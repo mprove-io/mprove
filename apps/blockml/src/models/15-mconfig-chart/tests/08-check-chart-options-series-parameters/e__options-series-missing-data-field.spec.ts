@@ -7,8 +7,8 @@ import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildDashboardTileCharts;
-let func = common.FuncEnum.CheckChartOptionsParameters;
-let testId = 'e__tile-options-wrong-parameter-value';
+let func = common.FuncEnum.CheckChartOptionsSeriesParameters;
+let testId = 'e__options-series-missing-data-field';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,6 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entDashboards.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.TILE_OPTIONS_WRONG_PARAMETER_VALUE);
-  t.is(errors[0].lines[0].line, 9);
+  t.is(errors[0].title, common.ErTitleEnum.OPTIONS_SERIES_MISSING_DATA_FIELD);
+  t.is(errors[0].lines[0].line, 15);
 });

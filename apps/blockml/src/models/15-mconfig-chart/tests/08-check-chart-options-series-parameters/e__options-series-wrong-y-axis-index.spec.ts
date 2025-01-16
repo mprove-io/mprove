@@ -6,13 +6,13 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildReportCharts;
+let caller = common.CallerEnum.BuildDashboardTileCharts;
 let func = common.FuncEnum.CheckChartOptionsSeriesParameters;
-let testId = 'e__tile-options-series-wrong-use-of-data-field';
+let testId = 'e__options-series-wrong-y-axis-index';
 
 test('1', async t => {
   let errors: BmError[];
-  let entReports: common.FileDashboard[];
+  let entDashboards: common.FileDashboard[];
 
   let wLogger;
   let configService;
@@ -47,7 +47,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    entReports = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
+    entDashboards = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -61,11 +61,8 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entReports.length, 0);
+  t.is(entDashboards.length, 0);
 
-  t.is(
-    errors[0].title,
-    common.ErTitleEnum.TILE_OPTIONS_SERIES_WRONG_USE_OF_DATA_FIELD
-  );
-  t.is(errors[0].lines[0].line, 11);
+  t.is(errors[0].title, common.ErTitleEnum.OPTIONS_SERIES_WRONG_Y_AXIS_INDEX);
+  t.is(errors[0].lines[0].line, 16);
 });

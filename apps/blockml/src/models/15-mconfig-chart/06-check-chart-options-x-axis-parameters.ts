@@ -36,7 +36,7 @@ export function checkChartOptionsXAxisParameters<T extends types.dzType>(
           if ([common.ParameterEnum.Scale.toString()].indexOf(parameter) < 0) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.TILE_OPTIONS_X_AXIS_UNKNOWN_PARAMETER,
+                title: common.ErTitleEnum.OPTIONS_X_AXIS_UNKNOWN_PARAMETER,
                 message:
                   `parameter "${parameter}" can not be used ` +
                   'inside x_axis element',
@@ -64,7 +64,7 @@ export function checkChartOptionsXAxisParameters<T extends types.dzType>(
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.TILE_OPTIONS_X_AXIS_UNEXPECTED_LIST,
+                title: common.ErTitleEnum.OPTIONS_X_AXIS_UNEXPECTED_LIST,
                 message: `parameter "${parameter}" can not be a list`,
                 lines: [
                   {
@@ -88,8 +88,7 @@ export function checkChartOptionsXAxisParameters<T extends types.dzType>(
           ) {
             item.errors.push(
               new BmError({
-                title:
-                  common.ErTitleEnum.TILE_OPTIONS_X_AXIS_UNEXPECTED_DICTIONARY,
+                title: common.ErTitleEnum.OPTIONS_X_AXIS_UNEXPECTED_DICTIONARY,
                 message: `parameter "${parameter}" can not be a dictionary`,
                 lines: [
                   {
@@ -116,8 +115,7 @@ export function checkChartOptionsXAxisParameters<T extends types.dzType>(
           ) {
             item.errors.push(
               new BmError({
-                title:
-                  common.ErTitleEnum.TILE_OPTIONS_X_AXIS_WRONG_PARAMETER_VALUE,
+                title: common.ErTitleEnum.OPTIONS_X_AXIS_WRONG_PARAMETER_VALUE,
                 message: `parameter "${parameter}" must be 'true' or 'false' if specified`,
                 lines: [
                   {
@@ -144,8 +142,7 @@ export function checkChartOptionsXAxisParameters<T extends types.dzType>(
         ) {
           item.errors.push(
             new BmError({
-              title:
-                common.ErTitleEnum.TILE_OPTIONS_X_AXIS_WRONG_PARAMETER_VALUE,
+              title: common.ErTitleEnum.OPTIONS_X_AXIS_WRONG_PARAMETER_VALUE,
               message: `parameter "${common.ParameterEnum.Scale}" must be 'true' or 'false' if specified`,
               lines: [
                 {

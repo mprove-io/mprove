@@ -39,8 +39,7 @@ export function checkChartOptionsYAxisParameters<T extends types.dcrType>(
             ) {
               item.errors.push(
                 new BmError({
-                  title:
-                    common.ErTitleEnum.TILE_OPTIONS_Y_AXIS_UNKNOWN_PARAMETER,
+                  title: common.ErTitleEnum.OPTIONS_Y_AXIS_UNKNOWN_PARAMETER,
                   message:
                     `parameter "${parameter}" can not be used ` +
                     'inside y_axis element',
@@ -68,7 +67,7 @@ export function checkChartOptionsYAxisParameters<T extends types.dcrType>(
             ) {
               item.errors.push(
                 new BmError({
-                  title: common.ErTitleEnum.TILE_OPTIONS_Y_AXIS_UNEXPECTED_LIST,
+                  title: common.ErTitleEnum.OPTIONS_Y_AXIS_UNEXPECTED_LIST,
                   message: `parameter "${parameter}" can not be a list`,
                   lines: [
                     {
@@ -93,8 +92,7 @@ export function checkChartOptionsYAxisParameters<T extends types.dcrType>(
               item.errors.push(
                 new BmError({
                   title:
-                    common.ErTitleEnum
-                      .TILE_OPTIONS_Y_AXIS_UNEXPECTED_DICTIONARY,
+                    common.ErTitleEnum.OPTIONS_Y_AXIS_UNEXPECTED_DICTIONARY,
                   message: `parameter "${parameter}" can not be a dictionary`,
                   lines: [
                     {
@@ -121,8 +119,7 @@ export function checkChartOptionsYAxisParameters<T extends types.dcrType>(
           ) {
             item.errors.push(
               new BmError({
-                title:
-                  common.ErTitleEnum.TILE_OPTIONS_Y_AXIS_WRONG_PARAMETER_VALUE,
+                title: common.ErTitleEnum.OPTIONS_Y_AXIS_WRONG_PARAMETER_VALUE,
                 message: `parameter "${common.ParameterEnum.Scale}" must be 'true' or 'false' if specified`,
                 lines: [
                   {

@@ -44,8 +44,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
             ) {
               item.errors.push(
                 new BmError({
-                  title:
-                    common.ErTitleEnum.TILE_OPTIONS_SERIES_UNKNOWN_PARAMETER,
+                  title: common.ErTitleEnum.OPTIONS_SERIES_UNKNOWN_PARAMETER,
                   message:
                     `parameter "${parameter}" can not be used ` +
                     'inside series element',
@@ -73,7 +72,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
             ) {
               item.errors.push(
                 new BmError({
-                  title: common.ErTitleEnum.TILE_OPTIONS_SERIES_UNEXPECTED_LIST,
+                  title: common.ErTitleEnum.OPTIONS_SERIES_UNEXPECTED_LIST,
                   message: `parameter "${parameter}" can not be a list`,
                   lines: [
                     {
@@ -98,8 +97,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
               item.errors.push(
                 new BmError({
                   title:
-                    common.ErTitleEnum
-                      .TILE_OPTIONS_SERIES_UNEXPECTED_DICTIONARY,
+                    common.ErTitleEnum.OPTIONS_SERIES_UNEXPECTED_DICTIONARY,
                   message: `parameter "${parameter}" can not be a dictionary`,
                   lines: [
                     {
@@ -138,8 +136,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
             if (common.isUndefined(seriesElement.data_field)) {
               item.errors.push(
                 new BmError({
-                  title:
-                    common.ErTitleEnum.TILE_OPTIONS_SERIES_MISSING_DATA_FIELD,
+                  title: common.ErTitleEnum.OPTIONS_SERIES_MISSING_DATA_FIELD,
                   message: `Series element must have "${common.ParameterEnum.DataField}" parameter`,
                   lines: [
                     {
@@ -164,8 +161,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
               ) {
                 item.errors.push(
                   new BmError({
-                    title:
-                      common.ErTitleEnum.TILE_OPTIONS_SERIES_WRONG_DATA_FIELD,
+                    title: common.ErTitleEnum.OPTIONS_SERIES_WRONG_DATA_FIELD,
                     message:
                       `"${common.ParameterEnum.DataField}" value must be one of ` +
                       `"${common.ParameterEnum.YFields}" elements`,
@@ -186,8 +182,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
               item.errors.push(
                 new BmError({
                   title:
-                    common.ErTitleEnum
-                      .TILE_OPTIONS_SERIES_WRONG_USE_OF_DATA_ROW_ID,
+                    common.ErTitleEnum.OPTIONS_SERIES_WRONG_USE_OF_DATA_ROW_ID,
                   message: `"${common.ParameterEnum.DataRowId}" can only be used inside report`,
                   lines: [
                     {
@@ -206,8 +201,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
             if (common.isUndefined(seriesElement.data_row_id)) {
               item.errors.push(
                 new BmError({
-                  title:
-                    common.ErTitleEnum.TILE_OPTIONS_SERIES_MISSING_DATA_ROW_ID,
+                  title: common.ErTitleEnum.OPTIONS_SERIES_MISSING_DATA_ROW_ID,
                   message: `Series element must have "${common.ParameterEnum.DataRowId}" parameter`,
                   lines: [
                     {
@@ -234,8 +228,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
               ) {
                 item.errors.push(
                   new BmError({
-                    title:
-                      common.ErTitleEnum.TILE_OPTIONS_SERIES_WRONG_DATA_ROW_ID,
+                    title: common.ErTitleEnum.OPTIONS_SERIES_WRONG_DATA_ROW_ID,
                     message:
                       `"${common.ParameterEnum.DataRowId}" value must be one of ` +
                       `row_ids with "${common.ParameterEnum.ShowChart}" enabled`,
@@ -256,8 +249,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
               item.errors.push(
                 new BmError({
                   title:
-                    common.ErTitleEnum
-                      .TILE_OPTIONS_SERIES_WRONG_USE_OF_DATA_FIELD,
+                    common.ErTitleEnum.OPTIONS_SERIES_WRONG_USE_OF_DATA_FIELD,
                   message: `"${common.ParameterEnum.DataField}" can only be used inside dashboard or chart`,
                   lines: [
                     {
@@ -281,8 +273,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
           ) {
             item.errors.push(
               new BmError({
-                title:
-                  common.ErTitleEnum.TILE_OPTIONS_SERIES_WRONG_Y_AXIS_INDEX,
+                title: common.ErTitleEnum.OPTIONS_SERIES_WRONG_Y_AXIS_INDEX,
                 message: `"${common.ParameterEnum.YAxisIndex}" must be index of ${common.ParameterEnum.YAxis} elements starting from 0`,
                 lines: [
                   {
@@ -302,7 +293,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.TILE_OPTIONS_SERIES_WRONG_TYPE,
+                title: common.ErTitleEnum.OPTIONS_SERIES_WRONG_TYPE,
                 message: `value "${seriesElement.type}" is not valid series "${common.ParameterEnum.Type}"`,
                 lines: [
                   {

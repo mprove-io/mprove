@@ -7,8 +7,8 @@ import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildDashboardTileCharts;
-let func = common.FuncEnum.CheckChartOptionsSeriesParameters;
-let testId = 'e__tile-options-series-unexpected-list';
+let func = common.FuncEnum.CheckChartOptionsYAxisParameters;
+let testId = 'e__options-y-axis-unknown-parameter';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,6 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entDashboards.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.TILE_OPTIONS_SERIES_UNEXPECTED_LIST);
+  t.is(errors[0].title, common.ErTitleEnum.OPTIONS_Y_AXIS_UNKNOWN_PARAMETER);
   t.is(errors[0].lines[0].line, 10);
 });

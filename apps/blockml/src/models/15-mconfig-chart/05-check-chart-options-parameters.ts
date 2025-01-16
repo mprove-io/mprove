@@ -44,10 +44,8 @@ export function checkChartOptionsParameters<T extends types.dcrType>(
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.TILE_OPTIONS_UNKNOWN_PARAMETER,
-                message:
-                  `parameter "${parameter}" can not be used ` +
-                  'inside Tile options',
+                title: common.ErTitleEnum.OPTIONS_UNKNOWN_PARAMETER,
+                message: `parameter "${parameter}" can not be used inside options`,
                 lines: [
                   {
                     line: tile.options[
@@ -74,7 +72,7 @@ export function checkChartOptionsParameters<T extends types.dcrType>(
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.TILE_OPTIONS_UNEXPECTED_LIST,
+                title: common.ErTitleEnum.OPTIONS_UNEXPECTED_LIST,
                 message: `parameter "${parameter}" can not be a list`,
                 lines: [
                   {
@@ -98,7 +96,7 @@ export function checkChartOptionsParameters<T extends types.dcrType>(
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.TILE_OPTIONS_UNEXPECTED_DICTIONARY,
+                title: common.ErTitleEnum.OPTIONS_UNEXPECTED_DICTIONARY,
                 message: `parameter "${parameter}" can not be a dictionary`,
                 lines: [
                   {
@@ -123,7 +121,7 @@ export function checkChartOptionsParameters<T extends types.dcrType>(
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.TILE_OPTIONS_WRONG_PARAMETER_VALUE,
+                title: common.ErTitleEnum.OPTIONS_WRONG_PARAMETER_VALUE,
                 message:
                   `parameter "${parameter}" value must be ` +
                   '"true" or "false" if specified',
@@ -153,7 +151,7 @@ export function checkChartOptionsParameters<T extends types.dcrType>(
               new BmError({
                 title:
                   common.ErTitleEnum
-                    .TILE_OPTIONS_PARAMETER_MUST_BE_A_POSITIVE_INTEGER,
+                    .OPTIONS_PARAMETER_MUST_BE_A_POSITIVE_INTEGER,
                 message:
                   `"${
                     tile.options[

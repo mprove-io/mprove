@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildReportCharts;
 let func = common.FuncEnum.CheckChartOptionsSeriesParameters;
-let testId = 'e__tile-options-series-missing-data-row-id';
+let testId = 'e__options-series-wrong-use-of-data-field';
 
 test('1', async t => {
   let errors: BmError[];
@@ -65,7 +65,7 @@ test('1', async t => {
 
   t.is(
     errors[0].title,
-    common.ErTitleEnum.TILE_OPTIONS_SERIES_MISSING_DATA_ROW_ID
+    common.ErTitleEnum.OPTIONS_SERIES_WRONG_USE_OF_DATA_FIELD
   );
-  t.is(errors[0].lines[0].line, 6);
+  t.is(errors[0].lines[0].line, 11);
 });

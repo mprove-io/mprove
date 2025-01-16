@@ -6,13 +6,13 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildDashboardTileCharts;
-let func = common.FuncEnum.CheckChartOptionsXAxisParameters;
-let testId = 'e__tile-options-x-axis-unexpected-list';
+let caller = common.CallerEnum.BuildReportCharts;
+let func = common.FuncEnum.CheckChartOptionsSeriesParameters;
+let testId = 'e__options-series-missing-data-row-id';
 
 test('1', async t => {
   let errors: BmError[];
-  let entDashboards: common.FileDashboard[];
+  let entReports: common.FileDashboard[];
 
   let wLogger;
   let configService;
@@ -47,7 +47,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    entDashboards = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
+    entReports = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -61,8 +61,8 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entDashboards.length, 0);
+  t.is(entReports.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.TILE_OPTIONS_X_AXIS_UNEXPECTED_LIST);
-  t.is(errors[0].lines[0].line, 10);
+  t.is(errors[0].title, common.ErTitleEnum.OPTIONS_SERIES_MISSING_DATA_ROW_ID);
+  t.is(errors[0].lines[0].line, 6);
 });

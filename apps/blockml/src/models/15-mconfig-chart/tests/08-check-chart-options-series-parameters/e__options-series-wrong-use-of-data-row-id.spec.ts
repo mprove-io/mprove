@@ -7,12 +7,12 @@ import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildDashboardTileCharts;
-let func = common.FuncEnum.CheckChartOptionsYAxisParameters;
-let testId = 'e__tile-options-y-axis-wrong-parameter-value';
+let func = common.FuncEnum.CheckChartOptionsSeriesParameters;
+let testId = 'e__options-series-wrong-use-of-data-row-id';
 
 test('1', async t => {
   let errors: BmError[];
-  let entDashboards: common.FileDashboard[];
+  let entReports: common.FileDashboard[];
 
   let wLogger;
   let configService;
@@ -47,7 +47,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    entDashboards = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
+    entReports = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -61,11 +61,11 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entDashboards.length, 0);
+  t.is(entReports.length, 0);
 
   t.is(
     errors[0].title,
-    common.ErTitleEnum.TILE_OPTIONS_Y_AXIS_WRONG_PARAMETER_VALUE
+    common.ErTitleEnum.OPTIONS_SERIES_WRONG_USE_OF_DATA_ROW_ID
   );
-  t.is(errors[0].lines[0].line, 10);
+  t.is(errors[0].lines[0].line, 16);
 });
