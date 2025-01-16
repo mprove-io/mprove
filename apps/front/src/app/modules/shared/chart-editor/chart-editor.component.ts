@@ -13,6 +13,7 @@ import { StructQuery } from '~front/app/queries/struct.query';
 import { DataService } from '~front/app/services/data.service';
 import { FormatNumberService } from '~front/app/services/format-number.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
+import { ReportService } from '~front/app/services/report.service';
 import { StructService } from '~front/app/services/struct.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
@@ -73,6 +74,9 @@ export class ChartEditorComponent implements OnChanges {
   @Input()
   isReport: boolean;
 
+  @Input()
+  report: common.ReportX;
+
   dimensionsMeasuresCalculations: common.MconfigField[];
 
   numbersDimensionsMeasuresCalculationsPlusEmpty: common.MconfigField[];
@@ -120,6 +124,7 @@ export class ChartEditorComponent implements OnChanges {
     private structQuery: StructQuery,
     private mconfigService: MconfigService,
     private dataService: DataService,
+    private reportService: ReportService,
     private formatNumberService: FormatNumberService
   ) {}
 
@@ -233,14 +238,58 @@ export class ChartEditorComponent implements OnChanges {
     return isChartValid;
   }
 
-  updateMconfig(newMconfig: common.MconfigX) {
-    let isValid = this.getIsValid();
-    if (isValid === true) {
-      newMconfig.chart.isValid = true;
+  chartEditorUpdateChart(item: {
+    chartPart: common.MconfigChart;
+    isCheck: boolean;
+  }) {
+    let { chartPart, isCheck } = item;
 
-      this.mconfigService.navCreateTempMconfig({
-        newMconfig: newMconfig
-      });
+    if (this.isReport === false) {
+      let newMconfig = this.structService.makeMconfig();
+
+      newMconfig.chart = Object.assign({}, newMconfig.chart, chartPart);
+
+      if (isCheck === true) {
+        let isValid = this.getIsValid();
+        if (isValid === true) {
+          newMconfig.chart.isValid = true;
+
+          this.mconfigService.navCreateTempMconfig({
+            newMconfig: newMconfig
+          });
+        }
+      } else {
+        this.mconfigService.navCreateTempMconfig({
+          newMconfig: newMconfig
+        });
+      }
+    } else {
+      let newChart = Object.assign({}, this.report.chart, chartPart);
+
+      if (isCheck === true) {
+        let isValid = this.getIsValid();
+        if (isValid === true) {
+          newChart.isValid = true;
+
+          this.reportService.modifyRows({
+            report: this.report,
+            changeType: common.ChangeTypeEnum.EditChart,
+            rowChange: undefined,
+            rowIds: undefined,
+            reportFields: this.report.fields,
+            chart: newChart
+          });
+        }
+      } else {
+        this.reportService.modifyRows({
+          report: this.report,
+          changeType: common.ChangeTypeEnum.EditChart,
+          rowChange: undefined,
+          rowIds: undefined,
+          reportFields: this.report.fields,
+          chart: newChart
+        });
+      }
     }
   }
 
@@ -260,9 +309,11 @@ export class ChartEditorComponent implements OnChanges {
       return;
     }
 
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.pageSize = pageSize;
-    this.updateMconfig(newMconfig);
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      pageSize: pageSize
+    };
+
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: true });
   }
 
   hideColumnsIsChecked(id: string) {
@@ -272,17 +323,17 @@ export class ChartEditorComponent implements OnChanges {
   hideColumnsOnClick(id: string) {
     let index = this.chart.hideColumns.findIndex(x => x === id);
 
-    let newMconfig = this.structService.makeMconfig();
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      hideColumns:
+        index > -1
+          ? [
+              ...this.chart.hideColumns.slice(0, index),
+              ...this.chart.hideColumns.slice(index + 1)
+            ]
+          : [...this.chart.hideColumns, id]
+    };
 
-    newMconfig.chart.hideColumns =
-      index > -1
-        ? [
-            ...this.chart.hideColumns.slice(0, index),
-            ...this.chart.hideColumns.slice(index + 1)
-          ]
-        : [...this.chart.hideColumns, id];
-
-    this.updateMconfig(newMconfig);
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: true });
   }
 
   yFieldsIsChecked(id: string) {
@@ -292,74 +343,72 @@ export class ChartEditorComponent implements OnChanges {
   yFieldsOnClick(id: string) {
     let index = this.chart.yFields.findIndex(x => x === id);
 
-    let newMconfig = this.structService.makeMconfig();
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      yFields:
+        index > -1
+          ? [
+              ...this.chart.yFields.slice(0, index),
+              ...this.chart.yFields.slice(index + 1)
+            ]
+          : [...this.chart.yFields, id]
+    };
 
-    newMconfig.chart.yFields =
-      index > -1
-        ? [
-            ...this.chart.yFields.slice(0, index),
-            ...this.chart.yFields.slice(index + 1)
-          ]
-        : [...this.chart.yFields, id];
-
-    this.updateMconfig(newMconfig);
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: true });
   }
 
   xFieldChange() {
     let xField = this.xFieldForm.controls['xField'].value;
 
-    let newMconfig = this.structService.makeMconfig();
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      xField: xField
+    };
 
     if (
-      common.UI_CHART_TYPES.multiField.indexOf(newMconfig.chart.type) > -1 &&
-      common.UI_CHART_TYPES.nullableMultiField.indexOf(newMconfig.chart.type) <
-        0
+      common.UI_CHART_TYPES.multiField.indexOf(this.chart.type) > -1 &&
+      common.UI_CHART_TYPES.nullableMultiField.indexOf(this.chart.type) < 0
     ) {
       let newMultiFieldValue = this.dimensions.filter(x => x.id !== xField)[0]
         .id;
+
       setValueAndMark({
         control: this.multiFieldForm.controls['multiField'],
         value: newMultiFieldValue
       });
-      newMconfig.chart.multiField = newMultiFieldValue;
+
+      newChart.multiField = newMultiFieldValue;
     }
 
-    newMconfig.chart.xField = xField;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
   }
 
   yFieldChange() {
     let yField = this.yFieldForm.controls['yField'].value;
 
-    let newMconfig = this.structService.makeMconfig();
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      yFields: [yField]
+    };
 
-    newMconfig.chart.yFields = [yField];
-
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
   }
 
   sizeFieldChange() {
     let sizeField = this.sizeFieldForm.controls['sizeField'].value;
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.sizeField = sizeField;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
+
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      sizeField: sizeField
+    };
+
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
   }
 
   multiFieldChange() {
     let multiField = this.multiFieldForm.controls['multiField'].value;
 
-    let newMconfig = this.structService.makeMconfig();
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      multiField: multiField
+    };
 
-    if (
-      common.UI_CHART_TYPES.nullableMultiField.indexOf(newMconfig.chart.type) <
-      0
-    ) {
+    if (common.UI_CHART_TYPES.nullableMultiField.indexOf(this.chart.type) < 0) {
       let newXFieldValue = this.dimensions.filter(x => x.id !== multiField)[0]
         .id;
 
@@ -368,37 +417,41 @@ export class ChartEditorComponent implements OnChanges {
         value: newXFieldValue
       });
 
-      newMconfig.chart.xField = newXFieldValue;
+      newChart.xField = newXFieldValue;
     }
 
-    newMconfig.chart.multiField = multiField;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
   }
 
   toggleFormat() {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.format = !newMconfig.chart.format;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      format: !this.chart.format
+    };
+
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
   }
 
   toggleXAxisScale() {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.xAxis.scale = !newMconfig.chart.xAxis.scale;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      xAxis: {
+        scale: !this.chart.xAxis.scale
+      }
+    };
+
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
   }
 
   toggleYAxisScale(i: number) {
-    let newMconfig = this.structService.makeMconfig();
-    newMconfig.chart.yAxis[i].scale = !newMconfig.chart.yAxis[i].scale;
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
-    });
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      yAxis: this.chart.yAxis.map((y, ind) => {
+        if (i === ind) {
+          y.scale = !y.scale;
+        }
+        return y;
+      })
+    };
+
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
   }
 }
 
@@ -1148,163 +1201,123 @@ export class ChartEditorComponent implements OnChanges {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.colorScheme = colorScheme;
 //   newMconfig.chart.schemeType = newSchemeTypeValue;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // schemeTypeChange() {
 //   let schemeType = this.schemeTypeForm.controls['schemeType'].value;
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.schemeType = schemeType;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // interpolationChange() {
 //   let interpolation = this.interpolationForm.controls['interpolation'].value;
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.interpolation = interpolation;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // bandColorChange($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.bandColor = $event.color;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // cardColorChange($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.cardColor = $event.color;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // textColorChange($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.textColor = $event.color;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // emptyColorChange($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.emptyColor = $event.color;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleXAxis($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.xAxis = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleYAxis($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.yAxis = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleShowXAxisLabel($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.showXAxisLabel = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleShowYAxisLabel($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.showYAxisLabel = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleShowAxis($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.showAxis = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleAnimations($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.animations = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleGradient($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.gradient = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleLegend($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.legend = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleTooltipDisabled($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.tooltipDisabled = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleRoundEdges($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.roundEdges = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleRoundDomains($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.roundDomains = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleShowGridLines($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.showGridLines = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleTimeline($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.timeline = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleAutoScale($event: any) {
@@ -1322,39 +1335,29 @@ export class ChartEditorComponent implements OnChanges {
 //   newMconfig.chart.autoScale = $event;
 //   newMconfig.chart.yScaleMin = null;
 //   newMconfig.chart.yScaleMax = null;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleDoughnut($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.doughnut = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleExplodeSlices($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.explodeSlices = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleLabels($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.labels = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }
 
 // toggleShowDataLabel($event: any) {
 //   let newMconfig = this.structService.makeMconfig();
 //   newMconfig.chart.showDataLabel = $event;
-//   this.mconfigService.navCreateTempMconfig({
-//     newMconfig: newMconfig
-//   });
+//   this.updateMconfig({ newMconfig: newMconfig, isCheck: false });
 // }

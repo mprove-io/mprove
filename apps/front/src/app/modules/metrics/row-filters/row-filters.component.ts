@@ -99,7 +99,8 @@ export class RowFiltersComponent implements OnChanges {
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
-      reportFields: report.fields
+      reportFields: report.fields,
+      chart: undefined
     });
   }
 
@@ -142,7 +143,8 @@ export class RowFiltersComponent implements OnChanges {
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
-      reportFields: report.fields
+      reportFields: report.fields,
+      chart: undefined
     });
   }
 
@@ -189,7 +191,8 @@ export class RowFiltersComponent implements OnChanges {
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
-      reportFields: report.fields
+      reportFields: report.fields,
+      chart: undefined
     });
   }
 
@@ -217,7 +220,8 @@ export class RowFiltersComponent implements OnChanges {
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
-      reportFields: report.fields
+      reportFields: report.fields,
+      chart: undefined
     });
   }
 
@@ -278,7 +282,8 @@ export class RowFiltersComponent implements OnChanges {
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
-      reportFields: report.fields
+      reportFields: report.fields,
+      chart: undefined
     });
   }
 
@@ -342,7 +347,8 @@ export class RowFiltersComponent implements OnChanges {
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
-      reportFields: report.fields
+      reportFields: report.fields,
+      chart: undefined
     });
   }
 
@@ -395,7 +401,8 @@ export class RowFiltersComponent implements OnChanges {
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
-      reportFields: report.fields
+      reportFields: report.fields,
+      chart: undefined
     });
   }
 
@@ -431,7 +438,8 @@ export class RowFiltersComponent implements OnChanges {
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
-      reportFields: report.fields
+      reportFields: report.fields,
+      chart: undefined
     });
   }
 }

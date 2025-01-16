@@ -51,7 +51,8 @@ export class EditDraftReportController {
       timeSpec,
       timezone,
       timeRangeFractionBrick,
-      newReportFields
+      newReportFields,
+      chart
     } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
@@ -131,6 +132,7 @@ export class EditDraftReportController {
 
     report.fields = newReportFields;
     report.rows = processedRows;
+    report.chart = chart;
 
     let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
 

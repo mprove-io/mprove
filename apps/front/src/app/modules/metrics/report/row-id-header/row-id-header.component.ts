@@ -50,7 +50,8 @@ export class RowIdHeaderComponent implements IHeaderAngularComp {
       changeType: common.ChangeTypeEnum.AddEmpty,
       rowChange: rowChange,
       rowIds: undefined,
-      reportFields: report.fields
+      reportFields: report.fields,
+      chart: undefined
     });
   }
 }

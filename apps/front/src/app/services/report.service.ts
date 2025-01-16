@@ -42,8 +42,11 @@ export class ReportService {
     rowChange: common.RowChange;
     rowIds: string[];
     reportFields: common.ReportField[];
+    chart: common.MconfigChart;
   }) {
-    let { report, changeType, rowChange, rowIds, reportFields } = item;
+    let { report, changeType, rowChange, rowIds, reportFields, chart } = item;
+
+    let newChart = common.isDefined(chart) ? chart : report.chart;
 
     if (report.draft === true) {
       this.editDraftReport({
@@ -51,7 +54,8 @@ export class ReportService {
         changeType: changeType,
         rowIds: rowIds,
         rowChange: rowChange,
-        fields: reportFields
+        fields: reportFields,
+        chart: newChart
       });
     } else {
       this.navCreateDraftReport({
@@ -59,7 +63,8 @@ export class ReportService {
         changeType: changeType,
         rowChange: rowChange,
         rowIds: rowIds,
-        fields: reportFields
+        fields: reportFields,
+        chart: newChart
       });
     }
   }
@@ -70,10 +75,11 @@ export class ReportService {
     rowIds: string[];
     fromReportId: string;
     fields: common.ReportField[];
+    chart: common.MconfigChart;
   }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { rowChange, rowIds, fromReportId, changeType, fields } = item;
+    let { rowChange, rowIds, fromReportId, changeType, fields, chart } = item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -89,7 +95,8 @@ export class ReportService {
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
       timeRangeFractionBrick: uiState.timeRangeFraction.brick,
-      newReportFields: fields
+      newReportFields: fields,
+      chart: chart
     };
 
     this.apiService
@@ -123,8 +130,9 @@ export class ReportService {
     rowIds: string[];
     reportId: string;
     fields: common.ReportField[];
+    chart: common.MconfigChart;
   }) {
-    let { rowChange, rowIds, reportId, changeType, fields } = item;
+    let { rowChange, rowIds, reportId, changeType, fields, chart } = item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -140,7 +148,8 @@ export class ReportService {
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
       timeRangeFractionBrick: uiState.timeRangeFraction.brick,
-      newReportFields: fields
+      newReportFields: fields,
+      chart: chart
     };
 
     this.apiService

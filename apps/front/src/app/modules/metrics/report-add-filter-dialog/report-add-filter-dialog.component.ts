@@ -294,7 +294,8 @@ export class ReportAddFilterDialogComponent implements OnInit {
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
-      reportFields: [...this.report.fields, field]
+      reportFields: [...this.report.fields, field],
+      chart: undefined
     });
   }
 

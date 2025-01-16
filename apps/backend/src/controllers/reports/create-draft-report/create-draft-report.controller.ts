@@ -71,7 +71,8 @@ export class CreateDraftReportController {
       timeSpec,
       timezone,
       timeRangeFractionBrick,
-      newReportFields
+      newReportFields,
+      chart
     } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
@@ -325,7 +326,7 @@ export class CreateDraftReportController {
       filePath: undefined,
       title: reportId,
       rows: processedRows,
-      chart: common.DEFAULT_CHART,
+      chart: chart,
       draftCreatedTs: makeTsNumber(),
       fields: newReportFields
     });

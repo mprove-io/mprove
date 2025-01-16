@@ -519,6 +519,8 @@ export class ReportsService {
         rows: processedRows,
         targetRowIds: rowIds
       });
+    } else if (changeType === common.ChangeTypeEnum.EditChart) {
+      //
     }
 
     return processedRows;

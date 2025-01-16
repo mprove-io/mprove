@@ -444,7 +444,8 @@ export class ReportComponent {
       changeType: common.ChangeTypeEnum.Move,
       rowChange: undefined,
       rowIds: rowIds,
-      reportFields: report.fields
+      reportFields: report.fields,
+      chart: undefined
     });
   }
 

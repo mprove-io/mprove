@@ -66,7 +66,8 @@ export class ReportFiltersComponent {
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
-      reportFields: newReportFields
+      reportFields: newReportFields,
+      chart: undefined
     });
   }
 
@@ -121,7 +122,8 @@ export class ReportFiltersComponent {
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
-      reportFields: newReportFields
+      reportFields: newReportFields,
+      chart: undefined
     });
   }
 
@@ -186,7 +188,8 @@ export class ReportFiltersComponent {
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
-      reportFields: newReportFields
+      reportFields: newReportFields,
+      chart: undefined
     });
   }
 
@@ -215,7 +218,8 @@ export class ReportFiltersComponent {
       changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
-      reportFields: newReportFields
+      reportFields: newReportFields,
+      chart: undefined
     });
   }
 }

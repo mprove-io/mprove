@@ -188,7 +188,8 @@ export class MetricsTreeComponent implements AfterViewInit {
       changeType: common.ChangeTypeEnum.AddMetric,
       rowChange: rowChange,
       rowIds: undefined,
-      reportFields: report.fields
+      reportFields: report.fields,
+      chart: undefined
     });
   }
 

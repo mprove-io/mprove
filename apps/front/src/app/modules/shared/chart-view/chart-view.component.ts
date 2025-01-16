@@ -104,7 +104,7 @@ export class ChartViewComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     // console.log('chart-view ngOnChanges');
     // if (this.isInitialized === true) {
-    this.updateChart();
+    this.chartViewUpdateChart();
     // }
   }
 
@@ -114,7 +114,7 @@ export class ChartViewComponent implements OnChanges {
   // this.isInitialized = true;
   // }
 
-  updateChart() {
+  chartViewUpdateChart() {
     // console.log('this.chart');
     // console.log(this.chart);
 

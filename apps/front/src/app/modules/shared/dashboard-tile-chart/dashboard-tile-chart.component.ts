@@ -180,7 +180,7 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
 
   updateChartView() {
     this.chartViewComponents.forEach(x => {
-      x.updateChart();
+      x.chartViewUpdateChart();
     });
   }
 
