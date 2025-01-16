@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildYaml;
 let func = common.FuncEnum.CheckTopUnknownParameters;
-let testId = 'e__parameter-must-be-a-list';
+let testId = 'e__parameter-is-not-a-list';
 
 test('1', async t => {
   let errors: BmError[];

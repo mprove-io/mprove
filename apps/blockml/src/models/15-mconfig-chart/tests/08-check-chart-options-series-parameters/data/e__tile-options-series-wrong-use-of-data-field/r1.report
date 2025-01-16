@@ -1,0 +1,13 @@
+report: r1
+title: t
+rows:
+- row_id: A
+  type: formula
+  show_chart: true
+  formula: 1
+options:
+  series:
+  - data_row_id: A
+    data_field: for_tile_only
+
+

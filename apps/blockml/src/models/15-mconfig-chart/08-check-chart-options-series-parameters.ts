@@ -191,7 +191,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
                   message: `"${common.ParameterEnum.DataRowId}" can only be used inside report`,
                   lines: [
                     {
-                      line: Math.min(...pKeysLineNums),
+                      line: seriesElement.data_row_id_line_num,
                       name: x.fileName,
                       path: x.filePath
                     }
@@ -241,7 +241,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
                       `row_ids with "${common.ParameterEnum.ShowChart}" enabled`,
                     lines: [
                       {
-                        line: seriesElement.data_field_line_num,
+                        line: seriesElement.data_row_id_line_num,
                         name: x.fileName,
                         path: x.filePath
                       }
@@ -261,7 +261,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
                   message: `"${common.ParameterEnum.DataField}" can only be used inside dashboard or chart`,
                   lines: [
                     {
-                      line: Math.min(...pKeysLineNums),
+                      line: seriesElement.data_field_line_num,
                       name: x.fileName,
                       path: x.filePath
                     }

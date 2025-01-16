@@ -331,7 +331,7 @@ export function checkTopUnknownParameters(
         ) {
           item.errors.push(
             new BmError({
-              title: common.ErTitleEnum.PARAMETER_MUST_BE_A_DICTIONARY,
+              title: common.ErTitleEnum.PARAMETER_IS_NOT_A_DICTIONARY,
               message: `parameter "${parameter}" must be a dictionary`,
               lines: [
                 {
