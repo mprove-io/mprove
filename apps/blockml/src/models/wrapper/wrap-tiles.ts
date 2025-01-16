@@ -22,8 +22,10 @@ export function wrapTiles(item: {
       title: tile.title,
       description: tile.description,
       type: tile.type,
-      data: tile.data,
-      options: tile.options
+      options: tile.options,
+      isReport: false,
+      rowIds: undefined,
+      data: tile.data
     });
 
     let model = models.find(m => m.name === tile.model);

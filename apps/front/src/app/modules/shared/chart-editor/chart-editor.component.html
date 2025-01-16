@@ -355,7 +355,7 @@
       *ngFor="let yAxisElement of chart.yAxis; let i = index"
       class="flex flex-col"
     >
-      <div class="text-gray1 mb-5 text-base">Index {{ i }}</div>
+      <!-- <div class="text-gray1 mb-5 text-base">Index {{ i }}</div> -->
 
       <div
         *ngIf="uiChartTypes.yAxis.scale.indexOf(chart.type) > -1"
@@ -390,8 +390,12 @@
       *ngFor="let seriesElement of chart.series; let i = index"
       class="flex flex-col"
     >
-      <div class="text-gray1 mb-5 text-base"
+      <div *ngIf="isReport === false" class="text-gray1 mb-5 text-base"
         >Data Field - {{ seriesElement.dataField }}</div
+      >
+
+      <div *ngIf="isReport === true" class="text-gray1 mb-5 text-base"
+        >Data Row - {{ seriesElement.dataRowId }}</div
       >
 
       <div

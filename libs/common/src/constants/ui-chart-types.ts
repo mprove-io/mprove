@@ -12,12 +12,7 @@ export const UI_CHART_TYPES = {
     enums.ChartTypeEnum.Scatter,
     enums.ChartTypeEnum.Pie
   ],
-  yField: [
-    enums.ChartTypeEnum.Line,
-    enums.ChartTypeEnum.Bar,
-    enums.ChartTypeEnum.Scatter,
-    enums.ChartTypeEnum.Pie
-  ],
+  yField: [enums.ChartTypeEnum.Pie],
   yFields: [
     enums.ChartTypeEnum.Line,
     enums.ChartTypeEnum.Bar,

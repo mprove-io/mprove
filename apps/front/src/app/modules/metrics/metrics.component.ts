@@ -422,10 +422,13 @@ export class MetricsComponent implements OnInit, OnDestroy {
                     }
                   }
           },
-          yAxis: {
-            type: 'value',
-            axisLabel: { fontSize: 14 }
-          },
+          yAxis: this.report.chart.yAxis.map(y => {
+            (y as any).type = 'value';
+            (y as any).axisLabel = {
+              fontSize: 14
+            };
+            return y;
+          }),
           series: repChartData.rows
             .filter(
               row =>

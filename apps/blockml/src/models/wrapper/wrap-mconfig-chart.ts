@@ -7,8 +7,10 @@ export function wrapMconfigChart(item: {
   type: common.ChartTypeEnum;
   options: common.FileChartOptions;
   data: common.FileChartData;
+  isReport: boolean;
+  rowIds: string[];
 }) {
-  let { title, description, type, options, data } = item;
+  let { title, description, type, options, data, rowIds, isReport } = item;
 
   let xAxis: common.MconfigChartXAxis = {
     scale: common.isDefined(options?.x_axis?.scale)
@@ -34,22 +36,31 @@ export function wrapMconfigChart(item: {
 
   let series: common.MconfigChartSeries[] = [];
 
-  if (common.isDefined(data?.y_fields) && data?.y_fields.length > 0) {
-    series = data?.y_fields.map(yFieldId => {
-      let seriesPart = options?.series?.find(s => s.data_field === yFieldId);
+  let seriesIds =
+    isReport === false && common.isDefined(data?.y_fields)
+      ? data?.y_fields
+      : isReport === true && common.isDefined(rowIds)
+      ? rowIds
+      : [];
 
-      let seriesElement: common.MconfigChartSeries = {
-        dataField: yFieldId,
-        dataRowId: undefined,
-        type: common.isDefined(seriesPart?.type) ? seriesPart.type : type,
-        yAxisIndex: common.isDefined(seriesPart?.y_axis_index)
-          ? Number(seriesPart.y_axis_index)
-          : 0
-      };
+  series = seriesIds.map(seriesId => {
+    let seriesPart = options?.series?.find(s =>
+      isReport === false
+        ? s.data_field === seriesId
+        : s.data_row_id === seriesId
+    );
 
-      return seriesElement;
-    });
-  }
+    let seriesElement: common.MconfigChartSeries = {
+      dataField: isReport === false ? seriesId : undefined,
+      dataRowId: isReport === true ? seriesId : undefined,
+      type: common.isDefined(seriesPart?.type) ? seriesPart.type : type,
+      yAxisIndex: common.isDefined(seriesPart?.y_axis_index)
+        ? Number(seriesPart.y_axis_index)
+        : 0
+    };
+
+    return seriesElement;
+  });
 
   let mconfigChart: common.MconfigChart = {
     isValid: true,

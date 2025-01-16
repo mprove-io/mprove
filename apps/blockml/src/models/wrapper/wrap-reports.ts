@@ -42,8 +42,14 @@ export function wrapReports(item: {
       title: undefined,
       description: undefined,
       type: common.ChartTypeEnum.Line,
-      data: undefined,
-      options: x.options
+      options: x.options,
+      isReport: true,
+      rowIds: x.rows
+        .filter(
+          row => helper.toBooleanFromLowercaseString(row.show_chart) === true
+        )
+        .map(row => row.row_id),
+      data: undefined
     });
 
     let report: common.Report = {

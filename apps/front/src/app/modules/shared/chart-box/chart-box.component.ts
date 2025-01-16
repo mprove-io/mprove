@@ -56,7 +56,6 @@ export class ChartBoxComponent implements OnChanges {
       this.localInitOpts = changes.eChartInitOpts.currentValue;
     }
 
-    // console.log(Date.now());
     if (
       common.isDefined(changes.eChartOptions) &&
       equal(
@@ -67,7 +66,6 @@ export class ChartBoxComponent implements OnChanges {
       // console.log('set localOptions');
       this.localOptions = changes.eChartOptions.currentValue;
     }
-    // console.log(Date.now());
 
     // if (common.isDefined(this.echartsInstance)) {
     //   this.echartsInstance.setOption(this.eChartOptions);

@@ -75,26 +75,6 @@ export class ChartViewComponent implements OnChanges {
   isSelectValid = false;
   errorMessage = '';
 
-  // timeline = common.CHART_DEFAULT_TIMELINE;
-  // rangeFillOpacity = common.CHART_DEFAULT_RANGE_FILL_OPACITY;
-  // legendForHeatMap = false;
-
-  // labelFormattingFn = this.labelFormatting.bind(this);
-  // dataLabelFormattingFn = this.dataLabelFormatting.bind(this);
-  // valueFormattingFn = this.valueFormatting.bind(this);
-  // axisTickFormattingFn = this.axisTickFormatting.bind(this);
-  // yAxisTickFormattingFn = this.yAxisTickFormatting.bind(this);
-  // xAxisTickFormattingFn = this.xAxisTickFormatting.bind(this);
-
-  // xAxisTickFormattingForLinearFn = this.xAxisTickFormattingForLinear.bind(this);
-
-  // dataLabelFormattingFn = (value: any) => this.dataLabelFormatting(value);
-  // valueFormattingFn = (value: any) => this.valueFormatting(value);
-  // axisTickFormattingFn = (value: any) => this.axisTickFormatting(value);
-  // yAxisTickFormattingFn = (value: any) => this.yAxisTickFormatting(value);
-  // xAxisTickFormattingFn = (value: any) => this.xAxisTickFormatting(value);
-  // xAxisTickFormattingForLinearFn = (value: any) => this.xAxisTickFormattingForLinear(value);
-
   constructor(
     private dataService: DataService,
     private formatNumberService: FormatNumberService,
@@ -103,27 +83,19 @@ export class ChartViewComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     // console.log('chart-view ngOnChanges');
-    // if (this.isInitialized === true) {
     this.chartViewUpdateChart();
-    // }
   }
-
-  // ngAfterViewInit() {
-  // console.log('chart-view ngAfterViewInit');
-  // this.updateChart();
-  // this.isInitialized = true;
-  // }
 
   chartViewUpdateChart() {
     // console.log('this.chart');
     // console.log(this.chart);
 
-    this.eChartInitOpts = {
+    let eChartInitOpts = {
       renderer: 'svg'
       // renderer: 'canvas'
     } as EChartsInitOpts;
 
-    this.eChartOptions = {
+    let eChartOptions: EChartsOption = {
       useUTC: true,
       grid: {
         left: '100',
@@ -241,7 +213,7 @@ export class ChartViewComponent implements OnChanges {
               })
           : undefined;
 
-        this.eChartOptions.xAxis =
+        eChartOptions.xAxis =
           xField.result === common.FieldResultEnum.Ts
             ? {
                 type: 'time',
@@ -265,19 +237,13 @@ export class ChartViewComponent implements OnChanges {
                 }
               };
 
-        this.eChartOptions.yAxis = this.chart.yAxis.map(y => {
+        eChartOptions.yAxis = this.chart.yAxis.map(y => {
           (y as any).type = 'value';
           (y as any).axisLabel = {
             fontSize: 14
           };
           return y;
         });
-        // {
-        //   type: 'value',
-        //   axisLabel: {
-        //     fontSize: 14
-        //   }
-        // };
       }
 
       // echarts - series
@@ -326,7 +292,7 @@ export class ChartViewComponent implements OnChanges {
                 }
         };
 
-        this.eChartOptions.series = this.seriesData.map(el => {
+        eChartOptions.series = this.seriesData.map(el => {
           let lineSeriesOption: LineSeriesOption = {
             type: 'line',
             symbol: 'circle',
@@ -419,17 +385,8 @@ export class ChartViewComponent implements OnChanges {
       }
     }
 
-    // console.log('this.eData:');
-    // console.log(this.eData);
-
-    // console.log('this.multi:');
-    // console.log(this.seriesData);
-
-    // console.log('this.eChartOptions:');
-    // console.log(this.eChartOptions);
-
-    // console.log('this.chart');
-    // console.log(this.chart);
+    this.eChartInitOpts = eChartInitOpts;
+    this.eChartOptions = eChartOptions;
 
     this.cd.detectChanges();
   }
@@ -611,3 +568,27 @@ export class ChartViewComponent implements OnChanges {
   //   return value;
   // }
 }
+
+//
+//
+//
+
+// timeline = common.CHART_DEFAULT_TIMELINE;
+// rangeFillOpacity = common.CHART_DEFAULT_RANGE_FILL_OPACITY;
+// legendForHeatMap = false;
+
+// labelFormattingFn = this.labelFormatting.bind(this);
+// dataLabelFormattingFn = this.dataLabelFormatting.bind(this);
+// valueFormattingFn = this.valueFormatting.bind(this);
+// axisTickFormattingFn = this.axisTickFormatting.bind(this);
+// yAxisTickFormattingFn = this.yAxisTickFormatting.bind(this);
+// xAxisTickFormattingFn = this.xAxisTickFormatting.bind(this);
+
+// xAxisTickFormattingForLinearFn = this.xAxisTickFormattingForLinear.bind(this);
+
+// dataLabelFormattingFn = (value: any) => this.dataLabelFormatting(value);
+// valueFormattingFn = (value: any) => this.valueFormatting(value);
+// axisTickFormattingFn = (value: any) => this.axisTickFormatting(value);
+// yAxisTickFormattingFn = (value: any) => this.yAxisTickFormatting(value);
+// xAxisTickFormattingFn = (value: any) => this.xAxisTickFormatting(value);
+// xAxisTickFormattingForLinearFn = (value: any) => this.xAxisTickFormattingForLinear(value);

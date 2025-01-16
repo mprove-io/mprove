@@ -444,10 +444,11 @@ export class ChartEditorComponent implements OnChanges {
   toggleYAxisScale(i: number) {
     let newChart: common.MconfigChart = <common.MconfigChart>{
       yAxis: this.chart.yAxis.map((y, ind) => {
-        if (i === ind) {
-          y.scale = !y.scale;
-        }
-        return y;
+        let newYAxisElement = Object.assign({}, y, {
+          scale: i === ind ? !y.scale : y.scale
+        });
+
+        return newYAxisElement;
       })
     };
 
