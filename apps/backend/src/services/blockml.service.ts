@@ -254,7 +254,7 @@ export class BlockmlService {
                   this.wrapToEntService.wrapToEntityDashboard(x)
                 )
               },
-              insertOrUpdate: {
+              insertOrDoNothing: {
                 queries: queries.map(x =>
                   this.wrapToEntService.wrapToEntityQuery(x)
                 )

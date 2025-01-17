@@ -1155,7 +1155,7 @@ export class ReportsService {
                     this.wrapToEntService.wrapToEntityMconfig(x)
                   )
                 },
-                insertOrUpdate: {
+                insertOrDoNothing: {
                   queries: newQueries.map(x =>
                     this.wrapToEntService.wrapToEntityQuery(x)
                   )

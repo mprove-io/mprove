@@ -278,9 +278,11 @@ export class ModifyChartController {
             },
             insertOrUpdate: {
               charts: common.isDefined(chart) ? [chartEnt] : undefined,
-              queries: [chartQuery],
               structs: [struct],
               bridges: [...branchBridges]
+            },
+            insertOrDoNothing: {
+              queries: [chartQuery]
             }
           });
         }),

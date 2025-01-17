@@ -100,25 +100,8 @@ SELECT
 FROM structs AS s
 LEFT JOIN bridges AS b ON s.struct_id = b.struct_id
 LEFT JOIN branches AS c ON b.branch_id = c.branch_id
-WHERE c.branch_id IS NULL AND to_timestamp(s.server_ts) < (NOW() - INTERVAL '1 minute');
+WHERE c.branch_id IS NULL AND to_timestamp(s.server_ts/1000) < (NOW() - INTERVAL '15 seconds');
 `);
-
-    //     let rawData: any;
-
-    //     await this.dataSource.transaction(async manager => {
-    //       rawData = await manager.query(`
-    // SELECT
-    //   s.struct_id,
-    //   b.project_id,
-    //   b.repo_id,
-    //   b.branch_id,
-    //   b.env_id
-    // FROM structs as s
-    // LEFT JOIN bridges as b ON s.struct_id=b.struct_id
-    // LEFT JOIN branches as c ON b.branch_id=c.branch_id
-    // WHERE c.branch_id is NULL AND s.server_ts < (NOW() - INTERVAL 1 MINUTE)
-    // `);
-    //     });
 
     let orphanedStructIds: string[] =
       rawData.rows.map((x: any) => x.struct_id) || [];

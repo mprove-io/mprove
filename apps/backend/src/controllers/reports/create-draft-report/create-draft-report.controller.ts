@@ -266,7 +266,7 @@ export class CreateDraftReportController {
                 mconfigs: copyMconfigs,
                 kits: copyKits
               },
-              insertOrUpdate: {
+              insertOrDoNothing: {
                 queries: copyQueries
               }
             })

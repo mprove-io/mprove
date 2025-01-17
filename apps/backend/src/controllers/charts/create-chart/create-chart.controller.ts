@@ -273,9 +273,11 @@ export class CreateChartController {
               mconfigs: [chartMconfig]
             },
             insertOrUpdate: {
-              queries: [chartQuery],
               structs: [struct],
               bridges: [...branchBridges]
+            },
+            insertOrDoNothing: {
+              queries: [chartQuery]
             }
           });
         }),
