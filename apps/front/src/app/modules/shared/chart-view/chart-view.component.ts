@@ -172,6 +172,9 @@ export class ChartViewComponent implements OnChanges {
                 chartType: this.chart.type
               })
             : [];
+
+        // console.log('this.seriesData');
+        // console.log(this.seriesData);
       }
 
       // echarts - axes
@@ -292,7 +295,14 @@ export class ChartViewComponent implements OnChanges {
                 }
         };
 
-        eChartOptions.series = this.seriesData.map(el => {
+        // console.log('this.chart.series');
+        // console.log(this.chart.series);
+
+        eChartOptions.series = this.chart.series.map(chartSeriesElement => {
+          let seriesDataElement = this.seriesData.find(
+            sd => sd.seriesId === chartSeriesElement.dataField
+          );
+
           let lineSeriesOption: LineSeriesOption = {
             type: 'line',
             symbol: 'circle',
@@ -301,9 +311,9 @@ export class ChartViewComponent implements OnChanges {
               width: 2.5
             },
             // areaStyle: {},
-            name: el.seriesName,
-            data: el.seriesPoints.map(x => ({
-              name: el.seriesName,
+            name: seriesDataElement?.seriesName,
+            data: seriesDataElement?.seriesPoints.map(x => ({
+              name: seriesDataElement?.seriesName,
               value: [x.xValue, x.yValue],
               pXValueFmt: x.xValueFmt,
               pYValueFmt: x.yValueFmt
@@ -316,9 +326,9 @@ export class ChartViewComponent implements OnChanges {
 
           let barSeriesOption: BarSeriesOption = {
             type: 'bar',
-            name: el.seriesName,
-            data: el.seriesPoints.map(x => ({
-              name: el.seriesName,
+            name: seriesDataElement?.seriesName,
+            data: seriesDataElement?.seriesPoints.map(x => ({
+              name: seriesDataElement?.seriesName,
               value: [x.xValue, x.yValue],
               pXValueFmt: x.xValueFmt,
               pYValueFmt: x.yValueFmt
@@ -331,9 +341,9 @@ export class ChartViewComponent implements OnChanges {
             symbolSize: common.isDefined(this.chart.sizeField)
               ? (data: any) => 5 + data[2] * 25
               : 10,
-            name: el.seriesName,
-            data: el.seriesPoints.map(x => ({
-              name: el.seriesName,
+            name: seriesDataElement?.seriesName,
+            data: seriesDataElement?.seriesPoints.map(x => ({
+              name: seriesDataElement?.seriesName,
               value: [x.xValue, x.yValue, x.sizeValueMod],
               pXValueFmt: x.xValueFmt,
               pYValueFmt: x.yValueFmt,
@@ -346,8 +356,8 @@ export class ChartViewComponent implements OnChanges {
 
           let pieSeriesOption: PieSeriesOption = {
             type: 'pie',
-            name: el.seriesName,
-            data: el.seriesPoints.map(x => ({
+            name: seriesDataElement?.seriesName,
+            data: seriesDataElement?.seriesPoints.map(x => ({
               name: x.xValue,
               value: x.yValue,
               pXValueFmt: x.xValueFmt,
@@ -358,9 +368,9 @@ export class ChartViewComponent implements OnChanges {
 
           let baseSeriesOption: SeriesOption = {
             type: this.chart.type as any,
-            name: el.seriesName,
-            data: el.seriesPoints.map(x => ({
-              name: el.seriesName,
+            name: seriesDataElement?.seriesName,
+            data: seriesDataElement?.seriesPoints.map(x => ({
+              name: seriesDataElement?.seriesName,
               value: [x.xValue, x.yValue],
               pXValueFmt: x.xValueFmt,
               pYValueFmt: x.yValueFmt

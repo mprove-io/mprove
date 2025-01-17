@@ -3,7 +3,7 @@
     <div class="mt-8 flex min-w-[2px] flex-grow flex-col" *ngIf="!!dashboard">
       <div class="flex h-11 flex-row items-center justify-between px-6">
         <div class="flex w-full flex-row items-center">
-          <div class="flex flex-1 flex-row items-center space-x-5">
+          <div class="flex flex-1 flex-row items-center">
             <div
               data-cy="dashboardTitle"
               class="text-gray1 flex items-center self-center text-2xl font-semibold"
@@ -11,18 +11,16 @@
               {{ pageTitle }}
             </div>
 
-            <div class="text-gray1 text-xl">{{
+            <div class="text-gray1 ml-5 text-xl">{{
               (dashboard.title ? dashboard.title : dashboard.dashboardId)
                 | capitalize
             }}</div>
-          </div>
 
-          <div class="ml-5 flex flex-1 flex-row items-center justify-center">
             <div
-              class="ml-5 flex cursor-pointer flex-row items-center"
+              class="ml-10 flex cursor-pointer flex-row items-center"
               (click)="toggleShowTileFilters()"
             >
-              <ui-switch class="ml-5" [checked]="showBricks"></ui-switch>
+              <ui-switch [checked]="showBricks"></ui-switch>
 
               <div
                 class="text-gray1 ml-5 flex h-9 select-none items-center text-base"

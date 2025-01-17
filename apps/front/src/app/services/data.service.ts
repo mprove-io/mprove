@@ -23,10 +23,10 @@ export interface QCell {
   valueFmt: string;
 }
 
-export interface SeriesDataElement {
-  seriesName: string;
-  seriesPoints: SeriesPoint[];
-  seriesSizeName: string;
+export interface YSeriesElement {
+  yKeyId: string; // multi by multifield
+  yFieldId: string;
+  points: SeriesPoint[];
 }
 
 export interface SeriesPoint {
@@ -40,8 +40,11 @@ export interface SeriesPoint {
   sizeFieldName: string;
 }
 
-interface PrepareData {
-  [key: string]: SeriesPoint[];
+export interface SeriesDataElement {
+  seriesId: string;
+  seriesName: string;
+  seriesPoints: SeriesPoint[];
+  seriesSizeName: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -206,7 +209,7 @@ export class DataService {
       yFields.push(yField);
     });
 
-    let xName = xField.sqlName;
+    let xSqlName = xField.sqlName;
 
     let multiField = common.isDefined(multiFieldId)
       ? selectFields.find(f => f.id === multiFieldId)
@@ -216,7 +219,7 @@ export class DataService {
       return [];
     }
 
-    let multiName = multiField ? multiField.sqlName : undefined;
+    let multiSqlName = multiField ? multiField.sqlName : undefined;
 
     let sizeField = common.isDefined(sizeFieldId)
       ? selectFields.find(f => f.id === sizeFieldId)
@@ -226,11 +229,7 @@ export class DataService {
       return [];
     }
 
-    let sizeName = sizeField ? sizeField.sqlName : undefined;
-
-    let prepareData: {
-      [key: string]: SeriesPoint[];
-    } = {};
+    let sizeSqlName = sizeField ? sizeField.sqlName : undefined;
 
     let addNorm = 0;
     let sizeMin = 1;
@@ -266,11 +265,13 @@ export class DataService {
       }
     }
 
+    let ySeries: YSeriesElement[] = [];
+
     data.forEach((row: QDataRow) => {
       yFields.forEach(yField => {
-        let yName = yField.sqlName;
+        let ySqlName = yField.sqlName;
 
-        let key: string;
+        let yKeyId: string;
 
         let yLabel =
           yField.topLabel +
@@ -279,67 +280,80 @@ export class DataService {
             : '') +
           ` ${capitalizeFirstLetter(yField.label)}`;
 
-        if (multiName) {
+        if (multiSqlName) {
           if (yFields.length > 1) {
-            key = row[multiName].value
-              ? row[multiName].value + ' ' + yLabel
+            yKeyId = row[multiSqlName].value
+              ? row[multiSqlName].value + ' ' + yLabel
               : 'NULL' + ' ' + yLabel;
           } else {
-            key = row[multiName].value ? row[multiName].value : 'NULL';
+            yKeyId = row[multiSqlName].value ? row[multiSqlName].value : 'NULL';
           }
         } else {
-          key = yLabel;
+          yKeyId = yLabel;
+        }
+
+        let ySeriesElement: YSeriesElement = ySeries.find(
+          y => y.yKeyId === yKeyId
+        );
+
+        if (common.isUndefined(ySeriesElement)) {
+          ySeriesElement = {
+            yKeyId: yKeyId,
+            yFieldId: yField.id,
+            points: []
+          };
+
+          ySeries.push(ySeriesElement);
         }
 
         // x null check
-        if (row[xName]) {
-          let tsValueFn = this.getTsValueFn(xName);
+        if (row[xSqlName]) {
+          let tsValueFn = this.getTsValueFn(xSqlName);
 
           let xV =
             xField.result === common.FieldResultEnum.Ts
               ? common.isDefined(tsValueFn)
-                ? tsValueFn(row[xName].value).getTime()
-                : row[xName].value
-              : row[xName].value;
+                ? tsValueFn(row[xSqlName].value).getTime()
+                : row[xSqlName].value
+              : row[xSqlName].value;
 
           if (common.isDefined(xV)) {
-            let element: SeriesPoint = {
+            let seriesPoint: SeriesPoint = {
               xValue: common.isUndefined(xV)
                 ? 'NULL'
                 : xField.result === common.FieldResultEnum.Number
                 ? this.convertToNumberOrNull(xV)
                 : xV,
-              yValue: this.convertToNumberOrNull(row[yName].value),
-              xValueFmt: row[xName].valueFmt,
-              yValueFmt: row[yName].valueFmt,
+              xValueFmt: row[xSqlName].valueFmt,
+              yValue: this.convertToNumberOrNull(row[ySqlName].value),
+              yValueFmt: row[ySqlName].valueFmt,
               sizeValueMod:
-                common.isDefined(sizeName) &&
-                this.isNumberString(row[sizeName].value)
-                  ? (Number(row[sizeName].value) + addNorm) /
+                common.isDefined(sizeSqlName) &&
+                this.isNumberString(row[sizeSqlName].value)
+                  ? (Number(row[sizeSqlName].value) + addNorm) /
                     (sizeMax + sizeMin)
                   : 1,
               sizeValue:
-                common.isDefined(sizeName) &&
-                this.isNumberString(row[sizeName].value)
-                  ? Number(row[sizeName].value)
+                common.isDefined(sizeSqlName) &&
+                this.isNumberString(row[sizeSqlName].value)
+                  ? Number(row[sizeSqlName].value)
                   : undefined,
               sizeValueFmt:
-                common.isDefined(sizeName) &&
-                this.isNumberString(row[sizeName].value)
-                  ? row[sizeName].valueFmt
+                common.isDefined(sizeSqlName) &&
+                this.isNumberString(row[sizeSqlName].value)
+                  ? row[sizeSqlName].valueFmt
                   : undefined,
               sizeFieldName: sizeFieldLabel
             };
 
-            if (prepareData[key as keyof PrepareData]) {
-              prepareData[key as keyof PrepareData].push(element);
-            } else {
-              prepareData[key as keyof PrepareData] = [element];
-            }
+            ySeriesElement.points.push(seriesPoint);
           }
         }
       });
     });
+
+    // console.log('ySeries');
+    // console.log(ySeries);
 
     let structState = this.structQuery.getValue();
 
@@ -381,9 +395,10 @@ export class DataService {
 
     let sortedQuartersOfYear = ['Q1', 'Q2', 'Q3', 'Q4'];
 
-    let seriesData: SeriesDataElement[] = Object.keys(prepareData).map(x =>
+    let seriesData: SeriesDataElement[] = ySeries.map(ySeriesElement =>
       Object.assign({
-        seriesName: x,
+        seriesName: ySeriesElement.yKeyId,
+        seriesId: ySeriesElement.yFieldId,
         seriesSizeName: sizeField?.label,
         seriesPoints:
           chartType !== common.ChartTypeEnum.Scatter &&
@@ -393,7 +408,7 @@ export class DataService {
             xField?.result === common.FieldResultEnum.DayOfWeekIndex ||
             xField?.result === common.FieldResultEnum.MonthName ||
             xField?.result === common.FieldResultEnum.QuarterOfYear)
-            ? prepareData[x].sort((a: SeriesPoint, b: SeriesPoint) =>
+            ? ySeriesElement.points.sort((a: SeriesPoint, b: SeriesPoint) =>
                 xField?.result === common.FieldResultEnum.Number ||
                 xField?.result === common.FieldResultEnum.DayOfWeekIndex ||
                 xField?.result === common.FieldResultEnum.Ts
@@ -428,11 +443,11 @@ export class DataService {
                     : 0
                   : 0
               )
-            : prepareData[x]
+            : ySeriesElement.points
       } as SeriesDataElement)
     );
 
-    // console.log('seriesData');
+    // console.log('data seriesData');
     // console.log(seriesData);
 
     return seriesData;
