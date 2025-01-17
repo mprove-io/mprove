@@ -118,6 +118,10 @@ export class ChartEditorComponent implements OnChanges {
     ]
   });
 
+  xAxisIsExpanded = false;
+  yAxisIsExpanded = false;
+  seriesIdsExpanded: string[] = [];
+
   constructor(
     private fb: FormBuilder,
     private structService: StructService,
@@ -439,6 +443,24 @@ export class ChartEditorComponent implements OnChanges {
     };
 
     this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
+  }
+
+  toggleYAxisPanel() {
+    this.yAxisIsExpanded = !this.yAxisIsExpanded;
+  }
+
+  toggleXAxisPanel() {
+    this.xAxisIsExpanded = !this.xAxisIsExpanded;
+  }
+
+  toggleSeriesPanel(seriesId: string) {
+    if (this.seriesIdsExpanded.indexOf(seriesId) > -1) {
+      this.seriesIdsExpanded = this.seriesIdsExpanded.filter(
+        x => x !== seriesId
+      );
+    } else {
+      this.seriesIdsExpanded = [...this.seriesIdsExpanded, seriesId];
+    }
   }
 
   toggleYAxisScale(i: number) {

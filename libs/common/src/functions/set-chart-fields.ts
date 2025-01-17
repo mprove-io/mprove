@@ -72,8 +72,6 @@ export function setChartFields<T extends Mconfig>(item: {
       isDefined(mconfig.chart.sizeField) &&
       mconfig.select.indexOf(mconfig.chart.sizeField) > -1
         ? mconfig.chart.sizeField
-        : selectedMCsResultIsNumber.length > 1
-        ? selectedMCsResultIsNumber[1]
         : undefined;
 
     let yFields =

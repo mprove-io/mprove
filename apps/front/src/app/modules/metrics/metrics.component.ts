@@ -370,6 +370,12 @@ export class MetricsComponent implements OnInit, OnDestroy {
             ) > -1
         ).length;
 
+        // console.log('this.report.chart');
+        // console.log(this.report.chart);
+
+        // console.log('repChartData.rows');
+        // console.log(repChartData.rows);
+
         this.eChartInitOpts = {
           renderer: 'svg'
           // renderer: 'canvas'
@@ -429,22 +435,30 @@ export class MetricsComponent implements OnInit, OnDestroy {
             };
             return y;
           }),
-          series: repChartData.rows
-            .filter(
-              row =>
-                row.showChart === true &&
-                [common.RowTypeEnum.Metric, common.RowTypeEnum.Formula].indexOf(
-                  row.rowType
-                ) > -1
-            )
-            .map(row =>
-              this.dataService.metricsRowToSeries({
-                row: row,
-                showMetricsModelName: showMetricsModelName,
-                showMetricsTimeFieldName: showMetricsTimeFieldName,
-                dataPoints: dataPoints
-              })
-            )
+          series:
+            repChartData.rows.length === 0
+              ? []
+              : this.report.chart.series.map(chartSeriesElement => {
+                  let seriesRow = repChartData.rows
+                    .filter(
+                      row =>
+                        row.showChart === true &&
+                        [
+                          common.RowTypeEnum.Metric,
+                          common.RowTypeEnum.Formula
+                        ].indexOf(row.rowType) > -1
+                    )
+                    .find(row => row.rowId === chartSeriesElement.dataRowId);
+
+                  let seriesElement = this.dataService.metricsRowToSeries({
+                    row: seriesRow,
+                    showMetricsModelName: showMetricsModelName,
+                    showMetricsTimeFieldName: showMetricsTimeFieldName,
+                    dataPoints: dataPoints
+                  });
+
+                  return seriesElement;
+                })
         }) as EChartsOption;
 
         // console.log('dataPoints');

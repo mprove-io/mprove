@@ -325,23 +325,43 @@
     </form>
   </div>
 
+  <div *ngIf="isReport === false" class="mb-5 divide-y divide-gray-300 pt-2">
+    <div></div>
+    <div></div>
+  </div>
+
   <div
     *ngIf="uiChartTypes.xAxisGroup.indexOf(chart.type) > -1"
     class="flex flex-col"
   >
-    <div class="text-gray1 mb-5 text-lg font-semibold">X Axis</div>
-
     <div
-      *ngIf="uiChartTypes.xAxis.scale.indexOf(chart.type) > -1"
-      class="mb-5 flex max-w-min cursor-pointer flex-row items-center"
-      (click)="toggleXAxisScale()"
+      (click)="toggleXAxisPanel()"
+      class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg font-semibold"
     >
-      <div
-        class="text-gray1 flex h-9 flex-shrink-0 select-none items-center text-base"
-        >Scale</div
-      >
+      <div class="flex flex-row items-center space-x-2">
+        <m-chevron-right-icon *ngIf="!xAxisIsExpanded"></m-chevron-right-icon>
+        <m-chevron-down-icon *ngIf="xAxisIsExpanded"></m-chevron-down-icon>
 
-      <ui-switch class="ml-5" [checked]="chart.xAxis.scale"></ui-switch>
+        <div class="ml-2"> X Axis </div>
+      </div>
+    </div>
+
+    <div *ngIf="xAxisIsExpanded" class="flex flex-col">
+      <div
+        *ngIf="
+          uiChartTypes.xAxis.scale.indexOf(chart.type) > -1 &&
+          isReport === false
+        "
+        class="mb-5 ml-[32px] flex max-w-min cursor-pointer flex-row items-center"
+        (click)="toggleXAxisScale()"
+      >
+        <div
+          class="text-gray1 flex h-9 flex-shrink-0 select-none items-center text-base"
+          >Scale</div
+        >
+
+        <ui-switch class="ml-5" [checked]="chart.xAxis.scale"></ui-switch>
+      </div>
     </div>
   </div>
 
@@ -349,33 +369,45 @@
     *ngIf="uiChartTypes.yAxisGroup.indexOf(chart.type) > -1"
     class="flex flex-col"
   >
-    <div class="text-gray1 mb-5 text-lg font-semibold">Y Axis</div>
-
     <div
-      *ngFor="let yAxisElement of chart.yAxis; let i = index"
-      class="flex flex-col"
+      (click)="toggleYAxisPanel()"
+      class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg font-semibold"
     >
-      <!-- <div class="text-gray1 mb-5 text-base">Index {{ i }}</div> -->
+      <div class="flex flex-row items-center space-x-2">
+        <m-chevron-right-icon *ngIf="!yAxisIsExpanded"></m-chevron-right-icon>
+        <m-chevron-down-icon *ngIf="yAxisIsExpanded"></m-chevron-down-icon>
 
-      <div
-        *ngIf="uiChartTypes.yAxis.scale.indexOf(chart.type) > -1"
-        class="mb-5 flex max-w-min cursor-pointer flex-row items-center"
-        (click)="toggleYAxisScale(i)"
-      >
-        <div
-          class="text-gray1 flex h-9 flex-shrink-0 select-none items-center text-base"
-          >Scale</div
-        >
-
-        <ui-switch class="ml-5" [checked]="yAxisElement.scale"></ui-switch>
+        <div class="ml-2"> Y Axis </div>
       </div>
+    </div>
 
+    <div *ngIf="yAxisIsExpanded" class="flex flex-col">
       <div
-        *ngIf="i !== chart.yAxis.length - 1"
-        class="mb-5 mr-[25px] mt-0 divide-y divide-gray-300"
+        *ngFor="let yAxisElement of chart.yAxis; let i = index"
+        class="flex flex-col"
       >
-        <div></div>
-        <div></div>
+        <!-- <div class="text-gray1 mb-5 text-base">Index {{ i }}</div> -->
+
+        <div
+          *ngIf="uiChartTypes.yAxis.scale.indexOf(chart.type) > -1"
+          class="mb-5 ml-[32px] flex max-w-min cursor-pointer flex-row items-center"
+          (click)="toggleYAxisScale(i)"
+        >
+          <div
+            class="text-gray1 flex h-9 flex-shrink-0 select-none items-center text-base"
+            >Scale</div
+          >
+
+          <ui-switch class="ml-5" [checked]="yAxisElement.scale"></ui-switch>
+        </div>
+
+        <div
+          *ngIf="i !== chart.yAxis.length - 1"
+          class="mb-5 mr-[25px] mt-0 divide-y divide-gray-300"
+        >
+          <div></div>
+          <div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -384,26 +416,42 @@
     *ngIf="uiChartTypes.seriesGroup.indexOf(chart.type) > -1"
     class="flex flex-col"
   >
-    <div class="text-gray1 mb-5 text-lg font-semibold">Series</div>
-
     <div
       *ngFor="let seriesElement of chart.series; let i = index"
       class="flex flex-col"
     >
-      <div *ngIf="isReport === false" class="text-gray1 mb-5 text-base"
-        >Data Field - {{ seriesElement.dataField }}</div
+      <div
+        *ngIf="isReport === true"
+        (click)="toggleSeriesPanel(seriesElement.dataRowId)"
+        class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg font-semibold"
       >
+        <div class="flex flex-row items-center space-x-2">
+          <m-chevron-right-icon
+            *ngIf="seriesIdsExpanded.indexOf(seriesElement.dataRowId) < 0"
+          ></m-chevron-right-icon>
+          <m-chevron-down-icon
+            *ngIf="seriesIdsExpanded.indexOf(seriesElement.dataRowId) > -1"
+          ></m-chevron-down-icon>
 
-      <div *ngIf="isReport === true" class="text-gray1 mb-5 text-base"
-        >Data Row - {{ seriesElement.dataRowId }}</div
-      >
+          <div class="ml-2"> Series - {{ seriesElement.dataRowId }} </div>
+        </div>
+      </div>
 
       <div
-        *ngIf="i !== chart.series.length - 1"
-        class="mb-5 mr-[25px] mt-0 divide-y divide-gray-300"
+        *ngIf="isReport === false"
+        (click)="toggleSeriesPanel(seriesElement.dataField)"
+        class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg font-semibold"
       >
-        <div></div>
-        <div></div>
+        <div class="flex flex-row items-center space-x-2">
+          <m-chevron-right-icon
+            *ngIf="seriesIdsExpanded.indexOf(seriesElement.dataField) < 0"
+          ></m-chevron-right-icon>
+          <m-chevron-down-icon
+            *ngIf="seriesIdsExpanded.indexOf(seriesElement.dataField) > -1"
+          ></m-chevron-down-icon>
+
+          <div class="ml-2"> Series - {{ seriesElement.dataField }} </div>
+        </div>
       </div>
     </div>
   </div>
