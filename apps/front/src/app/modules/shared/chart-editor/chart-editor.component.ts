@@ -19,6 +19,10 @@ import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
+class ChartSeriesWithField extends common.MconfigChartSeries {
+  field: common.MconfigField;
+}
+
 @Component({
   selector: 'm-chart-editor',
   templateUrl: './chart-editor.component.html'
@@ -90,6 +94,8 @@ export class ChartEditorComponent implements OnChanges {
 
   numbersYFields: common.MconfigField[];
 
+  chartSeriesWithField: ChartSeriesWithField[];
+
   xFieldForm: FormGroup = this.fb.group({
     xField: [undefined]
   });
@@ -135,7 +141,7 @@ export class ChartEditorComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     // console.log(changes);
 
-    if (common.isDefined(this.mconfigFields)) {
+    if (this.isReport === false) {
       this.dimensionsMeasuresCalculations = this.mconfigFields.filter(
         x =>
           [
@@ -210,6 +216,18 @@ export class ChartEditorComponent implements OnChanges {
         control: this.pageSizeForm.controls['pageSize'],
         value: this.chart.pageSize
       });
+
+      let seriesCopy = common.makeCopy(this.chart.series);
+
+      this.chartSeriesWithField = seriesCopy.map(x => {
+        let yField = this.numbersYFields.find(y => y.id === x.dataField);
+        (x as ChartSeriesWithField).field = yField;
+        return x as ChartSeriesWithField;
+      });
+    } else {
+      this.chartSeriesWithField = common.makeCopy(
+        this.chart.series as ChartSeriesWithField[]
+      );
     }
   }
 

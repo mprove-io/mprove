@@ -394,7 +394,7 @@
           (click)="toggleYAxisScale(i)"
         >
           <div
-            class="text-gray1 flex h-9 flex-shrink-0 select-none items-center text-base"
+            class="text-gray1 ml-5 flex h-9 flex-shrink-0 select-none items-center text-base"
             >Scale</div
           >
 
@@ -417,15 +417,15 @@
     class="flex flex-col"
   >
     <div
-      *ngFor="let seriesElement of chart.series; let i = index"
+      *ngFor="let seriesElement of chartSeriesWithField; let i = index"
       class="flex flex-col"
     >
       <div
         *ngIf="isReport === true"
         (click)="toggleSeriesPanel(seriesElement.dataRowId)"
-        class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg font-semibold"
+        class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg"
       >
-        <div class="flex flex-row items-center space-x-2">
+        <div class="flex flex-row items-center">
           <m-chevron-right-icon
             *ngIf="seriesIdsExpanded.indexOf(seriesElement.dataRowId) < 0"
           ></m-chevron-right-icon>
@@ -433,16 +433,22 @@
             *ngIf="seriesIdsExpanded.indexOf(seriesElement.dataRowId) > -1"
           ></m-chevron-down-icon>
 
-          <div class="ml-2"> Series - {{ seriesElement.dataRowId }} </div>
+          <div class="ml-2 flex flex-row items-center">
+            <span class="text-lg">Series</span>
+            <span class="ml-2">-</span>
+            <span class="ml-2 mt-1 text-base">{{
+              seriesElement.dataRowId
+            }}</span>
+          </div>
         </div>
       </div>
 
       <div
         *ngIf="isReport === false"
         (click)="toggleSeriesPanel(seriesElement.dataField)"
-        class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg font-semibold"
+        class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg"
       >
-        <div class="flex flex-row items-center space-x-2">
+        <div class="flex flex-row items-center">
           <m-chevron-right-icon
             *ngIf="seriesIdsExpanded.indexOf(seriesElement.dataField) < 0"
           ></m-chevron-right-icon>
@@ -450,7 +456,14 @@
             *ngIf="seriesIdsExpanded.indexOf(seriesElement.dataField) > -1"
           ></m-chevron-down-icon>
 
-          <div class="ml-2"> Series - {{ seriesElement.dataField }} </div>
+          <div class="ml-2 flex flex-row items-center">
+            <span class="text-lg">Series</span>
+            <span class="ml-2">-</span>
+            <m-field-label
+              [column]="seriesElement.field"
+              class="ml-2 mt-1 text-base"
+            ></m-field-label>
+          </div>
         </div>
       </div>
     </div>
