@@ -174,7 +174,7 @@
                 ></m-panel-title>
 
                 <button
-                  class="text-gray1 ml-5 w-24 select-none items-center py-3 text-lg focus:outline-none"
+                  class="text-gray1 ml-2 w-[84px] select-none items-center py-3 text-lg focus:outline-none"
                   [ngClass]="{
                     'font-semibold':
                       resultsIsShow === true &&
@@ -189,7 +189,7 @@
                 >
 
                 <button
-                  class="text-gray1 ml-5 w-24 select-none items-center py-3 text-lg focus:outline-none"
+                  class="text-gray1 ml-2 w-[166px] select-none items-center py-3 text-lg focus:outline-none"
                   [ngClass]="{
                     'font-semibold':
                       resultsIsShow === true && sqlIsShow === true,
@@ -198,11 +198,11 @@
                   }"
                   (click)="toggleSplit()"
                   [disabled]="!dataIsExpanded || mconfig?.select.length === 0"
-                  >Split</button
+                  >Results and SQL</button
                 >
 
                 <button
-                  class="text-gray1 ml-5 w-16 select-none items-center py-3 text-lg focus:outline-none"
+                  class="text-gray1 ml-2 w-[56px] select-none items-center py-3 text-lg focus:outline-none"
                   [ngClass]="{
                     'font-semibold':
                       sqlIsShow === true && resultsIsShow === false,

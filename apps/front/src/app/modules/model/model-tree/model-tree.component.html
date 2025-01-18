@@ -1,12 +1,28 @@
 <div class="flex w-full flex-col rounded bg-white shadow">
-  <div class="mb-6 ml-[56px] mt-8 flex flex-row items-center space-x-3">
+  <div class="ml-[56px] flex h-20 flex-row items-center">
     <div
-      class="w-[40px] cursor-pointer select-none"
+      class="text-gray1 mb-1 flex select-none flex-row items-center pr-5 text-xl font-semibold"
+    >
+      Fields
+    </div>
+
+    <button
+      class="ml-2 w-[54px] cursor-pointer select-none items-center text-lg"
       [ngClass]="{
         'font-semibold': modelTreeLevels === modelTreeLevelsFlat
       }"
       (click)="setModelTreeLevels(modelTreeLevelsFlat)"
-      >Flat</div
+    >
+      Flat
+    </button>
+
+    <button
+      class="ml-2 w-[83px] cursor-pointer select-none py-3 text-lg"
+      [ngClass]="{
+        'font-semibold': modelTreeLevels === modelTreeLevelsNested
+      }"
+      (click)="setModelTreeLevels(modelTreeLevelsNested)"
+      >Nested</button
     >
 
     <!-- <div
@@ -17,15 +33,6 @@
       (click)="setModelTreeLevels(modelTreeLevelsFlatTime)"
       >FlatTime</div
     > -->
-
-    <div
-      class="w-[70px] cursor-pointer select-none"
-      [ngClass]="{
-        'font-semibold': modelTreeLevels === modelTreeLevelsNested
-      }"
-      (click)="setModelTreeLevels(modelTreeLevelsNested)"
-      >Nested</div
-    >
 
     <!-- <div
       class="w-[150px] cursor-pointer select-none"
