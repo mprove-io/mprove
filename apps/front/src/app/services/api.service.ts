@@ -233,7 +233,7 @@ export class ApiService {
               .pipe(
                 tap(x => {
                   this.navigateService.navigateToMetricsRep({
-                    reportId: common.LAST_SELECTED_REPORT_ID
+                    reportId: common.EMPTY_REPORT_ID
                   });
                 }),
                 take(1)
