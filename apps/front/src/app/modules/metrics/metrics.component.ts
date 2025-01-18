@@ -825,7 +825,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
     this.structRepResolver
       .resolveRoute({
         route: this.route.children[0].snapshot,
-        showSpinner: true,
+        showSpinner: false,
         timezone: uiState.timezone,
         timeSpec: uiState.timeSpec,
         timeRangeFractionBrick: uiState.timeRangeFraction.brick
