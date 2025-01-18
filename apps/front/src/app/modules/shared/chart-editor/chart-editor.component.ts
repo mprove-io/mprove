@@ -9,6 +9,7 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
+import { SeriesPart } from '~front/app/interfaces/series-part';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { DataService } from '~front/app/services/data.service';
 import { FormatNumberService } from '~front/app/services/format-number.service';
@@ -21,6 +22,7 @@ import { constants } from '~front/barrels/constants';
 
 class ChartSeriesWithField extends common.MconfigChartSeries {
   field: common.MconfigField;
+  seriesName: string;
 }
 
 @Component({
@@ -74,6 +76,9 @@ export class ChartEditorComponent implements OnChanges {
 
   @Input()
   mconfigFields?: common.MconfigField[];
+
+  @Input()
+  seriesParts?: SeriesPart[];
 
   @Input()
   isReport: boolean;
@@ -225,9 +230,19 @@ export class ChartEditorComponent implements OnChanges {
         return x as ChartSeriesWithField;
       });
     } else {
-      this.chartSeriesWithField = common.makeCopy(
-        this.chart.series as ChartSeriesWithField[]
-      );
+      let seriesCopy = common.makeCopy(this.chart.series);
+
+      this.chartSeriesWithField = seriesCopy.map(x => {
+        let seriesPart = this.seriesParts.find(
+          sp => sp.seriesRowId === x.dataRowId
+        );
+        (x as ChartSeriesWithField).seriesName = seriesPart.seriesName;
+        return x as ChartSeriesWithField;
+      });
+
+      // this.chartSeriesWithField = common.makeCopy(
+      //   this.chart.series as ChartSeriesWithField[]
+      // );
     }
   }
 

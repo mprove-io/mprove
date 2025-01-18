@@ -44,6 +44,7 @@ import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { EChartsInitOpts, EChartsOption } from 'echarts';
 import { DataPoint } from '~front/app/interfaces/data-point';
+import { SeriesPart } from '~front/app/interfaces/series-part';
 import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { DataService } from '~front/app/services/data.service';
 
@@ -93,6 +94,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   queriesLength = 0;
 
+  seriesParts: SeriesPart[] = [];
   dataPoints: DataPoint[] = [];
 
   reportGlobalRow: common.Row;
@@ -381,6 +383,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
           // renderer: 'canvas'
         } as EChartsInitOpts;
 
+        this.seriesParts = [];
+
         this.eChartOptions = (<EChartsOption>{
           useUTC: true,
           grid: {
@@ -456,6 +460,13 @@ export class MetricsComponent implements OnInit, OnDestroy {
                     showMetricsTimeFieldName: showMetricsTimeFieldName,
                     dataPoints: dataPoints
                   });
+
+                  let seriesPart: SeriesPart = {
+                    seriesRowId: seriesRow.rowId,
+                    seriesName: seriesElement.name.toString()
+                  };
+
+                  this.seriesParts.push(seriesPart);
 
                   return seriesElement;
                 })
