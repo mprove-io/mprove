@@ -443,6 +443,12 @@ export class MetricsComponent implements OnInit, OnDestroy {
             repChartData.rows.length === 0
               ? []
               : this.report.chart.series.map(chartSeriesElement => {
+                  // console.log('chartSeriesElement');
+                  // console.log(chartSeriesElement);
+
+                  // console.log('repChartData.rows');
+                  // console.log(repChartData.rows);
+
                   let seriesRow = repChartData.rows
                     .filter(
                       row =>
@@ -463,7 +469,16 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
                   let seriesPart: SeriesPart = {
                     seriesRowId: seriesRow.rowId,
-                    seriesName: seriesElement.name.toString()
+                    seriesRowName: seriesRow.name,
+                    isMetric: seriesRow.rowType === common.RowTypeEnum.Metric,
+                    showMetricsModelName: showMetricsModelName,
+                    showMetricsTimeFieldName: showMetricsTimeFieldName,
+                    seriesName: seriesElement.name.toString(),
+                    partNodeLabel: seriesRow.partNodeLabel,
+                    partFieldLabel: seriesRow.partFieldLabel,
+                    timeNodeLabel: seriesRow.timeNodeLabel,
+                    timeFieldLabel: seriesRow.timeFieldLabel,
+                    topLabel: seriesRow.topLabel
                   };
 
                   this.seriesParts.push(seriesPart);
@@ -943,5 +958,15 @@ export class MetricsComponent implements OnInit, OnDestroy {
     this.metricsQuery.reset();
     this.reportsQuery.reset();
     this.reportQuery.reset();
+    this.uiQuery.updatePart({
+      reportSelectedNodes: [],
+      gridApi: null,
+      gridData: [],
+      chartFormulaData: null,
+      repChartData: {
+        rows: [],
+        columns: []
+      }
+    });
   }
 }

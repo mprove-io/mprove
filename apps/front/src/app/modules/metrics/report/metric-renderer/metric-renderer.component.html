@@ -4,86 +4,31 @@
   [ngClass]="{
     '': params.data.rowType === rowTypeHeader,
   }"
-  >{{ params.value | capitalize }}</div
 >
+  <m-row-metric-label
+    [name]="params.value"
+    [isMetric]="false"
+    [isAddPrefixRowId]="false"
+    [rowId]="params.data.rowId"
+  ></m-row-metric-label>
+</div>
 
 <div *ngIf="params.data.rowType === rowTypeMetric" class="font-ms">
   <div class="flex flex-col">
-    <div class="flex flex-row">
-      <div
-        class="truncate"
-        *ngIf="
-          showMetricsModelName === false && showMetricsTimeFieldName === false
-        "
-      >
-        <div class="select-none truncate">
-          <span>{{ params.data.partNodeLabel | capitalize }}</span>
-
-          <span class="ml-2 font-semibold">{{
-            params.data.partFieldLabel | capitalize
-          }}</span>
-        </div>
-      </div>
-
-      <div
-        class="truncate"
-        *ngIf="
-          showMetricsModelName === true && showMetricsTimeFieldName === true
-        "
-      >
-        <div class="select-none truncate">
-          <span>{{ params.data.partNodeLabel | capitalize }}</span>
-
-          <span class="ml-2 font-semibold">{{
-            params.data.partFieldLabel | capitalize
-          }}</span>
-
-          <span class="ml-2"
-            >by {{ params.data.timeNodeLabel | capitalize }}</span
-          >
-
-          <span class="ml-2">{{
-            params.data.timeFieldLabel | capitalize
-          }}</span>
-
-          <span class="ml-2">- {{ params.data.topLabel | capitalize }}</span>
-        </div>
-      </div>
-
-      <div
-        class="truncate"
-        *ngIf="
-          showMetricsModelName === true && showMetricsTimeFieldName === false
-        "
-      >
-        <span>{{ params.data.partNodeLabel | capitalize }}</span>
-
-        <span class="ml-2 font-semibold">{{
-          params.data.partFieldLabel | capitalize
-        }}</span>
-
-        <span class="ml-2">- {{ params.data.topLabel | capitalize }}</span>
-      </div>
-
-      <div
-        class="truncate"
-        *ngIf="
-          showMetricsModelName === false && showMetricsTimeFieldName === true
-        "
-      >
-        <span>{{ params.data.partNodeLabel | capitalize }}</span>
-
-        <span class="ml-2 font-semibold">{{
-          params.data.partFieldLabel | capitalize
-        }}</span>
-
-        <span class="ml-2"
-          >by {{ params.data.timeNodeLabel | capitalize }}</span
-        >
-
-        <span class="ml-2">{{ params.data.timeFieldLabel | capitalize }}</span>
-      </div>
-    </div>
+    <m-row-metric-label
+      [name]="params.value"
+      [isMetric]="true"
+      [isAddPrefixRowId]="false"
+      [rowId]="params.data.rowId"
+      [showMetricsModelName]="showMetricsModelName"
+      [showMetricsTimeFieldName]="showMetricsTimeFieldName"
+      [partNodeLabel]="params.data.partNodeLabel"
+      [partFieldLabel]="params.data.partFieldLabel"
+      [timeNodeLabel]="params.data.timeNodeLabel"
+      [timeFieldLabel]="params.data.timeFieldLabel"
+      [topLabel]="params.data.topLabel"
+      class="flex"
+    ></m-row-metric-label>
 
     <div
       class="flex flex-row"

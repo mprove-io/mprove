@@ -22,7 +22,16 @@ import { constants } from '~front/barrels/constants';
 
 class ChartSeriesWithField extends common.MconfigChartSeries {
   field: common.MconfigField;
+  isMetric: boolean;
+  showMetricsModelName: boolean;
+  showMetricsTimeFieldName: boolean;
   seriesName: string;
+  seriesRowName: string;
+  partNodeLabel: string;
+  partFieldLabel: string;
+  timeNodeLabel: string;
+  timeFieldLabel: string;
+  topLabel: string;
 }
 
 @Component({
@@ -230,13 +239,31 @@ export class ChartEditorComponent implements OnChanges {
         return x as ChartSeriesWithField;
       });
     } else {
+      // console.log('this.chart.series');
+      // console.log(this.chart.series);
+
       let seriesCopy = common.makeCopy(this.chart.series);
 
       this.chartSeriesWithField = seriesCopy.map(x => {
         let seriesPart = this.seriesParts.find(
           sp => sp.seriesRowId === x.dataRowId
         );
-        (x as ChartSeriesWithField).seriesName = seriesPart.seriesName;
+        if (common.isDefined(seriesPart)) {
+          (x as ChartSeriesWithField).seriesName = seriesPart.seriesName;
+          (x as ChartSeriesWithField).seriesRowName = seriesPart.seriesRowName;
+          (x as ChartSeriesWithField).isMetric = seriesPart.isMetric;
+          (x as ChartSeriesWithField).showMetricsModelName =
+            seriesPart.showMetricsModelName;
+          (x as ChartSeriesWithField).showMetricsTimeFieldName =
+            seriesPart.showMetricsTimeFieldName;
+          (x as ChartSeriesWithField).partNodeLabel = seriesPart.partNodeLabel;
+          (x as ChartSeriesWithField).partFieldLabel =
+            seriesPart.partFieldLabel;
+          (x as ChartSeriesWithField).timeNodeLabel = seriesPart.timeNodeLabel;
+          (x as ChartSeriesWithField).timeFieldLabel =
+            seriesPart.timeFieldLabel;
+          (x as ChartSeriesWithField).topLabel = seriesPart.topLabel;
+        }
         return x as ChartSeriesWithField;
       });
 

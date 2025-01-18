@@ -1,0 +1,71 @@
+<div *ngIf="isMetric === false" class="flex flex-row">
+  <div *ngIf="isAddPrefixRowId === true">
+    <div class="select-none truncate">
+      <span>({{ rowId | capitalize }})</span>
+    </div>
+  </div>
+
+  <div class="ml-2 flex">
+    {{ name | capitalize }}
+  </div>
+</div>
+
+<div *ngIf="isMetric === true" class="flex flex-row">
+  <div *ngIf="isAddPrefixRowId === true">
+    <div class="select-none truncate">
+      <span>({{ rowId | capitalize }})</span>
+    </div>
+  </div>
+
+  <div
+    class="truncate"
+    *ngIf="showMetricsModelName === false && showMetricsTimeFieldName === false"
+  >
+    <div class="ml-2 select-none truncate">
+      <span>{{ partNodeLabel | capitalize }}</span>
+
+      <span class="ml-2 font-semibold">{{ partFieldLabel | capitalize }}</span>
+    </div>
+  </div>
+
+  <div
+    class="truncate"
+    *ngIf="showMetricsModelName === true && showMetricsTimeFieldName === true"
+  >
+    <div class="select-none truncate">
+      <span>{{ partNodeLabel | capitalize }}</span>
+
+      <span class="ml-2 font-semibold">{{ partFieldLabel | capitalize }}</span>
+
+      <span class="ml-2">by {{ timeNodeLabel | capitalize }}</span>
+
+      <span class="ml-2">{{ timeFieldLabel | capitalize }}</span>
+
+      <span class="ml-2">- {{ topLabel | capitalize }}</span>
+    </div>
+  </div>
+
+  <div
+    class="truncate"
+    *ngIf="showMetricsModelName === true && showMetricsTimeFieldName === false"
+  >
+    <span>{{ partNodeLabel | capitalize }}</span>
+
+    <span class="ml-2 font-semibold">{{ partFieldLabel | capitalize }}</span>
+
+    <span class="ml-2">- {{ topLabel | capitalize }}</span>
+  </div>
+
+  <div
+    class="truncate"
+    *ngIf="showMetricsModelName === false && showMetricsTimeFieldName === true"
+  >
+    <span>{{ partNodeLabel | capitalize }}</span>
+
+    <span class="ml-2 font-semibold">{{ partFieldLabel | capitalize }}</span>
+
+    <span class="ml-2">by {{ timeNodeLabel | capitalize }}</span>
+
+    <span class="ml-2">{{ timeFieldLabel | capitalize }}</span>
+  </div>
+</div>

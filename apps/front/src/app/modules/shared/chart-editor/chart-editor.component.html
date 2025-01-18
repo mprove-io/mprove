@@ -436,9 +436,23 @@
           <div class="ml-2 flex flex-row items-center">
             <span class="text-lg">Series</span>
             <span class="ml-2">-</span>
-            <span class="ml-2 mt-1 text-base">{{
-              seriesElement.seriesName
-            }}</span>
+
+            <m-row-metric-label
+              [name]="seriesElement.seriesRowName"
+              [isMetric]="seriesElement.isMetric"
+              [isAddPrefixRowId]="true"
+              [rowId]="seriesElement.dataRowId"
+              [showMetricsModelName]="seriesElement.showMetricsModelName"
+              [showMetricsTimeFieldName]="
+                seriesElement.showMetricsTimeFieldName
+              "
+              [partNodeLabel]="seriesElement.partNodeLabel"
+              [partFieldLabel]="seriesElement.partFieldLabel"
+              [timeNodeLabel]="seriesElement.timeNodeLabel"
+              [timeFieldLabel]="seriesElement.timeFieldLabel"
+              [topLabel]="seriesElement.topLabel"
+              class="ml-2 mt-1 flex text-base"
+            ></m-row-metric-label>
           </div>
         </div>
       </div>
@@ -459,6 +473,7 @@
           <div class="ml-2 flex flex-row items-center">
             <span class="text-lg">Series</span>
             <span class="ml-2">-</span>
+
             <m-field-label
               [column]="seriesElement.field"
               class="ml-2 mt-1 text-base"
