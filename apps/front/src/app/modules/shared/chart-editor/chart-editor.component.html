@@ -394,7 +394,7 @@
           (click)="toggleYAxisScale(i)"
         >
           <div
-            class="text-gray1 ml-5 flex h-9 flex-shrink-0 select-none items-center text-base"
+            class="text-gray1 flex h-9 flex-shrink-0 select-none items-center text-base"
             >Scale</div
           >
 
@@ -424,7 +424,11 @@
         class="flex"
         [seriesElement]="seriesElement"
         [isReport]="isReport"
-        (chartSeriesEmtUpdate)="chartSeriesEmtUpdate($event)"
+        [isExpanded]="
+          seriesDataRowIdsExpanded.indexOf(seriesElement.dataRowId) > -1
+        "
+        (chartSeriesElementUpdate)="chartSeriesElementUpdate($event)"
+        (chartToggleSeries)="chartToggleSeries($event)"
       ></m-chart-editor-series>
     </div>
   </div>

@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -11,13 +10,8 @@ import {
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { TimeService } from '~front/app/services/time.service';
-import { UiService } from '~front/app/services/ui.service';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
-import { ChartTypeItem } from '../../model/model.component';
 import { ChartSeriesWithField } from '../chart-editor/chart-editor.component';
 
 @Component({
@@ -25,43 +19,42 @@ import { ChartSeriesWithField } from '../chart-editor/chart-editor.component';
   templateUrl: './chart-editor-series.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChartEditorSeriesEmtComponent implements OnChanges {
+export class ChartEditorSeriesElementComponent implements OnChanges {
   @Input()
   seriesElement: ChartSeriesWithField;
 
   @Input()
   isReport: boolean;
 
-  @Output() chartSeriesEmtUpdate =
-    new EventEmitter<interfaces.EventChartSeriesEmtUpdate>();
+  @Input()
+  isExpanded: boolean;
 
-  seriesTypesList: ChartTypeItem[] = [
-    {
-      label: 'Line',
-      value: common.ChartTypeEnum.Line,
-      iconPath: 'assets/charts/line.svg'
-    },
-    {
-      label: 'Bar',
-      value: common.ChartTypeEnum.Bar,
-      iconPath: 'assets/charts/bar_vertical.svg'
-    }
-  ];
+  @Output() chartSeriesElementUpdate =
+    new EventEmitter<interfaces.EventChartSeriesElementUpdate>();
+
+  @Output() chartToggleSeries =
+    new EventEmitter<interfaces.EventChartToggleSeries>();
+
+  // seriesTypesList: ChartTypeItem[] = [
+  //   {
+  //     label: 'Line',
+  //     value: common.ChartTypeEnum.Line,
+  //     iconPath: 'assets/charts/line.svg'
+  //   },
+  //   {
+  //     label: 'Bar',
+  //     value: common.ChartTypeEnum.Bar,
+  //     iconPath: 'assets/charts/bar_vertical.svg'
+  //   }
+  // ];
+
+  seriesTypeEnum = common.ChartTypeEnum;
 
   seriesTypeForm: FormGroup = this.fb.group({
     seriesType: [undefined]
   });
 
-  seriesIsExpanded = false;
-
-  constructor(
-    private fb: FormBuilder,
-    private uiQuery: UiQuery,
-    private uiService: UiService,
-    private structQuery: StructQuery,
-    private timeService: TimeService,
-    private cd: ChangeDetectorRef
-  ) {}
+  constructor(private fb: FormBuilder) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     setValueAndMark({
@@ -70,11 +63,13 @@ export class ChartEditorSeriesEmtComponent implements OnChanges {
     });
   }
 
-  toggleSeriesPanel(seriesId: string) {
-    this.seriesIsExpanded = !this.seriesIsExpanded;
-  }
+  seriesTypeChange(newSeriesTypeValue?: common.ChartTypeEnum) {
+    (document.activeElement as HTMLElement).blur();
 
-  seriesTypeChange() {
+    if (common.isDefined(newSeriesTypeValue)) {
+      this.seriesTypeForm.controls['seriesType'].setValue(newSeriesTypeValue);
+    }
+
     let seriesType = this.seriesTypeForm.controls['seriesType'].value;
 
     let newSeries: ChartSeriesWithField = Object.assign(
@@ -83,16 +78,24 @@ export class ChartEditorSeriesEmtComponent implements OnChanges {
       { type: seriesType }
     );
 
-    this.emitChartSeriesEmtUpdate({ series: newSeries });
+    this.emitChartSeriesElementUpdate({ series: newSeries });
   }
 
-  emitChartSeriesEmtUpdate(item: { series: ChartSeriesWithField }) {
+  emitChartSeriesElementUpdate(item: { series: ChartSeriesWithField }) {
     let { series } = item;
 
-    let event: interfaces.EventChartSeriesEmtUpdate = {
+    let event: interfaces.EventChartSeriesElementUpdate = {
       series: series
     };
 
-    this.chartSeriesEmtUpdate.emit(event);
+    this.chartSeriesElementUpdate.emit(event);
+  }
+
+  emitChartToggleSeries(seriesDataRowId: string) {
+    let event: interfaces.EventChartToggleSeries = {
+      seriesDataRowId: seriesDataRowId
+    };
+
+    this.chartToggleSeries.emit(event);
   }
 }

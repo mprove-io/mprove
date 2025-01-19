@@ -141,7 +141,7 @@ export class ChartEditorComponent implements OnChanges {
 
   xAxisIsExpanded = false;
   yAxisIsExpanded = false;
-  seriesIdsExpanded: string[] = [];
+  seriesDataRowIdsExpanded: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -514,16 +514,6 @@ export class ChartEditorComponent implements OnChanges {
     this.xAxisIsExpanded = !this.xAxisIsExpanded;
   }
 
-  toggleSeriesPanel(seriesId: string) {
-    if (this.seriesIdsExpanded.indexOf(seriesId) > -1) {
-      this.seriesIdsExpanded = this.seriesIdsExpanded.filter(
-        x => x !== seriesId
-      );
-    } else {
-      this.seriesIdsExpanded = [...this.seriesIdsExpanded, seriesId];
-    }
-  }
-
   toggleYAxisScale(i: number) {
     let newChart: common.MconfigChart = <common.MconfigChart>{
       yAxis: this.chart.yAxis.map((y, ind) => {
@@ -538,8 +528,24 @@ export class ChartEditorComponent implements OnChanges {
     this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
   }
 
-  chartSeriesEmtUpdate(
-    eventSeriesUpdate: interfaces.EventChartSeriesEmtUpdate
+  chartToggleSeries(eventToggleSeries: interfaces.EventChartToggleSeries) {
+    if (
+      this.seriesDataRowIdsExpanded.indexOf(eventToggleSeries.seriesDataRowId) >
+      -1
+    ) {
+      this.seriesDataRowIdsExpanded = this.seriesDataRowIdsExpanded.filter(
+        x => x !== eventToggleSeries.seriesDataRowId
+      );
+    } else {
+      this.seriesDataRowIdsExpanded = [
+        ...this.seriesDataRowIdsExpanded,
+        eventToggleSeries.seriesDataRowId
+      ];
+    }
+  }
+
+  chartSeriesElementUpdate(
+    eventSeriesUpdate: interfaces.EventChartSeriesElementUpdate
   ) {
     let newChart: common.MconfigChart = <common.MconfigChart>{
       series: this.chart.series.map(s => {
