@@ -712,6 +712,8 @@ export class ModelComponent implements OnInit, OnDestroy {
 
     newMconfig.chart.type = newChartType;
 
+    newMconfig.chart.series.forEach(s => (s.type = newChartType));
+
     this.mconfigService.navCreateTempMconfig({
       newMconfig: newMconfig
     });

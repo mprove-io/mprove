@@ -1,5 +1,7 @@
-import { ChartSeriesWithField } from '../modules/shared/chart-editor/chart-editor.component';
+import { MconfigChartSeries } from '~common/interfaces/blockml/mconfig-chart-series';
 
 export class EventChartSeriesElementUpdate {
-  series: ChartSeriesWithField;
+  seriesDataRowId: string;
+  seriesDataField: string;
+  seriesPart: MconfigChartSeries;
 }

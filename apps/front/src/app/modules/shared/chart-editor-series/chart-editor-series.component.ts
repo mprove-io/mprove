@@ -72,30 +72,41 @@ export class ChartEditorSeriesElementComponent implements OnChanges {
 
     let seriesType = this.seriesTypeForm.controls['seriesType'].value;
 
-    let newSeries: ChartSeriesWithField = Object.assign(
-      {},
-      this.seriesElement,
-      { type: seriesType }
-    );
-
-    this.emitChartSeriesElementUpdate({ series: newSeries });
-  }
-
-  emitChartSeriesElementUpdate(item: { series: ChartSeriesWithField }) {
-    let { series } = item;
-
-    let event: interfaces.EventChartSeriesElementUpdate = {
-      series: series
+    let newSeriesPart: common.MconfigChartSeries = {
+      type: seriesType
     };
 
-    this.chartSeriesElementUpdate.emit(event);
+    this.emitChartSeriesElementUpdate({
+      seriesDataRowId: this.seriesElement.dataRowId,
+      seriesDataField: this.seriesElement.dataField,
+      seriesPart: newSeriesPart
+    });
   }
 
-  emitChartToggleSeries(seriesDataRowId: string) {
+  emitChartToggleSeries(item: { dataRowId?: string; dataField?: string }) {
+    let { dataRowId, dataField } = item;
+
     let event: interfaces.EventChartToggleSeries = {
-      seriesDataRowId: seriesDataRowId
+      seriesDataRowId: dataRowId,
+      seriesDataField: dataField
     };
 
     this.chartToggleSeries.emit(event);
+  }
+
+  emitChartSeriesElementUpdate(item: {
+    seriesDataRowId: string;
+    seriesDataField: string;
+    seriesPart: common.MconfigChartSeries;
+  }) {
+    let { seriesDataRowId, seriesDataField, seriesPart } = item;
+
+    let event: interfaces.EventChartSeriesElementUpdate = {
+      seriesDataRowId: seriesDataRowId,
+      seriesDataField: seriesDataField,
+      seriesPart: seriesPart
+    };
+
+    this.chartSeriesElementUpdate.emit(event);
   }
 }

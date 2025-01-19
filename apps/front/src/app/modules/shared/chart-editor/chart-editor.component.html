@@ -1,4 +1,4 @@
-<div class="mx-5 mt-2" *ngIf="!!chart">
+<div class="mx-5 mt-2 pb-10" *ngIf="!!chart">
   <!-- <div class="text-xl text-gray1 font-semibold mb-5">Data</div> -->
 
   <div
@@ -425,7 +425,9 @@
         [seriesElement]="seriesElement"
         [isReport]="isReport"
         [isExpanded]="
-          seriesDataRowIdsExpanded.indexOf(seriesElement.dataRowId) > -1
+          isReport === true
+            ? seriesExpanded.indexOf(seriesElement.dataRowId) > -1
+            : seriesExpanded.indexOf(seriesElement.dataField) > -1
         "
         (chartSeriesElementUpdate)="chartSeriesElementUpdate($event)"
         (chartToggleSeries)="chartToggleSeries($event)"

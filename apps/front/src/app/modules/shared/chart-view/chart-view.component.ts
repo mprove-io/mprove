@@ -378,13 +378,13 @@ export class ChartViewComponent implements OnChanges {
           };
 
           let seriesOption =
-            this.chart.type === common.ChartTypeEnum.Line
+            chartSeriesElement.type === common.ChartTypeEnum.Line
               ? lineSeriesOption
-              : this.chart.type === common.ChartTypeEnum.Bar
+              : chartSeriesElement.type === common.ChartTypeEnum.Bar
               ? barSeriesOption
-              : this.chart.type === common.ChartTypeEnum.Scatter
+              : chartSeriesElement.type === common.ChartTypeEnum.Scatter
               ? scatterSeriesOption
-              : this.chart.type === common.ChartTypeEnum.Pie
+              : chartSeriesElement.type === common.ChartTypeEnum.Pie
               ? pieSeriesOption
               : baseSeriesOption;
 

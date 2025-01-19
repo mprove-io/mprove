@@ -1,7 +1,7 @@
 <div class="flex flex-col">
   <div
     *ngIf="isReport === true"
-    (click)="emitChartToggleSeries(seriesElement.dataRowId)"
+    (click)="emitChartToggleSeries({ dataRowId: seriesElement.dataRowId })"
     class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg"
   >
     <div class="flex flex-row items-center">
@@ -32,7 +32,7 @@
 
   <div
     *ngIf="isReport === false"
-    (click)="emitChartToggleSeries(seriesElement.dataRowId)"
+    (click)="emitChartToggleSeries({ dataField: seriesElement.dataField })"
     class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg"
   >
     <div class="flex flex-row items-center">
