@@ -69,6 +69,7 @@ export class ChartFormulaDialogComponent implements OnInit {
       {
         series: this.dataService.metricsRowToSeries({
           row: row,
+          chartSeriesElement: undefined,
           showMetricsModelName: this.uiQuery.getValue().showMetricsModelName,
           showMetricsTimeFieldName:
             this.uiQuery.getValue().showMetricsTimeFieldName,

@@ -462,6 +462,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
                   let seriesElement = this.dataService.metricsRowToSeries({
                     row: seriesRow,
+                    chartSeriesElement: chartSeriesElement,
                     showMetricsModelName: showMetricsModelName,
                     showMetricsTimeFieldName: showMetricsTimeFieldName,
                     dataPoints: dataPoints

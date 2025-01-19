@@ -420,67 +420,12 @@
       *ngFor="let seriesElement of chartSeriesWithField; let i = index"
       class="flex flex-col"
     >
-      <div
-        *ngIf="isReport === true"
-        (click)="toggleSeriesPanel(seriesElement.dataRowId)"
-        class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg"
-      >
-        <div class="flex flex-row items-center">
-          <m-chevron-right-icon
-            *ngIf="seriesIdsExpanded.indexOf(seriesElement.dataRowId) < 0"
-          ></m-chevron-right-icon>
-          <m-chevron-down-icon
-            *ngIf="seriesIdsExpanded.indexOf(seriesElement.dataRowId) > -1"
-          ></m-chevron-down-icon>
-
-          <div class="ml-2 flex flex-row items-center">
-            <span class="text-lg">Series</span>
-            <span class="ml-2">-</span>
-
-            <m-row-metric-label
-              [name]="seriesElement.seriesRowName"
-              [isMetric]="seriesElement.isMetric"
-              [isAddPrefixRowId]="true"
-              [rowId]="seriesElement.dataRowId"
-              [showMetricsModelName]="seriesElement.showMetricsModelName"
-              [showMetricsTimeFieldName]="
-                seriesElement.showMetricsTimeFieldName
-              "
-              [partNodeLabel]="seriesElement.partNodeLabel"
-              [partFieldLabel]="seriesElement.partFieldLabel"
-              [timeNodeLabel]="seriesElement.timeNodeLabel"
-              [timeFieldLabel]="seriesElement.timeFieldLabel"
-              [topLabel]="seriesElement.topLabel"
-              class="ml-2 mt-1 flex text-base"
-            ></m-row-metric-label>
-          </div>
-        </div>
-      </div>
-
-      <div
-        *ngIf="isReport === false"
-        (click)="toggleSeriesPanel(seriesElement.dataField)"
-        class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg"
-      >
-        <div class="flex flex-row items-center">
-          <m-chevron-right-icon
-            *ngIf="seriesIdsExpanded.indexOf(seriesElement.dataField) < 0"
-          ></m-chevron-right-icon>
-          <m-chevron-down-icon
-            *ngIf="seriesIdsExpanded.indexOf(seriesElement.dataField) > -1"
-          ></m-chevron-down-icon>
-
-          <div class="ml-2 flex flex-row items-center">
-            <span class="text-lg">Series</span>
-            <span class="ml-2">-</span>
-
-            <m-field-label
-              [column]="seriesElement.field"
-              class="ml-2 mt-1 text-base"
-            ></m-field-label>
-          </div>
-        </div>
-      </div>
+      <m-chart-editor-series
+        class="flex"
+        [seriesElement]="seriesElement"
+        [isReport]="isReport"
+        (chartSeriesEmtUpdate)="chartSeriesEmtUpdate($event)"
+      ></m-chart-editor-series>
     </div>
   </div>
 

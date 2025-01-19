@@ -1,0 +1,107 @@
+<div class="flex flex-col">
+  <div
+    *ngIf="isReport === true"
+    (click)="toggleSeriesPanel(seriesElement.dataRowId)"
+    class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg"
+  >
+    <div class="flex flex-row items-center">
+      <m-chevron-right-icon
+        *ngIf="seriesIsExpanded === false"
+      ></m-chevron-right-icon>
+      <m-chevron-down-icon
+        *ngIf="seriesIsExpanded === true"
+      ></m-chevron-down-icon>
+
+      <div class="ml-2 flex flex-row items-center">
+        <span class="text-lg">Series</span>
+        <span class="ml-2">-</span>
+
+        <m-row-metric-label
+          [name]="seriesElement.seriesRowName"
+          [isMetric]="seriesElement.isMetric"
+          [isAddPrefixRowId]="true"
+          [rowId]="seriesElement.dataRowId"
+          [showMetricsModelName]="seriesElement.showMetricsModelName"
+          [showMetricsTimeFieldName]="seriesElement.showMetricsTimeFieldName"
+          [partNodeLabel]="seriesElement.partNodeLabel"
+          [partFieldLabel]="seriesElement.partFieldLabel"
+          [timeNodeLabel]="seriesElement.timeNodeLabel"
+          [timeFieldLabel]="seriesElement.timeFieldLabel"
+          [topLabel]="seriesElement.topLabel"
+          class="ml-2 mt-1 flex text-base"
+        ></m-row-metric-label>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="isReport === false"
+    (click)="toggleSeriesPanel(seriesElement.dataField)"
+    class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg"
+  >
+    <div class="flex flex-row items-center">
+      <m-chevron-right-icon
+        *ngIf="seriesIsExpanded === false"
+      ></m-chevron-right-icon>
+      <m-chevron-down-icon
+        *ngIf="seriesIsExpanded === true"
+      ></m-chevron-down-icon>
+
+      <div class="ml-2 flex flex-row items-center">
+        <span class="text-lg">Series</span>
+        <span class="ml-2">-</span>
+
+        <m-field-label
+          [column]="seriesElement.field"
+          class="ml-2 mt-1 text-base"
+        ></m-field-label>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="seriesIsExpanded === true" class="mb-5 flex flex-row items-start">
+    <div class="flex flex-col">
+      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
+        >Type</div
+      >
+    </div>
+
+    <form [formGroup]="seriesTypeForm" class="ml-5 min-w-[2px] flex-grow">
+      <ng-select
+        #seriesTypeSelect
+        data-cy="seriesTypeSelect"
+        class="chart-type-select w-[200px] text-base focus:outline-none"
+        [items]="seriesTypesList"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="seriesTypeChange()"
+        (keyup.esc)="$event.stopImmediatePropagation(); seriesTypeSelect.blur()"
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); seriesTypeSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="seriesType"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 flex flex-row items-center justify-start space-x-2">
+            <img class="h-6 w-6" [src]="item.iconPath" />
+            <div> {{ item.label }} </div>
+          </div>
+        </ng-template>
+        <ng-template
+          ng-option-tmp
+          let-item="item"
+          let-index="index"
+          let-search="searchTerm"
+        >
+          <div class="ml-1 flex flex-row items-center justify-start space-x-2">
+            <img class="h-6 w-6" [src]="item.iconPath" />
+            <div> {{ item.label }} </div>
+          </div>
+        </ng-template>
+      </ng-select>
+    </form>
+  </div>
+</div>

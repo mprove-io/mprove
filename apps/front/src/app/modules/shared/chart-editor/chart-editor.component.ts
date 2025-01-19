@@ -19,8 +19,9 @@ import { StructService } from '~front/app/services/struct.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { interfaces } from '~front/barrels/interfaces';
 
-class ChartSeriesWithField extends common.MconfigChartSeries {
+export class ChartSeriesWithField extends common.MconfigChartSeries {
   field: common.MconfigField;
   isMetric: boolean;
   showMetricsModelName: boolean;
@@ -531,6 +532,23 @@ export class ChartEditorComponent implements OnChanges {
         });
 
         return newYAxisElement;
+      })
+    };
+
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
+  }
+
+  chartSeriesEmtUpdate(
+    eventSeriesUpdate: interfaces.EventChartSeriesEmtUpdate
+  ) {
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      series: this.chart.series.map(s => {
+        let newSeriesElement =
+          eventSeriesUpdate.series.dataRowId === s.dataRowId
+            ? eventSeriesUpdate.series
+            : s;
+
+        return newSeriesElement;
       })
     };
 

@@ -784,12 +784,18 @@ export class DataService {
 
   metricsRowToSeries(item: {
     row: DataRow;
+    chartSeriesElement: common.MconfigChartSeries;
     dataPoints: DataPoint[];
     showMetricsModelName: boolean;
     showMetricsTimeFieldName: boolean;
   }) {
-    let { row, dataPoints, showMetricsModelName, showMetricsTimeFieldName } =
-      item;
+    let {
+      row,
+      chartSeriesElement,
+      dataPoints,
+      showMetricsModelName,
+      showMetricsTimeFieldName
+    } = item;
 
     let rowName = this.metricsMakeRowName({
       row: row,
@@ -798,7 +804,9 @@ export class DataService {
     });
 
     let seriesOption: SeriesOption = {
-      type: 'line',
+      type: common.isDefined(chartSeriesElement?.type)
+        ? (chartSeriesElement.type as any)
+        : 'line',
       symbol: 'circle',
       symbolSize: 8,
       cursor: 'default',
