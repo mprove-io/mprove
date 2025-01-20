@@ -54,12 +54,14 @@ export class ChartEditorYAxisElementComponent {
     this.chartToggleYAxisElement.emit(event);
   }
 
-  emitChartDeleteYAxisElement() {
-    let event: interfaces.EventChartDeleteYAxisElement = {
+  emitChartDeleteYAxisElement(event: any) {
+    event.stopPropagation();
+
+    let eventDeleteYAxisElement: interfaces.EventChartDeleteYAxisElement = {
       yAxisIndex: this.yAxisIndex
     };
 
-    this.chartDeleteYAxisElement.emit(event);
+    this.chartDeleteYAxisElement.emit(eventDeleteYAxisElement);
   }
 
   emitChartYAxisElementUpdate(item: { yAxisPart: common.MconfigChartYAxis }) {

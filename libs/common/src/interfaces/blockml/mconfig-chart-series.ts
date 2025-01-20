@@ -11,7 +11,7 @@ export class MconfigChartSeries {
   dataRowId?: string;
 
   @IsEnum(enums.ChartTypeEnum)
-  type: enums.ChartTypeEnum;
+  type?: enums.ChartTypeEnum;
 
   @IsOptional()
   @IsInt()

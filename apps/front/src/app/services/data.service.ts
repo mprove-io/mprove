@@ -807,6 +807,7 @@ export class DataService {
       type: common.isDefined(chartSeriesElement?.type)
         ? (chartSeriesElement.type as any)
         : 'line',
+      yAxisIndex: chartSeriesElement?.yAxisIndex,
       symbol: 'circle',
       symbolSize: 8,
       cursor: 'default',

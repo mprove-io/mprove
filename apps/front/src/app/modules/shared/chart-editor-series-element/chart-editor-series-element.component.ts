@@ -30,6 +30,9 @@ export class ChartEditorSeriesElementComponent implements OnChanges {
   @Input()
   isExpanded: boolean;
 
+  @Input()
+  yAxisIndexList: number[];
+
   @Output() chartSeriesElementUpdate =
     new EventEmitter<interfaces.EventChartSeriesElementUpdate>();
 
@@ -55,12 +58,21 @@ export class ChartEditorSeriesElementComponent implements OnChanges {
     seriesType: [undefined]
   });
 
+  yAxisIndexForm: FormGroup = this.fb.group({
+    yAxisIndex: [undefined]
+  });
+
   constructor(private fb: FormBuilder) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     setValueAndMark({
       control: this.seriesTypeForm.controls['seriesType'],
       value: this.seriesElement.type
+    });
+
+    setValueAndMark({
+      control: this.yAxisIndexForm.controls['yAxisIndex'],
+      value: this.seriesElement.yAxisIndex
     });
   }
 
@@ -75,6 +87,22 @@ export class ChartEditorSeriesElementComponent implements OnChanges {
 
     let newSeriesPart: common.MconfigChartSeries = {
       type: seriesType
+    };
+
+    this.emitChartSeriesElementUpdate({
+      seriesDataRowId: this.seriesElement.dataRowId,
+      seriesDataField: this.seriesElement.dataField,
+      seriesPart: newSeriesPart
+    });
+  }
+
+  yAxisIndexChange() {
+    (document.activeElement as HTMLElement).blur();
+
+    let yAxisIndex = this.yAxisIndexForm.controls['yAxisIndex'].value;
+
+    let newSeriesPart: common.MconfigChartSeries = {
+      yAxisIndex: yAxisIndex
     };
 
     this.emitChartSeriesElementUpdate({

@@ -143,6 +143,7 @@ export class ChartEditorComponent implements OnChanges {
   yAxisIsExpanded = false;
   seriesExpanded: string[] = [];
   yAxisExpanded: number[] = [];
+  yAxisIndexList: number[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -156,6 +157,8 @@ export class ChartEditorComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     // console.log(changes);
+
+    this.yAxisIndexList = this.chart.yAxis.map((x, i) => i);
 
     if (this.isReport === false) {
       this.dimensionsMeasuresCalculations = this.mconfigFields.filter(
@@ -553,6 +556,11 @@ export class ChartEditorComponent implements OnChanges {
     this.yAxisIsExpanded = true;
 
     let newYAxis = common.DEFAULT_CHART_Y_AXIS;
+
+    // let newYAxis = Object.assign({}, common.DEFAULT_CHART_Y_AXIS, {
+    //   axisLine: { onZero: false },
+    //   offset: 50
+    // });
 
     let newChart: common.MconfigChart = <common.MconfigChart>{
       yAxis: [...this.chart.yAxis, newYAxis]

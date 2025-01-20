@@ -51,17 +51,13 @@
     </div>
   </div>
 
-  <div
-    *ngIf="isExpanded === true"
-    class="mb-5 ml-[32px] flex flex-row items-center"
-  >
-    <div class="flex flex-col">
+  <div *ngIf="isExpanded === true" class="flex flex-col">
+    <div class="mb-5 ml-[32px] flex flex-row items-center">
       <div class="text-gray1 flex h-9 select-none items-center text-base"
         >Type</div
       >
-    </div>
 
-    <!-- <div class="ml-5 flex flex-row items-center justify-start space-x-5">
+      <!-- <div class="ml-5 flex flex-row items-center justify-start space-x-5">
       <m-chart-line-icon
         class="h-6 w-6 cursor-pointer"
         [ngClass]="{
@@ -81,42 +77,78 @@
       ></m-chart-bar-icon>
     </div> -->
 
-    <form [formGroup]="seriesTypeForm" class="ml-5 min-w-[2px] flex-grow">
-      <ng-select
-        #seriesTypeSelect
-        data-cy="seriesTypeSelect"
-        class="chart-type-select w-[200px] text-base focus:outline-none"
-        [items]="seriesTypesList"
-        [clearable]="false"
-        [searchable]="false"
-        (change)="seriesTypeChange()"
-        (keyup.esc)="$event.stopImmediatePropagation(); seriesTypeSelect.blur()"
-        (keyup.enter)="
-          $event.stopImmediatePropagation(); seriesTypeSelect.blur()
-        "
-        appendTo="body"
-        bindLabel="label"
-        bindValue="value"
-        formControlName="seriesType"
-      >
-        <ng-template ng-label-tmp let-item="item">
-          <div class="ml-1 flex flex-row items-center justify-start space-x-2">
-            <img class="h-6 w-6" [src]="item.iconPath" />
-            <div> {{ item.label }} </div>
-          </div>
-        </ng-template>
-        <ng-template
-          ng-option-tmp
-          let-item="item"
-          let-index="index"
-          let-search="searchTerm"
+      <form [formGroup]="seriesTypeForm" class="ml-5 min-w-[2px] flex-grow">
+        <ng-select
+          #seriesTypeSelect
+          data-cy="seriesTypeSelect"
+          class="chart-type-select w-[150px] text-base focus:outline-none"
+          [items]="seriesTypesList"
+          [clearable]="false"
+          [searchable]="false"
+          (change)="seriesTypeChange()"
+          (keyup.esc)="
+            $event.stopImmediatePropagation(); seriesTypeSelect.blur()
+          "
+          (keyup.enter)="
+            $event.stopImmediatePropagation(); seriesTypeSelect.blur()
+          "
+          appendTo="body"
+          bindLabel="label"
+          bindValue="value"
+          formControlName="seriesType"
         >
-          <div class="ml-1 flex flex-row items-center justify-start space-x-2">
-            <img class="h-6 w-6" [src]="item.iconPath" />
-            <div> {{ item.label }} </div>
-          </div>
-        </ng-template>
-      </ng-select>
-    </form>
+          <ng-template ng-label-tmp let-item="item">
+            <div
+              class="ml-1 flex flex-row items-center justify-start space-x-2"
+            >
+              <img class="h-6 w-6" [src]="item.iconPath" />
+              <div> {{ item.label }} </div>
+            </div>
+          </ng-template>
+          <ng-template
+            ng-option-tmp
+            let-item="item"
+            let-index="index"
+            let-search="searchTerm"
+          >
+            <div
+              class="ml-1 flex flex-row items-center justify-start space-x-2"
+            >
+              <img class="h-6 w-6" [src]="item.iconPath" />
+              <div> {{ item.label }} </div>
+            </div>
+          </ng-template>
+        </ng-select>
+      </form>
+    </div>
+
+    <div class="mb-5 ml-[32px] flex flex-row items-center">
+      <div class="text-gray1 flex h-9 select-none items-center text-base"
+        >Y Axis</div
+      >
+
+      <form [formGroup]="yAxisIndexForm" class="ml-5 min-w-[2px] flex-grow">
+        <ng-select
+          #yAxisIndexSelect
+          data-cy="yAxisIndexSelect"
+          class="chart-type-select w-[100px] text-base focus:outline-none"
+          [items]="yAxisIndexList"
+          [clearable]="false"
+          [searchable]="false"
+          (change)="yAxisIndexChange()"
+          (keyup.esc)="
+            $event.stopImmediatePropagation(); yAxisIndexSelect.blur()
+          "
+          (keyup.enter)="
+            $event.stopImmediatePropagation(); yAxisIndexSelect.blur()
+          "
+          appendTo="body"
+          bindLabel="label"
+          bindValue="value"
+          formControlName="yAxisIndex"
+        >
+        </ng-select>
+      </form>
+    </div>
   </div>
 </div>

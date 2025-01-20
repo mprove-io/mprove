@@ -1,19 +1,19 @@
 <div class="flex flex-col">
   <div
     (click)="emitChartToggleYAxisElement()"
-    class="text-gray1 mb-5 ml-[32px] flex cursor-pointer select-none flex-row items-start text-lg"
+    class="text-gray1 ml-[32px] flex cursor-pointer select-none flex-row items-start text-lg"
   >
-    <div class="flex flex-row items-center">
+    <div class="flex flex-row items-start">
       <m-chevron-right-icon *ngIf="isExpanded === false"></m-chevron-right-icon>
       <m-chevron-down-icon *ngIf="isExpanded === true"></m-chevron-down-icon>
 
-      <div class="ml-2 flex flex-row items-center">
+      <div class="ml-2 flex flex-row items-start">
         <div class="text-gray1 mb-5 text-base">Y Axis {{ yAxisIndex }}</div>
 
         <m-trash-icon
           *ngIf="yAxisIndex !== 0"
           class="ml-5 cursor-pointer text-gray-500 hover:text-blue-500 [.group-link:hover_&]:visible"
-          (click)="emitChartDeleteYAxisElement()"
+          (click)="emitChartDeleteYAxisElement($event)"
         ></m-trash-icon>
       </div>
     </div>
