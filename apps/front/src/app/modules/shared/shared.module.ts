@@ -11,7 +11,8 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import { AvatarComponent } from './avatar/avatar.component';
 import { BricksComponent } from './bricks/bricks.component';
 import { ChartBoxComponent } from './chart-box/chart-box.component';
-import { ChartEditorSeriesElementComponent } from './chart-editor-series/chart-editor-series.component';
+import { ChartEditorSeriesElementComponent } from './chart-editor-series-element/chart-editor-series-element.component';
+import { ChartEditorYAxisElementComponent } from './chart-editor-y-axis-element/chart-editor-y-axis-element.component';
 import { ChartEditorComponent } from './chart-editor/chart-editor.component';
 import { ChartSaveAsDialogComponent } from './chart-save-as-dialog/chart-save-as-dialog.component';
 import { ChartTableComponent } from './chart-table/chart-table.component';
@@ -202,6 +203,7 @@ let sharedComponents = [
   DashboardEditListenersDialogComponent,
   ChartEditorComponent,
   ChartEditorSeriesElementComponent,
+  ChartEditorYAxisElementComponent,
   RowMetricLabelComponent
 ];
 

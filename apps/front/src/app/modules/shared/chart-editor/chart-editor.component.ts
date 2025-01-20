@@ -142,6 +142,7 @@ export class ChartEditorComponent implements OnChanges {
   xAxisIsExpanded = false;
   yAxisIsExpanded = false;
   seriesExpanded: string[] = [];
+  yAxisExpanded: number[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -496,58 +497,6 @@ export class ChartEditorComponent implements OnChanges {
     this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
   }
 
-  toggleXAxisScale() {
-    let newChart: common.MconfigChart = <common.MconfigChart>{
-      xAxis: {
-        scale: !this.chart.xAxis.scale
-      }
-    };
-
-    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
-  }
-
-  toggleYAxisPanel() {
-    this.yAxisIsExpanded = !this.yAxisIsExpanded;
-  }
-
-  addYAxis() {
-    // this.yAxisIsExpanded = true;
-
-    let newYAxis = common.DEFAULT_CHART_Y_AXIS;
-
-    let newChart: common.MconfigChart = <common.MconfigChart>{
-      yAxis: [...this.chart.yAxis, newYAxis]
-    };
-
-    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
-  }
-
-  deleteYAxis(index: number) {
-    let newChart: common.MconfigChart = <common.MconfigChart>{
-      yAxis: this.chart.yAxis.filter((x, i) => i !== index)
-    };
-
-    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
-  }
-
-  toggleXAxisPanel() {
-    this.xAxisIsExpanded = !this.xAxisIsExpanded;
-  }
-
-  toggleYAxisScale(i: number) {
-    let newChart: common.MconfigChart = <common.MconfigChart>{
-      yAxis: this.chart.yAxis.map((y, ind) => {
-        let newYAxisElement = Object.assign({}, y, {
-          scale: i === ind ? !y.scale : y.scale
-        });
-
-        return newYAxisElement;
-      })
-    };
-
-    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
-  }
-
   chartToggleSeries(eventToggleSeries: interfaces.EventChartToggleSeries) {
     let { seriesDataField, seriesDataRowId } = eventToggleSeries;
 
@@ -576,6 +525,71 @@ export class ChartEditorComponent implements OnChanges {
             : s;
 
         return newSeriesElement;
+      })
+    };
+
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
+  }
+
+  toggleXAxisPanel() {
+    this.xAxisIsExpanded = !this.xAxisIsExpanded;
+  }
+
+  toggleXAxisScale() {
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      xAxis: {
+        scale: !this.chart.xAxis.scale
+      }
+    };
+
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
+  }
+
+  toggleYAxisPanel() {
+    this.yAxisIsExpanded = !this.yAxisIsExpanded;
+  }
+
+  addYAxis() {
+    this.yAxisIsExpanded = true;
+
+    let newYAxis = common.DEFAULT_CHART_Y_AXIS;
+
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      yAxis: [...this.chart.yAxis, newYAxis]
+    };
+
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
+  }
+
+  chartToggleYAxisElement(event: interfaces.EventChartToggleYAxisElement) {
+    let { yAxisIndex } = event;
+
+    if (this.yAxisExpanded.indexOf(yAxisIndex) > -1) {
+      this.yAxisExpanded = this.yAxisExpanded.filter(x => x !== yAxisIndex);
+    } else {
+      this.yAxisExpanded = [...this.yAxisExpanded, yAxisIndex];
+    }
+  }
+
+  chartDeleteYAxisElement(event: interfaces.EventChartDeleteYAxisElement) {
+    let { yAxisIndex } = event;
+
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      yAxis: this.chart.yAxis.filter((x, i) => i !== yAxisIndex)
+    };
+
+    this.yAxisExpanded = [];
+
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
+  }
+
+  chartYAxisElementUpdate(event: interfaces.EventChartYAxisElementUpdate) {
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      yAxis: this.chart.yAxis.map((y, i) => {
+        let newYAxisElement =
+          event.yAxisIndex === i ? Object.assign({}, y, event.yAxisPart) : y;
+
+        return newYAxisElement;
       })
     };
 

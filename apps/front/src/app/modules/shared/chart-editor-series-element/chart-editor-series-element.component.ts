@@ -16,8 +16,8 @@ import { ChartTypeItem } from '../../model/model.component';
 import { ChartSeriesWithField } from '../chart-editor/chart-editor.component';
 
 @Component({
-  selector: 'm-chart-editor-series',
-  templateUrl: './chart-editor-series.component.html',
+  selector: 'm-chart-editor-series-element',
+  templateUrl: './chart-editor-series-element.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChartEditorSeriesElementComponent implements OnChanges {

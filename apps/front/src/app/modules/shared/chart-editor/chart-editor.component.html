@@ -338,7 +338,7 @@
       *ngFor="let seriesElement of chartSeriesWithField; let i = index"
       class="flex flex-col"
     >
-      <m-chart-editor-series
+      <m-chart-editor-series-element
         class="flex"
         [seriesElement]="seriesElement"
         [isReport]="isReport"
@@ -347,9 +347,9 @@
             ? seriesExpanded.indexOf(seriesElement.dataRowId) > -1
             : seriesExpanded.indexOf(seriesElement.dataField) > -1
         "
-        (chartSeriesElementUpdate)="chartSeriesElementUpdate($event)"
         (chartToggleSeries)="chartToggleSeries($event)"
-      ></m-chart-editor-series>
+        (chartSeriesElementUpdate)="chartSeriesElementUpdate($event)"
+      ></m-chart-editor-series-element>
     </div>
   </div>
 
@@ -406,7 +406,7 @@
       </div>
 
       <button
-        *ngIf="yAxisIsExpanded === true"
+        *ngIf="yAxisIsExpanded === true || chart.yAxis.length === 0"
         type="button"
         data-cy="chartEditorAddYAxisButton"
         class="ml-5 h-7 flex-shrink-0 select-none rounded border border-gray-400 px-[2px] py-[0px] text-sm font-medium text-gray-500 hover:bg-white focus:outline-none"
@@ -420,36 +420,16 @@
         *ngFor="let yAxisElement of chart.yAxis; let i = index"
         class="flex flex-col"
       >
-        <div class="flex flex-row">
-          <div class="text-gray1 mb-5 ml-[32px] text-base">Y Axis {{ i }}</div>
-
-          <m-trash-icon
-            *ngIf="i !== 0"
-            class="ml-5 cursor-pointer text-gray-500 hover:text-blue-500 [.group-link:hover_&]:visible"
-            (click)="deleteYAxis(i)"
-          ></m-trash-icon>
-        </div>
-
-        <div
-          *ngIf="uiChartTypes.yAxis.scale.indexOf(chart.type) > -1"
-          class="mb-5 ml-[52px] flex max-w-min cursor-pointer flex-row items-center"
-          (click)="toggleYAxisScale(i)"
-        >
-          <div
-            class="text-gray1 flex h-9 flex-shrink-0 select-none items-center text-base"
-            >Scale</div
-          >
-
-          <ui-switch class="ml-5" [checked]="yAxisElement.scale"></ui-switch>
-        </div>
-
-        <div
-          *ngIf="i !== chart.yAxis.length - 1"
-          class="mb-5 mr-[25px] mt-0 divide-y divide-gray-300"
-        >
-          <div></div>
-          <div></div>
-        </div>
+        <m-chart-editor-y-axis-element
+          class="flex"
+          [yAxisIndex]="i"
+          [yAxisElement]="yAxisElement"
+          [isExpanded]="yAxisExpanded.indexOf(i) > -1"
+          [chartType]="chart.type"
+          (chartDeleteYAxisElement)="chartDeleteYAxisElement($event)"
+          (chartToggleYAxisElement)="chartToggleYAxisElement($event)"
+          (chartYAxisElementUpdate)="chartYAxisElementUpdate($event)"
+        ></m-chart-editor-y-axis-element>
       </div>
     </div>
   </div>
