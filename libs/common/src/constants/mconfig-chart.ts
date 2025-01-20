@@ -1,7 +1,17 @@
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
+import { MconfigChartXAxis } from '~common/interfaces/blockml/mconfig-chart-x-axis';
+import { MconfigChartYAxis } from '~common/interfaces/blockml/mconfig-chart-y-axis';
 
 export const CHART_DEFAULT_SIZE_FIELD_VALUE = 'size_field_value';
+
+export const DEFAULT_CHART_X_AXIS: MconfigChartXAxis = {
+  scale: false
+};
+
+export const DEFAULT_CHART_Y_AXIS: MconfigChartYAxis = {
+  scale: false
+};
 
 export const DEFAULT_CHART: MconfigChart = {
   isValid: true,
@@ -17,15 +27,9 @@ export const DEFAULT_CHART: MconfigChart = {
   format: true,
   pageSize: 5,
 
-  xAxis: {
-    scale: false
-  },
+  xAxis: DEFAULT_CHART_X_AXIS,
 
-  yAxis: [
-    {
-      scale: false
-    }
-  ],
+  yAxis: [DEFAULT_CHART_Y_AXIS],
 
   series: []
 };

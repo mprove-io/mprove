@@ -392,16 +392,27 @@
     *ngIf="uiChartTypes.yAxisGroup.indexOf(chart.type) > -1"
     class="flex flex-col"
   >
-    <div
-      (click)="toggleYAxisPanel()"
-      class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg font-semibold"
-    >
-      <div class="flex flex-row items-center space-x-2">
-        <m-chevron-right-icon *ngIf="!yAxisIsExpanded"></m-chevron-right-icon>
-        <m-chevron-down-icon *ngIf="yAxisIsExpanded"></m-chevron-down-icon>
+    <div class="flex flex-row">
+      <div
+        (click)="toggleYAxisPanel()"
+        class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg font-semibold"
+      >
+        <div class="flex flex-row items-center">
+          <m-chevron-right-icon *ngIf="!yAxisIsExpanded"></m-chevron-right-icon>
+          <m-chevron-down-icon *ngIf="yAxisIsExpanded"></m-chevron-down-icon>
 
-        <div class="ml-2"> Y Axis </div>
+          <div class="ml-2"> Y Axis </div>
+        </div>
       </div>
+
+      <button
+        *ngIf="yAxisIsExpanded === true"
+        type="button"
+        data-cy="chartEditorAddYAxisButton"
+        class="ml-5 h-7 flex-shrink-0 select-none rounded border border-gray-400 px-[2px] py-[0px] text-sm font-medium text-gray-500 hover:bg-white focus:outline-none"
+        (click)="addYAxis()"
+        ><m-add-icon></m-add-icon
+      ></button>
     </div>
 
     <div *ngIf="yAxisIsExpanded" class="flex flex-col">
@@ -409,11 +420,19 @@
         *ngFor="let yAxisElement of chart.yAxis; let i = index"
         class="flex flex-col"
       >
-        <!-- <div class="text-gray1 mb-5 text-base">Index {{ i }}</div> -->
+        <div class="flex flex-row">
+          <div class="text-gray1 mb-5 ml-[32px] text-base">Y Axis {{ i }}</div>
+
+          <m-trash-icon
+            *ngIf="i !== 0"
+            class="ml-5 cursor-pointer text-gray-500 hover:text-blue-500 [.group-link:hover_&]:visible"
+            (click)="deleteYAxis(i)"
+          ></m-trash-icon>
+        </div>
 
         <div
           *ngIf="uiChartTypes.yAxis.scale.indexOf(chart.type) > -1"
-          class="mb-5 ml-[32px] flex max-w-min cursor-pointer flex-row items-center"
+          class="mb-5 ml-[52px] flex max-w-min cursor-pointer flex-row items-center"
           (click)="toggleYAxisScale(i)"
         >
           <div

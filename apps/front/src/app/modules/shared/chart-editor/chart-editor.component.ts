@@ -510,6 +510,26 @@ export class ChartEditorComponent implements OnChanges {
     this.yAxisIsExpanded = !this.yAxisIsExpanded;
   }
 
+  addYAxis() {
+    // this.yAxisIsExpanded = true;
+
+    let newYAxis = common.DEFAULT_CHART_Y_AXIS;
+
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      yAxis: [...this.chart.yAxis, newYAxis]
+    };
+
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
+  }
+
+  deleteYAxis(index: number) {
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      yAxis: this.chart.yAxis.filter((x, i) => i !== index)
+    };
+
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
+  }
+
   toggleXAxisPanel() {
     this.xAxisIsExpanded = !this.xAxisIsExpanded;
   }
