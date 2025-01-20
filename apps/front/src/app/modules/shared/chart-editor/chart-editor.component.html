@@ -331,6 +331,29 @@
   </div>
 
   <div
+    *ngIf="uiChartTypes.seriesGroup.indexOf(chart.type) > -1"
+    class="flex flex-col"
+  >
+    <div
+      *ngFor="let seriesElement of chartSeriesWithField; let i = index"
+      class="flex flex-col"
+    >
+      <m-chart-editor-series
+        class="flex"
+        [seriesElement]="seriesElement"
+        [isReport]="isReport"
+        [isExpanded]="
+          isReport === true
+            ? seriesExpanded.indexOf(seriesElement.dataRowId) > -1
+            : seriesExpanded.indexOf(seriesElement.dataField) > -1
+        "
+        (chartSeriesElementUpdate)="chartSeriesElementUpdate($event)"
+        (chartToggleSeries)="chartToggleSeries($event)"
+      ></m-chart-editor-series>
+    </div>
+  </div>
+
+  <div
     *ngIf="uiChartTypes.xAxisGroup.indexOf(chart.type) > -1"
     class="flex flex-col"
   >
@@ -409,29 +432,6 @@
           <div></div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <div
-    *ngIf="uiChartTypes.seriesGroup.indexOf(chart.type) > -1"
-    class="flex flex-col"
-  >
-    <div
-      *ngFor="let seriesElement of chartSeriesWithField; let i = index"
-      class="flex flex-col"
-    >
-      <m-chart-editor-series
-        class="flex"
-        [seriesElement]="seriesElement"
-        [isReport]="isReport"
-        [isExpanded]="
-          isReport === true
-            ? seriesExpanded.indexOf(seriesElement.dataRowId) > -1
-            : seriesExpanded.indexOf(seriesElement.dataField) > -1
-        "
-        (chartSeriesElementUpdate)="chartSeriesElementUpdate($event)"
-        (chartToggleSeries)="chartToggleSeries($event)"
-      ></m-chart-editor-series>
     </div>
   </div>
 

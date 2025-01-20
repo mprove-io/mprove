@@ -61,7 +61,7 @@
       >
     </div>
 
-    <div class="ml-5 flex flex-row items-center justify-start space-x-5">
+    <!-- <div class="ml-5 flex flex-row items-center justify-start space-x-5">
       <m-chart-line-icon
         class="h-6 w-6 cursor-pointer"
         [ngClass]="{
@@ -79,9 +79,9 @@
         }"
         (click)="seriesTypeChange(seriesTypeEnum.Bar)"
       ></m-chart-bar-icon>
-    </div>
+    </div> -->
 
-    <!-- <form [formGroup]="seriesTypeForm" class="ml-5 min-w-[2px] flex-grow">
+    <form [formGroup]="seriesTypeForm" class="ml-5 min-w-[2px] flex-grow">
       <ng-select
         #seriesTypeSelect
         data-cy="seriesTypeSelect"
@@ -117,6 +117,6 @@
           </div>
         </ng-template>
       </ng-select>
-    </form> -->
+    </form>
   </div>
 </div>

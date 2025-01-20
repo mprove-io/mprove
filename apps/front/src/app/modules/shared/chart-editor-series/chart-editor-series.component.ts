@@ -12,6 +12,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
+import { ChartTypeItem } from '../../model/model.component';
 import { ChartSeriesWithField } from '../chart-editor/chart-editor.component';
 
 @Component({
@@ -35,18 +36,18 @@ export class ChartEditorSeriesElementComponent implements OnChanges {
   @Output() chartToggleSeries =
     new EventEmitter<interfaces.EventChartToggleSeries>();
 
-  // seriesTypesList: ChartTypeItem[] = [
-  //   {
-  //     label: 'Line',
-  //     value: common.ChartTypeEnum.Line,
-  //     iconPath: 'assets/charts/line.svg'
-  //   },
-  //   {
-  //     label: 'Bar',
-  //     value: common.ChartTypeEnum.Bar,
-  //     iconPath: 'assets/charts/bar_vertical.svg'
-  //   }
-  // ];
+  seriesTypesList: ChartTypeItem[] = [
+    {
+      label: 'Line',
+      value: common.ChartTypeEnum.Line,
+      iconPath: 'assets/charts/line.svg'
+    },
+    {
+      label: 'Bar',
+      value: common.ChartTypeEnum.Bar,
+      iconPath: 'assets/charts/bar_vertical.svg'
+    }
+  ];
 
   seriesTypeEnum = common.ChartTypeEnum;
 
