@@ -25,13 +25,17 @@ export function wrapMconfigChart(item: {
       let yAxisElement = {
         scale: common.isDefined(yAxisPart.scale)
           ? helper.toBooleanFromLowercaseString(yAxisPart.scale)
-          : common.DEFAULT_CHART.yAxis[0].scale
+          : common.DEFAULT_CHART_Y_AXIS.scale
       };
 
       return yAxisElement;
     });
   } else {
-    yAxis = [common.DEFAULT_CHART.yAxis[0]];
+    yAxis = [common.DEFAULT_CHART_Y_AXIS];
+  }
+
+  if (yAxis.length === 1) {
+    yAxis = [...yAxis, common.DEFAULT_CHART_Y_AXIS];
   }
 
   let series: common.MconfigChartSeries[] = [];

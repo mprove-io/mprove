@@ -29,7 +29,7 @@ export const DEFAULT_CHART: MconfigChart = {
 
   xAxis: DEFAULT_CHART_X_AXIS,
 
-  yAxis: [DEFAULT_CHART_Y_AXIS],
+  yAxis: [DEFAULT_CHART_Y_AXIS, DEFAULT_CHART_Y_AXIS],
 
   series: []
 };

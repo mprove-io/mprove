@@ -131,7 +131,7 @@
         <ng-select
           #yAxisIndexSelect
           data-cy="yAxisIndexSelect"
-          class="chart-type-select w-[100px] text-base focus:outline-none"
+          class="chart-type-select w-[130px] text-base focus:outline-none"
           [items]="yAxisIndexList"
           [clearable]="false"
           [searchable]="false"
@@ -147,6 +147,25 @@
           bindValue="value"
           formControlName="yAxisIndex"
         >
+          <ng-template ng-label-tmp let-item="item">
+            <div
+              class="ml-1 flex flex-row items-center justify-start space-x-2"
+            >
+              <div> {{ item === 0 ? 'Left' : 'Right' }} </div>
+            </div>
+          </ng-template>
+          <ng-template
+            ng-option-tmp
+            let-item="item"
+            let-index="index"
+            let-search="searchTerm"
+          >
+            <div
+              class="ml-1 flex flex-row items-center justify-start space-x-2"
+            >
+              <div> {{ item === 0 ? 'Left' : 'Right' }} </div>
+            </div>
+          </ng-template>
         </ng-select>
       </form>
     </div>

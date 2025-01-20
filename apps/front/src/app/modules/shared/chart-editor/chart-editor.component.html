@@ -393,7 +393,7 @@
     *ngIf="uiChartTypes.yAxisGroup.indexOf(chart.type) > -1"
     class="flex flex-col"
   >
-    <div class="flex flex-row">
+    <!-- <div class="flex flex-row">
       <div
         (click)="toggleYAxisPanel()"
         class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg font-semibold"
@@ -414,7 +414,7 @@
         (click)="addYAxis()"
         ><m-add-icon></m-add-icon
       ></button>
-    </div>
+    </div> -->
 
     <div *ngIf="yAxisIsExpanded" class="flex flex-col">
       <div

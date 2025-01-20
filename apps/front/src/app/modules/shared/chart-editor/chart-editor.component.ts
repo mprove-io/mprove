@@ -140,7 +140,7 @@ export class ChartEditorComponent implements OnChanges {
   });
 
   xAxisIsExpanded = false;
-  yAxisIsExpanded = false;
+  yAxisIsExpanded = true;
   seriesExpanded: string[] = [];
   yAxisExpanded: number[] = [];
   yAxisIndexList: number[] = [];

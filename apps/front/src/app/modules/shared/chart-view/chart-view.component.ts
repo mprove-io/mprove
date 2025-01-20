@@ -305,6 +305,7 @@ export class ChartViewComponent implements OnChanges {
 
           let lineSeriesOption: LineSeriesOption = {
             type: 'line',
+            yAxisIndex: chartSeriesElement.yAxisIndex,
             symbol: 'circle',
             symbolSize: 8,
             lineStyle: {
@@ -326,6 +327,7 @@ export class ChartViewComponent implements OnChanges {
 
           let barSeriesOption: BarSeriesOption = {
             type: 'bar',
+            yAxisIndex: chartSeriesElement.yAxisIndex,
             name: seriesDataElement?.seriesName,
             data: seriesDataElement?.seriesPoints.map(x => ({
               name: seriesDataElement?.seriesName,
@@ -338,6 +340,7 @@ export class ChartViewComponent implements OnChanges {
 
           let scatterSeriesOption: ScatterSeriesOption = {
             type: 'scatter',
+            yAxisIndex: chartSeriesElement.yAxisIndex,
             symbolSize: common.isDefined(this.chart.sizeField)
               ? (data: any) => 5 + data[2] * 25
               : 10,
