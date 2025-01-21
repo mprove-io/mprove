@@ -577,6 +577,9 @@ export class ReportsService {
       currencySuffix: undefined
     };
 
+    let chart = common.makeCopy(common.DEFAULT_CHART);
+    chart.type = common.ChartTypeEnum.Line;
+
     let emptyRep = this.makerService.makeReport({
       structId: undefined,
       reportId: reportId,
@@ -588,7 +591,7 @@ export class ReportsService {
       title: reportId,
       fields: [],
       rows: [globalRow],
-      chart: common.DEFAULT_CHART,
+      chart: chart,
       draft: false
     });
 

@@ -24,7 +24,7 @@ export const emptyReport: ReportState = {
   timeColumnsLimit: undefined,
   isTimeColumnsLimitExceeded: false,
   rows: [],
-  chart: common.DEFAULT_CHART,
+  chart: common.makeCopy(common.DEFAULT_CHART),
   columns: [],
   draftCreatedTs: undefined,
   serverTs: undefined,

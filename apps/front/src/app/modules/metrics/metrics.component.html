@@ -561,8 +561,12 @@
                   <div
                     class="flex h-full flex-col"
                     [ngClass]="{
-                      'w-2/3': showMetricsChartSettings === true,
-                      'w-full': showMetricsChartSettings === false
+                      'w-2/3':
+                        showMetricsChartSettings === true &&
+                        report.chart.series.length > 0,
+                      'w-full':
+                        showMetricsChartSettings === false ||
+                        report.chart.series.length === 0
                     }"
                   >
                     <div
@@ -622,7 +626,10 @@
                   </div>
 
                   <div
-                    *ngIf="showMetricsChartSettings === true"
+                    *ngIf="
+                      showMetricsChartSettings === true &&
+                      report.chart.series.length > 0
+                    "
                     class="flex h-full w-1/3 flex-shrink-0 overflow-auto border-l"
                     [ngClass]="{
                       'border-gray-300': report.chart.isValid === true,
@@ -638,6 +645,7 @@
                   </div>
 
                   <div
+                    *ngIf="report.chart.series.length > 0"
                     class="absolute right-10 top-5 flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
                     (click)="toggleShowMetricsChartSettings()"
                   >

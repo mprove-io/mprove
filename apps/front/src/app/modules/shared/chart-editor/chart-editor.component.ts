@@ -156,7 +156,11 @@ export class ChartEditorComponent implements OnChanges {
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
+    // console.log('changes');
     // console.log(changes);
+
+    // console.log('this.chart');
+    // console.log(this.chart);
 
     this.yAxisIndexList = this.chart.yAxis.map((x, i) => i);
 

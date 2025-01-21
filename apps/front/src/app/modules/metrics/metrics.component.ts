@@ -102,10 +102,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
   report: common.ReportX;
   report$ = this.reportQuery.select().pipe(
     tap(x => {
-      this.report = x;
+      // console.log('x');
+      // console.log(x);
 
-      // console.log('this.report.chart');
-      // console.log(this.report.chart);
+      this.report = x;
 
       this.isShow = true;
 
@@ -115,15 +115,16 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
       let links = this.uiQuery.getValue().projectReportLinks;
 
+      let nav = this.navQuery.getValue();
       let link: common.ProjectReportLink = links.find(
-        r => r.projectId === x.projectId && r.draft === x.draft
+        l => l.projectId === nav.projectId && l.draft === x.draft
       );
 
       let newProjectReportLinks;
 
       if (common.isDefined(link)) {
         let newLink = {
-          projectId: x.projectId,
+          projectId: nav.projectId,
           draft: x.draft,
           reportId: x.reportId,
           lastNavTs: Date.now()
@@ -132,12 +133,12 @@ export class MetricsComponent implements OnInit, OnDestroy {
         newProjectReportLinks = [
           newLink,
           ...links.filter(
-            r => r.projectId !== x.projectId || r.draft !== x.draft
+            r => !(r.projectId === nav.projectId && r.draft === x.draft)
           )
         ];
       } else {
         let newLink = {
-          projectId: x.projectId,
+          projectId: nav.projectId,
           draft: x.draft,
           reportId: x.reportId,
           lastNavTs: Date.now()
