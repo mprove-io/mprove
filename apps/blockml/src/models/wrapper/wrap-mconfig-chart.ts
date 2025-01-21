@@ -8,9 +8,17 @@ export function wrapMconfigChart(item: {
   options: common.FileChartOptions;
   data: common.FileChartData;
   isReport: boolean;
-  rowIds: string[];
+  rowIdsWithShowChart: string[];
 }) {
-  let { title, description, type, options, data, rowIds, isReport } = item;
+  let {
+    title,
+    description,
+    type,
+    options,
+    data,
+    rowIdsWithShowChart,
+    isReport
+  } = item;
 
   let xAxis: common.MconfigChartXAxis = {
     scale: common.isDefined(options?.x_axis?.scale)
@@ -43,8 +51,8 @@ export function wrapMconfigChart(item: {
   let seriesIds =
     isReport === false && common.isDefined(data?.y_fields)
       ? data?.y_fields
-      : isReport === true && common.isDefined(rowIds)
-      ? rowIds
+      : isReport === true && common.isDefined(rowIdsWithShowChart)
+      ? rowIdsWithShowChart
       : [];
 
   series = seriesIds.map(seriesId => {

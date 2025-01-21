@@ -24,7 +24,7 @@ export function wrapTiles(item: {
       type: tile.type,
       options: tile.options,
       isReport: false,
-      rowIds: undefined,
+      rowIdsWithShowChart: undefined,
       data: tile.data
     });
 

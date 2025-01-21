@@ -44,7 +44,7 @@ export function wrapReports(item: {
       type: common.ChartTypeEnum.Line,
       options: x.options,
       isReport: true,
-      rowIds: x.rows
+      rowIdsWithShowChart: x.rows
         .filter(
           row => helper.toBooleanFromLowercaseString(row.show_chart) === true
         )
