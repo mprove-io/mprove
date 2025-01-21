@@ -113,48 +113,50 @@ export class MetricsComponent implements OnInit, OnDestroy {
         row => row.rowId === common.GLOBAL_ROW_ID
       );
 
-      let links = this.uiQuery.getValue().projectReportLinks;
+      if (x.draft === false) {
+        let links = this.uiQuery.getValue().projectReportLinks;
 
-      let nav = this.navQuery.getValue();
-      let link: common.ProjectReportLink = links.find(
-        l => l.projectId === nav.projectId && l.draft === x.draft
-      );
+        let nav = this.navQuery.getValue();
+        let link: common.ProjectReportLink = links.find(
+          l => l.projectId === nav.projectId && l.draft === x.draft
+        );
 
-      let newProjectReportLinks;
+        let newProjectReportLinks;
 
-      if (common.isDefined(link)) {
-        let newLink = {
-          projectId: nav.projectId,
-          draft: x.draft,
-          reportId: x.reportId,
-          lastNavTs: Date.now()
-        };
+        if (common.isDefined(link)) {
+          let newLink = {
+            projectId: nav.projectId,
+            draft: x.draft,
+            reportId: x.reportId,
+            lastNavTs: Date.now()
+          };
 
-        newProjectReportLinks = [
-          newLink,
-          ...links.filter(
-            r => !(r.projectId === nav.projectId && r.draft === x.draft)
-          )
-        ];
-      } else {
-        let newLink = {
-          projectId: nav.projectId,
-          draft: x.draft,
-          reportId: x.reportId,
-          lastNavTs: Date.now()
-        };
+          newProjectReportLinks = [
+            newLink,
+            ...links.filter(
+              r => !(r.projectId === nav.projectId && r.draft === x.draft)
+            )
+          ];
+        } else {
+          let newLink = {
+            projectId: nav.projectId,
+            draft: x.draft,
+            reportId: x.reportId,
+            lastNavTs: Date.now()
+          };
 
-        newProjectReportLinks = [newLink, ...links];
+          newProjectReportLinks = [newLink, ...links];
+        }
+
+        let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
+
+        newProjectReportLinks = newProjectReportLinks.filter(
+          l => l.lastNavTs >= oneYearAgoTimestamp
+        );
+
+        this.uiQuery.updatePart({ projectReportLinks: newProjectReportLinks });
+        this.uiService.setUserUi({ projectReportLinks: newProjectReportLinks });
       }
-
-      let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
-
-      newProjectReportLinks = newProjectReportLinks.filter(
-        l => l.lastNavTs >= oneYearAgoTimestamp
-      );
-
-      this.uiQuery.updatePart({ projectReportLinks: newProjectReportLinks });
-      this.uiService.setUserUi({ projectReportLinks: newProjectReportLinks });
 
       this.queriesLength = this.report.rows.filter(row =>
         common.isDefined(row.query)
