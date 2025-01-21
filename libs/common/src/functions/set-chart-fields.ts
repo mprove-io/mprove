@@ -1,4 +1,15 @@
-import { Mconfig, MconfigChart, ModelField, isDefined } from '~common/_index';
+import {
+  DEFAULT_CHART_SERIES_BAR,
+  DEFAULT_CHART_SERIES_LINE,
+  DEFAULT_CHART_SERIES_PIE,
+  DEFAULT_CHART_SERIES_SCATTER,
+  Mconfig,
+  MconfigChart,
+  MconfigChartSeries,
+  ModelField,
+  isDefined,
+  makeCopy
+} from '~common/_index';
 import { enums } from '~common/barrels/enums';
 
 export function setChartFields<T extends Mconfig>(item: {
@@ -89,11 +100,38 @@ export function setChartFields<T extends Mconfig>(item: {
         ? selectedDimensions.filter(x => x !== xField)[0]
         : undefined;
 
+    let series = makeCopy(mconfig.chart.series);
+
+    if (newChartType !== enums.ChartTypeEnum.Table) {
+      series = series.filter(s => yFields.indexOf(s.dataField) > -1);
+
+      let seriesIds = series.map(s => s.dataField);
+
+      yFields.forEach(y => {
+        if (seriesIds.indexOf(y) < 0) {
+          let newSeries: MconfigChartSeries =
+            newChartType === enums.ChartTypeEnum.Line
+              ? DEFAULT_CHART_SERIES_LINE
+              : newChartType === enums.ChartTypeEnum.Bar
+              ? DEFAULT_CHART_SERIES_BAR
+              : newChartType === enums.ChartTypeEnum.Scatter
+              ? DEFAULT_CHART_SERIES_SCATTER
+              : newChartType === enums.ChartTypeEnum.Pie
+              ? DEFAULT_CHART_SERIES_PIE
+              : DEFAULT_CHART_SERIES_LINE;
+
+          newSeries.dataField = y;
+          series.push(newSeries);
+        }
+      });
+    }
+
     mconfig.chart = Object.assign({}, mconfig.chart, <MconfigChart>{
       xField: xField,
       yFields: yFields,
       multiField: multiField,
-      sizeField: sizeField
+      sizeField: sizeField,
+      series: series
     });
   }
 

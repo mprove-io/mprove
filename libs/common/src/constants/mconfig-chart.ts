@@ -13,6 +13,25 @@ export const DEFAULT_CHART_SERIES_LINE: MconfigChartSeries = {
   yAxisIndex: 0
 };
 
+export const DEFAULT_CHART_SERIES_BAR: MconfigChartSeries = {
+  dataField: undefined,
+  dataRowId: undefined,
+  type: ChartTypeEnum.Bar,
+  yAxisIndex: 0
+};
+export const DEFAULT_CHART_SERIES_SCATTER: MconfigChartSeries = {
+  dataField: undefined,
+  dataRowId: undefined,
+  type: ChartTypeEnum.Scatter,
+  yAxisIndex: 0
+};
+export const DEFAULT_CHART_SERIES_PIE: MconfigChartSeries = {
+  dataField: undefined,
+  dataRowId: undefined,
+  type: ChartTypeEnum.Pie,
+  yAxisIndex: 0
+};
+
 export const DEFAULT_CHART_X_AXIS: MconfigChartXAxis = {
   scale: false
 };
