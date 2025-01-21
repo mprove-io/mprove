@@ -101,15 +101,18 @@ export function setChartFields<T extends Mconfig>(item: {
         : undefined;
 
     let series = makeCopy(mconfig.chart.series);
+    let sortedSeries: MconfigChartSeries[] = [];
 
     if (newChartType !== enums.ChartTypeEnum.Table) {
       series = series.filter(s => yFields.indexOf(s.dataField) > -1);
 
-      let seriesIds = series.map(s => s.dataField);
-
       yFields.forEach(y => {
-        if (seriesIds.indexOf(y) < 0) {
-          let newSeries: MconfigChartSeries =
+        let seriesElement = series.find(s => s.dataField === y);
+
+        if (isDefined(seriesElement)) {
+          sortedSeries.push(seriesElement);
+        } else {
+          let newSeriesElement: MconfigChartSeries =
             newChartType === enums.ChartTypeEnum.Line
               ? DEFAULT_CHART_SERIES_LINE
               : newChartType === enums.ChartTypeEnum.Bar
@@ -120,8 +123,8 @@ export function setChartFields<T extends Mconfig>(item: {
               ? DEFAULT_CHART_SERIES_PIE
               : DEFAULT_CHART_SERIES_LINE;
 
-          newSeries.dataField = y;
-          series.push(newSeries);
+          newSeriesElement.dataField = y;
+          sortedSeries.push(newSeriesElement);
         }
       });
     }
@@ -131,7 +134,7 @@ export function setChartFields<T extends Mconfig>(item: {
       yFields: yFields,
       multiField: multiField,
       sizeField: sizeField,
-      series: series
+      series: sortedSeries
     });
   }
 
