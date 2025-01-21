@@ -315,6 +315,16 @@ export class CreateDraftReportController {
       struct: struct
     });
 
+    let enabledChartRowIds = processedRows
+      .filter(row => row.showChart === true)
+      .map(row => row.rowId);
+
+    chart.series = chart.series
+      .filter(s => enabledChartRowIds.indexOf(s.dataRowId) > -1)
+      .sort((a, b) =>
+        a.dataRowId > b.dataRowId ? 1 : b.dataRowId > a.dataRowId ? -1 : 0
+      );
+
     let report: schemaPostgres.ReportEnt = this.makerService.makeReport({
       projectId: projectId,
       structId: bridge.structId,

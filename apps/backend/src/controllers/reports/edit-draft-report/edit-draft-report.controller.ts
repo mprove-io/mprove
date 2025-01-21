@@ -134,6 +134,16 @@ export class EditDraftReportController {
     report.rows = processedRows;
     report.chart = chart;
 
+    let enabledChartRowIds = processedRows
+      .filter(row => row.showChart === true)
+      .map(row => row.rowId);
+
+    report.chart.series = report.chart.series
+      .filter(s => enabledChartRowIds.indexOf(s.dataRowId) > -1)
+      .sort((a, b) =>
+        a.dataRowId > b.dataRowId ? 1 : b.dataRowId > a.dataRowId ? -1 : 0
+      );
+
     let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
 
     let repApi = await this.reportsService.getRepData({

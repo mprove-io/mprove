@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
+import { MconfigChartSeries } from '~common/_index';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { ReportQuery } from '~front/app/queries/report.query';
@@ -46,14 +47,29 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
 
     this.params.api.deselectAll();
     setTimeout(() => {
+      let newShowChart = !this.params.data.showChart;
+
       let report = this.reportQuery.getValue();
+
+      let newChart = common.makeCopy(report.chart);
+
+      if (newShowChart === true) {
+        let newSeries: MconfigChartSeries = common.DEFAULT_CHART_SERIES_LINE;
+        newSeries.dataRowId = this.params.data.rowId;
+        newChart.series.push(newSeries);
+      }
+      // else {
+      //   newChart.series = newChart.series.filter( // filtered on backend
+      //     x => x.dataRowId !== this.params.data.rowId
+      //   );
+      // }
 
       let rowChange: common.RowChange = {
         rowId: this.params.data.rowId,
         formula: this.params.data.formula,
         parameters: this.params.data.parameters,
         metricId: this.params.data.metricId,
-        showChart: !this.params.data.showChart
+        showChart: newShowChart
       };
 
       this.reportService.modifyRows({
@@ -62,7 +78,7 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
         rowChange: rowChange,
         rowIds: undefined,
         reportFields: report.fields,
-        chart: undefined
+        chart: newChart
       });
     }, 0);
   }
