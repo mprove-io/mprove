@@ -148,62 +148,6 @@ export function prepareTile(item: {
     plate: {}
   };
 
-  let partXAxis: FileChartOptionsXAxisElement =
-    {} as FileChartOptionsXAxisElement;
-
-  if (UI_CHART_TYPES.xAxisGroup.indexOf(chart.type) > -1) {
-    let keepXAxis = false;
-
-    if (
-      isDefined(chart.xAxis.scale) &&
-      chart.xAxis.scale !== DEFAULT_CHART_X_AXIS.scale
-    ) {
-      partXAxis.scale = chart.xAxis.scale as unknown as string;
-      keepXAxis = true;
-    }
-
-    if (keepXAxis === true) {
-      filePartTile.options.x_axis = partXAxis;
-    } else {
-      partXAxis = undefined;
-    }
-  } else {
-    partXAxis = undefined;
-  }
-
-  let partYAxis: FileChartOptionsYAxisElement[] = [];
-
-  if (UI_CHART_TYPES.yAxisGroup.indexOf(chart.type) > -1) {
-    if (isDefined(chart.yAxis)) {
-      chart.yAxis.forEach(chartYAxisElement => {
-        let partYAxisElement: FileChartOptionsYAxisElement = {
-          scale: isDefined(chartYAxisElement.scale)
-            ? (chartYAxisElement.scale as unknown as string)
-            : (DEFAULT_CHART_Y_AXIS.scale as unknown as string)
-        };
-
-        // if (
-        //   isDefined(chartYAxisElement.name) &&
-        //   chartYAxisElement.name !== DEFAULT_CHART_Y_AXIS.name
-        // ) {
-        //   yAxisElement.name = chartYAxisElement.name;
-        // }
-
-        partYAxis.push(partYAxisElement);
-      });
-    } else {
-      let defaultChartYAxis: FileChartOptionsYAxisElement = {
-        scale: DEFAULT_CHART_Y_AXIS.scale as unknown as string
-      };
-
-      partYAxis = [defaultChartYAxis, defaultChartYAxis];
-    }
-  } else {
-    partYAxis = undefined;
-  }
-
-  filePartTile.options.y_axis = partYAxis;
-
   let partSeries: FileChartOptionsSeriesElement[] = [];
 
   if (
@@ -261,6 +205,66 @@ export function prepareTile(item: {
   }
 
   filePartTile.options.series = partSeries;
+
+  let partXAxis: FileChartOptionsXAxisElement =
+    {} as FileChartOptionsXAxisElement;
+
+  if (UI_CHART_TYPES.xAxisGroup.indexOf(chart.type) > -1) {
+    let keepXAxis = false;
+
+    if (
+      isDefined(chart.xAxis.scale) &&
+      chart.xAxis.scale !== DEFAULT_CHART_X_AXIS.scale
+    ) {
+      partXAxis.scale = chart.xAxis.scale as unknown as string;
+      keepXAxis = true;
+    }
+
+    if (keepXAxis === true) {
+      filePartTile.options.x_axis = partXAxis;
+    } else {
+      partXAxis = undefined;
+    }
+  } else {
+    partXAxis = undefined;
+  }
+
+  let partYAxis: FileChartOptionsYAxisElement[] = [];
+
+  if (UI_CHART_TYPES.yAxisGroup.indexOf(chart.type) > -1) {
+    if (isDefined(chart.yAxis)) {
+      chart.yAxis.forEach(chartYAxisElement => {
+        let partYAxisElement: FileChartOptionsYAxisElement = {
+          scale: isDefined(chartYAxisElement.scale)
+            ? (chartYAxisElement.scale as unknown as string)
+            : (DEFAULT_CHART_Y_AXIS.scale as unknown as string)
+        };
+
+        // if (
+        //   isDefined(chartYAxisElement.name) &&
+        //   chartYAxisElement.name !== DEFAULT_CHART_Y_AXIS.name
+        // ) {
+        //   yAxisElement.name = chartYAxisElement.name;
+        // }
+
+        partYAxis.push(partYAxisElement);
+      });
+    } else {
+      let defaultChartYAxis: FileChartOptionsYAxisElement = {
+        scale: DEFAULT_CHART_Y_AXIS.scale as unknown as string
+      };
+
+      partYAxis = [defaultChartYAxis, defaultChartYAxis];
+    }
+
+    if (chart.series.map(s => s.yAxisIndex).filter(yi => yi > 0).length === 0) {
+      partYAxis = [partYAxis[0]];
+    }
+  } else {
+    partYAxis = undefined;
+  }
+
+  filePartTile.options.y_axis = partYAxis;
 
   if (isForDashboard === true && isDefined(tile)) {
     filePartTile.plate = {

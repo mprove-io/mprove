@@ -98,8 +98,12 @@ export class ChartViewComponent implements OnChanges {
     let eChartOptions: EChartsOption = {
       useUTC: true,
       grid: {
-        left: '100',
-        right: '50',
+        left: 100,
+        right:
+          this.chart.series.map(x => x.yAxisIndex).filter(yi => yi > 0).length >
+          0
+            ? 100
+            : 50,
         top: '10%',
         bottom: '10%'
       },
