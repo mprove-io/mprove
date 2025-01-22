@@ -9,7 +9,6 @@ import {
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 import { IsTimezone } from '~common/functions/is-timezone';
-import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
 
 export class ToBackendCreateDraftReportRequestPayload {
   @IsString()
@@ -53,8 +52,8 @@ export class ToBackendCreateDraftReportRequestPayload {
   newReportFields: common.ReportField[];
 
   @ValidateNested()
-  @Type(() => MconfigChart)
-  chart: MconfigChart;
+  @Type(() => common.MconfigChart)
+  chart: common.MconfigChart;
 }
 
 export class ToBackendCreateDraftReportRequest extends ToBackendRequest {

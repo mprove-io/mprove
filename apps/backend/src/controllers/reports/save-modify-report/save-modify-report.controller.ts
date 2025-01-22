@@ -84,7 +84,8 @@ export class SaveModifyReportController {
       timeSpec,
       timeRangeFractionBrick,
       timezone,
-      newReportFields
+      newReportFields,
+      chart
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
@@ -188,7 +189,8 @@ export class SaveModifyReportController {
       accessUsers: accessUsers,
       metrics: metrics,
       struct: currentStruct,
-      newReportFields: newReportFields
+      newReportFields: newReportFields,
+      chart: chart
     });
 
     let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {

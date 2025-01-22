@@ -44,6 +44,10 @@ export class ToBackendSaveCreateReportRequestPayload {
   @ValidateNested()
   @Type(() => common.ReportField)
   newReportFields: common.ReportField[];
+
+  @ValidateNested()
+  @Type(() => common.MconfigChart)
+  chart: common.MconfigChart;
 }
 
 export class ToBackendSaveCreateReportRequest extends ToBackendRequest {

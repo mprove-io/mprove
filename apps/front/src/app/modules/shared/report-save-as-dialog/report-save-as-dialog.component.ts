@@ -208,7 +208,8 @@ export class ReportSaveAsDialogComponent implements OnInit {
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
       timeRangeFractionBrick: uiState.timeRangeFraction.brick,
-      newReportFields: this.report.fields
+      newReportFields: this.report.fields,
+      chart: this.report.chart
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -289,7 +290,8 @@ export class ReportSaveAsDialogComponent implements OnInit {
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
       timeRangeFractionBrick: uiState.timeRangeFraction.brick,
-      newReportFields: this.report.fields
+      newReportFields: this.report.fields,
+      chart: this.report.chart
     };
 
     let apiService: ApiService = this.ref.data.apiService;

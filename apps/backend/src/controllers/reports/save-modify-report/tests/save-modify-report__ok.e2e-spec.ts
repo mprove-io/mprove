@@ -102,7 +102,8 @@ test('1', async t => {
         timeRangeFractionBrick: 'last 5 months',
         timeSpec: common.TimeSpecEnum.Months,
         timezone: 'UTC',
-        newReportFields: []
+        newReportFields: [],
+        chart: common.DEFAULT_CHART
       }
     };
 
@@ -135,7 +136,8 @@ test('1', async t => {
         timezone: 'UTC',
         timeSpec: common.TimeSpecEnum.Months,
         timeRangeFractionBrick: 'last 5 months',
-        newReportFields: []
+        newReportFields: [],
+        chart: resp1.payload.report.chart
       }
     };
 

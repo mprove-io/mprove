@@ -1,5 +1,6 @@
 import { common } from '~backend/barrels/common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
+import { toFileChartOptions } from '~common/functions/to-file-chart-options';
 
 export function makeReportFileText(item: {
   reportId: string;
@@ -10,6 +11,7 @@ export function makeReportFileText(item: {
   metrics: schemaPostgres.MetricEnt[];
   struct: schemaPostgres.StructEnt;
   newReportFields: common.ReportField[];
+  chart: common.MconfigChart;
 }) {
   let {
     reportId,
@@ -19,8 +21,14 @@ export function makeReportFileText(item: {
     accessUsers,
     metrics,
     struct,
-    newReportFields
+    newReportFields,
+    chart
   } = item;
+
+  let options = toFileChartOptions({
+    chart: chart,
+    isReport: true
+  });
 
   let fileReport: common.FileReport = {
     fileName: undefined,
@@ -140,7 +148,8 @@ export function makeReportFileText(item: {
         };
 
         return row;
-      })
+      }),
+    options: options
   };
 
   let fileReportText = common.toYaml(fileReport);
