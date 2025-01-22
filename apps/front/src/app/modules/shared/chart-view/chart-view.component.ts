@@ -241,7 +241,13 @@ export class ChartViewComponent implements OnChanges {
                 }
               };
 
-        eChartOptions.yAxis = this.chart.yAxis.map(y => {
+        let yAxis =
+          this.chart.series.map(x => x.yAxisIndex).filter(yi => yi > 0)
+            .length === 0
+            ? [this.chart.yAxis[0]]
+            : this.chart.yAxis;
+
+        eChartOptions.yAxis = yAxis.map(y => {
           (y as any).type = 'value';
           (y as any).axisLabel = {
             fontSize: 14

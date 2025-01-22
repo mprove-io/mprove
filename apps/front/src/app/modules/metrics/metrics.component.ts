@@ -388,6 +388,12 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
         this.seriesParts = [];
 
+        let yAxis =
+          this.report.chart.series.map(x => x.yAxisIndex).filter(yi => yi > 0)
+            .length === 0
+            ? [this.report.chart.yAxis[0]]
+            : this.report.chart.yAxis;
+
         this.eChartOptions = (<EChartsOption>{
           useUTC: true,
           grid: {
@@ -440,7 +446,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
                     }
                   }
           },
-          yAxis: this.report.chart.yAxis.map(y => {
+          yAxis: yAxis.map(y => {
             (y as any).type = 'value';
             (y as any).axisLabel = {
               fontSize: 14
