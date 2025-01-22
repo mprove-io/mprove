@@ -1,4 +1,19 @@
-import { FilePartTile, FileTileParameter, isUndefined } from '~common/_index';
+import {
+  ChartTypeEnum,
+  DEFAULT_CHART_SERIES_BAR,
+  DEFAULT_CHART_SERIES_LINE,
+  DEFAULT_CHART_SERIES_PIE,
+  DEFAULT_CHART_SERIES_SCATTER,
+  DEFAULT_CHART_X_AXIS,
+  DEFAULT_CHART_Y_AXIS,
+  FileChartOptionsSeriesElement,
+  FileChartOptionsXAxisElement,
+  FileChartOptionsYAxisElement,
+  FilePartTile,
+  FileTileParameter,
+  UI_CHART_TYPES,
+  isUndefined
+} from '~common/_index';
 import { constants } from '~common/barrels/constants';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { TileX } from '~common/interfaces/backend/tile-x';
@@ -132,6 +147,120 @@ export function prepareTile(item: {
     },
     plate: {}
   };
+
+  let partXAxis: FileChartOptionsXAxisElement =
+    {} as FileChartOptionsXAxisElement;
+
+  if (UI_CHART_TYPES.xAxisGroup.indexOf(chart.type) > -1) {
+    let keepXAxis = false;
+
+    if (
+      isDefined(chart.xAxis.scale) &&
+      chart.xAxis.scale !== DEFAULT_CHART_X_AXIS.scale
+    ) {
+      partXAxis.scale = chart.xAxis.scale as unknown as string;
+      keepXAxis = true;
+    }
+
+    if (keepXAxis === true) {
+      filePartTile.options.x_axis = partXAxis;
+    } else {
+      partXAxis = undefined;
+    }
+  } else {
+    partXAxis = undefined;
+  }
+
+  let partYAxis: FileChartOptionsYAxisElement[] = [];
+
+  if (UI_CHART_TYPES.yAxisGroup.indexOf(chart.type) > -1) {
+    if (isDefined(chart.yAxis)) {
+      chart.yAxis.forEach(chartYAxisElement => {
+        let partYAxisElement: FileChartOptionsYAxisElement = {
+          scale: isDefined(chartYAxisElement.scale)
+            ? (chartYAxisElement.scale as unknown as string)
+            : (DEFAULT_CHART_Y_AXIS.scale as unknown as string)
+        };
+
+        // if (
+        //   isDefined(chartYAxisElement.name) &&
+        //   chartYAxisElement.name !== DEFAULT_CHART_Y_AXIS.name
+        // ) {
+        //   yAxisElement.name = chartYAxisElement.name;
+        // }
+
+        partYAxis.push(partYAxisElement);
+      });
+    } else {
+      let defaultChartYAxis: FileChartOptionsYAxisElement = {
+        scale: DEFAULT_CHART_Y_AXIS.scale as unknown as string
+      };
+
+      partYAxis = [defaultChartYAxis, defaultChartYAxis];
+    }
+  } else {
+    partYAxis = undefined;
+  }
+
+  filePartTile.options.y_axis = partYAxis;
+
+  let partSeries: FileChartOptionsSeriesElement[] = [];
+
+  if (
+    UI_CHART_TYPES.seriesGroup.indexOf(chart.type) > -1 &&
+    isDefined(chart.series)
+  ) {
+    // console.log('chart.series');
+    // console.log(chart.series);
+
+    chart.series.forEach(chartSeriesElement => {
+      let defaultSeries =
+        chartSeriesElement.type === ChartTypeEnum.Line
+          ? DEFAULT_CHART_SERIES_LINE
+          : chartSeriesElement.type === ChartTypeEnum.Bar
+          ? DEFAULT_CHART_SERIES_BAR
+          : chartSeriesElement.type === ChartTypeEnum.Scatter
+          ? DEFAULT_CHART_SERIES_SCATTER
+          : chartSeriesElement.type === ChartTypeEnum.Pie
+          ? DEFAULT_CHART_SERIES_PIE
+          : DEFAULT_CHART_SERIES_LINE;
+
+      let partSeriesElement: FileChartOptionsSeriesElement = {
+        data_field: chartSeriesElement.dataField
+      };
+
+      let keepSeriesElement = false;
+
+      if (
+        isDefined(chartSeriesElement.type) &&
+        chartSeriesElement.type !== chart.type
+      ) {
+        partSeriesElement.type = chartSeriesElement.type;
+        keepSeriesElement = true;
+      }
+
+      if (
+        isDefined(chartSeriesElement.yAxisIndex) &&
+        chartSeriesElement.yAxisIndex !== 0
+      ) {
+        partSeriesElement.y_axis_index =
+          chartSeriesElement.yAxisIndex as unknown as string;
+        keepSeriesElement = true;
+      }
+
+      if (keepSeriesElement === true) {
+        partSeries.push(partSeriesElement);
+      }
+    });
+
+    if (partSeries.length === 0) {
+      partSeries = undefined;
+    }
+  } else {
+    partSeries = undefined;
+  }
+
+  filePartTile.options.series = partSeries;
 
   if (isForDashboard === true && isDefined(tile)) {
     filePartTile.plate = {
