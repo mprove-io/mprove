@@ -41,10 +41,7 @@ export class ChartViewComponent implements OnChanges {
     common.ChartTypeEnum.Line,
     common.ChartTypeEnum.Bar,
     common.ChartTypeEnum.Scatter,
-    common.ChartTypeEnum.Pie,
-    common.ChartTypeEnum.HeatMap,
-    common.ChartTypeEnum.TreeMap,
-    common.ChartTypeEnum.Gauge
+    common.ChartTypeEnum.Pie
   ];
 
   eChartsMultiChartTypes = [

@@ -212,10 +212,7 @@ export const CHART_TYPE_VALUES = [
   enums.ChartTypeEnum.Line,
   enums.ChartTypeEnum.Bar,
   enums.ChartTypeEnum.Scatter,
-  enums.ChartTypeEnum.Pie,
-  enums.ChartTypeEnum.HeatMap,
-  enums.ChartTypeEnum.TreeMap,
-  enums.ChartTypeEnum.Gauge
+  enums.ChartTypeEnum.Pie
 ];
 
 export const Y_FIELDS_CHART_TYPE_VALUES = [

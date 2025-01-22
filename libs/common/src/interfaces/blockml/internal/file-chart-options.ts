@@ -5,11 +5,11 @@ import { FileChartOptionsXAxisElement } from './file-chart-options-x-axis';
 import { FileChartOptionsYAxisElement } from './file-chart-options-y-axis';
 
 export interface FileChartOptions {
-  page_size?: string;
-  page_size_line_num?: number;
-
   format?: string; // boolean
   format_line_num?: number;
+
+  page_size?: string; // number
+  page_size_line_num?: number;
 
   x_axis?: FileChartOptionsXAxisElement;
   x_axis_line_num?: number;

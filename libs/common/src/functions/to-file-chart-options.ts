@@ -125,9 +125,20 @@ export function toFileChartOptions(item: {
 
   let partYAxis: FileChartOptionsYAxisElement[] = [];
 
+  let isFirstYAxisDefault = true;
+
   if (constants.UI_CHART_TYPES.yAxisGroup.indexOf(chart.type) > -1) {
     if (isDefined(chart.yAxis)) {
-      chart.yAxis.forEach(chartYAxisElement => {
+      chart.yAxis.forEach((chartYAxisElement, i) => {
+        if (i === 0) {
+          if (
+            isDefined(chartYAxisElement.scale) &&
+            chartYAxisElement.scale !== constants.DEFAULT_CHART_Y_AXIS.scale
+          ) {
+            isFirstYAxisDefault = false;
+          }
+        }
+
         let partYAxisElement: FileChartOptionsYAxisElement = {
           scale: isDefined(chartYAxisElement.scale)
             ? (chartYAxisElement.scale as unknown as string)
@@ -155,6 +166,10 @@ export function toFileChartOptions(item: {
       partYAxis = [partYAxis[0]];
     }
   } else {
+    partYAxis = undefined;
+  }
+
+  if (partYAxis?.length === 1 && isFirstYAxisDefault === true) {
     partYAxis = undefined;
   }
 

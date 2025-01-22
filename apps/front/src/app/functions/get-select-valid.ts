@@ -49,11 +49,7 @@ export function getSelectValid(item: {
 
   if (chart.type === common.ChartTypeEnum.Table) {
     //
-  } else if (
-    chart.type === common.ChartTypeEnum.Pie ||
-    chart.type === common.ChartTypeEnum.TreeMap ||
-    chart.type === common.ChartTypeEnum.Gauge
-  ) {
+  } else if (chart.type === common.ChartTypeEnum.Pie) {
     if (selectedDimensions.length === 0) {
       isSelectValid = false;
       errorMessage = 'Dimension field must be selected for this chart type';

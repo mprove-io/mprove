@@ -1,5 +1,6 @@
 import { JSONSchema7 } from 'json-schema';
 import { constants } from '~common/barrels/constants';
+import { OPTIONS_SCHEMA } from './options-schema';
 import { FILTER_SCHEMA } from './parameters/filter-schema';
 
 export const REPORT_SCHEMA: JSONSchema7 = {
@@ -95,7 +96,8 @@ export const REPORT_SCHEMA: JSONSchema7 = {
         },
         required: ['row_id', 'type']
       }
-    }
+    },
+    options: OPTIONS_SCHEMA
   },
   required: ['report', 'title', 'rows']
 };

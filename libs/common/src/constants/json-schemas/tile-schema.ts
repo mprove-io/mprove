@@ -1,10 +1,11 @@
 import { JSONSchema7 } from 'json-schema';
 import { constants } from '~common/barrels/constants';
 import { getTimezonesValues } from '~common/functions/get-timezones-values';
+import { OPTIONS_SCHEMA } from './options-schema';
 
 export const TILE_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
-  $id: 'https://docs.mprove.io/top/reference/tile',
+  $id: 'https://docs.mprove.io/top/reference/dashboard#tile',
   type: 'object',
   additionalProperties: false,
   properties: {
@@ -86,15 +87,7 @@ export const TILE_SCHEMA: JSONSchema7 = {
         }
       }
     },
-    options: {
-      type: 'object',
-      additionalProperties: false,
-      properties: {
-        format: {
-          type: 'boolean'
-        }
-      }
-    },
+    options: OPTIONS_SCHEMA,
     plate: {
       type: 'object',
       additionalProperties: false,
