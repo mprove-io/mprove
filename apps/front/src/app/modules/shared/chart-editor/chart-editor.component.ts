@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
+import { setChartSeries } from '~common/_index';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { SeriesPart } from '~front/app/interfaces/series-part';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -242,44 +243,61 @@ export class ChartEditorComponent implements OnChanges {
 
       let seriesCopy = common.makeCopy(this.chart.series);
 
-      this.chartSeriesWithField = seriesCopy.map(x => {
-        let yField = this.numbersYFields.find(y => y.id === x.dataField);
-        (x as ChartSeriesWithField).field = yField;
-        return x as ChartSeriesWithField;
-      });
+      this.chartSeriesWithField = seriesCopy
+        .map(x => {
+          let yField = this.numbersYFields.find(y => y.id === x.dataField);
+          (x as ChartSeriesWithField).field = yField;
+          return x as ChartSeriesWithField;
+        })
+        .sort((a, b) => {
+          let sortedIds = this.numbersYFields.map(x => x.id);
+          let aIndex = sortedIds.indexOf(a.dataField);
+          let bIndex = sortedIds.indexOf(b.dataField);
+
+          return aIndex > bIndex ? 1 : bIndex > aIndex ? -1 : 0;
+        });
     } else {
       // console.log('this.chart.series');
       // console.log(this.chart.series);
 
       let seriesCopy = common.makeCopy(this.chart.series);
 
-      this.chartSeriesWithField = seriesCopy.map(x => {
-        let seriesPart = this.seriesParts.find(
-          sp => sp.seriesRowId === x.dataRowId
+      this.chartSeriesWithField = seriesCopy
+        .map(x => {
+          let seriesPart = this.seriesParts.find(
+            sp => sp.seriesRowId === x.dataRowId
+          );
+          if (common.isDefined(seriesPart)) {
+            (x as ChartSeriesWithField).seriesName = seriesPart.seriesName;
+            (x as ChartSeriesWithField).seriesRowName =
+              seriesPart.seriesRowName;
+            (x as ChartSeriesWithField).isMetric = seriesPart.isMetric;
+            (x as ChartSeriesWithField).showMetricsModelName =
+              seriesPart.showMetricsModelName;
+            (x as ChartSeriesWithField).showMetricsTimeFieldName =
+              seriesPart.showMetricsTimeFieldName;
+            (x as ChartSeriesWithField).partNodeLabel =
+              seriesPart.partNodeLabel;
+            (x as ChartSeriesWithField).partFieldLabel =
+              seriesPart.partFieldLabel;
+            (x as ChartSeriesWithField).timeNodeLabel =
+              seriesPart.timeNodeLabel;
+            (x as ChartSeriesWithField).timeFieldLabel =
+              seriesPart.timeFieldLabel;
+            (x as ChartSeriesWithField).topLabel = seriesPart.topLabel;
+          }
+          return x as ChartSeriesWithField;
+        })
+        .sort((a, b) =>
+          a.dataRowId > b.dataRowId ? 1 : b.dataRowId > a.dataRowId ? -1 : 0
         );
-        if (common.isDefined(seriesPart)) {
-          (x as ChartSeriesWithField).seriesName = seriesPart.seriesName;
-          (x as ChartSeriesWithField).seriesRowName = seriesPart.seriesRowName;
-          (x as ChartSeriesWithField).isMetric = seriesPart.isMetric;
-          (x as ChartSeriesWithField).showMetricsModelName =
-            seriesPart.showMetricsModelName;
-          (x as ChartSeriesWithField).showMetricsTimeFieldName =
-            seriesPart.showMetricsTimeFieldName;
-          (x as ChartSeriesWithField).partNodeLabel = seriesPart.partNodeLabel;
-          (x as ChartSeriesWithField).partFieldLabel =
-            seriesPart.partFieldLabel;
-          (x as ChartSeriesWithField).timeNodeLabel = seriesPart.timeNodeLabel;
-          (x as ChartSeriesWithField).timeFieldLabel =
-            seriesPart.timeFieldLabel;
-          (x as ChartSeriesWithField).topLabel = seriesPart.topLabel;
-        }
-        return x as ChartSeriesWithField;
-      });
 
       // this.chartSeriesWithField = common.makeCopy(
       //   this.chart.series as ChartSeriesWithField[]
       // );
     }
+
+    // this.chartSeriesWithField
   }
 
   getIsValid() {
@@ -321,6 +339,8 @@ export class ChartEditorComponent implements OnChanges {
       let newMconfig = this.structService.makeMconfig();
 
       newMconfig.chart = Object.assign({}, newMconfig.chart, chartPart);
+
+      newMconfig = setChartSeries({ mconfig: newMconfig });
 
       if (isCheck === true) {
         let isValid = this.getIsValid();
@@ -409,26 +429,6 @@ export class ChartEditorComponent implements OnChanges {
     this.chartEditorUpdateChart({ chartPart: newChart, isCheck: true });
   }
 
-  yFieldsIsChecked(id: string) {
-    return this.chart.yFields.findIndex(x => x === id) > -1;
-  }
-
-  yFieldsOnClick(id: string) {
-    let index = this.chart.yFields.findIndex(x => x === id);
-
-    let newChart: common.MconfigChart = <common.MconfigChart>{
-      yFields:
-        index > -1
-          ? [
-              ...this.chart.yFields.slice(0, index),
-              ...this.chart.yFields.slice(index + 1)
-            ]
-          : [...this.chart.yFields, id]
-    };
-
-    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: true });
-  }
-
   xFieldChange() {
     let xField = this.xFieldForm.controls['xField'].value;
 
@@ -452,6 +452,26 @@ export class ChartEditorComponent implements OnChanges {
     }
 
     this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
+  }
+
+  yFieldsIsChecked(id: string) {
+    return this.chart.yFields.findIndex(x => x === id) > -1;
+  }
+
+  yFieldsOnClick(id: string) {
+    let index = this.chart.yFields.findIndex(x => x === id);
+
+    let newChart: common.MconfigChart = <common.MconfigChart>{
+      yFields:
+        index > -1
+          ? [
+              ...this.chart.yFields.slice(0, index),
+              ...this.chart.yFields.slice(index + 1)
+            ]
+          : [...this.chart.yFields, id]
+    };
+
+    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: true });
   }
 
   yFieldChange() {

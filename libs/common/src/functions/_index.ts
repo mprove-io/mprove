@@ -18,6 +18,7 @@ export * from './prepare-tile';
 export * from './row-id-letter-to-number';
 export * from './row-id-number-to-letter';
 export * from './set-chart-fields';
+export * from './set-chart-series';
 export * from './set-chart-title-on-select-change';
 export * from './sleep';
 export * from './sort-chart-fields-on-select-change';

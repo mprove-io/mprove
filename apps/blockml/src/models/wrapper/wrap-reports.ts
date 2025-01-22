@@ -48,7 +48,8 @@ export function wrapReports(item: {
         .filter(
           row => helper.toBooleanFromLowercaseString(row.show_chart) === true
         )
-        .map(row => row.row_id),
+        .map(row => row.row_id)
+        .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0)),
       data: undefined
     });
 
