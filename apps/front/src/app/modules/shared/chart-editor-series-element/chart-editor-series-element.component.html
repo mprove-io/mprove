@@ -129,7 +129,16 @@
       </form>
     </div>
 
-    <div class="mb-5 ml-[32px] flex flex-row items-center">
+    <div
+      *ngIf="
+        [
+          seriesTypeEnum.Line,
+          seriesTypeEnum.Bar,
+          seriesTypeEnum.Scatter
+        ].indexOf(seriesElement.type) > -1
+      "
+      class="mb-5 ml-[32px] flex flex-row items-center"
+    >
       <div
         class="text-gray1 flex h-9 w-[50px] select-none items-center text-base"
         >Y Axis</div
