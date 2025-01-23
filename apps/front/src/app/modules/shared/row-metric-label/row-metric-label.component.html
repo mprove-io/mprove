@@ -1,17 +1,17 @@
 <div *ngIf="isMetric === false" class="flex flex-row">
-  <div *ngIf="isAddPrefixRowId === true">
-    <div class="select-none truncate">
+  <div *ngIf="isAddPrefixRowId === true" class="mr-2">
+    <div class="select-nonetruncate">
       <span>({{ rowId | capitalize }})</span>
     </div>
   </div>
 
-  <div class="ml-2 flex">
+  <div class="flex">
     {{ name | capitalize }}
   </div>
 </div>
 
 <div *ngIf="isMetric === true" class="flex flex-row">
-  <div *ngIf="isAddPrefixRowId === true">
+  <div *ngIf="isAddPrefixRowId === true" class="mr-2">
     <div class="select-none truncate">
       <span>({{ rowId | capitalize }})</span>
     </div>
@@ -21,7 +21,7 @@
     class="truncate"
     *ngIf="showMetricsModelName === false && showMetricsTimeFieldName === false"
   >
-    <div class="ml-2 select-none truncate">
+    <div class="select-none truncate">
       <span>{{ partNodeLabel | capitalize }}</span>
 
       <span class="ml-2 font-semibold">{{ partFieldLabel | capitalize }}</span>
