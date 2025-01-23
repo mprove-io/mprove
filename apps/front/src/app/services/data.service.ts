@@ -770,12 +770,12 @@ export class DataService {
     } else {
       name = partLabel;
 
-      if (showMetricsModelName === true) {
-        name = `${topLabel} ${name}`;
-      }
-
       if (showMetricsTimeFieldName === true) {
         name = `${name} by ${timeLabel}`;
+      }
+
+      if (showMetricsModelName === true) {
+        name = `${name} - ${topLabel}`;
       }
     }
 
