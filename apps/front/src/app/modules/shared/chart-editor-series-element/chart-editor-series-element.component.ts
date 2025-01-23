@@ -49,11 +49,6 @@ export class ChartEditorSeriesElementComponent implements OnChanges {
       label: 'Bar',
       value: common.ChartTypeEnum.Bar,
       iconPath: 'assets/charts/bar_vertical.svg'
-    },
-    {
-      label: 'Scatter',
-      value: common.ChartTypeEnum.Scatter,
-      iconPath: 'assets/charts/scatter.svg'
     }
   ];
 
