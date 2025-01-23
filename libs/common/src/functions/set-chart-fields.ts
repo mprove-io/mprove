@@ -95,14 +95,14 @@ export function setChartFields<T extends Mconfig>(item: {
         ? selectedDimensions.filter(x => x !== xField)[0]
         : undefined;
 
-    mconfig = setChartSeries({ mconfig: mconfig });
-
     mconfig.chart = Object.assign({}, mconfig.chart, <MconfigChart>{
       xField: xField,
       yFields: yFields,
       multiField: multiField,
       sizeField: sizeField
     });
+
+    mconfig = setChartSeries({ mconfig: mconfig });
   }
 
   return mconfig;

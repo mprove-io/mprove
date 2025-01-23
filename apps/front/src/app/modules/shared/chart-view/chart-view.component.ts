@@ -302,9 +302,6 @@ export class ChartViewComponent implements OnChanges {
                 }
         };
 
-        // console.log('this.chart.series');
-        // console.log(this.chart.series);
-
         eChartOptions.series = this.chart.series
           .sort((a, b) => {
             let sortedIds = this.mconfigFields.map(x => x.id);
