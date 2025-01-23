@@ -302,7 +302,9 @@ export class ChartViewComponent implements OnChanges {
                 }
         };
 
-        eChartOptions.series = this.chart.series
+        let dataSeries: SeriesOption[] = [];
+
+        this.chart.series
           .sort((a, b) => {
             let sortedIds = this.mconfigFields.map(x => x.id);
             let aIndex = sortedIds.indexOf(a.dataField);
@@ -310,103 +312,107 @@ export class ChartViewComponent implements OnChanges {
 
             return aIndex > bIndex ? 1 : bIndex > aIndex ? -1 : 0;
           })
-          .map(chartSeriesElement => {
-            let seriesDataElement = this.seriesData.find(
+          .forEach(chartSeriesElement => {
+            let seriesDataElements = this.seriesData.filter(
               sd => sd.seriesId === chartSeriesElement.dataField
             );
 
-            let lineSeriesOption: LineSeriesOption = {
-              type: 'line',
-              yAxisIndex: chartSeriesElement.yAxisIndex,
-              symbol: 'circle',
-              symbolSize: 8,
-              lineStyle: {
-                width: 2.5
-              },
-              // areaStyle: {},
-              name: seriesDataElement?.seriesName,
-              data: seriesDataElement?.seriesPoints.map(x => ({
+            seriesDataElements.forEach(seriesDataElement => {
+              let lineSeriesOption: LineSeriesOption = {
+                type: 'line',
+                yAxisIndex: chartSeriesElement.yAxisIndex,
+                symbol: 'circle',
+                symbolSize: 8,
+                lineStyle: {
+                  width: 2.5
+                },
+                // areaStyle: {},
                 name: seriesDataElement?.seriesName,
-                value: [x.xValue, x.yValue],
-                pXValueFmt: x.xValueFmt,
-                pYValueFmt: x.yValueFmt
-              })),
-              tooltip: tooltip,
-              emphasis: {
-                disabled: true
-              }
-            };
+                data: seriesDataElement?.seriesPoints.map(x => ({
+                  name: seriesDataElement?.seriesName,
+                  value: [x.xValue, x.yValue],
+                  pXValueFmt: x.xValueFmt,
+                  pYValueFmt: x.yValueFmt
+                })),
+                tooltip: tooltip,
+                emphasis: {
+                  disabled: true
+                }
+              };
 
-            let barSeriesOption: BarSeriesOption = {
-              type: 'bar',
-              yAxisIndex: chartSeriesElement.yAxisIndex,
-              name: seriesDataElement?.seriesName,
-              data: seriesDataElement?.seriesPoints.map(x => ({
+              let barSeriesOption: BarSeriesOption = {
+                type: 'bar',
+                yAxisIndex: chartSeriesElement.yAxisIndex,
                 name: seriesDataElement?.seriesName,
-                value: [x.xValue, x.yValue],
-                pXValueFmt: x.xValueFmt,
-                pYValueFmt: x.yValueFmt
-              })),
-              tooltip: tooltip
-            };
+                data: seriesDataElement?.seriesPoints.map(x => ({
+                  name: seriesDataElement?.seriesName,
+                  value: [x.xValue, x.yValue],
+                  pXValueFmt: x.xValueFmt,
+                  pYValueFmt: x.yValueFmt
+                })),
+                tooltip: tooltip
+              };
 
-            let scatterSeriesOption: ScatterSeriesOption = {
-              type: 'scatter',
-              yAxisIndex: chartSeriesElement.yAxisIndex,
-              symbolSize: common.isDefined(this.chart.sizeField)
-                ? (data: any) => 5 + data[2] * 25
-                : 10,
-              name: seriesDataElement?.seriesName,
-              data: seriesDataElement?.seriesPoints.map(x => ({
+              let scatterSeriesOption: ScatterSeriesOption = {
+                type: 'scatter',
+                yAxisIndex: chartSeriesElement.yAxisIndex,
+                symbolSize: common.isDefined(this.chart.sizeField)
+                  ? (data: any) => 5 + data[2] * 25
+                  : 10,
                 name: seriesDataElement?.seriesName,
-                value: [x.xValue, x.yValue, x.sizeValueMod],
-                pXValueFmt: x.xValueFmt,
-                pYValueFmt: x.yValueFmt,
-                pSizeValue: x.sizeValue,
-                pSizeValueFmt: x.sizeValueFmt,
-                pSizeFieldName: x.sizeFieldName
-              })),
-              tooltip: tooltip
-            };
+                data: seriesDataElement?.seriesPoints.map(x => ({
+                  name: seriesDataElement?.seriesName,
+                  value: [x.xValue, x.yValue, x.sizeValueMod],
+                  pXValueFmt: x.xValueFmt,
+                  pYValueFmt: x.yValueFmt,
+                  pSizeValue: x.sizeValue,
+                  pSizeValueFmt: x.sizeValueFmt,
+                  pSizeFieldName: x.sizeFieldName
+                })),
+                tooltip: tooltip
+              };
 
-            let pieSeriesOption: PieSeriesOption = {
-              type: 'pie',
-              name: seriesDataElement?.seriesName,
-              data: seriesDataElement?.seriesPoints.map(x => ({
-                name: x.xValue,
-                value: x.yValue,
-                pXValueFmt: x.xValueFmt,
-                pYValueFmt: x.yValueFmt
-              })),
-              tooltip: tooltip
-            };
-
-            let baseSeriesOption: SeriesOption = {
-              type: this.chart.type as any,
-              name: seriesDataElement?.seriesName,
-              data: seriesDataElement?.seriesPoints.map(x => ({
+              let pieSeriesOption: PieSeriesOption = {
+                type: 'pie',
                 name: seriesDataElement?.seriesName,
-                value: [x.xValue, x.yValue],
-                pXValueFmt: x.xValueFmt,
-                pYValueFmt: x.yValueFmt
-              }))
-            };
+                data: seriesDataElement?.seriesPoints.map(x => ({
+                  name: x.xValue,
+                  value: x.yValue,
+                  pXValueFmt: x.xValueFmt,
+                  pYValueFmt: x.yValueFmt
+                })),
+                tooltip: tooltip
+              };
 
-            let seriesOption =
-              chartSeriesElement.type === common.ChartTypeEnum.Line
-                ? lineSeriesOption
-                : chartSeriesElement.type === common.ChartTypeEnum.Bar
-                ? barSeriesOption
-                : chartSeriesElement.type === common.ChartTypeEnum.Scatter
-                ? scatterSeriesOption
-                : chartSeriesElement.type === common.ChartTypeEnum.Pie
-                ? pieSeriesOption
-                : baseSeriesOption;
+              let baseSeriesOption: SeriesOption = {
+                type: this.chart.type as any,
+                name: seriesDataElement?.seriesName,
+                data: seriesDataElement?.seriesPoints.map(x => ({
+                  name: seriesDataElement?.seriesName,
+                  value: [x.xValue, x.yValue],
+                  pXValueFmt: x.xValueFmt,
+                  pYValueFmt: x.yValueFmt
+                }))
+              };
 
-            seriesOption.cursor = 'default';
+              let seriesOption =
+                chartSeriesElement.type === common.ChartTypeEnum.Line
+                  ? lineSeriesOption
+                  : chartSeriesElement.type === common.ChartTypeEnum.Bar
+                  ? barSeriesOption
+                  : chartSeriesElement.type === common.ChartTypeEnum.Scatter
+                  ? scatterSeriesOption
+                  : chartSeriesElement.type === common.ChartTypeEnum.Pie
+                  ? pieSeriesOption
+                  : baseSeriesOption;
 
-            return seriesOption;
+              seriesOption.cursor = 'default';
+
+              dataSeries.push(seriesOption);
+            });
           });
+
+        eChartOptions.series = dataSeries;
       }
     }
 
