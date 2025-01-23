@@ -372,7 +372,8 @@
       <div
         *ngIf="
           uiChartTypes.xAxis.scale.indexOf(chart.type) > -1 &&
-          isReport === false
+          isReport === false &&
+          xFieldResult === fieldResultEnum.Number
         "
         class="mb-5 ml-[32px] flex max-w-min cursor-pointer flex-row items-center"
         (click)="toggleXAxisScale()"

@@ -62,6 +62,7 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   chartTypeEnum = common.ChartTypeEnum;
+  fieldResultEnum = common.FieldResultEnum;
 
   uiChartTypes = common.UI_CHART_TYPES;
 
@@ -111,6 +112,8 @@ export class ChartEditorComponent implements OnChanges {
   numbersYFields: common.MconfigField[];
 
   chartSeriesWithField: ChartSeriesWithField[];
+
+  xFieldResult: common.FieldResultEnum;
 
   xFieldForm: FormGroup = this.fb.group({
     xField: [undefined]
@@ -166,6 +169,10 @@ export class ChartEditorComponent implements OnChanges {
     this.yAxisIndexList = this.chart.yAxis.map((x, i) => i);
 
     if (this.isReport === false) {
+      this.xFieldResult = this.mconfigFields.find(
+        x => x.id === this.chart.xField
+      )?.result;
+
       this.dimensionsMeasuresCalculations = this.mconfigFields.filter(
         x =>
           [
