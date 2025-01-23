@@ -376,7 +376,8 @@ export class ChartViewComponent implements OnChanges {
                 type: 'pie',
                 name: seriesDataElement?.seriesName,
                 data: seriesDataElement?.seriesPoints.map(x => ({
-                  name: x.xValue,
+                  // name: x.xValue,
+                  name: x.xValueFmt,
                   value: x.yValue,
                   pXValueFmt: x.xValueFmt,
                   pYValueFmt: x.yValueFmt
