@@ -30,6 +30,23 @@ export function checkChartOptionsYAxisParameters<T extends types.dcrType>(
         return;
       }
 
+      if (tile.options.y_axis.length > 2) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.OPTIONS_TOO_MANY_Y_AXIS_ELEMENTS,
+            message: `No more than 2 y_axis elements can be specified`,
+            lines: [
+              {
+                line: tile.options.y_axis_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
       tile.options.y_axis.forEach(yAxisElement =>
         Object.keys(yAxisElement)
           .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
