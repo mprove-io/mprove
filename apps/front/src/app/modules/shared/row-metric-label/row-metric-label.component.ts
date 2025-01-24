@@ -15,6 +15,9 @@ export class RowMetricLabelComponent {
   isAddPrefixRowId: boolean;
 
   @Input()
+  isWrap: boolean;
+
+  @Input()
   rowId: string;
 
   @Input()

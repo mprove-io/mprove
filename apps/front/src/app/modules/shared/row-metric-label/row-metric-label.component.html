@@ -1,71 +1,104 @@
-<div *ngIf="isMetric === false" class="flex flex-row">
-  <div *ngIf="isAddPrefixRowId === true" class="mr-2">
-    <div class="select-nonetruncate">
-      <span>({{ rowId | capitalize }})</span>
-    </div>
-  </div>
+<div
+  *ngIf="isMetric === false"
+  class="select-none"
+  [ngClass]="{
+    'flex-wrap': isWrap === true,
+    truncate: isWrap === false
+  }"
+>
+  <span *ngIf="isAddPrefixRowId === true" class="mr-2"
+    >({{ rowId | capitalize }})</span
+  >
 
-  <div class="flex">
+  <span>
     {{ name | capitalize }}
-  </div>
+  </span>
 </div>
 
-<div *ngIf="isMetric === true" class="flex flex-row">
-  <div *ngIf="isAddPrefixRowId === true" class="mr-2">
-    <div class="select-none truncate">
-      <span>({{ rowId | capitalize }})</span>
-    </div>
-  </div>
-
-  <div
-    class="truncate"
-    *ngIf="showMetricsModelName === false && showMetricsTimeFieldName === false"
+<div
+  *ngIf="
+    isMetric === true &&
+    showMetricsModelName === false &&
+    showMetricsTimeFieldName === false
+  "
+  class="select-none"
+  [ngClass]="{
+    'flex-wrap': isWrap === true,
+    truncate: isWrap === false
+  }"
+>
+  <span *ngIf="isAddPrefixRowId === true" class="mr-2"
+    >({{ rowId | capitalize }})</span
   >
-    <div class="select-none truncate">
-      <span>{{ partNodeLabel | capitalize }}</span>
 
-      <span class="ml-2 font-semibold">{{ partFieldLabel | capitalize }}</span>
-    </div>
-  </div>
+  <span>{{ partNodeLabel | capitalize }}</span>
 
-  <div
-    class="truncate"
-    *ngIf="showMetricsModelName === true && showMetricsTimeFieldName === true"
+  <span class="ml-2 font-semibold">{{ partFieldLabel | capitalize }}</span>
+</div>
+
+<div
+  class="select-none"
+  [ngClass]="{
+    'flex-wrap': isWrap === true,
+    truncate: isWrap === false
+  }"
+  *ngIf="
+    isMetric === true &&
+    showMetricsModelName === true &&
+    showMetricsTimeFieldName === true
+  "
+>
+  <span *ngIf="isAddPrefixRowId === true" class="mr-2"
+    >({{ rowId | capitalize }})</span
   >
-    <div class="select-none truncate">
-      <span>{{ partNodeLabel | capitalize }}</span>
 
-      <span class="ml-2 font-semibold">{{ partFieldLabel | capitalize }}</span>
+  <span>{{ partNodeLabel | capitalize }}</span>
 
-      <span class="ml-2">by {{ timeNodeLabel | capitalize }}</span>
+  <span class="ml-2 font-semibold">{{ partFieldLabel | capitalize }}</span>
 
-      <span class="ml-2">{{ timeFieldLabel | capitalize }}</span>
+  <span class="ml-2">by {{ timeNodeLabel | capitalize }}</span>
 
-      <span class="ml-2">- {{ topLabel | capitalize }}</span>
-    </div>
-  </div>
+  <span class="ml-2">{{ timeFieldLabel | capitalize }}</span>
 
-  <div
-    class="truncate"
-    *ngIf="showMetricsModelName === true && showMetricsTimeFieldName === false"
-  >
-    <span>{{ partNodeLabel | capitalize }}</span>
+  <span class="ml-2">- {{ topLabel | capitalize }}</span>
+</div>
 
-    <span class="ml-2 font-semibold">{{ partFieldLabel | capitalize }}</span>
+<div
+  class="select-none"
+  [ngClass]="{
+    'flex-wrap': isWrap === true,
+    truncate: isWrap === false
+  }"
+  *ngIf="
+    isMetric === true &&
+    showMetricsModelName === true &&
+    showMetricsTimeFieldName === false
+  "
+>
+  <span>{{ partNodeLabel | capitalize }}</span>
 
-    <span class="ml-2">- {{ topLabel | capitalize }}</span>
-  </div>
+  <span class="ml-2 font-semibold">{{ partFieldLabel | capitalize }}</span>
 
-  <div
-    class="truncate"
-    *ngIf="showMetricsModelName === false && showMetricsTimeFieldName === true"
-  >
-    <span>{{ partNodeLabel | capitalize }}</span>
+  <span class="ml-2">- {{ topLabel | capitalize }}</span>
+</div>
 
-    <span class="ml-2 font-semibold">{{ partFieldLabel | capitalize }}</span>
+<div
+  class="select-none"
+  [ngClass]="{
+    'flex-wrap': isWrap === true,
+    truncate: isWrap === false
+  }"
+  *ngIf="
+    isMetric === true &&
+    showMetricsModelName === false &&
+    showMetricsTimeFieldName === true
+  "
+>
+  <span>{{ partNodeLabel | capitalize }}</span>
 
-    <span class="ml-2">by {{ timeNodeLabel | capitalize }}</span>
+  <span class="ml-2 font-semibold">{{ partFieldLabel | capitalize }}</span>
 
-    <span class="ml-2">{{ timeFieldLabel | capitalize }}</span>
-  </div>
+  <span class="ml-2">by {{ timeNodeLabel | capitalize }}</span>
+
+  <span class="ml-2">{{ timeFieldLabel | capitalize }}</span>
 </div>

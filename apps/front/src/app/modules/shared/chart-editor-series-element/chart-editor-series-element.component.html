@@ -13,9 +13,11 @@
         <span class="ml-2">-</span>
 
         <m-row-metric-label
+          class="ml-2 mt-1 flex text-base"
           [name]="seriesElement.seriesRowName"
           [isMetric]="seriesElement.isMetric"
           [isAddPrefixRowId]="true"
+          [isWrap]="true"
           [rowId]="seriesElement.dataRowId"
           [showMetricsModelName]="seriesElement.showMetricsModelName"
           [showMetricsTimeFieldName]="seriesElement.showMetricsTimeFieldName"
@@ -24,7 +26,6 @@
           [timeNodeLabel]="seriesElement.timeNodeLabel"
           [timeFieldLabel]="seriesElement.timeFieldLabel"
           [topLabel]="seriesElement.topLabel"
-          class="ml-2 mt-1 flex text-base"
         ></m-row-metric-label>
       </div>
     </div>
