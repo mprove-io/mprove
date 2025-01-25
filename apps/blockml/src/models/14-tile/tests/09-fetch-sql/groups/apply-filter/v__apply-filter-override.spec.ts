@@ -65,7 +65,7 @@ WITH
   derived__v1__a AS (
     SELECT d1
     FROM tab1
-    WHERE (target > 50)
+    WHERE 'empty filter a.f1 applied' = 'empty filter a.f1 applied'
   ),
   derived__v1__b AS (
     SELECT d1
@@ -153,7 +153,7 @@ test('2', async t => {
   derived__v1__a AS (
     SELECT d1
     FROM tab1
-    WHERE (target > 50)
+    WHERE 'empty filter a.f1 applied' = 'empty filter a.f1 applied'
   ),
   derived__v1__b AS (
     SELECT d1

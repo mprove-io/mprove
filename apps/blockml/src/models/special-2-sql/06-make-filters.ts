@@ -41,29 +41,30 @@ export function makeFilters(item: {
 
   // prepare model and view filters defaults that is not in tile default
   // they will populate fractions
+
   let untouchedFilters: common.FilterBricksDictionary = {};
 
-  Object.keys(model.filters).forEach(modelFilter => {
-    let modelFilterName = `${constants.MF}.${modelFilter}`;
+  // Object.keys(model.filters).forEach(modelFilter => {
+  //   let modelFilterName = `${constants.MF}.${modelFilter}`;
 
-    if (common.isUndefined(filters[modelFilterName])) {
-      untouchedFilters[modelFilterName] = model.filters[modelFilter];
-    }
-  });
+  //   if (common.isUndefined(filters[modelFilterName])) {
+  //     untouchedFilters[modelFilterName] = model.filters[modelFilter];
+  //   }
+  // });
 
-  model.joinsSorted
-    .filter(x => common.isDefined(joins[x]))
-    .forEach(asName => {
-      let join = model.joins.find(j => j.as === asName);
+  // model.joinsSorted
+  //   .filter(x => common.isDefined(joins[x]))
+  //   .forEach(asName => {
+  //     let join = model.joins.find(j => j.as === asName);
 
-      Object.keys(join.view.filters).forEach(viewFilter => {
-        let viewFilterName = `${asName}.${viewFilter}`;
+  //     Object.keys(join.view.filters).forEach(viewFilter => {
+  //       let viewFilterName = `${asName}.${viewFilter}`;
 
-        if (common.isUndefined(filters[viewFilterName])) {
-          untouchedFilters[viewFilterName] = join.view.filters[viewFilter];
-        }
-      });
-    });
+  //       if (common.isUndefined(filters[viewFilterName])) {
+  //         untouchedFilters[viewFilterName] = join.view.filters[viewFilter];
+  //       }
+  //     });
+  //   });
 
   let allFilters = Object.assign({}, untouchedFilters, filters);
 

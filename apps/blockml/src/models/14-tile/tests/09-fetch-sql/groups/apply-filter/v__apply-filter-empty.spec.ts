@@ -65,7 +65,7 @@ WITH
   derived__v1__a AS (
     SELECT d1
     FROM tab1
-    WHERE ('any' = 'any')
+    WHERE 'empty filter a.f1 applied' = 'empty filter a.f1 applied'
   ),
   view__v1__a AS (
     SELECT
@@ -142,7 +142,7 @@ test('2', async t => {
   derived__v1__a AS (
     SELECT d1
     FROM tab1
-    WHERE ('any' = 'any')
+    WHERE 'empty filter a.f1 applied' = 'empty filter a.f1 applied'
   ),
   view__v1__a AS (
     SELECT

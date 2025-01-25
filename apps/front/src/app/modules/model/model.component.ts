@@ -450,7 +450,7 @@ export class ModelComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleSplit() {
+  toggleResultsAndSql() {
     if (this.resultsIsShow === false || this.sqlIsShow === false) {
       this.resultsIsShow = true;
       this.resultsIsShowTemp = true;

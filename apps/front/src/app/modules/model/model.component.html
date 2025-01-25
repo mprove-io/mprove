@@ -174,6 +174,7 @@
                 ></m-panel-title>
 
                 <button
+                  *ngIf="mconfig?.select.length > 0"
                   class="text-gray1 ml-2 w-[84px] select-none items-center py-3 text-lg focus:outline-none"
                   [ngClass]="{
                     'font-semibold':
@@ -184,11 +185,11 @@
                       !dataIsExpanded || mconfig?.select.length === 0
                   }"
                   (click)="toggleResults()"
-                  [disabled]="!dataIsExpanded || mconfig?.select.length === 0"
                   >Results</button
                 >
 
                 <button
+                  *ngIf="mconfig?.select.length > 0"
                   class="text-gray1 ml-2 w-[166px] select-none items-center py-3 text-lg focus:outline-none"
                   [ngClass]="{
                     'font-semibold':
@@ -196,12 +197,12 @@
                     'cursor-default text-gray-400':
                       !dataIsExpanded || mconfig?.select.length === 0
                   }"
-                  (click)="toggleSplit()"
-                  [disabled]="!dataIsExpanded || mconfig?.select.length === 0"
-                  >Results and SQL</button
+                  (click)="toggleResultsAndSql()"
+                  >Results + SQL</button
                 >
 
                 <button
+                  *ngIf="mconfig?.select.length > 0"
                   class="text-gray1 ml-2 w-[56px] select-none items-center py-3 text-lg focus:outline-none"
                   [ngClass]="{
                     'font-semibold':
@@ -210,7 +211,6 @@
                       !dataIsExpanded || mconfig?.select.length === 0
                   }"
                   (click)="toggleSql()"
-                  [disabled]="!dataIsExpanded || mconfig?.select.length === 0"
                   >SQL</button
                 >
 
