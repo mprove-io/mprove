@@ -4,8 +4,6 @@ table: tab1
 parameters:
 - filter: f1
   result: string
-  conditions:
-  - '-abc-' 
 
 fields:
 - dimension: dim1

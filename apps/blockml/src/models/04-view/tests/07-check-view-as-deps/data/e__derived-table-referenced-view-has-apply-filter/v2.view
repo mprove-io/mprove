@@ -7,8 +7,6 @@ derived_table: |
 parameters:
 - filter: f5
   result: string
-  conditions:
-  - '-abc-'
 
 fields:
 - dimension: dim2

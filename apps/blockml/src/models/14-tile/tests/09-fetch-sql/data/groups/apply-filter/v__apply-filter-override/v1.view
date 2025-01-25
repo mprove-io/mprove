@@ -11,8 +11,6 @@ fields:
 parameters:
 - filter: f1
   result: number  
-  conditions:
-  - '>50'  
 
 
 

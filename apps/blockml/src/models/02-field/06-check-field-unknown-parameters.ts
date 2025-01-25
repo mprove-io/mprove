@@ -213,7 +213,14 @@ export function checkFieldUnknownParameters<T extends types.vmdrType>(
                   common.ParameterEnum.Result.toString(),
                   common.ParameterEnum.SuggestModelDimension.toString(),
                   common.ParameterEnum.Conditions.toString()
-                ].indexOf(parameter) < 0
+                ].indexOf(parameter) < 0 ||
+                ([common.ParameterEnum.Conditions.toString()].indexOf(
+                  parameter
+                ) > -1 &&
+                  [
+                    common.FileExtensionEnum.Dashboard,
+                    common.FileExtensionEnum.Report
+                  ].indexOf(x.fileExt) < 0)
               ) {
                 item.errors.push(
                   new BmError({
@@ -287,8 +294,8 @@ export function checkFieldUnknownParameters<T extends types.vmdrType>(
           if (
             !Array.isArray(field[parameter as keyof common.FieldAny]) &&
             [
-              common.ParameterEnum.Conditions.toString(),
-              common.ParameterEnum.Timeframes.toString()
+              common.ParameterEnum.Timeframes.toString(),
+              common.ParameterEnum.Conditions.toString()
             ].indexOf(parameter) > -1
           ) {
             item.errors.push(

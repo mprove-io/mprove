@@ -7,8 +7,6 @@ derived_table: |
 parameters:
 - filter: f1
   result: number  
-  conditions:
-  - '>50'
 
 fields:
 - dimension: dim1

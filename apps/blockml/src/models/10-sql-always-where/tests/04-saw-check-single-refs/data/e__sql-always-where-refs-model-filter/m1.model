@@ -13,5 +13,3 @@ joins:
 parameters:
 - filter: f1
   result: string
-  conditions:
-  - '-abc-'   
