@@ -70,13 +70,17 @@ export class AppComponent implements OnInit {
           let time = constants.MIN_TIME_TO_SPIN - spinTimeAlready;
           // console.log('time:', time);
 
-          if (time > 0) {
-            setTimeout(
-              () => this.spinner.hide(constants.APP_SPINNER_NAME),
-              time
-            );
-          } else {
-            this.spinner.hide(constants.APP_SPINNER_NAME);
+          if (x.url.split('/last-selected?').length === 1) {
+            // console.log(x.url);
+
+            if (time > 0) {
+              setTimeout(
+                () => this.spinner.hide(constants.APP_SPINNER_NAME),
+                time
+              );
+            } else {
+              this.spinner.hide(constants.APP_SPINNER_NAME);
+            }
           }
 
           break;

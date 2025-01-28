@@ -694,6 +694,7 @@ export class ModelComponent implements OnInit, OnDestroy {
     let newChartType = this.chartTypeForm.controls['chartType'].value;
 
     let newMconfig = this.structService.makeMconfig();
+    newMconfig.chart.type = newChartType;
 
     let fields: common.ModelField[];
     this.modelQuery.fields$
@@ -709,8 +710,6 @@ export class ModelComponent implements OnInit, OnDestroy {
       mconfig: newMconfig,
       fields: fields
     });
-
-    newMconfig.chart.type = newChartType;
 
     newMconfig.chart.series.forEach(s => (s.type = newChartType));
 
