@@ -1,0 +1,154 @@
+api: google_analytics
+url: https://analyticsdata.googleapis.com/v1beta/properties/$ENV_GA_PROPERTY_ID_1:runReport
+# url: https://analyticsdata.googleapis.com/v1beta/properties/$PARAMETER_GA_PROPERTY_ID:runReport
+special:
+  google_credentials: $ENV_GOOGLE_SERVICE_ACCOUNT_CREDENTIALS
+method: POST
+headers:
+- key: Authorization
+  value: Bearer $GOOGLE_ACCESS_TOKEN
+- key: Content-Type
+  value: application/json
+body: |
+  let orderByElements = [];
+
+  $QUERY_ORDER_BY.forEach(x=> {
+    let orderBy;
+
+    if ($QUERY_SELECTED_DIMENSIONS.indexOf(x) > -1) {
+      orderBy = {
+        "dimension": {
+          "dimensionName": x.name
+        },
+        "desc": x.desc
+      }
+    } else if ($QUERY_SELECTED_MEASURES.indexOf(x) > -1) {
+      orderBy = {
+        "metric": {
+          "metricName": x.name
+        },
+        "desc": x.desc
+      }
+    }
+
+    orderByElements.push(orderBy);
+  });
+  
+  return {
+    dimensions: $QUERY_SELECTED_DIMENSIONS,
+    metrics: $QUERY_SELECTED_MEASURES,
+    # "dimensionFilter": {
+    #   "andGroup": {
+    #     "expressions": [
+    #       {
+    #         "filter": {
+    #           "fieldName": "country",
+    #           "stringFilter": {
+    #             "matchType": "EXACT",
+    #             "value": "United States"
+    #           }
+    #         }
+    #       }
+    #     ]
+    #   }
+    # },
+    # "metricFilter": {
+    #   "filter": {
+    #     "fieldName": "sessions",
+    #     "numericFilter": {
+    #       "operation": "GREATER_THAN",
+    #       "value": {
+    #         "int64Value": "100"
+    #       }
+    #     }
+    #   }
+    # },
+    dateRanges: [
+      {
+        startDate: $PARAMETER_START_DATE,
+        endDate: $PARAMETER_END_DATE
+      }
+    ],
+    orderBys: orderByElements,
+    limit: $QUERY_LIMIT,
+    currencyCode: USD,
+    keepEmptyRows: true,
+    returnPropertyQuota: false,
+    offset: undefined,
+    cohortSpec: undefined
+    comparisons: undefined
+  }
+response: |
+  let data = $QUERY_RESPONSE;
+  
+  let dimensionHeaders = data.dimensionHeaders.map(header => header.name);
+  let metricHeaders = data.metricHeaders.map(header => header.name);
+  
+  rData = data.rows.map(row => {
+    let newRow = {};
+    
+    row.dimensionValues.forEach((dimension, index) => {
+      let dimensionName = dimensionHeaders[index];
+      newRow[dimensionName] = dimension.value;
+    });
+    
+    row.metricValues.forEach((metric, index) => {
+      let metricName = metricHeaders[index];
+      newRow[metricName] = metric.value;
+    });
+    
+    return newRow;
+  });
+
+  return rData;
+
+parameters:
+- custom: ga_property_id
+  type: string
+  required: true
+  lock: false
+  value: $ENV_GA_PROPERTY_ID_1
+  options: 
+  - name: p1
+    value: $ENV_GA_PROPERTY_ID_1
+  - name: p2
+    value: $ENV_GA_PROPERTY_ID_2
+
+- custom: start_date
+  type: date
+  required: true
+  value: $QUERY_START_DATE
+
+- custom: end_date
+  type: date
+  required: true
+  value: $QUERY_END_DATE
+
+# - custom: date_range
+#   type: date
+#   sub_type: between
+#   required: true
+#   start: $QUERY_START_DATE
+#   end: $QUERY_END_DATE
+
+build_metrics:
+- time_group: Event time
+  units:
+  - date: d1
+  - month: d2
+  - year: d3
+
+fields:
+- dimension: d1
+
+- dimension: d2
+
+- dimension: d3
+
+- measure: m1
+  type: integer
+
+- measure: m2
+  type: float
+
+- measure: m3
