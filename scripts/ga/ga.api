@@ -39,15 +39,50 @@ body: |
     dimensions: $QUERY_SELECTED_DIMENSIONS,
     metrics: $QUERY_SELECTED_MEASURES,
 
-    "dimensionFilter": {
-      "andGroup": {
-        "expressions": [
+    dimensionFilter: {
+      andGroup: {
+        expressions: [
+          orGroup: {
+            expressions: [
+              {
+                filter: {
+                  fieldName: 'source',
+                  stringFilter: {
+                    matchType: "EXACT",
+                    value: 'google'
+                  }
+                }
+              },
+              {
+                filter: {
+                  fieldName: 'medium',
+                  stringFilter: {
+                    matchType: "EXACT",
+                    value: 'cpc'
+                  }
+                }
+              }
+            ]
+          },
           {
-            "filter": {
-              "fieldName": "country",
-              "stringFilter": {
-                "matchType": "EXACT",
-                "value": "United States"
+            notExpression: {
+              filter: {
+                fieldName: 'campaignId',
+                stringFilter: {
+                  matchType: "EXACT",
+                  value: 'spring_sale'
+                }
+              }
+            }
+          },
+          {
+            notExpression: {
+              filter: {
+                fieldName: 'campaignId',
+                stringFilter: {
+                  matchType: "EXACT",
+                  value: 'spring_sale'
+                }
               }
             }
           }
@@ -55,17 +90,17 @@ body: |
       }
     },
 
-    "metricFilter": {
-      "filter": {
-        "fieldName": "sessions",
-        "numericFilter": {
-          "operation": "GREATER_THAN",
-          "value": {
-            "int64Value": "100"
-          }
-        }
-      }
-    },
+    # "metricFilter": {
+    #   "filter": {
+    #     "fieldName": "sessions",
+    #     "numericFilter": {
+    #       "operation": "GREATER_THAN",
+    #       "value": {
+    #         "int64Value": "100"
+    #       }
+    #     }
+    #   }
+    # },
 
     dateRanges: [
       {
@@ -134,7 +169,7 @@ data_types:
   - name: equal
     value: EQUAL
     meta: 
-      type: NumericFilter
+      filter_type: NumericFilter
     controls: 
     - input: equalInput
 
@@ -142,7 +177,7 @@ data_types:
     value: LESS_THAN
     add_and_not: false
     meta: 
-      type: NumericFilter
+      filter_type: NumericFilter
     controls: 
     - input: lessThanInput
 
@@ -150,7 +185,7 @@ data_types:
     value: LESS_THAN_OR_EQUAL
     add_and_not: false
     meta: 
-      type: NumericFilter
+      filter_type: NumericFilter
     controls: 
     - input: lessThanOrEqualInput
 
@@ -158,7 +193,7 @@ data_types:
     value: GREATER_THAN
     add_and_not: false
     meta: 
-      type: NumericFilter
+      filter_type: NumericFilter
     controls: 
     - input: greaterThanInput
 
@@ -166,14 +201,14 @@ data_types:
     value: GREATER_THAN_OR_EQUAL
     add_and_not: false
     meta: 
-      type: NumericFilter
+      filter_type: NumericFilter
     controls: 
     - input: greaterThanOrEqualInput
 
   - name: between
     value: BETWEEN
     meta: 
-      type: BetweenFilter
+      filter_type: BetweenFilter
     controls:
     - input: betweenFromInput
     - input: betweenToInput
@@ -183,7 +218,7 @@ data_types:
   - name: exact
     value: EXACT
     meta: 
-      type: stringFilter
+      filter_type: stringFilter
     controls:
     - input: exactInput
     - switch: caseSensitiveSwitch
@@ -193,7 +228,7 @@ data_types:
   - name: begins with
     value: BEGINS_WITH
     meta: 
-      type: stringFilter
+      filter_type: stringFilter
     controls:
     - input: beginsWithInput
     - switch: caseSensitiveSwitch
@@ -203,7 +238,7 @@ data_types:
   - name: ends with
     value: ENDS_WITH
     meta: 
-      type: stringFilter
+      filter_type: stringFilter
     controls:
     - input: endsWithInput
     - switch: caseSensitiveSwitch
@@ -213,7 +248,7 @@ data_types:
   - name: contains
     value: CONTAINS
     meta: 
-      type: stringFilter
+      filter_type: stringFilter
     controls:
     - input: containsInput
     - switch: caseSensitiveSwitch
@@ -223,7 +258,7 @@ data_types:
   - name: full regexp
     value: FULL_REGEXP
     meta: 
-      type: stringFilter
+      filter_type: stringFilter
     controls:
     - input: fullRegexpInput
     - switch: caseSensitiveSwitch
@@ -233,7 +268,7 @@ data_types:
   - name: partial regexp
     value: PARTIAL_REGEXP
     meta: 
-      type: stringFilter
+      filter_type: stringFilter
     controls:
     - input: partialRegexpInput
     - switch: caseSensitiveSwitch
@@ -243,7 +278,7 @@ data_types:
   - name: in list
     value: IN_LIST
     meta: 
-      type: InListFilter
+      filter_type: InListFilter
     controls:
     - input: inListInput
       is_array: true
@@ -261,9 +296,11 @@ build_metrics:
 fields:
 - dimension: d1
   data_type: string
+  group: g1
 
 - dimension: d2
   data_type: string
+  group: g1
 
 - dimension: d3
   data_type: string
