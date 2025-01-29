@@ -1,6 +1,7 @@
 api: google_analytics
-url: https://analyticsdata.googleapis.com/v1beta/properties/$ENV_GA_PROPERTY_ID_1:runReport
-# url: https://analyticsdata.googleapis.com/v1beta/properties/$PARAMETER_GA_PROPERTY_ID:runReport
+url: |
+  let propertyId = $QUERY_PARAMETERS.find(x => x['filter'] === 'ga_property_id')?.gaPropertyId?.value;
+  return `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`;
 special:
   google_credentials: $ENV_GOOGLE_SERVICE_ACCOUNT_CREDENTIALS
 method: POST
@@ -37,36 +38,39 @@ body: |
   let body = {
     dimensions: $QUERY_SELECTED_DIMENSIONS,
     metrics: $QUERY_SELECTED_MEASURES,
-    # "dimensionFilter": {
-    #   "andGroup": {
-    #     "expressions": [
-    #       {
-    #         "filter": {
-    #           "fieldName": "country",
-    #           "stringFilter": {
-    #             "matchType": "EXACT",
-    #             "value": "United States"
-    #           }
-    #         }
-    #       }
-    #     ]
-    #   }
-    # },
-    # "metricFilter": {
-    #   "filter": {
-    #     "fieldName": "sessions",
-    #     "numericFilter": {
-    #       "operation": "GREATER_THAN",
-    #       "value": {
-    #         "int64Value": "100"
-    #       }
-    #     }
-    #   }
-    # },
+
+    "dimensionFilter": {
+      "andGroup": {
+        "expressions": [
+          {
+            "filter": {
+              "fieldName": "country",
+              "stringFilter": {
+                "matchType": "EXACT",
+                "value": "United States"
+              }
+            }
+          }
+        ]
+      }
+    },
+
+    "metricFilter": {
+      "filter": {
+        "fieldName": "sessions",
+        "numericFilter": {
+          "operation": "GREATER_THAN",
+          "value": {
+            "int64Value": "100"
+          }
+        }
+      }
+    },
+
     dateRanges: [
       {
-        startDate: $PARAMETER_START_DATE,
-        endDate: $PARAMETER_END_DATE
+        startDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range')?.startDate?.value,
+        endDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range')?.endDate?.value
       }
     ],
     orderBys: orderByElements,
@@ -104,144 +108,146 @@ response: |
 
   return newData;
 
-parameters:
-- custom: start_date
+initial_parameters:
+- filter: ga_property_id
   required: true
-  value: $QUERY_START_DATE # api format YYYY-MM-DD
-
-- custom: end_date
-  required: true
-  value: $QUERY_END_DATE # api format YYYY-MM-DD
-
-# - custom: date_range
-#   type: date
-#   sub_type: between
-#   required: true
-#   start: $QUERY_START_DATE
-#   end: $QUERY_END_DATE
-
-- custom: ga_property_id
-  required: true
-  # lock: false
   controls: 
   - selector: gaPropertyId
     value: $ENV_GA_PROPERTY_ID_1
     options: 
-    - name: p1
-      value: $ENV_GA_PROPERTY_ID_1
+    - value: $ENV_GA_PROPERTY_ID_1
+    - value: $ENV_GA_PROPERTY_ID_2
 
-    - name: p2
-      value: $ENV_GA_PROPERTY_ID_2
+- filter: date_range
+  required: true
+  controls:
+  - date_picker: startDate
+    name: Start Date
+    value: $QUERY_DATE_FROM
+  - date_picker: endDate
+    name: End Date
+    value: $QUERY_DATE_TO
 
 data_types:
 - data_type: number
   options:
   - name: equal
-    group: OR
     value: EQUAL
+    meta: 
+      type: NumericFilter
     controls: 
-    - input: numericFilterEqual
-
-  - name: not equal
-    group: AND_NOT
-    value: EQUAL
-    controls: 
-    - input: numericFilterEqual
+    - input: equalInput
 
   - name: less than
-    group: OR
     value: LESS_THAN
+    add_and_not: false
+    meta: 
+      type: NumericFilter
     controls: 
-    - input: numericFilterLessThan
+    - input: lessThanInput
 
   - name: less than or equal
-    group: OR
     value: LESS_THAN_OR_EQUAL
+    add_and_not: false
+    meta: 
+      type: NumericFilter
     controls: 
-    - input: numericFilterLessThanOrEqual
+    - input: lessThanOrEqualInput
 
   - name: greater than
-    group: OR
     value: GREATER_THAN
+    add_and_not: false
+    meta: 
+      type: NumericFilter
     controls: 
-    - input: numericFilterGreaterThan
+    - input: greaterThanInput
 
   - name: greater than or equal
-    group: OR
     value: GREATER_THAN_OR_EQUAL
+    add_and_not: false
+    meta: 
+      type: NumericFilter
     controls: 
-    - input: numericFilterGreaterThanOrEqual
+    - input: greaterThanOrEqualInput
 
   - name: between
-    group: OR
     value: BETWEEN
+    meta: 
+      type: BetweenFilter
     controls:
-    - input: betweenFilterFromValue
-    - input: betweenFilterToValue
+    - input: betweenFromInput
+    - input: betweenToInput
 
 - data_type: string
   options:
   - name: exact
-    group: OR
     value: EXACT
+    meta: 
+      type: stringFilter
     controls:
-    - input: stringFilterExact
-    - switch: caseSensitive
+    - input: exactInput
+    - switch: caseSensitiveSwitch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - name: begins with
-    group: OR
     value: BEGINS_WITH
+    meta: 
+      type: stringFilter
     controls:
-    - input: stringFilterBeginsWith
-    - switch: caseSensitive
+    - input: beginsWithInput
+    - switch: caseSensitiveSwitch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - name: ends with
-    group: OR
     value: ENDS_WITH
+    meta: 
+      type: stringFilter
     controls:
-    - input: stringFilterEndsWith
-    - switch: caseSensitive
+    - input: endsWithInput
+    - switch: caseSensitiveSwitch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - name: contains
-    group: OR
     value: CONTAINS
+    meta: 
+      type: stringFilter
     controls:
-    - input: stringFilterContains
-    - switch: caseSensitive
+    - input: containsInput
+    - switch: caseSensitiveSwitch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - name: full regexp
-    group: OR
     value: FULL_REGEXP
+    meta: 
+      type: stringFilter
     controls:
-    - input: stringFilterFullRegexp
-    - switch: caseSensitive
+    - input: fullRegexpInput
+    - switch: caseSensitiveSwitch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - name: partial regexp
-    group: OR
     value: PARTIAL_REGEXP
+    meta: 
+      type: stringFilter
     controls:
-    - input: stringFilterPartialRegexp
-    - switch: caseSensitive
+    - input: partialRegexpInput
+    - switch: caseSensitiveSwitch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - name: in list
-    group: OR
     value: IN_LIST
+    meta: 
+      type: InListFilter
     controls:
-    - input: inListFilterInList
+    - input: inListInput
       is_array: true
-    - switch: caseSensitive
+    - switch: caseSensitiveSwitch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
