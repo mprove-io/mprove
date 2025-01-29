@@ -1,6 +1,6 @@
 api: google_analytics
 url: |
-  let propertyId = $QUERY_PARAMETERS.find(x => x['filter'] === 'ga_property_id')?.gaPropertyId?.value;
+  let propertyId = $QUERY_PARAMETERS.find(x => x['filter'] === 'ga_property_id').gaPropertyId.value;
   return `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`;
 special:
   google_credentials: $ENV_GOOGLE_SERVICE_ACCOUNT_CREDENTIALS
@@ -18,16 +18,12 @@ body: |
 
     if ($QUERY_SELECTED_DIMENSIONS.indexOf(x) > -1) {
       orderBy = {
-        dimension: {
-          dimensionName: x.name
-        },
+        dimension: { dimensionName: x.name },
         desc: x.desc
       }
     } else if ($QUERY_SELECTED_MEASURES.indexOf(x) > -1) {
       orderBy = {
-        metric: {
-          metricName: x.name
-        },
+        metric: { metricName: x.name },
         desc: x.desc
       }
     }
@@ -37,7 +33,6 @@ body: |
   
   let dimensionFilterOrExpressions = [];
   let dimensionFilterAndNotExpressions = [];
-
   let metricFilterOrExpressions = [];
   let metricFilterAndNotExpressions = [];
 
@@ -45,14 +40,15 @@ body: |
     filter.fractions.forEach(fraction => {
       let apiFilter;
       let apiFilterType = fraction.option.meta.filter_type;
+      let option = fraction.option;
 
       if (apiFilterType === 'stringFilter') {
         apiFilter = {
           fieldName: x.fieldId,
           stringFilter: {
-            matchType: fraction.option.value,
-            value: fraction.controls.find(x => x['input'] === 'valueInput').value,
-            caseSensitive: fraction.controls.find(x => x['switch'] === 'caseSensitiveSwitch')?.value
+            matchType: option.value,
+            value: option.controls.find(x => x['input'] === 'valueInput').value,
+            caseSensitive: option.controls.find(x => x['switch'] === 'caseSensitiveSwitch').value
           }
         }
       }
@@ -61,8 +57,8 @@ body: |
         apiFilter = {
           fieldName: x.fieldId,
           inListFilter: {
-            values: fraction.controls.find(x => x['input'] === 'inListInput').values,
-            caseSensitive: fraction.controls.find(x => x['switch'] === 'caseSensitiveSwitch').value
+            values: option.controls.find(x => x['input'] === 'inListInput').values,
+            caseSensitive: option.controls.find(x => x['switch'] === 'caseSensitiveSwitch').value
           }
         }
       }
@@ -71,8 +67,8 @@ body: |
         apiFilter = {
           fieldName: x.fieldId,
           numericFilter: {
-            operation: fraction.option.value,
-            value: fraction.controls.find(x => x['input'] === 'valueInput').value
+            operation: option.value,
+            value: option.controls.find(x => x['input'] === 'valueInput').value
           }
         }
       }
@@ -81,8 +77,8 @@ body: |
         apiFilter = {
           fieldName: x.fieldId,
           betweenFilter: {
-            fromValue: fraction.controls.find(x => x['input'] === 'valueFromInput').value,
-            toValue: fraction.controls.find(x => x['input'] === 'valueToInput').value,
+            fromValue: option.controls.find(x => x['input'] === 'valueFromInput').value,
+            toValue: option.controls.find(x => x['input'] === 'valueToInput').value,
           }
         }
       } 
@@ -90,7 +86,8 @@ body: |
       if (filter.field.fieldClass === 'dimension') {
         if (fraction.group === 'OR') {
           dimensionFilterOrExpressions.push({ filter: apiFilter })
-        } else if (fraction.group === 'AND_NOT') {
+        } 
+        if (fraction.group === 'AND_NOT') {
           dimensionFilterAndNotExpressions.push({
             notExpression: {
               filter: apiFilter
@@ -102,8 +99,13 @@ body: |
       if (filter.field.fieldClass === 'measure') {
         if (fraction.group === 'OR') {
           metricFilterOrExpressions.push({ filter: apiFilter })
-        } else if (fraction.group === 'AND_NOT') {
-          metricFilterAndNotExpressions.push({ filter: apiFilter })
+        } 
+        if (fraction.group === 'AND_NOT') {
+          metricFilterAndNotExpressions.push({
+            notExpression: {
+              filter: apiFilter
+            }
+          })
         }
       }
     });
@@ -129,8 +131,8 @@ body: |
       }
     },
     dateRanges: [{
-      startDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range')?.startDate?.value,
-      endDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range')?.endDate?.value
+      startDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range').startDate.value,
+      endDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range').endDate.value
     }],
     orderBys: orderByElements,
     limit: $QUERY_LIMIT,
@@ -164,7 +166,7 @@ response: |
 
   return newData;
 
-initial_parameters:
+parameters:
 - filter: ga_property_id
   required: true
   controls: 
@@ -308,29 +310,186 @@ data_types:
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
 build_metrics:
-- time_group: Event time
+- time_group: 'Event Time'
   units:
-  - date: d1
-  - month: d2
-  - year: d3
+  - unit: years
+    dimension: year
+
+  - unit: months
+    dimension: yearMonth
+
+  - unit: days
+    dimension: date
+    
+  # - quarters:
+  # - weeks:
+  # - hours:
+  # - minutes:
+  # - timestamp:
 
 fields:
-- dimension: d1
-  data_type: string
-  group: g1
 
-- dimension: d2
-  data_type: string
-  group: g1
+# measures
 
-- dimension: d3
-  data_type: string
-
-- measure: m1
+- measure: activeUsers
+  label: 'Active users'
   data_type: number
+  description: 'The number of distinct users who visited your site or app',
+  group: 'User'
+  meta:
+    type: TYPE_INTEGER
 
-- measure: m2
+- measure: sessions
   data_type: number
+  description: 'The number of sessions that began on your site or app (event triggered: session_start)',
+  group: 'Session'
+  meta:
+    type: TYPE_INTEGER
 
-- measure: m3
+- measure: screenPageViews
   data_type: number
+  description: 'The number of app screens or web pages your users viewed. Repeated views of a single page or screen are counted. (screen_view + page_view events)',
+  group: 'Page / Screen'
+  meta:
+    type: TYPE_INTEGER
+
+# dimensions
+
+- dimension: country
+  data_type: string
+  description: 'The country from which the user activity originated',
+  group: 'Geography'
+
+- dimension: city
+  data_type: string
+  description: 'The city from which the user activity originated',
+  group: 'Geography'
+
+# Time dimensions
+
+- dimension: date
+  data_type: string
+  description: 'The date of the event, formatted as YYYYMMDD',
+  group: 'Time'
+
+- dimension: dateHour
+  label: 'Date hour (YYYYMMDDHH)'
+  data_type: string
+  description: 'The combined values of date and hour formatted as YYYYMMDDHH',
+  group: 'Time'
+
+- dimension: dateHourMinute
+  label: 'Date hour and minute'
+  data_type: string
+  description: 'The combined values of date, hour, and minute formatted as YYYYMMDDHHMM',
+  group: 'Time'
+
+- dimension: hour
+  data_type: string
+  description: 'The two-digit hour of the day that the event was logged. This dimension ranges from 0-23 and is reported in your property's timezone',
+  group: 'Time'
+
+- dimension: minute
+  data_type: string
+  description: 'The two-digit minute of the hour that the event was logged. This dimension ranges from 0-59 and is reported in your property's timezone',
+  group: 'Time'
+
+- dimension: day
+  data_type: string
+  description: 'The day of the month, a two-digit number from 01 to 31',
+  group: 'Time'
+
+- dimension: dayOfWeek
+  label: 'Day of week'
+  data_type: string
+  description: 'The integer day of the week. It returns values in the range 0 to 6 with Sunday as the first day of the week',
+  group: 'Time'
+
+- dimension: dayOfWeekName
+  label: 'Day of week name'
+  data_type: string
+  description: 'The day of the week in English. This dimension has values such as Sunday or Monday',
+  group: 'Time'
+
+- dimension: week
+  label: 'Week'
+  data_type: string
+  description: 'The week of the event, a two-digit number from 01 to 53. Each week starts on Sunday. January 1st is always in week 01. The first and last week of the year have fewer than 7 days in most years. Weeks other than the first and the last week of the year always have 7 days. For years where January 1st is a Sunday, the first week of that year and the last week of the prior year have 7 days',
+  group: 'Time'
+
+- dimension: month
+  data_type: string
+  description: 'The month of the event, a two digit integer from 01 to 12',
+  group: 'Time'
+
+- dimension: year
+  label: 'Year'
+  data_type: string
+  description: 'The four-digit year of the event. For example, 2020 or 2024',
+  group: 'Time'
+
+- dimension: yearWeek
+  label: 'Year week'
+  data_type: string
+  description: 'The combined values of year and week. Example values include 202253 or 202301',
+  group: 'Time'
+
+- dimension: yearMonth
+  label: 'Year month'
+  data_type: string
+  description: 'The combined values of year and month. Example values include 202212 or 202301',
+  group: 'Time'
+
+- dimension: isoWeek
+  label: 'ISO week of the year'
+  data_type: string
+  description: 'ISO week number, where each week starts on Monday. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 01, 02, & 53',
+  group: 'Time'
+
+- dimension: isoYear
+  label: 'ISO year'
+  data_type: string
+  description: 'The ISO year of the event. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 2022 & 2023',
+  group: 'Time'
+
+- dimension: isoYearIsoWeek
+  label: 'ISO week of ISO year'
+  data_type: string
+  description: 'The combined values of isoWeek and isoYear. Example values include 201652 & 201701',
+  group: 'Time'
+
+- dimension: nthDay
+  label: 'Nth day'
+  data_type: string
+  description: 'The number of days since the start of the date range',
+  group: 'Time'
+
+- dimension: nthWeek
+  label: 'Nth week'
+  data_type: string
+  description: 'A number representing the number of weeks since the start of a date range',
+  group: 'Time'
+
+- dimension: nthMonth
+  label: 'Nth month'
+  data_type: string
+  description: 'The number of months since the start of a date range. The starting month is 0000',
+  group: 'Time'
+
+- dimension: nthYear
+  label: 'Nth year'
+  data_type: string
+  description: 'The number of years since the start of the date range. The starting year is 0000',
+  group: 'Time'
+
+- dimension: nthHour
+  label: 'Nth hour'
+  data_type: string
+  description: 'The number of hours since the start of the date range. The starting hour is 0000',
+  group: 'Time'
+
+- dimension: nthMinute
+  label: 'Nth minute'
+  data_type: string
+  description: 'The number of minutes since the start of the date range. The starting minute is 0000',
+  group: 'Time'
