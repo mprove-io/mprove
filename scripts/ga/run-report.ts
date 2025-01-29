@@ -43,11 +43,123 @@ async function runReport() {
         metrics: [
           {
             name: 'sessions'
-          },
-          {
-            name: 'screenPageViews'
           }
-        ]
+          // ,
+          // {
+          //   name: 'screenPageViews'
+          // }
+        ],
+        dimensionFilter: {
+          // filter: {
+          //   fieldName: 'medium',
+          //   stringFilter: {
+          //     value: 'spring_sale'
+          //   }
+          // }
+          orGroup: {
+            expressions: [
+              {
+                andGroup: {
+                  expressions: [
+                    // Filter 1
+                    {
+                      filter: {
+                        fieldName: 'country',
+                        inListFilter: {
+                          values: ['United States', 'Canada']
+                        }
+                      }
+                    },
+                    // Filter 2
+                    {
+                      orGroup: {
+                        expressions: [
+                          {
+                            filter: {
+                              fieldName: 'source',
+                              stringFilter: {
+                                value: 'google'
+                              }
+                            }
+                          },
+                          {
+                            filter: {
+                              fieldName: 'medium',
+                              stringFilter: {
+                                value: 'cpc'
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    // Filter 3
+                    {
+                      notExpression: {
+                        filter: {
+                          fieldName: 'campaignId',
+                          stringFilter: {
+                            value: 'spring_sale'
+                          }
+                        }
+                      }
+                    },
+                    // Filter 4
+                    {
+                      notExpression: {
+                        andGroup: {
+                          expressions: [
+                            {
+                              filter: {
+                                fieldName: 'source',
+                                stringFilter: {
+                                  value: 'google'
+                                }
+                              }
+                            },
+                            {
+                              filter: {
+                                fieldName: 'medium',
+                                stringFilter: {
+                                  value: 'cpc'
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    // Filter 5
+                    {
+                      notExpression: {
+                        orGroup: {
+                          expressions: [
+                            {
+                              filter: {
+                                fieldName: 'source',
+                                stringFilter: {
+                                  value: 'google'
+                                }
+                              }
+                            },
+                            {
+                              filter: {
+                                fieldName: 'medium',
+                                stringFilter: {
+                                  value: 'cpc'
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
       },
       {
         headers: {

@@ -34,7 +34,7 @@ body: |
     orderByElements.push(orderBy);
   });
   
-  return {
+  let body = {
     dimensions: $QUERY_SELECTED_DIMENSIONS,
     metrics: $QUERY_SELECTED_MEASURES,
     # "dimensionFilter": {
@@ -78,13 +78,15 @@ body: |
     cohortSpec: undefined
     comparisons: undefined
   }
+
+  return body;
 response: |
   let data = $QUERY_RESPONSE;
   
   let dimensionHeaders = data.dimensionHeaders.map(header => header.name);
   let metricHeaders = data.metricHeaders.map(header => header.name);
   
-  rData = data.rows.map(row => {
+  newData = data.rows.map(row => {
     let newRow = {};
     
     row.dimensionValues.forEach((dimension, index) => {
@@ -100,29 +102,16 @@ response: |
     return newRow;
   });
 
-  return rData;
+  return newData;
 
 parameters:
-- custom: ga_property_id
-  type: string
-  required: true
-  lock: false
-  value: $ENV_GA_PROPERTY_ID_1
-  options: 
-  - name: p1
-    value: $ENV_GA_PROPERTY_ID_1
-  - name: p2
-    value: $ENV_GA_PROPERTY_ID_2
-
 - custom: start_date
-  type: date
   required: true
-  value: $QUERY_START_DATE
+  value: $QUERY_START_DATE # api format YYYY-MM-DD
 
 - custom: end_date
-  type: date
   required: true
-  value: $QUERY_END_DATE
+  value: $QUERY_END_DATE # api format YYYY-MM-DD
 
 # - custom: date_range
 #   type: date
@@ -130,6 +119,131 @@ parameters:
 #   required: true
 #   start: $QUERY_START_DATE
 #   end: $QUERY_END_DATE
+
+- custom: ga_property_id
+  required: true
+  # lock: false
+  controls: 
+  - selector: gaPropertyId
+    value: $ENV_GA_PROPERTY_ID_1
+    options: 
+    - name: p1
+      value: $ENV_GA_PROPERTY_ID_1
+
+    - name: p2
+      value: $ENV_GA_PROPERTY_ID_2
+
+data_types:
+- data_type: number
+  options:
+  - name: equal
+    group: OR
+    value: EQUAL
+    controls: 
+    - input: numericFilterEqual
+
+  - name: not equal
+    group: AND_NOT
+    value: EQUAL
+    controls: 
+    - input: numericFilterEqual
+
+  - name: less than
+    group: OR
+    value: LESS_THAN
+    controls: 
+    - input: numericFilterLessThan
+
+  - name: less than or equal
+    group: OR
+    value: LESS_THAN_OR_EQUAL
+    controls: 
+    - input: numericFilterLessThanOrEqual
+
+  - name: greater than
+    group: OR
+    value: GREATER_THAN
+    controls: 
+    - input: numericFilterGreaterThan
+
+  - name: greater than or equal
+    group: OR
+    value: GREATER_THAN_OR_EQUAL
+    controls: 
+    - input: numericFilterGreaterThanOrEqual
+
+  - name: between
+    group: OR
+    value: BETWEEN
+    controls:
+    - input: betweenFilterFromValue
+    - input: betweenFilterToValue
+
+- data_type: string
+  options:
+  - name: exact
+    group: OR
+    value: EXACT
+    controls:
+    - input: stringFilterExact
+    - switch: caseSensitive
+      label: Case Sensitive
+      value: $PROJECT_CONFIG_CASE_SENSITIVE
+
+  - name: begins with
+    group: OR
+    value: BEGINS_WITH
+    controls:
+    - input: stringFilterBeginsWith
+    - switch: caseSensitive
+      label: Case Sensitive
+      value: $PROJECT_CONFIG_CASE_SENSITIVE
+
+  - name: ends with
+    group: OR
+    value: ENDS_WITH
+    controls:
+    - input: stringFilterEndsWith
+    - switch: caseSensitive
+      label: Case Sensitive
+      value: $PROJECT_CONFIG_CASE_SENSITIVE
+
+  - name: contains
+    group: OR
+    value: CONTAINS
+    controls:
+    - input: stringFilterContains
+    - switch: caseSensitive
+      label: Case Sensitive
+      value: $PROJECT_CONFIG_CASE_SENSITIVE
+
+  - name: full regexp
+    group: OR
+    value: FULL_REGEXP
+    controls:
+    - input: stringFilterFullRegexp
+    - switch: caseSensitive
+      label: Case Sensitive
+      value: $PROJECT_CONFIG_CASE_SENSITIVE
+
+  - name: partial regexp
+    group: OR
+    value: PARTIAL_REGEXP
+    controls:
+    - input: stringFilterPartialRegexp
+    - switch: caseSensitive
+      label: Case Sensitive
+      value: $PROJECT_CONFIG_CASE_SENSITIVE
+
+  - name: in list
+    group: OR
+    value: IN_LIST
+    controls:
+    - input: inListFilterInList
+      is_array: true
+    - switch: caseSensitive
+      label: Case Sensitive
+      value: $PROJECT_CONFIG_CASE_SENSITIVE
 
 build_metrics:
 - time_group: Event time
@@ -140,15 +254,19 @@ build_metrics:
 
 fields:
 - dimension: d1
+  data_type: string
 
 - dimension: d2
+  data_type: string
 
 - dimension: d3
+  data_type: string
 
 - measure: m1
-  type: integer
+  data_type: number
 
 - measure: m2
-  type: float
+  data_type: number
 
 - measure: m3
+  data_type: number
