@@ -18,104 +18,125 @@ body: |
 
     if ($QUERY_SELECTED_DIMENSIONS.indexOf(x) > -1) {
       orderBy = {
-        "dimension": {
-          "dimensionName": x.name
+        dimension: {
+          dimensionName: x.name
         },
-        "desc": x.desc
+        desc: x.desc
       }
     } else if ($QUERY_SELECTED_MEASURES.indexOf(x) > -1) {
       orderBy = {
-        "metric": {
-          "metricName": x.name
+        metric: {
+          metricName: x.name
         },
-        "desc": x.desc
+        desc: x.desc
       }
     }
 
     orderByElements.push(orderBy);
   });
   
+  let dimensionFilterOrExpressions = [];
+  let dimensionFilterAndNotExpressions = [];
+
+  let metricFilterOrExpressions = [];
+  let metricFilterAndNotExpressions = [];
+
+  $QUERY_PARAMETERS.map(filter => {
+    filter.fractions.forEach(fraction => {
+      let apiFilter;
+      let apiFilterType = fraction.option.meta.filter_type;
+
+      if (apiFilterType === 'stringFilter') {
+        apiFilter = {
+          fieldName: x.fieldId,
+          stringFilter: {
+            matchType: fraction.option.value,
+            value: fraction.controls.find(x => x['input'] === 'valueInput').value,
+            caseSensitive: fraction.controls.find(x => x['switch'] === 'caseSensitiveSwitch')?.value
+          }
+        }
+      }
+
+      if (apiFilterType === 'inListFilter') {
+        apiFilter = {
+          fieldName: x.fieldId,
+          inListFilter: {
+            values: fraction.controls.find(x => x['input'] === 'inListInput').values,
+            caseSensitive: fraction.controls.find(x => x['switch'] === 'caseSensitiveSwitch').value
+          }
+        }
+      }
+
+      if (apiFilterType === 'numericFilter') {
+        apiFilter = {
+          fieldName: x.fieldId,
+          numericFilter: {
+            operation: fraction.option.value,
+            value: fraction.controls.find(x => x['input'] === 'valueInput').value
+          }
+        }
+      }
+
+      if (apiFilterType === 'betweenFilter') {
+        apiFilter = {
+          fieldName: x.fieldId,
+          betweenFilter: {
+            fromValue: fraction.controls.find(x => x['input'] === 'valueFromInput').value,
+            toValue: fraction.controls.find(x => x['input'] === 'valueToInput').value,
+          }
+        }
+      } 
+
+      if (filter.field.fieldClass === 'dimension') {
+        if (fraction.group === 'OR') {
+          dimensionFilterOrExpressions.push({ filter: apiFilter })
+        } else if (fraction.group === 'AND_NOT') {
+          dimensionFilterAndNotExpressions.push({
+            notExpression: {
+              filter: apiFilter
+            }
+          })
+        }
+      }
+
+      if (filter.field.fieldClass === 'measure') {
+        if (fraction.group === 'OR') {
+          metricFilterOrExpressions.push({ filter: apiFilter })
+        } else if (fraction.group === 'AND_NOT') {
+          metricFilterAndNotExpressions.push({ filter: apiFilter })
+        }
+      }
+    });
+  });
+
   let body = {
     dimensions: $QUERY_SELECTED_DIMENSIONS,
     metrics: $QUERY_SELECTED_MEASURES,
-
     dimensionFilter: {
       andGroup: {
         expressions: [
-          orGroup: {
-            expressions: [
-              {
-                filter: {
-                  fieldName: 'source',
-                  stringFilter: {
-                    matchType: "EXACT",
-                    value: 'google'
-                  }
-                }
-              },
-              {
-                filter: {
-                  fieldName: 'medium',
-                  stringFilter: {
-                    matchType: "EXACT",
-                    value: 'cpc'
-                  }
-                }
-              }
-            ]
-          },
-          {
-            notExpression: {
-              filter: {
-                fieldName: 'campaignId',
-                stringFilter: {
-                  matchType: "EXACT",
-                  value: 'spring_sale'
-                }
-              }
-            }
-          },
-          {
-            notExpression: {
-              filter: {
-                fieldName: 'campaignId',
-                stringFilter: {
-                  matchType: "EXACT",
-                  value: 'spring_sale'
-                }
-              }
-            }
-          }
+          orGroup: { expressions: dimensionFilterOrExpressions },
+          ...dimensionFilterAndNotExpressions
         ]
       }
     },
-
-    # "metricFilter": {
-    #   "filter": {
-    #     "fieldName": "sessions",
-    #     "numericFilter": {
-    #       "operation": "GREATER_THAN",
-    #       "value": {
-    #         "int64Value": "100"
-    #       }
-    #     }
-    #   }
-    # },
-
-    dateRanges: [
-      {
-        startDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range')?.startDate?.value,
-        endDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range')?.endDate?.value
+    metricFilter: {
+      andGroup: {
+        expressions: [
+          orGroup: { expressions: metricFilterOrExpressions },
+          ...metricFilterAndNotExpressions
+        ]
       }
-    ],
+    },
+    dateRanges: [{
+      startDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range')?.startDate?.value,
+      endDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range')?.endDate?.value
+    }],
     orderBys: orderByElements,
     limit: $QUERY_LIMIT,
     currencyCode: USD,
     keepEmptyRows: true,
-    returnPropertyQuota: false,
-    offset: undefined,
-    cohortSpec: undefined
-    comparisons: undefined
+    returnPropertyQuota: false
   }
 
   return body;
@@ -169,49 +190,49 @@ data_types:
   - name: equal
     value: EQUAL
     meta: 
-      filter_type: NumericFilter
+      filter_type: numericFilter
     controls: 
-    - input: equalInput
+    - input: valueInput
 
   - name: less than
     value: LESS_THAN
-    add_and_not: false
+    and_not: false
     meta: 
-      filter_type: NumericFilter
+      filter_type: numericFilter
     controls: 
-    - input: lessThanInput
+    - input: valueInput
 
   - name: less than or equal
     value: LESS_THAN_OR_EQUAL
-    add_and_not: false
+    and_not: false
     meta: 
-      filter_type: NumericFilter
+      filter_type: numericFilter
     controls: 
-    - input: lessThanOrEqualInput
+    - input: valueInput
 
   - name: greater than
     value: GREATER_THAN
-    add_and_not: false
+    and_not: false
     meta: 
-      filter_type: NumericFilter
+      filter_type: numericFilter
     controls: 
-    - input: greaterThanInput
+    - input: valueInput
 
   - name: greater than or equal
     value: GREATER_THAN_OR_EQUAL
-    add_and_not: false
+    and_not: false
     meta: 
-      filter_type: NumericFilter
+      filter_type: numericFilter
     controls: 
-    - input: greaterThanOrEqualInput
+    - input: valueInput
 
   - name: between
     value: BETWEEN
     meta: 
-      filter_type: BetweenFilter
+      filter_type: betweenFilter
     controls:
-    - input: betweenFromInput
-    - input: betweenToInput
+    - input: valueFromInput
+    - input: valueToInput
 
 - data_type: string
   options:
@@ -220,7 +241,7 @@ data_types:
     meta: 
       filter_type: stringFilter
     controls:
-    - input: exactInput
+    - input: valueInput
     - switch: caseSensitiveSwitch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
@@ -230,7 +251,7 @@ data_types:
     meta: 
       filter_type: stringFilter
     controls:
-    - input: beginsWithInput
+    - input: valueInput
     - switch: caseSensitiveSwitch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
@@ -240,7 +261,7 @@ data_types:
     meta: 
       filter_type: stringFilter
     controls:
-    - input: endsWithInput
+    - input: valueInput
     - switch: caseSensitiveSwitch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
@@ -250,7 +271,7 @@ data_types:
     meta: 
       filter_type: stringFilter
     controls:
-    - input: containsInput
+    - input: valueInput
     - switch: caseSensitiveSwitch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
@@ -260,7 +281,7 @@ data_types:
     meta: 
       filter_type: stringFilter
     controls:
-    - input: fullRegexpInput
+    - input: valueInput
     - switch: caseSensitiveSwitch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
@@ -270,7 +291,7 @@ data_types:
     meta: 
       filter_type: stringFilter
     controls:
-    - input: partialRegexpInput
+    - input: valueInput
     - switch: caseSensitiveSwitch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
@@ -278,9 +299,9 @@ data_types:
   - name: in list
     value: IN_LIST
     meta: 
-      filter_type: InListFilter
+      filter_type: inListFilter
     controls:
-    - input: inListInput
+    - input: valueInput
       is_array: true
     - switch: caseSensitiveSwitch
       label: Case Sensitive
