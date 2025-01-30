@@ -31,8 +31,71 @@ async function runReport() {
         ],
         dimensions: [
           {
-            name: 'date'
+            name: 'year' // "2025"
           },
+          {
+            name: 'yearMonth' // "202501"
+          },
+          {
+            name: 'isoYearIsoWeek' // "202504"
+          },
+          {
+            name: 'yearWeek' // "202505"
+          },
+          {
+            name: 'date' // "20250127"
+          },
+          {
+            name: 'dateHour' // "2025012722"
+          },
+          {
+            name: 'dateHourMinute' // "202501272212"
+          },
+          // {
+          //   name: 'hour' // "4"
+          // },
+          // {
+          //   name: 'minute' // "40"
+          // },
+          // {
+          //   name: 'day' // "26"
+          // },
+          // {
+          //   name: 'dayOfWeek' // "0"
+          // },
+          // {
+          //   name: 'dayOfWeekName' // "Sunday"
+          // },
+          // {
+          //   name: 'week' // "05"
+          // },
+          // {
+          //   name: 'month' // "01"
+          // },
+          // {
+          //   name: 'isoYear' // "2025"
+          // },
+          // {
+          //   name: 'isoWeek' // "04"
+          // },
+          // {
+          //   name: 'nthYear' // "0000"
+          // },
+          // {
+          //   name: 'nthMonth' // "0000"
+          // },
+          // {
+          //   name: 'nthWeek' // "0001"
+          // },
+          // {
+          //   name: 'nthDay' // "0004"
+          // },
+          // {
+          //   name: 'nthHour' // "0142"
+          // },
+          // {
+          //   name: 'nthMinute' // "8532"
+          // },
           {
             name: 'country'
           },
@@ -42,124 +105,131 @@ async function runReport() {
         ],
         metrics: [
           {
+            name: 'activeUsers'
+          },
+          {
             name: 'sessions'
+          },
+          {
+            name: 'screenPageViews'
           }
           // ,
           // {
           //   name: 'screenPageViews'
           // }
-        ],
-        dimensionFilter: {
-          // filter: {
-          //   fieldName: 'medium',
-          //   stringFilter: {
-          //     value: 'spring_sale'
-          //   }
-          // }
-          orGroup: {
-            expressions: [
-              {
-                andGroup: {
-                  expressions: [
-                    // Filter 1
-                    {
-                      filter: {
-                        fieldName: 'country',
-                        inListFilter: {
-                          values: ['United States', 'Canada']
-                        }
-                      }
-                    },
-                    // Filter 2
-                    {
-                      orGroup: {
-                        expressions: [
-                          {
-                            filter: {
-                              fieldName: 'source',
-                              stringFilter: {
-                                value: 'google'
-                              }
-                            }
-                          },
-                          {
-                            filter: {
-                              fieldName: 'medium',
-                              stringFilter: {
-                                value: 'cpc'
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    // Filter 3
-                    {
-                      notExpression: {
-                        filter: {
-                          fieldName: 'campaignId',
-                          stringFilter: {
-                            value: 'spring_sale'
-                          }
-                        }
-                      }
-                    },
-                    // Filter 4
-                    {
-                      notExpression: {
-                        andGroup: {
-                          expressions: [
-                            {
-                              filter: {
-                                fieldName: 'source',
-                                stringFilter: {
-                                  value: 'google'
-                                }
-                              }
-                            },
-                            {
-                              filter: {
-                                fieldName: 'medium',
-                                stringFilter: {
-                                  value: 'cpc'
-                                }
-                              }
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    // Filter 5
-                    {
-                      notExpression: {
-                        orGroup: {
-                          expressions: [
-                            {
-                              filter: {
-                                fieldName: 'source',
-                                stringFilter: {
-                                  value: 'google'
-                                }
-                              }
-                            },
-                            {
-                              filter: {
-                                fieldName: 'medium',
-                                stringFilter: {
-                                  value: 'cpc'
-                                }
-                              }
-                            }
-                          ]
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        }
+        ]
+        // ,
+        // dimensionFilter: {
+        //   // filter: {
+        //   //   fieldName: 'medium',
+        //   //   stringFilter: {
+        //   //     value: 'spring_sale'
+        //   //   }
+        //   // }
+        //   orGroup: {
+        //     expressions: [
+        //       {
+        //         andGroup: {
+        //           expressions: [
+        //             // Filter 1
+        //             {
+        //               filter: {
+        //                 fieldName: 'country',
+        //                 inListFilter: {
+        //                   values: ['United States', 'Canada']
+        //                 }
+        //               }
+        //             },
+        //             // Filter 2
+        //             {
+        //               orGroup: {
+        //                 expressions: [
+        //                   {
+        //                     filter: {
+        //                       fieldName: 'source',
+        //                       stringFilter: {
+        //                         value: 'google'
+        //                       }
+        //                     }
+        //                   },
+        //                   {
+        //                     filter: {
+        //                       fieldName: 'medium',
+        //                       stringFilter: {
+        //                         value: 'cpc'
+        //                       }
+        //                     }
+        //                   }
+        //                 ]
+        //               }
+        //             },
+        //             // Filter 3
+        //             {
+        //               notExpression: {
+        //                 filter: {
+        //                   fieldName: 'campaignId',
+        //                   stringFilter: {
+        //                     value: 'spring_sale'
+        //                   }
+        //                 }
+        //               }
+        //             },
+        //             // Filter 4
+        //             {
+        //               notExpression: {
+        //                 andGroup: {
+        //                   expressions: [
+        //                     {
+        //                       filter: {
+        //                         fieldName: 'source',
+        //                         stringFilter: {
+        //                           value: 'google'
+        //                         }
+        //                       }
+        //                     },
+        //                     {
+        //                       filter: {
+        //                         fieldName: 'medium',
+        //                         stringFilter: {
+        //                           value: 'cpc'
+        //                         }
+        //                       }
+        //                     }
+        //                   ]
+        //                 }
+        //               }
+        //             },
+        //             // Filter 5
+        //             {
+        //               notExpression: {
+        //                 orGroup: {
+        //                   expressions: [
+        //                     {
+        //                       filter: {
+        //                         fieldName: 'source',
+        //                         stringFilter: {
+        //                           value: 'google'
+        //                         }
+        //                       }
+        //                     },
+        //                     {
+        //                       filter: {
+        //                         fieldName: 'medium',
+        //                         stringFilter: {
+        //                           value: 'cpc'
+        //                         }
+        //                       }
+        //                     }
+        //                   ]
+        //                 }
+        //               }
+        //             }
+        //           ]
+        //         }
+        //       }
+        //     ]
+        //   }
+        // }
       },
       {
         headers: {

@@ -191,6 +191,8 @@ data_types:
   options:
   - name: equal
     value: EQUAL
+    or: true
+    and_not: true
     meta: 
       filter_type: numericFilter
     controls: 
@@ -198,6 +200,7 @@ data_types:
 
   - name: less than
     value: LESS_THAN
+    or: true
     and_not: false
     meta: 
       filter_type: numericFilter
@@ -311,21 +314,70 @@ data_types:
 
 build_metrics:
 - time_group: 'Event Time'
-  units:
+  details:
+  # - unit: quarters
+  # - unit: timestamp
   - unit: years
-    dimension: year
-
-  - unit: months
-    dimension: yearMonth
-
+    dimension: year # "2025"
+    utc_ms: |
+      let date = new Date(`${value}-01-01T00:00:00Z`);
+      return date.getTime();
+  - unit: months 
+    dimension: yearMonth # "202501"
+    utc_ms: |
+      let date = new Date(`${value.slice(0, 4)}-${value.slice(4, 6)}-01T00:00:00Z`);
+      return date.getTime();
+  - unit: weeksMonday
+    dimension: isoYearIsoWeek # "202504"
+    utc_ms: |
+      // Parse ISO year and week (e.g., "202504" → year=2025, week=4)
+      const year = parseInt(value.slice(0, 4), 10);
+      const week = parseInt(value.slice(4, 6), 10);
+      
+      // Create a date in week 1 of the ISO year (January 4th is always in week 1)
+      const date = new Date(Date.UTC(year, 0, 4));
+      
+      // Get the Monday of week 1
+      const day = date.getUTCDay(); // 0 (Sunday) to 6 (Saturday)
+      date.setUTCDate(date.getUTCDate() - (day === 0 ? 6 : day - 1));
+      
+      // Add weeks to reach the target week
+      date.setUTCDate(date.getUTCDate() + (week - 1) * 7);
+      
+      return date.getTime();
+  - unit: weeksSunday
+    dimension: yearWeek # "202505"
+    utc_ms: |
+      // Parse year and week (e.g., "202505" → year=2025, week=5)
+      const year = parseInt(value.slice(0, 4), 10);
+      const week = parseInt(value.slice(4, 6), 10);
+      
+      // Find the first Sunday of the year
+      const firstDay = new Date(Date.UTC(year, 0, 1));
+      const day = firstDay.getUTCDay(); // 0 (Sunday) to 6 (Saturday)
+      const firstSunday = new Date(firstDay);
+      firstSunday.setUTCDate(firstDay.getUTCDate() - day);
+      
+      // Add weeks to reach the target week
+      const date = new Date(firstSunday);
+      date.setUTCDate(firstSunday.getUTCDate() + (week - 1) * 7);
+      
+      return date.getTime();
   - unit: days
-    dimension: date
-    
-  # - quarters:
-  # - weeks:
-  # - hours:
-  # - minutes:
-  # - timestamp:
+    dimension: date # "20250127"
+    utc_ms: |
+      let date = new Date(`${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}T00:00:00Z`);
+      return date.getTime();
+  - unit: hours
+    dimension: dateHour # "2025012722"
+    utc_ms: |
+      let date = new Date(`${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}T${value.slice(8, 10)}:00:00Z`);
+      return date.getTime();
+  - unit: minutes
+    dimension: dateHourMinute # "202501272212"
+    utc_ms: |
+      let date = new Date(`${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}T${value.slice(8, 10)}:${value.slice(10, 12)}:00Z`);
+      return date.getTime();
 
 fields:
 
@@ -367,128 +419,128 @@ fields:
 
 # Time dimensions
 
-- dimension: date
-  data_type: string
-  description: 'The date of the event, formatted as YYYYMMDD',
-  group: 'Time'
-
-- dimension: dateHour
-  label: 'Date hour (YYYYMMDDHH)'
-  data_type: string
-  description: 'The combined values of date and hour formatted as YYYYMMDDHH',
-  group: 'Time'
-
-- dimension: dateHourMinute
-  label: 'Date hour and minute'
-  data_type: string
-  description: 'The combined values of date, hour, and minute formatted as YYYYMMDDHHMM',
-  group: 'Time'
-
-- dimension: hour
-  data_type: string
-  description: 'The two-digit hour of the day that the event was logged. This dimension ranges from 0-23 and is reported in your property's timezone',
-  group: 'Time'
-
-- dimension: minute
-  data_type: string
-  description: 'The two-digit minute of the hour that the event was logged. This dimension ranges from 0-59 and is reported in your property's timezone',
-  group: 'Time'
-
-- dimension: day
-  data_type: string
-  description: 'The day of the month, a two-digit number from 01 to 31',
-  group: 'Time'
-
-- dimension: dayOfWeek
-  label: 'Day of week'
-  data_type: string
-  description: 'The integer day of the week. It returns values in the range 0 to 6 with Sunday as the first day of the week',
-  group: 'Time'
-
-- dimension: dayOfWeekName
-  label: 'Day of week name'
-  data_type: string
-  description: 'The day of the week in English. This dimension has values such as Sunday or Monday',
-  group: 'Time'
-
-- dimension: week
-  label: 'Week'
-  data_type: string
-  description: 'The week of the event, a two-digit number from 01 to 53. Each week starts on Sunday. January 1st is always in week 01. The first and last week of the year have fewer than 7 days in most years. Weeks other than the first and the last week of the year always have 7 days. For years where January 1st is a Sunday, the first week of that year and the last week of the prior year have 7 days',
-  group: 'Time'
-
-- dimension: month
-  data_type: string
-  description: 'The month of the event, a two digit integer from 01 to 12',
-  group: 'Time'
-
-- dimension: year
+- dimension: year # "2025"
   label: 'Year'
   data_type: string
   description: 'The four-digit year of the event. For example, 2020 or 2024',
   group: 'Time'
 
-- dimension: yearWeek
-  label: 'Year week'
-  data_type: string
-  description: 'The combined values of year and week. Example values include 202253 or 202301',
-  group: 'Time'
-
-- dimension: yearMonth
+- dimension: yearMonth # "202501"
   label: 'Year month'
   data_type: string
   description: 'The combined values of year and month. Example values include 202212 or 202301',
   group: 'Time'
 
-- dimension: isoWeek
-  label: 'ISO week of the year'
-  data_type: string
-  description: 'ISO week number, where each week starts on Monday. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 01, 02, & 53',
-  group: 'Time'
-
-- dimension: isoYear
-  label: 'ISO year'
-  data_type: string
-  description: 'The ISO year of the event. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 2022 & 2023',
-  group: 'Time'
-
-- dimension: isoYearIsoWeek
+- dimension: isoYearIsoWeek # "202504"
   label: 'ISO week of ISO year'
   data_type: string
   description: 'The combined values of isoWeek and isoYear. Example values include 201652 & 201701',
   group: 'Time'
 
-- dimension: nthDay
-  label: 'Nth day'
+- dimension: yearWeek # "202505"
+  label: 'Year week'
   data_type: string
-  description: 'The number of days since the start of the date range',
+  description: 'The combined values of year and week. Example values include 202253 or 202301',
   group: 'Time'
 
-- dimension: nthWeek
-  label: 'Nth week'
+- dimension: date # "20250127"
   data_type: string
-  description: 'A number representing the number of weeks since the start of a date range',
+  description: 'The date of the event, formatted as YYYYMMDD',
   group: 'Time'
 
-- dimension: nthMonth
-  label: 'Nth month'
+- dimension: dateHour # "2025012722"
+  label: 'Date hour (YYYYMMDDHH)'
   data_type: string
-  description: 'The number of months since the start of a date range. The starting month is 0000',
+  description: 'The combined values of date and hour formatted as YYYYMMDDHH',
   group: 'Time'
 
-- dimension: nthYear
+- dimension: dateHourMinute # "202501272212"
+  label: 'Date hour and minute'
+  data_type: string
+  description: 'The combined values of date, hour, and minute formatted as YYYYMMDDHHMM',
+  group: 'Time'
+
+- dimension: hour # "4"
+  data_type: string
+  description: 'The two-digit hour of the day that the event was logged. This dimension ranges from 0-23 and is reported in your property's timezone',
+  group: 'Time'
+
+- dimension: minute # "40"
+  data_type: string
+  description: 'The two-digit minute of the hour that the event was logged. This dimension ranges from 0-59 and is reported in your property's timezone',
+  group: 'Time'
+
+- dimension: day # "26"
+  data_type: string
+  description: 'The day of the month, a two-digit number from 01 to 31',
+  group: 'Time'
+
+- dimension: dayOfWeek # "0"
+  label: 'Day of week'
+  data_type: string
+  description: 'The integer day of the week. It returns values in the range 0 to 6 with Sunday as the first day of the week',
+  group: 'Time'
+
+- dimension: dayOfWeekName # "Sunday"
+  label: 'Day of week name'
+  data_type: string
+  description: 'The day of the week in English. This dimension has values such as Sunday or Monday',
+  group: 'Time'
+
+- dimension: week # "05"
+  label: 'Week'
+  data_type: string
+  description: 'The week of the event, a two-digit number from 01 to 53. Each week starts on Sunday. January 1st is always in week 01. The first and last week of the year have fewer than 7 days in most years. Weeks other than the first and the last week of the year always have 7 days. For years where January 1st is a Sunday, the first week of that year and the last week of the prior year have 7 days',
+  group: 'Time'
+
+- dimension: month # "01"
+  data_type: string
+  description: 'The month of the event, a two digit integer from 01 to 12',
+  group: 'Time'
+
+- dimension: isoYear # "2025"
+  label: 'ISO year'
+  data_type: string
+  description: 'The ISO year of the event. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 2022 & 2023',
+  group: 'Time'
+
+- dimension: isoWeek # "04"
+  label: 'ISO week of the year'
+  data_type: string
+  description: 'ISO week number, where each week starts on Monday. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 01, 02, & 53',
+  group: 'Time'
+
+- dimension: nthYear # "0000"
   label: 'Nth year'
   data_type: string
   description: 'The number of years since the start of the date range. The starting year is 0000',
   group: 'Time'
 
-- dimension: nthHour
+- dimension: nthMonth # "0000"
+  label: 'Nth month'
+  data_type: string
+  description: 'The number of months since the start of a date range. The starting month is 0000',
+  group: 'Time'
+
+- dimension: nthWeek # "0001"
+  label: 'Nth week'
+  data_type: string
+  description: 'A number representing the number of weeks since the start of a date range',
+  group: 'Time'
+
+- dimension: nthDay # "0004"
+  label: 'Nth day'
+  data_type: string
+  description: 'The number of days since the start of the date range',
+  group: 'Time'
+
+- dimension: nthHour # "0142"
   label: 'Nth hour'
   data_type: string
   description: 'The number of hours since the start of the date range. The starting hour is 0000',
   group: 'Time'
 
-- dimension: nthMinute
+- dimension: nthMinute # "8532"
   label: 'Nth minute'
   data_type: string
   description: 'The number of minutes since the start of the date range. The starting minute is 0000',
