@@ -113,15 +113,44 @@ body: |
     });
   });
 
-  let cohortSpec = {};
+  let isCohortsEnabled = $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').cohortsSwitch.value;
+
+  let dateRanges;
+  let cohortSpec;
+
+  if (isCohortsEnabled === false) {
+    dateRanges = [{
+      startDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range').startDate.value,
+      endDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range').endDate.value
+    }],
+  } else {
+    let cohorts = [];
+
+    $QUERY_PARAMETERS.find(x => x['filter'] === 'cohorts_config').fractions.forEach(fraction => {
+      let cohort = {
+        dimension: "firstSessionDate",
+        dateRange: {
+          startDate: fraction.controls.startDate.value,
+          endDate: fraction.controls.endDate.value
+        }
+      }
+      cohorts.push(cohort);
+    });
+
+    cohortSpec = {
+      cohorts: cohorts,
+      cohortsRange: {
+        granularity: $QUERY_PARAMETERS.find(x => x['filter'] === 'granularity').granularity.value
+        startOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'cohorts_range').startOffset.value,
+        endOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'cohorts_range').endOffset.value,
+      }
+    };
+  }
 
   let body = {
     dimensions: $QUERY_SELECTED_DIMENSIONS,
     metrics: $QUERY_SELECTED_MEASURES,
-    dateRanges: [{
-      startDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range').startDate.value,
-      endDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range').endDate.value
-    }],
+    dateRanges: dateRanges,
     dimensionFilter: {
       andGroup: {
         expressions: [
@@ -175,7 +204,7 @@ response: |
   return newData;
 
 parameters:
-- filter: ga_property_id
+- filter: top_config
   required: true
   max_fractions: 1
   controls: 
@@ -185,9 +214,15 @@ parameters:
     options: 
     - value: $ENV_GA_PROPERTY_ID_1
     - value: $ENV_GA_PROPERTY_ID_2
+  - switch: cohortsSwitch
+    required: true
+    label: 'Cohorts Mode'
+    value: false
 
 - filter: date_range
+  remove_if_parameter_true: top_config.fractions[0].cohortsSwitch.value
   required: true
+  min_fractions: 1
   max_fractions: 1
   controls:
   - date_picker: startDate
@@ -196,6 +231,51 @@ parameters:
   - date_picker: endDate
     name: End Date
     value: $QUERY_DATE_TO
+
+- filter: cohorts_range
+  remove_if_parameter_false: top_config.fractions[0].cohortsSwitch.value
+  required: true
+  min_fractions: 1
+  max_fractions: 1
+  controls:
+  - selector: granularity
+    label: Granularity
+    value: DAILY
+    required: true
+    options: 
+    - value: DAILY
+    - value: WEEKLY
+    - value: MONTHLY
+  - input: startOffset
+    label: Start Offset # From
+    value: 0
+    required: true
+  - input: endOffset
+    label: End Offset # To
+    value: 5
+    required: true
+
+- filter: cohorts_config
+  remove_if_parameter_false: top_config.fractions[0].cohortsSwitch.value
+  required: true
+  min_fractions: 1
+  controls:
+  - date_picker: startDate
+    name: Start Date
+    value: $TODAY
+    required: true
+  - date_picker: endDate
+    name: End Date
+    value: $TODAY
+    required: true
+  # - input: valueInput
+  #   label: name
+  #   value: changedCohortFieldName
+  # - input: valueInput
+  #   label: dimension
+  #   value: firstSessionDate
+  #   required: true
+  #   lock: true
 
 data_types:
 - data_type: number
@@ -323,43 +403,6 @@ data_types:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
-- data_type: cohort
-  required_if_field_selected: true
-  fractions_can_be_empty_if_field_selected: false
-  controls:
-  - date_picker: startDate
-    name: Start Date
-    value: $TODAY
-    required: true
-  - date_picker: endDate
-    name: End Date
-    value: $TODAY
-    required: true
-  - selector: granularity
-    label: Granularity
-    value: DAILY
-    required: true
-    options: 
-    - value: DAILY
-    - value: WEEKLY
-    - value: MONTHLY
-  - input: startOffset
-    label: Start Offset # From
-    value: 0
-    required: true
-  - input: endOffset
-    label: End Offset # To
-    value: 5
-    required: true
-  # - input: valueInput
-  #   label: name
-  #   value: changedCohortFieldName
-  # - input: valueInput
-  #   label: dimension
-  #   value: firstSessionDate
-  #   required: true
-  #   lock: true
-
 build_metrics:
 - time_group: 'Event Time'
   details:
@@ -427,6 +470,16 @@ build_metrics:
       let date = new Date(`${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}T${value.slice(8, 10)}:${value.slice(10, 12)}:00Z`);
       return date.getTime();
 
+field_groups:
+- group: users
+- group: sessions
+- group: page_screens
+  label: Page Screens
+- group: geo
+- group: cohorts
+  remove_if_parameter_false: top_config.fractions[0].cohortsSwitch.value
+- group: time
+
 fields:
 
 # Measures
@@ -435,21 +488,21 @@ fields:
   label: 'Active users'
   data_type: number
   description: 'The number of distinct users who visited your site or app',
-  group: 'User'
+  group: users
   meta:
     type: TYPE_INTEGER
 
 - measure: sessions
   data_type: number
   description: 'The number of sessions that began on your site or app (event triggered: session_start)',
-  group: 'Session'
+  group: sessions
   meta:
     type: TYPE_INTEGER
 
 - measure: screenPageViews
   data_type: number
   description: 'The number of app screens or web pages your users viewed. Repeated views of a single page or screen are counted. (screen_view + page_view events)',
-  group: 'Page / Screen'
+  group: page_screens
   meta:
     type: TYPE_INTEGER
 
@@ -459,7 +512,7 @@ fields:
   label: 'Cohort active users'
   data_type: number
   description: 'The number of users in the cohort who are active in the time window corresponding to the cohort nth day/week/month. For example in the row where cohortNthWeek = 0001, this metric is the number of users (in the cohort) who are active in week 1',
-  group: 'Cohort'
+  group: cohorts
   meta:
     type: TYPE_INTEGER
 
@@ -467,7 +520,7 @@ fields:
   label: 'Cohort total users'
   data_type: number
   description: 'The total number of users in the cohort. This metric is the same value in every row of the report for each cohort. Because cohorts are defined by a shared acquisition date, cohortTotalUsers is the same as cohortActiveUsers for the cohort's selection date range. For report rows later than the cohort's selection range, it is typical for cohortActiveUsers to be smaller than cohortTotalUsers. This difference represents users from the cohort that were not active for the later date. cohortTotalUsers is commonly used in the metric expression cohortActiveUsers/cohortTotalUsers to compute a user retention fraction for the cohort. The relationship between activeUsers and totalUsers is not equivalent to the relationship between cohortActiveUsers and cohortTotalUsers',
-  group: 'Cohort'
+  group: cohorts
   meta:
     type: TYPE_INTEGER    
 
@@ -476,43 +529,45 @@ fields:
 - dimension: country
   data_type: string
   description: 'The country from which the user activity originated',
-  group: 'Geography'
+  group: geo
 
 - dimension: city
   data_type: string
   description: 'The city from which the user activity originated',
-  group: 'Geography'
+  group: geo
 
 ## Cohort dimensions
 
 - dimension: cohort
-  data_type: cohort
+  data_type: string
   description: 'The cohort's name in the request. A cohort is a set of users who started using your website or app in any consecutive group of days. If a cohort name is not specified in the request, cohorts are named by their zero based index such as cohort_0 and cohort_1',
-  group: 'Cohort'
+  group: cohorts
+  required: true
+  remove_if_parameter_false: top_config.fractions[0].cohortsSwitch.value
 
 - dimension: cohortNthDay
   label: Daily cohort
   data_type: string
   description: 'Day offset relative to the firstSessionDate for the users in the cohort. For example, if a cohort is selected with the start and end date of 2020-03-01, then for the date 2020-03-02, cohortNthDay will be 0001',
-  group: 'Cohort'
+  group: cohorts
 
 - dimension: cohortNthWeek
   label: Weekly cohort
   data_type: string
   description: 'Week offset relative to the firstSessionDate for the users in the cohort. Weeks start on Sunday and end on Saturday. For example, if a cohort is selected with the start and end date in the range 2020-11-08 to 2020-11-14, then for the dates in the range 2020-11-15 to 2020-11-21, cohortNthWeek will be 0001',
-  group: 'Cohort'
+  group: cohorts
 
 - dimension: cohortNthMonth
   label: Monthly cohort
   data_type: string
   description: 'Month offset relative to the firstSessionDate for the users in the cohort. Month boundaries align with calendar month boundaries. For example, if a cohort is selected with the start and end date in March 2020, then for any date in April 2020, cohortNthMonth will be 0001',
-  group: 'Cohort'
+  group: cohorts
 
 - dimension: cohortNthWeek
   label: 'Year'
   data_type: string
   description: 'The four-digit year of the event. For example, 2020 or 2024',
-  group: 'Time'
+  group: time
 
 # Time dimensions
 
@@ -520,125 +575,125 @@ fields:
   label: 'Year'
   data_type: string
   description: 'The four-digit year of the event. For example, 2020 or 2024',
-  group: 'Time'
+  group: time
 
 - dimension: yearMonth # "202501"
   label: 'Year month'
   data_type: string
   description: 'The combined values of year and month. Example values include 202212 or 202301',
-  group: 'Time'
+  group: time
 
 - dimension: isoYearIsoWeek # "202504"
   label: 'ISO week of ISO year'
   data_type: string
   description: 'The combined values of isoWeek and isoYear. Example values include 201652 & 201701',
-  group: 'Time'
+  group: time
 
 - dimension: yearWeek # "202505"
   label: 'Year week'
   data_type: string
   description: 'The combined values of year and week. Example values include 202253 or 202301',
-  group: 'Time'
+  group: time
 
 - dimension: date # "20250127"
   data_type: string
   description: 'The date of the event, formatted as YYYYMMDD',
-  group: 'Time'
+  group: time
 
 - dimension: dateHour # "2025012722"
   label: 'Date hour (YYYYMMDDHH)'
   data_type: string
   description: 'The combined values of date and hour formatted as YYYYMMDDHH',
-  group: 'Time'
+  group: time
 
 - dimension: dateHourMinute # "202501272212"
   label: 'Date hour and minute'
   data_type: string
   description: 'The combined values of date, hour, and minute formatted as YYYYMMDDHHMM',
-  group: 'Time'
+  group: time
 
 - dimension: hour # "4"
   data_type: string
   description: 'The two-digit hour of the day that the event was logged. This dimension ranges from 0-23 and is reported in your property's timezone',
-  group: 'Time'
+  group: time
 
 - dimension: minute # "40"
   data_type: string
   description: 'The two-digit minute of the hour that the event was logged. This dimension ranges from 0-59 and is reported in your property's timezone',
-  group: 'Time'
+  group: time
 
 - dimension: day # "26"
   data_type: string
   description: 'The day of the month, a two-digit number from 01 to 31',
-  group: 'Time'
+  group: time
 
 - dimension: dayOfWeek # "0"
   label: 'Day of week'
   data_type: string
   description: 'The integer day of the week. It returns values in the range 0 to 6 with Sunday as the first day of the week',
-  group: 'Time'
+  group: time
 
 - dimension: dayOfWeekName # "Sunday"
   label: 'Day of week name'
   data_type: string
   description: 'The day of the week in English. This dimension has values such as Sunday or Monday',
-  group: 'Time'
+  group: time
 
 - dimension: week # "05"
   label: 'Week'
   data_type: string
   description: 'The week of the event, a two-digit number from 01 to 53. Each week starts on Sunday. January 1st is always in week 01. The first and last week of the year have fewer than 7 days in most years. Weeks other than the first and the last week of the year always have 7 days. For years where January 1st is a Sunday, the first week of that year and the last week of the prior year have 7 days',
-  group: 'Time'
+  group: time
 
 - dimension: month # "01"
   data_type: string
   description: 'The month of the event, a two digit integer from 01 to 12',
-  group: 'Time'
+  group: time
 
 - dimension: isoYear # "2025"
   label: 'ISO year'
   data_type: string
   description: 'The ISO year of the event. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 2022 & 2023',
-  group: 'Time'
+  group: time
 
 - dimension: isoWeek # "04"
   label: 'ISO week of the year'
   data_type: string
   description: 'ISO week number, where each week starts on Monday. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 01, 02, & 53',
-  group: 'Time'
+  group: time
 
 - dimension: nthYear # "0000"
   label: 'Nth year'
   data_type: string
   description: 'The number of years since the start of the date range. The starting year is 0000',
-  group: 'Time'
+  group: time
 
 - dimension: nthMonth # "0000"
   label: 'Nth month'
   data_type: string
   description: 'The number of months since the start of a date range. The starting month is 0000',
-  group: 'Time'
+  group: time
 
 - dimension: nthWeek # "0001"
   label: 'Nth week'
   data_type: string
   description: 'A number representing the number of weeks since the start of a date range',
-  group: 'Time'
+  group: time
 
 - dimension: nthDay # "0004"
   label: 'Nth day'
   data_type: string
   description: 'The number of days since the start of the date range',
-  group: 'Time'
+  group: time
 
 - dimension: nthHour # "0142"
   label: 'Nth hour'
   data_type: string
   description: 'The number of hours since the start of the date range. The starting hour is 0000',
-  group: 'Time'
+  group: time
 
 - dimension: nthMinute # "8532"
   label: 'Nth minute'
   data_type: string
   description: 'The number of minutes since the start of the date range. The starting minute is 0000',
-  group: 'Time'
+  group: time

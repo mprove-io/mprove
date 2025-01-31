@@ -20,6 +20,7 @@ async function runReport() {
     const accessToken = await runReportGetAccessToken();
 
     const propertyId = process.env.PROPERTY_ID;
+
     const response = await axios.post(
       `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
       {
@@ -117,119 +118,55 @@ async function runReport() {
           // {
           //   name: 'screenPageViews'
           // }
-        ]
-        // ,
-        // dimensionFilter: {
-        //   // filter: {
-        //   //   fieldName: 'medium',
-        //   //   stringFilter: {
-        //   //     value: 'spring_sale'
-        //   //   }
-        //   // }
-        //   orGroup: {
-        //     expressions: [
-        //       {
-        //         andGroup: {
-        //           expressions: [
-        //             // Filter 1
-        //             {
-        //               filter: {
-        //                 fieldName: 'country',
-        //                 inListFilter: {
-        //                   values: ['United States', 'Canada']
-        //                 }
-        //               }
-        //             },
-        //             // Filter 2
-        //             {
-        //               orGroup: {
-        //                 expressions: [
-        //                   {
-        //                     filter: {
-        //                       fieldName: 'source',
-        //                       stringFilter: {
-        //                         value: 'google'
-        //                       }
-        //                     }
-        //                   },
-        //                   {
-        //                     filter: {
-        //                       fieldName: 'medium',
-        //                       stringFilter: {
-        //                         value: 'cpc'
-        //                       }
-        //                     }
-        //                   }
-        //                 ]
-        //               }
-        //             },
-        //             // Filter 3
-        //             {
-        //               notExpression: {
-        //                 filter: {
-        //                   fieldName: 'campaignId',
-        //                   stringFilter: {
-        //                     value: 'spring_sale'
-        //                   }
-        //                 }
-        //               }
-        //             },
-        //             // Filter 4
-        //             {
-        //               notExpression: {
-        //                 andGroup: {
-        //                   expressions: [
-        //                     {
-        //                       filter: {
-        //                         fieldName: 'source',
-        //                         stringFilter: {
-        //                           value: 'google'
-        //                         }
-        //                       }
-        //                     },
-        //                     {
-        //                       filter: {
-        //                         fieldName: 'medium',
-        //                         stringFilter: {
-        //                           value: 'cpc'
-        //                         }
-        //                       }
-        //                     }
-        //                   ]
-        //                 }
-        //               }
-        //             },
-        //             // Filter 5
-        //             {
-        //               notExpression: {
-        //                 orGroup: {
-        //                   expressions: [
-        //                     {
-        //                       filter: {
-        //                         fieldName: 'source',
-        //                         stringFilter: {
-        //                           value: 'google'
-        //                         }
-        //                       }
-        //                     },
-        //                     {
-        //                       filter: {
-        //                         fieldName: 'medium',
-        //                         stringFilter: {
-        //                           value: 'cpc'
-        //                         }
-        //                       }
-        //                     }
-        //                   ]
-        //                 }
-        //               }
-        //             }
-        //           ]
-        //         }
-        //       }
-        //     ]
-        //   }
-        // }
+        ],
+        dimensionFilter: {
+          andGroup: {
+            expressions: [
+              {
+                orGroup: {
+                  expressions: [
+                    {
+                      filter: {
+                        fieldName: 'city',
+                        stringFilter: {
+                          value: 'Helsinki'
+                        }
+                      }
+                    },
+                    {
+                      filter: {
+                        fieldName: 'country',
+                        stringFilter: {
+                          value: 'Finland'
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                notExpression: {
+                  filter: {
+                    fieldName: 'city',
+                    stringFilter: {
+                      value: 'Atlanta'
+                    }
+                  }
+                }
+              },
+              {
+                notExpression: {
+                  filter: {
+                    fieldName: 'country',
+                    stringFilter: {
+                      value: 'US'
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
       },
       {
         headers: {
@@ -238,6 +175,57 @@ async function runReport() {
         }
       }
     );
+
+    // const response = await axios.post(
+    //   `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
+    //   {
+    //     dimensions: [
+    //       { name: 'cohort' },
+    //       { name: 'cohortNthDay' },
+    //       { name: 'date' }
+    //     ],
+    //     metrics: [
+    //       // {
+    //       //   name: 'cohortRetentionFraction',
+    //       //   expression: 'cohortActiveUsers/cohortTotalUsers'
+    //       // }
+    //       {
+    //         name: 'cohortActiveUsers'
+    //       }
+    //     ],
+    //     // dimensionFilter: {
+    //     //   filter: {
+    //     //     fieldName: 'cohort',
+    //     //     stringFilter: {
+    //     //       value: 'cohort_0'
+    //     //     }
+    //     //   }
+    //     // },
+    //     cohortSpec: {
+    //       cohorts: [
+    //         {
+    //           dimension: 'firstSessionDate',
+    //           dateRange: { startDate: '2025-01-25', endDate: '2025-01-26' }
+    //         },
+    //         {
+    //           dimension: 'firstSessionDate',
+    //           dateRange: { startDate: '2025-01-26', endDate: '2025-01-27' }
+    //         }
+    //       ],
+    //       cohortsRange: {
+    //         endOffset: 4,
+    //         granularity: 'DAILY'
+    //       }
+    //     },
+    //     keepEmptyRows: true
+    //   },
+    //   {
+    //     headers: {
+    //       Authorization: `Bearer ${accessToken}`,
+    //       'Content-Type': 'application/json'
+    //     }
+    //   }
+    // );
 
     console.log('Analytics Data:', JSON.stringify(response.data, null, 2));
   } catch (error: any) {
