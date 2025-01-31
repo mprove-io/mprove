@@ -1,15 +1,17 @@
 api: google_analytics
-url: |
-  let propertyId = $QUERY_PARAMETERS.find(x => x['filter'] === 'ga_property_id').gaPropertyId.value;
-  return `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`;
-special:
-  google_credentials: $ENV_GOOGLE_SERVICE_ACCOUNT_CREDENTIALS
+connection: google1
+# connection_host: https://analyticsdata.googleapis.com
+# connection_type: google
+# connection_service_account_credentials: $ENV_GOOGLE_SERVICE_ACCOUNT_CREDENTIALS
+# connection_headers:
+# - key: Authorization
+#   value: Bearer ...
+# - key: Content-Type
+#   value: application/json
 method: POST
-headers:
-- key: Authorization
-  value: Bearer $GOOGLE_ACCESS_TOKEN
-- key: Content-Type
-  value: application/json
+url_path: |
+  let propertyId = $QUERY_PARAMETERS.find(x => x['filter'] === 'ga_property_id').gaPropertyId.value;
+  return `/v1beta/properties/${propertyId}:runReport`;
 body: |
   let orderByElements = [];
 
