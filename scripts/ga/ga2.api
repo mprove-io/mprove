@@ -1,0 +1,33 @@
+QUERY_ORDER_BY:
+- name: string
+  desc: boolean
+
+QUERY_SELECTED_DIMENSIONS:
+- string
+- string
+
+QUERY_SELECTED_MEASURES:
+- string
+- string
+
+QUERY_PARAMETERS:
+- filter: string
+  fieldId: string
+  remove_if_parameter_true: boolean
+  remove_if_parameter_false: boolean
+  field: 
+    fieldClass: enum
+  fractions:
+  - option:
+      name: string
+      value: string
+      or: boolean
+      and_not: boolean
+      meta: any
+    controls:
+    - id: string
+      label: string
+      type: input | switch | selector
+      value: string
+      is_array: boolean
+    group: OR | AND_NOT
