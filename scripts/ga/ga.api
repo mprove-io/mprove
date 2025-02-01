@@ -10,7 +10,7 @@ connection: google1
 #   value: application/json
 method: POST
 url_path: |
-  let propertyId = $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.gaProperty.value;
+  let propertyId = $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.ga_property.value;
   return `/v1beta/properties/${propertyId}:runReport`;
 body: |
   let orderByElements = [];
@@ -42,15 +42,15 @@ body: |
   $QUERY_PARAMETERS.map(filter => {
     filter.fractions.forEach(fraction => {
       let apiFilter;
-      let apiFilterType = fraction.option.meta.filter_type;
+      let apiFilterType = fraction.option?.meta?.filter_type;
 
       if (apiFilterType === 'stringFilter') {
         apiFilter = {
           fieldName: x.fieldId,
           stringFilter: {
             matchType: fraction.option.value,
-            value: fraction.controls.find(x => x['input'] === 'valueInput').value,
-            caseSensitive: fraction.controls.find(x => x['switch'] === 'caseSensitiveSwitch').value
+            value: fraction.controls.find(x => x['input'] === 'value_input').value,
+            caseSensitive: fraction.controls.find(x => x['switch'] === 'case_sensitive_switch').value
           }
         }
       }
@@ -60,7 +60,7 @@ body: |
           fieldName: x.fieldId,
           inListFilter: {
             values: fraction.controls.find(x => x['input'] === 'inListInput').values,
-            caseSensitive: fraction.controls.find(x => x['switch'] === 'caseSensitiveSwitch').value
+            caseSensitive: fraction.controls.find(x => x['switch'] === 'case_sensitive_switch').value
           }
         }
       }
@@ -70,7 +70,7 @@ body: |
           fieldName: x.fieldId,
           numericFilter: {
             operation: fraction.option.value,
-            value: fraction.controls.find(x => x['input'] === 'valueInput').value
+            value: fraction.controls.find(x => x['input'] === 'value_input').value
           }
         }
       }
@@ -79,13 +79,13 @@ body: |
         apiFilter = {
           fieldName: x.fieldId,
           betweenFilter: {
-            fromValue: fraction.controls.find(x => x['input'] === 'valueFromInput').value,
-            toValue: fraction.controls.find(x => x['input'] === 'valueToInput').value,
+            fromValue: fraction.controls.find(x => x['input'] === 'value_from_input').value,
+            toValue: fraction.controls.find(x => x['input'] === 'value_to_input').value,
           }
         }
       } 
 
-      if (filter.field.fieldClass === 'dimension') {
+      if (filter.field?.fieldClass === 'dimension') {
         if (fraction.group === 'OR') {
           dimensionFilterOrExpressions.push({ filter: apiFilter })
         } 
@@ -98,7 +98,7 @@ body: |
         }
       }
 
-      if (filter.field.fieldClass === 'measure') {
+      if (filter.field?.fieldClass === 'measure') {
         if (fraction.group === 'OR') {
           metricFilterOrExpressions.push({ filter: apiFilter })
         } 
@@ -113,15 +113,15 @@ body: |
     });
   });
 
-  let isCohortsEnabled = $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value;
+  let isCohortsEnabled = $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohorts_switch.value;
 
   let dateRanges;
   let cohortSpec;
 
   if (isCohortsEnabled === false) {
     dateRanges = [{
-      startDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range').fractions[0].controls.startDate.value,
-      endDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range').fractions[0].controls.endDate.value
+      startDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range').fractions[0].controls.start_date.value,
+      endDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range').fractions[0].controls.end_date.value
     }],
   } else {
     let cohorts = [];
@@ -130,8 +130,8 @@ body: |
       let cohort = {
         dimension: "firstSessionDate",
         dateRange: {
-          startDate: fraction.controls.startDate.value,
-          endDate: fraction.controls.endDate.value
+          startDate: fraction.controls.start_date.value,
+          endDate: fraction.controls.end_date.value
         }
       }
       cohorts.push(cohort);
@@ -141,8 +141,8 @@ body: |
       cohorts: cohorts,
       cohortsRange: {
         granularity: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.granularity.value,
-        startOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.startOffset.value,
-        endOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.endOffset.value,
+        startOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.start_offset.value,
+        endOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.end_offset.value,
       }
     };
   }
@@ -209,94 +209,79 @@ parameters:
   min_fractions: 1
   max_fractions: 1
   controls: 
-  - selector: gaProperty
+  - selector: ga_property
     required: true
     label: Property
     value: $ENV_GA_PROPERTY_ID_1
     options: 
     - value: $ENV_GA_PROPERTY_ID_1
     - value: $ENV_GA_PROPERTY_ID_2
-  - switch: cohortsSwitch
+  - switch: cohorts_switch
     required: true
     label: 'Cohorts Mode'
     value: false
   - selector: granularity
+    show_if: top_config.0.cohorts_switch.true
     required: true
-    remove_if_false: return $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value
     label: Granularity
     value: DAILY
     options: 
     - value: DAILY
     - value: WEEKLY
     - value: MONTHLY
-  - input: startOffset
+  - input: start_offset
+    show_if: top_config.0.cohorts_switch.true
     required: true
-    remove_if_false: return $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value
     label: Start Offset # From
     value: 0
-  - input: endOffset
+  - input: end_offset
+    show_if: top_config.0.cohorts_switch.true
     required: true
-    remove_if_false: return $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value
     label: End Offset # To
     value: 5
 
-- filter: date_range
-  remove_if_true: return $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value
-  required: true
-  min_fractions: 1
-  max_fractions: 1
-  controls:
-  - date_picker: startDate
-    name: Start Date
-    value: $QUERY_DATE_FROM
-  - date_picker: endDate
-    name: End Date
-    value: $QUERY_DATE_TO
-
 # - filter: cohorts_range
-#   remove_if_false: return $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value
+#   show_if: top_config.0.cohorts_switch.true
 #   required: true
 #   min_fractions: 1
 #   max_fractions: 1
 #   controls:
-#   - selector: granularity
-#     label: Granularity
-#     value: DAILY
-#     required: true
-#     options: 
-#     - value: DAILY
-#     - value: WEEKLY
-#     - value: MONTHLY
-#   - input: startOffset
-#     label: Start Offset # From
-#     value: 0
-#     required: true
-#   - input: endOffset
-#     label: End Offset # To
-#     value: 5
-#     required: true
+#   - selector: granularity ...
 
 - filter: cohorts_config
-  remove_if_false: return $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value
+  show_if: top_config.0.cohorts_switch.true
   required: true
   min_fractions: 1
   controls:
-  - date_picker: startDate
+  - date_picker: start_date
     name: Start Date
-    value: $TODAY
+    value: $DATE_TODAY
     required: true
-  - date_picker: endDate
+  - date_picker: end_date
     name: End Date
-    value: $TODAY
+    value: $DATE_TODAY
     required: true
-  # - input: valueInput
+  # - input: value_input
   #   label: name
   #   value: changedCohortFieldName
-  # - input: valueInput
+  # - input: value_input
   #   label: dimension
   #   value: firstSessionDate
   #   required: true
   #   lock: true
+
+- filter: date_range
+  show_if: top_config.0.cohorts_switch.false
+  required: true
+  min_fractions: 1
+  max_fractions: 1
+  controls:
+  - date_picker: start_date
+    name: Start Date
+    value: $METRICS_DATE_FROM
+  - date_picker: end_date
+    name: End Date
+    value: $METRICS_DATE_TO
 
 data_types:
 - data_type: number
@@ -308,7 +293,7 @@ data_types:
     meta: 
       filter_type: numericFilter
     controls: 
-    - input: valueInput
+    - input: value_input
 
   - name: less than
     value: LESS_THAN
@@ -317,7 +302,7 @@ data_types:
     meta: 
       filter_type: numericFilter
     controls: 
-    - input: valueInput
+    - input: value_input
 
   - name: less than or equal
     value: LESS_THAN_OR_EQUAL
@@ -325,7 +310,7 @@ data_types:
     meta: 
       filter_type: numericFilter
     controls: 
-    - input: valueInput
+    - input: value_input
 
   - name: greater than
     value: GREATER_THAN
@@ -333,7 +318,7 @@ data_types:
     meta: 
       filter_type: numericFilter
     controls: 
-    - input: valueInput
+    - input: value_input
 
   - name: greater than or equal
     value: GREATER_THAN_OR_EQUAL
@@ -341,15 +326,15 @@ data_types:
     meta: 
       filter_type: numericFilter
     controls: 
-    - input: valueInput
+    - input: value_input
 
   - name: between
     value: BETWEEN
     meta: 
       filter_type: betweenFilter
     controls:
-    - input: valueFromInput
-    - input: valueToInput
+    - input: value_from_input
+    - input: value_to_input
 
 - data_type: string
   options:
@@ -358,8 +343,8 @@ data_types:
     meta: 
       filter_type: stringFilter
     controls:
-    - input: valueInput
-    - switch: caseSensitiveSwitch
+    - input: value_input
+    - switch: case_sensitive_switch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
@@ -368,8 +353,8 @@ data_types:
     meta: 
       filter_type: stringFilter
     controls:
-    - input: valueInput
-    - switch: caseSensitiveSwitch
+    - input: value_input
+    - switch: case_sensitive_switch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
@@ -378,8 +363,8 @@ data_types:
     meta: 
       filter_type: stringFilter
     controls:
-    - input: valueInput
-    - switch: caseSensitiveSwitch
+    - input: value_input
+    - switch: case_sensitive_switch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
@@ -388,8 +373,8 @@ data_types:
     meta: 
       filter_type: stringFilter
     controls:
-    - input: valueInput
-    - switch: caseSensitiveSwitch
+    - input: value_input
+    - switch: case_sensitive_switch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
@@ -398,8 +383,8 @@ data_types:
     meta: 
       filter_type: stringFilter
     controls:
-    - input: valueInput
-    - switch: caseSensitiveSwitch
+    - input: value_input
+    - switch: case_sensitive_switch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
@@ -408,8 +393,8 @@ data_types:
     meta: 
       filter_type: stringFilter
     controls:
-    - input: valueInput
-    - switch: caseSensitiveSwitch
+    - input: value_input
+    - switch: case_sensitive_switch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
@@ -418,9 +403,9 @@ data_types:
     meta: 
       filter_type: inListFilter
     controls:
-    - input: valueInput
+    - input: value_input
       is_array: true  # default false
-    - switch: caseSensitiveSwitch
+    - switch: case_sensitive_switch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
@@ -498,7 +483,7 @@ field_groups:
   label: Page Screens
 - group: geo
 - group: cohorts
-  remove_if_false: return $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value
+  show_if: top_config.0.cohorts_switch.true
 - group: time
 
 fields:
@@ -560,11 +545,11 @@ fields:
 ## Cohort dimensions
 
 - dimension: cohort
+  show_if: top_config.0.cohorts_switch.true
+  required: true
   data_type: string
   description: 'The cohort's name in the request. A cohort is a set of users who started using your website or app in any consecutive group of days. If a cohort name is not specified in the request, cohorts are named by their zero based index such as cohort_0 and cohort_1',
   group: cohorts
-  required: true
-  remove_if_false: return $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value
 
 - dimension: cohortNthDay
   label: Daily cohort

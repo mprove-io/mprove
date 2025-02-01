@@ -1,6 +1,23 @@
+PROJECT_CONFIG_CASE_SENSITIVE: string
+
+ENV_GA_PROPERTY_ID_1: string
+ENV_GA_PROPERTY_ID_2: string
+
+DATE_TODAY: string
+
+METRICS_DETAIL: string
+METRICS_DATE_FROM: string
+METRICS_DATE_TO: string
+
+QUERY_TIMEZONE: string
+
+QUERY_RESPONSE: string
+
 QUERY_ORDER_BY:
 - name: string
   desc: boolean
+
+QUERY_LIMIT: number
 
 QUERY_SELECTED_DIMENSIONS:
 - string
@@ -12,22 +29,29 @@ QUERY_SELECTED_MEASURES:
 
 QUERY_PARAMETERS:
 - filter: string
+  min_fractions: number
+  max_fractions: number
+  show_if: string # boolean
+  required: string # boolean
   fieldId: string
-  remove_if_true: boolean
-  remove_if_false: boolean
   field: 
     fieldClass: enum
   fractions:
   - option:
       name: string
       value: string
-      or: boolean
-      and_not: boolean
+      or: string # boolean
+      and_not: string # boolean
       meta: any
     controls:
     - id: string
+      type: input | switch | selector | date_picker
+      input: string # id
+      switch: string # id
+      selector: string # id
+      date_picker: string # id
+      required: string # boolean
       label: string
-      type: input | switch | selector
       value: string
-      is_array: boolean
+      is_array: string # boolean
     group: OR | AND_NOT
