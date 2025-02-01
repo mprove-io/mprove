@@ -140,9 +140,9 @@ body: |
     cohortSpec = {
       cohorts: cohorts,
       cohortsRange: {
-        granularity: $QUERY_PARAMETERS.find(x => x['filter'] === 'granularity').fractions[0].controls.granularity.value
-        startOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'cohorts_range').fractions[0].controls.startOffset.value,
-        endOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'cohorts_range').fractions[0].controls.endOffset.value,
+        granularity: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.granularity.value
+        startOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.startOffset.value,
+        endOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.endOffset.value,
       }
     };
   }
@@ -206,9 +206,11 @@ response: |
 parameters:
 - filter: top_config
   required: true
+  min_fractions: 1
   max_fractions: 1
   controls: 
   - selector: gaProperty
+    required: true
     label: Property
     value: $ENV_GA_PROPERTY_ID_1
     options: 
@@ -218,6 +220,25 @@ parameters:
     required: true
     label: 'Cohorts Mode'
     value: false
+  - selector: granularity
+    required: true
+    remove_if_parameter_false: top_config.fractions[0].controls.cohortsSwitch.value
+    label: Granularity
+    value: DAILY
+    options: 
+    - value: DAILY
+    - value: WEEKLY
+    - value: MONTHLY
+  - input: startOffset
+    required: true
+    remove_if_parameter_false: top_config.fractions[0].controls.cohortsSwitch.value
+    label: Start Offset # From
+    value: 0
+  - input: endOffset
+    required: true
+    remove_if_parameter_false: top_config.fractions[0].controls.cohortsSwitch.value
+    label: End Offset # To
+    value: 5
 
 - filter: date_range
   remove_if_parameter_true: top_config.fractions[0].controls.cohortsSwitch.value
@@ -232,28 +253,28 @@ parameters:
     name: End Date
     value: $QUERY_DATE_TO
 
-- filter: cohorts_range
-  remove_if_parameter_false: top_config.fractions[0].controls.cohortsSwitch.value
-  required: true
-  min_fractions: 1
-  max_fractions: 1
-  controls:
-  - selector: granularity
-    label: Granularity
-    value: DAILY
-    required: true
-    options: 
-    - value: DAILY
-    - value: WEEKLY
-    - value: MONTHLY
-  - input: startOffset
-    label: Start Offset # From
-    value: 0
-    required: true
-  - input: endOffset
-    label: End Offset # To
-    value: 5
-    required: true
+# - filter: cohorts_range
+#   remove_if_parameter_false: top_config.fractions[0].controls.cohortsSwitch.value
+#   required: true
+#   min_fractions: 1
+#   max_fractions: 1
+#   controls:
+#   - selector: granularity
+#     label: Granularity
+#     value: DAILY
+#     required: true
+#     options: 
+#     - value: DAILY
+#     - value: WEEKLY
+#     - value: MONTHLY
+#   - input: startOffset
+#     label: Start Offset # From
+#     value: 0
+#     required: true
+#   - input: endOffset
+#     label: End Offset # To
+#     value: 5
+#     required: true
 
 - filter: cohorts_config
   remove_if_parameter_false: top_config.fractions[0].controls.cohortsSwitch.value
