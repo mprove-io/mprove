@@ -13,8 +13,8 @@ QUERY_SELECTED_MEASURES:
 QUERY_PARAMETERS:
 - filter: string
   fieldId: string
-  remove_if_parameter_true: boolean
-  remove_if_parameter_false: boolean
+  remove_if_true: boolean
+  remove_if_false: boolean
   field: 
     fieldClass: enum
   fractions:

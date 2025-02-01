@@ -140,7 +140,7 @@ body: |
     cohortSpec = {
       cohorts: cohorts,
       cohortsRange: {
-        granularity: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.granularity.value
+        granularity: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.granularity.value,
         startOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.startOffset.value,
         endOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.endOffset.value,
       }
@@ -222,7 +222,7 @@ parameters:
     value: false
   - selector: granularity
     required: true
-    remove_if_parameter_false: top_config.fractions[0].controls.cohortsSwitch.value
+    remove_if_false: return $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value
     label: Granularity
     value: DAILY
     options: 
@@ -231,17 +231,17 @@ parameters:
     - value: MONTHLY
   - input: startOffset
     required: true
-    remove_if_parameter_false: top_config.fractions[0].controls.cohortsSwitch.value
+    remove_if_false: return $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value
     label: Start Offset # From
     value: 0
   - input: endOffset
     required: true
-    remove_if_parameter_false: top_config.fractions[0].controls.cohortsSwitch.value
+    remove_if_false: return $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value
     label: End Offset # To
     value: 5
 
 - filter: date_range
-  remove_if_parameter_true: top_config.fractions[0].controls.cohortsSwitch.value
+  remove_if_true: return $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value
   required: true
   min_fractions: 1
   max_fractions: 1
@@ -254,7 +254,7 @@ parameters:
     value: $QUERY_DATE_TO
 
 # - filter: cohorts_range
-#   remove_if_parameter_false: top_config.fractions[0].controls.cohortsSwitch.value
+#   remove_if_false: return $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value
 #   required: true
 #   min_fractions: 1
 #   max_fractions: 1
@@ -277,7 +277,7 @@ parameters:
 #     required: true
 
 - filter: cohorts_config
-  remove_if_parameter_false: top_config.fractions[0].controls.cohortsSwitch.value
+  remove_if_false: return $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value
   required: true
   min_fractions: 1
   controls:
@@ -498,7 +498,7 @@ field_groups:
   label: Page Screens
 - group: geo
 - group: cohorts
-  remove_if_parameter_false: top_config.fractions[0].controls.cohortsSwitch.value
+  remove_if_false: return $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value
 - group: time
 
 fields:
@@ -564,7 +564,7 @@ fields:
   description: 'The cohort's name in the request. A cohort is a set of users who started using your website or app in any consecutive group of days. If a cohort name is not specified in the request, cohorts are named by their zero based index such as cohort_0 and cohort_1',
   group: cohorts
   required: true
-  remove_if_parameter_false: top_config.fractions[0].controls.cohortsSwitch.value
+  remove_if_false: return $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohortsSwitch.value
 
 - dimension: cohortNthDay
   label: Daily cohort
