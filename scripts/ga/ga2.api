@@ -36,14 +36,15 @@ QUERY_PARAMETERS:
   required: string # boolean
   fieldId: string
   field: 
+    result: string
     fieldClass: enum
   fractions:
-  - option:
-      name: string
-      value: string
-      or: string # boolean
-      and_not: string # boolean
-      meta: any
+  - type: string
+    name: string
+    group: OR | AND_NOT
+    or: string # boolean
+    and_not: string # boolean
+    meta: any
     controls:
     - id: string
       type: input | switch | selector | date_picker
@@ -51,8 +52,11 @@ QUERY_PARAMETERS:
       switch: string # id
       selector: string # id
       date_picker: string # id
-      required: string # boolean
       label: string
       value: string
       is_array: string # boolean
-    group: OR | AND_NOT
+      required: string # boolean
+      options: 
+      - value: string
+        label: string
+   

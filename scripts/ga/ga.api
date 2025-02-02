@@ -42,13 +42,13 @@ body: |
   $QUERY_PARAMETERS.map(filter => {
     filter.fractions.forEach(fraction => {
       let apiFilter;
-      let apiFilterType = fraction.option?.meta?.filter_type;
+      let apiFilterType = fraction.meta?.filter_type;
 
       if (apiFilterType === 'stringFilter') {
         apiFilter = {
           fieldName: x.fieldId,
           stringFilter: {
-            matchType: fraction.option.value,
+            matchType: fraction.type,
             value: fraction.controls.find(x => x['input'] === 'value_input').value,
             caseSensitive: fraction.controls.find(x => x['switch'] === 'case_sensitive_switch').value
           }
@@ -69,7 +69,7 @@ body: |
         apiFilter = {
           fieldName: x.fieldId,
           numericFilter: {
-            operation: fraction.option.value,
+            operation: fraction.type,
             value: fraction.controls.find(x => x['input'] === 'value_input').value
           }
         }
@@ -283,11 +283,11 @@ parameters:
     name: End Date
     value: $METRICS_DATE_TO
 
-data_types:
-- data_type: number
-  options:
-  - name: equal
-    value: EQUAL
+results:
+- result: number
+  fraction_types:
+  - type: EQUAL
+    name: equal
     or: true
     and_not: true
     meta: 
@@ -295,8 +295,8 @@ data_types:
     controls: 
     - input: value_input
 
-  - name: less than
-    value: LESS_THAN
+  - type: LESS_THAN
+    name: less than
     or: true
     and_not: false
     meta: 
@@ -304,42 +304,42 @@ data_types:
     controls: 
     - input: value_input
 
-  - name: less than or equal
-    value: LESS_THAN_OR_EQUAL
+  - type: LESS_THAN_OR_EQUAL
+    name: less than or equal
     and_not: false
     meta: 
       filter_type: numericFilter
     controls: 
     - input: value_input
 
-  - name: greater than
-    value: GREATER_THAN
+  - type: GREATER_THAN
+    name: greater than
     and_not: false
     meta: 
       filter_type: numericFilter
     controls: 
     - input: value_input
 
-  - name: greater than or equal
-    value: GREATER_THAN_OR_EQUAL
+  - type: GREATER_THAN_OR_EQUAL
+    name: greater than or equal
     and_not: false
     meta: 
       filter_type: numericFilter
     controls: 
     - input: value_input
 
-  - name: between
-    value: BETWEEN
+  - type: BETWEEN
+    name: between
     meta: 
       filter_type: betweenFilter
     controls:
     - input: value_from_input
     - input: value_to_input
 
-- data_type: string
-  options:
-  - name: exact
-    value: EXACT
+- result: string
+  fraction_types:
+  - type: EXACT
+    name: exact
     meta: 
       filter_type: stringFilter
     controls:
@@ -348,8 +348,8 @@ data_types:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
-  - name: begins with
-    value: BEGINS_WITH
+  - type: BEGINS_WITH
+    name: begins with
     meta: 
       filter_type: stringFilter
     controls:
@@ -358,8 +358,8 @@ data_types:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
-  - name: ends with
-    value: ENDS_WITH
+  - type: ENDS_WITH
+    name: ends with
     meta: 
       filter_type: stringFilter
     controls:
@@ -368,8 +368,8 @@ data_types:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
-  - name: contains
-    value: CONTAINS
+  - type: CONTAINS
+    name: contains
     meta: 
       filter_type: stringFilter
     controls:
@@ -378,8 +378,8 @@ data_types:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
-  - name: full regexp
-    value: FULL_REGEXP
+  - type: FULL_REGEXP
+    name: full regexp
     meta: 
       filter_type: stringFilter
     controls:
@@ -388,8 +388,8 @@ data_types:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
-  - name: partial regexp
-    value: PARTIAL_REGEXP
+  - type: PARTIAL_REGEXP
+    name: partial regexp
     meta: 
       filter_type: stringFilter
     controls:
@@ -398,8 +398,8 @@ data_types:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
-  - name: in list
-    value: IN_LIST
+  - type: IN_LIST
+    name: in list
     meta: 
       filter_type: inListFilter
     controls:
@@ -410,7 +410,7 @@ data_types:
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
 build_metrics:
-- time_group: 'Event Time'
+- time_label: 'Event Time'
   details:
   # - unit: quarters
   # - unit: timestamp
@@ -492,21 +492,21 @@ fields:
 
 - measure: activeUsers
   label: 'Active users'
-  data_type: number
+  result: number
   description: 'The number of distinct users who visited your site or app',
   group: users
   meta:
     type: TYPE_INTEGER
 
 - measure: sessions
-  data_type: number
+  result: number
   description: 'The number of sessions that began on your site or app (event triggered: session_start)',
   group: sessions
   meta:
     type: TYPE_INTEGER
 
 - measure: screenPageViews
-  data_type: number
+  result: number
   description: 'The number of app screens or web pages your users viewed. Repeated views of a single page or screen are counted. (screen_view + page_view events)',
   group: page_screens
   meta:
@@ -516,7 +516,7 @@ fields:
 
 - measure: cohortActiveUsers
   label: 'Cohort active users'
-  data_type: number
+  result: number
   description: 'The number of users in the cohort who are active in the time window corresponding to the cohort nth day/week/month. For example in the row where cohortNthWeek = 0001, this metric is the number of users (in the cohort) who are active in week 1',
   group: cohorts
   meta:
@@ -524,7 +524,7 @@ fields:
 
 - measure: cohortTotalUsers
   label: 'Cohort total users'
-  data_type: number
+  result: number
   description: 'The total number of users in the cohort. This metric is the same value in every row of the report for each cohort. Because cohorts are defined by a shared acquisition date, cohortTotalUsers is the same as cohortActiveUsers for the cohort's selection date range. For report rows later than the cohort's selection range, it is typical for cohortActiveUsers to be smaller than cohortTotalUsers. This difference represents users from the cohort that were not active for the later date. cohortTotalUsers is commonly used in the metric expression cohortActiveUsers/cohortTotalUsers to compute a user retention fraction for the cohort. The relationship between activeUsers and totalUsers is not equivalent to the relationship between cohortActiveUsers and cohortTotalUsers',
   group: cohorts
   meta:
@@ -533,12 +533,12 @@ fields:
 # Dimensions
 
 - dimension: country
-  data_type: string
+  result: string
   description: 'The country from which the user activity originated',
   group: geo
 
 - dimension: city
-  data_type: string
+  result: string
   description: 'The city from which the user activity originated',
   group: geo
 
@@ -547,31 +547,31 @@ fields:
 - dimension: cohort
   show_if: top_config.0.cohorts_switch.true
   required: true
-  data_type: string
+  result: string
   description: 'The cohort's name in the request. A cohort is a set of users who started using your website or app in any consecutive group of days. If a cohort name is not specified in the request, cohorts are named by their zero based index such as cohort_0 and cohort_1',
   group: cohorts
 
 - dimension: cohortNthDay
   label: Daily cohort
-  data_type: string
+  result: string
   description: 'Day offset relative to the firstSessionDate for the users in the cohort. For example, if a cohort is selected with the start and end date of 2020-03-01, then for the date 2020-03-02, cohortNthDay will be 0001',
   group: cohorts
 
 - dimension: cohortNthWeek
   label: Weekly cohort
-  data_type: string
+  result: string
   description: 'Week offset relative to the firstSessionDate for the users in the cohort. Weeks start on Sunday and end on Saturday. For example, if a cohort is selected with the start and end date in the range 2020-11-08 to 2020-11-14, then for the dates in the range 2020-11-15 to 2020-11-21, cohortNthWeek will be 0001',
   group: cohorts
 
 - dimension: cohortNthMonth
   label: Monthly cohort
-  data_type: string
+  result: string
   description: 'Month offset relative to the firstSessionDate for the users in the cohort. Month boundaries align with calendar month boundaries. For example, if a cohort is selected with the start and end date in March 2020, then for any date in April 2020, cohortNthMonth will be 0001',
   group: cohorts
 
 - dimension: cohortNthWeek
   label: 'Year'
-  data_type: string
+  result: string
   description: 'The four-digit year of the event. For example, 2020 or 2024',
   group: time
 
@@ -579,127 +579,127 @@ fields:
 
 - dimension: year # "2025"
   label: 'Year'
-  data_type: string
+  result: string
   description: 'The four-digit year of the event. For example, 2020 or 2024',
   group: time
 
 - dimension: yearMonth # "202501"
   label: 'Year month'
-  data_type: string
+  result: string
   description: 'The combined values of year and month. Example values include 202212 or 202301',
   group: time
 
 - dimension: isoYearIsoWeek # "202504"
   label: 'ISO week of ISO year'
-  data_type: string
+  result: string
   description: 'The combined values of isoWeek and isoYear. Example values include 201652 & 201701',
   group: time
 
 - dimension: yearWeek # "202505"
   label: 'Year week'
-  data_type: string
+  result: string
   description: 'The combined values of year and week. Example values include 202253 or 202301',
   group: time
 
 - dimension: date # "20250127"
-  data_type: string
+  result: string
   description: 'The date of the event, formatted as YYYYMMDD',
   group: time
 
 - dimension: dateHour # "2025012722"
   label: 'Date hour (YYYYMMDDHH)'
-  data_type: string
+  result: string
   description: 'The combined values of date and hour formatted as YYYYMMDDHH',
   group: time
 
 - dimension: dateHourMinute # "202501272212"
   label: 'Date hour and minute'
-  data_type: string
+  result: string
   description: 'The combined values of date, hour, and minute formatted as YYYYMMDDHHMM',
   group: time
 
 - dimension: hour # "4"
-  data_type: string
+  result: string
   description: 'The two-digit hour of the day that the event was logged. This dimension ranges from 0-23 and is reported in your property's timezone',
   group: time
 
 - dimension: minute # "40"
-  data_type: string
+  result: string
   description: 'The two-digit minute of the hour that the event was logged. This dimension ranges from 0-59 and is reported in your property's timezone',
   group: time
 
 - dimension: day # "26"
-  data_type: string
+  result: string
   description: 'The day of the month, a two-digit number from 01 to 31',
   group: time
 
 - dimension: dayOfWeek # "0"
   label: 'Day of week'
-  data_type: string
+  result: string
   description: 'The integer day of the week. It returns values in the range 0 to 6 with Sunday as the first day of the week',
   group: time
 
 - dimension: dayOfWeekName # "Sunday"
   label: 'Day of week name'
-  data_type: string
+  result: string
   description: 'The day of the week in English. This dimension has values such as Sunday or Monday',
   group: time
 
 - dimension: week # "05"
   label: 'Week'
-  data_type: string
+  result: string
   description: 'The week of the event, a two-digit number from 01 to 53. Each week starts on Sunday. January 1st is always in week 01. The first and last week of the year have fewer than 7 days in most years. Weeks other than the first and the last week of the year always have 7 days. For years where January 1st is a Sunday, the first week of that year and the last week of the prior year have 7 days',
   group: time
 
 - dimension: month # "01"
-  data_type: string
+  result: string
   description: 'The month of the event, a two digit integer from 01 to 12',
   group: time
 
 - dimension: isoYear # "2025"
   label: 'ISO year'
-  data_type: string
+  result: string
   description: 'The ISO year of the event. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 2022 & 2023',
   group: time
 
 - dimension: isoWeek # "04"
   label: 'ISO week of the year'
-  data_type: string
+  result: string
   description: 'ISO week number, where each week starts on Monday. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 01, 02, & 53',
   group: time
 
 - dimension: nthYear # "0000"
   label: 'Nth year'
-  data_type: string
+  result: string
   description: 'The number of years since the start of the date range. The starting year is 0000',
   group: time
 
 - dimension: nthMonth # "0000"
   label: 'Nth month'
-  data_type: string
+  result: string
   description: 'The number of months since the start of a date range. The starting month is 0000',
   group: time
 
 - dimension: nthWeek # "0001"
   label: 'Nth week'
-  data_type: string
+  result: string
   description: 'A number representing the number of weeks since the start of a date range',
   group: time
 
 - dimension: nthDay # "0004"
   label: 'Nth day'
-  data_type: string
+  result: string
   description: 'The number of days since the start of the date range',
   group: time
 
 - dimension: nthHour # "0142"
   label: 'Nth hour'
-  data_type: string
+  result: string
   description: 'The number of hours since the start of the date range. The starting hour is 0000',
   group: time
 
 - dimension: nthMinute # "8532"
   label: 'Nth minute'
-  data_type: string
+  result: string
   description: 'The number of minutes since the start of the date range. The starting minute is 0000',
   group: time
