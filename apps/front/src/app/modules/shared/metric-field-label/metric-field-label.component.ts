@@ -8,7 +8,7 @@ import { common } from '~front/barrels/common';
 // implements OnChanges
 export class MetricFieldLabelComponent {
   @Input()
-  metric: common.MetricAny;
+  metric: common.ModelMetric;
 
   @Input()
   isShowTop: boolean;

@@ -55,7 +55,7 @@ export class RebuildStructService {
 
     let {
       errors,
-      apis,
+      stores,
       dashboards,
       metrics,
       models,
@@ -103,7 +103,10 @@ export class RebuildStructService {
       currencySuffix: currencySuffix
     });
 
-    let apiApis = barWrapper.wrapApis({ structId: structId, apis: apis });
+    let apiStores = barWrapper.wrapStores({
+      structId: structId,
+      stores: stores
+    });
 
     let { apiDashboards, dashMconfigs, dashQueries } =
       barWrapper.wrapDashboards({
@@ -135,7 +138,7 @@ export class RebuildStructService {
       views: apiViews,
       models: apiModels,
       dashboards: apiDashboards,
-      apis: apiApis,
+      stores: apiStores,
       reports: apiReports,
       charts: apiCharts,
       metrics: metrics,
@@ -216,15 +219,17 @@ export class RebuildStructService {
   }) {
     //
     let errors: BmError[] = [];
-    let apis: common.FileApi[];
-    let dashboards: common.FileDashboard[];
-    let metrics: common.FileMetric[];
+
     let views: common.FileView[];
     let models: common.FileModel[];
+    let stores: common.FileStore[];
     let reports: common.FileReport[];
-    let udfs: common.FileUdf[];
+    let dashboards: common.FileDashboard[];
     let charts: common.FileChart[];
+    let udfs: common.FileUdf[];
     let projectConfig: common.FileProjectConf;
+
+    let metrics: common.FileMetric[] = [];
 
     let yamlBuildItem = barBuilder.buildYaml(
       {
@@ -237,9 +242,8 @@ export class RebuildStructService {
       },
       this.cs
     );
-    apis = yamlBuildItem.apis;
+    stores = yamlBuildItem.stores;
     dashboards = yamlBuildItem.dashboards;
-    metrics = yamlBuildItem.metrics;
     models = yamlBuildItem.models;
     reports = yamlBuildItem.reports;
     udfs = yamlBuildItem.udfs;
@@ -250,14 +254,13 @@ export class RebuildStructService {
     if (common.isUndefined(projectConfig)) {
       return {
         errors: errors,
-        apis: [],
-        dashboards: [],
-        metrics: [],
-        models: [],
-        reports: [],
-        udfsDict: {},
         views: [],
+        models: [],
+        stores: [],
+        reports: [],
+        dashboards: [],
         charts: [],
+        udfsDict: {},
         mproveDirValue: undefined,
         weekStart: constants.PROJECT_CONFIG_WEEK_START,
         allowTimezones: helper.toBooleanFromLowercaseString(
@@ -272,7 +275,8 @@ export class RebuildStructService {
         ),
         simplifySafeAggregates: helper.toBooleanFromLowercaseString(
           constants.PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES
-        )
+        ),
+        metrics: []
       };
     }
 
@@ -605,7 +609,7 @@ export class RebuildStructService {
       {
         errors: errors,
         udfsDict: udfsDict,
-        apis: apis,
+        stores: stores,
         views: views,
         models: models,
         metrics: commonMetrics,
@@ -620,7 +624,7 @@ export class RebuildStructService {
 
     return {
       errors: errors,
-      apis: apis,
+      stores: stores,
       dashboards: dashboards,
       metrics: commonMetrics,
       models: models,

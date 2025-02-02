@@ -257,7 +257,7 @@ export class RowComponent {
   newParameterId: string;
   newParameterModel: common.Model;
 
-  metrics: common.MetricAny[];
+  metrics: common.ModelMetric[];
   metrics$ = this.metricsQuery.select().pipe(
     tap(x => {
       this.metrics = x.metrics;
@@ -762,7 +762,7 @@ export class RowComponent {
     });
   }
 
-  newMetricSearchFn(term: string, metric: common.MetricAny) {
+  newMetricSearchFn(term: string, metric: common.ModelMetric) {
     let haystack = [
       `${metric.topLabel} ${metric.partNodeLabel} ${metric.partFieldLabel} by ${metric.timeNodeLabel} ${metric.timeFieldLabel}`
     ];

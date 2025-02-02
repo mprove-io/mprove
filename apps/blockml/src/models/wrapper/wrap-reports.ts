@@ -6,7 +6,7 @@ export function wrapReports(item: {
   projectId: string;
   structId: string;
   reports: common.FileReport[];
-  metrics: common.MetricAny[];
+  metrics: common.ModelMetric[];
   models: common.Model[];
   formatNumber: string;
   currencyPrefix: string;
@@ -69,7 +69,7 @@ export function wrapReports(item: {
       timeRangeFraction: undefined,
       columns: [],
       rows: x.rows.map(row => {
-        let metric: common.MetricAny = metrics.find(
+        let metric: common.ModelMetric = metrics.find(
           m => m.metricId === row.metric
         );
 

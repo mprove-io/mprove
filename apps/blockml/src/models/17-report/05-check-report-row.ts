@@ -9,7 +9,7 @@ let func = common.FuncEnum.CheckReportRow;
 export function checkReportRow(
   item: {
     reports: common.FileReport[];
-    metrics: common.MetricAny[];
+    metrics: common.ModelMetric[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;

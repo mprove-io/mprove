@@ -65,7 +65,7 @@ export class WrapToEntService {
     };
   }
 
-  wrapToEntityMetric(metric: common.MetricAny): schemaPostgres.MetricEnt {
+  wrapToEntityMetric(metric: common.ModelMetric): schemaPostgres.MetricEnt {
     return {
       metricFullId: this.hashService.makeMetricFullId({
         structId: metric.structId,

@@ -36,7 +36,7 @@ export function buildModelMetric(
     cs
   );
 
-  let metrics: common.MetricAny[] = [...item.metrics, ...genMetrics];
+  let metrics: common.ModelMetric[] = [...item.metrics, ...genMetrics];
 
   return {
     models: models,

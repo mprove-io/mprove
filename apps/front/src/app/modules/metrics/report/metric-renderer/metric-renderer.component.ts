@@ -19,7 +19,7 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
   rowTypeMetric = common.RowTypeEnum.Metric;
   rowTypeFormula = common.RowTypeEnum.Formula;
 
-  metric: common.MetricAny;
+  metric: common.ModelMetric;
 
   metricTypeModel = common.MetricTypeEnum.Model;
 

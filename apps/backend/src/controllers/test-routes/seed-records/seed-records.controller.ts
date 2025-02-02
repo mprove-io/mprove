@@ -320,7 +320,7 @@ export class SeedRecordsController {
             models: devModelsApi,
             metrics: devMetricsApi,
             reports: devReportsApi,
-            apis: devApisApi
+            stores: devStoresApi
           } = await this.blockmlService.rebuildStruct({
             traceId: reqValid.info.traceId,
             orgId: newProject.orgId,
@@ -346,7 +346,7 @@ export class SeedRecordsController {
             models: prodModelsApi,
             metrics: prodMetricsApi,
             reports: prodReportsApi,
-            apis: prodApisApi
+            stores: prodStoresApi
           } = await this.blockmlService.rebuildStruct({
             traceId: reqValid.info.traceId,
             orgId: newProject.orgId,

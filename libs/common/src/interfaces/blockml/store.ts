@@ -1,19 +1,17 @@
 import { IsInt, IsString } from 'class-validator';
 
-export class Api {
+export class Store {
   @IsString()
   structId: string;
 
   @IsString()
-  apiId: string;
+  storeId: string;
 
   @IsString()
   filePath: string;
 
   @IsString()
   label: string;
-
-  steps: any[];
 
   @IsInt()
   serverTs: number;

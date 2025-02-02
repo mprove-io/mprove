@@ -13,7 +13,7 @@ export function checkReportRowParameters(
   item: {
     caseSensitiveStringFilters: boolean;
     reports: common.FileReport[];
-    metrics: common.MetricAny[];
+    metrics: common.ModelMetric[];
     models: common.FileModel[];
     errors: BmError[];
     structId: string;

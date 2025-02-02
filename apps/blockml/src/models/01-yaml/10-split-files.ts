@@ -18,14 +18,13 @@ export function splitFiles(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let udfs: common.FileUdf[] = [];
   let views: common.FileView[] = [];
   let models: common.FileModel[] = [];
+  let stores: common.FileStore[] = [];
   let dashboards: common.FileDashboard[] = [];
   let reports: common.FileReport[] = [];
-  let metrics: common.FileMetric[] = [];
-  let apis: common.FileApi[] = [];
   let charts: common.FileChart[] = [];
+  let udfs: common.FileUdf[] = [];
   let confs: common.FileProjectConf[] = [];
 
   item.filesAny.forEach(file => {
@@ -134,6 +133,45 @@ export function splitFiles(
               lines: [
                 {
                   line: file.model_line_num,
+                  name: file.name,
+                  path: file.path
+                }
+              ]
+            })
+          );
+        }
+        break;
+      }
+
+      case common.FileExtensionEnum.Store: {
+        if (file.name === file.store + common.FileExtensionEnum.Store) {
+          let label: string = file.label ? file.label : file.store;
+          let labelLineNum: number = file.label_line_num
+            ? file.label_line_num
+            : 0;
+
+          delete file.ext;
+          delete file.name;
+          delete file.path;
+
+          let newStoreOptions: common.FileStore = {
+            name: file.store,
+            fileName: fileName,
+            filePath: filePath,
+            fileExt: fileExt,
+            label: label,
+            label_line_num: labelLineNum
+          };
+
+          stores.push(Object.assign(file, newStoreOptions));
+        } else {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.WRONG_STORE_NAME,
+              message: `filename ${file.name} does not match "store: ${file.store}"`,
+              lines: [
+                {
+                  line: file.store_line_num,
                   name: file.name,
                   path: file.path
                 }
@@ -262,15 +300,14 @@ export function splitFiles(
     }
   });
 
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Apis, apis);
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Ds, dashboards);
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Confs, confs);
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Metrics, metrics);
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, models);
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Reports, reports);
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Udfs, udfs);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Views, views);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, models);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Stores, stores);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Reports, reports);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Ds, dashboards);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Charts, charts);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Udfs, udfs);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Confs, confs);
   helper.log(
     cs,
     caller,
@@ -281,14 +318,13 @@ export function splitFiles(
   );
 
   return {
-    apis: apis,
-    dashboards: dashboards,
-    confs: confs,
-    metrics: metrics,
-    models: models,
-    reports: reports,
-    udfs: udfs,
     views: views,
-    charts: charts
+    models: models,
+    stores: stores,
+    reports: reports,
+    dashboards: dashboards,
+    charts: charts,
+    udfs: udfs,
+    confs: confs
   };
 }

@@ -15,15 +15,14 @@ export function buildYaml(
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let udfs: common.FileUdf[];
   let views: common.FileView[];
   let models: common.FileModel[];
-  let dashboards: common.FileDashboard[];
+  let stores: common.FileStore[];
   let reports: common.FileReport[];
-  let metrics: common.FileMetric[];
-  let apis: common.FileApi[];
+  let dashboards: common.FileDashboard[];
   let charts: common.FileChart[];
   let confs: common.FileProjectConf[];
+  let udfs: common.FileUdf[];
 
   let file2s: common.File2[] = barYaml.removeWrongExt(
     {
@@ -127,10 +126,9 @@ export function buildYaml(
     cs
   );
 
-  apis = splitFilesResult.apis;
+  stores = splitFilesResult.stores;
   confs = splitFilesResult.confs;
   dashboards = splitFilesResult.dashboards;
-  metrics = splitFilesResult.metrics;
   models = splitFilesResult.models;
   reports = splitFilesResult.reports;
   udfs = splitFilesResult.udfs;
@@ -149,14 +147,13 @@ export function buildYaml(
   );
 
   return {
-    apis: apis,
-    dashboards: dashboards,
-    projectConfig: projectConfig,
-    metrics: metrics,
-    models: models,
-    reports: reports,
-    udfs: udfs,
     views: views,
-    charts: charts
+    models: models,
+    stores: stores,
+    reports: reports,
+    dashboards: dashboards,
+    charts: charts,
+    projectConfig: projectConfig,
+    udfs: udfs
   };
 }

@@ -7,7 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 export function buildReport(
   item: {
     reports: common.FileReport[];
-    metrics: common.MetricAny[];
+    metrics: common.ModelMetric[];
     models: common.FileModel[];
     errors: BmError[];
     structId: string;

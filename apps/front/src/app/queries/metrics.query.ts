@@ -4,7 +4,7 @@ import { common } from '~front/barrels/common';
 import { BaseQuery } from './base.query';
 
 export class MetricsState {
-  metrics: common.MetricAny[];
+  metrics: common.ModelMetric[];
 }
 
 let metricsState: MetricsState = {

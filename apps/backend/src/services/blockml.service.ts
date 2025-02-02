@@ -169,15 +169,15 @@ export class BlockmlService {
       currencySuffix,
       errors,
       views,
-      udfsDict,
-      charts,
-      metrics,
+      models,
+      stores,
       reports,
-      apis,
-      mconfigs,
-      queries,
       dashboards,
-      models
+      charts,
+      udfsDict,
+      metrics,
+      mconfigs,
+      queries
     } = blockmlRebuildStructResponse.payload;
 
     let struct: schemaPostgres.StructEnt = {
@@ -282,11 +282,11 @@ export class BlockmlService {
     return {
       struct: struct,
       models: models,
-      metrics: metrics,
-      apis: apis,
+      stores: stores,
       reports: reports,
-      charts: charts,
       dashboards: dashboards,
+      charts: charts,
+      metrics: metrics,
       mconfigs: mconfigs,
       queries: queries
     };

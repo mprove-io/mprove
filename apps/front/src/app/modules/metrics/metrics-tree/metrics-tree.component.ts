@@ -28,7 +28,7 @@ export class MetricNode {
   timeLabel: string;
   isField: boolean;
   isSelected: boolean;
-  metric: common.MetricAny;
+  metric: common.ModelMetric;
   children: MetricNode[];
 }
 

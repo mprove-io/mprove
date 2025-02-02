@@ -217,7 +217,7 @@ export class WrapToApiService {
   wrapToApiMetric(item: {
     metric: schemaPostgres.MetricEnt;
     // hasAccess: boolean;
-  }): common.MetricAny {
+  }): common.ModelMetric {
     let {
       metric
       // , hasAccess
