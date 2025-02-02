@@ -104,7 +104,6 @@ export class RebuildStructService {
     });
 
     let apiStores = barWrapper.wrapStores({
-      structId: structId,
       stores: stores
     });
 

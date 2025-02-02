@@ -313,14 +313,13 @@ export class SeedRecordsController {
 
           let {
             struct: devStruct,
-            charts: devChartsApi,
-            mconfigs: devMconfigsApi,
-            queries: devQueriesApi,
-            dashboards: devDashboardsApi,
             models: devModelsApi,
-            metrics: devMetricsApi,
             reports: devReportsApi,
-            stores: devStoresApi
+            dashboards: devDashboardsApi,
+            charts: devChartsApi,
+            metrics: devMetricsApi,
+            mconfigs: devMconfigsApi,
+            queries: devQueriesApi
           } = await this.blockmlService.rebuildStruct({
             traceId: reqValid.info.traceId,
             orgId: newProject.orgId,
@@ -339,14 +338,13 @@ export class SeedRecordsController {
 
           let {
             struct: prodStruct,
-            charts: prodChartsApi,
-            mconfigs: prodMconfigsApi,
-            queries: prodQueriesApi,
-            dashboards: prodDashboardsApi,
             models: prodModelsApi,
-            metrics: prodMetricsApi,
             reports: prodReportsApi,
-            stores: prodStoresApi
+            dashboards: prodDashboardsApi,
+            charts: prodChartsApi,
+            metrics: prodMetricsApi,
+            mconfigs: prodMconfigsApi,
+            queries: prodQueriesApi
           } = await this.blockmlService.rebuildStruct({
             traceId: reqValid.info.traceId,
             orgId: newProject.orgId,
