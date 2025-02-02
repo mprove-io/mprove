@@ -9,6 +9,7 @@ import {
 import { enums } from '~common/barrels/enums';
 import { IsTimezone } from '~common/functions/is-timezone';
 import { BmlError } from '../blockml/bml-error';
+import { Store } from '../blockml/store';
 import { UdfsDict } from '../blockml/udfs-dict';
 import { View } from '../blockml/view';
 
@@ -53,6 +54,10 @@ export class Struct {
   @ValidateNested()
   @Type(() => View)
   views: View[];
+
+  @ValidateNested()
+  @Type(() => View)
+  stores: Store[];
 
   @ValidateNested()
   @Type(() => UdfsDict)
