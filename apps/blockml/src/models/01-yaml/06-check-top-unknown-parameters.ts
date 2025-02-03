@@ -143,6 +143,46 @@ export function checkTopUnknownParameters(
             break;
           }
 
+          case common.FileExtensionEnum.Store: {
+            if (
+              [
+                common.ParameterEnum.Store.toString(),
+                common.ParameterEnum.Connection.toString(),
+                common.ParameterEnum.Label.toString(),
+                common.ParameterEnum.Description.toString(),
+                common.ParameterEnum.AccessUsers.toString(),
+                common.ParameterEnum.AccessRoles.toString(),
+                common.ParameterEnum.Method.toString(),
+                common.ParameterEnum.UrlPath.toString(),
+                common.ParameterEnum.Body.toString(),
+                common.ParameterEnum.Response.toString(),
+                common.ParameterEnum.Parameters.toString(),
+                common.ParameterEnum.Results.toString(),
+                common.ParameterEnum.BuildMetrics.toString(),
+                common.ParameterEnum.FieldGroups.toString(),
+                common.ParameterEnum.Fields.toString()
+              ].indexOf(parameter) < 0
+            ) {
+              item.errors.push(
+                new BmError({
+                  title: common.ErTitleEnum.UNKNOWN_STORE_PARAMETER,
+                  message:
+                    `parameter "${parameter}" can not be used on top level of ` +
+                    `${common.FileExtensionEnum.Store} file`,
+                  lines: [
+                    {
+                      line: file[parameter + constants.LINE_NUM],
+                      name: file.name,
+                      path: file.path
+                    }
+                  ]
+                })
+              );
+              return;
+            }
+            break;
+          }
+
           case common.FileExtensionEnum.Dashboard: {
             if (
               [

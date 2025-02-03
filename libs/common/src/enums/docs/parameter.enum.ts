@@ -71,6 +71,13 @@ export enum ParameterEnum {
   Udfs = 'udfs',
   Unnest = 'unnest',
   View = 'view',
+  Store = 'store',
+  Method = 'method',
+  UrlPath = 'url_path',
+  Body = 'body',
+  Response = 'response',
+  Results = 'results',
+  FieldGroups = 'field_groups',
   Chart = 'chart',
   // row
   Parameters = 'parameters',

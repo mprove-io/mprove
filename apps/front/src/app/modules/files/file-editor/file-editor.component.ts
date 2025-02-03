@@ -234,20 +234,22 @@ export class FileEditorComponent implements OnInit, OnDestroy {
       );
 
       let schema: JSONSchema7 =
-        this.file.fileId === common.MPROVE_CONFIG_FILENAME
-          ? common.CONFIG_SCHEMA
+        dotExt === common.FileExtensionEnum.View
+          ? common.VIEW_SCHEMA
+          : dotExt === common.FileExtensionEnum.Store
+          ? common.STORE_SCHEMA
+          : dotExt === common.FileExtensionEnum.Model
+          ? common.MODEL_SCHEMA
+          : dotExt === common.FileExtensionEnum.Report
+          ? common.REPORT_SCHEMA
           : dotExt === common.FileExtensionEnum.Dashboard
           ? common.DASHBOARD_SCHEMA
           : dotExt === common.FileExtensionEnum.Chart
           ? common.CHART_SCHEMA
-          : dotExt === common.FileExtensionEnum.Model
-          ? common.MODEL_SCHEMA
-          : dotExt === common.FileExtensionEnum.View
-          ? common.VIEW_SCHEMA
           : dotExt === common.FileExtensionEnum.Udf
           ? common.UDF_SCHEMA
-          : dotExt === common.FileExtensionEnum.Report
-          ? common.REPORT_SCHEMA
+          : this.file.fileId === common.MPROVE_CONFIG_FILENAME
+          ? common.CONFIG_SCHEMA
           : undefined;
 
       setDiagnosticsOptions({
@@ -536,16 +538,20 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     let id = ar.join('.');
     let dotExt = `.${ext}`;
 
-    if (dotExt === common.FileExtensionEnum.Model) {
-      this.navigateService.navigateToModel(id);
-    } else if (dotExt === common.FileExtensionEnum.View) {
+    if (dotExt === common.FileExtensionEnum.View) {
       this.navigateService.navigateToModel(`${common.VIEW_MODEL_PREFIX}_${id}`);
-    } else if (dotExt === common.FileExtensionEnum.Dashboard) {
-      this.navigateService.navigateToDashboard(id);
+    } else if (dotExt === common.FileExtensionEnum.Store) {
+      this.navigateService.navigateToModel(
+        `${common.STORE_MODEL_PREFIX}_${id}`
+      );
+    } else if (dotExt === common.FileExtensionEnum.Model) {
+      this.navigateService.navigateToModel(id);
     } else if (dotExt === common.FileExtensionEnum.Report) {
       this.navigateService.navigateToMetricsRep({
         reportId: id
       });
+    } else if (dotExt === common.FileExtensionEnum.Dashboard) {
+      this.navigateService.navigateToDashboard(id);
     } else if (dotExt === common.FileExtensionEnum.Chart) {
       this.navigateService.navigateToCharts({
         extra: {

@@ -241,12 +241,14 @@ export class BlockmlErrorsComponent implements OnDestroy {
         return 5;
       case common.FileExtensionEnum.Model:
         return 6;
-      case common.FileExtensionEnum.Report:
+      case common.FileExtensionEnum.Store:
         return 7;
-      case common.FileExtensionEnum.Dashboard:
+      case common.FileExtensionEnum.Report:
         return 8;
-      case common.FileExtensionEnum.Chart:
+      case common.FileExtensionEnum.Dashboard:
         return 9;
+      case common.FileExtensionEnum.Chart:
+        return 10;
       default:
         return 0;
     }

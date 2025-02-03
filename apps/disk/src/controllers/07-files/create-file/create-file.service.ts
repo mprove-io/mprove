@@ -210,6 +210,9 @@ function getContentFromFileName(item: { fileName: string }) {
     case common.FileExtensionEnum.Model:
       content = `model: ${part}`;
       break;
+    case common.FileExtensionEnum.Store:
+      content = `store: ${part}`;
+      break;
     case common.FileExtensionEnum.Dashboard:
       content = `dashboard: ${part}`;
       break;

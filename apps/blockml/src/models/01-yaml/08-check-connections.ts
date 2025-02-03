@@ -24,9 +24,11 @@ export function checkConnections(
 
   item.filesAny.forEach(file => {
     if (
-      [common.FileExtensionEnum.View, common.FileExtensionEnum.Model].indexOf(
-        file.ext
-      ) > -1
+      [
+        common.FileExtensionEnum.View,
+        common.FileExtensionEnum.Model,
+        common.FileExtensionEnum.Store
+      ].indexOf(file.ext) > -1
     ) {
       let parameters = Object.keys(file).filter(
         x => !x.toString().match(common.MyRegex.ENDS_WITH_LINE_NUM())
