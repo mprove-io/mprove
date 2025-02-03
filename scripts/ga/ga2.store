@@ -35,20 +35,19 @@ QUERY_PARAMETERS:
   max_fractions: number
   show_if: string # boolean
   required: string # boolean
-  fieldId: string
-  field: 
-    result: string
-    fieldClass: enum
+  # fieldId: string
+  # field: 
+  #   result: string
+  #   fieldClass: enum
   fractions:
   - type: string
     name: string
-    group: OR | AND_NOT
-    or: string # boolean
-    and_not: string # boolean
+    # group: OR | AND_NOT
     meta: any
     controls:
-    - id: string
-      type: input | switch | selector | date_picker
+    - 
+      # id: string
+      # type: input | switch | selector | date_picker
       input: string # id
       switch: string # id
       selector: string # id

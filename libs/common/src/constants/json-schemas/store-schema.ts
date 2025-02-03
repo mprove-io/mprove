@@ -5,6 +5,16 @@ export const STORE_SCHEMA: JSONSchema7 = {
   $id: 'https://docs.mprove.io/top/reference/store',
   type: 'object',
   additionalProperties: false,
+  required: [
+    'store',
+    'connection',
+    'method',
+    'url_path',
+    'body',
+    'response',
+    'results',
+    'fields'
+  ],
   properties: {
     store: {
       type: 'string'
@@ -42,17 +52,173 @@ export const STORE_SCHEMA: JSONSchema7 = {
     response: {
       type: 'string'
     },
-    // parameters: {
-    //   type: 'string'
-    // },
-    // results: {
-    //   type: 'string'
-    // },
+    parameters: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['filter', 'controls'],
+        properties: {
+          filter: {
+            type: 'string'
+          },
+          min_fractions: {
+            type: 'integer'
+          },
+          max_fractions: {
+            type: 'integer'
+          },
+          show_if: {
+            type: 'boolean'
+          },
+          required: {
+            type: 'boolean'
+          },
+          controls: {
+            type: 'array',
+            items: {
+              type: 'object',
+              additionalProperties: false,
+              required: [],
+              properties: {
+                input: {
+                  type: 'string'
+                },
+                switch: {
+                  type: 'string'
+                },
+                selector: {
+                  type: 'string'
+                },
+                date_picker: {
+                  type: 'string'
+                },
+                value: {
+                  type: 'string'
+                },
+                label: {
+                  type: 'string'
+                },
+                is_array: {
+                  type: 'boolean'
+                },
+                required: {
+                  type: 'boolean'
+                },
+                options: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    additionalProperties: false,
+                    required: ['value'],
+                    properties: {
+                      value: {
+                        type: 'string'
+                      },
+                      label: {
+                        type: 'string'
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    results: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['result', 'fraction_types'],
+        properties: {
+          result: {
+            type: 'string'
+          },
+          fraction_types: {
+            type: 'array',
+            items: {
+              type: 'object',
+              additionalProperties: false,
+              required: ['type'],
+              properties: {
+                type: {
+                  type: 'string'
+                },
+                name: {
+                  type: 'string'
+                },
+                or: {
+                  type: 'boolean'
+                },
+                and_not: {
+                  type: 'boolean'
+                },
+                meta: {},
+                controls: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    additionalProperties: false,
+                    required: [],
+                    properties: {
+                      input: {
+                        type: 'string'
+                      },
+                      switch: {
+                        type: 'string'
+                      },
+                      selector: {
+                        type: 'string'
+                      },
+                      date_picker: {
+                        type: 'string'
+                      },
+                      value: {
+                        type: 'string'
+                      },
+                      label: {
+                        type: 'string'
+                      },
+                      is_array: {
+                        type: 'boolean'
+                      },
+                      required: {
+                        type: 'boolean'
+                      },
+                      options: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          additionalProperties: false,
+                          required: ['value'],
+                          properties: {
+                            value: {
+                              type: 'string'
+                            },
+                            label: {
+                              type: 'string'
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     build_metrics: {
       type: 'array',
       items: {
         type: 'object',
         additionalProperties: false,
+        required: ['time_label', 'details'],
         properties: {
           time_label: {
             type: 'string'
@@ -65,6 +231,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
             items: {
               type: 'object',
               additionalProperties: false,
+              required: ['unit', 'dimension'],
               properties: {
                 unit: {
                   type: 'string'
@@ -72,12 +239,10 @@ export const STORE_SCHEMA: JSONSchema7 = {
                 dimension: {
                   type: 'string'
                 }
-              },
-              required: ['unit', 'dimension']
+              }
             }
           }
-        },
-        required: ['time_label', 'details']
+        }
       }
     },
     field_groups: {
@@ -85,6 +250,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
       items: {
         type: 'object',
         additionalProperties: false,
+        required: ['group'],
         properties: {
           group: {
             type: 'string'
@@ -95,8 +261,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
           show_if: {
             type: 'boolean'
           }
-        },
-        required: ['group']
+        }
       }
     },
     fields: {
@@ -104,6 +269,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
       items: {
         type: 'object',
         additionalProperties: false,
+        required: ['result'],
         properties: {
           dimension: {
             type: 'string'
@@ -132,6 +298,9 @@ export const STORE_SCHEMA: JSONSchema7 = {
           meta: {
             type: 'string'
           }
+          // calculation: {
+          //   type: 'string'
+          // },
           // hidden: {
           //   type: 'boolean'
           // },
@@ -151,22 +320,8 @@ export const STORE_SCHEMA: JSONSchema7 = {
           // currency_suffix: {
           //   type: 'string'
           // },
-          // calculation: {
-          //   type: 'string'
-          // },
-        },
-        required: ['result']
+        }
       }
     }
-  },
-  required: [
-    'store',
-    'connection',
-    'method',
-    'url_path',
-    'body',
-    'response',
-    'results',
-    'fields'
-  ]
+  }
 };
