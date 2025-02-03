@@ -41,22 +41,132 @@ export const STORE_SCHEMA: JSONSchema7 = {
     },
     response: {
       type: 'string'
-    }
+    },
     // parameters: {
     //   type: 'string'
     // },
     // results: {
     //   type: 'string'
     // },
-    // build_metrics: {
-    //   type: 'string'
-    // },
-    // field_groups: {
-    //   type: 'string'
-    // },
-    // fields: {
-    //   type: 'string'
-    // }
+    build_metrics: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          time_label: {
+            type: 'string'
+          },
+          ms_utc_suffix: {
+            type: 'string'
+          },
+          details: {
+            type: 'array',
+            items: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                unit: {
+                  type: 'string'
+                },
+                dimension: {
+                  type: 'string'
+                }
+              },
+              required: ['unit', 'dimension']
+            }
+          }
+        },
+        required: ['time_label', 'details']
+      }
+    },
+    field_groups: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          group: {
+            type: 'string'
+          },
+          label: {
+            type: 'string'
+          },
+          show_if: {
+            type: 'boolean'
+          }
+        },
+        required: ['group']
+      }
+    },
+    fields: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          dimension: {
+            type: 'string'
+          },
+          measure: {
+            type: 'string'
+          },
+          label: {
+            type: 'string'
+          },
+          description: {
+            type: 'string'
+          },
+          result: {
+            type: 'string'
+          },
+          group: {
+            type: 'string'
+          },
+          show_if: {
+            type: 'boolean'
+          },
+          required: {
+            type: 'boolean'
+          },
+          meta: {
+            type: 'string'
+          }
+          // hidden: {
+          //   type: 'boolean'
+          // },
+          // type: {
+          //   type: 'string',
+          //   enum: constants.FIELD_TYPE_VALUES
+          // },
+          // suggest_model_dimension: {
+          //   type: 'string'
+          // },
+          // format_number: {
+          //   type: 'string'
+          // },
+          // currency_prefix: {
+          //   type: 'string'
+          // },
+          // currency_suffix: {
+          //   type: 'string'
+          // },
+          // calculation: {
+          //   type: 'string'
+          // },
+        },
+        required: ['result']
+      }
+    }
   },
-  required: ['store', 'connection']
+  required: [
+    'store',
+    'connection',
+    'method',
+    'url_path',
+    'body',
+    'response',
+    'results',
+    'fields'
+  ]
 };

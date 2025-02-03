@@ -245,8 +245,8 @@ response: |
       } 
 
       if (!!date) {
-        let dimensionUtcName = dimensionName + '_utc_ms';
-        newRow[dimensionUtcName] = date.getTime();
+        let dimensionNameUTC = dimensionName + $UTC_MS_SUFFIX;
+        newRow[dimensionNameUTC] = date.getTime();
       }
 
       newRow[dimensionName] = dimension.value;
