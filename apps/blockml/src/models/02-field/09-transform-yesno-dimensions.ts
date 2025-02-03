@@ -7,7 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.TransformYesNoDimensions;
 
-export function transformYesNoDimensions<T extends types.vmType>(
+export function transformYesNoDimensions<T extends types.vsmType>(
   item: {
     entities: T[];
     errors: BmError[];

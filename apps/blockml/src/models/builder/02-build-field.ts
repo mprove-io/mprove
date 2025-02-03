@@ -5,7 +5,7 @@ import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-export function buildField<T extends types.vmdrType>(
+export function buildField<T extends types.vsmdrType>(
   item: {
     entities: T[];
     projectConfig: common.FileProjectConf;

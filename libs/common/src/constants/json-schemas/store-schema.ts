@@ -1,4 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
+import { STORE_CONTROL_SCHEMA } from './store-control-schema';
 
 export const STORE_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -76,53 +77,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
           },
           controls: {
             type: 'array',
-            items: {
-              type: 'object',
-              additionalProperties: false,
-              required: [],
-              properties: {
-                input: {
-                  type: 'string'
-                },
-                switch: {
-                  type: 'string'
-                },
-                selector: {
-                  type: 'string'
-                },
-                date_picker: {
-                  type: 'string'
-                },
-                value: {
-                  type: 'string'
-                },
-                label: {
-                  type: 'string'
-                },
-                is_array: {
-                  type: 'boolean'
-                },
-                required: {
-                  type: 'boolean'
-                },
-                options: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    additionalProperties: false,
-                    required: ['value'],
-                    properties: {
-                      value: {
-                        type: 'string'
-                      },
-                      label: {
-                        type: 'string'
-                      }
-                    }
-                  }
-                }
-              }
-            }
+            items: STORE_CONTROL_SCHEMA
           }
         }
       }
@@ -159,53 +114,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
                 meta: {},
                 controls: {
                   type: 'array',
-                  items: {
-                    type: 'object',
-                    additionalProperties: false,
-                    required: [],
-                    properties: {
-                      input: {
-                        type: 'string'
-                      },
-                      switch: {
-                        type: 'string'
-                      },
-                      selector: {
-                        type: 'string'
-                      },
-                      date_picker: {
-                        type: 'string'
-                      },
-                      value: {
-                        type: 'string'
-                      },
-                      label: {
-                        type: 'string'
-                      },
-                      is_array: {
-                        type: 'boolean'
-                      },
-                      required: {
-                        type: 'boolean'
-                      },
-                      options: {
-                        type: 'array',
-                        items: {
-                          type: 'object',
-                          additionalProperties: false,
-                          required: ['value'],
-                          properties: {
-                            value: {
-                              type: 'string'
-                            },
-                            label: {
-                              type: 'string'
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  items: STORE_CONTROL_SCHEMA
                 }
               }
             }
@@ -221,9 +130,6 @@ export const STORE_SCHEMA: JSONSchema7 = {
         required: ['time_label', 'details'],
         properties: {
           time_label: {
-            type: 'string'
-          },
-          ms_utc_suffix: {
             type: 'string'
           },
           details: {

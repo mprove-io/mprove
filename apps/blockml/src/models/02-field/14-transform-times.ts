@@ -9,7 +9,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.TransformTimes;
 
-export function transformTimes<T extends types.vmType>(
+export function transformTimes<T extends types.vsmType>(
   item: {
     entities: T[];
     weekStart: common.ProjectWeekStartEnum;

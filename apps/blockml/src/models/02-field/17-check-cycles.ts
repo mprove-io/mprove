@@ -8,7 +8,7 @@ let Graph = require('tarjan-graph');
 
 let func = common.FuncEnum.CheckCycles;
 
-export function checkCycles<T extends types.vmType>(
+export function checkCycles<T extends types.vsmType>(
   item: {
     entities: T[];
     errors: BmError[];

@@ -28,6 +28,7 @@ export * from './file-report';
 export * from './file-report-row';
 export * from './file-report-row-parameter';
 export * from './file-store';
+export * from './file-store-control';
 export * from './file-tile-parameter';
 export * from './file-udf';
 export * from './file-view';

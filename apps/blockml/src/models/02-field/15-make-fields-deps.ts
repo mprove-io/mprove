@@ -7,7 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.MakeFieldsDeps;
 
-export function makeFieldsDeps<T extends types.vmType>(
+export function makeFieldsDeps<T extends types.vsmType>(
   item: {
     entities: T[];
     errors: BmError[];
@@ -112,7 +112,7 @@ export function makeFieldsDeps<T extends types.vmType>(
   return newEntities;
 }
 
-export function checkCharsInFieldRefs<T extends types.vmType>(item: {
+export function checkCharsInFieldRefs<T extends types.vsmType>(item: {
   errors: BmError[];
   fileVM: T;
   value: string;

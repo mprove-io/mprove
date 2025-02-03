@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckVmdrSuggestModelDimension;
 
-export function checkVmdrSuggestModelDimension<T extends types.vmdrType>(
+export function checkVmdrSuggestModelDimension<T extends types.vsmdrType>(
   item: {
     entities: T[];
     models: common.FileModel[];

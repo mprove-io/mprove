@@ -7,7 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.SubstituteSingleRefs;
 
-export function substituteSingleRefs<T extends types.vmType>(
+export function substituteSingleRefs<T extends types.vsmType>(
   item: {
     errors: BmError[];
     entities: T[];

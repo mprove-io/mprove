@@ -7,7 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckAndSetImplicitResult;
 
-export function checkAndSetImplicitResult<T extends types.vmdrType>(
+export function checkAndSetImplicitResult<T extends types.vsmdrType>(
   item: {
     entities: T[];
     errors: BmError[];

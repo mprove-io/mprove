@@ -7,7 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.SetImplicitLabel;
 
-export function setImplicitLabel<T extends types.vmdrType>(
+export function setImplicitLabel<T extends types.vsmdrType>(
   item: {
     entities: T[];
     errors: BmError[];

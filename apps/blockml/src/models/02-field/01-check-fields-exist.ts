@@ -7,7 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckFieldsExist;
 
-export function checkFieldsExist<T extends types.vmdrType>(
+export function checkFieldsExist<T extends types.vsmdrType>(
   item: {
     entities: T[];
     errors: BmError[];

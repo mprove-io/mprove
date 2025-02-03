@@ -7,7 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckCalculations;
 
-export function checkCalculations<T extends types.vmType>(
+export function checkCalculations<T extends types.vsmType>(
   item: {
     entities: T[];
     errors: BmError[];

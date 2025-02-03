@@ -8,7 +8,7 @@ import { processFilter } from './process-filter';
 
 let func = common.FuncEnum.CheckVmdrFilterConditions;
 
-export function checkVmdrFilterConditions<T extends types.vmdrType>(
+export function checkVmdrFilterConditions<T extends types.vsmdrType>(
   item: {
     entities: T[];
     errors: BmError[];
