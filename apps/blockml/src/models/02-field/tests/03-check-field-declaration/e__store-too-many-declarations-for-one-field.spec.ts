@@ -6,9 +6,9 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildViewField;
-let func = common.FuncEnum.CheckFieldIsObject;
-let testId = 'e__field-is-not-a-dictionary';
+let caller = common.CallerEnum.BuildStoreField;
+let func = common.FuncEnum.CheckFieldDeclaration;
+let testId = 'e__store-too-many-declarations-for-one-field';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,6 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entViews.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.FIELD_IS_NOT_A_DICTIONARY);
-  t.is(errors[0].lines[0].line, 3);
+  t.is(errors[0].title, common.ErTitleEnum.TOO_MANY_DECLARATIONS_FOR_ONE_FIELD);
+  t.is(errors[0].lines[0].line, 4);
 });

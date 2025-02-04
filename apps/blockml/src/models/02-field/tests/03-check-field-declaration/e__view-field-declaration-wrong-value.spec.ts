@@ -6,13 +6,13 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildDashboardField;
+let caller = common.CallerEnum.BuildViewField;
 let func = common.FuncEnum.CheckFieldDeclaration;
-let testId = 'e__missing-parameter-declaration';
+let testId = 'e__view-field-declaration-wrong-value';
 
 test('1', async t => {
   let errors: BmError[];
-  let entDashboards: common.FileDashboard[];
+  let entViews: common.FileView[];
 
   let wLogger;
   let configService;
@@ -47,7 +47,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    entDashboards = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
+    entViews = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -61,8 +61,8 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entDashboards.length, 0);
+  t.is(entViews.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.MISSING_PARAMETER_DECLARATION);
-  t.is(errors[0].lines[0].line, 3);
+  t.is(errors[0].title, common.ErTitleEnum.FIELD_DECLARATION_WRONG_VALUE);
+  t.is(errors[0].lines[0].line, 4);
 });
