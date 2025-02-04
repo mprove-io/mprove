@@ -18,6 +18,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
   cs: ConfigService<interfaces.Config>
 ) {
   let { caller, structId } = item;
+
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
@@ -113,25 +114,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
             }
 
             case common.FieldClassEnum.Time: {
-              if (caller === common.CallerEnum.BuildStoreField) {
-                item.errors.push(
-                  new BmError({
-                    title: common.ErTitleEnum.UNKNOWN_STORE_FIELD_PARAMETER,
-                    message: `parameter "${parameter}" can not be used in Store field`,
-                    lines: [
-                      {
-                        line: field[
-                          (parameter +
-                            constants.LINE_NUM) as keyof common.FieldAny
-                        ] as number,
-                        name: x.fileName,
-                        path: x.filePath
-                      }
-                    ]
-                  })
-                );
-                return;
-              } else if (
+              if (
                 [
                   common.ParameterEnum.Time.toString(),
                   common.ParameterEnum.Hidden.toString(),
@@ -217,25 +200,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
             }
 
             case common.FieldClassEnum.Calculation: {
-              if (caller === common.CallerEnum.BuildStoreField) {
-                item.errors.push(
-                  new BmError({
-                    title: common.ErTitleEnum.UNKNOWN_STORE_FIELD_PARAMETER,
-                    message: `parameter "${parameter}" can not be used in Store field`,
-                    lines: [
-                      {
-                        line: field[
-                          (parameter +
-                            constants.LINE_NUM) as keyof common.FieldAny
-                        ] as number,
-                        name: x.fileName,
-                        path: x.filePath
-                      }
-                    ]
-                  })
-                );
-                return;
-              } else if (
+              if (
                 [
                   common.ParameterEnum.Calculation.toString(),
                   common.ParameterEnum.Hidden.toString(),

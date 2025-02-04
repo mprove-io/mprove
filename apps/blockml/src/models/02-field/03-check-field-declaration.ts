@@ -210,6 +210,29 @@ export function checkFieldDeclaration<T extends types.vsmdrType>(
       let fieldClass = declaration;
       let fieldName = field[fieldClass as keyof common.FieldAny] as string;
 
+      if (
+        [
+          common.ParameterEnum.Time.toString(),
+          common.ParameterEnum.Calculation.toString()
+        ].indexOf(fieldClass) > -1 &&
+        caller === common.CallerEnum.BuildStoreField
+      ) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.WRONG_FIELD_DECLARATION,
+            message: `${fieldClass} can not be used in fields of ${x.fileExt} file`,
+            lines: [
+              {
+                line: Math.min(...fieldKeysLineNums),
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
       // if (
       //   x.fileExt === common.FileExtensionEnum.Dashboard &&
       //   fieldClass !== common.FieldClassEnum.Filter

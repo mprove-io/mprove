@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildViewField;
 let func = common.FuncEnum.CheckFieldUnknownParameters;
-let testId = 'e__unknown-filter-parameter';
+let testId = 'e__view-unknown-filter-parameter';
 
 test('1', async t => {
   let errors: BmError[];
