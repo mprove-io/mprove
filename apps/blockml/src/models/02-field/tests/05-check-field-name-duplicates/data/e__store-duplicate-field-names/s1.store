@@ -1,0 +1,8 @@
+store: s1
+connection: c1
+parameters:
+- filter: f1
+
+fields:
+- dimension: f1
+- measure: f1

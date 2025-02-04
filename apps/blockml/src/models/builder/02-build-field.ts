@@ -47,15 +47,19 @@ export function buildField<T extends types.vsmdrType>(
     cs
   );
 
-  entities = barField.checkSqlExist(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
+  // parameters added to fields
+
+  if (item.caller !== common.CallerEnum.BuildStoreField) {
+    entities = barField.checkSqlExist(
+      {
+        entities: entities,
+        structId: item.structId,
+        errors: item.errors,
+        caller: item.caller
+      },
+      cs
+    );
+  }
 
   entities = barField.checkFieldNameDuplicates(
     {

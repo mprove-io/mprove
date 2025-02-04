@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildViewField;
 let func = common.FuncEnum.CheckFieldNameDuplicates;
-let testId = 'e__duplicate-field-names';
+let testId = 'e__view-duplicate-field-names';
 
 test('1', async t => {
   let errors: BmError[];
