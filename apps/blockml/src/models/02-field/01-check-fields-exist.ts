@@ -26,7 +26,9 @@ export function checkFieldsExist<T extends types.vsmdrType>(
 
     if (
       common.isUndefined(x.fields) &&
-      x.fileExt === common.FileExtensionEnum.View
+      [common.FileExtensionEnum.View, common.FileExtensionEnum.Store].indexOf(
+        x.fileExt
+      ) > -1
     ) {
       item.errors.push(
         new BmError({

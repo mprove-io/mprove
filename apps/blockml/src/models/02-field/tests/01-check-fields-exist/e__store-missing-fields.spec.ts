@@ -6,9 +6,9 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildViewField;
+let caller = common.CallerEnum.BuildStoreField;
 let func = common.FuncEnum.CheckFieldsExist;
-let testId = 'e__missing-fields';
+let testId = 'e__store-missing-fields';
 
 test('1', async t => {
   let errors: BmError[];

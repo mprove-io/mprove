@@ -6,13 +6,13 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildYaml;
-let func = common.FuncEnum.CheckConnections;
-let testId = 'e__connection-not-found';
+let caller = common.CallerEnum.BuildViewField;
+let func = common.FuncEnum.CheckFieldsExist;
+let testId = 'e__view-missing-fields';
 
 test('1', async t => {
   let errors: BmError[];
-  let filesAny: any[];
+  let entViews: common.FileView[];
 
   let wLogger;
   let configService;
@@ -31,18 +31,23 @@ test('1', async t => {
 
     wLogger = logger;
 
+    let connection: common.ProjectConnection = {
+      connectionId: 'c1',
+      type: common.ConnectionTypeEnum.PostgreSQL
+    };
+
     await structService.rebuildStruct({
       traceId: traceId,
       dir: dataDir,
       structId: structId,
       envId: common.PROJECT_ENV_PROD,
       evs: [],
-      connections: [],
+      connections: [connection],
       overrideTimezone: undefined
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    filesAny = await helper.readLog(fromDir, common.LogTypeEnum.FilesAny);
+    entViews = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -55,13 +60,9 @@ test('1', async t => {
     });
   }
 
-  t.is(errors.length, 3);
-  t.is(filesAny.length, 1);
+  t.is(errors.length, 1);
+  t.is(entViews.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.CONNECTION_NOT_FOUND);
-  t.is(errors[0].lines[0].line, 2);
-  t.is(errors[1].title, common.ErTitleEnum.CONNECTION_NOT_FOUND);
-  t.is(errors[1].lines[0].line, 2);
-  t.is(errors[2].title, common.ErTitleEnum.CONNECTION_NOT_FOUND);
-  t.is(errors[2].lines[0].line, 2);
+  t.is(errors[0].title, common.ErTitleEnum.MISSING_FIELDS);
+  t.is(errors[0].lines[0].line, 0);
 });

@@ -322,6 +322,17 @@ export class RebuildStructService {
       this.cs
     );
 
+    stores = barBuilder.buildField(
+      {
+        entities: stores,
+        projectConfig: projectConfig,
+        structId: item.structId,
+        errors: errors,
+        caller: common.CallerEnum.BuildStoreField
+      },
+      this.cs
+    );
+
     models = barSpecial.checkModelName(
       {
         models: models,

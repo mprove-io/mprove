@@ -3,6 +3,7 @@ export enum CallerEnum {
 
   BuildViewField = '02-BuildViewField',
   BuildModelField = '02-BuildModelField',
+  BuildStoreField = '02-BuildStoreField',
   BuildDashboardField = '02-BuildDashboardField',
   BuildReportField = '02-BuildReportField',
 
