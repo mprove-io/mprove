@@ -61,6 +61,21 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
           switch (field.fieldClass) {
             case common.FieldClassEnum.Dimension: {
               if (
+                (caller === common.CallerEnum.BuildStoreField &&
+                  [
+                    common.ParameterEnum.Dimension.toString(),
+                    common.ParameterEnum.Label.toString(),
+                    common.ParameterEnum.Description.toString(),
+                    common.ParameterEnum.Result.toString(),
+                    // common.ParameterEnum.SuggestModelDimension.toString(),
+                    common.ParameterEnum.FormatNumber.toString(),
+                    common.ParameterEnum.CurrencyPrefix.toString(),
+                    common.ParameterEnum.CurrencySuffix.toString(),
+                    common.ParameterEnum.Group.toString(),
+                    common.ParameterEnum.ShowIf.toString(),
+                    common.ParameterEnum.Required.toString(),
+                    common.ParameterEnum.Meta.toString()
+                  ].indexOf(parameter) < 0) ||
                 [
                   common.ParameterEnum.Dimension.toString(),
                   common.ParameterEnum.Hidden.toString(),
@@ -79,7 +94,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                 item.errors.push(
                   new BmError({
                     title: common.ErTitleEnum.UNKNOWN_DIMENSION_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Dimension}`,
+                    message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Dimension} in ${x.fileExt} file`,
                     lines: [
                       {
                         line: field[
@@ -98,7 +113,25 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
             }
 
             case common.FieldClassEnum.Time: {
-              if (
+              if (caller === common.CallerEnum.BuildStoreField) {
+                item.errors.push(
+                  new BmError({
+                    title: common.ErTitleEnum.UNKNOWN_STORE_FIELD_PARAMETER,
+                    message: `parameter "${parameter}" can not be used in Store field`,
+                    lines: [
+                      {
+                        line: field[
+                          (parameter +
+                            constants.LINE_NUM) as keyof common.FieldAny
+                        ] as number,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              } else if (
                 [
                   common.ParameterEnum.Time.toString(),
                   common.ParameterEnum.Hidden.toString(),
@@ -133,6 +166,20 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
 
             case common.FieldClassEnum.Measure: {
               if (
+                (caller === common.CallerEnum.BuildStoreField &&
+                  [
+                    common.ParameterEnum.Measure.toString(),
+                    common.ParameterEnum.Label.toString(),
+                    common.ParameterEnum.Description.toString(),
+                    common.ParameterEnum.Result.toString(),
+                    common.ParameterEnum.FormatNumber.toString(),
+                    common.ParameterEnum.CurrencyPrefix.toString(),
+                    common.ParameterEnum.CurrencySuffix.toString(),
+                    common.ParameterEnum.Group.toString(),
+                    common.ParameterEnum.ShowIf.toString(),
+                    common.ParameterEnum.Required.toString(),
+                    common.ParameterEnum.Meta.toString()
+                  ].indexOf(parameter) < 0) ||
                 [
                   common.ParameterEnum.Measure.toString(),
                   common.ParameterEnum.Hidden.toString(),
@@ -151,7 +198,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                 item.errors.push(
                   new BmError({
                     title: common.ErTitleEnum.UNKNOWN_MEASURE_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Measure}`,
+                    message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Measure} in ${x.fileExt} file`,
                     lines: [
                       {
                         line: field[
@@ -170,7 +217,25 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
             }
 
             case common.FieldClassEnum.Calculation: {
-              if (
+              if (caller === common.CallerEnum.BuildStoreField) {
+                item.errors.push(
+                  new BmError({
+                    title: common.ErTitleEnum.UNKNOWN_STORE_FIELD_PARAMETER,
+                    message: `parameter "${parameter}" can not be used in Store field`,
+                    lines: [
+                      {
+                        line: field[
+                          (parameter +
+                            constants.LINE_NUM) as keyof common.FieldAny
+                        ] as number,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              } else if (
                 [
                   common.ParameterEnum.Calculation.toString(),
                   common.ParameterEnum.Hidden.toString(),
@@ -206,26 +271,45 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
 
             case common.FieldClassEnum.Filter: {
               if (
-                [
-                  common.ParameterEnum.Filter.toString(),
-                  common.ParameterEnum.Label.toString(),
-                  common.ParameterEnum.Description.toString(),
-                  common.ParameterEnum.Result.toString(),
-                  common.ParameterEnum.SuggestModelDimension.toString(),
-                  common.ParameterEnum.Conditions.toString()
-                ].indexOf(parameter) < 0 ||
-                ([common.ParameterEnum.Conditions.toString()].indexOf(
-                  parameter
-                ) > -1 &&
+                (caller === common.CallerEnum.BuildStoreField &&
                   [
-                    common.FileExtensionEnum.Dashboard,
-                    common.FileExtensionEnum.Report
-                  ].indexOf(x.fileExt) < 0)
+                    common.ParameterEnum.Filter.toString(),
+                    common.ParameterEnum.Label.toString(),
+                    common.ParameterEnum.Description.toString(),
+                    common.ParameterEnum.MinFractions.toString(),
+                    common.ParameterEnum.MaxFractions.toString(),
+                    common.ParameterEnum.ShowIf.toString(),
+                    common.ParameterEnum.Required.toString(),
+                    common.ParameterEnum.Controls.toString()
+                    // common.ParameterEnum.SuggestModelDimension.toString(),
+                  ].indexOf(parameter) < 0) ||
+                ([
+                  common.CallerEnum.BuildViewField,
+                  common.CallerEnum.BuildModelField,
+                  common.CallerEnum.BuildStoreField
+                ].indexOf(caller) > -1 &&
+                  [common.ParameterEnum.Conditions.toString()].indexOf(
+                    parameter
+                  ) > -1) ||
+                ([
+                  common.CallerEnum.BuildViewField,
+                  common.CallerEnum.BuildModelField,
+                  common.CallerEnum.BuildDashboardField,
+                  common.CallerEnum.BuildReportField
+                ].indexOf(caller) > -1 &&
+                  [
+                    common.ParameterEnum.Filter.toString(),
+                    common.ParameterEnum.Label.toString(),
+                    common.ParameterEnum.Description.toString(),
+                    common.ParameterEnum.Result.toString(),
+                    common.ParameterEnum.SuggestModelDimension.toString(),
+                    common.ParameterEnum.Conditions.toString()
+                  ].indexOf(parameter) < 0)
               ) {
                 item.errors.push(
                   new BmError({
                     title: common.ErTitleEnum.UNKNOWN_FILTER_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Filter}`,
+                    message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Filter} in ${x.fileExt} file`,
                     lines: [
                       {
                         line: field[
@@ -248,12 +332,13 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
             Array.isArray(field[parameter as keyof common.FieldAny]) &&
             [
               common.ParameterEnum.Timeframes.toString(),
-              common.ParameterEnum.Conditions.toString()
+              common.ParameterEnum.Conditions.toString(),
+              common.ParameterEnum.Controls.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.UNEXPECTED_LIST_IN_FIELD_PARAMETERS,
+                title: common.ErTitleEnum.UNEXPECTED_LIST,
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
@@ -270,12 +355,12 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
           }
 
           if (
-            field[parameter as keyof common.FieldAny]?.constructor === Object
+            field[parameter as keyof common.FieldAny]?.constructor === Object &&
+            [common.ParameterEnum.Meta.toString()].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({
-                title:
-                  common.ErTitleEnum.UNEXPECTED_DICTIONARY_IN_FIELD_PARAMETERS,
+                title: common.ErTitleEnum.UNEXPECTED_DICTIONARY,
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
@@ -295,12 +380,13 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
             !Array.isArray(field[parameter as keyof common.FieldAny]) &&
             [
               common.ParameterEnum.Timeframes.toString(),
-              common.ParameterEnum.Conditions.toString()
+              common.ParameterEnum.Conditions.toString(),
+              common.ParameterEnum.Controls.toString()
             ].indexOf(parameter) > -1
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.FIELD_PARAMETER_IS_NOT_A_LIST,
+                title: common.ErTitleEnum.PARAMETER_IS_NOT_A_LIST,
                 message: `parameter "${parameter}" must be a List`,
                 lines: [
                   {

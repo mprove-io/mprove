@@ -31,6 +31,9 @@ QUERY_SELECTED_MEASURES:
 
 QUERY_PARAMETERS:
 - filter: string
+  label: string
+  description: string
+  # result: custom
   min_fractions: number
   max_fractions: number
   show_if: string # boolean

@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildViewField;
 let func = common.FuncEnum.CheckFieldUnknownParameters;
-let testId = 'e__unexpected-list-in-field-parameters';
+let testId = 'e__unexpected-dictionary';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,6 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entViews.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.UNEXPECTED_LIST_IN_FIELD_PARAMETERS);
+  t.is(errors[0].title, common.ErTitleEnum.UNEXPECTED_DICTIONARY);
   t.is(errors[0].lines[0].line, 6);
 });
