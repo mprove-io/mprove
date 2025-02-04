@@ -6,9 +6,9 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildViewField;
+let caller = common.CallerEnum.BuildStoreField;
 let func = common.FuncEnum.CheckFieldUnknownParameters;
-let testId = 'e__unexpected-dictionary';
+let testId = 'e__store-parameter-is-not-a-list';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,6 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entViews.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.UNEXPECTED_DICTIONARY);
-  t.is(errors[0].lines[0].line, 6);
+  t.is(errors[0].title, common.ErTitleEnum.PARAMETER_IS_NOT_A_LIST);
+  t.is(errors[0].lines[0].line, 5);
 });

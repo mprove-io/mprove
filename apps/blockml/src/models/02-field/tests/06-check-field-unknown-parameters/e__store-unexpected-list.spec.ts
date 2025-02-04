@@ -6,9 +6,9 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildViewField;
+let caller = common.CallerEnum.BuildStoreField;
 let func = common.FuncEnum.CheckFieldUnknownParameters;
-let testId = 'e__unexpected-list';
+let testId = 'e__store-unexpected-list';
 
 test('1', async t => {
   let errors: BmError[];
@@ -64,5 +64,5 @@ test('1', async t => {
   t.is(entViews.length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.UNEXPECTED_LIST);
-  t.is(errors[0].lines[0].line, 6);
+  t.is(errors[0].lines[0].line, 5);
 });

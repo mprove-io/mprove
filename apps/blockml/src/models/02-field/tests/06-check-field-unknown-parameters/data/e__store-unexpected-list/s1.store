@@ -1,0 +1,7 @@
+store: s1
+connection: c1
+fields:
+- dimension: dim1
+  label:           
+  - 5
+  - 6 
