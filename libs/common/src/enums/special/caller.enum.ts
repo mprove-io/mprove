@@ -1,6 +1,8 @@
 export enum CallerEnum {
   BuildYaml = '01-BuildYaml',
 
+  BuildStoreStart = '01.1-BuildStoreStart',
+
   BuildViewField = '02-BuildViewField',
   BuildModelField = '02-BuildModelField',
   BuildStoreField = '02-BuildStoreField',

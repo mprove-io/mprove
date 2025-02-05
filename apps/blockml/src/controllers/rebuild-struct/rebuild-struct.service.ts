@@ -322,6 +322,16 @@ export class RebuildStructService {
       this.cs
     );
 
+    stores = barBuilder.buildStoreStart(
+      {
+        stores: stores,
+        structId: item.structId,
+        errors: errors,
+        caller: common.CallerEnum.BuildStoreStart
+      },
+      this.cs
+    );
+
     stores = barBuilder.buildField(
       {
         entities: stores,

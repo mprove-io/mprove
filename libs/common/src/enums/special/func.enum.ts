@@ -13,6 +13,8 @@ export enum FuncEnum {
   SplitFiles = '01-yaml/10-split-files',
   CheckProjectConfig = '01-yaml/11-check-project-config',
 
+  CheckFieldGroups = '01.1-store-start/01-check-field-groups',
+
   CheckFieldsExist = '02-field/01-check-fields-exist',
   CheckParametersExist = '02-field/01.1-check-parameters-exist',
   CheckFieldIsObject = '02-field/02-check-field-is-object',
