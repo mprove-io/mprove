@@ -23,25 +23,28 @@ export function checkFieldGroups(
   item.stores.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    // if (
-    //   Object.keys(x).indexOf(common.ParameterEnum.Table) < 0 &&
-    //   Object.keys(x).indexOf(common.ParameterEnum.DerivedTable) < 0
-    // ) {
-    //   item.errors.push(
-    //     new BmError({
-    //       title: common.ErTitleEnum.MISSING_TABLE,
-    //       message: `${common.FileExtensionEnum.View} must have "${common.ParameterEnum.Table}" or "${common.ParameterEnum.DerivedTable}" parameter`,
-    //       lines: [
-    //         {
-    //           line: x.view_line_num,
-    //           name: x.fileName,
-    //           path: x.filePath
-    //         }
-    //       ]
-    //     })
-    //   );
-    //   return;
-    // }
+    if (common.isUndefined(x.field_groups)) {
+      x.field_groups = [];
+    }
+
+    x.field_groups.forEach(fieldGroup => {
+      if (common.isDefined(fieldGroup) && fieldGroup.constructor !== Object) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.FIELD_GROUP_IS_NOT_A_DICTIONARY,
+            message: 'found at least one field group that is not a dictionary',
+            lines: [
+              {
+                line: x.field_groups_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+    });
 
     if (errorsOnStart === item.errors.length) {
       newStores.push(x);
