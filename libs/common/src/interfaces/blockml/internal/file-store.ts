@@ -2,7 +2,9 @@ import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { ProjectConnection } from '../project-connection';
 import { FieldAny } from './field-any';
 import { FileBasic } from './file-basic';
-import { FileStoreFractionControl } from './file-store-fraction-control';
+import { FileStoreBuildMetric } from './file-store-build-metric';
+import { FileStoreFieldGroup } from './file-store-field-group';
+import { FileStoreResult } from './file-store-result';
 
 export interface FileStore extends FileBasic {
   store?: string;
@@ -35,58 +37,13 @@ export interface FileStore extends FileBasic {
   parameters?: FieldAny[];
   parameters_line_num?: number;
 
-  results?: {
-    result: string;
-    result_line_num: number;
-
-    fraction_types?: {
-      type: string;
-      type_line_num: number;
-
-      label: string;
-      label_line_num: number;
-
-      or: string;
-      or_line_num: number;
-
-      and_not: string;
-      and_not_line_num: number;
-
-      meta: any;
-      meta_line_num: any;
-
-      controls: FileStoreFractionControl[];
-      controls_line_num: any;
-    }[];
-    fraction_types_line_num: number;
-  }[];
+  results?: FileStoreResult[];
   results_line_num?: number;
 
-  build_metrics?: {
-    time_label: string;
-    time_label_line_num: number;
-
-    details?: {
-      unit: string;
-      unit_line_num: number;
-
-      dimension: string;
-      dimension_line_num: number;
-    }[];
-    details_line_num: number;
-  }[];
+  build_metrics?: FileStoreBuildMetric[];
   build_metrics_line_num?: number;
 
-  field_groups?: {
-    group: string;
-    group_line_num: number;
-
-    label: string;
-    label_line_num: number;
-
-    show_if: string;
-    show_if_line_num: number;
-  }[];
+  field_groups?: FileStoreFieldGroup[];
   field_groups_line_num?: number;
 
   fields?: FieldAny[];

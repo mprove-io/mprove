@@ -168,6 +168,9 @@ export class MyRegex {
   static CAPTURE_NOT_ALLOWED_ALIAS_CHARS_G(): RegExp {
     return cloneRegexp(/([^a-z0-9_])/g);
   }
+  static CAPTURE_NOT_ALLOWED_GROUP_CHARS_G(): RegExp {
+    return cloneRegexp(/([^a-z0-9_])/g);
+  }
   static CAPTURE_NOT_ALLOWED_FIELD_CHARS_G(): RegExp {
     return cloneRegexp(/([^a-z0-9_])/g);
   }
