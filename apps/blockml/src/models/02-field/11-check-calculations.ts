@@ -36,8 +36,9 @@ export function checkCalculations<T extends types.vsmType>(
       if (field.fieldClass !== common.FieldClassEnum.Calculation) {
         return;
       }
+
       if (
-        field.sql &&
+        common.isDefined(field.sql) &&
         !field.sql.match(common.MyRegex.CONTAINS_BLOCKML_REF())
       ) {
         item.errors.push(

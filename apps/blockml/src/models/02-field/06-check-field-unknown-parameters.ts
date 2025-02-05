@@ -241,11 +241,10 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                     common.ParameterEnum.Filter.toString(),
                     common.ParameterEnum.Label.toString(),
                     common.ParameterEnum.Description.toString(),
-                    common.ParameterEnum.MinFractions.toString(),
                     common.ParameterEnum.MaxFractions.toString(),
                     common.ParameterEnum.ShowIf.toString(),
                     common.ParameterEnum.Required.toString(),
-                    common.ParameterEnum.Controls.toString()
+                    common.ParameterEnum.FractionControls.toString()
                     // common.ParameterEnum.SuggestModelDimension.toString(),
                   ].indexOf(parameter) < 0) ||
                 ([
@@ -298,7 +297,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
             [
               common.ParameterEnum.Timeframes.toString(),
               common.ParameterEnum.Conditions.toString(),
-              common.ParameterEnum.Controls.toString()
+              common.ParameterEnum.FractionControls.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(
@@ -346,7 +345,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
             [
               common.ParameterEnum.Timeframes.toString(),
               common.ParameterEnum.Conditions.toString(),
-              common.ParameterEnum.Controls.toString()
+              common.ParameterEnum.FractionControls.toString()
             ].indexOf(parameter) > -1
           ) {
             item.errors.push(

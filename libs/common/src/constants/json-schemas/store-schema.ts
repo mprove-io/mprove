@@ -63,9 +63,6 @@ export const STORE_SCHEMA: JSONSchema7 = {
           filter: {
             type: 'string'
           },
-          min_fractions: {
-            type: 'integer'
-          },
           max_fractions: {
             type: 'integer'
           },
@@ -75,7 +72,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
           required: {
             type: 'boolean'
           },
-          controls: {
+          fraction_controls: {
             type: 'array',
             items: STORE_CONTROL_SCHEMA
           }

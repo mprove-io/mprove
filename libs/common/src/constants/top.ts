@@ -167,11 +167,6 @@ export const DIMENSION_TYPE_VALUES = [
   enums.FieldTypeEnum.YesnoIsTrue
 ];
 
-export const DIMENSION_RESULT_VALUES = [
-  enums.FieldResultEnum.String,
-  enums.FieldResultEnum.Number
-];
-
 export const MEASURE_TYPE_VALUES = [
   enums.FieldTypeEnum.CountDistinct,
   enums.FieldTypeEnum.Sum,
@@ -184,6 +179,11 @@ export const MEASURE_TYPE_VALUES = [
   enums.FieldTypeEnum.Max,
   enums.FieldTypeEnum.List,
   enums.FieldTypeEnum.Custom
+];
+
+export const DIMENSION_RESULT_VALUES = [
+  enums.FieldResultEnum.String,
+  enums.FieldResultEnum.Number
 ];
 
 export const MEASURE_RESULT_VALUES = [

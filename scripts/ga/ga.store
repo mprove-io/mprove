@@ -271,9 +271,8 @@ response: |
 parameters:
 - filter: top_config
   required: true
-  min_fractions: 1
   max_fractions: 1
-  controls: 
+  fraction_controls: 
   - selector: ga_property
     required: true
     label: Property
@@ -308,7 +307,6 @@ parameters:
 # - filter: cohorts_range
 #   show_if: top_config.0.cohorts_switch.true
 #   required: true
-#   min_fractions: 1
 #   max_fractions: 1
 #   controls:
 #   - selector: granularity ...
@@ -316,8 +314,7 @@ parameters:
 - filter: cohorts_config
   show_if: top_config.0.cohorts_switch.true
   required: true
-  min_fractions: 1
-  controls:
+  fraction_controls:
   - date_picker: start_date
     name: Start Date
     value: $DATE_TODAY
@@ -338,9 +335,8 @@ parameters:
 - filter: date_range
   show_if: top_config.0.cohorts_switch.false
   required: true
-  min_fractions: 1
   max_fractions: 1
-  controls:
+  fraction_controls:
   - date_picker: start_date
     name: Start Date
     value: $METRICS_DATE_FROM
@@ -495,14 +491,14 @@ build_metrics:
   # - unit: timestamp
 
 field_groups:
+- group: geo
+- group: time
+- group: cohorts
+  label: Cohorts
+  show_if: top_config.0.cohorts_switch.true
 - group: users
 - group: sessions
 - group: page_screens
-  label: Page Screens
-- group: geo
-- group: cohorts
-  show_if: top_config.0.cohorts_switch.true
-- group: time
 
 fields:
 # Measures

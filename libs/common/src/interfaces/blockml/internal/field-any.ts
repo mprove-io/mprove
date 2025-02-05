@@ -2,11 +2,17 @@ import { FieldCalculation } from './field-calculation';
 import { FieldDimension } from './field-dimension';
 import { FieldFilter } from './field-filter';
 import { FieldMeasure } from './field-measure';
+import { FieldStoreDimension } from './field-store-dimension';
+import { FieldStoreFilter } from './field-store-filter';
+import { FieldStoreMeasure } from './field-store-measure';
 import { FieldTime } from './field-time';
 
 export interface FieldAny
   extends FieldDimension,
+    FieldStoreDimension,
     FieldTime,
     FieldMeasure,
+    FieldStoreMeasure,
     FieldCalculation,
-    FieldFilter {}
+    FieldFilter,
+    FieldStoreFilter {}

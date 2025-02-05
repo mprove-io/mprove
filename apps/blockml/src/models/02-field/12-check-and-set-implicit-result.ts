@@ -25,64 +25,52 @@ export function checkAndSetImplicitResult<T extends types.vsmdrType>(
     let errorsOnStart = item.errors.length;
 
     x.fields.forEach(field => {
-      if (common.isUndefined(field.result)) {
-        switch (field.fieldClass) {
-          case common.FieldClassEnum.Dimension: {
-            if (field.type === common.FieldTypeEnum.YesnoIsTrue) {
-              field.result = common.FieldResultEnum.Yesno;
-              field.result_line_num = 0;
-            } else {
-              field.result = common.FieldResultEnum.String;
-              field.result_line_num = 0;
+      if (
+        [
+          common.CallerEnum.BuildViewField,
+          common.CallerEnum.BuildModelField,
+          common.CallerEnum.BuildReportField,
+          common.CallerEnum.BuildDashboardField
+        ].indexOf(caller) > -1
+      ) {
+        if (common.isUndefined(field.result)) {
+          switch (field.fieldClass) {
+            case common.FieldClassEnum.Dimension: {
+              if (field.type === common.FieldTypeEnum.YesnoIsTrue) {
+                field.result = common.FieldResultEnum.Yesno;
+                field.result_line_num = 0;
+              } else {
+                field.result = common.FieldResultEnum.String;
+                field.result_line_num = 0;
+              }
+              return;
             }
-            return;
-          }
 
-          case common.FieldClassEnum.Measure: {
-            if (field.type === common.FieldTypeEnum.List) {
-              field.result = common.FieldResultEnum.String;
-              field.result_line_num = 0;
-            } else {
+            case common.FieldClassEnum.Measure: {
+              if (field.type === common.FieldTypeEnum.List) {
+                field.result = common.FieldResultEnum.String;
+                field.result_line_num = 0;
+              } else {
+                field.result = common.FieldResultEnum.Number;
+                field.result_line_num = 0;
+              }
+              return;
+            }
+
+            case common.FieldClassEnum.Calculation: {
               field.result = common.FieldResultEnum.Number;
               field.result_line_num = 0;
+              return;
             }
-            return;
-          }
 
-          case common.FieldClassEnum.Calculation: {
-            field.result = common.FieldResultEnum.Number;
-            field.result_line_num = 0;
-            return;
-          }
-
-          case common.FieldClassEnum.Filter: {
-            item.errors.push(
-              new BmError({
-                title: common.ErTitleEnum.MISSING_FILTER_RESULT,
-                message: `parameter ${common.ParameterEnum.Result} is required for filters`,
-                lines: [
-                  {
-                    line: field.name_line_num,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-        }
-      } else {
-        switch (field.fieldClass) {
-          case common.FieldClassEnum.Dimension: {
-            if (common.DIMENSION_RESULT_VALUES.indexOf(field.result) < 0) {
+            case common.FieldClassEnum.Filter: {
               item.errors.push(
                 new BmError({
-                  title: common.ErTitleEnum.WRONG_DIMENSION_RESULT,
-                  message: `"${field.result}" is not valid result for ${common.FieldClassEnum.Dimension}`,
+                  title: common.ErTitleEnum.MISSING_FILTER_RESULT,
+                  message: `parameter ${common.ParameterEnum.Result} is required for filters`,
                   lines: [
                     {
-                      line: field.result_line_num,
+                      line: field.name_line_num,
                       name: x.fileName,
                       path: x.filePath
                     }
@@ -91,69 +79,90 @@ export function checkAndSetImplicitResult<T extends types.vsmdrType>(
               );
               return;
             }
-            break;
           }
-
-          case common.FieldClassEnum.Measure: {
-            if (common.MEASURE_RESULT_VALUES.indexOf(field.result) < 0) {
-              item.errors.push(
-                new BmError({
-                  title: common.ErTitleEnum.WRONG_MEASURE_RESULT,
-                  message: `"${field.result}" is not valid result for ${common.FieldClassEnum.Measure}`,
-                  lines: [
-                    {
-                      line: field.result_line_num,
-                      name: x.fileName,
-                      path: x.filePath
-                    }
-                  ]
-                })
-              );
-              return;
+        } else {
+          switch (field.fieldClass) {
+            case common.FieldClassEnum.Dimension: {
+              if (common.DIMENSION_RESULT_VALUES.indexOf(field.result) < 0) {
+                item.errors.push(
+                  new BmError({
+                    title: common.ErTitleEnum.WRONG_DIMENSION_RESULT,
+                    message: `"${field.result}" is not valid result for ${common.FieldClassEnum.Dimension}`,
+                    lines: [
+                      {
+                        line: field.result_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              }
+              break;
             }
-            break;
-          }
 
-          case common.FieldClassEnum.Calculation: {
-            if (common.CALCULATION_RESULT_VALUES.indexOf(field.result) < 0) {
-              item.errors.push(
-                new BmError({
-                  title: common.ErTitleEnum.WRONG_CALCULATION_RESULT,
-                  message: `"${field.result}" is not valid result for ${common.FieldClassEnum.Calculation}`,
-                  lines: [
-                    {
-                      line: field.result_line_num,
-                      name: x.fileName,
-                      path: x.filePath
-                    }
-                  ]
-                })
-              );
-              return;
+            case common.FieldClassEnum.Measure: {
+              if (common.MEASURE_RESULT_VALUES.indexOf(field.result) < 0) {
+                item.errors.push(
+                  new BmError({
+                    title: common.ErTitleEnum.WRONG_MEASURE_RESULT,
+                    message: `"${field.result}" is not valid result for ${common.FieldClassEnum.Measure}`,
+                    lines: [
+                      {
+                        line: field.result_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              }
+              break;
             }
-            break;
-          }
 
-          case common.FieldClassEnum.Filter: {
-            if (common.FILTER_RESULT_VALUES.indexOf(field.result) < 0) {
-              item.errors.push(
-                new BmError({
-                  title: common.ErTitleEnum.WRONG_FILTER_RESULT,
-                  message: `"${field.result}" is not valid result for ${common.FieldClassEnum.Filter}`,
-                  lines: [
-                    {
-                      line: field.result_line_num,
-                      name: x.fileName,
-                      path: x.filePath
-                    }
-                  ]
-                })
-              );
-              return;
+            case common.FieldClassEnum.Calculation: {
+              if (common.CALCULATION_RESULT_VALUES.indexOf(field.result) < 0) {
+                item.errors.push(
+                  new BmError({
+                    title: common.ErTitleEnum.WRONG_CALCULATION_RESULT,
+                    message: `"${field.result}" is not valid result for ${common.FieldClassEnum.Calculation}`,
+                    lines: [
+                      {
+                        line: field.result_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              }
+              break;
             }
-            break;
+
+            case common.FieldClassEnum.Filter: {
+              if (common.FILTER_RESULT_VALUES.indexOf(field.result) < 0) {
+                item.errors.push(
+                  new BmError({
+                    title: common.ErTitleEnum.WRONG_FILTER_RESULT,
+                    message: `"${field.result}" is not valid result for ${common.FieldClassEnum.Filter}`,
+                    lines: [
+                      {
+                        line: field.result_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              }
+              break;
+            }
+            // no need to check Time result (result is not set by user)
           }
-          // no need to check Time result (result is not set by user)
         }
       }
     });

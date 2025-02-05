@@ -2,6 +2,6 @@ store: s1
 connection: c1
 parameters:
 - filter: f1
-  controls: abc
+  fraction_controls: abc
 fields:
 - dimension: dim1

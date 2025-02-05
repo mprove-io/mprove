@@ -84,7 +84,7 @@ export interface FileStore extends FileBasic {
     label: string;
     label_line_num: number;
 
-    show_if: string; // boolean
+    show_if: string;
     show_if_line_num: number;
   }[];
   field_groups_line_num?: number;

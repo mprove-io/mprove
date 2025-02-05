@@ -25,8 +25,11 @@ export function checkFieldsDeps<T extends types.vsmType>(
     let errorsOnStart = item.errors.length;
 
     if (
-      x.fileExt === common.FileExtensionEnum.Dashboard ||
-      x.fileExt === common.FileExtensionEnum.Report
+      [
+        common.CallerEnum.BuildStoreField,
+        common.CallerEnum.BuildReportField,
+        common.CallerEnum.BuildDashboardField
+      ].indexOf(caller) > -1
     ) {
       newEntities.push(x);
       return;

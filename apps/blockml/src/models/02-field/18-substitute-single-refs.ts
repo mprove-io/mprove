@@ -21,8 +21,11 @@ export function substituteSingleRefs<T extends types.vsmType>(
 
   item.entities.forEach(x => {
     if (
-      x.fileExt === common.FileExtensionEnum.Dashboard ||
-      x.fileExt === common.FileExtensionEnum.Report
+      [
+        common.CallerEnum.BuildStoreField,
+        common.CallerEnum.BuildReportField,
+        common.CallerEnum.BuildDashboardField
+      ].indexOf(caller) > -1
     ) {
       return;
     }
