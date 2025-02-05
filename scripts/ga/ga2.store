@@ -33,23 +33,23 @@ QUERY_PARAMETERS:
 - filter: string
   label: string
   description: string
-  # result: custom
   max_fractions: number
   show_if: string # boolean
   required: string # boolean
+  # result: custom
   # fieldId: string
   # field: 
   #   result: string
   #   fieldClass: enum
   fractions:
   - type: string
-    name: string
-    # group: OR | AND_NOT
+    label: string
+    group: OR | AND_NOT
     meta: any
     controls:
     - 
-      # id: string
-      # type: input | switch | selector | date_picker
+      # name: string
+      # controlClass: input | switch | selector | date_picker
       input: string # id
       switch: string # id
       selector: string # id

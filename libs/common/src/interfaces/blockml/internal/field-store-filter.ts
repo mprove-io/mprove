@@ -1,6 +1,6 @@
 import { enums } from '~common/barrels/enums';
 import { Fraction } from '../fraction';
-import { FileStoreControl } from './file-store-control';
+import { FileStoreFractionControl } from './file-store-fraction-control';
 
 export interface FieldStoreFilter {
   label?: string;
@@ -21,7 +21,7 @@ export interface FieldStoreFilter {
   required?: string; // boolean
   required_line_num?: number;
 
-  fraction_controls?: FileStoreControl[];
+  fraction_controls?: FileStoreFractionControl[];
   fraction_controls_line_num?: number;
 
   //

@@ -2,7 +2,7 @@ import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { ProjectConnection } from '../project-connection';
 import { FieldAny } from './field-any';
 import { FileBasic } from './file-basic';
-import { FileStoreControl } from './file-store-control';
+import { FileStoreFractionControl } from './file-store-fraction-control';
 
 export interface FileStore extends FileBasic {
   store?: string;
@@ -43,8 +43,8 @@ export interface FileStore extends FileBasic {
       type: string;
       type_line_num: number;
 
-      name: string;
-      name_line_num: number;
+      label: string;
+      label_line_num: number;
 
       or: string;
       or_line_num: number;
@@ -55,7 +55,7 @@ export interface FileStore extends FileBasic {
       meta: any;
       meta_line_num: any;
 
-      controls: FileStoreControl[];
+      controls: FileStoreFractionControl[];
       controls_line_num: any;
     }[];
     fraction_types_line_num: number;

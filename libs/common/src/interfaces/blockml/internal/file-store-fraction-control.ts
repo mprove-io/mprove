@@ -1,4 +1,4 @@
-export interface FileStoreControl {
+export interface FileStoreFractionControl {
   input?: string;
   input_line_num?: number;
 
@@ -20,11 +20,11 @@ export interface FileStoreControl {
   }[];
   options_line_num?: number;
 
-  name?: string;
-  name_line_num?: number;
-
   value?: string;
   value_line_num?: number;
+
+  label?: string;
+  label_line_num?: number;
 
   is_array?: string; // boolean
   is_array_line_num?: number;

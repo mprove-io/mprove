@@ -316,11 +316,11 @@ parameters:
   required: true
   fraction_controls:
   - date_picker: start_date
-    name: Start Date
+    label: Start Date
     value: $DATE_TODAY
     required: true
   - date_picker: end_date
-    name: End Date
+    label: End Date
     value: $DATE_TODAY
     required: true
   # - input: value_input
@@ -338,17 +338,17 @@ parameters:
   max_fractions: 1
   fraction_controls:
   - date_picker: start_date
-    name: Start Date
+    label: Start Date
     value: $METRICS_DATE_FROM
   - date_picker: end_date
-    name: End Date
+    label: End Date
     value: $METRICS_DATE_TO
 
 results:
 - result: number
   fraction_types:
   - type: EQUAL
-    name: equal
+    label: equal
     or: true
     and_not: true
     meta: 
@@ -357,7 +357,7 @@ results:
     - input: value_input
 
   - type: LESS_THAN
-    name: less than
+    label: less than
     or: true
     and_not: false
     meta: 
@@ -366,7 +366,7 @@ results:
     - input: value_input
 
   - type: LESS_THAN_OR_EQUAL
-    name: less than or equal
+    label: less than or equal
     and_not: false
     meta: 
       filter_type: numericFilter
@@ -374,7 +374,7 @@ results:
     - input: value_input
 
   - type: GREATER_THAN
-    name: greater than
+    label: greater than
     and_not: false
     meta: 
       filter_type: numericFilter
@@ -382,7 +382,7 @@ results:
     - input: value_input
 
   - type: GREATER_THAN_OR_EQUAL
-    name: greater than or equal
+    label: greater than or equal
     and_not: false
     meta: 
       filter_type: numericFilter
@@ -390,7 +390,7 @@ results:
     - input: value_input
 
   - type: BETWEEN
-    name: between
+    label: between
     meta: 
       filter_type: betweenFilter
     controls:
@@ -400,7 +400,7 @@ results:
 - result: string
   fraction_types:
   - type: EXACT
-    name: exact
+    label: exact
     meta: 
       filter_type: stringFilter
     controls:
@@ -410,7 +410,7 @@ results:
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - type: BEGINS_WITH
-    name: begins with
+    label: begins with
     meta: 
       filter_type: stringFilter
     controls:
@@ -420,7 +420,7 @@ results:
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - type: ENDS_WITH
-    name: ends with
+    label: ends with
     meta: 
       filter_type: stringFilter
     controls:
@@ -430,7 +430,7 @@ results:
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - type: CONTAINS
-    name: contains
+    label: contains
     meta: 
       filter_type: stringFilter
     controls:
@@ -440,7 +440,7 @@ results:
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - type: FULL_REGEXP
-    name: full regexp
+    label: full regexp
     meta: 
       filter_type: stringFilter
     controls:
@@ -450,7 +450,7 @@ results:
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - type: PARTIAL_REGEXP
-    name: partial regexp
+    label: partial regexp
     meta: 
       filter_type: stringFilter
     controls:
@@ -460,7 +460,7 @@ results:
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - type: IN_LIST
-    name: in list
+    label: in list
     meta: 
       filter_type: inListFilter
     controls:
