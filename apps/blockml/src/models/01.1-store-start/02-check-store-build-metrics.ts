@@ -79,9 +79,9 @@ export function checkStoreBuildMetrics(
 
           if (
             Array.isArray(
-              buildMetric[parameter as keyof FileStoreBuildMetric] &&
-                [common.ParameterEnum.Details.toString()].indexOf(parameter) < 0
-            )
+              buildMetric[parameter as keyof FileStoreBuildMetric]
+            ) &&
+            [common.ParameterEnum.Details.toString()].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({

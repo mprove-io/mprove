@@ -1,0 +1,6 @@
+store: s1
+connection: c1
+field_groups: 
+- group: a
+build_metrics:
+- details: []
