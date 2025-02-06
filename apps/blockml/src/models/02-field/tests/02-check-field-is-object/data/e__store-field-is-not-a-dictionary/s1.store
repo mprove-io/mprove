@@ -2,3 +2,6 @@ store: s1
 connection: c1
 fields:
 - 5
+
+field_groups:
+- group: g1

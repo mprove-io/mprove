@@ -3,3 +3,5 @@ connection: c1
 fields:
 - dimension: a b
 
+field_groups:
+- group: g1

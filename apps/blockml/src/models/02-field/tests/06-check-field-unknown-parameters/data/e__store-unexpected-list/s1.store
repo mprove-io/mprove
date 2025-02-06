@@ -5,3 +5,6 @@ fields:
   label:           
   - 5
   - 6 
+
+field_groups:
+- group: g1

@@ -3,3 +3,6 @@ connection: c1
 fields:
 - dimension: dim1
   unk: 1  
+
+field_groups:
+- group: g1

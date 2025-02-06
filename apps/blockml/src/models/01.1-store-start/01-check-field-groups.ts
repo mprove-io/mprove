@@ -75,7 +75,7 @@ export function checkFieldGroups(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.UNKNOWN_FIELD_GROUP_PARAMETER,
-                message: `parameter "${parameter}" can not be used in field_group element`,
+                message: `parameter "${parameter}" can not be used in field_groups element`,
                 lines: [
                   {
                     line: fieldGroup[
@@ -137,41 +137,40 @@ export function checkFieldGroups(
           }
         });
 
-      if (
-        common.isUndefined(fieldGroup.group) &&
-        errorsOnStart === item.errors.length
-      ) {
-        let fieldKeysLineNums: number[] = Object.keys(fieldGroup)
-          .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-          .map(y => fieldGroup[y as keyof FileStoreFieldGroup] as number);
+      if (errorsOnStart === item.errors.length) {
+        if (common.isUndefined(fieldGroup.group)) {
+          let fieldKeysLineNums: number[] = Object.keys(fieldGroup)
+            .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
+            .map(y => fieldGroup[y as keyof FileStoreFieldGroup] as number);
 
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.MISSING_GROUP,
-            message: 'field group must have "group" parameter',
-            lines: [
-              {
-                line: Math.min(...fieldKeysLineNums),
-                name: x.fileName,
-                path: x.filePath
-              }
-            ]
-          })
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.MISSING_GROUP,
+              message: 'field group must have "group" parameter',
+              lines: [
+                {
+                  line: Math.min(...fieldKeysLineNums),
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+
+        let index = groups.findIndex(
+          group => group.groupName === fieldGroup.group
         );
-        return;
-      }
 
-      let index = groups.findIndex(
-        group => group.groupName === fieldGroup.group
-      );
-
-      if (index > -1) {
-        groups[index].groupLineNums.push(fieldGroup.group_line_num);
-      } else {
-        groups.push({
-          groupName: fieldGroup.group,
-          groupLineNums: [fieldGroup.group_line_num]
-        });
+        if (index > -1) {
+          groups[index].groupLineNums.push(fieldGroup.group_line_num);
+        } else {
+          groups.push({
+            groupName: fieldGroup.group,
+            groupLineNums: [fieldGroup.group_line_num]
+          });
+        }
       }
 
       // TODO: show_if check

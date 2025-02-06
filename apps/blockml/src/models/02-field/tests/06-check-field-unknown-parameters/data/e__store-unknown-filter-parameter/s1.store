@@ -6,3 +6,6 @@ parameters:
 
 fields:
 - dimension: d1
+
+field_groups:
+- group: g1

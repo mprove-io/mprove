@@ -6,3 +6,6 @@ parameters:
 fields:
 - dimension: f1
 - measure: f1
+
+field_groups:
+- group: g1

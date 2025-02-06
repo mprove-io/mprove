@@ -495,7 +495,7 @@ field_groups:
 - group: time
 - group: cohorts
   label: Cohorts
-  show_if: top_config.cohorts_switch.true
+  show_if: top_config.0.cohorts_switch.true
 - group: users
 - group: sessions
 - group: page_screens

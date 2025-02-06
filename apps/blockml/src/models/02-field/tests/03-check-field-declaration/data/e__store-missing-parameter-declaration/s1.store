@@ -6,3 +6,6 @@ fields:
 
 parameters:
 - unk: one 
+
+field_groups:
+- group: g1
