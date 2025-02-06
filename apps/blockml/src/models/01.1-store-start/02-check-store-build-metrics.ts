@@ -61,7 +61,7 @@ export function checkStoreBuildMetrics(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.UNKNOWN_BUILD_METRIC_PARAMETER,
-                message: `parameter "${parameter}" can not be used in build_metrics element`,
+                message: `parameter "${parameter}" can not be used in ${common.ParameterEnum.BuildMetrics} element`,
                 lines: [
                   {
                     line: buildMetric[

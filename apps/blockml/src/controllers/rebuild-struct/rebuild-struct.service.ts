@@ -343,6 +343,16 @@ export class RebuildStructService {
       this.cs
     );
 
+    stores = barBuilder.buildStoreNext(
+      {
+        stores: stores,
+        structId: item.structId,
+        errors: errors,
+        caller: common.CallerEnum.BuildStoreNext
+      },
+      this.cs
+    );
+
     models = barSpecial.checkModelName(
       {
         models: models,

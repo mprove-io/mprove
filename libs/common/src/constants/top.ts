@@ -353,3 +353,14 @@ export const SAFE_AGGREGATION_MEASURE_TYPES = [
   enums.FieldTypeEnum.PercentileByKey,
   enums.FieldTypeEnum.MedianByKey
 ];
+
+export const DETAIL_UNIT_VALUES = [
+  enums.DetailUnitEnum.Years,
+  enums.DetailUnitEnum.Quarters,
+  enums.DetailUnitEnum.Months,
+  enums.DetailUnitEnum.WeeksSunday,
+  enums.DetailUnitEnum.WeeksMonday,
+  enums.DetailUnitEnum.Days,
+  enums.DetailUnitEnum.Hours,
+  enums.DetailUnitEnum.Minutes
+];

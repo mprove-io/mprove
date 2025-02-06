@@ -36,6 +36,8 @@ export enum FuncEnum {
   CheckCycles = '02-field/17-check-cycles',
   SubstituteSingleRefs = '02-field/18-substitute-single-refs',
 
+  CheckDetails = '02.1-store-next/01-check-details',
+
   MakeUdfsDict = '03-udf/01-make-udfs-dict',
 
   CheckTable = '04-view/01-check-table',

@@ -9,6 +9,8 @@ export enum CallerEnum {
   BuildDashboardField = '02-BuildDashboardField',
   BuildReportField = '02-BuildReportField',
 
+  BuildStoreNext = '02.1-BuildStoreNext',
+
   BuildUdf = '03-BuildUdf',
   BuildView = '04-BuildView',
   BuildModel = '05-BuildModel',

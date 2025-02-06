@@ -471,7 +471,8 @@ results:
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
 build_metrics:
-- time_label: 'Event Time'
+- time_name: event_time
+  time_label: 'Event Time'
   details:
   - unit: years
     dimension: year
