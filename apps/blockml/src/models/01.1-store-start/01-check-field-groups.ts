@@ -26,10 +26,23 @@ export function checkFieldGroups(
     let errorsOnStart = item.errors.length;
 
     if (common.isUndefined(x.field_groups)) {
-      x.field_groups = [];
+      item.errors.push(
+        new BmError({
+          title: common.ErTitleEnum.MISSING_FIELD_GROUPS,
+          message: `parameter "${common.ParameterEnum.FieldGroups}" is required for ${x.fileExt} file`,
+          lines: [
+            {
+              line: 0,
+              name: x.fileName,
+              path: x.filePath
+            }
+          ]
+        })
+      );
+      return;
     }
 
-    let groups: { group: string; groupLineNums: number[] }[] = [];
+    let groups: { groupName: string; groupLineNums: number[] }[] = [];
 
     x.field_groups.forEach(fieldGroup => {
       if (common.isDefined(fieldGroup) && fieldGroup.constructor !== Object) {
@@ -148,6 +161,19 @@ export function checkFieldGroups(
         return;
       }
 
+      let index = groups.findIndex(
+        group => group.groupName === fieldGroup.group
+      );
+
+      if (index > -1) {
+        groups[index].groupLineNums.push(fieldGroup.group_line_num);
+      } else {
+        groups.push({
+          groupName: fieldGroup.group,
+          groupLineNums: [fieldGroup.group_line_num]
+        });
+      }
+
       // TODO: show_if check
     });
 
@@ -175,7 +201,7 @@ export function checkFieldGroups(
         let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_GROUP_CHARS_G();
         let r2;
 
-        while ((r2 = reg2.exec(group.group))) {
+        while ((r2 = reg2.exec(group.groupName))) {
           groupWrongChars.push(r2[1]);
         }
 

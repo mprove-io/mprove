@@ -495,7 +495,7 @@ field_groups:
 - group: time
 - group: cohorts
   label: Cohorts
-  show_if: top_config.0.cohorts_switch.true
+  show_if: top_config.cohorts_switch.true
 - group: users
 - group: sessions
 - group: page_screens
@@ -504,24 +504,24 @@ fields:
 # Measures
 - measure: active_users
   result: number
-  description: 'The number of distinct users who visited your site or app',
   group: users
+  description: 'The number of distinct users who visited your site or app',
   meta:
     name: activeUsers
     type: TYPE_INTEGER
 
 - measure: sessions
   result: number
-  description: 'The number of sessions that began on your site or app (event triggered: session_start)',
   group: sessions
+  description: 'The number of sessions that began on your site or app (event triggered: session_start)',
   meta:
     name: sessions
     type: TYPE_INTEGER
 
 - measure: screen_page_views
   result: number
-  description: 'The number of app screens or web pages your users viewed. Repeated views of a single page or screen are counted. (screen_view + page_view events)',
   group: page_screens
+  description: 'The number of app screens or web pages your users viewed. Repeated views of a single page or screen are counted. (screen_view + page_view events)',
   meta:
     name: screenPageViews
     type: TYPE_INTEGER
@@ -529,8 +529,8 @@ fields:
 - measure: cohort_active_users
   label: 'Cohort active users'
   result: number
-  description: 'The number of users in the cohort who are active in the time window corresponding to the cohort nth day/week/month. For example in the row where cohortNthWeek = 0001, this metric is the number of users (in the cohort) who are active in week 1',
   group: cohorts
+  description: 'The number of users in the cohort who are active in the time window corresponding to the cohort nth day/week/month. For example in the row where cohortNthWeek = 0001, this metric is the number of users (in the cohort) who are active in week 1',
   meta:
     name: cohortActiveUsers
     type: TYPE_INTEGER
@@ -538,187 +538,187 @@ fields:
 - measure: cohort_total_users
   label: 'Cohort total users'
   result: number
-  description: 'The total number of users in the cohort. This metric is the same value in every row of the report for each cohort. Because cohorts are defined by a shared acquisition date, cohortTotalUsers is the same as cohortActiveUsers for the cohort's selection date range. For report rows later than the cohort's selection range, it is typical for cohortActiveUsers to be smaller than cohortTotalUsers. This difference represents users from the cohort that were not active for the later date. cohortTotalUsers is commonly used in the metric expression cohortActiveUsers/cohortTotalUsers to compute a user retention fraction for the cohort. The relationship between activeUsers and totalUsers is not equivalent to the relationship between cohortActiveUsers and cohortTotalUsers',
   group: cohorts
+  description: 'The total number of users in the cohort. This metric is the same value in every row of the report for each cohort. Because cohorts are defined by a shared acquisition date, cohortTotalUsers is the same as cohortActiveUsers for the cohort's selection date range. For report rows later than the cohort's selection range, it is typical for cohortActiveUsers to be smaller than cohortTotalUsers. This difference represents users from the cohort that were not active for the later date. cohortTotalUsers is commonly used in the metric expression cohortActiveUsers/cohortTotalUsers to compute a user retention fraction for the cohort. The relationship between activeUsers and totalUsers is not equivalent to the relationship between cohortActiveUsers and cohortTotalUsers',
   meta:
     name: cohortTotalUsers
     type: TYPE_INTEGER    
 # Dimensions
 - dimension: country
   result: string
-  description: 'The country from which the user activity originated',
   group: geo
+  description: 'The country from which the user activity originated',
   meta:
     name: country
 
 - dimension: city
   result: string
-  description: 'The city from which the user activity originated',
   group: geo
+  description: 'The city from which the user activity originated',
   meta:
     name: city
 ## Cohort dimensions
 - dimension: cohort
+  result: string
+  group: cohorts
   show_if: top_config.0.cohorts_switch.true
   required: true
-  result: string
   description: 'The cohort's name in the request. A cohort is a set of users who started using your website or app in any consecutive group of days. If a cohort name is not specified in the request, cohorts are named by their zero based index such as cohort_0 and cohort_1',
-  group: cohorts
   meta:
     name: cohort
 
 - dimension: cohort_nth_day
   label: Daily cohort
   result: string
-  description: 'Day offset relative to the firstSessionDate for the users in the cohort. For example, if a cohort is selected with the start and end date of 2020-03-01, then for the date 2020-03-02, cohortNthDay will be 0001',
   group: cohorts
+  description: 'Day offset relative to the firstSessionDate for the users in the cohort. For example, if a cohort is selected with the start and end date of 2020-03-01, then for the date 2020-03-02, cohortNthDay will be 0001',
   meta:
     name: cohortNthDay
 
 - dimension: cohort_nth_week
   label: Weekly cohort
   result: string
-  description: 'Week offset relative to the firstSessionDate for the users in the cohort. Weeks start on Sunday and end on Saturday. For example, if a cohort is selected with the start and end date in the range 2020-11-08 to 2020-11-14, then for the dates in the range 2020-11-15 to 2020-11-21, cohortNthWeek will be 0001',
   group: cohorts
+  description: 'Week offset relative to the firstSessionDate for the users in the cohort. Weeks start on Sunday and end on Saturday. For example, if a cohort is selected with the start and end date in the range 2020-11-08 to 2020-11-14, then for the dates in the range 2020-11-15 to 2020-11-21, cohortNthWeek will be 0001',
   meta:
     name: cohortNthWeek
 
 - dimension: cohort_nth_month
   label: Monthly cohort
   result: string
-  description: 'Month offset relative to the firstSessionDate for the users in the cohort. Month boundaries align with calendar month boundaries. For example, if a cohort is selected with the start and end date in March 2020, then for any date in April 2020, cohortNthMonth will be 0001',
   group: cohorts
+  description: 'Month offset relative to the firstSessionDate for the users in the cohort. Month boundaries align with calendar month boundaries. For example, if a cohort is selected with the start and end date in March 2020, then for any date in April 2020, cohortNthMonth will be 0001',
   meta:
     name: cohortNthMonth
 
 - dimension: cohort_nth_week
   label: 'Year'
   result: string
-  description: 'The four-digit year of the event. For example, 2020 or 2024',
   group: cohorts
+  description: 'The four-digit year of the event. For example, 2020 or 2024',
   meta:
     name: cohortNthWeek
 # Time dimensions
 - dimension: year # "2025"
   label: 'Year'
   result: string
-  description: 'The four-digit year of the event. For example, 2020 or 2024',
   group: time
+  description: 'The four-digit year of the event. For example, 2020 or 2024',
   meta:
     name: year
 
 - dimension: year_month # "202501"
   label: 'Year month'
   result: string
-  description: 'The combined values of year and month. Example values include 202212 or 202301',
   group: time
+  description: 'The combined values of year and month. Example values include 202212 or 202301',
   meta:
     name: yearMonth
 
 - dimension: iso_year_iso_week # "202504"
   label: 'ISO week of ISO year'
   result: string
-  description: 'The combined values of isoWeek and isoYear. Example values include 201652 & 201701',
   group: time
+  description: 'The combined values of isoWeek and isoYear. Example values include 201652 & 201701',
   meta:
     name: isoYearIsoWeek
 
 - dimension: year_week # "202505"
   label: 'Year week'
   result: string
-  description: 'The combined values of year and week. Example values include 202253 or 202301',
   group: time
+  description: 'The combined values of year and week. Example values include 202253 or 202301',
   meta:
     name: yearWeek
 
 - dimension: date # "20250127"
   result: string
-  description: 'The date of the event, formatted as YYYYMMDD',
   group: time
+  description: 'The date of the event, formatted as YYYYMMDD',
   meta:
     name: date
 
 - dimension: date_hour # "2025012722"
   label: 'Date hour (YYYYMMDDHH)'
   result: string
-  description: 'The combined values of date and hour formatted as YYYYMMDDHH',
   group: time
+  description: 'The combined values of date and hour formatted as YYYYMMDDHH',
   meta:
     name: dateHour
 
 - dimension: date_hour_minute # "202501272212"
   label: 'Date hour and minute'
   result: string
-  description: 'The combined values of date, hour, and minute formatted as YYYYMMDDHHMM',
   group: time
+  description: 'The combined values of date, hour, and minute formatted as YYYYMMDDHHMM',
   meta:
     name: dateHourMinute
 
 - dimension: hour # "4"
   result: string
-  description: 'The two-digit hour of the day that the event was logged. This dimension ranges from 0-23 and is reported in your property's timezone',
   group: time
+  description: 'The two-digit hour of the day that the event was logged. This dimension ranges from 0-23 and is reported in your property's timezone',
   meta:
     name: hour
 
 - dimension: minute # "40"
   result: string
-  description: 'The two-digit minute of the hour that the event was logged. This dimension ranges from 0-59 and is reported in your property's timezone',
   group: time
+  description: 'The two-digit minute of the hour that the event was logged. This dimension ranges from 0-59 and is reported in your property's timezone',
   meta:
     name: minute
 
 - dimension: day # "26"
   result: string
-  description: 'The day of the month, a two-digit number from 01 to 31',
   group: time
+  description: 'The day of the month, a two-digit number from 01 to 31',
   meta:
     name: day
 
 - dimension: day_of_week # "0"
   label: 'Day of week'
   result: string
-  description: 'The integer day of the week. It returns values in the range 0 to 6 with Sunday as the first day of the week',
   group: time
+  description: 'The integer day of the week. It returns values in the range 0 to 6 with Sunday as the first day of the week',
   meta:
     name: dayOfWeek
 
 - dimension: day_of_week_name # "Sunday"
   label: 'Day of week name'
   result: string
-  description: 'The day of the week in English. This dimension has values such as Sunday or Monday',
   group: time
+  description: 'The day of the week in English. This dimension has values such as Sunday or Monday',
   meta:
     name: dayOfWeekName
 
 - dimension: week # "05"
   label: 'Week'
   result: string
-  description: 'The week of the event, a two-digit number from 01 to 53. Each week starts on Sunday. January 1st is always in week 01. The first and last week of the year have fewer than 7 days in most years. Weeks other than the first and the last week of the year always have 7 days. For years where January 1st is a Sunday, the first week of that year and the last week of the prior year have 7 days',
   group: time
+  description: 'The week of the event, a two-digit number from 01 to 53. Each week starts on Sunday. January 1st is always in week 01. The first and last week of the year have fewer than 7 days in most years. Weeks other than the first and the last week of the year always have 7 days. For years where January 1st is a Sunday, the first week of that year and the last week of the prior year have 7 days',
   meta:
     name: week
 
 - dimension: month # "01"
   result: string
-  description: 'The month of the event, a two digit integer from 01 to 12',
   group: time
+  description: 'The month of the event, a two digit integer from 01 to 12',
   meta:
     name: month
 
 - dimension: iso_year # "2025"
   label: 'ISO year'
   result: string
-  description: 'The ISO year of the event. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 2022 & 2023',
   group: time
+  description: 'The ISO year of the event. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 2022 & 2023',
   meta:
     name: isoYear
 
 - dimension: iso_week # "04"
   label: 'ISO week of the year'
   result: string
-  description: 'ISO week number, where each week starts on Monday. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 01, 02, & 53',
   group: time
+  description: 'ISO week number, where each week starts on Monday. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 01, 02, & 53',
   meta:
     name: isoWeek
 
@@ -733,39 +733,39 @@ fields:
 - dimension: nth_month # "0000"
   label: 'Nth month'
   result: string
-  description: 'The number of months since the start of a date range. The starting month is 0000',
   group: time
+  description: 'The number of months since the start of a date range. The starting month is 0000',
   meta:
     name: nthMonth
 
 - dimension: nth_week # "0001"
   label: 'Nth week'
   result: string
-  description: 'A number representing the number of weeks since the start of a date range',
   group: time
+  description: 'A number representing the number of weeks since the start of a date range',
   meta:
     name: nthWeek
 
 - dimension: nth_day # "0004"
   label: 'Nth day'
   result: string
-  description: 'The number of days since the start of the date range',
   group: time
+  description: 'The number of days since the start of the date range',
   meta:
     name: nthDay
 
 - dimension: nth_hour # "0142"
   label: 'Nth hour'
   result: string
-  description: 'The number of hours since the start of the date range. The starting hour is 0000',
   group: time
+  description: 'The number of hours since the start of the date range. The starting hour is 0000',
   meta:
     name: nthHour
 
 - dimension: nth_minute # "8532"
   label: 'Nth minute'
   result: string
-  description: 'The number of minutes since the start of the date range. The starting minute is 0000',
   group: time
+  description: 'The number of minutes since the start of the date range. The starting minute is 0000',
   meta:
     name: nthMinute
