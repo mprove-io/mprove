@@ -35,5 +35,15 @@ export function buildStoreStart(
     cs
   );
 
+  stores = barStoreStart.checkStoreResultFractionTypes(
+    {
+      stores: stores,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   return stores;
 }

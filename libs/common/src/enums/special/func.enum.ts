@@ -15,6 +15,7 @@ export enum FuncEnum {
 
   CheckStoreFieldGroups = '01.1-store-start/01-check-store-field-groups',
   CheckStoreResults = '01.1-store-start/02-check-store-results',
+  CheckStoreResultFractionTypes = '01.1-store-start/03-check-store-result-fraction-types',
 
   CheckFieldsExist = '02-field/01-check-fields-exist',
   CheckParametersExist = '02-field/01.1-check-parameters-exist',

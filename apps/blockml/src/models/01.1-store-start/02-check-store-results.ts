@@ -140,11 +140,11 @@ export function checkStoreResults(
         });
 
       if (errorsOnStart === item.errors.length) {
-        if (common.isUndefined(resultElement.result)) {
-          let resultsElementKeyLineNums: number[] = Object.keys(resultElement)
-            .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-            .map(y => resultElement[y as keyof FileStoreResult] as number);
+        let resultsElementKeyLineNums: number[] = Object.keys(resultElement)
+          .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
+          .map(y => resultElement[y as keyof FileStoreResult] as number);
 
+        if (common.isUndefined(resultElement.result)) {
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.MISSING_RESULT,
@@ -162,10 +162,6 @@ export function checkStoreResults(
         }
 
         if (common.isUndefined(resultElement.fraction_types)) {
-          let resultsElementKeyLineNums: number[] = Object.keys(resultElement)
-            .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-            .map(y => resultElement[y as keyof FileStoreResult] as number);
-
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.MISSING_FRACTION_TYPES,
@@ -197,8 +193,6 @@ export function checkStoreResults(
           });
         }
       }
-
-      // TODO: show_if check
     });
 
     if (errorsOnStart === item.errors.length) {
