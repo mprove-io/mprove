@@ -15,6 +15,16 @@ export function buildStoreNext(
 ) {
   let stores = item.stores;
 
+  stores = barStoreNext.checkStoreBuildMetrics(
+    {
+      stores: stores,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   stores = barStoreNext.checkDetails(
     {
       stores: stores,

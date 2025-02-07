@@ -4,4 +4,5 @@ field_groups:
 - group: a
 build_metrics:
 - time_name:
-    a: b
+  - 1
+fields: []

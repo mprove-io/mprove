@@ -3,4 +3,5 @@ connection: c1
 field_groups: 
 - group: a
 build_metrics:
-- unk: a
+- details: []
+fields: []

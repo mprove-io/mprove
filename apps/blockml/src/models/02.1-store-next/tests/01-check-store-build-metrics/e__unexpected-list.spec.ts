@@ -6,9 +6,9 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildStoreStart;
+let caller = common.CallerEnum.BuildStoreNext;
 let func = common.FuncEnum.CheckStoreBuildMetrics;
-let testId = 'e__build-metrics-element-is-not-a-dictionary';
+let testId = 'e__unexpected-list';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,9 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entStores.length, 0);
 
-  t.is(
-    errors[0].title,
-    common.ErTitleEnum.BUILD_METRICS_ELEMENT_IS_NOT_A_DICTIONARY
-  );
-  t.is(errors[0].lines[0].line, 5);
+  t.is(errors[0].title, common.ErTitleEnum.UNEXPECTED_LIST);
+  t.is(errors[0].lines[0].line, 6);
 });

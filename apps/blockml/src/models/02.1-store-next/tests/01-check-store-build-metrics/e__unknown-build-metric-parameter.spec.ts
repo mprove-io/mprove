@@ -6,9 +6,9 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildStoreStart;
+let caller = common.CallerEnum.BuildStoreNext;
 let func = common.FuncEnum.CheckStoreBuildMetrics;
-let testId = 'e__unexpected-list';
+let testId = 'e__unknown-build-metric-parameter';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,6 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entStores.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.UNEXPECTED_LIST);
+  t.is(errors[0].title, common.ErTitleEnum.UNKNOWN_BUILD_METRIC_PARAMETER);
   t.is(errors[0].lines[0].line, 6);
 });

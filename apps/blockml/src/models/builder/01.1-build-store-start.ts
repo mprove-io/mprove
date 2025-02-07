@@ -25,15 +25,5 @@ export function buildStoreStart(
     cs
   );
 
-  stores = barStoreStart.checkStoreBuildMetrics(
-    {
-      stores: stores,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
   return stores;
 }

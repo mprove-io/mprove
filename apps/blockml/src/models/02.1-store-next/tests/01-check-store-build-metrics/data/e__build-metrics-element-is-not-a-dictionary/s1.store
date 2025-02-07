@@ -3,5 +3,5 @@ connection: c1
 field_groups: 
 - group: a
 build_metrics:
-- time_name:
-  - 1
+- 1
+fields: []
