@@ -161,6 +161,29 @@ export function checkStoreResults(
           return;
         }
 
+        if (common.isUndefined(resultElement.fraction_types)) {
+          let resultsElementKeyLineNums: number[] = Object.keys(resultElement)
+            .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
+            .map(y => resultElement[y as keyof FileStoreResult] as number);
+
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.MISSING_FRACTION_TYPES,
+              message: `results element must have "${common.ParameterEnum.FractionTypes}" parameter`,
+              lines: [
+                {
+                  line: Math.min(...resultsElementKeyLineNums),
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+      }
+
+      if (errorsOnStart === item.errors.length) {
         let index = results.findIndex(
           resultsElement => resultsElement.resultName === resultElement.result
         );
