@@ -2,7 +2,7 @@ store: s1
 connection: c1
 field_groups: []
 results:
-- result: a
+- result: string
   fraction_types:
-  - 1
+  - unk: b
 

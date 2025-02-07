@@ -7,8 +7,8 @@ import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildStoreStart;
-let func = common.FuncEnum.CheckStoreResultFractionTypes;
-let testId = 'e__fraction-types-element-is-not-a-dictionary';
+let func = common.FuncEnum.CheckResultFractionTypes;
+let testId = 'e__unknown-fraction-types-element-parameter';
 
 test('1', async t => {
   let errors: BmError[];
@@ -65,7 +65,7 @@ test('1', async t => {
 
   t.is(
     errors[0].title,
-    common.ErTitleEnum.FRACTION_TYPES_ELEMENT_IS_NOT_A_DICTIONARY
+    common.ErTitleEnum.UNKNOWN_FRACTION_TYPES_ELEMENT_PARAMETER
   );
-  t.is(errors[0].lines[0].line, 6);
+  t.is(errors[0].lines[0].line, 7);
 });

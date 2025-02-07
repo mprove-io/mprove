@@ -6,9 +6,9 @@ import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 import { FileStoreFractionType } from '~common/interfaces/blockml/internal/file-store-fraction-type';
 
-let func = common.FuncEnum.CheckStoreResultFractionTypes;
+let func = common.FuncEnum.CheckResultFractionTypes;
 
-export function checkStoreResultFractionTypes(
+export function checkResultFractionTypes(
   item: {
     stores: common.FileStore[];
     errors: BmError[];
