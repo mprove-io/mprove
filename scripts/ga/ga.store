@@ -52,7 +52,7 @@ body: |
         apiFilter = {
           fieldName: x.field.meta.name,
           stringFilter: {
-            matchType: fraction.type,
+            matchType: fraction.meta.match_type,
             value: fraction.controls.find(x => x['input'] === 'value_input').value,
             caseSensitive: fraction.controls.find(x => x['switch'] === 'case_sensitive_switch').value
           }
@@ -73,7 +73,7 @@ body: |
         apiFilter = {
           fieldName: x.field.meta.name,
           numericFilter: {
-            operation: fraction.type,
+            operation: fraction.meta.operation,
             value: fraction.controls.find(x => x['input'] === 'value_input').value
           }
         }
@@ -347,51 +347,52 @@ parameters:
 results:
 - result: number
   fraction_types:
-  - type: EQUAL
-    label: equal
+  - type: equal
+    label: Equal
     or: true
     and_not: true
     meta: 
+      operation: EQUAL
       filter_type: numericFilter
     controls: # TODO: checkControls
     - input: value_input
 
-  - type: LESS_THAN
-    label: less than
+  - type: less_than
     or: true
     and_not: false
     meta: 
+      operation: LESS_THAN
       filter_type: numericFilter
     controls: 
     - input: value_input
 
-  - type: LESS_THAN_OR_EQUAL
-    label: less than or equal
+  - type: less_than_or_equal
     and_not: false
     meta: 
+      operation: LESS_THAN_OR_EQUAL
       filter_type: numericFilter
     controls: 
     - input: value_input
 
-  - type: GREATER_THAN
-    label: greater than
+  - type: greater_than
     and_not: false
     meta: 
+      operation: GREATER_THAN
       filter_type: numericFilter
     controls: 
     - input: value_input
 
-  - type: GREATER_THAN_OR_EQUAL
-    label: greater than or equal
+  - type: greater_than_or_equal
     and_not: false
     meta: 
+      operation: GREATER_THAN_OR_EQUAL
       filter_type: numericFilter
     controls: 
     - input: value_input
 
-  - type: BETWEEN
-    label: between
+  - type: between
     meta: 
+      operation: BETWEEN
       filter_type: betweenFilter
     controls:
     - input: value_from_input
@@ -399,9 +400,9 @@ results:
 
 - result: string
   fraction_types:
-  - type: EXACT
-    label: exact
+  - type: exact
     meta: 
+      match_type: EXACT
       filter_type: stringFilter
     controls:
     - input: value_input
@@ -409,9 +410,9 @@ results:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
-  - type: BEGINS_WITH
-    label: begins with
+  - type: begins_with
     meta: 
+      match_type: BEGINS_WITH
       filter_type: stringFilter
     controls:
     - input: value_input
@@ -419,9 +420,9 @@ results:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
-  - type: ENDS_WITH
-    label: ends with
+  - type: ends_with
     meta: 
+      match_type: ENDS_WITH
       filter_type: stringFilter
     controls:
     - input: value_input
@@ -429,9 +430,9 @@ results:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
-  - type: CONTAINS
-    label: contains
+  - type: contains
     meta: 
+      match_type: CONTAINS
       filter_type: stringFilter
     controls:
     - input: value_input
@@ -439,9 +440,9 @@ results:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
-  - type: FULL_REGEXP
-    label: full regexp
+  - type: full_regexp
     meta: 
+      match_type: FULL_REGEXP
       filter_type: stringFilter
     controls:
     - input: value_input
@@ -449,9 +450,9 @@ results:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
-  - type: PARTIAL_REGEXP
-    label: partial regexp
+  - type: partial_regexp
     meta: 
+      match_type: PARTIAL_REGEXP
       filter_type: stringFilter
     controls:
     - input: value_input
@@ -459,9 +460,9 @@ results:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
-  - type: IN_LIST
-    label: in list
+  - type: in_list
     meta: 
+      match_type: IN_LIST
       filter_type: inListFilter
     controls:
     - input: value_input
