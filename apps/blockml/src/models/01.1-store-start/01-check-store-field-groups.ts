@@ -6,9 +6,9 @@ import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 import { FileStoreFieldGroup } from '~common/_index';
 
-let func = common.FuncEnum.CheckFieldGroups;
+let func = common.FuncEnum.CheckStoreFieldGroups;
 
-export function checkFieldGroups(
+export function checkStoreFieldGroups(
   item: {
     stores: common.FileStore[];
     errors: BmError[];

@@ -6,9 +6,9 @@ import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 import { FileStoreDetail } from '~common/_index';
 
-let func = common.FuncEnum.CheckDetails;
+let func = common.FuncEnum.CheckStoreBuildMetricDetails;
 
-export function checkDetails(
+export function checkStoreBuildMetricDetails(
   item: {
     stores: common.FileStore[];
     errors: BmError[];

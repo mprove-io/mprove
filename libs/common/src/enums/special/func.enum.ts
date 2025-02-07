@@ -13,7 +13,8 @@ export enum FuncEnum {
   SplitFiles = '01-yaml/10-split-files',
   CheckProjectConfig = '01-yaml/11-check-project-config',
 
-  CheckFieldGroups = '01.1-store-start/01-check-field-groups',
+  CheckStoreFieldGroups = '01.1-store-start/01-check-store-field-groups',
+  CheckStoreResults = '01.1-store-start/01-check-store-results',
 
   CheckFieldsExist = '02-field/01-check-fields-exist',
   CheckParametersExist = '02-field/01.1-check-parameters-exist',
@@ -36,7 +37,7 @@ export enum FuncEnum {
   SubstituteSingleRefs = '02-field/18-substitute-single-refs',
 
   CheckStoreBuildMetrics = '02.1-store-next/01-check-store-build-metrics',
-  CheckDetails = '02.1-store-next/02-check-details',
+  CheckStoreBuildMetricDetails = '02.1-store-next/02-check-store-build-metric-details',
 
   MakeUdfsDict = '03-udf/01-make-udfs-dict',
 

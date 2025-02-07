@@ -6,9 +6,9 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildStoreStart;
-let func = common.FuncEnum.CheckFieldGroups;
-let testId = 'e__missing-group';
+let caller = common.CallerEnum.BuildStoreNext;
+let func = common.FuncEnum.CheckStoreBuildMetricDetails;
+let testId = 'e__duplicate-detail';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,6 +63,8 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entStores.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.MISSING_GROUP);
-  t.is(errors[0].lines[0].line, 4);
+  t.is(errors[0].title, common.ErTitleEnum.DUPLICATE_DETAIL);
+  t.is(errors[0].lines.length, 2);
+  t.is(errors[0].lines[0].line, 7);
+  t.is(errors[0].lines[1].line, 9);
 });

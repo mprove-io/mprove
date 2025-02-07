@@ -15,7 +15,17 @@ export function buildStoreStart(
 ) {
   let stores = item.stores;
 
-  stores = barStoreStart.checkFieldGroups(
+  stores = barStoreStart.checkStoreFieldGroups(
+    {
+      stores: stores,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
+  stores = barStoreStart.checkStoreResults(
     {
       stores: stores,
       structId: item.structId,

@@ -7,8 +7,8 @@ import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildStoreStart;
-let func = common.FuncEnum.CheckFieldGroups;
-let testId = 'e__missing-field-groups';
+let func = common.FuncEnum.CheckStoreFieldGroups;
+let testId = 'e__unexpected-list';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,6 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entStores.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.MISSING_FIELD_GROUPS);
-  t.is(errors[0].lines[0].line, 0);
+  t.is(errors[0].title, common.ErTitleEnum.UNEXPECTED_LIST);
+  t.is(errors[0].lines[0].line, 4);
 });

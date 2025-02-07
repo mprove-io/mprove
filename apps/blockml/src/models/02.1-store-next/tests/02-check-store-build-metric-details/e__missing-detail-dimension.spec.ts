@@ -7,8 +7,8 @@ import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildStoreNext;
-let func = common.FuncEnum.CheckDetails;
-let testId = 'e__unknown-detail-parameter';
+let func = common.FuncEnum.CheckStoreBuildMetricDetails;
+let testId = 'e__missing-detail-dimension';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,6 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entStores.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.UNKNOWN_DETAIL_PARAMETER);
+  t.is(errors[0].title, common.ErTitleEnum.MISSING_DETAIL_DIMENSION);
   t.is(errors[0].lines[0].line, 7);
 });

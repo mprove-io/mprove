@@ -6,9 +6,9 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildStoreStart;
-let func = common.FuncEnum.CheckFieldGroups;
-let testId = 'e__field-group-is-not-a-dictionary';
+let caller = common.CallerEnum.BuildStoreNext;
+let func = common.FuncEnum.CheckStoreBuildMetricDetails;
+let testId = 'e__unknown-detail-parameter';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,6 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entStores.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.FIELD_GROUP_IS_NOT_A_DICTIONARY);
-  t.is(errors[0].lines[0].line, 3);
+  t.is(errors[0].title, common.ErTitleEnum.UNKNOWN_DETAIL_PARAMETER);
+  t.is(errors[0].lines[0].line, 7);
 });
