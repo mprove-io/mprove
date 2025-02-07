@@ -1,0 +1,12 @@
+store: s1
+connection: c1
+
+build_metrics:
+- time_label: a
+  details:
+  - unit: unk
+    dimension: b
+
+field_groups: []
+fields: []
+
