@@ -1,8 +1,10 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
+import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
+import { FileStoreResult } from '~common/interfaces/blockml/internal/file-store-result';
 
 let func = common.FuncEnum.CheckStoreResults;
 
@@ -40,190 +42,192 @@ export function checkStoreResults(
       return;
     }
 
-    // let groups: { groupName: string; groupLineNums: number[] }[] = [];
+    let results: { resultName: string; resultLineNums: number[] }[] = [];
 
-    // x.field_groups.forEach(fieldGroup => {
-    //   if (common.isDefined(fieldGroup) && fieldGroup.constructor !== Object) {
-    //     item.errors.push(
-    //       new BmError({
-    //         title: common.ErTitleEnum.FIELD_GROUP_IS_NOT_A_DICTIONARY,
-    //         message: 'found at least one field group that is not a dictionary',
-    //         lines: [
-    //           {
-    //             line: x.field_groups_line_num,
-    //             name: x.fileName,
-    //             path: x.filePath
-    //           }
-    //         ]
-    //       })
-    //     );
-    //     return;
-    //   }
+    x.results.forEach(resultElement => {
+      if (
+        common.isDefined(resultElement) &&
+        resultElement.constructor !== Object
+      ) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.RESULT_ELEMENT_IS_NOT_A_DICTIONARY,
+            message:
+              'found at least one results element that is not a dictionary',
+            lines: [
+              {
+                line: x.results_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
 
-    //   Object.keys(fieldGroup)
-    //     .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-    //     .forEach(parameter => {
-    //       if (
-    //         [
-    //           common.ParameterEnum.Group.toString(),
-    //           common.ParameterEnum.Label.toString(),
-    //           common.ParameterEnum.ShowIf.toString()
-    //         ].indexOf(parameter) < 0
-    //       ) {
-    //         item.errors.push(
-    //           new BmError({
-    //             title: common.ErTitleEnum.UNKNOWN_FIELD_GROUP_PARAMETER,
-    //             message: `parameter "${parameter}" can not be used in field_groups element`,
-    //             lines: [
-    //               {
-    //                 line: fieldGroup[
-    //                   (parameter +
-    //                     constants.LINE_NUM) as keyof FileStoreFieldGroup
-    //                 ] as number,
-    //                 name: x.fileName,
-    //                 path: x.filePath
-    //               }
-    //             ]
-    //           })
-    //         );
-    //         return;
-    //       }
+      Object.keys(resultElement)
+        .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
+        .forEach(parameter => {
+          if (
+            [
+              common.ParameterEnum.Result.toString(),
+              common.ParameterEnum.FractionTypes.toString()
+            ].indexOf(parameter) < 0
+          ) {
+            item.errors.push(
+              new BmError({
+                title: common.ErTitleEnum.UNKNOWN_RESULT_ELEMENT_PARAMETER,
+                message: `parameter "${parameter}" can not be used in results element`,
+                lines: [
+                  {
+                    line: resultElement[
+                      (parameter + constants.LINE_NUM) as keyof FileStoreResult
+                    ] as number,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
 
-    //       if (
-    //         Array.isArray(fieldGroup[parameter as keyof FileStoreFieldGroup])
-    //       ) {
-    //         item.errors.push(
-    //           new BmError({
-    //             title: common.ErTitleEnum.UNEXPECTED_LIST,
-    //             message: `parameter "${parameter}" must have a single value`,
-    //             lines: [
-    //               {
-    //                 line: fieldGroup[
-    //                   (parameter +
-    //                     constants.LINE_NUM) as keyof FileStoreFieldGroup
-    //                 ] as number,
-    //                 name: x.fileName,
-    //                 path: x.filePath
-    //               }
-    //             ]
-    //           })
-    //         );
-    //         return;
-    //       }
+          if (
+            Array.isArray(resultElement[parameter as keyof FileStoreResult]) &&
+            [common.ParameterEnum.FractionTypes.toString()].indexOf(parameter) <
+              0
+          ) {
+            item.errors.push(
+              new BmError({
+                title: common.ErTitleEnum.UNEXPECTED_LIST,
+                message: `parameter "${parameter}" must have a single value`,
+                lines: [
+                  {
+                    line: resultElement[
+                      (parameter + constants.LINE_NUM) as keyof FileStoreResult
+                    ] as number,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
 
-    //       if (
-    //         fieldGroup[parameter as keyof FileStoreFieldGroup]?.constructor ===
-    //         Object
-    //       ) {
-    //         item.errors.push(
-    //           new BmError({
-    //             title: common.ErTitleEnum.UNEXPECTED_DICTIONARY,
-    //             message: `parameter "${parameter}" must have a single value`,
-    //             lines: [
-    //               {
-    //                 line: fieldGroup[
-    //                   (parameter +
-    //                     constants.LINE_NUM) as keyof FileStoreFieldGroup
-    //                 ] as number,
-    //                 name: x.fileName,
-    //                 path: x.filePath
-    //               }
-    //             ]
-    //           })
-    //         );
-    //         return;
-    //       }
-    //     });
+          if (
+            resultElement[parameter as keyof FileStoreResult]?.constructor ===
+            Object
+          ) {
+            item.errors.push(
+              new BmError({
+                title: common.ErTitleEnum.UNEXPECTED_DICTIONARY,
+                message: `parameter "${parameter}" must have a single value`,
+                lines: [
+                  {
+                    line: resultElement[
+                      (parameter + constants.LINE_NUM) as keyof FileStoreResult
+                    ] as number,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+        });
 
-    //   if (errorsOnStart === item.errors.length) {
-    //     if (common.isUndefined(fieldGroup.group)) {
-    //       let fieldKeysLineNums: number[] = Object.keys(fieldGroup)
-    //         .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-    //         .map(y => fieldGroup[y as keyof FileStoreFieldGroup] as number);
+      if (errorsOnStart === item.errors.length) {
+        if (common.isUndefined(resultElement.result)) {
+          let resultsElementKeyLineNums: number[] = Object.keys(resultElement)
+            .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
+            .map(y => resultElement[y as keyof FileStoreResult] as number);
 
-    //       item.errors.push(
-    //         new BmError({
-    //           title: common.ErTitleEnum.MISSING_GROUP,
-    //           message: 'field group must have "group" parameter',
-    //           lines: [
-    //             {
-    //               line: Math.min(...fieldKeysLineNums),
-    //               name: x.fileName,
-    //               path: x.filePath
-    //             }
-    //           ]
-    //         })
-    //       );
-    //       return;
-    //     }
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.MISSING_RESULT,
+              message: `results element must have "${common.ParameterEnum.Result}" parameter`,
+              lines: [
+                {
+                  line: Math.min(...resultsElementKeyLineNums),
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
 
-    //     let index = groups.findIndex(
-    //       group => group.groupName === fieldGroup.group
-    //     );
+        let index = results.findIndex(
+          resultsElement => resultsElement.resultName === resultElement.result
+        );
 
-    //     if (index > -1) {
-    //       groups[index].groupLineNums.push(fieldGroup.group_line_num);
-    //     } else {
-    //       groups.push({
-    //         groupName: fieldGroup.group,
-    //         groupLineNums: [fieldGroup.group_line_num]
-    //       });
-    //     }
-    //   }
+        if (index > -1) {
+          results[index].resultLineNums.push(resultElement.result_line_num);
+        } else {
+          results.push({
+            resultName: resultElement.result,
+            resultLineNums: [resultElement.result_line_num]
+          });
+        }
+      }
 
-    //   // TODO: show_if check
-    // });
+      // TODO: show_if check
+    });
 
-    // if (errorsOnStart === item.errors.length) {
-    //   groups.forEach(group => {
-    //     if (group.groupLineNums.length > 1) {
-    //       item.errors.push(
-    //         new BmError({
-    //           title: common.ErTitleEnum.DUPLICATE_GROUPS,
-    //           message: `"${common.ParameterEnum.Group}" value must be unique across field_groups elements`,
-    //           lines: group.groupLineNums.map(l => ({
-    //             line: l,
-    //             name: x.fileName,
-    //             path: x.filePath
-    //           }))
-    //         })
-    //       );
-    //       return;
-    //     }
+    if (errorsOnStart === item.errors.length) {
+      results.forEach(result => {
+        if (result.resultLineNums.length > 1) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.DUPLICATE_RESULTS,
+              message: `"${common.ParameterEnum.Result}" value must be unique across results elements`,
+              lines: result.resultLineNums.map(l => ({
+                line: l,
+                name: x.fileName,
+                path: x.filePath
+              }))
+            })
+          );
+          return;
+        }
 
-    //     //
+        //
 
-    //     let groupWrongChars: string[] = [];
+        let resultWrongChars: string[] = [];
 
-    //     let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_GROUP_CHARS_G();
-    //     let r2;
+        let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_RESULT_CHARS_G();
+        let r2;
 
-    //     while ((r2 = reg2.exec(group.groupName))) {
-    //       groupWrongChars.push(r2[1]);
-    //     }
+        while ((r2 = reg2.exec(result.resultName))) {
+          resultWrongChars.push(r2[1]);
+        }
 
-    //     let groupWrongCharsString = '';
+        let resultWrongCharsString = '';
 
-    //     if (groupWrongChars.length > 0) {
-    //       groupWrongCharsString = [...new Set(groupWrongChars)].join(', '); // unique
+        if (resultWrongChars.length > 0) {
+          resultWrongCharsString = [...new Set(resultWrongChars)].join(', '); // unique
 
-    //       item.errors.push(
-    //         new BmError({
-    //           title: common.ErTitleEnum.WRONG_CHARS_IN_GROUP,
-    //           message: `Characters "${groupWrongCharsString}" can not be used for group (only snake_case "a...z0...9_" is allowed)`,
-    //           lines: [
-    //             {
-    //               line: group.groupLineNums[0],
-    //               name: x.fileName,
-    //               path: x.filePath
-    //             }
-    //           ]
-    //         })
-    //       );
-    //       return false;
-    //     }
-    //   });
-    // }
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.WRONG_CHARS_IN_RESULT,
+              message: `Characters "${resultWrongCharsString}" can not be used for result (only snake_case "a...z0...9_" is allowed)`,
+              lines: [
+                {
+                  line: result.resultLineNums[0],
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return false;
+        }
+      });
+    }
 
     if (errorsOnStart === item.errors.length) {
       newStores.push(x);

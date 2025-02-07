@@ -55,6 +55,7 @@ export enum ParameterEnum {
   Report = 'report',
   Tiles = 'tiles',
   Result = 'result',
+  FractionTypes = 'fraction_types',
   SuggestModelDimension = 'suggest_model_dimension',
   Rows = 'rows',
   Select = 'select',

@@ -29,7 +29,7 @@ export function checkStoreBuildMetrics(
       x.build_metrics = [];
     }
 
-    // let groups: { groupName: string; groupLineNums: number[] }[] = [];
+    let timeNames: { timeName: string; timeNameLineNums: number[] }[] = [];
 
     x.build_metrics.forEach(buildMetric => {
       if (common.isDefined(buildMetric) && buildMetric.constructor !== Object) {
@@ -129,17 +129,17 @@ export function checkStoreBuildMetrics(
 
       if (errorsOnStart === item.errors.length) {
         if (common.isUndefined(buildMetric.time_name)) {
-          let fieldKeysLineNums: number[] = Object.keys(buildMetric)
+          let buildMetricKeysLineNums: number[] = Object.keys(buildMetric)
             .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
             .map(y => buildMetric[y as keyof FileStoreBuildMetric] as number);
 
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.MISSING_TIME_NAME,
-              message: `field group must have "${common.ParameterEnum.TimeName}" parameter`,
+              message: `build_metrics element must have "${common.ParameterEnum.TimeName}" parameter`,
               lines: [
                 {
-                  line: Math.min(...fieldKeysLineNums),
+                  line: Math.min(...buildMetricKeysLineNums),
                   name: x.fileName,
                   path: x.filePath
                 }
@@ -162,17 +162,19 @@ export function checkStoreBuildMetrics(
         }
 
         if (common.isUndefined(buildMetric.details)) {
-          let fieldKeysLineNums: number[] = Object.keys(buildMetric)
+          let buildMetricKeysLineNums: number[] = Object.keys(buildMetric)
             .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
             .map(y => buildMetric[y as keyof FileStoreBuildMetric] as number);
 
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.MISSING_DETAILS,
-              message: `field group must have "${common.ParameterEnum.Details}" parameter`,
+              message: `build_metrics element must have "${common.ParameterEnum.Details}" parameter`,
               lines: [
                 {
-                  line: Math.min(...fieldKeysLineNums.filter(l => l !== 0)),
+                  line: Math.min(
+                    ...buildMetricKeysLineNums.filter(l => l !== 0)
+                  ),
                   name: x.fileName,
                   path: x.filePath
                 }
@@ -182,71 +184,75 @@ export function checkStoreBuildMetrics(
           return;
         }
 
-        // let index = groups.findIndex(
-        //   group => group.groupName === buildMetric.group
-        // );
+        let index = timeNames.findIndex(
+          tn => tn.timeName === buildMetric.time_name
+        );
 
-        // if (index > -1) {
-        //   groups[index].groupLineNums.push(buildMetric.group_line_num);
-        // } else {
-        //   groups.push({
-        //     groupName: buildMetric.group,
-        //     groupLineNums: [buildMetric.group_line_num]
-        //   });
-        // }
+        if (index > -1) {
+          timeNames[index].timeNameLineNums.push(
+            buildMetric.time_name_line_num
+          );
+        } else {
+          timeNames.push({
+            timeName: buildMetric.time_name,
+            timeNameLineNums: [buildMetric.time_name_line_num]
+          });
+        }
       }
     });
 
-    // if (errorsOnStart === item.errors.length) {
-    //   groups.forEach(group => {
-    //     if (group.groupLineNums.length > 1) {
-    //       item.errors.push(
-    //         new BmError({
-    //           title: common.ErTitleEnum.DUPLICATE_GROUPS,
-    //           message: `"${common.ParameterEnum.Group}" value must be unique across field_groups elements`,
-    //           lines: group.groupLineNums.map(l => ({
-    //             line: l,
-    //             name: x.fileName,
-    //             path: x.filePath
-    //           }))
-    //         })
-    //       );
-    //       return;
-    //     }
+    if (errorsOnStart === item.errors.length) {
+      timeNames.forEach(timeName => {
+        if (timeName.timeNameLineNums.length > 1) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.DUPLICATE_TIME_NAMES,
+              message: `"${common.ParameterEnum.TimeName}" value must be unique across build_metrics elements`,
+              lines: timeName.timeNameLineNums.map(l => ({
+                line: l,
+                name: x.fileName,
+                path: x.filePath
+              }))
+            })
+          );
+          return;
+        }
 
-    //     //
+        //
 
-    //     let groupWrongChars: string[] = [];
+        let timeNameWrongChars: string[] = [];
 
-    //     let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_GROUP_CHARS_G();
-    //     let r2;
+        let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_TIME_NAME_CHARS_G();
+        let r2;
 
-    //     while ((r2 = reg2.exec(group.groupName))) {
-    //       groupWrongChars.push(r2[1]);
-    //     }
+        while ((r2 = reg2.exec(timeName.timeName))) {
+          timeNameWrongChars.push(r2[1]);
+        }
 
-    //     let groupWrongCharsString = '';
+        let timeNameWrongCharsString = '';
 
-    //     if (groupWrongChars.length > 0) {
-    //       groupWrongCharsString = [...new Set(groupWrongChars)].join(', '); // unique
+        if (timeNameWrongChars.length > 0) {
+          timeNameWrongCharsString = [...new Set(timeNameWrongChars)].join(
+            ', '
+          ); // unique
 
-    //       item.errors.push(
-    //         new BmError({
-    //           title: common.ErTitleEnum.WRONG_CHARS_IN_GROUP,
-    //           message: `Characters "${groupWrongCharsString}" can not be used for group (only snake_case "a...z0...9_" is allowed)`,
-    //           lines: [
-    //             {
-    //               line: group.groupLineNums[0],
-    //               name: x.fileName,
-    //               path: x.filePath
-    //             }
-    //           ]
-    //         })
-    //       );
-    //       return false;
-    //     }
-    //   });
-    // }
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.WRONG_CHARS_IN_TIME_NAME,
+              message: `Characters "${timeNameWrongCharsString}" can not be used for ${common.ParameterEnum.TimeName} (only snake_case "a...z0...9_" is allowed)`,
+              lines: [
+                {
+                  line: timeName.timeNameLineNums[0],
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return false;
+        }
+      });
+    }
 
     if (errorsOnStart === item.errors.length) {
       newStores.push(x);

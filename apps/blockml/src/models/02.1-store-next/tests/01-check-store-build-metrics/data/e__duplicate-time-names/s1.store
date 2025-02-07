@@ -1,0 +1,11 @@
+store: s1
+connection: c1
+field_groups: 
+- group: a
+build_metrics:
+- time_name: a
+  details: []
+- time_name: a
+  details: []
+fields: []
+results: []

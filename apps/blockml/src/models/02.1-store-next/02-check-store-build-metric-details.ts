@@ -119,7 +119,7 @@ export function checkStoreBuildMetricDetails(
 
         if (errorsOnStart === item.errors.length) {
           if (common.isUndefined(detail.unit)) {
-            let fieldKeysLineNums: number[] = Object.keys(detail)
+            let detailKeysLineNums: number[] = Object.keys(detail)
               .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
               .map(y => detail[y as keyof FileStoreDetail] as number);
 
@@ -129,7 +129,7 @@ export function checkStoreBuildMetricDetails(
                 message: `detail must have "${common.ParameterEnum.Unit}" parameter`,
                 lines: [
                   {
-                    line: Math.min(...fieldKeysLineNums),
+                    line: Math.min(...detailKeysLineNums),
                     name: x.fileName,
                     path: x.filePath
                   }
@@ -140,7 +140,7 @@ export function checkStoreBuildMetricDetails(
           }
 
           if (common.isUndefined(detail.dimension)) {
-            let fieldKeysLineNums: number[] = Object.keys(detail)
+            let detailKeysLineNums: number[] = Object.keys(detail)
               .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
               .map(y => detail[y as keyof FileStoreDetail] as number);
 
@@ -150,7 +150,7 @@ export function checkStoreBuildMetricDetails(
                 message: `detail must have "${common.ParameterEnum.Dimension}" parameter`,
                 lines: [
                   {
-                    line: Math.min(...fieldKeysLineNums),
+                    line: Math.min(...detailKeysLineNums),
                     name: x.fileName,
                     path: x.filePath
                   }

@@ -139,17 +139,17 @@ export function checkStoreFieldGroups(
 
       if (errorsOnStart === item.errors.length) {
         if (common.isUndefined(fieldGroup.group)) {
-          let fieldKeysLineNums: number[] = Object.keys(fieldGroup)
+          let fieldGroupKeysLineNums: number[] = Object.keys(fieldGroup)
             .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
             .map(y => fieldGroup[y as keyof FileStoreFieldGroup] as number);
 
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.MISSING_GROUP,
-              message: 'field group must have "group" parameter',
+              message: `field group must have "${common.ParameterEnum.Group}" parameter`,
               lines: [
                 {
-                  line: Math.min(...fieldKeysLineNums),
+                  line: Math.min(...fieldGroupKeysLineNums),
                   name: x.fileName,
                   path: x.filePath
                 }
