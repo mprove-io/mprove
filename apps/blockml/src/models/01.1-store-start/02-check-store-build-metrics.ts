@@ -149,6 +149,18 @@ export function checkStoreBuildMetrics(
           return;
         }
 
+        if (common.isUndefined(buildMetric.time_label)) {
+          buildMetric.time_label = common.MyRegex.replaceUnderscoresWithSpaces(
+            buildMetric.time_name
+          );
+          buildMetric.time_label = buildMetric.time_label
+            .split(' ')
+            .map(word => common.capitalizeFirstLetter(word))
+            .join(' ');
+
+          buildMetric.time_label_line_num = 0;
+        }
+
         if (common.isUndefined(buildMetric.details)) {
           let fieldKeysLineNums: number[] = Object.keys(buildMetric)
             .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
@@ -160,7 +172,7 @@ export function checkStoreBuildMetrics(
               message: `field group must have "${common.ParameterEnum.Details}" parameter`,
               lines: [
                 {
-                  line: Math.min(...fieldKeysLineNums),
+                  line: Math.min(...fieldKeysLineNums.filter(l => l !== 0)),
                   name: x.fileName,
                   path: x.filePath
                 }

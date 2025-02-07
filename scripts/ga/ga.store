@@ -285,7 +285,7 @@ parameters:
     label: 'Cohorts Mode'
     value: false
   - selector: granularity
-    show_if: top_config.0.cohorts_switch.true
+    show_if: top_config.cohorts_switch.true
     required: true
     label: Granularity
     value: DAILY
@@ -294,25 +294,25 @@ parameters:
     - value: WEEKLY
     - value: MONTHLY
   - input: start_offset
-    show_if: top_config.0.cohorts_switch.true
+    show_if: top_config.cohorts_switch.true
     required: true
     label: Start Offset # From
     value: 0
   - input: end_offset
-    show_if: top_config.0.cohorts_switch.true
+    show_if: top_config.cohorts_switch.true
     required: true
     label: End Offset # To
     value: 5
 
 # - filter: cohorts_range
-#   show_if: top_config.0.cohorts_switch.true
+#   show_if: top_config.cohorts_switch.true
 #   required: true
 #   max_fractions: 1
 #   controls:
 #   - selector: granularity ...
 
 - filter: cohorts_config
-  show_if: top_config.0.cohorts_switch.true
+  show_if: top_config.cohorts_switch.true
   required: true
   fraction_controls:
   - date_picker: start_date
@@ -333,10 +333,10 @@ parameters:
   #   lock: true
 
 - filter: date_range
-  show_if: top_config.0.cohorts_switch.false
+  show_if: top_config.cohorts_switch.false
   required: true
   max_fractions: 1
-  fraction_controls:
+  fraction_controls: # TODO: checkControls
   - date_picker: start_date
     label: Start Date
     value: $METRICS_DATE_FROM
@@ -353,7 +353,7 @@ results:
     and_not: true
     meta: 
       filter_type: numericFilter
-    controls: 
+    controls: # TODO: checkControls
     - input: value_input
 
   - type: LESS_THAN
@@ -496,7 +496,7 @@ field_groups:
 - group: time
 - group: cohorts
   label: Cohorts
-  show_if: top_config.0.cohorts_switch.true
+  show_if: top_config.cohorts_switch.true # TODO: check
 - group: users
 - group: sessions
 - group: page_screens
@@ -504,8 +504,8 @@ field_groups:
 fields:
 # Measures
 - measure: active_users
-  result: number
-  group: users
+  result: number # TODO: check using results
+  group: users # TODO: check value using field_groups and must be set
   description: 'The number of distinct users who visited your site or app',
   meta:
     name: activeUsers
@@ -562,7 +562,7 @@ fields:
 - dimension: cohort
   result: string
   group: cohorts
-  show_if: top_config.0.cohorts_switch.true
+  show_if: top_config.cohorts_switch.true
   required: true
   description: 'The cohort's name in the request. A cohort is a set of users who started using your website or app in any consecutive group of days. If a cohort name is not specified in the request, cohorts are named by their zero based index such as cohort_0 and cohort_1',
   meta:
