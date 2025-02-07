@@ -71,6 +71,7 @@ export enum ParameterEnum {
   SqlWhere = 'sql_where',
   Table = 'table',
   Time = 'time',
+  TimeName = 'time_name',
   TimeLabel = 'time_label',
   Details = 'details',
   Unit = 'unit',

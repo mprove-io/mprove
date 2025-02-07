@@ -54,6 +54,7 @@ export function checkStoreBuildMetrics(
         .forEach(parameter => {
           if (
             [
+              common.ParameterEnum.TimeName.toString(),
               common.ParameterEnum.TimeLabel.toString(),
               common.ParameterEnum.Details.toString()
             ].indexOf(parameter) < 0
@@ -134,8 +135,8 @@ export function checkStoreBuildMetrics(
 
           item.errors.push(
             new BmError({
-              title: common.ErTitleEnum.MISSING_TIME_LABEL,
-              message: `field group must have "${common.ParameterEnum.TimeLabel}" parameter`,
+              title: common.ErTitleEnum.MISSING_TIME_NAME,
+              message: `field group must have "${common.ParameterEnum.TimeName}" parameter`,
               lines: [
                 {
                   line: Math.min(...fieldKeysLineNums),
