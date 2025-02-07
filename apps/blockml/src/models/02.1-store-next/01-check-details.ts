@@ -36,7 +36,7 @@ export function checkDetails(
               message: `found at least one ${common.ParameterEnum.Details} element that is not a dictionary`,
               lines: [
                 {
-                  line: x.build_metrics_line_num,
+                  line: buildMetric.details_line_num,
                   name: x.fileName,
                   path: x.filePath
                 }
