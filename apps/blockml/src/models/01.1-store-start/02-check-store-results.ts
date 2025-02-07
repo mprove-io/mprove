@@ -51,7 +51,7 @@ export function checkStoreResults(
       ) {
         item.errors.push(
           new BmError({
-            title: common.ErTitleEnum.RESULT_ELEMENT_IS_NOT_A_DICTIONARY,
+            title: common.ErTitleEnum.RESULTS_ELEMENT_IS_NOT_A_DICTIONARY,
             message:
               'found at least one results element that is not a dictionary',
             lines: [
@@ -77,7 +77,7 @@ export function checkStoreResults(
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.UNKNOWN_RESULT_ELEMENT_PARAMETER,
+                title: common.ErTitleEnum.UNKNOWN_RESULTS_ELEMENT_PARAMETER,
                 message: `parameter "${parameter}" can not be used in results element`,
                 lines: [
                   {
