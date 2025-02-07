@@ -5,3 +5,4 @@ field_groups:
 build_metrics:
 - time_name: abc
 fields: []
+results: []

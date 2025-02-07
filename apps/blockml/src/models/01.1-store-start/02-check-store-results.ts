@@ -23,22 +23,22 @@ export function checkStoreResults(
   item.stores.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    // if (common.isUndefined(x.field_groups)) {
-    //   item.errors.push(
-    //     new BmError({
-    //       title: common.ErTitleEnum.MISSING_FIELD_GROUPS,
-    //       message: `parameter "${common.ParameterEnum.FieldGroups}" is required for ${x.fileExt} file`,
-    //       lines: [
-    //         {
-    //           line: 0,
-    //           name: x.fileName,
-    //           path: x.filePath
-    //         }
-    //       ]
-    //     })
-    //   );
-    //   return;
-    // }
+    if (common.isUndefined(x.results)) {
+      item.errors.push(
+        new BmError({
+          title: common.ErTitleEnum.MISSING_RESULTS,
+          message: `parameter "${common.ParameterEnum.Results}" is required for ${x.fileExt} file`,
+          lines: [
+            {
+              line: 0,
+              name: x.fileName,
+              path: x.filePath
+            }
+          ]
+        })
+      );
+      return;
+    }
 
     // let groups: { groupName: string; groupLineNums: number[] }[] = [];
 

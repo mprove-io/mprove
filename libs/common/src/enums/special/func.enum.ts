@@ -14,7 +14,7 @@ export enum FuncEnum {
   CheckProjectConfig = '01-yaml/11-check-project-config',
 
   CheckStoreFieldGroups = '01.1-store-start/01-check-store-field-groups',
-  CheckStoreResults = '01.1-store-start/01-check-store-results',
+  CheckStoreResults = '01.1-store-start/02-check-store-results',
 
   CheckFieldsExist = '02-field/01-check-fields-exist',
   CheckParametersExist = '02-field/01.1-check-parameters-exist',
