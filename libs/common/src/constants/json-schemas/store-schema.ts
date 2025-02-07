@@ -124,8 +124,11 @@ export const STORE_SCHEMA: JSONSchema7 = {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['time_label', 'details'],
+        required: ['time_name', 'details'],
         properties: {
+          time_name: {
+            type: 'string'
+          },
           time_label: {
             type: 'string'
           },

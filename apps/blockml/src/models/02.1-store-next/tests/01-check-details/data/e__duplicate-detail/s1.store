@@ -2,7 +2,7 @@ store: s1
 connection: c1
 
 build_metrics:
-- time_label: a
+- time_name: a
   details:
   - unit: months
     dimension: a

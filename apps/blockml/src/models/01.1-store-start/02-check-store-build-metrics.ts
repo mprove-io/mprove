@@ -128,7 +128,7 @@ export function checkStoreBuildMetrics(
         });
 
       if (errorsOnStart === item.errors.length) {
-        if (common.isUndefined(buildMetric.time_label)) {
+        if (common.isUndefined(buildMetric.time_name)) {
           let fieldKeysLineNums: number[] = Object.keys(buildMetric)
             .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
             .map(y => buildMetric[y as keyof FileStoreBuildMetric] as number);

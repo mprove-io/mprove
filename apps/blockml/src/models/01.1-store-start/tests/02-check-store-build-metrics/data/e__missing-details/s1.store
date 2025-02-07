@@ -3,4 +3,4 @@ connection: c1
 field_groups: 
 - group: a
 build_metrics:
-- time_label: abc
+- time_name: abc
