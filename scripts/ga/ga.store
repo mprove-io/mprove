@@ -541,7 +541,7 @@ fields:
   label: 'Cohort total users'
   result: number
   group: cohorts
-  description: 'The total number of users in the cohort. This metric is the same value in every row of the report for each cohort. Because cohorts are defined by a shared acquisition date, cohortTotalUsers is the same as cohortActiveUsers for the cohort's selection date range. For report rows later than the cohort's selection range, it is typical for cohortActiveUsers to be smaller than cohortTotalUsers. This difference represents users from the cohort that were not active for the later date. cohortTotalUsers is commonly used in the metric expression cohortActiveUsers/cohortTotalUsers to compute a user retention fraction for the cohort. The relationship between activeUsers and totalUsers is not equivalent to the relationship between cohortActiveUsers and cohortTotalUsers',
+  description: "The total number of users in the cohort. This metric is the same value in every row of the report for each cohort. Because cohorts are defined by a shared acquisition date, cohortTotalUsers is the same as cohortActiveUsers for the cohort's selection date range. For report rows later than the cohort's selection range, it is typical for cohortActiveUsers to be smaller than cohortTotalUsers. This difference represents users from the cohort that were not active for the later date. cohortTotalUsers is commonly used in the metric expression cohortActiveUsers/cohortTotalUsers to compute a user retention fraction for the cohort. The relationship between activeUsers and totalUsers is not equivalent to the relationship between cohortActiveUsers and cohortTotalUsers",
   meta:
     name: cohortTotalUsers
     type: TYPE_INTEGER    
@@ -565,7 +565,7 @@ fields:
   group: cohorts
   show_if: top_config.cohorts_switch.true
   required: true
-  description: 'The cohort's name in the request. A cohort is a set of users who started using your website or app in any consecutive group of days. If a cohort name is not specified in the request, cohorts are named by their zero based index such as cohort_0 and cohort_1',
+  description: "The cohort's name in the request. A cohort is a set of users who started using your website or app in any consecutive group of days. If a cohort name is not specified in the request, cohorts are named by their zero based index such as cohort_0 and cohort_1",
   meta:
     name: cohort
 
@@ -659,14 +659,14 @@ fields:
 - dimension: hour # "4"
   result: string
   group: time
-  description: 'The two-digit hour of the day that the event was logged. This dimension ranges from 0-23 and is reported in your property's timezone',
+  description: "The two-digit hour of the day that the event was logged. This dimension ranges from 0-23 and is reported in your property's timezone",
   meta:
     name: hour
 
 - dimension: minute # "40"
   result: string
   group: time
-  description: 'The two-digit minute of the hour that the event was logged. This dimension ranges from 0-59 and is reported in your property's timezone',
+  description: "The two-digit minute of the hour that the event was logged. This dimension ranges from 0-59 and is reported in your property's timezone",
   meta:
     name: minute
 
