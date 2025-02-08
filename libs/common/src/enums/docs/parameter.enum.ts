@@ -62,6 +62,13 @@ export enum ParameterEnum {
   Rows = 'rows',
   Select = 'select',
 
+  Input = 'input',
+  Switch = 'switch',
+  DatePicker = 'date_picker',
+  Selector = 'selector',
+  IsArray = 'is_array',
+  Value = 'value',
+
   Relationship = 'relationship',
   ShowFields = 'show_fields',
   Sorts = 'sorts',

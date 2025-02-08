@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
@@ -229,6 +230,21 @@ export function checkResultFractionTypes(
               typeLineNums: [fractionTypesElement.type_line_num]
             });
           }
+        }
+
+        if (errorsOnStart === item.errors.length) {
+          barSpecial.checkStoreFractionControls(
+            {
+              controls: fractionTypesElement.controls,
+              controlsLineNum: fractionTypesElement.controls_line_num,
+              fileName: x.fileName,
+              filePath: x.filePath,
+              structId: item.structId,
+              errors: item.errors,
+              caller: item.caller
+            },
+            cs
+          );
         }
       });
 
