@@ -130,79 +130,89 @@ export function checkStoreFractionControls(
       });
 
     if (errorsOnStart === item.errors.length) {
-      // let fractionTypeElementKeyLineNums: number[] = Object.keys(control)
-      //   .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-      //   .map(y => control[y as keyof FileStoreFractionControl]);
-      // if (common.isUndefined(control.type)) {
-      //   item.errors.push(
-      //     new BmError({
-      //       title: common.ErTitleEnum.MISSING_TYPE,
-      //       message: `${common.ParameterEnum.FractionTypes} element must have "${common.ParameterEnum.Type}" parameter`,
-      //       lines: [
-      //         {
-      //           line: Math.min(...fractionTypeElementKeyLineNums),
-      //           name: item.fileName,
-      //           path: item.filePath
-      //         }
-      //       ]
-      //     })
-      //   );
-      //   return;
-      // }
-      // if (common.isUndefined(control.controls)) {
-      //   item.errors.push(
-      //     new BmError({
-      //       title: common.ErTitleEnum.MISSING_CONTROLS,
-      //       message: `${common.ParameterEnum.FractionTypes} element must have "${common.ParameterEnum.Controls}" parameter`,
-      //       lines: [
-      //         {
-      //           line: Math.min(...fractionTypeElementKeyLineNums),
-      //           name: item.fileName,
-      //           path: item.filePath
-      //         }
-      //       ]
-      //     })
-      //   );
-      //   return;
-      // }
-      // if (
-      //   common.isDefined(control.or) &&
-      //   !control.or.match(common.MyRegex.TRUE_FALSE())
-      // ) {
-      //   item.errors.push(
-      //     new BmError({
-      //       title: common.ErTitleEnum.WRONG_OR,
-      //       message: `parameter "${common.ParameterEnum.Or}" must be 'true' or 'false' if specified`,
-      //       lines: [
-      //         {
-      //           line: control.or_line_num,
-      //           name: item.fileName,
-      //           path: item.filePath
-      //         }
-      //       ]
-      //     })
-      //   );
-      //   return;
-      // }
-      // if (
-      //   common.isDefined(control.and_not) &&
-      //   !control.and_not.match(common.MyRegex.TRUE_FALSE())
-      // ) {
-      //   item.errors.push(
-      //     new BmError({
-      //       title: common.ErTitleEnum.WRONG_AND_NOT,
-      //       message: `parameter "${common.ParameterEnum.AndNot}" must be 'true' or 'false' if specified`,
-      //       lines: [
-      //         {
-      //           line: control.and_not_line_num,
-      //           name: item.fileName,
-      //           path: item.filePath
-      //         }
-      //       ]
-      //     })
-      //   );
-      //   return;
-      // }
+      let controlsElementKeyLineNums: number[] = Object.keys(control)
+        .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
+        .map(y => control[y as keyof FileStoreFractionControl] as number);
+
+      if (
+        common.isDefined(control.selector) &&
+        common.isUndefined(control.options)
+      ) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.MISSING_OPTIONS,
+            message: `${common.ParameterEnum.Selector} must have "${common.ParameterEnum.Options}" parameter`,
+            lines: [
+              {
+                line: Math.min(...controlsElementKeyLineNums),
+                name: item.fileName,
+                path: item.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      if (
+        common.isDefined(control.is_array) &&
+        !control.is_array.match(common.MyRegex.TRUE_FALSE())
+      ) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.WRONG_IS_ARRAY,
+            message: `parameter "${common.ParameterEnum.IsArray}" must be 'true' or 'false' if specified`,
+            lines: [
+              {
+                line: control.is_array_line_num,
+                name: item.fileName,
+                path: item.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      if (
+        common.isDefined(control.show_if) &&
+        !control.show_if.match(common.MyRegex.TRUE_FALSE())
+      ) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.WRONG_SHOW_IF,
+            message: `parameter "${common.ParameterEnum.ShowIf}" must be 'true' or 'false' if specified`,
+            lines: [
+              {
+                line: control.show_if_line_num,
+                name: item.fileName,
+                path: item.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      if (
+        common.isDefined(control.required) &&
+        !control.required.match(common.MyRegex.TRUE_FALSE())
+      ) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.WRONG_REQUIRED,
+            message: `parameter "${common.ParameterEnum.Required}" must be 'true' or 'false' if specified`,
+            lines: [
+              {
+                line: control.required_line_num,
+                name: item.fileName,
+                path: item.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
     }
 
     // if (errorsOnStart === item.errors.length) {

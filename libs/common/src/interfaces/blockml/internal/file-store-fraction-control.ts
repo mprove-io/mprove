@@ -30,7 +30,7 @@ export interface FileStoreFractionControl {
   is_array_line_num?: number;
 
   show_if?: string; // boolean
-  show_if_array_line_num?: number;
+  show_if_line_num?: number;
 
   required?: string; // boolean
   required_line_num?: number;
