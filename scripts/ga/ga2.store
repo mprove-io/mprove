@@ -57,7 +57,7 @@ QUERY_PARAMETERS:
       value: string
       label: string
       is_array: string # boolean
-      show_if: string
+      show_if: string # boolean
       required: string # boolean
       options: 
       - value: string

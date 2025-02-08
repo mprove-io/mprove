@@ -156,6 +156,26 @@ export function checkStoreFractionControls(
 
       if (
         common.isDefined(control.is_array) &&
+        common.isUndefined(control.input)
+      ) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.IS_ARRAY_WITHOUT_INPUT,
+            message: `parameter "${common.ParameterEnum.IsArray}" can only be used with input control`,
+            lines: [
+              {
+                line: control.is_array_line_num,
+                name: item.fileName,
+                path: item.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      if (
+        common.isDefined(control.is_array) &&
         !control.is_array.match(common.MyRegex.TRUE_FALSE())
       ) {
         item.errors.push(
@@ -231,56 +251,56 @@ export function checkStoreFractionControls(
     // }
   });
 
-  if (errorsOnStart === item.errors.length) {
-    controlNames.forEach(frType => {
-      if (frType.controlNameLineNums.length > 1) {
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.DUPLICATE_TYPES,
-            message: `"${common.ParameterEnum.Type}" value must be unique across ${common.ParameterEnum.FractionTypes} elements`,
-            lines: frType.controlNameLineNums.map(l => ({
-              line: l,
-              name: item.fileName,
-              path: item.filePath
-            }))
-          })
-        );
-        return;
-      }
+  // if (errorsOnStart === item.errors.length) {
+  //   controlNames.forEach(frType => {
+  //     if (frType.controlNameLineNums.length > 1) {
+  //       item.errors.push(
+  //         new BmError({
+  //           title: common.ErTitleEnum.DUPLICATE_TYPES,
+  //           message: `"${common.ParameterEnum.Type}" value must be unique across ${common.ParameterEnum.FractionTypes} elements`,
+  //           lines: frType.controlNameLineNums.map(l => ({
+  //             line: l,
+  //             name: item.fileName,
+  //             path: item.filePath
+  //           }))
+  //         })
+  //       );
+  //       return;
+  //     }
 
-      //
+  //     //
 
-      let typeWrongChars: string[] = [];
+  //     let typeWrongChars: string[] = [];
 
-      let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_RESULT_CHARS_G();
-      let r2;
+  //     let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_RESULT_CHARS_G();
+  //     let r2;
 
-      while ((r2 = reg2.exec(frType.controlName))) {
-        typeWrongChars.push(r2[1]);
-      }
+  //     while ((r2 = reg2.exec(frType.controlName))) {
+  //       typeWrongChars.push(r2[1]);
+  //     }
 
-      let typeWrongCharsString = '';
+  //     let typeWrongCharsString = '';
 
-      if (typeWrongChars.length > 0) {
-        typeWrongCharsString = [...new Set(typeWrongChars)].join(', '); // unique
+  //     if (typeWrongChars.length > 0) {
+  //       typeWrongCharsString = [...new Set(typeWrongChars)].join(', '); // unique
 
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.WRONG_CHARS_IN_TYPE,
-            message: `Characters "${typeWrongCharsString}" can not be used for result (only snake_case "a...z0...9_" is allowed)`,
-            lines: [
-              {
-                line: frType.controlNameLineNums[0],
-                name: item.fileName,
-                path: item.filePath
-              }
-            ]
-          })
-        );
-        return false;
-      }
-    });
-  }
+  //       item.errors.push(
+  //         new BmError({
+  //           title: common.ErTitleEnum.WRONG_CHARS_IN_TYPE,
+  //           message: `Characters "${typeWrongCharsString}" can not be used for result (only snake_case "a...z0...9_" is allowed)`,
+  //           lines: [
+  //             {
+  //               line: frType.controlNameLineNums[0],
+  //               name: item.fileName,
+  //               path: item.filePath
+  //             }
+  //           ]
+  //         })
+  //       );
+  //       return false;
+  //     }
+  //   });
+  // }
 
   return item.errors;
 }
