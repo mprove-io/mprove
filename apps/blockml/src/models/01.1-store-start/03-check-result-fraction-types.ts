@@ -26,9 +26,9 @@ export function checkResultFractionTypes(
     let errorsOnStart = item.errors.length;
 
     x.results.forEach(result => {
-      result.fraction_types.forEach(fractionTypesElement => {
-        let fractionTypes: { typeName: string; typeLineNums: number[] }[] = [];
+      let fractionTypes: { typeName: string; typeLineNums: number[] }[] = [];
 
+      result.fraction_types.forEach(fractionTypesElement => {
         if (
           common.isDefined(fractionTypesElement) &&
           fractionTypesElement.constructor !== Object
@@ -230,58 +230,58 @@ export function checkResultFractionTypes(
             });
           }
         }
+      });
 
-        if (errorsOnStart === item.errors.length) {
-          fractionTypes.forEach(frType => {
-            if (frType.typeLineNums.length > 1) {
-              item.errors.push(
-                new BmError({
-                  title: common.ErTitleEnum.DUPLICATE_TYPES,
-                  message: `"${common.ParameterEnum.Type}" value must be unique across ${common.ParameterEnum.FractionTypes} elements`,
-                  lines: frType.typeLineNums.map(l => ({
-                    line: l,
+      if (errorsOnStart === item.errors.length) {
+        fractionTypes.forEach(frType => {
+          if (frType.typeLineNums.length > 1) {
+            item.errors.push(
+              new BmError({
+                title: common.ErTitleEnum.DUPLICATE_TYPES,
+                message: `"${common.ParameterEnum.Type}" value must be unique across ${common.ParameterEnum.FractionTypes} elements`,
+                lines: frType.typeLineNums.map(l => ({
+                  line: l,
+                  name: x.fileName,
+                  path: x.filePath
+                }))
+              })
+            );
+            return;
+          }
+
+          //
+
+          let typeWrongChars: string[] = [];
+
+          let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_RESULT_CHARS_G();
+          let r2;
+
+          while ((r2 = reg2.exec(frType.typeName))) {
+            typeWrongChars.push(r2[1]);
+          }
+
+          let typeWrongCharsString = '';
+
+          if (typeWrongChars.length > 0) {
+            typeWrongCharsString = [...new Set(typeWrongChars)].join(', '); // unique
+
+            item.errors.push(
+              new BmError({
+                title: common.ErTitleEnum.WRONG_CHARS_IN_TYPE,
+                message: `Characters "${typeWrongCharsString}" can not be used for result (only snake_case "a...z0...9_" is allowed)`,
+                lines: [
+                  {
+                    line: frType.typeLineNums[0],
                     name: x.fileName,
                     path: x.filePath
-                  }))
-                })
-              );
-              return;
-            }
-
-            //
-
-            let typeWrongChars: string[] = [];
-
-            let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_RESULT_CHARS_G();
-            let r2;
-
-            while ((r2 = reg2.exec(frType.typeName))) {
-              typeWrongChars.push(r2[1]);
-            }
-
-            let typeWrongCharsString = '';
-
-            if (typeWrongChars.length > 0) {
-              typeWrongCharsString = [...new Set(typeWrongChars)].join(', '); // unique
-
-              item.errors.push(
-                new BmError({
-                  title: common.ErTitleEnum.WRONG_CHARS_IN_TYPE,
-                  message: `Characters "${typeWrongCharsString}" can not be used for result (only snake_case "a...z0...9_" is allowed)`,
-                  lines: [
-                    {
-                      line: frType.typeLineNums[0],
-                      name: x.fileName,
-                      path: x.filePath
-                    }
-                  ]
-                })
-              );
-              return false;
-            }
-          });
-        }
-      });
+                  }
+                ]
+              })
+            );
+            return false;
+          }
+        });
+      }
     });
 
     if (errorsOnStart === item.errors.length) {
