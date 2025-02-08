@@ -82,57 +82,57 @@ export function checkStoreFractionControls(
           return;
         }
 
-        // if (
-        //   Array.isArray(control[parameter as keyof FileStoreFractionType]) &&
-        //   [common.ParameterEnum.Controls.toString()].indexOf(parameter) < 0
-        // ) {
-        //   item.errors.push(
-        //     new BmError({
-        //       title: common.ErTitleEnum.UNEXPECTED_LIST,
-        //       message: `parameter "${parameter}" must have a single value`,
-        //       lines: [
-        //         {
-        //           line: control[
-        //             (parameter +
-        //               constants.LINE_NUM) as keyof FileStoreFractionType
-        //           ],
-        //           name: item.fileName,
-        //           path: item.filePath
-        //         }
-        //       ]
-        //     })
-        //   );
-        //   return;
-        // }
+        if (
+          Array.isArray(control[parameter as keyof FileStoreFractionControl]) &&
+          [common.ParameterEnum.Options.toString()].indexOf(parameter) < 0
+        ) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.UNEXPECTED_LIST,
+              message: `parameter "${parameter}" must have a single value`,
+              lines: [
+                {
+                  line: control[
+                    (parameter +
+                      constants.LINE_NUM) as keyof FileStoreFractionControl
+                  ] as number,
+                  name: item.fileName,
+                  path: item.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
 
-        // if (
-        //   control[parameter as keyof FileStoreFractionType]?.constructor ===
-        //   Object
-        // ) {
-        //   item.errors.push(
-        //     new BmError({
-        //       title: common.ErTitleEnum.UNEXPECTED_DICTIONARY,
-        //       message: `parameter "${parameter}" must have a single value`,
-        //       lines: [
-        //         {
-        //           line: control[
-        //             (parameter +
-        //               constants.LINE_NUM) as keyof FileStoreFractionType
-        //           ],
-        //           name: item.fileName,
-        //           path: item.filePath
-        //         }
-        //       ]
-        //     })
-        //   );
-        //   return;
-        // }
+        if (
+          control[parameter as keyof FileStoreFractionControl]?.constructor ===
+          Object
+        ) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.UNEXPECTED_DICTIONARY,
+              message: `parameter "${parameter}" must have a single value`,
+              lines: [
+                {
+                  line: control[
+                    (parameter +
+                      constants.LINE_NUM) as keyof FileStoreFractionControl
+                  ] as number,
+                  name: item.fileName,
+                  path: item.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
       });
 
     if (errorsOnStart === item.errors.length) {
       // let fractionTypeElementKeyLineNums: number[] = Object.keys(control)
       //   .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-      //   .map(y => control[y as keyof FileStoreFractionType]);
+      //   .map(y => control[y as keyof FileStoreFractionControl]);
       // if (common.isUndefined(control.type)) {
       //   item.errors.push(
       //     new BmError({
