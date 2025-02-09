@@ -272,12 +272,12 @@ parameters:
 - filter: top_config
   required: true
   max_fractions: 1
-  fraction_controls: # TODO: checkControls
+  fraction_controls:
   - selector: ga_property
     required: true
     label: Property
     value: $ENV_GA_PROPERTY_ID_1
-    options: # TODO: check selector options
+    options:
     - value: $ENV_GA_PROPERTY_ID_1
     - value: $ENV_GA_PROPERTY_ID_2
   - switch: cohorts_switch

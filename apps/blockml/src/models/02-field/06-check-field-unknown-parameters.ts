@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
@@ -364,6 +365,24 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
               })
             );
             return;
+          }
+
+          if (
+            errorsOnStart === item.errors.length &&
+            parameter === common.ParameterEnum.FractionControls.toString()
+          ) {
+            barSpecial.checkStoreFractionControls(
+              {
+                controls: field.fraction_controls,
+                controlsLineNum: field.fraction_controls_line_num,
+                fileName: x.fileName,
+                filePath: x.filePath,
+                structId: item.structId,
+                errors: item.errors,
+                caller: item.caller
+              },
+              cs
+            );
           }
         });
     });
