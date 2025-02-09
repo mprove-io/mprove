@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
@@ -149,6 +150,44 @@ export function checkStoreFractionControls(
           })
         );
         return;
+      }
+
+      if (
+        common.isDefined(control.options) &&
+        common.isUndefined(control.selector)
+      ) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.OPTIONS_WITHOUT_SELECTOR,
+            message: `${common.ParameterEnum.Options} can only be used with "${common.ParameterEnum.Selector}" control`,
+            lines: [
+              {
+                line: control.options_line_num,
+                name: item.fileName,
+                path: item.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      if (
+        errorsOnStart === item.errors.length &&
+        common.isDefined(control.options)
+      ) {
+        barSpecial.checkStoreFractionControlOptions(
+          {
+            options: control.options,
+            optionsLineNum: control.options_line_num,
+            fileName: item.fileName,
+            filePath: item.filePath,
+            structId: item.structId,
+            errors: item.errors,
+            caller: item.caller
+          },
+          cs
+        );
       }
 
       if (

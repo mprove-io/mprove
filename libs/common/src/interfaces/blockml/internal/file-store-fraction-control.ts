@@ -1,4 +1,5 @@
 import { enums } from '~common/barrels/enums';
+import { FileStoreFractionControlOption } from './file-store-fraction-control-option';
 
 export interface FileStoreFractionControl {
   input?: string;
@@ -13,13 +14,7 @@ export interface FileStoreFractionControl {
   selector?: string;
   selector_line_num?: number;
 
-  options?: {
-    value: string;
-    value_line_num: number;
-
-    label: string;
-    label_line_num: number;
-  }[];
+  options?: FileStoreFractionControlOption[];
   options_line_num?: number;
 
   value?: string;

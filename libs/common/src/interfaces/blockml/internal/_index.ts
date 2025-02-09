@@ -32,6 +32,7 @@ export * from './file-store-build-metric';
 export * from './file-store-detail';
 export * from './file-store-field-group';
 export * from './file-store-fraction-control';
+export * from './file-store-fraction-control-option';
 export * from './file-tile-parameter';
 export * from './file-udf';
 export * from './file-view';
