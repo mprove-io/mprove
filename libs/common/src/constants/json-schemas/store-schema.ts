@@ -67,7 +67,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
             type: 'integer'
           },
           show_if: {
-            type: 'boolean'
+            type: 'string'
           },
           required: {
             type: 'boolean'
@@ -165,7 +165,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
             type: 'string'
           },
           show_if: {
-            type: 'boolean'
+            type: 'string'
           }
         }
       }
@@ -196,7 +196,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
             type: 'string'
           },
           show_if: {
-            type: 'boolean'
+            type: 'string'
           },
           required: {
             type: 'boolean'

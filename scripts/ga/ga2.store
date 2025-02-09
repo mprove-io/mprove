@@ -34,7 +34,7 @@ QUERY_PARAMETERS:
   label: string
   description: string
   max_fractions: number
-  show_if: string # boolean
+  show_if: string
   required: string # boolean
   # result: custom
   # fieldId: string
@@ -57,7 +57,7 @@ QUERY_PARAMETERS:
       value: string
       label: string
       is_array: string # boolean
-      show_if: string # boolean
+      show_if: string
       required: string # boolean
       options: 
       - value: string

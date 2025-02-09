@@ -31,7 +31,7 @@ export interface FileStoreFractionControl {
   is_array?: string; // boolean
   is_array_line_num?: number;
 
-  show_if?: string; // boolean
+  show_if?: string;
   show_if_line_num?: number;
 
   required?: string; // boolean
@@ -39,8 +39,8 @@ export interface FileStoreFractionControl {
 
   //
 
-  name: string;
-  name_line_num: number;
+  name?: string;
+  name_line_num?: number;
 
-  controlClass: enums.ControlClassEnum;
+  controlClass?: enums.ControlClassEnum;
 }
