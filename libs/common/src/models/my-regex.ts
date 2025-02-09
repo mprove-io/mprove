@@ -177,6 +177,9 @@ export class MyRegex {
   static CAPTURE_NOT_ALLOWED_RESULT_CHARS_G(): RegExp {
     return cloneRegexp(/([^a-z0-9_])/g);
   }
+  static CAPTURE_NOT_ALLOWED_CONTROL_NAME_CHARS_G(): RegExp {
+    return cloneRegexp(/([^a-z0-9_])/g);
+  }
   static CAPTURE_NOT_ALLOWED_FIELD_CHARS_G(): RegExp {
     return cloneRegexp(/([^a-z0-9_])/g);
   }

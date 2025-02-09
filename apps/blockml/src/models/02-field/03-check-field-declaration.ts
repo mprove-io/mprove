@@ -152,7 +152,7 @@ export function checkFieldDeclaration<T extends types.vsmdrType>(
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.MISSING_FIELD_DECLARATION,
-            message: `field must contain one of parameters: ${common.ParameterEnum.Dimension}, ${common.ParameterEnum.Time}, ${common.ParameterEnum.Measure}`,
+            message: `field must contain one of parameters: ${common.ParameterEnum.Dimension}, ${common.ParameterEnum.Time}, ${common.ParameterEnum.Measure}, ${common.ParameterEnum.Calculation}`,
             lines: [
               {
                 line: Math.min(...fieldKeysLineNums),

@@ -1,3 +1,5 @@
+import { enums } from '~common/barrels/enums';
+
 export interface FileStoreFractionControl {
   input?: string;
   input_line_num?: number;
@@ -34,4 +36,11 @@ export interface FileStoreFractionControl {
 
   required?: string; // boolean
   required_line_num?: number;
+
+  //
+
+  name: string;
+  name_line_num: number;
+
+  controlClass: enums.ControlClassEnum;
 }

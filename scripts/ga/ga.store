@@ -277,7 +277,7 @@ parameters:
     required: true
     label: Property
     value: $ENV_GA_PROPERTY_ID_1
-    options: 
+    options: # TODO: check selector options
     - value: $ENV_GA_PROPERTY_ID_1
     - value: $ENV_GA_PROPERTY_ID_2
   - switch: cohorts_switch
@@ -354,7 +354,7 @@ results:
     meta: 
       operation: EQUAL
       filter_type: numericFilter
-    controls: # TODO: checkControls
+    controls: 
     - input: value_input
 
   - type: less_than

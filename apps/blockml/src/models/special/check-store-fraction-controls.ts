@@ -25,9 +25,6 @@ export function checkStoreFractionControls(
 
   let errorsOnStart = item.errors.length;
 
-  let controlNames: { controlName: string; controlNameLineNums: number[] }[] =
-    [];
-
   item.controls.forEach(control => {
     if (common.isDefined(control) && control.constructor !== Object) {
       item.errors.push(
@@ -233,74 +230,139 @@ export function checkStoreFractionControls(
         );
         return;
       }
+
+      let declarations: string[] = Object.keys(control).filter(
+        d =>
+          [
+            common.ParameterEnum.Input.toString(),
+            common.ParameterEnum.Switch.toString(),
+            common.ParameterEnum.DatePicker.toString(),
+            common.ParameterEnum.Selector.toString()
+          ].indexOf(d) > -1
+      );
+
+      if (declarations.length === 0) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.MISSING_CONTROL_DECLARATION,
+            message: `control must contain one of parameters: ${common.ParameterEnum.Input}, ${common.ParameterEnum.Switch}, ${common.ParameterEnum.DatePicker}, ${common.ParameterEnum.Selector}`,
+            lines: [
+              {
+                line: Math.min(...controlsElementKeyLineNums),
+                name: item.fileName,
+                path: item.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      if (declarations.length > 1) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.TOO_MANY_DECLARATIONS_FOR_ONE_CONTROL,
+            message: `control must contain only one of parameters:${common.ParameterEnum.Input}, ${common.ParameterEnum.Switch}, ${common.ParameterEnum.DatePicker}, ${common.ParameterEnum.Selector}`,
+            lines: [
+              {
+                line: Math.min(...controlsElementKeyLineNums),
+                name: item.fileName,
+                path: item.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      let declaration = declarations[0];
+
+      if (
+        (
+          control[declaration as keyof common.FileStoreFractionControl] as any
+        ).match(common.MyRegex.CAPTURE_NOT_ALLOWED_CONTROL_NAME_CHARS_G())
+      ) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.WRONG_CHARS_IN_CONTROL_NAME,
+            message: `parameter "${declaration}" contains wrong characters or whitespace (only snake_case "a...z0...9_" is allowed)`,
+            lines: [
+              {
+                line: control[
+                  (declaration +
+                    constants.LINE_NUM) as keyof common.FileStoreFractionControl
+                ] as number,
+                name: item.fileName,
+                path: item.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      let controlClass = declaration;
+      let controlName = control[
+        controlClass as keyof common.FileStoreFractionControl
+      ] as string;
+
+      let controNameLineNum = control[
+        (controlClass +
+          constants.LINE_NUM) as keyof common.FileStoreFractionControl
+      ] as number;
+
+      delete control[controlClass as keyof common.FileStoreFractionControl];
+      delete control[
+        (controlClass +
+          constants.LINE_NUM) as keyof common.FileStoreFractionControl
+      ];
+
+      let newControlProps: common.FileStoreFractionControl = {
+        name: controlName,
+        name_line_num: controNameLineNum,
+        controlClass: <common.ControlClassEnum>controlClass
+      };
+
+      Object.assign(control, newControlProps);
     }
-
-    // if (errorsOnStart === item.errors.length) {
-    //   let index = controlNames.findIndex(
-    //     fractionType => fractionType.controlName === control.type
-    //   );
-
-    //   if (index > -1) {
-    //     controlNames[index].controlNameLineNums.push(control.type_line_num);
-    //   } else {
-    //     controlNames.push({
-    //       controlName: control.type,
-    //       controlNameLineNums: [control.type_line_num]
-    //     });
-    //   }
-    // }
   });
 
-  // if (errorsOnStart === item.errors.length) {
-  //   controlNames.forEach(frType => {
-  //     if (frType.controlNameLineNums.length > 1) {
-  //       item.errors.push(
-  //         new BmError({
-  //           title: common.ErTitleEnum.DUPLICATE_TYPES,
-  //           message: `"${common.ParameterEnum.Type}" value must be unique across ${common.ParameterEnum.FractionTypes} elements`,
-  //           lines: frType.controlNameLineNums.map(l => ({
-  //             line: l,
-  //             name: item.fileName,
-  //             path: item.filePath
-  //           }))
-  //         })
-  //       );
-  //       return;
-  //     }
+  let cElements: {
+    controlName: string;
+    controlNameLineNums: number[];
+  }[] = [];
 
-  //     //
+  item.controls.forEach(control => {
+    let cElement = cElements.find(c => c.controlName === control.name);
 
-  //     let typeWrongChars: string[] = [];
+    if (common.isDefined(cElement)) {
+      cElement.controlNameLineNums.push(control.name_line_num);
+    } else {
+      cElements.push({
+        controlName: control.name,
+        controlNameLineNums: [control.name_line_num]
+      });
+    }
+  });
 
-  //     let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_RESULT_CHARS_G();
-  //     let r2;
+  cElements.forEach(ce => {
+    if (ce.controlNameLineNums.length > 1) {
+      let lines: common.FileErrorLine[] = ce.controlNameLineNums.map(y => ({
+        line: y,
+        name: item.fileName,
+        path: item.filePath
+      }));
 
-  //     while ((r2 = reg2.exec(frType.controlName))) {
-  //       typeWrongChars.push(r2[1]);
-  //     }
-
-  //     let typeWrongCharsString = '';
-
-  //     if (typeWrongChars.length > 0) {
-  //       typeWrongCharsString = [...new Set(typeWrongChars)].join(', '); // unique
-
-  //       item.errors.push(
-  //         new BmError({
-  //           title: common.ErTitleEnum.WRONG_CHARS_IN_TYPE,
-  //           message: `Characters "${typeWrongCharsString}" can not be used for result (only snake_case "a...z0...9_" is allowed)`,
-  //           lines: [
-  //             {
-  //               line: frType.controlNameLineNums[0],
-  //               name: item.fileName,
-  //               path: item.filePath
-  //             }
-  //           ]
-  //         })
-  //       );
-  //       return false;
-  //     }
-  //   });
-  // }
+      item.errors.push(
+        new BmError({
+          title: common.ErTitleEnum.DUPLICATE_CONTROL_NAMES,
+          message: 'Controls must have unique names',
+          lines: lines
+        })
+      );
+      return;
+    }
+  });
 
   return item.errors;
 }

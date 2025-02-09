@@ -2,6 +2,7 @@ export * from './bool.enum';
 export * from './change-type.enum';
 export * from './chart/_index';
 export * from './connection-type.enum';
+export * from './control-class.enum';
 export * from './detail-unit.enum';
 export * from './docs/fraction-unit.enum';
 export * from './docs/parameter.enum';
