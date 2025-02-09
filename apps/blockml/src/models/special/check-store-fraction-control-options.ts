@@ -140,50 +140,6 @@ export function checkStoreFractionControlOptions(
         );
         return;
       }
-
-      let declarations: string[] = Object.keys(option).filter(
-        d =>
-          [
-            common.ParameterEnum.Input.toString(),
-            common.ParameterEnum.Switch.toString(),
-            common.ParameterEnum.DatePicker.toString(),
-            common.ParameterEnum.Selector.toString()
-          ].indexOf(d) > -1
-      );
-
-      if (declarations.length === 0) {
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.MISSING_CONTROL_DECLARATION,
-            message: `control must contain one of parameters: ${common.ParameterEnum.Input}, ${common.ParameterEnum.Switch}, ${common.ParameterEnum.DatePicker}, ${common.ParameterEnum.Selector}`,
-            lines: [
-              {
-                line: Math.min(...optionsElementKeyLineNums),
-                name: item.fileName,
-                path: item.filePath
-              }
-            ]
-          })
-        );
-        return;
-      }
-
-      if (declarations.length > 1) {
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.TOO_MANY_DECLARATIONS_FOR_ONE_CONTROL,
-            message: `control must contain only one of parameters:${common.ParameterEnum.Input}, ${common.ParameterEnum.Switch}, ${common.ParameterEnum.DatePicker}, ${common.ParameterEnum.Selector}`,
-            lines: [
-              {
-                line: Math.min(...optionsElementKeyLineNums),
-                name: item.fileName,
-                path: item.filePath
-              }
-            ]
-          })
-        );
-        return;
-      }
     }
   });
 

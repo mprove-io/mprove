@@ -1,0 +1,11 @@
+store: s1
+connection: c1
+field_groups: []
+results:
+- result: string
+  fraction_types:
+  - type: equal
+    controls:
+    - selector: a
+      options:
+      - unk: b
