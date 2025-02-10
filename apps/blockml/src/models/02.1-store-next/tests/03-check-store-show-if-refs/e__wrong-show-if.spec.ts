@@ -6,9 +6,9 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildStoreStart;
-let func = common.FuncEnum.CheckResultFractionTypes;
-let testId = 'e__controls-wrong-show-if';
+let caller = common.CallerEnum.BuildStoreNext;
+let func = common.FuncEnum.CheckStoreShowIfRefs;
+let testId = 'e__wrong-show-if';
 
 test('1', async t => {
   let errors: BmError[];
@@ -64,5 +64,5 @@ test('1', async t => {
   t.is(entStores.length, 0);
 
   t.is(errors[0].title, common.ErTitleEnum.WRONG_SHOW_IF);
-  t.is(errors[0].lines[0].line, 10);
+  t.is(errors[0].lines[0].line, 5);
 });

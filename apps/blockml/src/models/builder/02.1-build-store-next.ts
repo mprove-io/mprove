@@ -35,5 +35,15 @@ export function buildStoreNext(
     cs
   );
 
+  stores = barStoreNext.checkStoreShowIfRefs(
+    {
+      stores: stores,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   return stores;
 }

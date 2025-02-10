@@ -5,6 +5,7 @@ export * from './check-access';
 export * from './check-model-name';
 export * from './check-store-fraction-control-options';
 export * from './check-store-fraction-controls';
+export * from './check-store-show-if';
 export * from './check-vmdr-field-suggest-model-dimension';
 export * from './check-vmdr-filter-conditions';
 export * from './log-struct';
