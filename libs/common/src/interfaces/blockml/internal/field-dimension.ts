@@ -44,6 +44,8 @@ export interface FieldDimension {
 
   //
 
+  groupId?: string;
+
   name?: string;
 
   name_line_num?: number;
@@ -57,6 +59,4 @@ export interface FieldDimension {
   sqlTimestampName?: string;
 
   sqlTimestamp?: string;
-
-  groupId?: string;
 }

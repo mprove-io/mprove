@@ -141,6 +141,18 @@ export function buildField<T extends types.vsmdrType>(
     cs
   );
 
+  if (item.caller === common.CallerEnum.BuildStoreField) {
+    entities = barField.checkStoreFieldGroup(
+      {
+        stores: entities as common.FileStore[],
+        structId: item.structId,
+        errors: item.errors,
+        caller: item.caller
+      },
+      cs
+    ) as T[];
+  }
+
   entities = barField.checkAndSetImplicitFormatNumber(
     {
       entities: entities,

@@ -1,0 +1,14 @@
+store: s1
+connection: c1
+results:
+- result: r1
+  fraction_types: []
+
+field_groups:
+- group: g1
+
+fields:
+- dimension: d1 
+  result: r1
+
+

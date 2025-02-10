@@ -506,7 +506,7 @@ fields:
 # Measures
 - measure: active_users
   result: number
-  group: users # TODO: check value using field_groups and must be set
+  group: users
   description: 'The number of distinct users who visited your site or app',
   meta:
     name: activeUsers
