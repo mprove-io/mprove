@@ -68,6 +68,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                     common.ParameterEnum.Dimension.toString(),
                     common.ParameterEnum.Label.toString(),
                     common.ParameterEnum.Description.toString(),
+                    common.ParameterEnum.Group.toString(),
                     common.ParameterEnum.Result.toString(),
                     // common.ParameterEnum.SuggestModelDimension.toString(),
                     common.ParameterEnum.FormatNumber.toString(),
@@ -78,20 +79,26 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                     common.ParameterEnum.Required.toString(),
                     common.ParameterEnum.Meta.toString()
                   ].indexOf(parameter) < 0) ||
-                [
-                  common.ParameterEnum.Dimension.toString(),
-                  common.ParameterEnum.Hidden.toString(),
-                  common.ParameterEnum.Label.toString(),
-                  common.ParameterEnum.Description.toString(),
-                  common.ParameterEnum.Unnest.toString(),
-                  common.ParameterEnum.Type.toString(),
-                  common.ParameterEnum.Sql.toString(),
-                  common.ParameterEnum.Result.toString(),
-                  common.ParameterEnum.SuggestModelDimension.toString(),
-                  common.ParameterEnum.FormatNumber.toString(),
-                  common.ParameterEnum.CurrencyPrefix.toString(),
-                  common.ParameterEnum.CurrencySuffix.toString()
-                ].indexOf(parameter) < 0
+                ([
+                  common.CallerEnum.BuildViewField,
+                  common.CallerEnum.BuildModelField,
+                  common.CallerEnum.BuildDashboardField,
+                  common.CallerEnum.BuildReportField
+                ].indexOf(caller) > -1 &&
+                  [
+                    common.ParameterEnum.Dimension.toString(),
+                    common.ParameterEnum.Hidden.toString(),
+                    common.ParameterEnum.Label.toString(),
+                    common.ParameterEnum.Description.toString(),
+                    common.ParameterEnum.Unnest.toString(),
+                    common.ParameterEnum.Type.toString(),
+                    common.ParameterEnum.Sql.toString(),
+                    common.ParameterEnum.Result.toString(),
+                    common.ParameterEnum.SuggestModelDimension.toString(),
+                    common.ParameterEnum.FormatNumber.toString(),
+                    common.ParameterEnum.CurrencyPrefix.toString(),
+                    common.ParameterEnum.CurrencySuffix.toString()
+                  ].indexOf(parameter) < 0)
               ) {
                 item.errors.push(
                   new BmError({
@@ -156,6 +163,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                     common.ParameterEnum.Label.toString(),
                     common.ParameterEnum.Description.toString(),
                     common.ParameterEnum.Result.toString(),
+                    common.ParameterEnum.Group.toString(),
                     common.ParameterEnum.FormatNumber.toString(),
                     common.ParameterEnum.CurrencyPrefix.toString(),
                     common.ParameterEnum.CurrencySuffix.toString(),
@@ -164,20 +172,26 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                     common.ParameterEnum.Required.toString(),
                     common.ParameterEnum.Meta.toString()
                   ].indexOf(parameter) < 0) ||
-                [
-                  common.ParameterEnum.Measure.toString(),
-                  common.ParameterEnum.Hidden.toString(),
-                  common.ParameterEnum.Label.toString(),
-                  common.ParameterEnum.Description.toString(),
-                  common.ParameterEnum.Type.toString(),
-                  common.ParameterEnum.Result.toString(),
-                  common.ParameterEnum.Sql.toString(),
-                  common.ParameterEnum.SqlKey.toString(),
-                  common.ParameterEnum.Percentile.toString(),
-                  common.ParameterEnum.FormatNumber.toString(),
-                  common.ParameterEnum.CurrencyPrefix.toString(),
-                  common.ParameterEnum.CurrencySuffix.toString()
-                ].indexOf(parameter) < 0
+                ([
+                  common.CallerEnum.BuildViewField,
+                  common.CallerEnum.BuildModelField,
+                  common.CallerEnum.BuildDashboardField,
+                  common.CallerEnum.BuildReportField
+                ].indexOf(caller) > -1 &&
+                  [
+                    common.ParameterEnum.Measure.toString(),
+                    common.ParameterEnum.Hidden.toString(),
+                    common.ParameterEnum.Label.toString(),
+                    common.ParameterEnum.Description.toString(),
+                    common.ParameterEnum.Type.toString(),
+                    common.ParameterEnum.Result.toString(),
+                    common.ParameterEnum.Sql.toString(),
+                    common.ParameterEnum.SqlKey.toString(),
+                    common.ParameterEnum.Percentile.toString(),
+                    common.ParameterEnum.FormatNumber.toString(),
+                    common.ParameterEnum.CurrencyPrefix.toString(),
+                    common.ParameterEnum.CurrencySuffix.toString()
+                  ].indexOf(parameter) < 0)
               ) {
                 item.errors.push(
                   new BmError({

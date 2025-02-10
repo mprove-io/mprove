@@ -121,7 +121,8 @@ export function checkStoreBuildMetricDetails(
           if (common.isUndefined(detail.unit)) {
             let detailKeysLineNums: number[] = Object.keys(detail)
               .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-              .map(y => detail[y as keyof FileStoreDetail] as number);
+              .map(y => detail[y as keyof FileStoreDetail] as number)
+              .filter(ln => ln !== 0);
 
             item.errors.push(
               new BmError({

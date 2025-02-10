@@ -131,7 +131,8 @@ export function checkStoreBuildMetrics(
         if (common.isUndefined(buildMetric.time_name)) {
           let buildMetricKeysLineNums: number[] = Object.keys(buildMetric)
             .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-            .map(y => buildMetric[y as keyof FileStoreBuildMetric] as number);
+            .map(y => buildMetric[y as keyof FileStoreBuildMetric] as number)
+            .filter(ln => ln !== 0);
 
           item.errors.push(
             new BmError({

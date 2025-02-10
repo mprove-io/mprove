@@ -165,6 +165,56 @@ export function checkAndSetImplicitResult<T extends types.vsmdrType>(
           }
         }
       }
+
+      if (caller === common.CallerEnum.BuildStoreField) {
+        if (
+          common.isUndefined(field.result) &&
+          field.fieldClass !== common.FieldClassEnum.Filter
+        ) {
+          let fieldKeysLineNums: number[] = Object.keys(field)
+            .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
+            .map(y => field[y as keyof common.FieldAny] as number)
+            .filter(ln => ln !== 0);
+
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.MISSING_STORE_FIELD_RESULT,
+              message: `field "${field.result}" is requred`,
+              lines: [
+                {
+                  line: Math.min(...fieldKeysLineNums),
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+
+        let results = (x as common.FileStore).results.map(r => r.result);
+
+        if (
+          common.isDefined(field.result) &&
+          field.fieldClass !== common.FieldClassEnum.Filter &&
+          results.indexOf(field.result) < 0
+        ) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.WRONG_STORE_FIELD_RESULT,
+              message: `field ${field.result} must be one of store results`,
+              lines: [
+                {
+                  line: field.result_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+      }
     });
 
     if (errorsOnStart === item.errors.length) {

@@ -27,7 +27,8 @@ export function checkReportRow(
     x.rows.forEach(row => {
       let rowKeysLineNums: number[] = Object.keys(row)
         .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-        .map(y => row[y as keyof common.FileReportRow] as number);
+        .map(y => row[y as keyof common.FileReportRow] as number)
+        .filter(ln => ln !== 0);
 
       if (common.isUndefined(row.row_id)) {
         item.errors.push(

@@ -141,7 +141,8 @@ export function checkStoreFieldGroups(
         if (common.isUndefined(fieldGroup.group)) {
           let fieldGroupKeysLineNums: number[] = Object.keys(fieldGroup)
             .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-            .map(y => fieldGroup[y as keyof FileStoreFieldGroup] as number);
+            .map(y => fieldGroup[y as keyof FileStoreFieldGroup] as number)
+            .filter(ln => ln !== 0);
 
           item.errors.push(
             new BmError({

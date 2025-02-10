@@ -32,7 +32,8 @@ export function checkFieldDeclaration<T extends types.vsmdrType>(
 
       let fieldKeysLineNums: number[] = Object.keys(field)
         .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-        .map(y => field[y as keyof common.FieldAny] as number);
+        .map(y => field[y as keyof common.FieldAny] as number)
+        .filter(ln => ln !== 0);
 
       if (declarations.length === 0) {
         item.errors.push(

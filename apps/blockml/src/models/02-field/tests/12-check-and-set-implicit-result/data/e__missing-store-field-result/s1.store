@@ -1,0 +1,13 @@
+store: s1
+connection: c1
+results: []
+
+field_groups:
+- group: g1
+
+fields:
+- dimension: d1 
+  group: g1
+
+
+

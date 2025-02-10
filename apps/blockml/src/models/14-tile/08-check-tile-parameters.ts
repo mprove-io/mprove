@@ -36,7 +36,8 @@ export function checkTileParameters<T extends types.dzType>(
       tile.parameters.forEach(p => {
         let pKeysLineNums: number[] = Object.keys(p)
           .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-          .map(y => p[y as keyof common.FileTileParameter] as number);
+          .map(y => p[y as keyof common.FileTileParameter] as number)
+          .filter(ln => ln !== 0);
 
         if (common.isUndefined(p.apply_to)) {
           item.errors.push(

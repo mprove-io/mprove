@@ -125,7 +125,8 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
                 seriesElement[
                   y as keyof common.FileChartOptionsSeriesElement
                 ] as number
-            );
+            )
+            .filter(ln => ln !== 0);
 
           if (
             [
