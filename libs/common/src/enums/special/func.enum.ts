@@ -43,6 +43,7 @@ export enum FuncEnum {
   CheckStoreShowIfRefs = '02.1-store-next/03-check-store-show-if-refs',
   CheckStoreShowIfSelfReference = '02.1-store-next/04-check-store-show-if-self-reference',
   CheckStoreShowIfCycles = '02.1-store-next/05-check-store-show-if-cycles',
+  CheckStoreRequiredParameters = '02.1-store-next/06-check-store-required-parameters',
 
   MakeUdfsDict = '03-udf/01-make-udfs-dict',
 

@@ -65,5 +65,15 @@ export function buildStoreNext(
     cs
   );
 
+  stores = barStoreNext.checkStoreRequiredParameters(
+    {
+      stores: stores,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   return stores;
 }

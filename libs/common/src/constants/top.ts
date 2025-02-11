@@ -364,3 +364,8 @@ export const DETAIL_UNIT_VALUES = [
   enums.DetailUnitEnum.Hours,
   enums.DetailUnitEnum.Minutes
 ];
+
+export const STORE_METHOD_VALUES = [
+  enums.StoreMethodEnum.Get,
+  enums.StoreMethodEnum.Post
+];
