@@ -41,6 +41,7 @@ export enum FuncEnum {
   CheckStoreBuildMetrics = '02.1-store-next/01-check-store-build-metrics',
   CheckStoreBuildMetricDetails = '02.1-store-next/02-check-store-build-metric-details',
   CheckStoreShowIfRefs = '02.1-store-next/03-check-store-show-if-refs',
+  CheckStoreShowIfCycles = '02.1-store-next/04-check-store-show-if-cycles',
 
   MakeUdfsDict = '03-udf/01-make-udfs-dict',
 
