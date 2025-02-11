@@ -12,7 +12,7 @@ access_roles: []
 #   value: Bearer ...
 # - key: Content-Type
 #   value: application/json
-method: POST
+method: POST # TODO: check GET / POST
 url_path: |
   let propertyId = $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.ga_property.value;
   return `/v1beta/properties/${propertyId}:runReport`;
@@ -276,10 +276,10 @@ parameters:
   - selector: ga_property
     required: true
     label: Property
-    value: $ENV_GA_PROPERTY_ID_1
+    value: 123123123 # $ENV_GA_PROPERTY_ID_1
     options:
-    - value: $ENV_GA_PROPERTY_ID_1
-    - value: $ENV_GA_PROPERTY_ID_2
+    - value: 456456456 # $ENV_GA_PROPERTY_ID_1
+    - value: 789789789 #$ENV_GA_PROPERTY_ID_2
   - switch: cohorts_switch
     required: true
     label: 'Cohorts Mode'
