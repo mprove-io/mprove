@@ -1,6 +1,7 @@
 store: s1
 connection: c1
 body: return {}
+method: a
 url_path: a/b/c
 response: return {}
 results: []

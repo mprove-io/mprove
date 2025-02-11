@@ -1,7 +1,7 @@
 store: s1
 connection: c1
 body: return {}
-url_path: a/b/c
+method: POST
 response: return {}
 results: []
 field_groups: []
