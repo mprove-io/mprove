@@ -3,10 +3,9 @@ import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
+let func = common.FuncEnum.CheckStoreShowIfSelfReference;
 
-let func = common.FuncEnum.CheckStoreShowIfCycles;
-
-export function checkStoreShowIfCycles(
+export function checkStoreShowIfSelfReference(
   item: {
     stores: common.FileStore[];
     errors: BmError[];

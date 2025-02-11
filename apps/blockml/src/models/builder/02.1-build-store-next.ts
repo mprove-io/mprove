@@ -45,6 +45,16 @@ export function buildStoreNext(
     cs
   );
 
+  stores = barStoreNext.checkStoreShowIfSelfReference(
+    {
+      stores: stores,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   stores = barStoreNext.checkStoreShowIfCycles(
     {
       stores: stores,

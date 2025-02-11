@@ -1,0 +1,14 @@
+store: s1
+connection: c1
+parameters:
+- filter: f1
+  fraction_controls:
+  - input: a
+    show_if: f2.a.true
+- filter: f2
+  show_if: f1.a.true
+  fraction_controls:
+  - input: a
+results: []
+field_groups: []
+fields: []

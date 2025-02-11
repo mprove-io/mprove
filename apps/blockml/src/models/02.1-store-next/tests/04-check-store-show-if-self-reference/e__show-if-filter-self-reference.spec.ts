@@ -7,8 +7,8 @@ import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildStoreNext;
-let func = common.FuncEnum.CheckStoreShowIfCycles;
-let testId = 'e__show-if-fraction-control-self-reference';
+let func = common.FuncEnum.CheckStoreShowIfSelfReference;
+let testId = 'e__show-if-filter-self-reference';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,9 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entStores.length, 0);
 
-  t.is(
-    errors[0].title,
-    common.ErTitleEnum.SHOW_IF_FRACTION_CONTROL_SELF_REFERENCE
-  );
-  t.is(errors[0].lines[0].line, 7);
+  t.is(errors[0].title, common.ErTitleEnum.SHOW_IF_FILTER_SELF_REFERENCE);
+  t.is(errors[0].lines[0].line, 5);
 });
