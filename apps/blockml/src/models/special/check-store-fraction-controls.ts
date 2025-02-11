@@ -231,26 +231,6 @@ export function checkStoreFractionControls(
       }
 
       if (
-        common.isDefined(control.show_if) &&
-        !control.show_if.match(common.MyRegex.TRUE_FALSE())
-      ) {
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.WRONG_SHOW_IF,
-            message: `parameter "${common.ParameterEnum.ShowIf}" must be 'true' or 'false' if specified`,
-            lines: [
-              {
-                line: control.show_if_line_num,
-                name: item.fileName,
-                path: item.filePath
-              }
-            ]
-          })
-        );
-        return;
-      }
-
-      if (
         common.isDefined(control.required) &&
         !control.required.match(common.MyRegex.TRUE_FALSE())
       ) {

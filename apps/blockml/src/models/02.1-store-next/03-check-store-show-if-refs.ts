@@ -45,9 +45,9 @@ export function checkStoreShowIfRefs(
         });
     }
 
-    x.results.forEach(result => {
-      result.fraction_types.forEach(fractionTypesElement => {
-        if (errorsOnStart === item.errors.length) {
+    if (errorsOnStart === item.errors.length) {
+      x.results.forEach(result => {
+        result.fraction_types.forEach(fractionTypesElement => {
           barSpecial.checkStoreShowIf(
             {
               showIfParentEntities: fractionTypesElement.controls,
@@ -62,9 +62,9 @@ export function checkStoreShowIfRefs(
             },
             cs
           );
-        }
+        });
       });
-    });
+    }
 
     if (errorsOnStart === item.errors.length) {
       barSpecial.checkStoreShowIf(

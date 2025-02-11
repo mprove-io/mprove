@@ -1,0 +1,13 @@
+store: s1
+connection: c1
+parameters:
+- filter: f1
+  fraction_controls: []
+- filter: f2
+  fraction_controls:
+  - date_picker: start_date
+    show_if: f1.unk.true
+field_groups: []
+results: []
+fields: []
+
