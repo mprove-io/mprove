@@ -359,10 +359,14 @@ export class RebuildStructService {
         models: models,
         errors: errors,
         structId: item.structId,
-        caller: common.CallerEnum.BuildViewModel
+        caller: common.CallerEnum.BuildCheckModelName
       },
       this.cs
     );
+
+    models.forEach(x => {
+      x.isViewModel = false;
+    });
 
     let viewModels = barSpecial.buildViewModel(
       {
@@ -373,10 +377,6 @@ export class RebuildStructService {
       },
       this.cs
     );
-
-    models.forEach(x => {
-      x.isViewModel = false;
-    });
 
     models = [...models, ...viewModels];
 

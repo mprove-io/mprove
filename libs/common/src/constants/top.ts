@@ -58,6 +58,7 @@ export const TIME_COLUMNS_LIMIT = 100;
 
 export const VIEW_MODEL_ALIAS = 'v';
 export const VIEW_MODEL_PREFIX = 'view_model';
+
 export const STORE_MODEL_PREFIX = 'store_model';
 
 export const DEFAULT_LIMIT = '500';
