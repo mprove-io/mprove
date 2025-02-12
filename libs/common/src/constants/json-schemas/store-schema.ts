@@ -99,7 +99,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
                 type: {
                   type: 'string'
                 },
-                name: {
+                label: {
                   type: 'string'
                 },
                 or: {
@@ -201,9 +201,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
           required: {
             type: 'boolean'
           },
-          meta: {
-            type: 'string'
-          }
+          meta: {}
           // calculation: {
           //   type: 'string'
           // },

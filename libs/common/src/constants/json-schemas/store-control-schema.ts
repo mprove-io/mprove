@@ -19,13 +19,16 @@ export const STORE_CONTROL_SCHEMA: JSONSchema7 = {
       type: 'string'
     },
     value: {
-      type: 'string'
+      type: ['string', 'number', 'boolean']
     },
     label: {
       type: 'string'
     },
     is_array: {
       type: 'boolean'
+    },
+    show_if: {
+      type: 'string'
     },
     required: {
       type: 'boolean'
@@ -38,7 +41,7 @@ export const STORE_CONTROL_SCHEMA: JSONSchema7 = {
         required: ['value'],
         properties: {
           value: {
-            type: 'string'
+            type: ['string', 'number', 'boolean']
           },
           label: {
             type: 'string'
