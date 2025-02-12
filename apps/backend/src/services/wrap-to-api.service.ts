@@ -271,6 +271,7 @@ export class WrapToApiService {
       connectionId: model.connectionId,
       filePath: model.filePath,
       content: model.content,
+      isStoreModel: model.isStoreModel,
       isViewModel: model.isViewModel,
       accessUsers: model.accessUsers,
       accessRoles: model.accessRoles,

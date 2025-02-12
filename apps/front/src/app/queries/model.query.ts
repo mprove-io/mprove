@@ -12,6 +12,7 @@ let modelState: ModelState = {
   filePath: undefined,
   content: undefined,
   isViewModel: undefined,
+  isStoreModel: undefined,
   accessUsers: [],
   accessRoles: [],
   label: undefined,

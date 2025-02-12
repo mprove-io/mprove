@@ -6,79 +6,120 @@ import { wrapField } from './wrap-field';
 export function wrapModels(item: {
   structId: string;
   models: common.FileModel[];
+  stores: common.FileStore[];
 }): common.Model[] {
-  let { structId, models } = item;
+  let { structId, models, stores } = item;
 
   let apiModels: common.Model[] = [];
 
-  models.forEach(x => {
+  [...models, ...stores].forEach(x => {
     let apiFields: common.ModelField[] = [];
     let nodes: common.ModelNode[] = [];
+    if (x.fileExt === common.FileExtensionEnum.Model) {
+      {
+        // model fields scope
+        let children: common.ModelNode[] = [];
 
-    {
-      // model fields scope
-      let children: common.ModelNode[] = [];
-
-      let node: common.ModelNode = {
-        id: constants.MF,
-        label: common.ModelNodeLabelEnum.ModelFields,
-        description: undefined,
-        hidden: false,
-        isField: false,
-        children: children,
-        nodeClass: common.FieldClassEnum.Join
-      };
-
-      x.fields.forEach(field => {
-        wrapField({
-          wrappedFields: apiFields,
-          field: field,
-          alias: constants.MF,
-          filePath: x.filePath,
-          fileName: x.fileName,
+        let node: common.ModelNode = {
+          id: constants.MF,
+          label: common.ModelNodeLabelEnum.ModelFields,
+          description: undefined,
+          hidden: false,
+          isField: false,
           children: children,
-          node: node
-        });
-      });
+          nodeClass: common.FieldClassEnum.Join
+        };
 
-      if (x.fields.length > 0) {
-        nodes.push(node);
+        x.fields.forEach(field => {
+          wrapField({
+            wrappedFields: apiFields,
+            field: field,
+            alias: constants.MF,
+            filePath: x.filePath,
+            fileName: x.fileName,
+            children: children,
+            node: node
+          });
+        });
+
+        if (x.fields.length > 0) {
+          nodes.push(node);
+        }
       }
+
+      (x as common.FileModel).joins.forEach(join => {
+        // join fields scope
+        let children: common.ModelNode[] = [];
+        let joinHidden = helper.toBooleanFromLowercaseString(join.hidden);
+
+        let node: common.ModelNode = {
+          id: join.as,
+          label: join.label,
+          description: join.description,
+          hidden: joinHidden,
+          isField: false,
+          children: children,
+          nodeClass: common.FieldClassEnum.Join,
+          viewFilePath: join.view.filePath,
+          viewName: join.view.name
+        };
+
+        join.view.fields.forEach(field => {
+          wrapField({
+            wrappedFields: apiFields,
+            field: field,
+            alias: join.as,
+            fileName: join.view.fileName,
+            filePath: join.view.filePath,
+            children: children,
+            node: node
+          });
+        });
+
+        if (join.view.fields.length > 0) {
+          nodes.push(node);
+        }
+      });
     }
 
-    x.joins.forEach(join => {
-      // join fields scope
-      let children: common.ModelNode[] = [];
-      let joinHidden = helper.toBooleanFromLowercaseString(join.hidden);
+    if (x.fileExt === common.FileExtensionEnum.Store) {
+      (x as common.FileStore).field_groups.forEach(fieldGroup => {
+        let children: common.ModelNode[] = [];
+        // let joinHidden = helper.toBooleanFromLowercaseString(join.hidden);
 
-      let node: common.ModelNode = {
-        id: join.as,
-        label: join.label,
-        description: join.description,
-        hidden: joinHidden,
-        isField: false,
-        children: children,
-        nodeClass: common.FieldClassEnum.Join,
-        viewFilePath: join.view.filePath,
-        viewName: join.view.name
-      };
-
-      join.view.fields.forEach(field => {
-        wrapField({
-          wrappedFields: apiFields,
-          field: field,
-          alias: join.as,
-          fileName: join.view.fileName,
-          filePath: join.view.filePath,
+        let node: common.ModelNode = {
+          id: fieldGroup.group, // join.as,
+          label: fieldGroup.label, // join.label,
+          description: undefined, //join.description, TODO: field_group description
+          hidden: false, // joinHidden,
+          isField: false,
           children: children,
-          node: node
-        });
-      });
+          nodeClass: common.FieldClassEnum.Join,
+          viewFilePath: undefined, // join.view.filePath,
+          viewName: undefined // join.view.name
+        };
 
-      if (join.view.fields.length > 0) {
-        nodes.push(node);
-      }
-    });
+        let fieldGroupFields = x.fields.filter(
+          f => f.group === fieldGroup.group
+        );
+
+        fieldGroupFields.forEach(field => {
+          wrapField({
+            wrappedFields: apiFields,
+            field: field,
+            alias: fieldGroup.group,
+            filePath: x.filePath,
+            fileName: x.fileName,
+            children: children,
+            node: node
+          });
+        });
+
+        if (fieldGroupFields.length > 0) {
+          nodes.push(node);
+        }
+      });
+    }
 
     nodes.forEach(node => {
       if (common.isDefined(node.children)) {
@@ -236,13 +277,25 @@ export function wrapModels(item: {
         connectionId: x.connection.connectionId,
         filePath: x.filePath,
         content: x,
-        isViewModel: x.isViewModel,
+        isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
+        isViewModel:
+          x.fileExt === common.FileExtensionEnum.Model
+            ? (x as common.FileModel).isViewModel
+            : false,
         accessUsers: x.access_users || [],
         accessRoles: x.access_roles || [],
         label: x.label,
         description: x.description,
-        gr: x.group,
-        hidden: helper.toBooleanFromLowercaseString(x.hidden),
+        gr:
+          x.fileExt === common.FileExtensionEnum.Model
+            ? (x as common.FileModel).group
+            : undefined,
+        hidden:
+          x.fileExt === common.FileExtensionEnum.Model
+            ? helper.toBooleanFromLowercaseString(
+                (x as common.FileModel).hidden
+              )
+            : false,
         fields: apiFields,
         nodes: sortedNodes,
         serverTs: 1

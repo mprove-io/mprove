@@ -27,6 +27,9 @@ export class Model {
   @IsBoolean()
   isViewModel: boolean;
 
+  @IsBoolean()
+  isStoreModel: boolean;
+
   @IsString({ each: true })
   accessUsers: string[];
 

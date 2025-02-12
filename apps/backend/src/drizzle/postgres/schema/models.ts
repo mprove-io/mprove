@@ -23,6 +23,7 @@ export const modelsTable = pgTable(
     filePath: varchar('file_path'),
     content: json('content').notNull(),
     isViewModel: boolean('is_view_model'),
+    isStoreModel: boolean('is_store_model'),
     accessUsers: json('access_users').$type<string[]>().notNull(),
     accessRoles: json('access_roles').$type<string[]>().notNull(),
     label: varchar('label').notNull(),
