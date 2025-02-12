@@ -58,7 +58,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['filter', 'controls'],
+        required: ['filter', 'fraction_controls'],
         properties: {
           filter: {
             type: 'string'

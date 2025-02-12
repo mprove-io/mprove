@@ -89,7 +89,7 @@ export function wrapModels(item: {
 
         let node: common.ModelNode = {
           id: fieldGroup.group, // join.as,
-          label: fieldGroup.label, // join.label,
+          label: fieldGroup.label || fieldGroup.group, // join.label, TODO: field_group label
           description: undefined, //join.description, TODO: field_group description
           hidden: false, // joinHidden,
           isField: false,

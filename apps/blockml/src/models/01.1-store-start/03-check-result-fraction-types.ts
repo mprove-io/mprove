@@ -111,7 +111,8 @@ export function checkResultFractionTypes(
 
             if (
               fractionTypesElement[parameter as keyof FileStoreFractionType]
-                ?.constructor === Object
+                ?.constructor === Object &&
+              [common.ParameterEnum.Meta.toString()].indexOf(parameter) < 0
             ) {
               item.errors.push(
                 new BmError({
