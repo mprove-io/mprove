@@ -17,7 +17,7 @@ export class GoFromFileExtPipe implements PipeTransform {
       ext = `.${valueChunks[valueChunks.length - 1]}`;
     }
 
-    ext = ext === '.view' ? '.model' : ext;
+    ext = ['.view', '.store'].indexOf(ext) > -1 ? '.model' : ext;
 
     return ext.substring(1);
   }

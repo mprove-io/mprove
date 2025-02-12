@@ -15,7 +15,8 @@
           ((file?.name | goFromFileExt) === 'chart' ||
             (file?.name | goFromFileExt) === 'dashboard' ||
             (member?.isExplorer === true &&
-              (file?.name | goFromFileExt) === 'view') ||
+              ((file?.name | goFromFileExt) === 'view' ||
+                (file?.name | goFromFileExt) === 'store')) ||
             (member?.isExplorer === true &&
               (file?.name | goFromFileExt) === 'model') ||
             (file?.name | goFromFileExt) === 'report')

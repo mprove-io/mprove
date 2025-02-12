@@ -273,7 +273,10 @@ export function wrapModels(item: {
     if (sortedNodes.length > 0) {
       apiModels.push({
         structId: structId,
-        modelId: x.name,
+        modelId:
+          x.fileExt === common.FileExtensionEnum.Store
+            ? `${common.STORE_MODEL_PREFIX}_${x.name}`
+            : x.name,
         connectionId: x.connection.connectionId,
         filePath: x.filePath,
         content: x,
@@ -284,7 +287,10 @@ export function wrapModels(item: {
             : false,
         accessUsers: x.access_users || [],
         accessRoles: x.access_roles || [],
-        label: x.label,
+        label:
+          x.fileExt === common.FileExtensionEnum.Store
+            ? `Store Model - ${x.label}`
+            : x.label,
         description: x.description,
         gr:
           x.fileExt === common.FileExtensionEnum.Model
