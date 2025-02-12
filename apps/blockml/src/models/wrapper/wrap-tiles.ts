@@ -1,5 +1,5 @@
 import { common } from '~blockml/barrels/common';
-import { helper } from '~blockml/barrels/helper';
+import { nodeCommon } from '~blockml/barrels/node-common';
 import { wrapMconfigChart } from './wrap-mconfig-chart';
 
 export function wrapTiles(item: {
@@ -30,11 +30,14 @@ export function wrapTiles(item: {
 
     let model = models.find(m => m.name === tile.model);
 
-    let queryId = helper.makeQueryId({
+    let queryId = nodeCommon.makeQueryId({
       sql: tile.sql,
+      storeMethod: undefined, // TODO: check
+      storeUrlPath: undefined,
+      storeBody: undefined,
       orgId: orgId,
       projectId: projectId,
-      connection: model.connection,
+      connectionId: model.connection.connectionId,
       envId: envId
     });
 

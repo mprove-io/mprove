@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
-import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { nodeCommon } from '~blockml/barrels/node-common';
 import { RabbitService } from '~blockml/services/rabbit.service';
@@ -82,11 +81,14 @@ export class ProcessQueryService {
       }
     );
 
-    let queryId = helper.makeQueryId({
+    let queryId = nodeCommon.makeQueryId({
+      sql: sql,
+      storeMethod: undefined,
+      storeUrlPath: undefined,
+      storeBody: undefined,
       orgId: orgId,
       projectId: projectId,
-      connection: model.connection,
-      sql: sql,
+      connectionId: model.connection.connectionId,
       envId: envId
     });
 

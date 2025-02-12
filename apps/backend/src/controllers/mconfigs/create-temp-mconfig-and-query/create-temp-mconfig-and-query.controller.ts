@@ -13,6 +13,7 @@ import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { nodeCommon } from '~backend/barrels/node-common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
@@ -122,36 +123,88 @@ export class CreateTempMconfigAndQueryController {
       });
     }
 
-    let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
-      {
-        info: {
-          name: apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlProcessQuery,
-          traceId: traceId
-        },
-        payload: {
-          orgId: project.orgId,
-          projectId: project.projectId,
-          weekStart: struct.weekStart,
-          caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
-          simplifySafeAggregates: struct.simplifySafeAggregates,
-          udfsDict: struct.udfsDict,
-          mconfig: mconfig,
-          modelContent: model.content,
-          envId: envId
-        }
+    let newMconfig: common.Mconfig;
+    let newQuery: common.Query;
+
+    if (model.isStoreModel === true) {
+      let storeMethod = common.StoreMethodEnum.Post;
+      let storeUrlPath = 'storeUrlPath content ...';
+      let storeBody = 'storeBody content ...';
+
+      let queryId = nodeCommon.makeQueryId({
+        sql: undefined,
+        storeMethod: storeMethod,
+        storeUrlPath: storeUrlPath,
+        storeBody: storeBody,
+        orgId: project.orgId,
+        projectId: projectId,
+        envId: envId,
+        connectionId: model.connectionId
+      });
+
+      newQuery = {
+        queryId: queryId,
+        projectId: projectId,
+        envId: envId,
+        connectionId: model.connectionId,
+        connectionType: (model.content as any).connection.type,
+        // sql: undefined,
+        sql: `${storeMethod}
+${storeUrlPath}
+${storeBody}
+`,
+        status: common.QueryStatusEnum.New,
+        lastRunBy: undefined,
+        lastRunTs: undefined,
+        lastCancelTs: undefined,
+        lastCompleteTs: undefined,
+        lastCompleteDuration: undefined,
+        lastErrorMessage: undefined,
+        lastErrorTs: undefined,
+        data: undefined,
+        queryJobId: undefined,
+        bigqueryQueryJobId: undefined,
+        bigqueryConsecutiveErrorsGetJob: 0,
+        bigqueryConsecutiveErrorsGetResults: 0,
+        serverTs: 1
       };
 
-    let blockmlProcessQueryResponse =
-      await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
+      newMconfig = common.makeCopy(mconfig);
+      newMconfig.queryId = newQuery.queryId;
+      newMconfig.temp = true;
+    } else {
+      let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
         {
-          routingKey: common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
-          message: toBlockmlProcessQueryRequest,
-          checkIsOk: true
-        }
-      );
+          info: {
+            name: apiToBlockml.ToBlockmlRequestInfoNameEnum
+              .ToBlockmlProcessQuery,
+            traceId: traceId
+          },
+          payload: {
+            orgId: project.orgId,
+            projectId: project.projectId,
+            weekStart: struct.weekStart,
+            caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
+            simplifySafeAggregates: struct.simplifySafeAggregates,
+            udfsDict: struct.udfsDict,
+            mconfig: mconfig,
+            modelContent: model.content,
+            envId: envId
+          }
+        };
 
-    let newMconfig = blockmlProcessQueryResponse.payload.mconfig;
-    let newQuery = blockmlProcessQueryResponse.payload.query;
+      let blockmlProcessQueryResponse =
+        await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
+          {
+            routingKey: common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
+            message: toBlockmlProcessQueryRequest,
+            checkIsOk: true
+          }
+        );
+
+      newMconfig = blockmlProcessQueryResponse.payload.mconfig;
+      newQuery = blockmlProcessQueryResponse.payload.query;
+    }
 
     let newQueryEnt = this.wrapToEntService.wrapToEntityQuery(newQuery);
     let newMconfigEnt = this.wrapToEntService.wrapToEntityMconfig(newMconfig);

@@ -8,6 +8,7 @@ export * from './listen-process-events';
 export * from './log-to-console';
 export * from './make-error-response';
 export * from './make-ok-response';
+export * from './make-query-id';
 export * from './read-file-check-size';
 export * from './transform-valid-sync';
 export * from './wrap-error';
