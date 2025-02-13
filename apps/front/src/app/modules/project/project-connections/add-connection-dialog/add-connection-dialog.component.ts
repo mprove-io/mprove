@@ -7,6 +7,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {
+  FormArray,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
@@ -64,8 +65,6 @@ export class AddConnectionDialogComponent implements OnInit {
 
   isSSL = true;
 
-  headers: common.ConnectionHeader[] = [];
-
   connectionTypes = [
     common.ConnectionTypeEnum.PostgreSQL,
     common.ConnectionTypeEnum.SnowFlake,
@@ -95,7 +94,7 @@ export class AddConnectionDialogComponent implements OnInit {
         [Validators.required, Validators.maxLength(255)]
       ],
       envId: [common.PROJECT_ENV_PROD],
-      type: [common.ConnectionTypeEnum.SnowFlake],
+      type: [common.ConnectionTypeEnum.PostgreSQL],
       baseUrl: [
         undefined,
         [
@@ -227,7 +226,12 @@ export class AddConnectionDialogComponent implements OnInit {
             Validators.required
           )
         ]
-      ]
+      ],
+      headers: this.fb.array([])
+      // headers: this.fb.array([
+      //   this.fb.group({ key: 'a1', value: 'v1' }),
+      //   this.fb.group({ key: 'a2', value: 'v2' })
+      // ])
     });
 
     this.addConnectionForm.get('type').valueChanges.subscribe(value => {
@@ -250,6 +254,26 @@ export class AddConnectionDialogComponent implements OnInit {
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();
     }, 0);
+  }
+
+  getHeaders(): FormArray {
+    return this.addConnectionForm.controls['headers'] as FormArray;
+  }
+
+  addHeader() {
+    const headerGroup = this.fb.group({
+      key: [''],
+      value: ['']
+    });
+    this.getHeaders().push(headerGroup);
+  }
+
+  removeHeader(index: number) {
+    this.getHeaders().removeAt(index);
+  }
+
+  showLog() {
+    console.log(this.addConnectionForm.get('headers').value);
   }
 
   openEnvSelect() {
@@ -291,7 +315,7 @@ export class AddConnectionDialogComponent implements OnInit {
       ].indexOf(type) < 0
     ) {
       this.addConnectionForm.controls['baseUrl'].reset();
-      this.headers = [];
+      this.addConnectionForm.controls['headers'].reset();
     }
 
     if (
@@ -359,7 +383,7 @@ export class AddConnectionDialogComponent implements OnInit {
       )
         ? JSON.parse(this.addConnectionForm.value.serviceAccountCredentials)
         : undefined,
-      headers: this.headers,
+      headers: this.addConnectionForm.value.headers,
       bigqueryQuerySizeLimitGb: common.isDefined(
         this.addConnectionForm.value.bigqueryQuerySizeLimitGb
       )
