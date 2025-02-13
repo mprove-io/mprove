@@ -16,6 +16,8 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './project-connections.component.html'
 })
 export class ProjectConnectionsComponent implements OnInit {
+  typeBigQuery = common.ConnectionTypeEnum.BigQuery;
+
   pageTitle = constants.PROJECT_CONNECTIONS_PAGE_TITLE;
 
   connectionTypeClickhouse = common.ConnectionTypeEnum.ClickHouse;
