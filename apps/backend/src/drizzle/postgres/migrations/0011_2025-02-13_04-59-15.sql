@@ -1,0 +1,1 @@
+ALTER TABLE "connections" RENAME COLUMN "bigquery_credentials" TO "service_account_credentials";

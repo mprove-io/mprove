@@ -46,7 +46,7 @@ export class EditConnectionController {
       projectId,
       envId,
       connectionId,
-      bigqueryCredentials,
+      serviceAccountCredentials,
       bigqueryQuerySizeLimitGb,
       account,
       warehouse,
@@ -80,9 +80,9 @@ export class EditConnectionController {
     connection.database = database;
     connection.username = username;
     connection.password = password;
-    connection.bigqueryCredentials = bigqueryCredentials;
-    connection.bigqueryProject = bigqueryCredentials?.project_id;
-    connection.bigqueryClientEmail = bigqueryCredentials?.client_email;
+    connection.serviceAccountCredentials = serviceAccountCredentials;
+    connection.googleCloudProject = serviceAccountCredentials?.project_id;
+    connection.googleCloudClientEmail = serviceAccountCredentials?.client_email;
     connection.bigqueryQuerySizeLimitGb = bigqueryQuerySizeLimitGb;
     connection.isSsl = isSSL;
 

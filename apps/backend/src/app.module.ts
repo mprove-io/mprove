@@ -359,7 +359,7 @@ export class AppModule implements OnModuleInit {
                 >('firstProjectDwhPostgresPassword'),
                 account: undefined,
                 warehouse: undefined,
-                bigqueryCredentials: undefined,
+                serviceAccountCredentials: undefined,
                 bigqueryQuerySizeLimitGb: 1,
                 isSSL: false
               });
@@ -397,7 +397,7 @@ export class AppModule implements OnModuleInit {
                 database: undefined,
                 account: undefined,
                 warehouse: undefined,
-                bigqueryCredentials: undefined,
+                serviceAccountCredentials: undefined,
                 bigqueryQuerySizeLimitGb: 1,
                 isSSL: false
               });
@@ -443,7 +443,7 @@ export class AppModule implements OnModuleInit {
                 password: undefined,
                 account: undefined,
                 warehouse: undefined,
-                bigqueryCredentials: bigqueryTestCredentials,
+                serviceAccountCredentials: bigqueryTestCredentials,
                 bigqueryQuerySizeLimitGb: 1,
                 isSSL: true
               });
@@ -487,7 +487,7 @@ export class AppModule implements OnModuleInit {
                 warehouse: this.cs.get<
                   interfaces.Config['firstProjectDwhSnowflakeWarehouse']
                 >('firstProjectDwhSnowflakeWarehouse'),
-                bigqueryCredentials: undefined,
+                serviceAccountCredentials: undefined,
                 bigqueryQuerySizeLimitGb: 1,
                 isSSL: true
               });

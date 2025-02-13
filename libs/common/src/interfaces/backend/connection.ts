@@ -15,10 +15,10 @@ export class Connection {
   type: enums.ConnectionTypeEnum;
 
   @IsString()
-  bigqueryProject: string;
+  googleCloudProject: string;
 
   @IsString()
-  bigqueryClientEmail: string;
+  googleCloudClientEmail: string;
 
   @IsInt()
   bigqueryQuerySizeLimitGb: number;

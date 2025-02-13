@@ -142,7 +142,7 @@ export class BlockmlService {
             connectionsEnts.map(x => ({
               connectionId: x.connectionId,
               type: x.type,
-              bigqueryProject: x.bigqueryProject
+              googleCloudProject: x.googleCloudProject
             })),
           overrideTimezone: overrideTimezone
         }

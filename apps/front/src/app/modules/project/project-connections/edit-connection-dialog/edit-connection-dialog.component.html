@@ -34,18 +34,18 @@
     <div *ngIf="editConnectionForm.controls['type'].value === typeBigQuery">
       <textarea
         rows="9"
-        data-cy="editConnectionDialogBigqueryCredentialsInput"
+        data-cy="editConnectionDialogServiceAccountCredentialsInput"
         class="form-input border-gray3 focus:border-blue3 mt-6 w-80 resize-none rounded font-mono"
         [ngClass]="{
           'border-red-600':
-            editConnectionForm.controls['bigqueryCredentials'].invalid &&
-            editConnectionForm.controls['bigqueryCredentials'].touched
+            editConnectionForm.controls['serviceAccountCredentials'].invalid &&
+            editConnectionForm.controls['serviceAccountCredentials'].touched
         }"
-        formControlName="bigqueryCredentials"
+        formControlName="serviceAccountCredentials"
         placeholder="JSON BigQuery Credentials"
       ></textarea>
       <m-validation
-        [control]="editConnectionForm.controls['bigqueryCredentials']"
+        [control]="editConnectionForm.controls['serviceAccountCredentials']"
       ></m-validation>
 
       <input

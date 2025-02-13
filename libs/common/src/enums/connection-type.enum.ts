@@ -1,6 +1,8 @@
 export enum ConnectionTypeEnum {
-  BigQuery = 'BigQuery',
   PostgreSQL = 'PostgreSQL',
+  SnowFlake = 'SnowFlake',
   ClickHouse = 'ClickHouse',
-  SnowFlake = 'SnowFlake'
+  BigQuery = 'BigQuery',
+  GoogleApi = 'GoogleApi',
+  Api = 'Api'
 }

@@ -1,5 +1,6 @@
 export * from './chart-x';
 export * from './connection';
+export * from './connection-header';
 export * from './dashboard-x';
 export * from './env';
 export * from './envs-item';

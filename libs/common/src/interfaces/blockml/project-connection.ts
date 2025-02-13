@@ -10,5 +10,5 @@ export class ProjectConnection {
 
   @IsOptional()
   @IsString()
-  bigqueryProject?: string;
+  googleCloudProject?: string;
 }

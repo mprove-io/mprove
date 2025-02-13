@@ -195,7 +195,7 @@ export class MakerService {
     password: string;
     account: string;
     warehouse: string;
-    bigqueryCredentials: any;
+    serviceAccountCredentials: any;
     bigqueryQuerySizeLimitGb: number;
     isSSL: boolean;
   }) {
@@ -211,7 +211,7 @@ export class MakerService {
       password,
       account,
       warehouse,
-      bigqueryCredentials,
+      serviceAccountCredentials,
       bigqueryQuerySizeLimitGb,
       isSSL
     } = item;
@@ -226,9 +226,9 @@ export class MakerService {
       envId: envId,
       connectionId: connectionId,
       type: type,
-      bigqueryCredentials: bigqueryCredentials,
-      bigqueryProject: bigqueryCredentials?.project_id,
-      bigqueryClientEmail: bigqueryCredentials?.client_email,
+      serviceAccountCredentials: serviceAccountCredentials,
+      googleCloudProject: serviceAccountCredentials?.project_id,
+      googleCloudClientEmail: serviceAccountCredentials?.client_email,
       bigqueryQuerySizeLimitGb:
         common.isDefined(bigqueryQuerySizeLimitGb) &&
         bigqueryQuerySizeLimitGb > 0

@@ -23,8 +23,16 @@ export class ToBackendCreateConnectionRequestPayload {
   @IsEnum(common.ConnectionTypeEnum)
   type: common.ConnectionTypeEnum;
 
+  @IsString()
+  baseUrl?: string;
+
   @IsOptional()
-  bigqueryCredentials?: any;
+  serviceAccountCredentials?: any;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => common.ConnectionHeader)
+  headers?: common.ConnectionHeader[];
 
   @IsOptional()
   @IsInt()

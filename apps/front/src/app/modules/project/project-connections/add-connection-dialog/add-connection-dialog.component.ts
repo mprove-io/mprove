@@ -64,17 +64,23 @@ export class AddConnectionDialogComponent implements OnInit {
 
   isSSL = true;
 
+  headers: common.ConnectionHeader[] = [];
+
   connectionTypes = [
+    common.ConnectionTypeEnum.PostgreSQL,
     common.ConnectionTypeEnum.SnowFlake,
-    common.ConnectionTypeEnum.BigQuery,
     common.ConnectionTypeEnum.ClickHouse,
-    common.ConnectionTypeEnum.PostgreSQL
+    common.ConnectionTypeEnum.BigQuery,
+    common.ConnectionTypeEnum.GoogleApi,
+    common.ConnectionTypeEnum.Api
   ];
 
-  typeSnowFlake = common.ConnectionTypeEnum.SnowFlake;
-  typeBigQuery = common.ConnectionTypeEnum.BigQuery;
-  typeClickHouse = common.ConnectionTypeEnum.ClickHouse;
   typePostgreSQL = common.ConnectionTypeEnum.PostgreSQL;
+  typeSnowFlake = common.ConnectionTypeEnum.SnowFlake;
+  typeClickHouse = common.ConnectionTypeEnum.ClickHouse;
+  typeBigQuery = common.ConnectionTypeEnum.BigQuery;
+  typeGoogleApi = common.ConnectionTypeEnum.GoogleApi;
+  typeApi = common.ConnectionTypeEnum.Api;
 
   constructor(
     public ref: DialogRef<AddConnectionDialogData>,
@@ -90,13 +96,28 @@ export class AddConnectionDialogComponent implements OnInit {
       ],
       envId: [common.PROJECT_ENV_PROD],
       type: [common.ConnectionTypeEnum.SnowFlake],
-      bigqueryCredentials: [
+      baseUrl: [
         undefined,
         [
           conditionalValidator(
             () =>
-              this.addConnectionForm.get('type').value ===
-              common.ConnectionTypeEnum.BigQuery,
+              [
+                common.ConnectionTypeEnum.GoogleApi,
+                common.ConnectionTypeEnum.Api
+              ].indexOf(this.addConnectionForm.get('type').value) > -1,
+            Validators.required
+          )
+        ]
+      ],
+      serviceAccountCredentials: [
+        undefined,
+        [
+          conditionalValidator(
+            () =>
+              [
+                common.ConnectionTypeEnum.BigQuery,
+                common.ConnectionTypeEnum.GoogleApi
+              ].indexOf(this.addConnectionForm.get('type').value) > -1,
             Validators.required
           )
         ]
@@ -107,8 +128,10 @@ export class AddConnectionDialogComponent implements OnInit {
           ValidationService.integerOrEmptyValidator,
           conditionalValidator(
             () =>
-              this.addConnectionForm.get('type').value ===
-              common.ConnectionTypeEnum.BigQuery,
+              [common.ConnectionTypeEnum.BigQuery].indexOf(
+                this.addConnectionForm.get('type').value
+              ) > -1,
+
             Validators.required
           )
         ]
@@ -208,8 +231,9 @@ export class AddConnectionDialogComponent implements OnInit {
     });
 
     this.addConnectionForm.get('type').valueChanges.subscribe(value => {
+      this.addConnectionForm.get('baseUrl');
       this.addConnectionForm
-        .get('bigqueryCredentials')
+        .get('serviceAccountCredentials')
         .updateValueAndValidity();
       this.addConnectionForm
         .get('bigqueryQuerySizeLimitGb')
@@ -260,8 +284,26 @@ export class AddConnectionDialogComponent implements OnInit {
   }
 
   changeType(type: common.ConnectionTypeEnum) {
+    if (
+      [
+        common.ConnectionTypeEnum.GoogleApi,
+        common.ConnectionTypeEnum.Api
+      ].indexOf(type) < 0
+    ) {
+      this.addConnectionForm.controls['baseUrl'].reset();
+      this.headers = [];
+    }
+
+    if (
+      [
+        common.ConnectionTypeEnum.BigQuery,
+        common.ConnectionTypeEnum.GoogleApi
+      ].indexOf(type) < 0
+    ) {
+      this.addConnectionForm.controls['serviceAccountCredentials'].reset();
+    }
+
     if (type !== common.ConnectionTypeEnum.BigQuery) {
-      this.addConnectionForm.controls['bigqueryCredentials'].reset();
       this.addConnectionForm.controls['bigqueryQuerySizeLimitGb'].reset();
     }
 
@@ -311,11 +353,13 @@ export class AddConnectionDialogComponent implements OnInit {
       connectionId: this.addConnectionForm.value.connectionId,
       envId: this.addConnectionForm.value.envId,
       type: this.addConnectionForm.value.type,
-      bigqueryCredentials: common.isDefined(
-        this.addConnectionForm.value.bigqueryCredentials
+      baseUrl: this.addConnectionForm.value.baseUrl,
+      serviceAccountCredentials: common.isDefined(
+        this.addConnectionForm.value.serviceAccountCredentials
       )
-        ? JSON.parse(this.addConnectionForm.value.bigqueryCredentials)
+        ? JSON.parse(this.addConnectionForm.value.serviceAccountCredentials)
         : undefined,
+      headers: this.headers,
       bigqueryQuerySizeLimitGb: common.isDefined(
         this.addConnectionForm.value.bigqueryQuerySizeLimitGb
       )

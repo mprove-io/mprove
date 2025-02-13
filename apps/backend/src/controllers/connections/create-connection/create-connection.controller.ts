@@ -52,7 +52,7 @@ export class CreateConnectionController {
       envId,
       connectionId,
       type,
-      bigqueryCredentials,
+      serviceAccountCredentials,
       bigqueryQuerySizeLimitGb,
       account,
       warehouse,
@@ -102,7 +102,7 @@ export class CreateConnectionController {
       database: database,
       username: username,
       password: password,
-      bigqueryCredentials: bigqueryCredentials,
+      serviceAccountCredentials: serviceAccountCredentials,
       bigqueryQuerySizeLimitGb: bigqueryQuerySizeLimitGb,
       isSSL: isSSL
     });

@@ -196,7 +196,7 @@ export class SeedRecordsController {
           password: x.password,
           account: x.account,
           warehouse: x.warehouse,
-          bigqueryCredentials: x.bigqueryCredentials,
+          serviceAccountCredentials: x.serviceAccountCredentials,
           bigqueryQuerySizeLimitGb: x.bigqueryQuerySizeLimitGb,
           isSSL: x.isSSL
         });
@@ -308,7 +308,7 @@ export class SeedRecordsController {
             .map(c => ({
               connectionId: c.connectionId,
               type: c.type,
-              bigqueryProject: c.bigqueryProject
+              googleCloudProject: c.googleCloudProject
             }));
 
           let {

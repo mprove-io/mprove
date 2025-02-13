@@ -71,7 +71,7 @@ export class EditConnectionDialogComponent implements OnInit {
     this.editConnectionForm = this.fb.group({
       connectionId: [this.dataItem.connection.connectionId],
       type: [this.dataItem.connection.type],
-      bigqueryCredentials: [
+      serviceAccountCredentials: [
         undefined,
         [
           conditionalValidator(
@@ -190,7 +190,7 @@ export class EditConnectionDialogComponent implements OnInit {
 
     this.editConnectionForm.get('type').valueChanges.subscribe(value => {
       this.editConnectionForm
-        .get('bigqueryCredentials')
+        .get('serviceAccountCredentials')
         .updateValueAndValidity();
       this.editConnectionForm
         .get('bigqueryQuerySizeLimitGb')
@@ -211,7 +211,7 @@ export class EditConnectionDialogComponent implements OnInit {
 
   changeType(ev: any) {
     if (ev !== common.ConnectionTypeEnum.BigQuery) {
-      this.editConnectionForm.controls['bigqueryCredentials'].reset();
+      this.editConnectionForm.controls['serviceAccountCredentials'].reset();
       this.editConnectionForm.controls['bigqueryQuerySizeLimitGb'].reset();
     }
 
@@ -260,10 +260,10 @@ export class EditConnectionDialogComponent implements OnInit {
       projectId: this.dataItem.connection.projectId,
       envId: this.dataItem.connection.envId,
       connectionId: this.editConnectionForm.value.connectionId,
-      bigqueryCredentials: common.isDefined(
-        this.editConnectionForm.value.bigqueryCredentials
+      serviceAccountCredentials: common.isDefined(
+        this.editConnectionForm.value.serviceAccountCredentials
       )
-        ? JSON.parse(this.editConnectionForm.value.bigqueryCredentials)
+        ? JSON.parse(this.editConnectionForm.value.serviceAccountCredentials)
         : undefined,
       bigqueryQuerySizeLimitGb: common.isDefined(
         this.editConnectionForm.value.bigqueryQuerySizeLimitGb

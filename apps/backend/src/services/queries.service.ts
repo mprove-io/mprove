@@ -320,8 +320,8 @@ WHERE m.mconfig_id is NULL
         }
 
         let bigquery = new BigQuery({
-          credentials: connection.bigqueryCredentials,
-          projectId: connection.bigqueryProject
+          credentials: connection.serviceAccountCredentials,
+          projectId: connection.googleCloudProject
         });
 
         let bigqueryQueryJob = bigquery.job(query.bigqueryQueryJobId);

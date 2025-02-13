@@ -4,7 +4,6 @@ import {
   IsEnum,
   IsInt,
   IsNumber,
-  IsObject,
   IsOptional,
   IsString,
   ValidateNested
@@ -132,9 +131,16 @@ export class ToBackendSeedRecordsRequestPayloadConnectionsItem {
   @IsEnum(common.ConnectionTypeEnum)
   type: common.ConnectionTypeEnum;
 
+  @IsString()
+  baseUrl?: string;
+
   @IsOptional()
-  @IsObject()
-  bigqueryCredentials?: any;
+  serviceAccountCredentials?: any;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => common.ConnectionHeader)
+  headers?: common.ConnectionHeader[];
 
   @IsOptional()
   @IsInt()

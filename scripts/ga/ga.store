@@ -4,8 +4,7 @@ label: Google Analytics
 description: '...'
 access_users: []
 access_roles: []
-# connection_type: google
-# connection_host: https://analyticsdata.googleapis.com
+# connection_base_url: https://analyticsdata.googleapis.com
 # connection_service_account_credentials: $ENV_GOOGLE_SERVICE_ACCOUNT_CREDENTIALS
 # connection_headers:
 # - key: Authorization

@@ -19,8 +19,16 @@ export class ToBackendEditConnectionRequestPayload {
   @IsString()
   connectionId: string;
 
+  @IsString()
+  baseUrl?: string;
+
   @IsOptional()
-  bigqueryCredentials?: any;
+  serviceAccountCredentials?: any;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => common.ConnectionHeader)
+  headers?: common.ConnectionHeader[];
 
   @IsOptional()
   @IsInt()

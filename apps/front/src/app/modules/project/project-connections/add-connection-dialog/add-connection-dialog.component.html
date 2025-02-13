@@ -86,18 +86,18 @@
     <div *ngIf="addConnectionForm.controls['type'].value === typeBigQuery">
       <textarea
         rows="9"
-        data-cy="addConnectionDialogBigqueryCredentialsInput"
+        data-cy="addConnectionDialogServiceAccountCredentialsInput"
         class="form-input border-gray3 focus:border-blue3 mt-6 w-96 resize-none rounded font-mono"
         [ngClass]="{
           'border-red-600':
-            addConnectionForm.controls['bigqueryCredentials'].invalid &&
-            addConnectionForm.controls['bigqueryCredentials'].touched
+            addConnectionForm.controls['serviceAccountCredentials'].invalid &&
+            addConnectionForm.controls['serviceAccountCredentials'].touched
         }"
-        formControlName="bigqueryCredentials"
+        formControlName="serviceAccountCredentials"
         placeholder="JSON BigQuery Credentials"
       ></textarea>
       <m-validation
-        [control]="addConnectionForm.controls['bigqueryCredentials']"
+        [control]="addConnectionForm.controls['serviceAccountCredentials']"
       ></m-validation>
 
       <div class="text-base">Query Size Limit, gb (default: 1)</div>

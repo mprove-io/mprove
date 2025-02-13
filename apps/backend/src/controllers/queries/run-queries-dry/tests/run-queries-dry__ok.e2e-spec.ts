@@ -84,7 +84,7 @@ test('1', async t => {
             connectionId: 'c1',
             envId: common.PROJECT_ENV_PROD,
             type: common.ConnectionTypeEnum.BigQuery,
-            bigqueryCredentials: bigqueryTestCredentials
+            serviceAccountCredentials: bigqueryTestCredentials
           }
         ]
       },

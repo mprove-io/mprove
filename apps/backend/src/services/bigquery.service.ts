@@ -16,8 +16,8 @@ export class BigQueryService {
     let { query, userId, connection } = item;
 
     let bigquery = new BigQuery({
-      credentials: connection.bigqueryCredentials,
-      projectId: connection.bigqueryProject
+      credentials: connection.serviceAccountCredentials,
+      projectId: connection.googleCloudProject
     });
 
     query.lastRunBy = userId;
@@ -65,8 +65,8 @@ export class BigQueryService {
     let errorQuery: schemaPostgres.QueryEnt;
 
     let bigquery = new BigQuery({
-      credentials: connection.bigqueryCredentials,
-      projectId: connection.bigqueryProject
+      credentials: connection.serviceAccountCredentials,
+      projectId: connection.googleCloudProject
     });
 
     let createQueryJobItem = await bigquery

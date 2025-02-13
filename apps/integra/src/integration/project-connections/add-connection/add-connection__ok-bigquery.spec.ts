@@ -72,7 +72,7 @@ describe('integra', () => {
     cy.get('[data-cy=addConnectionDialogConnectionIdInput]').type('c1');
     cy.get('[data-cy=addConnectionDialogTypeSelect]').click();
     cy.get('.ng-option').eq(1).click();
-    cy.get('[data-cy=addConnectionDialogBigqueryCredentialsInput]').type(
+    cy.get('[data-cy=addConnectionDialogServiceAccountCredentialsInput]').type(
       bigqueryTestCredentials
     );
     cy.get('[data-cy=addConnectionDialogBigqueryQuerySizeLimitGbInput]').type(
