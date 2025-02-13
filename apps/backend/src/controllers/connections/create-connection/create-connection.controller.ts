@@ -52,7 +52,10 @@ export class CreateConnectionController {
       envId,
       connectionId,
       type,
+      isSSL,
+      baseUrl,
       serviceAccountCredentials,
+      headers,
       bigqueryQuerySizeLimitGb,
       account,
       warehouse,
@@ -60,8 +63,7 @@ export class CreateConnectionController {
       port,
       database,
       username,
-      password,
-      isSSL
+      password
     } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
@@ -95,6 +97,8 @@ export class CreateConnectionController {
       envId: envId,
       connectionId: connectionId,
       type: type,
+      baseUrl: baseUrl,
+      headers: headers,
       account: account,
       warehouse: warehouse,
       host: host,

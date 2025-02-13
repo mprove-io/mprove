@@ -189,6 +189,8 @@ export class SeedRecordsController {
           envId: x.envId,
           connectionId: x.connectionId,
           type: x.type,
+          baseUrl: x.baseUrl,
+          headers: x.headers,
           host: x.host,
           port: x.port,
           database: x.database,

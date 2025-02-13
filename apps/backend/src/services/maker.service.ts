@@ -188,6 +188,8 @@ export class MakerService {
     connectionId: string;
     envId: string;
     type: common.ConnectionTypeEnum;
+    baseUrl: string;
+    headers: common.ConnectionHeader[];
     host: string;
     port: number;
     database: string;
@@ -204,6 +206,9 @@ export class MakerService {
       connectionId,
       envId,
       type,
+      isSSL,
+      baseUrl,
+      headers,
       host,
       port,
       database,
@@ -212,8 +217,7 @@ export class MakerService {
       account,
       warehouse,
       serviceAccountCredentials,
-      bigqueryQuerySizeLimitGb,
-      isSSL
+      bigqueryQuerySizeLimitGb
     } = item;
 
     let connection: schemaPostgres.ConnectionEnt = {
@@ -226,6 +230,8 @@ export class MakerService {
       envId: envId,
       connectionId: connectionId,
       type: type,
+      baseUrl: baseUrl,
+      headers: headers,
       serviceAccountCredentials: serviceAccountCredentials,
       googleCloudProject: serviceAccountCredentials?.project_id,
       googleCloudClientEmail: serviceAccountCredentials?.client_email,

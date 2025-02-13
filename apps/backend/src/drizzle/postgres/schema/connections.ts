@@ -22,10 +22,12 @@ export const connectionsTable = pgTable(
     envId: varchar('env_id', { length: 32 }).notNull(), // name
     connectionId: varchar('connection_id', { length: 32 }).notNull(), // name
     type: varchar('type').$type<common.ConnectionTypeEnum>().notNull(),
-    bigqueryQuerySizeLimitGb: integer('bigquery_query_size_limit_gb'),
+    baseUrl: varchar('base_url'),
+    headers: json('headers').$type<common.ConnectionHeader[]>(),
     serviceAccountCredentials: json('service_account_credentials'),
     googleCloudProject: varchar('google_cloud_project'),
     googleCloudClientEmail: varchar('google_cloud_client_email'),
+    bigqueryQuerySizeLimitGb: integer('bigquery_query_size_limit_gb'),
     account: varchar('account'),
     warehouse: varchar('warehouse'),
     host: varchar('host'),

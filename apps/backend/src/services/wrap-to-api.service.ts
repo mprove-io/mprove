@@ -32,6 +32,8 @@ export class WrapToApiService {
       connectionId: x.connectionId,
       envId: x.envId,
       type: x.type,
+      baseUrl: x.baseUrl,
+      headers: x.headers,
       googleCloudProject: x.googleCloudProject,
       googleCloudClientEmail: x.googleCloudClientEmail,
       bigqueryQuerySizeLimitGb: x.bigqueryQuerySizeLimitGb,

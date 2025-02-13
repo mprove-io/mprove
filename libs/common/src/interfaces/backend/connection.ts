@@ -1,5 +1,13 @@
-import { IsBoolean, IsEnum, IsInt, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { enums } from '~common/barrels/enums';
+import { ConnectionHeader } from './connection-header';
 
 export class Connection {
   @IsString()
@@ -28,6 +36,13 @@ export class Connection {
 
   @IsString()
   warehouse: string;
+
+  @IsString()
+  baseUrl: string;
+
+  @ValidateNested()
+  @Type(() => ConnectionHeader)
+  headers: ConnectionHeader[];
 
   @IsString()
   host: string;
