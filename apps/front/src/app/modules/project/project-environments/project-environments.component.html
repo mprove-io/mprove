@@ -10,7 +10,7 @@
       <div tp="Admin role required" [tpIsEnabled]="isAdmin === false">
         <button
           data-cy="projectEnvironmentsAddEnvironmentButton"
-          class="rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
+          class="mr-5 h-12 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
           type="submit"
           [ngClass]="{
             'bg-blue3': isAdmin === true,
@@ -128,9 +128,7 @@
                     class="h-9 w-9 rounded focus:outline-none"
                     [ngClass]="{
                       'cursor-default text-gray-400':
-                        isAdmin === false || environment.envId === envProd,
-                      'hover:bg-blue2':
-                        isAdmin !== false && environment.envId !== envProd
+                        isAdmin === false || environment.envId === envProd
                     }"
                     [disabled]="
                       isAdmin === false || environment.envId === envProd
