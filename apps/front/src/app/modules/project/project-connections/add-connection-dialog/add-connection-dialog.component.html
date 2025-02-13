@@ -216,6 +216,17 @@
         > -->
       </div>
 
+      <div
+        *ngIf="
+          [typeGoogleApi].indexOf(addConnectionForm.controls['type'].value) > -1
+        "
+        class="w-[628px] text-gray-400"
+        >For this connection type, the Authorization (Bearer token) and
+        Content-Type (application/json) headers will be automatically added. The
+        Authorization Bearer token will be obtained using the Service Account
+        Credentials.
+      </div>
+
       <div formArrayName="headers">
         <div class="flex flex-col">
           <div *ngFor="let header of getHeaders().controls; let i = index">
