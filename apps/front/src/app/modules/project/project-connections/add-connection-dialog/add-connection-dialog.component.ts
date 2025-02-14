@@ -130,7 +130,6 @@ export class AddConnectionDialogComponent implements OnInit {
               [common.ConnectionTypeEnum.BigQuery].indexOf(
                 this.addConnectionForm.get('type').value
               ) > -1,
-
             Validators.required
           )
         ]
@@ -235,7 +234,7 @@ export class AddConnectionDialogComponent implements OnInit {
     });
 
     this.addConnectionForm.get('type').valueChanges.subscribe(value => {
-      this.addConnectionForm.get('baseUrl');
+      this.addConnectionForm.get('baseUrl').updateValueAndValidity();
       this.addConnectionForm
         .get('serviceAccountCredentials')
         .updateValueAndValidity();

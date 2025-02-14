@@ -6,6 +6,7 @@ import {
   OnInit
 } from '@angular/core';
 import {
+  FormArray,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
@@ -48,16 +49,20 @@ export class EditConnectionDialogComponent implements OnInit {
   isSSL = true;
 
   connectionTypes = [
+    common.ConnectionTypeEnum.PostgreSQL,
     common.ConnectionTypeEnum.SnowFlake,
-    common.ConnectionTypeEnum.BigQuery,
     common.ConnectionTypeEnum.ClickHouse,
-    common.ConnectionTypeEnum.PostgreSQL
+    common.ConnectionTypeEnum.BigQuery,
+    common.ConnectionTypeEnum.GoogleApi,
+    common.ConnectionTypeEnum.Api
   ];
 
   typeSnowFlake = common.ConnectionTypeEnum.SnowFlake;
   typeBigQuery = common.ConnectionTypeEnum.BigQuery;
   typeClickHouse = common.ConnectionTypeEnum.ClickHouse;
   typePostgreSQL = common.ConnectionTypeEnum.PostgreSQL;
+  typeGoogleApi = common.ConnectionTypeEnum.GoogleApi;
+  typeApi = common.ConnectionTypeEnum.Api;
 
   constructor(
     public ref: DialogRef<EditConnectionDialogData>,
@@ -71,13 +76,28 @@ export class EditConnectionDialogComponent implements OnInit {
     this.editConnectionForm = this.fb.group({
       connectionId: [this.dataItem.connection.connectionId],
       type: [this.dataItem.connection.type],
+      baseUrl: [
+        this.dataItem.connection.baseUrl,
+        [
+          conditionalValidator(
+            () =>
+              [
+                common.ConnectionTypeEnum.GoogleApi,
+                common.ConnectionTypeEnum.Api
+              ].indexOf(this.editConnectionForm.get('type').value) > -1,
+            Validators.required
+          )
+        ]
+      ],
       serviceAccountCredentials: [
         undefined,
         [
           conditionalValidator(
             () =>
-              this.editConnectionForm.get('type').value ===
-              common.ConnectionTypeEnum.BigQuery,
+              [
+                common.ConnectionTypeEnum.BigQuery,
+                common.ConnectionTypeEnum.GoogleApi
+              ].indexOf(this.editConnectionForm.get('type').value) > -1,
             Validators.required
           )
         ]
@@ -185,10 +205,22 @@ export class EditConnectionDialogComponent implements OnInit {
             Validators.required
           )
         ]
-      ]
+      ],
+      headers: this.fb.array(
+        common.isUndefined(this.dataItem.connection.headers)
+          ? []
+          : this.dataItem.connection.headers?.map(header => {
+              let newHeader = {
+                key: header.key,
+                value: '' // backend returns HEADER_VALUE_IS_HIDDEN
+              };
+              return this.fb.group(newHeader);
+            })
+      )
     });
 
     this.editConnectionForm.get('type').valueChanges.subscribe(value => {
+      this.editConnectionForm.get('baseUrl').updateValueAndValidity();
       this.editConnectionForm
         .get('serviceAccountCredentials')
         .updateValueAndValidity();
@@ -209,38 +241,24 @@ export class EditConnectionDialogComponent implements OnInit {
     }, 0);
   }
 
-  changeType(ev: any) {
-    if (ev !== common.ConnectionTypeEnum.BigQuery) {
-      this.editConnectionForm.controls['serviceAccountCredentials'].reset();
-      this.editConnectionForm.controls['bigqueryQuerySizeLimitGb'].reset();
-    }
+  getHeaders(): FormArray {
+    return this.editConnectionForm.controls['headers'] as FormArray;
+  }
 
-    if (ev !== common.ConnectionTypeEnum.SnowFlake) {
-      this.editConnectionForm.controls['account'].reset();
-      this.editConnectionForm.controls['warehouse'].reset();
-    }
+  addHeader() {
+    const headerGroup = this.fb.group({
+      key: [''],
+      value: ['']
+    });
+    this.getHeaders().push(headerGroup);
+  }
 
-    if (
-      [
-        common.ConnectionTypeEnum.SnowFlake,
-        common.ConnectionTypeEnum.ClickHouse,
-        common.ConnectionTypeEnum.PostgreSQL
-      ].indexOf(ev) < 0
-    ) {
-      this.editConnectionForm.controls['username'].reset();
-      this.editConnectionForm.controls['password'].reset();
-    }
+  removeHeader(index: number) {
+    this.getHeaders().removeAt(index);
+  }
 
-    if (
-      [
-        common.ConnectionTypeEnum.ClickHouse,
-        common.ConnectionTypeEnum.PostgreSQL
-      ].indexOf(ev) < 0
-    ) {
-      this.editConnectionForm.controls['host'].reset();
-      this.editConnectionForm.controls['port'].reset();
-      this.editConnectionForm.controls['database'].reset();
-    }
+  showLog() {
+    console.log(this.editConnectionForm.get('headers').value);
   }
 
   toggleSSL() {
@@ -260,11 +278,13 @@ export class EditConnectionDialogComponent implements OnInit {
       projectId: this.dataItem.connection.projectId,
       envId: this.dataItem.connection.envId,
       connectionId: this.editConnectionForm.value.connectionId,
+      baseUrl: this.editConnectionForm.value.baseUrl,
       serviceAccountCredentials: common.isDefined(
         this.editConnectionForm.value.serviceAccountCredentials
       )
         ? JSON.parse(this.editConnectionForm.value.serviceAccountCredentials)
         : undefined,
+      headers: this.editConnectionForm.value.headers,
       bigqueryQuerySizeLimitGb: common.isDefined(
         this.editConnectionForm.value.bigqueryQuerySizeLimitGb
       )

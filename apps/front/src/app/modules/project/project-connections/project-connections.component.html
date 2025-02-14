@@ -120,10 +120,18 @@
                 </div>
 
                 <div class="flex-col" *ngIf="connection.headers">
-                  <div class="mt-2 font-medium">Headers:</div>
+                  <div
+                    class="font-medium"
+                    [ngClass]="{
+                      'mt-2': !!connection.googleCloudClientEmail
+                    }"
+                    >Headers:</div
+                  >
                   <div *ngFor="let header of connection.headers">
                     <span class="ml-5 font-medium">{{ header.key }}: </span>
-                    <span class="text-green-700"> ... </span>
+                    <span class="text-green-700">
+                      {{ header.value }}
+                    </span>
                   </div>
                 </div>
               </td>

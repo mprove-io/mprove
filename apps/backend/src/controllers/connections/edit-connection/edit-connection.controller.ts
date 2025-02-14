@@ -46,7 +46,10 @@ export class EditConnectionController {
       projectId,
       envId,
       connectionId,
+      isSSL,
+      baseUrl,
       serviceAccountCredentials,
+      headers,
       bigqueryQuerySizeLimitGb,
       account,
       warehouse,
@@ -54,8 +57,7 @@ export class EditConnectionController {
       port,
       database,
       username,
-      password,
-      isSSL
+      password
     } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
@@ -73,6 +75,9 @@ export class EditConnectionController {
       connectionId: connectionId
     });
 
+    connection.baseUrl = baseUrl;
+    connection.headers = headers;
+    connection.isSsl = isSSL;
     connection.account = account;
     connection.warehouse = warehouse;
     connection.host = host;
@@ -84,7 +89,6 @@ export class EditConnectionController {
     connection.googleCloudProject = serviceAccountCredentials?.project_id;
     connection.googleCloudClientEmail = serviceAccountCredentials?.client_email;
     connection.bigqueryQuerySizeLimitGb = bigqueryQuerySizeLimitGb;
-    connection.isSsl = isSSL;
 
     await retry(
       async () =>

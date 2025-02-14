@@ -4,14 +4,6 @@ label: Google Analytics
 description: '...'
 access_users: []
 access_roles: []
-# connection_base_url: https://analyticsdata.googleapis.com
-# connection_service_account_credentials: $ENV_GOOGLE_SERVICE_ACCOUNT_CREDENTIALS
-# connection_headers:
-# - key: Authorization
-#   value: Bearer ...
-# - key: Content-Type
-#   value: application/json
-method: POST
 url_path: |
   let propertyId = $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.ga_property.value;
   return `/v1beta/properties/${propertyId}:runReport`;

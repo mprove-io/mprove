@@ -33,7 +33,15 @@ export class WrapToApiService {
       envId: x.envId,
       type: x.type,
       baseUrl: x.baseUrl,
-      headers: x.headers,
+      headers: x.headers?.map(header => {
+        let newHeader: common.ConnectionHeader = {
+          key: header.key,
+          value: common.isDefinedAndNotEmpty(header.value)
+            ? common.HEADER_VALUE_IS_HIDDEN
+            : ''
+        };
+        return newHeader;
+      }),
       googleCloudProject: x.googleCloudProject,
       googleCloudClientEmail: x.googleCloudClientEmail,
       bigqueryQuerySizeLimitGb: x.bigqueryQuerySizeLimitGb,

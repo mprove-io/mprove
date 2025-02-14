@@ -137,6 +137,8 @@ export const GLOBAL_ROW_NAME = 'RGL';
 
 export const NO_FIELDS_SELECTED = 'no_fields_selected';
 
+export const HEADER_VALUE_IS_HIDDEN = 'value is hidden';
+
 export const FIELD_TYPE_VALUES = [
   enums.FieldTypeEnum.CountDistinct,
   enums.FieldTypeEnum.Sum,

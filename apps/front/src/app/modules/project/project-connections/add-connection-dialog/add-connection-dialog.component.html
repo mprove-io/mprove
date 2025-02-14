@@ -220,7 +220,7 @@
         *ngIf="
           [typeGoogleApi].indexOf(addConnectionForm.controls['type'].value) > -1
         "
-        class="w-[628px] text-gray-400"
+        class="mb-6 w-[628px] text-gray-400"
         >For this connection type, the Authorization (Bearer token) and
         Content-Type (application/json) headers will be automatically added. The
         Authorization Bearer token will be obtained using the Service Account
@@ -232,7 +232,7 @@
           <div *ngFor="let header of getHeaders().controls; let i = index">
             <div
               [formGroupName]="i"
-              class="mb-6 flex w-[600px] flex-row items-center"
+              class="mb-6 flex w-[700px] flex-row items-center"
             >
               <button
                 class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 focus:outline-none"
@@ -259,6 +259,7 @@
                 spellcheck="false"
                 data-cy="addConnectionHeaderKeyInput"
                 formControlName="value"
+                placeholder="Will be empty if not set"
               />
             </div>
           </div>

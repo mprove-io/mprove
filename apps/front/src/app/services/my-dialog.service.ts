@@ -547,7 +547,7 @@ export class MyDialogService {
       enableClose: false,
       closeButton: false,
       data: item,
-      width: 700
+      width: 800
     });
   }
 
@@ -555,7 +555,8 @@ export class MyDialogService {
     this.dialogService.open(EditConnectionDialogComponent, {
       enableClose: false,
       closeButton: false,
-      data: item
+      data: item,
+      width: 800
     });
   }
 
