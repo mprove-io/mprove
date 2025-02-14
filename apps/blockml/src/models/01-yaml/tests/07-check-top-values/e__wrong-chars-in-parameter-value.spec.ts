@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildYaml;
 let func = common.FuncEnum.CheckTopValues;
-let testId = 'e__wrong-char-in-parameter-value';
+let testId = 'e__wrong-chars-in-parameter-value';
 
 test('1', async t => {
   let errors: BmError[];
@@ -58,6 +58,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(filesAny.length, 1);
 
-  t.is(errors[0].title, common.ErTitleEnum.WRONG_CHAR_IN_PARAMETER_VALUE);
+  t.is(errors[0].title, common.ErTitleEnum.WRONG_CHARS_IN_PARAMETER_VALUE);
   t.is(errors[0].lines[0].line, 1);
 });

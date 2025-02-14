@@ -156,8 +156,8 @@ export class MyRegex {
   static CAPTURE_REFS_G(): RegExp {
     return cloneRegexp(/\$\{([^}]+)\}/g);
   }
-  static CAPTURE_NOT_ALLOWED_FILE_DECLARATION_CHARS_G(): RegExp {
-    return cloneRegexp(/([^a-zA-Z0-9_])/g);
+  static CAPTURE_NOT_SNAKE_CASE_CHARS_G(): RegExp {
+    return cloneRegexp(/([^a-z0-9_])/g);
   }
   static CAPTURE_NOT_ALLOWED_VIEW_REF_CHARS_G(): RegExp {
     return cloneRegexp(/([^a-z0-9_])/g);

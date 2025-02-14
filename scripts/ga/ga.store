@@ -1,5 +1,5 @@
 store: google_analytics
-connection: c5_google # TODO: ui name regex _
+connection: c5_google
 label: Google Analytics
 description: '...'
 access_users: []

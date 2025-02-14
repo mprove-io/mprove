@@ -97,7 +97,7 @@ export function checkViewBuildMetrics(
 
             if (
               timeFieldName.match(
-                common.MyRegex.CAPTURE_NOT_ALLOWED_FILE_DECLARATION_CHARS_G()
+                common.MyRegex.CAPTURE_NOT_SNAKE_CASE_CHARS_G()
               )
             ) {
               item.errors.push(

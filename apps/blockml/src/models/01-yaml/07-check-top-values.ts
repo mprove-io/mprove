@@ -63,6 +63,7 @@ export function checkTopValues(
           [
             common.ParameterEnum.View.toString(),
             common.ParameterEnum.Model.toString(),
+            common.ParameterEnum.Store.toString(),
             common.ParameterEnum.Report.toString(),
             common.ParameterEnum.Dashboard.toString(),
             common.ParameterEnum.Chart.toString(),
@@ -70,13 +71,11 @@ export function checkTopValues(
           ].indexOf(parameter) > -1 &&
           file[parameter]
             .toString()
-            .match(
-              common.MyRegex.CAPTURE_NOT_ALLOWED_FILE_DECLARATION_CHARS_G()
-            )
+            .match(common.MyRegex.CAPTURE_NOT_SNAKE_CASE_CHARS_G())
         ) {
           item.errors.push(
             new BmError({
-              title: common.ErTitleEnum.WRONG_CHAR_IN_PARAMETER_VALUE,
+              title: common.ErTitleEnum.WRONG_CHARS_IN_PARAMETER_VALUE,
               message: `parameter "${parameter}" contains wrong characters or whitespace (only snake_case "a...zA...Z0...9_" is allowed)`,
               lines: [
                 {

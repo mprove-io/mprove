@@ -91,7 +91,11 @@ export class AddConnectionDialogComponent implements OnInit {
     this.addConnectionForm = this.fb.group({
       connectionId: [
         undefined,
-        [Validators.required, Validators.maxLength(255)]
+        [
+          Validators.required,
+          ValidationService.connectionNameWrongChars,
+          Validators.maxLength(255)
+        ]
       ],
       envId: [common.PROJECT_ENV_PROD],
       type: [common.ConnectionTypeEnum.PostgreSQL],
