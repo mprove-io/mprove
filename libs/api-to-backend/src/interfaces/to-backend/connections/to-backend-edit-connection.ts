@@ -19,6 +19,7 @@ export class ToBackendEditConnectionRequestPayload {
   @IsString()
   connectionId: string;
 
+  @IsOptional()
   @IsString()
   baseUrl?: string;
 

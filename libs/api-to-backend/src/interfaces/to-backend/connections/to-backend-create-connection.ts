@@ -23,6 +23,7 @@ export class ToBackendCreateConnectionRequestPayload {
   @IsEnum(common.ConnectionTypeEnum)
   type: common.ConnectionTypeEnum;
 
+  @IsOptional()
   @IsString()
   baseUrl?: string;
 
