@@ -48,7 +48,6 @@ export function checkConnections(
             ]
           })
         );
-
         return;
       }
 
@@ -74,7 +73,41 @@ export function checkConnections(
             ]
           })
         );
+        return;
+      }
 
+      if (
+        ([
+          common.FileExtensionEnum.View,
+          common.FileExtensionEnum.Model
+        ].indexOf(file.ext) > -1 &&
+          [
+            common.ConnectionTypeEnum.PostgreSQL,
+            common.ConnectionTypeEnum.SnowFlake,
+            common.ConnectionTypeEnum.BigQuery,
+            common.ConnectionTypeEnum.ClickHouse
+          ].indexOf(connection.type) < 0) ||
+        ([common.FileExtensionEnum.Store].indexOf(file.ext) > -1 &&
+          [
+            common.ConnectionTypeEnum.Api,
+            common.ConnectionTypeEnum.GoogleApi
+          ].indexOf(connection.type) < 0)
+      ) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.CONNECTION_TYPE_MISMATCH,
+            message: `connection type "${connection.type}" is not supported for "${file.ext}" file`,
+            lines: [
+              {
+                line: file[
+                  common.ParameterEnum.Connection + constants.LINE_NUM
+                ],
+                name: file.name,
+                path: file.path
+              }
+            ]
+          })
+        );
         return;
       }
 
