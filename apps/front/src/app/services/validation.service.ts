@@ -156,7 +156,7 @@ export class ValidationService {
 
     let wrongChars: string[] = [];
 
-    let reg2 = common.MyRegex.CAPTURE_NOT_SNAKE_CASE_CHARS_G();
+    let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_CONNECTION_NAME_CHARS_G();
     let r2;
 
     while ((r2 = reg2.exec(control.value.toString()))) {

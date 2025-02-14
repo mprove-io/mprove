@@ -156,6 +156,9 @@ export class MyRegex {
   static CAPTURE_REFS_G(): RegExp {
     return cloneRegexp(/\$\{([^}]+)\}/g);
   }
+  static CAPTURE_NOT_ALLOWED_FILE_DECLARATION_CHARS_G(): RegExp {
+    return cloneRegexp(/([^a-zA-Z0-9_])/g); // A-Z for generated names
+  }
   static CAPTURE_NOT_SNAKE_CASE_CHARS_G(): RegExp {
     return cloneRegexp(/([^a-z0-9_])/g);
   }
@@ -164,6 +167,9 @@ export class MyRegex {
   }
   static CAPTURE_NOT_ALLOWED_ENV_VAR_CHARS_G(): RegExp {
     return cloneRegexp(/([^A-Z0-9_])/g);
+  }
+  static CAPTURE_NOT_ALLOWED_CONNECTION_NAME_CHARS_G(): RegExp {
+    return cloneRegexp(/([^a-z0-9_])/g);
   }
   static CAPTURE_NOT_ALLOWED_ALIAS_CHARS_G(): RegExp {
     return cloneRegexp(/([^a-z0-9_])/g);

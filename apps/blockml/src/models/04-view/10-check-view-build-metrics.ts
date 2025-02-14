@@ -105,7 +105,7 @@ export function checkViewBuildMetrics(
                   title: common.ErTitleEnum.WRONG_TIME_FIELD,
                   message:
                     `Time field "${timeFieldName}" is not valid. ` +
-                    `Parameter "${parameter}" contains wrong characters or whitespace (only snake_case "a...zA...Z0...9_" is allowed). ` +
+                    `Parameter "${parameter}" contains wrong characters or whitespace (only snake_case "a-z0-9_" is allowed). ` +
                     'Reference must be in form "field_name"',
                   lines: [
                     {

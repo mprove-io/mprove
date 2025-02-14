@@ -71,7 +71,9 @@ export function checkTopValues(
           ].indexOf(parameter) > -1 &&
           file[parameter]
             .toString()
-            .match(common.MyRegex.CAPTURE_NOT_SNAKE_CASE_CHARS_G())
+            .match(
+              common.MyRegex.CAPTURE_NOT_ALLOWED_FILE_DECLARATION_CHARS_G()
+            )
         ) {
           item.errors.push(
             new BmError({

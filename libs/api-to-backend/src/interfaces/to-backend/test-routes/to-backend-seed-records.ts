@@ -131,6 +131,7 @@ export class ToBackendSeedRecordsRequestPayloadConnectionsItem {
   @IsEnum(common.ConnectionTypeEnum)
   type: common.ConnectionTypeEnum;
 
+  @IsOptional()
   @IsString()
   baseUrl?: string;
 
