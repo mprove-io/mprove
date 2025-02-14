@@ -1,5 +1,5 @@
 store: google_analytics
-connection: c5_google # TODO: check connection type + (and for sql) + ui name regex _
+connection: c5_google # TODO: ui name regex _
 label: Google Analytics
 description: '...'
 access_users: []
