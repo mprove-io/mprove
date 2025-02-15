@@ -28,7 +28,7 @@ export class Query {
   sql: string;
 
   @IsString()
-  apiMethod: string;
+  apiMethod: enums.StoreMethodEnum;
 
   @IsString()
   apiUrl: string;

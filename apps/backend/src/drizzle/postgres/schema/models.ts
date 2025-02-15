@@ -31,6 +31,7 @@ export const modelsTable = pgTable(
     hidden: boolean('hidden').notNull(),
     fields: json('fields').$type<common.ModelField[]>().notNull(),
     nodes: json('nodes').$type<common.ModelNode[]>().notNull(),
+    store: json('store').$type<common.FileStore>(),
     description: varchar('description'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

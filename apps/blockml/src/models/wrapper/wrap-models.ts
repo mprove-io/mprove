@@ -281,6 +281,10 @@ export function wrapModels(item: {
         filePath: x.filePath,
         content: x,
         isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
+        store:
+          x.fileExt === common.FileExtensionEnum.Store
+            ? (x as common.FileStore)
+            : undefined,
         isViewModel:
           x.fileExt === common.FileExtensionEnum.Model
             ? (x as common.FileModel).isViewModel

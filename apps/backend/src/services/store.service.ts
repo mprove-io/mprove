@@ -173,7 +173,7 @@ export class StoreService {
           : { message: 'method must be POST or GET' };
 
       // let data = response.data; // TODO:
-      let data = {};
+      let data: any = [];
 
       let q = await this.db.drizzle.query.queriesTable.findFirst({
         where: and(

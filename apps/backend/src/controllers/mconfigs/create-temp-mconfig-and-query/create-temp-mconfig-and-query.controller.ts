@@ -17,6 +17,7 @@ import { nodeCommon } from '~backend/barrels/node-common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -127,15 +128,21 @@ export class CreateTempMconfigAndQueryController {
     let newQuery: common.Query;
 
     if (model.isStoreModel === true) {
-      let storeMethod = common.StoreMethodEnum.Post; // TODO:
-      let storeUrlPath = 'storeUrlPath content ...'; // TODO:
-      let storeBody = 'storeBody content ...'; // TODO:
+      let connection = await this.db.drizzle.query.connectionsTable.findFirst({
+        where: and(
+          eq(connectionsTable.projectId, projectId),
+          eq(connectionsTable.connectionId, model.connectionId)
+        )
+      });
+
+      let apiUrl = `${connection.baseUrl}/${model.store.url_path}`; // TODO:
+      let apiBody = `${model.store.body}`; // TODO:
 
       let queryId = nodeCommon.makeQueryId({
         sql: undefined,
-        storeMethod: storeMethod,
-        storeUrlPath: storeUrlPath,
-        storeBody: storeBody,
+        storeMethod: model.store.method as common.StoreMethodEnum,
+        storeUrlPath: apiUrl,
+        storeBody: apiBody,
         orgId: project.orgId,
         projectId: projectId,
         envId: envId,
@@ -148,10 +155,17 @@ export class CreateTempMconfigAndQueryController {
         envId: envId,
         connectionId: model.connectionId,
         connectionType: (model.content as any).connection.type,
-        sql: undefined,
-        apiMethod: storeMethod,
-        apiUrl: storeUrlPath,
-        apiBody: storeBody,
+        // sql: undefined,
+        sql: `---
+${model.store.method}
+---
+${apiUrl}
+---
+${apiBody}
+`,
+        apiMethod: model.store.method as common.StoreMethodEnum,
+        apiUrl: apiUrl,
+        apiBody: apiBody,
         status: common.QueryStatusEnum.New,
         lastRunBy: undefined,
         lastRunTs: undefined,

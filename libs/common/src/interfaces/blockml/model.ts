@@ -6,6 +6,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
+import { FileStore } from './internal/file-store';
 import { ModelField } from './model-field';
 import { ModelNode } from './model-node';
 
@@ -53,6 +54,8 @@ export class Model {
   @ValidateNested()
   @Type(() => ModelNode)
   nodes: ModelNode[];
+
+  store: FileStore;
 
   @IsOptional()
   @IsString()
