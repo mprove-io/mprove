@@ -28,8 +28,8 @@ import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { StoreService } from '~backend/services/store.service';
 import { StructsService } from '~backend/services/structs.service';
-import { UserCodeService } from '~backend/services/user-code.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 
@@ -49,7 +49,7 @@ export class CreateTempMconfigAndQueryController {
     private envsService: EnvsService,
     private wrapToEntService: WrapToEntService,
     private wrapToApiService: WrapToApiService,
-    private userCodeService: UserCodeService,
+    private storeService: StoreService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -130,6 +130,8 @@ export class CreateTempMconfigAndQueryController {
     let newQuery: common.Query;
 
     if (model.isStoreModel === true) {
+      newMconfig = common.makeCopy(mconfig);
+
       let connection = await this.db.drizzle.query.connectionsTable.findFirst({
         where: and(
           eq(connectionsTable.projectId, projectId),
@@ -137,33 +139,23 @@ export class CreateTempMconfigAndQueryController {
         )
       });
 
-      //
-
-      let urlPathUserCode = `JSON.stringify((function() {
-${model.store.url_path}
-})())`;
-
-      let urlPathRs = await this.userCodeService.runOnly({
-        userCode: urlPathUserCode
+      let urlPathResult = await this.storeService.runUserCode({
+        input: model.store.url_path,
+        mconfig: newMconfig
       });
 
-      let apiUrl = common.isDefined(urlPathRs.outValue)
-        ? `${connection.baseUrl}/${urlPathRs.outValue}`
-        : `store.url_path Error: ${urlPathRs.outError}`;
+      let apiUrl = common.isDefined(urlPathResult.value)
+        ? `${connection.baseUrl}/${urlPathResult.value}`
+        : `store.url_path Error: ${urlPathResult.error}`;
 
-      //
-
-      let bodyUserCode = `JSON.stringify((function() {
-${model.store.body}
-})())`;
-
-      let bodyRs = await this.userCodeService.runOnly({
-        userCode: bodyUserCode
+      let bodyResult = await this.storeService.runUserCode({
+        input: model.store.body,
+        mconfig: newMconfig
       });
 
-      let apiBody = common.isDefined(bodyRs.outValue)
-        ? bodyRs.outValue
-        : `store.body Error: ${bodyRs.outError}`;
+      let apiBody = common.isDefined(bodyResult.value)
+        ? bodyResult.value
+        : `store.body Error: ${bodyResult.error}`;
 
       let queryId = nodeCommon.makeQueryId({
         sql: undefined,
@@ -183,12 +175,16 @@ ${model.store.body}
         connectionId: model.connectionId,
         connectionType: (model.content as any).connection.type,
         // sql: undefined,
-        sql: `---
+        sql: `--- method
 ${model.store.method}
----
+--- url
 ${apiUrl}
----
+--- body store
 ${apiBody}
+--- urlPathResult inputSub
+${urlPathResult.inputSub}
+--- body inputSub
+${bodyResult.inputSub}
 `,
         apiMethod: model.store.method as common.StoreMethodEnum,
         apiUrl: apiUrl,
@@ -209,7 +205,6 @@ ${apiBody}
         serverTs: 1
       };
 
-      newMconfig = common.makeCopy(mconfig);
       newMconfig.queryId = newQuery.queryId;
       newMconfig.temp = true;
     } else {

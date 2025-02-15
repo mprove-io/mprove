@@ -213,6 +213,12 @@ export class MyRegex {
   static CAPTURE_X_REF_G(): RegExp {
     return cloneRegexp(/\$([A-Z0-9_]+)/g);
   }
+  static CAPTURE_S_REF(): RegExp {
+    return cloneRegexp(/\$([A-Z0-9_]+)/);
+  }
+  static CAPTURE_S_REF_G(): RegExp {
+    return cloneRegexp(/\$([A-Z0-9_]+)/g);
+  }
   static WORD_CHARACTERS(): RegExp {
     return cloneRegexp(/^(?:\w+)$/);
   }
@@ -486,6 +492,12 @@ export class MyRegex {
   }
 
   static replaceXRefs(input: string, ref: string, val: string): string {
+    // const regex = new RegExp(`\\$${ref}(?![A-Z_])`);
+    // return input.replace(regex, val);
+    return input.split(`\$${ref}`).join(`${val}`);
+  }
+
+  static replaceSRefs(input: string, ref: string, val: string): string {
     // const regex = new RegExp(`\\$${ref}(?![A-Z_])`);
     // return input.replace(regex, val);
     return input.split(`\$${ref}`).join(`${val}`);

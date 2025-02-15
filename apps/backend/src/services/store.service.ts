@@ -9,6 +9,7 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
+import { UserCodeService } from './user-code.service';
 
 let retry = require('async-retry');
 let axios = require('axios');
@@ -17,10 +18,71 @@ const { JWT } = require('google-auth-library');
 @Injectable()
 export class StoreService {
   constructor(
+    private userCodeService: UserCodeService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
+
+  async runUserCode(item: { input: string; mconfig: common.Mconfig }) {
+    let { input, mconfig } = item;
+
+    let inputSub = input;
+
+    let reg = common.MyRegex.CAPTURE_S_REF();
+    let r;
+
+    let refError;
+
+    while ((r = reg.exec(inputSub))) {
+      let reference = r[1];
+
+      let target: any;
+
+      // console.log('mconfig');
+      // console.log(mconfig);
+
+      if (reference === 'QUERY_ORDER_BY') {
+        target = JSON.stringify([]);
+      } else if (reference === 'QUERY_SELECTED_DIMENSIONS') {
+        target = JSON.stringify([]);
+      } else if (reference === 'QUERY_SELECTED_MEASURES') {
+        target = JSON.stringify([]);
+      } else if (reference === 'QUERY_PARAMETERS') {
+        target = JSON.stringify(mconfig.filters);
+      } else if (reference === 'QUERY_LIMIT') {
+        target = JSON.stringify(mconfig.limit);
+      } else if (reference === 'UTC_MS_SUFFIX') {
+        target = '__utc_ms';
+      } else {
+        refError = `Unknown reference $${reference}`;
+        break;
+      }
+
+      inputSub = common.MyRegex.replaceSRefs(inputSub, reference, target);
+    }
+
+    if (common.isDefined(refError)) {
+      return {
+        value: 'Error',
+        error: refError
+      };
+    }
+
+    let urlPathUserCode = `JSON.stringify((function() {
+${inputSub}
+})())`;
+
+    let urlPathRs = await this.userCodeService.runOnly({
+      userCode: urlPathUserCode
+    });
+
+    return {
+      value: urlPathRs.outValue,
+      error: urlPathRs.outError,
+      inputSub: inputSub
+    };
+  }
 
   async runQuery(item: {
     connection: schemaPostgres.ConnectionEnt;
