@@ -1,6 +1,6 @@
 const ivm = require('isolated-vm');
 
-const inputSub = `
+const inputSubGA = `
 ${yearsUtcMsX.toString()}
 
 ${monthsUtcMsX.toString()}
@@ -96,7 +96,7 @@ return resultRows;
 `;
 
 let uCode = `JSON.stringify((function() {
-${inputSub}
+${inputSubGA}
 })())`;
 
 async function runInIsolatedVm(userCode: string) {

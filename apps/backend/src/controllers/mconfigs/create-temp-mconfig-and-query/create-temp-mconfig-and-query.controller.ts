@@ -29,6 +29,7 @@ import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
+import { UserCodeService } from '~backend/services/user-code.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 
@@ -48,6 +49,7 @@ export class CreateTempMconfigAndQueryController {
     private envsService: EnvsService,
     private wrapToEntService: WrapToEntService,
     private wrapToApiService: WrapToApiService,
+    private userCodeService: UserCodeService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -135,8 +137,33 @@ export class CreateTempMconfigAndQueryController {
         )
       });
 
-      let apiUrl = `${connection.baseUrl}/${model.store.url_path}`; // TODO:
-      let apiBody = `${model.store.body}`; // TODO:
+      //
+
+      let urlPathUserCode = `JSON.stringify((function() {
+${model.store.url_path}
+})())`;
+
+      let urlPathRs = await this.userCodeService.runOnly({
+        userCode: urlPathUserCode
+      });
+
+      let apiUrl = common.isDefined(urlPathRs.outValue)
+        ? `${connection.baseUrl}/${urlPathRs.outValue}`
+        : `store.url_path Error: ${urlPathRs.outError}`;
+
+      //
+
+      let bodyUserCode = `JSON.stringify((function() {
+${model.store.body}
+})())`;
+
+      let bodyRs = await this.userCodeService.runOnly({
+        userCode: bodyUserCode
+      });
+
+      let apiBody = common.isDefined(bodyRs.outValue)
+        ? bodyRs.outValue
+        : `store.body Error: ${bodyRs.outError}`;
 
       let queryId = nodeCommon.makeQueryId({
         sql: undefined,
