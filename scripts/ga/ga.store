@@ -1,12 +1,12 @@
 store: google_analytics
-connection: c5_google
+connection: c6_google
 label: Google Analytics
 description: '...'
 access_users: []
 access_roles: []
 method: POST
 url_path: |
-  let propertyId = $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.ga_property.value;
+  let propertyId = $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config')?.fractions[0].controls.ga_property.value;
   return `/v1beta/properties/${propertyId}:runReport`;
 body: |
   let orderByElements = [];
@@ -42,7 +42,7 @@ body: |
 
       if (apiFilterType === 'stringFilter') {
         apiFilter = {
-          fieldName: x.field.meta.name,
+          fieldName: filter.field.meta.name,
           stringFilter: {
             matchType: fraction.meta.match_type,
             value: fraction.controls.find(x => x['input'] === 'value_input').value,
@@ -53,7 +53,7 @@ body: |
 
       if (apiFilterType === 'inListFilter') {
         apiFilter = {
-          fieldName: x.field.meta.name,
+          fieldName: filter.field.meta.name,
           inListFilter: {
             values: fraction.controls.find(x => x['input'] === 'inListInput').values,
             caseSensitive: fraction.controls.find(x => x['switch'] === 'case_sensitive_switch').value
@@ -63,7 +63,7 @@ body: |
 
       if (apiFilterType === 'numericFilter') {
         apiFilter = {
-          fieldName: x.field.meta.name,
+          fieldName: filter.field.meta.name,
           numericFilter: {
             operation: fraction.meta.operation,
             value: fraction.controls.find(x => x['input'] === 'value_input').value
@@ -73,7 +73,7 @@ body: |
 
       if (apiFilterType === 'betweenFilter') {
         apiFilter = {
-          fieldName: x.field.meta.name,
+          fieldName: filter.field.meta.name,
           betweenFilter: {
             fromValue: fraction.controls.find(x => x['input'] === 'value_from_input').value,
             toValue: fraction.controls.find(x => x['input'] === 'value_to_input').value,
@@ -109,22 +109,22 @@ body: |
     });
   });
 
-  let isCohortsEnabled = $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.cohorts_switch.value;
+  let isCohortsEnabled = $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config')?.fractions[0].controls.cohorts_switch.value;
 
   let dateRanges;
   let cohortSpec;
 
   if (isCohortsEnabled === false) {
     dateRanges = [{
-      startDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range').fractions[0].controls.start_date.value,
-      endDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range').fractions[0].controls.end_date.value
-    }],
+      startDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range')?.fractions[0].controls.start_date.value,
+      endDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range')?.fractions[0].controls.end_date.value
+    }]
   } else {
     let cohorts = [];
 
-    $QUERY_PARAMETERS.find(x => x['filter'] === 'cohorts_config').fractions.forEach(fraction => {
+    $QUERY_PARAMETERS.find(x => x['filter'] === 'cohorts_config')?.fractions.forEach(fraction => {
       let cohort = {
-        dimension: "firstSessionDate"
+        dimension: "firstSessionDate",
         dateRange: {
           startDate: fraction.controls.start_date.value,
           endDate: fraction.controls.end_date.value
@@ -136,9 +136,9 @@ body: |
     cohortSpec = {
       cohorts: cohorts,
       cohortsRange: {
-        granularity: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.granularity.value,
-        startOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.start_offset.value,
-        endOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.end_offset.value,
+        granularity: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config')?.fractions[0].controls.granularity.value,
+        startOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config')?.fractions[0].controls.start_offset.value,
+        endOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config')?.fractions[0].controls.end_offset.value,
       }
     };
   }
@@ -150,7 +150,7 @@ body: |
     dimensionFilter: {
       andGroup: {
         expressions: [
-          orGroup: { expressions: dimensionFilterOrExpressions },
+          { orGroup: { expressions: dimensionFilterOrExpressions } },
           ...dimensionFilterAndNotExpressions
         ]
       }
@@ -158,7 +158,7 @@ body: |
     metricFilter: {
       andGroup: {
         expressions: [
-          orGroup: { expressions: metricFilterOrExpressions },
+          { orGroup: { expressions: metricFilterOrExpressions } },
           ...metricFilterAndNotExpressions
         ]
       }
@@ -167,7 +167,7 @@ body: |
     limit: $QUERY_LIMIT,
     metricAggregations: undefined, // not supported
     orderBys: orderByElements,
-    currencyCode: USD,
+    currencyCode: 'USD',
     cohortSpec: cohortSpec,
     keepEmptyRows: true,
     returnPropertyQuota: false,
