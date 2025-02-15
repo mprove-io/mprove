@@ -29,6 +29,7 @@ import { RabbitService } from './services/rabbit.service';
 import { RedisService } from './services/redis.service';
 import { ReportsService } from './services/reports.service';
 import { SnowFlakeService } from './services/snowflake.service';
+import { StoreService } from './services/store.service';
 import { StructsService } from './services/structs.service';
 import { TasksService } from './services/tasks.service';
 import { UserCodeService } from './services/user-code.service';
@@ -57,6 +58,7 @@ export const appProviders = [
   ClickHouseService,
   BigQueryService,
   SnowFlakeService,
+  StoreService,
   StructsService,
   QueriesService,
   ChartsService,

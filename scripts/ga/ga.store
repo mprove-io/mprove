@@ -4,6 +4,7 @@ label: Google Analytics
 description: '...'
 access_users: []
 access_roles: []
+method: POST
 url_path: |
   let propertyId = $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config').fractions[0].controls.ga_property.value;
   return `/v1beta/properties/${propertyId}:runReport`;

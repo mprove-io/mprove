@@ -72,6 +72,9 @@ interface QueryPartQ {
   data: any;
   sql: string;
   sqlArray: string[];
+  apiMethod: string;
+  apiUrl: string;
+  apiBody: string;
 }
 
 export class GetQueryCommand extends CustomCommand {
@@ -303,7 +306,10 @@ export class GetQueryCommand extends CustomCommand {
         lastErrorTs: tileX.query.lastErrorTs,
         data: undefined,
         sql: undefined,
-        sqlArray: undefined
+        sqlArray: undefined,
+        apiMethod: undefined,
+        apiUrl: undefined,
+        apiBody: undefined
       };
 
       if (this.getData) {
@@ -311,6 +317,7 @@ export class GetQueryCommand extends CustomCommand {
       }
 
       if (this.getSql) {
+        // TODO: getApi
         queryPartQ.sql = tileX.query.sql;
       }
 
@@ -380,7 +387,10 @@ export class GetQueryCommand extends CustomCommand {
             lastErrorTs: tileX.query.lastErrorTs,
             data: undefined,
             sql: undefined,
-            sqlArray: undefined
+            sqlArray: undefined,
+            apiMethod: undefined,
+            apiUrl: undefined,
+            apiBody: undefined
           };
 
           if (this.getData) {
@@ -388,6 +398,7 @@ export class GetQueryCommand extends CustomCommand {
           }
 
           if (this.getSql) {
+            // TODO: getApi
             queryPartQ.sql = tileX.query.sql;
           }
 
@@ -468,7 +479,10 @@ export class GetQueryCommand extends CustomCommand {
               lastErrorTs: row.query.lastErrorTs,
               data: undefined,
               sql: undefined,
-              sqlArray: undefined
+              sqlArray: undefined,
+              apiMethod: undefined,
+              apiUrl: undefined,
+              apiBody: undefined
             };
 
             if (this.getData) {
@@ -476,6 +490,7 @@ export class GetQueryCommand extends CustomCommand {
             }
 
             if (this.getSql) {
+              // TODO: getApi
               queryPartQ.sql = row.query?.sql;
             }
           }

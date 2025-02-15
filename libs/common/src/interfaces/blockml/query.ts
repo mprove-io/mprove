@@ -27,6 +27,15 @@ export class Query {
   @IsString()
   sql: string;
 
+  @IsString()
+  apiMethod: string;
+
+  @IsString()
+  apiUrl: string;
+
+  @IsString()
+  apiBody: string;
+
   @IsEnum(enums.QueryStatusEnum)
   status: enums.QueryStatusEnum;
 

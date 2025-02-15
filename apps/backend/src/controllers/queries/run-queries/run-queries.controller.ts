@@ -25,6 +25,7 @@ import { MembersService } from '~backend/services/members.service';
 import { PgService } from '~backend/services/pg.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { SnowFlakeService } from '~backend/services/snowflake.service';
+import { StoreService } from '~backend/services/store.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 let retry = require('async-retry');
@@ -37,6 +38,7 @@ export class RunQueriesController {
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
     private pgService: PgService,
+    private storeService: StoreService,
     private clickhouseService: ClickHouseService,
     private bigqueryService: BigQueryService,
     private snowflakeService: SnowFlakeService,
@@ -159,6 +161,18 @@ export class RunQueriesController {
               queryId: query.queryId,
               queryJobId: query.queryJobId,
               querySql: query.sql,
+              projectId: projectId
+            });
+          } else if (
+            [
+              common.ConnectionTypeEnum.Api,
+              common.ConnectionTypeEnum.GoogleApi
+            ].indexOf(connection.type) > -1
+          ) {
+            await this.storeService.runQuery({
+              connection: connection,
+              queryId: query.queryId,
+              queryJobId: query.queryJobId,
               projectId: projectId
             });
           }
@@ -307,6 +321,30 @@ export class RunQueriesController {
                 logToConsoleBackend({
                   log: new common.ServerError({
                     message: common.ErEnum.BACKEND_RUN_QUERY_POSTGRES_ERROR,
+                    originalError: e
+                  }),
+                  logLevel: common.LogLevelEnum.Error,
+                  logger: this.logger,
+                  cs: this.cs
+                });
+              });
+          } else if (
+            [
+              common.ConnectionTypeEnum.Api,
+              common.ConnectionTypeEnum.GoogleApi
+            ].indexOf(connection.type) > -1
+          ) {
+            await this.storeService
+              .runQuery({
+                connection: connection,
+                queryId: query.queryId,
+                queryJobId: query.queryJobId,
+                projectId: projectId
+              })
+              .catch(e => {
+                logToConsoleBackend({
+                  log: new common.ServerError({
+                    message: common.ErEnum.BACKEND_RUN_QUERY_API_ERROR,
                     originalError: e
                   }),
                   logLevel: common.LogLevelEnum.Error,

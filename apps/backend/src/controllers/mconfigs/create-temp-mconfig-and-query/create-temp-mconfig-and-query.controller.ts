@@ -127,9 +127,9 @@ export class CreateTempMconfigAndQueryController {
     let newQuery: common.Query;
 
     if (model.isStoreModel === true) {
-      let storeMethod = common.StoreMethodEnum.Post;
-      let storeUrlPath = 'storeUrlPath content ...';
-      let storeBody = 'storeBody content ...';
+      let storeMethod = common.StoreMethodEnum.Post; // TODO:
+      let storeUrlPath = 'storeUrlPath content ...'; // TODO:
+      let storeBody = 'storeBody content ...'; // TODO:
 
       let queryId = nodeCommon.makeQueryId({
         sql: undefined,
@@ -148,11 +148,10 @@ export class CreateTempMconfigAndQueryController {
         envId: envId,
         connectionId: model.connectionId,
         connectionType: (model.content as any).connection.type,
-        // sql: undefined,
-        sql: `${storeMethod}
-${storeUrlPath}
-${storeBody}
-`,
+        sql: undefined,
+        apiMethod: storeMethod,
+        apiUrl: storeUrlPath,
+        apiBody: storeBody,
         status: common.QueryStatusEnum.New,
         lastRunBy: undefined,
         lastRunTs: undefined,
