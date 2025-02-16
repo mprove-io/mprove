@@ -4,6 +4,7 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 let Graph = require('tarjan-graph');
+let toposort = require('toposort');
 
 let func = common.FuncEnum.CheckStoreShowIfCycles;
 
@@ -43,13 +44,13 @@ export function checkStoreShowIfCycles(
           parentRefName = `${filterName}.${fractionControlName}`;
         }
 
-        fieldFilter.fraction_controls
-          .filter(
-            fractionControl =>
-              common.isDefined(fieldFilter.show_if) ||
-              common.isDefined(fractionControl.show_if)
-          )
-          .forEach(control => {
+        fieldFilter.fraction_controls.forEach(control => {
+          control.showIfDepsIncludingParentFilter = [];
+
+          if (
+            common.isDefined(fieldFilter.show_if) ||
+            common.isDefined(control.show_if)
+          ) {
             let sourceName = `${fieldFilter.name}.${control.name}`;
 
             if (common.isDefined(control.show_if)) {
@@ -64,12 +65,15 @@ export function checkStoreShowIfCycles(
               let refName = `${filterNameB}.${fractionControlNameB}`;
 
               g.add(sourceName, [refName]);
+              control.showIfDepsIncludingParentFilter.push(refName);
             }
 
             if (common.isDefined(parentRefName)) {
               g.add(sourceName, [parentRefName]);
+              control.showIfDepsIncludingParentFilter.push(parentRefName);
             }
-          });
+          }
+        });
       });
 
     if (g.hasCycle()) {
@@ -111,6 +115,29 @@ export function checkStoreShowIfCycles(
 
         return;
       });
+    } else {
+      // not cyclic - toposort
+      let graph: string[][] = [];
+      let zeroDepsControls: string[] = [];
+
+      let controlsWithShowIfDeps = toposort(graph).reverse();
+
+      x.fields
+        .filter(y => y.fieldClass === common.FieldClassEnum.Filter)
+        .forEach(fieldFilter => {
+          fieldFilter.fraction_controls.forEach(control => {
+            let sourceName = `${fieldFilter.name}.${control.name}`;
+            if (controlsWithShowIfDeps.indexOf(sourceName) < 0) {
+              // if (control.showIfDeps.length === 0) {
+              zeroDepsControls.push(sourceName);
+            }
+          });
+        });
+
+      x.filterControlsSortedByShowIfDeps = [
+        ...zeroDepsControls,
+        ...controlsWithShowIfDeps
+      ];
     }
 
     if (errorsOnStart === item.errors.length) {

@@ -38,4 +38,6 @@ export interface FileStoreFractionControl {
   name_line_num?: number;
 
   controlClass?: enums.ControlClassEnum;
+
+  showIfDepsIncludingParentFilter?: string[];
 }
