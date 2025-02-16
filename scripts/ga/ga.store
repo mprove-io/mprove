@@ -14,14 +14,14 @@ body: |
   $QUERY_ORDER_BY.forEach(x=> {
     let orderBy;
 
-    if ($QUERY_SELECTED_DIMENSIONS.indexOf(x) > -1) {
+    if ($QUERY_SELECTED_DIMENSIONS.map(field => field.name).indexOf(x.field.name) > -1) {
       orderBy = {
-        dimension: { dimensionName: x.meta.name },
+        dimension: { dimensionName: x.field.meta.name },
         desc: x.desc
       }
-    } else if ($QUERY_SELECTED_MEASURES.indexOf(x) > -1) {
+    } else if ($QUERY_SELECTED_MEASURES.map(field => field.name).indexOf(x.field.name) > -1) {
       orderBy = {
-        metric: { metricName: x.meta.name },
+        metric: { metricName: x.field.meta.name },
         desc: x.desc
       }
     }
@@ -29,11 +29,11 @@ body: |
     orderByElements.push(orderBy);
   });
   
-  let dimensionFilterOrExpressions = [];
-  let dimensionFilterAndNotExpressions = [];
+  let dimOrExpressions = [];
+  let dimAndNotExpressions = [];
 
-  let metricFilterOrExpressions = [];
-  let metricFilterAndNotExpressions = [];
+  let mcOrExpressions = [];
+  let mcAndNotExpressions = [];
 
   $QUERY_PARAMETERS.map(filter => {
     filter.fractions.forEach(fraction => {
@@ -83,10 +83,10 @@ body: |
 
       if (filter.field?.fieldClass === 'dimension') {
         if (fraction.group === 'OR') {
-          dimensionFilterOrExpressions.push({ filter: apiFilter })
+          dimOrExpressions.push({ filter: apiFilter })
         } 
         if (fraction.group === 'AND_NOT') {
-          dimensionFilterAndNotExpressions.push({
+          dimAndNotExpressions.push({
             notExpression: {
               filter: apiFilter
             }
@@ -96,10 +96,10 @@ body: |
 
       if (filter.field?.fieldClass === 'measure') {
         if (fraction.group === 'OR') {
-          metricFilterOrExpressions.push({ filter: apiFilter })
+          mcOrExpressions.push({ filter: apiFilter })
         } 
         if (fraction.group === 'AND_NOT') {
-          metricFilterAndNotExpressions.push({
+          mcAndNotExpressions.push({
             notExpression: {
               filter: apiFilter
             }
@@ -114,12 +114,7 @@ body: |
   let dateRanges;
   let cohortSpec;
 
-  if (isCohortsEnabled === false) {
-    dateRanges = [{
-      startDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range')?.fractions[0].controls.start_date.value,
-      endDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range')?.fractions[0].controls.end_date.value
-    }]
-  } else {
+  if (isCohortsEnabled === true) {
     let cohorts = [];
 
     $QUERY_PARAMETERS.find(x => x['filter'] === 'cohorts_config')?.fractions.forEach(fraction => {
@@ -141,28 +136,60 @@ body: |
         endOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config')?.fractions[0].controls.end_offset.value,
       }
     };
+  } else {
+    dateRanges = [{
+      startDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range')?.fractions[0].controls.start_date.value,
+      endDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range')?.fractions[0].controls.end_date.value
+    }]
+  }
+
+  let dimAndGroupExpressions = [];
+  let mcAndGroupExpressions = [];
+
+  if (dimOrExpressions.length > 0) {
+    dimAndGroupExpressions.push({
+      orGroup: { expressions: dimOrExpressions }
+    });
+  }
+
+  if (dimAndNotExpressions.length > 0) {
+    dimAndGroupExpressions = [
+      ...dimAndGroupExpressions,
+      ...dimAndNotExpressions
+    ];
+  }
+
+  if (mcOrExpressions.length > 0) {
+    mcAndGroupExpressions.push({
+      orGroup: { expressions: mcOrExpressions }
+    });
+  }
+
+  if (mcAndNotExpressions.length > 0) {
+    mcAndGroupExpressions = [
+      ...mcAndGroupExpressions,
+      ...mcAndNotExpressions
+    ];
   }
 
   let body = {
-    dimensions: $QUERY_SELECTED_DIMENSIONS,
-    metrics: $QUERY_SELECTED_MEASURES,
+    dimensions: $QUERY_SELECTED_DIMENSIONS.map(x => ({ name: x.name })),
+    metrics: $QUERY_SELECTED_MEASURES.map(x => ({ name: x.name })),
     dateRanges: dateRanges,
-    dimensionFilter: {
-      andGroup: {
-        expressions: [
-          { orGroup: { expressions: dimensionFilterOrExpressions } },
-          ...dimensionFilterAndNotExpressions
-        ]
-      }
-    },
-    metricFilter: {
-      andGroup: {
-        expressions: [
-          { orGroup: { expressions: metricFilterOrExpressions } },
-          ...metricFilterAndNotExpressions
-        ]
-      }
-    },
+    dimensionFilter: (dimOrExpressions.length > 0 || dimAndNotExpressions.length > 0)
+      ? {
+          andGroup: {
+            expressions: dimAndGroupExpressions
+          }
+        }
+      : undefined,
+    metricFilter: (mcOrExpressions.length > 0 || mcAndNotExpressions.length > 0)
+      ? {
+          andGroup: {
+            expressions: mcAndGroupExpressions
+          }
+        }
+      : undefined,
     offset: undefined, // not supported
     limit: $QUERY_LIMIT,
     metricAggregations: undefined, // not supported

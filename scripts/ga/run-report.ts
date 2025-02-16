@@ -23,10 +23,25 @@ async function runReport() {
 
     const response = await axios.post(
       `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
+      // {
+      //   dimensions: [{ name: 'city' }],
+      //   metrics: [],
+      //   dateRanges: [
+      //     {
+      //       startDate: '50daysAgo',
+      //       endDate: 'today'
+      //     }
+      //   ],
+      //   limit: 500,
+      //   orderBys: [{ dimension: { dimensionName: 'city' }, desc: false }],
+      //   currencyCode: 'USD',
+      //   keepEmptyRows: true,
+      //   returnPropertyQuota: false
+      // },
       {
         dateRanges: [
           {
-            startDate: '7daysAgo',
+            startDate: '50daysAgo',
             endDate: 'today'
           }
         ],

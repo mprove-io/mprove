@@ -28,7 +28,7 @@ export interface FieldStoreMeasure {
   required?: string; // boolean
   required_line_num?: number;
 
-  meta?: string;
+  meta?: any;
   meta_line_num?: number;
 
   //

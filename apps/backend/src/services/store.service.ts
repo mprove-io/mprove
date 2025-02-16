@@ -24,8 +24,12 @@ export class StoreService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async runUserCode(item: { input: string; mconfig: common.Mconfig }) {
-    let { input, mconfig } = item;
+  async runUserCode(item: {
+    input: string;
+    mconfig: common.Mconfig;
+    model: common.Model;
+  }) {
+    let { input, mconfig, model } = item;
 
     let inputSub = input;
 
@@ -34,20 +38,45 @@ export class StoreService {
 
     let refError;
 
+    let selectedDimensions = model.store.fields
+      .filter(field => field.fieldClass === common.FieldClassEnum.Dimension)
+      .filter(f => mconfig.select.indexOf(`${f.group}.${f.name}`) > -1);
+
+    let selectedMeasures = model.store.fields
+      .filter(field => field.fieldClass === common.FieldClassEnum.Measure)
+      .filter(f => mconfig.select.indexOf(`${f.group}.${f.name}`) > -1);
+
+    // console.log('selectedDimensions');
+    // console.log(selectedDimensions);
+
+    let orderByElements: {
+      fieldId: string;
+      field: common.FieldAny;
+      desc: boolean;
+    }[] = [];
+
+    mconfig.sortings.forEach(sorting => {
+      let orderByElement = {
+        fieldId: sorting.fieldId,
+        field: model.store.fields.find(
+          field => `${field.group}.${field.name}` === sorting.fieldId
+        ),
+        desc: sorting.desc
+      };
+      orderByElements.push(orderByElement);
+    });
+
     while ((r = reg.exec(inputSub))) {
       let reference = r[1];
 
       let target: any;
 
-      // console.log('mconfig');
-      // console.log(mconfig);
-
       if (reference === 'QUERY_ORDER_BY') {
-        target = JSON.stringify([]);
+        target = JSON.stringify(orderByElements);
       } else if (reference === 'QUERY_SELECTED_DIMENSIONS') {
-        target = JSON.stringify([]);
+        target = JSON.stringify(selectedDimensions);
       } else if (reference === 'QUERY_SELECTED_MEASURES') {
-        target = JSON.stringify([]);
+        target = JSON.stringify(selectedMeasures);
       } else if (reference === 'QUERY_PARAMETERS') {
         target = JSON.stringify(mconfig.filters);
       } else if (reference === 'QUERY_LIMIT') {
@@ -227,12 +256,12 @@ ${inputSub}
         headers['Content-Type'] = 'application/json';
       }
 
-      response =
-        queryStart.apiMethod === common.StoreMethodEnum.Post
-          ? await axios.post(url, body, { headers: headers })
-          : queryStart.apiMethod === common.StoreMethodEnum.Get
-          ? await axios.get(url, body, { headers: headers })
-          : { message: 'method must be POST or GET' };
+      // response = // TODO:
+      //   queryStart.apiMethod === common.StoreMethodEnum.Post
+      //     ? await axios.post(url, body, { headers: headers })
+      //     : queryStart.apiMethod === common.StoreMethodEnum.Get
+      //     ? await axios.get(url, body, { headers: headers })
+      //     : { message: 'method must be POST or GET' };
 
       // let data = response.data; // TODO:
       let data: any = [];

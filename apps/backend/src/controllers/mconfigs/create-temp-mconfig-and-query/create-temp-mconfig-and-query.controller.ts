@@ -132,6 +132,11 @@ export class CreateTempMconfigAndQueryController {
     if (model.isStoreModel === true) {
       newMconfig = common.makeCopy(mconfig);
 
+      // let parameters = [];
+
+      console.log('newMconfig:');
+      console.log(newMconfig);
+
       let connection = await this.db.drizzle.query.connectionsTable.findFirst({
         where: and(
           eq(connectionsTable.projectId, projectId),
@@ -141,7 +146,8 @@ export class CreateTempMconfigAndQueryController {
 
       let urlPathResult = await this.storeService.runUserCode({
         input: model.store.url_path,
-        mconfig: newMconfig
+        mconfig: newMconfig,
+        model: model
       });
 
       let apiUrl = common.isDefined(urlPathResult.value)
@@ -150,8 +156,15 @@ export class CreateTempMconfigAndQueryController {
 
       let bodyResult = await this.storeService.runUserCode({
         input: model.store.body,
-        mconfig: newMconfig
+        mconfig: newMconfig,
+        model: model
       });
+
+      // console.log('bodyResult.inputSub:');
+      // console.log(bodyResult.inputSub);
+
+      console.log('bodyResult.value:');
+      console.log(bodyResult.value);
 
       let apiBody = common.isDefined(bodyResult.value)
         ? bodyResult.value
