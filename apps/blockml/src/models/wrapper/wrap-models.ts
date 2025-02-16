@@ -1,6 +1,5 @@
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { helper } from '~blockml/barrels/helper';
 import { wrapField } from './wrap-field';
 
 export function wrapModels(item: {
@@ -50,7 +49,7 @@ export function wrapModels(item: {
       (x as common.FileModel).joins.forEach(join => {
         // join fields scope
         let children: common.ModelNode[] = [];
-        let joinHidden = helper.toBooleanFromLowercaseString(join.hidden);
+        let joinHidden = common.toBooleanFromLowercaseString(join.hidden);
 
         let node: common.ModelNode = {
           id: join.as,
@@ -85,7 +84,7 @@ export function wrapModels(item: {
     if (x.fileExt === common.FileExtensionEnum.Store) {
       (x as common.FileStore).field_groups.forEach(fieldGroup => {
         let children: common.ModelNode[] = [];
-        // let joinHidden = helper.toBooleanFromLowercaseString(join.hidden);
+        // let joinHidden = common.toBooleanFromLowercaseString(join.hidden);
 
         let node: common.ModelNode = {
           id: fieldGroup.group, // join.as,
@@ -302,7 +301,7 @@ export function wrapModels(item: {
             : undefined,
         hidden:
           x.fileExt === common.FileExtensionEnum.Model
-            ? helper.toBooleanFromLowercaseString(
+            ? common.toBooleanFromLowercaseString(
                 (x as common.FileModel).hidden
               )
             : false,

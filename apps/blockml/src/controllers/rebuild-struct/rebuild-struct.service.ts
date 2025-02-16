@@ -7,7 +7,6 @@ import { barWrapper } from '~blockml/barrels/bar-wrapper';
 import { barYaml } from '~blockml/barrels/bar-yaml';
 import { common } from '~blockml/barrels/common';
 import { constants } from '~blockml/barrels/constants';
-import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { nodeCommon } from '~blockml/barrels/node-common';
 import { getMproveConfigFile } from '~blockml/functions/get-mprove-config-file';
@@ -263,17 +262,17 @@ export class RebuildStructService {
         udfsDict: {},
         mproveDirValue: undefined,
         weekStart: constants.PROJECT_CONFIG_WEEK_START,
-        allowTimezones: helper.toBooleanFromLowercaseString(
+        allowTimezones: common.toBooleanFromLowercaseString(
           constants.PROJECT_CONFIG_ALLOW_TIMEZONES
         ),
         defaultTimezone: constants.PROJECT_CONFIG_DEFAULT_TIMEZONE,
         currencyPrefix: constants.PROJECT_CONFIG_CURRENCY_PREFIX,
         currencySuffix: constants.PROJECT_CONFIG_CURRENCY_SUFFIX,
         formatNumber: constants.PROJECT_CONFIG_FORMAT_NUMBER,
-        caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
+        caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
           constants.PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS
         ),
-        simplifySafeAggregates: helper.toBooleanFromLowercaseString(
+        simplifySafeAggregates: common.toBooleanFromLowercaseString(
           constants.PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES
         ),
         metrics: []
@@ -312,7 +311,7 @@ export class RebuildStructService {
         udfsDict: udfsDict,
         weekStart: projectConfig.week_start,
         structId: item.structId,
-        caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
+        caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters
         ),
         envId: item.envId,
@@ -408,7 +407,7 @@ export class RebuildStructService {
         views: views,
         udfs: udfs,
         structId: item.structId,
-        caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
+        caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters
         ),
         errors: errors,
@@ -495,7 +494,7 @@ export class RebuildStructService {
       {
         dashboards: dashboards,
         structId: item.structId,
-        caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
+        caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters
         ),
         errors: errors,
@@ -522,10 +521,10 @@ export class RebuildStructService {
         udfsDict: udfsDict,
         weekStart: projectConfig.week_start,
         timezone: projectConfig.default_timezone,
-        caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
+        caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters
         ),
-        simplifySafeAggregates: helper.toBooleanFromLowercaseString(
+        simplifySafeAggregates: common.toBooleanFromLowercaseString(
           projectConfig.simplify_safe_aggregates
         ),
         structId: item.structId,
@@ -544,10 +543,10 @@ export class RebuildStructService {
         udfsDict: udfsDict,
         weekStart: projectConfig.week_start,
         timezone: projectConfig.default_timezone,
-        caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
+        caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters
         ),
-        simplifySafeAggregates: helper.toBooleanFromLowercaseString(
+        simplifySafeAggregates: common.toBooleanFromLowercaseString(
           projectConfig.simplify_safe_aggregates
         ),
         structId: item.structId,
@@ -616,7 +615,7 @@ export class RebuildStructService {
         metrics: commonMetrics,
         models: models,
         structId: item.structId,
-        caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
+        caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters
         ),
         errors: errors,
@@ -665,17 +664,17 @@ export class RebuildStructService {
       charts: charts,
       mproveDirValue: projectConfig.mprove_dir,
       weekStart: projectConfig.week_start,
-      allowTimezones: helper.toBooleanFromLowercaseString(
+      allowTimezones: common.toBooleanFromLowercaseString(
         projectConfig.allow_timezones
       ),
       defaultTimezone: projectConfig.default_timezone,
       formatNumber: projectConfig.format_number,
       currencyPrefix: projectConfig.currency_prefix,
       currencySuffix: projectConfig.currency_suffix,
-      caseSensitiveStringFilters: helper.toBooleanFromLowercaseString(
+      caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
         projectConfig.case_sensitive_string_filters
       ),
-      simplifySafeAggregates: helper.toBooleanFromLowercaseString(
+      simplifySafeAggregates: common.toBooleanFromLowercaseString(
         projectConfig.simplify_safe_aggregates
       )
     };

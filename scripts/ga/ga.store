@@ -293,19 +293,16 @@ parameters:
   max_fractions: 1
   fraction_controls:
   - selector: ga_property
-    required: true
     label: Property
     value: 123123123 # $ENV_GA_PROPERTY_ID_1
     options:
     - value: 456456456 # $ENV_GA_PROPERTY_ID_1
     - value: 789789789 #$ENV_GA_PROPERTY_ID_2
   - switch: cohorts_switch
-    required: true
     label: 'Cohorts Mode'
     value: false
   - selector: granularity
     show_if: top_config.cohorts_switch.true
-    required: true
     label: Granularity
     value: DAILY
     options: 
@@ -314,21 +311,12 @@ parameters:
     - value: MONTHLY
   - input: start_offset
     show_if: top_config.cohorts_switch.true
-    required: true
     label: Start Offset # From
     value: 0
   - input: end_offset
     show_if: top_config.cohorts_switch.true
-    required: true
     label: End Offset # To
     value: 5
-
-# - filter: cohorts_range
-#   show_if: top_config.cohorts_switch.true
-#   required: true
-#   max_fractions: 1
-#   controls:
-#   - selector: granularity ...
 
 - filter: cohorts_config
   show_if: top_config.cohorts_switch.true
@@ -337,18 +325,15 @@ parameters:
   - date_picker: start_date
     label: Start Date
     value: $DATE_TODAY
-    required: true
   - date_picker: end_date
     label: End Date
     value: $DATE_TODAY
-    required: true
   # - input: value_input
   #   label: name
   #   value: 'changed cohort field name'
   # - input: value_input
   #   label: dimension
   #   value: firstSessionDate
-  #   required: true
   #   lock: true
 
 - filter: date_range

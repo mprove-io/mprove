@@ -1,5 +1,4 @@
 import { common } from '~blockml/barrels/common';
-import { helper } from '~blockml/barrels/helper';
 import { wrapTiles } from './wrap-tiles';
 
 export function wrapDashboards(item: {
@@ -24,7 +23,7 @@ export function wrapDashboards(item: {
     x.fields.forEach(field => {
       dashFields.push({
         id: field.name,
-        hidden: helper.toBooleanFromLowercaseString(field.hidden),
+        hidden: common.toBooleanFromLowercaseString(field.hidden),
         label: field.label,
         result: field.result,
         fractions: field.fractions,
@@ -56,7 +55,7 @@ export function wrapDashboards(item: {
       title: x.title,
       description: x.description,
       gr: x.group,
-      hidden: helper.toBooleanFromLowercaseString(x.hidden),
+      hidden: common.toBooleanFromLowercaseString(x.hidden),
       fields: dashFields,
       tiles: apiTiles,
       temp: false,

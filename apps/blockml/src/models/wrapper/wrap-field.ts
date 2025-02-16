@@ -1,5 +1,4 @@
 import { common } from '~blockml/barrels/common';
-import { helper } from '~blockml/barrels/helper';
 
 export function wrapField(item: {
   wrappedFields: common.ModelField[];
@@ -13,7 +12,7 @@ export function wrapField(item: {
   let { wrappedFields, field, alias, fileName, filePath, children, node } =
     item;
 
-  let fieldHidden = helper.toBooleanFromLowercaseString(field.hidden);
+  let fieldHidden = common.toBooleanFromLowercaseString(field.hidden);
 
   let modelField: common.ModelField = {
     id: `${alias}.${field.name}`,

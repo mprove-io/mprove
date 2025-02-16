@@ -22,5 +22,6 @@ export * from './set-chart-series';
 export * from './set-chart-title-on-select-change';
 export * from './sleep';
 export * from './sort-chart-fields-on-select-change';
+export * from './to-boolean-from-lowercase-string';
 export * from './to-yaml';
 export * from './transform-error-message';

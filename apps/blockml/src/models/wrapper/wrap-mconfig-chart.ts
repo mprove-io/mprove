@@ -1,5 +1,4 @@
 import { common } from '~blockml/barrels/common';
-import { helper } from '~blockml/barrels/helper';
 
 export function wrapMconfigChart(item: {
   title: string;
@@ -22,7 +21,7 @@ export function wrapMconfigChart(item: {
 
   let xAxis: common.MconfigChartXAxis = {
     scale: common.isDefined(options?.x_axis?.scale)
-      ? helper.toBooleanFromLowercaseString(options?.x_axis?.scale)
+      ? common.toBooleanFromLowercaseString(options?.x_axis?.scale)
       : common.DEFAULT_CHART.xAxis.scale
   };
 
@@ -32,7 +31,7 @@ export function wrapMconfigChart(item: {
     yAxis = options?.y_axis.map(yAxisPart => {
       let yAxisElement = {
         scale: common.isDefined(yAxisPart.scale)
-          ? helper.toBooleanFromLowercaseString(yAxisPart.scale)
+          ? common.toBooleanFromLowercaseString(yAxisPart.scale)
           : common.DEFAULT_CHART_Y_AXIS.scale
       };
 
@@ -88,7 +87,7 @@ export function wrapMconfigChart(item: {
 
     // options
     format: common.isDefined(options?.format)
-      ? helper.toBooleanFromLowercaseString(options?.format)
+      ? common.toBooleanFromLowercaseString(options?.format)
       : common.DEFAULT_CHART.format,
     pageSize: common.isDefined(options?.page_size)
       ? Number(options.page_size)
@@ -102,61 +101,61 @@ export function wrapMconfigChart(item: {
 }
 
 // animations: common.isDefined(tile.options?.animations)
-//   ? helper.toBooleanFromLowercaseString(tile.options?.animations)
+//   ? common.toBooleanFromLowercaseString(tile.options?.animations)
 //   : common.CHART_DEFAULT_ANIMATIONS,
 
 // showDataLabel: common.isDefined(tile.options?.show_data_label)
-//   ? helper.toBooleanFromLowercaseString(tile.options?.show_data_label)
+//   ? common.toBooleanFromLowercaseString(tile.options?.show_data_label)
 //   : common.CHART_DEFAULT_SHOW_DATA_LABEL,
 
 // gradient: common.isDefined(tile.options?.gradient)
-//   ? helper.toBooleanFromLowercaseString(tile.options?.gradient)
+//   ? common.toBooleanFromLowercaseString(tile.options?.gradient)
 //   : common.CHART_DEFAULT_GRADIENT,
 
 // legend: common.isDefined(tile.options?.legend)
-//   ? helper.toBooleanFromLowercaseString(tile.options?.legend)
+//   ? common.toBooleanFromLowercaseString(tile.options?.legend)
 //   : common.CHART_DEFAULT_LEGEND,
 
 // legendTitle:
 //   tile.options?.legend_title || common.CHART_DEFAULT_LEGEND_TITLE,
 
 // tooltipDisabled: common.isDefined(tile.options?.tooltip_disabled)
-//   ? helper.toBooleanFromLowercaseString(tile.options?.tooltip_disabled)
+//   ? common.toBooleanFromLowercaseString(tile.options?.tooltip_disabled)
 //   : common.CHART_DEFAULT_TOOLTIP_DISABLED,
 
 // roundEdges: common.isDefined(tile.options?.round_edges)
-//   ? helper.toBooleanFromLowercaseString(tile.options?.round_edges)
+//   ? common.toBooleanFromLowercaseString(tile.options?.round_edges)
 //   : common.CHART_DEFAULT_ROUND_EDGES,
 
 // roundDomains: common.isDefined(tile.options?.round_domains)
-//   ? helper.toBooleanFromLowercaseString(tile.options?.round_domains)
+//   ? common.toBooleanFromLowercaseString(tile.options?.round_domains)
 //   : common.CHART_DEFAULT_ROUND_DOMAINS,
 
 // showGridLines: common.isDefined(tile.options?.show_grid_lines)
-//   ? helper.toBooleanFromLowercaseString(tile.options?.show_grid_lines)
+//   ? common.toBooleanFromLowercaseString(tile.options?.show_grid_lines)
 //   : common.CHART_DEFAULT_SHOW_GRID_LINES,
 
 // timeline: common.isDefined(tile.options?.timeline)
-//   ? helper.toBooleanFromLowercaseString(tile.options?.timeline)
+//   ? common.toBooleanFromLowercaseString(tile.options?.timeline)
 //   : common.CHART_DEFAULT_TIMELINE,
 
 // interpolation:
 //   tile.options?.interpolation || common.CHART_DEFAULT_INTERPOLATION,
 
 // autoScale: common.isDefined(tile.options?.auto_scale)
-//   ? helper.toBooleanFromLowercaseString(tile.options?.auto_scale)
+//   ? common.toBooleanFromLowercaseString(tile.options?.auto_scale)
 //   : common.CHART_DEFAULT_AUTO_SCALE,
 
 // doughnut: common.isDefined(tile.options?.doughnut)
-//   ? helper.toBooleanFromLowercaseString(tile.options?.doughnut)
+//   ? common.toBooleanFromLowercaseString(tile.options?.doughnut)
 //   : common.CHART_DEFAULT_DOUGHNUT,
 
 // explodeSlices: common.isDefined(tile.options?.explode_slices)
-//   ? helper.toBooleanFromLowercaseString(tile.options?.explode_slices)
+//   ? common.toBooleanFromLowercaseString(tile.options?.explode_slices)
 //   : common.CHART_DEFAULT_EXPLODE_SLICES,
 
 // labels: common.isDefined(tile.options?.labels)
-//   ? helper.toBooleanFromLowercaseString(tile.options?.labels)
+//   ? common.toBooleanFromLowercaseString(tile.options?.labels)
 //   : common.CHART_DEFAULT_LABELS,
 
 // colorScheme:

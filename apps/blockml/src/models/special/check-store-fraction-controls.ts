@@ -57,8 +57,7 @@ export function checkStoreFractionControls(
             common.ParameterEnum.Value.toString(),
             common.ParameterEnum.Label.toString(),
             common.ParameterEnum.IsArray.toString(),
-            common.ParameterEnum.ShowIf.toString(),
-            common.ParameterEnum.Required.toString()
+            common.ParameterEnum.ShowIf.toString()
           ].indexOf(parameter) < 0
         ) {
           item.errors.push(
@@ -221,26 +220,6 @@ export function checkStoreFractionControls(
             lines: [
               {
                 line: control.is_array_line_num,
-                name: item.fileName,
-                path: item.filePath
-              }
-            ]
-          })
-        );
-        return;
-      }
-
-      if (
-        common.isDefined(control.required) &&
-        !control.required.match(common.MyRegex.TRUE_FALSE())
-      ) {
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.WRONG_REQUIRED,
-            message: `parameter "${common.ParameterEnum.Required}" must be 'true' or 'false' if specified`,
-            lines: [
-              {
-                line: control.required_line_num,
                 name: item.fileName,
                 path: item.filePath
               }

@@ -1,5 +1,4 @@
 import { common } from '~blockml/barrels/common';
-import { helper } from '~blockml/barrels/helper';
 import { wrapTiles } from './wrap-tiles';
 
 export function wrapCharts(item: {
@@ -43,7 +42,7 @@ export function wrapCharts(item: {
       accessUsers: x.access_users || [],
       accessRoles: x.access_roles || [],
       gr: x.group,
-      hidden: helper.toBooleanFromLowercaseString(x.hidden),
+      hidden: common.toBooleanFromLowercaseString(x.hidden),
       tiles: apiTiles,
       serverTs: 1
     });

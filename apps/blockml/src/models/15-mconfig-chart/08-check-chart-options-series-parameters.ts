@@ -221,7 +221,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
                 (x as common.FileReport).rows
                   .filter(
                     row =>
-                      helper.toBooleanFromLowercaseString(row.show_chart) ===
+                      common.toBooleanFromLowercaseString(row.show_chart) ===
                       true
                   )
                   .map(row => row.row_id)

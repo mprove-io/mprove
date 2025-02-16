@@ -1,5 +1,4 @@
 import { common } from '~blockml/barrels/common';
-import { helper } from '~blockml/barrels/helper';
 import { wrapMconfigChart } from './wrap-mconfig-chart';
 
 export function wrapReports(item: {
@@ -29,7 +28,7 @@ export function wrapReports(item: {
     x.fields.forEach(field => {
       reportFields.push({
         id: field.name,
-        hidden: helper.toBooleanFromLowercaseString(field.hidden),
+        hidden: common.toBooleanFromLowercaseString(field.hidden),
         label: field.label,
         result: field.result,
         fractions: field.fractions,
@@ -46,7 +45,7 @@ export function wrapReports(item: {
       isReport: true,
       rowIdsWithShowChart: x.rows
         .filter(
-          row => helper.toBooleanFromLowercaseString(row.show_chart) === true
+          row => common.toBooleanFromLowercaseString(row.show_chart) === true
         )
         .map(row => row.row_id)
         .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0)),
@@ -106,7 +105,7 @@ export function wrapReports(item: {
               ? metric.timeLabel
               : undefined,
           metricId: row.metric,
-          showChart: helper.toBooleanFromLowercaseString(row.show_chart),
+          showChart: common.toBooleanFromLowercaseString(row.show_chart),
           formula: row.formula,
           rqs: [],
           query: undefined,
