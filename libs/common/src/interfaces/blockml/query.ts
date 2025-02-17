@@ -27,12 +27,15 @@ export class Query {
   @IsString()
   sql: string;
 
+  @IsOptional()
   @IsString()
   apiMethod: enums.StoreMethodEnum;
 
+  @IsOptional()
   @IsString()
   apiUrl: string;
 
+  @IsOptional()
   @IsString()
   apiBody: string;
 
