@@ -10,9 +10,10 @@ import { enums } from '~common/barrels/enums';
 import { FractionControl } from './fraction-control';
 
 export class Fraction {
+  @IsOptional()
   @ValidateNested()
   @Type(() => FractionControl)
-  controls: FractionControl[];
+  controls?: FractionControl[];
 
   //
 

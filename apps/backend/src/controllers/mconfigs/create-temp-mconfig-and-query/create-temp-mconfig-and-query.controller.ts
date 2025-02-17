@@ -138,6 +138,21 @@ export class CreateTempMconfigAndQueryController {
       console.log('newMconfig:');
       console.log(newMconfig);
 
+      newMconfig.filters.forEach((filter, filterIndex) => {
+        console.log(`Filter ${filterIndex} fractions:`);
+        console.log(filter.fractions);
+        filter.fractions.forEach((fraction, frIndex) => {
+          console.log(`Filter ${filterIndex} Fraction ${frIndex} controls:`);
+          console.log(fraction.controls);
+          fraction.controls.forEach((control, cIndex) => {
+            console.log(
+              `Filter ${filterIndex} Fraction ${frIndex} Control ${cIndex} options:`
+            );
+            console.log(control?.options);
+          });
+        });
+      });
+
       let connection = await this.db.drizzle.query.connectionsTable.findFirst({
         where: and(
           eq(connectionsTable.projectId, projectId),

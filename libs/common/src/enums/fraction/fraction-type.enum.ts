@@ -1,4 +1,6 @@
 export enum FractionTypeEnum {
+  StoreFraction = 'StoreFraction',
+  //
   StringIsEqualTo = 'StringIsEqualTo',
   StringContains = 'StringContains',
   StringStartsWith = 'StringStartsWith',

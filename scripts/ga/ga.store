@@ -318,6 +318,18 @@ parameters:
     label: End Offset # To
     value: 5
 
+- filter: date_range
+  show_if: top_config.cohorts_switch.false
+  required: true
+  max_fractions: 1
+  fraction_controls: 
+  - date_picker: start_date
+    label: Start Date
+    value: $METRICS_DATE_FROM
+  - date_picker: end_date
+    label: End Date
+    value: $METRICS_DATE_TO
+
 - filter: cohorts_config
   show_if: top_config.cohorts_switch.true
   required: true
@@ -335,18 +347,6 @@ parameters:
   #   label: dimension
   #   value: firstSessionDate
   #   lock: true
-
-- filter: date_range
-  show_if: top_config.cohorts_switch.false
-  required: true
-  max_fractions: 1
-  fraction_controls: 
-  - date_picker: start_date
-    label: Start Date
-    value: $METRICS_DATE_FROM
-  - date_picker: end_date
-    label: End Date
-    value: $METRICS_DATE_TO
 
 results:
 - result: number
