@@ -283,7 +283,6 @@ export class WrapToApiService {
       content: model.content,
       isViewModel: model.isViewModel,
       isStoreModel: model.isStoreModel,
-      fileStore: model.fileStore,
       accessUsers: model.accessUsers,
       accessRoles: model.accessRoles,
       label: model.label,

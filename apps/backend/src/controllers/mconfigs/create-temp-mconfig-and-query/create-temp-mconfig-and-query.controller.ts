@@ -161,7 +161,7 @@ export class CreateTempMconfigAndQueryController {
       });
 
       let urlPathResult = await this.storeService.runUserCode({
-        input: model.fileStore.url_path,
+        input: (model.content as common.FileStore).url_path,
         mconfig: newMconfig,
         model: model
       });
@@ -171,7 +171,7 @@ export class CreateTempMconfigAndQueryController {
         : `store.url_path Error: ${urlPathResult.error}`;
 
       let bodyResult = await this.storeService.runUserCode({
-        input: model.fileStore.body,
+        input: (model.content as common.FileStore).body,
         mconfig: newMconfig,
         model: model
       });
@@ -188,7 +188,8 @@ export class CreateTempMconfigAndQueryController {
 
       let queryId = nodeCommon.makeQueryId({
         sql: undefined,
-        storeMethod: model.fileStore.method as common.StoreMethodEnum,
+        storeMethod: (model.content as common.FileStore)
+          .method as common.StoreMethodEnum,
         storeUrlPath: apiUrl,
         storeBody: apiBody,
         orgId: project.orgId,
@@ -205,7 +206,7 @@ export class CreateTempMconfigAndQueryController {
         connectionType: (model.content as any).connection.type,
         // sql: undefined,
         sql: `--- method
-${model.fileStore.method}
+${(model.content as common.FileStore).method}
 --- url
 ${apiUrl}
 --- body store
@@ -215,7 +216,8 @@ ${urlPathResult.inputSub}
 --- body inputSub
 ${bodyResult.inputSub}
 `,
-        apiMethod: model.fileStore.method as common.StoreMethodEnum,
+        apiMethod: (model.content as common.FileStore)
+          .method as common.StoreMethodEnum,
         apiUrl: apiUrl,
         apiBody: apiBody,
         status: common.QueryStatusEnum.New,
