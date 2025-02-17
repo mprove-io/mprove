@@ -130,49 +130,10 @@ export class CreateTempMconfigAndQueryController {
     let newQuery: common.Query;
 
     if (model.isStoreModel === true) {
-      newMconfig = common.makeCopy(mconfig);
-
-      let newFilters: common.Filter[] = common.makeCopy(newMconfig.filters);
-
-      // model.store.filterControlsSortedByShowIfDeps.forEach(dep => {
-      //   let filterName = dep.split('.')[0];
-      //   let controlName = dep.split('.')[1];
-
-      //   let filterDefinition = model.store.fields
-      //     .filter(x => x.fieldClass === common.FieldClassEnum.Filter)
-      //     .find(x => x.name === filterName);
-
-      //   if (
-      //     // common.isDefined(filterDefinition) &&
-      //     common.toBooleanFromLowercaseString(filterDefinition.required) ===
-      //       true &&
-      //     newFilters.map(x => x.fieldId).indexOf(filterName) < 0
-      //   ) {
-      //     if (filterDefinition.show_if) {
-      //       let reg = common.MyRegex.CAPTURE_TRIPLE_REF_FOR_SHOW_IF_G();
-
-      //       let r = reg.exec(filterDefinition.show_if);
-
-      //       let refFilterName = r[1];
-      //       let refFractionControlName = r[2];
-      //       let refControlValue = r[3];
-
-      //       let showIfReferencedFilterSelected = newFilters.find(
-      //         x => x.fieldId === refFilterName
-      //       );
-
-      //       if (filterDefinition.show_if) {
-      //         let newFilter: common.Filter = {
-      //           fieldId: filterName,
-      //           fractions: [] // TODO:
-      //         };
-      //         newFilters.push(newFilter);
-      //       }
-      //     }
-      //   }
-      // });
-
-      newMconfig.filters = newFilters;
+      newMconfig = await this.storeService.adjustMconfig({
+        mconfig: mconfig,
+        model: model
+      });
 
       console.log('newMconfig:');
       console.log(newMconfig);

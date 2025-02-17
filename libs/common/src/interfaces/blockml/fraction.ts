@@ -1,7 +1,21 @@
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { enums } from '~common/barrels/enums';
+import { FractionControl } from './fraction-control';
 
 export class Fraction {
+  @ValidateNested()
+  @Type(() => FractionControl)
+  controls: FractionControl[];
+
+  //
+
   @IsString()
   brick: string;
 

@@ -7,6 +7,8 @@ export * from './dashboard-field';
 export * from './filter';
 export * from './filter-bricks-dictionary';
 export * from './fraction';
+export * from './fraction-control';
+export * from './fraction-control-option';
 export * from './internal/_index';
 export * from './join-aggregation';
 export * from './mconfig';

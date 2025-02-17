@@ -31,17 +31,20 @@ export function checkStoreShowIfCycles(
       .filter(y => y.fieldClass === common.FieldClassEnum.Filter)
       .forEach(fieldFilter => {
         let parentRefName: string;
+        let parentFilterName: string;
+        let parentFractionControlName: string;
+        let parentControlValue: string;
 
         if (common.isDefined(fieldFilter.show_if)) {
           let reg = common.MyRegex.CAPTURE_TRIPLE_REF_FOR_SHOW_IF_G();
 
           let r = reg.exec(fieldFilter.show_if);
 
-          let filterName = r[1];
-          let fractionControlName = r[2];
-          let controlValue = r[3];
+          parentFilterName = r[1];
+          parentFractionControlName = r[2];
+          parentControlValue = r[3];
 
-          parentRefName = `${filterName}.${fractionControlName}`;
+          parentRefName = `${parentFilterName}.${parentFractionControlName}`;
         }
 
         fieldFilter.fraction_controls.forEach(control => {
@@ -65,12 +68,20 @@ export function checkStoreShowIfCycles(
               let refName = `${filterNameB}.${fractionControlNameB}`;
 
               g.add(sourceName, [refName]);
-              control.showIfDepsIncludingParentFilter.push(refName);
+              control.showIfDepsIncludingParentFilter.push({
+                filterName: filterNameB,
+                controlName: fractionControlNameB,
+                value: controlValueB
+              });
             }
 
             if (common.isDefined(parentRefName)) {
               g.add(sourceName, [parentRefName]);
-              control.showIfDepsIncludingParentFilter.push(parentRefName);
+              control.showIfDepsIncludingParentFilter.push({
+                filterName: parentFilterName,
+                controlName: parentFractionControlName,
+                value: parentControlValue
+              });
             }
           }
         });

@@ -24,6 +24,101 @@ export class StoreService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  async adjustMconfig(item: { mconfig: common.Mconfig; model: common.Model }) {
+    let { model, mconfig } = item;
+
+    let newMconfig = common.makeCopy(mconfig);
+
+    // remove filter controls if show_if deps not match
+    model.store.filterControlsSortedByShowIfDeps.forEach(filterDotControl => {
+      let filterName = filterDotControl.split('.')[0];
+      let controlName = filterDotControl.split('.')[1];
+
+      let isCheck = true;
+
+      while (isCheck === true) {
+        let isRemove = false as boolean;
+
+        let selectedFilter = newMconfig.filters.find(
+          x => x.fieldId === filterName
+        );
+
+        if (common.isDefined(selectedFilter)) {
+          selectedFilter.fractions.forEach(selectedFraction => {
+            // controls will be removed from all fractions - no need to check other fractions if isRemove true
+            if (isRemove === false) {
+              let selectedControl = selectedFraction.controls.find(
+                fc => fc.name === controlName
+              );
+
+              if (common.isDefined(selectedControl)) {
+                selectedControl.showIfDepsIncludingParentFilter.forEach(dep => {
+                  if (isRemove === false) {
+                    let depSelectedFilter = newMconfig.filters.find(
+                      y => y.fieldId === dep.filterName
+                    );
+
+                    if (common.isUndefined(depSelectedFilter)) {
+                      isRemove = true;
+                      return;
+                    }
+
+                    depSelectedFilter.fractions.forEach(y => {
+                      let depSelectedControl = y.controls.find(
+                        c => c.name === dep.controlName
+                      );
+
+                      if (
+                        common.isUndefined(depSelectedControl) ||
+                        depSelectedControl.value.toString() !==
+                          dep.value.toString()
+                      ) {
+                        isRemove = true;
+                        return;
+                      }
+                    });
+                  }
+                });
+              }
+            }
+          });
+        }
+
+        if (isRemove === true) {
+          let filter = newMconfig.filters.find(x => x.fieldId === filterName);
+
+          filter.fractions.forEach(fraction => {
+            fraction.controls = fraction.controls.filter(
+              control => control.name !== controlName
+            );
+          });
+        } else {
+          isCheck = false;
+        }
+      }
+    });
+
+    // add required filter controls, if show_if allows
+    model.store.filterControlsSortedByShowIfDeps.forEach(filterDotControl => {
+      let filterName = filterDotControl.split('.')[0];
+      let controlName = filterDotControl.split('.')[1];
+
+      let isCheck = true;
+
+      while (isCheck === true) {}
+    });
+
+    // let filterDefinition = model.store.fields
+    //   .filter(x => x.fieldClass === common.FieldClassEnum.Filter)
+    //   .find(x => x.name === filterName);
+
+    // let controlDefinition = filterDefinition.fraction_controls.find(
+    //   x => x.name === controlName
+    // );
+
+    return newMconfig;
+  }
+
   async runUserCode(item: {
     input: string;
     mconfig: common.Mconfig;

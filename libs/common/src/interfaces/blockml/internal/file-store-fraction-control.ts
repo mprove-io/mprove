@@ -39,5 +39,9 @@ export interface FileStoreFractionControl {
 
   controlClass?: enums.ControlClassEnum;
 
-  showIfDepsIncludingParentFilter?: string[];
+  showIfDepsIncludingParentFilter?: {
+    filterName: string;
+    controlName: string;
+    value: any;
+  }[];
 }
