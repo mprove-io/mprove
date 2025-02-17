@@ -16,7 +16,6 @@ let structState: StructState = {
   defaultTimezone: undefined,
   errors: [],
   views: [],
-  stores: [],
   udfsDict: undefined,
   serverTs: undefined,
   formatNumber: undefined,
