@@ -170,7 +170,6 @@ export class BlockmlService {
       errors,
       views,
       models,
-      stores,
       reports,
       dashboards,
       charts,
@@ -194,7 +193,6 @@ export class BlockmlService {
       currencySuffix: currencySuffix,
       errors: errors,
       views: views,
-      stores: stores,
       udfsDict: udfsDict,
       serverTs: undefined
     };

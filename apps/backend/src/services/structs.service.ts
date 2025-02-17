@@ -37,7 +37,6 @@ export class StructsService {
       currencySuffix: '',
       errors: [],
       views: [],
-      stores: [],
       udfsDict: {},
       serverTs: undefined
     };

@@ -283,7 +283,7 @@ export class WrapToApiService {
       content: model.content,
       isViewModel: model.isViewModel,
       isStoreModel: model.isStoreModel,
-      store: model.store,
+      fileStore: model.fileStore,
       accessUsers: model.accessUsers,
       accessRoles: model.accessRoles,
       label: model.label,
@@ -467,7 +467,6 @@ export class WrapToApiService {
       currencySuffix: struct.currencySuffix,
       errors: struct.errors,
       views: struct.views,
-      stores: struct.stores,
       udfsDict: struct.udfsDict,
       serverTs: Number(struct.serverTs)
     };

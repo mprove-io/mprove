@@ -280,7 +280,7 @@ export function wrapModels(item: {
         filePath: x.filePath,
         content: x,
         isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
-        store:
+        fileStore:
           x.fileExt === common.FileExtensionEnum.Store
             ? (x as common.FileStore)
             : undefined,

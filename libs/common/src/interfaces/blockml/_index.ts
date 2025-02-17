@@ -31,7 +31,6 @@ export * from './row-change';
 export * from './row-record';
 export * from './rq';
 export * from './sorting';
-export * from './store';
 export * from './tile';
 export * from './udfs-dict';
 export * from './view';

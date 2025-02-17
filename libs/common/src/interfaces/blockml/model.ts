@@ -55,7 +55,7 @@ export class Model {
   @Type(() => ModelNode)
   nodes: ModelNode[];
 
-  store: FileStore;
+  fileStore: FileStore;
 
   @IsOptional()
   @IsString()

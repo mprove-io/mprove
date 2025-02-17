@@ -103,10 +103,6 @@ export class RebuildStructService {
       currencySuffix: currencySuffix
     });
 
-    let apiStores = barWrapper.wrapStores({
-      stores: stores
-    });
-
     let { apiDashboards, dashMconfigs, dashQueries } =
       barWrapper.wrapDashboards({
         structId: structId,
@@ -137,7 +133,6 @@ export class RebuildStructService {
       views: apiViews,
       models: apiModels,
       dashboards: apiDashboards,
-      stores: apiStores,
       reports: apiReports,
       charts: apiCharts,
       metrics: metrics,

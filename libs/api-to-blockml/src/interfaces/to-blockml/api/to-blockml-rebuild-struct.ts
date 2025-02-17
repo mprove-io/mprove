@@ -103,10 +103,6 @@ export class ToBlockmlRebuildStructResponsePayload {
   reports: common.Report[];
 
   @ValidateNested()
-  @Type(() => common.Store)
-  stores: common.Store[];
-
-  @ValidateNested()
   @Type(() => common.Chart)
   charts: common.Chart[];
 

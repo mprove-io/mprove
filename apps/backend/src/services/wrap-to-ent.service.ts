@@ -115,7 +115,7 @@ export class WrapToEntService {
       content: model.content,
       isViewModel: model.isViewModel,
       isStoreModel: model.isStoreModel,
-      store: model.store,
+      fileStore: model.fileStore,
       accessUsers: model.accessUsers,
       accessRoles: model.accessRoles,
       label: model.label,
