@@ -205,13 +205,13 @@ body: |
 response: |
   let data = $RESPONSE_DATA;
   
-  let dimensionHeaders = data.dimensionHeaders.map(header => header.name);
-  let metricHeaders = data.metricHeaders.map(header => header.name);
+  let dimensionHeaders = data.dimensionHeaders?.map(header => header.name);
+  let metricHeaders = data.metricHeaders?.map(header => header.name);
   
   newData = data.rows.map(row => {
     let newRow = {};
     
-    row.dimensionValues.forEach((dimension, index) => {
+    row.dimensionValues?.forEach((dimension, index) => {
       let dimensionName = dimensionHeaders[index];
       let date;
 
@@ -263,9 +263,10 @@ response: |
         date = new Date(`${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}T${value.slice(8, 10)}:${value.slice(10, 12)}:00Z`);
       } 
 
-      let fieldId = $STORE_FIELDS.find(x => x.meta['name'] === dimensionName).id;
+      let storeField = $STORE_FIELDS.find(x => !!x.meta && x.meta['name'] === dimensionName);
 
-      if (!!fieldId) {
+      if (!!storeField) {
+        let fieldId = storeField.group + '.' + storeField.name;
         if (!!date) {
           let fieldIdUTC = fieldId + $UTC_MS_SUFFIX;
           newRow[fieldIdUTC] = date.getTime();
@@ -274,10 +275,11 @@ response: |
       }
     });
     
-    row.metricValues.forEach((metric, index) => {
+    row.metricValues?.forEach((metric, index) => {
       let metricName = metricHeaders[index];
-      let fieldId = $STORE_FIELDS.find(x => x.meta['name'] === metricName).id;
-      if (!!fieldId) {
+      let storeField = $STORE_FIELDS.find(x => !!x.meta && x.meta['name'] === metricName);
+      if (!!storeField) {
+        let fieldId = storeField.group + '.' + storeField.name;
         newRow[fieldId] = metric.value;
       }
     });

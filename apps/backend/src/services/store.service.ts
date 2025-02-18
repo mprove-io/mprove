@@ -316,7 +316,9 @@ export class StoreService {
       } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
         target = 'false'; // TODO:
       } else if (reference === 'STORE_FIELDS') {
-        target = (storeModel.content as common.FileStore).fields;
+        target = JSON.stringify(
+          (storeModel.content as common.FileStore).fields
+        );
       } else if (reference === 'QUERY_TIMEZONE') {
         target = mconfig.timezone;
         // } else if (reference === 'ENV_GA_PROPERTY_ID_1') {
@@ -376,9 +378,19 @@ ${inputSub}
       let target: any;
 
       if (reference === 'RESPONSE_DATA') {
-        target = respData;
+        target = JSON.stringify(respData);
+      } else if (reference === 'METRICS_DATE_FROM') {
+        target = '50daysAgo'; // TODO:
+      } else if (reference === 'METRICS_DATE_TO') {
+        target = 'today'; // TODO:
+      } else if (reference === 'DATE_TODAY') {
+        target = 'today'; // TODO:
+      } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
+        target = 'false'; // TODO:
       } else if (reference === 'STORE_FIELDS') {
-        target = (storeModel.content as common.FileStore).fields;
+        target = JSON.stringify(
+          (storeModel.content as common.FileStore).fields
+        );
       } else if (reference === 'UTC_MS_SUFFIX') {
         target = common.UTC_MS_SUFFIX;
         // } else if (reference === 'ENV_GA_PROPERTY_ID_1') {
@@ -390,6 +402,9 @@ ${inputSub}
 
       inputSub = common.MyRegex.replaceSRefs(inputSub, reference, target);
     }
+
+    // console.log('inputSub');
+    // console.log(inputSub);
 
     if (common.isDefined(refError)) {
       return {
@@ -482,11 +497,11 @@ ${inputSub}
       });
 
       if (common.isDefined(q)) {
-        if (response.code !== 200 && response.code !== 201) {
+        if (response.status !== 200 && response.status !== 201) {
           q.status = common.QueryStatusEnum.Error;
           q.data = [];
           q.queryJobId = undefined; // null
-          q.lastErrorMessage = `response code "${response.code}" is not 200 or 201`;
+          q.lastErrorMessage = `response status code "${response.code}" is not 200 or 201`;
           q.lastErrorTs = makeTsNumber();
         } else if (common.isUndefined(response.data)) {
           q.status = common.QueryStatusEnum.Error;
@@ -497,9 +512,8 @@ ${inputSub}
         } else {
           let model = await this.db.drizzle.query.modelsTable.findFirst({
             where: and(
-              eq(queriesTable.projectId, projectId),
-              eq(modelsTable.structId, q.storeStructId),
-              eq(modelsTable.modelId, q.storeModelId)
+              eq(modelsTable.modelId, q.storeModelId),
+              eq(modelsTable.structId, q.storeStructId)
             )
           });
 
