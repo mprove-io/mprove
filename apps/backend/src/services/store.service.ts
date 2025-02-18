@@ -303,6 +303,24 @@ export class StoreService {
         target = JSON.stringify(mconfig.limit);
       } else if (reference === 'UTC_MS_SUFFIX') {
         target = '__utc_ms';
+        // } else if (reference === 'QUERY_TIMEZONE') {
+        //   target = '...';
+        // } else if (reference === 'QUERY_RESPONSE') {
+        //   target = '...';
+        // } else if (reference === 'QUERY_FIELDS') {
+        //   target = '...';
+        // } else if (reference === 'ENV_GA_PROPERTY_ID_1') {
+        //   target = '...';
+        // } else if (reference === 'ENV_GA_PROPERTY_ID_2') {
+        //   target = '...';
+        // } else if (reference === 'METRICS_DATE_FROM') {
+        //   target = '...';
+        // } else if (reference === 'METRICS_DATE_TO') {
+        //   target = '...';
+        // } else if (reference === 'DATE_TODAY') {
+        //   target = '...';
+        // } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
+        //   target = '...';
       } else {
         refError = `Unknown reference $${reference}`;
         break;
