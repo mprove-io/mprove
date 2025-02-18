@@ -1,5 +1,4 @@
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 import { wrapField } from './wrap-field';
 
 export function wrapModels(item: {
@@ -20,7 +19,7 @@ export function wrapModels(item: {
         let children: common.ModelNode[] = [];
 
         let node: common.ModelNode = {
-          id: constants.MF,
+          id: common.MF,
           label: common.ModelNodeLabelEnum.ModelFields,
           description: undefined,
           hidden: false,
@@ -33,7 +32,7 @@ export function wrapModels(item: {
           wrapField({
             wrappedFields: apiFields,
             field: field,
-            alias: constants.MF,
+            alias: common.MF,
             filePath: x.filePath,
             fileName: x.fileName,
             children: children,
@@ -82,6 +81,39 @@ export function wrapModels(item: {
     }
 
     if (x.fileExt === common.FileExtensionEnum.Store) {
+      {
+        // model fields scope
+        let children: common.ModelNode[] = [];
+
+        let node: common.ModelNode = {
+          id: common.MF,
+          label: common.ModelNodeLabelEnum.ModelFields,
+          description: undefined,
+          hidden: false,
+          isField: false,
+          children: children,
+          nodeClass: common.FieldClassEnum.Join
+        };
+
+        x.fields
+          .filter(field => field.fieldClass === common.FieldClassEnum.Filter)
+          .forEach(field => {
+            wrapField({
+              children: children,
+              node: node,
+              wrappedFields: apiFields,
+              field: field,
+              alias: common.MF,
+              filePath: x.filePath,
+              fileName: x.fileName
+            });
+          });
+
+        if (x.fields.length > 0) {
+          nodes.push(node);
+        }
+      }
+
       (x as common.FileStore).field_groups.forEach(fieldGroup => {
         let children: common.ModelNode[] = [];
         // let joinHidden = common.toBooleanFromLowercaseString(join.hidden);

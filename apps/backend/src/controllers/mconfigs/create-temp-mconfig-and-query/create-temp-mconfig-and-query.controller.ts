@@ -20,6 +20,7 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
+import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -129,6 +130,9 @@ export class CreateTempMconfigAndQueryController {
     let newMconfig: common.Mconfig;
     let newQuery: common.Query;
 
+    let isError = false;
+    let errorMessage: string;
+
     if (model.isStoreModel === true) {
       newMconfig = await this.storeService.adjustMconfig({
         mconfig: mconfig,
@@ -138,20 +142,20 @@ export class CreateTempMconfigAndQueryController {
       console.log('newMconfig:');
       console.log(newMconfig);
 
-      newMconfig.filters.forEach((filter, filterIndex) => {
-        console.log(`Filter ${filterIndex} fractions:`);
-        console.log(filter.fractions);
-        filter.fractions.forEach((fraction, frIndex) => {
-          console.log(`Filter ${filterIndex} Fraction ${frIndex} controls:`);
-          console.log(fraction.controls);
-          fraction.controls.forEach((control, cIndex) => {
-            console.log(
-              `Filter ${filterIndex} Fraction ${frIndex} Control ${cIndex} options:`
-            );
-            console.log(control?.options);
-          });
-        });
-      });
+      // newMconfig.filters.forEach((filter, filterIndex) => {
+      //   console.log(`Filter ${filterIndex} fractions:`);
+      //   console.log(filter.fractions);
+      //   filter.fractions.forEach((fraction, frIndex) => {
+      //     console.log(`Filter ${filterIndex} Fraction ${frIndex} controls:`);
+      //     console.log(fraction.controls);
+      //     fraction.controls.forEach((control, cIndex) => {
+      //       console.log(
+      //         `Filter ${filterIndex} Fraction ${frIndex} Control ${cIndex} options:`
+      //       );
+      //       console.log(control?.options);
+      //     });
+      //   });
+      // });
 
       let connection = await this.db.drizzle.query.connectionsTable.findFirst({
         where: and(
@@ -166,9 +170,14 @@ export class CreateTempMconfigAndQueryController {
         model: model
       });
 
-      let apiUrl = common.isDefined(urlPathResult.value)
-        ? `${connection.baseUrl}/${urlPathResult.value}`
-        : `store.url_path Error: ${urlPathResult.error}`;
+      if (common.isDefined(urlPathResult.errorMessage)) {
+        isError = true;
+        errorMessage = `store.url_path Error: ${urlPathResult.errorMessage}`;
+      }
+
+      let apiUrl = common.isDefined(urlPathResult.errorMessage)
+        ? `store.url_path Error: ${urlPathResult.errorMessage}`
+        : `${connection.baseUrl}/${urlPathResult.value}`;
 
       let bodyResult = await this.storeService.runUserCode({
         input: (model.content as common.FileStore).body,
@@ -176,15 +185,17 @@ export class CreateTempMconfigAndQueryController {
         model: model
       });
 
-      // console.log('bodyResult.inputSub:');
-      // console.log(bodyResult.inputSub);
+      if (common.isDefined(bodyResult.errorMessage)) {
+        isError = true;
+        let errorMessagePrefix = common.isDefined(errorMessage)
+          ? `${errorMessage}, `
+          : '';
+        errorMessage = `${errorMessagePrefix}store.body Error: ${bodyResult.errorMessage}`;
+      }
 
-      console.log('bodyResult.value:');
-      console.log(bodyResult.value);
-
-      let apiBody = common.isDefined(bodyResult.value)
-        ? bodyResult.value
-        : `store.body Error: ${bodyResult.error}`;
+      let apiBody = common.isDefined(bodyResult.errorMessage)
+        ? `store.body Error: ${bodyResult.errorMessage}`
+        : bodyResult.value;
 
       let queryId = nodeCommon.makeQueryId({
         sql: undefined,
@@ -220,14 +231,17 @@ ${bodyResult.inputSub}
           .method as common.StoreMethodEnum,
         apiUrl: apiUrl,
         apiBody: apiBody,
-        status: common.QueryStatusEnum.New,
+        status:
+          isError === true
+            ? common.QueryStatusEnum.Error
+            : common.QueryStatusEnum.New,
         lastRunBy: undefined,
         lastRunTs: undefined,
         lastCancelTs: undefined,
         lastCompleteTs: undefined,
         lastCompleteDuration: undefined,
-        lastErrorMessage: undefined,
-        lastErrorTs: undefined,
+        lastErrorMessage: errorMessage,
+        lastErrorTs: isError === true ? makeTsNumber() : undefined,
         data: undefined,
         queryJobId: undefined,
         bigqueryQueryJobId: undefined,
@@ -284,8 +298,11 @@ ${bodyResult.inputSub}
               insert: {
                 mconfigs: [newMconfigEnt]
               },
+              insertOrUpdate: {
+                queries: isError === true ? [newQueryEnt] : []
+              },
               insertOrDoNothing: {
-                queries: [newQueryEnt]
+                queries: isError === true ? [] : [newQueryEnt]
               }
             })
         ),

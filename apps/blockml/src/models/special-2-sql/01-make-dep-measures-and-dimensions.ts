@@ -1,5 +1,4 @@
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 
 let func = common.FuncEnum.MakeDepMeasuresAndDimensions;
 
@@ -24,17 +23,17 @@ export function makeDepMeasuresAndDimensions(item: {
       let depModelField = model.fields.find(mField => mField.name === depName);
 
       if (depModelField.fieldClass === common.FieldClassEnum.Measure) {
-        if (common.isUndefined(depMeasures[constants.MF])) {
-          depMeasures[constants.MF] = {};
+        if (common.isUndefined(depMeasures[common.MF])) {
+          depMeasures[common.MF] = {};
         }
-        depMeasures[constants.MF][depName] = 1;
+        depMeasures[common.MF][depName] = 1;
       }
 
       if (depModelField.fieldClass === common.FieldClassEnum.Dimension) {
-        if (common.isUndefined(depDimensions[constants.MF])) {
-          depDimensions[constants.MF] = {};
+        if (common.isUndefined(depDimensions[common.MF])) {
+          depDimensions[common.MF] = {};
         }
-        depDimensions[constants.MF][depName] = 1;
+        depDimensions[common.MF][depName] = 1;
       }
     });
   }
@@ -79,7 +78,7 @@ export function makeDepMeasuresAndDimensions(item: {
     let asName = r[1];
     let fieldName = r[2];
 
-    if (asName === constants.MF) {
+    if (asName === common.MF) {
       let field = model.fields.find(mField => mField.name === fieldName);
 
       if (field.fieldClass !== common.FieldClassEnum.Calculation) {

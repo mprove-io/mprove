@@ -1,7 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
@@ -156,7 +155,7 @@ export function checkTileParameters<T extends types.dzType>(
 
             let listener = `${asName}.${fieldName}`;
 
-            if (asName === constants.MF) {
+            if (asName === common.MF) {
               let modelField = model.fields.find(
                 mField => mField.name === fieldName
               );
@@ -244,7 +243,7 @@ export function checkTileParameters<T extends types.dzType>(
             }
 
             let pResult =
-              asName === constants.MF
+              asName === common.MF
                 ? model.fields.find(mField => mField.name === fieldName).result
                 : model.joins
                     .find(j => j.as === asName)

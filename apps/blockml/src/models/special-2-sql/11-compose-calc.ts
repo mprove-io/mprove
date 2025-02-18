@@ -56,7 +56,7 @@ export function composeCalc(item: {
     let fieldName = r[2];
 
     let field =
-      asName === constants.MF
+      asName === common.MF
         ? model.fields.find(mField => mField.name === fieldName)
         : model.joins
             .find(j => j.as === asName)
@@ -97,7 +97,7 @@ export function composeCalc(item: {
 
       sqlAlwaysWhereCalcFinal = applyFilter({
         filterFieldsConditions: filterFieldsConditions,
-        as: constants.MF,
+        as: common.MF,
         input: sqlAlwaysWhereCalcFinal
       });
 

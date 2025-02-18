@@ -1,5 +1,4 @@
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 
 let func = common.FuncEnum.MakeSelectedAndFiltered;
 
@@ -60,7 +59,7 @@ export function makeSelectedAndFiltered(item: {
       let fieldName = r[2];
 
       let fieldClass: common.FieldClassEnum =
-        asName === constants.MF
+        asName === common.MF
           ? model.fields.find(mField => mField.name === fieldName).fieldClass
           : model.joins
               .find(j => j.as === asName)

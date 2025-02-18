@@ -1,6 +1,5 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
@@ -53,7 +52,7 @@ export function checkSelectElements<T extends types.dzType>(
         let asName = r[1];
         let fieldName = r[2];
 
-        if (asName === constants.MF) {
+        if (asName === common.MF) {
           let modelField = model.fields.find(
             mField => mField.name === fieldName
           );

@@ -1,6 +1,5 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
@@ -385,7 +384,7 @@ function getField(item: { model: common.FileModel; fieldId: string }) {
   let asName = r[1];
   let fieldName = r[2];
   let field =
-    asName === constants.MF
+    asName === common.MF
       ? model.fields.find(mField => mField.name === fieldName)
       : model.joins
           .find(j => j.as === asName)

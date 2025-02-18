@@ -1,5 +1,4 @@
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 
 let func = common.FuncEnum.MakeNeedsDoubles;
 
@@ -44,7 +43,7 @@ export function makeNeedsDoubles(item: {
 
   // pick deps from sqlAlwaysWhereCalc
   Object.keys(model.sqlAlwaysWhereCalcDepsAfterSingles).forEach(dep => {
-    let element = `${constants.MF}.${dep}`;
+    let element = `${common.MF}.${dep}`;
     whereCalcDeps[element] = 1;
   });
 
@@ -72,16 +71,16 @@ export function makeNeedsDoubles(item: {
     needsDoubles[aName][fName] = 1;
   });
 
-  if (needsDoubles[constants.MF]) {
+  if (needsDoubles[common.MF]) {
     // pick deps for all model fields
-    Object.keys(needsDoubles[constants.MF]).forEach(fieldName => {
+    Object.keys(needsDoubles[common.MF]).forEach(fieldName => {
       Object.keys(model.fieldsDepsAfterSingles[fieldName]).forEach(dep => {
-        needsDoubles[constants.MF][dep] = 1;
+        needsDoubles[common.MF][dep] = 1;
       });
     });
 
     // pick double deps for all model fields
-    Object.keys(needsDoubles[constants.MF]).forEach(fieldName => {
+    Object.keys(needsDoubles[common.MF]).forEach(fieldName => {
       Object.keys(model.fieldsDoubleDepsAfterSingles[fieldName]).forEach(
         alias => {
           Object.keys(
@@ -99,7 +98,7 @@ export function makeNeedsDoubles(item: {
 
   // pick deps for all view fields
   Object.keys(needsDoubles)
-    .filter(a => a !== constants.MF)
+    .filter(a => a !== common.MF)
     .forEach(asName => {
       Object.keys(needsDoubles[asName]).forEach(fieldName => {
         let join = model.joins.find(j => j.as === asName);

@@ -1,6 +1,5 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
@@ -70,7 +69,7 @@ export function checkVmdrSuggestModelDimension<T extends types.vsmdrType>(
       )
       .forEach(field => {
         if (common.isUndefined(field.suggest_model_dimension)) {
-          field.suggest_model_dimension = `${model.name}.${constants.MF}.${field.name}`;
+          field.suggest_model_dimension = `${model.name}.${common.MF}.${field.name}`;
         }
       });
   });
@@ -189,7 +188,7 @@ function checkSuggestFields(item: {
         return;
       }
 
-      if (asName === constants.MF) {
+      if (asName === common.MF) {
         let modelField = model.fields.find(mField => mField.name === fieldName);
 
         if (common.isUndefined(modelField)) {

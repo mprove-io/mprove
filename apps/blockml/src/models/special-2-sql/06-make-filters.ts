@@ -45,7 +45,7 @@ export function makeFilters(item: {
   let untouchedFilters: common.FilterBricksDictionary = {};
 
   // Object.keys(model.filters).forEach(modelFilter => {
-  //   let modelFilterName = `${constants.MF}.${modelFilter}`;
+  //   let modelFilterName = `${common.MF}.${modelFilter}`;
 
   //   if (common.isUndefined(filters[modelFilterName])) {
   //     untouchedFilters[modelFilterName] = model.filters[modelFilter];
@@ -79,7 +79,7 @@ export function makeFilters(item: {
     let sqlTimestampSelect: string;
 
     let field =
-      asName === constants.MF
+      asName === common.MF
         ? model.fields.find(mField => mField.name === fieldName)
         : model.joins
             .find(j => j.as === asName)
@@ -88,7 +88,7 @@ export function makeFilters(item: {
     if (field.result === common.FieldResultEnum.Ts) {
       if (field.fieldClass === common.FieldClassEnum.Filter) {
         sqlTimestampSelect = constants.MPROVE_FILTER;
-      } else if (asName === constants.MF) {
+      } else if (asName === common.MF) {
         // remove ${ } on doubles (no singles exists in _real of model dimensions)
         // ${a.city} + ${b.country}   >>>   a.city + b.country
         sqlTimestampSelect = common.MyRegex.removeBracketsOnDoubles(

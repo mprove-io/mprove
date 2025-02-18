@@ -41,7 +41,7 @@ export function makeMainText(item: {
     let { asName, fieldName } = els[element];
 
     let field =
-      asName === constants.MF
+      asName === common.MF
         ? model.fields.find(mField => mField.name === fieldName)
         : model.joins
             .find(j => j.as === asName)
@@ -55,7 +55,7 @@ export function makeMainText(item: {
     if (field.fieldClass === common.FieldClassEnum.Dimension) {
       i++;
 
-      if (asName === constants.MF) {
+      if (asName === common.MF) {
         // remove ${ } on doubles (no singles exists in _real of model dimensions)
         sqlSelect = common.MyRegex.removeBracketsOnDoubles(field.sqlReal);
       } else {
@@ -72,7 +72,7 @@ export function makeMainText(item: {
     } else if (field.fieldClass === common.FieldClassEnum.Measure) {
       i++;
 
-      if (asName === constants.MF) {
+      if (asName === common.MF) {
         // remove ${ } on doubles (no singles exists in _real of model measures)
         sqlFinal = common.MyRegex.removeBracketsOnDoubles(field.sqlReal);
 
@@ -240,7 +240,7 @@ export function makeMainText(item: {
         }
       }
     } else if (field.fieldClass === common.FieldClassEnum.Calculation) {
-      if (asName === constants.MF) {
+      if (asName === common.MF) {
         sqlFinal = common.MyRegex.removeBracketsOnCalculationSinglesMf(
           field.sqlReal
         );

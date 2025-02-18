@@ -1,13 +1,13 @@
 import { common } from '~blockml/barrels/common';
 
 export function wrapField(item: {
+  children: common.ModelNode[];
+  node: common.ModelNode;
   wrappedFields: common.ModelField[];
   field: common.FieldAny;
   alias: string;
   fileName: string;
   filePath: string;
-  children: common.ModelNode[];
-  node: common.ModelNode;
 }) {
   let { wrappedFields, field, alias, fileName, filePath, children, node } =
     item;

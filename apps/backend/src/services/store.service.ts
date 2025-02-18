@@ -42,7 +42,7 @@ export class StoreService {
         let isRemove = false as boolean;
 
         let selectedFilter = newMconfig.filters.find(
-          x => x.fieldId === filterName
+          x => x.fieldId === `${common.MF}.${filterName}`
         );
 
         if (common.isDefined(selectedFilter)) {
@@ -57,7 +57,7 @@ export class StoreService {
                 selectedControl.showIfDepsIncludingParentFilter.forEach(dep => {
                   if (isRemove === false) {
                     let depSelectedFilter = newMconfig.filters.find(
-                      y => y.fieldId === dep.filterName
+                      y => y.fieldId === `${common.MF}.${dep.filterName}`
                     );
 
                     if (common.isUndefined(depSelectedFilter)) {
@@ -87,7 +87,9 @@ export class StoreService {
         }
 
         if (isRemove === true) {
-          let filter = newMconfig.filters.find(x => x.fieldId === filterName);
+          let filter = newMconfig.filters.find(
+            x => x.fieldId === `${common.MF}.${filterName}`
+          );
 
           filter.fractions.forEach(fraction => {
             fraction.controls = fraction.controls.filter(
@@ -124,7 +126,7 @@ export class StoreService {
           let sControlValue = r[3];
 
           let sDepSelectedFilter = newMconfig.filters.find(
-            y => y.fieldId === sFilterName
+            y => y.fieldId === `${common.MF}.${sFilterName}`
           );
 
           if (
@@ -149,7 +151,7 @@ export class StoreService {
 
         if (filterShowIfAllows === true) {
           let selectedFilter = newMconfig.filters.find(
-            x => x.fieldId === filterName
+            x => x.fieldId === `${common.MF}.${filterName}`
           );
 
           if (common.isUndefined(selectedFilter)) {
@@ -161,7 +163,7 @@ export class StoreService {
             };
 
             let newFilter: common.Filter = {
-              fieldId: filterName,
+              fieldId: `${common.MF}.${filterName}`,
               fractions: [newFraction]
             };
 
@@ -186,7 +188,7 @@ export class StoreService {
             let cControlValue = r[3];
 
             let cDepSelectedFilter = newMconfig.filters.find(
-              y => y.fieldId === cFilterName
+              y => y.fieldId === `${common.MF}.${cFilterName}`
             );
 
             if (
@@ -267,9 +269,6 @@ export class StoreService {
       .filter(field => field.fieldClass === common.FieldClassEnum.Measure)
       .filter(f => mconfig.select.indexOf(`${f.group}.${f.name}`) > -1);
 
-    // console.log('selectedDimensions');
-    // console.log(selectedDimensions);
-
     let orderByElements: {
       fieldId: string;
       field: common.FieldAny;
@@ -315,7 +314,7 @@ export class StoreService {
     if (common.isDefined(refError)) {
       return {
         value: 'Error',
-        error: refError
+        errorMessage: refError
       };
     }
 

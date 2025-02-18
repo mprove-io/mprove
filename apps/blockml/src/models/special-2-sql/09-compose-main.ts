@@ -74,7 +74,7 @@ export function composeMain(item: {
     joinsWhere.forEach(element => {
       element = applyFilter({
         filterFieldsConditions: filterFieldsConditions,
-        as: constants.MF,
+        as: common.MF,
         input: element
       });
 
@@ -92,7 +92,7 @@ export function composeMain(item: {
 
       sqlAlwaysWhereFinal = applyFilter({
         filterFieldsConditions: filterFieldsConditions,
-        as: constants.MF,
+        as: common.MF,
         input: sqlAlwaysWhereFinal
       });
 

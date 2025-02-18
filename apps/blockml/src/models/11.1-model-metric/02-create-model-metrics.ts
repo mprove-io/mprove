@@ -1,6 +1,5 @@
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
@@ -42,7 +41,7 @@ export function createModelMetrics(
       let timeFieldLabel: string;
       let timeLabel: string;
 
-      if (timeAsName === constants.MF) {
+      if (timeAsName === common.MF) {
         let timeFields: common.FieldAny[] = model.fields.filter(
           mField => mField.groupId === timeFieldName
         );
@@ -74,7 +73,7 @@ export function createModelMetrics(
               [as: string]: { [fieldName: string]: number };
             } = {};
 
-            let asName = constants.MF;
+            let asName = common.MF;
             let fieldName = y.name;
 
             Object.keys(model.fieldsDepsAfterSingles[fieldName]).forEach(

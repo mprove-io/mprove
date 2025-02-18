@@ -1,7 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
@@ -111,7 +110,7 @@ export function checkReportRowParameters(
               let asName = r[1];
               let fieldName = r[2];
 
-              if (asName === constants.MF) {
+              if (asName === common.MF) {
                 let modelField = model.fields.find(
                   mField => mField.name === fieldName
                 );
@@ -241,7 +240,7 @@ export function checkReportRowParameters(
               }
 
               let pResult =
-                asName === constants.MF
+                asName === common.MF
                   ? model.fields.find(mField => mField.name === fieldName)
                       .result
                   : model.joins

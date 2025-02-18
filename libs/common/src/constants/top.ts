@@ -10,6 +10,8 @@ export const MPROVE_CONFIG_DIR_DOT_SLASH = './';
 export const MPROVE_CACHE_DIR = '.mprove';
 export const MPROVE_SYNC_FILENAME = 'sync.json';
 
+export const MF = 'mf';
+
 export const PROD_REPO_ID = 'production';
 export const BRANCH_MASTER = 'master'; // set as string in db default value
 export const BRANCH_MAIN = 'main';

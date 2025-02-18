@@ -1,5 +1,4 @@
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 
 let func = common.FuncEnum.MakeUnsafeSelect;
 
@@ -27,14 +26,14 @@ export function makeUnsafeSelect(item: {
     let fieldName = r[2];
 
     let field: common.FieldAny =
-      asName === constants.MF
+      asName === common.MF
         ? model.fields.find(mField => mField.name === fieldName)
         : model.joins
             .find(j => j.as === asName)
             .view.fields.find(vField => vField.name === fieldName);
 
     if (field.fieldClass === common.FieldClassEnum.Measure) {
-      if (asName !== constants.MF) {
+      if (asName !== common.MF) {
         let joinAggregation = joinAggregations.find(x => x.joinAs === asName);
 
         if (
@@ -83,7 +82,7 @@ export function makeUnsafeSelect(item: {
         }
       }
     } else if (field.fieldClass === common.FieldClassEnum.Calculation) {
-      if (asName !== constants.MF) {
+      if (asName !== common.MF) {
         let view = model.joins.find(j => j.as === asName).view;
 
         Object.keys(view.fieldsDepsAfterSingles[fieldName]).forEach(depName => {

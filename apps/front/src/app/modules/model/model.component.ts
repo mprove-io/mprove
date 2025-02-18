@@ -234,7 +234,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   resultsIsShow = true;
   resultsIsShowTemp = false;
-  sqlIsShow = false;
+  sqlIsShow = true;
 
   dryTimeAgo$ = interval(1000).pipe(
     startWith(0),

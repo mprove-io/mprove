@@ -124,7 +124,7 @@ export function checkModelBuildMetrics(
             let fieldName = r[2];
             let asFieldNameRef = `${asName}.${fieldName}`;
 
-            if (asName === constants.MF) {
+            if (asName === common.MF) {
               let modelField = x.fields.find(
                 mField =>
                   mField.groupId === fieldName &&
