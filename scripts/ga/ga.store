@@ -294,10 +294,10 @@ parameters:
   fraction_controls:
   - selector: ga_property
     label: Property
-    value: 123123123 # $ENV_GA_PROPERTY_ID_1
+    value: 474781769
     options:
-    - value: 456456456 # $ENV_GA_PROPERTY_ID_1
-    - value: 789789789 #$ENV_GA_PROPERTY_ID_2
+    - value: 474781769
+    - value: 123123123
   - switch: cohorts_switch
     label: 'Cohorts Mode'
     value: false

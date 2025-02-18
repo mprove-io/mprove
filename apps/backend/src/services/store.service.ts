@@ -372,107 +372,13 @@ ${inputSub}
       )
     });
 
-    try {
-      // let body = queryStart.apiBody; // TODO:
-      let body = {
-        dateRanges: [
-          {
-            startDate: '7daysAgo',
-            endDate: 'today'
-          }
-        ],
-        dimensions: [
-          {
-            name: 'year' // "2025"
-          },
-          {
-            name: 'yearMonth' // "202501"
-          },
-          {
-            name: 'isoYearIsoWeek' // "202504"
-          },
-          {
-            name: 'yearWeek' // "202505"
-          },
-          {
-            name: 'date' // "20250127"
-          },
-          {
-            name: 'dateHour' // "2025012722"
-          },
-          {
-            name: 'dateHourMinute' // "202501272212"
-          },
-          {
-            name: 'country'
-          },
-          {
-            name: 'city'
-          }
-        ],
-        metrics: [
-          {
-            name: 'activeUsers'
-          },
-          {
-            name: 'sessions'
-          },
-          {
-            name: 'screenPageViews'
-          }
-        ],
-        dimensionFilter: {
-          andGroup: {
-            expressions: [
-              {
-                orGroup: {
-                  expressions: [
-                    {
-                      filter: {
-                        fieldName: 'city',
-                        stringFilter: {
-                          value: 'Helsinki'
-                        }
-                      }
-                    },
-                    {
-                      filter: {
-                        fieldName: 'country',
-                        stringFilter: {
-                          value: 'Finland'
-                        }
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                notExpression: {
-                  filter: {
-                    fieldName: 'city',
-                    stringFilter: {
-                      value: 'Atlanta'
-                    }
-                  }
-                }
-              },
-              {
-                notExpression: {
-                  filter: {
-                    fieldName: 'country',
-                    stringFilter: {
-                      value: 'US'
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        }
-      };
+    // console.log('queryStart');
+    // console.log(queryStart);
 
-      // let url = queryStart.apiUrl // TODO:
-      let url = `https://analyticsdata.googleapis.com/v1beta/properties/474781769:runReport`;
+    try {
+      let body = queryStart.apiBody;
+
+      let url = queryStart.apiUrl;
 
       let headers: any = {};
 
@@ -499,15 +405,18 @@ ${inputSub}
         headers['Content-Type'] = 'application/json';
       }
 
-      // response = // TODO:
-      //   queryStart.apiMethod === common.StoreMethodEnum.Post
-      //     ? await axios.post(url, body, { headers: headers })
-      //     : queryStart.apiMethod === common.StoreMethodEnum.Get
-      //     ? await axios.get(url, body, { headers: headers })
-      //     : { message: 'method must be POST or GET' };
+      response =
+        queryStart.apiMethod === common.StoreMethodEnum.Post
+          ? await axios.post(url, body, { headers: headers })
+          : queryStart.apiMethod === common.StoreMethodEnum.Get
+          ? await axios.get(url, body, { headers: headers })
+          : { message: 'method must be POST or GET' };
 
-      // let data = response.data; // TODO:
+      console.log('response.data');
+      console.log(response.data);
+
       let data: any = [];
+      // let data = response.data || []; // TODO:
 
       let q = await this.db.drizzle.query.queriesTable.findFirst({
         where: and(

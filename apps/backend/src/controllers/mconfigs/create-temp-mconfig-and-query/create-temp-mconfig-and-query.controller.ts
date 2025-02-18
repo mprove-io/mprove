@@ -139,8 +139,8 @@ export class CreateTempMconfigAndQueryController {
         model: model
       });
 
-      console.log('newMconfig:');
-      console.log(newMconfig);
+      // console.log('newMconfig:');
+      // console.log(newMconfig);
 
       // newMconfig.filters.forEach((filter, filterIndex) => {
       //   console.log(`Filter ${filterIndex} fractions:`);
@@ -177,7 +177,7 @@ export class CreateTempMconfigAndQueryController {
 
       let apiUrl = common.isDefined(urlPathResult.errorMessage)
         ? `store.url_path Error: ${urlPathResult.errorMessage}`
-        : `${connection.baseUrl}/${urlPathResult.value}`;
+        : connection.baseUrl + JSON.parse(urlPathResult.value);
 
       let bodyResult = await this.storeService.runUserCode({
         input: (model.content as common.FileStore).body,
@@ -226,6 +226,8 @@ ${apiBody}
 ${urlPathResult.inputSub}
 --- body inputSub
 ${bodyResult.inputSub}
+--- newMconfig
+${JSON.stringify(newMconfig)}
 `,
         apiMethod: (model.content as common.FileStore)
           .method as common.StoreMethodEnum,
