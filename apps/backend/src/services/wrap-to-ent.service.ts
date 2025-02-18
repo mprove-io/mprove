@@ -133,6 +133,8 @@ export class WrapToEntService {
       envId: query.envId,
       connectionId: query.connectionId,
       connectionType: query.connectionType,
+      storeModelId: query.storeModelId,
+      storeStructId: query.storeStructId,
       queryId: query.queryId,
       sql: query.sql,
       apiMethod: query.apiMethod,

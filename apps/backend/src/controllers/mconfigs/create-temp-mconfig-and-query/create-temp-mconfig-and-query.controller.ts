@@ -164,25 +164,27 @@ export class CreateTempMconfigAndQueryController {
         )
       });
 
-      let urlPathResult = await this.storeService.runUserCode({
+      let urlPathResult = await this.storeService.transformStoreRequest({
         input: (model.content as common.FileStore).url_path,
         mconfig: newMconfig,
-        model: model
+        storeModel: model,
+        storeParam: common.ParameterEnum.UrlPath
       });
 
       if (common.isDefined(urlPathResult.errorMessage)) {
         isError = true;
-        errorMessage = `store.url_path Error: ${urlPathResult.errorMessage}`;
+        errorMessage = `store url_path processing Error: ${urlPathResult.errorMessage}`;
       }
 
       let apiUrl = common.isDefined(urlPathResult.errorMessage)
         ? `store.url_path Error: ${urlPathResult.errorMessage}`
         : connection.baseUrl + JSON.parse(urlPathResult.value);
 
-      let bodyResult = await this.storeService.runUserCode({
+      let bodyResult = await this.storeService.transformStoreRequest({
         input: (model.content as common.FileStore).body,
         mconfig: newMconfig,
-        model: model
+        storeModel: model,
+        storeParam: common.ParameterEnum.Body
       });
 
       if (common.isDefined(bodyResult.errorMessage)) {
@@ -190,7 +192,7 @@ export class CreateTempMconfigAndQueryController {
         let errorMessagePrefix = common.isDefined(errorMessage)
           ? `${errorMessage}, `
           : '';
-        errorMessage = `${errorMessagePrefix}store.body Error: ${bodyResult.errorMessage}`;
+        errorMessage = `${errorMessagePrefix}store body processing Error: ${bodyResult.errorMessage}`;
       }
 
       let apiBody = common.isDefined(bodyResult.errorMessage)
@@ -199,6 +201,8 @@ export class CreateTempMconfigAndQueryController {
 
       let queryId = nodeCommon.makeQueryId({
         sql: undefined,
+        storeStructId: struct.structId,
+        storeModelId: model.modelId,
         storeMethod: (model.content as common.FileStore)
           .method as common.StoreMethodEnum,
         storeUrlPath: apiUrl,
@@ -214,6 +218,8 @@ export class CreateTempMconfigAndQueryController {
         projectId: projectId,
         envId: envId,
         connectionId: model.connectionId,
+        storeModelId: model.modelId,
+        storeStructId: model.structId,
         connectionType: (model.content as any).connection.type,
         // sql: undefined,
         sql: `--- method

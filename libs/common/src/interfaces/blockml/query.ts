@@ -21,6 +21,14 @@ export class Query {
   @IsEnum(enums.ConnectionTypeEnum)
   connectionType: enums.ConnectionTypeEnum;
 
+  @IsOptional()
+  @IsString()
+  storeStructId: string;
+
+  @IsOptional()
+  @IsString()
+  storeModelId: string;
+
   @IsString()
   queryId: string;
 

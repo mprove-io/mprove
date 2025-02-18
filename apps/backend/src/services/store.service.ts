@@ -6,6 +6,7 @@ import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
@@ -251,12 +252,13 @@ export class StoreService {
     return newMconfig;
   }
 
-  async runUserCode(item: {
+  async transformStoreRequest(item: {
     input: string;
     mconfig: common.Mconfig;
-    model: common.Model;
+    storeModel: common.Model;
+    storeParam: common.ParameterEnum;
   }): Promise<StoreUserCodeReturn> {
-    let { input, mconfig, model } = item;
+    let { input, mconfig, storeModel, storeParam } = item;
 
     let inputSub = input;
 
@@ -265,11 +267,11 @@ export class StoreService {
 
     let refError;
 
-    let selectedDimensions = (model.content as common.FileStore).fields
+    let selectedDimensions = (storeModel.content as common.FileStore).fields
       .filter(field => field.fieldClass === common.FieldClassEnum.Dimension)
       .filter(f => mconfig.select.indexOf(`${f.group}.${f.name}`) > -1);
 
-    let selectedMeasures = (model.content as common.FileStore).fields
+    let selectedMeasures = (storeModel.content as common.FileStore).fields
       .filter(field => field.fieldClass === common.FieldClassEnum.Measure)
       .filter(f => mconfig.select.indexOf(`${f.group}.${f.name}`) > -1);
 
@@ -282,7 +284,7 @@ export class StoreService {
     mconfig.sortings.forEach(sorting => {
       let orderByElement = {
         fieldId: sorting.fieldId,
-        field: (model.content as common.FileStore).fields.find(
+        field: (storeModel.content as common.FileStore).fields.find(
           field => `${field.group}.${field.name}` === sorting.fieldId
         ),
         desc: sorting.desc
@@ -305,8 +307,6 @@ export class StoreService {
         target = JSON.stringify(mconfig.filters);
       } else if (reference === 'QUERY_LIMIT') {
         target = JSON.stringify(mconfig.limit);
-      } else if (reference === 'UTC_MS_SUFFIX') {
-        target = '__utc_ms';
       } else if (reference === 'METRICS_DATE_FROM') {
         target = '50daysAgo'; // TODO:
       } else if (reference === 'METRICS_DATE_TO') {
@@ -315,18 +315,76 @@ export class StoreService {
         target = 'today'; // TODO:
       } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
         target = 'false'; // TODO:
-        // } else if (reference === 'QUERY_TIMEZONE') {
-        //   target = '...';
-        // } else if (reference === 'QUERY_RESPONSE') {
-        //   target = '...';
-        // } else if (reference === 'QUERY_FIELDS') {
-        //   target = '...';
+      } else if (reference === 'STORE_FIELDS') {
+        target = (storeModel.content as common.FileStore).fields;
+      } else if (reference === 'QUERY_TIMEZONE') {
+        target = mconfig.timezone;
         // } else if (reference === 'ENV_GA_PROPERTY_ID_1') {
         //   target = '...';
         // } else if (reference === 'ENV_GA_PROPERTY_ID_2') {
         //   target = '...';
+      } else if (reference === 'UTC_MS_SUFFIX') {
+        target = common.UTC_MS_SUFFIX;
       } else {
-        refError = `Unknown reference $${reference}`;
+        refError = `Unknown reference in store.${storeParam}: $${reference}`;
+        break;
+      }
+
+      inputSub = common.MyRegex.replaceSRefs(inputSub, reference, target);
+    }
+
+    if (common.isDefined(refError)) {
+      return {
+        value: 'Error',
+        errorMessage: refError,
+        inputSub: inputSub
+      };
+    }
+
+    let userCode = `JSON.stringify((function() {
+${inputSub}
+})())`;
+
+    let userCodeResult = await this.userCodeService.runOnly({
+      userCode: userCode
+    });
+
+    return {
+      value: userCodeResult.outValue,
+      errorMessage: userCodeResult.outError,
+      inputSub: inputSub
+    };
+  }
+
+  async transformStoreResponseData(item: {
+    input: string;
+    storeModel: common.Model;
+    respData: any;
+  }): Promise<StoreUserCodeReturn> {
+    let { input, storeModel, respData } = item;
+
+    let inputSub = input;
+
+    let reg = common.MyRegex.CAPTURE_S_REF();
+    let r;
+
+    let refError;
+
+    while ((r = reg.exec(inputSub))) {
+      let reference = r[1];
+
+      let target: any;
+
+      if (reference === 'RESPONSE_DATA') {
+        target = respData;
+      } else if (reference === 'STORE_FIELDS') {
+        target = (storeModel.content as common.FileStore).fields;
+      } else if (reference === 'UTC_MS_SUFFIX') {
+        target = common.UTC_MS_SUFFIX;
+        // } else if (reference === 'ENV_GA_PROPERTY_ID_1') {
+        //   target = '...';
+      } else {
+        refError = `Unknown reference in store.${common.ParameterEnum.Response}: $${reference}`;
         break;
       }
 
@@ -415,9 +473,6 @@ ${inputSub}
       console.log('response.data');
       console.log(response.data);
 
-      let data: any = [];
-      // let data = response.data || []; // TODO:
-
       let q = await this.db.drizzle.query.queriesTable.findFirst({
         where: and(
           eq(queriesTable.queryId, queryId),
@@ -427,13 +482,49 @@ ${inputSub}
       });
 
       if (common.isDefined(q)) {
-        q.status = common.QueryStatusEnum.Completed;
-        q.queryJobId = undefined; // null;
-        q.data = data;
-        q.lastCompleteTs = makeTsNumber();
-        q.lastCompleteDuration = Math.floor(
-          (Number(q.lastCompleteTs) - Number(q.lastRunTs)) / 1000
-        );
+        if (response.code !== 200 && response.code !== 201) {
+          q.status = common.QueryStatusEnum.Error;
+          q.data = [];
+          q.queryJobId = undefined; // null
+          q.lastErrorMessage = `response code "${response.code}" is not 200 or 201`;
+          q.lastErrorTs = makeTsNumber();
+        } else if (common.isUndefined(response.data)) {
+          q.status = common.QueryStatusEnum.Error;
+          q.data = [];
+          q.queryJobId = undefined; // null
+          q.lastErrorMessage = `response has no data`;
+          q.lastErrorTs = makeTsNumber();
+        } else {
+          let model = await this.db.drizzle.query.modelsTable.findFirst({
+            where: and(
+              eq(queriesTable.projectId, projectId),
+              eq(modelsTable.structId, q.storeStructId),
+              eq(modelsTable.modelId, q.storeModelId)
+            )
+          });
+
+          let dataResult = await this.transformStoreResponseData({
+            input: (model.content as common.FileStore).response,
+            storeModel: model,
+            respData: response.data
+          });
+
+          if (common.isDefined(dataResult.errorMessage)) {
+            q.status = common.QueryStatusEnum.Error;
+            q.data = [];
+            q.queryJobId = undefined; // null
+            q.lastErrorMessage = `store response data processing Error: ${dataResult.errorMessage}`;
+            q.lastErrorTs = makeTsNumber();
+          } else {
+            q.status = common.QueryStatusEnum.Completed;
+            q.queryJobId = undefined; // null;
+            q.data = dataResult.value || [];
+            q.lastCompleteTs = makeTsNumber();
+            q.lastCompleteDuration = Math.floor(
+              (Number(q.lastCompleteTs) - Number(q.lastRunTs)) / 1000
+            );
+          }
+        }
 
         await retry(
           async () =>

@@ -32,9 +32,11 @@ export function wrapTiles(item: {
 
     let queryId = nodeCommon.makeQueryId({
       sql: tile.sql,
+      storeStructId: undefined, // TODO: check
+      storeModelId: undefined, // TODO: check
       storeMethod: undefined, // TODO: check
-      storeUrlPath: undefined,
-      storeBody: undefined,
+      storeUrlPath: undefined, // TODO: check
+      storeBody: undefined, // TODO: check
       orgId: orgId,
       projectId: projectId,
       connectionId: model.connection.connectionId,
@@ -47,6 +49,8 @@ export function wrapTiles(item: {
       envId: envId,
       connectionId: model.connection.connectionId,
       connectionType: model.connection.type,
+      storeModelId: tile.model,
+      storeStructId: structId,
       sql: tile.sql.join('\n'),
       apiMethod: undefined,
       apiUrl: undefined,

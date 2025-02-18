@@ -83,6 +83,8 @@ export class ProcessQueryService {
 
     let queryId = nodeCommon.makeQueryId({
       sql: sql,
+      storeStructId: undefined,
+      storeModelId: undefined,
       storeMethod: undefined,
       storeUrlPath: undefined,
       storeBody: undefined,
@@ -98,6 +100,8 @@ export class ProcessQueryService {
       envId: envId,
       connectionId: model.connection.connectionId,
       connectionType: model.connection.type,
+      storeModelId: undefined,
+      storeStructId: undefined,
       sql: sql.join('\n'),
       apiMethod: undefined,
       apiUrl: undefined,
