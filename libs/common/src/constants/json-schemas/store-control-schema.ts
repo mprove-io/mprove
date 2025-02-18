@@ -9,6 +9,9 @@ export const STORE_CONTROL_SCHEMA: JSONSchema7 = {
     input: {
       type: 'string'
     },
+    list_input: {
+      type: 'string'
+    },
     switch: {
       type: 'string'
     },
@@ -21,11 +24,14 @@ export const STORE_CONTROL_SCHEMA: JSONSchema7 = {
     value: {
       type: ['string', 'number', 'boolean']
     },
+    values: {
+      type: 'array',
+      items: {
+        type: ['string', 'number', 'boolean']
+      }
+    },
     label: {
       type: 'string'
-    },
-    is_array: {
-      type: 'boolean'
     },
     show_if: {
       type: 'string'

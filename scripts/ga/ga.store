@@ -6,7 +6,7 @@ access_users: []
 access_roles: []
 method: POST
 url_path: |
-  let propertyId = $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.top_config')?.fractions[0].controls.ga_property.value;
+  let propertyId = $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.top_config')?.fractions[0].controls.find(control => control.name === 'ga_property')?.value;
   return `/v1beta/properties/${propertyId}:runReport`;
 body: |
   let orderByElements = [];
@@ -45,8 +45,8 @@ body: |
           fieldName: filter.field.meta.name,
           stringFilter: {
             matchType: fraction.meta.match_type,
-            value: fraction.controls.find(x => x['input'] === 'value_input').value,
-            caseSensitive: fraction.controls.find(x => x['switch'] === 'case_sensitive_switch').value
+            value: fraction.controls.find(control => control['name'] === 'value_input')?.value,
+            caseSensitive: fraction.controls.find(control => control['name'] === 'case_sensitive_switch')?.value
           }
         }
       }
@@ -55,8 +55,8 @@ body: |
         apiFilter = {
           fieldName: filter.field.meta.name,
           inListFilter: {
-            values: fraction.controls.find(x => x['input'] === 'inListInput').values,
-            caseSensitive: fraction.controls.find(x => x['switch'] === 'case_sensitive_switch').value
+            values: fraction.controls.find(control => control['name'] === 'values_input')?.values,
+            caseSensitive: fraction.controls.find(control => control['name'] === 'case_sensitive_switch')?.value
           }
         }
       }
@@ -66,7 +66,7 @@ body: |
           fieldName: filter.field.meta.name,
           numericFilter: {
             operation: fraction.meta.operation,
-            value: fraction.controls.find(x => x['input'] === 'value_input').value
+            value: fraction.controls.find(control => control['name'] === 'value_input')?.value
           }
         }
       }
@@ -75,8 +75,8 @@ body: |
         apiFilter = {
           fieldName: filter.field.meta.name,
           betweenFilter: {
-            fromValue: fraction.controls.find(x => x['input'] === 'value_from_input').value,
-            toValue: fraction.controls.find(x => x['input'] === 'value_to_input').value,
+            fromValue: fraction.controls.find(control => control['name'] === 'value_from_input')?.value,
+            toValue: fraction.controls.find(control => control['name'] === 'value_to_input')?.value,
           }
         }
       } 
@@ -109,7 +109,7 @@ body: |
     });
   });
 
-  let isCohortsEnabled = $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.top_config')?.fractions[0].controls.cohorts_switch.value;
+  let isCohortsEnabled = $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.top_config')?.fractions[0].controls.find(control => control.name === 'cohorts_switch')?.value;
 
   let dateRanges;
   let cohortSpec;
@@ -121,8 +121,8 @@ body: |
       let cohort = {
         dimension: "firstSessionDate",
         dateRange: {
-          startDate: fraction.controls.start_date.value,
-          endDate: fraction.controls.end_date.value
+          startDate: fraction.controls.find(control => control.name === 'start_date')?.value,
+          endDate: fraction.controls.find(control => control.name === 'end_date')?.value
         }
       }
       cohorts.push(cohort);
@@ -131,15 +131,15 @@ body: |
     cohortSpec = {
       cohorts: cohorts,
       cohortsRange: {
-        granularity: $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.top_config')?.fractions[0].controls.granularity.value,
-        startOffset: $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.top_config')?.fractions[0].controls.start_offset.value,
-        endOffset: $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.top_config')?.fractions[0].controls.end_offset.value,
+        granularity: $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.top_config')?.fractions[0].controls.find(control => control.name === 'granularity')?.value,
+        startOffset: $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.top_config')?.fractions[0].controls.find(control => control.name === 'start_offset')?.value,
+        endOffset: $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.top_config')?.fractions[0].controls.find(control => control.name === 'end_offset')?.value,
       }
     };
   } else {
     dateRanges = [{
-      startDate: $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.date_range')?.fractions[0].controls.start_date.value,
-      endDate: $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.date_range')?.fractions[0].controls.end_date.value
+      startDate: $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.date_range')?.fractions[0].controls.find(control => control.name === 'start_date')?.value,
+      endDate: $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.date_range')?.fractions[0].controls.find(control => control.name === 'end_date')?.value
     }]
   }
 
@@ -469,8 +469,7 @@ results:
       match_type: IN_LIST
       filter_type: inListFilter
     controls:
-    - input: value_input
-      is_array: true  # default false
+    - list_input: values_input
     - switch: case_sensitive_switch
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE

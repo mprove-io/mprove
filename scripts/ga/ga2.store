@@ -50,14 +50,15 @@ QUERY_PARAMETERS:
     controls:
     - 
       # name: string
-      # controlClass: input | switch | selector | date_picker
+      # controlClass: list_input | input | switch | selector | date_picker
       input: string # id
+      list_input: string[] # id
       switch: string # id
       selector: string # id
       date_picker: string # id
       value: string
+      values: string[]
       label: string
-      is_array: string # boolean
       show_if: string
       required: string # boolean
       options: 

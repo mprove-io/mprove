@@ -1,11 +1,14 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 import { FractionControlOption } from './fraction-control-option';
 
 export class FractionControl {
   @IsString()
   input: string;
+
+  @IsString()
+  listInput: string;
 
   @IsString()
   switch: string;
@@ -25,9 +28,6 @@ export class FractionControl {
 
   @IsString()
   label: string;
-
-  @IsBoolean()
-  isArray: boolean;
 
   @IsString()
   showIf: string;

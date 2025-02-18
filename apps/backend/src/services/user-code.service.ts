@@ -21,7 +21,7 @@ export class UserCodeService {
       // console.log(error);
       // console.log('error.message:');
       // console.log(error.message);
-      return { outError: error.message };
+      return { outError: `${error.message}\n${error.stack}` };
     } finally {
       if (isolate.isDisposed === false) {
         isolate.dispose();

@@ -50,20 +50,20 @@ export function checkStoreFractionControls(
         if (
           [
             common.ParameterEnum.Input.toString(),
+            common.ParameterEnum.ListInput.toString(),
             common.ParameterEnum.Switch.toString(),
             common.ParameterEnum.DatePicker.toString(),
             common.ParameterEnum.Selector.toString(),
             common.ParameterEnum.Options.toString(),
             common.ParameterEnum.Value.toString(),
             common.ParameterEnum.Label.toString(),
-            common.ParameterEnum.IsArray.toString(),
             common.ParameterEnum.ShowIf.toString()
           ].indexOf(parameter) < 0
         ) {
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.UNKNOWN_CONTROLS_ELEMENT_PARAMETER,
-              message: `parameter "${parameter}" can not be used in ${common.ParameterEnum.FractionTypes} element`,
+              message: `parameter "${parameter}" can not be used in ${common.ParameterEnum.FractionTypes} element controls`,
               lines: [
                 {
                   line: control[
@@ -189,50 +189,11 @@ export function checkStoreFractionControls(
         );
       }
 
-      if (
-        common.isDefined(control.is_array) &&
-        common.isUndefined(control.input)
-      ) {
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.IS_ARRAY_WITHOUT_INPUT,
-            message: `parameter "${common.ParameterEnum.IsArray}" can only be used with input control`,
-            lines: [
-              {
-                line: control.is_array_line_num,
-                name: item.fileName,
-                path: item.filePath
-              }
-            ]
-          })
-        );
-        return;
-      }
-
-      if (
-        common.isDefined(control.is_array) &&
-        !control.is_array.match(common.MyRegex.TRUE_FALSE())
-      ) {
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.WRONG_IS_ARRAY,
-            message: `parameter "${common.ParameterEnum.IsArray}" must be 'true' or 'false' if specified`,
-            lines: [
-              {
-                line: control.is_array_line_num,
-                name: item.fileName,
-                path: item.filePath
-              }
-            ]
-          })
-        );
-        return;
-      }
-
       let declarations: string[] = Object.keys(control).filter(
         d =>
           [
             common.ParameterEnum.Input.toString(),
+            common.ParameterEnum.ListInput.toString(),
             common.ParameterEnum.Switch.toString(),
             common.ParameterEnum.DatePicker.toString(),
             common.ParameterEnum.Selector.toString()

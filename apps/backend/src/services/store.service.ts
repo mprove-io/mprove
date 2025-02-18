@@ -226,15 +226,13 @@ export class StoreService {
             if (common.isUndefined(selectedControl)) {
               let newControl: common.FractionControl = {
                 input: storeFractionControl.input,
+                listInput: storeFractionControl.list_input,
                 switch: storeFractionControl.switch,
                 datePicker: storeFractionControl.date_picker,
                 selector: storeFractionControl.selector,
                 options: storeFractionControl.options,
                 value: storeFractionControl.value,
                 label: storeFractionControl.label,
-                isArray: common.toBooleanFromLowercaseString(
-                  storeFractionControl.is_array
-                ),
                 showIf: storeFractionControl.show_if,
                 required: storeFractionControl.required,
                 name: storeFractionControl.name,

@@ -5,6 +5,9 @@ export interface FileStoreFractionControl {
   input?: string;
   input_line_num?: number;
 
+  list_input?: string;
+  list_input_line_num?: number;
+
   switch?: string;
   switch_line_num?: number;
 
@@ -22,9 +25,6 @@ export interface FileStoreFractionControl {
 
   label?: string;
   label_line_num?: number;
-
-  is_array?: string; // boolean
-  is_array_line_num?: number;
 
   show_if?: string;
   show_if_line_num?: number;

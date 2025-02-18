@@ -63,10 +63,10 @@ export enum ParameterEnum {
   Select = 'select',
 
   Input = 'input',
+  ListInput = 'list_input',
   Switch = 'switch',
   DatePicker = 'date_picker',
   Selector = 'selector',
-  IsArray = 'is_array',
   Value = 'value',
 
   Relationship = 'relationship',
