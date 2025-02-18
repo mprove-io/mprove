@@ -15,6 +15,12 @@ let retry = require('async-retry');
 let axios = require('axios');
 const { JWT } = require('google-auth-library');
 
+export interface StoreUserCodeReturn {
+  value: string;
+  errorMessage: string;
+  inputSub: string;
+}
+
 @Injectable()
 export class StoreService {
   constructor(
@@ -251,7 +257,7 @@ export class StoreService {
     input: string;
     mconfig: common.Mconfig;
     model: common.Model;
-  }) {
+  }): Promise<StoreUserCodeReturn> {
     let { input, mconfig, model } = item;
 
     let inputSub = input;
@@ -303,6 +309,14 @@ export class StoreService {
         target = JSON.stringify(mconfig.limit);
       } else if (reference === 'UTC_MS_SUFFIX') {
         target = '__utc_ms';
+      } else if (reference === 'METRICS_DATE_FROM') {
+        target = '50daysAgo'; // TODO:
+      } else if (reference === 'METRICS_DATE_TO') {
+        target = 'today'; // TODO:
+      } else if (reference === 'DATE_TODAY') {
+        target = 'today'; // TODO:
+      } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
+        target = 'false'; // TODO:
         // } else if (reference === 'QUERY_TIMEZONE') {
         //   target = '...';
         // } else if (reference === 'QUERY_RESPONSE') {
@@ -312,14 +326,6 @@ export class StoreService {
         // } else if (reference === 'ENV_GA_PROPERTY_ID_1') {
         //   target = '...';
         // } else if (reference === 'ENV_GA_PROPERTY_ID_2') {
-        //   target = '...';
-        // } else if (reference === 'METRICS_DATE_FROM') {
-        //   target = '...';
-        // } else if (reference === 'METRICS_DATE_TO') {
-        //   target = '...';
-        // } else if (reference === 'DATE_TODAY') {
-        //   target = '...';
-        // } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
         //   target = '...';
       } else {
         refError = `Unknown reference $${reference}`;
@@ -332,21 +338,22 @@ export class StoreService {
     if (common.isDefined(refError)) {
       return {
         value: 'Error',
-        errorMessage: refError
+        errorMessage: refError,
+        inputSub: inputSub
       };
     }
 
-    let urlPathUserCode = `JSON.stringify((function() {
+    let userCode = `JSON.stringify((function() {
 ${inputSub}
 })())`;
 
-    let urlPathRs = await this.userCodeService.runOnly({
-      userCode: urlPathUserCode
+    let userCodeResult = await this.userCodeService.runOnly({
+      userCode: userCode
     });
 
     return {
-      value: urlPathRs.outValue,
-      error: urlPathRs.outError,
+      value: userCodeResult.outValue,
+      errorMessage: userCodeResult.outError,
       inputSub: inputSub
     };
   }

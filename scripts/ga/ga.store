@@ -6,7 +6,7 @@ access_users: []
 access_roles: []
 method: POST
 url_path: |
-  let propertyId = $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config')?.fractions[0].controls.ga_property.value;
+  let propertyId = $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.top_config')?.fractions[0].controls.ga_property.value;
   return `/v1beta/properties/${propertyId}:runReport`;
 body: |
   let orderByElements = [];
@@ -109,7 +109,7 @@ body: |
     });
   });
 
-  let isCohortsEnabled = $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config')?.fractions[0].controls.cohorts_switch.value;
+  let isCohortsEnabled = $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.top_config')?.fractions[0].controls.cohorts_switch.value;
 
   let dateRanges;
   let cohortSpec;
@@ -117,7 +117,7 @@ body: |
   if (isCohortsEnabled === true) {
     let cohorts = [];
 
-    $QUERY_PARAMETERS.find(x => x['filter'] === 'cohorts_config')?.fractions.forEach(fraction => {
+    $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.cohorts_config')?.fractions.forEach(fraction => {
       let cohort = {
         dimension: "firstSessionDate",
         dateRange: {
@@ -131,15 +131,15 @@ body: |
     cohortSpec = {
       cohorts: cohorts,
       cohortsRange: {
-        granularity: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config')?.fractions[0].controls.granularity.value,
-        startOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config')?.fractions[0].controls.start_offset.value,
-        endOffset: $QUERY_PARAMETERS.find(x => x['filter'] === 'top_config')?.fractions[0].controls.end_offset.value,
+        granularity: $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.top_config')?.fractions[0].controls.granularity.value,
+        startOffset: $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.top_config')?.fractions[0].controls.start_offset.value,
+        endOffset: $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.top_config')?.fractions[0].controls.end_offset.value,
       }
     };
   } else {
     dateRanges = [{
-      startDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range')?.fractions[0].controls.start_date.value,
-      endDate: $QUERY_PARAMETERS.find(x => x['filter'] === 'date_range')?.fractions[0].controls.end_date.value
+      startDate: $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.date_range')?.fractions[0].controls.start_date.value,
+      endDate: $QUERY_PARAMETERS.find(x => x['fieldId'] === 'mf.date_range')?.fractions[0].controls.end_date.value
     }]
   }
 
