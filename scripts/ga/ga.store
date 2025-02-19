@@ -478,6 +478,9 @@ results:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
+build_metrics:
+- time: event_time
+
 field_groups:
 - group: geo
 - group: events
@@ -491,11 +494,7 @@ field_groups:
 - time_group: event_time
   label: 'Event Time'
 
-build_metrics:
-- time: event_time
-
 fields:
-
 # Measures
 
 - measure: active_users
