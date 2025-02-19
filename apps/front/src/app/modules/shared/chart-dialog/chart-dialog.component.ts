@@ -178,8 +178,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
                 this.qData =
                   this.mconfig.queryId === this.query.queryId
                     ? this.dataService.makeQData({
-                        data: this.query.data,
-                        columns: this.mconfig.fields
+                        query: this.query,
+                        mconfigFields: this.mconfig.fields
                       })
                     : [];
               }
@@ -251,8 +251,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
                     this.qData =
                       this.mconfig.queryId === this.query.queryId
                         ? this.dataService.makeQData({
-                            data: this.query.data,
-                            columns: this.mconfig.fields
+                            query: this.query,
+                            mconfigFields: this.mconfig.fields
                           })
                         : [];
 
@@ -516,8 +516,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
                 this.qData =
                   this.mconfig.queryId === this.query.queryId
                     ? this.dataService.makeQData({
-                        data: this.query.data,
-                        columns: this.mconfig.fields
+                        query: this.query,
+                        mconfigFields: this.mconfig.fields
                       })
                     : [];
 
@@ -561,8 +561,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
               this.qData =
                 this.mconfig.queryId === this.query.queryId
                   ? this.dataService.makeQData({
-                      data: this.query.data,
-                      columns: this.mconfig.fields
+                      query: this.query,
+                      mconfigFields: this.mconfig.fields
                     })
                   : [];
 

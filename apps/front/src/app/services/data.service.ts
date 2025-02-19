@@ -105,13 +105,39 @@ export class DataService {
     }
   }
 
-  makeQData(item: { data: SourceDataRow[]; columns: common.MconfigField[] }) {
-    let { data, columns } = item;
+  makeQData(item: {
+    query: common.Query;
+    mconfigFields: common.MconfigField[];
+  }) {
+    let { query, mconfigFields } = item;
+
+    // ---query data row
+    // time.date: "20250126"
+    // time.date___utc_ms: 1737849600000
+
+    // ---mconfigField
+    // description: "The date of the event, formatted as YYYYMMDD"
+    // fieldClass: "dimension"
+    // hidden: false
+    // id: "time.date"
+    // isHideColumn: false
+    // label: "Date"
+    // result: "string"
+    // sorting: {fieldId: 'time.date', desc: false}
+    // sortingNumber: 0
+    // sqlName: "time_date"
+    // topId: "time"
+    // topLabel: "time"
+    // type: "custom"
+
+    let data: SourceDataRow[] = query.data;
+    let isStore = common.isDefined(query.storeModelId);
 
     // console.log('data');
     // console.log(data);
+
     // console.log('columns');
-    // console.log(columns);
+    // console.log(mconfigFields);
 
     if (common.isUndefined(data)) {
       return [];
@@ -124,17 +150,24 @@ export class DataService {
 
       Object.keys(row)
         .filter(k => k !== NO_FIELDS_SELECTED)
+        .filter(k => !k.endsWith(common.UTC_MS_SUFFIX))
         .forEach(key => {
           let value = row[key];
 
           let fieldId = key.toLowerCase();
 
-          let field = columns.find(x => x.sqlName === fieldId);
+          let field = mconfigFields.find(
+            x => (isStore === true ? x.id : x.sqlName) === fieldId
+          );
+
+          let sqlName = field.sqlName;
 
           let tsValue: number;
 
-          if (field.result === common.FieldResultEnum.Ts) {
-            let tsValueFn = this.getTsValueFn(field.sqlName);
+          if (common.isDefined(row[field.id + common.UTC_MS_SUFFIX])) {
+            tsValue = row[field.id + common.UTC_MS_SUFFIX] as unknown as number;
+          } else if (field.result === common.FieldResultEnum.Ts) {
+            let tsValueFn = this.getTsValueFn(sqlName);
 
             tsValue = common.isDefined(tsValueFn)
               ? tsValueFn(value).getTime()
@@ -148,7 +181,10 @@ export class DataService {
               ? 'NULL'
               : common.isDefined(tsValue)
               ? common.formatTsUnix({
-                  timeSpec: this.getTimeSpecByFieldSqlName(field.sqlName),
+                  timeSpec:
+                    isStore === true
+                      ? common.TimeSpecEnum.Days
+                      : this.getTimeSpecByFieldSqlName(sqlName),
                   unixTimeZoned: tsValue / 1000
                 })
               : this.formatValue({
@@ -160,7 +196,7 @@ export class DataService {
                 })
           };
 
-          r[key.toLowerCase()] = cell;
+          r[sqlName] = cell;
         });
 
       qData.push(r);

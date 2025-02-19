@@ -173,8 +173,8 @@ body: |
   }
 
   let body = {
-    dimensions: $QUERY_SELECTED_DIMENSIONS.map(x => ({ name: x.name })),
-    metrics: $QUERY_SELECTED_MEASURES.map(x => ({ name: x.name })),
+    dimensions: $QUERY_SELECTED_DIMENSIONS.map(x => ({ name: x.meta['name'] })), 
+    metrics: $QUERY_SELECTED_MEASURES.map(x => ({ name: x.meta['name'] })),
     dateRanges: dateRanges,
     dimensionFilter: (dimOrExpressions.length > 0 || dimAndNotExpressions.length > 0)
       ? {
@@ -213,6 +213,7 @@ response: |
     
     row.dimensionValues?.forEach((dimension, index) => {
       let dimensionName = dimensionHeaders[index];
+      let value = dimension.value;
       let date;
 
       if (dimensionName === 'year') {
@@ -268,19 +269,20 @@ response: |
       if (!!storeField) {
         let fieldId = storeField.group + '.' + storeField.name;
         if (!!date) {
-          let fieldIdUTC = fieldId + $UTC_MS_SUFFIX;
+          let fieldIdUTC = fieldId + '$UTC_MS_SUFFIX';
           newRow[fieldIdUTC] = date.getTime();
         }
-        newRow[fieldId] = dimension.value;
+        newRow[fieldId] = value;
       }
     });
     
     row.metricValues?.forEach((metric, index) => {
       let metricName = metricHeaders[index];
+      let value = metric.value;
       let storeField = $STORE_FIELDS.find(x => !!x.meta && x.meta['name'] === metricName);
       if (!!storeField) {
         let fieldId = storeField.group + '.' + storeField.name;
-        newRow[fieldId] = metric.value;
+        newRow[fieldId] = value;
       }
     });
     

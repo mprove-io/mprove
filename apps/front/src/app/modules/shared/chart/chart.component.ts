@@ -127,8 +127,8 @@ export class ChartComponent implements OnInit, OnDestroy {
     this.qData =
       mconfig.queryId === query.queryId
         ? this.dataService.makeQData({
-            data: query.data,
-            columns: mconfig.fields
+            query: query,
+            mconfigFields: mconfig.fields
           })
         : [];
 
@@ -306,8 +306,8 @@ export class ChartComponent implements OnInit, OnDestroy {
     this.qData =
       this.mconfig.queryId === this.query.queryId
         ? this.dataService.makeQData({
-            data: this.query.data,
-            columns: this.mconfig.fields
+            query: this.query,
+            mconfigFields: this.mconfig.fields
           })
         : [];
 

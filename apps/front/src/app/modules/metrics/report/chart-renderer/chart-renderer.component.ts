@@ -93,8 +93,8 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
       let qData =
         this.params.data.mconfig.queryId === this.params.data.query.queryId
           ? this.dataService.makeQData({
-              data: this.params.data.query.data,
-              columns: this.params.data.mconfig.fields
+              query: this.params.data.query,
+              mconfigFields: this.params.data.mconfig.fields
             })
           : [];
 

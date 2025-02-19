@@ -325,8 +325,6 @@ export class StoreService {
         //   target = '...';
         // } else if (reference === 'ENV_GA_PROPERTY_ID_2') {
         //   target = '...';
-      } else if (reference === 'UTC_MS_SUFFIX') {
-        target = common.UTC_MS_SUFFIX;
       } else {
         refError = `Unknown reference in store.${storeParam}: $${reference}`;
         break;
@@ -485,8 +483,16 @@ ${inputSub}
           ? await axios.get(url, body, { headers: headers })
           : { message: 'method must be POST or GET' };
 
-      console.log('response.data');
-      console.log(response.data);
+      // console.log('response.data');
+      // console.log(response.data);
+
+      // console.log('response.data.rows');
+      // console.log(response.data.rows);
+
+      // console.log('response.data.rows[0]');
+      // console.log(
+      //   response.data.rows.length > 0 ? response.data.rows[0] : undefined
+      // );
 
       let q = await this.db.drizzle.query.queriesTable.findFirst({
         where: and(
@@ -555,6 +561,9 @@ ${inputSub}
         );
       }
     } catch (e: any) {
+      // console.log('errr:');
+      // console.log(e);
+
       let q = await this.db.drizzle.query.queriesTable.findFirst({
         where: and(
           eq(queriesTable.queryId, queryId),
@@ -567,7 +576,9 @@ ${inputSub}
         q.status = common.QueryStatusEnum.Error;
         q.data = [];
         q.queryJobId = undefined; // null
-        q.lastErrorMessage = e.message;
+        q.lastErrorMessage = common.isDefined(e?.response?.data)
+          ? e.message + JSON.stringify(e?.response?.data)
+          : e.message;
         q.lastErrorTs = makeTsNumber();
 
         await retry(
