@@ -488,60 +488,14 @@ field_groups:
   label: Cohorts
   show_if: top_config.cohorts_switch.true
 
-field_time_groups:
-- time_group: event_created_at
-  label: 'Event Created At'
+field_time_groups: # TODO: check
+- time: event_created_at # TODO: check
+  label: 'Event Created At' # TODO: check
 
 build_metrics:
-- time: event_created_at
+- time: event_created_at # TODO: check is part of field_time_groups
 
-fields:
-# Measures
-
-- measure: active_users
-  result: number
-  group: users
-  description: 'The number of distinct users who visited your site or app'
-  meta:
-    name: activeUsers
-    type: TYPE_INTEGER
-
-- measure: sessions
-  result: number
-  group: sessions
-  description: 'The number of sessions that began on your site or app (event triggered: session_start)'
-  meta:
-    name: sessions
-    type: TYPE_INTEGER
-
-- measure: screen_page_views
-  result: number
-  group: page_screens
-  description: 'The number of app screens or web pages your users viewed. Repeated views of a single page or screen are counted. (screen_view + page_view events)'
-  meta:
-    name: screenPageViews
-    type: TYPE_INTEGER
-
-## Cohort Measures
-
-- measure: cohort_active_users
-  label: 'Cohort active users'
-  result: number
-  group: cohorts
-  description: 'The number of users in the cohort who are active in the time window corresponding to the cohort nth day/week/month. For example in the row where cohortNthWeek = 0001, this metric is the number of users (in the cohort) who are active in week 1'
-  meta:
-    name: cohortActiveUsers
-    type: TYPE_INTEGER
-
-- measure: cohort_total_users
-  label: 'Cohort total users'
-  result: number
-  group: cohorts
-  description: "The total number of users in the cohort. This metric is the same value in every row of the report for each cohort. Because cohorts are defined by a shared acquisition date, cohortTotalUsers is the same as cohortActiveUsers for the cohort's selection date range. For report rows later than the cohort's selection range, it is typical for cohortActiveUsers to be smaller than cohortTotalUsers. This difference represents users from the cohort that were not active for the later date. cohortTotalUsers is commonly used in the metric expression cohortActiveUsers/cohortTotalUsers to compute a user retention fraction for the cohort. The relationship between activeUsers and totalUsers is not equivalent to the relationship between cohortActiveUsers and cohortTotalUsers"
-  meta:
-    name: cohortTotalUsers
-    type: TYPE_INTEGER    
-
+fields:    
 # Dimensions
 
 - dimension: country
@@ -564,8 +518,8 @@ fields:
   label: 'Year'
   result: string
   group: events
-  time_group: event_created_at
-  detail: years
+  time_group: event_created_at # TODO: check - is part of field_time_groups
+  detail: years # TODO: check - time_group and detail pair is unique across fields
   description: 'The four-digit year of the event. For example, 2020 or 2024'
   meta:
     name: year
@@ -779,4 +733,50 @@ fields:
   description: 'Month offset relative to the firstSessionDate for the users in the cohort. Month boundaries align with calendar month boundaries. For example, if a cohort is selected with the start and end date in March 2020, then for any date in April 2020, cohortNthMonth will be 0001'
   meta:
     name: cohortNthMonth
+
+# Measures
+
+- measure: active_users
+  result: number
+  group: users
+  description: 'The number of distinct users who visited your site or app'
+  meta:
+    name: activeUsers
+    type: TYPE_INTEGER
+
+- measure: sessions
+  result: number
+  group: sessions
+  description: 'The number of sessions that began on your site or app (event triggered: session_start)'
+  meta:
+    name: sessions
+    type: TYPE_INTEGER
+
+- measure: screen_page_views
+  result: number
+  group: page_screens
+  description: 'The number of app screens or web pages your users viewed. Repeated views of a single page or screen are counted. (screen_view + page_view events)'
+  meta:
+    name: screenPageViews
+    type: TYPE_INTEGER
+
+## Cohort Measures
+
+- measure: cohort_active_users
+  label: 'Cohort active users'
+  result: number
+  group: cohorts
+  description: 'The number of users in the cohort who are active in the time window corresponding to the cohort nth day/week/month. For example in the row where cohortNthWeek = 0001, this metric is the number of users (in the cohort) who are active in week 1'
+  meta:
+    name: cohortActiveUsers
+    type: TYPE_INTEGER
+
+- measure: cohort_total_users
+  label: 'Cohort total users'
+  result: number
+  group: cohorts
+  description: "The total number of users in the cohort. This metric is the same value in every row of the report for each cohort. Because cohorts are defined by a shared acquisition date, cohortTotalUsers is the same as cohortActiveUsers for the cohort's selection date range. For report rows later than the cohort's selection range, it is typical for cohortActiveUsers to be smaller than cohortTotalUsers. This difference represents users from the cohort that were not active for the later date. cohortTotalUsers is commonly used in the metric expression cohortActiveUsers/cohortTotalUsers to compute a user retention fraction for the cohort. The relationship between activeUsers and totalUsers is not equivalent to the relationship between cohortActiveUsers and cohortTotalUsers"
+  meta:
+    name: cohortTotalUsers
+    type: TYPE_INTEGER
 
