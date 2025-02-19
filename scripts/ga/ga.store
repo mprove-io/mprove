@@ -478,22 +478,21 @@ results:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
-field_times:
-- time: event_time
+field_groups:
+- group: geo
+- group: events
+- group: users
+- group: sessions
+- group: page_screens
+- group: cohorts
+  label: Cohorts
+  show_if: top_config.cohorts_switch.true
+
+- time_group: event_time
   label: 'Event Time'
 
 build_metrics:
 - time: event_time
-
-field_groups:
-- group: geo
-- group: events
-- group: cohorts
-  label: Cohorts
-  show_if: top_config.cohorts_switch.true
-- group: users
-- group: sessions
-- group: page_screens
 
 fields:
 
@@ -565,7 +564,7 @@ fields:
   label: 'Year'
   result: string
   group: events
-  frame_of_time: event_time
+  time_group: event_time
   detail: years
   description: 'The four-digit year of the event. For example, 2020 or 2024'
   meta:
@@ -575,7 +574,7 @@ fields:
   label: 'Year month'
   result: string
   group: events
-  frame_of_time: event_time
+  time_group: event_time
   detail: months
   description: 'The combined values of year and month. Example values include 202212 or 202301'
   meta:
@@ -585,7 +584,7 @@ fields:
   label: 'ISO week of ISO year'
   result: string
   group: events
-  frame_of_time: event_time
+  time_group: event_time
   detail: weeksMonday
   description: 'The combined values of isoWeek and isoYear. Example values include 201652 & 201701'
   meta:
@@ -595,7 +594,7 @@ fields:
   label: 'Year week'
   result: string
   group: events
-  frame_of_time: event_time
+  time_group: event_time
   detail: weeksSunday
   description: 'The combined values of year and week. Example values include 202253 or 202301'
   meta:
@@ -604,7 +603,7 @@ fields:
 - dimension: date # "20250127"
   result: string
   group: events
-  frame_of_time: event_time
+  time_group: event_time
   detail: days
   description: 'The date of the event, formatted as YYYYMMDD'
   meta:
@@ -614,7 +613,7 @@ fields:
   label: 'Date hour (YYYYMMDDHH)'
   result: string
   group: events
-  frame_of_time: event_time
+  time_group: event_time
   detail: hours
   description: 'The combined values of date and hour formatted as YYYYMMDDHH'
   meta:
@@ -623,8 +622,8 @@ fields:
 - dimension: date_hour_minute # "202501272212"
   label: 'Date hour and minute'
   result: string
-  group: events
-  frame_of_time: event_time
+  field_group: events
+  time_group: event_time
   detail: minutes
   description: 'The combined values of date, hour, and minute formatted as YYYYMMDDHHMM'
   meta:
