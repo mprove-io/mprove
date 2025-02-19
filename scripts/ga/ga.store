@@ -478,9 +478,6 @@ results:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
-build_metrics:
-- time: event_time
-
 field_groups:
 - group: geo
 - group: events
@@ -491,8 +488,12 @@ field_groups:
   label: Cohorts
   show_if: top_config.cohorts_switch.true
 
-- time_group: event_time
-  label: 'Event Time'
+field_time_groups:
+- time_group: event_created_at
+  label: 'Event Created At'
+
+build_metrics:
+- time: event_created_at
 
 fields:
 # Measures
@@ -563,7 +564,7 @@ fields:
   label: 'Year'
   result: string
   group: events
-  time_group: event_time
+  time_group: event_created_at
   detail: years
   description: 'The four-digit year of the event. For example, 2020 or 2024'
   meta:
@@ -573,7 +574,7 @@ fields:
   label: 'Year month'
   result: string
   group: events
-  time_group: event_time
+  time_group: event_created_at
   detail: months
   description: 'The combined values of year and month. Example values include 202212 or 202301'
   meta:
@@ -583,7 +584,7 @@ fields:
   label: 'ISO week of ISO year'
   result: string
   group: events
-  time_group: event_time
+  time_group: event_created_at
   detail: weeksMonday
   description: 'The combined values of isoWeek and isoYear. Example values include 201652 & 201701'
   meta:
@@ -593,7 +594,7 @@ fields:
   label: 'Year week'
   result: string
   group: events
-  time_group: event_time
+  time_group: event_created_at
   detail: weeksSunday
   description: 'The combined values of year and week. Example values include 202253 or 202301'
   meta:
@@ -602,7 +603,7 @@ fields:
 - dimension: date # "20250127"
   result: string
   group: events
-  time_group: event_time
+  time_group: event_created_at
   detail: days
   description: 'The date of the event, formatted as YYYYMMDD'
   meta:
@@ -612,7 +613,7 @@ fields:
   label: 'Date hour (YYYYMMDDHH)'
   result: string
   group: events
-  time_group: event_time
+  time_group: event_created_at
   detail: hours
   description: 'The combined values of date and hour formatted as YYYYMMDDHH'
   meta:
@@ -622,7 +623,7 @@ fields:
   label: 'Date hour and minute'
   result: string
   field_group: events
-  time_group: event_time
+  time_group: event_created_at
   detail: minutes
   description: 'The combined values of date, hour, and minute formatted as YYYYMMDDHHMM'
   meta:
