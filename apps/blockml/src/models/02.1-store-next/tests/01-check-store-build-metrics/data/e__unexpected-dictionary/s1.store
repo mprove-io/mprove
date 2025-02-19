@@ -3,7 +3,7 @@ connection: c1
 field_groups: 
 - group: a
 build_metrics:
-- time_name:
+- time:
     a: b
 fields: []
 results: []

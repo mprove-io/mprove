@@ -52,13 +52,7 @@ export function checkStoreBuildMetrics(
       Object.keys(buildMetric)
         .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
-          if (
-            [
-              common.ParameterEnum.TimeName.toString(),
-              common.ParameterEnum.TimeLabel.toString(),
-              common.ParameterEnum.Details.toString()
-            ].indexOf(parameter) < 0
-          ) {
+          if ([common.ParameterEnum.Time.toString()].indexOf(parameter) < 0) {
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.UNKNOWN_BUILD_METRIC_PARAMETER,
@@ -79,10 +73,7 @@ export function checkStoreBuildMetrics(
           }
 
           if (
-            Array.isArray(
-              buildMetric[parameter as keyof FileStoreBuildMetric]
-            ) &&
-            [common.ParameterEnum.Details.toString()].indexOf(parameter) < 0
+            Array.isArray(buildMetric[parameter as keyof FileStoreBuildMetric])
           ) {
             item.errors.push(
               new BmError({
@@ -128,7 +119,7 @@ export function checkStoreBuildMetrics(
         });
 
       if (errorsOnStart === item.errors.length) {
-        if (common.isUndefined(buildMetric.time_name)) {
+        if (common.isUndefined(buildMetric.time)) {
           let buildMetricKeysLineNums: number[] = Object.keys(buildMetric)
             .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
             .map(y => buildMetric[y as keyof FileStoreBuildMetric] as number)
@@ -136,8 +127,8 @@ export function checkStoreBuildMetrics(
 
           item.errors.push(
             new BmError({
-              title: common.ErTitleEnum.MISSING_TIME_NAME,
-              message: `build_metrics element must have "${common.ParameterEnum.TimeName}" parameter`,
+              title: common.ErTitleEnum.MISSING_TIME,
+              message: `${common.ParameterEnum.BuildMetrics} element must have "${common.ParameterEnum.Time}" parameter`,
               lines: [
                 {
                   line: Math.min(...buildMetricKeysLineNums),
@@ -150,53 +141,26 @@ export function checkStoreBuildMetrics(
           return;
         }
 
-        if (common.isUndefined(buildMetric.time_label)) {
-          buildMetric.time_label = common.MyRegex.replaceUnderscoresWithSpaces(
-            buildMetric.time_name
-          );
-          buildMetric.time_label = buildMetric.time_label
-            .split(' ')
-            .map(word => common.capitalizeFirstLetter(word))
-            .join(' ');
+        // if (common.isUndefined(buildMetric.label)) {
+        //   buildMetric.label = common.MyRegex.replaceUnderscoresWithSpaces(
+        //     buildMetric.time
+        //   );
+        //   buildMetric.label = buildMetric.label
+        //     .split(' ')
+        //     .map(word => common.capitalizeFirstLetter(word))
+        //     .join(' ');
 
-          buildMetric.time_label_line_num = 0;
-        }
+        //   buildMetric.label_line_num = 0;
+        // }
 
-        if (common.isUndefined(buildMetric.details)) {
-          let buildMetricKeysLineNums: number[] = Object.keys(buildMetric)
-            .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-            .map(y => buildMetric[y as keyof FileStoreBuildMetric] as number);
-
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.MISSING_DETAILS,
-              message: `build_metrics element must have "${common.ParameterEnum.Details}" parameter`,
-              lines: [
-                {
-                  line: Math.min(
-                    ...buildMetricKeysLineNums.filter(l => l !== 0)
-                  ),
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
-
-        let index = timeNames.findIndex(
-          tn => tn.timeName === buildMetric.time_name
-        );
+        let index = timeNames.findIndex(tn => tn.timeName === buildMetric.time);
 
         if (index > -1) {
-          timeNames[index].timeNameLineNums.push(
-            buildMetric.time_name_line_num
-          );
+          timeNames[index].timeNameLineNums.push(buildMetric.time_line_num);
         } else {
           timeNames.push({
-            timeName: buildMetric.time_name,
-            timeNameLineNums: [buildMetric.time_name_line_num]
+            timeName: buildMetric.time,
+            timeNameLineNums: [buildMetric.time_line_num]
           });
         }
       }
@@ -208,7 +172,7 @@ export function checkStoreBuildMetrics(
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.DUPLICATE_TIME_NAMES,
-              message: `"${common.ParameterEnum.TimeName}" value must be unique across build_metrics elements`,
+              message: `"${common.ParameterEnum.Time}" value must be unique across ${common.ParameterEnum.BuildMetrics} elements`,
               lines: timeName.timeNameLineNums.map(l => ({
                 line: l,
                 name: x.fileName,
@@ -240,7 +204,7 @@ export function checkStoreBuildMetrics(
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.WRONG_CHARS_IN_TIME_NAME,
-              message: `Characters "${timeNameWrongCharsString}" can not be used for ${common.ParameterEnum.TimeName} (only snake_case "a...z0...9_" is allowed)`,
+              message: `Characters "${timeNameWrongCharsString}" can not be used for ${common.ParameterEnum.Time} (only snake_case "a...z0...9_" is allowed)`,
               lines: [
                 {
                   line: timeName.timeNameLineNums[0],

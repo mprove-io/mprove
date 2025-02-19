@@ -124,29 +124,10 @@ export const STORE_SCHEMA: JSONSchema7 = {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['time_name', 'details'],
+        required: ['time'],
         properties: {
-          time_name: {
+          time: {
             type: 'string'
-          },
-          time_label: {
-            type: 'string'
-          },
-          details: {
-            type: 'array',
-            items: {
-              type: 'object',
-              additionalProperties: false,
-              required: ['unit', 'dimension'],
-              properties: {
-                unit: {
-                  type: 'string'
-                },
-                dimension: {
-                  type: 'string'
-                }
-              }
-            }
           }
         }
       }

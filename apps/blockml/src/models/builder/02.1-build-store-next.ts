@@ -25,16 +25,6 @@ export function buildStoreNext(
     cs
   );
 
-  stores = barStoreNext.checkStoreBuildMetricDetails(
-    {
-      stores: stores,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
   stores = barStoreNext.checkStoreShowIfRefs(
     {
       stores: stores,
