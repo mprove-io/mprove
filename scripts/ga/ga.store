@@ -478,33 +478,9 @@ results:
       label: Case Sensitive
       value: $PROJECT_CONFIG_CASE_SENSITIVE
 
-# build_metrics:
-# - time_name: event_time
-#   time_label: 'Event Time'
-
-  # details:
-  # - unit: years
-  #   dimension: year
-
-  # - unit: months 
-  #   dimension: year_month
-
-  # - unit: weeksMonday
-  #   dimension: iso_year_iso_week
-
-  # - unit: weeksSunday
-  #   dimension: year_week
-
-  # - unit: days
-  #   dimension: date
-
-  # - unit: hours
-  #   dimension: date_hour
-
-  # - unit: minutes
-  #   dimension: date_hour_minute
-  # # - unit: quarters
-  # # - unit: timestamp
+field_times:
+- time: event_time
+  label: 'Event Time'
 
 build_metrics:
 - time: event_time
@@ -520,7 +496,9 @@ field_groups:
 - group: page_screens
 
 fields:
+
 # Measures
+
 - measure: active_users
   result: number
   group: users
@@ -544,7 +522,9 @@ fields:
   meta:
     name: screenPageViews
     type: TYPE_INTEGER
-## Cohort measures
+
+## Cohort Measures
+
 - measure: cohort_active_users
   label: 'Cohort active users'
   result: number
@@ -563,17 +543,30 @@ fields:
     name: cohortTotalUsers
     type: TYPE_INTEGER    
 
-# Time fields
-- time: event_time
-  label: 'Event Time'
+# Dimensions
 
-# Time dimensions
+- dimension: country
+  result: string
+  group: geo
+  description: 'The country from which the user activity originated'
+  meta:
+    name: country
+
+- dimension: city
+  result: string
+  group: geo
+  description: 'The city from which the user activity originated'
+  meta:
+    name: city
+
+# Time Dimensions
+
 - dimension: year # "2025"
   label: 'Year'
   result: string
-  part_of_time: event_time
-  detail: years
   group: events
+  frame_of_time: event_time
+  detail: years
   description: 'The four-digit year of the event. For example, 2020 or 2024'
   meta:
     name: year
@@ -581,9 +574,9 @@ fields:
 - dimension: year_month # "202501"
   label: 'Year month'
   result: string
-  part_of_time: event_time
-  detail: months
   group: events
+  frame_of_time: event_time
+  detail: months
   description: 'The combined values of year and month. Example values include 202212 or 202301'
   meta:
     name: yearMonth
@@ -591,9 +584,9 @@ fields:
 - dimension: iso_year_iso_week # "202504"
   label: 'ISO week of ISO year'
   result: string
-  part_of_time: event_time
-  detail: weeksMonday
   group: events
+  frame_of_time: event_time
+  detail: weeksMonday
   description: 'The combined values of isoWeek and isoYear. Example values include 201652 & 201701'
   meta:
     name: isoYearIsoWeek
@@ -601,18 +594,18 @@ fields:
 - dimension: year_week # "202505"
   label: 'Year week'
   result: string
-  part_of_time: event_time
-  detail: weeksSunday
   group: events
+  frame_of_time: event_time
+  detail: weeksSunday
   description: 'The combined values of year and week. Example values include 202253 or 202301'
   meta:
     name: yearWeek
 
 - dimension: date # "20250127"
   result: string
-  part_of_time: event_time
-  detail: days
   group: events
+  frame_of_time: event_time
+  detail: days
   description: 'The date of the event, formatted as YYYYMMDD'
   meta:
     name: date
@@ -620,9 +613,9 @@ fields:
 - dimension: date_hour # "2025012722"
   label: 'Date hour (YYYYMMDDHH)'
   result: string
-  part_of_time: event_time
-  detail: hours
   group: events
+  frame_of_time: event_time
+  detail: hours
   description: 'The combined values of date and hour formatted as YYYYMMDDHH'
   meta:
     name: dateHour
@@ -630,9 +623,9 @@ fields:
 - dimension: date_hour_minute # "202501272212"
   label: 'Date hour and minute'
   result: string
-  part_of_time: event_time
-  detail: minutes
   group: events
+  frame_of_time: event_time
+  detail: minutes
   description: 'The combined values of date, hour, and minute formatted as YYYYMMDDHHMM'
   meta:
     name: dateHourMinute
@@ -752,7 +745,9 @@ fields:
   description: 'The number of minutes since the start of the date range. The starting minute is 0000'
   meta:
     name: nthMinute
-## Cohort dimensions
+    
+## Cohort Dimensions
+
 - dimension: cohort
   result: string
   group: cohorts
@@ -785,17 +780,4 @@ fields:
   description: 'Month offset relative to the firstSessionDate for the users in the cohort. Month boundaries align with calendar month boundaries. For example, if a cohort is selected with the start and end date in March 2020, then for any date in April 2020, cohortNthMonth will be 0001'
   meta:
     name: cohortNthMonth
-# Other dimensions
-- dimension: country
-  result: string
-  group: geo
-  description: 'The country from which the user activity originated'
-  meta:
-    name: country
 
-- dimension: city
-  result: string
-  group: geo
-  description: 'The city from which the user activity originated'
-  meta:
-    name: city
