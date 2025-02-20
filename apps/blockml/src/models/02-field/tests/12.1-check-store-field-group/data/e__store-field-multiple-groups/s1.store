@@ -6,9 +6,16 @@ results:
 
 field_groups:
 - group: g1
+- group: g2
+
+field_time_groups:
+- time: t1
+  group: g2
 
 fields:
 - dimension: d1 
   result: r1
+  group: g1
+  time_group: t1
 
 

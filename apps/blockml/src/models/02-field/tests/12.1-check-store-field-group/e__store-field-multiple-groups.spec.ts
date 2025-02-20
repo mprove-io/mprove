@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildStoreField;
 let func = common.FuncEnum.CheckStoreFieldGroup;
-let testId = 'e__missing-store-field-group';
+let testId = 'e__store-field-multiple-groups';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,6 +63,8 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entViews.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.MISSING_STORE_FIELD_GROUP);
-  t.is(errors[0].lines[0].line, 11);
+  t.is(errors[0].title, common.ErTitleEnum.STORE_FIELD_MULTIPLE_GROUPS);
+  t.is(errors[0].lines.length, 2);
+  t.is(errors[0].lines[0].line, 18);
+  t.is(errors[0].lines[1].line, 19);
 });

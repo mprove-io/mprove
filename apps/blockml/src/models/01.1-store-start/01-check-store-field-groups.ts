@@ -26,20 +26,7 @@ export function checkStoreFieldGroups(
     let errorsOnStart = item.errors.length;
 
     if (common.isUndefined(x.field_groups)) {
-      item.errors.push(
-        new BmError({
-          title: common.ErTitleEnum.MISSING_FIELD_GROUPS,
-          message: `parameter "${common.ParameterEnum.FieldGroups}" is required for ${x.fileExt} file`,
-          lines: [
-            {
-              line: 0,
-              name: x.fileName,
-              path: x.filePath
-            }
-          ]
-        })
-      );
-      return;
+      x.field_groups = [];
     }
 
     let groups: { groupName: string; groupLineNums: number[] }[] = [];

@@ -23,55 +23,91 @@ export function checkStoreFieldGroup(
   item.stores.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    x.fields.forEach(field => {
-      if (
-        common.isUndefined(field.group) &&
-        field.fieldClass !== common.FieldClassEnum.Filter
-      ) {
-        let fieldKeysLineNums: number[] = Object.keys(field)
-          .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-          .map(y => field[y as keyof common.FieldAny] as number)
-          .filter(ln => ln !== 0);
+    x.fields
+      .filter(field => field.fieldClass !== common.FieldClassEnum.Filter)
+      .forEach(field => {
+        if (
+          common.isDefined(field.group) &&
+          common.isDefined(field.time_group)
+        ) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.STORE_FIELD_MULTIPLE_GROUPS,
+              message: `store field can have only one of the parameters ${common.ParameterEnum.Group} or ${common.ParameterEnum.TimeGroup}`,
+              lines: [
+                {
+                  line: field.group_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                },
+                {
+                  line: field.time_group_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
 
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.MISSING_STORE_FIELD_GROUP,
-            message: `field "${field.group}" is requred`,
-            lines: [
-              {
-                line: Math.min(...fieldKeysLineNums),
-                name: x.fileName,
-                path: x.filePath
-              }
-            ]
-          })
-        );
-        return;
-      }
+        if (
+          common.isDefined(field.group) &&
+          (x as common.FileStore).field_groups
+            .map(r => r.group)
+            .indexOf(field.group) < 0
+        ) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.WRONG_STORE_FIELD_GROUP,
+              message: `field ${field.group} must be one of store ${common.ParameterEnum.FieldGroups}`,
+              lines: [
+                {
+                  line: field.group_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
 
-      if (
-        common.isDefined(field.group) &&
-        field.fieldClass !== common.FieldClassEnum.Filter &&
-        (x as common.FileStore).field_groups
-          .map(r => r.group)
-          .indexOf(field.group) < 0
-      ) {
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.WRONG_STORE_FIELD_GROUP,
-            message: `field ${field.group} must be one of store field_groups`,
-            lines: [
-              {
-                line: field.group_line_num,
-                name: x.fileName,
-                path: x.filePath
-              }
-            ]
-          })
-        );
-        return;
-      }
-    });
+        if (
+          common.isDefined(field.time_group) &&
+          (x as common.FileStore).field_time_groups
+            .map(r => r.time)
+            .indexOf(field.time_group) < 0
+        ) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.WRONG_STORE_FIELD_TIME_GROUP,
+              message: `field ${field.time_group} must be one of store ${common.ParameterEnum.FieldTimeGroups}`,
+              lines: [
+                {
+                  line: field.time_group_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+
+        if (common.isUndefined(field.group)) {
+          if (common.isDefined(field.time_group)) {
+            let timeGroup = (x as common.FileStore).field_time_groups.find(
+              tg => tg.time === field.time_group
+            );
+            field.group = common.isDefined(timeGroup.group)
+              ? timeGroup.group
+              : common.MF;
+          } else {
+            field.group = common.MF;
+          }
+        }
+      });
 
     if (errorsOnStart === item.errors.length) {
       newEntities.push(x);

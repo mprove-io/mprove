@@ -519,7 +519,7 @@ fields:
 - dimension: year # "2025"
   label: 'Year'
   result: string
-  time_group: event_created_at # TODO: check - is part of field_time_groups, check group is not defined at the sametime with time_group
+  time_group: event_created_at
   detail: years # TODO: check - time_group and detail pair is unique across fields
   description: 'The four-digit year of the event. For example, 2020 or 2024'
   meta:

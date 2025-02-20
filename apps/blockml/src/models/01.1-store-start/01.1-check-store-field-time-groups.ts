@@ -25,11 +25,11 @@ export function checkStoreFieldTimeGroups(
   item.stores.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    let times: { timeName: string; timeLineNums: number[] }[] = [];
-
     if (common.isUndefined(x.field_time_groups)) {
       x.field_time_groups = [];
     }
+
+    let times: { timeName: string; timeLineNums: number[] }[] = [];
 
     x.field_time_groups.forEach(fieldTimeGroup => {
       if (

@@ -6,13 +6,13 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildStoreStart;
-let func = common.FuncEnum.CheckStoreFieldGroups;
-let testId = 'e__missing-field-groups';
+let caller = common.CallerEnum.BuildStoreField;
+let func = common.FuncEnum.CheckStoreFieldGroup;
+let testId = 'e__wrong-store-field-time-group';
 
 test('1', async t => {
   let errors: BmError[];
-  let entStores: common.FileView[];
+  let entViews: common.FileView[];
 
   let wLogger;
   let configService;
@@ -47,7 +47,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    entStores = await helper.readLog(fromDir, common.LogTypeEnum.Stores);
+    entViews = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -61,8 +61,8 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entStores.length, 0);
+  t.is(entViews.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.MISSING_FIELD_GROUPS);
-  t.is(errors[0].lines[0].line, 0);
+  t.is(errors[0].title, common.ErTitleEnum.WRONG_STORE_FIELD_TIME_GROUP);
+  t.is(errors[0].lines[0].line, 17);
 });
