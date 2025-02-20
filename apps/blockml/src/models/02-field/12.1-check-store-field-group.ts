@@ -49,12 +49,12 @@ export function checkStoreFieldGroup(
         return;
       }
 
-      let groups = (x as common.FileStore).field_groups.map(r => r.group);
-
       if (
         common.isDefined(field.group) &&
         field.fieldClass !== common.FieldClassEnum.Filter &&
-        groups.indexOf(field.group) < 0
+        (x as common.FileStore).field_groups
+          .map(r => r.group)
+          .indexOf(field.group) < 0
       ) {
         item.errors.push(
           new BmError({

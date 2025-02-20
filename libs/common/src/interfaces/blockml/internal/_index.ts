@@ -32,7 +32,6 @@ export * from './file-report-row';
 export * from './file-report-row-parameter';
 export * from './file-store';
 export * from './file-store-build-metric';
-export * from './file-store-detail';
 export * from './file-store-field-group';
 export * from './file-store-field-time-group';
 export * from './file-store-fraction-control';

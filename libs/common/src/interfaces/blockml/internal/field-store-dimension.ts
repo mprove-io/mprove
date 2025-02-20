@@ -22,6 +22,12 @@ export interface FieldStoreDimension {
   group?: string;
   group_line_num?: number;
 
+  time_group?: string;
+  time_group_line_num?: number;
+
+  detail?: string;
+  detail_line_num?: number;
+
   show_if?: string;
   show_if_line_num?: number;
 

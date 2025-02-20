@@ -509,7 +509,7 @@ fields:
 
 - dimension: city
   result: string
-  group: geo # TODO: check group exists in field_groups
+  group: geo
   description: 'The city from which the user activity originated'
   meta:
     name: city
