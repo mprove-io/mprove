@@ -61,4 +61,8 @@ export class ModelField {
   @IsOptional()
   @IsString()
   currencySuffix?: string;
+
+  @IsOptional()
+  @IsString()
+  detail?: enums.DetailUnitEnum;
 }

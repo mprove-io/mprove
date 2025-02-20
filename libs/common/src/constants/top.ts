@@ -369,9 +369,11 @@ export const STORE_FIELD_DETAIL_VALUES = [
   enums.DetailUnitEnum.Years,
   enums.DetailUnitEnum.Quarters,
   enums.DetailUnitEnum.Months,
+  enums.DetailUnitEnum.Weeks,
   enums.DetailUnitEnum.WeeksSunday,
   enums.DetailUnitEnum.WeeksMonday,
   enums.DetailUnitEnum.Days,
   enums.DetailUnitEnum.Hours,
-  enums.DetailUnitEnum.Minutes
+  enums.DetailUnitEnum.Minutes,
+  enums.DetailUnitEnum.Timestamps
 ];
