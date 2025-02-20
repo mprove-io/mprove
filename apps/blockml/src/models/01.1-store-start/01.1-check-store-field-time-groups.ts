@@ -167,6 +167,42 @@ export function checkStoreFieldTimeGroups(
             timeLineNums: [fieldTimeGroup.time_line_num]
           });
         }
+
+        if (common.isUndefined(fieldTimeGroup.group)) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.MISSING_GROUP,
+              message: `${common.ParameterEnum.FieldTimeGroups} element must have "${common.ParameterEnum.Group}" parameter`,
+              lines: [
+                {
+                  line: fieldTimeGroup.time_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+
+        if (
+          x.field_groups.map(g => g.group).indexOf(fieldTimeGroup.group) < 0
+        ) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.WRONG_GROUP,
+              message: `specified ${common.ParameterEnum.Group} "${fieldTimeGroup.group}" is not found in ${common.ParameterEnum.FieldGroups}`,
+              lines: [
+                {
+                  line: fieldTimeGroup.group_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
       }
     });
 

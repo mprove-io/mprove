@@ -1,6 +1,9 @@
 store: s1
 connection: c1
-field_groups: []
+field_groups: 
+- group: a
 field_time_groups: 
-- time: a
-- time: a
+- time: b
+  group: a
+- time: b
+  group: a
