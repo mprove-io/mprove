@@ -17,9 +17,11 @@ export class Fraction {
 
   //
 
+  @IsOptional()
   @IsString()
   brick: string;
 
+  @IsOptional()
   @IsEnum(enums.FractionOperatorEnum)
   operator: enums.FractionOperatorEnum;
 

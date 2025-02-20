@@ -1,24 +1,10 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 import { FractionControlOption } from './fraction-control-option';
+import { ShowIfDepIncludingParentFilter } from './show-if-dep-including-parent-filter';
 
 export class FractionControl {
-  @IsString()
-  input: string;
-
-  @IsString()
-  listInput: string;
-
-  @IsString()
-  switch: string;
-
-  @IsString()
-  datePicker: string;
-
-  @IsString()
-  selector: string;
-
   @ValidateNested()
   @Type(() => FractionControlOption)
   options: FractionControlOption[];
@@ -26,12 +12,15 @@ export class FractionControl {
   @IsString()
   value: any;
 
+  @IsOptional()
   @IsString()
   label: string;
 
+  @IsOptional()
   @IsString()
   showIf: string;
 
+  @IsOptional()
   @IsString()
   required: string;
 
@@ -41,10 +30,7 @@ export class FractionControl {
   @IsEnum(enums.ControlClassEnum)
   controlClass: enums.ControlClassEnum;
 
-  @IsString()
-  showIfDepsIncludingParentFilter: {
-    filterName: string;
-    controlName: string;
-    value: any;
-  }[];
+  @ValidateNested()
+  @Type(() => FractionControlOption)
+  showIfDepsIncludingParentFilter: ShowIfDepIncludingParentFilter[];
 }

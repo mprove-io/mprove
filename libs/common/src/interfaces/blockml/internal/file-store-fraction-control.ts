@@ -1,4 +1,5 @@
 import { enums } from '~common/barrels/enums';
+import { ShowIfDepIncludingParentFilter } from '../show-if-dep-including-parent-filter';
 import { FileStoreFractionControlOption } from './file-store-fraction-control-option';
 
 export interface FileStoreFractionControl {
@@ -39,9 +40,5 @@ export interface FileStoreFractionControl {
 
   controlClass?: enums.ControlClassEnum;
 
-  showIfDepsIncludingParentFilter?: {
-    filterName: string;
-    controlName: string;
-    value: any;
-  }[];
+  showIfDepsIncludingParentFilter?: ShowIfDepIncludingParentFilter[];
 }

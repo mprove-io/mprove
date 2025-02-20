@@ -30,6 +30,7 @@ export * from './row';
 export * from './row-change';
 export * from './row-record';
 export * from './rq';
+export * from './show-if-dep-including-parent-filter';
 export * from './sorting';
 export * from './tile';
 export * from './udfs-dict';
