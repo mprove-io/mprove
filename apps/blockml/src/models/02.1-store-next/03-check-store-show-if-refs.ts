@@ -86,6 +86,23 @@ export function checkStoreShowIfRefs(
     if (errorsOnStart === item.errors.length) {
       barSpecial.checkStoreShowIf(
         {
+          showIfParentEntities: x.field_time_groups,
+          filters: x.fields.filter(
+            field => field.fieldClass === common.FieldClassEnum.Filter
+          ),
+          fileName: x.fileName,
+          filePath: x.filePath,
+          structId: item.structId,
+          errors: item.errors,
+          caller: item.caller
+        },
+        cs
+      );
+    }
+
+    if (errorsOnStart === item.errors.length) {
+      barSpecial.checkStoreShowIf(
+        {
           showIfParentEntities: x.fields,
           filters: x.fields.filter(
             field => field.fieldClass === common.FieldClassEnum.Filter

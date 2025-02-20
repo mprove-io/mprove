@@ -492,7 +492,7 @@ field_time_groups:
 - time: event_created_at
   group: events
   label: 'Event Created At'
-  # show_if: ... // TODO: check
+  # show_if: ... 
 
 build_metrics:
 - time: event_created_at
