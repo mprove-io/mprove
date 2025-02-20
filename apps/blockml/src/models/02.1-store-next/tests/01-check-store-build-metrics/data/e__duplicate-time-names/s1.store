@@ -1,9 +1,12 @@
 store: s1
 connection: c1
-field_groups: 
+field_groups:
 - group: a
+field_time_groups: 
+- time: c
+  group: a
 build_metrics:
-- time: a
-- time: a
+- time: c
+- time: c
 fields: []
 results: []

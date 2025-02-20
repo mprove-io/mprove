@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildStoreNext;
 let func = common.FuncEnum.CheckStoreBuildMetrics;
-let testId = 'e__wrong-chars-in-time-name';
+let testId = 'e__wrong-time';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,6 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entStores.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.WRONG_CHARS_IN_TIME_NAME);
+  t.is(errors[0].title, common.ErTitleEnum.WRONG_TIME);
   t.is(errors[0].lines[0].line, 6);
 });

@@ -163,6 +163,25 @@ export function checkStoreBuildMetrics(
             timeNameLineNums: [buildMetric.time_line_num]
           });
         }
+
+        if (
+          x.field_time_groups.map(el => el.time).indexOf(buildMetric.time) < 0
+        ) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.WRONG_TIME,
+              message: `specified ${common.ParameterEnum.Time} "${buildMetric.time}" is not found in ${common.ParameterEnum.FieldTimeGroups}`,
+              lines: [
+                {
+                  line: buildMetric.time_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
       }
     });
 
@@ -181,40 +200,6 @@ export function checkStoreBuildMetrics(
             })
           );
           return;
-        }
-
-        //
-
-        let timeNameWrongChars: string[] = [];
-
-        let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_TIME_NAME_CHARS_G();
-        let r2;
-
-        while ((r2 = reg2.exec(timeName.timeName))) {
-          timeNameWrongChars.push(r2[1]);
-        }
-
-        let timeNameWrongCharsString = '';
-
-        if (timeNameWrongChars.length > 0) {
-          timeNameWrongCharsString = [...new Set(timeNameWrongChars)].join(
-            ', '
-          ); // unique
-
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.WRONG_CHARS_IN_TIME_NAME,
-              message: `Characters "${timeNameWrongCharsString}" can not be used for ${common.ParameterEnum.Time} (only snake_case "a...z0...9_" is allowed)`,
-              lines: [
-                {
-                  line: timeName.timeNameLineNums[0],
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return false;
         }
       });
     }
