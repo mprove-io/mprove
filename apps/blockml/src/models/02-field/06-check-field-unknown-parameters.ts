@@ -165,8 +165,6 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                     common.ParameterEnum.Description.toString(),
                     common.ParameterEnum.Result.toString(),
                     common.ParameterEnum.Group.toString(),
-                    common.ParameterEnum.TimeGroup.toString(),
-                    common.ParameterEnum.Detail.toString(),
                     common.ParameterEnum.FormatNumber.toString(),
                     common.ParameterEnum.CurrencyPrefix.toString(),
                     common.ParameterEnum.CurrencySuffix.toString(),
