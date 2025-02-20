@@ -1,0 +1,21 @@
+store: s1
+connection: c1
+results:
+- result: r1
+  fraction_types: []
+
+field_time_groups:
+- time: t1
+
+fields:
+- dimension: d1 
+  result: r1
+  time_group: t1
+  detail: years
+
+- dimension: d2 
+  result: r1
+  time_group: t1
+  detail: years
+
+

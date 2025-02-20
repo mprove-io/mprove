@@ -32,6 +32,7 @@ export enum FuncEnum {
   CheckCalculations = '02-field/11-check-calculations',
   CheckAndSetImplicitResult = '02-field/12-check-and-set-implicit-result',
   CheckStoreFieldGroup = '02-field/12.1-check-store-field-group',
+  CheckStoreFieldDetail = '02-field/12.2-check-store-field-detail',
   CheckAndSetImplicitFormatNumber = '02-field/13-check-and-set-implicit-format-number',
   TransformTimes = '02-field/14-transform-times',
   MakeFieldsDeps = '02-field/15-make-fields-deps',

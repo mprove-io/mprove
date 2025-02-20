@@ -360,7 +360,12 @@ export const SAFE_AGGREGATION_MEASURE_TYPES = [
   enums.FieldTypeEnum.MedianByKey
 ];
 
-export const DETAIL_UNIT_VALUES = [
+export const STORE_METHOD_VALUES = [
+  enums.StoreMethodEnum.Get,
+  enums.StoreMethodEnum.Post
+];
+
+export const STORE_FIELD_DETAIL_VALUES = [
   enums.DetailUnitEnum.Years,
   enums.DetailUnitEnum.Quarters,
   enums.DetailUnitEnum.Months,
@@ -369,9 +374,4 @@ export const DETAIL_UNIT_VALUES = [
   enums.DetailUnitEnum.Days,
   enums.DetailUnitEnum.Hours,
   enums.DetailUnitEnum.Minutes
-];
-
-export const STORE_METHOD_VALUES = [
-  enums.StoreMethodEnum.Get,
-  enums.StoreMethodEnum.Post
 ];

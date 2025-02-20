@@ -11,6 +11,7 @@ export * from './10-check-measures';
 export * from './11-check-calculations';
 export * from './12-check-and-set-implicit-result';
 export * from './12.1-check-store-field-group';
+export * from './12.2-check-store-field-detail';
 export * from './13-check-and-set-implicit-format-number';
 export * from './14-transform-times';
 export * from './15-make-fields-deps';

@@ -25,7 +25,7 @@ export interface FieldStoreMeasure {
   time_group?: string;
   time_group_line_num?: number;
 
-  detail?: string;
+  detail?: enums.DetailUnitEnum;
   detail_line_num?: number;
 
   show_if?: string;

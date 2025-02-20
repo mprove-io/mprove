@@ -173,7 +173,9 @@ export function checkStoreFieldTimeGroups(
         }
 
         if (
-          x.field_groups.map(g => g.group).indexOf(fieldTimeGroup.group) < 0
+          [common.MF, ...x.field_groups.map(g => g.group)].indexOf(
+            fieldTimeGroup.group
+          ) < 0
         ) {
           item.errors.push(
             new BmError({
