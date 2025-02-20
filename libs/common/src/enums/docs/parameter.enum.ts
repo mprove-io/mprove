@@ -97,6 +97,7 @@ export enum ParameterEnum {
   Response = 'response',
   Results = 'results',
   FieldGroups = 'field_groups',
+  FieldTimeGroups = 'field_time_groups',
   Chart = 'chart',
   // row
   Parameters = 'parameters',

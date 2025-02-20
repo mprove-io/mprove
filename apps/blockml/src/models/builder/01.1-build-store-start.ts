@@ -25,6 +25,16 @@ export function buildStoreStart(
     cs
   );
 
+  stores = barStoreStart.checkStoreFieldTimeGroups(
+    {
+      stores: stores,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   stores = barStoreStart.checkStoreResults(
     {
       stores: stores,

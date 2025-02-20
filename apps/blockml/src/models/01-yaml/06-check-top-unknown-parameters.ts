@@ -160,6 +160,7 @@ export function checkTopUnknownParameters(
                 common.ParameterEnum.Results.toString(),
                 common.ParameterEnum.BuildMetrics.toString(),
                 common.ParameterEnum.FieldGroups.toString(),
+                common.ParameterEnum.FieldTimeGroups.toString(),
                 common.ParameterEnum.Fields.toString()
               ].indexOf(parameter) < 0
             ) {
@@ -324,6 +325,7 @@ export function checkTopUnknownParameters(
             common.ParameterEnum.Tiles.toString(),
             common.ParameterEnum.BuildMetrics.toString(),
             common.ParameterEnum.FieldGroups.toString(),
+            common.ParameterEnum.FieldTimeGroups.toString(),
             common.ParameterEnum.Results.toString(),
             common.ParameterEnum.Rows.toString(),
             common.ParameterEnum.Joins.toString(),
@@ -396,6 +398,7 @@ export function checkTopUnknownParameters(
             common.ParameterEnum.Tiles.toString(),
             common.ParameterEnum.BuildMetrics.toString(),
             common.ParameterEnum.FieldGroups.toString(),
+            common.ParameterEnum.FieldTimeGroups.toString(),
             common.ParameterEnum.Results.toString(),
             common.ParameterEnum.Rows.toString(),
             common.ParameterEnum.Joins.toString(),

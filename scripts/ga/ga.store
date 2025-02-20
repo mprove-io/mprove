@@ -488,9 +488,11 @@ field_groups:
   label: Cohorts
   show_if: top_config.cohorts_switch.true
 
-field_time_groups: # TODO: check
-- time: event_created_at # TODO: check
-  label: 'Event Created At' # TODO: check
+field_time_groups:
+- time: event_created_at
+  group: events
+  label: 'Event Created At'
+  # show_if: ... // TODO: check
 
 build_metrics:
 - time: event_created_at # TODO: check is part of field_time_groups
@@ -517,8 +519,7 @@ fields:
 - dimension: year # "2025"
   label: 'Year'
   result: string
-  group: events
-  time_group: event_created_at # TODO: check - is part of field_time_groups
+  time_group: event_created_at # TODO: check - is part of field_time_groups, check group is not defined at the sametime with time_group
   detail: years # TODO: check - time_group and detail pair is unique across fields
   description: 'The four-digit year of the event. For example, 2020 or 2024'
   meta:
@@ -527,7 +528,6 @@ fields:
 - dimension: year_month # "202501"
   label: 'Year month'
   result: string
-  group: events
   time_group: event_created_at
   detail: months
   description: 'The combined values of year and month. Example values include 202212 or 202301'
@@ -537,7 +537,6 @@ fields:
 - dimension: iso_year_iso_week # "202504"
   label: 'ISO week of ISO year'
   result: string
-  group: events
   time_group: event_created_at
   detail: weeksMonday
   description: 'The combined values of isoWeek and isoYear. Example values include 201652 & 201701'
@@ -547,7 +546,6 @@ fields:
 - dimension: year_week # "202505"
   label: 'Year week'
   result: string
-  group: events
   time_group: event_created_at
   detail: weeksSunday
   description: 'The combined values of year and week. Example values include 202253 or 202301'
@@ -556,7 +554,6 @@ fields:
 
 - dimension: date # "20250127"
   result: string
-  group: events
   time_group: event_created_at
   detail: days
   description: 'The date of the event, formatted as YYYYMMDD'
@@ -566,7 +563,6 @@ fields:
 - dimension: date_hour # "2025012722"
   label: 'Date hour (YYYYMMDDHH)'
   result: string
-  group: events
   time_group: event_created_at
   detail: hours
   description: 'The combined values of date and hour formatted as YYYYMMDDHH'
@@ -576,7 +572,6 @@ fields:
 - dimension: date_hour_minute # "202501272212"
   label: 'Date hour and minute'
   result: string
-  field_group: events
   time_group: event_created_at
   detail: minutes
   description: 'The combined values of date, hour, and minute formatted as YYYYMMDDHHMM'

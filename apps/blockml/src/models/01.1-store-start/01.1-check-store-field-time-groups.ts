@@ -4,11 +4,11 @@ import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
-import { FileStoreFieldGroup } from '~common/_index';
+import { FileStoreFieldTimeGroup } from '~common/_index';
 
-let func = common.FuncEnum.CheckStoreFieldGroups;
+let func = common.FuncEnum.CheckStoreFieldTimeGroups;
 
-export function checkStoreFieldGroups(
+export function checkStoreFieldTimeGroups(
   item: {
     stores: common.FileStore[];
     errors: BmError[];
@@ -25,34 +25,24 @@ export function checkStoreFieldGroups(
   item.stores.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (common.isUndefined(x.field_groups)) {
-      item.errors.push(
-        new BmError({
-          title: common.ErTitleEnum.MISSING_FIELD_GROUPS,
-          message: `parameter "${common.ParameterEnum.FieldGroups}" is required for ${x.fileExt} file`,
-          lines: [
-            {
-              line: 0,
-              name: x.fileName,
-              path: x.filePath
-            }
-          ]
-        })
-      );
-      return;
+    let times: { timeName: string; timeLineNums: number[] }[] = [];
+
+    if (common.isUndefined(x.field_time_groups)) {
+      x.field_time_groups = [];
     }
 
-    let groups: { groupName: string; groupLineNums: number[] }[] = [];
-
-    x.field_groups.forEach(fieldGroup => {
-      if (common.isDefined(fieldGroup) && fieldGroup.constructor !== Object) {
+    x.field_time_groups.forEach(fieldTimeGroup => {
+      if (
+        common.isDefined(fieldTimeGroup) &&
+        fieldTimeGroup.constructor !== Object
+      ) {
         item.errors.push(
           new BmError({
-            title: common.ErTitleEnum.FIELD_GROUP_IS_NOT_A_DICTIONARY,
-            message: 'found at least one field group that is not a dictionary',
+            title: common.ErTitleEnum.FIELD_TIME_GROUP_IS_NOT_A_DICTIONARY,
+            message: `found at least one ${common.ParameterEnum.FieldTimeGroups} element that is not a dictionary`,
             lines: [
               {
-                line: x.field_groups_line_num,
+                line: x.field_time_groups_line_num,
                 name: x.fileName,
                 path: x.filePath
               }
@@ -62,11 +52,12 @@ export function checkStoreFieldGroups(
         return;
       }
 
-      Object.keys(fieldGroup)
+      Object.keys(fieldTimeGroup)
         .filter(k => !k.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
         .forEach(parameter => {
           if (
             [
+              common.ParameterEnum.Time.toString(),
               common.ParameterEnum.Group.toString(),
               common.ParameterEnum.Label.toString(),
               common.ParameterEnum.ShowIf.toString()
@@ -74,13 +65,13 @@ export function checkStoreFieldGroups(
           ) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.UNKNOWN_FIELD_GROUP_PARAMETER,
-                message: `parameter "${parameter}" can not be used in field_groups element`,
+                title: common.ErTitleEnum.UNKNOWN_FIELD_TIME_GROUP_PARAMETER,
+                message: `parameter "${parameter}" can not be used in ${common.ParameterEnum.FieldTimeGroups} element`,
                 lines: [
                   {
-                    line: fieldGroup[
+                    line: fieldTimeGroup[
                       (parameter +
-                        constants.LINE_NUM) as keyof FileStoreFieldGroup
+                        constants.LINE_NUM) as keyof FileStoreFieldTimeGroup
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -92,7 +83,9 @@ export function checkStoreFieldGroups(
           }
 
           if (
-            Array.isArray(fieldGroup[parameter as keyof FileStoreFieldGroup])
+            Array.isArray(
+              fieldTimeGroup[parameter as keyof FileStoreFieldTimeGroup]
+            )
           ) {
             item.errors.push(
               new BmError({
@@ -100,9 +93,9 @@ export function checkStoreFieldGroups(
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
-                    line: fieldGroup[
+                    line: fieldTimeGroup[
                       (parameter +
-                        constants.LINE_NUM) as keyof FileStoreFieldGroup
+                        constants.LINE_NUM) as keyof FileStoreFieldTimeGroup
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -114,8 +107,8 @@ export function checkStoreFieldGroups(
           }
 
           if (
-            fieldGroup[parameter as keyof FileStoreFieldGroup]?.constructor ===
-            Object
+            fieldTimeGroup[parameter as keyof FileStoreFieldTimeGroup]
+              ?.constructor === Object
           ) {
             item.errors.push(
               new BmError({
@@ -123,9 +116,9 @@ export function checkStoreFieldGroups(
                 message: `parameter "${parameter}" must have a single value`,
                 lines: [
                   {
-                    line: fieldGroup[
+                    line: fieldTimeGroup[
                       (parameter +
-                        constants.LINE_NUM) as keyof FileStoreFieldGroup
+                        constants.LINE_NUM) as keyof FileStoreFieldTimeGroup
                     ] as number,
                     name: x.fileName,
                     path: x.filePath
@@ -138,19 +131,21 @@ export function checkStoreFieldGroups(
         });
 
       if (errorsOnStart === item.errors.length) {
-        if (common.isUndefined(fieldGroup.group)) {
-          let fieldGroupKeysLineNums: number[] = Object.keys(fieldGroup)
+        if (common.isUndefined(fieldTimeGroup.time)) {
+          let fieldTimeGroupKeysLineNums: number[] = Object.keys(fieldTimeGroup)
             .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-            .map(y => fieldGroup[y as keyof FileStoreFieldGroup] as number)
+            .map(
+              y => fieldTimeGroup[y as keyof FileStoreFieldTimeGroup] as number
+            )
             .filter(ln => ln !== 0);
 
           item.errors.push(
             new BmError({
-              title: common.ErTitleEnum.MISSING_GROUP,
-              message: `field group must have "${common.ParameterEnum.Group}" parameter`,
+              title: common.ErTitleEnum.MISSING_TIME,
+              message: `${common.ParameterEnum.FieldTimeGroups} element must have "${common.ParameterEnum.Time}" parameter`,
               lines: [
                 {
-                  line: Math.min(...fieldGroupKeysLineNums),
+                  line: Math.min(...fieldTimeGroupKeysLineNums),
                   name: x.fileName,
                   path: x.filePath
                 }
@@ -160,29 +155,29 @@ export function checkStoreFieldGroups(
           return;
         }
 
-        let index = groups.findIndex(
-          group => group.groupName === fieldGroup.group
+        let index = times.findIndex(
+          timeGroup => timeGroup.timeName === fieldTimeGroup.time
         );
 
         if (index > -1) {
-          groups[index].groupLineNums.push(fieldGroup.group_line_num);
+          times[index].timeLineNums.push(fieldTimeGroup.time_line_num);
         } else {
-          groups.push({
-            groupName: fieldGroup.group,
-            groupLineNums: [fieldGroup.group_line_num]
+          times.push({
+            timeName: fieldTimeGroup.time,
+            timeLineNums: [fieldTimeGroup.time_line_num]
           });
         }
       }
     });
 
     if (errorsOnStart === item.errors.length) {
-      groups.forEach(group => {
-        if (group.groupLineNums.length > 1) {
+      times.forEach(timeElement => {
+        if (timeElement.timeLineNums.length > 1) {
           item.errors.push(
             new BmError({
-              title: common.ErTitleEnum.DUPLICATE_GROUPS,
-              message: `"${common.ParameterEnum.Group}" value must be unique across field_groups elements`,
-              lines: group.groupLineNums.map(l => ({
+              title: common.ErTitleEnum.DUPLICATE_TIME_NAMES,
+              message: `"${common.ParameterEnum.Time}" value must be unique across ${common.ParameterEnum.FieldTimeGroups} elements`,
+              lines: timeElement.timeLineNums.map(l => ({
                 line: l,
                 name: x.fileName,
                 path: x.filePath
@@ -194,27 +189,28 @@ export function checkStoreFieldGroups(
 
         //
 
-        let groupWrongChars: string[] = [];
+        let timeWrongChars: string[] = [];
 
-        let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_GROUP_CHARS_G();
+        let reg2 =
+          common.MyRegex.CAPTURE_NOT_ALLOWED_FIELD_TIME_GROUP_CHARS_G();
         let r2;
 
-        while ((r2 = reg2.exec(group.groupName))) {
-          groupWrongChars.push(r2[1]);
+        while ((r2 = reg2.exec(timeElement.timeName))) {
+          timeWrongChars.push(r2[1]);
         }
 
-        let groupWrongCharsString = '';
+        let timeWrongCharsString = '';
 
-        if (groupWrongChars.length > 0) {
-          groupWrongCharsString = [...new Set(groupWrongChars)].join(', '); // unique
+        if (timeWrongChars.length > 0) {
+          timeWrongCharsString = [...new Set(timeWrongChars)].join(', '); // unique
 
           item.errors.push(
             new BmError({
-              title: common.ErTitleEnum.WRONG_CHARS_IN_GROUP,
-              message: `Characters "${groupWrongCharsString}" can not be used for group (only snake_case "a...z0...9_" is allowed)`,
+              title: common.ErTitleEnum.WRONG_CHARS_IN_TIME_NAME,
+              message: `Characters "${timeWrongCharsString}" can not be used for time (only snake_case "a...z0...9_" is allowed)`,
               lines: [
                 {
-                  line: group.groupLineNums[0],
+                  line: timeElement.timeLineNums[0],
                   name: x.fileName,
                   path: x.filePath
                 }

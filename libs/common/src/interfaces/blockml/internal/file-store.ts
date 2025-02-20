@@ -4,6 +4,7 @@ import { FieldAny } from './field-any';
 import { FileBasic } from './file-basic';
 import { FileStoreBuildMetric } from './file-store-build-metric';
 import { FileStoreFieldGroup } from './file-store-field-group';
+import { FileStoreFieldTimeGroup } from './file-store-field-time-group';
 import { FileStoreResult } from './file-store-result';
 
 export interface FileStore extends FileBasic {
@@ -45,6 +46,9 @@ export interface FileStore extends FileBasic {
 
   field_groups?: FileStoreFieldGroup[];
   field_groups_line_num?: number;
+
+  field_time_groups?: FileStoreFieldTimeGroup[];
+  field_time_groups_line_num?: number;
 
   fields?: FieldAny[];
   fields_line_num?: number;
