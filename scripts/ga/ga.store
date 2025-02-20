@@ -268,11 +268,7 @@ response: |
 
       if (!!storeField) {
         let fieldId = storeField.group + '.' + storeField.name;
-        if (!!date) {
-          let fieldIdUTC = fieldId + '$UTC_MS_SUFFIX';
-          newRow[fieldIdUTC] = date.getTime();
-        }
-        newRow[fieldId] = value;
+        newRow[fieldId] = !!date ? date.getTime() : value;
       }
     });
     

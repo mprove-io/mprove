@@ -111,10 +111,6 @@ export class DataService {
   }) {
     let { query, mconfigFields } = item;
 
-    // ---query data row
-    // time.date: "20250126"
-    // time.date___utc_ms: 1737849600000
-
     // ---mconfigField
     // description: "The date of the event, formatted as YYYYMMDD"
     // fieldClass: "dimension"
@@ -150,7 +146,6 @@ export class DataService {
 
       Object.keys(row)
         .filter(k => k !== NO_FIELDS_SELECTED)
-        .filter(k => !k.endsWith(common.UTC_MS_SUFFIX))
         .forEach(key => {
           let value = row[key];
 
@@ -161,18 +156,6 @@ export class DataService {
           );
 
           let sqlName = field.sqlName;
-
-          let tsValue: number;
-
-          if (common.isDefined(row[field.id + common.UTC_MS_SUFFIX])) {
-            tsValue = row[field.id + common.UTC_MS_SUFFIX] as unknown as number;
-          } else if (field.result === common.FieldResultEnum.Ts) {
-            let tsValueFn = this.getTsValueFn(sqlName);
-
-            tsValue = common.isDefined(tsValueFn)
-              ? tsValueFn(value).getTime()
-              : undefined;
-          }
 
           let storeTimeSpec;
 
@@ -199,6 +182,18 @@ export class DataService {
                 : field.detail === common.DetailUnitEnum.Years
                 ? common.TimeSpecEnum.Years
                 : undefined;
+          }
+
+          let tsValue: number;
+
+          if (common.isDefined(storeTimeSpec)) {
+            tsValue = row[field.id] as unknown as number;
+          } else if (field.result === common.FieldResultEnum.Ts) {
+            let tsValueFn = this.getTsValueFn(sqlName);
+
+            tsValue = common.isDefined(tsValueFn)
+              ? tsValueFn(value).getTime()
+              : undefined;
           }
 
           let cell: QCell = {

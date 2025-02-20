@@ -384,8 +384,6 @@ ${inputSub}
         target = JSON.stringify(
           (storeModel.content as common.FileStore).fields
         );
-      } else if (reference === 'UTC_MS_SUFFIX') {
-        target = common.UTC_MS_SUFFIX;
         // } else if (reference === 'ENV_GA_PROPERTY_ID_1') {
         //   target = '...';
       } else {
