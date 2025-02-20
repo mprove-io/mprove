@@ -110,6 +110,20 @@ export function checkStoreFieldGroup(
             field.group = common.MF;
           }
         }
+
+        if (common.isDefined(field.time_group)) {
+          field.groupId = field.time_group;
+
+          let timeGroup = x.field_time_groups.find(
+            tg => tg.time === field.time_group
+          );
+
+          field.group_label =
+            timeGroup.label ||
+            common.MyRegex.replaceUnderscoresWithSpaces(timeGroup.time);
+          //
+          field.group = timeGroup.group;
+        }
       });
     }
 

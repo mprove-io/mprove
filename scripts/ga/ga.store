@@ -526,7 +526,7 @@ fields:
     name: year
 
 - dimension: year_month # "202501"
-  label: 'Year month'
+  label: 'Month'
   result: string
   time_group: event_created_at
   detail: months
@@ -535,7 +535,7 @@ fields:
     name: yearMonth
 
 - dimension: iso_year_iso_week # "202504"
-  label: 'ISO week of ISO year'
+  label: 'Week Monday'
   result: string
   time_group: event_created_at
   detail: weeksMonday
@@ -544,7 +544,7 @@ fields:
     name: isoYearIsoWeek
 
 - dimension: year_week # "202505"
-  label: 'Year week'
+  label: 'Week Sunday'
   result: string
   time_group: event_created_at
   detail: weeksSunday
@@ -561,7 +561,7 @@ fields:
     name: date
 
 - dimension: date_hour # "2025012722"
-  label: 'Date hour (YYYYMMDDHH)'
+  label: 'Hour'
   result: string
   time_group: event_created_at
   detail: hours
@@ -570,7 +570,7 @@ fields:
     name: dateHour
 
 - dimension: date_hour_minute # "202501272212"
-  label: 'Date hour and minute'
+  label: 'Minute'
   result: string
   time_group: event_created_at
   detail: minutes
