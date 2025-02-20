@@ -94,7 +94,10 @@ export function checkStoreFieldGroup(
           );
           return;
         }
+      });
 
+    if (errorsOnStart === item.errors.length) {
+      x.fields.forEach(field => {
         if (common.isUndefined(field.group)) {
           if (common.isDefined(field.time_group)) {
             let timeGroup = (x as common.FileStore).field_time_groups.find(
@@ -108,6 +111,7 @@ export function checkStoreFieldGroup(
           }
         }
       });
+    }
 
     if (errorsOnStart === item.errors.length) {
       newEntities.push(x);

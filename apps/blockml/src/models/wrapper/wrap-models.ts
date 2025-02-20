@@ -96,7 +96,7 @@ export function wrapModels(item: {
         };
 
         x.fields
-          .filter(field => field.fieldClass === common.FieldClassEnum.Filter)
+          .filter(field => field.group === common.MF)
           .forEach(field => {
             wrapField({
               children: children,
