@@ -151,6 +151,28 @@ export const STORE_SCHEMA: JSONSchema7 = {
         }
       }
     },
+    field_time_groups: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['time'],
+        properties: {
+          time: {
+            type: 'string'
+          },
+          group: {
+            type: 'string'
+          },
+          label: {
+            type: 'string'
+          },
+          show_if: {
+            type: 'string'
+          }
+        }
+      }
+    },
     fields: {
       type: 'array',
       items: {
@@ -174,6 +196,12 @@ export const STORE_SCHEMA: JSONSchema7 = {
             type: 'string'
           },
           group: {
+            type: 'string'
+          },
+          time_group: {
+            type: 'string'
+          },
+          detail: {
             type: 'string'
           },
           show_if: {
