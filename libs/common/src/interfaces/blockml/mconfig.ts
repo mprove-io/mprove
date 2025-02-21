@@ -26,6 +26,9 @@ export class Mconfig {
   @IsString()
   modelId: string;
 
+  @IsBoolean()
+  isStoreModel: boolean;
+
   @IsString()
   modelLabel: string;
 

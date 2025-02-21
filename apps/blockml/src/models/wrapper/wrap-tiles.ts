@@ -87,6 +87,7 @@ export function wrapTiles(item: {
       mconfigId: mconfigId,
       queryId: queryId,
       modelId: tile.model,
+      isStoreModel: model.fileExt === common.FileExtensionEnum.Store,
       modelLabel: model.label,
       select: tile.select,
       unsafeSelect: tile.unsafeSelect,

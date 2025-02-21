@@ -57,6 +57,9 @@ export class ChartViewComponent implements OnChanges {
   mconfigFields: common.MconfigField[];
 
   @Input()
+  isStoreModel: boolean;
+
+  @Input()
   qData: QDataRow[];
 
   @Input()
@@ -128,7 +131,8 @@ export class ChartViewComponent implements OnChanges {
 
     let checkSelectResult = getSelectValid({
       chart: this.chart,
-      mconfigFields: this.mconfigFields
+      mconfigFields: this.mconfigFields,
+      isStoreModel: this.isStoreModel
     });
 
     this.isSelectValid =

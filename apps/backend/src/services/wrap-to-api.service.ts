@@ -179,6 +179,7 @@ export class WrapToApiService {
       mconfigId: mconfig.mconfigId,
       queryId: mconfig.queryId,
       modelId: mconfig.modelId,
+      isStoreModel: mconfig.isStoreModel,
       modelLabel: mconfig.modelLabel,
       select: mconfig.select,
       unsafeSelect: mconfig.unsafeSelect,

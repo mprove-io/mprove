@@ -59,6 +59,7 @@ export class StructService {
       mconfigId: newMconfigId,
       queryId: newQueryId,
       modelId: this.model.modelId,
+      isStoreModel: this.model.isStoreModel,
       modelLabel: this.model.label,
       select: [],
       unsafeSelect: [],

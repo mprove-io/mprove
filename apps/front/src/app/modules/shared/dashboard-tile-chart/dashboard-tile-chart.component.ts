@@ -157,7 +157,8 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
 
     let checkSelectResult = getSelectValid({
       chart: this.mconfig.chart,
-      mconfigFields: this.mconfig.fields
+      mconfigFields: this.mconfig.fields,
+      isStoreModel: this.mconfig.isStoreModel
     });
 
     this.isSelectValid = checkSelectResult.isSelectValid;

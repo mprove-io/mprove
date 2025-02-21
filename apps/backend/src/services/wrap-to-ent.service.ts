@@ -49,6 +49,7 @@ export class WrapToEntService {
       queryId: mconfig.queryId,
       mconfigId: mconfig.mconfigId,
       modelId: mconfig.modelId,
+      isStoreModel: mconfig.isStoreModel,
       modelLabel: mconfig.modelLabel,
       select: mconfig.select,
       unsafeSelect: mconfig.unsafeSelect,

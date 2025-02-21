@@ -3,8 +3,9 @@ import { common } from '~front/barrels/common';
 export function getSelectValid(item: {
   chart: common.MconfigChart;
   mconfigFields: common.MconfigField[];
+  isStoreModel: boolean;
 }) {
-  let { chart, mconfigFields } = item;
+  let { chart, mconfigFields, isStoreModel } = item;
 
   let xField = mconfigFields.find(f => f.id === chart.xField);
   let sizeField = mconfigFields.find(f => f.id === chart.sizeField);
@@ -33,7 +34,8 @@ export function getSelectValid(item: {
   let selectedDimensionsResultForXField = mconfigFields.filter(
     x =>
       x.fieldClass === common.FieldClassEnum.Dimension &&
-      (x.result === common.FieldResultEnum.Number ||
+      ((isStoreModel === true && common.isDefined(x.detail)) ||
+        x.result === common.FieldResultEnum.Number ||
         x.result === common.FieldResultEnum.Ts ||
         x.result === common.FieldResultEnum.DayOfWeek ||
         x.result === common.FieldResultEnum.DayOfWeekIndex ||
@@ -86,6 +88,8 @@ export function getSelectValid(item: {
         'At least one of the selected dimensions for this chart type must have result type "number", "ts", "day_of_week", "day_of_week_index", "month_name", "quarter_of_year"';
     } else if (
       common.isDefined(xField) &&
+      isStoreModel === true &&
+      common.isUndefined(xField.detail) &&
       xField.result !== common.FieldResultEnum.Number &&
       xField.result !== common.FieldResultEnum.Ts &&
       xField.result !== common.FieldResultEnum.DayOfWeek &&
@@ -96,17 +100,25 @@ export function getSelectValid(item: {
     ) {
       isSelectValid = false;
       errorMessage =
-        'xField for this chart type must have result type "number", "ts", "day_of_week", "day_of_week_index", "month_name", "quarter_of_year"';
+        isStoreModel === true
+          ? 'xField for this chart type must have result type "number" or time_group with detail specified'
+          : 'xField for this chart type must have result type "number", "ts", "day_of_week", "day_of_week_index", "month_name", "quarter_of_year"';
     } else if (
       selectedDimensions.length === 2 &&
       selectedDimensions[0].topId === selectedDimensions[1].topId &&
       selectedDimensions[0].groupId === selectedDimensions[1].groupId &&
-      selectedDimensions[0].result === common.FieldResultEnum.Ts &&
-      selectedDimensions[1].result === common.FieldResultEnum.Ts
+      (selectedDimensions[0].result === common.FieldResultEnum.Ts ||
+        (isStoreModel === true &&
+          common.isDefined(selectedDimensions[0].detail))) &&
+      (selectedDimensions[1].result === common.FieldResultEnum.Ts ||
+        (isStoreModel === true &&
+          common.isDefined(selectedDimensions[1].detail)))
     ) {
       isSelectValid = false;
       errorMessage =
-        'Two dimensions with result type TS from the same time group can be selected simultaneously only for the table chart';
+        isStoreModel === true
+          ? 'Two dimensions with detail specified from the same time group can be selected simultaneously only for the table chart'
+          : 'Two dimensions with result type TS from the same time group can be selected simultaneously only for the table chart';
     } else if (
       selectedMeasuresAndCalculations.length === 0 &&
       chart.type !== common.ChartTypeEnum.Scatter

@@ -196,6 +196,8 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                 mconfigId: common.makeId(),
                 queryId: common.makeId(),
                 modelId: modelName,
+                isStoreModel:
+                  this.fraction.type === common.FractionTypeEnum.StoreFraction,
                 modelLabel: 'empty',
                 select: [fieldId],
                 unsafeSelect: [],

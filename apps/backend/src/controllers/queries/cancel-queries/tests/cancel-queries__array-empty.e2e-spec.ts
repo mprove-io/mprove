@@ -39,6 +39,7 @@ test('1', async t => {
     mconfigId: mconfigId,
     queryId: queryId,
     modelId: 'abc',
+    isStoreModel: false,
     modelLabel: 'abc',
     select: [],
     unsafeSelect: [],

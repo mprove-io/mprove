@@ -444,7 +444,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
     let checkSelectResult = getSelectValid({
       chart: mconfig.chart,
-      mconfigFields: mconfig.fields
+      mconfigFields: mconfig.fields,
+      isStoreModel: mconfig.isStoreModel
     });
 
     let isSelectValid = checkSelectResult.isSelectValid;

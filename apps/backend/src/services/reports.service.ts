@@ -844,6 +844,7 @@ export class ReportsService {
             mconfigId: newMconfigId,
             queryId: newQueryId,
             modelId: model.modelId,
+            isStoreModel: model.isStoreModel,
             modelLabel: model.label,
             select: [timeFieldIdSpec, metric.fieldId],
             unsafeSelect: [],
