@@ -12,14 +12,15 @@ export function makeMconfigFiltersX(item: {
     filtersX = mconfigFilters.map(x => {
       let filterX: common.FilterX = {
         fieldId: x.fieldId,
-        fractions: [
-          ...x.fractions.filter(
-            fraction => fraction.operator === common.FractionOperatorEnum.Or
-          ),
-          ...x.fractions.filter(
-            fraction => fraction.operator === common.FractionOperatorEnum.And
-          )
-        ],
+        fractions: x.fractions.sort((a, b) => {
+          let getPriority = (op: common.FractionOperatorEnum): number => {
+            if (op === common.FractionOperatorEnum.Or) return 0;
+            if (op === common.FractionOperatorEnum.And) return 1;
+            return 2;
+          };
+
+          return getPriority(a.operator) - getPriority(b.operator);
+        }),
         field: modelFields.find(field => field.id === x.fieldId)
       };
       return filterX;

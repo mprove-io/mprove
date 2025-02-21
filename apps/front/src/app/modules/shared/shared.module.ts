@@ -24,6 +24,7 @@ import { DashboardSaveAsDialogComponent } from './dashboard-save-as-dialog/dashb
 import { DashboardTileChartComponent } from './dashboard-tile-chart/dashboard-tile-chart.component';
 import { FieldLabelComponent } from './field-label/field-label.component';
 import { FormatNumberComponent } from './format-number/format-number.component';
+import { FractionControlSelectorComponent } from './fraction/fraction-control-selector/fraction-control-selector.component';
 import { FractionDayOfWeekIndexComponent } from './fraction/fraction-day-of-week-index/fraction-day-of-week-index.component';
 import { FractionDayOfWeekComponent } from './fraction/fraction-day-of-week/fraction-day-of-week.component';
 import { FractionMonthNameComponent } from './fraction/fraction-month-name/fraction-month-name.component';
@@ -149,6 +150,7 @@ let sharedComponents = [
   CurrencyDollarIconComponent,
   FilterIconComponent,
   FractionComponent,
+  FractionControlSelectorComponent,
   FractionStringComponent,
   FractionNumberComponent,
   FractionYesnoComponent,

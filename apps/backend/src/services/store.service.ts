@@ -162,7 +162,7 @@ export class StoreService {
           );
 
           if (common.isUndefined(selectedFilter)) {
-            let newFraction = {
+            let newFraction: common.Fraction = {
               type: common.FractionTypeEnum.StoreFraction,
               controls: [] as any[],
               brick: undefined as any,
