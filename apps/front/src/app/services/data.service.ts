@@ -151,9 +151,10 @@ export class DataService {
 
           let fieldId = key.toLowerCase();
 
-          let field = mconfigFields.find(
-            x => (isStore === true ? x.id : x.sqlName) === fieldId
-          );
+          let field = mconfigFields.find(x => {
+            let id = isStore === true ? x.id : x.sqlName;
+            return id === fieldId;
+          });
 
           let sqlName = field.sqlName;
 

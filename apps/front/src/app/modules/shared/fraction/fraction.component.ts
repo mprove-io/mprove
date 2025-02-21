@@ -77,6 +77,8 @@ export class FractionComponent {
 
   fieldResultEnum = common.FieldResultEnum;
 
+  fractionTypeStoreFraction = common.FractionTypeEnum.StoreFraction;
+
   @Input() suggestModelDimension: string;
   @Input() structId: string;
 

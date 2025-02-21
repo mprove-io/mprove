@@ -49,7 +49,10 @@ export function wrapTiles(item: {
       envId: envId,
       connectionId: model.connection.connectionId,
       connectionType: model.connection.type,
-      storeModelId: tile.model,
+      storeModelId:
+        model.fileExt === common.FileExtensionEnum.Store
+          ? tile.model
+          : undefined,
       storeStructId: structId,
       sql: tile.sql.join('\n'),
       apiMethod: undefined,

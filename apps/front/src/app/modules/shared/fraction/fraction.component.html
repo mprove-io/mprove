@@ -1,85 +1,87 @@
-<div [ngSwitch]="fieldResult" class="flex flex-row items-start justify-start">
-  <div class="ml-5 flex h-[36px] w-10 items-center justify-start">
-    {{
-      !isFirst && fraction.operator === fractionOperatorEnum.Or
-        ? 'OR'
-        : !isFirst && fraction.operator === fractionOperatorEnum.And
-        ? 'AND'
-        : ''
-    }}
+<div *ngIf="fraction.type !== fractionTypeStoreFraction">
+  <div [ngSwitch]="fieldResult" class="flex flex-row items-start justify-start">
+    <div class="ml-5 flex h-[36px] w-10 items-center justify-start">
+      {{
+        !isFirst && fraction.operator === fractionOperatorEnum.Or
+          ? 'OR'
+          : !isFirst && fraction.operator === fractionOperatorEnum.And
+          ? 'AND'
+          : ''
+      }}
+    </div>
+
+    <m-fraction-number
+      *ngSwitchCase="fieldResultEnum.Number"
+      [fraction]="fraction"
+      [isFirst]="isFirst"
+      [fractionIndex]="fractionIndex"
+      [isDisabled]="isDisabled"
+      (fractionUpdate)="fractionUpdate.emit($event)"
+    ></m-fraction-number>
+
+    <m-fraction-string
+      *ngSwitchCase="fieldResultEnum.String"
+      [suggestModelDimension]="suggestModelDimension"
+      [structId]="structId"
+      [fraction]="fraction"
+      [isFirst]="isFirst"
+      [fractionIndex]="fractionIndex"
+      [isDisabled]="isDisabled"
+      (fractionUpdate)="fractionUpdate.emit($event)"
+    ></m-fraction-string>
+
+    <m-fraction-day-of-week
+      *ngSwitchCase="fieldResultEnum.DayOfWeek"
+      [fraction]="fraction"
+      [isFirst]="isFirst"
+      [fractionIndex]="fractionIndex"
+      [isDisabled]="isDisabled"
+      (fractionUpdate)="fractionUpdate.emit($event)"
+    ></m-fraction-day-of-week>
+
+    <m-fraction-day-of-week-index
+      *ngSwitchCase="fieldResultEnum.DayOfWeekIndex"
+      [fraction]="fraction"
+      [isFirst]="isFirst"
+      [fractionIndex]="fractionIndex"
+      [isDisabled]="isDisabled"
+      (fractionUpdate)="fractionUpdate.emit($event)"
+    ></m-fraction-day-of-week-index>
+
+    <m-fraction-month-name
+      *ngSwitchCase="fieldResultEnum.MonthName"
+      [fraction]="fraction"
+      [isFirst]="isFirst"
+      [fractionIndex]="fractionIndex"
+      [isDisabled]="isDisabled"
+      (fractionUpdate)="fractionUpdate.emit($event)"
+    ></m-fraction-month-name>
+
+    <m-fraction-quarter-of-year
+      *ngSwitchCase="fieldResultEnum.QuarterOfYear"
+      [fraction]="fraction"
+      [isFirst]="isFirst"
+      [fractionIndex]="fractionIndex"
+      [isDisabled]="isDisabled"
+      (fractionUpdate)="fractionUpdate.emit($event)"
+    ></m-fraction-quarter-of-year>
+
+    <m-fraction-ts
+      *ngSwitchCase="fieldResultEnum.Ts"
+      [fraction]="fraction"
+      [isFirst]="isFirst"
+      [fractionIndex]="fractionIndex"
+      [isDisabled]="isDisabled"
+      (fractionUpdate)="fractionUpdate.emit($event)"
+    ></m-fraction-ts>
+
+    <m-fraction-yesno
+      *ngSwitchCase="fieldResultEnum.Yesno"
+      [fraction]="fraction"
+      [isFirst]="isFirst"
+      [fractionIndex]="fractionIndex"
+      [isDisabled]="isDisabled"
+      (fractionUpdate)="fractionUpdate.emit($event)"
+    ></m-fraction-yesno>
   </div>
-
-  <m-fraction-number
-    *ngSwitchCase="fieldResultEnum.Number"
-    [fraction]="fraction"
-    [isFirst]="isFirst"
-    [fractionIndex]="fractionIndex"
-    [isDisabled]="isDisabled"
-    (fractionUpdate)="fractionUpdate.emit($event)"
-  ></m-fraction-number>
-
-  <m-fraction-string
-    *ngSwitchCase="fieldResultEnum.String"
-    [suggestModelDimension]="suggestModelDimension"
-    [structId]="structId"
-    [fraction]="fraction"
-    [isFirst]="isFirst"
-    [fractionIndex]="fractionIndex"
-    [isDisabled]="isDisabled"
-    (fractionUpdate)="fractionUpdate.emit($event)"
-  ></m-fraction-string>
-
-  <m-fraction-day-of-week
-    *ngSwitchCase="fieldResultEnum.DayOfWeek"
-    [fraction]="fraction"
-    [isFirst]="isFirst"
-    [fractionIndex]="fractionIndex"
-    [isDisabled]="isDisabled"
-    (fractionUpdate)="fractionUpdate.emit($event)"
-  ></m-fraction-day-of-week>
-
-  <m-fraction-day-of-week-index
-    *ngSwitchCase="fieldResultEnum.DayOfWeekIndex"
-    [fraction]="fraction"
-    [isFirst]="isFirst"
-    [fractionIndex]="fractionIndex"
-    [isDisabled]="isDisabled"
-    (fractionUpdate)="fractionUpdate.emit($event)"
-  ></m-fraction-day-of-week-index>
-
-  <m-fraction-month-name
-    *ngSwitchCase="fieldResultEnum.MonthName"
-    [fraction]="fraction"
-    [isFirst]="isFirst"
-    [fractionIndex]="fractionIndex"
-    [isDisabled]="isDisabled"
-    (fractionUpdate)="fractionUpdate.emit($event)"
-  ></m-fraction-month-name>
-
-  <m-fraction-quarter-of-year
-    *ngSwitchCase="fieldResultEnum.QuarterOfYear"
-    [fraction]="fraction"
-    [isFirst]="isFirst"
-    [fractionIndex]="fractionIndex"
-    [isDisabled]="isDisabled"
-    (fractionUpdate)="fractionUpdate.emit($event)"
-  ></m-fraction-quarter-of-year>
-
-  <m-fraction-ts
-    *ngSwitchCase="fieldResultEnum.Ts"
-    [fraction]="fraction"
-    [isFirst]="isFirst"
-    [fractionIndex]="fractionIndex"
-    [isDisabled]="isDisabled"
-    (fractionUpdate)="fractionUpdate.emit($event)"
-  ></m-fraction-ts>
-
-  <m-fraction-yesno
-    *ngSwitchCase="fieldResultEnum.Yesno"
-    [fraction]="fraction"
-    [isFirst]="isFirst"
-    [fractionIndex]="fractionIndex"
-    [isDisabled]="isDisabled"
-    (fractionUpdate)="fractionUpdate.emit($event)"
-  ></m-fraction-yesno>
 </div>

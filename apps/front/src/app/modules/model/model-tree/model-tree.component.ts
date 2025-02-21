@@ -242,11 +242,40 @@ export class ModelTreeComponent implements AfterViewInit {
         ...newMconfig.filters.slice(filterIndex + 1)
       ];
     } else {
-      let newFraction: common.Fraction = {
-        brick: 'any',
-        operator: common.FractionOperatorEnum.Or,
-        type: common.getFractionTypeForAny(node.data.fieldResult)
-      };
+      let newFraction: common.Fraction;
+
+      if (newMconfig.isStoreModel === true) {
+        let field = this.model.fields.find(x => x.id === node.data.id);
+
+        newFraction = {
+          operator: common.FractionOperatorEnum.Or,
+          brick: undefined,
+          type: common.FractionTypeEnum.StoreFraction,
+          storeResult: field.result,
+          controls: (this.model.content as common.FileStore).results
+            .find(r => r.result === field.result)
+            .fraction_types[0].controls.map(control => {
+              let newControl: common.FractionControl = {
+                options: control.options,
+                value: control.value,
+                label: control.label,
+                showIf: control.show_if,
+                required: control.required,
+                name: control.name,
+                controlClass: control.controlClass,
+                showIfDepsIncludingParentFilter:
+                  control.showIfDepsIncludingParentFilter
+              };
+              return newControl;
+            })
+        };
+      } else {
+        newFraction = {
+          brick: 'any',
+          operator: common.FractionOperatorEnum.Or,
+          type: common.getFractionTypeForAny(node.data.fieldResult)
+        };
+      }
 
       let newFilter: common.Filter = {
         fieldId: node.data.id,

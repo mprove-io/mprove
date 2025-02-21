@@ -9,6 +9,7 @@ export class FractionControl {
   @Type(() => FractionControlOption)
   options: FractionControlOption[];
 
+  @IsOptional()
   @IsString()
   value: any;
 

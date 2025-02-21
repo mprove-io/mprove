@@ -30,6 +30,10 @@ export class Fraction {
 
   @IsOptional()
   @IsString()
+  storeResult?: string;
+
+  @IsOptional()
+  @IsString()
   stringValue?: string;
 
   @IsOptional()
