@@ -145,7 +145,7 @@ export function createModelMetrics(
             modelId: model.name,
             topNode: model.name,
             topLabel: topLabel,
-            fieldId: `mf.${modelField.name}`,
+            fieldId: `${common.MF}.${modelField.name}`,
             fieldClass: modelField.fieldClass,
             timeFieldId: element.time,
             timeNodeLabel: timeNodeLabel,
