@@ -49,7 +49,7 @@ export class StoreService {
         let isRemove = false as boolean;
 
         let selectedFilter = newMconfig.filters.find(
-          x => x.fieldId === `${common.MF}.${filterName}`
+          x => x.fieldId === `${filterName}`
         );
 
         if (common.isDefined(selectedFilter)) {
@@ -64,7 +64,7 @@ export class StoreService {
                 selectedControl.showIfDepsIncludingParentFilter.forEach(dep => {
                   if (isRemove === false) {
                     let depSelectedFilter = newMconfig.filters.find(
-                      y => y.fieldId === `${common.MF}.${dep.filterName}`
+                      y => y.fieldId === `${dep.filterName}`
                     );
 
                     if (common.isUndefined(depSelectedFilter)) {
@@ -95,7 +95,7 @@ export class StoreService {
 
         if (isRemove === true) {
           let filter = newMconfig.filters.find(
-            x => x.fieldId === `${common.MF}.${filterName}`
+            x => x.fieldId === `${filterName}`
           );
 
           filter.fractions.forEach(fraction => {
@@ -133,7 +133,7 @@ export class StoreService {
           let sControlValue = r[3];
 
           let sDepSelectedFilter = newMconfig.filters.find(
-            y => y.fieldId === `${common.MF}.${sFilterName}`
+            y => y.fieldId === `${sFilterName}`
           );
 
           if (
@@ -158,7 +158,7 @@ export class StoreService {
 
         if (filterShowIfAllows === true) {
           let selectedFilter = newMconfig.filters.find(
-            x => x.fieldId === `${common.MF}.${filterName}`
+            x => x.fieldId === `${filterName}`
           );
 
           if (common.isUndefined(selectedFilter)) {
@@ -170,7 +170,7 @@ export class StoreService {
             };
 
             let newFilter: common.Filter = {
-              fieldId: `${common.MF}.${filterName}`,
+              fieldId: `${filterName}`,
               fractions: [newFraction]
             };
 
@@ -195,7 +195,7 @@ export class StoreService {
             let cControlValue = r[3];
 
             let cDepSelectedFilter = newMconfig.filters.find(
-              y => y.fieldId === `${common.MF}.${cFilterName}`
+              y => y.fieldId === `${cFilterName}`
             );
 
             if (
@@ -264,11 +264,11 @@ export class StoreService {
 
     let selectedDimensions = (storeModel.content as common.FileStore).fields
       .filter(field => field.fieldClass === common.FieldClassEnum.Dimension)
-      .filter(f => mconfig.select.indexOf(`${f.group}.${f.name}`) > -1);
+      .filter(f => mconfig.select.indexOf(`${f.name}`) > -1);
 
     let selectedMeasures = (storeModel.content as common.FileStore).fields
       .filter(field => field.fieldClass === common.FieldClassEnum.Measure)
-      .filter(f => mconfig.select.indexOf(`${f.group}.${f.name}`) > -1);
+      .filter(f => mconfig.select.indexOf(`${f.name}`) > -1);
 
     let orderByElements: {
       fieldId: string;
@@ -280,7 +280,7 @@ export class StoreService {
       let orderByElement = {
         fieldId: sorting.fieldId,
         field: (storeModel.content as common.FileStore).fields.find(
-          field => `${field.group}.${field.name}` === sorting.fieldId
+          field => `${field.name}` === sorting.fieldId
         ),
         desc: sorting.desc
       };

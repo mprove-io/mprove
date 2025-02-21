@@ -30,6 +30,7 @@ export function wrapModels(item: {
 
         x.fields.forEach(field => {
           wrapField({
+            isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
             wrappedFields: apiFields,
             field: field,
             alias: common.MF,
@@ -64,6 +65,7 @@ export function wrapModels(item: {
 
         join.view.fields.forEach(field => {
           wrapField({
+            isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
             wrappedFields: apiFields,
             field: field,
             alias: join.as,
@@ -99,6 +101,7 @@ export function wrapModels(item: {
           .filter(field => field.group === common.MF)
           .forEach(field => {
             wrapField({
+              isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
               children: children,
               node: node,
               wrappedFields: apiFields,
@@ -136,6 +139,7 @@ export function wrapModels(item: {
 
         fieldGroupFields.forEach(field => {
           wrapField({
+            isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
             wrappedFields: apiFields,
             field: field,
             alias: fieldGroup.group,

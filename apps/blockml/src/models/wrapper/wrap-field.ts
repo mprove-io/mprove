@@ -8,14 +8,23 @@ export function wrapField(item: {
   alias: string;
   fileName: string;
   filePath: string;
+  isStoreModel: boolean;
 }) {
-  let { wrappedFields, field, alias, fileName, filePath, children, node } =
-    item;
+  let {
+    wrappedFields,
+    field,
+    alias,
+    fileName,
+    filePath,
+    children,
+    node,
+    isStoreModel
+  } = item;
 
   let fieldHidden = common.toBooleanFromLowercaseString(field.hidden);
 
   let modelField: common.ModelField = {
-    id: `${alias}.${field.name}`,
+    id: isStoreModel === true ? `${field.name}` : `${alias}.${field.name}`,
     hidden: fieldHidden,
     label: field.label,
     fieldClass: field.fieldClass,
@@ -23,7 +32,7 @@ export function wrapField(item: {
     formatNumber: field.format_number,
     currencyPrefix: field.currency_prefix,
     currencySuffix: field.currency_suffix,
-    sqlName: `${alias}_${field.name}`,
+    sqlName: isStoreModel === true ? `${field.name}` : `${alias}_${field.name}`,
     topId: node.id,
     topLabel: node.label,
     description: field.description,
@@ -38,7 +47,7 @@ export function wrapField(item: {
   wrappedFields.push(modelField);
 
   let fieldNode: common.ModelNode = {
-    id: `${alias}.${field.name}`,
+    id: isStoreModel === true ? `${field.name}` : `${alias}.${field.name}`,
     label: field.label,
     description: field.description,
     hidden: fieldHidden,
@@ -52,13 +61,20 @@ export function wrapField(item: {
   };
 
   if (common.isDefined(field.groupId)) {
-    let groupNode = children.find(c => c.id === `${alias}.${field.groupId}`);
+    let groupNode = children.find(c =>
+      isStoreModel === true
+        ? c.id === `${field.groupId}`
+        : c.id === `${alias}.${field.groupId}`
+    );
 
     if (common.isDefined(groupNode)) {
       groupNode.children.push(fieldNode);
     } else {
       let newGroupNode: common.ModelNode = {
-        id: `${alias}.${field.groupId}`,
+        id:
+          isStoreModel === true
+            ? `${field.groupId}`
+            : `${alias}.${field.groupId}`,
         label: field.group_label,
         description: field.group_description,
         hidden: fieldHidden,
