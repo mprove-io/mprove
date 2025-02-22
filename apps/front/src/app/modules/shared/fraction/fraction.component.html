@@ -142,5 +142,17 @@
       (fractionUpdate)="fractionUpdate.emit($event)"
     >
     </m-store-fraction-switch>
+
+    <m-store-fraction-date-picker
+      class="ml-5"
+      *ngIf="fractionControl.controlClass === controlClassDatePicker"
+      [fraction]="fraction"
+      [isFirst]="isFirst"
+      [fractionIndex]="fractionIndex"
+      [isDisabled]="isDisabled"
+      [fractionControl]="fractionControl"
+      (fractionUpdate)="fractionUpdate.emit($event)"
+    >
+    </m-store-fraction-date-picker>
   </div>
 </div>

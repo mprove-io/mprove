@@ -21,6 +21,7 @@ import {
 import '@vaadin/time-picker';
 import { TimePicker } from '@vaadin/time-picker';
 import { tap } from 'rxjs';
+import { COMMON_I18N } from '~front/app/constants/top';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { TimeService } from '~front/app/services/time.service';
@@ -337,49 +338,7 @@ export class FractionTsComponent implements OnInit {
     }
   ];
 
-  commonI18n: DatePickerI18n = {
-    monthNames: [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ],
-    weekdays: [
-      'Sunday',
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday'
-    ],
-    weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    firstDayOfWeek: 0,
-    week: 'Week',
-    calendar: 'Calendar',
-    today: 'Today',
-    cancel: 'Cancel',
-    referenceDate: '',
-    formatDate: (d: DatePickerDate) => {
-      let monthIndex = d.month + 1;
-      let month =
-        monthIndex.toString().length === 1 ? `0${monthIndex}` : `${monthIndex}`;
-
-      let day = d.day.toString().length === 1 ? `0${d.day}` : `${d.day}`;
-
-      return `${d.year}-${month}-${day}`;
-    },
-    parseDate: null,
-    formatTitle: (monthName: any, fullYear: any) => monthName + '  ' + fullYear
-  };
+  commonI18n: DatePickerI18n = COMMON_I18N;
 
   onYearDateI18n = Object.assign({}, this.commonI18n);
   onMonthDateI18n = Object.assign({}, this.commonI18n);

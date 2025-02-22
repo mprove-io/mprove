@@ -230,7 +230,7 @@ export class ModelComponent implements OnInit, OnDestroy {
     })
   );
 
-  isAutoRun = true;
+  isAutoRun = false;
   isFormat = true;
 
   resultsIsShow = true;

@@ -303,11 +303,11 @@ export class StoreService {
       } else if (reference === 'QUERY_LIMIT') {
         target = JSON.stringify(mconfig.limit);
       } else if (reference === 'METRICS_DATE_FROM') {
-        target = '50daysAgo'; // TODO:
+        target = '2025-01-01'; // TODO:
       } else if (reference === 'METRICS_DATE_TO') {
-        target = 'today'; // TODO:
+        target = '2025-02-01'; // TODO:
       } else if (reference === 'DATE_TODAY') {
-        target = 'today'; // TODO:
+        target = '2025-01-26'; // TODO:
       } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
         target = 'false'; // TODO:
       } else if (reference === 'STORE_FIELDS') {

@@ -1,0 +1,22 @@
+<div class="ml-2 flex h-16 flex-row">
+  <div
+    *ngIf="!!fractionControl.label"
+    class="text-gray1 mr-5 flex h-9 flex-shrink-0 select-none items-center text-base"
+    >{{ fractionControl.label }}</div
+  >
+
+  <div
+    tp="Turn off formula to activate control"
+    [tpIsEnabled]="isDisabled === true"
+  >
+    <vaadin-date-picker
+      #vDatePicker
+      class="py-0"
+      required
+      [value]="fractionControl.value"
+      [i18n]="dateI18n"
+      (value-changed)="dateValueChanged($event)"
+      [disabled]="isDisabled === true"
+    ></vaadin-date-picker>
+  </div>
+</div>

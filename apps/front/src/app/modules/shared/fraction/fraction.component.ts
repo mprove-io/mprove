@@ -81,6 +81,7 @@ export class FractionComponent {
   controlClassSelector = common.ControlClassEnum.Selector;
   controlClassInput = common.ControlClassEnum.Input;
   controlClassSwitch = common.ControlClassEnum.Switch;
+  controlClassDatePicker = common.ControlClassEnum.DatePicker;
 
   @Input() suggestModelDimension: string;
   @Input() structId: string;

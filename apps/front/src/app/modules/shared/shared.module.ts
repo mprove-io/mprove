@@ -33,6 +33,7 @@ import { FractionStringComponent } from './fraction/fraction-string/fraction-str
 import { FractionTsComponent } from './fraction/fraction-ts/fraction-ts.component';
 import { FractionYesnoComponent } from './fraction/fraction-yesno/fraction-yesno.component';
 import { FractionComponent } from './fraction/fraction.component';
+import { StoreFractionDatePickerComponent } from './fraction/store-fraction-date-picker/store-fraction-date-picker.component';
 import { StoreFractionInputComponent } from './fraction/store-fraction-input/store-fraction-input.component';
 import { StoreFractionSelectorComponent } from './fraction/store-fraction-selector/store-fraction-selector.component';
 import { StoreFractionSubTypeComponent } from './fraction/store-fraction-sub-type/store-fraction-sub-type.component';
@@ -157,6 +158,7 @@ let sharedComponents = [
   StoreFractionSelectorComponent,
   StoreFractionInputComponent,
   StoreFractionSwitchComponent,
+  StoreFractionDatePickerComponent,
   FractionStringComponent,
   FractionNumberComponent,
   FractionYesnoComponent,

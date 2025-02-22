@@ -1,3 +1,4 @@
+import { DatePickerDate, DatePickerI18n } from '@vaadin/date-picker';
 import { common } from '~front/barrels/common';
 
 export const SPECIAL_ERROR = 'SPECIAL_ERROR';
@@ -150,4 +151,48 @@ export const EMPTY_MCONFIG_FIELD: common.MconfigField = {
   sorting: undefined,
   sortingNumber: undefined,
   isHideColumn: undefined
+};
+
+export const COMMON_I18N: DatePickerI18n = {
+  monthNames: [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ],
+  weekdays: [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday'
+  ],
+  weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  firstDayOfWeek: 0,
+  week: 'Week',
+  calendar: 'Calendar',
+  today: 'Today',
+  cancel: 'Cancel',
+  referenceDate: '',
+  formatDate: (d: DatePickerDate) => {
+    let monthIndex = d.month + 1;
+    let month =
+      monthIndex.toString().length === 1 ? `0${monthIndex}` : `${monthIndex}`;
+
+    let day = d.day.toString().length === 1 ? `0${d.day}` : `${d.day}`;
+
+    return `${d.year}-${month}-${day}`;
+  },
+  parseDate: null,
+  formatTitle: (monthName: any, fullYear: any) => monthName + '  ' + fullYear
 };
