@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-import { ModelNode } from '~common/_index';
+import { FractionSubTypeOption, ModelNode } from '~common/_index';
 import { ModelQuery, ModelState } from '~front/app/queries/model.query';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -252,6 +252,20 @@ export class ModelTreeComponent implements AfterViewInit {
           brick: undefined,
           type: common.FractionTypeEnum.StoreFraction,
           storeResult: field.result,
+          storeFractionSubType: (
+            this.model.content as common.FileStore
+          ).results.find(r => r.result === field.result).fraction_types[0].type,
+          storeFractionSubTypeOptions: (
+            this.model.content as common.FileStore
+          ).results
+            .find(r => r.result === field.result)
+            .fraction_types.map(ft => {
+              let option: FractionSubTypeOption = {
+                value: ft.type,
+                label: ft.label
+              };
+              return option;
+            }),
           controls: (this.model.content as common.FileStore).results
             .find(r => r.result === field.result)
             .fraction_types[0].controls.map(control => {

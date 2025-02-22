@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 import { FractionControl } from './fraction-control';
+import { FractionSubTypeOption } from './fraction-sub-type-option';
 
 export class Fraction {
   @IsOptional()
@@ -31,6 +32,11 @@ export class Fraction {
   @IsOptional()
   @IsString()
   storeFractionSubType?: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => FractionSubTypeOption)
+  storeFractionSubTypeOptions?: FractionSubTypeOption[];
 
   @IsOptional()
   @IsString()

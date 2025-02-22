@@ -9,6 +9,7 @@ export * from './filter-bricks-dictionary';
 export * from './fraction';
 export * from './fraction-control';
 export * from './fraction-control-option';
+export * from './fraction-sub-type-option';
 export * from './internal/_index';
 export * from './join-aggregation';
 export * from './mconfig';
