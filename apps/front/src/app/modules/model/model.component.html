@@ -424,7 +424,9 @@
                     class="ml-3 max-h-[260px] w-2 flex-1 overflow-auto"
                     *ngIf="filtersIsExpanded"
                   >
-                    <m-model-filters></m-model-filters>
+                    <m-model-filters
+                      [modelContent]="model.content"
+                    ></m-model-filters>
                   </div>
                 </div>
               </div>

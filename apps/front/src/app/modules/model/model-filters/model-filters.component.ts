@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
@@ -11,6 +11,8 @@ import { interfaces } from '~front/barrels/interfaces';
   templateUrl: './model-filters.component.html'
 })
 export class ModelFiltersComponent {
+  @Input() modelContent: any;
+
   mconfig: common.MconfigX;
   mconfig$ = this.mqQuery.mconfig$.pipe(
     tap(x => {

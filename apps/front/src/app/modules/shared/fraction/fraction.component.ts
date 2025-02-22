@@ -83,6 +83,7 @@ export class FractionComponent {
 
   @Input() suggestModelDimension: string;
   @Input() structId: string;
+  @Input() modelContent: any;
 
   @Input() isDisabled: boolean;
   @Input() fieldResult: common.FieldResultEnum;
