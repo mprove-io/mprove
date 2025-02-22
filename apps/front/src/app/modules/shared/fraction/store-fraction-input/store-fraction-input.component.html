@@ -1,0 +1,59 @@
+<div class="ml-2 flex h-16 flex-row space-x-5">
+  <form [formGroup]="fractionForm" class="flex flex-col">
+    <div
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
+    >
+      <fieldset [disabled]="isDisabled === true">
+        <ng-select
+          *ngIf="!!suggestModelDimension"
+          #inputValueSelect
+          data-cy="inputValueSelect"
+          class="w-96 text-base"
+          [ngClass]="{
+            'cursor-default': isDisabled === true
+          }"
+          [items]="items"
+          [typeahead]="searchInput$"
+          [loading]="loading"
+          [clearable]="false"
+          [searchable]="true"
+          (keyup.esc)="
+            $event.stopImmediatePropagation(); inputValueSelect.blur()
+          "
+          (keyup.enter)="
+            $event.stopImmediatePropagation(); inputValueSelect.blur()
+          "
+          (change)="inputValueChange($event)"
+          (search)="inputValueSearch($event)"
+          (open)="onOpenSelect()"
+          (close)="onCloseSelect()"
+          appendTo="body"
+          bindLabel="name"
+          bindValue="name"
+          formControlName="inputValue"
+        >
+        </ng-select>
+
+        <input
+          *ngIf="!suggestModelDimension"
+          autocomplete="off"
+          spellcheck="false"
+          data-cy="fractionInputValueInput"
+          class="form-input border-gray3 focus:border-blue3 h-[36px] w-[404px] rounded"
+          [ngClass]="{
+            'border-red-600':
+              fractionForm.controls['inputValue'].invalid &&
+              fractionForm.controls['inputValue'].touched
+          }"
+          formControlName="inputValue"
+          (blur)="inputValueBlur()"
+        />
+      </fieldset>
+    </div>
+
+    <m-validation
+      [control]="fractionForm.controls['inputValue']"
+    ></m-validation>
+  </form>
+</div>

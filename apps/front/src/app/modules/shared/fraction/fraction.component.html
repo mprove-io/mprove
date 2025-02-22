@@ -116,5 +116,17 @@
       (fractionUpdate)="fractionUpdate.emit($event)"
     >
     </m-store-fraction-selector>
+
+    <m-store-fraction-input
+      class="ml-5"
+      *ngIf="fractionControl.controlClass === controlClassInput"
+      [fraction]="fraction"
+      [isFirst]="isFirst"
+      [fractionIndex]="fractionIndex"
+      [isDisabled]="isDisabled"
+      [fractionControl]="fractionControl"
+      (fractionUpdate)="fractionUpdate.emit($event)"
+    >
+    </m-store-fraction-input>
   </div>
 </div>
