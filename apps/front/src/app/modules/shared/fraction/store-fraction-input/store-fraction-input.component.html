@@ -1,4 +1,10 @@
-<div class="ml-2 flex h-16 flex-row space-x-5">
+<div class="ml-2 flex h-16 flex-row">
+  <div
+    *ngIf="!!fractionControl.label"
+    class="text-gray1 mr-5 flex h-9 flex-shrink-0 select-none items-center text-base"
+    >{{ fractionControl.label }}</div
+  >
+
   <form [formGroup]="fractionForm" class="flex flex-col">
     <div
       tp="Turn off formula to activate control"

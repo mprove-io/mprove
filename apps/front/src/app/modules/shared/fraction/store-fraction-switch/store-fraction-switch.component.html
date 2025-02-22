@@ -8,12 +8,12 @@
       (click)="toggleSwitch()"
     >
       <div
-        class="text-gray1 flex h-9 flex-shrink-0 select-none items-center text-base"
-        >{{ fractionControl.label || fractionControl.name }}</div
+        *ngIf="!!fractionControl.label"
+        class="text-gray1 mr-5 flex h-9 flex-shrink-0 select-none items-center text-base"
+        >{{ fractionControl.label }}</div
       >
 
       <ui-switch
-        class="ml-5"
         [checked]="fractionControl.value"
         [disabled]="isDisabled === true"
       ></ui-switch>
