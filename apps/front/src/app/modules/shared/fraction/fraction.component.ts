@@ -74,12 +74,13 @@ export class FractionTsLastCompleteOptionItem {
 })
 export class FractionComponent {
   fractionOperatorEnum = common.FractionOperatorEnum;
-
   fieldResultEnum = common.FieldResultEnum;
 
   fractionTypeStoreFraction = common.FractionTypeEnum.StoreFraction;
+
   controlClassSelector = common.ControlClassEnum.Selector;
   controlClassInput = common.ControlClassEnum.Input;
+  controlClassSwitch = common.ControlClassEnum.Switch;
 
   @Input() suggestModelDimension: string;
   @Input() structId: string;

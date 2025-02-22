@@ -1,0 +1,22 @@
+<div class="ml-2 flex h-16 flex-row">
+  <div
+    tp="Turn off formula to activate control"
+    [tpIsEnabled]="isDisabled === true"
+  >
+    <div
+      class="mb-5 flex cursor-pointer flex-row items-center"
+      (click)="toggleSwitch()"
+    >
+      <div
+        class="text-gray1 flex h-9 flex-shrink-0 select-none items-center text-base"
+        >{{ fractionControl.label || fractionControl.name }}</div
+      >
+
+      <ui-switch
+        class="ml-5"
+        [checked]="fractionControl.value"
+        [disabled]="isDisabled === true"
+      ></ui-switch>
+    </div>
+  </div>
+</div>

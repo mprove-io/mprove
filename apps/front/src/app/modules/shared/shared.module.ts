@@ -36,6 +36,7 @@ import { FractionComponent } from './fraction/fraction.component';
 import { StoreFractionInputComponent } from './fraction/store-fraction-input/store-fraction-input.component';
 import { StoreFractionSelectorComponent } from './fraction/store-fraction-selector/store-fraction-selector.component';
 import { StoreFractionSubTypeComponent } from './fraction/store-fraction-sub-type/store-fraction-sub-type.component';
+import { StoreFractionSwitchComponent } from './fraction/store-fraction-switch/store-fraction-switch.component';
 import { AddIconComponent } from './icons/add-icon/add-icon.component';
 import { AdjustmentsIconComponent } from './icons/adjustments-icon/adjustments-icon.component';
 import { ArrowDropDownIconComponent } from './icons/arrow-drop-down-icon/arrow-drop-down-icon.component';
@@ -155,6 +156,7 @@ let sharedComponents = [
   StoreFractionSubTypeComponent,
   StoreFractionSelectorComponent,
   StoreFractionInputComponent,
+  StoreFractionSwitchComponent,
   FractionStringComponent,
   FractionNumberComponent,
   FractionYesnoComponent,
