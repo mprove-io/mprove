@@ -24,7 +24,6 @@ import { DashboardSaveAsDialogComponent } from './dashboard-save-as-dialog/dashb
 import { DashboardTileChartComponent } from './dashboard-tile-chart/dashboard-tile-chart.component';
 import { FieldLabelComponent } from './field-label/field-label.component';
 import { FormatNumberComponent } from './format-number/format-number.component';
-import { FractionControlSelectorComponent } from './fraction/fraction-control-selector/fraction-control-selector.component';
 import { FractionDayOfWeekIndexComponent } from './fraction/fraction-day-of-week-index/fraction-day-of-week-index.component';
 import { FractionDayOfWeekComponent } from './fraction/fraction-day-of-week/fraction-day-of-week.component';
 import { FractionMonthNameComponent } from './fraction/fraction-month-name/fraction-month-name.component';
@@ -34,6 +33,8 @@ import { FractionStringComponent } from './fraction/fraction-string/fraction-str
 import { FractionTsComponent } from './fraction/fraction-ts/fraction-ts.component';
 import { FractionYesnoComponent } from './fraction/fraction-yesno/fraction-yesno.component';
 import { FractionComponent } from './fraction/fraction.component';
+import { StoreFractionSelectorComponent } from './fraction/store-fraction-selector/store-fraction-selector.component';
+import { StoreFractionSubTypeComponent } from './fraction/store-fraction-sub-type/store-fraction-sub-type.component';
 import { AddIconComponent } from './icons/add-icon/add-icon.component';
 import { AdjustmentsIconComponent } from './icons/adjustments-icon/adjustments-icon.component';
 import { ArrowDropDownIconComponent } from './icons/arrow-drop-down-icon/arrow-drop-down-icon.component';
@@ -150,7 +151,8 @@ let sharedComponents = [
   CurrencyDollarIconComponent,
   FilterIconComponent,
   FractionComponent,
-  FractionControlSelectorComponent,
+  StoreFractionSubTypeComponent,
+  StoreFractionSelectorComponent,
   FractionStringComponent,
   FractionNumberComponent,
   FractionYesnoComponent,

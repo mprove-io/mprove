@@ -4,23 +4,23 @@
     [tpIsEnabled]="isDisabled === true"
   >
     <ng-select
-      #fractionControlSelectorSelect
-      data-cy="fractionControlSelectorSelect"
+      #fractionSubTypeSelect
+      data-cy="fractionSubTypeSelect"
       class="popup-55 w-48"
       [ngClass]="{
         'cursor-default': isDisabled === true
       }"
-      [items]="fractionControl.options"
+      [items]="[]"
       [clearable]="false"
       [searchable]="false"
       [disabled]="isDisabled === true"
-      [(ngModel)]="fractionControl.value"
-      (change)="valueChange($event)"
+      [(ngModel)]="fraction.storeFractionSubType"
+      (change)="subTypeChange($event)"
       (keyup.esc)="
-        $event.stopImmediatePropagation(); fractionControlSelectorSelect.blur()
+        $event.stopImmediatePropagation(); fractionSubTypeSelect.blur()
       "
       (keyup.enter)="
-        $event.stopImmediatePropagation(); fractionControlSelectorSelect.blur()
+        $event.stopImmediatePropagation(); fractionSubTypeSelect.blur()
       "
       appendTo="body"
       bindLabel="label"

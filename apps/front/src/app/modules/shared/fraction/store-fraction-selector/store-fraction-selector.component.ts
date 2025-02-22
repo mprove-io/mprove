@@ -13,18 +13,18 @@ import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
-  selector: 'm-fraction-control-selector',
-  templateUrl: 'fraction-control-selector.component.html',
+  selector: 'm-store-fraction-selector',
+  templateUrl: 'store-fraction-selector.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 // implements OnInit
-export class FractionControlSelectorComponent {
-  @ViewChild('fractionControlSelectorSelect', { static: false })
-  fractionControlSelectorSelectElement: NgSelectComponent;
+export class StoreFractionSelectorComponent {
+  @ViewChild('fractionSelectorSelect', { static: false })
+  fractionSelectorSelect: NgSelectComponent;
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.fractionControlSelectorSelectElement?.close();
+    this.fractionSelectorSelect?.close();
   }
 
   @Input() fraction: common.Fraction;

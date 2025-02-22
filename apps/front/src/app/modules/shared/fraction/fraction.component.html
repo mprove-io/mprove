@@ -92,12 +92,20 @@
 >
   <div class="ml-5 flex h-[36px] w-10 items-center justify-start"></div>
 
-  <!-- <div *ngIf="field.fieldClass === Filter"> 
-    selector for fraction type
-  </div> -->
+  <div *ngIf="!!fieldResult" class="flex">
+    <m-store-fraction-sub-type
+      class="ml-5"
+      [fraction]="fraction"
+      [isFirst]="isFirst"
+      [fractionIndex]="fractionIndex"
+      [isDisabled]="isDisabled"
+      (fractionUpdate)="fractionUpdate.emit($event)"
+    >
+    </m-store-fraction-sub-type>
+  </div>
 
   <div *ngFor="let fractionControl of fraction.controls" class="flex">
-    <m-fraction-control-selector
+    <m-store-fraction-selector
       class="ml-5"
       *ngIf="fractionControl.controlClass === controlClassSelector"
       [fraction]="fraction"
@@ -107,6 +115,6 @@
       [fractionControl]="fractionControl"
       (fractionUpdate)="fractionUpdate.emit($event)"
     >
-    </m-fraction-control-selector>
+    </m-store-fraction-selector>
   </div>
 </div>
