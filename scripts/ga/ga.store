@@ -6,9 +6,13 @@ access_users: []
 access_roles: []
 method: POST
 url_path: |
-  let propertyId = $QUERY_PARAMETERS.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'ga_property')?.value;
+  let queryParameters = $QUERY_PARAMETERS;
+
+  let propertyId = queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'ga_property')?.value;
+  
   return `/v1beta/properties/${propertyId}:runReport`;
 body: |
+  let storeFields = $STORE_FIELDS;
   let queryOrderBy = $QUERY_ORDER_BY;
   let selectedDimensions = $QUERY_SELECTED_DIMENSIONS;
   let selectedMeasures = $QUERY_SELECTED_MEASURES;
@@ -42,13 +46,15 @@ body: |
   let mcAndNotExpressions = [];
 
   queryParameters.map(filter => {
+    let field = storeFields.find(x => x.name === filter.fieldId);
+
     filter.fractions.forEach(fraction => {
       let apiFilter;
       let apiFilterType = fraction.meta?.filter_type;
 
       if (apiFilterType === 'stringFilter') {
         apiFilter = {
-          fieldName: filter.field.meta.name,
+          fieldName: field.meta.name,
           stringFilter: {
             matchType: fraction.meta.match_type,
             value: fraction.controls.find(control => control['name'] === 'value_input')?.value,
@@ -59,7 +65,7 @@ body: |
 
       if (apiFilterType === 'inListFilter') {
         apiFilter = {
-          fieldName: filter.field.meta.name,
+          fieldName: field.meta.name,
           inListFilter: {
             values: fraction.controls.find(control => control['name'] === 'values_input')?.values,
             caseSensitive: fraction.controls.find(control => control['name'] === 'case_sensitive_switch')?.value
@@ -69,7 +75,7 @@ body: |
 
       if (apiFilterType === 'numericFilter') {
         apiFilter = {
-          fieldName: filter.field.meta.name,
+          fieldName: field.meta.name,
           numericFilter: {
             operation: fraction.meta.operation,
             value: fraction.controls.find(control => control['name'] === 'value_input')?.value
@@ -79,7 +85,7 @@ body: |
 
       if (apiFilterType === 'betweenFilter') {
         apiFilter = {
-          fieldName: filter.field.meta.name,
+          fieldName: field.meta.name,
           betweenFilter: {
             fromValue: fraction.controls.find(control => control['name'] === 'value_from_input')?.value,
             toValue: fraction.controls.find(control => control['name'] === 'value_to_input')?.value,
@@ -87,7 +93,7 @@ body: |
         }
       } 
 
-      if (filter.field?.fieldClass === 'dimension') {
+      if (field.fieldClass === 'dimension') {
         if (fraction.group === 'OR') {
           dimOrExpressions.push({ filter: apiFilter })
         } 
@@ -100,7 +106,7 @@ body: |
         }
       }
 
-      if (filter.field?.fieldClass === 'measure') {
+      if (field.fieldClass === 'measure') {
         if (fraction.group === 'OR') {
           mcOrExpressions.push({ filter: apiFilter })
         } 

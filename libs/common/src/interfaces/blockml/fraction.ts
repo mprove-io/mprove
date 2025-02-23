@@ -39,6 +39,12 @@ export class Fraction {
   storeFractionSubTypeOptions?: FractionSubTypeOption[];
 
   @IsOptional()
+  meta?: any;
+
+  @IsOptional()
+  group?: any; // TODO:
+
+  @IsOptional()
   @IsString()
   storeResult?: string;
 

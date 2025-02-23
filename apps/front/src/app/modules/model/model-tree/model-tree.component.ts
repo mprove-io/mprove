@@ -247,14 +247,18 @@ export class ModelTreeComponent implements AfterViewInit {
       if (newMconfig.isStoreModel === true) {
         let field = this.model.fields.find(x => x.id === node.data.id);
 
+        let storeTypeFraction = (
+          this.model.content as common.FileStore
+        ).results.find(r => r.result === field.result).fraction_types[0];
+
         newFraction = {
           operator: common.FractionOperatorEnum.Or,
           brick: undefined,
           type: common.FractionTypeEnum.StoreFraction,
           storeResult: field.result,
-          storeFractionSubType: (
-            this.model.content as common.FileStore
-          ).results.find(r => r.result === field.result).fraction_types[0].type,
+          storeFractionSubType: storeTypeFraction.type,
+          meta: storeTypeFraction.meta,
+          group: undefined, // TODO:
           storeFractionSubTypeOptions: (
             this.model.content as common.FileStore
           ).results

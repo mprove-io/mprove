@@ -33,6 +33,7 @@ export const ENVIRONMENTS_PER_PAGE = 10;
 export const MARKDOWN_LANGUAGE_ID = 'markdown';
 export const YAML_LANGUAGE_ID = 'yaml';
 export const SQL_LANGUAGE_ID = 'sql';
+export const JAVASCRIPT_LANGUAGE_ID = 'javascript';
 
 export const TEXTMATE_THEME = 'textmate';
 export const BLOCKML_THEME = 'blockml';

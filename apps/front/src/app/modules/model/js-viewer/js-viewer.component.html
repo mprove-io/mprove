@@ -1,0 +1,8 @@
+<ng-monaco-editor
+  style="height: 100%"
+  data-cy="modelJsEditor"
+  [options]="editorOptions"
+  [(ngModel)]="content"
+></ng-monaco-editor>
+
+<div *ngIf="mconfig$ | async"></div>

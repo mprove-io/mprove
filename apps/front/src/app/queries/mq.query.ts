@@ -14,6 +14,7 @@ export const emptyMconfig: common.MconfigX = {
   queryId: undefined,
   modelId: undefined,
   isStoreModel: undefined,
+  storePart: undefined,
   modelLabel: undefined,
   select: [],
   unsafeSelect: [],

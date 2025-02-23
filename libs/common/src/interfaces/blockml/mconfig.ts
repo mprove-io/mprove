@@ -12,6 +12,7 @@ import { Filter } from './filter';
 import { JoinAggregation } from './join-aggregation';
 import { MconfigChart } from './mconfig-chart';
 import { Sorting } from './sorting';
+import { StorePart } from './store-part';
 
 export class Mconfig {
   @IsString()
@@ -28,6 +29,11 @@ export class Mconfig {
 
   @IsBoolean()
   isStoreModel: boolean;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => StorePart)
+  storePart: StorePart;
 
   @IsString()
   modelLabel: string;

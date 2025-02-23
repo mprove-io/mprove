@@ -33,6 +33,7 @@ export * from './row-record';
 export * from './rq';
 export * from './show-if-dep-including-parent-filter';
 export * from './sorting';
+export * from './store-part';
 export * from './tile';
 export * from './udfs-dict';
 export * from './view';

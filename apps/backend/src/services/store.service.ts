@@ -19,9 +19,9 @@ let axios = require('axios');
 const { JWT } = require('google-auth-library');
 
 export interface StoreUserCodeReturn {
-  value: string;
+  userCode: string;
+  result: string;
   errorMessage: string;
-  inputSub: string;
 }
 
 @Injectable()
@@ -430,9 +430,9 @@ export class StoreService {
 
     if (common.isDefined(refError)) {
       return {
-        value: 'Error',
+        result: 'Error',
         errorMessage: refError,
-        inputSub: inputSub
+        userCode: inputSub
       };
     }
 
@@ -445,9 +445,9 @@ ${inputSub}
     });
 
     return {
-      value: userCodeResult.outValue,
+      result: userCodeResult.outValue,
       errorMessage: userCodeResult.outError,
-      inputSub: inputSub
+      userCode: inputSub
     };
   }
 
@@ -502,9 +502,9 @@ ${inputSub}
 
     if (common.isDefined(refError)) {
       return {
-        value: 'Error',
+        result: 'Error',
         errorMessage: refError,
-        inputSub: inputSub
+        userCode: inputSub
       };
     }
 
@@ -517,9 +517,9 @@ ${inputSub}
     });
 
     return {
-      value: userCodeResult.outValue,
+      result: userCodeResult.outValue,
       errorMessage: userCodeResult.outError,
-      inputSub: inputSub
+      userCode: inputSub
     };
   }
 
@@ -634,7 +634,7 @@ ${inputSub}
           } else {
             q.status = common.QueryStatusEnum.Completed;
             q.queryJobId = undefined; // null;
-            q.data = dataResult.value || [];
+            q.data = dataResult.result || [];
             q.lastCompleteTs = makeTsNumber();
             q.lastCompleteDuration = Math.floor(
               (Number(q.lastCompleteTs) - Number(q.lastRunTs)) / 1000

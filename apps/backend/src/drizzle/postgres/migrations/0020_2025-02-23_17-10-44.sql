@@ -1,0 +1,1 @@
+ALTER TABLE "mconfigs" ADD COLUMN "store_part" json;

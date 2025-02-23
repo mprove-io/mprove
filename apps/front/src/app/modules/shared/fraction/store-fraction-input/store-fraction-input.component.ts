@@ -127,6 +127,7 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
                 modelId: modelName,
                 isStoreModel:
                   this.fraction.type === common.FractionTypeEnum.StoreFraction,
+                storePart: undefined,
                 modelLabel: 'empty',
                 select: [fieldId],
                 unsafeSelect: [],

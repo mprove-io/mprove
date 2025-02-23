@@ -60,6 +60,7 @@ export class StructService {
       queryId: newQueryId,
       modelId: this.model.modelId,
       isStoreModel: this.model.isStoreModel,
+      storePart: undefined,
       modelLabel: this.model.label,
       select: [],
       unsafeSelect: [],

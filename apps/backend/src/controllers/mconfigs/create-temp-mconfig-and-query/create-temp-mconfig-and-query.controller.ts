@@ -167,7 +167,7 @@ export class CreateTempMconfigAndQueryController {
         )
       });
 
-      let urlPathResult = await this.storeService.transformStoreRequestPart({
+      let processedUrlPath = await this.storeService.transformStoreRequestPart({
         input: (model.content as common.FileStore).url_path,
         mconfig: newMconfig,
         storeModel: model,
@@ -177,16 +177,16 @@ export class CreateTempMconfigAndQueryController {
         metricsEndDateYYYYMMDD: undefined
       });
 
-      if (common.isDefined(urlPathResult.errorMessage)) {
+      if (common.isDefined(processedUrlPath.errorMessage)) {
         isError = true;
-        errorMessage = `store url_path processing Error: ${urlPathResult.errorMessage}`;
+        errorMessage = `store url_path processing Error: ${processedUrlPath.errorMessage}`;
       }
 
-      let apiUrl = common.isDefined(urlPathResult.errorMessage)
-        ? `store.url_path Error: ${urlPathResult.errorMessage}`
-        : connection.baseUrl + JSON.parse(urlPathResult.value);
+      let apiUrl = common.isDefined(processedUrlPath.errorMessage)
+        ? `store.url_path Error: ${processedUrlPath.errorMessage}`
+        : connection.baseUrl + JSON.parse(processedUrlPath.result);
 
-      let bodyResult = await this.storeService.transformStoreRequestPart({
+      let processedBody = await this.storeService.transformStoreRequestPart({
         input: (model.content as common.FileStore).body,
         mconfig: newMconfig,
         storeModel: model,
@@ -196,17 +196,20 @@ export class CreateTempMconfigAndQueryController {
         metricsEndDateYYYYMMDD: undefined
       });
 
-      if (common.isDefined(bodyResult.errorMessage)) {
+      if (common.isDefined(processedBody.errorMessage)) {
         isError = true;
         let errorMessagePrefix = common.isDefined(errorMessage)
           ? `${errorMessage}, `
           : '';
-        errorMessage = `${errorMessagePrefix}store body processing Error: ${bodyResult.errorMessage}`;
+        errorMessage = `${errorMessagePrefix}store body processing Error: ${processedBody.errorMessage}`;
       }
 
-      let apiBody = common.isDefined(bodyResult.errorMessage)
-        ? `store.body Error: ${bodyResult.errorMessage}`
-        : bodyResult.value;
+      let apiBody = common.isDefined(processedBody.errorMessage)
+        ? `store.body Error: ${processedBody.errorMessage}`
+        : processedBody.result;
+
+      // console.log('apiBody');
+      // console.log(apiBody);
 
       let queryId = nodeCommon.makeQueryId({
         sql: undefined,
@@ -221,6 +224,9 @@ export class CreateTempMconfigAndQueryController {
         envId: envId,
         connectionId: model.connectionId
       });
+
+      // console.log('queryId');
+      // console.log(queryId);
 
       newQuery = {
         queryId: queryId,
@@ -238,9 +244,9 @@ ${apiUrl}
 --- body store
 ${apiBody}
 --- urlPathResult inputSub
-${urlPathResult.inputSub}
+${processedUrlPath.userCode}
 --- body inputSub
-${bodyResult.inputSub}
+${processedBody.userCode}
 --- newMconfig
 ${JSON.stringify(newMconfig)}
 `,
@@ -269,6 +275,12 @@ ${JSON.stringify(newMconfig)}
 
       newMconfig.queryId = newQuery.queryId;
       newMconfig.temp = true;
+      newMconfig.storePart = {
+        urlPathFunc: processedUrlPath.userCode,
+        urlPathResult: processedUrlPath.result,
+        bodyFunc: processedBody.userCode,
+        bodyResult: processedBody.result
+      };
     } else {
       let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
         {

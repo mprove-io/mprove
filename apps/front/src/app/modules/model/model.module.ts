@@ -10,6 +10,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
 import { ChartOptionsComponent } from './chart-options/chart-options.component';
+import { JsViewerComponent } from './js-viewer/js-viewer.component';
 import { MconfigComponent } from './mconfig/mconfig.component';
 import { ModelFiltersComponent } from './model-filters/model-filters.component';
 import { FieldOptionsComponent } from './model-tree/field-options/field-options.component';
@@ -28,6 +29,7 @@ import { SqlComponent } from './sql/sql.component';
     QueryComponent,
     PanelTitleComponent,
     SqlComponent,
+    JsViewerComponent,
     FieldOptionsComponent,
     ModelFiltersComponent,
     QueryOptionsComponent,

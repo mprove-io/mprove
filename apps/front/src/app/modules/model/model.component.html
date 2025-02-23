@@ -198,7 +198,11 @@
                       !dataIsExpanded || mconfig?.select.length === 0
                   }"
                   (click)="toggleResultsAndSql()"
-                  >Results + SQL</button
+                  >{{
+                    mconfig.isStoreModel === false
+                      ? 'Results + SQL'
+                      : 'Results + Debug'
+                  }}</button
                 >
 
                 <button
@@ -211,7 +215,8 @@
                       !dataIsExpanded || mconfig?.select.length === 0
                   }"
                   (click)="toggleSql()"
-                  >SQL</button
+                >
+                  {{ mconfig.isStoreModel === false ? 'SQL' : 'Debug' }}</button
                 >
 
                 <div
@@ -356,7 +361,11 @@
                   </div>
 
                   <div *ngIf="sqlIsShow" class="h-full w-2 flex-1">
-                    <m-sql></m-sql>
+                    <m-sql *ngIf="mconfig.isStoreModel === false"></m-sql>
+
+                    <m-js-viewer
+                      *ngIf="mconfig.isStoreModel === true"
+                    ></m-js-viewer>
                   </div>
                 </div>
               </div>

@@ -19,6 +19,7 @@ export const mconfigsTable = pgTable(
     queryId: varchar('query_id', { length: 64 }).notNull(),
     modelId: varchar('model_id', { length: 64 }).notNull(),
     isStoreModel: boolean('is_store_model'),
+    storePart: json('store_part').$type<common.StorePart>(),
     modelLabel: varchar('model_label'),
     select: json('select').$type<string[]>().notNull(),
     unsafeSelect: json('unsafe_select').$type<string[]>(),
