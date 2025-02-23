@@ -215,7 +215,7 @@ response: |
   let dimensionHeaders = data.dimensionHeaders?.map(header => header.name);
   let metricHeaders = data.metricHeaders?.map(header => header.name);
   
-  newData = data.rows.map(row => {
+  newData = data.rows?.map(row => {
     let newRow = {};
     
     row.dimensionValues?.forEach((dimension, index) => {
@@ -292,7 +292,7 @@ response: |
     return newRow;
   });
 
-  return newData;
+  return newData || [];
 
 parameters:
 - filter: top_config

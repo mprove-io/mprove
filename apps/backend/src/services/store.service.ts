@@ -458,6 +458,9 @@ ${inputSub}
   }): Promise<StoreUserCodeReturn> {
     let { input, storeModel, respData } = item;
 
+    // console.log('respData');
+    // console.log(respData);
+
     let inputSub = input;
 
     let reg = common.MyRegex.CAPTURE_S_REF();
@@ -472,6 +475,14 @@ ${inputSub}
 
       if (reference === 'RESPONSE_DATA') {
         target = JSON.stringify(respData);
+      } else if (reference === 'METRICS_DATE_FROM') {
+        target = null;
+      } else if (reference === 'METRICS_DATE_TO') {
+        target = null;
+      } else if (reference === 'DATE_TODAY') {
+        target = null;
+      } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
+        target = null;
       } else if (reference === 'STORE_FIELDS') {
         target = JSON.stringify(
           (storeModel.content as common.FileStore).fields
