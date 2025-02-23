@@ -10,6 +10,8 @@ import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
+import { toBooleanFromLowercaseString } from '~common/_index';
+import { getCurrentDateYYYYMMDDByTimezone } from '~node-common/functions/get-current-date-yyyymmdd-by-timezone';
 import { UserCodeService } from './user-code.service';
 
 let retry = require('async-retry');
@@ -31,8 +33,20 @@ export class StoreService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async adjustMconfig(item: { mconfig: common.Mconfig; model: common.Model }) {
-    let { model, mconfig } = item;
+  async adjustMconfig(item: {
+    mconfig: common.Mconfig;
+    model: common.Model;
+    caseSensitiveStringFilters: boolean;
+    metricsStartDateYYYYMMDD: string;
+    metricsEndDateYYYYMMDD: string;
+  }) {
+    let {
+      model,
+      mconfig,
+      caseSensitiveStringFilters,
+      metricsStartDateYYYYMMDD,
+      metricsEndDateYYYYMMDD
+    } = item;
 
     let newMconfig = common.makeCopy(mconfig);
 
@@ -244,16 +258,92 @@ export class StoreService {
       }
     });
 
+    newMconfig.filters.forEach(filter => {
+      filter.fractions.forEach(fraction => {
+        fraction.controls
+          .filter(
+            control =>
+              common.isDefinedAndNotEmpty(control.value) &&
+              typeof control.value === 'string'
+          )
+          .forEach(control => {
+            let newValue = control.value;
+
+            let reg = common.MyRegex.CAPTURE_S_REF();
+            let r;
+
+            // let refError;
+
+            while ((r = reg.exec(newValue))) {
+              let reference = r[1];
+
+              let target: any;
+
+              if (reference === 'METRICS_DATE_FROM') {
+                target = common.isDefined(metricsStartDateYYYYMMDD)
+                  ? metricsStartDateYYYYMMDD
+                  : getCurrentDateYYYYMMDDByTimezone({
+                      timezone: mconfig.timezone
+                    });
+              } else if (reference === 'METRICS_DATE_TO') {
+                target = common.isDefined(metricsEndDateYYYYMMDD)
+                  ? metricsEndDateYYYYMMDD
+                  : getCurrentDateYYYYMMDDByTimezone({
+                      timezone: mconfig.timezone
+                    });
+              } else if (reference === 'DATE_TODAY') {
+                target = getCurrentDateYYYYMMDDByTimezone({
+                  timezone: mconfig.timezone
+                });
+              } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
+                target = caseSensitiveStringFilters;
+                // } else if (reference === 'ENV_GA_PROPERTY_ID_1') { // TODO:
+                //   target = '...';
+              } else {
+                target = null;
+                // refError = `Unknown reference in store.${storeParam}: $${reference}`;
+                // break;
+              }
+
+              newValue = common.MyRegex.replaceSRefs(
+                newValue,
+                reference,
+                target
+              );
+            }
+
+            control.value =
+              control.controlClass === common.ControlClassEnum.Switch &&
+              typeof newValue === 'string'
+                ? toBooleanFromLowercaseString(newValue)
+                : newValue;
+            // console.log('control.value');
+            // console.log(control.value);
+          });
+      });
+    });
+
     return newMconfig;
   }
 
-  async transformStoreRequest(item: {
+  async transformStoreRequestPart(item: {
     input: string;
     mconfig: common.Mconfig;
     storeModel: common.Model;
     storeParam: common.ParameterEnum;
+    caseSensitiveStringFilters: boolean;
+    metricsStartDateYYYYMMDD: string;
+    metricsEndDateYYYYMMDD: string;
   }): Promise<StoreUserCodeReturn> {
-    let { input, mconfig, storeModel, storeParam } = item;
+    let {
+      input,
+      mconfig,
+      storeModel,
+      storeParam,
+      caseSensitiveStringFilters,
+      metricsStartDateYYYYMMDD,
+      metricsEndDateYYYYMMDD
+    } = item;
 
     let inputSub = input;
 
@@ -303,13 +393,23 @@ export class StoreService {
       } else if (reference === 'QUERY_LIMIT') {
         target = JSON.stringify(mconfig.limit);
       } else if (reference === 'METRICS_DATE_FROM') {
-        target = '2025-01-01'; // TODO:
+        target = common.isDefined(metricsStartDateYYYYMMDD)
+          ? metricsStartDateYYYYMMDD
+          : getCurrentDateYYYYMMDDByTimezone({
+              timezone: mconfig.timezone
+            });
       } else if (reference === 'METRICS_DATE_TO') {
-        target = '2025-02-01'; // TODO:
+        target = common.isDefined(metricsEndDateYYYYMMDD)
+          ? metricsEndDateYYYYMMDD
+          : getCurrentDateYYYYMMDDByTimezone({
+              timezone: mconfig.timezone
+            });
       } else if (reference === 'DATE_TODAY') {
-        target = '2025-01-26'; // TODO:
+        target = getCurrentDateYYYYMMDDByTimezone({
+          timezone: mconfig.timezone
+        });
       } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
-        target = 'false'; // TODO:
+        target = caseSensitiveStringFilters;
       } else if (reference === 'STORE_FIELDS') {
         target = JSON.stringify(
           (storeModel.content as common.FileStore).fields
@@ -372,14 +472,6 @@ ${inputSub}
 
       if (reference === 'RESPONSE_DATA') {
         target = JSON.stringify(respData);
-      } else if (reference === 'METRICS_DATE_FROM') {
-        target = '50daysAgo'; // TODO:
-      } else if (reference === 'METRICS_DATE_TO') {
-        target = 'today'; // TODO:
-      } else if (reference === 'DATE_TODAY') {
-        target = 'today'; // TODO:
-      } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
-        target = 'false'; // TODO:
       } else if (reference === 'STORE_FIELDS') {
         target = JSON.stringify(
           (storeModel.content as common.FileStore).fields

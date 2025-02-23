@@ -136,7 +136,10 @@ export class CreateTempMconfigAndQueryController {
     if (model.isStoreModel === true) {
       newMconfig = await this.storeService.adjustMconfig({
         mconfig: mconfig,
-        model: model
+        model: model,
+        caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
+        metricsStartDateYYYYMMDD: undefined,
+        metricsEndDateYYYYMMDD: undefined
       });
 
       // console.log('newMconfig:');
@@ -164,11 +167,14 @@ export class CreateTempMconfigAndQueryController {
         )
       });
 
-      let urlPathResult = await this.storeService.transformStoreRequest({
+      let urlPathResult = await this.storeService.transformStoreRequestPart({
         input: (model.content as common.FileStore).url_path,
         mconfig: newMconfig,
         storeModel: model,
-        storeParam: common.ParameterEnum.UrlPath
+        storeParam: common.ParameterEnum.UrlPath,
+        caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
+        metricsStartDateYYYYMMDD: undefined,
+        metricsEndDateYYYYMMDD: undefined
       });
 
       if (common.isDefined(urlPathResult.errorMessage)) {
@@ -180,11 +186,14 @@ export class CreateTempMconfigAndQueryController {
         ? `store.url_path Error: ${urlPathResult.errorMessage}`
         : connection.baseUrl + JSON.parse(urlPathResult.value);
 
-      let bodyResult = await this.storeService.transformStoreRequest({
+      let bodyResult = await this.storeService.transformStoreRequestPart({
         input: (model.content as common.FileStore).body,
         mconfig: newMconfig,
         storeModel: model,
-        storeParam: common.ParameterEnum.Body
+        storeParam: common.ParameterEnum.Body,
+        caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
+        metricsStartDateYYYYMMDD: undefined,
+        metricsEndDateYYYYMMDD: undefined
       });
 
       if (common.isDefined(bodyResult.errorMessage)) {
