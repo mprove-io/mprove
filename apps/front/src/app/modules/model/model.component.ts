@@ -45,6 +45,11 @@ import { UiQuery } from '~front/app/queries/ui.query';
 import { DataService } from '~front/app/services/data.service';
 import { UiService } from '~front/app/services/ui.service';
 
+export class RequestPartTypeItem {
+  label: string;
+  value: common.RequestPartTypeEnum;
+}
+
 export class ChartTypeItem {
   label: string;
   value: common.ChartTypeEnum;
@@ -56,11 +61,15 @@ export class ChartTypeItem {
   templateUrl: './model.component.html'
 })
 export class ModelComponent implements OnInit, OnDestroy {
+  @ViewChild('requestPartTypeSelect', { static: false })
+  requestPartTypeSelectElement: NgSelectComponent;
+
   @ViewChild('chartTypeSelect', { static: false })
   chartTypeSelectElement: NgSelectComponent;
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
+    this.requestPartTypeSelectElement?.close();
     this.chartTypeSelectElement?.close();
   }
 
@@ -77,6 +86,7 @@ export class ModelComponent implements OnInit, OnDestroy {
   queryStatusEnum = common.QueryStatusEnum;
   connectionTypeEnum = common.ConnectionTypeEnum;
   chartTypeEnum = common.ChartTypeEnum;
+  requestPartTypeEnum = common.RequestPartTypeEnum;
 
   chartTypeEnumTable = common.ChartTypeEnum.Table;
   chartTypeEnumLine = common.ChartTypeEnum.Line;
@@ -235,7 +245,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   resultsIsShow = true;
   resultsIsShowTemp = false;
-  sqlIsShow = true;
+  rightIsShow = true;
 
   dryTimeAgo$ = interval(1000).pipe(
     startWith(0),
@@ -301,6 +311,37 @@ export class ModelComponent implements OnInit, OnDestroy {
       ]
     ]
   });
+
+  requestPartTypeForm: FormGroup = this.fb.group({
+    requestPartType: [common.RequestPartTypeEnum.Body3]
+  });
+
+  requestPartTypeList: RequestPartTypeItem[] = [
+    {
+      label: 'Url Path 1',
+      value: common.RequestPartTypeEnum.UrlPath1
+    },
+    {
+      label: 'Url Path 2',
+      value: common.RequestPartTypeEnum.UrlPath2
+    },
+    {
+      label: 'Url Path 3',
+      value: common.RequestPartTypeEnum.UrlPath3
+    },
+    {
+      label: 'Body 1',
+      value: common.RequestPartTypeEnum.Body1
+    },
+    {
+      label: 'Body 2',
+      value: common.RequestPartTypeEnum.Body2
+    },
+    {
+      label: 'Body 3',
+      value: common.RequestPartTypeEnum.Body3
+    }
+  ];
 
   chartTypeForm: FormGroup = this.fb.group({
     chartType: [undefined]
@@ -445,28 +486,28 @@ export class ModelComponent implements OnInit, OnDestroy {
   }
 
   toggleResults() {
-    if (this.resultsIsShow === false || this.sqlIsShow === true) {
+    if (this.resultsIsShow === false || this.rightIsShow === true) {
       this.resultsIsShow = true;
-      this.sqlIsShow = false;
+      this.rightIsShow = false;
     }
   }
 
-  toggleResultsAndSql() {
-    if (this.resultsIsShow === false || this.sqlIsShow === false) {
+  toggleSplit() {
+    if (this.resultsIsShow === false || this.rightIsShow === false) {
       this.resultsIsShow = true;
       this.resultsIsShowTemp = true;
-      this.sqlIsShow = false;
+      this.rightIsShow = false;
       setTimeout(() => {
-        this.sqlIsShow = true;
+        this.rightIsShow = true;
         this.resultsIsShowTemp = false;
       });
     }
   }
 
-  toggleSql() {
-    if (this.resultsIsShow === true || this.sqlIsShow === false) {
+  toggleRight() {
+    if (this.resultsIsShow === true || this.rightIsShow === false) {
       this.resultsIsShow = false;
-      this.sqlIsShow = true;
+      this.rightIsShow = true;
     }
   }
 
@@ -682,6 +723,10 @@ export class ModelComponent implements OnInit, OnDestroy {
         take(1)
       )
       .subscribe();
+  }
+
+  requestPartTypeChange() {
+    (document.activeElement as HTMLElement).blur();
   }
 
   chartTypeChange(newChartTypeValue?: common.ChartTypeEnum) {

@@ -179,7 +179,7 @@
                   [ngClass]="{
                     'font-semibold':
                       resultsIsShow === true &&
-                      sqlIsShow === false &&
+                      rightIsShow === false &&
                       resultsIsShowTemp === false,
                     'cursor-default text-gray-400':
                       !dataIsExpanded || mconfig?.select.length === 0
@@ -190,34 +190,70 @@
 
                 <button
                   *ngIf="mconfig?.select.length > 0"
-                  class="text-gray1 ml-2 w-[166px] select-none items-center py-3 text-lg focus:outline-none"
+                  class="text-gray1 ml-2 w-[70px] select-none items-center py-3 text-lg focus:outline-none"
                   [ngClass]="{
                     'font-semibold':
-                      resultsIsShow === true && sqlIsShow === true,
+                      resultsIsShow === true && rightIsShow === true,
                     'cursor-default text-gray-400':
                       !dataIsExpanded || mconfig?.select.length === 0
                   }"
-                  (click)="toggleResultsAndSql()"
-                  >{{
-                    mconfig.isStoreModel === false
-                      ? 'Results + SQL'
-                      : 'Results + Debug'
-                  }}</button
+                  (click)="toggleSplit()"
+                  >Split</button
                 >
 
                 <button
                   *ngIf="mconfig?.select.length > 0"
-                  class="text-gray1 ml-2 w-[56px] select-none items-center py-3 text-lg focus:outline-none"
+                  class="text-gray1 ml-2 select-none items-center py-3 text-lg focus:outline-none"
                   [ngClass]="{
                     'font-semibold':
-                      sqlIsShow === true && resultsIsShow === false,
+                      rightIsShow === true && resultsIsShow === false,
                     'cursor-default text-gray-400':
-                      !dataIsExpanded || mconfig?.select.length === 0
+                      !dataIsExpanded || mconfig?.select.length === 0,
+                    'w-[56]': mconfig.isStoreModel === false,
+                    'w-[100px]': mconfig.isStoreModel === true
                   }"
-                  (click)="toggleSql()"
+                  (click)="toggleRight()"
                 >
-                  {{ mconfig.isStoreModel === false ? 'SQL' : 'Debug' }}</button
+                  {{
+                    mconfig.isStoreModel === false ? 'SQL' : 'Request'
+                  }}</button
                 >
+
+                <form
+                  [formGroup]="requestPartTypeForm"
+                  *ngIf="mconfig?.select.length > 0 && rightIsShow === true"
+                  class="ml-5"
+                >
+                  <ng-select
+                    #requestPartTypeSelect
+                    data-cy="requestPartTypeSelect"
+                    class="w-[200px] flex-shrink-0 text-base focus:outline-none"
+                    [items]="requestPartTypeList"
+                    [clearable]="false"
+                    [searchable]="false"
+                    (change)="requestPartTypeChange()"
+                    (keyup.esc)="
+                      $event.stopImmediatePropagation();
+                      requestPartTypeSelect.blur()
+                    "
+                    (keyup.enter)="
+                      $event.stopImmediatePropagation();
+                      requestPartTypeSelect.blur()
+                    "
+                    appendTo="body"
+                    bindLabel="label"
+                    bindValue="value"
+                    formControlName="requestPartType"
+                  >
+                    <ng-template ng-label-tmp let-item="item">
+                      <div>{{ item.label }}</div>
+                    </ng-template>
+
+                    <ng-template ng-option-tmp let-item="item">
+                      <div>{{ item.label }}</div>
+                    </ng-template>
+                  </ng-select>
+                </form>
 
                 <div
                   *ngIf="!!mconfig && mconfig.warnSelect.length > 0"
@@ -360,7 +396,7 @@
                     ></m-main-table>
                   </div>
 
-                  <div *ngIf="sqlIsShow" class="h-full w-2 flex-1">
+                  <div *ngIf="rightIsShow" class="h-full w-2 flex-1">
                     <m-sql *ngIf="mconfig.isStoreModel === false"></m-sql>
 
                     <m-js-viewer

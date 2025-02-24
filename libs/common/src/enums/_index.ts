@@ -31,6 +31,7 @@ export * from './rabbit-blockml-routing-keys.enum';
 export * from './rabbit-blockml-worker-routing-keys.enum';
 export * from './rabbit-exchanges.enum';
 export * from './repo-status.enum';
+export * from './request-part-type.enum';
 export * from './response-info-status.enum';
 export * from './row-type.enum';
 export * from './special/caller.enum';
