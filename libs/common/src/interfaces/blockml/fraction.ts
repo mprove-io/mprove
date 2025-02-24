@@ -42,7 +42,8 @@ export class Fraction {
   meta?: any;
 
   @IsOptional()
-  group?: any; // TODO:
+  @IsEnum(enums.FractionLogicEnum)
+  logicGroup?: enums.FractionLogicEnum;
 
   @IsOptional()
   @IsString()

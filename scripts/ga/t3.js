@@ -107,7 +107,7 @@ function t3() {
       fraction_controls: [
         {
           label: 'Start Date',
-          value: '2025-02-23',
+          value: '2025-02-24',
           label_line_num: 340,
           value_line_num: 341,
           name: 'start_date',
@@ -123,7 +123,7 @@ function t3() {
         },
         {
           label: 'End Date',
-          value: '2025-02-23',
+          value: '2025-02-24',
           label_line_num: 343,
           value_line_num: 344,
           name: 'end_date',
@@ -155,7 +155,7 @@ function t3() {
       fraction_controls: [
         {
           label: 'Start Date',
-          value: '2025-02-23',
+          value: '2025-02-24',
           label_line_num: 351,
           value_line_num: 352,
           name: 'start_date',
@@ -171,7 +171,7 @@ function t3() {
         },
         {
           label: 'End Date',
-          value: '2025-02-23',
+          value: '2025-02-24',
           label_line_num: 354,
           value_line_num: 355,
           name: 'end_date',
@@ -926,6 +926,7 @@ function t3() {
             match_type_line_num: 422,
             filter_type_line_num: 423
           },
+          logicGroup: 'AND_NOT',
           storeFractionSubTypeOptions: [
             { value: 'exact' },
             { value: 'begins_with' },
@@ -936,7 +937,7 @@ function t3() {
             { value: 'in_list' }
           ],
           controls: [
-            { name: 'value_input', controlClass: 'input' },
+            { name: 'value_input', controlClass: 'input', value: 'h' },
             {
               value: false,
               label: 'Case Sensitive',
@@ -945,7 +946,19 @@ function t3() {
             }
           ]
         }
-      ]
+      ],
+      field: {
+        id: 'city',
+        hidden: false,
+        label: 'City',
+        fieldClass: 'dimension',
+        result: 'string',
+        sqlName: 'city',
+        topId: 'geo',
+        topLabel: 'geo',
+        description: 'The city from which the user activity originated',
+        type: 'custom'
+      }
     },
     {
       fieldId: 'date_range',
@@ -954,7 +967,7 @@ function t3() {
           type: 'StoreFraction',
           controls: [
             {
-              value: '2025-02-23',
+              value: '2025-02-24',
               label: 'Start Date',
               name: 'start_date',
               controlClass: 'date_picker',
@@ -967,7 +980,7 @@ function t3() {
               ]
             },
             {
-              value: '2025-02-23',
+              value: '2025-02-24',
               label: 'End Date',
               name: 'end_date',
               controlClass: 'date_picker',
@@ -1058,10 +1071,8 @@ function t3() {
     filter.fractions.forEach(fraction => {
       console.log('fraction.type');
       console.log(fraction.type);
-
       let apiFilter;
       let apiFilterType = fraction.meta?.filter_type;
-
       console.log('apiFilterType');
       console.log(apiFilterType);
 
@@ -1078,7 +1089,6 @@ function t3() {
             )?.value
           }
         };
-
         console.log('apiFilter');
         console.log(apiFilter);
       }
@@ -1124,10 +1134,10 @@ function t3() {
       }
 
       if (field.fieldClass === 'dimension') {
-        if (fraction.group === 'OR') {
+        if (fraction.logicGroup === 'OR') {
           dimOrExpressions.push({ filter: apiFilter });
         }
-        if (fraction.group === 'AND_NOT') {
+        if (fraction.logicGroup === 'AND_NOT') {
           dimAndNotExpressions.push({
             notExpression: {
               filter: apiFilter
@@ -1137,10 +1147,10 @@ function t3() {
       }
 
       if (field.fieldClass === 'measure') {
-        if (fraction.group === 'OR') {
+        if (fraction.logicGroup === 'OR') {
           mcOrExpressions.push({ filter: apiFilter });
         }
-        if (fraction.group === 'AND_NOT') {
+        if (fraction.logicGroup === 'AND_NOT') {
           mcAndNotExpressions.push({
             notExpression: {
               filter: apiFilter
@@ -1217,9 +1227,6 @@ function t3() {
   let dimAndGroupExpressions = [];
   let mcAndGroupExpressions = [];
 
-  console.log('dimOrExpressions');
-  console.log(dimOrExpressions);
-
   if (dimOrExpressions.length > 0) {
     dimAndGroupExpressions.push({
       orGroup: { expressions: dimOrExpressions }
@@ -1275,6 +1282,8 @@ function t3() {
   };
 
   console.log(body);
+
+  console.log(body.dimensionFilter.andGroup.expressions);
 
   return body;
 }

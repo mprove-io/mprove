@@ -13,7 +13,11 @@ import {
 } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-import { FractionSubTypeOption, ModelNode } from '~common/_index';
+import {
+  FractionSubTypeOption,
+  ModelNode,
+  toBooleanFromLowercaseString
+} from '~common/_index';
 import { ModelQuery, ModelState } from '~front/app/queries/model.query';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -258,7 +262,11 @@ export class ModelTreeComponent implements AfterViewInit {
           storeResult: field.result,
           storeFractionSubType: storeTypeFraction.type,
           meta: storeTypeFraction.meta,
-          group: undefined, // TODO:
+          logicGroup:
+            common.isUndefined(storeTypeFraction.or) ||
+            toBooleanFromLowercaseString(storeTypeFraction.or) === true
+              ? common.FractionLogicEnum.Or
+              : common.FractionLogicEnum.AndNot,
           storeFractionSubTypeOptions: (
             this.model.content as common.FileStore
           ).results
