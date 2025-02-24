@@ -94,10 +94,10 @@ body: |
       } 
 
       if (field.fieldClass === 'dimension') {
-        if (fraction.group === 'OR') {
+        if (fraction.logicGroup === 'OR') {
           dimOrExpressions.push({ filter: apiFilter })
         } 
-        if (fraction.group === 'AND_NOT') {
+        if (fraction.logicGroup === 'AND_NOT') {
           dimAndNotExpressions.push({
             notExpression: {
               filter: apiFilter
@@ -107,10 +107,10 @@ body: |
       }
 
       if (field.fieldClass === 'measure') {
-        if (fraction.group === 'OR') {
+        if (fraction.logicGroup === 'OR') {
           mcOrExpressions.push({ filter: apiFilter })
         } 
-        if (fraction.group === 'AND_NOT') {
+        if (fraction.logicGroup === 'AND_NOT') {
           mcAndNotExpressions.push({
             notExpression: {
               filter: apiFilter
