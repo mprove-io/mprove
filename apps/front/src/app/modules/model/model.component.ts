@@ -88,6 +88,14 @@ export class ModelComponent implements OnInit, OnDestroy {
   chartTypeEnum = common.ChartTypeEnum;
   requestPartTypeEnum = common.RequestPartTypeEnum;
 
+  requestPartTypeEnumBodyStart = common.RequestPartTypeEnum.BodyStart;
+  requestPartTypeEnumBodyFunction = common.RequestPartTypeEnum.BodyFunction;
+  requestPartTypeEnumBody = common.RequestPartTypeEnum.Body;
+  requestPartTypeEnumUrlPathStart = common.RequestPartTypeEnum.UrlPathStart;
+  requestPartTypeEnumUrlPathFunction =
+    common.RequestPartTypeEnum.UrlPathFunction;
+  requestPartTypeEnumUrlPath = common.RequestPartTypeEnum.UrlPath;
+
   chartTypeEnumTable = common.ChartTypeEnum.Table;
   chartTypeEnumLine = common.ChartTypeEnum.Line;
   chartTypeEnumBar = common.ChartTypeEnum.Bar;
@@ -313,33 +321,33 @@ export class ModelComponent implements OnInit, OnDestroy {
   });
 
   requestPartTypeForm: FormGroup = this.fb.group({
-    requestPartType: [common.RequestPartTypeEnum.Body3]
+    requestPartType: [common.RequestPartTypeEnum.Body]
   });
 
   requestPartTypeList: RequestPartTypeItem[] = [
     {
-      label: 'Url Path 1',
-      value: common.RequestPartTypeEnum.UrlPath1
+      label: 'Url Path Start',
+      value: common.RequestPartTypeEnum.UrlPathStart
     },
     {
-      label: 'Url Path 2',
-      value: common.RequestPartTypeEnum.UrlPath2
+      label: 'Url Path Function',
+      value: common.RequestPartTypeEnum.UrlPathFunction
     },
     {
-      label: 'Url Path 3',
-      value: common.RequestPartTypeEnum.UrlPath3
+      label: 'Url Path',
+      value: common.RequestPartTypeEnum.UrlPath
     },
     {
-      label: 'Body 1',
-      value: common.RequestPartTypeEnum.Body1
+      label: 'Body Start',
+      value: common.RequestPartTypeEnum.BodyStart
     },
     {
-      label: 'Body 2',
-      value: common.RequestPartTypeEnum.Body2
+      label: 'Body Function',
+      value: common.RequestPartTypeEnum.BodyFunction
     },
     {
-      label: 'Body 3',
-      value: common.RequestPartTypeEnum.Body3
+      label: 'Body',
+      value: common.RequestPartTypeEnum.Body
     }
   ];
 
@@ -402,6 +410,9 @@ export class ModelComponent implements OnInit, OnDestroy {
     //   iconPath: 'assets/charts/gauge.svg'
     //   iconPath: 'assets/charts/gauge_linear.svg'
   ];
+
+  jsContent: string;
+  jsonContent: any;
 
   constructor(
     private router: Router,
@@ -725,8 +736,54 @@ export class ModelComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  requestPartTypeChange() {
+  requestPartTypeChange(requestPartTypeItem: RequestPartTypeItem) {
     (document.activeElement as HTMLElement).blur();
+
+    let value = requestPartTypeItem.value;
+
+    if (
+      [
+        common.RequestPartTypeEnum.BodyStart,
+        common.RequestPartTypeEnum.BodyFunction,
+        common.RequestPartTypeEnum.UrlPathStart,
+        common.RequestPartTypeEnum.UrlPathFunction
+      ].indexOf(value) > -1
+    ) {
+      this.jsContent =
+        value === common.RequestPartTypeEnum.BodyStart
+          ? `// function to make request body (before interpolation)
+${this.mconfig.storePart?.body}`
+          : value === common.RequestPartTypeEnum.BodyFunction
+          ? `// function to make request body (after interpolation)
+${this.mconfig.storePart?.bodyFunc}`
+          : value === common.RequestPartTypeEnum.Body
+          ? `// request body
+${this.mconfig.storePart?.bodyFuncResult}`
+          : value === common.RequestPartTypeEnum.UrlPathStart
+          ? `// function to make request url path (before interpolation)
+${this.mconfig.storePart?.urlPath}`
+          : value === common.RequestPartTypeEnum.UrlPathFunction
+          ? `// function to make request url path (after interpolation)
+${this.mconfig.storePart?.urlPathFunc}`
+          : value === common.RequestPartTypeEnum.UrlPath
+          ? `// request url path
+${this.mconfig.storePart?.urlPathFuncResult}`
+          : undefined;
+    }
+
+    if (
+      [
+        common.RequestPartTypeEnum.Body,
+        common.RequestPartTypeEnum.UrlPath
+      ].indexOf(value) > -1
+    ) {
+      this.jsonContent =
+        value === common.RequestPartTypeEnum.Body
+          ? this.mconfig.storePart?.bodyFuncResult
+          : value === common.RequestPartTypeEnum.UrlPath
+          ? this.mconfig.storePart?.urlPathFuncResult
+          : undefined;
+    }
   }
 
   chartTypeChange(newChartTypeValue?: common.ChartTypeEnum) {

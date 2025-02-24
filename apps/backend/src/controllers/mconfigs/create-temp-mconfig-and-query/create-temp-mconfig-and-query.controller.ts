@@ -276,10 +276,12 @@ ${JSON.stringify(newMconfig)}
       newMconfig.queryId = newQuery.queryId;
       newMconfig.temp = true;
       newMconfig.storePart = {
+        urlPath: (model.content as common.FileStore).url_path,
         urlPathFunc: processedUrlPath.userCode,
-        urlPathResult: processedUrlPath.result,
+        urlPathFuncResult: processedUrlPath.result,
+        body: (model.content as common.FileStore).body,
         bodyFunc: processedBody.userCode,
-        bodyResult: processedBody.result
+        bodyFuncResult: processedBody.result
       };
     } else {
       let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =

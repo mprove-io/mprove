@@ -1,8 +1,5 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { MonacoEditorOptions } from 'ng-monaco-editor';
-import { tap } from 'rxjs/operators';
-import { MqQuery } from '~front/app/queries/mq.query';
-import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 @Component({
@@ -19,24 +16,7 @@ export class JsViewerComponent {
     fixedOverflowWidgets: true
   };
 
-  content: string;
+  @Input() jsContent: string;
 
-  mconfig: common.MconfigX;
-  mconfig$ = this.mqQuery.mconfig$.pipe(
-    tap(x => {
-      this.mconfig = x;
-      this.content = `
-//
-// function to make resquest url path
-//
-${x.storePart?.urlPathFunc}
-//
-// function to make request body
-//
-${x.storePart?.bodyFunc}`;
-      this.cd.detectChanges();
-    })
-  );
-
-  constructor(private cd: ChangeDetectorRef, private mqQuery: MqQuery) {}
+  constructor(private cd: ChangeDetectorRef) {}
 }

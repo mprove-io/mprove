@@ -221,7 +221,11 @@
 
                 <form
                   [formGroup]="requestPartTypeForm"
-                  *ngIf="mconfig?.select.length > 0 && rightIsShow === true"
+                  *ngIf="
+                    mconfig.isStoreModel === true &&
+                    mconfig?.select.length > 0 &&
+                    rightIsShow === true
+                  "
                   class="ml-5"
                 >
                   <ng-select
@@ -231,7 +235,7 @@
                     [items]="requestPartTypeList"
                     [clearable]="false"
                     [searchable]="false"
-                    (change)="requestPartTypeChange()"
+                    (change)="requestPartTypeChange($event)"
                     (keyup.esc)="
                       $event.stopImmediatePropagation();
                       requestPartTypeSelect.blur()
@@ -400,8 +404,34 @@
                     <m-sql *ngIf="mconfig.isStoreModel === false"></m-sql>
 
                     <m-js-viewer
-                      *ngIf="mconfig.isStoreModel === true"
+                      *ngIf="
+                        mconfig.isStoreModel === true &&
+                        [
+                          requestPartTypeEnumBodyStart,
+                          requestPartTypeEnumBodyFunction,
+                          requestPartTypeEnumUrlPathStart,
+                          requestPartTypeEnumUrlPathFunction
+                        ].indexOf(
+                          requestPartTypeForm.controls['requestPartType'].value
+                        ) > -1
+                      "
+                      [jsContent]="jsContent"
                     ></m-js-viewer>
+
+                    <m-json-viewer
+                      *ngIf="
+                        mconfig.isStoreModel === true &&
+                        [
+                          requestPartTypeEnumBody,
+                          requestPartTypeEnumUrlPath
+                        ].indexOf(
+                          requestPartTypeForm.controls['requestPartType'].value
+                        ) > -1
+                      "
+                      [jsonContent]="
+                        jsonContent || this.mconfig.storePart?.bodyFuncResult
+                      "
+                    ></m-json-viewer>
                   </div>
                 </div>
               </div>
