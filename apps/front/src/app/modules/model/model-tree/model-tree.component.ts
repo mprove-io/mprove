@@ -255,28 +255,64 @@ export class ModelTreeComponent implements AfterViewInit {
           this.model.content as common.FileStore
         ).results.find(r => r.result === field.result).fraction_types[0];
 
+        let logicGroup =
+          common.isUndefined(storeTypeFraction.or) ||
+          toBooleanFromLowercaseString(storeTypeFraction.or) === true
+            ? common.FractionLogicEnum.Or
+            : common.FractionLogicEnum.AndNot;
+
         newFraction = {
-          operator: common.FractionOperatorEnum.Or,
-          brick: undefined,
-          type: common.FractionTypeEnum.StoreFraction,
-          storeResult: field.result,
-          storeFractionSubType: storeTypeFraction.type,
-          meta: storeTypeFraction.meta,
+          operator:
+            logicGroup === common.FractionLogicEnum.Or
+              ? common.FractionOperatorEnum.Or
+              : common.FractionOperatorEnum.And,
           logicGroup:
             common.isUndefined(storeTypeFraction.or) ||
             toBooleanFromLowercaseString(storeTypeFraction.or) === true
               ? common.FractionLogicEnum.Or
               : common.FractionLogicEnum.AndNot,
+          brick: undefined,
+          type: common.FractionTypeEnum.StoreFraction,
+          storeResult: field.result,
+          storeFractionSubType: storeTypeFraction.type,
+          meta: storeTypeFraction.meta,
           storeFractionSubTypeOptions: (
             this.model.content as common.FileStore
           ).results
             .find(r => r.result === field.result)
             .fraction_types.map(ft => {
-              let option: FractionSubTypeOption = {
-                value: ft.type,
-                label: ft.label
-              };
-              return option;
+              let options = [];
+
+              if (
+                common.isUndefined(ft.or) ||
+                toBooleanFromLowercaseString(ft.or) === true
+              ) {
+                let optionOr: FractionSubTypeOption = {
+                  logicGroup: common.FractionLogicEnum.Or,
+                  value: ft.type,
+                  label: ft.label
+                };
+                options.push(optionOr);
+              }
+
+              if (
+                common.isUndefined(ft.and_not) ||
+                toBooleanFromLowercaseString(ft.and_not) === true
+              ) {
+                let optionAndNot: FractionSubTypeOption = {
+                  logicGroup: common.FractionLogicEnum.AndNot,
+                  value: ft.type,
+                  label: ft.label
+                };
+                options.push(optionAndNot);
+              }
+
+              return options;
+            })
+            .flat()
+            .sort((a, b) => {
+              if (a.logicGroup === b.logicGroup) return 0;
+              return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
             }),
           controls: (this.model.content as common.FileStore).results
             .find(r => r.result === field.result)

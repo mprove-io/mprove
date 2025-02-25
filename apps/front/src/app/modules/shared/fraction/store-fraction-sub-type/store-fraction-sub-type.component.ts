@@ -37,6 +37,9 @@ export class StoreFractionSubTypeComponent {
 
   @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
 
+  logicGroupEnumOr = common.FractionLogicEnum.Or;
+  logicGroupEnumAndNot = common.FractionLogicEnum.AndNot;
+
   constructor(private fb: FormBuilder) {}
 
   emitFractionUpdate() {

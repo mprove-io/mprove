@@ -6,7 +6,7 @@
     <ng-select
       #fractionSubTypeSelect
       data-cy="fractionSubTypeSelect"
-      class="popup-55 w-48"
+      class="popup-55 w-[300px]"
       [ngClass]="{
         'cursor-default': isDisabled === true
       }"
@@ -27,12 +27,20 @@
       bindValue="value"
     >
       <ng-template ng-label-tmp let-item="item">
-        <div class="ml-1 truncate">{{ item.label || item.value }}</div>
+        <div class="ml-1 truncate">{{
+          item.logicGroup === logicGroupEnumOr
+            ? item.label || item.value
+            : 'NOT ' + (item.label || item.value)
+        }}</div>
       </ng-template>
 
       <ng-template ng-option-tmp let-item="item">
         <div class="flex flex-row">
-          <div class="ml-1 truncate">{{ item.label || item.value }}</div>
+          <div class="ml-1 truncate">{{
+            item.logicGroup === logicGroupEnumOr
+              ? 'OR - ' + (item.label || item.value)
+              : 'AND - NOT ' + (item.label || item.value)
+          }}</div>
         </div>
       </ng-template>
     </ng-select>
