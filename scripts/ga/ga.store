@@ -78,7 +78,9 @@ body: |
           fieldName: field.meta.name,
           numericFilter: {
             operation: fraction.meta.operation,
-            value: fraction.controls.find(control => control['name'] === 'value_input')?.value
+            value: {
+              doubleValue: Number(fraction.controls.find(control => control['name'] === 'value_input')?.value)
+            }
           }
         }
       }
@@ -87,8 +89,12 @@ body: |
         apiFilter = {
           fieldName: field.meta.name,
           betweenFilter: {
-            fromValue: fraction.controls.find(control => control['name'] === 'value_from_input')?.value,
-            toValue: fraction.controls.find(control => control['name'] === 'value_to_input')?.value,
+            fromValue: {
+              doubleValue: Number(fraction.controls.find(control => control['name'] === 'value_from_input')?.value)
+            },
+            toValue: {
+              doubleValue: Number(fraction.controls.find(control => control['name'] === 'value_to_input')?.value)
+            },
           }
         }
       } 
