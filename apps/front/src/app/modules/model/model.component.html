@@ -429,7 +429,13 @@
                         ) > -1
                       "
                       [jsonContent]="
-                        jsonContent || this.mconfig.storePart?.bodyFuncResult
+                        requestPartTypeForm.controls['requestPartType']
+                          .value === requestPartTypeEnumBody
+                          ? mconfig.storePart?.bodyFuncResult
+                          : requestPartTypeForm.controls['requestPartType']
+                              .value === requestPartTypeEnumUrlPath
+                          ? mconfig.storePart?.urlPathFuncResult
+                          : undefined
                       "
                     ></m-json-viewer>
                   </div>

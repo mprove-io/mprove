@@ -412,7 +412,6 @@ export class ModelComponent implements OnInit, OnDestroy {
   ];
 
   jsContent: string;
-  jsonContent: any;
 
   constructor(
     private router: Router,
@@ -768,20 +767,6 @@ ${this.mconfig.storePart?.urlPathFunc}`
           : value === common.RequestPartTypeEnum.UrlPath
           ? `// request url path
 ${this.mconfig.storePart?.urlPathFuncResult}`
-          : undefined;
-    }
-
-    if (
-      [
-        common.RequestPartTypeEnum.Body,
-        common.RequestPartTypeEnum.UrlPath
-      ].indexOf(value) > -1
-    ) {
-      this.jsonContent =
-        value === common.RequestPartTypeEnum.Body
-          ? this.mconfig.storePart?.bodyFuncResult
-          : value === common.RequestPartTypeEnum.UrlPath
-          ? this.mconfig.storePart?.urlPathFuncResult
           : undefined;
     }
   }
