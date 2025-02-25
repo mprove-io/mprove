@@ -1,15 +1,19 @@
-<div *ngIf="fraction.type !== fractionTypeStoreFraction">
-  <div [ngSwitch]="fieldResult" class="flex flex-row items-start justify-start">
-    <div class="ml-5 flex h-[36px] w-10 items-center justify-start">
-      {{
-        !isFirst && fraction.operator === fractionOperatorEnum.Or
-          ? 'OR'
-          : !isFirst && fraction.operator === fractionOperatorEnum.And
-          ? 'AND'
-          : ''
-      }}
-    </div>
+<div class="flex flex-row items-start justify-start">
+  <div class="ml-5 flex h-[36px] w-10 items-center justify-start">
+    {{
+      !isFirst && fraction.operator === fractionOperatorEnum.Or
+        ? 'OR'
+        : !isFirst && fraction.operator === fractionOperatorEnum.And
+        ? 'AND'
+        : ''
+    }}
+  </div>
 
+  <div
+    *ngIf="fraction.type !== fractionTypeStoreFraction"
+    [ngSwitch]="fieldResult"
+    class="flex flex-row items-start justify-start"
+  >
     <m-fraction-number
       *ngSwitchCase="fieldResultEnum.Number"
       [fraction]="fraction"
@@ -84,75 +88,75 @@
       (fractionUpdate)="fractionUpdate.emit($event)"
     ></m-fraction-yesno>
   </div>
-</div>
 
-<div
-  *ngIf="fraction.type === fractionTypeStoreFraction"
-  class="flex flex-row items-start justify-start"
->
-  <div class="ml-5 flex h-[36px] w-10 items-center justify-start"></div>
+  <div
+    *ngIf="fraction.type === fractionTypeStoreFraction"
+    class="flex flex-row items-start justify-start"
+  >
+    <!-- <div class="ml-5 flex h-[36px] w-10 items-center justify-start"></div> -->
 
-  <div *ngIf="!!fieldResult" class="flex">
-    <m-store-fraction-sub-type
-      class="ml-5"
-      [fraction]="fraction"
-      [modelContent]="modelContent"
-      [fieldResult]="fieldResult"
-      [isFirst]="isFirst"
-      [fractionIndex]="fractionIndex"
-      [isDisabled]="isDisabled"
-      (fractionUpdate)="fractionUpdate.emit($event)"
-    >
-    </m-store-fraction-sub-type>
-  </div>
+    <div *ngIf="!!fieldResult" class="flex">
+      <m-store-fraction-sub-type
+        class="ml-5"
+        [fraction]="fraction"
+        [modelContent]="modelContent"
+        [fieldResult]="fieldResult"
+        [isFirst]="isFirst"
+        [fractionIndex]="fractionIndex"
+        [isDisabled]="isDisabled"
+        (fractionUpdate)="fractionUpdate.emit($event)"
+      >
+      </m-store-fraction-sub-type>
+    </div>
 
-  <div *ngFor="let fractionControl of fraction.controls" class="flex">
-    <m-store-fraction-selector
-      class="ml-5"
-      *ngIf="fractionControl.controlClass === controlClassSelector"
-      [fraction]="fraction"
-      [isFirst]="isFirst"
-      [fractionIndex]="fractionIndex"
-      [isDisabled]="isDisabled"
-      [fractionControl]="fractionControl"
-      (fractionUpdate)="fractionUpdate.emit($event)"
-    >
-    </m-store-fraction-selector>
+    <div *ngFor="let fractionControl of fraction.controls" class="flex">
+      <m-store-fraction-selector
+        class="ml-5"
+        *ngIf="fractionControl.controlClass === controlClassSelector"
+        [fraction]="fraction"
+        [isFirst]="isFirst"
+        [fractionIndex]="fractionIndex"
+        [isDisabled]="isDisabled"
+        [fractionControl]="fractionControl"
+        (fractionUpdate)="fractionUpdate.emit($event)"
+      >
+      </m-store-fraction-selector>
 
-    <m-store-fraction-input
-      class="ml-5"
-      *ngIf="fractionControl.controlClass === controlClassInput"
-      [fraction]="fraction"
-      [isFirst]="isFirst"
-      [fractionIndex]="fractionIndex"
-      [isDisabled]="isDisabled"
-      [fractionControl]="fractionControl"
-      (fractionUpdate)="fractionUpdate.emit($event)"
-    >
-    </m-store-fraction-input>
+      <m-store-fraction-input
+        class="ml-5"
+        *ngIf="fractionControl.controlClass === controlClassInput"
+        [fraction]="fraction"
+        [isFirst]="isFirst"
+        [fractionIndex]="fractionIndex"
+        [isDisabled]="isDisabled"
+        [fractionControl]="fractionControl"
+        (fractionUpdate)="fractionUpdate.emit($event)"
+      >
+      </m-store-fraction-input>
 
-    <m-store-fraction-switch
-      class="ml-5"
-      *ngIf="fractionControl.controlClass === controlClassSwitch"
-      [fraction]="fraction"
-      [isFirst]="isFirst"
-      [fractionIndex]="fractionIndex"
-      [isDisabled]="isDisabled"
-      [fractionControl]="fractionControl"
-      (fractionUpdate)="fractionUpdate.emit($event)"
-    >
-    </m-store-fraction-switch>
+      <m-store-fraction-switch
+        class="ml-5"
+        *ngIf="fractionControl.controlClass === controlClassSwitch"
+        [fraction]="fraction"
+        [isFirst]="isFirst"
+        [fractionIndex]="fractionIndex"
+        [isDisabled]="isDisabled"
+        [fractionControl]="fractionControl"
+        (fractionUpdate)="fractionUpdate.emit($event)"
+      >
+      </m-store-fraction-switch>
 
-    <m-store-fraction-date-picker
-      class="ml-5"
-      *ngIf="fractionControl.controlClass === controlClassDatePicker"
-      [fraction]="fraction"
-      [isFirst]="isFirst"
-      [fractionIndex]="fractionIndex"
-      [isDisabled]="isDisabled"
-      [fractionControl]="fractionControl"
-      (fractionUpdate)="fractionUpdate.emit($event)"
-    >
-    </m-store-fraction-date-picker>
+      <m-store-fraction-date-picker
+        class="ml-5"
+        *ngIf="fractionControl.controlClass === controlClassDatePicker"
+        [fraction]="fraction"
+        [isFirst]="isFirst"
+        [fractionIndex]="fractionIndex"
+        [isDisabled]="isDisabled"
+        [fractionControl]="fractionControl"
+        (fractionUpdate)="fractionUpdate.emit($event)"
+      >
+      </m-store-fraction-date-picker>
+    </div>
   </div>
 </div>
