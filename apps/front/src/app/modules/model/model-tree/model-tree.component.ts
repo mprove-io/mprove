@@ -251,31 +251,29 @@ export class ModelTreeComponent implements AfterViewInit {
       if (newMconfig.isStoreModel === true) {
         let field = this.model.fields.find(x => x.id === node.data.id);
 
-        let storeTypeFraction = (
+        let storeResultFraction = (
           this.model.content as common.FileStore
         ).results.find(r => r.result === field.result).fraction_types[0];
 
         let logicGroup =
-          common.isUndefined(storeTypeFraction.or) ||
-          toBooleanFromLowercaseString(storeTypeFraction.or) === true
+          common.isUndefined(storeResultFraction.or) ||
+          toBooleanFromLowercaseString(storeResultFraction.or) === true
             ? common.FractionLogicEnum.Or
             : common.FractionLogicEnum.AndNot;
 
         newFraction = {
+          meta: storeResultFraction.meta,
           operator:
             logicGroup === common.FractionLogicEnum.Or
               ? common.FractionOperatorEnum.Or
               : common.FractionOperatorEnum.And,
-          logicGroup:
-            common.isUndefined(storeTypeFraction.or) ||
-            toBooleanFromLowercaseString(storeTypeFraction.or) === true
-              ? common.FractionLogicEnum.Or
-              : common.FractionLogicEnum.AndNot,
+          logicGroup: logicGroup,
           brick: undefined,
           type: common.FractionTypeEnum.StoreFraction,
           storeResult: field.result,
-          storeFractionSubType: storeTypeFraction.type,
-          meta: storeTypeFraction.meta,
+          storeFractionSubType: storeResultFraction.type,
+          storeFractionLogicGroupWithSubType:
+            logicGroup + storeResultFraction.type,
           storeFractionSubTypeOptions: (
             this.model.content as common.FileStore
           ).results
@@ -289,7 +287,8 @@ export class ModelTreeComponent implements AfterViewInit {
               ) {
                 let optionOr: FractionSubTypeOption = {
                   logicGroup: common.FractionLogicEnum.Or,
-                  value: ft.type,
+                  typeValue: ft.type,
+                  value: common.FractionLogicEnum.Or + ft.type,
                   label: ft.label
                 };
                 options.push(optionOr);
@@ -301,7 +300,8 @@ export class ModelTreeComponent implements AfterViewInit {
               ) {
                 let optionAndNot: FractionSubTypeOption = {
                   logicGroup: common.FractionLogicEnum.AndNot,
-                  value: ft.type,
+                  value: common.FractionLogicEnum.AndNot + ft.type,
+                  typeValue: ft.type,
                   label: ft.label
                 };
                 options.push(optionAndNot);

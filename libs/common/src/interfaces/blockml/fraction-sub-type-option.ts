@@ -7,6 +7,9 @@ export class FractionSubTypeOption {
   logicGroup: enums.FractionLogicEnum;
 
   @IsString()
+  typeValue: string;
+
+  @IsString()
   value: string;
 
   @IsOptional()

@@ -14,7 +14,7 @@
       [clearable]="false"
       [searchable]="false"
       [disabled]="isDisabled === true"
-      [(ngModel)]="fraction.storeFractionSubType"
+      [(ngModel)]="fraction.storeFractionLogicGroupWithSubType"
       (change)="subTypeChange($event)"
       (keyup.esc)="
         $event.stopImmediatePropagation(); fractionSubTypeSelect.blur()
@@ -29,8 +29,8 @@
       <ng-template ng-label-tmp let-item="item">
         <div class="ml-1 truncate">{{
           item.logicGroup === logicGroupEnumOr
-            ? item.label || item.value
-            : 'NOT ' + (item.label || item.value)
+            ? item.label || item.typeValue
+            : 'NOT ' + (item.label || item.typeValue)
         }}</div>
       </ng-template>
 
@@ -38,8 +38,8 @@
         <div class="flex flex-row">
           <div class="ml-1 truncate">{{
             item.logicGroup === logicGroupEnumOr
-              ? 'OR - ' + (item.label || item.value)
-              : 'AND - NOT ' + (item.label || item.value)
+              ? 'OR - ' + (item.label || item.typeValue)
+              : 'AND - NOT ' + (item.label || item.typeValue)
           }}</div>
         </div>
       </ng-template>

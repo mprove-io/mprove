@@ -49,14 +49,25 @@ export class StoreFractionSubTypeComponent {
     });
   }
 
-  subTypeChange(item: { value: string; label: string }) {
+  subTypeChange(item: common.FractionSubTypeOption) {
+    let storeTypeFraction = (this.modelContent as common.FileStore).results
+      .find(r => r.result === this.fieldResult)
+      .fraction_types.find(ft => ft.type === item.typeValue);
+
     let newFraction: common.Fraction = {
+      meta: storeTypeFraction.meta,
+      operator:
+        item.logicGroup === common.FractionLogicEnum.Or
+          ? common.FractionOperatorEnum.Or
+          : common.FractionOperatorEnum.And,
+      logicGroup: item.logicGroup,
       type: common.FractionTypeEnum.StoreFraction,
-      storeFractionSubType: item.value,
+      storeFractionSubType: item.typeValue,
+      storeFractionLogicGroupWithSubType: item.logicGroup + item.typeValue,
       storeFractionSubTypeOptions: this.fraction.storeFractionSubTypeOptions,
       controls: (this.modelContent as common.FileStore).results
         .find(r => r.result === this.fieldResult)
-        .fraction_types.find(ft => ft.type === item.value)
+        .fraction_types.find(ft => ft.type === item.typeValue)
         .controls.map(control => {
           let newControl: common.FractionControl = {
             options: control.options,
@@ -71,8 +82,7 @@ export class StoreFractionSubTypeComponent {
           };
           return newControl;
         }),
-      brick: undefined as any,
-      operator: undefined as any
+      brick: undefined as any
     };
 
     this.fraction = newFraction;

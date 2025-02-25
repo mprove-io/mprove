@@ -26,12 +26,12 @@ export class Fraction {
   @IsEnum(enums.FractionOperatorEnum)
   operator: enums.FractionOperatorEnum;
 
+  @IsOptional()
+  @IsEnum(enums.FractionLogicEnum)
+  logicGroup?: enums.FractionLogicEnum;
+
   @IsEnum(enums.FractionTypeEnum)
   type: enums.FractionTypeEnum;
-
-  @IsOptional()
-  @IsString()
-  storeFractionSubType?: string;
 
   @IsOptional()
   @ValidateNested()
@@ -39,11 +39,15 @@ export class Fraction {
   storeFractionSubTypeOptions?: FractionSubTypeOption[];
 
   @IsOptional()
-  meta?: any;
+  @IsString()
+  storeFractionSubType?: string;
 
   @IsOptional()
-  @IsEnum(enums.FractionLogicEnum)
-  logicGroup?: enums.FractionLogicEnum;
+  @IsString()
+  storeFractionLogicGroupWithSubType?: string;
+
+  @IsOptional()
+  meta?: any;
 
   @IsOptional()
   @IsString()
