@@ -11,6 +11,7 @@ export async function buildTile<T extends types.dzType>(
     traceId: string;
     entities: T[];
     models: common.FileModel[];
+    stores: common.FileStore[];
     udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
     timezone: string;
@@ -49,6 +50,7 @@ export async function buildTile<T extends types.dzType>(
     {
       entities: entities,
       models: item.models,
+      stores: item.stores,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
@@ -60,6 +62,7 @@ export async function buildTile<T extends types.dzType>(
     {
       entities: entities,
       models: item.models,
+      stores: item.stores,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
@@ -92,6 +95,7 @@ export async function buildTile<T extends types.dzType>(
       entities: entities,
       caseSensitiveStringFilters: item.caseSensitiveStringFilters,
       models: item.models,
+      stores: item.stores,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller

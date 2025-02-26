@@ -4,6 +4,7 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
+import { STORE_MODEL_PREFIX } from '~common/constants/top';
 
 let func = common.FuncEnum.CheckSelectElements;
 
@@ -11,6 +12,7 @@ export function checkSelectElements<T extends types.dzType>(
   item: {
     entities: T[];
     models: common.FileModel[];
+    stores: common.FileStore[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -26,65 +28,28 @@ export function checkSelectElements<T extends types.dzType>(
     let errorsOnStart = item.errors.length;
 
     x.tiles.forEach(tile => {
+      let isStore = tile.model.startsWith(STORE_MODEL_PREFIX);
+      let model: common.FileModel;
+      let store: common.FileStore;
+
+      if (isStore === true) {
+        store = item.stores.find(
+          m => `${STORE_MODEL_PREFIX}_${m.name}` === tile.model
+        );
+      } else {
+        model = item.models.find(m => m.name === tile.model);
+      }
+
       tile.select.forEach(element => {
-        let model = item.models.find(m => m.name === tile.model);
+        if (isStore === false) {
+          let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
+          let r = reg.exec(element);
 
-        let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
-        let r = reg.exec(element);
-
-        if (common.isUndefined(r)) {
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.TILE_WRONG_SELECT_ELEMENT,
-              message: `found element "${element}" that can not be parsed as "alias.field_name"`,
-              lines: [
-                {
-                  line: tile.select_line_num,
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
-
-        let asName = r[1];
-        let fieldName = r[2];
-
-        if (asName === common.MF) {
-          let modelField = model.fields.find(
-            mField => mField.name === fieldName
-          );
-
-          if (common.isUndefined(modelField)) {
+          if (common.isUndefined(r)) {
             item.errors.push(
               new BmError({
-                title: common.ErTitleEnum.TILE_WRONG_SELECT_MODEL_FIELD,
-                message:
-                  `found element "${element}" references missing or not valid field ` +
-                  `"${fieldName}" of model "${model.name}" fields section`,
-                lines: [
-                  {
-                    line: tile.select_line_num,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-        } else {
-          let join = model.joins.find(j => j.as === asName);
-
-          if (common.isUndefined(join)) {
-            item.errors.push(
-              new BmError({
-                title: common.ErTitleEnum.TILE_WRONG_SELECT_ALIAS,
-                message:
-                  `found element "${element}" references missing alias ` +
-                  `"${asName}" of model "${model.name}" joins section `,
+                title: common.ErTitleEnum.TILE_WRONG_SELECT_ELEMENT,
+                message: `found element "${element}" that can not be parsed as "alias.field_name"`,
                 lines: [
                   {
                     line: tile.select_line_num,
@@ -97,26 +62,75 @@ export function checkSelectElements<T extends types.dzType>(
             return;
           }
 
-          let viewField = join.view.fields.find(f => f.name === fieldName);
+          let asName = r[1];
+          let fieldName = r[2];
 
-          if (common.isUndefined(viewField)) {
-            item.errors.push(
-              new BmError({
-                title: common.ErTitleEnum.TILE_WRONG_SELECT_VIEW_FIELD,
-                message:
-                  `found element "${element}" references missing or not valid field ` +
-                  `"${fieldName}" of view "${join.view.name}" fields section. ` +
-                  `View has "${asName}" alias in "${model.name}" model.`,
-                lines: [
-                  {
-                    line: tile.select_line_num,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
+          if (asName === common.MF) {
+            let modelField = model.fields.find(
+              mField => mField.name === fieldName
             );
-            return;
+
+            if (common.isUndefined(modelField)) {
+              item.errors.push(
+                new BmError({
+                  title: common.ErTitleEnum.TILE_WRONG_SELECT_MODEL_FIELD,
+                  message:
+                    `found element "${element}" references missing or not valid field ` +
+                    `"${fieldName}" of model "${model.name}" fields section`,
+                  lines: [
+                    {
+                      line: tile.select_line_num,
+                      name: x.fileName,
+                      path: x.filePath
+                    }
+                  ]
+                })
+              );
+              return;
+            }
+          } else {
+            let join = model.joins.find(j => j.as === asName);
+
+            if (common.isUndefined(join)) {
+              item.errors.push(
+                new BmError({
+                  title: common.ErTitleEnum.TILE_WRONG_SELECT_ALIAS,
+                  message:
+                    `found element "${element}" references missing alias ` +
+                    `"${asName}" of model "${model.name}" joins section `,
+                  lines: [
+                    {
+                      line: tile.select_line_num,
+                      name: x.fileName,
+                      path: x.filePath
+                    }
+                  ]
+                })
+              );
+              return;
+            }
+
+            let viewField = join.view.fields.find(f => f.name === fieldName);
+
+            if (common.isUndefined(viewField)) {
+              item.errors.push(
+                new BmError({
+                  title: common.ErTitleEnum.TILE_WRONG_SELECT_VIEW_FIELD,
+                  message:
+                    `found element "${element}" references missing or not valid field ` +
+                    `"${fieldName}" of view "${join.view.name}" fields section. ` +
+                    `View has "${asName}" alias in "${model.name}" model.`,
+                  lines: [
+                    {
+                      line: tile.select_line_num,
+                      name: x.fileName,
+                      path: x.filePath
+                    }
+                  ]
+                })
+              );
+              return;
+            }
           }
         }
       });

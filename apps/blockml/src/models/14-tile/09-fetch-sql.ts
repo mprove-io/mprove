@@ -7,6 +7,7 @@ import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 import { RabbitService } from '~blockml/services/rabbit.service';
+import { STORE_MODEL_PREFIX } from '~common/constants/top';
 
 let func = common.FuncEnum.FetchSql;
 
@@ -41,7 +42,7 @@ export async function fetchSql<T extends types.dzType>(
 
   await asyncPool(
     concurrencyLimit,
-    tiles,
+    tiles.filter(x => x.model.startsWith(STORE_MODEL_PREFIX) === false),
     async (tile: common.FilePartTile) => {
       let model = item.models.find(m => m.name === tile.model);
 

@@ -4,6 +4,7 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
+import { STORE_MODEL_PREFIX } from '~common/constants/top';
 
 let func = common.FuncEnum.CheckTileTitleModelSelect;
 
@@ -11,6 +12,7 @@ export function checkTileTitleModelSelect<T extends types.dzType>(
   item: {
     entities: T[];
     models: common.FileModel[];
+    stores: common.FileStore[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -74,9 +76,19 @@ export function checkTileTitleModelSelect<T extends types.dzType>(
         return;
       }
 
-      let model = item.models.find(m => m.name === tile.model);
+      let isStore = tile.model.startsWith(STORE_MODEL_PREFIX);
+      let model;
+      let store;
 
-      if (common.isUndefined(model)) {
+      if (isStore === true) {
+        store = item.stores.find(
+          m => `${STORE_MODEL_PREFIX}_${m.name}` === tile.model
+        );
+      } else {
+        model = item.models.find(m => m.name === tile.model);
+      }
+
+      if (isStore === false && common.isUndefined(model)) {
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.WRONG_TILE_MODEL,

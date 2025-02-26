@@ -4,6 +4,7 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
+import { STORE_MODEL_PREFIX } from '~common/constants/top';
 
 let func = common.FuncEnum.CheckSorts;
 
@@ -31,8 +32,14 @@ export function checkSorts<T extends types.dzType>(
         return;
       }
 
+      let isStore = tile.model.startsWith(STORE_MODEL_PREFIX);
+
       tile.sorts.split(',').forEach(part => {
-        let reg = common.MyRegex.CAPTURE_SORT_WITH_OPTIONAL_DESC_G();
+        let reg =
+          isStore === true
+            ? common.MyRegex.CAPTURE_STORE_SORT_WITH_OPTIONAL_DESC_G()
+            : common.MyRegex.CAPTURE_SORT_WITH_OPTIONAL_DESC_G();
+
         let r = reg.exec(part);
 
         if (common.isUndefined(r)) {
@@ -40,8 +47,11 @@ export function checkSorts<T extends types.dzType>(
             new BmError({
               title: common.ErTitleEnum.TILE_WRONG_SORTS_SYNTAX,
               message:
-                `"${common.ParameterEnum.Sorts}" can contain selected ` +
-                'fields in form of "alias.field_name [desc]" separated by comma',
+                isStore === true
+                  ? `Store Model "${common.ParameterEnum.Sorts}" can contain selected ` +
+                    'fields in form of "field_name [desc]" separated by comma'
+                  : `Model "${common.ParameterEnum.Sorts}" can contain selected ` +
+                    'fields in form of "alias.field_name [desc]" separated by comma',
               lines: [
                 {
                   line: tile.sorts_line_num,
