@@ -374,7 +374,7 @@ results:
     label: Equal
     or: true
     and_not: true
-    meta: 
+    meta:
       operation: EQUAL
       filter_type: numericFilter
     controls: 

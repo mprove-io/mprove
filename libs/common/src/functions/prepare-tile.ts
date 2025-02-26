@@ -1,7 +1,10 @@
 import { FilePartTile, FileTileParameter, isUndefined } from '~common/_index';
 import { constants } from '~common/barrels/constants';
+import { enums } from '~common/barrels/enums';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { TileX } from '~common/interfaces/backend/tile-x';
+import { FileFraction } from '~common/interfaces/blockml/internal/file-fraction';
+import { FileFractionControl } from '~common/interfaces/blockml/internal/file-fraction-control';
 import { isDefined } from './is-defined';
 import { toFileChartOptions } from './to-file-chart-options';
 
@@ -38,6 +41,57 @@ export function prepareTile(item: {
           apply_to: x.fieldId,
           conditions: bricks
         };
+
+        if (mconfig.isStoreModel === true) {
+          parameter.fractions = x.fractions.map(mconfigFraction => {
+            let fileFraction: FileFraction = {};
+
+            if (isDefined(mconfigFraction.logicGroup)) {
+              fileFraction.logic = mconfigFraction.logicGroup;
+            }
+
+            if (isDefined(mconfigFraction.storeFractionSubType)) {
+              fileFraction.type = mconfigFraction.storeFractionSubType;
+            }
+
+            fileFraction.controls = mconfigFraction.controls.map(
+              mconfigControl => {
+                let newFileControl: FileFractionControl = {};
+
+                if (
+                  mconfigControl.controlClass === enums.ControlClassEnum.Input
+                ) {
+                  newFileControl.input = mconfigControl.name;
+                } else if (
+                  mconfigControl.controlClass ===
+                  enums.ControlClassEnum.ListInput
+                ) {
+                  newFileControl.list_input = mconfigControl.name;
+                } else if (
+                  mconfigControl.controlClass === enums.ControlClassEnum.Switch
+                ) {
+                  newFileControl.switch = mconfigControl.name;
+                } else if (
+                  mconfigControl.controlClass ===
+                  enums.ControlClassEnum.DatePicker
+                ) {
+                  newFileControl.date_picker = mconfigControl.name;
+                } else if (
+                  mconfigControl.controlClass ===
+                  enums.ControlClassEnum.Selector
+                ) {
+                  newFileControl.selector = mconfigControl.name;
+                }
+
+                newFileControl.value = mconfigControl.value;
+
+                return newFileControl;
+              }
+            );
+
+            return fileFraction;
+          });
+        }
 
         parameters.push(parameter);
       }
