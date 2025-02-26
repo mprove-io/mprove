@@ -38,11 +38,12 @@ export function prepareTile(item: {
         x.fieldId !== deleteFilterFieldId
       ) {
         let parameter: FileTileParameter = {
-          apply_to: x.fieldId,
-          conditions: bricks
+          apply_to: x.fieldId
         };
 
-        if (mconfig.isStoreModel === true) {
+        if (mconfig.isStoreModel === false) {
+          parameter.conditions = bricks;
+        } else {
           parameter.fractions = x.fractions.map(mconfigFraction => {
             let fileFraction: FileFraction = {};
 

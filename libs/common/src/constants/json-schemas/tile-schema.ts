@@ -51,6 +51,50 @@ export const TILE_SCHEMA: JSONSchema7 = {
             items: {
               type: 'string'
             }
+          },
+          fractions: {
+            type: 'array',
+            items: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                logic: {
+                  type: 'string'
+                },
+                type: {
+                  type: 'string'
+                },
+                controls: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                      input: {
+                        type: 'string'
+                      },
+                      list_input: {
+                        type: 'string'
+                      },
+                      switch: {
+                        type: 'string'
+                      },
+                      date_picker: {
+                        type: 'string'
+                      },
+                      selector: {
+                        type: 'string'
+                      },
+                      value: {
+                        type: 'string'
+                      }
+                    },
+                    required: ['value']
+                  }
+                }
+              },
+              required: ['controls']
+            }
           }
         },
         required: ['apply_to']
