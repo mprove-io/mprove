@@ -109,6 +109,7 @@ export class RebuildStructService {
         orgId: orgId,
         projectId: projectId,
         models: models,
+        stores: stores,
         dashboards: dashboards,
         envId: envId,
         timezone: defaultTimezone
@@ -119,6 +120,7 @@ export class RebuildStructService {
       orgId: orgId,
       projectId: projectId,
       models: models,
+      stores: stores,
       charts: charts,
       envId: envId,
       timezone: defaultTimezone

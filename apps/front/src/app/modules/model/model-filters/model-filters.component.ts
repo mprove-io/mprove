@@ -72,18 +72,18 @@ export class ModelFiltersComponent {
     if (newMconfig.isStoreModel === true) {
       let field = filterExtended.field;
 
-      let storeResultFraction = (
+      let storeResultFirstTypeFraction = (
         this.modelContent as common.FileStore
       ).results.find(r => r.result === field.result).fraction_types[0];
 
       let logicGroup =
-        common.isUndefined(storeResultFraction.or) ||
-        toBooleanFromLowercaseString(storeResultFraction.or) === true
+        common.isUndefined(storeResultFirstTypeFraction.or) ||
+        toBooleanFromLowercaseString(storeResultFirstTypeFraction.or) === true
           ? common.FractionLogicEnum.Or
           : common.FractionLogicEnum.AndNot;
 
       newFraction = {
-        meta: storeResultFraction.meta,
+        meta: storeResultFirstTypeFraction.meta,
         operator:
           logicGroup === common.FractionLogicEnum.Or
             ? common.FractionOperatorEnum.Or
@@ -92,9 +92,9 @@ export class ModelFiltersComponent {
         brick: undefined,
         type: common.FractionTypeEnum.StoreFraction,
         storeResult: field.result,
-        storeFractionSubType: storeResultFraction.type,
+        storeFractionSubType: storeResultFirstTypeFraction.type,
         storeFractionLogicGroupWithSubType:
-          logicGroup + storeResultFraction.type,
+          logicGroup + storeResultFirstTypeFraction.type,
         storeFractionSubTypeOptions: (
           this.modelContent as common.FileStore
         ).results
@@ -135,22 +135,20 @@ export class ModelFiltersComponent {
             if (a.logicGroup === b.logicGroup) return 0;
             return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
           }),
-        controls: (this.modelContent as common.FileStore).results
-          .find(r => r.result === field.result)
-          .fraction_types[0].controls.map(control => {
-            let newControl: common.FractionControl = {
-              options: control.options,
-              value: control.value,
-              label: control.label,
-              showIf: control.show_if,
-              required: control.required,
-              name: control.name,
-              controlClass: control.controlClass,
-              showIfDepsIncludingParentFilter:
-                control.showIfDepsIncludingParentFilter
-            };
-            return newControl;
-          })
+        controls: storeResultFirstTypeFraction.controls.map(control => {
+          let newControl: common.FractionControl = {
+            options: control.options,
+            value: control.value,
+            label: control.label,
+            showIf: control.show_if,
+            required: control.required,
+            name: control.name,
+            controlClass: control.controlClass,
+            showIfDepsIncludingParentFilter:
+              control.showIfDepsIncludingParentFilter
+          };
+          return newControl;
+        })
       };
     } else {
       newFraction = {

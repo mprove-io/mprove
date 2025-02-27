@@ -1,5 +1,9 @@
 import { common } from '~blockml/barrels/common';
 import { nodeCommon } from '~blockml/barrels/node-common';
+import { STORE_MODEL_PREFIX } from '~common/constants/top';
+import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
+import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
+import { FileFractionControl } from '~common/interfaces/blockml/internal/file-fraction-control';
 import { wrapMconfigChart } from './wrap-mconfig-chart';
 
 export function wrapTiles(item: {
@@ -9,9 +13,11 @@ export function wrapTiles(item: {
   envId: string;
   tiles: common.FilePartTile[];
   models: common.FileModel[];
+  stores: common.FileStore[];
   timezone: string;
 }) {
-  let { structId, orgId, projectId, models, tiles, envId, timezone } = item;
+  let { structId, orgId, projectId, models, stores, tiles, envId, timezone } =
+    item;
 
   let apiTiles: common.Tile[] = [];
   let mconfigs: common.Mconfig[] = [];
@@ -28,33 +34,45 @@ export function wrapTiles(item: {
       data: tile.data
     });
 
-    let model = models.find(m => m.name === tile.model);
+    let isStore = tile.model.startsWith(STORE_MODEL_PREFIX);
+    let model;
+    let store: common.FileStore;
 
-    let queryId = nodeCommon.makeQueryId({
-      sql: tile.sql,
-      storeStructId: undefined, // TODO: check
-      storeModelId: undefined, // TODO: check
-      storeMethod: undefined, // TODO: check
-      storeUrlPath: undefined, // TODO: check
-      storeBody: undefined, // TODO: check
-      orgId: orgId,
-      projectId: projectId,
-      connectionId: model.connection.connectionId,
-      envId: envId
-    });
+    if (isStore === true) {
+      store = stores.find(
+        m => `${STORE_MODEL_PREFIX}_${m.name}` === tile.model
+      );
+    } else {
+      model = models.find(m => m.name === tile.model);
+    }
+
+    let connection = isStore === false ? model.connection : store.connection;
+
+    let queryId =
+      isStore === true
+        ? common.EMPTY_QUERY_ID
+        : nodeCommon.makeQueryId({
+            sql: tile.sql,
+            storeStructId: undefined,
+            storeModelId: undefined,
+            storeMethod: undefined,
+            storeUrlPath: undefined,
+            storeBody: undefined,
+            orgId: orgId,
+            projectId: projectId,
+            connectionId: connection.connectionId,
+            envId: envId
+          });
 
     let query: common.Query = {
       queryId: queryId,
       projectId: projectId,
       envId: envId,
-      connectionId: model.connection.connectionId,
-      connectionType: model.connection.type,
-      storeModelId:
-        model.fileExt === common.FileExtensionEnum.Store
-          ? tile.model
-          : undefined,
-      storeStructId: structId,
-      sql: tile.sql.join('\n'),
+      connectionId: connection.connectionId,
+      connectionType: connection.type,
+      storeModelId: isStore === true ? tile.model : undefined,
+      storeStructId: isStore === true ? structId : undefined,
+      sql: isStore === true ? undefined : tile.sql.join('\n'),
       apiMethod: undefined,
       apiUrl: undefined,
       apiBody: undefined,
@@ -78,21 +96,107 @@ export function wrapTiles(item: {
 
     let filters: common.Filter[] = [];
 
-    Object.keys(tile.filtersFractions).forEach(fieldId => {
-      filters.push({
-        fieldId: fieldId,
-        fractions: tile.filtersFractions[fieldId] || []
+    if (isStore === false) {
+      Object.keys(tile.filtersFractions).forEach(fieldId => {
+        filters.push({
+          fieldId: fieldId,
+          fractions:
+            (isStore === true ? [] : tile.filtersFractions[fieldId]) || []
+        });
       });
-    });
+    } else {
+      tile.parameters.forEach(x => {
+        let field = store.fields.find(k => k.name === x.apply_to);
+
+        let filter: common.Filter = {
+          fieldId: x.apply_to,
+          fractions: x.fractions.map(y => {
+            let storeResultCurrentTypeFraction = store.results
+              .find(r => r.result === field.result)
+              .fraction_types.find(ft => ft.type === y.type);
+
+            let fraction: common.Fraction = {
+              meta: storeResultCurrentTypeFraction.meta,
+              operator:
+                y.logic === common.FractionLogicEnum.Or
+                  ? common.FractionOperatorEnum.Or
+                  : common.FractionOperatorEnum.And,
+              logicGroup: y.logic,
+              brick: undefined,
+              type: common.FractionTypeEnum.StoreFraction,
+              storeFractionSubType: y.type,
+              storeFractionSubTypeOptions: store.results
+                .find(r => r.result === field.result)
+                .fraction_types.map(ft => {
+                  let options = [];
+
+                  if (
+                    common.isUndefined(ft.or) ||
+                    toBooleanFromLowercaseString(ft.or) === true
+                  ) {
+                    let optionOr: FractionSubTypeOption = {
+                      logicGroup: common.FractionLogicEnum.Or,
+                      typeValue: ft.type,
+                      value: common.FractionLogicEnum.Or + ft.type,
+                      label: ft.label
+                    };
+                    options.push(optionOr);
+                  }
+
+                  if (
+                    common.isUndefined(ft.and_not) ||
+                    toBooleanFromLowercaseString(ft.and_not) === true
+                  ) {
+                    let optionAndNot: FractionSubTypeOption = {
+                      logicGroup: common.FractionLogicEnum.AndNot,
+                      value: common.FractionLogicEnum.AndNot + ft.type,
+                      typeValue: ft.type,
+                      label: ft.label
+                    };
+                    options.push(optionAndNot);
+                  }
+
+                  return options;
+                })
+                .flat()
+                .sort((a, b) => {
+                  if (a.logicGroup === b.logicGroup) return 0;
+                  return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
+                }),
+              controls: y.controls.map((control: FileFractionControl) => {
+                let storeControl = storeResultCurrentTypeFraction.controls.find(
+                  fc => fc.name === control.name
+                );
+
+                let newControl: common.FractionControl = {
+                  options: storeControl.options,
+                  value: control.value,
+                  label: storeControl.label,
+                  showIf: storeControl.show_if,
+                  required: storeControl.required,
+                  name: control.name,
+                  controlClass: control.controlClass,
+                  showIfDepsIncludingParentFilter:
+                    storeControl.showIfDepsIncludingParentFilter
+                };
+                return newControl;
+              })
+            };
+            return fraction;
+          })
+        };
+        filters.push(filter);
+      });
+    }
 
     let mconfig: common.Mconfig = {
       structId: structId,
       mconfigId: mconfigId,
       queryId: queryId,
       modelId: tile.model,
-      isStoreModel: model.fileExt === common.FileExtensionEnum.Store,
+      isStoreModel: isStore,
       storePart: undefined,
-      modelLabel: model.label,
+      modelLabel: isStore === true ? store.label : model.label,
       select: tile.select,
       unsafeSelect: tile.unsafeSelect,
       warnSelect: tile.warnSelect,
@@ -115,8 +219,8 @@ export function wrapTiles(item: {
     mconfigs.push(mconfig);
     queries.push(query);
     apiTiles.push({
-      modelId: model.name,
-      modelLabel: model.label,
+      modelId: tile.model,
+      modelLabel: isStore === true ? store.label : model.label,
       mconfigId: mconfigId,
       queryId: queryId,
       listen: tile.listen,

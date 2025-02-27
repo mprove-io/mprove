@@ -13,23 +13,20 @@ import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
-import { nodeCommon } from '~backend/barrels/node-common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
-import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
+import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { StoreService } from '~backend/services/store.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
@@ -50,7 +47,7 @@ export class CreateTempMconfigAndQueryController {
     private envsService: EnvsService,
     private wrapToEntService: WrapToEntService,
     private wrapToApiService: WrapToApiService,
-    private storeService: StoreService,
+    private mconfigsService: MconfigsService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -131,158 +128,19 @@ export class CreateTempMconfigAndQueryController {
     let newQuery: common.Query;
 
     let isError = false;
-    let errorMessage: string;
 
     if (model.isStoreModel === true) {
-      newMconfig = await this.storeService.adjustMconfig({
-        mconfig: mconfig,
+      let mqe = await this.mconfigsService.prepMconfigQuery({
+        struct: struct,
+        project: project,
+        envId: envId,
         model: model,
-        caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
-        metricsStartDateYYYYMMDD: undefined,
-        metricsEndDateYYYYMMDD: undefined
+        mconfig: mconfig
       });
 
-      // console.log('newMconfig:');
-      // console.log(newMconfig);
-
-      // newMconfig.filters.forEach((filter, filterIndex) => {
-      //   console.log(`Filter ${filterIndex} fractions:`);
-      //   console.log(filter.fractions);
-      //   filter.fractions.forEach((fraction, frIndex) => {
-      //     console.log(`Filter ${filterIndex} Fraction ${frIndex} controls:`);
-      //     console.log(fraction.controls);
-      //     fraction.controls.forEach((control, cIndex) => {
-      //       console.log(
-      //         `Filter ${filterIndex} Fraction ${frIndex} Control ${cIndex} options:`
-      //       );
-      //       console.log(control?.options);
-      //     });
-      //   });
-      // });
-
-      let connection = await this.db.drizzle.query.connectionsTable.findFirst({
-        where: and(
-          eq(connectionsTable.projectId, projectId),
-          eq(connectionsTable.connectionId, model.connectionId)
-        )
-      });
-
-      let processedUrlPath = await this.storeService.transformStoreRequestPart({
-        input: (model.content as common.FileStore).url_path,
-        mconfig: newMconfig,
-        storeModel: model,
-        storeParam: common.ParameterEnum.UrlPath,
-        caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
-        metricsStartDateYYYYMMDD: undefined,
-        metricsEndDateYYYYMMDD: undefined
-      });
-
-      if (common.isDefined(processedUrlPath.errorMessage)) {
-        isError = true;
-        errorMessage = `store url_path processing Error: ${processedUrlPath.errorMessage}`;
-      }
-
-      let apiUrl = common.isDefined(processedUrlPath.errorMessage)
-        ? `store.url_path Error: ${processedUrlPath.errorMessage}`
-        : connection.baseUrl + JSON.parse(processedUrlPath.result);
-
-      let processedBody = await this.storeService.transformStoreRequestPart({
-        input: (model.content as common.FileStore).body,
-        mconfig: newMconfig,
-        storeModel: model,
-        storeParam: common.ParameterEnum.Body,
-        caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
-        metricsStartDateYYYYMMDD: undefined,
-        metricsEndDateYYYYMMDD: undefined
-      });
-
-      if (common.isDefined(processedBody.errorMessage)) {
-        isError = true;
-        let errorMessagePrefix = common.isDefined(errorMessage)
-          ? `${errorMessage}, `
-          : '';
-        errorMessage = `${errorMessagePrefix}store body processing Error: ${processedBody.errorMessage}`;
-      }
-
-      let apiBody = common.isDefined(processedBody.errorMessage)
-        ? `store.body Error: ${processedBody.errorMessage}`
-        : processedBody.result;
-
-      // console.log('apiBody');
-      // console.log(apiBody);
-
-      let queryId = nodeCommon.makeQueryId({
-        sql: undefined,
-        storeStructId: struct.structId,
-        storeModelId: model.modelId,
-        storeMethod: (model.content as common.FileStore)
-          .method as common.StoreMethodEnum,
-        storeUrlPath: apiUrl,
-        storeBody: apiBody,
-        orgId: project.orgId,
-        projectId: projectId,
-        envId: envId,
-        connectionId: model.connectionId
-      });
-
-      // console.log('queryId');
-      // console.log(queryId);
-
-      newQuery = {
-        queryId: queryId,
-        projectId: projectId,
-        envId: envId,
-        connectionId: model.connectionId,
-        storeModelId: model.modelId,
-        storeStructId: model.structId,
-        connectionType: (model.content as any).connection.type,
-        // sql: undefined,
-        sql: `--- method
-${(model.content as common.FileStore).method}
---- url
-${apiUrl}
---- body store
-${apiBody}
---- urlPathResult inputSub
-${processedUrlPath.userCode}
---- body inputSub
-${processedBody.userCode}
---- newMconfig
-${JSON.stringify(newMconfig)}
-`,
-        apiMethod: (model.content as common.FileStore)
-          .method as common.StoreMethodEnum,
-        apiUrl: apiUrl,
-        apiBody: apiBody,
-        status:
-          isError === true
-            ? common.QueryStatusEnum.Error
-            : common.QueryStatusEnum.New,
-        lastRunBy: undefined,
-        lastRunTs: undefined,
-        lastCancelTs: undefined,
-        lastCompleteTs: undefined,
-        lastCompleteDuration: undefined,
-        lastErrorMessage: errorMessage,
-        lastErrorTs: isError === true ? makeTsNumber() : undefined,
-        data: undefined,
-        queryJobId: undefined,
-        bigqueryQueryJobId: undefined,
-        bigqueryConsecutiveErrorsGetJob: 0,
-        bigqueryConsecutiveErrorsGetResults: 0,
-        serverTs: 1
-      };
-
-      newMconfig.queryId = newQuery.queryId;
-      newMconfig.temp = true;
-      newMconfig.storePart = {
-        urlPath: (model.content as common.FileStore).url_path,
-        urlPathFunc: processedUrlPath.userCode,
-        urlPathFuncResult: processedUrlPath.result,
-        body: (model.content as common.FileStore).body,
-        bodyFunc: processedBody.userCode,
-        bodyFuncResult: processedBody.result
-      };
+      newMconfig = mqe.newMconfig;
+      newQuery = mqe.newQuery;
+      isError = mqe.isError;
     } else {
       let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
         {
