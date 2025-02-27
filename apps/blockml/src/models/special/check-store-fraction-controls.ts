@@ -11,6 +11,7 @@ let func = common.FuncEnum.CheckStoreFractionControls;
 
 export function checkStoreFractionControls(
   item: {
+    skipOptions: boolean;
     controls: common.FileStoreFractionControl[];
     controlsLineNum: number;
     fileName: string;
@@ -21,7 +22,7 @@ export function checkStoreFractionControls(
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId } = item;
+  let { caller, structId, skipOptions } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let errorsOnStart = item.errors.length;
@@ -132,6 +133,7 @@ export function checkStoreFractionControls(
         .map(y => control[y as keyof FileStoreFractionControl] as number);
 
       if (
+        skipOptions === false &&
         common.isDefined(control.selector) &&
         common.isUndefined(control.options)
       ) {
@@ -152,6 +154,7 @@ export function checkStoreFractionControls(
       }
 
       if (
+        skipOptions === false &&
         common.isDefined(control.options) &&
         common.isUndefined(control.selector)
       ) {
@@ -172,6 +175,7 @@ export function checkStoreFractionControls(
       }
 
       if (
+        skipOptions === false &&
         errorsOnStart === item.errors.length &&
         common.isDefined(control.options)
       ) {
@@ -286,42 +290,44 @@ export function checkStoreFractionControls(
     }
   });
 
-  let cElements: {
-    controlName: string;
-    controlNameLineNums: number[];
-  }[] = [];
+  if (errorsOnStart === item.errors.length) {
+    let cElements: {
+      controlName: string;
+      controlNameLineNums: number[];
+    }[] = [];
 
-  item.controls.forEach(control => {
-    let cElement = cElements.find(c => c.controlName === control.name);
+    item.controls.forEach(control => {
+      let cElement = cElements.find(c => c.controlName === control.name);
 
-    if (common.isDefined(cElement)) {
-      cElement.controlNameLineNums.push(control.name_line_num);
-    } else {
-      cElements.push({
-        controlName: control.name,
-        controlNameLineNums: [control.name_line_num]
-      });
-    }
-  });
+      if (common.isDefined(cElement)) {
+        cElement.controlNameLineNums.push(control.name_line_num);
+      } else {
+        cElements.push({
+          controlName: control.name,
+          controlNameLineNums: [control.name_line_num]
+        });
+      }
+    });
 
-  cElements.forEach(ce => {
-    if (ce.controlNameLineNums.length > 1) {
-      let lines: common.FileErrorLine[] = ce.controlNameLineNums.map(y => ({
-        line: y,
-        name: item.fileName,
-        path: item.filePath
-      }));
+    cElements.forEach(ce => {
+      if (ce.controlNameLineNums.length > 1) {
+        let lines: common.FileErrorLine[] = ce.controlNameLineNums.map(y => ({
+          line: y,
+          name: item.fileName,
+          path: item.filePath
+        }));
 
-      item.errors.push(
-        new BmError({
-          title: common.ErTitleEnum.DUPLICATE_CONTROL_NAMES,
-          message: 'Controls must have unique names',
-          lines: lines
-        })
-      );
-      return;
-    }
-  });
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.DUPLICATE_CONTROL_NAMES,
+            message: 'Controls must have unique names',
+            lines: lines
+          })
+        );
+        return;
+      }
+    });
+  }
 
   return item.errors;
 }

@@ -420,6 +420,28 @@ export function checkTileParameters<T extends types.dzType>(
               }
             });
         }
+
+        if (isStore === true) {
+          tile.parameters.forEach(p => {
+            // TODO: check parameters
+
+            p.fractions.forEach(pf => {
+              barSpecial.checkStoreFractionControls(
+                {
+                  skipOptions: true,
+                  controls: pf.controls,
+                  controlsLineNum: pf.controls_line_num,
+                  fileName: x.fileName,
+                  filePath: x.filePath,
+                  structId: item.structId,
+                  errors: item.errors,
+                  caller: item.caller
+                },
+                cs
+              );
+            });
+          });
+        }
       });
     }
 

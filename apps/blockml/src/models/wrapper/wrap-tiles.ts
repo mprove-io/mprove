@@ -111,66 +111,99 @@ export function wrapTiles(item: {
         let filter: common.Filter = {
           fieldId: x.apply_to,
           fractions: x.fractions.map(y => {
-            let storeResultCurrentTypeFraction = store.results
-              .find(r => r.result === field.result)
-              .fraction_types.find(ft => ft.type === y.type);
+            let storeResultCurrentTypeFraction: common.FileStoreFractionType;
+
+            if (field.fieldClass !== common.FieldClassEnum.Filter) {
+              storeResultCurrentTypeFraction = store.results
+                .find(r => r.result === field.result)
+                .fraction_types.find(ft => ft.type === y.type);
+            }
 
             let fraction: common.Fraction = {
-              meta: storeResultCurrentTypeFraction.meta,
+              meta:
+                field.fieldClass === common.FieldClassEnum.Filter
+                  ? undefined
+                  : storeResultCurrentTypeFraction?.meta,
               operator:
-                y.logic === common.FractionLogicEnum.Or
+                field.fieldClass === common.FieldClassEnum.Filter
+                  ? undefined
+                  : y.logic === common.FractionLogicEnum.Or
                   ? common.FractionOperatorEnum.Or
                   : common.FractionOperatorEnum.And,
-              logicGroup: y.logic,
+              logicGroup:
+                field.fieldClass === common.FieldClassEnum.Filter
+                  ? undefined
+                  : y.logic,
               brick: undefined,
               type: common.FractionTypeEnum.StoreFraction,
-              storeFractionSubType: y.type,
-              storeFractionSubTypeOptions: store.results
-                .find(r => r.result === field.result)
-                .fraction_types.map(ft => {
-                  let options = [];
+              storeFractionSubType:
+                field.fieldClass === common.FieldClassEnum.Filter
+                  ? undefined
+                  : y.type,
+              storeFractionLogicGroupWithSubType:
+                field.fieldClass === common.FieldClassEnum.Filter
+                  ? undefined
+                  : y.logic + y.type,
+              storeFractionSubTypeOptions:
+                field.fieldClass === common.FieldClassEnum.Filter
+                  ? undefined
+                  : store.results
+                      .find(r => r.result === field.result)
+                      .fraction_types.map(ft => {
+                        let options = [];
 
-                  if (
-                    common.isUndefined(ft.or) ||
-                    toBooleanFromLowercaseString(ft.or) === true
-                  ) {
-                    let optionOr: FractionSubTypeOption = {
-                      logicGroup: common.FractionLogicEnum.Or,
-                      typeValue: ft.type,
-                      value: common.FractionLogicEnum.Or + ft.type,
-                      label: ft.label
-                    };
-                    options.push(optionOr);
-                  }
+                        if (
+                          common.isUndefined(ft.or) ||
+                          toBooleanFromLowercaseString(ft.or) === true
+                        ) {
+                          let optionOr: FractionSubTypeOption = {
+                            logicGroup: common.FractionLogicEnum.Or,
+                            typeValue: ft.type,
+                            value: common.FractionLogicEnum.Or + ft.type,
+                            label: ft.label
+                          };
+                          options.push(optionOr);
+                        }
 
-                  if (
-                    common.isUndefined(ft.and_not) ||
-                    toBooleanFromLowercaseString(ft.and_not) === true
-                  ) {
-                    let optionAndNot: FractionSubTypeOption = {
-                      logicGroup: common.FractionLogicEnum.AndNot,
-                      value: common.FractionLogicEnum.AndNot + ft.type,
-                      typeValue: ft.type,
-                      label: ft.label
-                    };
-                    options.push(optionAndNot);
-                  }
+                        if (
+                          common.isUndefined(ft.and_not) ||
+                          toBooleanFromLowercaseString(ft.and_not) === true
+                        ) {
+                          let optionAndNot: FractionSubTypeOption = {
+                            logicGroup: common.FractionLogicEnum.AndNot,
+                            value: common.FractionLogicEnum.AndNot + ft.type,
+                            typeValue: ft.type,
+                            label: ft.label
+                          };
+                          options.push(optionAndNot);
+                        }
 
-                  return options;
-                })
-                .flat()
-                .sort((a, b) => {
-                  if (a.logicGroup === b.logicGroup) return 0;
-                  return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
-                }),
+                        return options;
+                      })
+                      .flat()
+                      .sort((a, b) => {
+                        if (a.logicGroup === b.logicGroup) return 0;
+                        return a.logicGroup === common.FractionLogicEnum.Or
+                          ? -1
+                          : 1;
+                      }),
               controls: y.controls.map((control: FileFractionControl) => {
-                let storeControl = storeResultCurrentTypeFraction.controls.find(
-                  fc => fc.name === control.name
-                );
+                let storeControl =
+                  field.fieldClass === common.FieldClassEnum.Filter
+                    ? field.fraction_controls.find(
+                        fc => fc.name === control.name
+                      )
+                    : storeResultCurrentTypeFraction.controls.find(
+                        fc => fc.name === control.name
+                      );
 
                 let newControl: common.FractionControl = {
-                  options: storeControl.options,
-                  value: control.value,
+                  options: storeControl?.options,
+                  value:
+                    control.controlClass === common.ControlClassEnum.Switch &&
+                    typeof control.value === 'string'
+                      ? toBooleanFromLowercaseString(control.value)
+                      : control.value,
                   label: storeControl.label,
                   showIf: storeControl.show_if,
                   required: storeControl.required,
@@ -198,9 +231,9 @@ export function wrapTiles(item: {
       storePart: undefined,
       modelLabel: isStore === true ? store.label : model.label,
       select: tile.select,
-      unsafeSelect: tile.unsafeSelect,
-      warnSelect: tile.warnSelect,
-      joinAggregations: tile.joinAggregations,
+      unsafeSelect: tile.unsafeSelect || [],
+      warnSelect: tile.warnSelect || [],
+      joinAggregations: tile.joinAggregations || [],
       sortings: tile.sortingsAry.map(s => ({
         fieldId: s.fieldId,
         desc: s.desc

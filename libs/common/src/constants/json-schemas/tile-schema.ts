@@ -86,7 +86,13 @@ export const TILE_SCHEMA: JSONSchema7 = {
                         type: 'string'
                       },
                       value: {
-                        type: 'string'
+                        type: ['string', 'number', 'boolean']
+                      },
+                      values: {
+                        type: 'array',
+                        items: {
+                          type: ['string', 'number', 'boolean']
+                        }
                       }
                     },
                     required: ['value']

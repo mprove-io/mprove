@@ -236,6 +236,7 @@ export function checkResultFractionTypes(
         if (errorsOnStart === item.errors.length) {
           barSpecial.checkStoreFractionControls(
             {
+              skipOptions: false,
               controls: fractionTypesElement.controls,
               controlsLineNum: fractionTypesElement.controls_line_num,
               fileName: x.fileName,

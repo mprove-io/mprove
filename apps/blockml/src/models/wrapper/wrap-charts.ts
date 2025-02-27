@@ -1,4 +1,5 @@
 import { common } from '~blockml/barrels/common';
+import { STORE_MODEL_PREFIX } from '~common/constants/top';
 import { wrapTiles } from './wrap-tiles';
 
 export function wrapCharts(item: {
@@ -33,14 +34,24 @@ export function wrapCharts(item: {
     chartMconfigs = [...chartMconfigs, ...mconfigs];
     chartQueries = [...chartQueries, ...queries];
 
-    let model = models.find(m => m.name === x.tiles[0].model);
+    let isStore = x.tiles[0].model.startsWith(STORE_MODEL_PREFIX);
+    let model;
+    let store: common.FileStore;
+
+    if (isStore === true) {
+      store = stores.find(
+        m => `${STORE_MODEL_PREFIX}_${m.name}` === x.tiles[0].model
+      );
+    } else {
+      model = models.find(m => m.name === x.tiles[0].model);
+    }
 
     apiCharts.push({
       structId: structId,
       chartId: x.name,
       title: x.tiles[0].title,
-      modelId: model.name,
-      modelLabel: model.label,
+      modelId: x.tiles[0].model,
+      modelLabel: isStore === true ? store.label : model.label,
       filePath: x.filePath,
       accessUsers: x.access_users || [],
       accessRoles: x.access_roles || [],

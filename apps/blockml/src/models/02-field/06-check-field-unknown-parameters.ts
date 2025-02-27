@@ -387,6 +387,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
           ) {
             barSpecial.checkStoreFractionControls(
               {
+                skipOptions: false,
                 controls: field.fraction_controls,
                 controlsLineNum: field.fraction_controls_line_num,
                 fileName: x.fileName,
