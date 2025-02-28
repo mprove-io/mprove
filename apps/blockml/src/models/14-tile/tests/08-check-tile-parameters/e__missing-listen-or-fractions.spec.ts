@@ -60,8 +60,6 @@ test('1', async t => {
     });
   }
 
-  console.log(errors);
-
   t.is(errors.length, 1);
   t.is(entDashboards.length, 0);
 
