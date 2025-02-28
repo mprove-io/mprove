@@ -135,57 +135,88 @@ export class GetChartController {
 
     let query;
 
-    let newMconfig;
-    let newQuery;
+    let newMconfig: common.Mconfig;
+    let newQuery: common.Query;
 
-    if (chartMconfig.timezone === timezone) {
+    let isError = false;
+
+    let isSearchExisting =
+      model.isStoreModel === false && chartMconfig.timezone === timezone;
+
+    if (isSearchExisting) {
       query = await this.queriesService.getQueryCheckExists({
         queryId: chartMconfig.queryId,
         projectId: projectId
       });
     } else {
-      let newMconfigId = common.makeId();
-      let newQueryId = common.makeId();
+      if (model.isStoreModel === true) {
+        let newMconfigId = common.makeId();
+        let newQueryId = common.makeId();
 
-      /* prettier-ignore */
-      let sendMconfig = Object.assign({}, chartMconfig, <schemaPostgres.MconfigEnt>{
-        mconfigId: newMconfigId,
-        queryId: newQueryId,
-        timezone: timezone,
-        temp: true
-      });
+        /* prettier-ignore */
+        let sMconfig = Object.assign({}, chartMconfig, <schemaPostgres.MconfigEnt>{
+            mconfigId: newMconfigId,
+            queryId: newQueryId,
+            timezone: timezone,
+            temp: true
+          });
 
-      let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
-        {
-          info: {
-            name: apiToBlockml.ToBlockmlRequestInfoNameEnum
-              .ToBlockmlProcessQuery,
-            traceId: traceId
-          },
-          payload: {
-            orgId: project.orgId,
-            projectId: project.projectId,
-            weekStart: struct.weekStart,
-            caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
-            simplifySafeAggregates: struct.simplifySafeAggregates,
-            udfsDict: struct.udfsDict,
-            mconfig: sendMconfig,
-            modelContent: model.content,
-            envId: envId
-          }
-        };
+        let mqe = await this.mconfigsService.prepMconfigQuery({
+          struct: struct,
+          project: project,
+          envId: envId,
+          model: model,
+          mconfig: sMconfig
+        });
 
-      let blockmlProcessQueryResponse =
-        await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
+        newMconfig = mqe.newMconfig;
+        newQuery = mqe.newQuery;
+        isError = mqe.isError;
+      } else {
+        let newMconfigId = common.makeId();
+        let newQueryId = common.makeId();
+
+        /* prettier-ignore */
+        let sendMconfig = Object.assign({}, chartMconfig, <schemaPostgres.MconfigEnt>{
+          mconfigId: newMconfigId,
+          queryId: newQueryId,
+          timezone: timezone,
+          temp: true
+        });
+
+        let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
           {
-            routingKey: common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
-            message: toBlockmlProcessQueryRequest,
-            checkIsOk: true
-          }
-        );
+            info: {
+              name: apiToBlockml.ToBlockmlRequestInfoNameEnum
+                .ToBlockmlProcessQuery,
+              traceId: traceId
+            },
+            payload: {
+              orgId: project.orgId,
+              projectId: project.projectId,
+              weekStart: struct.weekStart,
+              caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
+              simplifySafeAggregates: struct.simplifySafeAggregates,
+              udfsDict: struct.udfsDict,
+              mconfig: sendMconfig,
+              modelContent: model.content,
+              envId: envId
+            }
+          };
 
-      newMconfig = blockmlProcessQueryResponse.payload.mconfig;
-      newQuery = blockmlProcessQueryResponse.payload.query;
+        let blockmlProcessQueryResponse =
+          await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
+            {
+              routingKey:
+                common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
+              message: toBlockmlProcessQueryRequest,
+              checkIsOk: true
+            }
+          );
+
+        newMconfig = blockmlProcessQueryResponse.payload.mconfig;
+        newQuery = blockmlProcessQueryResponse.payload.query;
+      }
 
       let newQueryEnt = this.wrapToEntService.wrapToEntityQuery(newQuery);
       let newMconfigEnt = this.wrapToEntService.wrapToEntityMconfig(newMconfig);
@@ -199,8 +230,11 @@ export class GetChartController {
                 insert: {
                   mconfigs: [newMconfigEnt]
                 },
+                insertOrUpdate: {
+                  queries: isError === true ? [newQueryEnt] : []
+                },
                 insertOrDoNothing: {
-                  queries: [newQueryEnt]
+                  queries: isError === true ? [] : [newQueryEnt]
                 }
               })
           ),
@@ -226,8 +260,7 @@ export class GetChartController {
         chart: chart,
         mconfigs: [
           this.wrapToApiService.wrapToApiMconfig({
-            mconfig:
-              chartMconfig.timezone === timezone ? chartMconfig : newMconfig,
+            mconfig: isSearchExisting ? chartMconfig : newMconfig,
             modelFields: model.fields
           })
         ],
