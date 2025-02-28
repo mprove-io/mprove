@@ -23,7 +23,6 @@ export * from './file-chart-plate';
 export * from './file-dashboard';
 export * from './file-error-line';
 export * from './file-join';
-export * from './file-metric';
 export * from './file-model';
 export * from './file-part-tile';
 export * from './file-project-conf';

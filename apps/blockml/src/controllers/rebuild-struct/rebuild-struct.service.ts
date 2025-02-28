@@ -225,8 +225,6 @@ export class RebuildStructService {
     let udfs: common.FileUdf[];
     let projectConfig: common.FileProjectConf;
 
-    let metrics: common.FileMetric[] = [];
-
     let yamlBuildItem = barBuilder.buildYaml(
       {
         files: item.files,
@@ -475,7 +473,6 @@ export class RebuildStructService {
 
     let buildModelMetricResult = barBuilder.buildModelMetric(
       {
-        metrics: metrics,
         models: models,
         structId: item.structId,
         errors: errors,
@@ -485,7 +482,7 @@ export class RebuildStructService {
     );
 
     models = buildModelMetricResult.models;
-    let commonMetrics = buildModelMetricResult.metrics;
+    let metrics = buildModelMetricResult.metrics;
 
     dashboards = barBuilder.buildDashboard(
       {
@@ -611,7 +608,7 @@ export class RebuildStructService {
     reports = barBuilder.buildReport(
       {
         reports: reports,
-        metrics: commonMetrics,
+        metrics: metrics,
         models: models,
         structId: item.structId,
         caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
@@ -641,7 +638,7 @@ export class RebuildStructService {
         stores: stores,
         views: views,
         models: models,
-        metrics: commonMetrics,
+        metrics: metrics,
         dashboards: dashboards,
         reports: reports,
         charts: charts,
@@ -655,7 +652,7 @@ export class RebuildStructService {
       errors: errors,
       stores: stores,
       dashboards: dashboards,
-      metrics: commonMetrics,
+      metrics: metrics,
       models: models,
       udfsDict: udfsDict,
       reports: reports,

@@ -1,13 +1,5 @@
-import { Type } from 'class-transformer';
-import {
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-  ValidateNested
-} from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 import { enums } from '~common/barrels/enums';
-import { Filter } from './filter';
 
 export class ModelMetric {
   @IsString()
@@ -22,18 +14,8 @@ export class ModelMetric {
   @IsString()
   timeFieldId?: string;
 
-  @ValidateNested()
-  @Type(() => Filter)
-  params?: Filter[];
-
-  @IsString()
-  formula?: string;
-
   @IsString()
   connection?: string;
-
-  @IsString()
-  sql?: string;
 
   @IsString()
   structId?: string;

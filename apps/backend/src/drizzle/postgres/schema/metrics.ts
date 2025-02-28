@@ -3,7 +3,6 @@ import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,
   index,
-  json,
   pgTable,
   uniqueIndex,
   varchar
@@ -30,13 +29,10 @@ export const metricsTable = pgTable(
     timeNodeLabel: varchar('time_node_label').notNull(),
     timeFieldLabel: varchar('time_field_label').notNull(),
     timeLabel: varchar('time_label').notNull(),
-    params: json('params').$type<any[]>().notNull(),
     modelId: varchar('model_id'),
     timefieldId: varchar('timefield_id'),
     fieldId: varchar('field_id'),
     fieldClass: varchar('field_class').$type<common.FieldClassEnum>(),
-    formula: varchar('formula'),
-    sql: varchar('sql'),
     connectionId: varchar('connection_id'),
     description: varchar('description'),
     formatNumber: varchar('format_number'),
