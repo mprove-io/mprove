@@ -234,7 +234,7 @@ export class GetChartController {
                   queries: isError === true ? [newQueryEnt] : []
                 },
                 insertOrDoNothing: {
-                  queries: isError === true ? [] : [newQueryEnt]
+                  queries: isError === false ? [newQueryEnt] : []
                 }
               })
           ),

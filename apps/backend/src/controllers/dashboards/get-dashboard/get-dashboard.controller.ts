@@ -7,6 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
@@ -23,6 +24,7 @@ import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
 import { EnvsService } from '~backend/services/envs.service';
+import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -45,6 +47,7 @@ export class GetDashboardController {
     private dashboardsService: DashboardsService,
     private bridgesService: BridgesService,
     private envsService: EnvsService,
+    private mconfigsService: MconfigsService,
     private wrapToApiService: WrapToApiService,
     private wrapToEntService: WrapToEntService,
     private cs: ConfigService<interfaces.Config>,
@@ -233,7 +236,7 @@ export class GetDashboardController {
       })
     ];
 
-    let { struct, dashboards, mconfigs, queries } =
+    let { struct, dashboards, mconfigs, models, queries } =
       await this.blockmlService.rebuildStruct({
         traceId: traceId,
         orgId: project.orgId,
@@ -269,6 +272,64 @@ export class GetDashboardController {
       x => dashboardQueryIds.indexOf(x.queryId) > -1
     );
 
+    let insertMconfigs: schemaPostgres.MconfigEnt[] = [];
+    let insertOrUpdateQueries: schemaPostgres.QueryEnt[] = [];
+    let insertOrDoNothingQueries: schemaPostgres.QueryEnt[] = [];
+
+    dashboardMconfigs
+      .filter(mconfig => mconfig.isStoreModel === false)
+      .forEach(mconfig => {
+        let query = dashboardQueries.find(y => y.queryId === mconfig.queryId);
+
+        insertMconfigs.push(this.wrapToEntService.wrapToEntityMconfig(mconfig));
+
+        insertOrDoNothingQueries.push(
+          this.wrapToEntService.wrapToEntityQuery(query)
+        );
+      });
+
+    await forEachSeries(
+      dashboardMconfigs.filter(mconfig => mconfig.isStoreModel === true),
+      async mconfig => {
+        let newMconfig: common.Mconfig;
+        let newQuery: common.Query;
+        let isError = false;
+
+        let model = models.find(y => y.modelId === mconfig.modelId);
+
+        let mqe = await this.mconfigsService.prepMconfigQuery({
+          struct: struct,
+          project: project,
+          envId: envId,
+          model: this.wrapToEntService.wrapToEntityModel(model),
+          mconfig: mconfig
+        });
+
+        newMconfig = mqe.newMconfig;
+        newQuery = mqe.newQuery;
+        isError = mqe.isError;
+
+        let newDashboardTile = newDashboard.tiles.find(
+          tile => tile.mconfigId === mconfig.mconfigId
+        );
+        newDashboardTile.queryId = newMconfig.queryId;
+
+        insertMconfigs.push(
+          this.wrapToEntService.wrapToEntityMconfig(newMconfig)
+        );
+
+        if (isError === true) {
+          insertOrUpdateQueries.push(
+            this.wrapToEntService.wrapToEntityQuery(newQuery)
+          );
+        } else {
+          insertOrDoNothingQueries.push(
+            this.wrapToEntService.wrapToEntityQuery(newQuery)
+          );
+        }
+      }
+    );
+
     await retry(
       async () =>
         await this.db.drizzle.transaction(
@@ -276,14 +337,13 @@ export class GetDashboardController {
             await this.db.packer.write({
               tx: tx,
               insert: {
-                mconfigs: dashboardMconfigs.map(x =>
-                  this.wrapToEntService.wrapToEntityMconfig(x)
-                )
+                mconfigs: insertMconfigs
+              },
+              insertOrUpdate: {
+                queries: insertOrUpdateQueries
               },
               insertOrDoNothing: {
-                queries: dashboardQueries.map(x =>
-                  this.wrapToEntService.wrapToEntityQuery(x)
-                )
+                queries: insertOrDoNothingQueries
               }
             })
         ),
