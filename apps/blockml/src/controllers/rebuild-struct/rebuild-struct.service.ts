@@ -474,6 +474,7 @@ export class RebuildStructService {
     let buildModelMetricResult = barBuilder.buildModelMetric(
       {
         models: models,
+        stores: stores,
         structId: item.structId,
         errors: errors,
         caller: common.CallerEnum.BuildModelMetric

@@ -3,12 +3,14 @@ import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
+import { STORE_MODEL_PREFIX } from '~common/constants/top';
 
 let func = common.FuncEnum.CreateModelMetrics;
 
 export function createModelMetrics(
   item: {
     models: common.FileModel[];
+    stores: common.FileStore[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -20,9 +22,90 @@ export function createModelMetrics(
 
   let modelMetrics: common.ModelMetric[] = [];
 
-  item.models.forEach(model => {
-    let errorsOnStart = item.errors.length;
+  item.stores.forEach(store => {
+    if (
+      common.isUndefined(store.build_metrics) ||
+      store.build_metrics.length === 0
+    ) {
+      return;
+    }
 
+    store.build_metrics.forEach(buildMetricElement => {
+      let storeFieldTimeGroup = store.field_time_groups.find(
+        ftg => ftg.time === buildMetricElement.time
+      );
+
+      let storeFieldGroup = common.isDefined(storeFieldTimeGroup.group)
+        ? store.field_groups.find(fg => fg.group === storeFieldTimeGroup.group)
+        : undefined;
+
+      let timeId = storeFieldTimeGroup.time;
+
+      let timeNodeLabel: string;
+      let timeFieldLabel: string;
+      let timeLabel: string;
+
+      if (common.isUndefined(storeFieldTimeGroup.group)) {
+        timeNodeLabel = 'Model Fields';
+        timeFieldLabel = storeFieldTimeGroup.label;
+        timeLabel = `${timeNodeLabel} ${timeFieldLabel}`;
+      } else {
+        timeNodeLabel =
+          storeFieldGroup?.label || storeFieldGroup?.group || 'Model Fields';
+        timeFieldLabel =
+          storeFieldTimeGroup?.label || storeFieldTimeGroup?.time;
+        timeLabel = `${timeNodeLabel} ${timeFieldLabel}`;
+      }
+
+      store.fields
+        .filter(
+          storeField => storeField.fieldClass === common.FieldClassEnum.Measure
+        )
+        .forEach(storeField => {
+          let topLabel = `Store Model - ${store.label}`;
+
+          let partId = `${storeField.name}`;
+
+          let partNodeLabel = common.isDefined(storeFieldGroup)
+            ? storeFieldGroup.label || storeFieldGroup.group
+            : 'Model Fields';
+
+          let partFieldLabel = storeField.label;
+
+          let partLabel = `${partNodeLabel} ${partFieldLabel}`;
+
+          let modelMetric: common.ModelMetric = {
+            metricId: `${store.name}_${partId}_by_${timeId}`,
+            filePath: store.filePath,
+            partId: partId,
+            modelId: `${STORE_MODEL_PREFIX}_${store.name}`,
+            topNode: `${STORE_MODEL_PREFIX}_${store.name}`,
+            topLabel: topLabel,
+            fieldId: `${storeField.name}`,
+            fieldClass: storeField.fieldClass,
+            timeFieldId: storeFieldTimeGroup.time,
+            timeNodeLabel: timeNodeLabel,
+            timeFieldLabel: timeFieldLabel,
+            timeLabel: timeLabel,
+            structId: structId,
+            type: common.MetricTypeEnum.Model,
+            label: `${topLabel} ${partLabel} by ${timeLabel}`,
+            partNodeLabel: partNodeLabel,
+            partFieldLabel: partFieldLabel,
+            partLabel: partLabel,
+            description: storeField.description,
+            formatNumber: storeField.format_number,
+            currencyPrefix: storeField.currency_prefix,
+            currencySuffix: storeField.currency_suffix,
+            serverTs: 1
+          };
+
+          modelMetrics.push(modelMetric);
+        });
+    });
+  });
+
+  item.models.forEach(model => {
     if (
       common.isUndefined(model.build_metrics) ||
       model.build_metrics.length === 0
@@ -164,9 +247,7 @@ export function createModelMetrics(
             serverTs: 1
           };
 
-          if (errorsOnStart === item.errors.length) {
-            modelMetrics.push(modelMetric);
-          }
+          modelMetrics.push(modelMetric);
         });
 
       model.joins.forEach(join => {
@@ -247,9 +328,7 @@ export function createModelMetrics(
               serverTs: 1
             };
 
-            if (errorsOnStart === item.errors.length) {
-              modelMetrics.push(modelMetric);
-            }
+            modelMetrics.push(modelMetric);
           });
       });
     });
