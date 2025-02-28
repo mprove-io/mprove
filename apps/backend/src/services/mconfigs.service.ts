@@ -48,8 +48,18 @@ export class MconfigsService {
     envId: string;
     model: schemaPostgres.ModelEnt;
     mconfig: common.Mconfig;
+    metricsStartDateYYYYMMDD: string;
+    metricsEndDateYYYYMMDD: string;
   }) {
-    let { model, struct, mconfig, project, envId } = item;
+    let {
+      model,
+      struct,
+      mconfig,
+      project,
+      envId,
+      metricsStartDateYYYYMMDD,
+      metricsEndDateYYYYMMDD
+    } = item;
 
     let newMconfig: common.Mconfig;
     let newQuery: common.Query;
@@ -61,8 +71,8 @@ export class MconfigsService {
       mconfig: mconfig,
       model: model,
       caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
-      metricsStartDateYYYYMMDD: undefined,
-      metricsEndDateYYYYMMDD: undefined
+      metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
+      metricsEndDateYYYYMMDD: metricsEndDateYYYYMMDD
     });
 
     // console.log('newMconfig:');

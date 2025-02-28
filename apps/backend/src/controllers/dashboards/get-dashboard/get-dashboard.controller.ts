@@ -302,7 +302,9 @@ export class GetDashboardController {
           project: project,
           envId: envId,
           model: this.wrapToEntService.wrapToEntityModel(model),
-          mconfig: mconfig
+          mconfig: mconfig,
+          metricsStartDateYYYYMMDD: undefined,
+          metricsEndDateYYYYMMDD: undefined
         });
 
         newMconfig = mqe.newMconfig;

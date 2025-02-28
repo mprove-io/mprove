@@ -166,7 +166,9 @@ export class GetChartController {
           project: project,
           envId: envId,
           model: model,
-          mconfig: sMconfig
+          mconfig: sMconfig,
+          metricsStartDateYYYYMMDD: undefined,
+          metricsEndDateYYYYMMDD: undefined
         });
 
         newMconfig = mqe.newMconfig;

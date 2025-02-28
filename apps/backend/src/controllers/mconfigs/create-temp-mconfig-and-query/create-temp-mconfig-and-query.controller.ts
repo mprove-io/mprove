@@ -135,7 +135,9 @@ export class CreateTempMconfigAndQueryController {
         project: project,
         envId: envId,
         model: model,
-        mconfig: mconfig
+        mconfig: mconfig,
+        metricsStartDateYYYYMMDD: undefined,
+        metricsEndDateYYYYMMDD: undefined
       });
 
       newMconfig = mqe.newMconfig;

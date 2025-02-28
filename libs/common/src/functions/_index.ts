@@ -3,6 +3,7 @@ export * from './capitalize-first-letter';
 export * from './enum-to-boolean';
 export * from './format-ts-unix';
 export * from './get-fraction-type-for-any';
+export * from './get-timespec-detail';
 export * from './get-timespec-word';
 export * from './get-timezones';
 export * from './get-timezones-values';

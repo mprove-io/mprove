@@ -17,9 +17,11 @@ import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { clearRowsCache } from '~backend/functions/clear-rows-cache';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { processRowIds } from '~backend/functions/process-row-ids';
+import { getYYYYMMDDFromEpochUtcByTimezone } from '~node-common/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
 import { BlockmlService } from './blockml.service';
 import { DocService } from './doc.service';
 import { MakerService } from './maker.service';
+import { MconfigsService } from './mconfigs.service';
 import { RabbitService } from './rabbit.service';
 import { WrapToApiService } from './wrap-to-api.service';
 import { WrapToEntService } from './wrap-to-ent.service';
@@ -31,6 +33,7 @@ export class ReportsService {
   constructor(
     private makerService: MakerService,
     private docService: DocService,
+    private mconfigsService: MconfigsService,
     private blockmlService: BlockmlService,
     private rabbitService: RabbitService,
     private wrapToEntService: WrapToEntService,
@@ -818,9 +821,25 @@ export class ReportsService {
 
           let model = models.find(ml => ml.modelId === metric.modelId);
 
-          let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
+          let timeFieldIdSpec;
 
-          let timeFieldIdSpec = `${metric.timefieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+          if (model.isStoreModel === false) {
+            let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
+
+            timeFieldIdSpec = `${metric.timefieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+          } else {
+            let timeSpecDetail = common.getTimeSpecDetail({
+              timeSpec: timeSpec
+            });
+
+            let storeField = (model.content as common.FileStore).fields.find(
+              field =>
+                field.time_group === metric.timefieldId &&
+                field.detail === timeSpecDetail
+            );
+
+            timeFieldIdSpec = storeField.name;
+          }
 
           let timeSorting: common.Sorting = {
             desc: false,
@@ -832,12 +851,18 @@ export class ReportsService {
             fractions: [timeRangeFraction]
           };
 
-          let filters: common.Filter[] = [
-            timeFilter,
-            ...x.parametersFiltersWithExcludedTime
-          ].sort((a, b) =>
-            a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
-          );
+          let filters: common.Filter[] =
+            model.isStoreModel === true
+              ? [
+                  // timeFilter,
+                  ...x.parametersFiltersWithExcludedTime
+                ].sort((a, b) =>
+                  a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+                )
+              : [timeFilter, ...x.parametersFiltersWithExcludedTime].sort(
+                  (a, b) =>
+                    a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+                );
 
           let mconfig: common.Mconfig = {
             structId: struct.structId,
@@ -881,38 +906,62 @@ export class ReportsService {
             fields: model.fields
           });
 
-          let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
-            {
-              info: {
-                name: apiToBlockml.ToBlockmlRequestInfoNameEnum
-                  .ToBlockmlProcessQuery,
-                traceId: traceId
-              },
-              payload: {
-                orgId: project.orgId,
-                projectId: project.projectId,
-                weekStart: struct.weekStart,
-                caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
-                simplifySafeAggregates: struct.simplifySafeAggregates,
-                udfsDict: struct.udfsDict,
-                mconfig: mconfig,
-                modelContent: model.content,
-                envId: envId
-              }
-            };
+          let isError = false;
 
-          let blockmlProcessQueryResponse =
-            await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
+          if (model.isStoreModel === true) {
+            let mqe = await this.mconfigsService.prepMconfigQuery({
+              struct: struct,
+              project: project,
+              envId: envId,
+              model: model,
+              mconfig: mconfig,
+              metricsStartDateYYYYMMDD: getYYYYMMDDFromEpochUtcByTimezone({
+                timezone: mconfig.timezone,
+                secondsEpochUTC: columns[0].columnId
+              }),
+              metricsEndDateYYYYMMDD: getYYYYMMDDFromEpochUtcByTimezone({
+                timezone: mconfig.timezone,
+                secondsEpochUTC: columns[columns.length - 1].columnId
+              })
+            });
+
+            newMconfig = mqe.newMconfig;
+            newQuery = mqe.newQuery;
+            isError = mqe.isError;
+          } else {
+            let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
               {
-                routingKey:
-                  common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
-                message: toBlockmlProcessQueryRequest,
-                checkIsOk: true
-              }
-            );
+                info: {
+                  name: apiToBlockml.ToBlockmlRequestInfoNameEnum
+                    .ToBlockmlProcessQuery,
+                  traceId: traceId
+                },
+                payload: {
+                  orgId: project.orgId,
+                  projectId: project.projectId,
+                  weekStart: struct.weekStart,
+                  caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
+                  simplifySafeAggregates: struct.simplifySafeAggregates,
+                  udfsDict: struct.udfsDict,
+                  mconfig: mconfig,
+                  modelContent: model.content,
+                  envId: envId
+                }
+              };
 
-          newMconfig = blockmlProcessQueryResponse.payload.mconfig;
-          newQuery = blockmlProcessQueryResponse.payload.query;
+            let blockmlProcessQueryResponse =
+              await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
+                {
+                  routingKey:
+                    common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
+                  message: toBlockmlProcessQueryRequest,
+                  checkIsOk: true
+                }
+              );
+
+            newMconfig = blockmlProcessQueryResponse.payload.mconfig;
+            newQuery = blockmlProcessQueryResponse.payload.query;
+          }
 
           newMconfig.queryId = newQueryId;
           newQuery.queryId = newQueryId;

@@ -11,7 +11,7 @@ import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { toBooleanFromLowercaseString } from '~common/_index';
-import { getCurrentDateYYYYMMDDByTimezone } from '~node-common/functions/get-current-date-yyyymmdd-by-timezone';
+import { getYYYYMMDDCurrentDateByTimezone } from '~node-common/functions/get-yyyymmdd-current-date-by-timezone';
 import { UserCodeService } from './user-code.service';
 
 let retry = require('async-retry');
@@ -282,17 +282,17 @@ export class StoreService {
               if (reference === 'METRICS_DATE_FROM') {
                 target = common.isDefined(metricsStartDateYYYYMMDD)
                   ? metricsStartDateYYYYMMDD
-                  : getCurrentDateYYYYMMDDByTimezone({
+                  : getYYYYMMDDCurrentDateByTimezone({
                       timezone: mconfig.timezone
                     });
               } else if (reference === 'METRICS_DATE_TO') {
                 target = common.isDefined(metricsEndDateYYYYMMDD)
                   ? metricsEndDateYYYYMMDD
-                  : getCurrentDateYYYYMMDDByTimezone({
+                  : getYYYYMMDDCurrentDateByTimezone({
                       timezone: mconfig.timezone
                     });
               } else if (reference === 'DATE_TODAY') {
-                target = getCurrentDateYYYYMMDDByTimezone({
+                target = getYYYYMMDDCurrentDateByTimezone({
                   timezone: mconfig.timezone
                 });
               } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
@@ -395,17 +395,17 @@ export class StoreService {
       } else if (reference === 'METRICS_DATE_FROM') {
         target = common.isDefined(metricsStartDateYYYYMMDD)
           ? metricsStartDateYYYYMMDD
-          : getCurrentDateYYYYMMDDByTimezone({
+          : getYYYYMMDDCurrentDateByTimezone({
               timezone: mconfig.timezone
             });
       } else if (reference === 'METRICS_DATE_TO') {
         target = common.isDefined(metricsEndDateYYYYMMDD)
           ? metricsEndDateYYYYMMDD
-          : getCurrentDateYYYYMMDDByTimezone({
+          : getYYYYMMDDCurrentDateByTimezone({
               timezone: mconfig.timezone
             });
       } else if (reference === 'DATE_TODAY') {
-        target = getCurrentDateYYYYMMDDByTimezone({
+        target = getYYYYMMDDCurrentDateByTimezone({
           timezone: mconfig.timezone
         });
       } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {

@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 
-export function getCurrentDateYYYYMMDDByTimezone(item: { timezone: string }) {
+export function getYYYYMMDDCurrentDateByTimezone(item: { timezone: string }) {
   let { timezone } = item;
 
   let now = new Date();
