@@ -33,7 +33,7 @@ body: |
       orderBy = {
         metric: { metricName: x.field.meta.name },
         desc: x.desc
-      }
+      } 
     }
 
     orderByElements.push(orderBy);
@@ -58,7 +58,7 @@ body: |
           stringFilter: {
             matchType: fraction.meta.match_type,
             value: fraction.controls.find(control => control['name'] === 'value_input')?.value,
-            caseSensitive: fraction.controls.find(control => control['name'] === 'case_sensitive_switch')?.value
+            caseSensitive: $PROJECT_CONFIG_CASE_SENSITIVE
           }
         }
       }
@@ -68,7 +68,7 @@ body: |
           fieldName: field.meta.name,
           inListFilter: {
             values: fraction.controls.find(control => control['name'] === 'values_input')?.values,
-            caseSensitive: fraction.controls.find(control => control['name'] === 'case_sensitive_switch')?.value
+            caseSensitive: $PROJECT_CONFIG_CASE_SENSITIVE
           }
         }
       }
@@ -127,39 +127,10 @@ body: |
     });
   });
 
-  let isCohortsEnabled = queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'cohorts_switch')?.value;
-
-  let dateRanges;
-  let cohortSpec;
-
-  if (isCohortsEnabled === true) {
-    let cohorts = [];
-
-    queryParameters.find(x => x['fieldId'] === 'cohorts_config')?.fractions.forEach(fraction => {
-      let cohort = {
-        dimension: "firstSessionDate",
-        dateRange: {
-          startDate: fraction.controls.find(control => control.name === 'start_date')?.value,
-          endDate: fraction.controls.find(control => control.name === 'end_date')?.value
-        }
-      }
-      cohorts.push(cohort);
-    });
-
-    cohortSpec = {
-      cohorts: cohorts,
-      cohortsRange: {
-        granularity: queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'granularity')?.value,
-        startOffset: queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'start_offset')?.value,
-        endOffset: queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'end_offset')?.value,
-      }
-    };
-  } else {
-    dateRanges = [{
-      startDate: queryParameters.find(x => x['fieldId'] === 'date_range')?.fractions[0].controls.find(control => control.name === 'start_date')?.value,
-      endDate: queryParameters.find(x => x['fieldId'] === 'date_range')?.fractions[0].controls.find(control => control.name === 'end_date')?.value
-    }]
-  }
+  let dateRanges = [{
+    startDate: queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'start_date')?.value,
+    endDate: queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'end_date')?.value
+  }];
 
   let dimAndGroupExpressions = [];
   let mcAndGroupExpressions = [];
@@ -208,15 +179,15 @@ body: |
           }
         }
       : undefined,
-    offset: undefined, // not supported
     limit: queryLimit,
-    metricAggregations: undefined, // not supported
     orderBys: orderByElements,
     currencyCode: 'USD',
-    cohortSpec: cohortSpec,
     keepEmptyRows: true,
     returnPropertyQuota: false,
-    comparisons: undefined // not supported
+    cohortSpec: undefined, // supported in ga_cohorts.store
+    metricAggregations: undefined, // not supported
+    comparisons: undefined, // not supported
+    offset: undefined // not supported
   }
 
   return body;
@@ -287,7 +258,7 @@ response: |
 
       if (!!storeField) {
         let fieldId = storeField.name;
-        newRow[fieldId] = !!date ? date.getTime() : value;
+        newRow[fieldId] = !!date ? date.getTime()/1000 : value;
       }
     });
     
@@ -317,55 +288,12 @@ parameters:
     options:
     - value: 474781769
     - value: 123123123
-  - switch: cohorts_switch
-    label: 'Cohorts Mode'
-    value: false
-  - selector: granularity
-    show_if: top_config.cohorts_switch.true
-    label: Granularity
-    value: DAILY
-    options: 
-    - value: DAILY
-    - value: WEEKLY
-    - value: MONTHLY
-  - input: start_offset
-    show_if: top_config.cohorts_switch.true
-    label: Start Offset # From
-    value: 0
-  - input: end_offset
-    show_if: top_config.cohorts_switch.true
-    label: End Offset # To
-    value: 5
-
-- filter: date_range
-  show_if: top_config.cohorts_switch.false
-  required: true
-  max_fractions: 1
-  fraction_controls: 
   - date_picker: start_date
     label: Start Date
     value: $METRICS_DATE_FROM
   - date_picker: end_date
     label: End Date
     value: $METRICS_DATE_TO
-
-- filter: cohorts_config
-  show_if: top_config.cohorts_switch.true
-  required: true
-  fraction_controls:
-  - date_picker: start_date
-    label: Start Date
-    value: $DATE_TODAY
-  - date_picker: end_date
-    label: End Date
-    value: $DATE_TODAY
-  # - input: value_input
-  #   label: name
-  #   value: 'changed cohort field name'
-  # - input: value_input
-  #   label: dimension
-  #   value: firstSessionDate
-  #   lock: true
 
 results:
 - result: number
@@ -429,9 +357,6 @@ results:
       filter_type: stringFilter
     controls:
     - input: value_input
-    - switch: case_sensitive_switch
-      label: Case Sensitive
-      value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - type: begins_with
     meta: 
@@ -439,9 +364,6 @@ results:
       filter_type: stringFilter
     controls:
     - input: value_input
-    - switch: case_sensitive_switch
-      label: Case Sensitive
-      value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - type: ends_with
     meta: 
@@ -449,9 +371,6 @@ results:
       filter_type: stringFilter
     controls:
     - input: value_input
-    - switch: case_sensitive_switch
-      label: Case Sensitive
-      value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - type: contains
     meta: 
@@ -459,9 +378,6 @@ results:
       filter_type: stringFilter
     controls:
     - input: value_input
-    - switch: case_sensitive_switch
-      label: Case Sensitive
-      value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - type: full_regexp
     meta: 
@@ -469,9 +385,6 @@ results:
       filter_type: stringFilter
     controls:
     - input: value_input
-    - switch: case_sensitive_switch
-      label: Case Sensitive
-      value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - type: partial_regexp
     meta: 
@@ -479,9 +392,6 @@ results:
       filter_type: stringFilter
     controls:
     - input: value_input
-    - switch: case_sensitive_switch
-      label: Case Sensitive
-      value: $PROJECT_CONFIG_CASE_SENSITIVE
 
   - type: in_list
     meta: 
@@ -489,9 +399,6 @@ results:
       filter_type: inListFilter
     controls:
     - list_input: values_input
-    - switch: case_sensitive_switch
-      label: Case Sensitive
-      value: $PROJECT_CONFIG_CASE_SENSITIVE
 
 field_groups:
 - group: geo
@@ -499,15 +406,11 @@ field_groups:
 - group: users
 - group: sessions
 - group: page_screens
-- group: cohorts
-  label: Cohorts
-  show_if: top_config.cohorts_switch.true
 
 field_time_groups:
 - time: event_created_at
   group: events
   label: 'Event Created At'
-  # show_if: ... 
 
 build_metrics:
 - time: event_created_at
@@ -709,41 +612,6 @@ fields:
   meta:
     name: nthMinute
     
-## Cohort Dimensions
-
-- dimension: cohort
-  result: string
-  group: cohorts
-  show_if: top_config.cohorts_switch.true
-  required: true
-  description: "The cohort's name in the request. A cohort is a set of users who started using your website or app in any consecutive group of days. If a cohort name is not specified in the request, cohorts are named by their zero based index such as cohort_0 and cohort_1"
-  meta:
-    name: cohort
-
-- dimension: cohort_nth_day
-  label: Daily cohort
-  result: string
-  group: cohorts
-  description: 'Day offset relative to the firstSessionDate for the users in the cohort. For example, if a cohort is selected with the start and end date of 2020-03-01, then for the date 2020-03-02, cohortNthDay will be 0001'
-  meta:
-    name: cohortNthDay
-
-- dimension: cohort_nth_week
-  label: Weekly cohort
-  result: string
-  group: cohorts
-  description: 'Week offset relative to the firstSessionDate for the users in the cohort. Weeks start on Sunday and end on Saturday. For example, if a cohort is selected with the start and end date in the range 2020-11-08 to 2020-11-14, then for the dates in the range 2020-11-15 to 2020-11-21, cohortNthWeek will be 0001'
-  meta:
-    name: cohortNthWeek
-
-- dimension: cohort_nth_month
-  label: Monthly cohort
-  result: string
-  group: cohorts
-  description: 'Month offset relative to the firstSessionDate for the users in the cohort. Month boundaries align with calendar month boundaries. For example, if a cohort is selected with the start and end date in March 2020, then for any date in April 2020, cohortNthMonth will be 0001'
-  meta:
-    name: cohortNthMonth
-
 # Measures
 
 - measure: active_users
@@ -768,25 +636,5 @@ fields:
   description: 'The number of app screens or web pages your users viewed. Repeated views of a single page or screen are counted. (screen_view + page_view events)'
   meta:
     name: screenPageViews
-    type: TYPE_INTEGER
-
-## Cohort Measures
-
-- measure: cohort_active_users
-  label: 'Cohort active users'
-  result: number
-  group: cohorts
-  description: 'The number of users in the cohort who are active in the time window corresponding to the cohort nth day/week/month. For example in the row where cohortNthWeek = 0001, this metric is the number of users (in the cohort) who are active in week 1'
-  meta:
-    name: cohortActiveUsers
-    type: TYPE_INTEGER
-
-- measure: cohort_total_users
-  label: 'Cohort total users'
-  result: number
-  group: cohorts
-  description: "The total number of users in the cohort. This metric is the same value in every row of the report for each cohort. Because cohorts are defined by a shared acquisition date, cohortTotalUsers is the same as cohortActiveUsers for the cohort's selection date range. For report rows later than the cohort's selection range, it is typical for cohortActiveUsers to be smaller than cohortTotalUsers. This difference represents users from the cohort that were not active for the later date. cohortTotalUsers is commonly used in the metric expression cohortActiveUsers/cohortTotalUsers to compute a user retention fraction for the cohort. The relationship between activeUsers and totalUsers is not equivalent to the relationship between cohortActiveUsers and cohortTotalUsers"
-  meta:
-    name: cohortTotalUsers
     type: TYPE_INTEGER
 

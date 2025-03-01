@@ -1,0 +1,771 @@
+store: google_analytics
+connection: c6_google
+label: Google Analytics
+description: '...'
+access_users: []
+access_roles: []
+method: POST
+url_path: |
+  let queryParameters = $QUERY_PARAMETERS;
+
+  let propertyId = queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'ga_property')?.value;
+  
+  return `/v1beta/properties/${propertyId}:runReport`;
+body: |
+  let storeFields = $STORE_FIELDS;
+  let queryOrderBy = $QUERY_ORDER_BY;
+  let selectedDimensions = $QUERY_SELECTED_DIMENSIONS;
+  let selectedMeasures = $QUERY_SELECTED_MEASURES;
+  let queryParameters = $QUERY_PARAMETERS;
+  let queryLimit = $QUERY_LIMIT;
+
+  let orderByElements = [];
+
+  queryOrderBy.forEach(x=> {
+    let orderBy;
+
+    if (selectedDimensions.map(field => field.name).indexOf(x.field.name) > -1) {
+      orderBy = {
+        dimension: { dimensionName: x.field.meta.name },
+        desc: x.desc
+      }
+    } else if (selectedMeasures.map(field => field.name).indexOf(x.field.name) > -1) {
+      orderBy = {
+        metric: { metricName: x.field.meta.name },
+        desc: x.desc
+      }
+    }
+
+    orderByElements.push(orderBy);
+  });
+  
+  let dimOrExpressions = [];
+  let dimAndNotExpressions = [];
+
+  let mcOrExpressions = [];
+  let mcAndNotExpressions = [];
+
+  queryParameters.map(filter => {
+    let field = storeFields.find(x => x.name === filter.fieldId);
+
+    filter.fractions.forEach(fraction => {
+      let apiFilter;
+      let apiFilterType = fraction.meta?.filter_type;
+
+      if (apiFilterType === 'stringFilter') {
+        apiFilter = {
+          fieldName: field.meta.name,
+          stringFilter: {
+            matchType: fraction.meta.match_type,
+            value: fraction.controls.find(control => control['name'] === 'value_input')?.value,
+            caseSensitive: $PROJECT_CONFIG_CASE_SENSITIVE
+          }
+        }
+      }
+
+      if (apiFilterType === 'inListFilter') {
+        apiFilter = {
+          fieldName: field.meta.name,
+          inListFilter: {
+            values: fraction.controls.find(control => control['name'] === 'values_input')?.values,
+            caseSensitive: $PROJECT_CONFIG_CASE_SENSITIVE
+          }
+        }
+      }
+
+      if (apiFilterType === 'numericFilter') {
+        apiFilter = {
+          fieldName: field.meta.name,
+          numericFilter: {
+            operation: fraction.meta.operation,
+            value: {
+              doubleValue: Number(fraction.controls.find(control => control['name'] === 'value_input')?.value)
+            }
+          }
+        }
+      }
+
+      if (apiFilterType === 'betweenFilter') {
+        apiFilter = {
+          fieldName: field.meta.name,
+          betweenFilter: {
+            fromValue: {
+              doubleValue: Number(fraction.controls.find(control => control['name'] === 'value_from_input')?.value)
+            },
+            toValue: {
+              doubleValue: Number(fraction.controls.find(control => control['name'] === 'value_to_input')?.value)
+            },
+          }
+        }
+      } 
+
+      if (field.fieldClass === 'dimension') {
+        if (fraction.logicGroup === 'OR') {
+          dimOrExpressions.push({ filter: apiFilter })
+        } 
+        if (fraction.logicGroup === 'AND_NOT') {
+          dimAndNotExpressions.push({
+            notExpression: {
+              filter: apiFilter
+            }
+          })
+        }
+      }
+
+      if (field.fieldClass === 'measure') {
+        if (fraction.logicGroup === 'OR') {
+          mcOrExpressions.push({ filter: apiFilter })
+        } 
+        if (fraction.logicGroup === 'AND_NOT') {
+          mcAndNotExpressions.push({
+            notExpression: {
+              filter: apiFilter
+            }
+          })
+        }
+      }
+    });
+  });
+
+  let isCohortsEnabled = queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'cohorts_switch')?.value;
+
+  let dateRanges;
+  let cohortSpec;
+
+  if (isCohortsEnabled === true) {
+    let cohorts = [];
+
+    queryParameters.find(x => x['fieldId'] === 'cohorts_config')?.fractions.forEach(fraction => {
+      let cohort = {
+        dimension: "firstSessionDate",
+        dateRange: {
+          startDate: fraction.controls.find(control => control.name === 'start_date')?.value,
+          endDate: fraction.controls.find(control => control.name === 'end_date')?.value
+        }
+      }
+      cohorts.push(cohort);
+    });
+
+    cohortSpec = {
+      cohorts: cohorts,
+      cohortsRange: {
+        granularity: queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'granularity')?.value,
+        startOffset: queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'start_offset')?.value,
+        endOffset: queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'end_offset')?.value,
+      }
+    };
+  } else {
+    dateRanges = [{
+      startDate: queryParameters.find(x => x['fieldId'] === 'date_range')?.fractions[0].controls.find(control => control.name === 'start_date')?.value,
+      endDate: queryParameters.find(x => x['fieldId'] === 'date_range')?.fractions[0].controls.find(control => control.name === 'end_date')?.value
+    }]
+  }
+
+  let dimAndGroupExpressions = [];
+  let mcAndGroupExpressions = [];
+
+  if (dimOrExpressions.length > 0) {
+    dimAndGroupExpressions.push({
+      orGroup: { expressions: dimOrExpressions }
+    });
+  }
+
+  if (dimAndNotExpressions.length > 0) {
+    dimAndGroupExpressions = [
+      ...dimAndGroupExpressions,
+      ...dimAndNotExpressions
+    ];
+  }
+
+  if (mcOrExpressions.length > 0) {
+    mcAndGroupExpressions.push({
+      orGroup: { expressions: mcOrExpressions }
+    });
+  }
+
+  if (mcAndNotExpressions.length > 0) {
+    mcAndGroupExpressions = [
+      ...mcAndGroupExpressions,
+      ...mcAndNotExpressions
+    ];
+  }
+
+  let body = {
+    dimensions: selectedDimensions.map(x => ({ name: x.meta['name'] })), 
+    metrics: selectedMeasures.map(x => ({ name: x.meta['name'] })),
+    dateRanges: dateRanges,
+    dimensionFilter: (dimOrExpressions.length > 0 || dimAndNotExpressions.length > 0)
+      ? {
+          andGroup: {
+            expressions: dimAndGroupExpressions
+          }
+        }
+      : undefined,
+    metricFilter: (mcOrExpressions.length > 0 || mcAndNotExpressions.length > 0)
+      ? {
+          andGroup: {
+            expressions: mcAndGroupExpressions
+          }
+        }
+      : undefined,
+    offset: undefined, // not supported
+    limit: queryLimit,
+    metricAggregations: undefined, // not supported
+    orderBys: orderByElements,
+    currencyCode: 'USD',
+    cohortSpec: cohortSpec,
+    keepEmptyRows: true,
+    returnPropertyQuota: false,
+    comparisons: undefined // not supported
+  }
+
+  return body;
+response: |
+  let data = $RESPONSE_DATA;
+  let storeFields = $STORE_FIELDS;
+  
+  let dimensionHeaders = data.dimensionHeaders?.map(header => header.name);
+  let metricHeaders = data.metricHeaders?.map(header => header.name);
+  
+  newData = data.rows?.map(row => {
+    let newRow = {};
+    
+    row.dimensionValues?.forEach((dimension, index) => {
+      let dimensionName = dimensionHeaders[index];
+      let value = dimension.value;
+      let date;
+
+      if (dimensionName === 'year') {
+        date = new Date(`${value}-01-01T00:00:00Z`);
+        //
+      } else if (dimensionName === 'yearMonth') {
+        date = new Date(`${value.slice(0, 4)}-${value.slice(4, 6)}-01T00:00:00Z`);
+        //
+      } else if (dimensionName === 'isoYearIsoWeek') {
+        // Parse ISO year and week (e.g., "202504" → year=2025, week=4)
+        // Create a date in week 1 of the ISO year (January 4th is always in week 1)
+        // Get the Monday of week 1
+        // Add weeks to reach the target week
+
+        let year = parseInt(value.slice(0, 4), 10);
+        let week = parseInt(value.slice(4, 6), 10);
+        
+        date = new Date(Date.UTC(year, 0, 4));
+        
+        let day = date.getUTCDay(); // 0 (Sunday) to 6 (Saturday)
+        date.setUTCDate(date.getUTCDate() - (day === 0 ? 6 : day - 1));
+        
+        date.setUTCDate(date.getUTCDate() + (week - 1) * 7);
+        //
+      } else if (dimensionName === 'yearWeek') {
+        // Parse year and week (e.g., "202505" → year=2025, week=5)
+        // Find the first Sunday of the year
+        // Add weeks to reach the target week
+
+        let year = parseInt(value.slice(0, 4), 10);
+        let week = parseInt(value.slice(4, 6), 10);
+        
+        let firstDay = new Date(Date.UTC(year, 0, 1));
+        let day = firstDay.getUTCDay(); // 0 (Sunday) to 6 (Saturday)
+        let firstSunday = new Date(firstDay);
+        firstSunday.setUTCDate(firstDay.getUTCDate() - day);
+        
+        date = new Date(firstSunday);
+        date.setUTCDate(firstSunday.getUTCDate() + (week - 1) * 7);
+        //
+      } else if (dimensionName === 'date') {
+        date = new Date(`${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}T00:00:00Z`);
+        //
+      } else if (dimensionName === 'dateHour') {
+        date = new Date(`${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}T${value.slice(8, 10)}:00:00Z`);
+        //
+      } else if (dimensionName === 'dateHourMinute') {
+        date = new Date(`${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}T${value.slice(8, 10)}:${value.slice(10, 12)}:00Z`);
+      } 
+
+      let storeField = storeFields.find(x => !!x.meta && x.meta['name'] === dimensionName);
+
+      if (!!storeField) {
+        let fieldId = storeField.name;
+        newRow[fieldId] = !!date ? date.getTime()/1000 : value;
+      }
+    });
+    
+    row.metricValues?.forEach((metric, index) => {
+      let metricName = metricHeaders[index];
+      let value = metric.value;
+      let storeField = storeFields.find(x => !!x.meta && x.meta['name'] === metricName);
+      if (!!storeField) {
+        let fieldId = storeField.name;
+        newRow[fieldId] = value;
+      }
+    });
+    
+    return newRow;
+  });
+
+  return newData || [];
+
+parameters:
+- filter: top_config
+  required: true
+  max_fractions: 1
+  fraction_controls:
+  - selector: ga_property
+    label: Property
+    value: 474781769
+    options:
+    - value: 474781769
+    - value: 123123123
+  - switch: cohorts_switch
+    label: 'Cohorts Mode'
+    value: false
+  - selector: granularity
+    show_if: top_config.cohorts_switch.true
+    label: Granularity
+    value: DAILY
+    options: 
+    - value: DAILY
+    - value: WEEKLY
+    - value: MONTHLY
+  - input: start_offset
+    show_if: top_config.cohorts_switch.true
+    label: Start Offset # From
+    value: 0
+  - input: end_offset
+    show_if: top_config.cohorts_switch.true
+    label: End Offset # To
+    value: 5
+
+- filter: date_range
+  show_if: top_config.cohorts_switch.false
+  required: true
+  max_fractions: 1
+  fraction_controls: 
+  - date_picker: start_date
+    label: Start Date
+    value: $METRICS_DATE_FROM
+  - date_picker: end_date
+    label: End Date
+    value: $METRICS_DATE_TO
+
+- filter: cohorts_config
+  show_if: top_config.cohorts_switch.true
+  required: true
+  fraction_controls:
+  - date_picker: start_date
+    label: Start Date
+    value: $DATE_TODAY
+  - date_picker: end_date
+    label: End Date
+    value: $DATE_TODAY
+  # - input: value_input
+  #   label: name
+  #   value: 'changed cohort field name'
+  # - input: value_input
+  #   label: dimension
+  #   value: firstSessionDate
+  #   lock: true
+
+results:
+- result: number
+  fraction_types:
+  - type: equal
+    label: Equal
+    or: true
+    and_not: true
+    meta: 
+      operation: EQUAL
+      filter_type: numericFilter
+    controls: 
+    - input: value_input
+
+  - type: less_than
+    or: true
+    and_not: false
+    meta: 
+      operation: LESS_THAN
+      filter_type: numericFilter
+    controls: 
+    - input: value_input
+
+  - type: less_than_or_equal
+    and_not: false
+    meta: 
+      operation: LESS_THAN_OR_EQUAL
+      filter_type: numericFilter
+    controls: 
+    - input: value_input
+
+  - type: greater_than
+    and_not: false
+    meta: 
+      operation: GREATER_THAN
+      filter_type: numericFilter
+    controls: 
+    - input: value_input
+
+  - type: greater_than_or_equal
+    and_not: false
+    meta: 
+      operation: GREATER_THAN_OR_EQUAL
+      filter_type: numericFilter
+    controls: 
+    - input: value_input
+
+  - type: between
+    meta: 
+      operation: BETWEEN
+      filter_type: betweenFilter
+    controls:
+    - input: value_from_input
+    - input: value_to_input
+
+- result: string
+  fraction_types:
+  - type: exact
+    meta: 
+      match_type: EXACT
+      filter_type: stringFilter
+    controls:
+    - input: value_input
+
+  - type: begins_with
+    meta: 
+      match_type: BEGINS_WITH
+      filter_type: stringFilter
+    controls:
+    - input: value_input
+
+  - type: ends_with
+    meta: 
+      match_type: ENDS_WITH
+      filter_type: stringFilter
+    controls:
+    - input: value_input
+
+  - type: contains
+    meta: 
+      match_type: CONTAINS
+      filter_type: stringFilter
+    controls:
+    - input: value_input
+
+  - type: full_regexp
+    meta: 
+      match_type: FULL_REGEXP
+      filter_type: stringFilter
+    controls:
+    - input: value_input
+
+  - type: partial_regexp
+    meta: 
+      match_type: PARTIAL_REGEXP
+      filter_type: stringFilter
+    controls:
+    - input: value_input
+
+  - type: in_list
+    meta: 
+      match_type: IN_LIST
+      filter_type: inListFilter
+    controls:
+    - list_input: values_input
+
+field_groups:
+- group: geo
+- group: events
+- group: users
+- group: sessions
+- group: page_screens
+- group: cohorts
+  label: Cohorts
+  show_if: top_config.cohorts_switch.true
+
+field_time_groups:
+- time: event_created_at
+  group: events
+  label: 'Event Created At'
+  # show_if: ... 
+
+build_metrics:
+- time: event_created_at
+
+fields:    
+# Dimensions
+
+- dimension: country
+  result: string
+  group: geo
+  description: 'The country from which the user activity originated'
+  meta:
+    name: country
+
+- dimension: city
+  result: string
+  group: geo
+  description: 'The city from which the user activity originated'
+  meta:
+    name: city
+
+# Time Dimensions
+
+- dimension: year # "2025"
+  label: 'Year'
+  result: string
+  time_group: event_created_at
+  detail: years
+  description: 'The four-digit year of the event. For example, 2020 or 2024'
+  meta:
+    name: year
+
+- dimension: year_month # "202501"
+  label: 'Month'
+  result: string
+  time_group: event_created_at
+  detail: months
+  description: 'The combined values of year and month. Example values include 202212 or 202301'
+  meta:
+    name: yearMonth
+
+- dimension: iso_year_iso_week # "202504"
+  label: 'Week Monday'
+  result: string
+  time_group: event_created_at
+  detail: weeksMonday
+  description: 'The combined values of isoWeek and isoYear. Example values include 201652 & 201701'
+  meta:
+    name: isoYearIsoWeek
+
+- dimension: year_week # "202505"
+  label: 'Week Sunday'
+  result: string
+  time_group: event_created_at
+  detail: weeksSunday
+  description: 'The combined values of year and week. Example values include 202253 or 202301'
+  meta:
+    name: yearWeek
+
+- dimension: date # "20250127"
+  result: string
+  time_group: event_created_at
+  detail: days
+  description: 'The date of the event, formatted as YYYYMMDD'
+  meta:
+    name: date
+
+- dimension: date_hour # "2025012722"
+  label: 'Hour'
+  result: string
+  time_group: event_created_at
+  detail: hours
+  description: 'The combined values of date and hour formatted as YYYYMMDDHH'
+  meta:
+    name: dateHour
+
+- dimension: date_hour_minute # "202501272212"
+  label: 'Minute'
+  result: string
+  time_group: event_created_at
+  detail: minutes
+  description: 'The combined values of date, hour, and minute formatted as YYYYMMDDHHMM'
+  meta:
+    name: dateHourMinute
+
+- dimension: hour # "4"
+  result: string
+  group: events
+  description: "The two-digit hour of the day that the event was logged. This dimension ranges from 0-23 and is reported in your property's timezone"
+  meta:
+    name: hour
+
+- dimension: minute # "40"
+  result: string
+  group: events
+  description: "The two-digit minute of the hour that the event was logged. This dimension ranges from 0-59 and is reported in your property's timezone"
+  meta:
+    name: minute
+
+- dimension: day # "26"
+  result: string
+  group: events
+  description: 'The day of the month, a two-digit number from 01 to 31'
+  meta:
+    name: day
+
+- dimension: day_of_week # "0"
+  label: 'Day of week'
+  result: string
+  group: events
+  description: 'The integer day of the week. It returns values in the range 0 to 6 with Sunday as the first day of the week'
+  meta:
+    name: dayOfWeek
+
+- dimension: day_of_week_name # "Sunday"
+  label: 'Day of week name'
+  result: string
+  group: events
+  description: 'The day of the week in English. This dimension has values such as Sunday or Monday'
+  meta:
+    name: dayOfWeekName
+
+- dimension: week # "05"
+  label: 'Week'
+  result: string
+  group: events
+  description: 'The week of the event, a two-digit number from 01 to 53. Each week starts on Sunday. January 1st is always in week 01. The first and last week of the year have fewer than 7 days in most years. Weeks other than the first and the last week of the year always have 7 days. For years where January 1st is a Sunday, the first week of that year and the last week of the prior year have 7 days'
+  meta:
+    name: week
+
+- dimension: month # "01"
+  result: string
+  group: events
+  description: 'The month of the event, a two digit integer from 01 to 12'
+  meta:
+    name: month
+
+- dimension: iso_year # "2025"
+  label: 'ISO year'
+  result: string
+  group: events
+  description: 'The ISO year of the event. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 2022 & 2023'
+  meta:
+    name: isoYear
+
+- dimension: iso_week # "04"
+  label: 'ISO week of the year'
+  result: string
+  group: events
+  description: 'ISO week number, where each week starts on Monday. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 01, 02, & 53'
+  meta:
+    name: isoWeek
+
+- dimension: nth_year # "0000"
+  label: 'Nth year'
+  result: string
+  description: 'The number of years since the start of the date range. The starting year is 0000'
+  group: events
+  meta:
+    name: nthYear
+
+- dimension: nth_month # "0000"
+  label: 'Nth month'
+  result: string
+  group: events
+  description: 'The number of months since the start of a date range. The starting month is 0000'
+  meta:
+    name: nthMonth
+
+- dimension: nth_week # "0001"
+  label: 'Nth week'
+  result: string
+  group: events
+  description: 'A number representing the number of weeks since the start of a date range'
+  meta:
+    name: nthWeek
+
+- dimension: nth_day # "0004"
+  label: 'Nth day'
+  result: string
+  group: events
+  description: 'The number of days since the start of the date range'
+  meta:
+    name: nthDay
+
+- dimension: nth_hour # "0142"
+  label: 'Nth hour'
+  result: string
+  group: events
+  description: 'The number of hours since the start of the date range. The starting hour is 0000'
+  meta:
+    name: nthHour
+
+- dimension: nth_minute # "8532"
+  label: 'Nth minute'
+  result: string
+  group: events
+  description: 'The number of minutes since the start of the date range. The starting minute is 0000'
+  meta:
+    name: nthMinute
+    
+## Cohort Dimensions
+
+- dimension: cohort
+  result: string
+  group: cohorts
+  show_if: top_config.cohorts_switch.true
+  required: true
+  description: "The cohort's name in the request. A cohort is a set of users who started using your website or app in any consecutive group of days. If a cohort name is not specified in the request, cohorts are named by their zero based index such as cohort_0 and cohort_1"
+  meta:
+    name: cohort
+
+- dimension: cohort_nth_day
+  label: Daily cohort
+  result: string
+  group: cohorts
+  description: 'Day offset relative to the firstSessionDate for the users in the cohort. For example, if a cohort is selected with the start and end date of 2020-03-01, then for the date 2020-03-02, cohortNthDay will be 0001'
+  meta:
+    name: cohortNthDay
+
+- dimension: cohort_nth_week
+  label: Weekly cohort
+  result: string
+  group: cohorts
+  description: 'Week offset relative to the firstSessionDate for the users in the cohort. Weeks start on Sunday and end on Saturday. For example, if a cohort is selected with the start and end date in the range 2020-11-08 to 2020-11-14, then for the dates in the range 2020-11-15 to 2020-11-21, cohortNthWeek will be 0001'
+  meta:
+    name: cohortNthWeek
+
+- dimension: cohort_nth_month
+  label: Monthly cohort
+  result: string
+  group: cohorts
+  description: 'Month offset relative to the firstSessionDate for the users in the cohort. Month boundaries align with calendar month boundaries. For example, if a cohort is selected with the start and end date in March 2020, then for any date in April 2020, cohortNthMonth will be 0001'
+  meta:
+    name: cohortNthMonth
+
+# Measures
+
+- measure: active_users
+  result: number
+  group: users
+  description: 'The number of distinct users who visited your site or app'
+  meta:
+    name: activeUsers
+    type: TYPE_INTEGER
+
+- measure: sessions
+  result: number
+  group: sessions
+  description: 'The number of sessions that began on your site or app (event triggered: session_start)'
+  meta:
+    name: sessions
+    type: TYPE_INTEGER
+
+- measure: screen_page_views
+  result: number
+  group: page_screens
+  description: 'The number of app screens or web pages your users viewed. Repeated views of a single page or screen are counted. (screen_view + page_view events)'
+  meta:
+    name: screenPageViews
+    type: TYPE_INTEGER
+
+## Cohort Measures
+
+- measure: cohort_active_users
+  label: 'Cohort active users'
+  result: number
+  group: cohorts
+  description: 'The number of users in the cohort who are active in the time window corresponding to the cohort nth day/week/month. For example in the row where cohortNthWeek = 0001, this metric is the number of users (in the cohort) who are active in week 1'
+  meta:
+    name: cohortActiveUsers
+    type: TYPE_INTEGER
+
+- measure: cohort_total_users
+  label: 'Cohort total users'
+  result: number
+  group: cohorts
+  description: "The total number of users in the cohort. This metric is the same value in every row of the report for each cohort. Because cohorts are defined by a shared acquisition date, cohortTotalUsers is the same as cohortActiveUsers for the cohort's selection date range. For report rows later than the cohort's selection range, it is typical for cohortActiveUsers to be smaller than cohortTotalUsers. This difference represents users from the cohort that were not active for the later date. cohortTotalUsers is commonly used in the metric expression cohortActiveUsers/cohortTotalUsers to compute a user retention fraction for the cohort. The relationship between activeUsers and totalUsers is not equivalent to the relationship between cohortActiveUsers and cohortTotalUsers"
+  meta:
+    name: cohortTotalUsers
+    type: TYPE_INTEGER
+

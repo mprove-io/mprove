@@ -105,6 +105,25 @@ export function checkTileTitleModelSelect<T extends types.dzType>(
         return;
       }
 
+      if (isStore === true && common.isUndefined(store)) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.WRONG_TILE_MODEL,
+            message: `store "${
+              tile.model.split(STORE_MODEL_PREFIX + '_')[1]
+            }" is missing or not valid`,
+            lines: [
+              {
+                line: tile.model_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
       if (common.isUndefined(tile.select)) {
         item.errors.push(
           new BmError({
