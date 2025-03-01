@@ -1,6 +1,6 @@
-store: google_analytics
+store: google_analytics_cohorts
 connection: c6_google
-label: Google Analytics
+label: Google Analytics Cohorts
 description: '...'
 access_users: []
 access_roles: []
@@ -127,39 +127,29 @@ body: |
     });
   });
 
-  let isCohortsEnabled = queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'cohorts_switch')?.value;
 
-  let dateRanges;
-  let cohortSpec;
+  let cohorts = [];
 
-  if (isCohortsEnabled === true) {
-    let cohorts = [];
-
-    queryParameters.find(x => x['fieldId'] === 'cohorts_config')?.fractions.forEach(fraction => {
-      let cohort = {
-        dimension: "firstSessionDate",
-        dateRange: {
-          startDate: fraction.controls.find(control => control.name === 'start_date')?.value,
-          endDate: fraction.controls.find(control => control.name === 'end_date')?.value
-        }
+  queryParameters.find(x => x['fieldId'] === 'cohorts_config')?.fractions.forEach(fraction => {
+    let cohort = {
+      dimension: "firstSessionDate",
+      dateRange: {
+        startDate: fraction.controls.find(control => control.name === 'start_date')?.value,
+        endDate: fraction.controls.find(control => control.name === 'end_date')?.value
       }
-      cohorts.push(cohort);
-    });
+    }
+    cohorts.push(cohort);
+  });
 
-    cohortSpec = {
-      cohorts: cohorts,
-      cohortsRange: {
-        granularity: queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'granularity')?.value,
-        startOffset: queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'start_offset')?.value,
-        endOffset: queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'end_offset')?.value,
-      }
-    };
-  } else {
-    dateRanges = [{
-      startDate: queryParameters.find(x => x['fieldId'] === 'date_range')?.fractions[0].controls.find(control => control.name === 'start_date')?.value,
-      endDate: queryParameters.find(x => x['fieldId'] === 'date_range')?.fractions[0].controls.find(control => control.name === 'end_date')?.value
-    }]
-  }
+  let cohortSpec = {
+    cohorts: cohorts,
+    cohortsRange: {
+      granularity: queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'granularity')?.value,
+      startOffset: queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'start_offset')?.value,
+      endOffset: queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'end_offset')?.value,
+    }
+  };
+
 
   let dimAndGroupExpressions = [];
   let mcAndGroupExpressions = [];
@@ -193,7 +183,6 @@ body: |
   let body = {
     dimensions: selectedDimensions.map(x => ({ name: x.meta['name'] })), 
     metrics: selectedMeasures.map(x => ({ name: x.meta['name'] })),
-    dateRanges: dateRanges,
     dimensionFilter: (dimOrExpressions.length > 0 || dimAndNotExpressions.length > 0)
       ? {
           andGroup: {
@@ -208,15 +197,16 @@ body: |
           }
         }
       : undefined,
-    offset: undefined, // not supported
     limit: queryLimit,
-    metricAggregations: undefined, // not supported
     orderBys: orderByElements,
     currencyCode: 'USD',
-    cohortSpec: cohortSpec,
     keepEmptyRows: true,
     returnPropertyQuota: false,
-    comparisons: undefined // not supported
+    cohortSpec: cohortSpec,
+    dateRanges: undefined, // not used for cohorts
+    metricAggregations: undefined, // not supported
+    comparisons: undefined, // not supported
+    offset: undefined // not supported
   }
 
   return body;
@@ -317,11 +307,7 @@ parameters:
     options:
     - value: 474781769
     - value: 123123123
-  - switch: cohorts_switch
-    label: 'Cohorts Mode'
-    value: false
   - selector: granularity
-    show_if: top_config.cohorts_switch.true
     label: Granularity
     value: DAILY
     options: 
@@ -329,28 +315,13 @@ parameters:
     - value: WEEKLY
     - value: MONTHLY
   - input: start_offset
-    show_if: top_config.cohorts_switch.true
     label: Start Offset # From
     value: 0
   - input: end_offset
-    show_if: top_config.cohorts_switch.true
     label: End Offset # To
     value: 5
 
-- filter: date_range
-  show_if: top_config.cohorts_switch.false
-  required: true
-  max_fractions: 1
-  fraction_controls: 
-  - date_picker: start_date
-    label: Start Date
-    value: $METRICS_DATE_FROM
-  - date_picker: end_date
-    label: End Date
-    value: $METRICS_DATE_TO
-
 - filter: cohorts_config
-  show_if: top_config.cohorts_switch.true
   required: true
   fraction_controls:
   - date_picker: start_date
@@ -480,13 +451,11 @@ field_groups:
 - group: page_screens
 - group: cohorts
   label: Cohorts
-  show_if: top_config.cohorts_switch.true
 
 field_time_groups:
 - time: event_created_at
   group: events
   label: 'Event Created At'
-  # show_if: ... 
 
 build_metrics:
 - time: event_created_at
@@ -693,7 +662,6 @@ fields:
 - dimension: cohort
   result: string
   group: cohorts
-  show_if: top_config.cohorts_switch.true
   required: true
   description: "The cohort's name in the request. A cohort is a set of users who started using your website or app in any consecutive group of days. If a cohort name is not specified in the request, cohorts are named by their zero based index such as cohort_0 and cohort_1"
   meta:
