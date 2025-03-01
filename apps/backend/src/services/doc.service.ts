@@ -831,30 +831,6 @@ FROM main;`;
 
     if (timeSpec !== common.TimeSpecEnum.Timestamps) {
       reportDataColumns = report.columns.map((column, i) => {
-        // console.log('column.columnId');
-        // console.log(column.columnId);
-
-        let tsDate = fromUnixTime(column.columnId);
-
-        let timeValue =
-          timeSpec === common.TimeSpecEnum.Years
-            ? format(tsDate, 'yyyy')
-            : timeSpec === common.TimeSpecEnum.Quarters
-            ? format(tsDate, 'yyyy-MM')
-            : timeSpec === common.TimeSpecEnum.Months
-            ? format(tsDate, 'yyyy-MM')
-            : timeSpec === common.TimeSpecEnum.Weeks
-            ? format(tsDate, 'yyyy-MM-dd')
-            : timeSpec === common.TimeSpecEnum.Days
-            ? format(tsDate, 'yyyy-MM-dd')
-            : timeSpec === common.TimeSpecEnum.Hours
-            ? format(tsDate, 'yyyy-MM-dd HH')
-            : timeSpec === common.TimeSpecEnum.Minutes
-            ? format(tsDate, 'yyyy-MM-dd HH:mm')
-            : // : timeSpec === common.TimeSpecEnum.Timestamps
-              // ? format(tsDate, 'yyyy-MM-dd HH:mm:ss.SSS')
-              undefined;
-
         let reportDataColumn: common.ReportDataColumn = {
           id: i,
           fields: {
@@ -884,9 +860,38 @@ FROM main;`;
               );
             }
 
-            let dataRow = row.query?.data?.find(
-              (r: any) => r[timeFieldId]?.toString() === timeValue
-            );
+            let dataRow;
+
+            if (row.mconfig.isStoreModel === true) {
+              dataRow = row.query?.data?.find(
+                (r: any) => r[timeFieldId] === column.columnId
+              );
+            } else {
+              let tsDate = fromUnixTime(column.columnId);
+
+              let timeValue =
+                timeSpec === common.TimeSpecEnum.Years
+                  ? format(tsDate, 'yyyy')
+                  : timeSpec === common.TimeSpecEnum.Quarters
+                  ? format(tsDate, 'yyyy-MM')
+                  : timeSpec === common.TimeSpecEnum.Months
+                  ? format(tsDate, 'yyyy-MM')
+                  : timeSpec === common.TimeSpecEnum.Weeks
+                  ? format(tsDate, 'yyyy-MM-dd')
+                  : timeSpec === common.TimeSpecEnum.Days
+                  ? format(tsDate, 'yyyy-MM-dd')
+                  : timeSpec === common.TimeSpecEnum.Hours
+                  ? format(tsDate, 'yyyy-MM-dd HH')
+                  : timeSpec === common.TimeSpecEnum.Minutes
+                  ? format(tsDate, 'yyyy-MM-dd HH:mm')
+                  : // : timeSpec === common.TimeSpecEnum.Timestamps
+                    // ? format(tsDate, 'yyyy-MM-dd HH:mm:ss.SSS')
+                    undefined;
+
+              dataRow = row.query?.data?.find(
+                (r: any) => r[timeFieldId]?.toString() === timeValue
+              );
+            }
 
             if (common.isDefined(dataRow)) {
               reportDataColumn.fields[row.rowId] = common.isUndefined(
