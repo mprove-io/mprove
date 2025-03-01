@@ -1,0 +1,27 @@
+store: s1
+connection: c1
+field_time_groups:
+- time: t1
+
+build_metrics:
+- time: t1
+
+results: 
+- result: string
+  fraction_types:
+  - type: equal
+    controls: 
+    - input: value_input
+
+fields:
+- dimension: dim1
+  result: string
+  required: true
+
+- dimension: dim2
+  result: string
+  time_group: t1
+
+- dimension: dim3
+  result: string
+  required: true

@@ -323,6 +323,21 @@ export class StoreService {
       });
     });
 
+    let addSelect: string[] = [];
+
+    (model.content as common.FileStore).fields
+      .filter(
+        storeField =>
+          common.toBooleanFromLowercaseString(storeField.required) === true
+      )
+      .forEach(field => {
+        if (newMconfig.select.indexOf(field.name) < 0) {
+          addSelect.push(field.name);
+        }
+      });
+
+    newMconfig.select = [...newMconfig.select, ...addSelect];
+
     return newMconfig;
   }
 

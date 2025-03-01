@@ -4,7 +4,11 @@ import { constants } from '~blockml/barrels/constants';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
-import { FileStoreBuildMetric } from '~common/_index';
+import {
+  FieldClassEnum,
+  FileStoreBuildMetric,
+  toBooleanFromLowercaseString
+} from '~common/_index';
 
 let func = common.FuncEnum.CheckStoreBuildMetrics;
 
@@ -27,6 +31,41 @@ export function checkStoreBuildMetrics(
 
     if (common.isUndefined(x.build_metrics)) {
       x.build_metrics = [];
+    }
+
+    if (
+      x.build_metrics.length > 0 &&
+      x.fields.filter(
+        field =>
+          field.fieldClass !== FieldClassEnum.Filter &&
+          toBooleanFromLowercaseString(field.required) === true
+      ).length > 0
+    ) {
+      item.errors.push(
+        new BmError({
+          title:
+            common.ErTitleEnum
+              .BUILD_METRICS_AND_REQUIRED_FIELDS_DO_NOT_WORK_TOGETHER,
+          message: `${common.ParameterEnum.BuildMetrics} can not be used in store when there are fields with "required" set to true`,
+          lines: [
+            {
+              line: x.build_metrics_line_num,
+              name: x.fileName,
+              path: x.filePath
+            },
+            ...x.fields
+              .filter(
+                field => toBooleanFromLowercaseString(field.required) === true
+              )
+              .map(field => ({
+                line: field.required_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }))
+          ]
+        })
+      );
+      return;
     }
 
     let timeNames: { timeName: string; timeNameLineNums: number[] }[] = [];

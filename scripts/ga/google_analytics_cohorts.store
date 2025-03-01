@@ -457,9 +457,6 @@ field_time_groups:
   group: events
   label: 'Event Created At'
 
-build_metrics:
-- time: event_created_at
-
 fields:    
 # Dimensions
 

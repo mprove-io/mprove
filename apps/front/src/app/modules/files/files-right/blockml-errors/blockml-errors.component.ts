@@ -74,13 +74,6 @@ export class BlockmlErrorsComponent implements OnDestroy {
       let nodes: BmlErrorsNode[] = [];
 
       this.errors.forEach(error => {
-        let newError: BmlErrorsNode = Object.assign({}, error, {
-          id: common.makeId(),
-          name: '123',
-          isError: true,
-          children: []
-        });
-
         if (error.lines.length > 0) {
           error.lines.forEach(line => {
             let node = nodes.find(y => y.id === line.fileId);
@@ -89,19 +82,32 @@ export class BlockmlErrorsComponent implements OnDestroy {
               let newNode: BmlErrorsNode = {
                 id: line.fileId,
                 name: line.fileName,
-                children: [newError],
+                children: [
+                  Object.assign({}, error, {
+                    id: common.makeId(),
+                    name: null,
+                    isError: true,
+                    lines: error.lines.filter(k => k.fileId === line.fileId),
+                    children: []
+                  })
+                ],
                 isError: false
               };
               nodes.push(newNode);
-            } else {
-              node.children.push(newError);
             }
           });
         } else {
           let newNode: BmlErrorsNode = {
             id: undefined,
             name: 'No file',
-            children: [newError],
+            children: [
+              Object.assign({}, error, {
+                id: common.makeId(),
+                name: null,
+                isError: true,
+                children: []
+              })
+            ],
             isError: false
           };
           nodes.push(newNode);
