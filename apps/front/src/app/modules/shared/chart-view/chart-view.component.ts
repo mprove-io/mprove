@@ -221,29 +221,64 @@ export class ChartViewComponent implements OnChanges {
               })
           : undefined;
 
-        eChartOptions.xAxis =
-          xField.result === common.FieldResultEnum.Ts
-            ? {
-                type: 'time',
-                axisLabel: {
-                  fontSize: 13,
-                  formatter: tsFormatter
+        eChartOptions.xAxis = common.isDefined(xField.detail)
+          ? {
+              type: 'time',
+              axisLabel: {
+                fontSize: 13,
+                formatter: (value: any) => {
+                  let storeTimeSpec =
+                    xField.detail === common.DetailUnitEnum.Timestamps
+                      ? common.TimeSpecEnum.Timestamps
+                      : xField.detail === common.DetailUnitEnum.Minutes
+                      ? common.TimeSpecEnum.Minutes
+                      : xField.detail === common.DetailUnitEnum.Hours
+                      ? common.TimeSpecEnum.Hours
+                      : xField.detail === common.DetailUnitEnum.Days
+                      ? common.TimeSpecEnum.Days
+                      : xField.detail === common.DetailUnitEnum.Weeks
+                      ? common.TimeSpecEnum.Weeks
+                      : xField.detail === common.DetailUnitEnum.WeeksSunday
+                      ? common.TimeSpecEnum.Weeks
+                      : xField.detail === common.DetailUnitEnum.WeeksMonday
+                      ? common.TimeSpecEnum.Weeks
+                      : xField.detail === common.DetailUnitEnum.Months
+                      ? common.TimeSpecEnum.Months
+                      : xField.detail === common.DetailUnitEnum.Quarters
+                      ? common.TimeSpecEnum.Quarters
+                      : xField.detail === common.DetailUnitEnum.Years
+                      ? common.TimeSpecEnum.Years
+                      : undefined;
+
+                  return common.formatTsUnix({
+                    timeSpec: storeTimeSpec,
+                    unixTimeZoned: value
+                  });
                 }
               }
-            : xField.result === common.FieldResultEnum.Number
-            ? {
-                type: 'value',
-                scale: this.chart.xAxis.scale,
-                axisLabel: {
-                  fontSize: 13
-                }
+            }
+          : xField.result === common.FieldResultEnum.Ts
+          ? {
+              type: 'time',
+              axisLabel: {
+                fontSize: 13,
+                formatter: tsFormatter
               }
-            : {
-                type: 'category',
-                axisLabel: {
-                  fontSize: 13
-                }
-              };
+            }
+          : xField.result === common.FieldResultEnum.Number
+          ? {
+              type: 'value',
+              scale: this.chart.xAxis.scale,
+              axisLabel: {
+                fontSize: 13
+              }
+            }
+          : {
+              type: 'category',
+              axisLabel: {
+                fontSize: 13
+              }
+            };
 
         let yAxis =
           this.chart.series.map(x => x.yAxisIndex).filter(yi => yi > 0)
