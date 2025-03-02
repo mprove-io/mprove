@@ -87,12 +87,22 @@
             <m-arrow-right-icon></m-arrow-right-icon>
           </button>
 
-          <button
-            class="hover:bg-blue2 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
-            (click)="remove(column.id)"
+          <div
+            tp="A required field cannot be deselected"
+            [tpIsEnabled]="column.required === true"
           >
-            <m-delete-icon></m-delete-icon>
-          </button>
+            <button
+              class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+              [ngClass]="{
+                'cursor-default text-gray-400': column.required === true,
+                'hover:bg-blue2': column.required === false
+              }"
+              [disabled]="column.required === true"
+              (click)="remove(column.id)"
+            >
+              <m-delete-icon></m-delete-icon>
+            </button>
+          </div>
         </div>
 
         <div
