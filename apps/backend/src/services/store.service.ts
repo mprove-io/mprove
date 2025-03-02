@@ -170,6 +170,7 @@ export class StoreService {
     (model.content as common.FileStore).fields
       .filter(
         storeField =>
+          storeField.fieldClass !== common.FieldClassEnum.Filter &&
           common.toBooleanFromLowercaseString(storeField.required) === true
       )
       .forEach(field => {
