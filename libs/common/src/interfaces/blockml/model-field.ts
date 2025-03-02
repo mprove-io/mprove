@@ -17,6 +17,7 @@ export class ModelField {
   @IsBoolean()
   required: boolean;
 
+  @IsOptional()
   @IsNumber()
   maxFractions: number;
 
