@@ -57,8 +57,6 @@ export interface FileStore extends FileBasic {
 
   connection?: ProjectConnection;
 
-  filterControlsSortedByShowIfDeps?: string[];
-
   // only for types
   fieldsDeps?: {
     [fieldName: string]: {

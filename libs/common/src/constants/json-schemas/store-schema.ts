@@ -66,9 +66,6 @@ export const STORE_SCHEMA: JSONSchema7 = {
           max_fractions: {
             type: 'integer'
           },
-          show_if: {
-            type: 'string'
-          },
           required: {
             type: 'boolean'
           },
@@ -144,9 +141,6 @@ export const STORE_SCHEMA: JSONSchema7 = {
           },
           label: {
             type: 'string'
-          },
-          show_if: {
-            type: 'string'
           }
         }
       }
@@ -165,9 +159,6 @@ export const STORE_SCHEMA: JSONSchema7 = {
             type: 'string'
           },
           label: {
-            type: 'string'
-          },
-          show_if: {
             type: 'string'
           }
         }
@@ -202,9 +193,6 @@ export const STORE_SCHEMA: JSONSchema7 = {
             type: 'string'
           },
           detail: {
-            type: 'string'
-          },
-          show_if: {
             type: 'string'
           },
           required: {

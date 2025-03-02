@@ -76,7 +76,6 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                     common.ParameterEnum.FormatNumber.toString(),
                     common.ParameterEnum.CurrencyPrefix.toString(),
                     common.ParameterEnum.CurrencySuffix.toString(),
-                    common.ParameterEnum.ShowIf.toString(),
                     common.ParameterEnum.Required.toString(),
                     common.ParameterEnum.Meta.toString()
                   ].indexOf(parameter) < 0) ||
@@ -168,7 +167,6 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                     common.ParameterEnum.FormatNumber.toString(),
                     common.ParameterEnum.CurrencyPrefix.toString(),
                     common.ParameterEnum.CurrencySuffix.toString(),
-                    common.ParameterEnum.ShowIf.toString(),
                     common.ParameterEnum.Required.toString(),
                     common.ParameterEnum.Meta.toString()
                   ].indexOf(parameter) < 0) ||
@@ -257,7 +255,6 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                     common.ParameterEnum.Label.toString(),
                     common.ParameterEnum.Description.toString(),
                     common.ParameterEnum.MaxFractions.toString(),
-                    common.ParameterEnum.ShowIf.toString(),
                     common.ParameterEnum.Required.toString(),
                     common.ParameterEnum.FractionControls.toString()
                     // common.ParameterEnum.SuggestModelDimension.toString(),

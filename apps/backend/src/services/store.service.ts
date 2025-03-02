@@ -50,129 +50,15 @@ export class StoreService {
 
     let newMconfig = common.makeCopy(mconfig);
 
-    // remove filter controls if show_if deps not match
-    (
-      model.content as common.FileStore
-    ).filterControlsSortedByShowIfDeps.forEach(filterDotControl => {
-      let filterName = filterDotControl.split('.')[0];
-      let controlName = filterDotControl.split('.')[1];
-
-      let isCheck = true;
-
-      while (isCheck === true) {
-        let isRemove = false as boolean;
-
-        let selectedFilter = newMconfig.filters.find(
-          x => x.fieldId === `${filterName}`
-        );
-
-        if (common.isDefined(selectedFilter)) {
-          selectedFilter.fractions.forEach(selectedFraction => {
-            // controls will be removed from all fractions - no need to check other fractions if isRemove true
-            if (isRemove === false) {
-              let selectedControl = selectedFraction.controls.find(
-                fc => fc.name === controlName
-              );
-
-              if (common.isDefined(selectedControl)) {
-                selectedControl.showIfDepsIncludingParentFilter.forEach(dep => {
-                  if (isRemove === false) {
-                    let depSelectedFilter = newMconfig.filters.find(
-                      y => y.fieldId === `${dep.filterName}`
-                    );
-
-                    if (common.isUndefined(depSelectedFilter)) {
-                      isRemove = true;
-                      return;
-                    }
-
-                    depSelectedFilter.fractions.forEach(y => {
-                      let depSelectedControl = y.controls.find(
-                        c => c.name === dep.controlName
-                      );
-
-                      if (
-                        common.isUndefined(depSelectedControl) ||
-                        depSelectedControl.value?.toString() !==
-                          dep.value.toString()
-                      ) {
-                        isRemove = true;
-                        return;
-                      }
-                    });
-                  }
-                });
-              }
-            }
-          });
-        }
-
-        if (isRemove === true) {
-          let filter = newMconfig.filters.find(
-            x => x.fieldId === `${filterName}`
-          );
-
-          filter.fractions.forEach(fraction => {
-            fraction.controls = fraction.controls.filter(
-              control => control.name !== controlName
-            );
-          });
-        } else {
-          isCheck = false;
-        }
-      }
-    });
-
-    // add required filter controls, if show_if allows
-    (
-      model.content as common.FileStore
-    ).filterControlsSortedByShowIfDeps.forEach(filterDotControl => {
-      let filterName = filterDotControl.split('.')[0];
-      let controlName = filterDotControl.split('.')[1];
-
-      let storeFilter = (model.content as common.FileStore).fields
-        .filter(x => x.fieldClass === common.FieldClassEnum.Filter)
-        .find(x => x.name === filterName);
-
-      if (common.toBooleanFromLowercaseString(storeFilter.required) === true) {
-        let filterShowIfAllows = true;
-
-        if (common.isDefined(storeFilter.show_if)) {
-          let reg = common.MyRegex.CAPTURE_TRIPLE_REF_FOR_SHOW_IF_G();
-
-          let r = reg.exec(storeFilter.show_if);
-
-          let sFilterName = r[1];
-          let sFractionControlName = r[2];
-          let sControlValue = r[3];
-
-          let sDepSelectedFilter = newMconfig.filters.find(
-            y => y.fieldId === `${sFilterName}`
-          );
-
-          if (
-            common.isUndefined(sDepSelectedFilter) ||
-            sDepSelectedFilter.fractions.length === 0
-          ) {
-            filterShowIfAllows = false;
-          } else {
-            let sDepSelectedControl =
-              sDepSelectedFilter.fractions[0].controls.find(
-                x => x.name === sFractionControlName
-              );
-
-            if (
-              common.isUndefined(sDepSelectedControl) ||
-              sDepSelectedControl.value?.toString() !== sControlValue.toString()
-            ) {
-              filterShowIfAllows = false;
-            }
-          }
-        }
-
-        if (filterShowIfAllows === true) {
+    // add required filters
+    (model.content as common.FileStore).fields
+      .filter(x => x.fieldClass === common.FieldClassEnum.Filter)
+      .forEach(storeFilter => {
+        if (
+          common.toBooleanFromLowercaseString(storeFilter.required) === true
+        ) {
           let selectedFilter = newMconfig.filters.find(
-            x => x.fieldId === `${filterName}`
+            x => x.fieldId === `${storeFilter.name}`
           );
 
           if (common.isUndefined(selectedFilter)) {
@@ -184,7 +70,7 @@ export class StoreService {
             };
 
             let newFilter: common.Filter = {
-              fieldId: `${filterName}`,
+              fieldId: `${storeFilter.name}`,
               fractions: [newFraction]
             };
 
@@ -193,47 +79,7 @@ export class StoreService {
             selectedFilter = newFilter;
           }
 
-          let storeFractionControl = storeFilter.fraction_controls.find(
-            x => x.name === controlName
-          );
-
-          let controlShowIfAllows = true;
-
-          if (common.isDefined(storeFractionControl.show_if)) {
-            let reg = common.MyRegex.CAPTURE_TRIPLE_REF_FOR_SHOW_IF_G();
-
-            let r = reg.exec(storeFractionControl.show_if);
-
-            let cFilterName = r[1];
-            let cFractionControlName = r[2];
-            let cControlValue = r[3];
-
-            let cDepSelectedFilter = newMconfig.filters.find(
-              y => y.fieldId === `${cFilterName}`
-            );
-
-            if (
-              common.isUndefined(cDepSelectedFilter) ||
-              cDepSelectedFilter.fractions.length === 0
-            ) {
-              controlShowIfAllows = false;
-            } else {
-              let cDepSelectedControl =
-                cDepSelectedFilter.fractions[0].controls.find(
-                  x => x.name === cFractionControlName
-                );
-
-              if (
-                common.isUndefined(cDepSelectedControl) ||
-                cDepSelectedControl.value?.toString() !==
-                  cControlValue.toString()
-              ) {
-                controlShowIfAllows = false;
-              }
-            }
-          }
-
-          if (controlShowIfAllows === true) {
+          storeFilter.fraction_controls.forEach(storeFractionControl => {
             let selectedControl = selectedFilter.fractions[0].controls.find(
               x => x.name === storeFractionControl.name
             );
@@ -243,20 +89,16 @@ export class StoreService {
                 options: storeFractionControl.options,
                 value: storeFractionControl.value,
                 label: storeFractionControl.label,
-                showIf: storeFractionControl.show_if,
                 required: storeFractionControl.required,
                 name: storeFractionControl.name,
-                controlClass: storeFractionControl.controlClass,
-                showIfDepsIncludingParentFilter:
-                  storeFractionControl.showIfDepsIncludingParentFilter
+                controlClass: storeFractionControl.controlClass
               };
 
               selectedFilter.fractions[0].controls.push(newControl);
             }
-          }
+          });
         }
-      }
-    });
+      });
 
     newMconfig.filters.forEach(filter => {
       filter.fractions.forEach(fraction => {

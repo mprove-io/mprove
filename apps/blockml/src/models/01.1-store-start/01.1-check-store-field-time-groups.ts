@@ -59,8 +59,7 @@ export function checkStoreFieldTimeGroups(
             [
               common.ParameterEnum.Time.toString(),
               common.ParameterEnum.Group.toString(),
-              common.ParameterEnum.Label.toString(),
-              common.ParameterEnum.ShowIf.toString()
+              common.ParameterEnum.Label.toString()
             ].indexOf(parameter) < 0
           ) {
             item.errors.push(

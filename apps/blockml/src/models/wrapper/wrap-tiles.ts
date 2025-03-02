@@ -205,12 +205,9 @@ export function wrapTiles(item: {
                       ? toBooleanFromLowercaseString(control.value)
                       : control.value,
                   label: storeControl.label,
-                  showIf: storeControl.show_if,
                   required: storeControl.required,
                   name: control.name,
-                  controlClass: control.controlClass,
-                  showIfDepsIncludingParentFilter:
-                    storeControl.showIfDepsIncludingParentFilter
+                  controlClass: control.controlClass
                 };
                 return newControl;
               })

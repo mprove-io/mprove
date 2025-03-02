@@ -1,8 +1,0 @@
-store: s1
-connection: c1
-field_groups: 
-- group: g1
-  show_if: abc
-results: []
-fields: []
-

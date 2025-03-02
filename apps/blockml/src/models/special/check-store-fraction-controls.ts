@@ -57,8 +57,7 @@ export function checkStoreFractionControls(
             common.ParameterEnum.Selector.toString(),
             common.ParameterEnum.Options.toString(),
             common.ParameterEnum.Value.toString(),
-            common.ParameterEnum.Label.toString(),
-            common.ParameterEnum.ShowIf.toString()
+            common.ParameterEnum.Label.toString()
           ].indexOf(parameter) < 0
         ) {
           item.errors.push(

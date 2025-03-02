@@ -1,5 +1,4 @@
 import { enums } from '~common/barrels/enums';
-import { ShowIfDepIncludingParentFilter } from '../show-if-dep-including-parent-filter';
 import { FileStoreFractionControlOption } from './file-store-fraction-control-option';
 
 export interface FileStoreFractionControl {
@@ -27,9 +26,6 @@ export interface FileStoreFractionControl {
   label?: string;
   label_line_num?: number;
 
-  show_if?: string;
-  show_if_line_num?: number;
-
   required?: string; // boolean
   required_line_num?: number;
 
@@ -39,6 +35,4 @@ export interface FileStoreFractionControl {
   name_line_num?: number;
 
   controlClass?: enums.ControlClassEnum;
-
-  showIfDepsIncludingParentFilter?: ShowIfDepIncludingParentFilter[];
 }

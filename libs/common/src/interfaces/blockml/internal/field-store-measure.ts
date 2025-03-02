@@ -22,9 +22,6 @@ export interface FieldStoreMeasure {
   group?: string;
   group_line_num?: number;
 
-  show_if?: string;
-  show_if_line_num?: number;
-
   required?: string; // boolean
   required_line_num?: number;
 

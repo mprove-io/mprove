@@ -28,9 +28,6 @@ export interface FieldStoreDimension {
   detail?: enums.DetailUnitEnum;
   detail_line_num?: number;
 
-  show_if?: string;
-  show_if_line_num?: number;
-
   required?: string; // boolean
   required_line_num?: number;
 

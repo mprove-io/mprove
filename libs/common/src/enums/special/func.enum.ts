@@ -42,9 +42,6 @@ export enum FuncEnum {
 
   CheckStoreBuildMetrics = '02.1-store-next/01-check-store-build-metrics',
   CheckStoreBuildMetricDetails = '02.1-store-next/02-check-store-build-metric-details',
-  CheckStoreShowIfRefs = '02.1-store-next/03-check-store-show-if-refs',
-  CheckStoreShowIfSelfReference = '02.1-store-next/04-check-store-show-if-self-reference',
-  CheckStoreShowIfCycles = '02.1-store-next/05-check-store-show-if-cycles',
   CheckStoreRequiredParameters = '02.1-store-next/06-check-store-required-parameters',
 
   MakeUdfsDict = '03-udf/01-make-udfs-dict',
@@ -155,7 +152,6 @@ export enum FuncEnum {
   CheckReportRowParameters = '17-report/07-check-report-row-parameters',
 
   CheckAccess = 'special/check-access',
-  CheckStoreShowIf = 'special/check-store-show-if',
   CheckVmdrFilterConditions = 'special/check-vmdr-filter-conditions',
   CheckStoreFractionControls = 'special/check-store-fraction-controls',
   CheckStoreFractionControlOptions = 'special/check-store-fraction-control-options',

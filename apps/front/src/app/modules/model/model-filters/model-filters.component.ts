@@ -140,12 +140,9 @@ export class ModelFiltersComponent {
             options: control.options,
             value: control.value,
             label: control.label,
-            showIf: control.show_if,
             required: control.required,
             name: control.name,
-            controlClass: control.controlClass,
-            showIfDepsIncludingParentFilter:
-              control.showIfDepsIncludingParentFilter
+            controlClass: control.controlClass
           };
           return newControl;
         })

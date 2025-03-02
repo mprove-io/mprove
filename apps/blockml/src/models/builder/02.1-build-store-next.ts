@@ -25,36 +25,6 @@ export function buildStoreNext(
     cs
   );
 
-  stores = barStoreNext.checkStoreShowIfRefs(
-    {
-      stores: stores,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  stores = barStoreNext.checkStoreShowIfSelfReference(
-    {
-      stores: stores,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  stores = barStoreNext.checkStoreShowIfCycles(
-    {
-      stores: stores,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
   stores = barStoreNext.checkStoreRequiredParameters(
     {
       stores: stores,

@@ -33,9 +33,6 @@ export const STORE_CONTROL_SCHEMA: JSONSchema7 = {
     label: {
       type: 'string'
     },
-    show_if: {
-      type: 'string'
-    },
     required: {
       type: 'boolean'
     },

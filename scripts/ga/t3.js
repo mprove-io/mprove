@@ -16,8 +16,7 @@ function t3() {
           options_line_num: 311,
           name: 'ga_property',
           name_line_num: 308,
-          controlClass: 'selector',
-          showIfDepsIncludingParentFilter: []
+          controlClass: 'selector'
         },
         {
           label: 'Cohorts Mode',
@@ -26,11 +25,9 @@ function t3() {
           value_line_num: 316,
           name: 'cohorts_switch',
           name_line_num: 314,
-          controlClass: 'switch',
-          showIfDepsIncludingParentFilter: []
+          controlClass: 'switch'
         },
         {
-          show_if: 'top_config.cohorts_switch.true',
           label: 'Granularity',
           value: 'DAILY',
           options: [
@@ -38,56 +35,30 @@ function t3() {
             { value: 'WEEKLY', value_line_num: 323 },
             { value: 'MONTHLY', value_line_num: 324 }
           ],
-          show_if_line_num: 318,
           label_line_num: 319,
           value_line_num: 320,
           options_line_num: 321,
           name: 'granularity',
           name_line_num: 317,
-          controlClass: 'selector',
-          showIfDepsIncludingParentFilter: [
-            {
-              filterName: 'top_config',
-              controlName: 'cohorts_switch',
-              value: 'true'
-            }
-          ]
+          controlClass: 'selector'
         },
         {
-          show_if: 'top_config.cohorts_switch.true',
           label: 'Start Offset',
           value: '0',
-          show_if_line_num: 326,
           label_line_num: 327,
           value_line_num: 328,
           name: 'start_offset',
           name_line_num: 325,
-          controlClass: 'input',
-          showIfDepsIncludingParentFilter: [
-            {
-              filterName: 'top_config',
-              controlName: 'cohorts_switch',
-              value: 'true'
-            }
-          ]
+          controlClass: 'input'
         },
         {
-          show_if: 'top_config.cohorts_switch.true',
           label: 'End Offset',
           value: '5',
-          show_if_line_num: 330,
           label_line_num: 331,
           value_line_num: 332,
           name: 'end_offset',
           name_line_num: 329,
-          controlClass: 'input',
-          showIfDepsIncludingParentFilter: [
-            {
-              filterName: 'top_config',
-              controlName: 'cohorts_switch',
-              value: 'true'
-            }
-          ]
+          controlClass: 'input'
         }
       ],
       required_line_num: 305,
@@ -101,7 +72,6 @@ function t3() {
       group: 'mf'
     },
     {
-      show_if: 'top_config.cohorts_switch.false',
       required: 'true',
       max_fractions: '1',
       fraction_controls: [
@@ -112,14 +82,7 @@ function t3() {
           value_line_num: 341,
           name: 'start_date',
           name_line_num: 339,
-          controlClass: 'date_picker',
-          showIfDepsIncludingParentFilter: [
-            {
-              filterName: 'top_config',
-              controlName: 'cohorts_switch',
-              value: 'false'
-            }
-          ]
+          controlClass: 'date_picker'
         },
         {
           label: 'End Date',
@@ -128,17 +91,9 @@ function t3() {
           value_line_num: 344,
           name: 'end_date',
           name_line_num: 342,
-          controlClass: 'date_picker',
-          showIfDepsIncludingParentFilter: [
-            {
-              filterName: 'top_config',
-              controlName: 'cohorts_switch',
-              value: 'false'
-            }
-          ]
+          controlClass: 'date_picker'
         }
       ],
-      show_if_line_num: 335,
       required_line_num: 336,
       max_fractions_line_num: 337,
       fraction_controls_line_num: 338,
@@ -150,7 +105,6 @@ function t3() {
       group: 'mf'
     },
     {
-      show_if: 'top_config.cohorts_switch.true',
       required: 'true',
       fraction_controls: [
         {
@@ -160,14 +114,7 @@ function t3() {
           value_line_num: 352,
           name: 'start_date',
           name_line_num: 350,
-          controlClass: 'date_picker',
-          showIfDepsIncludingParentFilter: [
-            {
-              filterName: 'top_config',
-              controlName: 'cohorts_switch',
-              value: 'true'
-            }
-          ]
+          controlClass: 'date_picker'
         },
         {
           label: 'End Date',
@@ -176,17 +123,9 @@ function t3() {
           value_line_num: 355,
           name: 'end_date',
           name_line_num: 353,
-          controlClass: 'date_picker',
-          showIfDepsIncludingParentFilter: [
-            {
-              filterName: 'top_config',
-              controlName: 'cohorts_switch',
-              value: 'true'
-            }
-          ]
+          controlClass: 'date_picker'
         }
       ],
-      show_if_line_num: 347,
       required_line_num: 348,
       fraction_controls_line_num: 349,
       name: 'cohorts_config',
@@ -660,14 +599,12 @@ function t3() {
     {
       result: 'string',
       group: 'cohorts',
-      show_if: 'top_config.cohorts_switch.true',
       required: 'true',
       description:
         "The cohort's name in the request. A cohort is a set of users who started using your website or app in any consecutive group of days. If a cohort name is not specified in the request, cohorts are named by their zero based index such as cohort_0 and cohort_1",
       meta: { name: 'cohort', name_line_num: 715 },
       result_line_num: 709,
       group_line_num: 710,
-      show_if_line_num: 711,
       required_line_num: 712,
       description_line_num: 713,
       meta_line_num: 714,
@@ -970,27 +907,13 @@ function t3() {
               value: '2025-02-24',
               label: 'Start Date',
               name: 'start_date',
-              controlClass: 'date_picker',
-              showIfDepsIncludingParentFilter: [
-                {
-                  filterName: 'top_config',
-                  controlName: 'cohorts_switch',
-                  value: 'false'
-                }
-              ]
+              controlClass: 'date_picker'
             },
             {
               value: '2025-02-24',
               label: 'End Date',
               name: 'end_date',
-              controlClass: 'date_picker',
-              showIfDepsIncludingParentFilter: [
-                {
-                  filterName: 'top_config',
-                  controlName: 'cohorts_switch',
-                  value: 'false'
-                }
-              ]
+              controlClass: 'date_picker'
             }
           ]
         }
@@ -1010,15 +933,13 @@ function t3() {
               value: '474781769',
               label: 'Property',
               name: 'ga_property',
-              controlClass: 'selector',
-              showIfDepsIncludingParentFilter: []
+              controlClass: 'selector'
             },
             {
               value: false,
               label: 'Cohorts Mode',
               name: 'cohorts_switch',
-              controlClass: 'switch',
-              showIfDepsIncludingParentFilter: []
+              controlClass: 'switch'
             }
           ]
         }

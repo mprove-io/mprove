@@ -27,7 +27,6 @@ export enum ParameterEnum {
   Fields = 'fields',
   Filter = 'filter',
   MaxFractions = 'max_fractions',
-  ShowIf = 'show_if',
   Required = 'required',
   Or = 'or',
   AndNot = 'and_not',
