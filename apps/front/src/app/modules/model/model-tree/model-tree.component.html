@@ -68,6 +68,16 @@
               node.data.nodeClass === nodeClassCalculation ||
               node.data.nodeClass === nodeClassFilter
           }"
+          tp="A required field cannot be deselected"
+          [tpIsEnabled]="
+            node.data.required === true &&
+            node.data.isSelected === true &&
+            [
+              nodeClassDimension,
+              nodeClassMeasure,
+              nodeClassCalculation
+            ].indexOf(node.data.nodeClass) > -1
+          "
         >
           <div
             data-cy="modelTreeItem"
@@ -75,15 +85,31 @@
             [ngClass]="{
               'cursor-pointer':
                 node.data.nodeClass !== nodeClassInfo &&
-                node.data.nodeClass !== nodeClassFilter,
+                node.data.nodeClass !== nodeClassFilter &&
+                (node.data.required === false ||
+                  node.data.isSelected === false ||
+                  [
+                    nodeClassDimension,
+                    nodeClassMeasure,
+                    nodeClassCalculation
+                  ].indexOf(node.data.nodeClass) < 0),
               'bg-blue2': node.data.nodeClass === nodeClassDimension,
-              'hover:bg-blue5': node.data.nodeClass === nodeClassDimension,
-              'bg-purple-100 hover:bg-purple-200':
-                node.data.nodeClass === nodeClassMeasure,
-              'bg-gray-100 hover:bg-gray-200':
-                node.data.nodeClass === nodeClassFilter,
-              'bg-green2 hover:bg-green1':
-                node.data.nodeClass === nodeClassCalculation,
+              'bg-purple-100': node.data.nodeClass === nodeClassMeasure,
+              'bg-green2': node.data.nodeClass === nodeClassCalculation,
+              'bg-gray-100': node.data.nodeClass === nodeClassFilter,
+              'hover:bg-blue5':
+                node.data.nodeClass === nodeClassDimension &&
+                (node.data.isSelected === false ||
+                  node.data.required === false),
+              'hover:bg-purple-200':
+                node.data.nodeClass === nodeClassMeasure &&
+                (node.data.isSelected === false ||
+                  node.data.required === false),
+              'hover:bg-green1':
+                node.data.nodeClass === nodeClassCalculation &&
+                (node.data.isSelected === false ||
+                  node.data.required === false),
+              'hover:bg-gray-200': node.data.nodeClass === nodeClassFilter,
               'px-5': !node.data.isField
             }"
             (click)="nodeOnClick(node)"
@@ -200,9 +226,11 @@
               <div class="flex flex-grow"></div>
 
               <div
-                tp="Cannot remove required filter"
+                tp="A required filter cannot be removed"
                 [tpIsEnabled]="
-                  node.data.required === true && node.data.isFiltered === true
+                  node.data.required === true &&
+                  node.data.isFiltered === true &&
+                  node.data.nodeClass === nodeClassFilter
                 "
               >
                 <button
@@ -215,7 +243,9 @@
                     'text-gray1': node.data.isFiltered === false
                   }"
                   [disabled]="
-                    node.data.required === true && node.data.isFiltered === true
+                    node.data.required === true &&
+                    node.data.isFiltered === true &&
+                    node.data.nodeClass === nodeClassFilter
                   "
                   (click)="filterField(node, $event)"
                 >
@@ -224,7 +254,8 @@
                     [ngClass]="{
                       'group-hover:bg-white':
                         node.data.required === false ||
-                        node.data.isFiltered === false
+                        node.data.isFiltered === false ||
+                        node.data.nodeClass !== nodeClassFilter
                     }"
                   >
                     <!-- <div

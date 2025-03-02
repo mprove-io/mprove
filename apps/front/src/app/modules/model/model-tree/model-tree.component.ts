@@ -178,15 +178,27 @@ export class ModelTreeComponent implements AfterViewInit {
   }
 
   nodeOnClick(node: TreeNode) {
-    if (node.data.nodeClass === this.nodeClassFilter) {
+    if (
+      node.data.nodeClass === common.FieldClassEnum.Filter ||
+      node.data.nodeClass === common.FieldClassEnum.Info
+    ) {
       return;
     }
+
     node.toggleActivated();
-    if (!node.data.isField) {
-      if (node.hasChildren) {
-        node.toggleExpanded();
-      }
-    } else {
+
+    if (node.data.isField === false && node.hasChildren === true) {
+      node.toggleExpanded();
+    } else if (
+      node.data.isField === true &&
+      (node.data.required === false ||
+        node.data.isSelected === false ||
+        [
+          common.FieldClassEnum.Dimension,
+          common.FieldClassEnum.Measure,
+          common.FieldClassEnum.Calculation
+        ].indexOf(node.data?.nodeClass) < 0)
+    ) {
       this.selectField(node);
     }
   }
