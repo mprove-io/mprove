@@ -125,13 +125,19 @@
                   }"
                 >
                   <div
-                    *ngIf="node.data.isSelected === true"
+                    *ngIf="
+                      node.data.isSelected === true &&
+                      node.data.nodeClass !== nodeClassFilter
+                    "
                     data-cy="filesTreeSelectedSymbol"
                     class="bg-blue3 h-2 w-2 rounded-full text-white focus:outline-none"
                   ></div>
 
                   <div
-                    *ngIf="node.data.isSelected === false"
+                    *ngIf="
+                      node.data.isSelected === false ||
+                      node.data.nodeClass === nodeClassFilter
+                    "
                     class="h-2 w-2"
                   ></div>
                 </div>
@@ -193,36 +199,51 @@
 
               <div class="flex flex-grow"></div>
 
-              <button
-                *ngIf="node.data.isField === true"
-                type="button"
-                data-cy="filesTreeFilterButton"
-                class="group invisible ml-3 flex h-10 flex-shrink-0 items-center justify-center rounded focus:outline-none [.group-bar:hover_&]:visible"
-                [ngClass]="{
-                  'text-blue3': node.data.isFiltered === true,
-                  'text-gray1': node.data.isFiltered === false
-                }"
-                (click)="filterField(node, $event)"
+              <div
+                tp="Cannot remove required filter"
+                [tpIsEnabled]="
+                  node.data.required === true && node.data.isFiltered === true
+                "
               >
-                <div
-                  class="flex h-8 w-9 flex-shrink-0 flex-row items-center justify-center space-x-2 rounded group-hover:bg-white"
-                >
-                  <!-- <div
-                  class="invisible flex w-[76px] flex-shrink-0 justify-start text-sm [.group-bar:hover_&]:visible"
+                <button
+                  *ngIf="node.data.isField === true"
+                  type="button"
+                  data-cy="filesTreeFilterButton"
+                  class="group invisible ml-3 flex h-10 flex-shrink-0 items-center justify-center rounded focus:outline-none [.group-bar:hover_&]:visible"
                   [ngClass]="{
                     'text-blue3': node.data.isFiltered === true,
-                    'text-gray-400': node.data.isFiltered === false
+                    'text-gray1': node.data.isFiltered === false
                   }"
-                  >{{ node.data.fieldResult | result }}</div
-                > -->
-
-                  <m-filter-icon
+                  [disabled]="
+                    node.data.required === true && node.data.isFiltered === true
+                  "
+                  (click)="filterField(node, $event)"
+                >
+                  <div
+                    class="flex h-8 w-9 flex-shrink-0 flex-row items-center justify-center space-x-2 rounded"
                     [ngClass]="{
-                      visible: node.data.isFiltered === true
+                      'group-hover:bg-white':
+                        node.data.required === false ||
+                        node.data.isFiltered === false
                     }"
-                  ></m-filter-icon>
-                </div>
-              </button>
+                  >
+                    <!-- <div
+                class="invisible flex w-[76px] flex-shrink-0 justify-start text-sm [.group-bar:hover_&]:visible"
+                [ngClass]="{
+                  'text-blue3': node.data.isFiltered === true,
+                    'text-gray-400': node.data.isFiltered === false
+                    }"
+                    >{{ node.data.fieldResult | result }}</div
+                    > -->
+
+                    <m-filter-icon
+                      [ngClass]="{
+                        visible: node.data.isFiltered === true
+                      }"
+                    ></m-filter-icon>
+                  </div>
+                </button>
+              </div>
 
               <div
                 *ngIf="node.data.isField === true"
