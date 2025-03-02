@@ -83,7 +83,7 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
     }, 0);
   }
 
-  explore(event?: MouseEvent) {
+  showDialog(event?: MouseEvent) {
     event.stopPropagation();
 
     // console.log('this.params.data');
