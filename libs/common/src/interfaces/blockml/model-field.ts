@@ -8,6 +8,9 @@ export class ModelField {
   @IsBoolean()
   hidden: boolean;
 
+  @IsBoolean()
+  required: boolean;
+
   @IsString()
   label: string;
 

@@ -53,6 +53,9 @@ export class ModelNode {
   @IsBoolean()
   hidden: boolean;
 
+  @IsBoolean()
+  required: boolean;
+
   @ValidateNested()
   @Type(() => ModelNode)
   children?: ModelNode[];

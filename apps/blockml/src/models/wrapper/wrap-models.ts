@@ -23,6 +23,7 @@ export function wrapModels(item: {
           label: common.ModelNodeLabelEnum.ModelFields,
           description: undefined,
           hidden: false,
+          required: false,
           isField: false,
           children: children,
           nodeClass: common.FieldClassEnum.Join
@@ -56,6 +57,7 @@ export function wrapModels(item: {
           label: join.label,
           description: join.description,
           hidden: joinHidden,
+          required: false,
           isField: false,
           children: children,
           nodeClass: common.FieldClassEnum.Join,
@@ -92,6 +94,7 @@ export function wrapModels(item: {
           label: common.ModelNodeLabelEnum.ModelFields,
           description: undefined,
           hidden: false,
+          required: false,
           isField: false,
           children: children,
           nodeClass: common.FieldClassEnum.Join
@@ -126,6 +129,7 @@ export function wrapModels(item: {
           label: fieldGroup.label || fieldGroup.group, // join.label, TODO: field_group label
           description: undefined, //join.description, TODO: field_group description
           hidden: false, // joinHidden,
+          required: false,
           isField: false,
           children: children,
           nodeClass: common.FieldClassEnum.Join,
@@ -219,6 +223,7 @@ export function wrapModels(item: {
             label: common.ModelNodeLabelEnum.Dimensions,
             description: undefined,
             hidden: false,
+            required: false,
             isField: false,
             children: [],
             nodeClass: common.FieldClassEnum.Info
@@ -233,6 +238,7 @@ export function wrapModels(item: {
             label: common.ModelNodeLabelEnum.FilterOnlyFields,
             description: undefined,
             hidden: false,
+            required: false,
             isField: false,
             children: [],
             nodeClass: common.FieldClassEnum.Info
@@ -247,6 +253,7 @@ export function wrapModels(item: {
             label: common.ModelNodeLabelEnum.Measures,
             description: undefined,
             hidden: false,
+            required: false,
             isField: false,
             children: [],
             nodeClass: common.FieldClassEnum.Info
@@ -261,6 +268,7 @@ export function wrapModels(item: {
             label: common.ModelNodeLabelEnum.Calculations,
             description: undefined,
             hidden: false,
+            required: false,
             isField: false,
             children: [],
             nodeClass: common.FieldClassEnum.Info

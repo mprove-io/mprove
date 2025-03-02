@@ -135,6 +135,7 @@ export const FORMAT_NUMBER_EXAMPLES: {
 export const EMPTY_MCONFIG_FIELD: common.MconfigField = {
   id: undefined,
   hidden: undefined,
+  required: undefined,
   label: undefined,
   fieldClass: undefined,
   result: undefined,

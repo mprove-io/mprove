@@ -22,10 +22,12 @@ export function wrapField(item: {
   } = item;
 
   let fieldHidden = common.toBooleanFromLowercaseString(field.hidden);
+  let fieldRequired = common.toBooleanFromLowercaseString(field.required);
 
   let modelField: common.ModelField = {
     id: isStoreModel === true ? `${field.name}` : `${alias}.${field.name}`,
     hidden: fieldHidden,
+    required: fieldRequired,
     label: field.label,
     fieldClass: field.fieldClass,
     result: field.result,
@@ -51,6 +53,7 @@ export function wrapField(item: {
     label: field.label,
     description: field.description,
     hidden: fieldHidden,
+    required: fieldRequired,
     isField: true,
     children: [],
     fieldFileName: fileName,
@@ -78,6 +81,7 @@ export function wrapField(item: {
         label: field.group_label,
         description: field.group_description,
         hidden: fieldHidden,
+        required: false,
         isField: false,
         children: [fieldNode],
         nodeClass: common.FieldClassEnum.Dimension
