@@ -136,6 +136,7 @@ export const EMPTY_MCONFIG_FIELD: common.MconfigField = {
   id: undefined,
   hidden: undefined,
   required: undefined,
+  maxFractions: undefined,
   label: undefined,
   fieldClass: undefined,
   result: undefined,

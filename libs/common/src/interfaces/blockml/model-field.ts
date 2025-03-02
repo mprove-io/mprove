@@ -1,4 +1,10 @@
-import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString
+} from 'class-validator';
 import { enums } from '~common/barrels/enums';
 
 export class ModelField {
@@ -10,6 +16,9 @@ export class ModelField {
 
   @IsBoolean()
   required: boolean;
+
+  @IsNumber()
+  maxFractions: number;
 
   @IsString()
   label: string;

@@ -28,6 +28,9 @@ export function wrapField(item: {
     id: isStoreModel === true ? `${field.name}` : `${alias}.${field.name}`,
     hidden: fieldHidden,
     required: fieldRequired,
+    maxFractions: common.isDefined(field.max_fractions)
+      ? Number(field.max_fractions)
+      : undefined,
     label: field.label,
     fieldClass: field.fieldClass,
     result: field.result,

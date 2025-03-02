@@ -8,13 +8,22 @@
     }"
   >
     <div class="flex flex-row items-start justify-center">
-      <button
-        class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
-        [disabled]="filter.field.required === true"
-        (click)="deleteFilter(filter)"
+      <div
+        tp="Cannot remove required filter"
+        [tpIsEnabled]="filter.field.required === true"
       >
-        <m-trash-icon></m-trash-icon>
-      </button>
+        <button
+          class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
+          [ngClass]="{
+            'text-gray-500 hover:bg-blue-200': filter.field.required === false,
+            'cursor-default text-gray-400': filter.field.required === true
+          }"
+          [disabled]="filter.field.required === true"
+          (click)="deleteFilter(filter)"
+        >
+          <m-trash-icon></m-trash-icon>
+        </button>
+      </div>
 
       <div class="mb-5 ml-5 flex flex-col items-start justify-start">
         <div class="truncate text-sm font-normal">{{
@@ -55,19 +64,55 @@
         >
         </m-fraction>
 
-        <button
-          class="ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
-          (click)="addFraction(filter, filterIndex)"
+        <div
+          tp="The maximum limit for the number of filter fractions has been reached"
+          [tpIsEnabled]="
+            !!filter.field.maxFractions &&
+            filter.field.maxFractions === filter.fractions.length
+          "
         >
-          <m-add-icon></m-add-icon>
-        </button>
+          <button
+            class="ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
+            [ngClass]="{
+              'text-gray-500 hover:bg-blue-200':
+                !filter.field.maxFractions ||
+                filter.field.maxFractions !== filter.fractions.length,
+              'cursor-default text-gray-400':
+                !!filter.field.maxFractions &&
+                filter.field.maxFractions === filter.fractions.length
+            }"
+            [disabled]="
+              !!filter.field.maxFractions &&
+              filter.field.maxFractions === filter.fractions.length
+            "
+            (click)="addFraction(filter, filterIndex)"
+          >
+            <m-add-icon></m-add-icon>
+          </button>
+        </div>
 
-        <button
-          class="ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
-          (click)="deleteFraction(filter, filterIndex, fractionIndex)"
+        <div
+          tp="Cannot remove required filter"
+          [tpIsEnabled]="
+            filter.field.required === true && filter.fractions.length === 1
+          "
         >
-          <m-trash-icon></m-trash-icon>
-        </button>
+          <button
+            class="ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
+            [ngClass]="{
+              'text-gray-500 hover:bg-blue-200':
+                filter.field.required === false || filter.fractions.length > 1,
+              'cursor-default text-gray-400':
+                filter.field.required === true && filter.fractions.length === 1
+            }"
+            [disabled]="
+              filter.field.required === true && filter.fractions.length === 1
+            "
+            (click)="deleteFraction(filter, filterIndex, fractionIndex)"
+          >
+            <m-trash-icon></m-trash-icon>
+          </button>
+        </div>
       </div>
     </div>
   </div>
