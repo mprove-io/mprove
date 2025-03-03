@@ -234,6 +234,8 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         serverTs: 1
       });
 
+      newMconfig.chart.type = common.ChartTypeEnum.Table;
+
       let newFilters = [...newMconfig.filters];
 
       if (isStore === false) {
