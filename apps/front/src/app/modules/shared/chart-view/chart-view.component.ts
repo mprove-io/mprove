@@ -83,6 +83,7 @@ export class ChartViewComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     // console.log('chart-view ngOnChanges');
+    // console.log(changes);
     this.chartViewUpdateChart();
   }
 
@@ -252,7 +253,7 @@ export class ChartViewComponent implements OnChanges {
 
                   return common.formatTsUnix({
                     timeSpec: storeTimeSpec,
-                    unixTimeZoned: value
+                    unixTimeZoned: value / 1000
                   });
                 }
               }
@@ -458,6 +459,12 @@ export class ChartViewComponent implements OnChanges {
 
     this.eChartInitOpts = eChartInitOpts;
     this.eChartOptions = eChartOptions;
+
+    // console.log('chart-view eChartInitOpts');
+    // console.log(eChartInitOpts);
+
+    // console.log('chart-view eChartOptions');
+    // console.log(eChartOptions);
 
     this.cd.detectChanges();
   }

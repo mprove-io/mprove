@@ -36,6 +36,9 @@ export class ChartBoxComponent implements OnChanges {
     // console.log('onChanges');
     // console.log(changes);
 
+    // console.log('chart-box onChanges');
+    // console.log(changes);
+
     if (
       common.isDefined(changes.chartInstanceId) &&
       changes.chartInstanceId.currentValue !==

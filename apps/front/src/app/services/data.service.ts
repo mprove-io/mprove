@@ -158,36 +158,9 @@ export class DataService {
 
           let sqlName = field.sqlName;
 
-          let storeTimeSpec;
-
-          if (isStore === true) {
-            storeTimeSpec =
-              field.detail === common.DetailUnitEnum.Timestamps
-                ? common.TimeSpecEnum.Timestamps
-                : field.detail === common.DetailUnitEnum.Minutes
-                ? common.TimeSpecEnum.Minutes
-                : field.detail === common.DetailUnitEnum.Hours
-                ? common.TimeSpecEnum.Hours
-                : field.detail === common.DetailUnitEnum.Days
-                ? common.TimeSpecEnum.Days
-                : field.detail === common.DetailUnitEnum.Weeks
-                ? common.TimeSpecEnum.Weeks
-                : field.detail === common.DetailUnitEnum.WeeksSunday
-                ? common.TimeSpecEnum.Weeks
-                : field.detail === common.DetailUnitEnum.WeeksMonday
-                ? common.TimeSpecEnum.Weeks
-                : field.detail === common.DetailUnitEnum.Months
-                ? common.TimeSpecEnum.Months
-                : field.detail === common.DetailUnitEnum.Quarters
-                ? common.TimeSpecEnum.Quarters
-                : field.detail === common.DetailUnitEnum.Years
-                ? common.TimeSpecEnum.Years
-                : undefined;
-          }
-
           let tsValue: number;
 
-          if (common.isDefined(storeTimeSpec)) {
+          if (common.isDefined(field.detail)) {
             tsValue = row[field.id] as unknown as number;
           } else if (field.result === common.FieldResultEnum.Ts) {
             let tsValueFn = this.getTsValueFn(sqlName);
@@ -197,9 +170,39 @@ export class DataService {
               : undefined;
           }
 
+          let storeTimeSpec =
+            isStore === false
+              ? undefined
+              : field.detail === common.DetailUnitEnum.Timestamps
+              ? common.TimeSpecEnum.Timestamps
+              : field.detail === common.DetailUnitEnum.Minutes
+              ? common.TimeSpecEnum.Minutes
+              : field.detail === common.DetailUnitEnum.Hours
+              ? common.TimeSpecEnum.Hours
+              : field.detail === common.DetailUnitEnum.Days
+              ? common.TimeSpecEnum.Days
+              : field.detail === common.DetailUnitEnum.Weeks
+              ? common.TimeSpecEnum.Weeks
+              : field.detail === common.DetailUnitEnum.WeeksSunday
+              ? common.TimeSpecEnum.Weeks
+              : field.detail === common.DetailUnitEnum.WeeksMonday
+              ? common.TimeSpecEnum.Weeks
+              : field.detail === common.DetailUnitEnum.Months
+              ? common.TimeSpecEnum.Months
+              : field.detail === common.DetailUnitEnum.Quarters
+              ? common.TimeSpecEnum.Quarters
+              : field.detail === common.DetailUnitEnum.Years
+              ? common.TimeSpecEnum.Years
+              : undefined;
+
           let cell: QCell = {
             id: key.toLowerCase(),
-            value: common.isDefined(value) ? value : 'NULL',
+            value:
+              isStore === true && common.isDefined(storeTimeSpec)
+                ? ((Number(value) * 1000) as unknown as string)
+                : common.isDefined(value)
+                ? value
+                : 'NULL',
             valueFmt: common.isUndefined(value)
               ? 'NULL'
               : common.isDefined(tsValue)
@@ -208,7 +211,7 @@ export class DataService {
                     isStore === true
                       ? storeTimeSpec
                       : this.getTimeSpecByFieldSqlName(sqlName),
-                  unixTimeZoned: tsValue / 1000
+                  unixTimeZoned: tsValue
                 })
               : this.formatValue({
                   value: value,
