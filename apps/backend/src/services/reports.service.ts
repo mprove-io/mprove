@@ -909,6 +909,9 @@ export class ReportsService {
           let isError = false;
 
           if (model.isStoreModel === true) {
+            console.log('columns[0].columnId');
+            console.log(columns[0].columnId);
+
             let mqe = await this.mconfigsService.prepMconfigQuery({
               struct: struct,
               project: project,
@@ -921,7 +924,8 @@ export class ReportsService {
               }),
               metricsEndDateYYYYMMDD: getYYYYMMDDFromEpochUtcByTimezone({
                 timezone: mconfig.timezone,
-                secondsEpochUTC: columns[columns.length - 1].columnId
+                secondsEpochUTC:
+                  columns[columns.length - 1].columnId + 24 * 60 * 60
               })
             });
 
