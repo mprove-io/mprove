@@ -59,163 +59,168 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       common.isDefined(this.params.data.mconfig) &&
       this.params.data.rowType === common.RowTypeEnum.Metric
     ) {
+      let isStore = this.params.data.mconfig.isStoreModel;
+
+      // console.log('isStore');
+      // console.log(isStore);
+
       let rowDataRecord = this.params.data.records.find(
         x => x.key * 1000 === Number(this.params.colDef.field)
       );
 
       // console.log(rowDataRecord.key);
 
-      let ts = rowDataRecord.key * 1000;
-
-      let { date, dateStr, timeStr } =
-        this.timeService.getDateTimeStrFromEpochMs({
-          ts: ts
-        });
+      let tsMs = rowDataRecord.key * 1000;
 
       let metric = this.metricsQuery
         .getValue()
         .metrics.find(y => y.metricId === this.params.data.metricId);
 
-      let timeSpec = this.reportQuery.getValue().timeSpec;
-
-      let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
-
       let timeRangeFraction;
 
-      let dateToStr;
-      let timeToStr;
+      let timeSpec = this.reportQuery.getValue().timeSpec;
 
-      if (timeSpecWord === common.TimeframeEnum.Year) {
-        let nextYear = date.getUTCFullYear() + 1;
-        let nextYearDate = new Date(nextYear, 0, 1, 0, 0, 0, 0);
+      if (isStore === false) {
+        let { date, dateStr, timeStr } =
+          this.timeService.getDateTimeStrFromEpochMs({
+            ts: tsMs
+          });
 
-        let yearTo = this.timeService.getDateTimeStrFromEpochMs({
-          ts:
-            nextYearDate.getTime() -
-            nextYearDate.getTimezoneOffset() * 60 * 1000
+        let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
+
+        let dateToStr;
+        let timeToStr;
+
+        if (timeSpecWord === common.TimeframeEnum.Year) {
+          let nextYear = date.getUTCFullYear() + 1;
+          let nextYearDate = new Date(nextYear, 0, 1, 0, 0, 0, 0);
+
+          let yearTo = this.timeService.getDateTimeStrFromEpochMs({
+            ts:
+              nextYearDate.getTime() -
+              nextYearDate.getTimezoneOffset() * 60 * 1000
+          });
+
+          dateToStr = yearTo.dateStr;
+          timeToStr = yearTo.timeStr;
+        } else if (timeSpecWord === common.TimeframeEnum.Quarter) {
+          let qMonth = date.getUTCMonth(); // Months are 0-11
+
+          let nextQuarterMonth = (Math.floor(qMonth / 3) * 3 + 3) % 12;
+
+          let yearIncrement = qMonth >= 9 ? 1 : 0; // If current month is Oct-Dec, increment year
+
+          let nextQuarterYear = date.getUTCFullYear() + yearIncrement;
+
+          let nextQuarterDate = new Date(
+            nextQuarterYear,
+            nextQuarterMonth,
+            1,
+            0,
+            0,
+            0,
+            0
+          );
+
+          let quarterTo = this.timeService.getDateTimeStrFromEpochMs({
+            ts:
+              nextQuarterDate.getTime() -
+              nextQuarterDate.getTimezoneOffset() * 60 * 1000
+          });
+
+          dateToStr = quarterTo.dateStr;
+          timeToStr = quarterTo.timeStr;
+        } else if (timeSpecWord === common.TimeframeEnum.Month) {
+          let month = date.getUTCMonth(); // Months are zero-based (0-11)
+
+          let nextMonth = month === 11 ? 0 : month + 1;
+
+          let yearTo =
+            nextMonth === 0 ? date.getUTCFullYear() + 1 : date.getUTCFullYear();
+
+          let nextMonthDate = new Date(yearTo, nextMonth, 1, 0, 0, 0, 0);
+
+          let monthTo = this.timeService.getDateTimeStrFromEpochMs({
+            ts:
+              nextMonthDate.getTime() -
+              nextMonthDate.getTimezoneOffset() * 60 * 1000
+          });
+
+          dateToStr = monthTo.dateStr;
+          timeToStr = monthTo.timeStr;
+        } else if (timeSpecWord === common.TimeframeEnum.Week) {
+          let tsNextWeek = tsMs + 7 * 24 * 60 * 60 * 1000;
+
+          let weekTo = this.timeService.getDateTimeStrFromEpochMs({
+            ts: tsNextWeek
+          });
+
+          dateToStr = weekTo.dateStr;
+          timeToStr = weekTo.timeStr;
+        } else if (timeSpecWord === common.TimeframeEnum.Date) {
+          let tsNextDay = tsMs + 24 * 60 * 60 * 1000;
+
+          let dayTo = this.timeService.getDateTimeStrFromEpochMs({
+            ts: tsNextDay
+          });
+
+          dateToStr = dayTo.dateStr;
+          timeToStr = dayTo.timeStr;
+        } else if (timeSpecWord === common.TimeframeEnum.Hour) {
+          let tsNextHour = tsMs + 60 * 60 * 1000;
+
+          let hourTo = this.timeService.getDateTimeStrFromEpochMs({
+            ts: tsNextHour
+          });
+
+          dateToStr = hourTo.dateStr;
+          timeToStr = hourTo.timeStr;
+        } else if (timeSpecWord === common.TimeframeEnum.Minute) {
+          let tsNextMinute = tsMs + 60 * 1000;
+
+          let minuteTo = this.timeService.getDateTimeStrFromEpochMs({
+            ts: tsNextMinute
+          });
+
+          dateToStr = minuteTo.dateStr;
+          timeToStr = minuteTo.timeStr;
+        } else {
+          let tsNextMinute = tsMs + 60 * 1000;
+
+          let minuteTo = this.timeService.getDateTimeStrFromEpochMs({
+            ts: tsNextMinute
+          });
+
+          dateToStr = minuteTo.dateStr;
+          timeToStr = minuteTo.timeStr;
+        }
+
+        let minuteStr = this.timeService.getMinuteStr({
+          dateValue: dateStr,
+          timeValue: timeStr
         });
 
-        dateToStr = yearTo.dateStr;
-        timeToStr = yearTo.timeStr;
-      } else if (timeSpecWord === common.TimeframeEnum.Quarter) {
-        let qMonth = date.getUTCMonth(); // Months are 0-11
-
-        let nextQuarterMonth = (Math.floor(qMonth / 3) * 3 + 3) % 12;
-
-        let yearIncrement = qMonth >= 9 ? 1 : 0; // If current month is Oct-Dec, increment year
-
-        let nextQuarterYear = date.getUTCFullYear() + yearIncrement;
-
-        let nextQuarterDate = new Date(
-          nextQuarterYear,
-          nextQuarterMonth,
-          1,
-          0,
-          0,
-          0,
-          0
-        );
-
-        let quarterTo = this.timeService.getDateTimeStrFromEpochMs({
-          ts:
-            nextQuarterDate.getTime() -
-            nextQuarterDate.getTimezoneOffset() * 60 * 1000
+        let minuteToStr = this.timeService.getMinuteStr({
+          dateValue: dateToStr,
+          timeValue: timeToStr
         });
 
-        dateToStr = quarterTo.dateStr;
-        timeToStr = quarterTo.timeStr;
-      } else if (timeSpecWord === common.TimeframeEnum.Month) {
-        let month = date.getUTCMonth(); // Months are zero-based (0-11)
-
-        let nextMonth = month === 11 ? 0 : month + 1;
-
-        let yearTo =
-          nextMonth === 0 ? date.getUTCFullYear() + 1 : date.getUTCFullYear();
-
-        let nextMonthDate = new Date(yearTo, nextMonth, 1, 0, 0, 0, 0);
-
-        let monthTo = this.timeService.getDateTimeStrFromEpochMs({
-          ts:
-            nextMonthDate.getTime() -
-            nextMonthDate.getTimezoneOffset() * 60 * 1000
-        });
-
-        dateToStr = monthTo.dateStr;
-        timeToStr = monthTo.timeStr;
-      } else if (timeSpecWord === common.TimeframeEnum.Week) {
-        let tsNextWeek = ts + 7 * 24 * 60 * 60 * 1000;
-
-        let weekTo = this.timeService.getDateTimeStrFromEpochMs({
-          ts: tsNextWeek
-        });
-
-        dateToStr = weekTo.dateStr;
-        timeToStr = weekTo.timeStr;
-      } else if (timeSpecWord === common.TimeframeEnum.Date) {
-        let tsNextDay = ts + 24 * 60 * 60 * 1000;
-
-        let dayTo = this.timeService.getDateTimeStrFromEpochMs({
-          ts: tsNextDay
-        });
-
-        dateToStr = dayTo.dateStr;
-        timeToStr = dayTo.timeStr;
-      } else if (timeSpecWord === common.TimeframeEnum.Hour) {
-        let tsNextHour = ts + 60 * 60 * 1000;
-
-        let hourTo = this.timeService.getDateTimeStrFromEpochMs({
-          ts: tsNextHour
-        });
-
-        dateToStr = hourTo.dateStr;
-        timeToStr = hourTo.timeStr;
-      } else if (timeSpecWord === common.TimeframeEnum.Minute) {
-        let tsNextMinute = ts + 60 * 1000;
-
-        let minuteTo = this.timeService.getDateTimeStrFromEpochMs({
-          ts: tsNextMinute
-        });
-
-        dateToStr = minuteTo.dateStr;
-        timeToStr = minuteTo.timeStr;
-      } else {
-        let tsNextMinute = ts + 60 * 1000;
-
-        let minuteTo = this.timeService.getDateTimeStrFromEpochMs({
-          ts: tsNextMinute
-        });
-
-        dateToStr = minuteTo.dateStr;
-        timeToStr = minuteTo.timeStr;
+        timeRangeFraction = {
+          brick: `on ${minuteStr} to ${minuteToStr}`,
+          operator: common.FractionOperatorEnum.Or,
+          type: common.FractionTypeEnum.TsIsInRange,
+          tsDateYear: Number(dateStr.split('-')[0]),
+          tsDateMonth: Number(dateStr.split('-')[1].replace(/^0+/, '')),
+          tsDateDay: Number(dateStr.split('-')[2].replace(/^0+/, '')),
+          tsDateHour: Number(timeStr.split(':')[0].replace(/^0+/, '')),
+          tsDateMinute: Number(timeStr.split(':')[1].replace(/^0+/, '')),
+          tsDateToYear: Number(dateToStr.split('-')[0]),
+          tsDateToMonth: Number(dateToStr.split('-')[1].replace(/^0+/, '')),
+          tsDateToDay: Number(dateToStr.split('-')[2].replace(/^0+/, '')),
+          tsDateToHour: Number(timeToStr.split(':')[0].replace(/^0+/, '')),
+          tsDateToMinute: Number(timeToStr.split(':')[1].replace(/^0+/, ''))
+        };
       }
-
-      let minuteStr = this.timeService.getMinuteStr({
-        dateValue: dateStr,
-        timeValue: timeStr
-      });
-
-      let minuteToStr = this.timeService.getMinuteStr({
-        dateValue: dateToStr,
-        timeValue: timeToStr
-      });
-
-      timeRangeFraction = {
-        brick: `on ${minuteStr} to ${minuteToStr}`,
-        operator: common.FractionOperatorEnum.Or,
-        type: common.FractionTypeEnum.TsIsInRange,
-        tsDateYear: Number(dateStr.split('-')[0]),
-        tsDateMonth: Number(dateStr.split('-')[1].replace(/^0+/, '')),
-        tsDateDay: Number(dateStr.split('-')[2].replace(/^0+/, '')),
-        tsDateHour: Number(timeStr.split(':')[0].replace(/^0+/, '')),
-        tsDateMinute: Number(timeStr.split(':')[1].replace(/^0+/, '')),
-        tsDateToYear: Number(dateToStr.split('-')[0]),
-        tsDateToMonth: Number(dateToStr.split('-')[1].replace(/^0+/, '')),
-        tsDateToDay: Number(dateToStr.split('-')[2].replace(/^0+/, '')),
-        tsDateToHour: Number(timeToStr.split(':')[0].replace(/^0+/, '')),
-        tsDateToMinute: Number(timeToStr.split(':')[1].replace(/^0+/, ''))
-      };
-
-      let newFraction = timeRangeFraction;
 
       let newMconfigId = common.makeId();
       let newQueryId = common.makeId();
@@ -229,13 +234,20 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         serverTs: 1
       });
 
-      newMconfig.filters = [
-        ...newMconfig.filters,
-        {
+      let newFilters = [...newMconfig.filters];
+
+      if (isStore === false) {
+        let newFraction = timeRangeFraction;
+
+        let newFilter: common.Filter = {
           fieldId: `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Time}`,
           fractions: [newFraction]
-        }
-      ].sort((a, b) =>
+        };
+
+        newFilters.push(newFilter);
+      }
+
+      newMconfig.filters = newFilters.sort((a, b) =>
         a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
       );
 

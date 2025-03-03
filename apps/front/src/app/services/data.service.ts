@@ -211,7 +211,7 @@ export class DataService {
                     isStore === true
                       ? storeTimeSpec
                       : this.getTimeSpecByFieldSqlName(sqlName),
-                  unixTimeZoned: tsValue
+                  unixTimeZoned: isStore === true ? tsValue : tsValue / 1000
                 })
               : this.formatValue({
                   value: value,

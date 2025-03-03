@@ -909,8 +909,8 @@ export class ReportsService {
           let isError = false;
 
           if (model.isStoreModel === true) {
-            console.log('columns[0].columnId');
-            console.log(columns[0].columnId);
+            // console.log('columns[0].columnId');
+            // console.log(columns[0].columnId);
 
             let mqe = await this.mconfigsService.prepMconfigQuery({
               struct: struct,
