@@ -85,9 +85,49 @@
                   }}
                 </div>
               </div>
-              <div class="flex max-w-[450px] flex-shrink-0 pr-5">{{
-                fraction.brick
-              }}</div>
+              <div
+                *ngIf="!!fraction.brick"
+                class="flex max-w-[450px] flex-shrink-0 pr-5"
+                >{{ fraction.brick }}</div
+              >
+              <div
+                *ngIf="!fraction.brick"
+                class="flex max-w-[450px] flex-shrink-0 pr-5"
+              >
+                <div
+                  *ngIf="!!fraction.storeFractionSubType"
+                  class="flex max-w-[450px] flex-shrink-0 pr-5"
+                >
+                  <!-- <div> Type</div> -->
+                  <div>
+                    {{
+                      fraction.storeFractionSubTypeLabel ||
+                        fraction.storeFractionSubType
+                    }}</div
+                  >
+
+                  <div
+                    class="ml-5 flex flex-row items-start justify-start"
+                    *ngFor="let control of fraction.controls"
+                  >
+                    <!-- <div>{{ control.name }}</div> -->
+                    <div>{{ control.value }}</div>
+                  </div>
+                </div>
+
+                <div
+                  *ngIf="!fraction.storeFractionSubType"
+                  class="flex max-w-[450px] flex-shrink-0 flex-col pr-5"
+                >
+                  <div
+                    class="ml-5 flex flex-row items-start justify-start"
+                    *ngFor="let control of fraction.controls"
+                  >
+                    <div>{{ control.label || control.name }}</div>
+                    <div class="ml-5">{{ control.value }}</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </td>
         </tr>

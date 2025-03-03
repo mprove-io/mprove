@@ -63,8 +63,13 @@ export class StoreFractionSubTypeComponent {
       logicGroup: item.logicGroup,
       type: common.FractionTypeEnum.StoreFraction,
       storeFractionSubType: item.typeValue,
-      storeFractionLogicGroupWithSubType: item.logicGroup + item.typeValue,
       storeFractionSubTypeOptions: this.fraction.storeFractionSubTypeOptions,
+      storeFractionSubTypeLabel: common.isDefined(item.typeValue)
+        ? this.fraction.storeFractionSubTypeOptions.find(
+            k => k.typeValue === item.typeValue
+          ).label
+        : item.typeValue,
+      storeFractionLogicGroupWithSubType: item.logicGroup + item.typeValue,
       controls: (this.modelContent as common.FileStore).results
         .find(r => r.result === this.fieldResult)
         .fraction_types.find(ft => ft.type === item.typeValue)

@@ -44,6 +44,10 @@ export class Fraction {
 
   @IsOptional()
   @IsString()
+  storeFractionSubTypeLabel?: string;
+
+  @IsOptional()
+  @IsString()
   storeFractionLogicGroupWithSubType?: string;
 
   @IsOptional()
