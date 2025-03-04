@@ -831,7 +831,8 @@ export class ReportsService {
             timeFieldIdSpec = `${metric.timefieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
           } else {
             let timeSpecDetail = common.getTimeSpecDetail({
-              timeSpec: timeSpec
+              timeSpec: timeSpec,
+              weekStart: struct.weekStart
             });
 
             let storeField = (model.content as common.FileStore).fields.find(

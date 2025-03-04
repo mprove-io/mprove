@@ -3,7 +3,6 @@ export enum DetailUnitEnum {
   Minutes = 'minutes',
   Hours = 'hours',
   Days = 'days',
-  Weeks = 'weeks',
   WeeksSunday = 'weeksSunday',
   WeeksMonday = 'weeksMonday',
   Months = 'months',

@@ -237,8 +237,6 @@ export class ChartViewComponent implements OnChanges {
                       ? common.TimeSpecEnum.Hours
                       : xField.detail === common.DetailUnitEnum.Days
                       ? common.TimeSpecEnum.Days
-                      : xField.detail === common.DetailUnitEnum.Weeks
-                      ? common.TimeSpecEnum.Weeks
                       : xField.detail === common.DetailUnitEnum.WeeksSunday
                       ? common.TimeSpecEnum.Weeks
                       : xField.detail === common.DetailUnitEnum.WeeksMonday

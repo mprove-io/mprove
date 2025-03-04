@@ -181,8 +181,6 @@ export class DataService {
               ? common.TimeSpecEnum.Hours
               : field.detail === common.DetailUnitEnum.Days
               ? common.TimeSpecEnum.Days
-              : field.detail === common.DetailUnitEnum.Weeks
-              ? common.TimeSpecEnum.Weeks
               : field.detail === common.DetailUnitEnum.WeeksSunday
               ? common.TimeSpecEnum.Weeks
               : field.detail === common.DetailUnitEnum.WeeksMonday
