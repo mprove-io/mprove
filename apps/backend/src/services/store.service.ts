@@ -48,6 +48,11 @@ export class StoreService {
       metricsEndDateYYYYMMDD
     } = item;
 
+    // console.log('item.metricsStartDateYYYYMMDD');
+    // console.log(item.metricsStartDateYYYYMMDD);
+    // console.log('item.metricsEndDateYYYYMMDD');
+    // console.log(item.metricsEndDateYYYYMMDD);
+
     let newMconfig = common.makeCopy(mconfig);
 
     //

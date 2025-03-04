@@ -698,7 +698,9 @@ export class ReportsService {
       columns,
       isTimeColumnsLimitExceeded,
       timeColumnsLimit,
-      timeRangeFraction
+      timeRangeFraction,
+      rangeStart,
+      rangeEnd
     } = await this.blockmlService.getTimeColumns({
       traceId: traceId,
       timezone: timezone,
@@ -913,6 +915,8 @@ export class ReportsService {
             // console.log('columns[0].columnId');
             // console.log(columns[0].columnId);
 
+            // console.log('getRepData prepMconfigQuery');
+
             let mqe = await this.mconfigsService.prepMconfigQuery({
               struct: struct,
               project: project,
@@ -921,12 +925,18 @@ export class ReportsService {
               mconfig: mconfig,
               metricsStartDateYYYYMMDD: getYYYYMMDDFromEpochUtcByTimezone({
                 timezone: mconfig.timezone,
-                secondsEpochUTC: columns[0].columnId
+                secondsEpochUTC: rangeStart
+                // secondsEpochUTC: columns[0].columnId
               }),
               metricsEndDateYYYYMMDD: getYYYYMMDDFromEpochUtcByTimezone({
                 timezone: mconfig.timezone,
                 secondsEpochUTC:
-                  columns[columns.length - 1].columnId + 24 * 60 * 60
+                  mconfig.dateRangeIncludesRightSide === true &&
+                  rangeEnd - rangeStart >= 24 * 60 * 60
+                    ? rangeEnd - 24 * 60 * 60
+                    : rangeEnd
+                // secondsEpochUTC:
+                //   columns[columns.length - 1].columnId + 24 * 60 * 60,
               })
             });
 

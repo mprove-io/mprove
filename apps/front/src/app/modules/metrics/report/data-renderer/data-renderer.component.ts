@@ -275,6 +275,11 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         cellMetricsEndDateMs = undefined;
       }
 
+      // console.log('cellMetricsStartDateMs');
+      // console.log(cellMetricsStartDateMs);
+      // console.log('cellMetricsEndDateMs');
+      // console.log(cellMetricsEndDateMs);
+
       this.mconfigService.navCreateTempMconfigAndQuery({
         newMconfig: newMconfig,
         cellMetricsStartDateMs: cellMetricsStartDateMs,

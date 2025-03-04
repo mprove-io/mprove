@@ -547,7 +547,9 @@ export class BlockmlService {
       columns: columns,
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded,
       timeColumnsLimit: timeColumnsLimit,
-      timeRangeFraction: timeRangeFraction
+      timeRangeFraction: timeRangeFraction,
+      rangeStart: rangeStart,
+      rangeEnd: rangeEnd
     };
   }
 }
