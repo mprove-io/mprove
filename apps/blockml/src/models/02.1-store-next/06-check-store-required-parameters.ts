@@ -110,6 +110,26 @@ export function checkStoreRequiredParameters(
       return;
     }
 
+    if (
+      common.isDefined(x.date_range_includes_right_side) &&
+      !x.date_range_includes_right_side.match(common.MyRegex.TRUE_FALSE())
+    ) {
+      item.errors.push(
+        new BmError({
+          title: common.ErTitleEnum.WRONG_DATE_RANGE_INCLUDES_RIGHT_SIDE,
+          message: `parameter "${common.ParameterEnum.DateRangeIncludesRightSide}" must be 'true' or 'false' if specified`,
+          lines: [
+            {
+              line: x.date_range_includes_right_side_line_num,
+              name: x.fileName,
+              path: x.filePath
+            }
+          ]
+        })
+      );
+      return;
+    }
+
     if (errorsOnStart === item.errors.length) {
       newStores.push(x);
     }

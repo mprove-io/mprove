@@ -24,6 +24,7 @@ export const modelsTable = pgTable(
     content: json('content').notNull(),
     isViewModel: boolean('is_view_model'),
     isStoreModel: boolean('is_store_model'),
+    dateRangeIncludesRightSide: boolean('date_range_includes_right_side'),
     accessUsers: json('access_users').$type<string[]>().notNull(),
     accessRoles: json('access_roles').$type<string[]>().notNull(),
     label: varchar('label').notNull(),

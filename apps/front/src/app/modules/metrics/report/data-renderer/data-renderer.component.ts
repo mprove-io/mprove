@@ -87,7 +87,9 @@ export class DataRendererComponent implements ICellRendererAngularComp {
           ts: tsMs
         });
 
-      let isDateRangeRightSideIncluded = true;
+      let isDateRangeIncludesRightSide =
+        this.params.data.mconfig.dateRangeIncludesRightSide;
+
       let cellMetricsStartDateMs = dateUtcMs;
       let cellMetricsEndDateMs;
 
@@ -263,7 +265,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       if (
         common.isDefined(cellMetricsStartDateMs) &&
         common.isDefined(cellMetricsEndDateMs) &&
-        isDateRangeRightSideIncluded === true &&
+        isDateRangeIncludesRightSide === true &&
         cellMetricsEndDateMs - cellMetricsStartDateMs >= 24 * 60 * 60 * 1000
       ) {
         cellMetricsEndDateMs = cellMetricsEndDateMs - 24 * 60 * 60 * 1000;

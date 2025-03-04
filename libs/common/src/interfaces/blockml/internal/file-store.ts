@@ -35,6 +35,9 @@ export interface FileStore extends FileBasic {
   response?: string;
   response_line_num?: number;
 
+  date_range_includes_right_side?: string;
+  date_range_includes_right_side_line_num?: number;
+
   parameters?: FieldAny[];
   parameters_line_num?: number;
 

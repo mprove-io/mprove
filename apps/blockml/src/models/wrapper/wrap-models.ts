@@ -324,6 +324,16 @@ export function wrapModels(item: {
         filePath: x.filePath,
         content: x,
         isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
+        dateRangeIncludesRightSide:
+          x.fileExt === common.FileExtensionEnum.Store &&
+          (common.isUndefined(
+            (x as common.FileStore).date_range_includes_right_side
+          ) ||
+            common.toBooleanFromLowercaseString(
+              (x as common.FileStore).date_range_includes_right_side
+            ) === true)
+            ? true
+            : false,
         isViewModel:
           x.fileExt === common.FileExtensionEnum.Model
             ? (x as common.FileModel).isViewModel

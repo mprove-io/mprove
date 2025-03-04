@@ -40,6 +40,7 @@ test('1', async t => {
     queryId: queryId,
     modelId: 'abc',
     isStoreModel: false,
+    dateRangeIncludesRightSide: false,
     storePart: undefined,
     modelLabel: 'abc',
     select: [],

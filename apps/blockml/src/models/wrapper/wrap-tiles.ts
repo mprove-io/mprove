@@ -235,6 +235,14 @@ export function wrapTiles(item: {
       queryId: queryId,
       modelId: tile.model,
       isStoreModel: isStore,
+      dateRangeIncludesRightSide:
+        isStore === true &&
+        (common.isUndefined(store.date_range_includes_right_side) ||
+          common.toBooleanFromLowercaseString(
+            store.date_range_includes_right_side
+          ) === true)
+          ? true
+          : false,
       storePart: undefined,
       modelLabel: isStore === true ? store.label : model.label,
       select: tile.select,

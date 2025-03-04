@@ -60,6 +60,7 @@ export class StructService {
       queryId: newQueryId,
       modelId: this.model.modelId,
       isStoreModel: this.model.isStoreModel,
+      dateRangeIncludesRightSide: this.model.dateRangeIncludesRightSide,
       storePart: undefined,
       modelLabel: this.model.label,
       select: [],

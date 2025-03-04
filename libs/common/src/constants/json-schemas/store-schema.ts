@@ -53,6 +53,9 @@ export const STORE_SCHEMA: JSONSchema7 = {
     response: {
       type: 'string'
     },
+    date_range_includes_right_side: {
+      type: 'boolean'
+    },
     parameters: {
       type: 'array',
       items: {

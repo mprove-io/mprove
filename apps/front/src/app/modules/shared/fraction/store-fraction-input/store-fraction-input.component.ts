@@ -127,6 +127,7 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
                 modelId: modelName,
                 isStoreModel:
                   this.fraction.type === common.FractionTypeEnum.StoreFraction,
+                dateRangeIncludesRightSide: undefined, // adjustMconfig overrides it
                 storePart: undefined,
                 modelLabel: 'empty',
                 select: [fieldId],

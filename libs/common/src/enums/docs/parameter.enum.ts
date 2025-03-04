@@ -96,6 +96,7 @@ export enum ParameterEnum {
   Body = 'body',
   Response = 'response',
   Results = 'results',
+  DateRangeIncludesRightSide = 'date_range_includes_right_side',
   FieldGroups = 'field_groups',
   FieldTimeGroups = 'field_time_groups',
   Chart = 'chart',

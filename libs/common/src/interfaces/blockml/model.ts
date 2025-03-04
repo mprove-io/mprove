@@ -30,6 +30,9 @@ export class Model {
   @IsBoolean()
   isStoreModel: boolean;
 
+  @IsBoolean()
+  dateRangeIncludesRightSide: boolean;
+
   @IsString({ each: true })
   accessUsers: string[];
 

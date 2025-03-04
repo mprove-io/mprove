@@ -30,6 +30,9 @@ export class Mconfig {
   @IsBoolean()
   isStoreModel: boolean;
 
+  @IsBoolean()
+  dateRangeIncludesRightSide: boolean;
+
   @IsOptional()
   @ValidateNested()
   @Type(() => StorePart)

@@ -50,6 +50,17 @@ export class StoreService {
 
     let newMconfig = common.makeCopy(mconfig);
 
+    //
+    newMconfig.dateRangeIncludesRightSide =
+      common.isUndefined(
+        (model.content as common.FileStore).date_range_includes_right_side
+      ) ||
+      common.toBooleanFromLowercaseString(
+        (model.content as common.FileStore).date_range_includes_right_side
+      ) === true
+        ? true
+        : false;
+
     // add required filters
     (model.content as common.FileStore).fields
       .filter(x => x.fieldClass === common.FieldClassEnum.Filter)

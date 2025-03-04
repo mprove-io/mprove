@@ -277,6 +277,8 @@ response: |
 
   return newData || [];
 
+date_range_includes_right_side: true
+
 parameters:
 - filter: top_config
   required: true

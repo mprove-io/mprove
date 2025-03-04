@@ -13,6 +13,7 @@ let modelState: ModelState = {
   content: undefined,
   isViewModel: undefined,
   isStoreModel: undefined,
+  dateRangeIncludesRightSide: undefined,
   accessUsers: [],
   accessRoles: [],
   label: undefined,

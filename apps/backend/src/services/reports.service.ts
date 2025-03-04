@@ -870,6 +870,7 @@ export class ReportsService {
             queryId: newQueryId,
             modelId: model.modelId,
             isStoreModel: model.isStoreModel,
+            dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
             storePart: undefined,
             modelLabel: model.label,
             select: [timeFieldIdSpec, metric.fieldId],
