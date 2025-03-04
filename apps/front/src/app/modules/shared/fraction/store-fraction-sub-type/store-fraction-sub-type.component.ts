@@ -80,7 +80,8 @@ export class StoreFractionSubTypeComponent {
             label: control.label,
             required: control.required,
             name: control.name,
-            controlClass: control.controlClass
+            controlClass: control.controlClass,
+            isMetricsDate: undefined
           };
           return newControl;
         }),

@@ -24,4 +24,7 @@ export class FractionControl {
 
   @IsEnum(enums.ControlClassEnum)
   controlClass: enums.ControlClassEnum;
+
+  @IsOptional()
+  isMetricsDate: boolean;
 }

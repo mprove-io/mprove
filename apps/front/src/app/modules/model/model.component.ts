@@ -581,7 +581,9 @@ export class ModelComponent implements OnInit, OnDestroy {
 
     newMconfig.limit = Number(limit.value);
 
-    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery({
+      newMconfig: newMconfig
+    });
   }
 
   timezoneChange() {
@@ -596,7 +598,9 @@ export class ModelComponent implements OnInit, OnDestroy {
     this.uiQuery.updatePart({ timezone: timezone });
     this.uiService.setUserUi({ timezone: timezone });
 
-    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery({
+      newMconfig: newMconfig
+    });
   }
 
   run() {

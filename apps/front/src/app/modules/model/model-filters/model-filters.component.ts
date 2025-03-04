@@ -59,7 +59,9 @@ export class ModelFiltersComponent {
       ...newMconfig.filters.slice(filterIndex + 1)
     ];
 
-    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery({
+      newMconfig: newMconfig
+    });
   }
 
   addFraction(filterExtended: common.FilterX, filterIndex: number) {
@@ -169,7 +171,8 @@ export class ModelFiltersComponent {
                 label: control.label,
                 required: control.required,
                 name: control.name,
-                controlClass: control.controlClass
+                controlClass: control.controlClass,
+                isMetricsDate: undefined
               };
               return newControl;
             })
@@ -180,7 +183,8 @@ export class ModelFiltersComponent {
                 label: control.label,
                 required: control.required,
                 name: control.name,
-                controlClass: control.controlClass
+                controlClass: control.controlClass,
+                isMetricsDate: undefined
               };
               return newControl;
             })
@@ -205,7 +209,9 @@ export class ModelFiltersComponent {
       ...newMconfig.filters.slice(filterIndex + 1)
     ];
 
-    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery({
+      newMconfig: newMconfig
+    });
   }
 
   deleteFraction(
@@ -239,7 +245,9 @@ export class ModelFiltersComponent {
       ];
     }
 
-    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery({
+      newMconfig: newMconfig
+    });
   }
 
   deleteFilter(filterExtended: common.FilterX) {
@@ -249,6 +257,8 @@ export class ModelFiltersComponent {
       x => x.fieldId !== filterExtended.fieldId
     );
 
-    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery({
+      newMconfig: newMconfig
+    });
   }
 }

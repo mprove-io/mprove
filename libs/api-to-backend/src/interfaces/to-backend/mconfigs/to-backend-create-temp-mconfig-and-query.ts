@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
@@ -19,6 +25,14 @@ export class ToBackendCreateTempMconfigAndQueryRequestPayload {
   @ValidateNested()
   @Type(() => common.Mconfig)
   mconfig: common.Mconfig;
+
+  @IsOptional()
+  @IsNumber()
+  cellMetricsStartDateMs: number;
+
+  @IsOptional()
+  @IsNumber()
+  cellMetricsEndDateMs: number;
 }
 
 export class ToBackendCreateTempMconfigAndQueryRequest extends ToBackendRequest {

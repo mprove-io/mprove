@@ -125,7 +125,13 @@ export class MconfigService {
     return newMconfig;
   }
 
-  navCreateTempMconfigAndQuery(newMconfig: common.MconfigX) {
+  navCreateTempMconfigAndQuery(item: {
+    newMconfig: common.MconfigX;
+    cellMetricsStartDateMs?: number;
+    cellMetricsEndDateMs?: number;
+  }) {
+    let { newMconfig, cellMetricsStartDateMs, cellMetricsEndDateMs } = item;
+
     this.spinner.show(constants.APP_SPINNER_NAME);
 
     let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload =
@@ -134,7 +140,9 @@ export class MconfigService {
         isRepoProd: this.nav.isRepoProd,
         branchId: this.nav.branchId,
         envId: this.nav.envId,
-        mconfig: newMconfig
+        mconfig: newMconfig,
+        cellMetricsStartDateMs: cellMetricsStartDateMs,
+        cellMetricsEndDateMs: cellMetricsEndDateMs
       };
 
     this.apiService

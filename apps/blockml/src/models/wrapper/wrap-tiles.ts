@@ -216,7 +216,8 @@ export function wrapTiles(item: {
                   label: storeControl.label,
                   required: storeControl.required,
                   name: control.name,
-                  controlClass: control.controlClass
+                  controlClass: control.controlClass,
+                  isMetricsDate: undefined
                 };
                 return newControl;
               })

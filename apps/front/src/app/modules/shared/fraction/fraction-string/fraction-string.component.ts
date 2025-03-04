@@ -239,7 +239,9 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                     isRepoProd: nav.isRepoProd,
                     branchId: nav.branchId,
                     envId: nav.envId,
-                    mconfig: newMconfig
+                    mconfig: newMconfig,
+                    cellMetricsStartDateMs: undefined,
+                    cellMetricsEndDateMs: undefined
                   } as apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload
                 })
                 .pipe(

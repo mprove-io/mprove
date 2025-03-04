@@ -86,6 +86,7 @@ export class StoreService {
 
             if (common.isUndefined(selectedControl)) {
               let newControl: common.FractionControl = {
+                isMetricsDate: undefined,
                 options: storeFractionControl.options,
                 value: storeFractionControl.value,
                 label: storeFractionControl.label,
@@ -109,7 +110,19 @@ export class StoreService {
               typeof control.value === 'string'
           )
           .forEach(control => {
-            let newValue = control.value;
+            let newValue =
+              control.isMetricsDate === true &&
+              (common.isDefined(metricsStartDateYYYYMMDD) ||
+                common.isDefined(metricsEndDateYYYYMMDD))
+                ? (model.content as common.FileStore).fields
+                    .filter(
+                      storeField =>
+                        storeField.fieldClass === common.FieldClassEnum.Filter
+                    )
+                    .find(storeField => storeField.name === filter.fieldId)
+                    .fraction_controls.find(fc => fc.name === control.name)
+                    .value
+                : control.value;
 
             let reg = common.MyRegex.CAPTURE_S_REF();
             let r;
@@ -122,12 +135,16 @@ export class StoreService {
               let target: any;
 
               if (reference === 'METRICS_DATE_FROM') {
+                control.isMetricsDate = true;
+
                 target = common.isDefined(metricsStartDateYYYYMMDD)
                   ? metricsStartDateYYYYMMDD
                   : getYYYYMMDDCurrentDateByTimezone({
                       timezone: mconfig.timezone
                     });
               } else if (reference === 'METRICS_DATE_TO') {
+                control.isMetricsDate = true;
+
                 target = common.isDefined(metricsEndDateYYYYMMDD)
                   ? metricsEndDateYYYYMMDD
                   : getYYYYMMDDCurrentDateByTimezone({

@@ -30,6 +30,7 @@ import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
+import { getYYYYMMDDFromEpochUtcByTimezone } from '~node-common/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
 
 let retry = require('async-retry');
 
@@ -64,7 +65,15 @@ export class CreateTempMconfigAndQueryController {
       request.body;
 
     let { traceId } = reqValid.info;
-    let { mconfig, projectId, isRepoProd, branchId, envId } = reqValid.payload;
+    let {
+      mconfig,
+      projectId,
+      isRepoProd,
+      branchId,
+      envId,
+      cellMetricsStartDateMs,
+      cellMetricsEndDateMs
+    } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
 
@@ -136,8 +145,18 @@ export class CreateTempMconfigAndQueryController {
         envId: envId,
         model: model,
         mconfig: mconfig,
-        metricsStartDateYYYYMMDD: undefined,
-        metricsEndDateYYYYMMDD: undefined
+        metricsStartDateYYYYMMDD: common.isDefined(cellMetricsStartDateMs)
+          ? getYYYYMMDDFromEpochUtcByTimezone({
+              timezone: mconfig.timezone,
+              secondsEpochUTC: cellMetricsStartDateMs / 1000
+            })
+          : undefined,
+        metricsEndDateYYYYMMDD: common.isDefined(cellMetricsEndDateMs)
+          ? getYYYYMMDDFromEpochUtcByTimezone({
+              timezone: mconfig.timezone,
+              secondsEpochUTC: cellMetricsEndDateMs / 1000
+            })
+          : undefined
       });
 
       newMconfig = mqe.newMconfig;

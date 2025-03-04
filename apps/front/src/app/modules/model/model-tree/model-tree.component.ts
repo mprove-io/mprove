@@ -240,7 +240,9 @@ export class ModelTreeComponent implements AfterViewInit {
       fields: fields
     });
 
-    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery({
+      newMconfig: newMconfig
+    });
   }
 
   filterField(node: TreeNode, event: MouseEvent) {
@@ -358,7 +360,8 @@ export class ModelTreeComponent implements AfterViewInit {
                   label: control.label,
                   required: control.required,
                   name: control.name,
-                  controlClass: control.controlClass
+                  controlClass: control.controlClass,
+                  isMetricsDate: undefined
                 };
                 return newControl;
               })
@@ -371,7 +374,8 @@ export class ModelTreeComponent implements AfterViewInit {
                     label: control.label,
                     required: control.required,
                     name: control.name,
-                    controlClass: control.controlClass
+                    controlClass: control.controlClass,
+                    isMetricsDate: undefined
                   };
                   return newControl;
                 })
@@ -396,7 +400,9 @@ export class ModelTreeComponent implements AfterViewInit {
       this.expandFilters.emit();
     }
 
-    this.mconfigService.navCreateTempMconfigAndQuery(newMconfig);
+    this.mconfigService.navCreateTempMconfigAndQuery({
+      newMconfig: newMconfig
+    });
   }
 
   makeNodesExtra() {

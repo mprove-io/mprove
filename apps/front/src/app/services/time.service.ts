@@ -107,6 +107,8 @@ export class TimeService {
     let dateStr = `${year}-${monthD}-${dayD}`;
     let timeStr = `${hourD}:${minuteD}:${secondD}`;
 
-    return { date, dateStr, timeStr };
+    let dateUtcMs = new Date(`${dateStr}T00:00:00Z`).getTime();
+
+    return { date, dateStr, timeStr, dateUtcMs };
   }
 }
