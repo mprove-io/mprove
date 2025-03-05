@@ -92,7 +92,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   filtersIsExpanded = false;
 
-  queriesLength = 0;
+  notEmptySelectQueriesLength = 0;
 
   seriesParts: SeriesPart[] = [];
   dataPoints: DataPoint[] = [];
@@ -158,8 +158,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
         this.uiService.setUserUi({ projectReportLinks: newProjectReportLinks });
       }
 
-      this.queriesLength = this.report.rows.filter(row =>
-        common.isDefined(row.query)
+      this.notEmptySelectQueriesLength = this.report.rows.filter(
+        row => common.isDefined(row.query) && row.mconfig.select.length > 0
       ).length;
 
       let newQueries = this.report.rows.filter(
@@ -168,7 +168,14 @@ export class MetricsComponent implements OnInit, OnDestroy {
           row.query.status === common.QueryStatusEnum.New
       );
 
-      if (this.isAutoRun === true && newQueries.length > 0) {
+      if (
+        this.isAutoRun === true &&
+        newQueries.length > 0
+        //  &&
+        // this.report.rows.filter(
+        //   row => common.isDefined(row.query) && row.mconfig.select.length === 0
+        // ).length === 0
+      ) {
         setTimeout(() => {
           this.run();
         }, 0);
@@ -713,7 +720,9 @@ export class MetricsComponent implements OnInit, OnDestroy {
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       projectId: nav.projectId,
       queryIds: this.report.rows
-        .filter(row => common.isDefined(row.query))
+        .filter(
+          row => common.isDefined(row.query) && row.mconfig.select.length > 0
+        )
         .map(row => row.query.queryId)
     };
 

@@ -841,25 +841,28 @@ export class ReportsService {
                 field.detail === timeSpecDetail
             );
 
-            timeFieldIdSpec = storeField.name;
+            timeFieldIdSpec = storeField?.name;
           }
 
-          let timeSorting: common.Sorting = {
-            desc: false,
-            fieldId: timeFieldIdSpec
-          };
+          let timeSorting: common.Sorting =
+            model.isStoreModel === true && common.isUndefined(timeFieldIdSpec)
+              ? undefined
+              : {
+                  desc: false,
+                  fieldId: timeFieldIdSpec
+                };
 
-          let timeFilter: common.Filter = {
-            fieldId: timeFieldIdSpec,
-            fractions: [timeRangeFraction]
-          };
+          let timeFilter: common.Filter =
+            model.isStoreModel === true && common.isUndefined(timeFieldIdSpec)
+              ? undefined
+              : {
+                  fieldId: timeFieldIdSpec,
+                  fractions: [timeRangeFraction]
+                };
 
           let filters: common.Filter[] =
             model.isStoreModel === true
-              ? [
-                  // timeFilter,
-                  ...x.parametersFiltersWithExcludedTime
-                ].sort((a, b) =>
+              ? [...x.parametersFiltersWithExcludedTime].sort((a, b) =>
                   a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
                 )
               : [timeFilter, ...x.parametersFiltersWithExcludedTime].sort(
@@ -876,16 +879,24 @@ export class ReportsService {
             dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
             storePart: undefined,
             modelLabel: model.label,
-            select: [timeFieldIdSpec, metric.fieldId],
+            select:
+              model.isStoreModel === true && common.isUndefined(timeFieldIdSpec)
+                ? []
+                : [timeFieldIdSpec, metric.fieldId],
             unsafeSelect: [],
             warnSelect: [],
             joinAggregations: [],
-            sortings: [timeSorting],
+            sortings:
+              model.isStoreModel === true && common.isUndefined(timeFieldIdSpec)
+                ? []
+                : [timeSorting],
             sorts:
-              [
-                common.FractionTypeEnum.TsIsAfterDate,
-                common.FractionTypeEnum.TsIsAfterRelative
-              ].indexOf(timeRangeFraction.type) > -1
+              model.isStoreModel === true && common.isUndefined(timeFieldIdSpec)
+                ? undefined
+                : [
+                    common.FractionTypeEnum.TsIsAfterDate,
+                    common.FractionTypeEnum.TsIsAfterRelative
+                  ].indexOf(timeRangeFraction.type) > -1
                 ? `${timeFieldIdSpec}`
                 : `${timeFieldIdSpec} desc`,
             timezone: timezone,
@@ -944,6 +955,11 @@ export class ReportsService {
             newMconfig = mqe.newMconfig;
             newQuery = mqe.newQuery;
             isError = mqe.isError;
+
+            if (newMconfig.select.length === 0) {
+              newQuery.status = common.QueryStatusEnum.Completed;
+              newQuery.data = [];
+            }
           } else {
             let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
               {

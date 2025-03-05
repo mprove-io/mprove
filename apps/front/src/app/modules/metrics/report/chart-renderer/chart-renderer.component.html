@@ -17,7 +17,8 @@
   <div class="ml-5 mt-1 w-6">
     <m-chart-view-icon
       *ngIf="
-        params.data.rowType === rowTypeMetric ||
+        (params.data.mconfig?.select.length > 0 &&
+          params.data.rowType === rowTypeMetric) ||
         params.data.rowType === rowTypeFormula
       "
       class="cursor-pointer text-gray-500"

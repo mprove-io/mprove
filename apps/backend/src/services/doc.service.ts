@@ -839,7 +839,11 @@ FROM main;`;
         };
 
         report.rows
-          .filter(row => row.rowType === common.RowTypeEnum.Metric)
+          .filter(
+            row =>
+              row.rowType === common.RowTypeEnum.Metric &&
+              row.mconfig.select.length > 0
+          )
           .forEach((row: common.Row) => {
             let timeFieldId = row.mconfig?.select[0]
               .split('.')
@@ -910,7 +914,11 @@ FROM main;`;
       report.columns = [];
 
       report.rows
-        .filter(row => row.rowType === common.RowTypeEnum.Metric)
+        .filter(
+          row =>
+            row.rowType === common.RowTypeEnum.Metric &&
+            row.mconfig.select.length > 0
+        )
         .forEach((row: common.Row) => {
           let timeFieldId = row.mconfig?.select[0]
             .split('.')

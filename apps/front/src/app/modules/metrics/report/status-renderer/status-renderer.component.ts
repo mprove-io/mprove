@@ -4,6 +4,7 @@ import { ICellRendererParams } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { ReportQuery } from '~front/app/queries/report.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -20,6 +21,9 @@ export class StatusRendererComponent implements ICellRendererAngularComp {
   isLimitReached = false;
   isRunning = false;
   topQueryError: string;
+
+  timeSpec: common.TimeSpecEnum;
+  timeSpecDetail: common.DetailUnitEnum;
 
   someRowsHaveFormulaErrors = common.SOME_ROWS_HAVE_FORMULA_ERRORS;
 
@@ -49,9 +53,15 @@ export class StatusRendererComponent implements ICellRendererAngularComp {
 
     this.timeColumnsLimit = this.reportQuery.getValue().timeColumnsLimit;
 
+    this.timeSpec = this.reportQuery.getValue().timeSpec;
+    this.timeSpecDetail = common.getTimeSpecDetail({
+      timeSpec: this.timeSpec,
+      weekStart: this.structQuery.getValue().weekStart
+    });
+
     this.isLimitReached =
       this.params.data.query?.status === common.QueryStatusEnum.Completed &&
-      this.reportQuery.getValue().timeSpec === common.TimeSpecEnum.Timestamps &&
+      this.timeSpec === common.TimeSpecEnum.Timestamps &&
       this.params.data.query.data.length === this.timeColumnsLimit;
   }
 
@@ -67,6 +77,7 @@ export class StatusRendererComponent implements ICellRendererAngularComp {
   constructor(
     private cd: ChangeDetectorRef,
     private spinner: NgxSpinnerService,
-    private reportQuery: ReportQuery
+    private reportQuery: ReportQuery,
+    private structQuery: StructQuery
   ) {}
 }
