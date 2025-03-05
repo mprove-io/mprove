@@ -183,6 +183,8 @@ export class GetMetricsController {
           timezone: undefined,
           timeSpec: undefined,
           timeRangeFraction: undefined,
+          rangeOpen: undefined,
+          rangeClose: undefined,
           timeColumnsLimit: undefined,
           timeColumnsLength: undefined,
           isTimeColumnsLimitExceeded: false

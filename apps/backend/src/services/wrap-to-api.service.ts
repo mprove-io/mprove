@@ -370,6 +370,8 @@ export class WrapToApiService {
     timezone: string;
     timeSpec: common.TimeSpecEnum;
     timeRangeFraction: common.Fraction;
+    rangeOpen: number;
+    rangeClose: number;
     timeColumnsLimit: number;
     columns: common.Column[];
     timeColumnsLength: number;
@@ -383,6 +385,8 @@ export class WrapToApiService {
       timeSpec,
       models,
       timeRangeFraction,
+      rangeOpen,
+      rangeClose,
       timeColumnsLimit,
       timeColumnsLength,
       isTimeColumnsLimitExceeded
@@ -422,6 +426,8 @@ export class WrapToApiService {
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
+      rangeOpen: rangeOpen,
+      rangeClose: rangeClose,
       fields: report.fields.sort((a, b) => {
         let labelA = a.label.toUpperCase();
         let labelB = b.label.toUpperCase();

@@ -57,6 +57,8 @@ export class GetTimeRangeService {
     if (p.valid !== 1) {
       let payload: apiToBlockml.ToBlockmlGetTimeRangeResponsePayload = {
         isValid: false,
+        rangeOpen: undefined,
+        rangeClose: undefined,
         rangeStart: undefined,
         rangeEnd: undefined,
         timeRangeFraction: undefined
@@ -144,6 +146,8 @@ export class GetTimeRangeService {
 
     let payload: apiToBlockml.ToBlockmlGetTimeRangeResponsePayload = {
       isValid: p.valid === 1,
+      rangeOpen: rangeOpen,
+      rangeClose: rangeClose,
       rangeStart: start,
       rangeEnd: end,
       timeRangeFraction: timeRangeFraction

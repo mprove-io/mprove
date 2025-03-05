@@ -73,6 +73,8 @@ export class MetricsComponent implements OnInit, OnDestroy {
   rowTypeHeader = common.RowTypeEnum.Header;
   rowTypeEmpty = common.RowTypeEnum.Empty;
 
+  fractionTypeIsInRange = common.FractionTypeEnum.TsIsInRange;
+
   timeSpecYears = common.TimeSpecEnum.Years;
   timeSpecQuarters = common.TimeSpecEnum.Quarters;
   timeSpecMonths = common.TimeSpecEnum.Months;
@@ -102,9 +104,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
   report: common.ReportX;
   report$ = this.reportQuery.select().pipe(
     tap(x => {
-      // console.log('x');
-      // console.log(x);
-
       this.report = x;
 
       this.isShow = true;
@@ -170,11 +169,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
       if (
         this.isAutoRun === true &&
-        newQueries.length > 0
-        //  &&
-        // this.report.rows.filter(
-        //   row => common.isDefined(row.query) && row.mconfig.select.length === 0
-        // ).length === 0
+        newQueries.length > 0 &&
+        (this.report?.rangeOpen < this.report?.rangeClose ||
+          this.report?.timeRangeFraction.type !==
+            common.FractionTypeEnum.TsIsInRange)
       ) {
         setTimeout(() => {
           this.run();

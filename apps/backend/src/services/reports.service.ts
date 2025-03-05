@@ -699,6 +699,8 @@ export class ReportsService {
       isTimeColumnsLimitExceeded,
       timeColumnsLimit,
       timeRangeFraction,
+      rangeOpen,
+      rangeClose,
       rangeStart,
       rangeEnd
     } = await this.blockmlService.getTimeColumns({
@@ -1127,6 +1129,8 @@ export class ReportsService {
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
+      rangeOpen: rangeOpen,
+      rangeClose: rangeClose,
       timeColumnsLimit: timeColumnsLimit,
       timeColumnsLength: columns.length,
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded

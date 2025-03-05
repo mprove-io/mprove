@@ -342,6 +342,9 @@ export class BlockmlService {
     let timeRangeFraction =
       blockmlGetTimeRangeResponse.payload.timeRangeFraction;
 
+    let rangeOpen = blockmlGetTimeRangeResponse.payload.rangeOpen;
+    let rangeClose = blockmlGetTimeRangeResponse.payload.rangeClose;
+
     let rangeStart = blockmlGetTimeRangeResponse.payload.rangeStart;
     let rangeEnd = blockmlGetTimeRangeResponse.payload.rangeEnd;
 
@@ -548,6 +551,8 @@ export class BlockmlService {
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded,
       timeColumnsLimit: timeColumnsLimit,
       timeRangeFraction: timeRangeFraction,
+      rangeOpen: rangeOpen,
+      rangeClose: rangeClose,
       rangeStart: rangeStart,
       rangeEnd: rangeEnd
     };

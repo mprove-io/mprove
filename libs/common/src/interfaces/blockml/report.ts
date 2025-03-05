@@ -3,6 +3,8 @@ import {
   IsBoolean,
   IsEnum,
   IsInt,
+  IsNumber,
+  IsOptional,
   IsString,
   ValidateNested
 } from 'class-validator';
@@ -55,6 +57,14 @@ export class Report {
   @ValidateNested()
   @Type(() => Fraction)
   timeRangeFraction: Fraction;
+
+  @IsOptional()
+  @IsNumber()
+  rangeOpen: number;
+
+  @IsOptional()
+  @IsNumber()
+  rangeClose: number;
 
   @ValidateNested()
   @Type(() => Column)

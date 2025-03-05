@@ -223,6 +223,17 @@
             <m-exclamation-icon></m-exclamation-icon>
           </div>
 
+          <div
+            class="text-red1 ml-4 flex h-8 w-8 flex-shrink-0"
+            tp="The left boundary value of the time range must be less than the right boundary value"
+            *ngIf="
+              report?.rangeOpen >= report?.rangeClose &&
+              report?.timeRangeFraction.type === fractionTypeIsInRange
+            "
+          >
+            <m-exclamation-icon></m-exclamation-icon>
+          </div>
+
           <div class="flex-grow"></div>
 
           <div
@@ -255,15 +266,26 @@
               data-cy="metricsRunButton"
               class="ml-5 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
               [ngClass]="{
-                'bg-blue3': notEmptySelectQueriesLength > 0,
+                'bg-blue3':
+                  notEmptySelectQueriesLength > 0 &&
+                  (report?.rangeOpen < report?.rangeClose ||
+                    report?.timeRangeFraction.type !== fractionTypeIsInRange),
                 'cursor-default':
                   notEmptySelectQueriesLength === 0 ||
-                  isRunButtonPressed === true,
-                'bg-gray-400': notEmptySelectQueriesLength === 0
+                  isRunButtonPressed === true ||
+                  (report?.rangeOpen >= report?.rangeClose &&
+                    report?.timeRangeFraction.type === fractionTypeIsInRange),
+                'bg-gray-400':
+                  notEmptySelectQueriesLength === 0 ||
+                  (report?.rangeOpen >= report?.rangeClose &&
+                    report?.timeRangeFraction.type === fractionTypeIsInRange)
               }"
               (click)="run()"
               [disabled]="
-                notEmptySelectQueriesLength === 0 || isRunButtonPressed === true
+                notEmptySelectQueriesLength === 0 ||
+                isRunButtonPressed === true ||
+                (report?.rangeOpen >= report?.rangeClose &&
+                  report?.timeRangeFraction.type === fractionTypeIsInRange)
               "
             >
               <div *ngIf="isRunButtonPressed === false">Run</div>

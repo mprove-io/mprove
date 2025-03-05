@@ -20,6 +20,8 @@ export const emptyReport: ReportState = {
   timezone: undefined,
   timeSpec: undefined,
   timeRangeFraction: undefined,
+  rangeOpen: undefined,
+  rangeClose: undefined,
   timeColumnsLength: undefined,
   timeColumnsLimit: undefined,
   isTimeColumnsLimitExceeded: false,
