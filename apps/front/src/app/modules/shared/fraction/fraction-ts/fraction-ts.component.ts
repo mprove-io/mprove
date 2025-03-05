@@ -465,58 +465,62 @@ export class FractionTsComponent implements OnInit {
     let year = common.isDefined(this.fraction.tsDateYear)
       ? this.fraction.tsDateYear
       : now.getFullYear();
+
     let month = common.isDefined(this.fraction.tsDateMonth)
       ? this.fraction.tsDateMonth
-      : 1;
+      : now.getMonth() + 1;
+
     let day = common.isDefined(this.fraction.tsDateDay)
       ? this.fraction.tsDateDay
-      : 1;
+      : now.getDate();
+
     let hour = common.isDefined(this.fraction.tsDateHour)
       ? this.fraction.tsDateHour
       : 0;
+
     let minute = common.isDefined(this.fraction.tsDateMinute)
       ? this.fraction.tsDateMinute
       : 0;
+
     let second = 0;
 
-    let monthD = month.toString().length === 1 ? `0${month}` : `${month}`;
-    let dayD = day.toString().length === 1 ? `0${day}` : `${day}`;
-    let hourD = hour.toString().length === 1 ? `0${hour}` : `${hour}`;
-    let minuteD = minute.toString().length === 1 ? `0${minute}` : `${minute}`;
-    let secondD = second.toString().length === 1 ? `0${second}` : `${second}`;
+    let pad = (value: any) => String(value).padStart(2, '0');
 
-    this.dateStr = `${year}-${monthD}-${dayD}`;
-    this.timeStr = `${hourD}:${minuteD}:${secondD}`;
+    this.dateStr = `${year}-${pad(month)}-${pad(day)}`;
+    this.timeStr = `${pad(hour)}:${pad(minute)}:${pad(second)}`;
   }
 
   resetDateToUsingFraction() {
-    let now = new Date();
+    let date = new Date();
+
+    date.setDate(date.getDate() + 1);
 
     let year = common.isDefined(this.fraction.tsDateToYear)
       ? this.fraction.tsDateToYear
-      : now.getFullYear();
+      : date.getFullYear();
+
     let month = common.isDefined(this.fraction.tsDateToMonth)
       ? this.fraction.tsDateToMonth
-      : 1;
+      : date.getMonth() + 1;
+
     let day = common.isDefined(this.fraction.tsDateToDay)
       ? this.fraction.tsDateToDay
-      : 2;
+      : date.getDate();
+
     let hour = common.isDefined(this.fraction.tsDateToHour)
       ? this.fraction.tsDateToHour
       : 0;
+
     let minute = common.isDefined(this.fraction.tsDateToMinute)
       ? this.fraction.tsDateToMinute
       : 0;
+
     let second = 0;
 
-    let monthD = month.toString().length === 1 ? `0${month}` : `${month}`;
-    let dayD = day.toString().length === 1 ? `0${day}` : `${day}`;
-    let hourD = hour.toString().length === 1 ? `0${hour}` : `${hour}`;
-    let minuteD = minute.toString().length === 1 ? `0${minute}` : `${minute}`;
-    let secondD = second.toString().length === 1 ? `0${second}` : `${second}`;
+    let pad = (value: any) => String(value).padStart(2, '0');
 
-    this.dateToStr = `${year}-${monthD}-${dayD}`;
-    this.timeToStr = `${hourD}:${minuteD}:${secondD}`;
+    this.dateToStr = `${year}-${pad(month)}-${pad(day)}`;
+    this.timeToStr = `${pad(hour)}:${pad(minute)}:${pad(second)}`;
   }
 
   updateRelativeControls() {
