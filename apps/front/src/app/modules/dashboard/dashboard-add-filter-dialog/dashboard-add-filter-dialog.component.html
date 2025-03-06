@@ -1,11 +1,11 @@
 <div class="flex flex-col bg-white p-9">
   <div
     data-cy="dashboardAddFilterDialogTitle"
-    class="text-gray2 mb-9 mt-5 flex-grow text-left text-2xl font-semibold"
+    class="text-gray2 mt-5 flex-grow text-left text-2xl font-semibold"
     >Add Filter</div
   >
 
-  <form class="flex flex-col" [formGroup]="filterForm">
+  <form class="mt-9 flex flex-col" [formGroup]="filterForm">
     <div class="flex flex-row items-start">
       <div class="flex flex-col">
         <div
@@ -33,49 +33,152 @@
     </div>
   </form>
 
-  <div class="flex flex-col" *ngIf="!!this.modelTypeForm">
-    <div class="flex flex-row items-start">
-      <div class="flex flex-col">
-        <div
-          class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
-          >Model Type</div
-        >
-      </div>
-
-      <form [formGroup]="modelTypeForm">
-        <ng-select
-          #modelTypeSelect
-          data-cy="modelTypeSelect"
-          class="w-72 text-base"
-          [items]="modelTypesList"
-          [clearable]="false"
-          [searchable]="false"
-          (keyup.esc)="
-            $event.stopImmediatePropagation(); modelTypeSelect.blur()
-          "
-          (keyup.enter)="
-            $event.stopImmediatePropagation(); modelTypeSelect.blur()
-          "
-          (change)="modelTypeChange()"
-          appendTo="body"
-          bindLabel="label"
-          bindValue="value"
-          formControlName="modelType"
-        >
-          <ng-template ng-label-tmp let-item="item">
-            <div class="ml-1 truncate">{{ item.label }}</div>
-          </ng-template>
-
-          <ng-template ng-option-tmp let-item="item">
-            <div class="ml-1 truncate">{{ item.label }}</div>
-          </ng-template>
-        </ng-select>
-      </form>
+  <div class="flex flex-row items-start">
+    <div class="flex flex-col">
+      <div
+        class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+        >Model Type</div
+      >
     </div>
+
+    <form [formGroup]="modelTypeForm">
+      <ng-select
+        #modelTypeSelect
+        data-cy="modelTypeSelect"
+        class="w-72 text-base"
+        [items]="modelTypesList"
+        [clearable]="false"
+        [searchable]="false"
+        (keyup.esc)="$event.stopImmediatePropagation(); modelTypeSelect.blur()"
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); modelTypeSelect.blur()
+        "
+        (change)="modelTypeChange()"
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="modelType"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </form>
+  </div>
+
+  <div
+    class="mt-6 flex flex-row items-start"
+    *ngIf="modelTypeForm.get('modelType').value === modelTypeStore"
+  >
+    <div class="flex flex-col">
+      <div
+        class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+        >Model</div
+      >
+    </div>
+
+    <div class="relative flex h-9 w-9 flex-shrink-0" *ngIf="!storeModelsLoaded">
+      <ngx-spinner
+        [name]="storeModelsSpinnerName"
+        color="rgba(54, 94, 224, 100)"
+        bdColor="rgba(0, 0, 0, 0)"
+        size="default"
+        type="ball-clip-rotate"
+        [fullScreen]="false"
+        [disableAnimation]="true"
+        [zIndex]="99998"
+      >
+      </ngx-spinner>
+    </div>
+
+    <form [formGroup]="storeModelForm" *ngIf="!!storeModelsLoaded">
+      <ng-select
+        #storeModelSelect
+        data-cy="storeModelSelect"
+        class="w-[500px] text-base"
+        [loading]="suggestFieldsLoading"
+        [items]="storeModelsList"
+        [clearable]="false"
+        [searchable]="false"
+        (keyup.esc)="$event.stopImmediatePropagation(); storeModelSelect.blur()"
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); storeModelSelect.blur()
+        "
+        (change)="storeModelChange()"
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="storeModel"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </form>
+  </div>
+
+  <div
+    class="mt-6 flex flex-row items-start"
+    *ngIf="
+      modelTypeForm.get('modelType').value === modelTypeStore &&
+      storeModelSet === true
+    "
+  >
+    <div class="flex flex-col">
+      <div
+        class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+        >For</div
+      >
+    </div>
+
+    <form [formGroup]="storeFilterForForm">
+      <ng-select
+        #storeFilterForSelect
+        data-cy="storeFilterForSelect"
+        class="w-72 text-base"
+        [items]="storeFilterForList"
+        [clearable]="false"
+        [searchable]="false"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); storeFilterForSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); storeFilterForSelect.blur()
+        "
+        (change)="storeFilterForChange()"
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="storeFilterFor"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </form>
   </div>
 
   <form class="flex flex-col" [formGroup]="filterForm" (ngSubmit)="save()">
-    <div class="mt-6 flex flex-row items-start">
+    <div
+      class="mt-6 flex flex-row items-start"
+      *ngIf="
+        modelTypeForm.get('modelType').value === modelTypeSql ||
+        storeFilterForForm.get('storeFilterFor').value ===
+          storeFilterForDimensionOrMeasure
+      "
+    >
       <div class="flex flex-col">
         <div
           class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
@@ -108,6 +211,11 @@
 
     <div
       class="mt-6 flex min-w-[2px] max-w-[1000px] flex-grow select-none flex-row items-start items-center"
+      *ngIf="
+        modelTypeForm.get('modelType').value === modelTypeSql ||
+        storeFilterForForm.get('storeFilterFor').value ===
+          storeFilterForDimensionOrMeasure
+      "
     >
       <div class="flex flex-col">
         <div
@@ -124,13 +232,10 @@
 
       <div
         class="relative flex h-9 w-9 flex-shrink-0"
-        *ngIf="
-          !suggestFieldsLoaded &&
-          filterForm.get('fieldResult').value === fieldResultString
-        "
+        *ngIf="!suggestFieldsLoaded"
       >
         <ngx-spinner
-          [name]="spinnerName"
+          [name]="suggestFieldsSpinnerName"
           color="rgba(54, 94, 224, 100)"
           bdColor="rgba(0, 0, 0, 0)"
           size="default"

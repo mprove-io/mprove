@@ -31,6 +31,7 @@ import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../../shared/shared.module';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { ModelsQuery } from '~front/app/queries/models.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 
 export interface DashboardAddFilterDialogData {
@@ -40,8 +41,18 @@ export interface DashboardAddFilterDialogData {
 }
 
 export class ModelTypeItem {
-  label: string;
   value: common.ModelTypeEnum;
+  label: string;
+}
+
+export class StoreFilterForItem {
+  value: common.StoreFilterForEnum;
+  label: string;
+}
+
+export class StoreModelItem {
+  value: string;
+  label: string;
 }
 
 @Component({
@@ -69,13 +80,19 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   @ViewChild('filterLabel') filterLabelElement: ElementRef;
 
-  spinnerName = 'dashboardAddSuggestSpinnerName';
+  storeModelsSpinnerName = 'dashboardAddstoreModelsSpinnerName';
+  suggestFieldsSpinnerName = 'dashboardAddSuggestFieldsSpinnerName';
 
   resultsList = constants.RESULTS_LIST;
 
   fieldResult = common.FieldResultEnum.String;
 
   fieldResultString = common.FieldResultEnum.String;
+
+  modelTypeStore = common.ModelTypeEnum.Store;
+  modelTypeSql = common.ModelTypeEnum.SQL;
+  storeFilterForDimensionOrMeasure =
+    common.StoreFilterForEnum.ForDimensionOrMeasure;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -88,9 +105,14 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   dashboard: common.DashboardX;
 
   suggestFields: common.SuggestField[] = [];
-
   suggestFieldsLoading: boolean;
   suggestFieldsLoaded = false;
+
+  storeModelsList: StoreModelItem[] = [];
+  storeModelsLoading: boolean;
+  storeModelsLoaded = false;
+
+  storeModelSet = false;
 
   emptySuggestField = Object.assign({}, constants.EMPTY_MCONFIG_FIELD, {
     modelFieldRef: undefined,
@@ -124,12 +146,60 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     }
   ];
 
+  storeModelForm = this.fb.group({
+    storeModel: [
+      {
+        value: undefined
+      }
+    ]
+  });
+
+  models$ = this.modelsQuery.select().pipe(
+    tap(x => {
+      this.storeModelsList = [
+        // { value: 'Empty', label: 'Empty' },
+        ...x.models
+          .filter(model => model.isStoreModel === true)
+          .map(model => {
+            let storeModelItem: StoreModelItem = {
+              value: model.modelId,
+              label: model.label || model.modelId
+            };
+
+            return storeModelItem;
+          })
+      ];
+
+      this.cd.detectChanges();
+    })
+  );
+
+  storeFilterForForm = this.fb.group({
+    storeFilterFor: [
+      {
+        value: undefined
+      }
+    ]
+  });
+
+  storeFilterForList: StoreFilterForItem[] = [
+    {
+      label: 'For Filter',
+      value: common.StoreFilterForEnum.ForFilter
+    },
+    {
+      label: 'For Dimension or Measure',
+      value: common.StoreFilterForEnum.ForDimensionOrMeasure
+    }
+  ];
+
   constructor(
     public ref: DialogRef<DashboardAddFilterDialogData>,
     private fb: FormBuilder,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
+    private modelsQuery: ModelsQuery,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -137,6 +207,9 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     this.dashboard = this.ref.data.dashboard;
 
     this.modelTypeForm.controls['modelType'].setValue(common.ModelTypeEnum.SQL);
+    this.storeFilterForForm.controls['storeFilterFor'].setValue(
+      common.StoreFilterForEnum.ForFilter
+    );
 
     this.filterForm = this.fb.group(
       {
@@ -183,6 +256,24 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   modelTypeChange() {
     (document.activeElement as HTMLElement).blur();
+
+    if (
+      this.modelTypeForm.controls['modelType'].value ===
+      common.ModelTypeEnum.Store
+    ) {
+      this.loadStoreModels();
+    }
+  }
+
+  storeModelChange() {
+    (document.activeElement as HTMLElement).blur();
+
+    this.storeModelSet = true;
+    this.cd.detectChanges();
+  }
+
+  storeFilterForChange() {
+    (document.activeElement as HTMLElement).blur();
   }
 
   resultChange(fieldResult: common.FieldResultEnum) {
@@ -190,6 +281,65 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     this.loadSuggestFields();
     this.cd.detectChanges();
+  }
+
+  loadStoreModels() {
+    if (this.storeModelsLoaded === false) {
+      this.storeModelsLoading = true;
+
+      let nav: NavState;
+      this.navQuery
+        .select()
+        .pipe(
+          tap(x => {
+            nav = x;
+          }),
+          take(1)
+        )
+        .subscribe();
+
+      let apiService: ApiService = this.ref.data.apiService;
+
+      this.spinner.show(this.storeModelsSpinnerName);
+
+      let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
+        projectId: nav.projectId,
+        isRepoProd: nav.isRepoProd,
+        branchId: nav.branchId,
+        envId: nav.envId
+      };
+
+      apiService
+        .req({
+          pathInfoName:
+            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
+          payload: payload
+        })
+        .pipe(
+          tap((resp: apiToBackend.ToBackendGetModelsResponse) => {
+            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+              this.storeModelsList = resp.payload.models
+                .filter(model => model.isStoreModel === true)
+                .map(model => {
+                  let storeModelItem: StoreModelItem = {
+                    value: model.modelId,
+                    label: model.label || model.modelId
+                  };
+
+                  return storeModelItem;
+                });
+
+              this.storeModelsLoading = false;
+              this.storeModelsLoaded = true;
+
+              this.spinner.hide(this.storeModelsSpinnerName);
+
+              this.cd.detectChanges();
+            }
+          })
+        )
+        .toPromise();
+    }
   }
 
   loadSuggestFields() {
@@ -219,7 +369,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
       let apiService: ApiService = this.ref.data.apiService;
 
-      this.spinner.show(this.spinnerName);
+      this.spinner.show(this.suggestFieldsSpinnerName);
 
       apiService
         .req({
@@ -238,7 +388,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
               this.suggestFieldsLoading = false;
               this.suggestFieldsLoaded = true;
 
-              this.spinner.hide(this.spinnerName);
+              this.spinner.hide(this.suggestFieldsSpinnerName);
 
               this.cd.detectChanges();
             }

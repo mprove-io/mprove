@@ -39,6 +39,7 @@ export * from './special/caller.enum';
 export * from './special/er-title.enum';
 export * from './special/func.enum';
 export * from './special/log-type.enum';
+export * from './store-filter-for.enum';
 export * from './store-method.enum';
 export * from './time-label.enum';
 export * from './time-source.enum';

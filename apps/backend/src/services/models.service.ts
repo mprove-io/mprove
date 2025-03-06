@@ -50,6 +50,7 @@ export class ModelsService {
       filePath: modelsTable.filePath,
       // 'content'
       isViewModel: modelsTable.isViewModel,
+      isStoreModel: modelsTable.isStoreModel,
       accessUsers: modelsTable.accessUsers,
       accessRoles: modelsTable.accessRoles,
       label: modelsTable.label,
