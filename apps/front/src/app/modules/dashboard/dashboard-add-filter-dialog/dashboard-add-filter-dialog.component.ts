@@ -83,7 +83,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   storeModelsSpinnerName = 'dashboardAddstoreModelsSpinnerName';
   suggestFieldsSpinnerName = 'dashboardAddSuggestFieldsSpinnerName';
 
-  resultsList = constants.RESULTS_LIST;
+  sqlResultsList = constants.RESULTS_LIST;
+  storeResultsList: string[] = [];
 
   fieldResult = common.FieldResultEnum.String;
 
@@ -92,7 +93,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   modelTypeStore = common.ModelTypeEnum.Store;
   modelTypeSql = common.ModelTypeEnum.SQL;
   storeFilterForDimensionOrMeasure =
-    common.StoreFilterForEnum.ForDimensionOrMeasure;
+    common.StoreFilterForEnum.DimensionOrMeasure;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -108,6 +109,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   suggestFieldsLoading: boolean;
   suggestFieldsLoaded = false;
 
+  storeModels: common.Model[] = [];
   storeModelsList: StoreModelItem[] = [];
   storeModelsLoading: boolean;
   storeModelsLoaded = false;
@@ -154,26 +156,6 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     ]
   });
 
-  models$ = this.modelsQuery.select().pipe(
-    tap(x => {
-      this.storeModelsList = [
-        // { value: 'Empty', label: 'Empty' },
-        ...x.models
-          .filter(model => model.isStoreModel === true)
-          .map(model => {
-            let storeModelItem: StoreModelItem = {
-              value: model.modelId,
-              label: model.label || model.modelId
-            };
-
-            return storeModelItem;
-          })
-      ];
-
-      this.cd.detectChanges();
-    })
-  );
-
   storeFilterForForm = this.fb.group({
     storeFilterFor: [
       {
@@ -184,12 +166,12 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   storeFilterForList: StoreFilterForItem[] = [
     {
-      label: 'For Filter',
-      value: common.StoreFilterForEnum.ForFilter
+      label: 'Filter',
+      value: common.StoreFilterForEnum.Filter
     },
     {
-      label: 'For Dimension or Measure',
-      value: common.StoreFilterForEnum.ForDimensionOrMeasure
+      label: 'Dimension or Measure',
+      value: common.StoreFilterForEnum.DimensionOrMeasure
     }
   ];
 
@@ -207,9 +189,6 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     this.dashboard = this.ref.data.dashboard;
 
     this.modelTypeForm.controls['modelType'].setValue(common.ModelTypeEnum.SQL);
-    this.storeFilterForForm.controls['storeFilterFor'].setValue(
-      common.StoreFilterForEnum.ForFilter
-    );
 
     this.filterForm = this.fb.group(
       {
@@ -261,7 +240,16 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       this.modelTypeForm.controls['modelType'].value ===
       common.ModelTypeEnum.Store
     ) {
+      this.storeModelForm.controls['storeModel'].setValue(undefined);
+      this.storeFilterForForm.controls['storeFilterFor'].setValue(
+        common.StoreFilterForEnum.Filter
+      );
+      this.filterForm.controls['fieldResult'].setValue(undefined);
       this.loadStoreModels();
+    } else {
+      this.filterForm.controls['fieldResult'].setValue(
+        common.FieldResultEnum.String
+      );
     }
   }
 
@@ -269,6 +257,23 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     (document.activeElement as HTMLElement).blur();
 
     this.storeModelSet = true;
+
+    this.storeResultsList =
+      (
+        this.storeModels.find(
+          model =>
+            model.modelId === this.storeModelForm.controls['storeModel'].value
+        ).content as common.FileStore
+      ).results?.map(result => result.result) || [];
+
+    if (this.storeResultsList.indexOf(common.FieldResultEnum.String) > -1) {
+      this.filterForm.controls['fieldResult'].setValue(
+        common.FieldResultEnum.String
+      );
+    } else {
+      this.filterForm.controls['fieldResult'].setValue(undefined);
+    }
+
     this.cd.detectChanges();
   }
 
@@ -306,7 +311,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
         projectId: nav.projectId,
         isRepoProd: nav.isRepoProd,
         branchId: nav.branchId,
-        envId: nav.envId
+        envId: nav.envId,
+        addContent: true
       };
 
       apiService
@@ -318,16 +324,18 @@ export class DashboardAddFilterDialogComponent implements OnInit {
         .pipe(
           tap((resp: apiToBackend.ToBackendGetModelsResponse) => {
             if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-              this.storeModelsList = resp.payload.models
-                .filter(model => model.isStoreModel === true)
-                .map(model => {
-                  let storeModelItem: StoreModelItem = {
-                    value: model.modelId,
-                    label: model.label || model.modelId
-                  };
+              this.storeModels = resp.payload.models.filter(
+                model => model.isStoreModel === true
+              );
 
-                  return storeModelItem;
-                });
+              this.storeModelsList = this.storeModels.map(model => {
+                let storeModelItem: StoreModelItem = {
+                  value: model.modelId,
+                  label: model.label || model.modelId
+                };
+
+                return storeModelItem;
+              });
 
               this.storeModelsLoading = false;
               this.storeModelsLoaded = true;

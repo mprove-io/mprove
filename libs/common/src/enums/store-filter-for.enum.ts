@@ -1,4 +1,4 @@
 export enum StoreFilterForEnum {
-  ForFilter = 'ForFilter',
-  ForDimensionOrMeasure = 'ForDimensionOrMeasure'
+  Filter = 'Filter',
+  DimensionOrMeasure = 'DimensionOrMeasure'
 }

@@ -28,6 +28,10 @@ export class ToBackendGetModelsRequestPayload {
   @IsOptional()
   @IsBoolean()
   addFields?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  addContent?: boolean;
 }
 
 export class ToBackendGetModelsRequest extends ToBackendRequest {

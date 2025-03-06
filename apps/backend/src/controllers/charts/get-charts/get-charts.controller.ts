@@ -115,7 +115,8 @@ export class GetChartsController {
     let modelsY = await this.modelsService.getModelsY({
       bridge: bridge,
       filterByModelIds: undefined,
-      addFields: false
+      addFields: false,
+      addContent: false
     });
 
     let struct = await this.structsService.getStructCheckExists({

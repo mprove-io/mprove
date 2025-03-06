@@ -135,7 +135,7 @@
     <div class="flex flex-col">
       <div
         class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
-        >For</div
+        >Apply to Field Type</div
       >
     </div>
 
@@ -190,7 +190,11 @@
         #typeSelect
         data-cy="resultSelect"
         class="w-72 text-base"
-        [items]="resultsList"
+        [items]="
+          modelTypeForm.get('modelType').value === modelTypeSql
+            ? sqlResultsList
+            : storeResultsList
+        "
         [clearable]="false"
         [searchable]="false"
         (keyup.esc)="$event.stopImmediatePropagation(); typeSelect.blur()"
@@ -211,11 +215,7 @@
 
     <div
       class="mt-6 flex min-w-[2px] max-w-[1000px] flex-grow select-none flex-row items-start items-center"
-      *ngIf="
-        modelTypeForm.get('modelType').value === modelTypeSql ||
-        storeFilterForForm.get('storeFilterFor').value ===
-          storeFilterForDimensionOrMeasure
-      "
+      *ngIf="modelTypeForm.get('modelType').value === modelTypeSql"
     >
       <div class="flex flex-col">
         <div

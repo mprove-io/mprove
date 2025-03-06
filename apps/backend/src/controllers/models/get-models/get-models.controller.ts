@@ -41,7 +41,8 @@ export class GetModelsController {
       branchId,
       envId,
       filterByModelIds,
-      addFields
+      addFields,
+      addContent
     } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
@@ -75,7 +76,8 @@ export class GetModelsController {
     let modelsY = await this.modelsService.getModelsY({
       bridge: bridge,
       filterByModelIds: filterByModelIds,
-      addFields: addFields
+      addFields: addFields,
+      addContent: addContent
     });
 
     let struct = await this.structsService.getStructCheckExists({

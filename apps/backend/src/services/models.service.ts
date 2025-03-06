@@ -39,8 +39,9 @@ export class ModelsService {
     bridge: schemaPostgres.BridgeEnt;
     filterByModelIds: string[];
     addFields: boolean;
+    addContent: boolean;
   }) {
-    let { bridge, filterByModelIds, addFields } = item;
+    let { bridge, filterByModelIds, addFields, addContent } = item;
 
     let selectObj: any = {
       // 'modelFullId'
@@ -78,6 +79,10 @@ export class ModelsService {
       selectObj.fields = modelsTable.fields;
 
       // selectObj.push('fields');
+    }
+
+    if (addContent === true) {
+      selectObj.content = modelsTable.content;
     }
 
     let models = (await this.db.drizzle
