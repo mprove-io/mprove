@@ -39,6 +39,11 @@ export interface DashboardAddFilterDialogData {
   apiService: ApiService;
 }
 
+export class ModelTypeItem {
+  label: string;
+  value: common.ModelTypeEnum;
+}
+
 @Component({
   selector: 'm-dashboard-add-filter-dialog',
   templateUrl: './dashboard-add-filter-dialog.component.html',
@@ -66,7 +71,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   spinnerName = 'dashboardAddSuggestSpinnerName';
 
-  resultList = constants.RESULT_LIST;
+  resultsList = constants.RESULTS_LIST;
 
   fieldResult = common.FieldResultEnum.String;
 
@@ -100,6 +105,25 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     suggestField: FormControl<SuggestField>;
   }>;
 
+  modelTypeForm = this.fb.group({
+    modelType: [
+      {
+        value: undefined
+      }
+    ]
+  });
+
+  modelTypesList: ModelTypeItem[] = [
+    {
+      label: 'SQL',
+      value: common.ModelTypeEnum.SQL
+    },
+    {
+      label: 'Store',
+      value: common.ModelTypeEnum.Store
+    }
+  ];
+
   constructor(
     public ref: DialogRef<DashboardAddFilterDialogData>,
     private fb: FormBuilder,
@@ -112,10 +136,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   ngOnInit() {
     this.dashboard = this.ref.data.dashboard;
 
-    // setValueAndMark({
-    //   control: this.labelForm.controls['label'],
-    //   value: ''
-    // });
+    this.modelTypeForm.controls['modelType'].setValue(common.ModelTypeEnum.SQL);
 
     this.filterForm = this.fb.group(
       {
@@ -129,6 +150,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     );
 
     setTimeout(() => {
+      // this.cd.detectChanges();
       // this.filterLabelElement.nativeElement.focus();
       this.loadSuggestFields();
     }, 0);
@@ -157,6 +179,10 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     } else {
       return null;
     }
+  }
+
+  modelTypeChange() {
+    (document.activeElement as HTMLElement).blur();
   }
 
   resultChange(fieldResult: common.FieldResultEnum) {

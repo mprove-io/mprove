@@ -66,7 +66,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
   spinnerName = 'reportAddSuggestSpinnerName';
 
-  resultList = constants.RESULT_LIST;
+  resultsList = constants.RESULTS_LIST;
 
   fieldResult = common.FieldResultEnum.String;
 

@@ -49,7 +49,7 @@ export const BLOCKML_EXT_LIST: common.FileExtensionEnum[] = [
   common.FileExtensionEnum.Udf
 ];
 
-export const RESULT_LIST: common.FieldResultEnum[] = [
+export const RESULTS_LIST: common.FieldResultEnum[] = [
   common.FieldResultEnum.String,
   common.FieldResultEnum.Number,
   common.FieldResultEnum.Yesno,

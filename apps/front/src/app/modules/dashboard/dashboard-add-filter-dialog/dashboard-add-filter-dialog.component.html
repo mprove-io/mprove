@@ -5,8 +5,8 @@
     >Add Filter</div
   >
 
-  <form class="flex flex-col" [formGroup]="filterForm" (ngSubmit)="save()">
-    <div class="mt-9 flex flex-row items-start">
+  <form class="flex flex-col" [formGroup]="filterForm">
+    <div class="flex flex-row items-start">
       <div class="flex flex-col">
         <div
           class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
@@ -31,12 +31,55 @@
         <m-validation [control]="filterForm.controls['label']"></m-validation>
       </div>
     </div>
+  </form>
 
-    <div class="mt-2 flex flex-row items-start">
+  <div class="flex flex-col" *ngIf="!!this.modelTypeForm">
+    <div class="flex flex-row items-start">
       <div class="flex flex-col">
         <div
           class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
-          >Type (result)</div
+          >Model Type</div
+        >
+      </div>
+
+      <form [formGroup]="modelTypeForm">
+        <ng-select
+          #modelTypeSelect
+          data-cy="modelTypeSelect"
+          class="w-72 text-base"
+          [items]="modelTypesList"
+          [clearable]="false"
+          [searchable]="false"
+          (keyup.esc)="
+            $event.stopImmediatePropagation(); modelTypeSelect.blur()
+          "
+          (keyup.enter)="
+            $event.stopImmediatePropagation(); modelTypeSelect.blur()
+          "
+          (change)="modelTypeChange()"
+          appendTo="body"
+          bindLabel="label"
+          bindValue="value"
+          formControlName="modelType"
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <div class="ml-1 truncate">{{ item.label }}</div>
+          </ng-template>
+
+          <ng-template ng-option-tmp let-item="item">
+            <div class="ml-1 truncate">{{ item.label }}</div>
+          </ng-template>
+        </ng-select>
+      </form>
+    </div>
+  </div>
+
+  <form class="flex flex-col" [formGroup]="filterForm" (ngSubmit)="save()">
+    <div class="mt-6 flex flex-row items-start">
+      <div class="flex flex-col">
+        <div
+          class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+          >Result</div
         >
       </div>
 
@@ -44,7 +87,7 @@
         #typeSelect
         data-cy="resultSelect"
         class="w-72 text-base"
-        [items]="resultList"
+        [items]="resultsList"
         [clearable]="false"
         [searchable]="false"
         (keyup.esc)="$event.stopImmediatePropagation(); typeSelect.blur()"
@@ -64,7 +107,7 @@
     </div>
 
     <div
-      class="mt-8 flex min-w-[2px] max-w-[1000px] flex-grow select-none flex-row items-start items-center"
+      class="mt-6 flex min-w-[2px] max-w-[1000px] flex-grow select-none flex-row items-start items-center"
     >
       <div class="flex flex-col">
         <div

@@ -36,7 +36,7 @@
       <div class="flex flex-col">
         <div
           class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
-          >Type (result)</div
+          >Result</div
         >
       </div>
 
@@ -44,7 +44,7 @@
         #typeSelect
         data-cy="resultSelect"
         class="w-72 text-base"
-        [items]="resultList"
+        [items]="resultsList"
         [clearable]="false"
         [searchable]="false"
         (keyup.esc)="$event.stopImmediatePropagation(); typeSelect.blur()"
