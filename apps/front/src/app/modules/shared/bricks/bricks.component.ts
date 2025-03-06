@@ -41,9 +41,9 @@ export class BricksComponent {
 
   constructor() {}
 
-  deleteFilter(filterFieldId: string) {
+  deleteFilter(filter: common.FilterX) {
     this.deleteFilterFn({
-      filterFieldId: filterFieldId,
+      filterFieldId: filter.fieldId,
       tileTitle: this.tileTitle
     });
   }
