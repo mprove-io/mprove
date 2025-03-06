@@ -110,15 +110,19 @@
         </ng-template>
       </div>
 
-      <m-bricks
-        class="mx-7 mb-5 flex max-h-[120px] max-w-max flex-shrink-0 flex-row items-start justify-start overflow-auto"
+      <div
         *ngIf="showBricks === true && mconfig?.filters.length > 0"
-        [extendedFilters]="mconfig.extendedFilters"
-        [listen]="tile.listen"
-        [tileTitle]="tile.title"
-        [deleteFilterFn]="deleteFilterFn"
-        [isKeepBackgroundColor]="false"
-      ></m-bricks>
+        class="flex flex-row items-start"
+      >
+        <m-bricks
+          class="mx-7 mb-5 flex max-h-[120px] max-w-max flex-shrink-0 overflow-auto"
+          [extendedFilters]="mconfig.extendedFilters"
+          [listen]="tile.listen"
+          [tileTitle]="tile.title"
+          [deleteFilterFn]="deleteFilterFn"
+          [isKeepBackgroundColor]="false"
+        ></m-bricks>
+      </div>
 
       <div
         class="flex w-full flex-grow cursor-default overflow-auto rounded bg-white px-7 pb-10 pt-5"

@@ -320,11 +320,13 @@
                   >
                     <div class="flex w-12 cursor-default"></div>
 
-                    <m-bricks
-                      class="mb-6 ml-10 mt-3 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
-                      [extendedFilters]="item.extendedFilters"
-                      [isKeepBackgroundColor]="false"
-                    ></m-bricks>
+                    <div class="flex flex-row items-start">
+                      <m-bricks
+                        class="mb-6 ml-10 mt-3 flex max-h-[120px] max-w-max flex-shrink-0 overflow-auto"
+                        [extendedFilters]="item.extendedFilters"
+                        [isKeepBackgroundColor]="false"
+                      ></m-bricks>
+                    </div>
 
                     <div class="flex w-1/6 cursor-default"></div>
                   </div>
