@@ -715,8 +715,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       id: id,
       hidden: false,
       label: label,
-      // store_filter: // TODO:
-      // store_result:
+      // storeFilter: // TODO:
+      // storeResult:
       result: result,
       suggestModelDimension: common.isDefined(suggestField.modelFieldRef)
         ? suggestField.modelFieldRef
