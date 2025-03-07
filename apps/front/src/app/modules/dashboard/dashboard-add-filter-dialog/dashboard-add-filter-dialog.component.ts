@@ -55,6 +55,11 @@ export class StoreModelItem {
   label: string;
 }
 
+export class StoreFiltersItem {
+  value: string;
+  label: string;
+}
+
 @Component({
   selector: 'm-dashboard-add-filter-dialog',
   templateUrl: './dashboard-add-filter-dialog.component.html',
@@ -81,6 +86,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   @ViewChild('filterLabel') filterLabelElement: ElementRef;
 
   storeModelsSpinnerName = 'dashboardAddstoreModelsSpinnerName';
+  storeFiltersSpinnerName = 'dashboardAddstoreFiltersSpinnerName';
   suggestFieldsSpinnerName = 'dashboardAddSuggestFieldsSpinnerName';
 
   sqlResultsList = constants.RESULTS_LIST;
@@ -92,8 +98,9 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   modelTypeStore = common.ModelTypeEnum.Store;
   modelTypeSql = common.ModelTypeEnum.SQL;
-  storeFilterForDimensionOrMeasure =
-    common.StoreFilterForEnum.DimensionOrMeasure;
+
+  storeFilterForFilter = common.StoreFilterForEnum.Filter;
+  storeFilterForResult = common.StoreFilterForEnum.Result;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -104,30 +111,6 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   );
 
   dashboard: common.DashboardX;
-
-  suggestFields: common.SuggestField[] = [];
-  suggestFieldsLoading: boolean;
-  suggestFieldsLoaded = false;
-
-  storeModels: common.Model[] = [];
-  storeModelsList: StoreModelItem[] = [];
-  storeModelsLoading: boolean;
-  storeModelsLoaded = false;
-
-  storeModelSet = false;
-
-  emptySuggestField = Object.assign({}, constants.EMPTY_MCONFIG_FIELD, {
-    modelFieldRef: undefined,
-    topLabel: 'Empty',
-    partNodeLabel: undefined,
-    partFieldLabel: undefined
-  } as common.SuggestField);
-
-  filterForm: FormGroup<{
-    label: FormControl<string>;
-    fieldResult: FormControl<common.FieldResultEnum>;
-    suggestField: FormControl<SuggestField>;
-  }>;
 
   modelTypeForm = this.fb.group({
     modelType: [
@@ -147,6 +130,12 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       value: common.ModelTypeEnum.Store
     }
   ];
+
+  storeModels: common.Model[] = [];
+  storeModelsList: StoreModelItem[] = [];
+  storeModelsLoading = false;
+  storeModelsLoaded = false;
+  storeModelSet = false;
 
   storeModelForm = this.fb.group({
     storeModel: [
@@ -170,10 +159,39 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       value: common.StoreFilterForEnum.Filter
     },
     {
-      label: 'Dimension or Measure',
-      value: common.StoreFilterForEnum.DimensionOrMeasure
+      label: 'Result',
+      value: common.StoreFilterForEnum.Result
     }
   ];
+
+  storeFiltersList: StoreFiltersItem[] = [];
+  storeFiltersLoading = false;
+  storeFiltersLoaded = false;
+
+  storeFilterForm = this.fb.group({
+    storeFilter: [
+      {
+        value: undefined
+      }
+    ]
+  });
+
+  suggestFields: common.SuggestField[] = [];
+  suggestFieldsLoading = false;
+  suggestFieldsLoaded = false;
+
+  emptySuggestField = Object.assign({}, constants.EMPTY_MCONFIG_FIELD, {
+    modelFieldRef: undefined,
+    topLabel: 'Empty',
+    partNodeLabel: undefined,
+    partFieldLabel: undefined
+  } as common.SuggestField);
+
+  topForm: FormGroup<{
+    label: FormControl<string>;
+    fieldResult: FormControl<common.FieldResultEnum>;
+    suggestField: FormControl<SuggestField>;
+  }>;
 
   constructor(
     public ref: DialogRef<DashboardAddFilterDialogData>,
@@ -190,7 +208,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     this.modelTypeForm.controls['modelType'].setValue(common.ModelTypeEnum.SQL);
 
-    this.filterForm = this.fb.group(
+    this.topForm = this.fb.group(
       {
         label: [undefined, [Validators.required, Validators.maxLength(255)]],
         fieldResult: [this.fieldResult],
@@ -202,21 +220,24 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     );
 
     setTimeout(() => {
-      // this.cd.detectChanges();
-      // this.filterLabelElement.nativeElement.focus();
-      this.loadSuggestFields();
+      if (
+        this.fieldResult === common.FieldResultEnum.String &&
+        this.suggestFieldsLoaded === false
+      ) {
+        this.loadSuggestFields();
+      }
     }, 0);
   }
 
   labelValidator(group: AbstractControl): ValidationErrors | null {
     if (
-      common.isUndefined(this.filterForm) ||
-      common.isUndefined(this.filterForm.controls['label'].value)
+      common.isUndefined(this.topForm) ||
+      common.isUndefined(this.topForm.controls['label'].value)
     ) {
       return null;
     }
 
-    let label: string = this.filterForm.controls['label'].value.toLowerCase();
+    let label: string = this.topForm.controls['label'].value.toLowerCase();
 
     let id = common.MyRegex.replaceSpacesWithUnderscores(label).toLowerCase();
 
@@ -227,7 +248,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     let ids = this.dashboard.extendedFilters.map(x => x.fieldId.toLowerCase());
 
     if (labels.indexOf(label) > -1 || ids.indexOf(id) > -1) {
-      this.filterForm.controls['label'].setErrors({ labelIsNotUnique: true });
+      this.topForm.controls['label'].setErrors({ labelIsNotUnique: true });
     } else {
       return null;
     }
@@ -240,14 +261,20 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       this.modelTypeForm.controls['modelType'].value ===
       common.ModelTypeEnum.Store
     ) {
+      this.storeModelSet = false;
+
       this.storeModelForm.controls['storeModel'].setValue(undefined);
       this.storeFilterForForm.controls['storeFilterFor'].setValue(
         common.StoreFilterForEnum.Filter
       );
-      this.filterForm.controls['fieldResult'].setValue(undefined);
-      this.loadStoreModels();
+      this.storeFilterForm.controls['storeFilter'].setValue(undefined);
+      this.topForm.controls['fieldResult'].setValue(undefined);
+
+      if (this.storeModelsLoaded === false) {
+        this.loadStoreModels();
+      }
     } else {
-      this.filterForm.controls['fieldResult'].setValue(
+      this.topForm.controls['fieldResult'].setValue(
         common.FieldResultEnum.String
       );
     }
@@ -258,168 +285,231 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     this.storeModelSet = true;
 
-    this.storeResultsList =
-      (
-        this.storeModels.find(
-          model =>
-            model.modelId === this.storeModelForm.controls['storeModel'].value
-        ).content as common.FileStore
-      ).results?.map(result => result.result) || [];
-
-    if (this.storeResultsList.indexOf(common.FieldResultEnum.String) > -1) {
-      this.filterForm.controls['fieldResult'].setValue(
-        common.FieldResultEnum.String
-      );
-    } else {
-      this.filterForm.controls['fieldResult'].setValue(undefined);
-    }
+    this.storeFiltersLoaded = false;
+    this.loadStoreFilters();
 
     this.cd.detectChanges();
   }
 
   storeFilterForChange() {
     (document.activeElement as HTMLElement).blur();
+
+    if (
+      this.storeFilterForForm.controls['storeFilterFor'].value ===
+      common.StoreFilterForEnum.Result
+    ) {
+      if (this.storeResultsList.indexOf(common.FieldResultEnum.String) > -1) {
+        this.topForm.controls['fieldResult'].setValue(
+          common.FieldResultEnum.String
+        );
+      } else {
+        this.topForm.controls['fieldResult'].setValue(undefined);
+      }
+    } else {
+      this.topForm.controls['fieldResult'].setValue(undefined);
+    }
+  }
+
+  storeFilterChange() {
+    (document.activeElement as HTMLElement).blur();
   }
 
   resultChange(fieldResult: common.FieldResultEnum) {
     this.fieldResult = fieldResult;
 
-    this.loadSuggestFields();
-    this.cd.detectChanges();
-  }
-
-  loadStoreModels() {
-    if (this.storeModelsLoaded === false) {
-      this.storeModelsLoading = true;
-
-      let nav: NavState;
-      this.navQuery
-        .select()
-        .pipe(
-          tap(x => {
-            nav = x;
-          }),
-          take(1)
-        )
-        .subscribe();
-
-      let apiService: ApiService = this.ref.data.apiService;
-
-      this.spinner.show(this.storeModelsSpinnerName);
-
-      let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
-        projectId: nav.projectId,
-        isRepoProd: nav.isRepoProd,
-        branchId: nav.branchId,
-        envId: nav.envId,
-        addContent: true
-      };
-
-      apiService
-        .req({
-          pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
-          payload: payload
-        })
-        .pipe(
-          tap((resp: apiToBackend.ToBackendGetModelsResponse) => {
-            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-              this.storeModels = resp.payload.models.filter(
-                model => model.isStoreModel === true
-              );
-
-              this.storeModelsList = this.storeModels.map(model => {
-                let storeModelItem: StoreModelItem = {
-                  value: model.modelId,
-                  label: model.label || model.modelId
-                };
-
-                return storeModelItem;
-              });
-
-              this.storeModelsLoading = false;
-              this.storeModelsLoaded = true;
-
-              this.spinner.hide(this.storeModelsSpinnerName);
-
-              this.cd.detectChanges();
-            }
-          })
-        )
-        .toPromise();
-    }
-  }
-
-  loadSuggestFields() {
     if (
       this.fieldResult === common.FieldResultEnum.String &&
       this.suggestFieldsLoaded === false
     ) {
-      this.suggestFieldsLoading = true;
-
-      let nav: NavState;
-      this.navQuery
-        .select()
-        .pipe(
-          tap(x => {
-            nav = x;
-          }),
-          take(1)
-        )
-        .subscribe();
-
-      let payload: apiToBackend.ToBackendGetSuggestFieldsRequestPayload = {
-        projectId: nav.projectId,
-        branchId: nav.branchId,
-        isRepoProd: nav.isRepoProd,
-        envId: nav.envId
-      };
-
-      let apiService: ApiService = this.ref.data.apiService;
-
-      this.spinner.show(this.suggestFieldsSpinnerName);
-
-      apiService
-        .req({
-          pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields,
-          payload: payload
-        })
-        .pipe(
-          tap((resp: apiToBackend.ToBackendGetSuggestFieldsResponse) => {
-            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-              this.suggestFields = [
-                this.emptySuggestField,
-                ...resp.payload.suggestFields
-              ];
-
-              this.suggestFieldsLoading = false;
-              this.suggestFieldsLoaded = true;
-
-              this.spinner.hide(this.suggestFieldsSpinnerName);
-
-              this.cd.detectChanges();
-            }
-          })
-        )
-        .toPromise();
+      this.loadSuggestFields();
     }
+    this.cd.detectChanges();
+  }
+
+  loadStoreModels() {
+    this.storeModelsLoading = true;
+
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    this.spinner.show(this.storeModelsSpinnerName);
+
+    let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
+      projectId: nav.projectId,
+      isRepoProd: nav.isRepoProd,
+      branchId: nav.branchId,
+      envId: nav.envId
+    };
+
+    apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendGetModelsResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.storeModels = resp.payload.models.filter(
+              model => model.isStoreModel === true
+            );
+
+            this.storeModelsList = this.storeModels.map(model => {
+              let storeModelItem: StoreModelItem = {
+                value: model.modelId,
+                label: model.label || model.modelId
+              };
+
+              return storeModelItem;
+            });
+
+            this.storeModelsLoading = false;
+            this.storeModelsLoaded = true;
+
+            this.spinner.hide(this.storeModelsSpinnerName);
+
+            this.cd.detectChanges();
+          }
+        })
+      )
+      .toPromise();
+  }
+
+  loadStoreFilters() {
+    this.storeFiltersLoading = true;
+
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    this.spinner.show(this.storeFiltersSpinnerName);
+
+    let payload: apiToBackend.ToBackendGetModelRequestPayload = {
+      projectId: nav.projectId,
+      isRepoProd: nav.isRepoProd,
+      branchId: nav.branchId,
+      envId: nav.envId,
+      modelId: this.storeModelForm.controls['storeModel'].value
+    };
+
+    apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendGetModelResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.storeFiltersList = resp.payload.model.fields
+              .filter(x => x.fieldClass === common.FieldClassEnum.Filter)
+              .map(field => {
+                let storeFiltersItem: StoreFiltersItem = {
+                  value: field.id,
+                  label: field.label || field.id
+                };
+
+                return storeFiltersItem;
+              });
+
+            this.storeResultsList =
+              (resp.payload.model.content as common.FileStore).results?.map(
+                result => result.result
+              ) || [];
+
+            this.storeFiltersLoading = false;
+            this.storeFiltersLoaded = true;
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  loadSuggestFields() {
+    this.suggestFieldsLoading = true;
+
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
+    let payload: apiToBackend.ToBackendGetSuggestFieldsRequestPayload = {
+      projectId: nav.projectId,
+      branchId: nav.branchId,
+      isRepoProd: nav.isRepoProd,
+      envId: nav.envId
+    };
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    this.spinner.show(this.suggestFieldsSpinnerName);
+
+    apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendGetSuggestFieldsResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.suggestFields = [
+              this.emptySuggestField,
+              ...resp.payload.suggestFields
+            ];
+
+            this.suggestFieldsLoading = false;
+            this.suggestFieldsLoaded = true;
+
+            this.spinner.hide(this.suggestFieldsSpinnerName);
+
+            this.cd.detectChanges();
+          }
+        })
+      )
+      .toPromise();
   }
 
   save() {
-    this.filterForm.markAllAsTouched();
+    this.topForm.markAllAsTouched();
 
-    if (!this.filterForm.valid) {
+    if (!this.topForm.valid) {
       return;
     }
 
     this.ref.close();
 
-    let label: string = this.filterForm.controls['label'].value;
+    let label: string = this.topForm.controls['label'].value;
 
     let id = common.MyRegex.replaceSpacesWithUnderscores(label).toLowerCase();
 
-    let result = this.filterForm.controls['fieldResult'].value;
+    let result = this.topForm.controls['fieldResult'].value;
 
     let fraction: common.Fraction = {
       brick: 'any',
@@ -427,7 +517,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       type: common.getFractionTypeForAny(result)
     };
 
-    let suggestField = this.filterForm.controls['suggestField'].value;
+    let suggestField = this.topForm.controls['suggestField'].value;
 
     let field: common.DashboardField = {
       id: id,

@@ -5,7 +5,7 @@
     >Add Filter</div
   >
 
-  <form class="mt-9 flex flex-col" [formGroup]="filterForm">
+  <form class="mt-9 flex flex-col" [formGroup]="topForm">
     <div class="flex flex-row items-start">
       <div class="flex flex-col">
         <div
@@ -14,7 +14,7 @@
         >
       </div>
 
-      <div [formGroup]="filterForm" class="flex flex-col items-start">
+      <div [formGroup]="topForm" class="flex flex-col items-start">
         <input
           #filterLabel
           autocomplete="off"
@@ -23,12 +23,12 @@
           class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
           [ngClass]="{
             'border-red-600':
-              filterForm.controls['label'].invalid &&
-              filterForm.controls['label'].touched
+              topForm.controls['label'].invalid &&
+              topForm.controls['label'].touched
           }"
           formControlName="label"
         />
-        <m-validation [control]="filterForm.controls['label']"></m-validation>
+        <m-validation [control]="topForm.controls['label']"></m-validation>
       </div>
     </div>
   </form>
@@ -100,7 +100,7 @@
         #storeModelSelect
         data-cy="storeModelSelect"
         class="w-[500px] text-base"
-        [loading]="suggestFieldsLoading"
+        [loading]="storeModelsLoading"
         [items]="storeModelsList"
         [clearable]="false"
         [searchable]="false"
@@ -135,7 +135,7 @@
     <div class="flex flex-col">
       <div
         class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
-        >Apply to Field Type</div
+        >Add Controls from</div
       >
     </div>
 
@@ -170,13 +170,75 @@
     </form>
   </div>
 
-  <form class="flex flex-col" [formGroup]="filterForm" (ngSubmit)="save()">
+  <div
+    class="mt-6 flex flex-row items-start"
+    *ngIf="
+      storeModelSet === true &&
+      storeFilterForForm.get('storeFilterFor').value === storeFilterForFilter
+    "
+  >
+    <div class="flex flex-col">
+      <div
+        class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+        >Filter</div
+      >
+    </div>
+
+    <div
+      class="relative flex h-9 w-9 flex-shrink-0"
+      *ngIf="!storeFiltersLoaded"
+    >
+      <ngx-spinner
+        [name]="storeFiltersSpinnerName"
+        color="rgba(54, 94, 224, 100)"
+        bdColor="rgba(0, 0, 0, 0)"
+        size="default"
+        type="ball-clip-rotate"
+        [fullScreen]="false"
+        [disableAnimation]="true"
+        [zIndex]="99998"
+      >
+      </ngx-spinner>
+    </div>
+
+    <form [formGroup]="storeFilterForm" *ngIf="!!storeFiltersLoaded">
+      <ng-select
+        #storeFilterSelect
+        data-cy="storeFilterSelect"
+        class="w-[500px] text-base"
+        [loading]="storeFiltersLoading"
+        [items]="storeFiltersList"
+        [clearable]="false"
+        [searchable]="false"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); storeFilterSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); storeFilterSelect.blur()
+        "
+        (change)="storeFilterChange()"
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="storeFilter"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </form>
+  </div>
+
+  <form class="flex flex-col" [formGroup]="topForm" (ngSubmit)="save()">
     <div
       class="mt-6 flex flex-row items-start"
       *ngIf="
         modelTypeForm.get('modelType').value === modelTypeSql ||
-        storeFilterForForm.get('storeFilterFor').value ===
-          storeFilterForDimensionOrMeasure
+        storeFilterForForm.get('storeFilterFor').value === storeFilterForResult
       "
     >
       <div class="flex flex-col">
@@ -186,7 +248,31 @@
         >
       </div>
 
+      <div
+        class="relative flex h-9 w-9 flex-shrink-0"
+        *ngIf="
+          modelTypeForm.get('modelType').value === modelTypeStore &&
+          !storeFiltersLoaded
+        "
+      >
+        <ngx-spinner
+          [name]="storeFiltersSpinnerName"
+          color="rgba(54, 94, 224, 100)"
+          bdColor="rgba(0, 0, 0, 0)"
+          size="default"
+          type="ball-clip-rotate"
+          [fullScreen]="false"
+          [disableAnimation]="true"
+          [zIndex]="99998"
+        >
+        </ngx-spinner>
+      </div>
+
       <ng-select
+        *ngIf="
+          modelTypeForm.get('modelType').value === modelTypeSql ||
+          !!storeFiltersLoaded
+        "
         #typeSelect
         data-cy="resultSelect"
         class="w-72 text-base"
@@ -219,12 +305,12 @@
     >
       <div class="flex flex-col">
         <div
-          *ngIf="filterForm.get('fieldResult').value !== fieldResultString"
+          *ngIf="topForm.get('fieldResult').value !== fieldResultString"
           class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
         ></div>
 
         <div
-          *ngIf="filterForm.get('fieldResult').value === fieldResultString"
+          *ngIf="topForm.get('fieldResult').value === fieldResultString"
           class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
           >Suggest values from</div
         >
@@ -251,7 +337,7 @@
         #dashboardSuggestFieldSelect
         *ngIf="
           !!suggestFieldsLoaded &&
-          filterForm.get('fieldResult').value === fieldResultString
+          topForm.get('fieldResult').value === fieldResultString
         "
         data-cy="dashboardSuggestFieldSelect"
         class="w-full min-w-[2px] text-base"
