@@ -19,6 +19,7 @@ export class DashboardField {
   @IsString()
   label: string;
 
+  @IsOptional()
   @IsEnum(enums.FieldResultEnum)
   result: enums.FieldResultEnum;
 

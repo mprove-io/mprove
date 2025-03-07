@@ -63,6 +63,9 @@ export function makeDashboardFileText(item: {
               common.isDefined(field.description) && field.description !== ''
                 ? field.description
                 : undefined,
+            // store_filter: // TODO:
+            // store_result:
+            // fractions
             result: field.result,
             suggest_model_dimension: field.suggestModelDimension,
             conditions:

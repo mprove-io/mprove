@@ -29,9 +29,6 @@ export function prepareTile(item: {
 
   if (isDefined(mconfig.filters) && mconfig.filters.length > 0) {
     mconfig.filters.forEach(x => {
-      let bricks: string[] = [];
-      x.fractions.forEach(fraction => bricks.push(fraction.brick));
-
       if (
         isUndefined(deleteFilterTileTitle) ||
         tile.title !== deleteFilterTileTitle ||
@@ -42,7 +39,7 @@ export function prepareTile(item: {
         };
 
         if (mconfig.isStoreModel === false) {
-          parameter.conditions = bricks;
+          parameter.conditions = x.fractions.map(fraction => fraction.brick);
         } else {
           parameter.fractions = x.fractions.map(mconfigFraction => {
             let fileFraction: FileFraction = {};
@@ -98,6 +95,8 @@ export function prepareTile(item: {
       }
     });
   }
+
+  // TODO: check tile listen for store
 
   if (
     isForDashboard === true &&

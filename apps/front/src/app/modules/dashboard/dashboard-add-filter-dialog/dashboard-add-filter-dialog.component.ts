@@ -21,7 +21,11 @@ import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { SuggestField } from '~common/_index';
+import {
+  FractionSubTypeOption,
+  SuggestField,
+  toBooleanFromLowercaseString
+} from '~common/_index';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DashboardService } from '~front/app/services/dashboard.service';
@@ -132,7 +136,9 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   storeModelsList: StoreModelItem[] = [];
   storeModelsLoading = false;
   storeModelsLoaded = false;
+
   storeModelSet = false;
+  storeModel: common.Model;
 
   storeModelForm = this.fb.group({
     storeModel: [
@@ -162,8 +168,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   ];
 
   storeFiltersList: StoreFiltersItem[] = [];
-  storeFiltersLoading = false;
-  storeFiltersLoaded = false;
+  selectedModelLoading = false;
+  selectedModelLoaded = false;
 
   storeFilterForm = this.fb.group({
     storeFilter: [
@@ -281,6 +287,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       );
       this.storeFilterForm.controls['storeFilter'].setValue(undefined);
       this.fieldResultForm.controls['fieldResult'].setValue(undefined);
+      this.suggestFieldForm.controls['suggestField'].setValue(undefined);
 
       if (this.storeModelsLoaded === false) {
         this.loadStoreModels();
@@ -299,8 +306,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     this.storeModelSet = true;
 
-    this.storeFiltersLoaded = false;
-    this.loadStoreFilters();
+    this.selectedModelLoaded = false;
+    this.loadSelectedModel();
 
     this.cd.detectChanges();
   }
@@ -405,8 +412,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       .toPromise();
   }
 
-  loadStoreFilters() {
-    this.storeFiltersLoading = true;
+  loadSelectedModel() {
+    this.selectedModelLoading = true;
 
     let nav: NavState;
     this.navQuery
@@ -440,6 +447,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetModelResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.storeModel = resp.payload.model;
+
             this.storeFiltersList = resp.payload.model.fields
               .filter(x => x.fieldClass === common.FieldClassEnum.Filter)
               .map(field => {
@@ -456,8 +465,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
                 result => result.result
               ) || [];
 
-            this.storeFiltersLoading = false;
-            this.storeFiltersLoaded = true;
+            this.selectedModelLoading = false;
+            this.selectedModelLoaded = true;
           }
         }),
         take(1)
@@ -563,11 +572,142 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     let result = this.fieldResultForm.controls['fieldResult'].value;
 
-    let fraction: common.Fraction = {
-      brick: 'any',
-      operator: common.FractionOperatorEnum.Or,
-      type: common.getFractionTypeForAny(result)
-    };
+    let fraction: common.Fraction;
+
+    if (
+      this.modelTypeForm.controls['modelType'].value ===
+      common.ModelTypeEnum.Store
+    ) {
+      let storeFilter =
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+        common.StoreFilterForEnum.Filter
+          ? (this.storeModel.content as common.FileStore).fields.find(
+              f => f.name === this.storeFilterForm.controls['storeFilter'].value
+            )
+          : undefined;
+
+      let storeResultFraction =
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+        common.StoreFilterForEnum.Filter
+          ? undefined
+          : (this.storeModel.content as common.FileStore).results.find(
+              r =>
+                r.result === this.fieldResultForm.controls['fieldResult'].value
+            ).fraction_types[0];
+
+      let logicGroup = common.isUndefined(storeResultFraction)
+        ? undefined
+        : common.isUndefined(storeResultFraction.or) ||
+          toBooleanFromLowercaseString(storeResultFraction.or) === true
+        ? common.FractionLogicEnum.Or
+        : common.FractionLogicEnum.AndNot;
+
+      let storeFractionSubTypeOptions = common.isUndefined(storeResultFraction)
+        ? []
+        : (this.storeModel.content as common.FileStore).results
+            .find(
+              r =>
+                r.result === this.fieldResultForm.controls['fieldResult'].value
+            )
+            .fraction_types.map(ft => {
+              let options = [];
+
+              if (
+                common.isUndefined(ft.or) ||
+                toBooleanFromLowercaseString(ft.or) === true
+              ) {
+                let optionOr: FractionSubTypeOption = {
+                  logicGroup: common.FractionLogicEnum.Or,
+                  typeValue: ft.type,
+                  value: common.FractionLogicEnum.Or + ft.type,
+                  label: ft.label
+                };
+                options.push(optionOr);
+              }
+
+              if (
+                common.isUndefined(ft.and_not) ||
+                toBooleanFromLowercaseString(ft.and_not) === true
+              ) {
+                let optionAndNot: FractionSubTypeOption = {
+                  logicGroup: common.FractionLogicEnum.AndNot,
+                  value: common.FractionLogicEnum.AndNot + ft.type,
+                  typeValue: ft.type,
+                  label: ft.label
+                };
+                options.push(optionAndNot);
+              }
+
+              return options;
+            })
+            .flat()
+            .sort((a, b) => {
+              if (a.logicGroup === b.logicGroup) return 0;
+              return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
+            });
+
+      fraction = {
+        meta: storeResultFraction?.meta,
+        operator: common.isUndefined(logicGroup)
+          ? undefined
+          : logicGroup === common.FractionLogicEnum.Or
+          ? common.FractionOperatorEnum.Or
+          : common.FractionOperatorEnum.And,
+        logicGroup: logicGroup,
+        brick: undefined,
+        type: common.FractionTypeEnum.StoreFraction,
+        storeResult: this.fieldResultForm.controls['fieldResult'].value,
+        storeFractionSubTypeOptions: storeFractionSubTypeOptions,
+        storeFractionSubType: storeResultFraction?.type,
+        storeFractionSubTypeLabel: common.isDefined(storeResultFraction?.type)
+          ? storeFractionSubTypeOptions.find(
+              k => k.typeValue === storeResultFraction?.type
+            ).label
+          : storeResultFraction?.type,
+        storeFractionLogicGroupWithSubType:
+          common.isDefined(logicGroup) &&
+          common.isDefined(storeResultFraction?.type)
+            ? logicGroup + storeResultFraction.type
+            : undefined,
+        controls: common.isUndefined(storeResultFraction)
+          ? storeFilter.fraction_controls.map(control => {
+              let newControl: common.FractionControl = {
+                options: control.options,
+                value: control.value,
+                label: control.label,
+                required: control.required,
+                name: control.name,
+                controlClass: control.controlClass,
+                isMetricsDate: undefined
+              };
+              return newControl;
+            })
+          : (this.storeModel.content as common.FileStore).results
+              .find(
+                r =>
+                  r.result ===
+                  this.fieldResultForm.controls['fieldResult'].value
+              )
+              .fraction_types[0].controls.map(control => {
+                let newControl: common.FractionControl = {
+                  options: control.options,
+                  value: control.value,
+                  label: control.label,
+                  required: control.required,
+                  name: control.name,
+                  controlClass: control.controlClass,
+                  isMetricsDate: undefined
+                };
+                return newControl;
+              })
+      };
+    } else {
+      fraction = {
+        brick: 'any',
+        operator: common.FractionOperatorEnum.Or,
+        type: common.getFractionTypeForAny(result)
+      };
+    }
 
     let suggestField = this.suggestFieldForm.controls['suggestField'].value;
 
@@ -575,6 +715,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       id: id,
       hidden: false,
       label: label,
+      // store_filter: // TODO:
+      // store_result:
       result: result,
       suggestModelDimension: common.isDefined(suggestField.modelFieldRef)
         ? suggestField.modelFieldRef

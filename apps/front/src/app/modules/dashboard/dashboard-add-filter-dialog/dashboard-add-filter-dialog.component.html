@@ -186,7 +186,7 @@
 
     <div
       class="relative flex h-9 w-9 flex-shrink-0"
-      *ngIf="!storeFiltersLoaded"
+      *ngIf="!selectedModelLoaded"
     >
       <ngx-spinner
         [name]="storeFiltersSpinnerName"
@@ -201,12 +201,12 @@
       </ngx-spinner>
     </div>
 
-    <form [formGroup]="storeFilterForm" *ngIf="!!storeFiltersLoaded">
+    <form [formGroup]="storeFilterForm" *ngIf="!!selectedModelLoaded">
       <ng-select
         #storeFilterSelect
         data-cy="storeFilterSelect"
         class="w-[500px] text-base"
-        [loading]="storeFiltersLoading"
+        [loading]="selectedModelLoading"
         [items]="storeFiltersList"
         [clearable]="false"
         [searchable]="false"
@@ -252,7 +252,7 @@
         class="relative flex h-9 w-9 flex-shrink-0"
         *ngIf="
           modelTypeForm.get('modelType').value === modelTypeStore &&
-          !storeFiltersLoaded
+          !selectedModelLoaded
         "
       >
         <ngx-spinner
@@ -272,7 +272,7 @@
         <ng-select
           *ngIf="
             modelTypeForm.get('modelType').value === modelTypeSql ||
-            !!storeFiltersLoaded
+            !!selectedModelLoaded
           "
           #typeSelect
           data-cy="resultSelect"
