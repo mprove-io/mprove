@@ -5,7 +5,7 @@
     >Add Filter</div
   >
 
-  <form class="mt-9 flex flex-col" [formGroup]="topForm">
+  <div class="mt-9 flex flex-col">
     <div class="flex flex-row items-start">
       <div class="flex flex-col">
         <div
@@ -14,7 +14,7 @@
         >
       </div>
 
-      <div [formGroup]="topForm" class="flex flex-col items-start">
+      <form [formGroup]="labelForm" class="flex flex-col items-start">
         <input
           #filterLabel
           autocomplete="off"
@@ -23,15 +23,15 @@
           class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
           [ngClass]="{
             'border-red-600':
-              topForm.controls['label'].invalid &&
-              topForm.controls['label'].touched
+              labelForm.controls['label'].invalid &&
+              labelForm.controls['label'].touched
           }"
           formControlName="label"
         />
-        <m-validation [control]="topForm.controls['label']"></m-validation>
-      </div>
+        <m-validation [control]="labelForm.controls['label']"></m-validation>
+      </form>
     </div>
-  </form>
+  </div>
 
   <div class="flex flex-row items-start">
     <div class="flex flex-col">
@@ -233,7 +233,7 @@
     </form>
   </div>
 
-  <form class="flex flex-col" [formGroup]="topForm" (ngSubmit)="save()">
+  <div class="flex flex-col">
     <div
       class="mt-6 flex flex-row items-start"
       *ngIf="
@@ -268,35 +268,37 @@
         </ngx-spinner>
       </div>
 
-      <ng-select
-        *ngIf="
-          modelTypeForm.get('modelType').value === modelTypeSql ||
-          !!storeFiltersLoaded
-        "
-        #typeSelect
-        data-cy="resultSelect"
-        class="w-72 text-base"
-        [items]="
-          modelTypeForm.get('modelType').value === modelTypeSql
-            ? sqlResultsList
-            : storeResultsList
-        "
-        [clearable]="false"
-        [searchable]="false"
-        (keyup.esc)="$event.stopImmediatePropagation(); typeSelect.blur()"
-        (keyup.enter)="$event.stopImmediatePropagation(); typeSelect.blur()"
-        (change)="resultChange($event)"
-        appendTo="body"
-        formControlName="fieldResult"
-      >
-        <ng-template ng-label-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item }}</div>
-        </ng-template>
+      <form [formGroup]="fieldResultForm">
+        <ng-select
+          *ngIf="
+            modelTypeForm.get('modelType').value === modelTypeSql ||
+            !!storeFiltersLoaded
+          "
+          #typeSelect
+          data-cy="resultSelect"
+          class="w-72 text-base"
+          [items]="
+            modelTypeForm.get('modelType').value === modelTypeSql
+              ? sqlResultsList
+              : storeResultsList
+          "
+          [clearable]="false"
+          [searchable]="false"
+          (keyup.esc)="$event.stopImmediatePropagation(); typeSelect.blur()"
+          (keyup.enter)="$event.stopImmediatePropagation(); typeSelect.blur()"
+          (change)="resultChange($event)"
+          appendTo="body"
+          formControlName="fieldResult"
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <div class="ml-1 truncate">{{ item }}</div>
+          </ng-template>
 
-        <ng-template ng-option-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item }}</div>
-        </ng-template>
-      </ng-select>
+          <ng-template ng-option-tmp let-item="item">
+            <div class="ml-1 truncate">{{ item }}</div>
+          </ng-template>
+        </ng-select>
+      </form>
     </div>
 
     <div
@@ -305,12 +307,12 @@
     >
       <div class="flex flex-col">
         <div
-          *ngIf="topForm.get('fieldResult').value !== fieldResultString"
+          *ngIf="fieldResultForm.get('fieldResult').value !== fieldResultString"
           class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
         ></div>
 
         <div
-          *ngIf="topForm.get('fieldResult').value === fieldResultString"
+          *ngIf="fieldResultForm.get('fieldResult').value === fieldResultString"
           class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
           >Suggest values from</div
         >
@@ -333,56 +335,67 @@
         </ngx-spinner>
       </div>
 
-      <ng-select
-        #dashboardSuggestFieldSelect
-        *ngIf="
-          !!suggestFieldsLoaded &&
-          topForm.get('fieldResult').value === fieldResultString
-        "
-        data-cy="dashboardSuggestFieldSelect"
-        class="w-full min-w-[2px] text-base"
-        [loading]="suggestFieldsLoading"
-        [items]="suggestFields"
-        [clearable]="false"
-        [searchable]="true"
-        [searchFn]="searchFn"
-        (change)="suggestFieldChange()"
-        (keyup.esc)="
-          $event.stopImmediatePropagation(); dashboardSuggestFieldSelect.blur()
-        "
-        (keyup.enter)="
-          $event.stopImmediatePropagation(); dashboardSuggestFieldSelect.blur()
-        "
-        appendTo="body"
-        placeholder="Select Field"
-        formControlName="suggestField"
+      <form
+        [formGroup]="suggestFieldForm"
+        class="min-w-[2px] max-w-[800px] flex-grow"
       >
-        <ng-template ng-label-tmp let-item="item">
-          <m-suggest-field-label
-            [suggestField]="item"
-            [isShowTop]="true"
-            [isShowTime]="true"
-            class="ml-1 flex"
-          ></m-suggest-field-label>
-        </ng-template>
-
-        <ng-template
-          ng-option-tmp
-          let-item="item"
-          let-index="index"
-          let-search="searchTerm"
+        <ng-select
+          #dashboardSuggestFieldSelect
+          *ngIf="
+            !!suggestFieldsLoaded &&
+            fieldResultForm.get('fieldResult').value === fieldResultString
+          "
+          data-cy="dashboardSuggestFieldSelect"
+          class="w-full min-w-[2px] text-base"
+          [loading]="suggestFieldsLoading"
+          [items]="suggestFields"
+          [clearable]="false"
+          [searchable]="true"
+          [searchFn]="searchFn"
+          (change)="suggestFieldChange()"
+          (keyup.esc)="
+            $event.stopImmediatePropagation();
+            dashboardSuggestFieldSelect.blur()
+          "
+          (keyup.enter)="
+            $event.stopImmediatePropagation();
+            dashboardSuggestFieldSelect.blur()
+          "
+          appendTo="body"
+          placeholder="Select Field"
+          formControlName="suggestField"
         >
-          <m-suggest-field-label
-            [suggestField]="item"
-            [isShowTop]="true"
-            [isShowTime]="true"
-            class="ml-1 flex"
-          ></m-suggest-field-label>
-        </ng-template>
-      </ng-select>
+          <ng-template ng-label-tmp let-item="item">
+            <m-suggest-field-label
+              [suggestField]="item"
+              [isShowTop]="true"
+              [isShowTime]="true"
+              class="ml-1 flex"
+            ></m-suggest-field-label>
+          </ng-template>
+
+          <ng-template
+            ng-option-tmp
+            let-item="item"
+            let-index="index"
+            let-search="searchTerm"
+          >
+            <m-suggest-field-label
+              [suggestField]="item"
+              [isShowTop]="true"
+              [isShowTime]="true"
+              class="ml-1 flex"
+            ></m-suggest-field-label>
+          </ng-template>
+        </ng-select>
+      </form>
     </div>
 
-    <div class="mt-14 flex">
+    <form
+      class="mt-14 flex flex-row items-center"
+      [formGroup]="labelForm"
+      (ngSubmit)="save()"
+    >
       <button
         data-cy="dashboardAddFilterDialogSaveButton"
         class="bg-blue3 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
@@ -397,8 +410,12 @@
         (click)="cancel()"
         >Cancel</button
       >
-    </div>
-  </form>
+
+      <div *ngIf="!!formsError" class="text-red1 ml-5 flex">
+        {{ formsError }}
+      </div>
+    </form>
+  </div>
 </div>
 
 <div *ngIf="nav$ | async"></div>

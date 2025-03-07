@@ -31,7 +31,6 @@ import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../../shared/shared.module';
 
 import uFuzzy from '@leeoniya/ufuzzy';
-import { ModelsQuery } from '~front/app/queries/models.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 
 export interface DashboardAddFilterDialogData {
@@ -92,15 +91,13 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   sqlResultsList = constants.RESULTS_LIST;
   storeResultsList: string[] = [];
 
-  fieldResult = common.FieldResultEnum.String;
-
-  fieldResultString = common.FieldResultEnum.String;
-
   modelTypeStore = common.ModelTypeEnum.Store;
   modelTypeSql = common.ModelTypeEnum.SQL;
-
   storeFilterForFilter = common.StoreFilterForEnum.Filter;
   storeFilterForResult = common.StoreFilterForEnum.Result;
+  fieldResultString = common.FieldResultEnum.String;
+
+  fieldResult = common.FieldResultEnum.String;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -185,13 +182,21 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     topLabel: 'Empty',
     partNodeLabel: undefined,
     partFieldLabel: undefined
-  } as common.SuggestField);
+  }) as common.SuggestField;
 
-  topForm: FormGroup<{
+  labelForm: FormGroup<{
     label: FormControl<string>;
+  }>;
+
+  fieldResultForm: FormGroup<{
     fieldResult: FormControl<common.FieldResultEnum>;
+  }>;
+
+  suggestFieldForm: FormGroup<{
     suggestField: FormControl<SuggestField>;
   }>;
+
+  formsError: string;
 
   constructor(
     public ref: DialogRef<DashboardAddFilterDialogData>,
@@ -199,25 +204,30 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
-    private modelsQuery: ModelsQuery,
     private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.dashboard = this.ref.data.dashboard;
 
-    this.modelTypeForm.controls['modelType'].setValue(common.ModelTypeEnum.SQL);
-
-    this.topForm = this.fb.group(
+    this.labelForm = this.fb.group(
       {
-        label: [undefined, [Validators.required, Validators.maxLength(255)]],
-        fieldResult: [this.fieldResult],
-        suggestField: [this.emptySuggestField]
+        label: [undefined, [Validators.required, Validators.maxLength(255)]]
       },
       {
         validator: this.labelValidator.bind(this)
       }
     );
+
+    this.fieldResultForm = this.fb.group({
+      fieldResult: [this.fieldResult]
+    });
+
+    this.suggestFieldForm = this.fb.group({
+      suggestField: [this.emptySuggestField]
+    });
+
+    this.modelTypeForm.controls['modelType'].setValue(common.ModelTypeEnum.SQL);
 
     setTimeout(() => {
       if (
@@ -231,13 +241,13 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   labelValidator(group: AbstractControl): ValidationErrors | null {
     if (
-      common.isUndefined(this.topForm) ||
-      common.isUndefined(this.topForm.controls['label'].value)
+      common.isUndefined(this.labelForm) ||
+      common.isUndefined(this.labelForm.controls['label'].value)
     ) {
       return null;
     }
 
-    let label: string = this.topForm.controls['label'].value.toLowerCase();
+    let label: string = this.labelForm.controls['label'].value.toLowerCase();
 
     let id = common.MyRegex.replaceSpacesWithUnderscores(label).toLowerCase();
 
@@ -248,7 +258,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     let ids = this.dashboard.extendedFilters.map(x => x.fieldId.toLowerCase());
 
     if (labels.indexOf(label) > -1 || ids.indexOf(id) > -1) {
-      this.topForm.controls['label'].setErrors({ labelIsNotUnique: true });
+      this.labelForm.controls['label'].setErrors({ labelIsNotUnique: true });
     } else {
       return null;
     }
@@ -256,6 +266,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   modelTypeChange() {
     (document.activeElement as HTMLElement).blur();
+
+    this.formsError = undefined;
 
     if (
       this.modelTypeForm.controls['modelType'].value ===
@@ -268,13 +280,13 @@ export class DashboardAddFilterDialogComponent implements OnInit {
         common.StoreFilterForEnum.Filter
       );
       this.storeFilterForm.controls['storeFilter'].setValue(undefined);
-      this.topForm.controls['fieldResult'].setValue(undefined);
+      this.fieldResultForm.controls['fieldResult'].setValue(undefined);
 
       if (this.storeModelsLoaded === false) {
         this.loadStoreModels();
       }
     } else {
-      this.topForm.controls['fieldResult'].setValue(
+      this.fieldResultForm.controls['fieldResult'].setValue(
         common.FieldResultEnum.String
       );
     }
@@ -282,6 +294,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   storeModelChange() {
     (document.activeElement as HTMLElement).blur();
+
+    this.formsError = undefined;
 
     this.storeModelSet = true;
 
@@ -294,27 +308,33 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   storeFilterForChange() {
     (document.activeElement as HTMLElement).blur();
 
+    this.formsError = undefined;
+
     if (
       this.storeFilterForForm.controls['storeFilterFor'].value ===
       common.StoreFilterForEnum.Result
     ) {
       if (this.storeResultsList.indexOf(common.FieldResultEnum.String) > -1) {
-        this.topForm.controls['fieldResult'].setValue(
+        this.fieldResultForm.controls['fieldResult'].setValue(
           common.FieldResultEnum.String
         );
       } else {
-        this.topForm.controls['fieldResult'].setValue(undefined);
+        this.fieldResultForm.controls['fieldResult'].setValue(undefined);
       }
     } else {
-      this.topForm.controls['fieldResult'].setValue(undefined);
+      this.fieldResultForm.controls['fieldResult'].setValue(undefined);
     }
   }
 
   storeFilterChange() {
     (document.activeElement as HTMLElement).blur();
+
+    this.formsError = undefined;
   }
 
   resultChange(fieldResult: common.FieldResultEnum) {
+    this.formsError = undefined;
+
     this.fieldResult = fieldResult;
 
     if (
@@ -497,19 +517,51 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   }
 
   save() {
-    this.topForm.markAllAsTouched();
+    this.labelForm.markAllAsTouched();
 
-    if (!this.topForm.valid) {
+    if (!this.labelForm.valid) {
       return;
     }
 
+    if (
+      this.modelTypeForm.controls['modelType'].value ===
+      common.ModelTypeEnum.Store
+    ) {
+      if (
+        common.isUndefined(this.storeModelForm.controls['storeModel'].value)
+      ) {
+        this.formsError = 'Model must be selected';
+        return;
+      }
+
+      if (
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+          common.StoreFilterForEnum.Filter &&
+        common.isUndefined(this.storeFilterForm.controls['storeFilter'].value)
+      ) {
+        this.formsError = 'Filter must be selected';
+        return;
+      }
+
+      if (
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+          common.StoreFilterForEnum.Result &&
+        common.isUndefined(this.fieldResultForm.controls['fieldResult'].value)
+      ) {
+        this.formsError = 'Result must be selected';
+        return;
+      }
+    }
+
+    this.formsError = undefined;
+
     this.ref.close();
 
-    let label: string = this.topForm.controls['label'].value;
+    let label: string = this.labelForm.controls['label'].value;
 
     let id = common.MyRegex.replaceSpacesWithUnderscores(label).toLowerCase();
 
-    let result = this.topForm.controls['fieldResult'].value;
+    let result = this.fieldResultForm.controls['fieldResult'].value;
 
     let fraction: common.Fraction = {
       brick: 'any',
@@ -517,7 +569,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       type: common.getFractionTypeForAny(result)
     };
 
-    let suggestField = this.topForm.controls['suggestField'].value;
+    let suggestField = this.suggestFieldForm.controls['suggestField'].value;
 
     let field: common.DashboardField = {
       id: id,
