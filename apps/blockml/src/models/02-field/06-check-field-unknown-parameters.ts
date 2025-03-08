@@ -269,7 +269,17 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                   ) > -1) ||
                 ([
                   common.CallerEnum.BuildViewField,
-                  common.CallerEnum.BuildModelField,
+                  common.CallerEnum.BuildModelField
+                ].indexOf(caller) > -1 &&
+                  [
+                    common.ParameterEnum.Filter.toString(),
+                    common.ParameterEnum.Label.toString(),
+                    common.ParameterEnum.Description.toString(),
+                    common.ParameterEnum.Result.toString(),
+                    common.ParameterEnum.SuggestModelDimension.toString(),
+                    common.ParameterEnum.Conditions.toString()
+                  ].indexOf(parameter) < 0) ||
+                ([
                   common.CallerEnum.BuildDashboardField,
                   common.CallerEnum.BuildReportField
                 ].indexOf(caller) > -1 &&
@@ -279,7 +289,11 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                     common.ParameterEnum.Description.toString(),
                     common.ParameterEnum.Result.toString(),
                     common.ParameterEnum.SuggestModelDimension.toString(),
-                    common.ParameterEnum.Conditions.toString()
+                    common.ParameterEnum.Conditions.toString(),
+                    common.ParameterEnum.Fractions.toString(),
+                    common.ParameterEnum.Store.toString(),
+                    common.ParameterEnum.StoreFilter.toString(),
+                    common.ParameterEnum.StoreResult.toString()
                   ].indexOf(parameter) < 0)
               ) {
                 item.errors.push(
@@ -309,6 +323,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
             [
               common.ParameterEnum.Timeframes.toString(),
               common.ParameterEnum.Conditions.toString(),
+              common.ParameterEnum.Fractions.toString(),
               common.ParameterEnum.FractionControls.toString()
             ].indexOf(parameter) < 0
           ) {
@@ -357,6 +372,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
             [
               common.ParameterEnum.Timeframes.toString(),
               common.ParameterEnum.Conditions.toString(),
+              common.ParameterEnum.Fractions.toString(),
               common.ParameterEnum.FractionControls.toString()
             ].indexOf(parameter) > -1
           ) {

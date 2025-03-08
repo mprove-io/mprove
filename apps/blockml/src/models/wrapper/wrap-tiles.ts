@@ -106,29 +106,29 @@ export function wrapTiles(item: {
       });
     } else {
       tile.parameters.forEach(x => {
-        let field = store.fields.find(k => k.name === x.apply_to);
+        let storeField = store.fields.find(k => k.name === x.apply_to);
 
         let filter: common.Filter = {
           fieldId: x.apply_to,
           fractions: x.fractions.map(y => {
             let storeResultCurrentTypeFraction: common.FileStoreFractionType;
 
-            if (field.fieldClass !== common.FieldClassEnum.Filter) {
+            if (storeField.fieldClass !== common.FieldClassEnum.Filter) {
               storeResultCurrentTypeFraction = store.results
-                .find(r => r.result === field.result)
+                .find(r => r.result === storeField.result)
                 .fraction_types.find(ft => ft.type === y.type);
             }
 
             let storeFractionSubType =
-              field.fieldClass === common.FieldClassEnum.Filter
+              storeField.fieldClass === common.FieldClassEnum.Filter
                 ? undefined
                 : y.type;
 
             let storeFractionSubTypeOptions =
-              field.fieldClass === common.FieldClassEnum.Filter
+              storeField.fieldClass === common.FieldClassEnum.Filter
                 ? undefined
                 : store.results
-                    .find(r => r.result === field.result)
+                    .find(r => r.result === storeField.result)
                     .fraction_types.map(ft => {
                       let options = [];
 
@@ -170,17 +170,17 @@ export function wrapTiles(item: {
 
             let fraction: common.Fraction = {
               meta:
-                field.fieldClass === common.FieldClassEnum.Filter
+                storeField.fieldClass === common.FieldClassEnum.Filter
                   ? undefined
                   : storeResultCurrentTypeFraction?.meta,
               operator:
-                field.fieldClass === common.FieldClassEnum.Filter
+                storeField.fieldClass === common.FieldClassEnum.Filter
                   ? undefined
                   : y.logic === common.FractionLogicEnum.Or
                   ? common.FractionOperatorEnum.Or
                   : common.FractionOperatorEnum.And,
               logicGroup:
-                field.fieldClass === common.FieldClassEnum.Filter
+                storeField.fieldClass === common.FieldClassEnum.Filter
                   ? undefined
                   : y.logic,
               brick: undefined,
@@ -193,13 +193,13 @@ export function wrapTiles(item: {
                   ).label
                 : storeFractionSubType,
               storeFractionLogicGroupWithSubType:
-                field.fieldClass === common.FieldClassEnum.Filter
+                storeField.fieldClass === common.FieldClassEnum.Filter
                   ? undefined
                   : y.logic + y.type,
               controls: y.controls.map((control: FileFractionControl) => {
                 let storeControl =
-                  field.fieldClass === common.FieldClassEnum.Filter
-                    ? field.fraction_controls.find(
+                  storeField.fieldClass === common.FieldClassEnum.Filter
+                    ? storeField.fraction_controls.find(
                         fc => fc.name === control.name
                       )
                     : storeResultCurrentTypeFraction.controls.find(

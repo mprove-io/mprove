@@ -64,20 +64,22 @@ export function checkAndSetImplicitResult<T extends types.vsmdrType>(
             }
 
             case common.FieldClassEnum.Filter: {
-              item.errors.push(
-                new BmError({
-                  title: common.ErTitleEnum.MISSING_FILTER_RESULT,
-                  message: `parameter ${common.ParameterEnum.Result} is required for filters`,
-                  lines: [
-                    {
-                      line: field.name_line_num,
-                      name: x.fileName,
-                      path: x.filePath
-                    }
-                  ]
-                })
-              );
-              return;
+              if (common.isUndefined(field.store)) {
+                item.errors.push(
+                  new BmError({
+                    title: common.ErTitleEnum.MISSING_FILTER_RESULT,
+                    message: `parameter ${common.ParameterEnum.Result} is required for filters`,
+                    lines: [
+                      {
+                        line: field.name_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              }
             }
           }
         } else {

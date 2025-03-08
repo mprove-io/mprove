@@ -23,6 +23,15 @@ export const FILTER_SCHEMA: JSONSchema7 = {
       type: 'string',
       enum: constants.FILTER_RESULT_VALUES
     },
+    store: {
+      type: 'string'
+    },
+    store_result: {
+      type: 'string'
+    },
+    store_filter: {
+      type: 'string'
+    },
     suggest_model_dimension: {
       type: 'string'
     },
@@ -30,6 +39,52 @@ export const FILTER_SCHEMA: JSONSchema7 = {
       type: 'array',
       items: {
         type: 'string'
+      }
+    },
+    fractions: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['controls'],
+        properties: {
+          controls: {
+            type: 'array',
+            items: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                input: {
+                  type: 'string'
+                },
+                list_input: {
+                  type: 'string'
+                },
+                switch: {
+                  type: 'string'
+                },
+                selector: {
+                  type: 'string'
+                },
+                date_picker: {
+                  type: 'string'
+                },
+                value: {
+                  type: ['string', 'number', 'boolean']
+                },
+                values: {
+                  type: 'array',
+                  items: {
+                    type: ['string', 'number', 'boolean']
+                  }
+                },
+                label: {
+                  type: 'string'
+                }
+              }
+            }
+          }
+        }
       }
     }
   }

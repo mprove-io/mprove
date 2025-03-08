@@ -140,6 +140,20 @@ export class CreateTempDashboardController {
     fromDashboard.tiles = yTiles;
     fromDashboard.fields = newDashboardFields;
 
+    // console.log('newDashboardFields');
+    // newDashboardFields.forEach(dashboardField => {
+    //   console.log('dashboardField');
+    //   console.log(dashboardField);
+    //   dashboardField.fractions.forEach(fraction => {
+    //     console.log('fraction');
+    //     console.log(fraction);
+    //     fraction.controls.forEach(control => {
+    //       console.log('control');
+    //       console.log(control);
+    //     });
+    //   });
+    // });
+
     let dashboardFileText = makeDashboardFileText({
       dashboard: fromDashboard,
       newDashboardId: newDashboardId,
@@ -151,6 +165,9 @@ export class CreateTempDashboardController {
       timezone: timezone,
       caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters
     });
+
+    // console.log('dashboardFileText');
+    // console.log(dashboardFileText);
 
     let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
       info: {
@@ -244,6 +261,9 @@ export class CreateTempDashboardController {
         envId: envId,
         overrideTimezone: timezone
       });
+
+    // console.log('struct');
+    // console.log(struct);
 
     let newDashboard = dashboards.find(x => x.dashboardId === newDashboardId);
 

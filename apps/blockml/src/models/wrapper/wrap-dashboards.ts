@@ -1,4 +1,5 @@
 import { common } from '~blockml/barrels/common';
+import { STORE_MODEL_PREFIX } from '~common/_index';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
 import { FileFractionControl } from '~common/interfaces/blockml/internal/file-fraction-control';
@@ -44,7 +45,9 @@ export function wrapDashboards(item: {
         fractions: common.isUndefined(field.store)
           ? field.fieldFractions
           : field.fractions.map(y => {
-              let store = stores.find(s => s.name === field.store);
+              let store = stores.find(
+                s => `${STORE_MODEL_PREFIX}_${s.name}` === field.store
+              );
 
               let storeResultCurrentTypeFraction: common.FileStoreFractionType;
 
@@ -132,8 +135,29 @@ export function wrapDashboards(item: {
                   ? undefined
                   : y.logic + y.type,
                 controls: y.controls.map((control: FileFractionControl) => {
+                  if (common.isDefined(control.input)) {
+                    control.name = control.input;
+                    control.controlClass = common.ControlClassEnum.Input;
+                  } else if (common.isDefined(control.list_input)) {
+                    control.name = control.list_input;
+                    control.controlClass = common.ControlClassEnum.ListInput;
+                  } else if (common.isDefined(control.switch)) {
+                    control.name = control.switch;
+                    control.controlClass = common.ControlClassEnum.Switch;
+                  } else if (common.isDefined(control.date_picker)) {
+                    control.name = control.date_picker;
+                    control.controlClass = common.ControlClassEnum.DatePicker;
+                  } else if (common.isDefined(control.selector)) {
+                    control.name = control.selector;
+                    control.controlClass = common.ControlClassEnum.Selector;
+                  }
+
+                  let storeField = common.isDefined(field.store_filter)
+                    ? store.fields.find(k => k.name === field.store_filter)
+                    : undefined;
+
                   let storeControl = common.isDefined(field.store_filter)
-                    ? field.fraction_controls.find(
+                    ? storeField.fraction_controls.find(
                         fc => fc.name === control.name
                       )
                     : storeResultCurrentTypeFraction.controls.find(
