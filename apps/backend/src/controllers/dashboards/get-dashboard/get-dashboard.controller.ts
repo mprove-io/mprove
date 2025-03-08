@@ -145,7 +145,9 @@ export class GetDashboardController {
       roles: fromDashboard.accessRoles.join(', '),
       users: fromDashboard.accessUsers.join(', '),
       deleteFilterFieldId: undefined,
-      deleteFilterTileTitle: undefined
+      deleteFilterTileTitle: undefined,
+      timezone: timezone,
+      caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters
     });
 
     let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {

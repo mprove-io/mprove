@@ -156,7 +156,8 @@ export class StoreService {
                 target = common.isDefined(metricsStartDateYYYYMMDD)
                   ? metricsStartDateYYYYMMDD
                   : getYYYYMMDDCurrentDateByTimezone({
-                      timezone: mconfig.timezone
+                      timezone: mconfig.timezone,
+                      deltaDays: -1
                     });
               } else if (reference === 'METRICS_DATE_TO') {
                 control.isMetricsDate = true;
@@ -164,11 +165,13 @@ export class StoreService {
                 target = common.isDefined(metricsEndDateYYYYMMDD)
                   ? metricsEndDateYYYYMMDD
                   : getYYYYMMDDCurrentDateByTimezone({
-                      timezone: mconfig.timezone
+                      timezone: mconfig.timezone,
+                      deltaDays: 1
                     });
               } else if (reference === 'DATE_TODAY') {
                 target = getYYYYMMDDCurrentDateByTimezone({
-                  timezone: mconfig.timezone
+                  timezone: mconfig.timezone,
+                  deltaDays: 0
                 });
               } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
                 target = caseSensitiveStringFilters;
@@ -287,17 +290,20 @@ export class StoreService {
         target = common.isDefined(metricsStartDateYYYYMMDD)
           ? metricsStartDateYYYYMMDD
           : getYYYYMMDDCurrentDateByTimezone({
-              timezone: mconfig.timezone
+              timezone: mconfig.timezone,
+              deltaDays: -1
             });
       } else if (reference === 'METRICS_DATE_TO') {
         target = common.isDefined(metricsEndDateYYYYMMDD)
           ? metricsEndDateYYYYMMDD
           : getYYYYMMDDCurrentDateByTimezone({
-              timezone: mconfig.timezone
+              timezone: mconfig.timezone,
+              deltaDays: 1
             });
       } else if (reference === 'DATE_TODAY') {
         target = getYYYYMMDDCurrentDateByTimezone({
-          timezone: mconfig.timezone
+          timezone: mconfig.timezone,
+          deltaDays: 0
         });
       } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
         target = caseSensitiveStringFilters;

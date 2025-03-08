@@ -22,6 +22,7 @@ export * from './file-chart-options-y-axis';
 export * from './file-chart-plate';
 export * from './file-dashboard';
 export * from './file-error-line';
+export * from './file-fraction-control';
 export * from './file-join';
 export * from './file-model';
 export * from './file-part-tile';

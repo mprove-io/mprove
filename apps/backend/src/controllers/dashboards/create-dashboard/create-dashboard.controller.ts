@@ -175,7 +175,9 @@ export class CreateDashboardController {
         roles: accessRoles,
         users: accessUsers,
         deleteFilterFieldId: undefined,
-        deleteFilterTileTitle: undefined
+        deleteFilterTileTitle: undefined,
+        timezone: common.UTC,
+        caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters
       });
     } else {
       let newDashboard: common.DashboardX = {
@@ -203,7 +205,9 @@ export class CreateDashboardController {
         roles: accessRoles,
         users: accessUsers,
         deleteFilterFieldId: undefined,
-        deleteFilterTileTitle: undefined
+        deleteFilterTileTitle: undefined,
+        timezone: common.UTC,
+        caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters
       });
     }
 

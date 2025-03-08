@@ -134,7 +134,7 @@ export class ReportFiltersComponent {
   ) {
     let fractions = reportField.fractions;
 
-    let newReportFields: common.DashboardField[];
+    let newReportFields: common.ReportField[];
 
     if (fractions.length === 1) {
       newReportFields = [

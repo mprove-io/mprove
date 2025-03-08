@@ -25,6 +25,18 @@ export class DashboardField {
 
   @IsOptional()
   @IsString()
+  store: string;
+
+  @IsOptional()
+  @IsString()
+  storeResult: string;
+
+  @IsOptional()
+  @IsString()
+  storeFilter: string;
+
+  @IsOptional()
+  @IsString()
   suggestModelDimension: string;
 
   @ValidateNested()

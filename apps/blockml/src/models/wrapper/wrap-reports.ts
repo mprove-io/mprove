@@ -31,7 +31,7 @@ export function wrapReports(item: {
         hidden: common.toBooleanFromLowercaseString(field.hidden),
         label: field.label,
         result: field.result,
-        fractions: field.fractions,
+        fractions: field.fieldFractions,
         description: field.description,
         suggestModelDimension: field.suggest_model_dimension
       });

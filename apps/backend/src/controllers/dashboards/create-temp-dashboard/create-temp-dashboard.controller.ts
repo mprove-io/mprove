@@ -147,7 +147,9 @@ export class CreateTempDashboardController {
       roles: fromDashboard.accessRoles.join(', '),
       users: fromDashboard.accessUsers.join(', '),
       deleteFilterFieldId: deleteFilterFieldId,
-      deleteFilterTileTitle: deleteFilterTileTitle
+      deleteFilterTileTitle: deleteFilterTileTitle,
+      timezone: timezone,
+      caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters
     });
 
     let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {

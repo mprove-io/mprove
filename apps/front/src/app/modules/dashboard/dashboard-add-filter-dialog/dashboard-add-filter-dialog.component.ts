@@ -35,6 +35,7 @@ import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../../shared/shared.module';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 
 export interface DashboardAddFilterDialogData {
@@ -210,6 +211,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
+    private structQuery: StructQuery,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -570,8 +572,6 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     let id = common.MyRegex.replaceSpacesWithUnderscores(label).toLowerCase();
 
-    let result = this.fieldResultForm.controls['fieldResult'].value;
-
     let fraction: common.Fraction;
 
     if (
@@ -646,6 +646,37 @@ export class DashboardAddFilterDialogComponent implements OnInit {
               return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
             });
 
+      let controls = common.isUndefined(storeResultFraction)
+        ? storeFilter.fraction_controls.map(control => {
+            let newControl: common.FractionControl = {
+              options: control.options,
+              value: control.value,
+              label: control.label,
+              required: control.required,
+              name: control.name,
+              controlClass: control.controlClass,
+              isMetricsDate: undefined
+            };
+            return newControl;
+          })
+        : (this.storeModel.content as common.FileStore).results
+            .find(
+              r =>
+                r.result === this.fieldResultForm.controls['fieldResult'].value
+            )
+            .fraction_types[0].controls.map(control => {
+              let newControl: common.FractionControl = {
+                options: control.options,
+                value: control.value,
+                label: control.label,
+                required: control.required,
+                name: control.name,
+                controlClass: control.controlClass,
+                isMetricsDate: undefined
+              };
+              return newControl;
+            });
+
       fraction = {
         meta: storeResultFraction?.meta,
         operator: common.isUndefined(logicGroup)
@@ -669,43 +700,15 @@ export class DashboardAddFilterDialogComponent implements OnInit {
           common.isDefined(storeResultFraction?.type)
             ? logicGroup + storeResultFraction.type
             : undefined,
-        controls: common.isUndefined(storeResultFraction)
-          ? storeFilter.fraction_controls.map(control => {
-              let newControl: common.FractionControl = {
-                options: control.options,
-                value: control.value,
-                label: control.label,
-                required: control.required,
-                name: control.name,
-                controlClass: control.controlClass,
-                isMetricsDate: undefined
-              };
-              return newControl;
-            })
-          : (this.storeModel.content as common.FileStore).results
-              .find(
-                r =>
-                  r.result ===
-                  this.fieldResultForm.controls['fieldResult'].value
-              )
-              .fraction_types[0].controls.map(control => {
-                let newControl: common.FractionControl = {
-                  options: control.options,
-                  value: control.value,
-                  label: control.label,
-                  required: control.required,
-                  name: control.name,
-                  controlClass: control.controlClass,
-                  isMetricsDate: undefined
-                };
-                return newControl;
-              })
+        controls: controls
       };
     } else {
       fraction = {
         brick: 'any',
         operator: common.FractionOperatorEnum.Or,
-        type: common.getFractionTypeForAny(result)
+        type: common.getFractionTypeForAny(
+          this.fieldResultForm.controls['fieldResult'].value
+        )
       };
     }
 
@@ -715,11 +718,32 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       id: id,
       hidden: false,
       label: label,
-      // storeFilter: // TODO:
-      // storeResult:
-      result: result,
-      suggestModelDimension: common.isDefined(suggestField.modelFieldRef)
-        ? suggestField.modelFieldRef
+      store:
+        this.modelTypeForm.controls['modelType'].value ===
+        common.ModelTypeEnum.Store
+          ? this.storeModelForm.controls['storeModel'].value
+          : undefined,
+      storeFilter:
+        this.modelTypeForm.controls['modelType'].value ===
+          common.ModelTypeEnum.Store &&
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+          common.StoreFilterForEnum.Filter
+          ? this.storeFilterForm.controls['storeFilter'].value
+          : undefined,
+      storeResult:
+        this.modelTypeForm.controls['modelType'].value ===
+          common.ModelTypeEnum.Store &&
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+          common.StoreFilterForEnum.Result
+          ? this.fieldResultForm.controls['fieldResult'].value
+          : undefined,
+      result:
+        this.modelTypeForm.controls['modelType'].value ===
+        common.ModelTypeEnum.SQL
+          ? this.fieldResultForm.controls['fieldResult'].value
+          : undefined,
+      suggestModelDimension: common.isDefined(suggestField?.modelFieldRef)
+        ? suggestField?.modelFieldRef
         : undefined,
       fractions: [fraction],
       description: undefined

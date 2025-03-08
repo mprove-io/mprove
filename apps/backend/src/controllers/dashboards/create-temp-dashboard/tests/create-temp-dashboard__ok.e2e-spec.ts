@@ -108,6 +108,9 @@ test('1', async t => {
         req: req1
       });
 
+    // console.log('resp1');
+    // console.log(resp1);
+
     let req: apiToBackend.ToBackendCreateTempDashboardRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum
