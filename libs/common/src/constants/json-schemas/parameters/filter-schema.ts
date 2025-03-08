@@ -48,6 +48,12 @@ export const FILTER_SCHEMA: JSONSchema7 = {
         additionalProperties: false,
         required: ['controls'],
         properties: {
+          logic: {
+            type: 'string'
+          },
+          type: {
+            type: 'string'
+          },
           controls: {
             type: 'array',
             items: {
