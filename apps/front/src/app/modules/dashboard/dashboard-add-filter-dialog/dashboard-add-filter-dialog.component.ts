@@ -574,11 +574,13 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     let fraction: common.Fraction;
 
+    let storeFilter;
+
     if (
       this.modelTypeForm.controls['modelType'].value ===
       common.ModelTypeEnum.Store
     ) {
-      let storeFilter =
+      storeFilter =
         this.storeFilterForForm.controls['storeFilterFor'].value ===
         common.StoreFilterForEnum.Filter
           ? (this.storeModel.content as common.FileStore).fields.find(
@@ -718,6 +720,9 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       id: id,
       hidden: false,
       label: label,
+      maxFractions: common.isDefined(storeFilter)
+        ? Number(storeFilter.max_fractions)
+        : undefined,
       store:
         this.modelTypeForm.controls['modelType'].value ===
         common.ModelTypeEnum.Store

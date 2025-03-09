@@ -39,6 +39,14 @@ export function wrapDashboards(item: {
         hidden: common.toBooleanFromLowercaseString(field.hidden),
         label: field.label,
         result: field.result,
+        maxFractions:
+          common.isDefined(field.store) && common.isDefined(field.store_filter)
+            ? Number(
+                stores
+                  .find(s => `${STORE_MODEL_PREFIX}_${s.name}` === field.store)
+                  .fields.find(k => k.name === field.store_filter).max_fractions
+              )
+            : undefined,
         store: field.store,
         storeResult: field.store_result,
         storeFilter: field.store_filter,

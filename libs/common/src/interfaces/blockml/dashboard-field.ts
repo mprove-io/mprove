@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
+  IsNumber,
   IsOptional,
   IsString,
   ValidateNested
@@ -15,6 +16,10 @@ export class DashboardField {
 
   @IsBoolean()
   hidden: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  maxFractions: number;
 
   @IsString()
   label: string;
