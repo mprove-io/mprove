@@ -108,6 +108,7 @@ export class ModelComponent implements OnInit, OnDestroy {
   model$ = this.modelQuery.select().pipe(
     tap(x => {
       this.model = x;
+
       this.title.setTitle(`${this.pageTitle} - ${this.model?.label}`);
       this.cd.detectChanges();
     })
@@ -147,6 +148,9 @@ export class ModelComponent implements OnInit, OnDestroy {
 
       this.mconfig = x.mconfig;
       this.query = x.query;
+
+      // console.log('this.mconfig.extendedFilters');
+      // console.log(this.mconfig.extendedFilters);
 
       // console.log(this.mconfig);
 

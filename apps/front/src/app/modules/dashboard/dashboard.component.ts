@@ -113,6 +113,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     tap(x => {
       this.dashboard = x;
 
+      // console.log('this.dashboard.extendedFilters');
+      // console.log(this.dashboard.extendedFilters);
+
       this.checkQueries();
 
       let uiState = this.uiQuery.getValue();
