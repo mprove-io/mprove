@@ -32,7 +32,7 @@ export class StoreFractionSubTypeComponent {
   @Input() fractionIndex: number;
   @Input() isDisabled: boolean;
   @Input() modelContent: any;
-  @Input() fieldResult: common.FieldResultEnum;
+  @Input() fieldResult: common.FieldResultEnum | string;
   @Input() fractionControl: common.FractionControl;
 
   @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();

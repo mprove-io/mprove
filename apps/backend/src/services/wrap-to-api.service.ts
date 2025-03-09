@@ -83,6 +83,10 @@ export class WrapToApiService {
 
     let dashboardExtendedFilters = makeDashboardFiltersX(dashboard);
 
+    let storeModelIds = dashboard.fields
+      .filter(x => common.isDefined(x.store))
+      .map(x => x.store);
+
     let dashboardX: common.DashboardX = {
       structId: dashboard.structId,
       dashboardId: dashboard.dashboardId,
@@ -114,6 +118,10 @@ export class WrapToApiService {
         models: models,
         dashboardExtendedFilters: dashboardExtendedFilters
       }),
+      storeModels:
+        storeModelIds.length > 0
+          ? models.filter(model => storeModelIds.indexOf(model.modelId) > -1)
+          : [],
       temp: dashboard.temp,
       serverTs: dashboard.serverTs
     };

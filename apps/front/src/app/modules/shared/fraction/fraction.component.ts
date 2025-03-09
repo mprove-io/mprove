@@ -88,7 +88,7 @@ export class FractionComponent {
   @Input() modelContent: any;
 
   @Input() isDisabled: boolean;
-  @Input() fieldResult: common.FieldResultEnum;
+  @Input() fieldResult: common.FieldResultEnum | string;
 
   @Input() fraction: common.Fraction;
   @Input() isFirst: boolean;

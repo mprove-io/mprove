@@ -22,7 +22,8 @@ let dashboardState: DashboardState = {
   description: undefined,
   serverTs: undefined,
   author: undefined,
-  canEditOrDeleteDashboard: undefined
+  canEditOrDeleteDashboard: undefined,
+  storeModels: undefined
 };
 
 @Injectable({ providedIn: 'root' })

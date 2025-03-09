@@ -17,6 +17,10 @@ export class DashboardFiltersComponent {
     private uiQuery: UiQuery
   ) {}
 
+  getModelContent(storeId: string) {
+    return this.dashboard.storeModels.find(x => x.modelId === storeId)?.content;
+  }
+
   fractionUpdate(
     dashboardField: common.DashboardField,
     fieldIndex: number,

@@ -194,6 +194,7 @@ export class CreateDashboardController {
         canEditOrDeleteDashboard: undefined,
         serverTs: undefined,
         extendedFilters: [],
+        storeModels: [],
         fields: [],
         temp: false
       };
