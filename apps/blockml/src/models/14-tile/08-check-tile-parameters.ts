@@ -168,10 +168,12 @@ export function checkTileParameters<T extends types.dzType>(
           model = models.find(m => m.name === tile.model);
         }
 
-        if (isStore === false) {
-          tile.parameters
-            .filter(p => common.isDefined(p.apply_to))
-            .forEach(p => {
+        tile.parameters
+          .filter(p => common.isDefined(p.apply_to))
+          .forEach(p => {
+            let listener;
+
+            if (isStore === false) {
               let reg =
                 common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
               let r = reg.exec(p.apply_to);
@@ -196,7 +198,7 @@ export function checkTileParameters<T extends types.dzType>(
               let asName = r[1];
               let fieldName = r[2];
 
-              let listener = `${asName}.${fieldName}`;
+              listener = `${asName}.${fieldName}`;
 
               if (asName === common.MF) {
                 let modelField = model.fields.find(
@@ -418,30 +420,46 @@ export function checkTileParameters<T extends types.dzType>(
               ) {
                 tile.combinedFilters[listener] = p.conditions;
               }
-            });
-        }
+            }
 
-        if (isStore === true) {
-          tile.parameters.forEach(p => {
-            // TODO: check parameters
+            if (isStore === true) {
+              // TODO: check parameters
 
-            p.fractions.forEach(pf => {
-              barSpecial.checkStoreFractionControls(
-                {
-                  skipOptions: true,
-                  controls: pf.controls,
-                  controlsLineNum: pf.controls_line_num,
-                  fileName: x.fileName,
-                  filePath: x.filePath,
-                  structId: item.structId,
-                  errors: item.errors,
-                  caller: item.caller
-                },
-                cs
-              );
-            });
+              p.fractions?.forEach(pf => {
+                barSpecial.checkStoreFractionControls(
+                  {
+                    skipOptions: true,
+                    controls: pf.controls,
+                    controlsLineNum: pf.controls_line_num,
+                    fileName: x.fileName,
+                    filePath: x.filePath,
+                    structId: item.structId,
+                    errors: item.errors,
+                    caller: item.caller
+                  },
+                  cs
+                );
+              });
+
+              listener = p.apply_to;
+
+              if (common.isDefined(p.listen)) {
+                let dashboardField = (<common.FileDashboard>x).fields.find(
+                  f => f.name === p.listen
+                );
+
+                tile.listen[listener] = dashboardField.name;
+
+                // console.log('dashboardField.fractions');
+                // console.log(dashboardField.fractions);
+
+                // console.log('dashboardField.fieldFractions');
+                // console.log(dashboardField.fieldFractions);
+
+                p.fractions = dashboardField.fractions;
+              }
+            }
           });
-        }
       });
     }
 

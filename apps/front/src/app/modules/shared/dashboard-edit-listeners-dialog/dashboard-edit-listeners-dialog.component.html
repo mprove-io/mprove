@@ -45,7 +45,13 @@
         </div>
 
         <div class="ml-2 flex flex-shrink-0">
-          <div> ({{ dashboardField.result }})</div>
+          <div>
+            ({{
+              dashboardField.result ??
+                dashboardField.storeResult ??
+                dashboardField.storeFilter
+            }})</div
+          >
         </div>
       </div>
     </div>

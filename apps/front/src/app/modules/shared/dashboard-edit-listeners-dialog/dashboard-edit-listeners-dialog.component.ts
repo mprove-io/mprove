@@ -136,14 +136,22 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
               let modelFields: { [a: string]: common.ModelField[] } = {};
 
-              (this.dashboard as DashboardX2).fields.forEach(f => {
-                modelFields[f.id] = [
+              (this.dashboard as DashboardX2).fields.forEach(dashField => {
+                modelFields[dashField.id] = [
                   <ModelField>{ id: undefined },
-                  ...model.fields.filter(y => y.result === f.result)
+                  ...model.fields.filter(y =>
+                    common.isUndefined(dashField.store)
+                      ? y.result === dashField.result
+                      : common.isDefined(dashField.storeResult)
+                      ? y.result === dashField.storeResult
+                      : y.fieldClass === common.FieldClassEnum.Filter
+                      ? y.id === dashField.storeFilter
+                      : false
+                  )
                 ];
 
-                if (common.isUndefined(swap[f.id])) {
-                  swap[f.id] = [undefined];
+                if (common.isUndefined(swap[dashField.id])) {
+                  swap[dashField.id] = [undefined];
                 }
               });
 
@@ -159,6 +167,12 @@ export class DashboardEditListenersDialogComponent implements OnInit {
                   );
                 });
               });
+
+              // console.log('modelFields');
+              // console.log(modelFields);
+
+              // console.log('swap');
+              // console.log(swap);
             });
 
             this.cd.detectChanges();

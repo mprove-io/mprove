@@ -117,6 +117,7 @@ export function prepareTile(item: {
         if (isDefined(parameter)) {
           parameter.listen = dashboardFieldName;
           parameter.conditions = undefined;
+          parameter.fractions = undefined;
         } else {
           parameter = {
             apply_to: x,
