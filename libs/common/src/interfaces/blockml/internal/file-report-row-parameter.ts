@@ -1,4 +1,5 @@
 import { enums } from '~common/barrels/enums';
+import { FileFraction } from './file-fraction';
 
 export interface FileReportRowParameter {
   type?: enums.ParameterTypeEnum;
@@ -15,6 +16,9 @@ export interface FileReportRowParameter {
 
   conditions?: string[];
   conditions_line_num?: number;
+
+  fractions?: FileFraction[];
+  fractions_line_num?: number;
 
   //
 

@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
+  IsNumber,
   IsOptional,
   IsString,
   ValidateNested
@@ -16,11 +17,27 @@ export class ReportField {
   @IsBoolean()
   hidden: boolean;
 
+  @IsOptional()
+  @IsNumber()
+  maxFractions: number;
+
   @IsString()
   label: string;
 
   @IsEnum(enums.FieldResultEnum)
   result: enums.FieldResultEnum;
+
+  @IsOptional()
+  @IsString()
+  store: string;
+
+  @IsOptional()
+  @IsString()
+  storeResult: string;
+
+  @IsOptional()
+  @IsString()
+  storeFilter: string;
 
   @IsOptional()
   @IsString()

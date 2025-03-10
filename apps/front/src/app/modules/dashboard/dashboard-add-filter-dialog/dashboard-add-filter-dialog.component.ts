@@ -89,8 +89,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   @ViewChild('filterLabel') filterLabelElement: ElementRef;
 
-  storeModelsSpinnerName = 'dashboardAddstoreModelsSpinnerName';
-  storeFiltersSpinnerName = 'dashboardAddstoreFiltersSpinnerName';
+  storeModelsSpinnerName = 'dashboardAddStoreModelsSpinnerName';
+  storeFiltersSpinnerName = 'dashboardAddStoreFiltersSpinnerName';
   suggestFieldsSpinnerName = 'dashboardAddSuggestFieldsSpinnerName';
 
   sqlResultsList = constants.RESULTS_LIST;

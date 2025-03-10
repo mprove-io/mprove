@@ -1,5 +1,13 @@
-import { IsBoolean, IsEnum, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { enums } from '~common/barrels/enums';
+import { Fraction } from './fraction';
 
 export class Parameter {
   @IsString()
@@ -17,8 +25,24 @@ export class Parameter {
   @IsEnum(enums.FieldResultEnum)
   result: enums.FieldResultEnum;
 
+  @IsOptional()
+  @IsString()
+  store: string;
+
+  @IsOptional()
+  @IsString()
+  storeResult: string;
+
+  @IsOptional()
+  @IsString()
+  storeFilter: string;
+
   @IsString({ each: true })
   conditions: string[];
+
+  @ValidateNested()
+  @Type(() => Fraction)
+  fractions: Fraction[];
 
   @IsString()
   formula: string;

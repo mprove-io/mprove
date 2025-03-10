@@ -21,7 +21,11 @@ import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { SuggestField } from '~common/_index';
+import {
+  FractionSubTypeOption,
+  SuggestField,
+  toBooleanFromLowercaseString
+} from '~common/_index';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -37,6 +41,26 @@ export interface ReportAddFilterDialogData {
   reportService: ReportService;
   report: common.ReportX;
   apiService: ApiService;
+}
+
+export class ModelTypeItem {
+  value: common.ModelTypeEnum;
+  label: string;
+}
+
+export class StoreFilterForItem {
+  value: common.StoreFilterForEnum;
+  label: string;
+}
+
+export class StoreModelItem {
+  value: string;
+  label: string;
+}
+
+export class StoreFiltersItem {
+  value: string;
+  label: string;
 }
 
 @Component({
@@ -64,13 +88,20 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
   @ViewChild('filterLabel') filterLabelElement: ElementRef;
 
-  spinnerName = 'reportAddSuggestSpinnerName';
+  storeModelsSpinnerName = 'reportAddStoreModelsSpinnerName';
+  storeFiltersSpinnerName = 'reportAddStoreFiltersSpinnerName';
+  suggestFieldsSpinnerName = 'reportAddSuggestFieldsSpinnerName';
 
-  resultsList = constants.RESULTS_LIST;
+  sqlResultsList = constants.RESULTS_LIST;
+  storeResultsList: string[] = [];
+
+  modelTypeStore = common.ModelTypeEnum.Store;
+  modelTypeSql = common.ModelTypeEnum.SQL;
+  storeFilterForFilter = common.StoreFilterForEnum.Filter;
+  storeFilterForResult = common.StoreFilterForEnum.Result;
+  fieldResultString = common.FieldResultEnum.String;
 
   fieldResult = common.FieldResultEnum.String;
-
-  fieldResultString = common.FieldResultEnum.String;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -82,9 +113,74 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
   report: common.ReportX;
 
-  suggestFields: common.SuggestField[] = [];
+  modelTypeForm = this.fb.group({
+    modelType: [
+      {
+        value: undefined
+      }
+    ]
+  });
 
-  suggestFieldsLoading: boolean;
+  modelTypesList: ModelTypeItem[] = [
+    {
+      label: 'SQL',
+      value: common.ModelTypeEnum.SQL
+    },
+    {
+      label: 'Store',
+      value: common.ModelTypeEnum.Store
+    }
+  ];
+
+  storeModels: common.Model[] = [];
+  storeModelsList: StoreModelItem[] = [];
+  storeModelsLoading = false;
+  storeModelsLoaded = false;
+
+  storeModelSet = false;
+  storeModel: common.Model;
+
+  storeModelForm = this.fb.group({
+    storeModel: [
+      {
+        value: undefined
+      }
+    ]
+  });
+
+  storeFilterForForm = this.fb.group({
+    storeFilterFor: [
+      {
+        value: undefined
+      }
+    ]
+  });
+
+  storeFilterForList: StoreFilterForItem[] = [
+    {
+      label: 'Filter',
+      value: common.StoreFilterForEnum.Filter
+    },
+    {
+      label: 'Result',
+      value: common.StoreFilterForEnum.Result
+    }
+  ];
+
+  storeFiltersList: StoreFiltersItem[] = [];
+  selectedModelLoading = false;
+  selectedModelLoaded = false;
+
+  storeFilterForm = this.fb.group({
+    storeFilter: [
+      {
+        value: undefined
+      }
+    ]
+  });
+
+  suggestFields: common.SuggestField[] = [];
+  suggestFieldsLoading = false;
   suggestFieldsLoaded = false;
 
   emptySuggestField = Object.assign({}, constants.EMPTY_MCONFIG_FIELD, {
@@ -92,13 +188,21 @@ export class ReportAddFilterDialogComponent implements OnInit {
     topLabel: 'Empty',
     partNodeLabel: undefined,
     partFieldLabel: undefined
-  } as common.SuggestField);
+  }) as common.SuggestField;
 
-  filterForm: FormGroup<{
+  labelForm: FormGroup<{
     label: FormControl<string>;
+  }>;
+
+  fieldResultForm: FormGroup<{
     fieldResult: FormControl<common.FieldResultEnum>;
+  }>;
+
+  suggestFieldForm: FormGroup<{
     suggestField: FormControl<SuggestField>;
   }>;
+
+  formsError: string;
 
   constructor(
     public ref: DialogRef<ReportAddFilterDialogData>,
@@ -112,37 +216,44 @@ export class ReportAddFilterDialogComponent implements OnInit {
   ngOnInit() {
     this.report = this.ref.data.report;
 
-    // setValueAndMark({
-    //   control: this.labelForm.controls['label'],
-    //   value: ''
-    // });
-
-    this.filterForm = this.fb.group(
+    this.labelForm = this.fb.group(
       {
-        label: [undefined, [Validators.required, Validators.maxLength(255)]],
-        fieldResult: [this.fieldResult],
-        suggestField: [this.emptySuggestField]
+        label: [undefined, [Validators.required, Validators.maxLength(255)]]
       },
       {
         validator: this.labelValidator.bind(this)
       }
     );
 
+    this.fieldResultForm = this.fb.group({
+      fieldResult: [this.fieldResult]
+    });
+
+    this.suggestFieldForm = this.fb.group({
+      suggestField: [this.emptySuggestField]
+    });
+
+    this.modelTypeForm.controls['modelType'].setValue(common.ModelTypeEnum.SQL);
+
     setTimeout(() => {
-      // this.filterLabelElement.nativeElement.focus();
-      this.loadSuggestFields();
+      if (
+        this.fieldResult === common.FieldResultEnum.String &&
+        this.suggestFieldsLoaded === false
+      ) {
+        this.loadSuggestFields();
+      }
     }, 0);
   }
 
   labelValidator(group: AbstractControl): ValidationErrors | null {
     if (
-      common.isUndefined(this.filterForm) ||
-      common.isUndefined(this.filterForm.controls['label'].value)
+      common.isUndefined(this.labelForm) ||
+      common.isUndefined(this.labelForm.controls['label'].value)
     ) {
       return null;
     }
 
-    let label: string = this.filterForm.controls['label'].value.toLowerCase();
+    let label: string = this.labelForm.controls['label'].value.toLowerCase();
 
     let id = common.MyRegex.replaceSpacesWithUnderscores(label).toLowerCase();
 
@@ -153,108 +264,489 @@ export class ReportAddFilterDialogComponent implements OnInit {
     let ids = this.report.extendedFilters.map(x => x.fieldId.toLowerCase());
 
     if (labels.indexOf(label) > -1 || ids.indexOf(id) > -1) {
-      this.filterForm.controls['label'].setErrors({ labelIsNotUnique: true });
+      this.labelForm.controls['label'].setErrors({ labelIsNotUnique: true });
     } else {
       return null;
     }
   }
 
-  resultChange(fieldResult: common.FieldResultEnum) {
-    this.fieldResult = fieldResult;
+  modelTypeChange() {
+    (document.activeElement as HTMLElement).blur();
 
-    this.loadSuggestFields();
+    this.formsError = undefined;
+
+    if (
+      this.modelTypeForm.controls['modelType'].value ===
+      common.ModelTypeEnum.Store
+    ) {
+      this.storeModelSet = false;
+
+      this.storeModelForm.controls['storeModel'].setValue(undefined);
+      this.storeFilterForForm.controls['storeFilterFor'].setValue(
+        common.StoreFilterForEnum.Filter
+      );
+      this.storeFilterForm.controls['storeFilter'].setValue(undefined);
+      this.fieldResultForm.controls['fieldResult'].setValue(undefined);
+      this.suggestFieldForm.controls['suggestField'].setValue(undefined);
+
+      if (this.storeModelsLoaded === false) {
+        this.loadStoreModels();
+      }
+    } else {
+      this.fieldResultForm.controls['fieldResult'].setValue(
+        common.FieldResultEnum.String
+      );
+    }
+  }
+
+  storeModelChange() {
+    (document.activeElement as HTMLElement).blur();
+
+    this.formsError = undefined;
+
+    this.storeModelSet = true;
+
+    this.selectedModelLoaded = false;
+    this.loadSelectedModel();
+
     this.cd.detectChanges();
   }
 
-  loadSuggestFields() {
+  storeFilterForChange() {
+    (document.activeElement as HTMLElement).blur();
+
+    this.formsError = undefined;
+
+    if (
+      this.storeFilterForForm.controls['storeFilterFor'].value ===
+      common.StoreFilterForEnum.Result
+    ) {
+      if (this.storeResultsList.indexOf(common.FieldResultEnum.String) > -1) {
+        this.fieldResultForm.controls['fieldResult'].setValue(
+          common.FieldResultEnum.String
+        );
+      } else {
+        this.fieldResultForm.controls['fieldResult'].setValue(undefined);
+      }
+    } else {
+      this.fieldResultForm.controls['fieldResult'].setValue(undefined);
+    }
+  }
+
+  storeFilterChange() {
+    (document.activeElement as HTMLElement).blur();
+
+    this.formsError = undefined;
+  }
+
+  resultChange(fieldResult: common.FieldResultEnum) {
+    this.formsError = undefined;
+
+    this.fieldResult = fieldResult;
+
     if (
       this.fieldResult === common.FieldResultEnum.String &&
       this.suggestFieldsLoaded === false
     ) {
-      this.suggestFieldsLoading = true;
-
-      let nav: NavState;
-      this.navQuery
-        .select()
-        .pipe(
-          tap(x => {
-            nav = x;
-          }),
-          take(1)
-        )
-        .subscribe();
-
-      let payload: apiToBackend.ToBackendGetSuggestFieldsRequestPayload = {
-        projectId: nav.projectId,
-        branchId: nav.branchId,
-        isRepoProd: nav.isRepoProd,
-        envId: nav.envId
-      };
-
-      let apiService: ApiService = this.ref.data.apiService;
-
-      this.spinner.show(this.spinnerName);
-
-      apiService
-        .req({
-          pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields,
-          payload: payload
-        })
-        .pipe(
-          tap((resp: apiToBackend.ToBackendGetSuggestFieldsResponse) => {
-            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-              this.suggestFields = [
-                this.emptySuggestField,
-                ...resp.payload.suggestFields
-              ];
-
-              this.suggestFieldsLoading = false;
-              this.suggestFieldsLoaded = true;
-
-              this.spinner.hide(this.spinnerName);
-
-              this.cd.detectChanges();
-            }
-          })
-        )
-        .toPromise();
+      this.loadSuggestFields();
     }
+    this.cd.detectChanges();
+  }
+
+  loadStoreModels() {
+    this.storeModelsLoading = true;
+
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    this.spinner.show(this.storeModelsSpinnerName);
+
+    let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
+      projectId: nav.projectId,
+      isRepoProd: nav.isRepoProd,
+      branchId: nav.branchId,
+      envId: nav.envId
+    };
+
+    apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendGetModelsResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.storeModels = resp.payload.models.filter(
+              model => model.isStoreModel === true
+            );
+
+            this.storeModelsList = this.storeModels.map(model => {
+              let storeModelItem: StoreModelItem = {
+                value: model.modelId,
+                label: model.label || model.modelId
+              };
+
+              return storeModelItem;
+            });
+
+            this.storeModelsLoading = false;
+            this.storeModelsLoaded = true;
+
+            this.spinner.hide(this.storeModelsSpinnerName);
+
+            this.cd.detectChanges();
+          }
+        })
+      )
+      .toPromise();
+  }
+
+  loadSelectedModel() {
+    this.selectedModelLoading = true;
+
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    this.spinner.show(this.storeFiltersSpinnerName);
+
+    let payload: apiToBackend.ToBackendGetModelRequestPayload = {
+      projectId: nav.projectId,
+      isRepoProd: nav.isRepoProd,
+      branchId: nav.branchId,
+      envId: nav.envId,
+      modelId: this.storeModelForm.controls['storeModel'].value
+    };
+
+    apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendGetModelResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.storeModel = resp.payload.model;
+
+            this.storeFiltersList = resp.payload.model.fields
+              .filter(x => x.fieldClass === common.FieldClassEnum.Filter)
+              .map(field => {
+                let storeFiltersItem: StoreFiltersItem = {
+                  value: field.id,
+                  label: field.label || field.id
+                };
+
+                return storeFiltersItem;
+              });
+
+            this.storeResultsList =
+              (resp.payload.model.content as common.FileStore).results?.map(
+                result => result.result
+              ) || [];
+
+            this.selectedModelLoading = false;
+            this.selectedModelLoaded = true;
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  loadSuggestFields() {
+    this.suggestFieldsLoading = true;
+
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
+    let payload: apiToBackend.ToBackendGetSuggestFieldsRequestPayload = {
+      projectId: nav.projectId,
+      branchId: nav.branchId,
+      isRepoProd: nav.isRepoProd,
+      envId: nav.envId
+    };
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    this.spinner.show(this.suggestFieldsSpinnerName);
+
+    apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendGetSuggestFieldsResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.suggestFields = [
+              this.emptySuggestField,
+              ...resp.payload.suggestFields
+            ];
+
+            this.suggestFieldsLoading = false;
+            this.suggestFieldsLoaded = true;
+
+            this.spinner.hide(this.suggestFieldsSpinnerName);
+
+            this.cd.detectChanges();
+          }
+        })
+      )
+      .toPromise();
   }
 
   save() {
-    this.filterForm.markAllAsTouched();
+    this.labelForm.markAllAsTouched();
 
-    if (!this.filterForm.valid) {
+    if (!this.labelForm.valid) {
       return;
     }
 
+    if (
+      this.modelTypeForm.controls['modelType'].value ===
+      common.ModelTypeEnum.Store
+    ) {
+      if (
+        common.isUndefined(this.storeModelForm.controls['storeModel'].value)
+      ) {
+        this.formsError = 'Model must be selected';
+        return;
+      }
+
+      if (
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+          common.StoreFilterForEnum.Filter &&
+        common.isUndefined(this.storeFilterForm.controls['storeFilter'].value)
+      ) {
+        this.formsError = 'Filter must be selected';
+        return;
+      }
+
+      if (
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+          common.StoreFilterForEnum.Result &&
+        common.isUndefined(this.fieldResultForm.controls['fieldResult'].value)
+      ) {
+        this.formsError = 'Result must be selected';
+        return;
+      }
+    }
+
+    this.formsError = undefined;
+
     this.ref.close();
 
-    let label: string = this.filterForm.controls['label'].value;
+    let label: string = this.labelForm.controls['label'].value;
 
-    let id =
-      common.MyRegex.replaceNonLettersNumbersWithUnderscores(
-        label
-      ).toLowerCase();
+    let id = common.MyRegex.replaceSpacesWithUnderscores(label).toLowerCase();
 
-    let result = this.filterForm.controls['fieldResult'].value;
+    let fraction: common.Fraction;
 
-    let fraction: common.Fraction = {
-      brick: 'any',
-      operator: common.FractionOperatorEnum.Or,
-      type: common.getFractionTypeForAny(result)
-    };
+    let storeFilter;
 
-    let suggestField = this.filterForm.controls['suggestField'].value;
+    if (
+      this.modelTypeForm.controls['modelType'].value ===
+      common.ModelTypeEnum.Store
+    ) {
+      storeFilter =
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+        common.StoreFilterForEnum.Filter
+          ? (this.storeModel.content as common.FileStore).fields.find(
+              f => f.name === this.storeFilterForm.controls['storeFilter'].value
+            )
+          : undefined;
+
+      let storeResultFraction =
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+        common.StoreFilterForEnum.Filter
+          ? undefined
+          : (this.storeModel.content as common.FileStore).results.find(
+              r =>
+                r.result === this.fieldResultForm.controls['fieldResult'].value
+            ).fraction_types[0];
+
+      let logicGroup = common.isUndefined(storeResultFraction)
+        ? undefined
+        : common.isUndefined(storeResultFraction.or) ||
+          toBooleanFromLowercaseString(storeResultFraction.or) === true
+        ? common.FractionLogicEnum.Or
+        : common.FractionLogicEnum.AndNot;
+
+      let storeFractionSubTypeOptions = common.isUndefined(storeResultFraction)
+        ? []
+        : (this.storeModel.content as common.FileStore).results
+            .find(
+              r =>
+                r.result === this.fieldResultForm.controls['fieldResult'].value
+            )
+            .fraction_types.map(ft => {
+              let options = [];
+
+              if (
+                common.isUndefined(ft.or) ||
+                toBooleanFromLowercaseString(ft.or) === true
+              ) {
+                let optionOr: FractionSubTypeOption = {
+                  logicGroup: common.FractionLogicEnum.Or,
+                  typeValue: ft.type,
+                  value: common.FractionLogicEnum.Or + ft.type,
+                  label: ft.label
+                };
+                options.push(optionOr);
+              }
+
+              if (
+                common.isUndefined(ft.and_not) ||
+                toBooleanFromLowercaseString(ft.and_not) === true
+              ) {
+                let optionAndNot: FractionSubTypeOption = {
+                  logicGroup: common.FractionLogicEnum.AndNot,
+                  value: common.FractionLogicEnum.AndNot + ft.type,
+                  typeValue: ft.type,
+                  label: ft.label
+                };
+                options.push(optionAndNot);
+              }
+
+              return options;
+            })
+            .flat()
+            .sort((a, b) => {
+              if (a.logicGroup === b.logicGroup) return 0;
+              return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
+            });
+
+      let controls = common.isUndefined(storeResultFraction)
+        ? storeFilter.fraction_controls.map(control => {
+            let newControl: common.FractionControl = {
+              options: control.options,
+              value: control.value,
+              label: control.label,
+              required: control.required,
+              name: control.name,
+              controlClass: control.controlClass,
+              isMetricsDate: undefined
+            };
+            return newControl;
+          })
+        : (this.storeModel.content as common.FileStore).results
+            .find(
+              r =>
+                r.result === this.fieldResultForm.controls['fieldResult'].value
+            )
+            .fraction_types[0].controls.map(control => {
+              let newControl: common.FractionControl = {
+                options: control.options,
+                value: control.value,
+                label: control.label,
+                required: control.required,
+                name: control.name,
+                controlClass: control.controlClass,
+                isMetricsDate: undefined
+              };
+              return newControl;
+            });
+
+      fraction = {
+        meta: storeResultFraction?.meta,
+        operator: common.isUndefined(logicGroup)
+          ? undefined
+          : logicGroup === common.FractionLogicEnum.Or
+          ? common.FractionOperatorEnum.Or
+          : common.FractionOperatorEnum.And,
+        logicGroup: logicGroup,
+        brick: undefined,
+        type: common.FractionTypeEnum.StoreFraction,
+        storeResult: this.fieldResultForm.controls['fieldResult'].value,
+        storeFractionSubTypeOptions: storeFractionSubTypeOptions,
+        storeFractionSubType: storeResultFraction?.type,
+        storeFractionSubTypeLabel: common.isDefined(storeResultFraction?.type)
+          ? storeFractionSubTypeOptions.find(
+              k => k.typeValue === storeResultFraction?.type
+            ).label
+          : storeResultFraction?.type,
+        storeFractionLogicGroupWithSubType:
+          common.isDefined(logicGroup) &&
+          common.isDefined(storeResultFraction?.type)
+            ? logicGroup + storeResultFraction.type
+            : undefined,
+        controls: controls
+      };
+    } else {
+      fraction = {
+        brick: 'any',
+        operator: common.FractionOperatorEnum.Or,
+        type: common.getFractionTypeForAny(
+          this.fieldResultForm.controls['fieldResult'].value
+        )
+      };
+    }
+
+    let suggestField = this.suggestFieldForm.controls['suggestField'].value;
 
     let field: common.ReportField = {
       id: id,
       hidden: false,
       label: label,
-      result: result,
-      suggestModelDimension: common.isDefined(suggestField.modelFieldRef)
-        ? suggestField.modelFieldRef
+      maxFractions: common.isDefined(storeFilter)
+        ? Number(storeFilter.max_fractions)
+        : undefined,
+      store:
+        this.modelTypeForm.controls['modelType'].value ===
+        common.ModelTypeEnum.Store
+          ? this.storeModelForm.controls['storeModel'].value
+          : undefined,
+      storeFilter:
+        this.modelTypeForm.controls['modelType'].value ===
+          common.ModelTypeEnum.Store &&
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+          common.StoreFilterForEnum.Filter
+          ? this.storeFilterForm.controls['storeFilter'].value
+          : undefined,
+      storeResult:
+        this.modelTypeForm.controls['modelType'].value ===
+          common.ModelTypeEnum.Store &&
+        this.storeFilterForForm.controls['storeFilterFor'].value ===
+          common.StoreFilterForEnum.Result
+          ? this.fieldResultForm.controls['fieldResult'].value
+          : undefined,
+      result:
+        this.modelTypeForm.controls['modelType'].value ===
+        common.ModelTypeEnum.SQL
+          ? this.fieldResultForm.controls['fieldResult'].value
+          : undefined,
+      suggestModelDimension: common.isDefined(suggestField?.modelFieldRef)
+        ? suggestField?.modelFieldRef
         : undefined,
       fractions: [fraction],
       description: undefined
@@ -273,8 +765,12 @@ export class ReportAddFilterDialogComponent implements OnInit {
       parameterId: [globalRow.rowId, field.id].join('_').toUpperCase(),
       parameterType: common.ParameterTypeEnum.Field,
       apply_to: undefined,
-      result: result,
-      conditions: ['any'],
+      store: field.store,
+      storeFilter: field.storeFilter,
+      storeResult: field.storeResult,
+      result: field.result,
+      conditions: common.isUndefined(field.store) ? ['any'] : undefined,
+      fractions: field.fractions,
       formula: undefined,
       listen: undefined,
       xDeps: undefined

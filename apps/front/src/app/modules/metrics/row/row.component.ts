@@ -24,6 +24,8 @@ import { constants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
+import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
+import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
 
 export interface ParameterFilter extends common.FilterX {
   parameterType: common.ParameterTypeEnum;
@@ -178,23 +180,33 @@ export class RowComponent {
         this.parametersFilters =
           this.reportSelectedNode.data.mconfig.extendedFilters
             .filter(
-              filter =>
-                this.reportSelectedNode.data.parametersFiltersWithExcludedTime
-                  .map(f => f.fieldId)
-                  .indexOf(filter.fieldId) > -1
+              (
+                filter // TODO: row store parametersFiltersWithExcludedTime
+              ) =>
+                this.reportSelectedNode.data.mconfig.isStoreModel === true
+                  ? this.reportSelectedNode.data.mconfig.filters
+                      .map(f => f.fieldId)
+                      .indexOf(filter.fieldId) > -1
+                  : this.reportSelectedNode.data.parametersFiltersWithExcludedTime
+                      .map(f => f.fieldId)
+                      .indexOf(filter.fieldId) > -1
             )
+            // .sort((a, b) => // TODO: sort by store group and id
+            //   a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+            // )
             .map(filter => {
               let parameter = this.reportSelectedNode.data.parameters.find(
                 y => y.apply_to === filter.fieldId
               );
 
               return Object.assign({}, filter, {
-                parameterType: parameter.parameterType,
-                formula: parameter.formula,
-                listen: parameter.listen,
-                isJsonValid: parameter.isJsonValid,
-                isSchemaValid: parameter.isSchemaValid,
-                schemaError: parameter.schemaError
+                // TODO: parameter?
+                parameterType: parameter?.parameterType,
+                formula: parameter?.formula,
+                listen: parameter?.listen,
+                isJsonValid: parameter?.isJsonValid,
+                isSchemaValid: parameter?.isSchemaValid,
+                schemaError: parameter?.schemaError
               } as ParameterFilter);
             });
       }
@@ -700,6 +712,124 @@ export class RowComponent {
       x => x.id === this.newParameterId
     );
 
+    let newFraction: common.Fraction;
+
+    if (this.newParameterModel.isStoreModel === true) {
+      let storeFilter =
+        field.fieldClass === common.FieldClassEnum.Filter
+          ? (this.newParameterModel.content as common.FileStore).fields.find(
+              f => f.name === field.id
+            )
+          : undefined;
+
+      let storeResultFraction =
+        field.fieldClass === common.FieldClassEnum.Filter
+          ? undefined
+          : (this.newParameterModel.content as common.FileStore).results.find(
+              r => r.result === field.result
+            ).fraction_types[0];
+
+      let logicGroup = common.isUndefined(storeResultFraction)
+        ? undefined
+        : common.isUndefined(storeResultFraction.or) ||
+          toBooleanFromLowercaseString(storeResultFraction.or) === true
+        ? common.FractionLogicEnum.Or
+        : common.FractionLogicEnum.AndNot;
+
+      let storeFractionSubTypeOptions = common.isUndefined(storeResultFraction)
+        ? []
+        : (this.newParameterModel.content as common.FileStore).results
+            .find(r => r.result === field.result)
+            .fraction_types.map(ft => {
+              let options = [];
+
+              if (
+                common.isUndefined(ft.or) ||
+                toBooleanFromLowercaseString(ft.or) === true
+              ) {
+                let optionOr: FractionSubTypeOption = {
+                  logicGroup: common.FractionLogicEnum.Or,
+                  typeValue: ft.type,
+                  value: common.FractionLogicEnum.Or + ft.type,
+                  label: ft.label
+                };
+                options.push(optionOr);
+              }
+
+              if (
+                common.isUndefined(ft.and_not) ||
+                toBooleanFromLowercaseString(ft.and_not) === true
+              ) {
+                let optionAndNot: FractionSubTypeOption = {
+                  logicGroup: common.FractionLogicEnum.AndNot,
+                  value: common.FractionLogicEnum.AndNot + ft.type,
+                  typeValue: ft.type,
+                  label: ft.label
+                };
+                options.push(optionAndNot);
+              }
+
+              return options;
+            })
+            .flat()
+            .sort((a, b) => {
+              if (a.logicGroup === b.logicGroup) return 0;
+              return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
+            });
+
+      newFraction = {
+        meta: storeResultFraction?.meta,
+        operator: common.isUndefined(logicGroup)
+          ? undefined
+          : logicGroup === common.FractionLogicEnum.Or
+          ? common.FractionOperatorEnum.Or
+          : common.FractionOperatorEnum.And,
+        logicGroup: logicGroup,
+        brick: undefined,
+        type: common.FractionTypeEnum.StoreFraction,
+        storeResult: field.result,
+        storeFractionSubTypeOptions: storeFractionSubTypeOptions,
+        storeFractionSubType: storeResultFraction?.type,
+        storeFractionSubTypeLabel: common.isDefined(storeResultFraction?.type)
+          ? storeFractionSubTypeOptions.find(
+              k => k.typeValue === storeResultFraction?.type
+            ).label
+          : storeResultFraction?.type,
+        storeFractionLogicGroupWithSubType:
+          common.isDefined(logicGroup) &&
+          common.isDefined(storeResultFraction?.type)
+            ? logicGroup + storeResultFraction.type
+            : undefined,
+        controls: common.isUndefined(storeResultFraction)
+          ? storeFilter.fraction_controls.map(control => {
+              let newControl: common.FractionControl = {
+                options: control.options,
+                value: control.value,
+                label: control.label,
+                required: control.required,
+                name: control.name,
+                controlClass: control.controlClass,
+                isMetricsDate: undefined
+              };
+              return newControl;
+            })
+          : (this.newParameterModel.content as common.FileStore).results
+              .find(r => r.result === field.result)
+              .fraction_types[0].controls.map(control => {
+                let newControl: common.FractionControl = {
+                  options: control.options,
+                  value: control.value,
+                  label: control.label,
+                  required: control.required,
+                  name: control.name,
+                  controlClass: control.controlClass,
+                  isMetricsDate: undefined
+                };
+                return newControl;
+              })
+      };
+    }
+
     let newParameter: common.Parameter = {
       topParId: undefined,
       parameterId: [this.reportSelectedNode.data.rowId, ...field.id.split('.')]
@@ -708,7 +838,26 @@ export class RowComponent {
       parameterType: common.ParameterTypeEnum.Field,
       apply_to: field.id,
       result: field.result,
-      conditions: ['any'],
+      store: undefined,
+      // store:
+      //   this.newParameterModel.isStoreModel === true
+      //     ? undefined
+      //     : this.newParameterModel.modelId,
+      storeResult: undefined,
+      // storeResult:
+      //   this.newParameterModel.isStoreModel === true ? field.result : undefined,
+      storeFilter: undefined,
+      // storeFilter:
+      //   this.newParameterModel.isStoreModel === true &&
+      //   field.fieldClass === common.FieldClassEnum.Filter
+      //     ? field.id
+      //     : undefined,
+      conditions:
+        this.newParameterModel.isStoreModel === true ? undefined : ['any'],
+      fractions:
+        this.newParameterModel.isStoreModel === true
+          ? [newFraction]
+          : undefined,
       formula: undefined,
       listen: undefined,
       xDeps: undefined

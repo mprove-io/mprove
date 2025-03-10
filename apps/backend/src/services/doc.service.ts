@@ -256,7 +256,7 @@ ${inputSub}
           try {
             JSON.parse(parametersXColumn.outputValue);
             isParamsJsonValid = true;
-          } catch (e) {
+          } catch (er) {
             isParamsJsonValid = false;
             paramsSchemaError = `Failed to calculate row parameters. 
 Check parameters formula and its dependences. 
@@ -305,7 +305,7 @@ Formula must return a valid JSON (array of parameters).`;
               try {
                 JSON.parse(parXColumn.outputValue);
                 isJsonValid = true;
-              } catch (e) {
+              } catch (err) {
                 isJsonValid = false;
                 schemaError = `Failed to calculate parameter. 
 Check parameter formula and its dependences. 
@@ -320,9 +320,18 @@ Formula must return a valid JSON object.`;
             if (parameter.isJsonValid === true) {
               parsedParameter = JSON.parse(parXColumn.outputValue);
               parameter.conditions = parsedParameter.conditions;
+              parameter.fractions = parsedParameter.fractions;
             } else {
               parameter.conditions = ['any'];
+              parameter.fractions = [];
             }
+          }
+
+          let model;
+
+          if (common.isDefined(row.metricId)) {
+            let metric = metrics.find(m => m.metricId === row.metricId);
+            model = models.find(ml => ml.modelId === metric.modelId);
           }
 
           if (parameter.constructor !== Object) {
@@ -337,14 +346,13 @@ Formula must return a valid JSON object.`;
             (Array.isArray(parameter.apply_to) ||
               parameter.apply_to.constructor === Object)
           ) {
-            schemaError =
-              'Parameter apply_to must be a string in a form of "alias.field_id"';
+            schemaError = 'Parameter apply_to must be a string';
           } else if (common.isDefined(row.parametersFormula)) {
             let fieldId = parameter.apply_to.split('.').join('_').toUpperCase();
             parameter.parameterId = `${row.rowId}_${fieldId}`;
 
-            let metric = metrics.find(m => m.metricId === row.metricId);
-            let model = models.find(ml => ml.modelId === metric.modelId);
+            // let metric = metrics.find(m => m.metricId === row.metricId);
+            // model = models.find(ml => ml.modelId === metric.modelId);
             let field = model.fields.find(f => f.id === parameter.apply_to);
 
             if (common.isDefined(field)) {
@@ -356,31 +364,35 @@ Formula must return a valid JSON object.`;
 
           if (common.isDefined(schemaError)) {
             parameter.conditions = ['any'];
+            parameter.fractions = [];
           }
 
-          if (common.isUndefined(parameter.conditions)) {
-            schemaError = 'Parameter conditions must be defined';
-          } else if (!Array.isArray(parameter.conditions)) {
-            schemaError = 'Parameter conditions must be an array';
-          } else if (parameter.conditions.length === 0) {
-            schemaError = 'Parameter conditions must have at least one element';
-          } else {
-            parameter.conditions.forEach(y => {
-              if (
-                common.isUndefined(y) ||
-                Array.isArray(y) ||
-                y.constructor === Object
-              ) {
-                schemaError =
-                  'Parameter conditions must be an array of filter expressions';
-              }
-            });
+          if (common.isUndefined(model) || model.isStoreModel === false) {
+            if (common.isUndefined(parameter.conditions)) {
+              schemaError = 'Parameter conditions must be defined';
+            } else if (!Array.isArray(parameter.conditions)) {
+              schemaError = 'Parameter conditions must be an array';
+            } else if (parameter.conditions.length === 0) {
+              schemaError =
+                'Parameter conditions must have at least one element';
+            } else {
+              parameter.conditions.forEach(y => {
+                if (
+                  common.isUndefined(y) ||
+                  Array.isArray(y) ||
+                  y.constructor === Object
+                ) {
+                  schemaError =
+                    'Parameter conditions must be an array of filter expressions';
+                }
+              });
+            }
           }
 
           //
-          // console.log('------')
-          // console.log('schemaError')
-          // console.log(schemaError)
+          console.log('------');
+          console.log('schemaError');
+          console.log(schemaError);
           // console.log('parameter.conditions')
           // console.log(parameter.conditions)
           // console.log('parameter.result')
@@ -390,39 +402,48 @@ Formula must return a valid JSON object.`;
 
           if (common.isDefined(schemaError)) {
             parameter.conditions = ['any'];
+            parameter.fractions = [];
           }
 
-          let toBlockmlGetFractionsRequest: apiToBlockml.ToBlockmlGetFractionsRequest =
-            {
-              info: {
-                name: apiToBlockml.ToBlockmlRequestInfoNameEnum
-                  .ToBlockmlGetFractions,
-                traceId: traceId
-              },
-              payload: {
-                caseSensitiveStringFilters: caseSensitiveStringFilters,
-                bricks: parameter.conditions,
-                result: parameter.result
-              }
-            };
+          let fractions;
 
-          let blockmlGetFractionsResponse =
-            await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlGetFractionsResponse>(
+          if (common.isUndefined(model) || model.isStoreModel === false) {
+            let toBlockmlGetFractionsRequest: apiToBlockml.ToBlockmlGetFractionsRequest =
               {
-                routingKey:
-                  common.RabbitBlockmlRoutingEnum.GetFractions.toString(),
-                message: toBlockmlGetFractionsRequest,
-                checkIsOk: true
-              }
-            );
+                info: {
+                  name: apiToBlockml.ToBlockmlRequestInfoNameEnum
+                    .ToBlockmlGetFractions,
+                  traceId: traceId
+                },
+                payload: {
+                  caseSensitiveStringFilters: caseSensitiveStringFilters,
+                  bricks: parameter.conditions,
+                  result: parameter.result
+                }
+              };
 
-          if (blockmlGetFractionsResponse.payload.isValid === false) {
-            schemaError = `Parameter conditions are not valid for result "${parameter.result}"`;
+            let blockmlGetFractionsResponse =
+              await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlGetFractionsResponse>(
+                {
+                  routingKey:
+                    common.RabbitBlockmlRoutingEnum.GetFractions.toString(),
+                  message: toBlockmlGetFractionsRequest,
+                  checkIsOk: true
+                }
+              );
+
+            if (blockmlGetFractionsResponse.payload.isValid === false) {
+              schemaError = `Parameter conditions are not valid for result "${parameter.result}"`;
+            }
+
+            fractions = blockmlGetFractionsResponse.payload.fractions;
+          } else {
+            fractions = parameter.fractions;
           }
 
           let filter: common.Filter = {
             fieldId: parameter.apply_to,
-            fractions: blockmlGetFractionsResponse.payload.fractions
+            fractions: fractions
           };
 
           filters.push(filter);
@@ -460,7 +481,8 @@ Formula must return a valid JSON object.`;
                 row.parameters.map(x => {
                   let p = common.makeCopy({
                     apply_to: x.apply_to,
-                    conditions: x.conditions
+                    conditions: x.conditions,
+                    fractions: x.fractions
                   });
                   return p;
                 })
@@ -667,8 +689,8 @@ FROM main;`;
             return r;
           });
         })
-        .catch(async (e: any) => {
-          topQueryError = e.message;
+        .catch(async (errr: any) => {
+          topQueryError = errr.message;
         });
 
       // console.log('topQueryData');

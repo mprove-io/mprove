@@ -863,7 +863,7 @@ export class ReportsService {
                 };
 
           let filters: common.Filter[] =
-            model.isStoreModel === true
+            model.isStoreModel === true // TODO: store parametersFiltersWithExcludedTime
               ? [...x.parametersFiltersWithExcludedTime].sort((a, b) =>
                   a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
                 )

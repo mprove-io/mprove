@@ -84,7 +84,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
   timeSpecMinutes = common.TimeSpecEnum.Minutes;
   timeSpecTimestamps = common.TimeSpecEnum.Timestamps;
 
-  isAutoRun = true;
+  isAutoRun = false;
 
   isShow = true;
 

@@ -47,7 +47,13 @@ export class ReportFiltersComponent {
         parameterType: common.ParameterTypeEnum.Field,
         apply_to: undefined,
         result: field.result,
-        conditions: field.fractions.map(fr => fr.brick),
+        store: field.store, // TODO: check
+        storeResult: field.storeResult,
+        storeFilter: field.storeFilter,
+        conditions: common.isUndefined(field.store)
+          ? field.fractions.map(fr => fr.brick)
+          : [],
+        fractions: field.fractions,
         formula: undefined,
         listen: undefined,
         xDeps: undefined
@@ -103,7 +109,13 @@ export class ReportFiltersComponent {
         parameterType: common.ParameterTypeEnum.Field,
         apply_to: undefined,
         result: field.result,
-        conditions: field.fractions.map(fr => fr.brick),
+        store: field.store, // TODO: check
+        storeResult: field.storeResult,
+        storeFilter: field.storeFilter,
+        conditions: common.isUndefined(field.store)
+          ? field.fractions.map(fr => fr.brick)
+          : [],
+        fractions: field.fractions,
         formula: undefined,
         listen: undefined,
         xDeps: undefined
@@ -169,7 +181,13 @@ export class ReportFiltersComponent {
         parameterType: common.ParameterTypeEnum.Field,
         apply_to: undefined,
         result: field.result,
-        conditions: field.fractions.map(fr => fr.brick),
+        store: field.store, // TODO: check
+        storeResult: field.storeResult,
+        storeFilter: field.storeFilter,
+        conditions: common.isUndefined(field.store)
+          ? field.fractions.map(fr => fr.brick)
+          : [],
+        fractions: field.fractions,
         formula: undefined,
         listen: undefined,
         xDeps: undefined

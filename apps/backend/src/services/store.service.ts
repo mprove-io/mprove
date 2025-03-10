@@ -117,8 +117,16 @@ export class StoreService {
         }
       });
 
+    // console.log('newMconfig.filters');
+    // console.log(newMconfig.filters);
+
     newMconfig.filters.forEach(filter => {
+      // console.log('filter');
+      // console.log(filter);
       filter.fractions.forEach(fraction => {
+        // console.log('fraction');
+        // console.log(fraction);
+
         fraction.controls
           .filter(
             control =>
