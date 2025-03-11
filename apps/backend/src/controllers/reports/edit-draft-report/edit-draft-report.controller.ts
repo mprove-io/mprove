@@ -122,8 +122,8 @@ export class EditDraftReportController {
     let models: ModelEnt[] = [];
 
     if (
-      common.isDefined(rowChange.metricId) &&
-      changeType === common.ChangeTypeEnum.ConvertToMetric
+      changeType === common.ChangeTypeEnum.ConvertToMetric &&
+      common.isDefined(rowChange?.metricId)
     ) {
       let metric = metrics.find(x => x.metricId === rowChange.metricId);
 
