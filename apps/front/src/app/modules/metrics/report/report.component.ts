@@ -458,19 +458,31 @@ export class ReportComponent {
       params.data.isParamsSchemaValid === false;
 
     if (common.isDefined(params.data.mconfig) && isShowParameters === true) {
-      let totalConditions = 0;
+      let totalLines = 0;
 
       params.data.parameters.forEach(x => {
         if (common.isDefined(x.conditions)) {
-          x.conditions.forEach(y => (totalConditions = totalConditions + 1));
+          x.conditions.forEach(y => (totalLines = totalLines + 1));
+        }
+
+        if (common.isDefined(x.fractions)) {
+          x.fractions.forEach(y => (totalLines = totalLines + 1));
         }
       });
 
-      if (totalConditions > 0) {
+      if (totalLines > 0) {
         params.data.parameters.forEach(x => {
           if (common.isDefined(x.conditions)) {
             x.conditions.forEach(y => {
               rowHeight = rowHeight + 25;
+            });
+          }
+
+          if (common.isDefined(x.fractions)) {
+            x.fractions.forEach(y => {
+              y.controls.forEach(c => {
+                rowHeight = rowHeight + 25;
+              });
             });
           }
 

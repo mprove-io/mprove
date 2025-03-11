@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { tap } from 'rxjs';
+import { STORE_MODEL_PREFIX } from '~common/_index';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { ReportQuery } from '~front/app/queries/report.query';
@@ -76,10 +77,13 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
 
         let timeFieldIdSpec = `${this.metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
-        this.parametersFilters =
-          this.params.data.mconfig.extendedFilters.filter(
-            filter => filter.fieldId !== timeFieldIdSpec
-          );
+        this.parametersFilters = this.metric.modelId.startsWith(
+          STORE_MODEL_PREFIX
+        )
+          ? this.params.data.mconfig.extendedFilters
+          : this.params.data.mconfig.extendedFilters.filter(
+              filter => filter.fieldId !== timeFieldIdSpec
+            );
 
         let listen: { [a: string]: string } = {};
         let formulas: { [a: string]: boolean } = {};
