@@ -16,6 +16,7 @@ import { interfaces } from '~front/barrels/interfaces';
 import { environment } from '~front/environments/environment';
 import { MemberQuery } from '../queries/member.query';
 import { MetricsQuery } from '../queries/metrics.query';
+import { ModelsQuery } from '../queries/models.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ReportsQuery } from '../queries/reports.query';
 import { StructQuery } from '../queries/struct.query';
@@ -37,6 +38,7 @@ export class ApiService {
     private navigateService: NavigateService,
     private metricsQuery: MetricsQuery,
     private reportsQuery: ReportsQuery,
+    private modelsQuery: ModelsQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery
   ) {}
@@ -386,6 +388,8 @@ export class ApiService {
           this.reportsQuery.update({
             reports: resp.payload.reports
           });
+
+          this.modelsQuery.update({ models: resp.payload.storeModels });
 
           this.uiQuery.updatePart({ metricsLoadedTs: Date.now() });
 

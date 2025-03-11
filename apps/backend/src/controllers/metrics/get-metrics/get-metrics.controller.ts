@@ -189,7 +189,19 @@ export class GetMetricsController {
           timeColumnsLength: undefined,
           isTimeColumnsLimitExceeded: false
         })
-      )
+      ),
+      storeModels: models
+        .filter(model => model.isStoreModel === true)
+        .map(model =>
+          this.wrapToApiService.wrapToApiModel({
+            model: model,
+            hasAccess: helper.checkAccess({
+              userAlias: user.alias,
+              member: userMember,
+              entity: model
+            })
+          })
+        )
     };
 
     return payload;

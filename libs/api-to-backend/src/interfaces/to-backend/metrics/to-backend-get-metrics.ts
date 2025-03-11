@@ -40,6 +40,10 @@ export class ToBackendGetMetricsResponsePayload {
 
   @ValidateNested()
   reports: common.ReportX[];
+
+  @ValidateNested()
+  @Type(() => common.ModelX)
+  storeModels: common.ModelX[];
 }
 
 export class ToBackendGetMetricsResponse extends common.MyResponse {
