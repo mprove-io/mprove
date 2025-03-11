@@ -36,7 +36,8 @@ export function checkReportRowUnknownParams(
                   common.ParameterEnum.ApplyTo.toString(),
                   common.ParameterEnum.Listen.toString(),
                   common.ParameterEnum.Formula.toString(),
-                  common.ParameterEnum.Conditions.toString()
+                  common.ParameterEnum.Conditions.toString(),
+                  common.ParameterEnum.Fractions.toString()
                 ].indexOf(parameter) < 0
               ) {
                 item.errors.push(
@@ -59,9 +60,10 @@ export function checkReportRowUnknownParams(
               }
 
               if (
-                [common.ParameterEnum.Conditions.toString()].indexOf(
-                  parameter
-                ) < 0 &&
+                [
+                  common.ParameterEnum.Conditions.toString(),
+                  common.ParameterEnum.Fractions.toString()
+                ].indexOf(parameter) < 0 &&
                 Array.isArray(
                   param[parameter as keyof common.FileReportRowParameter]
                 )
@@ -114,9 +116,10 @@ export function checkReportRowUnknownParams(
               }
 
               if (
-                [common.ParameterEnum.Conditions.toString()].indexOf(
-                  parameter
-                ) > -1 &&
+                [
+                  common.ParameterEnum.Conditions.toString(),
+                  common.ParameterEnum.Fractions.toString()
+                ].indexOf(parameter) > -1 &&
                 !Array.isArray(
                   param[parameter as keyof common.FileReportRowParameter]
                 )

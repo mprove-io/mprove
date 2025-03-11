@@ -390,9 +390,9 @@ Formula must return a valid JSON object.`;
           }
 
           //
-          console.log('------');
-          console.log('schemaError');
-          console.log(schemaError);
+          // console.log('------');
+          // console.log('schemaError');
+          // console.log(schemaError);
           // console.log('parameter.conditions')
           // console.log(parameter.conditions)
           // console.log('parameter.result')

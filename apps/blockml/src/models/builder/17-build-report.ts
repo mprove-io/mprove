@@ -83,6 +83,7 @@ export function buildReport(
     {
       reports: reports,
       metrics: item.metrics,
+      models: item.models,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller

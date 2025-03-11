@@ -88,6 +88,56 @@ export const REPORT_SCHEMA: JSONSchema7 = {
                   items: {
                     type: 'string'
                   }
+                },
+                fractions: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                      logic: {
+                        type: 'string'
+                      },
+                      type: {
+                        type: 'string'
+                      },
+                      controls: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          additionalProperties: false,
+                          properties: {
+                            input: {
+                              type: 'string'
+                            },
+                            list_input: {
+                              type: 'string'
+                            },
+                            switch: {
+                              type: 'string'
+                            },
+                            date_picker: {
+                              type: 'string'
+                            },
+                            selector: {
+                              type: 'string'
+                            },
+                            value: {
+                              type: ['string', 'number', 'boolean']
+                            },
+                            values: {
+                              type: 'array',
+                              items: {
+                                type: ['string', 'number', 'boolean']
+                              }
+                            }
+                          },
+                          required: ['value']
+                        }
+                      }
+                    },
+                    required: ['controls']
+                  }
                 }
               },
               required: ['apply_to']

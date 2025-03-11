@@ -19,6 +19,7 @@ import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
+import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeReportFileText } from '~backend/functions/make-report-file-text';
@@ -181,6 +182,19 @@ export class SaveModifyReportController {
           //   })
           [];
 
+    let models: ModelEnt[] = [];
+
+    if (metrics.length > 0) {
+      let metricModelIds = metrics.map(x => x.modelId);
+
+      models = await this.db.drizzle.query.modelsTable.findMany({
+        where: and(
+          inArray(modelsTable.modelId, metricModelIds),
+          eq(modelsTable.structId, bridge.structId)
+        )
+      });
+    }
+
     let repFileText = makeReportFileText({
       reportId: modReportId,
       title: title,
@@ -188,6 +202,7 @@ export class SaveModifyReportController {
       accessRoles: accessRoles,
       accessUsers: accessUsers,
       metrics: metrics,
+      models: models,
       struct: currentStruct,
       newReportFields: newReportFields,
       chart: chart

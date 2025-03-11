@@ -440,6 +440,32 @@ export function wrapReports(item: {
                                 : y.logic + y.type,
                             controls: y.controls.map(
                               (control: FileFractionControl) => {
+                                if (common.isDefined(control.input)) {
+                                  control.name = control.input;
+                                  control.controlClass =
+                                    common.ControlClassEnum.Input;
+                                } else if (
+                                  common.isDefined(control.list_input)
+                                ) {
+                                  control.name = control.list_input;
+                                  control.controlClass =
+                                    common.ControlClassEnum.ListInput;
+                                } else if (common.isDefined(control.switch)) {
+                                  control.name = control.switch;
+                                  control.controlClass =
+                                    common.ControlClassEnum.Switch;
+                                } else if (
+                                  common.isDefined(control.date_picker)
+                                ) {
+                                  control.name = control.date_picker;
+                                  control.controlClass =
+                                    common.ControlClassEnum.DatePicker;
+                                } else if (common.isDefined(control.selector)) {
+                                  control.name = control.selector;
+                                  control.controlClass =
+                                    common.ControlClassEnum.Selector;
+                                }
+
                                 let storeControl =
                                   storeField.fieldClass ===
                                   common.FieldClassEnum.Filter

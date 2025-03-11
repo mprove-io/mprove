@@ -3,6 +3,7 @@ import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
+import { STORE_MODEL_PREFIX } from '~common/constants/top';
 
 let func = common.FuncEnum.CheckReportRow;
 
@@ -10,13 +11,14 @@ export function checkReportRow(
   item: {
     reports: common.FileReport[];
     metrics: common.ModelMetric[];
+    models: common.FileModel[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId, metrics } = item;
+  let { caller, structId, metrics, models } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newReports: common.FileReport[] = [];
@@ -207,28 +209,41 @@ export function checkReportRow(
             return;
           }
 
-          if (
-            common.isUndefined(p.listen) &&
-            common.isUndefined(p.formula) &&
-            common.isUndefined(p.conditions)
-          ) {
-            item.errors.push(
-              new BmError({
-                title:
-                  common.ErTitleEnum.MISSING_LISTEN_OR_FORMULA_OR_CONDITIONS,
-                message:
-                  `"${common.ParameterEnum.Listen}", "${common.ParameterEnum.Formula}" or ` +
-                  `"${common.ParameterEnum.Conditions}" must be specified for a row parameter`,
-                lines: [
-                  {
-                    line: Math.min(...pKeysLineNums),
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
+          let model;
+
+          if (common.isDefined(row.metric)) {
+            let metric = metrics.find(m => m.metricId === row.metric);
+            model = models.find(y => y.model === metric.modelId);
+          }
+
+          let isStore = model?.model.startsWith(STORE_MODEL_PREFIX);
+
+          // TODO: add more store checks
+
+          if (isStore === false) {
+            if (
+              common.isUndefined(p.listen) &&
+              common.isUndefined(p.formula) &&
+              common.isUndefined(p.conditions)
+            ) {
+              item.errors.push(
+                new BmError({
+                  title:
+                    common.ErTitleEnum.MISSING_LISTEN_OR_FORMULA_OR_CONDITIONS,
+                  message:
+                    `"${common.ParameterEnum.Listen}", "${common.ParameterEnum.Formula}" or ` +
+                    `"${common.ParameterEnum.Conditions}" must be specified for a row parameter`,
+                  lines: [
+                    {
+                      line: Math.min(...pKeysLineNums),
+                      name: x.fileName,
+                      path: x.filePath
+                    }
+                  ]
+                })
+              );
+              return;
+            }
           }
         });
       }

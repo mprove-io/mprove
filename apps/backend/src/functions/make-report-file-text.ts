@@ -1,6 +1,10 @@
 import { common } from '~backend/barrels/common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
+import { enums } from '~common/barrels/enums';
+import { isDefined } from '~common/functions/is-defined';
 import { toFileChartOptions } from '~common/functions/to-file-chart-options';
+import { FileFraction } from '~common/interfaces/blockml/internal/file-fraction';
+import { FileFractionControl } from '~common/interfaces/blockml/internal/file-fraction-control';
 
 export function makeReportFileText(item: {
   reportId: string;
@@ -9,6 +13,7 @@ export function makeReportFileText(item: {
   accessUsers: string[];
   rows: common.Row[];
   metrics: schemaPostgres.MetricEnt[];
+  models: schemaPostgres.ModelEnt[];
   struct: schemaPostgres.StructEnt;
   newReportFields: common.ReportField[];
   chart: common.MconfigChart;
@@ -20,6 +25,7 @@ export function makeReportFileText(item: {
     accessRoles,
     accessUsers,
     metrics,
+    models,
     struct,
     newReportFields,
     chart
@@ -73,10 +79,25 @@ export function makeReportFileText(item: {
     rows: rows
       .filter(r => r.rowType !== common.RowTypeEnum.Global)
       .map(x => {
+        // console.log('x');
+        // console.log(x);
+
         let metric =
           x.rowType === common.RowTypeEnum.Metric
             ? metrics.find(m => m.metricId === x.metricId)
             : undefined;
+
+        // console.log('metric');
+        // console.log(metric);
+
+        let model = common.isDefined(metric)
+          ? models.find(m => m.modelId === metric.modelId)
+          : undefined;
+
+        // console.log('model.modelId');
+        // console.log(model?.modelId);
+        // console.log('model.isStoreModel');
+        // console.log(model?.isStoreModel);
 
         let row: common.FileReportRow = {
           row_id: x.rowId,
@@ -134,9 +155,69 @@ export function makeReportFileText(item: {
                     // result: parameter.result,
                     conditions:
                       common.isDefined(formula) ||
-                      common.isDefined(parameter.listen)
+                      common.isDefined(parameter.listen) ||
+                      model?.isStoreModel === true
                         ? undefined
                         : parameter.conditions,
+                    fractions:
+                      model?.isStoreModel === true
+                        ? parameter.fractions.map(apiFraction => {
+                            // console.log('apiFraction');
+                            // console.log(apiFraction);
+
+                            let fileFraction: FileFraction = {};
+
+                            if (isDefined(apiFraction.logicGroup)) {
+                              fileFraction.logic = apiFraction.logicGroup;
+                            }
+
+                            if (isDefined(apiFraction.storeFractionSubType)) {
+                              fileFraction.type =
+                                apiFraction.storeFractionSubType;
+                            }
+
+                            fileFraction.controls = apiFraction.controls.map(
+                              mconfigControl => {
+                                let newFileControl: FileFractionControl = {};
+
+                                if (
+                                  mconfigControl.controlClass ===
+                                  enums.ControlClassEnum.Input
+                                ) {
+                                  newFileControl.input = mconfigControl.name;
+                                } else if (
+                                  mconfigControl.controlClass ===
+                                  enums.ControlClassEnum.ListInput
+                                ) {
+                                  newFileControl.list_input =
+                                    mconfigControl.name;
+                                } else if (
+                                  mconfigControl.controlClass ===
+                                  enums.ControlClassEnum.Switch
+                                ) {
+                                  newFileControl.switch = mconfigControl.name;
+                                } else if (
+                                  mconfigControl.controlClass ===
+                                  enums.ControlClassEnum.DatePicker
+                                ) {
+                                  newFileControl.date_picker =
+                                    mconfigControl.name;
+                                } else if (
+                                  mconfigControl.controlClass ===
+                                  enums.ControlClassEnum.Selector
+                                ) {
+                                  newFileControl.selector = mconfigControl.name;
+                                }
+
+                                newFileControl.value = mconfigControl.value;
+
+                                return newFileControl;
+                              }
+                            );
+
+                            return fileFraction;
+                          })
+                        : undefined,
                     formula: formula,
                     listen: parameter.listen,
                     globalFieldResult: undefined
