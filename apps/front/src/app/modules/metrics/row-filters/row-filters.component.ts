@@ -7,7 +7,9 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IRowNode } from 'ag-grid-community';
+import { STORE_MODEL_PREFIX } from '~common/_index';
 import { DataRow } from '~front/app/interfaces/data-row';
+import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ReportService } from '~front/app/services/report.service';
@@ -43,6 +45,7 @@ export class RowFiltersComponent implements OnChanges {
     private fb: FormBuilder,
     private reportQuery: ReportQuery,
     private reportService: ReportService,
+    private metricsQuery: MetricsQuery,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -77,8 +80,18 @@ export class RowFiltersComponent implements OnChanges {
       ...fractions.slice(eventFractionUpdate.fractionIndex + 1)
     ];
 
+    let metric = this.metricsQuery
+      .getValue()
+      .metrics.find(y => y.metricId === this.reportSelectedNode.data.metricId);
+
+    let isStore = metric.modelId.startsWith(STORE_MODEL_PREFIX);
+
     let newParameter = Object.assign({}, newParameters[parametersIndex], {
-      conditions: newFractions.map(fraction => fraction.brick)
+      conditions:
+        isStore === false
+          ? newFractions.map(fraction => fraction.brick)
+          : undefined,
+      fractions: isStore === true ? newFractions : undefined
     } as common.Parameter);
 
     newParameters = [
