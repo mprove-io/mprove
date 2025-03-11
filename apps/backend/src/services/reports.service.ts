@@ -81,6 +81,7 @@ export class ReportsService {
     rowChange: common.RowChange;
     rowIds: string[];
     metrics: schemaPostgres.MetricEnt[];
+    models: schemaPostgres.ModelEnt[];
     rows: common.Row[];
     changeType: common.ChangeTypeEnum;
     timezone: string;
@@ -97,6 +98,7 @@ export class ReportsService {
       timeSpec,
       timeRangeFractionBrick,
       metrics,
+      models,
       struct
     } = item;
 
@@ -214,6 +216,8 @@ export class ReportsService {
         m => m.metricId === rowChange.metricId
       );
 
+      let model = models.find(m => m.modelId === metric.modelId);
+
       let editRow: common.Row = {
         rowId: rowChange.rowId,
         rowType: common.RowTypeEnum.Metric,
@@ -227,7 +231,61 @@ export class ReportsService {
         timeFieldLabel: metric.timeFieldLabel,
         timeLabel: metric.timeLabel,
         showChart: false,
-        parameters: [],
+        parameters:
+          model.isStoreModel === false
+            ? []
+            : (model.content as common.FileStore).fields
+                .filter(
+                  x =>
+                    x.fieldClass === common.FieldClassEnum.Filter &&
+                    common.toBooleanFromLowercaseString(x.required) === true
+                )
+                .map(storeFilter => {
+                  let newControls: common.FractionControl[] = [];
+
+                  storeFilter.fraction_controls.forEach(
+                    storeFractionControl => {
+                      let newControl: common.FractionControl = {
+                        isMetricsDate: undefined,
+                        options: storeFractionControl.options,
+                        value: storeFractionControl.value,
+                        label: storeFractionControl.label,
+                        required: storeFractionControl.required,
+                        name: storeFractionControl.name,
+                        controlClass: storeFractionControl.controlClass
+                      };
+
+                      newControls.push(newControl);
+                    }
+                  );
+
+                  let newFraction: common.Fraction = {
+                    type: common.FractionTypeEnum.StoreFraction,
+                    controls: newControls,
+                    brick: undefined as any,
+                    operator: undefined as any
+                  };
+
+                  let newParameter: common.Parameter = {
+                    topParId: undefined,
+                    parameterId: [rowChange.rowId, storeFilter.name]
+                      .join('_')
+                      .toUpperCase(),
+                    parameterType: common.ParameterTypeEnum.Field,
+                    apply_to: storeFilter.name,
+                    result: undefined,
+                    store: undefined,
+                    storeResult: undefined,
+                    storeFilter: undefined,
+                    conditions: undefined,
+                    fractions: [newFraction],
+                    formula: undefined,
+                    listen: undefined,
+                    xDeps: undefined
+                  };
+
+                  return newParameter;
+                }),
         parametersFiltersWithExcludedTime: [],
         parametersJson: undefined,
         parametersFormula: undefined,

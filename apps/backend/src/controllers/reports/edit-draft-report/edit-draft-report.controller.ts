@@ -6,6 +6,7 @@ import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
+import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -118,6 +119,24 @@ export class EditDraftReportController {
           //   })
           [];
 
+    let models: ModelEnt[] = [];
+
+    if (
+      common.isDefined(rowChange.metricId) &&
+      changeType === common.ChangeTypeEnum.ConvertToMetric
+    ) {
+      let metric = metrics.find(x => x.metricId === rowChange.metricId);
+
+      let model = await this.db.drizzle.query.modelsTable.findFirst({
+        where: and(
+          eq(modelsTable.structId, struct.structId),
+          eq(modelsTable.modelId, metric.modelId)
+        )
+      });
+
+      models.push(model);
+    }
+
     let processedRows = this.reportsService.getProcessedRows({
       rows: report.rows,
       rowChange: rowChange,
@@ -127,6 +146,7 @@ export class EditDraftReportController {
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
       metrics: metrics,
+      models: models,
       struct: struct
     });
 

@@ -17,6 +17,7 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { kitsTable } from '~backend/drizzle/postgres/schema/kits';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
+import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
@@ -303,6 +304,24 @@ export class CreateDraftReportController {
           //   })
           [];
 
+    let models: ModelEnt[] = [];
+
+    if (
+      common.isDefined(rowChange.metricId) &&
+      changeType === common.ChangeTypeEnum.ConvertToMetric
+    ) {
+      let metric = metrics.find(x => x.metricId === rowChange.metricId);
+
+      let model = await this.db.drizzle.query.modelsTable.findFirst({
+        where: and(
+          eq(modelsTable.structId, struct.structId),
+          eq(modelsTable.modelId, metric.modelId)
+        )
+      });
+
+      models.push(model);
+    }
+
     let processedRows: common.Row[] = this.reportsService.getProcessedRows({
       rows: fromReport.rows,
       rowChange: rowChange,
@@ -312,6 +331,7 @@ export class CreateDraftReportController {
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
       metrics: metrics,
+      models: models,
       struct: struct
     });
 
