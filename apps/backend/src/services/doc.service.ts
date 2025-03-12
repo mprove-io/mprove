@@ -329,10 +329,18 @@ Formula must return a valid JSON object.`;
 
           let model;
 
+          // console.log('row');
+          // console.log(row);
+          // console.log('row.metricId');
+          // console.log(row.metricId);
+
           if (common.isDefined(row.metricId)) {
             let metric = metrics.find(m => m.metricId === row.metricId);
             model = models.find(ml => ml.modelId === metric.modelId);
           }
+
+          // console.log('model');
+          // console.log(model);
 
           if (parameter.constructor !== Object) {
             schemaError = 'Parameter must be an object';
@@ -407,7 +415,10 @@ Formula must return a valid JSON object.`;
 
           let fractions;
 
-          if (common.isUndefined(model) || model.isStoreModel === false) {
+          if (
+            common.isDefined(parameter.result) &&
+            (common.isUndefined(model) || model.isStoreModel === false)
+          ) {
             let toBlockmlGetFractionsRequest: apiToBlockml.ToBlockmlGetFractionsRequest =
               {
                 info: {

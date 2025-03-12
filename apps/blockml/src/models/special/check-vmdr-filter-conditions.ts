@@ -34,6 +34,7 @@ export function checkVmdrFilterConditions<T extends types.vsmdrType>(
       }
 
       if (common.isUndefined(field.conditions)) {
+        // TODO: check logic for store
         field.conditions = ['any'];
       }
 
