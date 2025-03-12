@@ -2,6 +2,7 @@ import { common } from '~backend/barrels/common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { enums } from '~common/barrels/enums';
 import { isDefined } from '~common/functions/is-defined';
+import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
 import { toFileChartOptions } from '~common/functions/to-file-chart-options';
 import { FileFraction } from '~common/interfaces/blockml/internal/file-fraction';
 import { FileFractionControl } from '~common/interfaces/blockml/internal/file-fraction-control';
@@ -17,6 +18,8 @@ export function makeReportFileText(item: {
   struct: schemaPostgres.StructEnt;
   newReportFields: common.ReportField[];
   chart: common.MconfigChart;
+  timezone: string;
+  caseSensitiveStringFilters: boolean;
 }) {
   let {
     reportId,
@@ -28,7 +31,9 @@ export function makeReportFileText(item: {
     models,
     struct,
     newReportFields,
-    chart
+    chart,
+    caseSensitiveStringFilters,
+    timezone
   } = item;
 
   let options = toFileChartOptions({
@@ -65,9 +70,120 @@ export function makeReportFileText(item: {
                 ? field.description
                 : undefined,
             result: field.result,
+            store: field.store,
+            store_result: field.storeResult,
+            store_filter: field.storeFilter,
+            fractions: common.isUndefined(field.store)
+              ? undefined
+              : field.fractions?.map(mconfigFraction => {
+                  let fileFraction: FileFraction = {};
+
+                  if (common.isDefined(mconfigFraction.logicGroup)) {
+                    fileFraction.logic = mconfigFraction.logicGroup;
+                  }
+
+                  if (common.isDefined(mconfigFraction.storeFractionSubType)) {
+                    fileFraction.type = mconfigFraction.storeFractionSubType;
+                  }
+
+                  fileFraction.controls = mconfigFraction.controls.map(
+                    mconfigControl => {
+                      let newFileControl: common.FileFractionControl = {};
+
+                      if (
+                        mconfigControl.controlClass ===
+                        enums.ControlClassEnum.Input
+                      ) {
+                        newFileControl.input = mconfigControl.name;
+                      } else if (
+                        mconfigControl.controlClass ===
+                        enums.ControlClassEnum.ListInput
+                      ) {
+                        newFileControl.list_input = mconfigControl.name;
+                      } else if (
+                        mconfigControl.controlClass ===
+                        enums.ControlClassEnum.Switch
+                      ) {
+                        newFileControl.switch = mconfigControl.name;
+                      } else if (
+                        mconfigControl.controlClass ===
+                        enums.ControlClassEnum.DatePicker
+                      ) {
+                        newFileControl.date_picker = mconfigControl.name;
+                      } else if (
+                        mconfigControl.controlClass ===
+                        enums.ControlClassEnum.Selector
+                      ) {
+                        newFileControl.selector = mconfigControl.name;
+                      }
+
+                      let newValue = mconfigControl.value;
+
+                      // let reg = common.MyRegex.CAPTURE_S_REF();
+
+                      // let r;
+
+                      // // let refError;
+
+                      // while ((r = reg.exec(newValue))) {
+                      //   let reference = r[1];
+
+                      //   let target: any;
+
+                      //   if (reference === 'METRICS_DATE_FROM') {
+                      //     target = getYYYYMMDDCurrentDateByTimezone({
+                      //       timezone: timezone,
+                      //       deltaDays: -1
+                      //     });
+                      //   } else if (reference === 'METRICS_DATE_TO') {
+                      //     target = getYYYYMMDDCurrentDateByTimezone({
+                      //       timezone: timezone,
+                      //       deltaDays: +1
+                      //     });
+                      //   } else if (reference === 'DATE_TODAY') {
+                      //     target = getYYYYMMDDCurrentDateByTimezone({
+                      //       timezone: timezone,
+                      //       deltaDays: 0
+                      //     });
+                      //   } else if (
+                      //     reference === 'PROJECT_CONFIG_CASE_SENSITIVE'
+                      //   ) {
+                      //     target = caseSensitiveStringFilters;
+                      //     // } else if (reference === 'ENV_GA_PROPERTY_ID_1') { // TODO:
+                      //     //   target = '...';
+                      //   } else {
+                      //     target = null;
+                      //     // refError = `Unknown reference in store.${storeParam}: $${reference}`;
+                      //     // break;
+                      //   }
+
+                      // newValue = common.MyRegex.replaceSRefs(
+                      //   newValue,
+                      //   reference,
+                      //   target
+                      // );
+                      // }
+
+                      newFileControl.value =
+                        newFileControl.controlClass ===
+                          common.ControlClassEnum.Switch &&
+                        typeof newValue === 'string'
+                          ? toBooleanFromLowercaseString(newValue)
+                          : newValue;
+
+                      // newFileControl.value = mconfigControl.value;
+
+                      return newFileControl;
+                    }
+                  );
+
+                  return fileFraction;
+                }),
             suggest_model_dimension: field.suggestModelDimension,
             conditions:
-              common.isDefined(field.fractions) && field.fractions.length > 0
+              common.isUndefined(field.store) &&
+              common.isDefined(field.fractions) &&
+              field.fractions.length > 0
                 ? field.fractions.map(x => x.brick)
                 : undefined
           }))

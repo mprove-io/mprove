@@ -230,8 +230,8 @@ export class ModifyDashboardController {
         users: fromDashboard.accessUsers.join(', '),
         deleteFilterFieldId: undefined,
         deleteFilterTileTitle: undefined,
-        timezone: common.UTC,
-        caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters
+        caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
+        timezone: common.UTC
       });
     } else {
       // dashboard save as - replace existing
@@ -258,8 +258,8 @@ export class ModifyDashboardController {
         users: accessUsers,
         deleteFilterFieldId: undefined,
         deleteFilterTileTitle: undefined,
-        timezone: common.UTC,
-        caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters
+        caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
+        timezone: common.UTC
       });
     }
 

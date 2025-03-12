@@ -193,7 +193,9 @@ export class SaveCreateReportController {
       models: models,
       struct: currentStruct,
       newReportFields: newReportFields,
-      chart: chart
+      chart: chart,
+      caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
+      timezone: common.UTC
     });
 
     let mdir = currentStruct.mproveDirValue;

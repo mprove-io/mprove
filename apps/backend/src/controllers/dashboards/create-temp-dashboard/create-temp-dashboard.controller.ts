@@ -162,8 +162,8 @@ export class CreateTempDashboardController {
       users: fromDashboard.accessUsers.join(', '),
       deleteFilterFieldId: deleteFilterFieldId,
       deleteFilterTileTitle: deleteFilterTileTitle,
-      timezone: timezone,
-      caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters
+      caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
+      timezone: common.UTC
     });
 
     // console.log('dashboardFileText');
