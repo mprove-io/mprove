@@ -53,7 +53,7 @@ export class ReportFiltersComponent {
         parameterType: common.ParameterTypeEnum.Field,
         apply_to: undefined,
         result: field.result,
-        store: field.store, // TODO: check
+        store: field.store,
         storeResult: field.storeResult,
         storeFilter: field.storeFilter,
         conditions: common.isUndefined(field.store)
@@ -314,7 +314,7 @@ export class ReportFiltersComponent {
         parameterType: common.ParameterTypeEnum.Field,
         apply_to: undefined,
         result: field.result,
-        store: field.store, // TODO: check
+        store: field.store,
         storeResult: field.storeResult,
         storeFilter: field.storeFilter,
         conditions: common.isUndefined(field.store)

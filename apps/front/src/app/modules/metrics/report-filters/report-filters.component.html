@@ -44,12 +44,32 @@
         >
         </m-fraction>
 
-        <button
-          class="ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
-          (click)="addFraction(filter, filterIndex)"
+        <div
+          tp="Filter max_fractions reached"
+          [tpIsEnabled]="
+            !!filter.maxFractions &&
+            filter.maxFractions === filter.fractions.length
+          "
         >
-          <m-add-icon></m-add-icon>
-        </button>
+          <button
+            class="ml-3 flex h-9 w-9 items-center justify-center rounded focus:outline-none"
+            [ngClass]="{
+              'text-gray-500 hover:bg-blue-200':
+                !filter.maxFractions ||
+                filter.maxFractions !== filter.fractions.length,
+              'cursor-default text-gray-400':
+                !!filter.maxFractions &&
+                filter.maxFractions === filter.fractions.length
+            }"
+            [disabled]="
+              !!filter.maxFractions &&
+              filter.maxFractions === filter.fractions.length
+            "
+            (click)="addFraction(filter, filterIndex)"
+          >
+            <m-add-icon></m-add-icon>
+          </button>
+        </div>
 
         <button
           class="ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
