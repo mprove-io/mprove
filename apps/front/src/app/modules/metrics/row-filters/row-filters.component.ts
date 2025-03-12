@@ -317,8 +317,20 @@ export class RowFiltersComponent implements OnChanges {
         ...fractions.slice(fractionIndex + 1)
       ];
 
+      let metric = this.metricsQuery
+        .getValue()
+        .metrics.find(
+          y => y.metricId === this.reportSelectedNode.data.metricId
+        );
+
+      let isStore = metric.modelId.startsWith(STORE_MODEL_PREFIX);
+
       let newParameter = Object.assign({}, newParameters[parametersIndex], {
-        conditions: newFractions.map(fraction => fraction.brick)
+        conditions:
+          isStore === false
+            ? newFractions.map(fraction => fraction.brick)
+            : undefined,
+        fractions: isStore === true ? newFractions : undefined
       } as common.Parameter);
 
       newParameters = [
