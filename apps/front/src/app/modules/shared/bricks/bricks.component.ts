@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { DeleteFilterFnItem } from '~front/app/interfaces/delete-filter-fn-item';
+import { ModelsQuery } from '~front/app/queries/models.query';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -37,14 +38,30 @@ export class BricksComponent {
   @Input()
   isKeepBackgroundColor: boolean;
 
+  @Input()
+  metricsStartDateYYYYMMDD: string;
+
+  @Input()
+  metricsEndDateExcludedYYYYMMDD: string;
+
+  @Input()
+  metricsEndDateIncludedYYYYMMDD: string;
+
   fractionOperatorEnum = common.FractionOperatorEnum;
 
-  constructor() {}
+  constructor(private modelsQuery: ModelsQuery) {}
 
   deleteFilter(filter: common.FilterX) {
     this.deleteFilterFn({
       filterFieldId: filter.fieldId,
       tileTitle: this.tileTitle
     });
+  }
+
+  getModelDateRangeIncludesRightSide(storeId: string) {
+    return this.modelsQuery.getValue().models.find(x => x.modelId === storeId)
+      ?.dateRangeIncludesRightSide === true
+      ? this.metricsEndDateIncludedYYYYMMDD
+      : this.metricsEndDateExcludedYYYYMMDD;
   }
 }

@@ -139,7 +139,13 @@
                     *ngFor="let control of fraction.controls"
                   >
                     <div>{{ control.label || control.name }}</div>
-                    <div class="ml-5">{{ control.value }}</div>
+                    <div class="ml-5">{{
+                      control.value.split('$METRICS_DATE_FROM').length > 1
+                        ? metricsStartDateYYYYMMDD
+                        : control.value.split('$METRICS_DATE_TO').length > 1
+                        ? getModelDateRangeIncludesRightSide(filter.field.store)
+                        : control.value
+                    }}</div>
                   </div>
                 </div>
               </div>

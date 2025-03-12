@@ -514,6 +514,13 @@
                 <m-bricks
                   class="mb-5 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
                   [extendedFilters]="report?.extendedFilters"
+                  [metricsStartDateYYYYMMDD]="report?.metricsStartDateYYYYMMDD"
+                  [metricsEndDateExcludedYYYYMMDD]="
+                    report?.metricsEndDateExcludedYYYYMMDD
+                  "
+                  [metricsEndDateIncludedYYYYMMDD]="
+                    report?.metricsEndDateIncludedYYYYMMDD
+                  "
                   [isKeepBackgroundColor]="false"
                   [showJson]="false"
                 ></m-bricks>
