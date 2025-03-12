@@ -170,24 +170,38 @@
               !!reportSelectedNode.data.parametersFormula
             "
           >
-            <button
-              class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-              (click)="addFraction(filter)"
-              [ngClass]="{
-                'text-gray-500 hover:bg-blue-200':
-                  filter.parameterType !== parameterTypeFormula &&
-                  !reportSelectedNode.data.parametersFormula,
-                'cursor-default text-gray-400':
-                  filter.parameterType === parameterTypeFormula ||
-                  !!reportSelectedNode.data.parametersFormula
-              }"
-              [disabled]="
-                filter.parameterType === parameterTypeFormula ||
-                !!reportSelectedNode.data.parametersFormula
+            <div
+              tp="Filter max_fractions reached"
+              [tpIsEnabled]="
+                !!filter.field.maxFractions &&
+                filter.field.maxFractions === filter.fractions.length
               "
             >
-              <m-add-icon></m-add-icon>
-            </button>
+              <button
+                class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                (click)="addFraction(filter)"
+                [ngClass]="{
+                  'text-gray-500 hover:bg-blue-200':
+                    filter.parameterType !== parameterTypeFormula &&
+                    !reportSelectedNode.data.parametersFormula &&
+                    (!filter.field.maxFractions ||
+                      filter.field.maxFractions !== filter.fractions.length),
+                  'cursor-default text-gray-400':
+                    filter.parameterType === parameterTypeFormula ||
+                    !!reportSelectedNode.data.parametersFormula ||
+                    (!!filter.field.maxFractions &&
+                      filter.field.maxFractions === filter.fractions.length)
+                }"
+                [disabled]="
+                  filter.parameterType === parameterTypeFormula ||
+                  !!reportSelectedNode.data.parametersFormula ||
+                  (!!filter.field.maxFractions &&
+                    filter.field.maxFractions === filter.fractions.length)
+                "
+              >
+                <m-add-icon></m-add-icon>
+              </button>
+            </div>
           </div>
 
           <div
@@ -196,25 +210,37 @@
               filter.parameterType === parameterTypeFormula ||
               !!reportSelectedNode.data.parametersFormula
             "
-          >
-            <button
-              class="ml-3 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
-              (click)="deleteFraction(filter, fractionIndex)"
-              [ngClass]="{
-                'text-gray-500 hover:bg-blue-200':
-                  filter.parameterType !== parameterTypeFormula &&
-                  !reportSelectedNode.data.parametersFormula,
-                'cursor-default text-gray-400':
-                  filter.parameterType === parameterTypeFormula ||
-                  !!reportSelectedNode.data.parametersFormula
-              }"
-              [disabled]="
-                filter.parameterType === parameterTypeFormula ||
-                !!reportSelectedNode.data.parametersFormula
+            ><div
+              tp="A required filter cannot be removed"
+              [tpIsEnabled]="
+                filter.field.required === true && filter.fractions.length === 1
               "
             >
-              <m-trash-icon></m-trash-icon>
-            </button>
+              <button
+                class="ml-3 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+                (click)="deleteFraction(filter, fractionIndex)"
+                [ngClass]="{
+                  'text-gray-500 hover:bg-blue-200':
+                    filter.parameterType !== parameterTypeFormula &&
+                    !reportSelectedNode.data.parametersFormula &&
+                    (filter.field.required !== true ||
+                      filter.fractions.length !== 1),
+                  'cursor-default text-gray-400':
+                    filter.parameterType === parameterTypeFormula ||
+                    !!reportSelectedNode.data.parametersFormula ||
+                    (filter.field.required === true &&
+                      filter.fractions.length === 1)
+                }"
+                [disabled]="
+                  filter.parameterType === parameterTypeFormula ||
+                  !!reportSelectedNode.data.parametersFormula ||
+                  (filter.field.required === true &&
+                    filter.fractions.length === 1)
+                "
+              >
+                <m-trash-icon></m-trash-icon>
+              </button>
+            </div>
           </div>
         </div>
       </div>
