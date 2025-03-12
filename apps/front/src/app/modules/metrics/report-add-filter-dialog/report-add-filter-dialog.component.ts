@@ -655,7 +655,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
               required: control.required,
               name: control.name,
               controlClass: control.controlClass,
-              isMetricsDate: undefined
+              isMetricsDate: control.isMetricsDate
             };
             return newControl;
           })
@@ -672,7 +672,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
                 required: control.required,
                 name: control.name,
                 controlClass: control.controlClass,
-                isMetricsDate: undefined
+                isMetricsDate: control.isMetricsDate
               };
               return newControl;
             });

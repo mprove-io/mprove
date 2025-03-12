@@ -165,7 +165,7 @@ export class DashboardFiltersComponent {
                 required: control.required,
                 name: control.name,
                 controlClass: control.controlClass,
-                isMetricsDate: undefined
+                isMetricsDate: control.isMetricsDate
               };
               return newControl;
             })
@@ -177,7 +177,7 @@ export class DashboardFiltersComponent {
                 required: control.required,
                 name: control.name,
                 controlClass: control.controlClass,
-                isMetricsDate: undefined
+                isMetricsDate: control.isMetricsDate
               };
               return newControl;
             })

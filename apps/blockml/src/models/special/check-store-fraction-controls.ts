@@ -282,7 +282,10 @@ export function checkStoreFractionControls(
       let newControlProps: common.FileStoreFractionControl = {
         name: controlName,
         name_line_num: controNameLineNum,
-        controlClass: <common.ControlClassEnum>controlClass
+        controlClass: <common.ControlClassEnum>controlClass,
+        isMetricsDate:
+          common.isDefined(control.value) &&
+          control.value.toString().split('$METRICS_DATE_').length > 1
       };
 
       Object.assign(control, newControlProps);

@@ -239,7 +239,7 @@ export class RowFiltersComponent implements OnChanges {
                 required: control.required,
                 name: control.name,
                 controlClass: control.controlClass,
-                isMetricsDate: undefined
+                isMetricsDate: control.isMetricsDate
               };
               return newControl;
             })
@@ -251,7 +251,7 @@ export class RowFiltersComponent implements OnChanges {
                 required: control.required,
                 name: control.name,
                 controlClass: control.controlClass,
-                isMetricsDate: undefined
+                isMetricsDate: control.isMetricsDate
               };
               return newControl;
             })

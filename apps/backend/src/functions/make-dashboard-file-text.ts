@@ -136,15 +136,11 @@ export function makeDashboardFileText(item: {
                           let target: any;
 
                           if (reference === 'METRICS_DATE_FROM') {
-                            // control.isMetricsDate = true;
-
                             target = getYYYYMMDDCurrentDateByTimezone({
                               timezone: timezone,
                               deltaDays: -1
                             });
                           } else if (reference === 'METRICS_DATE_TO') {
-                            // control.isMetricsDate = true;
-
                             target = getYYYYMMDDCurrentDateByTimezone({
                               timezone: timezone,
                               deltaDays: +1

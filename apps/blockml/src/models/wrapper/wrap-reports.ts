@@ -182,7 +182,7 @@ export function wrapReports(item: {
                       required: storeControl.required,
                       name: control.name,
                       controlClass: control.controlClass,
-                      isMetricsDate: undefined
+                      isMetricsDate: storeControl.isMetricsDate
                     };
                     return newControl;
                   }
@@ -490,7 +490,7 @@ export function wrapReports(item: {
                                   required: storeControl.required,
                                   name: control.name,
                                   controlClass: control.controlClass,
-                                  isMetricsDate: undefined
+                                  isMetricsDate: storeControl.isMetricsDate
                                 };
                                 return newControl;
                               }

@@ -657,7 +657,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
               required: control.required,
               name: control.name,
               controlClass: control.controlClass,
-              isMetricsDate: undefined
+              isMetricsDate: control.isMetricsDate
             };
             return newControl;
           })
@@ -674,7 +674,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
                 required: control.required,
                 name: control.name,
                 controlClass: control.controlClass,
-                isMetricsDate: undefined
+                isMetricsDate: control.isMetricsDate
               };
               return newControl;
             });

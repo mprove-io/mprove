@@ -172,7 +172,7 @@ export class ModelFiltersComponent {
                 required: control.required,
                 name: control.name,
                 controlClass: control.controlClass,
-                isMetricsDate: undefined
+                isMetricsDate: control.isMetricsDate
               };
               return newControl;
             })
@@ -184,7 +184,7 @@ export class ModelFiltersComponent {
                 required: control.required,
                 name: control.name,
                 controlClass: control.controlClass,
-                isMetricsDate: undefined
+                isMetricsDate: control.isMetricsDate
               };
               return newControl;
             })

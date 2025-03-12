@@ -102,7 +102,7 @@ export class StoreService {
 
             if (common.isUndefined(selectedControl)) {
               let newControl: common.FractionControl = {
-                isMetricsDate: undefined,
+                isMetricsDate: storeFractionControl.isMetricsDate,
                 options: storeFractionControl.options,
                 value: storeFractionControl.value,
                 label: storeFractionControl.label,
@@ -159,8 +159,6 @@ export class StoreService {
               let target: any;
 
               if (reference === 'METRICS_DATE_FROM') {
-                control.isMetricsDate = true;
-
                 target = common.isDefined(metricsStartDateYYYYMMDD)
                   ? metricsStartDateYYYYMMDD
                   : getYYYYMMDDCurrentDateByTimezone({
@@ -168,8 +166,6 @@ export class StoreService {
                       deltaDays: -1
                     });
               } else if (reference === 'METRICS_DATE_TO') {
-                control.isMetricsDate = true;
-
                 target = common.isDefined(metricsEndDateYYYYMMDD)
                   ? metricsEndDateYYYYMMDD
                   : getYYYYMMDDCurrentDateByTimezone({

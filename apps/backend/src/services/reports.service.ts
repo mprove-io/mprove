@@ -246,7 +246,7 @@ export class ReportsService {
                   storeFilter.fraction_controls.forEach(
                     storeFractionControl => {
                       let newControl: common.FractionControl = {
-                        isMetricsDate: undefined,
+                        isMetricsDate: storeFractionControl.isMetricsDate,
                         options: storeFractionControl.options,
                         value: storeFractionControl.value,
                         label: storeFractionControl.label,
