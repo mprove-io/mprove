@@ -591,4 +591,14 @@ export class RowFiltersComponent implements OnChanges {
       chart: undefined
     });
   }
+
+  getModelContent() {
+    let metric = this.metricsQuery
+      .getValue()
+      .metrics.find(y => y.metricId === this.reportSelectedNode.data.metricId);
+
+    return this.modelsQuery
+      .getValue()
+      .models.find(x => x.modelId === metric.modelId)?.content;
+  }
 }

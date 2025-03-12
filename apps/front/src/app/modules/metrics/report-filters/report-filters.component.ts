@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { ModelsQuery } from '~front/app/queries/models.query';
 import { ReportService } from '~front/app/services/report.service';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
@@ -11,7 +12,10 @@ export class ReportFiltersComponent {
   @Input()
   report: common.ReportX;
 
-  constructor(private reportService: ReportService) {}
+  constructor(
+    private reportService: ReportService,
+    private modelsQuery: ModelsQuery
+  ) {}
 
   fractionUpdate(
     reportField: common.ReportField,
@@ -239,5 +243,10 @@ export class ReportFiltersComponent {
       reportFields: newReportFields,
       chart: undefined
     });
+  }
+
+  getModelContent(storeId: string) {
+    return this.modelsQuery.getValue().models.find(x => x.modelId === storeId)
+      ?.content;
   }
 }
