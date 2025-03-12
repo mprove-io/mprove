@@ -24,6 +24,7 @@ export class ReportField {
   @IsString()
   label: string;
 
+  @IsOptional()
   @IsEnum(enums.FieldResultEnum)
   result: enums.FieldResultEnum;
 

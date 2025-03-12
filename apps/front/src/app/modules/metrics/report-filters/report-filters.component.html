@@ -33,7 +33,9 @@
         <m-fraction
           [suggestModelDimension]="filter.suggestModelDimension"
           [structId]="report.structId"
-          [fieldResult]="filter.result"
+          [fieldResult]="
+            !!filter.storeResult ? filter.storeResult : filter.result
+          "
           [modelContent]="getModelContent(filter.store)"
           [fraction]="fraction"
           [fractionIndex]="fractionIndex"
