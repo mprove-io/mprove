@@ -13,4 +13,13 @@ export class ReportX extends Report {
 
   @IsBoolean()
   canEditOrDeleteReport: boolean;
+
+  @IsString()
+  metricsStartDateYYYYMMDD: string;
+
+  @IsString()
+  metricsEndDateExcludedYYYYMMDD: string;
+
+  @IsString()
+  metricsEndDateIncludedYYYYMMDD: string;
 }

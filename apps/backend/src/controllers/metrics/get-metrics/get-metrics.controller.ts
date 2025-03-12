@@ -185,6 +185,9 @@ export class GetMetricsController {
           timeRangeFraction: undefined,
           rangeOpen: undefined,
           rangeClose: undefined,
+          metricsStartDateYYYYMMDD: undefined,
+          metricsEndDateExcludedYYYYMMDD: undefined,
+          metricsEndDateIncludedYYYYMMDD: undefined,
           timeColumnsLimit: undefined,
           timeColumnsLength: undefined,
           isTimeColumnsLimitExceeded: false

@@ -384,6 +384,9 @@ export class WrapToApiService {
     columns: common.Column[];
     timeColumnsLength: number;
     isTimeColumnsLimitExceeded: boolean;
+    metricsStartDateYYYYMMDD: string;
+    metricsEndDateExcludedYYYYMMDD: string;
+    metricsEndDateIncludedYYYYMMDD: string;
   }): common.ReportX {
     let {
       report,
@@ -397,7 +400,10 @@ export class WrapToApiService {
       rangeClose,
       timeColumnsLimit,
       timeColumnsLength,
-      isTimeColumnsLimitExceeded
+      isTimeColumnsLimitExceeded,
+      metricsStartDateYYYYMMDD,
+      metricsEndDateExcludedYYYYMMDD,
+      metricsEndDateIncludedYYYYMMDD
     } = item;
 
     let author;
@@ -436,6 +442,9 @@ export class WrapToApiService {
       timeRangeFraction: timeRangeFraction,
       rangeOpen: rangeOpen,
       rangeClose: rangeClose,
+      metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
+      metricsEndDateExcludedYYYYMMDD: metricsEndDateExcludedYYYYMMDD,
+      metricsEndDateIncludedYYYYMMDD: metricsEndDateIncludedYYYYMMDD,
       fields: report.fields.sort((a, b) => {
         let labelA = a.label.toUpperCase();
         let labelB = b.label.toUpperCase();

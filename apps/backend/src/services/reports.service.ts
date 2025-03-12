@@ -770,6 +770,25 @@ export class ReportsService {
       caseSensitiveStringFilters: struct.caseSensitiveStringFilters
     });
 
+    let metricsStartDateYYYYMMDD = getYYYYMMDDFromEpochUtcByTimezone({
+      timezone: timezone,
+      secondsEpochUTC: rangeStart
+      // secondsEpochUTC: columns[0].columnId
+    });
+
+    let metricsEndDateExcludedYYYYMMDD = getYYYYMMDDFromEpochUtcByTimezone({
+      timezone: timezone,
+      secondsEpochUTC: rangeEnd
+    });
+
+    let metricsEndDateIncludedYYYYMMDD = getYYYYMMDDFromEpochUtcByTimezone({
+      timezone: timezone,
+      secondsEpochUTC:
+        rangeEnd - rangeStart >= 24 * 60 * 60
+          ? rangeEnd - 24 * 60 * 60
+          : rangeEnd
+    });
+
     let metricIds = report.rows
       .map(x => x.metricId)
       .filter(x => common.isDefined(x));
@@ -995,21 +1014,11 @@ export class ReportsService {
               envId: envId,
               model: model,
               mconfig: mconfig,
-              metricsStartDateYYYYMMDD: getYYYYMMDDFromEpochUtcByTimezone({
-                timezone: mconfig.timezone,
-                secondsEpochUTC: rangeStart
-                // secondsEpochUTC: columns[0].columnId
-              }),
-              metricsEndDateYYYYMMDD: getYYYYMMDDFromEpochUtcByTimezone({
-                timezone: mconfig.timezone,
-                secondsEpochUTC:
-                  mconfig.dateRangeIncludesRightSide === true &&
-                  rangeEnd - rangeStart >= 24 * 60 * 60
-                    ? rangeEnd - 24 * 60 * 60
-                    : rangeEnd
-                // secondsEpochUTC:
-                //   columns[columns.length - 1].columnId + 24 * 60 * 60,
-              })
+              metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
+              metricsEndDateYYYYMMDD:
+                mconfig.dateRangeIncludesRightSide === true
+                  ? metricsEndDateIncludedYYYYMMDD
+                  : metricsEndDateExcludedYYYYMMDD
             });
 
             newMconfig = mqe.newMconfig;
@@ -1189,6 +1198,9 @@ export class ReportsService {
       timeRangeFraction: timeRangeFraction,
       rangeOpen: rangeOpen,
       rangeClose: rangeClose,
+      metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
+      metricsEndDateExcludedYYYYMMDD: metricsEndDateExcludedYYYYMMDD,
+      metricsEndDateIncludedYYYYMMDD: metricsEndDateIncludedYYYYMMDD,
       timeColumnsLimit: timeColumnsLimit,
       timeColumnsLength: columns.length,
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
