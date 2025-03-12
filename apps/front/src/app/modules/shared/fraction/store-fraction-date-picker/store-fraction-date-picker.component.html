@@ -9,14 +9,21 @@
     tp="Turn off formula to activate control"
     [tpIsEnabled]="isDisabled === true"
   >
-    <vaadin-date-picker
-      #vDatePicker
-      class="py-0"
-      required
-      [value]="fractionControl.value"
-      [i18n]="dateI18n"
-      (value-changed)="dateValueChanged($event)"
-      [disabled]="isDisabled === true"
-    ></vaadin-date-picker>
+    <div
+      tp="Metric time filter is read only"
+      [tpIsEnabled]="fractionControl.isMetricsDate === true"
+    >
+      <vaadin-date-picker
+        #vDatePicker
+        class="py-0"
+        required
+        [value]="fractionControl.value"
+        [i18n]="dateI18n"
+        (value-changed)="dateValueChanged($event)"
+        [disabled]="
+          isDisabled === true || fractionControl.isMetricsDate === true
+        "
+      ></vaadin-date-picker>
+    </div>
   </div>
 </div>

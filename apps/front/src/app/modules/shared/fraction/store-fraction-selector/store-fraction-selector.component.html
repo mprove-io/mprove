@@ -9,38 +9,46 @@
     tp="Turn off formula to activate control"
     [tpIsEnabled]="isDisabled === true"
   >
-    <ng-select
-      #fractionSelectorSelect
-      data-cy="fractionSelectorSelect"
-      class="popup-55 w-48"
-      [ngClass]="{
-        'cursor-default': isDisabled === true
-      }"
-      [items]="fractionControl.options"
-      [clearable]="false"
-      [searchable]="false"
-      [disabled]="isDisabled === true"
-      [(ngModel)]="fractionControl.value"
-      (change)="valueChange($event)"
-      (keyup.esc)="
-        $event.stopImmediatePropagation(); fractionSelectorSelect.blur()
-      "
-      (keyup.enter)="
-        $event.stopImmediatePropagation(); fractionSelectorSelect.blur()
-      "
-      appendTo="body"
-      bindLabel="label"
-      bindValue="value"
+    <div
+      tp="Metric time filter is read only"
+      [tpIsEnabled]="fractionControl.isMetricsDate === true"
     >
-      <ng-template ng-label-tmp let-item="item">
-        <div class="ml-1 truncate">{{ item.label || item.value }}</div>
-      </ng-template>
-
-      <ng-template ng-option-tmp let-item="item">
-        <div class="flex flex-row">
+      <ng-select
+        #fractionSelectorSelect
+        data-cy="fractionSelectorSelect"
+        class="popup-55 w-48"
+        [ngClass]="{
+          'cursor-default':
+            isDisabled === true || fractionControl.isMetricsDate === true
+        }"
+        [items]="fractionControl.options"
+        [clearable]="false"
+        [searchable]="false"
+        [disabled]="
+          isDisabled === true || fractionControl.isMetricsDate === true
+        "
+        [(ngModel)]="fractionControl.value"
+        (change)="valueChange($event)"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); fractionSelectorSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); fractionSelectorSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+      >
+        <ng-template ng-label-tmp let-item="item">
           <div class="ml-1 truncate">{{ item.label || item.value }}</div>
-        </div>
-      </ng-template>
-    </ng-select>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="flex flex-row">
+            <div class="ml-1 truncate">{{ item.label || item.value }}</div>
+          </div>
+        </ng-template>
+      </ng-select>
+    </div>
   </div>
 </div>
