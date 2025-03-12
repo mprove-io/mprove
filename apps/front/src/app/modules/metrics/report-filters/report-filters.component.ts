@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
+import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { ReportService } from '~front/app/services/report.service';
 import { common } from '~front/barrels/common';
@@ -84,13 +86,140 @@ export class ReportFiltersComponent {
   addFraction(reportField: common.ReportField, fieldIndex: number) {
     let fractions = reportField.fractions;
 
-    let fraction: common.Fraction = {
-      brick: 'any',
-      operator: common.FractionOperatorEnum.Or,
-      type: common.getFractionTypeForAny(reportField.result)
-    };
+    let newFraction: common.Fraction;
 
-    let newFractions = [...fractions, fraction];
+    if (common.isDefined(reportField.store)) {
+      let store = this.modelsQuery
+        .getValue()
+        .models.find(m => m.modelId === reportField.store);
+      // let store = this.dashboard.storeModels.find(
+      //   x => x.modelId === reportField.store
+      // );
+
+      let storeFilter = common.isDefined(reportField.storeFilter)
+        ? (store.content as common.FileStore).fields.find(
+            f => f.name === reportField.storeFilter
+          )
+        : undefined;
+
+      let storeResultFirstTypeFraction = common.isDefined(
+        reportField.storeFilter
+      )
+        ? undefined
+        : (store.content as common.FileStore).results.find(
+            r => r.result === reportField.storeResult
+          ).fraction_types[0];
+
+      let logicGroup = common.isUndefined(storeResultFirstTypeFraction)
+        ? undefined
+        : common.isUndefined(storeResultFirstTypeFraction.or) ||
+          toBooleanFromLowercaseString(storeResultFirstTypeFraction.or) === true
+        ? common.FractionLogicEnum.Or
+        : common.FractionLogicEnum.AndNot;
+
+      let storeFractionSubTypeOptions = common.isUndefined(
+        storeResultFirstTypeFraction
+      )
+        ? []
+        : (store.content as common.FileStore).results
+            .find(r => r.result === reportField.storeResult)
+            .fraction_types.map(ft => {
+              let options = [];
+
+              if (
+                common.isUndefined(ft.or) ||
+                toBooleanFromLowercaseString(ft.or) === true
+              ) {
+                let optionOr: FractionSubTypeOption = {
+                  logicGroup: common.FractionLogicEnum.Or,
+                  typeValue: ft.type,
+                  value: common.FractionLogicEnum.Or + ft.type,
+                  label: ft.label
+                };
+                options.push(optionOr);
+              }
+
+              if (
+                common.isUndefined(ft.and_not) ||
+                toBooleanFromLowercaseString(ft.and_not) === true
+              ) {
+                let optionAndNot: FractionSubTypeOption = {
+                  logicGroup: common.FractionLogicEnum.AndNot,
+                  value: common.FractionLogicEnum.AndNot + ft.type,
+                  typeValue: ft.type,
+                  label: ft.label
+                };
+                options.push(optionAndNot);
+              }
+
+              return options;
+            })
+            .flat()
+            .sort((a, b) => {
+              if (a.logicGroup === b.logicGroup) return 0;
+              return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
+            });
+
+      newFraction = {
+        meta: storeResultFirstTypeFraction?.meta,
+        operator: common.isUndefined(logicGroup)
+          ? undefined
+          : logicGroup === common.FractionLogicEnum.Or
+          ? common.FractionOperatorEnum.Or
+          : common.FractionOperatorEnum.And,
+        logicGroup: logicGroup,
+        brick: undefined,
+        type: common.FractionTypeEnum.StoreFraction,
+        storeResult: reportField.storeResult,
+        storeFractionSubTypeOptions: storeFractionSubTypeOptions,
+        storeFractionSubType: storeResultFirstTypeFraction?.type,
+        storeFractionSubTypeLabel: common.isDefined(
+          storeResultFirstTypeFraction?.type
+        )
+          ? storeFractionSubTypeOptions.find(
+              k => k.typeValue === storeResultFirstTypeFraction?.type
+            ).label
+          : storeResultFirstTypeFraction?.type,
+        storeFractionLogicGroupWithSubType:
+          common.isDefined(logicGroup) &&
+          common.isDefined(storeResultFirstTypeFraction?.type)
+            ? logicGroup + storeResultFirstTypeFraction.type
+            : undefined,
+        controls: common.isUndefined(storeResultFirstTypeFraction)
+          ? storeFilter.fraction_controls.map(control => {
+              let newControl: common.FractionControl = {
+                options: control.options,
+                value: control.value,
+                label: control.label,
+                required: control.required,
+                name: control.name,
+                controlClass: control.controlClass,
+                isMetricsDate: control.isMetricsDate
+              };
+              return newControl;
+            })
+          : storeResultFirstTypeFraction.controls.map(control => {
+              let newControl: common.FractionControl = {
+                options: control.options,
+                value: control.value,
+                label: control.label,
+                required: control.required,
+                name: control.name,
+                controlClass: control.controlClass,
+                isMetricsDate: control.isMetricsDate
+              };
+              return newControl;
+            })
+      };
+    } else {
+      newFraction = {
+        brick: 'any',
+        operator: common.FractionOperatorEnum.Or,
+        type: common.getFractionTypeForAny(reportField.result)
+      };
+    }
+
+    let newFractions = [...fractions, newFraction];
 
     let newField = Object.assign({}, reportField, {
       fractions: newFractions
