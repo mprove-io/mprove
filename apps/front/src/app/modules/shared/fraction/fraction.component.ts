@@ -87,6 +87,9 @@ export class FractionComponent {
   @Input() structId: string;
   @Input() modelContent: any;
 
+  @Input() metricsStartDateYYYYMMDD: string;
+  @Input() metricsEndDateYYYYMMDD: string;
+
   @Input() isDisabled: boolean;
   @Input() fieldResult: common.FieldResultEnum | string;
 

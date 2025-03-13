@@ -140,10 +140,12 @@
                   >
                     <div>{{ control.label || control.name }}</div>
                     <div class="ml-5">{{
+                      control.controlClass === controlClassDatePicker &&
                       control.value.split('$METRICS_DATE_FROM').length > 1
                         ? metricsStartDateYYYYMMDD
-                        : control.value.split('$METRICS_DATE_TO').length > 1
-                        ? getModelDateRangeIncludesRightSide(filter.field.store)
+                        : control.controlClass === controlClassDatePicker &&
+                          control.value.split('$METRICS_DATE_TO').length > 1
+                        ? getMetricsEndDateYYYYMMDD(filter.field.store)
                         : control.value
                     }}</div>
                   </div>

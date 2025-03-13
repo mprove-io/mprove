@@ -149,6 +149,8 @@
       <m-store-fraction-date-picker
         class="ml-5"
         *ngIf="fractionControl.controlClass === controlClassDatePicker"
+        [metricsStartDateYYYYMMDD]="metricsStartDateYYYYMMDD"
+        [metricsEndDateYYYYMMDD]="metricsEndDateYYYYMMDD"
         [fraction]="fraction"
         [isFirst]="isFirst"
         [fractionIndex]="fractionIndex"

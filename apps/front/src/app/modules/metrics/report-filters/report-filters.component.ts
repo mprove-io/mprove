@@ -378,4 +378,11 @@ export class ReportFiltersComponent {
     return this.modelsQuery.getValue().models.find(x => x.modelId === storeId)
       ?.content;
   }
+
+  getMetricsEndDateYYYYMMDD(storeId: string) {
+    return this.modelsQuery.getValue().models.find(x => x.modelId === storeId)
+      ?.dateRangeIncludesRightSide === true
+      ? this.report?.metricsEndDateIncludedYYYYMMDD
+      : this.report?.metricsEndDateExcludedYYYYMMDD;
+  }
 }

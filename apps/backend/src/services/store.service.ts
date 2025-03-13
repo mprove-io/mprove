@@ -158,14 +158,20 @@ export class StoreService {
 
               let target: any;
 
-              if (reference === 'METRICS_DATE_FROM') {
+              if (
+                reference === 'METRICS_DATE_FROM' &&
+                control.controlClass === common.ControlClassEnum.DatePicker
+              ) {
                 target = common.isDefined(metricsStartDateYYYYMMDD)
                   ? metricsStartDateYYYYMMDD
                   : getYYYYMMDDCurrentDateByTimezone({
                       timezone: mconfig.timezone,
                       deltaDays: -1
                     });
-              } else if (reference === 'METRICS_DATE_TO') {
+              } else if (
+                reference === 'METRICS_DATE_TO' &&
+                control.controlClass === common.ControlClassEnum.DatePicker
+              ) {
                 target = common.isDefined(metricsEndDateYYYYMMDD)
                   ? metricsEndDateYYYYMMDD
                   : getYYYYMMDDCurrentDateByTimezone({

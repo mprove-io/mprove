@@ -48,6 +48,7 @@ export class BricksComponent {
   metricsEndDateIncludedYYYYMMDD: string;
 
   fractionOperatorEnum = common.FractionOperatorEnum;
+  controlClassDatePicker = common.ControlClassEnum.DatePicker;
 
   constructor(private modelsQuery: ModelsQuery) {}
 
@@ -58,7 +59,7 @@ export class BricksComponent {
     });
   }
 
-  getModelDateRangeIncludesRightSide(storeId: string) {
+  getMetricsEndDateYYYYMMDD(storeId: string) {
     return this.modelsQuery.getValue().models.find(x => x.modelId === storeId)
       ?.dateRangeIncludesRightSide === true
       ? this.metricsEndDateIncludedYYYYMMDD

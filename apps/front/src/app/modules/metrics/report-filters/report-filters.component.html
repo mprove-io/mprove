@@ -37,6 +37,8 @@
             !!filter.storeResult ? filter.storeResult : filter.result
           "
           [modelContent]="getModelContent(filter.store)"
+          [metricsStartDateYYYYMMDD]="report?.metricsStartDateYYYYMMDD"
+          [metricsEndDateYYYYMMDD]="getMetricsEndDateYYYYMMDD(filter.store)"
           [fraction]="fraction"
           [fractionIndex]="fractionIndex"
           [isFirst]="isFirst"

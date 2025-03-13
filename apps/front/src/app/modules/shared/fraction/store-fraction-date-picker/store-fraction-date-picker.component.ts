@@ -20,6 +20,8 @@ import { interfaces } from '~front/barrels/interfaces';
 })
 // implements OnInit
 export class StoreFractionDatePickerComponent {
+  @Input() metricsStartDateYYYYMMDD: string;
+  @Input() metricsEndDateYYYYMMDD: string;
   @Input() fraction: common.Fraction;
   @Input() isFirst: boolean;
   @Input() fractionIndex: number;

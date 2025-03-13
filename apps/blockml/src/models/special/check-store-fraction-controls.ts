@@ -284,6 +284,8 @@ export function checkStoreFractionControls(
         name_line_num: controNameLineNum,
         controlClass: <common.ControlClassEnum>controlClass,
         isMetricsDate:
+          <common.ControlClassEnum>controlClass ===
+            common.ControlClassEnum.DatePicker &&
           common.isDefined(control.value) &&
           control.value.toString().split('$METRICS_DATE_').length > 1
       };
