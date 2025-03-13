@@ -874,6 +874,14 @@ export class MetricsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  editListeners() {
+    this.myDialogService.showReportEditListeners({
+      reportService: this.reportService,
+      apiService: this.apiService,
+      report: this.report
+    });
+  }
+
   toggleFiltersPanel() {
     this.filtersIsExpanded = !this.filtersIsExpanded;
   }

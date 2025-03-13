@@ -193,6 +193,10 @@ import {
   PhotoDialogData
 } from '../modules/shared/photo-dialog/photo-dialog.component';
 import {
+  ReportEditListenersDialogComponent,
+  ReportEditListenersDialogData
+} from '../modules/shared/report-edit-listeners-dialog/report-edit-listeners-dialog.component';
+import {
   ReportSaveAsDialogComponent,
   ReportSaveAsDialogData
 } from '../modules/shared/report-save-as-dialog/report-save-as-dialog.component';
@@ -384,6 +388,16 @@ export class MyDialogService {
 
   showDashboardEditListeners(item: DashboardEditListenersDialogData): void {
     this.dialogService.open(DashboardEditListenersDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: '90vw',
+      height: '87vh'
+    });
+  }
+
+  showReportEditListeners(item: ReportEditListenersDialogData): void {
+    this.dialogService.open(ReportEditListenersDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,

@@ -484,6 +484,47 @@
           </div>
 
           <div class="mr-5 mt-5 flex min-h-[68px] flex-shrink-0 flex-row">
+            <ng-template #templateEditListeners>
+              <div *ngIf="report?.rows.length === 0">No rows</div>
+              <div *ngIf="report?.fields.length === 0">No parameters</div>
+            </ng-template>
+
+            <div
+              [tp]="templateEditListeners"
+              [tpIsEnabled]="
+                report?.fields.length === 0 || report?.fields.length === 0
+              "
+              class="h-11 flex-shrink-0"
+            >
+              <button
+                type="button"
+                data-cy="reportEditListenButton"
+                class="flex h-11 flex-row items-center rounded border px-4 py-2 text-base font-medium focus:outline-none"
+                (click)="editListeners()"
+                [ngClass]="{
+                  'border-gray-400 text-gray-500 hover:bg-white':
+                    report?.rows.length > 0 && report?.fields.length > 0,
+                  'cursor-default  border-gray-300 text-gray-400':
+                    report?.rows.length === 0 || report?.fields.length === 0
+                }"
+                [disabled]="
+                  report?.rows.length === 0 || report?.fields.length === 0
+                "
+              >
+                <m-link-icon
+                  class="text-gray-500"
+                  [ngClass]="{
+                    'text-gray-500':
+                      report?.rows.length > 0 && report?.fields.length > 0,
+                    'text-gray-400':
+                      report?.rows.length === 0 || report?.fields.length === 0
+                  }"
+                ></m-link-icon>
+
+                <div class="ml-3"> Edit Listeners </div>
+              </button>
+            </div>
+
             <div
               (click)="toggleFiltersPanel()"
               class="text-gray1 ml-3 mt-2 flex h-11 select-none flex-row items-start space-x-2 px-5 text-xl font-semibold"

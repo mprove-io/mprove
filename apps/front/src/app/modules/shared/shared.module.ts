@@ -99,6 +99,7 @@ import { MproveDirPipe } from './pipes/mprove-dir.pipe';
 import { PrettyJsonPipe } from './pipes/pretty-json.pipe';
 import { ResultPipe } from './pipes/result.pipe';
 import { QueryStatusComponent } from './query-status/query-status.component';
+import { ReportEditListenersDialogComponent } from './report-edit-listeners-dialog/report-edit-listeners-dialog.component';
 import { ReportSaveAsDialogComponent } from './report-save-as-dialog/report-save-as-dialog.component';
 import { AlertRingComponent } from './rings/alert-ring/alert-ring.component';
 import { CompletedRingComponent } from './rings/completed-ring/completed-ring.component';
@@ -211,6 +212,7 @@ let sharedComponents = [
   ChartSaveAsDialogComponent,
   DashboardSaveAsDialogComponent,
   DashboardEditListenersDialogComponent,
+  ReportEditListenersDialogComponent,
   ChartEditorComponent,
   ChartEditorSeriesElementComponent,
   ChartEditorYAxisElementComponent,

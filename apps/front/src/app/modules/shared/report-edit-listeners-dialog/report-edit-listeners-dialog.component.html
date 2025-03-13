@@ -1,0 +1,194 @@
+<div class="flex h-[87vh] w-[90vw] flex-col bg-white p-9">
+  <div
+    data-cy="editListenDialogTitle"
+    class="text-gray2 mt-5 cursor-default text-left text-2xl font-semibold"
+    >Edit Listeners</div
+  >
+
+  <div
+    data-cy="editListenDialogInfo"
+    class="text-gray1 mb-6 mt-2 cursor-default text-left text-xl"
+    >Map report filters to row's model fields</div
+  >
+
+  <div class="flex flex-1 flex-row items-center justify-center" *ngIf="!models">
+    <div class="relative flex h-9 w-9 flex-shrink-0">
+      <ngx-spinner
+        [name]="spinnerName"
+        color="rgba(54, 94, 224, 100)"
+        bdColor="rgba(0, 0, 0, 0)"
+        size="default"
+        type="ball-clip-rotate"
+        [fullScreen]="false"
+        [disableAnimation]="true"
+        [zIndex]="99998"
+      >
+      </ngx-spinner>
+    </div>
+  </div>
+
+  <div
+    class="flex flex-grow flex-col divide-y divide-gray-500 overflow-auto"
+    *ngIf="!!models"
+  >
+    <div
+      class="text-gray1 mb-3 flex cursor-default flex-row space-x-5 text-base"
+    >
+      <div class="flex w-[500px] flex-shrink-0 font-semibold"> Row</div>
+
+      <div
+        class="flex w-[480px] flex-shrink-0 flex-row"
+        *ngFor="let reportField of report.fields"
+      >
+        <div class="flex truncate font-semibold">
+          <div class="truncate"> {{ reportField.label }}</div>
+        </div>
+
+        <div class="ml-2 flex flex-shrink-0">
+          <div>
+            ({{
+              reportField.result ??
+                reportField.storeResult ??
+                reportField.storeFilter
+            }})</div
+          >
+        </div>
+      </div>
+    </div>
+
+    <form [formGroup]="listenForm">
+      <div
+        class="text-gray1 flex flex-row space-x-5 border-gray-300 py-4 text-base"
+        [ngStyle]="
+          row.rowId !== reportRows[reportRows.length - 1].rowId && {
+            'border-bottom-width': '1px'
+          }
+        "
+        *ngFor="let row of reportRows; let rowIndex = index"
+      >
+        <div
+          class="flex w-[500px] flex-shrink-0 flex-row items-start justify-start"
+        >
+          <div class="items-start truncate">
+            <div class="mt-2 cursor-default truncate">
+              {{ row.rowId }}
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="group flex w-[480px] flex-shrink-0 flex-col space-y-4"
+          *ngFor="let reportField of report.fields"
+        >
+          <div
+            class="flex flex-row"
+            *ngFor="
+              let y of row.mconfigListenSwap[reportField.id];
+              let i = index
+            "
+          >
+            <ng-select
+              #fieldSelect
+              data-cy="fieldSelect"
+              class="w-96 text-base"
+              [items]="row.modelFields[reportField.id]"
+              [clearable]="false"
+              [searchable]="false"
+              formControlName="{{ rowIndex }}-----{{ reportField.id }}-----{{
+                i
+              }}"
+              (change)="
+              listenerChange({
+                  reportFieldId: reportField.id,
+                  row: row,
+                  rowIndex: rowIndex,
+                  i: i,
+                  items: row.modelFields[reportField.id],
+                  selected: $event,
+                })
+              "
+              (keyup.esc)="
+                $event.stopImmediatePropagation(); fieldSelect.blur()
+              "
+              (keyup.enter)="
+                $event.stopImmediatePropagation(); fieldSelect.blur()
+              "
+              appendTo="body"
+              bindLabel="id"
+              bindValue="id"
+            >
+              <ng-template ng-label-tmp let-item="item">
+                <m-field-label
+                  [column]="item"
+                  class="ml-1 flex text-sm"
+                ></m-field-label>
+              </ng-template>
+
+              <ng-template
+                ng-option-tmp
+                let-item="item"
+                let-index="index"
+                let-search="searchTerm"
+              >
+                <m-field-label
+                  [column]="item"
+                  class="ml-1 flex text-sm"
+                ></m-field-label>
+              </ng-template>
+            </ng-select>
+
+            <button
+              *ngIf="i === 0"
+              class="hover:bg-blue2 invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
+              (click)="
+                addListener({
+                  row: row,
+                  rowIndex: rowIndex,
+                  reportFieldId: reportField.id
+                })
+              "
+            >
+              <m-add-icon></m-add-icon>
+            </button>
+
+            <button
+              *ngIf="i > 0"
+              class="hover:bg-blue2 invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
+              (click)="
+                removeListener({
+                  event: $event,
+                  row: row,
+                  rowIndex: rowIndex,
+                  index: i,
+                  reportFieldId: reportField.id
+                })
+              "
+            >
+              <m-delete-icon></m-delete-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="mt-9">
+    <button
+      data-cy="editListenDialogApplyButton"
+      class="bg-blue3 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
+      type="button"
+      (click)="apply()"
+      >Apply</button
+    >
+
+    <button
+      data-cy="editListenDialogCancelButton"
+      class="border-blue3 text-blue3 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+      type="button"
+      (click)="cancel()"
+      >Cancel</button
+    >
+  </div>
+</div>
+
+<div *ngIf="nav$ | async"></div>
