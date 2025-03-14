@@ -7,3 +7,4 @@ export * from './05-check-report-row';
 export * from './05.5-make-report-parameters';
 export * from './06-check-report-row-ids';
 export * from './07-check-report-row-parameters';
+export * from './08-build-report-row-parameter-fractions';

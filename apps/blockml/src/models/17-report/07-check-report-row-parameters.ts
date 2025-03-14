@@ -139,6 +139,8 @@ export function checkReportRowParameters(
                     );
                     return;
                   }
+
+                  p.notStoreApplyToResult = modelField.result;
                 } else {
                   let join = model.joins.find(j => j.as === asName);
 
@@ -185,6 +187,8 @@ export function checkReportRowParameters(
                     );
                     return;
                   }
+
+                  p.notStoreApplyToResult = viewField.result;
                 }
 
                 if (common.isDefined(p.listen) && common.isDefined(p.formula)) {

@@ -150,6 +150,7 @@ export enum FuncEnum {
   CheckReportRow = '17-report/05-check-report-row',
   CheckReportRowIds = '17-report/06-check-report-row-ids',
   CheckReportRowParameters = '17-report/07-check-report-row-parameters',
+  BuildReportRowParameterFractions = '17-report/08-build-report-row-parameter-fractions',
 
   CheckAccess = 'special/check-access',
   CheckVmdrFilterConditions = 'special/check-vmdr-filter-conditions',

@@ -31,6 +31,7 @@ import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { ReportDataService } from '~backend/services/report-data.service';
 import { ReportsService } from '~backend/services/reports.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
@@ -46,6 +47,7 @@ export class SaveModifyReportController {
     private projectsService: ProjectsService,
     private structsService: StructsService,
     private reportsService: ReportsService,
+    private reportDataService: ReportDataService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
@@ -368,7 +370,7 @@ export class SaveModifyReportController {
 
     let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let repApi = await this.reportsService.getRepData({
+    let repApi = await this.reportDataService.getReportData({
       report: repEnt,
       traceId: traceId,
       project: project,
@@ -379,7 +381,8 @@ export class SaveModifyReportController {
       struct: struct,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
-      timezone: timezone
+      timezone: timezone,
+      isEditParameters: false
     });
 
     let payload: apiToBackend.ToBackendGetReportResponsePayload = {

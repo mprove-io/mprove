@@ -15,7 +15,7 @@
     [animateRows]="true"
     [rowSelection]="'multiple'"
     [rowMultiSelectWithClick]="false"
-    [getRowHeight]="getRowHeight"
+    [getRowHeight]="getRowHeight.bind(this)"
     (rowClicked)="onRowClicked($event)"
     (selectionChanged)="onSelectionChanged($event)"
     (rangeSelectionChanged)="onRangeSelectionChanged($event)"

@@ -21,6 +21,7 @@ import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { ReportDataService } from '~backend/services/report-data.service';
 import { ReportsService } from '~backend/services/reports.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
@@ -34,6 +35,7 @@ export class GetReportController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private reportsService: ReportsService,
+    private reportDataService: ReportDataService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
@@ -106,9 +108,20 @@ export class GetReportController {
       userMember: userMember
     });
 
+    // report.rows.forEach(row => {
+    //   console.log('row.rowId');
+    //   console.log(row.rowId);
+    //   row.parameters.forEach(rowParameter => {
+    //     console.log('rowParameter');
+    //     console.log(rowParameter);
+    //     console.log('rowParameter.fractions');
+    //     console.log(rowParameter.fractions);
+    //   });
+    // });
+
     let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let repApi = await this.reportsService.getRepData({
+    let repApi = await this.reportDataService.getReportData({
       report: report,
       traceId: traceId,
       project: project,
@@ -119,7 +132,8 @@ export class GetReportController {
       struct: struct,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
-      timezone: timezone
+      timezone: timezone,
+      isEditParameters: false
     });
 
     user.ui = user.ui || constants.DEFAULT_UI;
@@ -146,6 +160,15 @@ export class GetReportController {
     //   records: {
     //     users: [user]
     //   }
+    // });
+
+    // repApi.rows.forEach(row => {
+    //   console.log('row.rowId');
+    //   console.log(row.rowId);
+    //   row.parameters.forEach(rowParameter => {
+    //     console.log('rowParameter');
+    //     console.log(rowParameter);
+    //   });
     // });
 
     let payload: apiToBackend.ToBackendGetReportResponsePayload = {

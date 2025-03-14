@@ -28,6 +28,8 @@ import { EnvsService } from '~backend/services/envs.service';
 import { MakerService } from '~backend/services/maker.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { ReportDataService } from '~backend/services/report-data.service';
+import { ReportRowService } from '~backend/services/report-row.service';
 import { ReportsService } from '~backend/services/reports.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
@@ -41,6 +43,8 @@ export class CreateDraftReportController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private reportsService: ReportsService,
+    private reportDataService: ReportDataService,
+    private reportRowService: ReportRowService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
@@ -322,7 +326,7 @@ export class CreateDraftReportController {
       models.push(model);
     }
 
-    let processedRows: common.Row[] = this.reportsService.getProcessedRows({
+    let processedRows: common.Row[] = this.reportRowService.getProcessedRows({
       rows: fromReport.rows,
       rowChange: rowChange,
       rowIds: rowIds,
@@ -363,7 +367,7 @@ export class CreateDraftReportController {
 
     let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let repApi = await this.reportsService.getRepData({
+    let apiReport = await this.reportDataService.getReportData({
       report: report,
       traceId: traceId,
       project: project,
@@ -375,6 +379,7 @@ export class CreateDraftReportController {
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
+      isEditParameters: changeType === common.ChangeTypeEnum.EditParameters,
       isSaveToDb: true
     });
 
@@ -382,7 +387,7 @@ export class CreateDraftReportController {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: userMemberApi,
-      report: repApi
+      report: apiReport
     };
 
     return payload;

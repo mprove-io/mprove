@@ -21,7 +21,10 @@ export function clearRowsCache(item: {
   // });
 
   processedRows.forEach(row => {
-    if (row.deps.findIndex(dep => changedRowIds.indexOf(dep) > -1) > -1) {
+    if (
+      changedRowIds.length === 0 ||
+      row.deps.findIndex(dep => changedRowIds.indexOf(dep) > -1) > -1
+    ) {
       if (
         row.rowType === common.RowTypeEnum.Formula ||
         row.rowType === common.RowTypeEnum.Metric

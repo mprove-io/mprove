@@ -114,5 +114,18 @@ export function buildReport(
     cs
   );
 
+  reports = barReport.buildReportRowParameterFractions(
+    {
+      reports: reports,
+      metrics: item.metrics,
+      models: item.models,
+      structId: item.structId,
+      caseSensitiveStringFilters: item.caseSensitiveStringFilters,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   return reports;
 }

@@ -103,6 +103,17 @@ export class RebuildStructService {
       currencySuffix: currencySuffix
     });
 
+    // apiReports.find(report=>report.reportId === 'LBW2P1FG40HF0NNCDH3U').rows.forEach(row => {
+    //   console.log('row.rowId');
+    //   console.log(row.rowId);
+    //   row.parameters.forEach(rowParameter => {
+    //     console.log('rowParameter');
+    //     console.log(rowParameter);
+    //     console.log('rowParameter.fractions');
+    //     console.log(rowParameter.fractions);
+    //   });
+    // });
+
     let { apiDashboards, dashMconfigs, dashQueries } =
       barWrapper.wrapDashboards({
         structId: structId,

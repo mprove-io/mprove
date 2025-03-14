@@ -1,6 +1,4 @@
-import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
   ColDef,
@@ -16,7 +14,9 @@ import {
 } from 'ag-grid-community';
 import { combineLatest, tap } from 'rxjs';
 import { debounce } from 'throttle-debounce';
+import { STORE_MODEL_PREFIX } from '~common/constants/top';
 import { DataRow } from '~front/app/interfaces/data-row';
+import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ReportService } from '~front/app/services/report.service';
@@ -348,10 +348,8 @@ export class ReportComponent {
   constructor(
     private cd: ChangeDetectorRef,
     private reportQuery: ReportQuery,
-    private router: Router,
-    private route: ActivatedRoute,
-    private location: Location,
     private reportService: ReportService,
+    private metricsQuery: MetricsQuery,
     private uiQuery: UiQuery,
     private uiService: UiService
   ) {}
@@ -458,39 +456,39 @@ export class ReportComponent {
       params.data.isParamsSchemaValid === false;
 
     if (common.isDefined(params.data.mconfig) && isShowParameters === true) {
-      let totalLines = 0;
+      let timeSpec = this.reportQuery.getValue().timeSpec;
 
-      params.data.parameters.forEach(x => {
-        if (common.isDefined(x.conditions)) {
-          x.conditions.forEach(y => (totalLines = totalLines + 1));
-        }
+      let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
 
+      let metric = this.metricsQuery
+        .getValue()
+        .metrics.find(y => y.metricId === params.data.metricId);
+
+      let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+
+      let extendedFilters = metric.modelId.startsWith(STORE_MODEL_PREFIX)
+        ? params.data.mconfig.extendedFilters
+        : params.data.mconfig.extendedFilters.filter(
+            filter => filter.fieldId !== timeFieldIdSpec
+          );
+
+      extendedFilters.forEach(x => {
         if (common.isDefined(x.fractions)) {
-          x.fractions.forEach(y => (totalLines = totalLines + 1));
-        }
-      });
-
-      if (totalLines > 0) {
-        params.data.parameters.forEach(x => {
-          if (common.isDefined(x.conditions)) {
-            x.conditions.forEach(y => {
-              rowHeight = rowHeight + 25;
-            });
-          }
-
-          if (common.isDefined(x.fractions)) {
-            x.fractions.forEach(y => {
-              y.controls.forEach(c => {
+          x.fractions.forEach(y => {
+            if (common.isDefined(y.controls)) {
+              y.controls?.forEach(c => {
                 rowHeight = rowHeight + 25;
               });
-            });
-          }
+            } else {
+              rowHeight = rowHeight + 25;
+            }
+          });
+        }
 
-          rowHeight = rowHeight + 8;
-        });
+        rowHeight = rowHeight + 8;
+      });
 
-        rowHeight = rowHeight + 9;
-      }
+      rowHeight = rowHeight + 9;
     }
 
     // let minRowHeight =

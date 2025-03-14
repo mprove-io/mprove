@@ -24,7 +24,7 @@ export class RowX2 extends common.Row {
 }
 
 export class ReportX2 extends common.ReportX {
-  tiles: RowX2[];
+  rows: RowX2[];
 }
 
 export interface ReportEditListenersDialogData {
@@ -131,12 +131,12 @@ export class ReportEditListenersDialogComponent implements OnInit {
               x.parameters
                 .filter(p => common.isDefined(p.listen))
                 .forEach(p => {
-                  let dashboardFieldId = p.listen;
+                  let reportFieldId = p.listen;
 
-                  if (common.isUndefined(swap[dashboardFieldId])) {
-                    swap[dashboardFieldId] = [p.apply_to];
+                  if (common.isUndefined(swap[reportFieldId])) {
+                    swap[reportFieldId] = [p.apply_to];
                   } else {
-                    swap[dashboardFieldId].push(p.apply_to);
+                    swap[reportFieldId].push(p.apply_to);
                   }
                 });
 
@@ -249,14 +249,17 @@ export class ReportEditListenersDialogComponent implements OnInit {
   apply() {
     this.ref.close();
 
-    (this.report as ReportX2).tiles.forEach(x => {
+    this.reportRows.forEach(x => {
       let newListen: { [a: string]: string } = {};
 
-      Object.keys(x.mconfigListenSwap).forEach(dashboardFieldId => {
-        x.mconfigListenSwap[dashboardFieldId]
+      // console.log('x');
+      // console.log(x);
+
+      Object.keys(x.mconfigListenSwap).forEach(reportFieldId => {
+        x.mconfigListenSwap[reportFieldId]
           .filter(y => common.isDefined(y))
           .forEach(modelFieldId => {
-            newListen[modelFieldId] = dashboardFieldId;
+            newListen[modelFieldId] = reportFieldId;
           });
       });
 
@@ -271,15 +274,14 @@ export class ReportEditListenersDialogComponent implements OnInit {
 
     let reportService: ReportService = this.ref.data.reportService;
 
-    // dashboardService.navCreateTempDashboard({
-    //   tiles: this.dashboard.tiles,
-    //   oldDashboardId: this.dashboard.dashboardId,
-    //   newDashboardId: common.makeId(),
-    //   newDashboardFields: this.dashboard.fields,
-    //   deleteFilterFieldId: undefined,
-    //   deleteFilterTileTitle: undefined,
-    //   timezone: this.uiQuery.getValue().timezone
-    // });
+    reportService.modifyRows({
+      report: this.report,
+      changeType: common.ChangeTypeEnum.EditParameters,
+      rowChange: undefined,
+      rowIds: undefined,
+      reportFields: this.report.fields,
+      chart: undefined
+    });
   }
 
   cancel() {

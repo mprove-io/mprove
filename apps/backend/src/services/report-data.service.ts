@@ -1,0 +1,752 @@
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { and, eq, inArray } from 'drizzle-orm';
+import { forEachSeries } from 'p-iteration';
+import { apiToBlockml } from '~backend/barrels/api-to-blockml';
+import { common } from '~backend/barrels/common';
+import { helper } from '~backend/barrels/helper';
+import { interfaces } from '~backend/barrels/interfaces';
+import { schemaPostgres } from '~backend/barrels/schema-postgres';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { kitsTable } from '~backend/drizzle/postgres/schema/kits';
+import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
+import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import { getRetryOption } from '~backend/functions/get-retry-option';
+import { getYYYYMMDDFromEpochUtcByTimezone } from '~node-common/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
+import { BlockmlService } from './blockml.service';
+import { DocService } from './doc.service';
+import { MconfigsService } from './mconfigs.service';
+import { RabbitService } from './rabbit.service';
+import { WrapToApiService } from './wrap-to-api.service';
+import { WrapToEntService } from './wrap-to-ent.service';
+
+let retry = require('async-retry');
+
+@Injectable()
+export class ReportDataService {
+  constructor(
+    private docService: DocService,
+    private mconfigsService: MconfigsService,
+    private blockmlService: BlockmlService,
+    private rabbitService: RabbitService,
+    private wrapToEntService: WrapToEntService,
+    private wrapToApiService: WrapToApiService,
+    private cs: ConfigService<interfaces.Config>,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
+  ) {}
+
+  async getReportData(item: {
+    traceId: string;
+    timezone: string;
+    timeSpec: common.TimeSpecEnum;
+    timeRangeFractionBrick: string;
+    struct: schemaPostgres.StructEnt;
+    report: schemaPostgres.ReportEnt;
+    project: schemaPostgres.ProjectEnt;
+    envId: string;
+    userMemberApi: common.Member;
+    userMember: schemaPostgres.MemberEnt;
+    user: schemaPostgres.UserEnt;
+    isEditParameters: boolean;
+    isSaveToDb?: boolean;
+  }) {
+    let {
+      traceId,
+      timeSpec,
+      timeRangeFractionBrick,
+      struct,
+      report,
+      timezone,
+      project,
+      envId,
+      user,
+      userMemberApi,
+      userMember,
+      isSaveToDb,
+      isEditParameters
+    } = item;
+
+    let {
+      columns,
+      isTimeColumnsLimitExceeded,
+      timeColumnsLimit,
+      timeRangeFraction,
+      rangeOpen,
+      rangeClose,
+      rangeStart,
+      rangeEnd
+    } = await this.blockmlService.getTimeColumns({
+      traceId: traceId,
+      timezone: timezone,
+      timeSpec: timeSpec,
+      timeRangeFractionBrick: timeRangeFractionBrick,
+      projectWeekStart: struct.weekStart,
+      caseSensitiveStringFilters: struct.caseSensitiveStringFilters
+    });
+
+    let metricsStartDateYYYYMMDD = getYYYYMMDDFromEpochUtcByTimezone({
+      timezone: timezone,
+      secondsEpochUTC: rangeStart
+      // secondsEpochUTC: columns[0].columnId
+    });
+
+    let metricsEndDateExcludedYYYYMMDD = getYYYYMMDDFromEpochUtcByTimezone({
+      timezone: timezone,
+      secondsEpochUTC: rangeEnd
+    });
+
+    let metricsEndDateIncludedYYYYMMDD = getYYYYMMDDFromEpochUtcByTimezone({
+      timezone: timezone,
+      secondsEpochUTC:
+        rangeEnd - rangeStart >= 24 * 60 * 60
+          ? rangeEnd - 24 * 60 * 60
+          : rangeEnd
+    });
+
+    let metricIds = report.rows
+      .map(x => x.metricId)
+      .filter(x => common.isDefined(x));
+
+    let metrics = await this.db.drizzle.query.metricsTable.findMany({
+      where: and(
+        inArray(metricsTable.metricId, metricIds),
+        eq(metricsTable.structId, struct.structId)
+      )
+    });
+
+    // let metrics = await this.metricsRepository.find({
+    //   where: {
+    //     metric_id: In(metricIds),
+    //     struct_id: struct.struct_id
+    //   }
+    // });
+
+    let modelIds = metrics
+      .filter(m => common.isDefined(m.modelId))
+      .map(x => x.modelId);
+
+    let models = await this.db.drizzle.query.modelsTable.findMany({
+      where: and(
+        inArray(modelsTable.modelId, modelIds),
+        eq(modelsTable.structId, struct.structId)
+      )
+    });
+
+    // let models = await this.modelsRepository.find({
+    //   where: {
+    //     model_id: In(modelIds),
+    //     struct_id: struct.struct_id
+    //   }
+    // });
+
+    // if (
+    //   // isEditParameters === true
+    //   report.rows.filter(
+    //     row =>
+    //       row.rowType === common.RowTypeEnum.Metric &&
+    //       row.isCalculateParameters === true
+    //   ).length > 0
+    // ) {
+    // console.log('isCalculateParameters true');
+
+    // report.rows = await this.docService.calculateParameters({
+    //   rows: report.rows,
+    //   models: models,
+    //   metrics: metrics,
+    //   traceId: traceId,
+    //   caseSensitiveStringFilters: struct.caseSensitiveStringFilters
+    // });
+
+    // TODO:
+    report.rows.forEach(row => {
+      row.parameters.forEach(rowParameter => {
+        if (row.rowId !== common.GLOBAL_ROW_ID) {
+          // console.log('rowParameter');
+          // console.log(rowParameter);
+          if (
+            common.isDefined(
+              rowParameter.fractions && rowParameter.fractions.length > 0
+            )
+          ) {
+            // console.log('rowParameter.fractions[0]');
+            // console.log(rowParameter.fractions[0]);
+          }
+        }
+
+        if (common.isDefined(rowParameter.listen)) {
+          let reportField = report.fields.find(
+            rField => rField.id === rowParameter.listen
+          );
+
+          let bricks = reportField.fractions
+            .filter(fraction => common.isDefined(fraction.brick))
+            .map(fraction => fraction.brick);
+
+          rowParameter.conditions = bricks.length > 0 ? bricks : undefined;
+          rowParameter.fractions = reportField.fractions;
+        }
+      });
+    });
+
+    report.rows.forEach(row => {
+      let filters: common.Filter[] = [];
+
+      row.parameters.forEach(rowParameter => {
+        let filter: common.Filter = {
+          fieldId: rowParameter.apply_to,
+          fractions: rowParameter.fractions
+        };
+
+        filters.push(filter);
+      });
+
+      row.parametersFiltersWithExcludedTime = filters;
+    });
+    // } else {
+    //   // console.log('isCalculateParameters false');
+    // }
+
+    let newMconfigs: common.Mconfig[] = [];
+    let newQueries: common.Query[] = [];
+
+    let mconfigIds: string[] = [];
+    let queryIds: string[] = [];
+    let kitIds: string[] = [];
+
+    await forEachSeries(report.rows, async x => {
+      let rq = x.rqs.find(
+        y =>
+          y.fractionBrick === timeRangeFraction.brick &&
+          y.timeSpec === timeSpec &&
+          y.timezone === timezone
+      );
+
+      // if (common.isDefined(rq)) {
+      //   console.log('===')
+      //   console.log('rq');
+      //   console.log(rq);
+      //   if (
+      //     rq.timeStartTs !== columns[0].columnId ||
+      //     rq.timeEndTs !== columns[columns.length - 1].columnId
+      //   ) {
+      //     console.log('filtered')
+      //     x.rqs = x.rqs.filter(
+      //       y =>
+      //         !(
+      //           y.fractionBrick === timeRangeFraction.brick &&
+      //           y.timeSpec === timeSpec &&
+      //           y.timezone === timezone
+      //         )
+      //     );
+      //     rq = undefined;
+      //   }
+      // }
+
+      if (common.isDefined(rq)) {
+        if (x.rowType === common.RowTypeEnum.Metric) {
+          queryIds.push(rq.queryId);
+          mconfigIds.push(rq.mconfigId);
+        } else if (x.rowType === common.RowTypeEnum.Formula) {
+          kitIds.push(rq.kitId);
+        }
+      } else {
+        let newMconfig: common.Mconfig;
+        let newQuery: common.Query;
+
+        if (x.rowType === common.RowTypeEnum.Metric) {
+          let newMconfigId = common.makeId();
+          let newQueryId = common.makeId();
+
+          let metric: schemaPostgres.MetricEnt = metrics.find(
+            m => m.metricId === x.metricId
+          );
+
+          let model = models.find(ml => ml.modelId === metric.modelId);
+
+          let timeFieldIdSpec;
+
+          if (model.isStoreModel === false) {
+            let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
+
+            timeFieldIdSpec = `${metric.timefieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+          } else {
+            let timeSpecDetail = common.getTimeSpecDetail({
+              timeSpec: timeSpec,
+              weekStart: struct.weekStart
+            });
+
+            let storeField = (model.content as common.FileStore).fields.find(
+              field =>
+                field.time_group === metric.timefieldId &&
+                field.detail === timeSpecDetail
+            );
+
+            timeFieldIdSpec = storeField?.name;
+          }
+
+          let timeSorting: common.Sorting =
+            model.isStoreModel === true && common.isUndefined(timeFieldIdSpec)
+              ? undefined
+              : {
+                  desc: false,
+                  fieldId: timeFieldIdSpec
+                };
+
+          let timeFilter: common.Filter =
+            model.isStoreModel === true && common.isUndefined(timeFieldIdSpec)
+              ? undefined
+              : {
+                  fieldId: timeFieldIdSpec,
+                  fractions: [timeRangeFraction]
+                };
+
+          let filters: common.Filter[] =
+            model.isStoreModel === true // TODO: store parametersFiltersWithExcludedTime
+              ? [...x.parametersFiltersWithExcludedTime].sort((a, b) =>
+                  a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+                )
+              : [timeFilter, ...x.parametersFiltersWithExcludedTime].sort(
+                  (a, b) =>
+                    a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+                );
+
+          let mconfig: common.Mconfig = {
+            structId: struct.structId,
+            mconfigId: newMconfigId,
+            queryId: newQueryId,
+            modelId: model.modelId,
+            isStoreModel: model.isStoreModel,
+            dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
+            storePart: undefined,
+            modelLabel: model.label,
+            select:
+              model.isStoreModel === true && common.isUndefined(timeFieldIdSpec)
+                ? []
+                : [timeFieldIdSpec, metric.fieldId],
+            unsafeSelect: [],
+            warnSelect: [],
+            joinAggregations: [],
+            sortings:
+              model.isStoreModel === true && common.isUndefined(timeFieldIdSpec)
+                ? []
+                : [timeSorting],
+            sorts:
+              model.isStoreModel === true && common.isUndefined(timeFieldIdSpec)
+                ? undefined
+                : [
+                    common.FractionTypeEnum.TsIsAfterDate,
+                    common.FractionTypeEnum.TsIsAfterRelative
+                  ].indexOf(timeRangeFraction.type) > -1
+                ? `${timeFieldIdSpec}`
+                : `${timeFieldIdSpec} desc`,
+            timezone: timezone,
+            limit: timeColumnsLimit,
+            filters: filters,
+            chart: common.makeCopy(common.DEFAULT_CHART),
+            temp: true,
+            serverTs: 1
+            // fields: [],
+            // extendedFilters: [],
+          };
+
+          // if (model.isStoreModel === true) {
+          //   mconfig = await this.storeService.adjustMconfig({
+          //     mconfig: mconfig,
+          //     model: model,
+          //     caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
+          //     metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
+          //     metricsEndDateYYYYMMDD: model.dateRangeIncludesRightSide
+          //       ? metricsEndDateIncludedYYYYMMDD
+          //       : metricsEndDateExcludedYYYYMMDD
+          //   });
+          // }
+
+          mconfig.chart.type = common.ChartTypeEnum.Line;
+
+          mconfig = common.setChartTitleOnSelectChange({
+            mconfig: mconfig,
+            fields: model.fields
+          });
+
+          mconfig = common.setChartFields({
+            mconfig: mconfig,
+            fields: model.fields
+          });
+
+          let isError = false;
+
+          if (model.isStoreModel === true) {
+            // console.log('columns[0].columnId');
+            // console.log(columns[0].columnId);
+
+            // console.log('getRepData prepMconfigQuery');
+
+            let mqe = await this.mconfigsService.prepMconfigQuery({
+              struct: struct,
+              project: project,
+              envId: envId,
+              model: model,
+              mconfig: mconfig,
+              metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
+              metricsEndDateYYYYMMDD:
+                mconfig.dateRangeIncludesRightSide === true
+                  ? metricsEndDateIncludedYYYYMMDD
+                  : metricsEndDateExcludedYYYYMMDD
+            });
+
+            newMconfig = mqe.newMconfig;
+            newQuery = mqe.newQuery;
+            isError = mqe.isError;
+
+            if (newMconfig.select.length === 0) {
+              newQuery.status = common.QueryStatusEnum.Completed;
+              newQuery.data = [];
+            }
+          } else {
+            let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
+              {
+                info: {
+                  name: apiToBlockml.ToBlockmlRequestInfoNameEnum
+                    .ToBlockmlProcessQuery,
+                  traceId: traceId
+                },
+                payload: {
+                  orgId: project.orgId,
+                  projectId: project.projectId,
+                  weekStart: struct.weekStart,
+                  caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
+                  simplifySafeAggregates: struct.simplifySafeAggregates,
+                  udfsDict: struct.udfsDict,
+                  mconfig: mconfig,
+                  modelContent: model.content,
+                  envId: envId
+                }
+              };
+
+            let blockmlProcessQueryResponse =
+              await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
+                {
+                  routingKey:
+                    common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
+                  message: toBlockmlProcessQueryRequest,
+                  checkIsOk: true
+                }
+              );
+
+            newMconfig = blockmlProcessQueryResponse.payload.mconfig;
+            newQuery = blockmlProcessQueryResponse.payload.query;
+          }
+
+          newMconfig.queryId = newQueryId;
+          newQuery.queryId = newQueryId;
+
+          newMconfigs.push(newMconfig);
+          newQueries.push(newQuery);
+        }
+
+        let newRq: common.Rq = {
+          fractionBrick: timeRangeFraction.brick,
+          timeSpec: timeSpec,
+          timezone: timezone,
+          timeStartTs: columns[0].columnId,
+          timeEndTs: columns[columns.length - 1].columnId,
+          mconfigId: newMconfig?.mconfigId,
+          queryId: newMconfig?.queryId,
+          kitId: undefined,
+          lastCalculatedTs: 0
+        };
+
+        x.rqs.push(newRq);
+      }
+    });
+
+    let mconfigs: schemaPostgres.MconfigEnt[] = [];
+    if (mconfigIds.length > 0) {
+      mconfigs = await this.db.drizzle.query.mconfigsTable.findMany({
+        where: and(
+          inArray(mconfigsTable.mconfigId, mconfigIds),
+          eq(mconfigsTable.structId, struct.structId)
+        )
+      });
+
+      // mconfigs = await this.mconfigsRepository.find({
+      //   where: {
+      //     mconfig_id: In(mconfigIds),
+      //     struct_id: struct.struct_id
+      //   }
+      // });
+    }
+
+    let queries: schemaPostgres.QueryEnt[] = [];
+    if (queryIds.length > 0) {
+      queries = await this.db.drizzle.query.queriesTable.findMany({
+        where: and(
+          inArray(queriesTable.queryId, queryIds),
+          eq(queriesTable.projectId, project.projectId)
+        )
+      });
+
+      // queries = await this.queriesRepository.find({
+      //   where: {
+      //     query_id: In(queryIds),
+      //     project_id: project.project_id
+      //   }
+      // });
+    }
+
+    let kits: schemaPostgres.KitEnt[] = [];
+    if (kitIds.length > 0) {
+      kits = await this.db.drizzle.query.kitsTable.findMany({
+        where: and(
+          inArray(kitsTable.kitId, kitIds),
+          eq(kitsTable.structId, report.structId)
+        )
+      });
+
+      // kits = await this.kitsRepository.find({
+      //   where: {
+      //     kit_id: In(kitIds),
+      //     struct_id: rep.struct_id
+      //   }
+      // });
+    }
+
+    let queriesApi = queries.map(x => this.wrapToApiService.wrapToApiQuery(x));
+
+    let mconfigsApi = mconfigs.map(x =>
+      this.wrapToApiService.wrapToApiMconfig({
+        mconfig: x,
+        modelFields: models.find(m => m.modelId === x.modelId).fields
+      })
+    );
+
+    let modelsApi = models.map(model =>
+      this.wrapToApiService.wrapToApiModel({
+        model: model,
+        hasAccess: helper.checkAccess({
+          userAlias: user.alias,
+          member: userMember,
+          entity: model
+        })
+      })
+    );
+
+    report.rows.forEach(x => {
+      let rq = x.rqs.find(
+        y =>
+          y.fractionBrick === timeRangeFraction.brick &&
+          y.timeSpec === timeSpec &&
+          y.timezone === timezone
+      );
+
+      if (x.rowType === common.RowTypeEnum.Metric) {
+        let newMconfigsEnts = newMconfigs.map(m =>
+          this.wrapToEntService.wrapToEntityMconfig(m)
+        );
+
+        let newMconfigsApi = newMconfigsEnts.map(y =>
+          this.wrapToApiService.wrapToApiMconfig({
+            mconfig: y,
+            modelFields: modelsApi.find(m => m.modelId === y.modelId).fields
+          })
+        );
+
+        x.mconfig = [...mconfigsApi, ...newMconfigsApi].find(
+          y => y.mconfigId === rq.mconfigId
+        );
+
+        x.query = [...queriesApi, ...newQueries].find(
+          y => y.queryId === rq.queryId
+        );
+      }
+    });
+
+    let reportApi = this.wrapToApiService.wrapToApiReport({
+      report: report,
+      models: modelsApi,
+      member: userMemberApi,
+      columns: columns,
+      timezone: timezone,
+      timeSpec: timeSpec,
+      timeRangeFraction: timeRangeFraction,
+      rangeOpen: rangeOpen,
+      rangeClose: rangeClose,
+      metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
+      metricsEndDateExcludedYYYYMMDD: metricsEndDateExcludedYYYYMMDD,
+      metricsEndDateIncludedYYYYMMDD: metricsEndDateIncludedYYYYMMDD,
+      timeColumnsLimit: timeColumnsLimit,
+      timeColumnsLength: columns.length,
+      isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded
+    });
+
+    let formulaRows = reportApi.rows.filter(
+      row => row.rowType === common.RowTypeEnum.Formula
+    );
+
+    let formulaRowsCalculated = formulaRows.filter(row => {
+      let rq = row.rqs.find(
+        y =>
+          y.fractionBrick === timeRangeFraction.brick &&
+          y.timeSpec === timeSpec &&
+          y.timezone === timezone
+      );
+
+      return common.isDefined(rq) && rq.lastCalculatedTs > 0;
+    });
+
+    let queryRows = reportApi.rows.filter(
+      row => row.rowType === common.RowTypeEnum.Metric
+    );
+
+    let queryRowsCompleted = queryRows.filter(
+      row => row.query.status === common.QueryStatusEnum.Completed
+    );
+
+    let queryRowsCompletedCalculated = queryRowsCompleted.filter(row => {
+      let rq = row.rqs.find(
+        y =>
+          y.fractionBrick === timeRangeFraction.brick &&
+          y.timeSpec === timeSpec &&
+          y.timezone === timezone
+      );
+
+      return (
+        common.isDefined(rq) && rq.lastCalculatedTs > row.query.lastCompleteTs
+      );
+    });
+
+    let isCalculateData =
+      report.reportId !== common.EMPTY_REPORT_ID &&
+      queryRows.length === queryRowsCompleted.length &&
+      (queryRowsCompleted.length !== queryRowsCompletedCalculated.length ||
+        formulaRows.length !== formulaRowsCalculated.length);
+
+    if (isCalculateData === true) {
+      // console.log('isCalculateData true');
+
+      reportApi = await this.docService.calculateData({
+        report: reportApi,
+        timezone: timezone,
+        timeSpec: timeSpec,
+        timeRangeFraction: timeRangeFraction,
+        traceId: traceId
+      });
+    } else {
+      // console.log('isCalculateData false');
+
+      let reportDataColumns = this.docService.makeReportDataColumns({
+        report: reportApi,
+        timeSpec: timeSpec
+      });
+
+      reportApi.rows.forEach(row => {
+        let rq = row.rqs.find(
+          y =>
+            y.fractionBrick === timeRangeFraction.brick &&
+            y.timeSpec === timeSpec &&
+            y.timezone === timezone
+        );
+
+        row.records = common.isDefined(row.query)
+          ? reportDataColumns.map(y => {
+              let unixTimeZoned = y.fields.timestamp;
+              // let unixDateZoned = new Date(unixTimeZoned * 1000);
+              // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
+
+              let record: common.RowRecord = {
+                id: y.id,
+                columnLabel: undefined,
+                key: unixTimeZoned,
+                // tsUTC: tsUTC,
+                value: common.isDefined(y.fields)
+                  ? y.fields[row.rowId]
+                  : undefined,
+                error:
+                  // common.isDefined(y.errors)
+                  //   ? y.errors[row.rowId]
+                  //   :
+                  undefined
+              };
+
+              return record;
+            })
+          : common.isDefined(rq.kitId)
+          ? (kits.find(k => k.kitId === rq.kitId)?.data as any[]) || []
+          : [];
+      });
+    }
+
+    if (newMconfigs.length > 0 || newQueries.length > 0) {
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insert: {
+                  mconfigs: newMconfigs.map(x =>
+                    this.wrapToEntService.wrapToEntityMconfig(x)
+                  )
+                },
+                insertOrDoNothing: {
+                  queries: newQueries.map(x =>
+                    this.wrapToEntService.wrapToEntityQuery(x)
+                  )
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+
+      // await this.dbService.writeRecords({
+      //   modify: false,
+      //   records: {
+      //     mconfigs: newMconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
+      //     queries: newQueries.map(x => wrapper.wrapToEntityQuery(x))
+      //   }
+      // });
+    }
+
+    if (
+      isSaveToDb === true ||
+      isCalculateData === true ||
+      newMconfigs.length > 0 ||
+      newQueries.length > 0
+    ) {
+      let dbRows = common.makeCopy(report.rows);
+
+      dbRows.forEach(x => {
+        delete x.mconfig;
+        delete x.query;
+      });
+
+      report.rows = dbRows;
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  reports: [report]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+
+      // await this.dbService.writeRecords({
+      //   modify: true,
+      //   records: {
+      //     reps: [rep]
+      //   }
+      // });
+    }
+
+    return reportApi;
+  }
+}

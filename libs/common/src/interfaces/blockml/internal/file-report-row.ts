@@ -34,4 +34,10 @@ export interface FileReportRow {
 
   currency_suffix?: string;
   currency_suffix_line_num?: number;
+
+  //
+
+  model?: string;
+
+  isStore?: boolean;
 }

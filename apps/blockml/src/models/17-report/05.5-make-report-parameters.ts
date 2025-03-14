@@ -32,7 +32,8 @@ export function makeReportParameters(
           filter.name
         ).toLowerCase(),
         conditions: filter.conditions,
-        globalFieldResult: filter.result
+        globalFieldResult: filter.result,
+        notStoreApplyToResult: undefined
       };
 
       globalParameters.push(newGlobalParameter);
@@ -42,7 +43,9 @@ export function makeReportParameters(
       row_id: common.GLOBAL_ROW_ID,
       name: common.GLOBAL_ROW_NAME,
       type: common.RowTypeEnum.Global,
-      parameters: globalParameters
+      parameters: globalParameters,
+      model: undefined,
+      isStore: undefined
     };
 
     x.rows = [globalRow, ...x.rows];

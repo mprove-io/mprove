@@ -1,4 +1,5 @@
 import { enums } from '~common/barrels/enums';
+import { Fraction } from '../fraction';
 import { FileFraction } from './file-fraction';
 
 export interface FileReportRowParameter {
@@ -22,7 +23,11 @@ export interface FileReportRowParameter {
 
   //
 
+  apiFractions?: Fraction[];
+
   topParId?: string;
 
-  globalFieldResult: enums.FieldResultEnum;
+  globalFieldResult?: enums.FieldResultEnum;
+
+  notStoreApplyToResult?: enums.FieldResultEnum;
 }
