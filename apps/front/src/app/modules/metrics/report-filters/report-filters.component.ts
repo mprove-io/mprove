@@ -56,9 +56,7 @@ export class ReportFiltersComponent {
         store: field.store,
         storeResult: field.storeResult,
         storeFilter: field.storeFilter,
-        conditions: common.isUndefined(field.store)
-          ? field.fractions.map(fr => fr.brick)
-          : [],
+        conditions: undefined,
         fractions: field.fractions,
         formula: undefined,
         listen: undefined,
@@ -245,9 +243,7 @@ export class ReportFiltersComponent {
         store: field.store, // TODO: check
         storeResult: field.storeResult,
         storeFilter: field.storeFilter,
-        conditions: common.isUndefined(field.store)
-          ? field.fractions.map(fr => fr.brick)
-          : [],
+        conditions: undefined,
         fractions: field.fractions,
         formula: undefined,
         listen: undefined,
@@ -317,9 +313,7 @@ export class ReportFiltersComponent {
         store: field.store,
         storeResult: field.storeResult,
         storeFilter: field.storeFilter,
-        conditions: common.isUndefined(field.store)
-          ? field.fractions.map(fr => fr.brick)
-          : [],
+        conditions: undefined,
         fractions: field.fractions,
         formula: undefined,
         listen: undefined,

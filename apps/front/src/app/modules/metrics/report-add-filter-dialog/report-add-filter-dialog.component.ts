@@ -293,6 +293,8 @@ export class ReportAddFilterDialogComponent implements OnInit {
         this.loadStoreModels();
       }
     } else {
+      this.storeModelForm.controls['storeModel'].setValue(undefined);
+      this.storeFilterForForm.controls['storeFilterFor'].setValue(undefined);
       this.fieldResultForm.controls['fieldResult'].setValue(
         common.FieldResultEnum.String
       );
@@ -769,7 +771,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
       storeFilter: field.storeFilter,
       storeResult: field.storeResult,
       result: field.result,
-      conditions: common.isUndefined(field.store) ? ['any'] : undefined,
+      conditions: undefined,
       fractions: field.fractions,
       formula: undefined,
       listen: undefined,
