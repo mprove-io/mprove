@@ -43,12 +43,17 @@ export class ToBackendEditDraftReportRequestPayload {
 
   @IsEnum(common.TimeSpecEnum)
   timeSpec: common.TimeSpecEnum;
+
   @IsString()
   timeRangeFractionBrick: string;
 
   @ValidateNested()
   @Type(() => common.ReportField)
   newReportFields: common.ReportField[];
+
+  @ValidateNested()
+  @Type(() => common.Listener)
+  listeners: common.Listener[];
 
   @ValidateNested()
   @Type(() => common.MconfigChart)

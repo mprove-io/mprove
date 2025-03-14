@@ -42,9 +42,18 @@ export class ReportService {
     rowChange: common.RowChange;
     rowIds: string[];
     reportFields: common.ReportField[];
+    listeners?: common.Listener[];
     chart: common.MconfigChart;
   }) {
-    let { report, changeType, rowChange, rowIds, reportFields, chart } = item;
+    let {
+      report,
+      changeType,
+      rowChange,
+      rowIds,
+      reportFields,
+      listeners,
+      chart
+    } = item;
 
     let newChart = common.isDefined(chart) ? chart : report.chart;
 
@@ -55,6 +64,7 @@ export class ReportService {
         rowIds: rowIds,
         rowChange: rowChange,
         fields: reportFields,
+        listeners: listeners,
         chart: newChart
       });
     } else {
@@ -64,6 +74,7 @@ export class ReportService {
         rowChange: rowChange,
         rowIds: rowIds,
         fields: reportFields,
+        listeners: listeners,
         chart: newChart
       });
     }
@@ -75,11 +86,20 @@ export class ReportService {
     rowIds: string[];
     fromReportId: string;
     fields: common.ReportField[];
+    listeners: common.Listener[];
     chart: common.MconfigChart;
   }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { rowChange, rowIds, fromReportId, changeType, fields, chart } = item;
+    let {
+      rowChange,
+      rowIds,
+      fromReportId,
+      changeType,
+      fields,
+      listeners,
+      chart
+    } = item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -96,6 +116,7 @@ export class ReportService {
       timeSpec: uiState.timeSpec,
       timeRangeFractionBrick: uiState.timeRangeFraction.brick,
       newReportFields: fields,
+      listeners: listeners,
       chart: chart
     };
 
@@ -131,9 +152,11 @@ export class ReportService {
     rowIds: string[];
     reportId: string;
     fields: common.ReportField[];
+    listeners: common.Listener[];
     chart: common.MconfigChart;
   }) {
-    let { rowChange, rowIds, reportId, changeType, fields, chart } = item;
+    let { rowChange, rowIds, reportId, changeType, fields, listeners, chart } =
+      item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -150,6 +173,7 @@ export class ReportService {
       timeSpec: uiState.timeSpec,
       timeRangeFractionBrick: uiState.timeRangeFraction.brick,
       newReportFields: fields,
+      listeners: listeners,
       chart: chart
     };
 

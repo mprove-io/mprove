@@ -77,6 +77,7 @@ export class CreateDraftReportController {
       timezone,
       timeRangeFractionBrick,
       newReportFields,
+      listeners,
       chart
     } = reqValid.payload;
 
@@ -336,7 +337,9 @@ export class CreateDraftReportController {
       timeRangeFractionBrick: timeRangeFractionBrick,
       metrics: metrics,
       models: models,
-      struct: struct
+      struct: struct,
+      newReportFields: newReportFields,
+      listeners: listeners
     });
 
     let enabledChartRowIds = processedRows

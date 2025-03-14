@@ -8,6 +8,7 @@ export enum ChangeTypeEnum {
   EditChart = 'EditChart',
   EditFormula = 'EditFormula',
   EditParameters = 'EditParameters',
+  EditListeners = 'EditListeners',
   Delete = 'Delete',
   Clear = 'Clear',
   Move = 'Move'

@@ -57,6 +57,7 @@ export class EditDraftReportController {
       timezone,
       timeRangeFractionBrick,
       newReportFields,
+      listeners,
       chart
     } = reqValid.payload;
 
@@ -151,7 +152,9 @@ export class EditDraftReportController {
       timeRangeFractionBrick: timeRangeFractionBrick,
       metrics: metrics,
       models: models,
-      struct: struct
+      struct: struct,
+      newReportFields: newReportFields,
+      listeners: listeners
     });
 
     report.fields = newReportFields;

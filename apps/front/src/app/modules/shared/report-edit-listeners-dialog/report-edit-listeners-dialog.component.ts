@@ -249,24 +249,25 @@ export class ReportEditListenersDialogComponent implements OnInit {
   apply() {
     this.ref.close();
 
+    let listeners: common.Listener[] = [];
+
     this.reportRows.forEach(x => {
-      let newListen: { [a: string]: string } = {};
-
-      // console.log('x');
-      // console.log(x);
-
       Object.keys(x.mconfigListenSwap).forEach(reportFieldId => {
         x.mconfigListenSwap[reportFieldId]
           .filter(y => common.isDefined(y))
           .forEach(modelFieldId => {
-            newListen[modelFieldId] = reportFieldId;
+            let listener: common.Listener = {
+              rowId: x.rowId,
+              applyTo: modelFieldId,
+              listen: reportFieldId
+            };
+
+            listeners.push(listener);
           });
       });
 
-      console.log('newListen');
-      console.log(newListen);
-
-      // x.listen = newListen;
+      console.log('listeners');
+      console.log(listeners);
 
       delete x.mconfigListenSwap;
       delete x.modelFields;
@@ -276,10 +277,11 @@ export class ReportEditListenersDialogComponent implements OnInit {
 
     reportService.modifyRows({
       report: this.report,
-      changeType: common.ChangeTypeEnum.EditParameters,
+      changeType: common.ChangeTypeEnum.EditListeners,
       rowChange: undefined,
       rowIds: undefined,
       reportFields: this.report.fields,
+      listeners: listeners,
       chart: undefined
     });
   }

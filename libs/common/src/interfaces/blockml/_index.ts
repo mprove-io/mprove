@@ -12,6 +12,7 @@ export * from './fraction-control-option';
 export * from './fraction-sub-type-option';
 export * from './internal/_index';
 export * from './join-aggregation';
+export * from './listener';
 export * from './mconfig';
 export * from './mconfig-chart';
 export * from './mconfig-chart-series';

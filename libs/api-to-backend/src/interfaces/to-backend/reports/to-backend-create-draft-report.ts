@@ -52,6 +52,10 @@ export class ToBackendCreateDraftReportRequestPayload {
   newReportFields: common.ReportField[];
 
   @ValidateNested()
+  @Type(() => common.Listener)
+  listeners: common.Listener[];
+
+  @ValidateNested()
   @Type(() => common.MconfigChart)
   chart: common.MconfigChart;
 }

@@ -21,6 +21,8 @@ export class ReportRowService {
     timeSpec: common.TimeSpecEnum;
     timeRangeFractionBrick: string;
     struct: schemaPostgres.StructEnt;
+    newReportFields: common.ReportField[];
+    listeners: common.Listener[];
   }) {
     let {
       rows,
@@ -32,7 +34,9 @@ export class ReportRowService {
       timeRangeFractionBrick,
       metrics,
       models,
-      struct
+      struct,
+      newReportFields,
+      listeners
     } = item;
 
     let processedRows: common.Row[] = rows.map(row => Object.assign({}, row));
@@ -432,6 +436,104 @@ export class ReportRowService {
       processedRows = processedRows.map(row =>
         row.rowId === editRow.rowId ? editRow : row
       );
+
+      processedRows = processRowIds({
+        rows: processedRows,
+        targetRowIds: processedRows.map(pr => pr.rowId)
+      });
+    } else if (changeType === common.ChangeTypeEnum.EditListeners) {
+      clearRowsCache({
+        processedRows: processedRows,
+        changedRowIds: [],
+        timezone: timezone,
+        timeSpec: timeSpec,
+        timeRangeFractionBrick: timeRangeFractionBrick
+      });
+
+      processedRows = processedRows.map(row => {
+        if (
+          row.rowId === common.GLOBAL_ROW_ID ||
+          common.isUndefined(row.parameters)
+        ) {
+          return row;
+        }
+
+        let newParameters: common.Parameter[] = [];
+
+        row.parameters.forEach(rowParameter => {
+          let listener = listeners.find(
+            l => l.rowId === row.rowId && l.applyTo === rowParameter.apply_to
+          );
+
+          if (common.isDefined(listener)) {
+            let reportField = newReportFields.find(
+              f => f.id === listener.listen
+            );
+
+            let editParameter: common.Parameter = Object.assign(
+              {},
+              rowParameter,
+              <common.Parameter>{
+                listen: listener.listen,
+                fractions: reportField.fractions
+              }
+            );
+
+            newParameters.push(editParameter);
+          } else {
+            let editParameter: common.Parameter = Object.assign(
+              {},
+              rowParameter,
+              <common.Parameter>{
+                listen: undefined
+              }
+            );
+
+            newParameters.push(editParameter);
+          }
+        });
+
+        listeners
+          .filter(
+            l =>
+              l.rowId === row.rowId &&
+              newParameters.map(p => p.apply_to).indexOf(l.applyTo) < 0
+          )
+          .forEach(l => {
+            let reportField = newReportFields.find(f => f.id === l.listen);
+
+            let newParameter: common.Parameter = {
+              topParId: undefined,
+              parameterId: [row.rowId, l.applyTo.split('.')]
+                .join('_')
+                .toUpperCase(),
+              parameterType: common.ParameterTypeEnum.Field,
+              apply_to: l.applyTo,
+              result: reportField.result,
+              store: reportField.store,
+              storeResult: reportField.storeResult,
+              storeFilter: reportField.storeFilter,
+              conditions: undefined,
+              fractions: reportField.fractions,
+              formula: undefined,
+              listen: l.listen,
+              xDeps: undefined
+            };
+
+            newParameters.push(newParameter);
+          });
+
+        let editRow: common.Row = Object.assign({}, row, <common.Row>{
+          parameters: newParameters,
+          rqs: [],
+          isCalculateParameters: true,
+          records: [],
+          mconfig: undefined,
+          query: undefined
+        });
+
+        return editRow;
+      });
 
       processedRows = processRowIds({
         rows: processedRows,
