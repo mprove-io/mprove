@@ -160,7 +160,6 @@ export class ReportDataService {
     //   caseSensitiveStringFilters: struct.caseSensitiveStringFilters
     // });
 
-    // TODO:
     report.rows
       .filter(row => common.isDefined(row.parameters))
       .forEach(row => {

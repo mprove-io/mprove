@@ -517,6 +517,7 @@ Formula must return a valid JSON object.`;
 
         row.isParamsSchemaValid = common.isUndefined(row.paramsSchemaError);
 
+        // TODO: check remove time
         row.parametersFiltersWithExcludedTime = filters;
         row.isCalculateParameters = false;
       }
