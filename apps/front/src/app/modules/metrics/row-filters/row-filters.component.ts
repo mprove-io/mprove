@@ -66,6 +66,9 @@ export class RowFiltersComponent implements OnChanges {
     filterExtended: common.FilterX,
     eventFractionUpdate: interfaces.EventFractionUpdate
   ) {
+    // console.log('this.reportSelectedNode.data.parameters');
+    // console.log(this.reportSelectedNode.data.parameters);
+
     let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
@@ -100,6 +103,9 @@ export class RowFiltersComponent implements OnChanges {
       newParameter,
       ...newParameters.slice(parametersIndex + 1)
     ];
+
+    // console.log('newParameters');
+    // console.log(newParameters);
 
     let report = this.reportQuery.getValue();
 

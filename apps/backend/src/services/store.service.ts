@@ -121,12 +121,12 @@ export class StoreService {
     // console.log(newMconfig.filters);
 
     newMconfig.filters.forEach(filter => {
-      console.log('filter.fieldId');
-      console.log(filter.fieldId);
+      // console.log('filter.fieldId');
+      // console.log(filter.fieldId);
 
       if (common.isUndefined(filter.fieldId)) {
-        console.log('___filter___');
-        console.log(filter);
+        // console.log('___filter___');
+        // console.log(filter);
       }
 
       filter.fractions.forEach(fraction => {
@@ -140,8 +140,8 @@ export class StoreService {
               typeof control.value === 'string'
           )
           .forEach(control => {
-            console.log('control');
-            console.log(control);
+            // console.log('control');
+            // console.log(control);
 
             let storeFilt = (model.content as common.FileStore).fields
               .filter(
@@ -150,8 +150,8 @@ export class StoreService {
               )
               .find(storeField => storeField.name === filter.fieldId);
 
-            console.log('storeFilt');
-            console.log(storeFilt);
+            // console.log('storeFilt');
+            // console.log(storeFilt);
 
             let newValue =
               control.isMetricsDate === true &&
