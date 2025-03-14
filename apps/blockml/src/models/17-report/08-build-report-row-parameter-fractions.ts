@@ -83,8 +83,8 @@ export function buildReportRowParameterFractions(
 
             rowParameter.apiFractions = fractions;
 
-            console.log('rowParameter.apiFractions');
-            console.log(rowParameter.apiFractions);
+            // console.log('rowParameter.apiFractions');
+            // console.log(rowParameter.apiFractions);
           });
       });
 

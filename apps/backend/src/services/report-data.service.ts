@@ -187,7 +187,9 @@ export class ReportDataService {
               .filter(fraction => common.isDefined(fraction.brick))
               .map(fraction => fraction.brick);
 
-            rowParameter.conditions = bricks.length > 0 ? bricks : undefined;
+            rowParameter.conditions = undefined;
+            // rowParameter.conditions = bricks.length > 0 ? bricks : undefined;
+
             rowParameter.fractions = reportField.fractions;
           }
         });
