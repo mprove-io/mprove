@@ -112,6 +112,7 @@ export class ReportService {
 
             let reports = this.reportsQuery.getValue().reports;
             let newReports = [report, ...reports];
+
             this.reportsQuery.update({ reports: newReports });
 
             this.navigateService.navigateToMetricsRep({

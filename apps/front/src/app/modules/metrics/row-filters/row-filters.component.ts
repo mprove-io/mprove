@@ -80,18 +80,19 @@ export class RowFiltersComponent implements OnChanges {
       ...fractions.slice(eventFractionUpdate.fractionIndex + 1)
     ];
 
-    let metric = this.metricsQuery
-      .getValue()
-      .metrics.find(y => y.metricId === this.reportSelectedNode.data.metricId);
+    // let metric = this.metricsQuery
+    //   .getValue()
+    //   .metrics.find(y => y.metricId === this.reportSelectedNode.data.metricId);
 
-    let isStore = metric.modelId.startsWith(STORE_MODEL_PREFIX);
+    // let isStore = metric.modelId.startsWith(STORE_MODEL_PREFIX);
 
     let newParameter = Object.assign({}, newParameters[parametersIndex], {
-      conditions:
-        isStore === false
-          ? newFractions.map(fraction => fraction.brick)
-          : undefined,
-      fractions: isStore === true ? newFractions : undefined
+      // conditions:
+      //   isStore === false
+      //     ? newFractions.map(fraction => fraction.brick)
+      //     : undefined,
+      fractions: newFractions
+      // fractions: isStore === true ? newFractions : undefined
     } as common.Parameter);
 
     newParameters = [
@@ -267,11 +268,11 @@ export class RowFiltersComponent implements OnChanges {
     let newFractions = [...fractions, newFraction];
 
     let newParameter = Object.assign({}, newParameters[parametersIndex], {
-      conditions:
-        isStore === false
-          ? newFractions.map(fraction => fraction.brick)
-          : undefined,
-      fractions: isStore === true ? newFractions : undefined
+      // conditions:
+      //   isStore === false
+      //     ? newFractions.map(fraction => fraction.brick)
+      //     : undefined,
+      fractions: newFractions
     } as common.Parameter);
 
     newParameters = [
@@ -317,20 +318,20 @@ export class RowFiltersComponent implements OnChanges {
         ...fractions.slice(fractionIndex + 1)
       ];
 
-      let metric = this.metricsQuery
-        .getValue()
-        .metrics.find(
-          y => y.metricId === this.reportSelectedNode.data.metricId
-        );
+      // let metric = this.metricsQuery
+      //   .getValue()
+      //   .metrics.find(
+      //     y => y.metricId === this.reportSelectedNode.data.metricId
+      //   );
 
-      let isStore = metric.modelId.startsWith(STORE_MODEL_PREFIX);
+      // let isStore = metric.modelId.startsWith(STORE_MODEL_PREFIX);
 
       let newParameter = Object.assign({}, newParameters[parametersIndex], {
-        conditions:
-          isStore === false
-            ? newFractions.map(fraction => fraction.brick)
-            : undefined,
-        fractions: isStore === true ? newFractions : undefined
+        // conditions:
+        //   isStore === false
+        //     ? newFractions.map(fraction => fraction.brick)
+        //     : undefined,
+        fractions: newFractions
       } as common.Parameter);
 
       newParameters = [

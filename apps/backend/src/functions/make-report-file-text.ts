@@ -274,7 +274,10 @@ export function makeReportFileText(item: {
                       common.isDefined(parameter.listen) ||
                       model?.isStoreModel === true
                         ? undefined
-                        : parameter.conditions,
+                        : common.isDefined(parameter.fractions) &&
+                          parameter.fractions.length > 0
+                        ? parameter.fractions.map(fraction => fraction.brick)
+                        : undefined,
                     fractions:
                       model?.isStoreModel === true
                         ? parameter.fractions.map(apiFraction => {

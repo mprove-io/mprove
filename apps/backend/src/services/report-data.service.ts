@@ -161,50 +161,54 @@ export class ReportDataService {
     // });
 
     // TODO:
-    report.rows.forEach(row => {
-      row.parameters.forEach(rowParameter => {
-        if (row.rowId !== common.GLOBAL_ROW_ID) {
-          // console.log('rowParameter');
-          // console.log(rowParameter);
-          if (
-            common.isDefined(
-              rowParameter.fractions && rowParameter.fractions.length > 0
-            )
-          ) {
-            // console.log('rowParameter.fractions[0]');
-            // console.log(rowParameter.fractions[0]);
+    report.rows
+      .filter(row => common.isDefined(row.parameters))
+      .forEach(row => {
+        row.parameters.forEach(rowParameter => {
+          if (row.rowId !== common.GLOBAL_ROW_ID) {
+            // console.log('rowParameter');
+            // console.log(rowParameter);
+            if (
+              common.isDefined(
+                rowParameter.fractions && rowParameter.fractions.length > 0
+              )
+            ) {
+              // console.log('rowParameter.fractions[0]');
+              // console.log(rowParameter.fractions[0]);
+            }
           }
-        }
 
-        if (common.isDefined(rowParameter.listen)) {
-          let reportField = report.fields.find(
-            rField => rField.id === rowParameter.listen
-          );
+          if (common.isDefined(rowParameter.listen)) {
+            let reportField = report.fields.find(
+              rField => rField.id === rowParameter.listen
+            );
 
-          let bricks = reportField.fractions
-            .filter(fraction => common.isDefined(fraction.brick))
-            .map(fraction => fraction.brick);
+            let bricks = reportField.fractions
+              .filter(fraction => common.isDefined(fraction.brick))
+              .map(fraction => fraction.brick);
 
-          rowParameter.conditions = bricks.length > 0 ? bricks : undefined;
-          rowParameter.fractions = reportField.fractions;
-        }
-      });
-    });
-
-    report.rows.forEach(row => {
-      let filters: common.Filter[] = [];
-
-      row.parameters.forEach(rowParameter => {
-        let filter: common.Filter = {
-          fieldId: rowParameter.apply_to,
-          fractions: rowParameter.fractions
-        };
-
-        filters.push(filter);
+            rowParameter.conditions = bricks.length > 0 ? bricks : undefined;
+            rowParameter.fractions = reportField.fractions;
+          }
+        });
       });
 
-      row.parametersFiltersWithExcludedTime = filters;
-    });
+    report.rows
+      .filter(row => common.isDefined(row.parameters))
+      .forEach(row => {
+        let filters: common.Filter[] = [];
+
+        row.parameters.forEach(rowParameter => {
+          let filter: common.Filter = {
+            fieldId: rowParameter.apply_to,
+            fractions: rowParameter.fractions
+          };
+
+          filters.push(filter);
+        });
+
+        row.parametersFiltersWithExcludedTime = filters;
+      });
     // } else {
     //   // console.log('isCalculateParameters false');
     // }

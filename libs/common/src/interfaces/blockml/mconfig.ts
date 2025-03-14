@@ -30,6 +30,7 @@ export class Mconfig {
   @IsBoolean()
   isStoreModel: boolean;
 
+  @IsOptional()
   @IsBoolean()
   dateRangeIncludesRightSide: boolean;
 
