@@ -828,6 +828,12 @@ export class RowComponent {
                 return newControl;
               })
       };
+    } else {
+      newFraction = {
+        brick: 'any',
+        operator: common.FractionOperatorEnum.Or,
+        type: common.getFractionTypeForAny(field.result)
+      };
     }
 
     let newParameter: common.Parameter = {
@@ -852,12 +858,10 @@ export class RowComponent {
       //   field.fieldClass === common.FieldClassEnum.Filter
       //     ? field.id
       //     : undefined,
-      conditions:
-        this.newParameterModel.isStoreModel === true ? undefined : ['any'],
-      fractions:
-        this.newParameterModel.isStoreModel === true
-          ? [newFraction]
-          : undefined,
+      // conditions:
+      //   this.newParameterModel.isStoreModel === true ? undefined : ['any'],
+      conditions: undefined,
+      fractions: [newFraction],
       formula: undefined,
       listen: undefined,
       xDeps: undefined
