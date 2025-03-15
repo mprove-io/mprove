@@ -218,7 +218,7 @@ export class ReportDataService {
                 true
               ) {
                 let selectedParameter = row.parameters.find(
-                  x => x.storeFilter === `${storeFilter.name}`
+                  x => x.apply_to === `${storeFilter.name}`
                 );
 
                 if (common.isUndefined(selectedParameter)) {
@@ -396,6 +396,9 @@ export class ReportDataService {
                   (a, b) =>
                     a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
                 );
+
+          // console.log('filters');
+          // console.log(filters);
 
           let mconfig: common.Mconfig = {
             structId: struct.structId,

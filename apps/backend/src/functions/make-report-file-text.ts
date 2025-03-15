@@ -279,7 +279,8 @@ export function makeReportFileText(item: {
                         ? parameter.fractions.map(fraction => fraction.brick)
                         : undefined,
                     fractions:
-                      model?.isStoreModel === true
+                      model?.isStoreModel === true &&
+                      common.isUndefined(parameter.listen)
                         ? parameter.fractions.map(apiFraction => {
                             // console.log('apiFraction');
                             // console.log(apiFraction);
@@ -337,7 +338,7 @@ export function makeReportFileText(item: {
                                           field =>
                                             field.fieldClass ===
                                               common.FieldClassEnum.Filter &&
-                                            field.name === parameter.storeFilter
+                                            field.name === parameter.apply_to
                                         )
                                         .fraction_controls.find(
                                           control =>
