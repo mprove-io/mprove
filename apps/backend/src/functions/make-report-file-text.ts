@@ -328,7 +328,26 @@ export function makeReportFileText(item: {
                                   newFileControl.selector = mconfigControl.name;
                                 }
 
-                                newFileControl.value = mconfigControl.value;
+                                let newValue = mconfigControl.value;
+
+                                newFileControl.value =
+                                  mconfigControl.isMetricsDate === true
+                                    ? (model.content as common.FileStore).fields
+                                        .find(
+                                          field =>
+                                            field.fieldClass ===
+                                              common.FieldClassEnum.Filter &&
+                                            field.name === parameter.storeFilter
+                                        )
+                                        .fraction_controls.find(
+                                          control =>
+                                            control.name === mconfigControl.name
+                                        ).value
+                                    : newFileControl.controlClass ===
+                                        common.ControlClassEnum.Switch &&
+                                      typeof newValue === 'string'
+                                    ? toBooleanFromLowercaseString(newValue)
+                                    : newValue;
 
                                 return newFileControl;
                               }

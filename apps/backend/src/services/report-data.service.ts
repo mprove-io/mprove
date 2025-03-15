@@ -195,8 +195,87 @@ export class ReportDataService {
       });
 
     report.rows
-      .filter(row => common.isDefined(row.parameters))
+      .filter(
+        row =>
+          row.rowId !== common.GLOBAL_ROW_ID &&
+          common.isDefined(row.parameters) &&
+          common.isDefined(row.metricId)
+      )
       .forEach(row => {
+        let metric: schemaPostgres.MetricEnt = metrics.find(
+          m => m.metricId === row.metricId
+        );
+
+        let model = models.find(ml => ml.modelId === metric.modelId);
+
+        if (model.isStoreModel === true) {
+          // add required parameters
+          (model.content as common.FileStore).fields
+            .filter(x => x.fieldClass === common.FieldClassEnum.Filter)
+            .forEach(storeFilter => {
+              if (
+                common.toBooleanFromLowercaseString(storeFilter.required) ===
+                true
+              ) {
+                let selectedParameter = row.parameters.find(
+                  x => x.storeFilter === `${storeFilter.name}`
+                );
+
+                if (common.isUndefined(selectedParameter)) {
+                  let newFraction: common.Fraction = {
+                    type: common.FractionTypeEnum.StoreFraction,
+                    controls: [] as any[],
+                    brick: undefined as any,
+                    operator: undefined as any
+                  };
+
+                  let newParameter: common.Parameter = {
+                    topParId: undefined,
+                    parameterId: [row.rowId, storeFilter.name.split('.')]
+                      .join('_')
+                      .toUpperCase(),
+                    parameterType: common.ParameterTypeEnum.Field,
+                    apply_to: storeFilter.name,
+                    result: undefined,
+                    store: storeFilter.store,
+                    storeResult: undefined,
+                    storeFilter: storeFilter.name,
+                    conditions: undefined,
+                    fractions: [newFraction],
+                    formula: undefined,
+                    listen: undefined,
+                    xDeps: undefined
+                  };
+
+                  row.parameters.push(newParameter);
+
+                  selectedParameter = newParameter;
+                }
+
+                storeFilter.fraction_controls.forEach(storeFractionControl => {
+                  let selectedControl =
+                    selectedParameter.fractions[0].controls.find(
+                      x => x.name === storeFractionControl.name
+                    );
+
+                  if (common.isUndefined(selectedControl)) {
+                    let newControl: common.FractionControl = {
+                      isMetricsDate: storeFractionControl.isMetricsDate,
+                      options: storeFractionControl.options,
+                      value: storeFractionControl.value,
+                      label: storeFractionControl.label,
+                      required: storeFractionControl.required,
+                      name: storeFractionControl.name,
+                      controlClass: storeFractionControl.controlClass
+                    };
+
+                    selectedParameter.fractions[0].controls.push(newControl);
+                  }
+                });
+              }
+            });
+        }
+
         let filters: common.Filter[] = [];
 
         row.parameters.forEach(rowParameter => {
