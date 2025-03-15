@@ -173,17 +173,15 @@ export class ReportComponent {
     this.reportQuery.select(),
     this.uiQuery.timeColumnsNarrowWidth$,
     this.uiQuery.timeColumnsWideWidth$,
-    this.uiQuery.showMetricsParameters$,
-    this.uiQuery.showParametersJson$
+    this.uiQuery.showMetricsParameters$
   ]).pipe(
     tap(
       ([
         rep,
         timeColumnsNarrowWidth,
         timeColumnsWideWidth,
-        showMetricsParameters,
-        showParametersJson
-      ]: [common.ReportX, number, number, boolean, boolean]) => {
+        showMetricsParameters
+      ]: [common.ReportX, number, number, boolean]) => {
         this.report = rep;
 
         // console.log('---');
@@ -255,7 +253,6 @@ export class ReportComponent {
           .map((row: common.Row) => {
             let dataRow: DataRow = Object.assign({}, row, <DataRow>{
               showMetricsParameters: showMetricsParameters,
-              showParametersJson: showParametersJson,
               isRepParametersHaveError: isRepParametersHaveError,
               strParameters: common.isDefined(row.parameters)
                 ? JSON.stringify(row.parameters)
@@ -491,32 +488,9 @@ export class ReportComponent {
       rowHeight = rowHeight + 9;
     }
 
-    // let minRowHeight =
-    //   params.data.rowType === common.RowTypeEnum.Metric &&
-    //   params.data.showParametersJson === true
-    //     ? countLines({ input: params.data.parametersJson, lines: 1 }) * 20 + 8
-    //     : 42;
+    params.data.finalRowHeight = rowHeight;
 
-    // let finalRowHeight = Math.max(rowHeight, minRowHeight);
-
-    let jsonRowHeight =
-      params.data.rowType === common.RowTypeEnum.Metric &&
-      isShowParameters === true &&
-      params.data.showParametersJson === true
-        ? countLines({ input: params.data.parametersJson, lines: 1 }) * 20 + 8
-        : 0;
-
-    let finalRowHeight = rowHeight + jsonRowHeight;
-
-    // let heightLimit = 600;
-
-    // if (finalRowHeight > heightLimit) {
-    //   finalRowHeight = heightLimit;
-    // }
-
-    params.data.finalRowHeight = finalRowHeight;
-
-    return finalRowHeight;
+    return rowHeight;
   }
 }
 

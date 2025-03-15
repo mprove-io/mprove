@@ -27,9 +27,6 @@ export class BricksComponent {
   onlyJson?: boolean;
 
   @Input()
-  parametersJson?: any[];
-
-  @Input()
   jsonMaxHeight?: number;
 
   @Input()

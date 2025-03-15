@@ -96,7 +96,6 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
       }
     }
 
-    this.showJson = this.uiQuery.getValue().showParametersJson;
     this.showParameters = this.uiQuery.getValue().showMetricsParameters;
   }
 }

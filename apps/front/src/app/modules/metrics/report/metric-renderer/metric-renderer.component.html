@@ -66,14 +66,8 @@
             [extendedFilters]="parametersFilters"
             [isKeepBackgroundColor]="true"
             [listen]="listen"
-            [parametersJson]="params.data.parametersJson"
             [showJson]="showJson"
             [onlyJson]="false"
-            [jsonMaxHeight]="
-              (params.data?.parametersJson || []).length > 0
-                ? params.data?.finalRowHeight - 16
-                : params.data?.finalRowHeight - 8
-            "
           ></m-bricks>
         </div>
       </div>

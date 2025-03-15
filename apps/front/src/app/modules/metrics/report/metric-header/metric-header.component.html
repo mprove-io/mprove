@@ -1,6 +1,18 @@
 <div class="custom-header flex flex-row items-center">
   <div class="font-semibold">Metric</div>
 
+  <div class="ml-5 flex w-[101px] flex-row items-center">
+    <button
+      class="flex h-9 cursor-pointer select-none items-center text-gray-500"
+      [ngClass]="{
+        'font-semibold': showMetricsParameters === true,
+        'font-normal': showMetricsParameters === false
+      }"
+      (click)="toggleShowMetricsParameters()"
+      >Parameters</button
+    >
+  </div>
+
   <div class="ml-5 flex w-[45px] flex-row items-center">
     <button
       class="flex h-9 cursor-pointer select-none items-center text-gray-500"
@@ -24,54 +36,6 @@
       >Model</button
     >
   </div>
-
-  <div class="ml-5 flex w-[101px] flex-row items-center">
-    <button
-      class="flex h-9 cursor-pointer select-none items-center text-gray-500"
-      [ngClass]="{
-        'font-semibold': showMetricsParameters === true,
-        'font-normal': showMetricsParameters === false
-      }"
-      (click)="toggleShowMetricsParameters()"
-      >Parameters</button
-    >
-  </div>
-
-  <div
-    class="ml-5 flex w-[50px] flex-row items-center"
-    tp="To use the JSON switch, first enable the Parameters switch."
-    [tpIsEnabled]="showMetricsParameters === false"
-  >
-    <button
-      class="flex h-9 cursor-pointer select-none items-center text-gray-500"
-      [ngClass]="{
-        'cursor-pointer': showMetricsParameters === true,
-        'cursor-default': showMetricsParameters === false,
-        'font-semibold':
-          showMetricsParameters === true && showParametersJson === true,
-        'font-normal':
-          showMetricsParameters === false || showParametersJson === false
-      }"
-      [disabled]="showMetricsParameters === false"
-      (click)="toggleShowParametersJson()"
-      >JSON</button
-    >
-  </div>
-
-  <!-- <button
-    data-cy="metricsDeselectButton"
-    class="ml-[50px] rounded border px-4 py-[6px] font-normal focus:outline-none"
-    [ngClass]="{
-      'border-gray-500 text-gray-600 hover:bg-white':
-        reportSelectedNodes.length > 0,
-      'cursor-default border-gray-300 text-gray-400':
-        reportSelectedNodes.length === 0
-    }"
-    type="button"
-    (click)="deselect()"
-    [disabled]="reportSelectedNodes.length === 0"
-    >Deselect</button
-  > -->
 </div>
 
 <div *ngIf="reportSelectedNodes$ | async"></div>

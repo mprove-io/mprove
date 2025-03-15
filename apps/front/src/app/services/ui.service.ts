@@ -16,7 +16,6 @@ export class UiService {
     showMetricsModelName?: boolean;
     showMetricsTimeFieldName?: boolean;
     showMetricsParameters?: boolean;
-    showParametersJson?: boolean;
     showMetricsChart?: boolean;
     showMetricsChartSettings?: boolean;
     modelTreeLevels?: common.ModelTreeLevelsEnum;
@@ -31,7 +30,6 @@ export class UiService {
       showMetricsModelName,
       showMetricsTimeFieldName,
       showMetricsParameters,
-      showParametersJson,
       showMetricsChart,
       showMetricsChartSettings,
       modelTreeLevels,
@@ -63,9 +61,6 @@ export class UiService {
       showMetricsParameters: common.isDefined(showMetricsParameters)
         ? showMetricsParameters
         : uiState.showMetricsParameters,
-      showParametersJson: common.isDefined(showParametersJson)
-        ? showParametersJson
-        : uiState.showParametersJson,
       showMetricsChart: common.isDefined(showMetricsChart)
         ? showMetricsChart
         : uiState.showMetricsChart,

@@ -65,8 +65,6 @@ export class Row {
   @IsString()
   topQueryError?: string;
 
-  parametersJson: any[];
-
   @ValidateNested()
   @Type(() => Parameter)
   parameters: Parameter[];

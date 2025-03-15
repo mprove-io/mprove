@@ -539,10 +539,6 @@ export class WrapToApiService {
           ? user.ui?.showMetricsParameters
           : constants.DEFAULT_UI.showMetricsParameters,
 
-        showParametersJson: common.isDefined(user.ui?.showParametersJson)
-          ? user.ui?.showParametersJson
-          : constants.DEFAULT_UI.showParametersJson,
-
         showMetricsChart: common.isDefined(user.ui?.showMetricsChart)
           ? user.ui?.showMetricsChart
           : constants.DEFAULT_UI.showMetricsChart,

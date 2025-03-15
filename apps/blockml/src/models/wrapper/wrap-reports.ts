@@ -503,7 +503,6 @@ export function wrapReports(item: {
               }),
           isCalculateParameters: true,
           parametersFiltersWithExcludedTime: [],
-          parametersJson: undefined,
           deps: undefined,
           xDeps: undefined,
           formulaDeps: undefined,

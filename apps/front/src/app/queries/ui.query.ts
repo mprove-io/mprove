@@ -27,7 +27,6 @@ export class UiState {
   showMetricsModelName: boolean;
   showMetricsTimeFieldName: boolean;
   showMetricsParameters: boolean;
-  showParametersJson: boolean;
   showMetricsChart: boolean;
   showMetricsChartSettings: boolean;
   modelTreeLevels: common.ModelTreeLevelsEnum;
@@ -62,7 +61,6 @@ let uiState: UiState = {
   showMetricsModelName: undefined,
   showMetricsTimeFieldName: undefined,
   showMetricsParameters: undefined,
-  showParametersJson: undefined,
   showMetricsChart: undefined,
   showMetricsChartSettings: undefined,
   modelTreeLevels: undefined,
@@ -103,10 +101,6 @@ export class UiQuery extends BaseQuery<UiState> {
 
   showMetricsParameters$ = this.store.pipe(
     select(state => state.showMetricsParameters)
-  );
-
-  showParametersJson$ = this.store.pipe(
-    select(state => state.showParametersJson)
   );
 
   reportSelectedNodes$ = this.store.pipe(

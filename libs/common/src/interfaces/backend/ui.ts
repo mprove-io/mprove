@@ -37,9 +37,6 @@ export class Ui {
   @IsBoolean()
   showMetricsParameters: boolean;
 
-  @IsBoolean()
-  showParametersJson: boolean;
-
   @IsEnum(enums.ModelTreeLevelsEnum)
   modelTreeLevels: enums.ModelTreeLevelsEnum;
 

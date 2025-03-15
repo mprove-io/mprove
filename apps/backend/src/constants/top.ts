@@ -28,7 +28,6 @@ export const DEFAULT_UI: common.Ui = {
   showMetricsModelName: false,
   showMetricsTimeFieldName: false,
   showMetricsParameters: true,
-  showParametersJson: false,
   showMetricsChart: true,
   showMetricsChartSettings: true,
   showHours: false,

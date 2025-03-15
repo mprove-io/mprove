@@ -528,7 +528,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
   );
 
   fractions: common.Fraction[] = [];
-  showBricksJson = false;
   showMetricsModelName = false;
   showMetricsTimeFieldName = false;
   showMetricsChart = false;
@@ -548,8 +547,6 @@ export class MetricsComponent implements OnInit, OnDestroy {
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
       this.fractions = [x.timeRangeFraction];
-
-      this.showBricksJson = x.showParametersJson && x.showMetricsParameters;
 
       this.showMetricsModelName = x.showMetricsModelName;
       this.showMetricsTimeFieldName = x.showMetricsTimeFieldName;
