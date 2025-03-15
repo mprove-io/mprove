@@ -94,65 +94,6 @@ export function processRowIds(item: {
       });
 
       row.formulaDeps = formulaDeps;
-    } else if (common.isDefined(row.parametersFormula)) {
-      row.xDeps = [];
-
-      let newParametersFormula = row.parametersFormula;
-      let parametersFormulaDeps: string[] = [];
-      let reg = common.MyRegex.CAPTURE_ROW_REF();
-      let r;
-
-      while ((r = reg.exec(newParametersFormula))) {
-        let reference = r[1];
-
-        let targetRow;
-
-        if (common.isDefined(targets[reference])) {
-          targetRow = rows.find(y => y.rowId === targets[reference]);
-        }
-
-        let targetTo =
-          common.isDefined(targetRow) &&
-          targetRow.rowType === common.RowTypeEnum.Metric
-            ? targets[reference]
-            : common.isDefined(replaceWithUndef) &&
-              replaceWithUndef.indexOf(reference) > -1
-            ? common.UNDEF
-            : reference;
-
-        newParametersFormula = common.MyRegex.replaceRowIds(
-          newParametersFormula,
-          reference,
-          targetTo
-        );
-
-        if (parametersFormulaDeps.indexOf(targetTo) < 0) {
-          parametersFormulaDeps.push(targetTo);
-        }
-      }
-
-      newParametersFormula = newParametersFormula
-        .split(common.QUAD_UNDERSCORE)
-        .join('');
-
-      row.parametersFormula = newParametersFormula;
-
-      parametersFormulaDeps.forEach(x => {
-        if (row.deps.indexOf(x) < 0) {
-          row.deps.push(x);
-        }
-      });
-
-      //
-
-      let parametersFormulaReg = common.MyRegex.CAPTURE_X_REF_G();
-      let parametersFormulaR;
-
-      while (
-        (parametersFormulaR = parametersFormulaReg.exec(row.parametersFormula))
-      ) {
-        row.xDeps.push(parametersFormulaR[1]);
-      }
     } else if (common.isDefined(row.parameters)) {
       row.xDeps = [];
 
@@ -187,63 +128,6 @@ export function processRowIds(item: {
         p.parameterId = newParId.split('$')[1];
 
         row.xDeps.push(p.parameterId);
-
-        if (common.isDefined(p.formula)) {
-          let newParFormula = p.formula;
-          let parFormulaDeps: string[] = [];
-          let reg = common.MyRegex.CAPTURE_ROW_REF();
-          let r;
-
-          while ((r = reg.exec(newParFormula))) {
-            let reference = r[1];
-
-            let targetRow;
-
-            if (common.isDefined(targets[reference])) {
-              targetRow = rows.find(y => y.rowId === targets[reference]);
-            }
-
-            let targetTo =
-              common.isDefined(targetRow) &&
-              targetRow.rowType === common.RowTypeEnum.Metric
-                ? targets[reference]
-                : common.isDefined(replaceWithUndef) &&
-                  replaceWithUndef.indexOf(reference) > -1
-                ? common.UNDEF
-                : reference;
-
-            newParFormula = common.MyRegex.replaceRowIds(
-              newParFormula,
-              reference,
-              targetTo
-            );
-
-            if (parFormulaDeps.indexOf(targetTo) < 0) {
-              parFormulaDeps.push(targetTo);
-            }
-          }
-
-          newParFormula = newParFormula.split(common.QUAD_UNDERSCORE).join('');
-
-          p.formula = newParFormula;
-
-          parFormulaDeps.forEach(x => {
-            if (row.deps.indexOf(x) < 0) {
-              row.deps.push(x);
-            }
-          });
-
-          //
-
-          p.xDeps = [];
-
-          let pFormulaReg = common.MyRegex.CAPTURE_X_REF_G();
-          let pFormulaR;
-
-          while ((pFormulaR = pFormulaReg.exec(p.formula))) {
-            p.xDeps.push(pFormulaR[1]);
-          }
-        }
       });
     }
   });

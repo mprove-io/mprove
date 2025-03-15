@@ -251,26 +251,15 @@ export function makeReportFileText(item: {
               : struct.currencySuffix === x.currencySuffix
               ? undefined
               : x.currencySuffix,
-          parameters_formula: common.isDefined(x.parametersFormula)
-            ? x.parametersFormula
-            : undefined,
           parameters:
             [common.RowTypeEnum.Metric].indexOf(x.rowType) < 0
               ? undefined
-              : common.isDefined(x.parametersFormula)
-              ? undefined
               : common.isDefined(x.parameters)
               ? x.parameters.map(parameter => {
-                  let formula = common.isDefined(parameter.listen)
-                    ? undefined
-                    : parameter.formula;
-
                   let p: common.FileReportRowParameter = {
-                    // type: parameter.parameterType,
                     apply_to: parameter.apply_to,
                     // result: parameter.result,
                     conditions:
-                      common.isDefined(formula) ||
                       common.isDefined(parameter.listen) ||
                       model?.isStoreModel === true
                         ? undefined
@@ -357,7 +346,6 @@ export function makeReportFileText(item: {
                             return fileFraction;
                           })
                         : undefined,
-                    formula: formula,
                     listen: parameter.listen,
                     globalFieldResult: undefined
                   };

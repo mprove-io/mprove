@@ -765,7 +765,6 @@ export class ReportAddFilterDialogComponent implements OnInit {
     let newParameter: common.Parameter = {
       topParId: field.id,
       parameterId: [globalRow.rowId, field.id].join('_').toUpperCase(),
-      parameterType: common.ParameterTypeEnum.Field,
       apply_to: undefined,
       store: field.store,
       storeFilter: field.storeFilter,
@@ -773,7 +772,6 @@ export class ReportAddFilterDialogComponent implements OnInit {
       result: field.result,
       conditions: undefined,
       fractions: field.fractions,
-      formula: undefined,
       listen: undefined,
       xDeps: undefined
     };

@@ -107,7 +107,6 @@ export class ReportsService {
       isCalculateParameters: true,
       parametersFiltersWithExcludedTime: [],
       parametersJson: undefined,
-      parametersFormula: undefined,
       deps: [],
       xDeps: undefined,
       formulaDeps: undefined,

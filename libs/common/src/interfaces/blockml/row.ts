@@ -78,9 +78,6 @@ export class Row {
   @Type(() => Filter)
   parametersFiltersWithExcludedTime: Filter[];
 
-  @IsString()
-  parametersFormula: string;
-
   xDeps: string[];
 
   formulaDeps: string[];

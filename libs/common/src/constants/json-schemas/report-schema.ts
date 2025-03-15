@@ -65,9 +65,6 @@ export const REPORT_SCHEMA: JSONSchema7 = {
           currency_suffix: {
             type: 'string'
           },
-          parameters_formula: {
-            type: 'string'
-          },
           parameters: {
             type: 'array',
             items: {
@@ -78,9 +75,6 @@ export const REPORT_SCHEMA: JSONSchema7 = {
                   type: 'string'
                 },
                 listen: {
-                  type: 'string'
-                },
-                formula: {
                   type: 'string'
                 },
                 conditions: {

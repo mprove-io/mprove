@@ -104,7 +104,6 @@ export enum ParameterEnum {
   Chart = 'chart',
   // row
   Parameters = 'parameters',
-  ParametersFormula = 'parameters_formula',
   RowId = 'row_id',
   Metric = 'metric',
   ShowChart = 'show_chart',

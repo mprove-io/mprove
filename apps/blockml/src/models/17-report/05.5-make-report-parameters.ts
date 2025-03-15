@@ -27,7 +27,6 @@ export function makeReportParameters(
 
     x.fields.forEach(filter => {
       let newGlobalParameter: common.FileReportRowParameter = {
-        type: common.ParameterTypeEnum.Field,
         topParId: common.MyRegex.replaceNonLettersNumbersWithUnderscores(
           filter.name
         ).toLowerCase(),

@@ -238,7 +238,6 @@ export class ReportDataService {
                     parameterId: [row.rowId, storeFilter.name.split('.')]
                       .join('_')
                       .toUpperCase(),
-                    parameterType: common.ParameterTypeEnum.Field,
                     apply_to: storeFilter.name,
                     result: undefined,
                     store: storeFilter.store,
@@ -246,7 +245,6 @@ export class ReportDataService {
                     storeFilter: storeFilter.name,
                     conditions: undefined,
                     fractions: [newFraction],
-                    formula: undefined,
                     listen: undefined,
                     xDeps: undefined
                   };

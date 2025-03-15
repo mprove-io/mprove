@@ -42,7 +42,6 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
   );
 
   listen: { [a: string]: string } = {};
-  formulas: { [a: string]: boolean } = {};
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -86,21 +85,14 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
             );
 
         let listen: { [a: string]: string } = {};
-        let formulas: { [a: string]: boolean } = {};
 
         this.params.data.parameters.forEach(x => {
           if (common.isDefined(x.listen)) {
             listen[x.apply_to] = x.listen;
-          } else if (
-            common.isDefined(this.params.data.parametersFormula) ||
-            common.isDefined(x.formula)
-          ) {
-            formulas[x.apply_to] = true;
           }
         });
 
         this.listen = listen;
-        this.formulas = formulas;
       }
     }
 

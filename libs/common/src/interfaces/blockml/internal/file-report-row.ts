@@ -17,9 +17,6 @@ export interface FileReportRow {
   parameters?: FileReportRowParameter[];
   parameters_line_num?: number;
 
-  parameters_formula?: string;
-  parameters_formula_line_num?: number;
-
   formula?: string;
   formula_line_num?: number;
 

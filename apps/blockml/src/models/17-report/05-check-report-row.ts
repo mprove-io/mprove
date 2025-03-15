@@ -143,16 +143,11 @@ export function checkReportRow(
           row.isStore = row.model.startsWith(common.STORE_MODEL_PREFIX);
         }
 
-        if (
-          common.isUndefined(row.parameters) &&
-          common.isUndefined(row.parameters_formula)
-        ) {
+        if (common.isUndefined(row.parameters)) {
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.MISSING_ROW_PARAMETERS,
-              message:
-                `one of parameters "${common.ParameterEnum.Parameters}", ` +
-                `"${common.ParameterEnum.ParametersFormula}" is required for a row of type "${row.type}"`,
+              message: `"${common.ParameterEnum.Parameters}" is required for a row of type "${row.type}"`,
               lines: [
                 {
                   line: row.row_id_line_num,
@@ -226,15 +221,13 @@ export function checkReportRow(
           if (isStore === false) {
             if (
               common.isUndefined(p.listen) &&
-              common.isUndefined(p.formula) &&
               common.isUndefined(p.conditions)
             ) {
               item.errors.push(
                 new BmError({
-                  title:
-                    common.ErTitleEnum.MISSING_LISTEN_OR_FORMULA_OR_CONDITIONS,
+                  title: common.ErTitleEnum.MISSING_LISTEN_OR_CONDITIONS,
                   message:
-                    `"${common.ParameterEnum.Listen}", "${common.ParameterEnum.Formula}" or ` +
+                    `"${common.ParameterEnum.Listen}" or ` +
                     `"${common.ParameterEnum.Conditions}" must be specified for a row parameter`,
                   lines: [
                     {

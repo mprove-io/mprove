@@ -1,10 +1,8 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { format, fromUnixTime } from 'date-fns';
-import { forEachSeries } from 'p-iteration';
 import * as pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
-import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
@@ -44,486 +42,416 @@ export class DocService {
     rows: common.Row[];
     traceId: string;
   }) {
-    let { rows, models, metrics, traceId, caseSensitiveStringFilters } = item;
-
-    let xColumns: XColumn[] = [];
-
-    rows
-      .filter(row => row.rowType === common.RowTypeEnum.Formula)
-      .forEach(row => {
-        row.formulaError = undefined;
-      });
-
-    rows
-      .filter(
-        row =>
-          row.rowType === common.RowTypeEnum.Metric ||
-          row.rowType === common.RowTypeEnum.Global
-      )
-      .forEach(row => {
-        let xColumnsRow: XColumn[] = [];
-
-        if (
-          common.isUndefined(row.parametersFormula) &&
-          common.isDefined(row.parameters)
-        ) {
-          row.parameters
-            .sort((a, b) =>
-              a.apply_to > b.apply_to ? 1 : b.apply_to > a.apply_to ? -1 : 0
-            )
-            .forEach(parameter => {
-              let columnX: XColumn;
-
-              if (
-                parameter.parameterType === common.ParameterTypeEnum.Formula
-              ) {
-                columnX = {
-                  id: parameter.parameterId,
-                  xDeps: parameter.xDeps,
-                  input: parameter.formula,
-                  inputSub: undefined,
-                  outputValue: undefined,
-                  outputError: undefined
-                };
-              } else {
-                let prep = {
-                  apply_to: parameter.apply_to,
-                  conditions: parameter.conditions
-                };
-
-                columnX = {
-                  id: parameter.parameterId,
-                  xDeps: parameter.xDeps || [],
-                  input: undefined,
-                  inputSub: undefined,
-                  outputValue: JSON.stringify(prep),
-                  outputError: undefined
-                };
-              }
-              xColumns.push(columnX);
-              xColumnsRow.push(columnX);
-            });
-        }
-
-        let parametersColumnX: XColumn = {
-          id: `${row.rowId}_PARAMETERS`,
-          xDeps: row.xDeps,
-          input: common.isDefined(row.parametersFormula)
-            ? row.parametersFormula
-            : row.parameters.filter(
-                x => x.parameterType === common.ParameterTypeEnum.Formula
-              ).length > 0
-            ? `return [${xColumnsRow.map(x => `$${x.id}`).join(', ')}]`
-            : undefined,
-          inputSub: undefined,
-          outputValue:
-            common.isDefined(row.parametersFormula) ||
-            row.parameters.filter(
-              x => x.parameterType === common.ParameterTypeEnum.Formula
-            ).length > 0
-              ? undefined
-              : JSON.stringify(
-                  row.parameters.map(x => {
-                    let prep = {
-                      apply_to: x.apply_to,
-                      conditions: x.conditions
-                    };
-                    return prep;
-                  })
-                ),
-          outputError: undefined
-        };
-
-        xColumns.push(parametersColumnX);
-      });
-
-    let xColumnsZeroDeps: string[] = [];
-
-    // check for cycles - tarjan graph
-    let g = new Graph();
-    // graph for toposort
-    let gr: string[][] = [];
-
-    xColumns.forEach(xColumn => {
-      if (common.isDefined(xColumn.xDeps) && xColumn.xDeps.length > 0) {
-        xColumn.xDeps.forEach(xDep => {
-          g.add(xColumn.id, [xDep]);
-          gr.push([xColumn.id, xDep]);
-        });
-      } else {
-        xColumnsZeroDeps.push(xColumn.id);
-      }
-    });
-
-    let processedXColumns: XColumn[] = [];
-    let cycledNames: string[] = [];
-
-    if (g.hasCycle() === true) {
-      let cycles: any[] = g.getCycles();
-
-      cycledNames = cycles[0].map((c: any) => c.name);
-
-      let cycledNamesStr = cycledNames.join(', ');
-
-      processedXColumns = [
-        ...xColumns
-          .filter(k => cycledNames.indexOf(k.id) > -1)
-          .map(x => {
-            x.outputError = `Cycle in formula references of parameters: ${cycledNamesStr}`;
-            return x;
-          }),
-        ...xColumns.filter(k => cycledNames.indexOf(k.id) < 0)
-      ];
-    } else {
-      let xColumnsWithDeps = toposort(gr).reverse();
-
-      let idsSorted = [
-        ...xColumnsZeroDeps.filter(x => xColumnsWithDeps.indexOf(x) < 0),
-        ...xColumnsWithDeps
-      ];
-
-      await forEachSeries(idsSorted, async x => {
-        let xColumn = xColumns.find(y => y.id === x);
-
-        if (common.isDefined(xColumn?.outputValue)) {
-          processedXColumns.push(xColumn);
-        } else if (common.isDefined(xColumn)) {
-          let inputSub = xColumn.input;
-
-          let reg = common.MyRegex.CAPTURE_X_REF();
-          let r;
-
-          let refError;
-
-          while ((r = reg.exec(inputSub))) {
-            let reference = r[1];
-
-            let targetXColumn = processedXColumns.find(k => k.id === reference);
-
-            if (common.isUndefined(targetXColumn)) {
-              refError = `Reference ${reference} not found`;
-              break;
-            } else if (common.isDefined(targetXColumn.outputError)) {
-              refError = `Referenced value of ${reference} has error`;
-              break;
-            }
-
-            inputSub = common.MyRegex.replaceXRefs(
-              inputSub,
-              reference,
-              targetXColumn.outputValue
-            );
-          }
-
-          if (common.isDefined(refError)) {
-            xColumn.outputValue = 'Error';
-            xColumn.outputError = refError;
-          } else {
-            let userCode = `JSON.stringify((function() {
-${inputSub}
-})())`;
-
-            let rs = await this.userCodeService.runOnly({
-              userCode: userCode
-            });
-
-            xColumn.outputValue = common.isDefined(rs.outValue)
-              ? rs.outValue
-              : 'Error';
-            xColumn.outputError = rs.outError;
-          }
-
-          processedXColumns.push(xColumn);
-        }
-      });
-    }
-
-    await forEachSeries(
-      rows.filter(
-        row =>
-          row.rowType === common.RowTypeEnum.Metric ||
-          row.rowType === common.RowTypeEnum.Global
-      ),
-      async row => {
-        let parametersXColumn = processedXColumns.find(
-          x => x.id === `${row.rowId}_PARAMETERS`
-        );
-
-        let paramsSchemaError;
-        let isParamsJsonValid = false;
-
-        if (common.isUndefined(parametersXColumn.outputError)) {
-          try {
-            JSON.parse(parametersXColumn.outputValue);
-            isParamsJsonValid = true;
-          } catch (er) {
-            isParamsJsonValid = false;
-            paramsSchemaError = `Failed to calculate row parameters. 
-Check parameters formula and its dependences. 
-Formula must return a valid JSON (array of parameters).`;
-          }
-        } else {
-          paramsSchemaError = parametersXColumn.outputError;
-        }
-
-        let parsedParameters: common.Parameter[] =
-          isParamsJsonValid === true
-            ? JSON.parse(parametersXColumn.outputValue)
-            : [];
-
-        if (common.isDefined(row.parametersFormula)) {
-          if (!Array.isArray(parsedParameters)) {
-            paramsSchemaError = 'Parameters formula must return an array';
-          }
-
-          if (common.isDefined(paramsSchemaError)) {
-            row.parameters = [];
-          } else {
-            row.parameters = common.makeCopy(parsedParameters);
-            row.parameters.forEach(x => {
-              x.parameterType = common.ParameterTypeEnum.Field;
-            });
-          }
-        }
-
-        row.paramsSchemaError = paramsSchemaError;
-
-        let filters: common.Filter[] = [];
-
-        await forEachSeries(row.parameters, async parameter => {
-          let parXColumn = processedXColumns.find(
-            x => x.id === parameter.parameterId
-          );
-
-          let schemaError;
-          let isJsonValid = false;
-
-          let parsedParameter;
-
-          if (parameter.parameterType === common.ParameterTypeEnum.Formula) {
-            if (common.isUndefined(parXColumn.outputError)) {
-              try {
-                JSON.parse(parXColumn.outputValue);
-                isJsonValid = true;
-              } catch (err) {
-                isJsonValid = false;
-                schemaError = `Failed to calculate parameter. 
-Check parameter formula and its dependences. 
-Formula must return a valid JSON object.`;
-              }
-            } else {
-              schemaError = parXColumn.outputError;
-            }
-
-            parameter.isJsonValid = isJsonValid;
-
-            if (parameter.isJsonValid === true) {
-              parsedParameter = JSON.parse(parXColumn.outputValue);
-              parameter.conditions = parsedParameter.conditions;
-              parameter.fractions = parsedParameter.fractions;
-            } else {
-              parameter.conditions = ['any'];
-              parameter.fractions = [];
-            }
-          }
-
-          let model;
-
-          // console.log('row');
-          // console.log(row);
-          // console.log('row.metricId');
-          // console.log(row.metricId);
-
-          if (common.isDefined(row.metricId)) {
-            let metric = metrics.find(m => m.metricId === row.metricId);
-            model = models.find(ml => ml.modelId === metric.modelId);
-          }
-
-          // console.log('model');
-          // console.log(model);
-
-          if (parameter.constructor !== Object) {
-            schemaError = 'Parameter must be an object';
-          } else if (
-            row.rowType !== common.RowTypeEnum.Global &&
-            common.isUndefined(parameter.apply_to)
-          ) {
-            schemaError = 'Parameter must have "apply_to" property';
-          } else if (
-            row.rowType !== common.RowTypeEnum.Global &&
-            (Array.isArray(parameter.apply_to) ||
-              parameter.apply_to.constructor === Object)
-          ) {
-            schemaError = 'Parameter apply_to must be a string';
-          } else if (common.isDefined(row.parametersFormula)) {
-            let fieldId = parameter.apply_to.split('.').join('_').toUpperCase();
-            parameter.parameterId = `${row.rowId}_${fieldId}`;
-
-            // let metric = metrics.find(m => m.metricId === row.metricId);
-            // model = models.find(ml => ml.modelId === metric.modelId);
-            let field = model.fields.find(f => f.id === parameter.apply_to);
-
-            if (common.isDefined(field)) {
-              parameter.result = field.result;
-            } else {
-              schemaError = 'Wrong apply_to value. Model field is not found.';
-            }
-          }
-
-          if (common.isDefined(schemaError)) {
-            parameter.conditions = ['any'];
-            parameter.fractions = [];
-          }
-
-          if (common.isUndefined(model) || model.isStoreModel === false) {
-            if (common.isUndefined(parameter.conditions)) {
-              schemaError = 'Parameter conditions must be defined';
-            } else if (!Array.isArray(parameter.conditions)) {
-              schemaError = 'Parameter conditions must be an array';
-            } else if (parameter.conditions.length === 0) {
-              schemaError =
-                'Parameter conditions must have at least one element';
-            } else {
-              parameter.conditions.forEach(y => {
-                if (
-                  common.isUndefined(y) ||
-                  Array.isArray(y) ||
-                  y.constructor === Object
-                ) {
-                  schemaError =
-                    'Parameter conditions must be an array of filter expressions';
-                }
-              });
-            }
-          }
-
-          //
-          // console.log('------');
-          // console.log('schemaError');
-          // console.log(schemaError);
-          // console.log('parameter.conditions')
-          // console.log(parameter.conditions)
-          // console.log('parameter.result')
-          // console.log(parameter.result)
-          // console.log('caseSensitiveStringFilters')
-          // console.log(caseSensitiveStringFilters)
-
-          if (common.isDefined(schemaError)) {
-            parameter.conditions = ['any'];
-            parameter.fractions = [];
-          }
-
-          let fractions;
-
-          if (
-            common.isDefined(parameter.result) &&
-            (common.isUndefined(model) || model.isStoreModel === false)
-          ) {
-            let toBlockmlGetFractionsRequest: apiToBlockml.ToBlockmlGetFractionsRequest =
-              {
-                info: {
-                  name: apiToBlockml.ToBlockmlRequestInfoNameEnum
-                    .ToBlockmlGetFractions,
-                  traceId: traceId
-                },
-                payload: {
-                  caseSensitiveStringFilters: caseSensitiveStringFilters,
-                  bricks: parameter.conditions,
-                  result: parameter.result
-                }
-              };
-
-            let blockmlGetFractionsResponse =
-              await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlGetFractionsResponse>(
-                {
-                  routingKey:
-                    common.RabbitBlockmlRoutingEnum.GetFractions.toString(),
-                  message: toBlockmlGetFractionsRequest,
-                  checkIsOk: true
-                }
-              );
-
-            if (blockmlGetFractionsResponse.payload.isValid === false) {
-              schemaError = `Parameter conditions are not valid for result "${parameter.result}"`;
-            }
-
-            fractions = blockmlGetFractionsResponse.payload.fractions;
-          } else {
-            fractions = parameter.fractions;
-          }
-
-          let filter: common.Filter = {
-            fieldId: parameter.apply_to,
-            fractions: fractions
-          };
-
-          filters.push(filter);
-
-          if (
-            common.isUndefined(schemaError) &&
-            common.isDefined(parsedParameter)
-          ) {
-            if (
-              row.rowType !== common.RowTypeEnum.Global &&
-              common.isUndefined(parsedParameter.apply_to)
-            ) {
-              schemaError = `Parameter "${parameter.apply_to}" must have "apply_to" property`;
-            } else if (
-              row.rowType !== common.RowTypeEnum.Global &&
-              parameter.apply_to !== parsedParameter.apply_to
-            ) {
-              schemaError = `parameter apply_to "${parameter.apply_to}" does not match "${parsedParameter.apply_to}"`;
-            }
-          }
-
-          parameter.schemaError = schemaError;
-          parameter.isSchemaValid = common.isUndefined(schemaError);
-          row.paramsSchemaError = row.paramsSchemaError || schemaError;
-        });
-
-        row.isParamsJsonValid = isParamsJsonValid;
-
-        row.parametersJson =
-          isParamsJsonValid === true
-            ? common.makeCopy(parsedParameters)
-            : common.isDefined(row.parametersFormula)
-            ? common.makeCopy(parsedParameters)
-            : common.makeCopy(
-                row.parameters.map(x => {
-                  let p = common.makeCopy({
-                    apply_to: x.apply_to,
-                    conditions: x.conditions,
-                    fractions: x.fractions
-                  });
-                  return p;
-                })
-              );
-
-        if (Array.isArray(row.parametersJson)) {
-          row.parametersJson = row.parametersJson
-            .filter(element => element?.constructor === Object)
-            .map(x => {
-              if (x?.constructor === Object) {
-                return Object.fromEntries(
-                  Object.entries(x).sort(([keyA], [keyB]) =>
-                    keyA > keyB ? 1 : keyB > keyA ? -1 : 0
-                  )
-                );
-              } else {
-                return x;
-              }
-            });
-        }
-
-        row.isParamsSchemaValid = common.isUndefined(row.paramsSchemaError);
-
-        // TODO: check remove time
-        row.parametersFiltersWithExcludedTime = filters;
-        row.isCalculateParameters = false;
-      }
-    );
-
-    return rows;
+    //     let { rows, models, metrics, traceId, caseSensitiveStringFilters } = item;
+    //     let xColumns: XColumn[] = [];
+    //     rows
+    //       .filter(row => row.rowType === common.RowTypeEnum.Formula)
+    //       .forEach(row => {
+    //         row.formulaError = undefined;
+    //       });
+    //     rows
+    //       .filter(
+    //         row =>
+    //           row.rowType === common.RowTypeEnum.Metric ||
+    //           row.rowType === common.RowTypeEnum.Global
+    //       )
+    //       .forEach(row => {
+    //         let xColumnsRow: XColumn[] = [];
+    //         if (
+    //           common.isDefined(row.parameters)
+    //         ) {
+    //           row.parameters
+    //             .sort((a, b) =>
+    //               a.apply_to > b.apply_to ? 1 : b.apply_to > a.apply_to ? -1 : 0
+    //             )
+    //             .forEach(parameter => {
+    //               let columnX: XColumn;
+    //               if (
+    //                 parameter.parameterType === common.ParameterTypeEnum.Formula
+    //               ) {
+    //                 columnX = {
+    //                   id: parameter.parameterId,
+    //                   xDeps: parameter.xDeps,
+    //                   input: parameter.formula,
+    //                   inputSub: undefined,
+    //                   outputValue: undefined,
+    //                   outputError: undefined
+    //                 };
+    //               } else {
+    //                 let prep = {
+    //                   apply_to: parameter.apply_to,
+    //                   conditions: parameter.conditions
+    //                 };
+    //                 columnX = {
+    //                   id: parameter.parameterId,
+    //                   xDeps: parameter.xDeps || [],
+    //                   input: undefined,
+    //                   inputSub: undefined,
+    //                   outputValue: JSON.stringify(prep),
+    //                   outputError: undefined
+    //                 };
+    //               }
+    //               xColumns.push(columnX);
+    //               xColumnsRow.push(columnX);
+    //             });
+    //         }
+    //         let parametersColumnX: XColumn = {
+    //           id: `${row.rowId}_PARAMETERS`,
+    //           xDeps: row.xDeps,
+    //           input: common.isDefined(row.parametersFormula)
+    //             ? row.parametersFormula
+    //             : row.parameters.filter(
+    //                 x => x.parameterType === common.ParameterTypeEnum.Formula
+    //               ).length > 0
+    //             ? `return [${xColumnsRow.map(x => `$${x.id}`).join(', ')}]`
+    //             : undefined,
+    //           inputSub: undefined,
+    //           outputValue:
+    //             common.isDefined(row.parametersFormula) ||
+    //             row.parameters.filter(
+    //               x => x.parameterType === common.ParameterTypeEnum.Formula
+    //             ).length > 0
+    //               ? undefined
+    //               : JSON.stringify(
+    //                   row.parameters.map(x => {
+    //                     let prep = {
+    //                       apply_to: x.apply_to,
+    //                       conditions: x.conditions
+    //                     };
+    //                     return prep;
+    //                   })
+    //                 ),
+    //           outputError: undefined
+    //         };
+    //         xColumns.push(parametersColumnX);
+    //       });
+    //     let xColumnsZeroDeps: string[] = [];
+    //     // check for cycles - tarjan graph
+    //     let g = new Graph();
+    //     // graph for toposort
+    //     let gr: string[][] = [];
+    //     xColumns.forEach(xColumn => {
+    //       if (common.isDefined(xColumn.xDeps) && xColumn.xDeps.length > 0) {
+    //         xColumn.xDeps.forEach(xDep => {
+    //           g.add(xColumn.id, [xDep]);
+    //           gr.push([xColumn.id, xDep]);
+    //         });
+    //       } else {
+    //         xColumnsZeroDeps.push(xColumn.id);
+    //       }
+    //     });
+    //     let processedXColumns: XColumn[] = [];
+    //     let cycledNames: string[] = [];
+    //     if (g.hasCycle() === true) {
+    //       let cycles: any[] = g.getCycles();
+    //       cycledNames = cycles[0].map((c: any) => c.name);
+    //       let cycledNamesStr = cycledNames.join(', ');
+    //       processedXColumns = [
+    //         ...xColumns
+    //           .filter(k => cycledNames.indexOf(k.id) > -1)
+    //           .map(x => {
+    //             x.outputError = `Cycle in formula references of parameters: ${cycledNamesStr}`;
+    //             return x;
+    //           }),
+    //         ...xColumns.filter(k => cycledNames.indexOf(k.id) < 0)
+    //       ];
+    //     } else {
+    //       let xColumnsWithDeps = toposort(gr).reverse();
+    //       let idsSorted = [
+    //         ...xColumnsZeroDeps.filter(x => xColumnsWithDeps.indexOf(x) < 0),
+    //         ...xColumnsWithDeps
+    //       ];
+    //       await forEachSeries(idsSorted, async x => {
+    //         let xColumn = xColumns.find(y => y.id === x);
+    //         if (common.isDefined(xColumn?.outputValue)) {
+    //           processedXColumns.push(xColumn);
+    //         } else if (common.isDefined(xColumn)) {
+    //           let inputSub = xColumn.input;
+    //           let reg = common.MyRegex.CAPTURE_X_REF();
+    //           let r;
+    //           let refError;
+    //           while ((r = reg.exec(inputSub))) {
+    //             let reference = r[1];
+    //             let targetXColumn = processedXColumns.find(k => k.id === reference);
+    //             if (common.isUndefined(targetXColumn)) {
+    //               refError = `Reference ${reference} not found`;
+    //               break;
+    //             } else if (common.isDefined(targetXColumn.outputError)) {
+    //               refError = `Referenced value of ${reference} has error`;
+    //               break;
+    //             }
+    //             inputSub = common.MyRegex.replaceXRefs(
+    //               inputSub,
+    //               reference,
+    //               targetXColumn.outputValue
+    //             );
+    //           }
+    //           if (common.isDefined(refError)) {
+    //             xColumn.outputValue = 'Error';
+    //             xColumn.outputError = refError;
+    //           } else {
+    //             let userCode = `JSON.stringify((function() {
+    // ${inputSub}
+    // })())`;
+    //             let rs = await this.userCodeService.runOnly({
+    //               userCode: userCode
+    //             });
+    //             xColumn.outputValue = common.isDefined(rs.outValue)
+    //               ? rs.outValue
+    //               : 'Error';
+    //             xColumn.outputError = rs.outError;
+    //           }
+    //           processedXColumns.push(xColumn);
+    //         }
+    //       });
+    //     }
+    //     await forEachSeries(
+    //       rows.filter(
+    //         row =>
+    //           row.rowType === common.RowTypeEnum.Metric ||
+    //           row.rowType === common.RowTypeEnum.Global
+    //       ),
+    //       async row => {
+    //         let parametersXColumn = processedXColumns.find(
+    //           x => x.id === `${row.rowId}_PARAMETERS`
+    //         );
+    //         let paramsSchemaError;
+    //         let isParamsJsonValid = false;
+    //         if (common.isUndefined(parametersXColumn.outputError)) {
+    //           try {
+    //             JSON.parse(parametersXColumn.outputValue);
+    //             isParamsJsonValid = true;
+    //           } catch (er) {
+    //             isParamsJsonValid = false;
+    //             paramsSchemaError = `Failed to calculate row parameters.
+    // Check parameters formula and its dependences.
+    // Formula must return a valid JSON (array of parameters).`;
+    //           }
+    //         } else {
+    //           paramsSchemaError = parametersXColumn.outputError;
+    //         }
+    //         let parsedParameters: common.Parameter[] =
+    //           isParamsJsonValid === true
+    //             ? JSON.parse(parametersXColumn.outputValue)
+    //             : [];
+    //         if (common.isDefined(row.parametersFormula)) {
+    //           if (!Array.isArray(parsedParameters)) {
+    //             paramsSchemaError = 'Parameters formula must return an array';
+    //           }
+    //           if (common.isDefined(paramsSchemaError)) {
+    //             row.parameters = [];
+    //           } else {
+    //             row.parameters = common.makeCopy(parsedParameters);
+    //             row.parameters.forEach(x => {
+    //               x.parameterType = common.ParameterTypeEnum.Field;
+    //             });
+    //           }
+    //         }
+    //         row.paramsSchemaError = paramsSchemaError;
+    //         let filters: common.Filter[] = [];
+    //         await forEachSeries(row.parameters, async parameter => {
+    //           let parXColumn = processedXColumns.find(
+    //             x => x.id === parameter.parameterId
+    //           );
+    //           let schemaError;
+    //           let isJsonValid = false;
+    //           let parsedParameter;
+    //           if (parameter.parameterType === common.ParameterTypeEnum.Formula) {
+    //             if (common.isUndefined(parXColumn.outputError)) {
+    //               try {
+    //                 JSON.parse(parXColumn.outputValue);
+    //                 isJsonValid = true;
+    //               } catch (err) {
+    //                 isJsonValid = false;
+    //                 schemaError = `Failed to calculate parameter.
+    // Check parameter formula and its dependences.
+    // Formula must return a valid JSON object.`;
+    //               }
+    //             } else {
+    //               schemaError = parXColumn.outputError;
+    //             }
+    //             parameter.isJsonValid = isJsonValid;
+    //             if (parameter.isJsonValid === true) {
+    //               parsedParameter = JSON.parse(parXColumn.outputValue);
+    //               parameter.conditions = parsedParameter.conditions;
+    //               parameter.fractions = parsedParameter.fractions;
+    //             } else {
+    //               parameter.conditions = ['any'];
+    //               parameter.fractions = [];
+    //             }
+    //           }
+    //           let model;
+    //           // console.log('row');
+    //           // console.log(row);
+    //           // console.log('row.metricId');
+    //           // console.log(row.metricId);
+    //           if (common.isDefined(row.metricId)) {
+    //             let metric = metrics.find(m => m.metricId === row.metricId);
+    //             model = models.find(ml => ml.modelId === metric.modelId);
+    //           }
+    //           // console.log('model');
+    //           // console.log(model);
+    //           if (parameter.constructor !== Object) {
+    //             schemaError = 'Parameter must be an object';
+    //           } else if (
+    //             row.rowType !== common.RowTypeEnum.Global &&
+    //             common.isUndefined(parameter.apply_to)
+    //           ) {
+    //             schemaError = 'Parameter must have "apply_to" property';
+    //           } else if (
+    //             row.rowType !== common.RowTypeEnum.Global &&
+    //             (Array.isArray(parameter.apply_to) ||
+    //               parameter.apply_to.constructor === Object)
+    //           ) {
+    //             schemaError = 'Parameter apply_to must be a string';
+    //           } else if (common.isDefined(row.parametersFormula)) {
+    //             let fieldId = parameter.apply_to.split('.').join('_').toUpperCase();
+    //             parameter.parameterId = `${row.rowId}_${fieldId}`;
+    //             // let metric = metrics.find(m => m.metricId === row.metricId);
+    //             // model = models.find(ml => ml.modelId === metric.modelId);
+    //             let field = model.fields.find(f => f.id === parameter.apply_to);
+    //             if (common.isDefined(field)) {
+    //               parameter.result = field.result;
+    //             } else {
+    //               schemaError = 'Wrong apply_to value. Model field is not found.';
+    //             }
+    //           }
+    //           if (common.isDefined(schemaError)) {
+    //             parameter.conditions = ['any'];
+    //             parameter.fractions = [];
+    //           }
+    //           if (common.isUndefined(model) || model.isStoreModel === false) {
+    //             if (common.isUndefined(parameter.conditions)) {
+    //               schemaError = 'Parameter conditions must be defined';
+    //             } else if (!Array.isArray(parameter.conditions)) {
+    //               schemaError = 'Parameter conditions must be an array';
+    //             } else if (parameter.conditions.length === 0) {
+    //               schemaError =
+    //                 'Parameter conditions must have at least one element';
+    //             } else {
+    //               parameter.conditions.forEach(y => {
+    //                 if (
+    //                   common.isUndefined(y) ||
+    //                   Array.isArray(y) ||
+    //                   y.constructor === Object
+    //                 ) {
+    //                   schemaError =
+    //                     'Parameter conditions must be an array of filter expressions';
+    //                 }
+    //               });
+    //             }
+    //           }
+    //           //
+    //           // console.log('------');
+    //           // console.log('schemaError');
+    //           // console.log(schemaError);
+    //           // console.log('parameter.conditions')
+    //           // console.log(parameter.conditions)
+    //           // console.log('parameter.result')
+    //           // console.log(parameter.result)
+    //           // console.log('caseSensitiveStringFilters')
+    //           // console.log(caseSensitiveStringFilters)
+    //           if (common.isDefined(schemaError)) {
+    //             parameter.conditions = ['any'];
+    //             parameter.fractions = [];
+    //           }
+    //           let fractions;
+    //           if (
+    //             common.isDefined(parameter.result) &&
+    //             (common.isUndefined(model) || model.isStoreModel === false)
+    //           ) {
+    //             let toBlockmlGetFractionsRequest: apiToBlockml.ToBlockmlGetFractionsRequest =
+    //               {
+    //                 info: {
+    //                   name: apiToBlockml.ToBlockmlRequestInfoNameEnum
+    //                     .ToBlockmlGetFractions,
+    //                   traceId: traceId
+    //                 },
+    //                 payload: {
+    //                   caseSensitiveStringFilters: caseSensitiveStringFilters,
+    //                   bricks: parameter.conditions,
+    //                   result: parameter.result
+    //                 }
+    //               };
+    //             let blockmlGetFractionsResponse =
+    //               await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlGetFractionsResponse>(
+    //                 {
+    //                   routingKey:
+    //                     common.RabbitBlockmlRoutingEnum.GetFractions.toString(),
+    //                   message: toBlockmlGetFractionsRequest,
+    //                   checkIsOk: true
+    //                 }
+    //               );
+    //             if (blockmlGetFractionsResponse.payload.isValid === false) {
+    //               schemaError = `Parameter conditions are not valid for result "${parameter.result}"`;
+    //             }
+    //             fractions = blockmlGetFractionsResponse.payload.fractions;
+    //           } else {
+    //             fractions = parameter.fractions;
+    //           }
+    //           let filter: common.Filter = {
+    //             fieldId: parameter.apply_to,
+    //             fractions: fractions
+    //           };
+    //           filters.push(filter);
+    //           if (
+    //             common.isUndefined(schemaError) &&
+    //             common.isDefined(parsedParameter)
+    //           ) {
+    //             if (
+    //               row.rowType !== common.RowTypeEnum.Global &&
+    //               common.isUndefined(parsedParameter.apply_to)
+    //             ) {
+    //               schemaError = `Parameter "${parameter.apply_to}" must have "apply_to" property`;
+    //             } else if (
+    //               row.rowType !== common.RowTypeEnum.Global &&
+    //               parameter.apply_to !== parsedParameter.apply_to
+    //             ) {
+    //               schemaError = `parameter apply_to "${parameter.apply_to}" does not match "${parsedParameter.apply_to}"`;
+    //             }
+    //           }
+    //           parameter.schemaError = schemaError;
+    //           parameter.isSchemaValid = common.isUndefined(schemaError);
+    //           row.paramsSchemaError = row.paramsSchemaError || schemaError;
+    //         });
+    //         row.isParamsJsonValid = isParamsJsonValid;
+    //         row.parametersJson =
+    //           isParamsJsonValid === true
+    //             ? common.makeCopy(parsedParameters)
+    //             : common.isDefined(row.parametersFormula)
+    //             ? common.makeCopy(parsedParameters)
+    //             : common.makeCopy(
+    //                 row.parameters.map(x => {
+    //                   let p = common.makeCopy({
+    //                     apply_to: x.apply_to,
+    //                     conditions: x.conditions,
+    //                     fractions: x.fractions
+    //                   });
+    //                   return p;
+    //                 })
+    //               );
+    //         if (Array.isArray(row.parametersJson)) {
+    //           row.parametersJson = row.parametersJson
+    //             .filter(element => element?.constructor === Object)
+    //             .map(x => {
+    //               if (x?.constructor === Object) {
+    //                 return Object.fromEntries(
+    //                   Object.entries(x).sort(([keyA], [keyB]) =>
+    //                     keyA > keyB ? 1 : keyB > keyA ? -1 : 0
+    //                   )
+    //                 );
+    //               } else {
+    //                 return x;
+    //               }
+    //             });
+    //         }
+    //         row.isParamsSchemaValid = common.isUndefined(row.paramsSchemaError);
+    //         // TODO: check remove time
+    //         row.parametersFiltersWithExcludedTime = filters;
+    //         row.isCalculateParameters = false;
+    //       }
+    //     );
+    //     return rows;
   }
 
   async calculateData(item: {

@@ -16,9 +16,6 @@ export class Parameter {
   @IsString()
   topParId: string;
 
-  @IsEnum(enums.ParameterTypeEnum)
-  parameterType: enums.ParameterTypeEnum;
-
   @IsString()
   apply_to: string;
 
@@ -43,9 +40,6 @@ export class Parameter {
   @ValidateNested()
   @Type(() => Fraction)
   fractions: Fraction[];
-
-  @IsString()
-  formula: string;
 
   @IsString()
   listen: string;

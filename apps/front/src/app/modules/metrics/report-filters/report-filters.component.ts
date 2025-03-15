@@ -50,7 +50,6 @@ export class ReportFiltersComponent {
       let newParameter: common.Parameter = {
         topParId: field.id,
         parameterId: [globalRow.rowId, field.id].join('_').toUpperCase(),
-        parameterType: common.ParameterTypeEnum.Field,
         apply_to: undefined,
         result: field.result,
         store: field.store,
@@ -58,7 +57,6 @@ export class ReportFiltersComponent {
         storeFilter: field.storeFilter,
         conditions: undefined,
         fractions: field.fractions,
-        formula: undefined,
         listen: undefined,
         xDeps: undefined
       };
@@ -237,7 +235,6 @@ export class ReportFiltersComponent {
       let newParameter: common.Parameter = {
         topParId: field.id,
         parameterId: [globalRow.rowId, field.id].join('_').toUpperCase(),
-        parameterType: common.ParameterTypeEnum.Field,
         apply_to: undefined,
         result: field.result,
         store: field.store, // TODO: check
@@ -245,7 +242,6 @@ export class ReportFiltersComponent {
         storeFilter: field.storeFilter,
         conditions: undefined,
         fractions: field.fractions,
-        formula: undefined,
         listen: undefined,
         xDeps: undefined
       };
@@ -307,7 +303,6 @@ export class ReportFiltersComponent {
       let newParameter: common.Parameter = {
         topParId: field.id,
         parameterId: [globalRow.rowId, field.id].join('_').toUpperCase(),
-        parameterType: common.ParameterTypeEnum.Field,
         apply_to: undefined,
         result: field.result,
         store: field.store,
@@ -315,7 +310,6 @@ export class ReportFiltersComponent {
         storeFilter: field.storeFilter,
         conditions: undefined,
         fractions: field.fractions,
-        formula: undefined,
         listen: undefined,
         xDeps: undefined
       };

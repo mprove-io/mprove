@@ -191,23 +191,6 @@ export function checkReportRowParameters(
                   p.notStoreApplyToResult = viewField.result;
                 }
 
-                if (common.isDefined(p.listen) && common.isDefined(p.formula)) {
-                  item.errors.push(
-                    new BmError({
-                      title: common.ErTitleEnum.PARAMETER_WRONG_COMBINATION,
-                      message: `found that both parameters "formula" and "listen" are specified`,
-                      lines: [
-                        {
-                          line: p.apply_to_line_num,
-                          name: x.fileName,
-                          path: x.filePath
-                        }
-                      ]
-                    })
-                  );
-                  return;
-                }
-
                 if (
                   common.isDefined(p.listen) &&
                   common.isDefined(p.conditions)
@@ -216,26 +199,6 @@ export function checkReportRowParameters(
                     new BmError({
                       title: common.ErTitleEnum.PARAMETER_WRONG_COMBINATION,
                       message: `found that both parameters "conditions" and "listen" are specified`,
-                      lines: [
-                        {
-                          line: p.apply_to_line_num,
-                          name: x.fileName,
-                          path: x.filePath
-                        }
-                      ]
-                    })
-                  );
-                  return;
-                }
-
-                if (
-                  common.isDefined(p.formula) &&
-                  common.isDefined(p.conditions)
-                ) {
-                  item.errors.push(
-                    new BmError({
-                      title: common.ErTitleEnum.PARAMETER_WRONG_COMBINATION,
-                      message: `found that both parameters "formula" and "conditions" are specified`,
                       lines: [
                         {
                           line: p.apply_to_line_num,

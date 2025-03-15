@@ -494,90 +494,16 @@
       </div>
     </div>
 
-    <button
-      class="ml-3 mt-1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
-      (click)="toggleParametersFormula()"
-    >
-      <m-formula-icon
-        [ngClass]="{
-          'text-blue-500': !!reportSelectedNode.data.parametersFormula
-        }"
-      ></m-formula-icon>
-    </button>
-
     <div class="flex w-full flex-col">
-      <div
-        class="flex items-start"
-        *ngIf="!!reportSelectedNode.data.parametersFormula"
-      >
-        <div class="flex max-w-[750px] flex-grow flex-row">
-          <div
-            [formGroup]="parametersFormulaForm"
-            class="relative mb-5 ml-7 flex flex-grow"
-          >
-            <textarea
-              data-cy="parametersFormulaInput"
-              class="form-input border-gray3 focus:border-blue3 max-h-[150px] min-h-[95px] w-full min-w-[300px] resize-y rounded font-mono"
-              [ngClass]="{
-                'border-red-600':
-                  parametersFormulaForm.controls['formula'].invalid &&
-                  parametersFormulaForm.controls['formula'].touched
-              }"
-              formControlName="formula"
-              placeholder="Formula to calculate parameters"
-              (blur)="parametersFormulaBlur()"
-            ></textarea>
-
-            <m-validation
-              class="absolute -bottom-[22px] left-0"
-              [control]="parametersFormulaForm.controls['formula']"
-            ></m-validation>
-          </div>
-        </div>
-
-        <ng-template #templateErrors>
-          <div *ngIf="reportSelectedNode.data.isParamsSchemaValid === false">{{
-            reportSelectedNode.data.paramsSchemaError
-          }}</div>
-        </ng-template>
-
-        <div
-          *ngIf="
-            !!reportSelectedNode.data.parametersFormula &&
-            (reportSelectedNode.data.isParamsJsonValid === false ||
-              reportSelectedNode.data.isParamsSchemaValid === false)
-          "
-          class="text-red1 ml-5 mt-1 flex h-8 w-8 flex-shrink-0"
-          [tp]="templateErrors"
+      <div class="flex w-full flex-row">
+        <button
+          type="button"
+          data-cy="rowAddParameterButton"
+          class="ml-7 h-11 flex-shrink-0 select-none rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
+          (click)="addParameter()"
         >
-          <m-exclamation-icon></m-exclamation-icon>
-        </div>
-      </div>
-
-      <div
-        *ngIf="!reportSelectedNode.data.parametersFormula"
-        class="flex w-full flex-row"
-      >
-        <div
-          tp="Turn off formula to activate control"
-          [tpIsEnabled]="!!reportSelectedNode.data.parametersFormula"
-        >
-          <button
-            type="button"
-            data-cy="rowAddParameterButton"
-            class="ml-7 h-11 flex-shrink-0 select-none rounded border px-4 py-2 focus:outline-none"
-            [ngClass]="{
-              'border-gray-400 text-gray-500 hover:bg-white':
-                !reportSelectedNode.data.parametersFormula,
-              'cursor-default border-gray-300 text-gray-400':
-                !!reportSelectedNode.data.parametersFormula
-            }"
-            [disabled]="!!reportSelectedNode.data.parametersFormula"
-            (click)="addParameter()"
-          >
-            Add Filter
-          </button>
-        </div>
+          Add Filter
+        </button>
 
         <div class="min-h-[68px]"></div>
 

@@ -22,8 +22,6 @@ import { ParameterFilter } from '../row/row.component';
   templateUrl: './row-filters.component.html'
 })
 export class RowFiltersComponent implements OnChanges {
-  parameterTypeFormula = common.ParameterTypeEnum.Formula;
-
   @Input()
   reportSelectedNode: IRowNode<DataRow>;
 
@@ -393,68 +391,6 @@ export class RowFiltersComponent implements OnChanges {
     });
   }
 
-  toggleParFormula(filterExtended: common.FilterX) {
-    let report = this.reportQuery.getValue();
-
-    let newParameters = [...this.reportSelectedNode.data.parameters];
-
-    let parameterIndex = this.reportSelectedNode.data.parameters.findIndex(
-      x => x.apply_to === filterExtended.fieldId
-    );
-
-    let parameter: common.Parameter =
-      this.reportSelectedNode.data.parameters.find(
-        x => x.apply_to === filterExtended.fieldId
-      );
-
-    let newParameter;
-
-    if (
-      parameter.parameterType === common.ParameterTypeEnum.Formula &&
-      common.isUndefined(parameter.listen)
-    ) {
-      let newConditions = parameter.conditions;
-
-      newParameter = Object.assign({}, parameter, {
-        parameterType: common.ParameterTypeEnum.Field,
-        conditions: newConditions,
-        formula: undefined,
-        listen: undefined
-      } as common.Parameter);
-    } else {
-      let newConditions = ['any'];
-
-      let newConditionsStr = newConditions.join('", "');
-
-      newParameter = Object.assign({}, parameter, {
-        parameterType: common.ParameterTypeEnum.Formula,
-        conditions: newConditions,
-        formula: `return {"apply_to": "${parameter.apply_to}", "conditions": ["${newConditionsStr}"]}`,
-        listen: undefined
-      } as common.Parameter);
-    }
-
-    newParameters = [
-      ...newParameters.slice(0, parameterIndex),
-      newParameter,
-      ...newParameters.slice(parameterIndex + 1)
-    ];
-
-    let rowChange: common.RowChange = {
-      rowId: this.reportSelectedNode.data.rowId,
-      parameters: newParameters
-    };
-
-    this.reportService.modifyRows({
-      report: report,
-      changeType: common.ChangeTypeEnum.EditParameters,
-      rowChange: rowChange,
-      rowIds: undefined,
-      reportFields: report.fields,
-      chart: undefined
-    });
-  }
-
   toggleListen(pFilter: ParameterFilter) {
     let report = this.reportQuery.getValue();
 
@@ -474,10 +410,9 @@ export class RowFiltersComponent implements OnChanges {
     if (common.isDefined(parameter.listen)) {
       let newConditions = parameter.conditions;
 
+      // TODO: check conditions vs fractions
       newParameter = Object.assign({}, parameter, {
-        parameterType: common.ParameterTypeEnum.Field,
         conditions: newConditions,
-        formula: undefined,
         listen: undefined,
         xDeps: undefined
       } as common.Parameter);
@@ -488,12 +423,8 @@ export class RowFiltersComponent implements OnChanges {
         .join('_')
         .toUpperCase();
 
-      let formula = `let p = $${globalParameterId}; p.apply_to = '${parameter.apply_to}'; return p`;
-
       newParameter = Object.assign({}, parameter, {
-        parameterType: common.ParameterTypeEnum.Formula,
         conditions: undefined,
-        formula: formula,
         listen: firstGlobalField.id,
         xDeps: undefined
       } as common.Parameter);
@@ -546,46 +477,8 @@ export class RowFiltersComponent implements OnChanges {
     let newParameter: common.Parameter = Object.assign({}, parameter, {
       result: globalField.result,
       conditions: undefined,
-      formula: formula,
       listen: newListenValue,
       xDeps: undefined
-    } as common.Parameter);
-
-    newParameters = [
-      ...newParameters.slice(0, parametersIndex),
-      newParameter,
-      ...newParameters.slice(parametersIndex + 1)
-    ];
-
-    let report = this.reportQuery.getValue();
-
-    let rowChange: common.RowChange = {
-      rowId: this.reportSelectedNode.data.rowId,
-      parameters: newParameters
-    };
-
-    this.reportService.modifyRows({
-      report: report,
-      changeType: common.ChangeTypeEnum.EditParameters,
-      rowChange: rowChange,
-      rowIds: undefined,
-      reportFields: report.fields,
-      chart: undefined
-    });
-  }
-
-  parameterFormulaUpdate(
-    eventParameterFormulaUpdate: interfaces.EventParameterFormulaUpdate,
-    filterExtended: common.FilterX
-  ) {
-    let newParameters = [...this.reportSelectedNode.data.parameters];
-
-    let parametersIndex = newParameters.findIndex(
-      p => p.apply_to === filterExtended.fieldId
-    );
-
-    let newParameter = Object.assign({}, newParameters[parametersIndex], {
-      formula: eventParameterFormulaUpdate.formula
     } as common.Parameter);
 
     newParameters = [

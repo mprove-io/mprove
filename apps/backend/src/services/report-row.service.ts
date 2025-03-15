@@ -79,7 +79,6 @@ export class ReportRowService {
         parameters: [],
         parametersFiltersWithExcludedTime: [],
         parametersJson: undefined,
-        parametersFormula: undefined,
         formula: undefined,
         deps: undefined,
         xDeps: undefined,
@@ -208,7 +207,6 @@ export class ReportRowService {
                     parameterId: [rowChange.rowId, storeFilter.name]
                       .join('_')
                       .toUpperCase(),
-                    parameterType: common.ParameterTypeEnum.Field,
                     apply_to: storeFilter.name,
                     result: undefined,
                     store: undefined,
@@ -216,7 +214,6 @@ export class ReportRowService {
                     storeFilter: undefined,
                     conditions: undefined,
                     fractions: [newFraction],
-                    formula: undefined,
                     listen: undefined,
                     xDeps: undefined
                   };
@@ -225,7 +222,6 @@ export class ReportRowService {
                 }),
         parametersFiltersWithExcludedTime: [],
         parametersJson: undefined,
-        parametersFormula: undefined,
         formula: undefined,
         deps: undefined,
         formulaDeps: undefined,
@@ -266,7 +262,6 @@ export class ReportRowService {
         parameters: undefined,
         parametersFiltersWithExcludedTime: [],
         parametersJson: undefined,
-        parametersFormula: undefined,
         deps: undefined,
         formulaDeps: undefined,
         xDeps: undefined,
@@ -330,7 +325,6 @@ export class ReportRowService {
           : [],
         parametersFiltersWithExcludedTime: [],
         parametersJson: undefined,
-        parametersFormula: undefined,
         formula: undefined,
         deps: undefined,
         formulaDeps: undefined,
@@ -404,7 +398,6 @@ export class ReportRowService {
 
       let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
         parameters: rowChange.parameters,
-        parametersFormula: rowChange.parametersFormula,
         rqs: [],
         isCalculateParameters: true,
         records: [],
@@ -507,7 +500,6 @@ export class ReportRowService {
               parameterId: [row.rowId, l.applyTo.split('.')]
                 .join('_')
                 .toUpperCase(),
-              parameterType: common.ParameterTypeEnum.Field,
               apply_to: l.applyTo,
               result: reportField.result,
               store: reportField.store,
@@ -515,7 +507,6 @@ export class ReportRowService {
               storeFilter: reportField.storeFilter,
               conditions: undefined,
               fractions: reportField.fractions,
-              formula: undefined,
               listen: l.listen,
               xDeps: undefined
             };
@@ -566,7 +557,6 @@ export class ReportRowService {
             parameters: [],
             parametersFiltersWithExcludedTime: [],
             parametersJson: undefined,
-            parametersFormula: undefined,
             formula: undefined,
             deps: undefined,
             xDeps: undefined,

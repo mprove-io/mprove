@@ -44,7 +44,6 @@ interface RowPartQ {
   rowType: common.RowTypeEnum;
   metricId: string;
   formula: string;
-  parametersFormula: string;
   parameters: common.Parameter[];
   query: QueryPartQ;
   records: any[];
@@ -512,7 +511,6 @@ export class GetQueryCommand extends CustomCommand {
             rowType: row.rowType,
             metricId: row.metricId,
             formula: row.formula,
-            parametersFormula: row.parametersFormula,
             parameters: row.parameters,
             query: queryPartQ,
             records: this.getData === true ? row.records : undefined

@@ -8,32 +8,20 @@
   >
     <div class="flex flex-row items-start justify-center">
       <div
-        tp="Turn off formula to activate control"
-        [tpIsEnabled]="!!reportSelectedNode.data.parametersFormula"
+        tp="A required filter cannot be removed"
+        [tpIsEnabled]="filter.field.required === true"
       >
-        <div
-          tp="A required filter cannot be removed"
-          [tpIsEnabled]="filter.field.required === true"
+        <button
+          class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+          [ngClass]="{
+            'text-gray-500 hover:bg-blue-200': filter.field.required !== true,
+            'cursor-default text-gray-400': filter.field.required === true
+          }"
+          [disabled]="filter.field.required === true"
+          (click)="deleteFilter(filter)"
         >
-          <button
-            class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-            [ngClass]="{
-              'text-gray-500 hover:bg-blue-200':
-                !reportSelectedNode.data.parametersFormula &&
-                filter.field.required !== true,
-              'cursor-default text-gray-400':
-                !!reportSelectedNode.data.parametersFormula ||
-                filter.field.required === true
-            }"
-            [disabled]="
-              !!reportSelectedNode.data.parametersFormula ||
-              filter.field.required === true
-            "
-            (click)="deleteFilter(filter)"
-          >
-            <m-trash-icon></m-trash-icon>
-          </button>
-        </div>
+          <m-trash-icon></m-trash-icon>
+        </button>
       </div>
 
       <div class="mb-5 ml-5 flex flex-col items-start justify-start">
@@ -52,25 +40,6 @@
           }}</div>
         </div>
       </div>
-
-      <button
-        class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-        [ngClass]="{
-          'text-gray-500 hover:bg-blue-200':
-            !reportSelectedNode.data.parametersFormula,
-          'cursor-default text-gray-400':
-            !!reportSelectedNode.data.parametersFormula
-        }"
-        (click)="toggleParFormula(filter)"
-        [disabled]="!!reportSelectedNode.data.parametersFormula"
-      >
-        <m-formula-icon
-          [ngClass]="{
-            'text-blue-500':
-              filter.parameterType === parameterTypeFormula && !filter.listen
-          }"
-        ></m-formula-icon>
-      </button>
 
       <div
         tp="Report parameters is empty"
@@ -95,18 +64,6 @@
     </div>
 
     <div class="flex w-full flex-col">
-      <div
-        *ngIf="filter.parameterType === parameterTypeFormula && !filter.listen"
-        class="mb-6 ml-5 flex flex-grow flex-row"
-      >
-        <m-parameter-formula
-          class="w-full"
-          [parameterFilter]="filter"
-          [isDisabled]="filter.parameterType === parameterTypeFormula"
-          (parameterFormulaUpdate)="parameterFormulaUpdate($event, filter)"
-        ></m-parameter-formula>
-      </div>
-
       <div
         *ngIf="!!filter.listen"
         class="mb-6 ml-5 flex w-[300px] flex-grow flex-row"
@@ -148,7 +105,7 @@
         </form>
       </div>
 
-      <div *ngIf="filter.parameterType !== parameterTypeFormula">
+      <div *ngIf="!filter.listen">
         <div
           class="flex flex-row items-start justify-start"
           *ngFor="
@@ -164,93 +121,61 @@
             [modelContent]="getModelContent()"
             [fraction]="fraction"
             [fractionIndex]="fractionIndex"
-            [isDisabled]="
-              filter.parameterType === parameterTypeFormula ||
-              !!reportSelectedNode.data.parametersFormula
-            "
             [isFirst]="isFirst"
             (fractionUpdate)="fractionUpdate(filter, $event)"
           >
           </m-fraction>
 
           <div
-            tp="Turn off formula to activate control"
+            tp="Filter max_fractions reached"
             [tpIsEnabled]="
-              filter.parameterType === parameterTypeFormula ||
-              !!reportSelectedNode.data.parametersFormula
+              !!filter.field.maxFractions &&
+              filter.field.maxFractions === filter.fractions.length
             "
           >
-            <div
-              tp="Filter max_fractions reached"
-              [tpIsEnabled]="
+            <button
+              class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+              (click)="addFraction(filter)"
+              [ngClass]="{
+                'text-gray-500 hover:bg-blue-200':
+                  !filter.field.maxFractions ||
+                  filter.field.maxFractions !== filter.fractions.length,
+                'cursor-default text-gray-400':
+                  !!filter.field.maxFractions &&
+                  filter.field.maxFractions === filter.fractions.length
+              }"
+              [disabled]="
                 !!filter.field.maxFractions &&
                 filter.field.maxFractions === filter.fractions.length
               "
             >
-              <button
-                class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-                (click)="addFraction(filter)"
-                [ngClass]="{
-                  'text-gray-500 hover:bg-blue-200':
-                    filter.parameterType !== parameterTypeFormula &&
-                    !reportSelectedNode.data.parametersFormula &&
-                    (!filter.field.maxFractions ||
-                      filter.field.maxFractions !== filter.fractions.length),
-                  'cursor-default text-gray-400':
-                    filter.parameterType === parameterTypeFormula ||
-                    !!reportSelectedNode.data.parametersFormula ||
-                    (!!filter.field.maxFractions &&
-                      filter.field.maxFractions === filter.fractions.length)
-                }"
-                [disabled]="
-                  filter.parameterType === parameterTypeFormula ||
-                  !!reportSelectedNode.data.parametersFormula ||
-                  (!!filter.field.maxFractions &&
-                    filter.field.maxFractions === filter.fractions.length)
-                "
-              >
-                <m-add-icon></m-add-icon>
-              </button>
-            </div>
+              <m-add-icon></m-add-icon>
+            </button>
           </div>
 
           <div
-            tp="Turn off formula to activate control"
+            tp="A required filter cannot be removed"
             [tpIsEnabled]="
-              filter.parameterType === parameterTypeFormula ||
-              !!reportSelectedNode.data.parametersFormula
+              filter.field.required === true && filter.fractions.length === 1
             "
-            ><div
-              tp="A required filter cannot be removed"
-              [tpIsEnabled]="
+          >
+            <button
+              class="ml-3 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+              (click)="deleteFraction(filter, fractionIndex)"
+              [ngClass]="{
+                'text-gray-500 hover:bg-blue-200':
+                  filter.field.required !== true ||
+                  filter.fractions.length !== 1,
+                'cursor-default text-gray-400':
+                  filter.field.required === true &&
+                  filter.fractions.length === 1
+              }"
+              [disabled]="
                 filter.field.required === true && filter.fractions.length === 1
               "
             >
-              <button
-                class="ml-3 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
-                (click)="deleteFraction(filter, fractionIndex)"
-                [ngClass]="{
-                  'text-gray-500 hover:bg-blue-200':
-                    filter.parameterType !== parameterTypeFormula &&
-                    !reportSelectedNode.data.parametersFormula &&
-                    (filter.field.required !== true ||
-                      filter.fractions.length !== 1),
-                  'cursor-default text-gray-400':
-                    filter.parameterType === parameterTypeFormula ||
-                    !!reportSelectedNode.data.parametersFormula ||
-                    (filter.field.required === true &&
-                      filter.fractions.length === 1)
-                }"
-                [disabled]="
-                  filter.parameterType === parameterTypeFormula ||
-                  !!reportSelectedNode.data.parametersFormula ||
-                  (filter.field.required === true &&
-                    filter.fractions.length === 1)
-                "
-              >
-                <m-trash-icon></m-trash-icon>
-              </button>
-            </div>
+              <m-trash-icon></m-trash-icon>
+            </button>
           </div>
         </div>
       </div>

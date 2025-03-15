@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildReport;
 let func = common.FuncEnum.CheckReportRow;
-let testId = 'e__missing-listen-or-formula-or-conditions';
+let testId = 'e__missing-listen-or-conditions';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,9 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entReports.length, 0);
 
-  t.is(
-    errors[0].title,
-    common.ErTitleEnum.MISSING_LISTEN_OR_FORMULA_OR_CONDITIONS
-  );
+  t.is(errors[0].title, common.ErTitleEnum.MISSING_LISTEN_OR_CONDITIONS);
   t.is(errors[0].lines[0].line, 8);
 });

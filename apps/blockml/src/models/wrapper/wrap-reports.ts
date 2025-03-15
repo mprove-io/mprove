@@ -307,10 +307,6 @@ export function wrapReports(item: {
                       .toUpperCase()
                   : undefined;
 
-                let formula = common.isDefined(parameter.listen)
-                  ? `let p = $${globalParameterId}; p.apply_to = '${parameter.apply_to}'; return p`
-                  : parameter.formula;
-
                 let parameterApi: common.Parameter = {
                   topParId: parameter.topParId,
                   parameterId:
@@ -319,9 +315,6 @@ export function wrapReports(item: {
                       : [row.row_id, ...parameter.apply_to.split('.')]
                           .join('_')
                           .toUpperCase(),
-                  parameterType: common.isDefined(formula)
-                    ? common.ParameterTypeEnum.Formula
-                    : common.ParameterTypeEnum.Field,
                   apply_to: parameter.apply_to,
                   result: result,
                   store: undefined,
@@ -502,7 +495,6 @@ export function wrapReports(item: {
                           };
                           return fraction;
                         }),
-                  formula: formula,
                   listen: parameter.listen,
                   xDeps: undefined
                 };
@@ -512,7 +504,6 @@ export function wrapReports(item: {
           isCalculateParameters: true,
           parametersFiltersWithExcludedTime: [],
           parametersJson: undefined,
-          parametersFormula: row.parameters_formula,
           deps: undefined,
           xDeps: undefined,
           formulaDeps: undefined,

@@ -28,7 +28,6 @@ import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
 
 export interface ParameterFilter extends common.FilterX {
-  parameterType: common.ParameterTypeEnum;
   isJsonValid: boolean;
   isSchemaValid: boolean;
   schemaError: string;
@@ -67,10 +66,6 @@ export class RowComponent {
   });
 
   newFormulaForm: FormGroup = this.fb.group({
-    formula: [undefined, [Validators.required]]
-  });
-
-  parametersFormulaForm: FormGroup = this.fb.group({
     formula: [undefined, [Validators.required]]
   });
 
@@ -201,8 +196,6 @@ export class RowComponent {
 
               return Object.assign({}, filter, {
                 // TODO: parameter?
-                parameterType: parameter?.parameterType,
-                formula: parameter?.formula,
                 listen: parameter?.listen,
                 isJsonValid: parameter?.isJsonValid,
                 isSchemaValid: parameter?.isSchemaValid,
@@ -212,15 +205,6 @@ export class RowComponent {
       }
 
       if (common.isDefined(this.reportSelectedNode)) {
-        if (
-          this.reportSelectedNode.data.rowType === common.RowTypeEnum.Metric
-        ) {
-          setValueAndMark({
-            control: this.parametersFormulaForm.controls['formula'],
-            value: this.reportSelectedNode.data.parametersFormula
-          });
-        }
-
         if (
           this.reportSelectedNode.data.rowType === common.RowTypeEnum.Formula
         ) {
@@ -339,33 +323,6 @@ export class RowComponent {
     this.reportService.modifyRows({
       report: report,
       changeType: common.ChangeTypeEnum.EditInfo,
-      rowChange: rowChange,
-      rowIds: undefined,
-      reportFields: report.fields,
-      chart: undefined
-    });
-  }
-
-  parametersFormulaBlur() {
-    let value = this.parametersFormulaForm.controls['formula'].value;
-
-    if (
-      !this.parametersFormulaForm.valid ||
-      this.reportSelectedNode.data.parametersFormula === value
-    ) {
-      return;
-    }
-
-    let report = this.reportQuery.getValue();
-
-    let rowChange: common.RowChange = {
-      rowId: this.reportSelectedNode.data.rowId,
-      parametersFormula: value
-    };
-
-    this.reportService.modifyRows({
-      report: report,
-      changeType: common.ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -841,7 +798,6 @@ export class RowComponent {
       parameterId: [this.reportSelectedNode.data.rowId, ...field.id.split('.')]
         .join('_')
         .toUpperCase(),
-      parameterType: common.ParameterTypeEnum.Field,
       apply_to: field.id,
       result: field.result,
       store: undefined,
@@ -862,7 +818,6 @@ export class RowComponent {
       //   this.newParameterModel.isStoreModel === true ? undefined : ['any'],
       conditions: undefined,
       fractions: [newFraction],
-      formula: undefined,
       listen: undefined,
       xDeps: undefined
     };
@@ -875,35 +830,6 @@ export class RowComponent {
       rowId: this.reportSelectedNode.data.rowId,
       parameters: newParameters
     };
-
-    this.reportService.modifyRows({
-      report: report,
-      changeType: common.ChangeTypeEnum.EditParameters,
-      rowChange: rowChange,
-      rowIds: undefined,
-      reportFields: report.fields,
-      chart: undefined
-    });
-  }
-
-  toggleParametersFormula() {
-    let report = this.reportQuery.getValue();
-
-    let rowChange: common.RowChange;
-
-    if (common.isDefined(this.reportSelectedNode.data.parametersFormula)) {
-      rowChange = {
-        rowId: this.reportSelectedNode.data.rowId,
-        parameters: this.reportSelectedNode.data.parameters,
-        parametersFormula: undefined
-      };
-    } else {
-      rowChange = {
-        rowId: this.reportSelectedNode.data.rowId,
-        parameters: undefined,
-        parametersFormula: `return []`
-      };
-    }
 
     this.reportService.modifyRows({
       report: report,

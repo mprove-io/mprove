@@ -32,10 +32,6 @@ export class RowChange {
 
   @IsOptional()
   @IsString()
-  parametersFormula?: string;
-
-  @IsOptional()
-  @IsString()
   formatNumber?: string;
 
   @IsOptional()

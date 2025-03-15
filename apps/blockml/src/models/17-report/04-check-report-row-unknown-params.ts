@@ -35,7 +35,6 @@ export function checkReportRowUnknownParams(
                 [
                   common.ParameterEnum.ApplyTo.toString(),
                   common.ParameterEnum.Listen.toString(),
-                  common.ParameterEnum.Formula.toString(),
                   common.ParameterEnum.Conditions.toString(),
                   common.ParameterEnum.Fractions.toString()
                 ].indexOf(parameter) < 0
