@@ -182,14 +182,18 @@ export class ReportDataService {
               rField => rField.id === rowParameter.listen
             );
 
-            let bricks = reportField.fractions
-              .filter(fraction => common.isDefined(fraction.brick))
-              .map(fraction => fraction.brick);
+            if (common.isUndefined(reportField)) {
+              delete rowParameter.listen;
+            } else {
+              // let bricks = reportField.fractions
+              //   .filter(fraction => common.isDefined(fraction.brick))
+              //   .map(fraction => fraction.brick);
 
-            rowParameter.conditions = undefined;
-            // rowParameter.conditions = bricks.length > 0 ? bricks : undefined;
+              // rowParameter.conditions = bricks.length > 0 ? bricks : undefined;
 
-            rowParameter.fractions = reportField.fractions;
+              rowParameter.conditions = undefined;
+              rowParameter.fractions = reportField.fractions;
+            }
           }
         });
       });

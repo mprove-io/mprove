@@ -11,19 +11,29 @@
         tp="Turn off formula to activate control"
         [tpIsEnabled]="!!reportSelectedNode.data.parametersFormula"
       >
-        <button
-          class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-          [ngClass]="{
-            'text-gray-500 hover:bg-blue-200':
-              !reportSelectedNode.data.parametersFormula,
-            'cursor-default text-gray-400':
-              !!reportSelectedNode.data.parametersFormula
-          }"
-          [disabled]="!!reportSelectedNode.data.parametersFormula"
-          (click)="deleteFilter(filter)"
+        <div
+          tp="A required filter cannot be removed"
+          [tpIsEnabled]="filter.field.required === true"
         >
-          <m-trash-icon></m-trash-icon>
-        </button>
+          <button
+            class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+            [ngClass]="{
+              'text-gray-500 hover:bg-blue-200':
+                !reportSelectedNode.data.parametersFormula &&
+                filter.field.required !== true,
+              'cursor-default text-gray-400':
+                !!reportSelectedNode.data.parametersFormula ||
+                filter.field.required === true
+            }"
+            [disabled]="
+              !!reportSelectedNode.data.parametersFormula ||
+              filter.field.required === true
+            "
+            (click)="deleteFilter(filter)"
+          >
+            <m-trash-icon></m-trash-icon>
+          </button>
+        </div>
       </div>
 
       <div class="mb-5 ml-5 flex flex-col items-start justify-start">
