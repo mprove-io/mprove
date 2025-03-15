@@ -5,8 +5,11 @@ import { tap } from 'rxjs';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { ApiService } from '~front/app/services/api.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { ReportService } from '~front/app/services/report.service';
 import { UiService } from '~front/app/services/ui.service';
+import { common } from '~front/barrels/common';
 
 @Component({
   selector: 'm-metric-header',
@@ -37,10 +40,20 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
     })
   );
 
+  report: common.ReportX;
+  report$ = this.reportQuery.select().pipe(
+    tap(x => {
+      this.report = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     private uiQuery: UiQuery,
     private uiService: UiService,
+    private myDialogService: MyDialogService,
     private reportService: ReportService,
+    private apiService: ApiService,
     private reportQuery: ReportQuery,
     private cd: ChangeDetectorRef
   ) {}
@@ -52,10 +65,6 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
   refresh(params: IHeaderParams) {
     this.params = params;
     return true;
-  }
-
-  deselect() {
-    this.params.api.deselectAll();
   }
 
   toggleShowMetricsModelName() {
@@ -87,5 +96,13 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
 
     this.uiQuery.updatePart({ showMetricsParameters: showMetricsParameters });
     this.uiService.setUserUi({ showMetricsParameters: showMetricsParameters });
+  }
+
+  editListeners() {
+    this.myDialogService.showReportEditListeners({
+      reportService: this.reportService,
+      apiService: this.apiService,
+      report: this.report
+    });
   }
 }
