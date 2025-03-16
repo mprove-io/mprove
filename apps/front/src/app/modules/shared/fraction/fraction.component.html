@@ -1,5 +1,8 @@
 <div class="flex flex-row items-start justify-start">
-  <div class="ml-5 flex h-[36px] w-10 items-center justify-start">
+  <div
+    class="ml-5 flex h-[36px] w-10 items-center justify-start"
+    *ngIf="fraction.type !== fractionTypeStoreFraction || !!fieldResult"
+  >
     {{
       !isFirst && fraction.operator === fractionOperatorEnum.Or
         ? 'OR'
@@ -12,7 +15,7 @@
   <div
     *ngIf="fraction.type !== fractionTypeStoreFraction"
     [ngSwitch]="fieldResult"
-    class="flex flex-row items-start justify-start"
+    class="ml-5 flex flex-row items-start justify-start"
   >
     <m-fraction-number
       *ngSwitchCase="fieldResultEnum.Number"
@@ -109,9 +112,8 @@
       </m-store-fraction-sub-type>
     </div>
 
-    <div *ngFor="let fractionControl of fraction.controls" class="flex">
+    <div *ngFor="let fractionControl of fraction.controls" class="ml-5 flex">
       <m-store-fraction-selector
-        class="ml-5"
         *ngIf="fractionControl.controlClass === controlClassSelector"
         [fraction]="fraction"
         [isFirst]="isFirst"
@@ -123,7 +125,6 @@
       </m-store-fraction-selector>
 
       <m-store-fraction-input
-        class="ml-5"
         *ngIf="fractionControl.controlClass === controlClassInput"
         [fraction]="fraction"
         [isFirst]="isFirst"
@@ -135,7 +136,6 @@
       </m-store-fraction-input>
 
       <m-store-fraction-switch
-        class="ml-5"
         *ngIf="fractionControl.controlClass === controlClassSwitch"
         [fraction]="fraction"
         [isFirst]="isFirst"
@@ -147,7 +147,6 @@
       </m-store-fraction-switch>
 
       <m-store-fraction-date-picker
-        class="ml-5"
         *ngIf="fractionControl.controlClass === controlClassDatePicker"
         [metricsStartDateYYYYMMDD]="metricsStartDateYYYYMMDD"
         [metricsEndDateYYYYMMDD]="metricsEndDateYYYYMMDD"
