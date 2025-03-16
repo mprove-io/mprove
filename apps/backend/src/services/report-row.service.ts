@@ -372,27 +372,6 @@ export class ReportRowService {
         timeRangeFractionBrick: timeRangeFractionBrick
       });
 
-      // if (editRow.rowId === common.GLOBAL_ROW_ID) {
-      //   // console.log(editRow.parameters);
-      //   let topParIds = editRow.parameters.map(x => x.topParId);
-
-      //   processedRows
-      //     .filter(x => x.rowId !== common.GLOBAL_ROW_ID)
-      //     .forEach(x => {
-      //       x.parameters = x.parameters.map(p => {
-      //         if (
-      //           common.isDefined(p.listen) &&
-      //           topParIds.indexOf(p.listen) < 0
-      //         ) {
-      //           p.parameterType = common.ParameterTypeEnum.Field;
-      //           p.listen = undefined;
-      //           p.formula = undefined;
-      //         }
-      //         return p;
-      //       });
-      //     });
-      // }
-
       if (common.isDefined(rowChange)) {
         let pRow = processedRows.find(r => r.rowId === rowChange.rowId);
 

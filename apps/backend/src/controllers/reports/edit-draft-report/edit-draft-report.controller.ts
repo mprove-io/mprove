@@ -108,7 +108,6 @@ export class EditDraftReportController {
       common.isDefined(rowChange) &&
       [
         common.ChangeTypeEnum.AddMetric,
-        common.ChangeTypeEnum.EditParameters,
         common.ChangeTypeEnum.ConvertToMetric
       ].indexOf(changeType) > -1
         ? await this.db.drizzle.query.metricsTable.findMany({
@@ -117,13 +116,7 @@ export class EditDraftReportController {
               eq(metricsTable.metricId, rowChange.metricId)
             )
           })
-        : // await this.metricsRepository.find({
-          //     where: {
-          //       struct_id: bridge.struct_id,
-          //       metric_id: rowChange.metricId
-          //     }
-          //   })
-          [];
+        : [];
 
     let models: ModelEnt[] = [];
 
@@ -186,7 +179,6 @@ export class EditDraftReportController {
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
-      isEditParameters: changeType === common.ChangeTypeEnum.EditParameters,
       isSaveToDb: true
     });
 

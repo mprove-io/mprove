@@ -132,8 +132,7 @@ export class GetReportController {
       struct: struct,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
-      timezone: timezone,
-      isEditParameters: false
+      timezone: timezone
     });
 
     user.ui = user.ui || constants.DEFAULT_UI;

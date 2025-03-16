@@ -381,8 +381,7 @@ export class SaveModifyReportController {
       struct: struct,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
-      timezone: timezone,
-      isEditParameters: false
+      timezone: timezone
     });
 
     let payload: apiToBackend.ToBackendGetReportResponsePayload = {

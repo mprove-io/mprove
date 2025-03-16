@@ -50,7 +50,6 @@ export class ReportDataService {
     userMemberApi: common.Member;
     userMember: schemaPostgres.MemberEnt;
     user: schemaPostgres.UserEnt;
-    isEditParameters: boolean;
     isSaveToDb?: boolean;
   }) {
     let {
@@ -65,8 +64,7 @@ export class ReportDataService {
       user,
       userMemberApi,
       userMember,
-      isSaveToDb,
-      isEditParameters
+      isSaveToDb
     } = item;
 
     let {
@@ -117,13 +115,6 @@ export class ReportDataService {
       )
     });
 
-    // let metrics = await this.metricsRepository.find({
-    //   where: {
-    //     metric_id: In(metricIds),
-    //     struct_id: struct.struct_id
-    //   }
-    // });
-
     let modelIds = metrics
       .filter(m => common.isDefined(m.modelId))
       .map(x => x.modelId);
@@ -134,31 +125,6 @@ export class ReportDataService {
         eq(modelsTable.structId, struct.structId)
       )
     });
-
-    // let models = await this.modelsRepository.find({
-    //   where: {
-    //     model_id: In(modelIds),
-    //     struct_id: struct.struct_id
-    //   }
-    // });
-
-    // if (
-    //   // isEditParameters === true
-    //   report.rows.filter(
-    //     row =>
-    //       row.rowType === common.RowTypeEnum.Metric &&
-    //       row.isCalculateParameters === true
-    //   ).length > 0
-    // ) {
-    // console.log('isCalculateParameters true');
-
-    // report.rows = await this.docService.calculateParameters({
-    //   rows: report.rows,
-    //   models: models,
-    //   metrics: metrics,
-    //   traceId: traceId,
-    //   caseSensitiveStringFilters: struct.caseSensitiveStringFilters
-    // });
 
     report.rows
       .filter(row => common.isDefined(row.parameters))
@@ -172,12 +138,6 @@ export class ReportDataService {
             if (common.isUndefined(reportField)) {
               delete rowParameter.listen;
             } else {
-              // let bricks = reportField.fractions
-              //   .filter(fraction => common.isDefined(fraction.brick))
-              //   .map(fraction => fraction.brick);
-
-              // rowParameter.conditions = bricks.length > 0 ? bricks : undefined;
-
               rowParameter.fractions = reportField.fractions;
             }
           }
@@ -265,9 +225,6 @@ export class ReportDataService {
 
         row.parametersFiltersWithExcludedTime = filters;
       });
-    // } else {
-    //   // console.log('isCalculateParameters false');
-    // }
 
     let newMconfigs: common.Mconfig[] = [];
     let newQueries: common.Query[] = [];
