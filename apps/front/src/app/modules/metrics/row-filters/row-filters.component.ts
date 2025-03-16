@@ -392,63 +392,50 @@ export class RowFiltersComponent implements OnChanges {
   }
 
   toggleListen(pFilter: ParameterFilter) {
-    let report = this.reportQuery.getValue();
-
-    let newParameters = [...this.reportSelectedNode.data.parameters];
-
-    let parameterIndex = this.reportSelectedNode.data.parameters.findIndex(
-      x => x.apply_to === pFilter.fieldId
-    );
-
-    let parameter: common.Parameter =
-      this.reportSelectedNode.data.parameters.find(
-        x => x.apply_to === pFilter.fieldId
-      );
-
-    let newParameter;
-
-    if (common.isDefined(parameter.listen)) {
-      let newConditions = parameter.conditions;
-
-      // TODO: check conditions vs fractions
-      newParameter = Object.assign({}, parameter, {
-        conditions: newConditions,
-        listen: undefined,
-        xDeps: undefined
-      } as common.Parameter);
-    } else {
-      let firstGlobalField = this.report.fields[0];
-
-      let globalParameterId = [common.GLOBAL_ROW_ID, firstGlobalField.id]
-        .join('_')
-        .toUpperCase();
-
-      newParameter = Object.assign({}, parameter, {
-        conditions: undefined,
-        listen: firstGlobalField.id,
-        xDeps: undefined
-      } as common.Parameter);
-    }
-
-    newParameters = [
-      ...newParameters.slice(0, parameterIndex),
-      newParameter,
-      ...newParameters.slice(parameterIndex + 1)
-    ];
-
-    let rowChange: common.RowChange = {
-      rowId: this.reportSelectedNode.data.rowId,
-      parameters: newParameters
-    };
-
-    this.reportService.modifyRows({
-      report: report,
-      changeType: common.ChangeTypeEnum.EditParameters,
-      rowChange: rowChange,
-      rowIds: undefined,
-      reportFields: report.fields,
-      chart: undefined
-    });
+    // let report = this.reportQuery.getValue();
+    // let newParameters = [...this.reportSelectedNode.data.parameters];
+    // let parameterIndex = this.reportSelectedNode.data.parameters.findIndex(
+    //   x => x.apply_to === pFilter.fieldId
+    // );
+    // let parameter: common.Parameter =
+    //   this.reportSelectedNode.data.parameters.find(
+    //     x => x.apply_to === pFilter.fieldId
+    //   );
+    // let newParameter;
+    // if (common.isDefined(parameter.listen)) {
+    //   let newConditions = parameter.conditions;
+    //   // TODO: check conditions vs fractions
+    //   newParameter = Object.assign({}, parameter, {
+    //     conditions: newConditions,
+    //     listen: undefined
+    //   } as common.Parameter);
+    // } else {
+    //   let firstGlobalField = this.report.fields[0];
+    //   let globalParameterId = [common.GLOBAL_ROW_ID, firstGlobalField.id]
+    //     .join('_')
+    //     .toUpperCase();
+    //   newParameter = Object.assign({}, parameter, {
+    //     conditions: undefined,
+    //     listen: firstGlobalField.id
+    //   } as common.Parameter);
+    // }
+    // newParameters = [
+    //   ...newParameters.slice(0, parameterIndex),
+    //   newParameter,
+    //   ...newParameters.slice(parameterIndex + 1)
+    // ];
+    // let rowChange: common.RowChange = {
+    //   rowId: this.reportSelectedNode.data.rowId,
+    //   parameters: newParameters
+    // };
+    // this.reportService.modifyRows({
+    //   report: report,
+    //   changeType: common.ChangeTypeEnum.EditParameters,
+    //   rowChange: rowChange,
+    //   rowIds: undefined,
+    //   reportFields: report.fields,
+    //   chart: undefined
+    // });
   }
 
   listenChange(pFilter: ParameterFilter) {
@@ -466,19 +453,10 @@ export class RowFiltersComponent implements OnChanges {
 
     let parameter = newParameters[parametersIndex];
 
-    let globalField = this.report.fields.find(x => x.id === newListenValue);
-
-    let globalParameterId = [common.GLOBAL_ROW_ID, newListenValue]
-      .join('_')
-      .toUpperCase();
-
-    let formula = `let p = $${globalParameterId}; p.apply_to = '${parameter.apply_to}'; return p`;
+    let reportField = this.report.fields.find(x => x.id === newListenValue);
 
     let newParameter: common.Parameter = Object.assign({}, parameter, {
-      result: globalField.result,
-      conditions: undefined,
-      listen: newListenValue,
-      xDeps: undefined
+      listen: newListenValue
     } as common.Parameter);
 
     newParameters = [

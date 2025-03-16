@@ -241,41 +241,31 @@ export class ReportComponent {
 
         // let metrics = this.metricsQuery.getValue();
 
-        let isRepParametersHaveError =
-          this.report.rows.filter(
-            row =>
-              row.isParamsJsonValid === false ||
-              row.isParamsSchemaValid === false
-          ).length > 0;
-
-        this.data = this.report.rows
-          .filter(row => row.rowId !== common.GLOBAL_ROW_ID)
-          .map((row: common.Row) => {
-            let dataRow: DataRow = Object.assign({}, row, <DataRow>{
-              showMetricsParameters: showMetricsParameters,
-              isRepParametersHaveError: isRepParametersHaveError,
-              strParameters: common.isDefined(row.parameters)
-                ? JSON.stringify(row.parameters)
-                : ''
-            });
-
-            // console.log(row.rowId);
-            // console.log(row.records);
-
-            row.records.forEach(record => {
-              let column = this.report.columns.find(
-                c => c.columnId === record.key
-              );
-
-              record.columnLabel = column?.label;
-
-              if (common.isDefined(record.columnLabel)) {
-                (dataRow as any)[record.key * 1000] = record.value;
-              }
-            });
-
-            return dataRow;
+        this.data = this.report.rows.map((row: common.Row) => {
+          let dataRow: DataRow = Object.assign({}, row, <DataRow>{
+            showMetricsParameters: showMetricsParameters,
+            strParameters: common.isDefined(row.parameters)
+              ? JSON.stringify(row.parameters)
+              : ''
           });
+
+          // console.log(row.rowId);
+          // console.log(row.records);
+
+          row.records.forEach(record => {
+            let column = this.report.columns.find(
+              c => c.columnId === record.key
+            );
+
+            record.columnLabel = column?.label;
+
+            if (common.isDefined(record.columnLabel)) {
+              (dataRow as any)[record.key * 1000] = record.value;
+            }
+          });
+
+          return dataRow;
+        });
 
         let sNodes = this.uiQuery.getValue().reportSelectedNodes;
 
@@ -447,10 +437,7 @@ export class ReportComponent {
   getRowHeight(params: RowHeightParams<DataRow>): number | undefined | null {
     let rowHeight = 42;
 
-    let isShowParameters =
-      params.data.showMetricsParameters === true ||
-      params.data.isParamsJsonValid === false ||
-      params.data.isParamsSchemaValid === false;
+    let isShowParameters = params.data.showMetricsParameters === true;
 
     if (common.isDefined(params.data.mconfig) && isShowParameters === true) {
       let timeSpec = this.reportQuery.getValue().timeSpec;

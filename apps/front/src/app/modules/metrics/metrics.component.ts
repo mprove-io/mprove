@@ -99,18 +99,12 @@ export class MetricsComponent implements OnInit, OnDestroy {
   seriesParts: SeriesPart[] = [];
   dataPoints: DataPoint[] = [];
 
-  reportGlobalRow: common.Row;
-
   report: common.ReportX;
   report$ = this.reportQuery.select().pipe(
     tap(x => {
       this.report = x;
 
       this.isShow = true;
-
-      this.reportGlobalRow = this.report.rows.find(
-        row => row.rowId === common.GLOBAL_ROW_ID
-      );
 
       if (x.draft === false) {
         let links = this.uiQuery.getValue().projectReportLinks;

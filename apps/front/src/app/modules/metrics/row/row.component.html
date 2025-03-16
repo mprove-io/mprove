@@ -533,7 +533,7 @@
                 [searchable]="true"
                 [searchFn]="filterMetricBySearchFn"
                 [clearable]="false"
-                [(ngModel)]="newParameterId"
+                [(ngModel)]="newParameterFieldId"
                 (change)="filterMetricByChange()"
                 (keyup.esc)="
                   $event.stopImmediatePropagation(); filterMetricBySelect.blur()

@@ -297,31 +297,10 @@ export function wrapReports(item: {
                     .fields.find(
                       field => field.id === parameter.apply_to
                     ).result;
-                } else if (row.type === common.RowTypeEnum.Global) {
-                  result = parameter.globalFieldResult;
                 }
 
-                let globalParameterId = common.isDefined(parameter.listen)
-                  ? [common.GLOBAL_ROW_ID, parameter.listen]
-                      .join('_')
-                      .toUpperCase()
-                  : undefined;
-
                 let parameterApi: common.Parameter = {
-                  topParId: parameter.topParId,
-                  parameterId:
-                    row.row_id === common.GLOBAL_ROW_ID
-                      ? [row.row_id, parameter.topParId].join('_').toUpperCase()
-                      : [row.row_id, ...parameter.apply_to.split('.')]
-                          .join('_')
-                          .toUpperCase(),
                   apply_to: parameter.apply_to,
-                  result: result,
-                  store: undefined,
-                  storeResult: undefined,
-                  storeFilter: undefined,
-                  // conditions: parameter.conditions,
-                  conditions: undefined,
                   fractions:
                     common.isUndefined(model) ||
                     common.isDefined(parameter.listen)
@@ -495,16 +474,13 @@ export function wrapReports(item: {
                           };
                           return fraction;
                         }),
-                  listen: parameter.listen,
-                  xDeps: undefined
+                  listen: parameter.listen
                 };
 
                 return parameterApi;
               }),
-          isCalculateParameters: true,
           parametersFiltersWithExcludedTime: [],
           deps: undefined,
-          xDeps: undefined,
           formulaDeps: undefined,
           records: [],
           formatNumber: common.isDefined(row.format_number)

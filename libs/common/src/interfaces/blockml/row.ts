@@ -9,14 +9,6 @@ import { RowRecord } from './row-record';
 import { Rq } from './rq';
 
 export class Row {
-  // @IsOptional()
-  // @IsString()
-  // status: string;
-
-  // @IsOptional()
-  // @IsString()
-  // chart: string;
-
   @IsString()
   rowId: string;
 
@@ -50,37 +42,11 @@ export class Row {
   @IsString()
   timeLabel: string;
 
-  @IsBoolean()
-  isParamsJsonValid?: boolean;
-
-  @IsBoolean()
-  isParamsSchemaValid?: boolean;
-
-  @IsString()
-  paramsSchemaError?: string;
-
   @IsString()
   formulaError?: string;
 
   @IsString()
   topQueryError?: string;
-
-  @ValidateNested()
-  @Type(() => Parameter)
-  parameters: Parameter[];
-
-  @IsBoolean()
-  isCalculateParameters: boolean;
-
-  @ValidateNested()
-  @Type(() => Filter)
-  parametersFiltersWithExcludedTime: Filter[];
-
-  xDeps: string[];
-
-  formulaDeps: string[];
-
-  deps: string[];
 
   @IsBoolean()
   hasAccessToModel: boolean;
@@ -92,8 +58,6 @@ export class Row {
   @ValidateNested()
   @Type(() => Query)
   query: Query;
-
-  formula: string;
 
   showChart: boolean;
 
@@ -111,4 +75,18 @@ export class Row {
 
   @IsString()
   currencySuffix: string;
+
+  @ValidateNested()
+  @Type(() => Parameter)
+  parameters: Parameter[];
+
+  @ValidateNested()
+  @Type(() => Filter)
+  parametersFiltersWithExcludedTime: Filter[];
+
+  formula: string;
+
+  formulaDeps: string[];
+
+  deps: string[];
 }

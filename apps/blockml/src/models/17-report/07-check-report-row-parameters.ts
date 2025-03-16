@@ -4,7 +4,7 @@ import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
-import { GLOBAL_ROW_ID, STORE_MODEL_PREFIX } from '~common/_index';
+import { STORE_MODEL_PREFIX } from '~common/_index';
 
 let func = common.FuncEnum.CheckReportRowParameters;
 
@@ -29,9 +29,7 @@ export function checkReportRowParameters(
     let errorsOnStart = item.errors.length;
 
     x.rows
-      .filter(
-        row => common.isDefined(row.parameters) && row.row_id !== GLOBAL_ROW_ID
-      )
+      .filter(row => common.isDefined(row.parameters))
       .forEach(row => {
         let pApplyToMaps: Array<{ applyTo: string; lineNumbers: number[] }> =
           [];
@@ -76,8 +74,7 @@ export function checkReportRowParameters(
         .filter(
           row =>
             row.type === common.RowTypeEnum.Metric &&
-            common.isDefined(row.parameters) &&
-            row.row_id !== GLOBAL_ROW_ID
+            common.isDefined(row.parameters)
         )
         .forEach(row => {
           let metric = metrics.find(m => m.metricId === row.metric);

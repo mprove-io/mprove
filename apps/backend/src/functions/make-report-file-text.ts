@@ -192,171 +192,167 @@ export function makeReportFileText(item: {
       accessRoles.length > 0 ? accessRoles.map(x => x.trim()) : undefined,
     access_users:
       accessUsers.length > 0 ? accessUsers.map(x => x.trim()) : undefined,
-    rows: rows
-      .filter(r => r.rowType !== common.RowTypeEnum.Global)
-      .map(x => {
-        // console.log('x');
-        // console.log(x);
+    rows: rows.map(x => {
+      // console.log('x');
+      // console.log(x);
 
-        let metric =
-          x.rowType === common.RowTypeEnum.Metric
-            ? metrics.find(m => m.metricId === x.metricId)
-            : undefined;
-
-        // console.log('metric');
-        // console.log(metric);
-
-        let model = common.isDefined(metric)
-          ? models.find(m => m.modelId === metric.modelId)
+      let metric =
+        x.rowType === common.RowTypeEnum.Metric
+          ? metrics.find(m => m.metricId === x.metricId)
           : undefined;
 
-        // console.log('model.modelId');
-        // console.log(model?.modelId);
-        // console.log('model.isStoreModel');
-        // console.log(model?.isStoreModel);
+      // console.log('metric');
+      // console.log(metric);
 
-        let row: common.FileReportRow = {
-          row_id: x.rowId,
-          type: x.rowType,
-          name:
-            x.rowType === common.RowTypeEnum.Empty ||
-            x.rowType === common.RowTypeEnum.Metric
-              ? undefined
-              : x.name,
-          metric: x.metricId,
-          formula: common.isDefined(x.formula) ? x.formula : undefined,
-          show_chart:
-            common.isDefined(x.showChart) &&
-            x.showChart !== common.REPORT_ROW_DEFAULT_SHOW_CHART
-              ? <any>x.showChart
-              : undefined,
-          format_number:
-            x.rowType === common.RowTypeEnum.Metric &&
-            metric.formatNumber === x.formatNumber
-              ? undefined
-              : struct.formatNumber === x.formatNumber
-              ? undefined
-              : x.formatNumber,
-          currency_prefix:
-            x.rowType === common.RowTypeEnum.Metric &&
-            metric.currencyPrefix === x.currencyPrefix
-              ? undefined
-              : struct.currencyPrefix === x.currencyPrefix
-              ? undefined
-              : x.currencyPrefix,
-          currency_suffix:
-            x.rowType === common.RowTypeEnum.Metric &&
-            metric.currencySuffix === x.currencySuffix
-              ? undefined
-              : struct.currencySuffix === x.currencySuffix
-              ? undefined
-              : x.currencySuffix,
-          parameters:
-            [common.RowTypeEnum.Metric].indexOf(x.rowType) < 0
-              ? undefined
-              : common.isDefined(x.parameters)
-              ? x.parameters.map(parameter => {
-                  let p: common.FileReportRowParameter = {
-                    apply_to: parameter.apply_to,
-                    // result: parameter.result,
-                    conditions:
-                      common.isDefined(parameter.listen) ||
-                      model?.isStoreModel === true
-                        ? undefined
-                        : common.isDefined(parameter.fractions) &&
-                          parameter.fractions.length > 0
-                        ? parameter.fractions.map(fraction => fraction.brick)
-                        : undefined,
-                    fractions:
-                      model?.isStoreModel === true &&
-                      common.isUndefined(parameter.listen)
-                        ? parameter.fractions.map(apiFraction => {
-                            // console.log('apiFraction');
-                            // console.log(apiFraction);
+      let model = common.isDefined(metric)
+        ? models.find(m => m.modelId === metric.modelId)
+        : undefined;
 
-                            let fileFraction: FileFraction = {};
+      // console.log('model.modelId');
+      // console.log(model?.modelId);
+      // console.log('model.isStoreModel');
+      // console.log(model?.isStoreModel);
 
-                            if (isDefined(apiFraction.logicGroup)) {
-                              fileFraction.logic = apiFraction.logicGroup;
-                            }
+      let row: common.FileReportRow = {
+        row_id: x.rowId,
+        type: x.rowType,
+        name:
+          x.rowType === common.RowTypeEnum.Empty ||
+          x.rowType === common.RowTypeEnum.Metric
+            ? undefined
+            : x.name,
+        metric: x.metricId,
+        formula: common.isDefined(x.formula) ? x.formula : undefined,
+        show_chart:
+          common.isDefined(x.showChart) &&
+          x.showChart !== common.REPORT_ROW_DEFAULT_SHOW_CHART
+            ? <any>x.showChart
+            : undefined,
+        format_number:
+          x.rowType === common.RowTypeEnum.Metric &&
+          metric.formatNumber === x.formatNumber
+            ? undefined
+            : struct.formatNumber === x.formatNumber
+            ? undefined
+            : x.formatNumber,
+        currency_prefix:
+          x.rowType === common.RowTypeEnum.Metric &&
+          metric.currencyPrefix === x.currencyPrefix
+            ? undefined
+            : struct.currencyPrefix === x.currencyPrefix
+            ? undefined
+            : x.currencyPrefix,
+        currency_suffix:
+          x.rowType === common.RowTypeEnum.Metric &&
+          metric.currencySuffix === x.currencySuffix
+            ? undefined
+            : struct.currencySuffix === x.currencySuffix
+            ? undefined
+            : x.currencySuffix,
+        parameters:
+          [common.RowTypeEnum.Metric].indexOf(x.rowType) < 0
+            ? undefined
+            : common.isDefined(x.parameters)
+            ? x.parameters.map(parameter => {
+                let p: common.FileReportRowParameter = {
+                  apply_to: parameter.apply_to,
+                  // result: parameter.result,
+                  conditions:
+                    common.isDefined(parameter.listen) ||
+                    model?.isStoreModel === true
+                      ? undefined
+                      : common.isDefined(parameter.fractions) &&
+                        parameter.fractions.length > 0
+                      ? parameter.fractions.map(fraction => fraction.brick)
+                      : undefined,
+                  fractions:
+                    model?.isStoreModel === true &&
+                    common.isUndefined(parameter.listen)
+                      ? parameter.fractions.map(apiFraction => {
+                          // console.log('apiFraction');
+                          // console.log(apiFraction);
 
-                            if (isDefined(apiFraction.storeFractionSubType)) {
-                              fileFraction.type =
-                                apiFraction.storeFractionSubType;
-                            }
+                          let fileFraction: FileFraction = {};
 
-                            fileFraction.controls = apiFraction.controls.map(
-                              mconfigControl => {
-                                let newFileControl: FileFractionControl = {};
+                          if (isDefined(apiFraction.logicGroup)) {
+                            fileFraction.logic = apiFraction.logicGroup;
+                          }
 
-                                if (
-                                  mconfigControl.controlClass ===
-                                  enums.ControlClassEnum.Input
-                                ) {
-                                  newFileControl.input = mconfigControl.name;
-                                } else if (
-                                  mconfigControl.controlClass ===
-                                  enums.ControlClassEnum.ListInput
-                                ) {
-                                  newFileControl.list_input =
-                                    mconfigControl.name;
-                                } else if (
-                                  mconfigControl.controlClass ===
-                                  enums.ControlClassEnum.Switch
-                                ) {
-                                  newFileControl.switch = mconfigControl.name;
-                                } else if (
-                                  mconfigControl.controlClass ===
-                                  enums.ControlClassEnum.DatePicker
-                                ) {
-                                  newFileControl.date_picker =
-                                    mconfigControl.name;
-                                } else if (
-                                  mconfigControl.controlClass ===
-                                  enums.ControlClassEnum.Selector
-                                ) {
-                                  newFileControl.selector = mconfigControl.name;
-                                }
+                          if (isDefined(apiFraction.storeFractionSubType)) {
+                            fileFraction.type =
+                              apiFraction.storeFractionSubType;
+                          }
 
-                                let newValue = mconfigControl.value;
+                          fileFraction.controls = apiFraction.controls.map(
+                            mconfigControl => {
+                              let newFileControl: FileFractionControl = {};
 
-                                newFileControl.value =
-                                  mconfigControl.isMetricsDate === true
-                                    ? (model.content as common.FileStore).fields
-                                        .find(
-                                          field =>
-                                            field.fieldClass ===
-                                              common.FieldClassEnum.Filter &&
-                                            field.name === parameter.apply_to
-                                        )
-                                        .fraction_controls.find(
-                                          control =>
-                                            control.name === mconfigControl.name
-                                        ).value
-                                    : newFileControl.controlClass ===
-                                        common.ControlClassEnum.Switch &&
-                                      typeof newValue === 'string'
-                                    ? toBooleanFromLowercaseString(newValue)
-                                    : newValue;
-
-                                return newFileControl;
+                              if (
+                                mconfigControl.controlClass ===
+                                enums.ControlClassEnum.Input
+                              ) {
+                                newFileControl.input = mconfigControl.name;
+                              } else if (
+                                mconfigControl.controlClass ===
+                                enums.ControlClassEnum.ListInput
+                              ) {
+                                newFileControl.list_input = mconfigControl.name;
+                              } else if (
+                                mconfigControl.controlClass ===
+                                enums.ControlClassEnum.Switch
+                              ) {
+                                newFileControl.switch = mconfigControl.name;
+                              } else if (
+                                mconfigControl.controlClass ===
+                                enums.ControlClassEnum.DatePicker
+                              ) {
+                                newFileControl.date_picker =
+                                  mconfigControl.name;
+                              } else if (
+                                mconfigControl.controlClass ===
+                                enums.ControlClassEnum.Selector
+                              ) {
+                                newFileControl.selector = mconfigControl.name;
                               }
-                            );
 
-                            return fileFraction;
-                          })
-                        : undefined,
-                    listen: parameter.listen,
-                    globalFieldResult: undefined
-                  };
+                              let newValue = mconfigControl.value;
 
-                  return p;
-                })
-              : []
-        };
+                              newFileControl.value =
+                                mconfigControl.isMetricsDate === true
+                                  ? (model.content as common.FileStore).fields
+                                      .find(
+                                        field =>
+                                          field.fieldClass ===
+                                            common.FieldClassEnum.Filter &&
+                                          field.name === parameter.apply_to
+                                      )
+                                      .fraction_controls.find(
+                                        control =>
+                                          control.name === mconfigControl.name
+                                      ).value
+                                  : newFileControl.controlClass ===
+                                      common.ControlClassEnum.Switch &&
+                                    typeof newValue === 'string'
+                                  ? toBooleanFromLowercaseString(newValue)
+                                  : newValue;
 
-        return row;
-      }),
+                              return newFileControl;
+                            }
+                          );
+
+                          return fileFraction;
+                        })
+                      : undefined,
+                  listen: parameter.listen
+                };
+
+                return p;
+              })
+            : []
+      };
+
+      return row;
+    }),
     options: options
   };
 

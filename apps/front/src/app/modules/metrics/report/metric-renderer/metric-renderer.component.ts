@@ -26,7 +26,6 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
 
   parametersFilters: common.FilterX[] = [];
 
-  showJson = false;
   showParameters = false;
 
   showMetricsModelName = false;

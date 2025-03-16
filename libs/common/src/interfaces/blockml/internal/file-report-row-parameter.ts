@@ -19,9 +19,5 @@ export interface FileReportRowParameter {
 
   apiFractions?: Fraction[];
 
-  topParId?: string;
-
-  globalFieldResult?: enums.FieldResultEnum;
-
   notStoreApplyToResult?: enums.FieldResultEnum;
 }

@@ -105,6 +105,7 @@ export class EditDraftReportController {
     });
 
     let metrics =
+      common.isDefined(rowChange) &&
       [
         common.ChangeTypeEnum.AddMetric,
         common.ChangeTypeEnum.EditParameters,

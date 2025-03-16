@@ -50,9 +50,9 @@ export class ReportRowService {
         );
       }
 
-      let rowIdsNumbers = processedRows
-        .filter(y => y.rowId !== common.GLOBAL_ROW_ID)
-        .map(y => common.rowIdLetterToNumber(y.rowId));
+      let rowIdsNumbers = processedRows.map(y =>
+        common.rowIdLetterToNumber(y.rowId)
+      );
 
       let maxRowIdNumber =
         rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
@@ -80,10 +80,8 @@ export class ReportRowService {
         parametersFiltersWithExcludedTime: [],
         formula: undefined,
         deps: undefined,
-        xDeps: undefined,
         formulaDeps: undefined,
         rqs: [],
-        isCalculateParameters: false,
         mconfig: undefined,
         query: undefined,
         hasAccessToModel: false,
@@ -202,19 +200,9 @@ export class ReportRowService {
                   };
 
                   let newParameter: common.Parameter = {
-                    topParId: undefined,
-                    parameterId: [rowChange.rowId, storeFilter.name]
-                      .join('_')
-                      .toUpperCase(),
                     apply_to: storeFilter.name,
-                    result: undefined,
-                    store: undefined,
-                    storeResult: undefined,
-                    storeFilter: undefined,
-                    conditions: undefined,
                     fractions: [newFraction],
-                    listen: undefined,
-                    xDeps: undefined
+                    listen: undefined
                   };
 
                   return newParameter;
@@ -223,9 +211,7 @@ export class ReportRowService {
         formula: undefined,
         deps: undefined,
         formulaDeps: undefined,
-        xDeps: undefined,
         rqs: [],
-        isCalculateParameters: false,
         mconfig: undefined,
         query: undefined,
         hasAccessToModel: false,
@@ -261,10 +247,8 @@ export class ReportRowService {
         parametersFiltersWithExcludedTime: [],
         deps: undefined,
         formulaDeps: undefined,
-        xDeps: undefined,
         formula: rowChange.formula,
         rqs: [],
-        isCalculateParameters: false,
         mconfig: undefined,
         query: undefined,
         hasAccessToModel: false,
@@ -286,9 +270,9 @@ export class ReportRowService {
       let rowId = rowChange.rowId;
 
       if (common.isUndefined(rowId)) {
-        let rowIdsNumbers = processedRows
-          .filter(y => y.rowId !== common.GLOBAL_ROW_ID)
-          .map(y => common.rowIdLetterToNumber(y.rowId));
+        let rowIdsNumbers = processedRows.map(y =>
+          common.rowIdLetterToNumber(y.rowId)
+        );
 
         let maxRowIdNumber =
           rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
@@ -324,9 +308,7 @@ export class ReportRowService {
         formula: undefined,
         deps: undefined,
         formulaDeps: undefined,
-        xDeps: undefined,
         rqs: [],
-        isCalculateParameters: false,
         mconfig: undefined,
         query: undefined,
         hasAccessToModel: false,
@@ -390,17 +372,6 @@ export class ReportRowService {
         timeRangeFractionBrick: timeRangeFractionBrick
       });
 
-      let pRow = processedRows.find(r => r.rowId === rowChange.rowId);
-
-      let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
-        parameters: rowChange.parameters,
-        rqs: [],
-        isCalculateParameters: true,
-        records: [],
-        mconfig: undefined,
-        query: undefined
-      });
-
       // if (editRow.rowId === common.GLOBAL_ROW_ID) {
       //   // console.log(editRow.parameters);
       //   let topParIds = editRow.parameters.map(x => x.topParId);
@@ -422,9 +393,21 @@ export class ReportRowService {
       //     });
       // }
 
-      processedRows = processedRows.map(row =>
-        row.rowId === editRow.rowId ? editRow : row
-      );
+      if (common.isDefined(rowChange)) {
+        let pRow = processedRows.find(r => r.rowId === rowChange.rowId);
+
+        let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
+          parameters: rowChange.parameters,
+          rqs: [],
+          records: [],
+          mconfig: undefined,
+          query: undefined
+        });
+
+        processedRows = processedRows.map(row =>
+          row.rowId === editRow.rowId ? editRow : row
+        );
+      }
 
       processedRows = processRowIds({
         rows: processedRows,
@@ -440,10 +423,7 @@ export class ReportRowService {
       });
 
       processedRows = processedRows.map(row => {
-        if (
-          row.rowId === common.GLOBAL_ROW_ID ||
-          common.isUndefined(row.parameters)
-        ) {
+        if (common.isUndefined(row.parameters)) {
           return row;
         }
 
@@ -492,19 +472,9 @@ export class ReportRowService {
             let reportField = newReportFields.find(f => f.id === l.listen);
 
             let newParameter: common.Parameter = {
-              topParId: undefined,
-              parameterId: [row.rowId, l.applyTo.split('.')]
-                .join('_')
-                .toUpperCase(),
               apply_to: l.applyTo,
-              result: reportField.result,
-              store: reportField.store,
-              storeResult: reportField.storeResult,
-              storeFilter: reportField.storeFilter,
-              conditions: undefined,
               fractions: reportField.fractions,
-              listen: l.listen,
-              xDeps: undefined
+              listen: l.listen
             };
 
             newParameters.push(newParameter);
@@ -513,7 +483,6 @@ export class ReportRowService {
         let editRow: common.Row = Object.assign({}, row, <common.Row>{
           parameters: newParameters,
           rqs: [],
-          isCalculateParameters: true,
           records: [],
           mconfig: undefined,
           query: undefined
@@ -554,10 +523,8 @@ export class ReportRowService {
             parametersFiltersWithExcludedTime: [],
             formula: undefined,
             deps: undefined,
-            xDeps: undefined,
             formulaDeps: undefined,
             rqs: [],
-            isCalculateParameters: false,
             mconfig: undefined,
             query: undefined,
             hasAccessToModel: false,

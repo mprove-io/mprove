@@ -7,16 +7,6 @@ export function processRowIds(item: {
 }) {
   let { rows, targetRowIds, replaceWithUndef } = item;
 
-  rows = [
-    ...rows.filter(row => row.rowId !== common.GLOBAL_ROW_ID),
-    rows.find(row => row.rowId === common.GLOBAL_ROW_ID)
-  ];
-
-  targetRowIds = [
-    ...targetRowIds.filter(rowId => rowId !== common.GLOBAL_ROW_ID),
-    common.GLOBAL_ROW_ID
-  ];
-
   let targets: { [from: string]: string } = {};
 
   rows.forEach(row => {
@@ -25,10 +15,7 @@ export function processRowIds(item: {
       targetRowId => targetRowId === rowId
     );
 
-    targets[rowId] =
-      rowId === common.GLOBAL_ROW_ID
-        ? common.GLOBAL_ROW_ID
-        : common.rowIdNumberToLetter(targetIndex);
+    targets[rowId] = common.rowIdNumberToLetter(targetIndex);
   });
 
   // rows = rows.map(row => {
@@ -94,41 +81,6 @@ export function processRowIds(item: {
       });
 
       row.formulaDeps = formulaDeps;
-    } else if (common.isDefined(row.parameters)) {
-      row.xDeps = [];
-
-      row.parameters.forEach(p => {
-        let newParId = `$${p.parameterId}`;
-        let reg1 = common.MyRegex.CAPTURE_ROW_REF();
-        let r1;
-
-        while ((r1 = reg1.exec(newParId))) {
-          let ref = r1[1];
-
-          let targetRow;
-
-          if (common.isDefined(targets[ref])) {
-            targetRow = rows.find(y => y.rowId === targets[ref]);
-          }
-
-          let targetTo =
-            common.isDefined(targetRow) &&
-            targetRow.rowType === common.RowTypeEnum.Metric
-              ? targets[ref]
-              : common.isDefined(replaceWithUndef) &&
-                replaceWithUndef.indexOf(ref) > -1
-              ? common.UNDEF
-              : ref;
-
-          newParId = common.MyRegex.replaceRowIds(newParId, ref, targetTo);
-        }
-
-        newParId = newParId.split(common.QUAD_UNDERSCORE).join('');
-
-        p.parameterId = newParId.split('$')[1];
-
-        row.xDeps.push(p.parameterId);
-      });
     }
   });
 

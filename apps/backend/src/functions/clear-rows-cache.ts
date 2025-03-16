@@ -42,7 +42,6 @@ export function clearRowsCache(item: {
         ];
 
         if (row.rowType === common.RowTypeEnum.Metric) {
-          row.isCalculateParameters = true;
           row.parametersFiltersWithExcludedTime = [];
 
           row.records = [];

@@ -716,7 +716,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     let suggestField = this.suggestFieldForm.controls['suggestField'].value;
 
-    let field: common.ReportField = {
+    let newReportField: common.ReportField = {
       id: id,
       hidden: false,
       label: label,
@@ -754,43 +754,14 @@ export class ReportAddFilterDialogComponent implements OnInit {
       description: undefined
     };
 
-    let globalRow = this.reportQuery
-      .getValue()
-      .rows.find(row => row.rowId === common.GLOBAL_ROW_ID);
-
-    let newParameters = common.isDefined(globalRow.parameters)
-      ? [...globalRow.parameters]
-      : [];
-
-    let newParameter: common.Parameter = {
-      topParId: field.id,
-      parameterId: [globalRow.rowId, field.id].join('_').toUpperCase(),
-      apply_to: undefined,
-      store: field.store,
-      storeFilter: field.storeFilter,
-      storeResult: field.storeResult,
-      result: field.result,
-      conditions: undefined,
-      fractions: field.fractions,
-      listen: undefined,
-      xDeps: undefined
-    };
-
-    newParameters = [...newParameters, newParameter];
-
-    let rowChange: common.RowChange = {
-      rowId: common.GLOBAL_ROW_ID,
-      parameters: newParameters
-    };
-
     let reportService: ReportService = this.ref.data.reportService;
 
     reportService.modifyRows({
       report: this.report,
       changeType: common.ChangeTypeEnum.EditParameters,
-      rowChange: rowChange,
+      rowChange: undefined,
       rowIds: undefined,
-      reportFields: [...this.report.fields, field],
+      reportFields: [...this.report.fields, newReportField],
       chart: undefined
     });
   }

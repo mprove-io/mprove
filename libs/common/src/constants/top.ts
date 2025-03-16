@@ -134,9 +134,6 @@ export const PATH_TEAM = 'team';
 
 export const METHOD_RABBIT = 'RABBIT';
 
-export const GLOBAL_ROW_ID = 'RGL';
-export const GLOBAL_ROW_NAME = 'RGL';
-
 export const NO_FIELDS_SELECTED = 'no_fields_selected';
 
 export const HEADER_VALUE_IS_HIDDEN = 'value is hidden';
@@ -343,7 +340,6 @@ export const TIMEFRAME_VALUES = [
 export const ROW_TYPE_VALUES = [
   enums.RowTypeEnum.Empty,
   enums.RowTypeEnum.Header,
-  enums.RowTypeEnum.Global,
   enums.RowTypeEnum.Metric,
   enums.RowTypeEnum.Formula
 ];

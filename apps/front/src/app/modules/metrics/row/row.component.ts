@@ -28,9 +28,6 @@ import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
 
 export interface ParameterFilter extends common.FilterX {
-  isJsonValid: boolean;
-  isSchemaValid: boolean;
-  schemaError: string;
   formula: string;
   listen: string;
 }
@@ -196,10 +193,7 @@ export class RowComponent {
 
               return Object.assign({}, filter, {
                 // TODO: parameter?
-                listen: parameter?.listen,
-                isJsonValid: parameter?.isJsonValid,
-                isSchemaValid: parameter?.isSchemaValid,
-                schemaError: parameter?.schemaError
+                listen: parameter?.listen
               } as ParameterFilter);
             });
       }
@@ -250,7 +244,7 @@ export class RowComponent {
   );
 
   newMetricId: string;
-  newParameterId: string;
+  newParameterFieldId: string;
   newParameterModel: common.Model;
 
   metrics: common.ModelMetric[];
@@ -340,7 +334,7 @@ export class RowComponent {
     this.isDisabledApplyAlreadyFiltered =
       this.reportSelectedNode.data.mconfig.extendedFilters
         .map(filter => filter.fieldId)
-        .indexOf(this.newParameterId) > -1;
+        .indexOf(this.newParameterFieldId) > -1;
 
     // let metric = this.metricsQuery
     //   .getValue()
@@ -493,7 +487,7 @@ export class RowComponent {
     this.isToMetric = false;
 
     this.isAddParameter = false;
-    this.newParameterId = undefined;
+    this.newParameterFieldId = undefined;
     this.newParameterModel = undefined;
   }
 
@@ -655,7 +649,7 @@ export class RowComponent {
   }
 
   applyAddParameter() {
-    if (common.isUndefined(this.newParameterId)) {
+    if (common.isUndefined(this.newParameterFieldId)) {
       return;
     }
 
@@ -666,7 +660,7 @@ export class RowComponent {
       : [];
 
     let field = this.newParameterModel.fields.find(
-      x => x.id === this.newParameterId
+      x => x.id === this.newParameterFieldId
     );
 
     let newFraction: common.Fraction;
@@ -794,32 +788,9 @@ export class RowComponent {
     }
 
     let newParameter: common.Parameter = {
-      topParId: undefined,
-      parameterId: [this.reportSelectedNode.data.rowId, ...field.id.split('.')]
-        .join('_')
-        .toUpperCase(),
       apply_to: field.id,
-      result: field.result,
-      store: undefined,
-      // store:
-      //   this.newParameterModel.isStoreModel === true
-      //     ? undefined
-      //     : this.newParameterModel.modelId,
-      storeResult: undefined,
-      // storeResult:
-      //   this.newParameterModel.isStoreModel === true ? field.result : undefined,
-      storeFilter: undefined,
-      // storeFilter:
-      //   this.newParameterModel.isStoreModel === true &&
-      //   field.fieldClass === common.FieldClassEnum.Filter
-      //     ? field.id
-      //     : undefined,
-      // conditions:
-      //   this.newParameterModel.isStoreModel === true ? undefined : ['any'],
-      conditions: undefined,
       fractions: [newFraction],
-      listen: undefined,
-      xDeps: undefined
+      listen: undefined
     };
 
     newParameters = [...newParameters, newParameter];

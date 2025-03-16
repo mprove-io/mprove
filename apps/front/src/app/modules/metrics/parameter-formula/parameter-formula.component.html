@@ -22,22 +22,5 @@
     ></m-validation>
   </div>
 
-  <ng-template #templateParameterFormula>
-    <div *ngIf="parameterFilter.isSchemaValid === false">{{
-      parameterFilter.schemaError
-    }}</div>
-  </ng-template>
-
-  <div
-    *ngIf="
-      parameterFilter.isJsonValid === false ||
-      parameterFilter.isSchemaValid === false
-    "
-    class="text-red1 ml-5 mt-1 flex h-8 w-8 flex-shrink-0"
-    [tp]="templateParameterFormula"
-  >
-    <m-exclamation-icon></m-exclamation-icon>
-  </div>
-
   <!-- <div class="flex flex-1"></div> -->
 </div>

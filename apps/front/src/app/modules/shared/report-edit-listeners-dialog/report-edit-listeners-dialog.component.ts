@@ -78,9 +78,8 @@ export class ReportEditListenersDialogComponent implements OnInit {
 
   async ngOnInit() {
     this.report = common.makeCopy(this.ref.data.report) as common.ReportX;
-    this.reportRows = this.report.rows.filter(
-      (row: common.Row) =>
-        row.rowId !== common.GLOBAL_ROW_ID && common.isDefined(row.mconfig)
+    this.reportRows = this.report.rows.filter((row: common.Row) =>
+      common.isDefined(row.mconfig)
     );
 
     let nav: NavState;

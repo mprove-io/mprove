@@ -3,7 +3,6 @@ import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
-import { GLOBAL_ROW_ID } from '~common/_index';
 import { processFilter } from '../special/process-filter';
 
 let func = common.FuncEnum.BuildReportRowParameterFractions;
@@ -29,12 +28,7 @@ export function buildReportRowParameterFractions(
     // let errorsOnStart = item.errors.length;
 
     x.rows
-      .filter(
-        row =>
-          common.isDefined(row.parameters) &&
-          row.row_id !== GLOBAL_ROW_ID &&
-          row.isStore === false
-      )
+      .filter(row => common.isDefined(row.parameters) && row.isStore === false)
       .forEach(row => {
         row.parameters
           .filter(

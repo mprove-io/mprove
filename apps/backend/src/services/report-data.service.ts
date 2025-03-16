@@ -164,19 +164,6 @@ export class ReportDataService {
       .filter(row => common.isDefined(row.parameters))
       .forEach(row => {
         row.parameters.forEach(rowParameter => {
-          if (row.rowId !== common.GLOBAL_ROW_ID) {
-            // console.log('rowParameter');
-            // console.log(rowParameter);
-            if (
-              common.isDefined(
-                rowParameter.fractions && rowParameter.fractions.length > 0
-              )
-            ) {
-              // console.log('rowParameter.fractions[0]');
-              // console.log(rowParameter.fractions[0]);
-            }
-          }
-
           if (common.isDefined(rowParameter.listen)) {
             let reportField = report.fields.find(
               rField => rField.id === rowParameter.listen
@@ -191,7 +178,6 @@ export class ReportDataService {
 
               // rowParameter.conditions = bricks.length > 0 ? bricks : undefined;
 
-              rowParameter.conditions = undefined;
               rowParameter.fractions = reportField.fractions;
             }
           }
@@ -201,9 +187,7 @@ export class ReportDataService {
     report.rows
       .filter(
         row =>
-          row.rowId !== common.GLOBAL_ROW_ID &&
-          common.isDefined(row.parameters) &&
-          common.isDefined(row.metricId)
+          common.isDefined(row.parameters) && common.isDefined(row.metricId)
       )
       .forEach(row => {
         let metric: schemaPostgres.MetricEnt = metrics.find(
@@ -234,19 +218,9 @@ export class ReportDataService {
                   };
 
                   let newParameter: common.Parameter = {
-                    topParId: undefined,
-                    parameterId: [row.rowId, storeFilter.name.split('.')]
-                      .join('_')
-                      .toUpperCase(),
                     apply_to: storeFilter.name,
-                    result: undefined,
-                    store: storeFilter.store,
-                    storeResult: undefined,
-                    storeFilter: storeFilter.name,
-                    conditions: undefined,
                     fractions: [newFraction],
-                    listen: undefined,
-                    xDeps: undefined
+                    listen: undefined
                   };
 
                   row.parameters.push(newParameter);

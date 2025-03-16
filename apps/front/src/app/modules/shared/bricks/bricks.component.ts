@@ -15,19 +15,7 @@ export class BricksComponent {
   listen: { [a: string]: string };
 
   @Input()
-  formulas: { [a: string]: boolean };
-
-  @Input()
   tileTitle: string;
-
-  @Input()
-  showJson?: boolean;
-
-  @Input()
-  onlyJson?: boolean;
-
-  @Input()
-  jsonMaxHeight?: number;
 
   @Input()
   deleteFilterFn: (item: DeleteFilterFnItem) => void;

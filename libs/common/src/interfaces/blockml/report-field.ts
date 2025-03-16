@@ -17,16 +17,28 @@ export class ReportField {
   @IsBoolean()
   hidden: boolean;
 
-  @IsOptional()
-  @IsNumber()
-  maxFractions: number;
-
   @IsString()
   label: string;
 
   @IsOptional()
+  @IsString()
+  description?: string;
+
+  @ValidateNested()
+  @Type(() => Fraction)
+  fractions: Fraction[];
+
+  @IsOptional()
+  @IsNumber()
+  maxFractions: number;
+
+  @IsOptional()
   @IsEnum(enums.FieldResultEnum)
   result: enums.FieldResultEnum;
+
+  @IsOptional()
+  @IsString()
+  suggestModelDimension: string;
 
   @IsOptional()
   @IsString()
@@ -39,16 +51,4 @@ export class ReportField {
   @IsOptional()
   @IsString()
   storeFilter: string;
-
-  @IsOptional()
-  @IsString()
-  suggestModelDimension: string;
-
-  @ValidateNested()
-  @Type(() => Fraction)
-  fractions: Fraction[];
-
-  @IsOptional()
-  @IsString()
-  description?: string;
 }

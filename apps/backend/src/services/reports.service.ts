@@ -85,36 +85,6 @@ export class ReportsService {
       userMember
     } = item;
 
-    let globalRow: common.Row = {
-      rowId: common.GLOBAL_ROW_ID,
-      rowType: common.RowTypeEnum.Global,
-      name: common.GLOBAL_ROW_NAME,
-      topLabel: undefined,
-      partNodeLabel: undefined,
-      partFieldLabel: undefined,
-      partLabel: undefined,
-      timeNodeLabel: undefined,
-      timeFieldLabel: undefined,
-      timeLabel: undefined,
-      metricId: undefined,
-      showChart: false,
-      formula: undefined,
-      rqs: [],
-      query: undefined,
-      mconfig: undefined,
-      hasAccessToModel: false,
-      parameters: [],
-      isCalculateParameters: true,
-      parametersFiltersWithExcludedTime: [],
-      deps: [],
-      xDeps: undefined,
-      formulaDeps: undefined,
-      records: [],
-      formatNumber: undefined,
-      currencyPrefix: undefined,
-      currencySuffix: undefined
-    };
-
     let chart = common.makeCopy(common.DEFAULT_CHART);
     chart.type = common.ChartTypeEnum.Line;
 
@@ -128,7 +98,7 @@ export class ReportsService {
       accessUsers: [],
       title: reportId,
       fields: [],
-      rows: [globalRow],
+      rows: [],
       chart: chart,
       draft: false
     });
