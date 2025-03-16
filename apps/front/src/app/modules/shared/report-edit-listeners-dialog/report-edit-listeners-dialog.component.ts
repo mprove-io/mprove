@@ -142,18 +142,34 @@ export class ReportEditListenersDialogComponent implements OnInit {
               let modelFields: { [a: string]: common.ModelField[] } = {};
 
               (this.report as ReportX2).fields.forEach(reportField => {
-                modelFields[reportField.id] = [
-                  <ModelField>{ id: undefined },
-                  ...model.fields.filter(y =>
-                    common.isUndefined(reportField.store)
-                      ? y.result === reportField.result
-                      : common.isDefined(reportField.storeResult)
-                      ? y.result === reportField.storeResult
-                      : y.fieldClass === common.FieldClassEnum.Filter
-                      ? y.id === reportField.storeFilter
-                      : false
-                  )
-                ];
+                modelFields[reportField.id] = common.isDefined(
+                  reportField.storeResult
+                )
+                  ? [
+                      <ModelField>{ id: undefined },
+                      ...model.fields.filter(
+                        y =>
+                          y.result === reportField.storeResult &&
+                          model.modelId === reportField.store
+                      )
+                    ]
+                  : common.isDefined(reportField.storeFilter)
+                  ? [
+                      <ModelField>{ id: undefined },
+                      ...model.fields.filter(y =>
+                        y.fieldClass === common.FieldClassEnum.Filter
+                          ? y.id === reportField.storeFilter
+                          : false
+                      )
+                    ]
+                  : model.isStoreModel === false
+                  ? [
+                      <ModelField>{ id: undefined },
+                      ...model.fields.filter(
+                        y => y.result === reportField.result
+                      )
+                    ]
+                  : [<ModelField>{ id: undefined }];
 
                 if (common.isUndefined(swap[reportField.id])) {
                   swap[reportField.id] = [undefined];

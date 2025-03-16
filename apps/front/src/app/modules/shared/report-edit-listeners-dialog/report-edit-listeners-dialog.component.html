@@ -44,14 +44,20 @@
           <div class="truncate"> {{ reportField.label }}</div>
         </div>
 
-        <div class="ml-2 flex flex-shrink-0">
+        <div class="ml-3 flex flex-shrink-0">
           <div>
-            ({{
-              reportField.result ??
-                reportField.storeResult ??
-                reportField.storeFilter
-            }})</div
-          >
+            <div *ngIf="!!reportField.result">{{ reportField.result }}</div>
+
+            <div *ngIf="!!reportField.storeResult">
+              <span>{{ reportField.storeResult }}</span>
+              <span class="ml-3">{{ reportField.store }}</span>
+            </div>
+
+            <div *ngIf="!!reportField.storeFilter">
+              <span>{{ reportField.storeFilter }}</span>
+              <span class="ml-3">{{ reportField.store }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
