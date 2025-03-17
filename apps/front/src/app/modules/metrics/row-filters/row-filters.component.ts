@@ -1,11 +1,5 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges
-} from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { IRowNode } from 'ag-grid-community';
 import { STORE_MODEL_PREFIX } from '~common/_index';
 import { DataRow } from '~front/app/interfaces/data-row';
@@ -21,7 +15,7 @@ import { FilterX2 } from '../row/row.component';
   selector: 'm-row-filters',
   templateUrl: './row-filters.component.html'
 })
-export class RowFiltersComponent implements OnChanges {
+export class RowFiltersComponent {
   @Input()
   reportSelectedNode: IRowNode<DataRow>;
 
@@ -34,10 +28,6 @@ export class RowFiltersComponent implements OnChanges {
   @Input()
   report: common.ReportX;
 
-  myForm: FormGroup;
-
-  waitMconfigChangeFilterId: string;
-
   constructor(
     private fb: FormBuilder,
     private reportQuery: ReportQuery,
@@ -46,19 +36,6 @@ export class RowFiltersComponent implements OnChanges {
     private modelsQuery: ModelsQuery,
     private cd: ChangeDetectorRef
   ) {}
-
-  ngOnChanges(changes: SimpleChanges) {
-    // console.log('ngOnChanges');
-    // console.log(changes);
-
-    if (common.isDefined(changes.mconfig)) {
-      this.waitMconfigChangeFilterId = undefined;
-    }
-
-    let opts: any = {};
-    this.parametersFilters.forEach(x => (opts[x.fieldId] = [x.listen]));
-    this.myForm = this.fb.group(opts);
-  }
 
   fractionUpdate(
     filterExtended: common.FilterX,
@@ -391,97 +368,6 @@ export class RowFiltersComponent implements OnChanges {
     });
   }
 
-  toggleListen(pFilter: FilterX2) {
-    // let report = this.reportQuery.getValue();
-    // let newParameters = [...this.reportSelectedNode.data.parameters];
-    // let parameterIndex = this.reportSelectedNode.data.parameters.findIndex(
-    //   x => x.apply_to === pFilter.fieldId
-    // );
-    // let parameter: common.Parameter =
-    //   this.reportSelectedNode.data.parameters.find(
-    //     x => x.apply_to === pFilter.fieldId
-    //   );
-    // let newParameter;
-    // if (common.isDefined(parameter.listen)) {
-    //   let newConditions = parameter.conditions;
-    //   // TODO: check conditions vs fractions
-    //   newParameter = Object.assign({}, parameter, {
-    //     conditions: newConditions,
-    //     listen: undefined
-    //   } as common.Parameter);
-    // } else {
-    //   let firstGlobalField = this.report.fields[0];
-    //   let globalParameterId = [common.GLOBAL_ROW_ID, firstGlobalField.id]
-    //     .join('_')
-    //     .toUpperCase();
-    //   newParameter = Object.assign({}, parameter, {
-    //     conditions: undefined,
-    //     listen: firstGlobalField.id
-    //   } as common.Parameter);
-    // }
-    // newParameters = [
-    //   ...newParameters.slice(0, parameterIndex),
-    //   newParameter,
-    //   ...newParameters.slice(parameterIndex + 1)
-    // ];
-    // let rowChange: common.RowChange = {
-    //   rowId: this.reportSelectedNode.data.rowId,
-    //   parameters: newParameters
-    // };
-    // this.reportService.modifyRows({
-    //   report: report,
-    //   changeType: common.ChangeTypeEnum.EditParameters,
-    //   rowChange: rowChange,
-    //   rowIds: undefined,
-    //   reportFields: report.fields,
-    //   chart: undefined
-    // });
-  }
-
-  listenChange(pFilter: FilterX2) {
-    // console.log('listenChange');
-
-    let newListenValue = this.myForm.controls[pFilter.fieldId].value;
-
-    this.waitMconfigChangeFilterId = pFilter.fieldId;
-
-    let newParameters = [...this.reportSelectedNode.data.parameters];
-
-    let parametersIndex = newParameters.findIndex(
-      p => p.apply_to === pFilter.fieldId
-    );
-
-    let parameter = newParameters[parametersIndex];
-
-    // let reportField = this.report.fields.find(x => x.id === newListenValue);
-
-    let newParameter: common.Parameter = Object.assign({}, parameter, {
-      listen: newListenValue
-    } as common.Parameter);
-
-    newParameters = [
-      ...newParameters.slice(0, parametersIndex),
-      newParameter,
-      ...newParameters.slice(parametersIndex + 1)
-    ];
-
-    let report = this.reportQuery.getValue();
-
-    let rowChange: common.RowChange = {
-      rowId: this.reportSelectedNode.data.rowId,
-      parameters: newParameters
-    };
-
-    this.reportService.modifyRows({
-      report: report,
-      changeType: common.ChangeTypeEnum.EditParameters,
-      rowChange: rowChange,
-      rowIds: undefined,
-      reportFields: report.fields,
-      chart: undefined
-    });
-  }
-
   getModelContent() {
     let metric = this.metricsQuery
       .getValue()
@@ -490,42 +376,5 @@ export class RowFiltersComponent implements OnChanges {
     return this.modelsQuery
       .getValue()
       .models.find(x => x.modelId === metric.modelId)?.content;
-  }
-
-  getRowParameterListenFields(filter: FilterX2) {
-    let field = filter.field as common.ModelField;
-
-    let metric = this.metricsQuery
-      .getValue()
-      .metrics.find(y => y.metricId === this.reportSelectedNode.data.metricId);
-
-    let model = this.modelsQuery
-      .getValue()
-      .models.find(m => m.modelId === metric.modelId);
-
-    let isStore = model?.isStoreModel === true;
-
-    let fields =
-      isStore === true && field.fieldClass === common.FieldClassEnum.Filter
-        ? this.report.fields.filter(
-            reportField =>
-              reportField.store === model.modelId &&
-              reportField.storeFilter === field.id
-          )
-        : isStore === true && field.fieldClass !== common.FieldClassEnum.Filter
-        ? this.report.fields.filter(
-            reportField =>
-              reportField.store === model.modelId &&
-              reportField.storeResult === field.result
-          )
-        : isStore === false
-        ? this.report.fields.filter(
-            reportField =>
-              common.isUndefined(reportField.store) &&
-              reportField.result === field.result
-          )
-        : [];
-
-    return fields;
   }
 }

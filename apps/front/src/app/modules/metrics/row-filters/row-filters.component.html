@@ -24,7 +24,9 @@
         </button>
       </div>
 
-      <div class="mb-5 ml-5 flex flex-col items-start justify-start">
+      <div
+        class="mb-5 ml-5 flex flex-shrink-0 flex-col items-start justify-start"
+      >
         <div class="truncate text-sm font-normal">{{
           filter.field.topLabel | capitalize
         }}</div>
@@ -42,67 +44,20 @@
       </div>
 
       <div
-        tp="Report parameters is empty"
-        [tpIsEnabled]="report.fields.length === 0"
+        *ngIf="!!filter.listen"
+        class="ml-5 mt-2"
+        tp="To edit listeners use Listeners button in table header"
       >
-        <button
-          class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-          [ngClass]="{
-            'text-gray-500 hover:bg-blue-200': report.fields.length > 0,
-            'cursor-default text-gray-400': report.fields.length === 0
-          }"
-          (click)="toggleListen(filter)"
-          [disabled]="report.fields.length === 0"
-        >
-          <m-link-icon
-            [ngClass]="{
-              'text-blue-500': !!filter.listen
-            }"
-          ></m-link-icon>
-        </button>
+        <m-link-icon class="text-gray-500"></m-link-icon>
       </div>
     </div>
 
     <div class="flex w-full flex-col">
       <div
         *ngIf="!!filter.listen"
-        class="mb-6 ml-5 flex w-[300px] flex-grow flex-row"
+        class="mb-6 ml-5 mt-2 flex w-[300px] flex-row"
       >
-        <form [formGroup]="myForm" class="relative flex w-full">
-          <ng-select
-            *ngIf="filter.fieldId === waitMconfigChangeFilterId"
-            class="w-full text-base"
-          ></ng-select>
-
-          <ng-select
-            *ngIf="filter.fieldId !== waitMconfigChangeFilterId"
-            #rowFiltersListenSelect
-            data-cy="rowFiltersListenSelect"
-            class="w-full text-base"
-            [items]="getRowParameterListenFields(filter)"
-            [clearable]="false"
-            [searchable]="false"
-            (change)="listenChange(filter)"
-            (keyup.esc)="
-              $event.stopImmediatePropagation(); rowFiltersListenSelect.blur()
-            "
-            (keyup.enter)="
-              $event.stopImmediatePropagation(); rowFiltersListenSelect.blur()
-            "
-            appendTo="body"
-            bindLabel="label"
-            bindValue="id"
-            formControlName="{{ filter.fieldId }}"
-          >
-            <ng-template ng-label-tmp let-item="item">
-              <div class="truncate">{{ item.label | capitalize }}</div>
-            </ng-template>
-
-            <ng-template ng-option-tmp let-item="item">
-              <div class="truncate">{{ item.label | capitalize }}</div>
-            </ng-template>
-          </ng-select>
-        </form>
+        {{ filter.listen }}
       </div>
 
       <div *ngIf="!filter.listen">
