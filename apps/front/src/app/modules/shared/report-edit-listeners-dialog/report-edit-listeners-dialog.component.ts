@@ -50,6 +50,8 @@ export class ReportEditListenersDialogComponent implements OnInit {
     // this.ref.close();
   }
 
+  rowTypeMetric = common.RowTypeEnum.Metric;
+
   spinnerName = 'reportEditListen';
 
   models: common.Model[];
