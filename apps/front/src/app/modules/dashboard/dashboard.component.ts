@@ -42,6 +42,7 @@ import uFuzzy from '@leeoniya/ufuzzy';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { StructDashboardResolver } from '~front/app/resolvers/struct-dashboard.resolver';
 import { UiService } from '~front/app/services/ui.service';
+import { apiToBackend } from '~front/barrels/api-to-backend';
 
 class LayoutItem {
   id: string;
@@ -433,9 +434,73 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   run() {
     this.startRunButtonTimer();
 
-    this.chartRepComponents.forEach(x => {
-      x.run();
-    });
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
+    let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
+      projectId: nav.projectId,
+      queryIds: this.dashboard.tiles.map(tile => tile.queryId)
+    };
+
+    this.apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let { runningQueries } = resp.payload;
+
+            this.dashboard.tiles = this.dashboard.tiles.map(x => {
+              let newTile = Object.assign({}, x);
+              let query = runningQueries.find(q => q.queryId === x.queryId);
+              newTile.query = query;
+              return newTile;
+            });
+
+            this.chartRepComponents.forEach(x => {
+              x.showSpinner();
+            });
+
+            this.dashboard = Object.assign({}, this.dashboard);
+
+            this.layout = this.dashboard.tiles.map(
+              tile =>
+                <LayoutItem>{
+                  id: tile.title,
+                  x: common.isDefined(tile.plateX)
+                    ? tile.plateX
+                    : common.TILE_DEFAULT_PLATE_X,
+                  y: common.isDefined(tile.plateY)
+                    ? tile.plateY
+                    : common.TILE_DEFAULT_PLATE_Y,
+                  w: common.isDefined(tile.plateWidth)
+                    ? tile.plateWidth
+                    : common.TILE_DEFAULT_PLATE_WIDTH,
+                  h: common.isDefined(tile.plateHeight)
+                    ? tile.plateHeight
+                    : common.TILE_DEFAULT_PLATE_HEIGHT,
+                  tile: tile
+                }
+            );
+
+            this.checkQueries();
+            this.cd.detectChanges();
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   editListeners() {

@@ -90,6 +90,7 @@ export class FractionComponent {
   @Input() metricsStartDateYYYYMMDD: string;
   @Input() metricsEndDateYYYYMMDD: string;
 
+  @Input() isMetricsPage: boolean;
   @Input() isDisabled: boolean;
   @Input() fieldResult: common.FieldResultEnum | string;
 

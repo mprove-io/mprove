@@ -27,7 +27,8 @@
         [i18n]="dateI18n"
         (value-changed)="dateValueChanged($event)"
         [disabled]="
-          isDisabled === true || fractionControl.isMetricsDate === true
+          isDisabled === true ||
+          (isMetricsPage === true && fractionControl.isMetricsDate === true)
         "
       ></vaadin-date-picker>
     </div>

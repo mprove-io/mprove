@@ -12,10 +12,7 @@
         >
         </div>
 
-        <div
-          class="relative flex h-9 w-9 flex-shrink-0"
-          *ngIf="query?.status === queryStatusRunning"
-        ></div>
+        <div class="relative flex h-9 w-9 flex-shrink-0"></div>
 
         <div
           class="text-gray1 flex max-h-[60px] flex-grow cursor-pointer flex-col items-center justify-start hover:text-blue-500"
@@ -28,10 +25,7 @@
           </div>
         </div>
 
-        <div
-          class="relative flex h-9 w-9 flex-shrink-0"
-          *ngIf="query?.status === queryStatusRunning"
-        >
+        <div class="relative flex h-9 w-9 flex-shrink-0">
           <ngx-spinner
             [name]="tile?.title"
             color="rgba(54, 94, 224, 100)"

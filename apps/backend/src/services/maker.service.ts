@@ -235,6 +235,7 @@ export class MakerService {
       serviceAccountCredentials: serviceAccountCredentials,
       googleCloudProject: serviceAccountCredentials?.project_id,
       googleCloudClientEmail: serviceAccountCredentials?.client_email,
+      googleAccessToken: undefined,
       bigqueryQuerySizeLimitGb:
         common.isDefined(bigqueryQuerySizeLimitGb) &&
         bigqueryQuerySizeLimitGb > 0

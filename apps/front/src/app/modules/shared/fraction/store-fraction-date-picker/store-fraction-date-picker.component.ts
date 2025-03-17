@@ -25,6 +25,7 @@ export class StoreFractionDatePickerComponent {
   @Input() fraction: common.Fraction;
   @Input() isFirst: boolean;
   @Input() fractionIndex: number;
+  @Input() isMetricsPage: boolean;
   @Input() isDisabled: boolean;
   @Input() fractionControl: common.FractionControl;
 

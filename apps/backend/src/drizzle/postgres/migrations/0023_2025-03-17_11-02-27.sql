@@ -1,0 +1,1 @@
+ALTER TABLE "connections" ADD COLUMN "google_access_token" varchar;

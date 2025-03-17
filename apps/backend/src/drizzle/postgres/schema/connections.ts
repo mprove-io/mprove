@@ -27,6 +27,7 @@ export const connectionsTable = pgTable(
     serviceAccountCredentials: json('service_account_credentials'),
     googleCloudProject: varchar('google_cloud_project'),
     googleCloudClientEmail: varchar('google_cloud_client_email'),
+    googleAccessToken: varchar('google_access_token'),
     bigqueryQuerySizeLimitGb: integer('bigquery_query_size_limit_gb'),
     account: varchar('account'),
     warehouse: varchar('warehouse'),

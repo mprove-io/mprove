@@ -144,7 +144,12 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
               .pipe(
                 tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
                   if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-                    this.updateQuery(resp.payload.query);
+                    if (
+                      resp.payload.query.status !==
+                      common.QueryStatusEnum.Running
+                    ) {
+                      this.updateQuery(resp.payload.query);
+                    }
                   }
                 })
               );
@@ -183,6 +188,10 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
     this.chartViewComponents.forEach(x => {
       x.chartViewUpdateChart();
     });
+  }
+
+  showSpinner() {
+    this.spinner.show(this.tile.title);
   }
 
   run(event?: MouseEvent) {

@@ -452,6 +452,9 @@ ${inputSub}
   }) {
     let { connection, queryJobId, queryId, projectId } = item;
 
+    // console.log('store runQuery start');
+    // let tsStart = Date.now();
+
     let queryStart = await this.db.drizzle.query.queriesTable.findFirst({
       where: and(
         eq(queriesTable.queryId, queryId),
@@ -459,9 +462,6 @@ ${inputSub}
         eq(queriesTable.projectId, projectId)
       )
     });
-
-    // console.log('queryStart');
-    // console.log(queryStart);
 
     try {
       let body = queryStart.apiBody;
@@ -477,19 +477,7 @@ ${inputSub}
       let response;
 
       if (connection.type === common.ConnectionTypeEnum.GoogleApi) {
-        let googleAccessToken;
-
-        let authClient = new JWT({
-          email: (connection.serviceAccountCredentials as any).client_email,
-          key: (connection.serviceAccountCredentials as any).private_key,
-          scopes: ['https://www.googleapis.com/auth/analytics.readonly'] // TODO: add scopes to connection dialogs
-        });
-
-        let tokens = await authClient.authorize();
-
-        googleAccessToken = tokens.access_token;
-
-        headers['Authorization'] = `Bearer ${googleAccessToken}`;
+        headers['Authorization'] = `Bearer ${connection.googleAccessToken}`;
         headers['Content-Type'] = 'application/json';
       }
 
@@ -499,6 +487,9 @@ ${inputSub}
           : queryStart.apiMethod === common.StoreMethodEnum.Get
           ? await axios.get(url, body, { headers: headers })
           : { message: 'method must be POST or GET' };
+
+      // console.log(Date.now() - tsStart);
+      // console.log('store runquery end');
 
       // console.log('response.data');
       // console.log(response.data);

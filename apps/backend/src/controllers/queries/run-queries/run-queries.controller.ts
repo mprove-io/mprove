@@ -7,6 +7,8 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { and, eq, inArray } from 'drizzle-orm';
+import { forEachSeries } from 'p-iteration';
 import asyncPool from 'tiny-async-pool';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
@@ -14,6 +16,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
@@ -28,6 +31,7 @@ import { SnowFlakeService } from '~backend/services/snowflake.service';
 import { StoreService } from '~backend/services/store.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
+let { JWT } = require('google-auth-library');
 let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
@@ -62,6 +66,66 @@ export class RunQueriesController {
 
     let pSize = 1;
 
+    let queries = await this.queriesService.getQueriesCheckExistSkipSqlData({
+      queryIds: queryIds,
+      projectId: projectId
+    });
+
+    let googleApiConnectionIds = queries
+      .filter(
+        query => query.connectionType === common.ConnectionTypeEnum.GoogleApi
+      )
+      .map(query => query.connectionId);
+
+    // console.log('googleApiConnectionIds');
+    // console.log(googleApiConnectionIds);
+
+    let uniqueGoogleApiConnectionIds = [...new Set(googleApiConnectionIds)];
+
+    // console.log('uniqueGoogleApiConnectionIds');
+    // console.log(uniqueGoogleApiConnectionIds);
+
+    let uniqueGoogleApiConnections =
+      await this.db.drizzle.query.connectionsTable.findMany({
+        where: and(
+          eq(connectionsTable.projectId, projectId),
+          inArray(connectionsTable.connectionId, uniqueGoogleApiConnectionIds)
+        )
+      });
+
+    await forEachSeries(uniqueGoogleApiConnections, async connection => {
+      // console.log('googleApiConnections start');
+      // let tsStart = Date.now();
+
+      let authClient = new JWT({
+        email: (connection.serviceAccountCredentials as any).client_email,
+        key: (connection.serviceAccountCredentials as any).private_key,
+        // TODO: add scopes to connection dialogs
+        scopes: ['https://www.googleapis.com/auth/analytics.readonly']
+      });
+
+      let tokens = await authClient.authorize();
+
+      connection.googleAccessToken = tokens.access_token;
+
+      // console.log(Date.now() - tsStart);
+      // console.log('googleApiConnections end');
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  connections: [connection]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    });
+
     if (common.isDefined(poolSize)) {
       startedQueryIds = queryIds;
       pSize = Number(poolSize);
@@ -72,7 +136,7 @@ export class RunQueriesController {
           queryId: queryId
         });
 
-        let member = await this.membersService.getMemberCheckExists({
+        await this.membersService.getMemberCheckExists({
           projectId: query.projectId,
           memberId: user.userId
         });
@@ -105,13 +169,6 @@ export class RunQueriesController {
               ),
             getRetryOption(this.cs, this.logger)
           );
-
-          // await this.dbService.writeRecords({
-          //   modify: true,
-          //   records: {
-          //     queries: [query]
-          //   }
-          // });
         } else {
           query.status = common.QueryStatusEnum.Running;
           query.queryJobId = common.makeId();
@@ -131,13 +188,6 @@ export class RunQueriesController {
               ),
             getRetryOption(this.cs, this.logger)
           );
-
-          // await this.dbService.writeRecords({
-          //   modify: true,
-          //   records: {
-          //     queries: [query]
-          //   }
-          // });
 
           if (connection.type === common.ConnectionTypeEnum.SnowFlake) {
             await this.snowflakeService.runQuery({
@@ -195,7 +245,7 @@ export class RunQueriesController {
           queryId: queryId
         });
 
-        let member = await this.membersService.getMemberCheckExists({
+        await this.membersService.getMemberCheckExists({
           projectId: query.projectId,
           memberId: user.userId
         });
@@ -229,15 +279,7 @@ export class RunQueriesController {
             getRetryOption(this.cs, this.logger)
           );
 
-          // let records = await this.dbService.writeRecords({
-          //   modify: true,
-          //   records: {
-          //     queries: [query]
-          //   }
-          // });
-
           runningQueries.push(query);
-          // runningQueries.push(records.queries[0]);
         } else {
           query.status = common.QueryStatusEnum.Running;
           query.queryJobId = common.makeId();
@@ -258,15 +300,7 @@ export class RunQueriesController {
             getRetryOption(this.cs, this.logger)
           );
 
-          // let records = await this.dbService.writeRecords({
-          //   modify: true,
-          //   records: {
-          //     queries: [query]
-          //   }
-          // });
-
           runningQueries.push(query);
-          // runningQueries.push(records.queries[0]);
 
           if (connection.type === common.ConnectionTypeEnum.SnowFlake) {
             this.snowflakeService
@@ -334,7 +368,7 @@ export class RunQueriesController {
               common.ConnectionTypeEnum.GoogleApi
             ].indexOf(connection.type) > -1
           ) {
-            await this.storeService
+            this.storeService
               .runQuery({
                 connection: connection,
                 queryId: query.queryId,
