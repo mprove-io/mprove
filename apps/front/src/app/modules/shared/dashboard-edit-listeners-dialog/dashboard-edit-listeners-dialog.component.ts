@@ -137,18 +137,36 @@ export class DashboardEditListenersDialogComponent implements OnInit {
               let modelFields: { [a: string]: common.ModelField[] } = {};
 
               (this.dashboard as DashboardX2).fields.forEach(dashField => {
-                modelFields[dashField.id] = [
-                  <ModelField>{ id: undefined },
-                  ...model.fields.filter(y =>
-                    common.isUndefined(dashField.store)
-                      ? y.result === dashField.result
-                      : common.isDefined(dashField.storeResult)
-                      ? y.result === dashField.storeResult
-                      : y.fieldClass === common.FieldClassEnum.Filter
-                      ? y.id === dashField.storeFilter
-                      : false
-                  )
-                ];
+                modelFields[dashField.id] =
+                  common.isDefined(dashField.storeResult) &&
+                  dashField.store === model.modelId
+                    ? [
+                        <ModelField>{ id: undefined },
+                        ...model.fields.filter(
+                          y =>
+                            y.result === dashField.storeResult &&
+                            model.modelId === dashField.store
+                        )
+                      ]
+                    : common.isDefined(dashField.storeFilter) &&
+                      dashField.store === model.modelId
+                    ? [
+                        <ModelField>{ id: undefined },
+                        ...model.fields.filter(y =>
+                          y.fieldClass === common.FieldClassEnum.Filter
+                            ? y.id === dashField.storeFilter
+                            : false
+                        )
+                      ]
+                    : model.isStoreModel === false &&
+                      common.isUndefined(dashField.store)
+                    ? [
+                        <ModelField>{ id: undefined },
+                        ...model.fields.filter(
+                          y => y.result === dashField.result
+                        )
+                      ]
+                    : [<ModelField>{ id: undefined }];
 
                 if (common.isUndefined(swap[dashField.id])) {
                   swap[dashField.id] = [undefined];

@@ -79,7 +79,7 @@
             #rowFiltersListenSelect
             data-cy="rowFiltersListenSelect"
             class="w-full text-base"
-            [items]="report.fields"
+            [items]="getRowParameterListenFields(filter)"
             [clearable]="false"
             [searchable]="false"
             (change)="listenChange(filter)"

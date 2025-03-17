@@ -27,8 +27,7 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
 
-export interface ParameterFilter extends common.FilterX {
-  formula: string;
+export interface FilterX2 extends common.FilterX {
   listen: string;
 }
 
@@ -106,7 +105,7 @@ export class RowComponent {
   reportSelectedNode: IRowNode<DataRow>;
 
   mconfig: common.MconfigX;
-  parametersFilters: ParameterFilter[] = [];
+  parametersFilters: FilterX2[] = [];
 
   showMetricsChart: boolean;
 
@@ -194,7 +193,7 @@ export class RowComponent {
               return Object.assign({}, filter, {
                 // TODO: parameter?
                 listen: parameter?.listen
-              } as ParameterFilter);
+              } as FilterX2);
             });
       }
 

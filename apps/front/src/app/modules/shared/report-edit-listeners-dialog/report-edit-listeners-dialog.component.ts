@@ -142,34 +142,36 @@ export class ReportEditListenersDialogComponent implements OnInit {
               let modelFields: { [a: string]: common.ModelField[] } = {};
 
               (this.report as ReportX2).fields.forEach(reportField => {
-                modelFields[reportField.id] = common.isDefined(
-                  reportField.storeResult
-                )
-                  ? [
-                      <ModelField>{ id: undefined },
-                      ...model.fields.filter(
-                        y =>
-                          y.result === reportField.storeResult &&
-                          model.modelId === reportField.store
-                      )
-                    ]
-                  : common.isDefined(reportField.storeFilter)
-                  ? [
-                      <ModelField>{ id: undefined },
-                      ...model.fields.filter(y =>
-                        y.fieldClass === common.FieldClassEnum.Filter
-                          ? y.id === reportField.storeFilter
-                          : false
-                      )
-                    ]
-                  : model.isStoreModel === false
-                  ? [
-                      <ModelField>{ id: undefined },
-                      ...model.fields.filter(
-                        y => y.result === reportField.result
-                      )
-                    ]
-                  : [<ModelField>{ id: undefined }];
+                modelFields[reportField.id] =
+                  common.isDefined(reportField.storeResult) &&
+                  reportField.store === model.modelId
+                    ? [
+                        <ModelField>{ id: undefined },
+                        ...model.fields.filter(
+                          y =>
+                            y.result === reportField.storeResult &&
+                            model.modelId === reportField.store
+                        )
+                      ]
+                    : common.isDefined(reportField.storeFilter) &&
+                      reportField.store === model.modelId
+                    ? [
+                        <ModelField>{ id: undefined },
+                        ...model.fields.filter(y =>
+                          y.fieldClass === common.FieldClassEnum.Filter
+                            ? y.id === reportField.storeFilter
+                            : false
+                        )
+                      ]
+                    : model.isStoreModel === false &&
+                      common.isUndefined(reportField.store)
+                    ? [
+                        <ModelField>{ id: undefined },
+                        ...model.fields.filter(
+                          y => y.result === reportField.result
+                        )
+                      ]
+                    : [<ModelField>{ id: undefined }];
 
                 if (common.isUndefined(swap[reportField.id])) {
                   swap[reportField.id] = [undefined];

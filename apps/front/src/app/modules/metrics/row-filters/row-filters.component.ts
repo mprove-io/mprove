@@ -15,7 +15,7 @@ import { ReportQuery } from '~front/app/queries/report.query';
 import { ReportService } from '~front/app/services/report.service';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
-import { ParameterFilter } from '../row/row.component';
+import { FilterX2 } from '../row/row.component';
 
 @Component({
   selector: 'm-row-filters',
@@ -29,7 +29,7 @@ export class RowFiltersComponent implements OnChanges {
   mconfig: common.MconfigX;
 
   @Input()
-  parametersFilters: ParameterFilter[];
+  parametersFilters: FilterX2[];
 
   @Input()
   report: common.ReportX;
@@ -391,7 +391,7 @@ export class RowFiltersComponent implements OnChanges {
     });
   }
 
-  toggleListen(pFilter: ParameterFilter) {
+  toggleListen(pFilter: FilterX2) {
     // let report = this.reportQuery.getValue();
     // let newParameters = [...this.reportSelectedNode.data.parameters];
     // let parameterIndex = this.reportSelectedNode.data.parameters.findIndex(
@@ -438,7 +438,7 @@ export class RowFiltersComponent implements OnChanges {
     // });
   }
 
-  listenChange(pFilter: ParameterFilter) {
+  listenChange(pFilter: FilterX2) {
     // console.log('listenChange');
 
     let newListenValue = this.myForm.controls[pFilter.fieldId].value;
@@ -453,7 +453,7 @@ export class RowFiltersComponent implements OnChanges {
 
     let parameter = newParameters[parametersIndex];
 
-    let reportField = this.report.fields.find(x => x.id === newListenValue);
+    // let reportField = this.report.fields.find(x => x.id === newListenValue);
 
     let newParameter: common.Parameter = Object.assign({}, parameter, {
       listen: newListenValue
@@ -490,5 +490,42 @@ export class RowFiltersComponent implements OnChanges {
     return this.modelsQuery
       .getValue()
       .models.find(x => x.modelId === metric.modelId)?.content;
+  }
+
+  getRowParameterListenFields(filter: FilterX2) {
+    let field = filter.field as common.ModelField;
+
+    let metric = this.metricsQuery
+      .getValue()
+      .metrics.find(y => y.metricId === this.reportSelectedNode.data.metricId);
+
+    let model = this.modelsQuery
+      .getValue()
+      .models.find(m => m.modelId === metric.modelId);
+
+    let isStore = model?.isStoreModel === true;
+
+    let fields =
+      isStore === true && field.fieldClass === common.FieldClassEnum.Filter
+        ? this.report.fields.filter(
+            reportField =>
+              reportField.store === model.modelId &&
+              reportField.storeFilter === field.id
+          )
+        : isStore === true && field.fieldClass !== common.FieldClassEnum.Filter
+        ? this.report.fields.filter(
+            reportField =>
+              reportField.store === model.modelId &&
+              reportField.storeResult === field.result
+          )
+        : isStore === false
+        ? this.report.fields.filter(
+            reportField =>
+              common.isUndefined(reportField.store) &&
+              reportField.result === field.result
+          )
+        : [];
+
+    return fields;
   }
 }
