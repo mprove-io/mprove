@@ -279,10 +279,15 @@ export function checkTileParameters<T extends types.dzType>(
                 item.errors.push(
                   new BmError({
                     title: common.ErTitleEnum.PARAMETER_WRONG_COMBINATION,
-                    message: `found that both parameters "conditions" and "listen" are specified`,
+                    message: `found that both parameters "${common.ParameterEnum.Conditions}" and "${common.ParameterEnum.Listen}" are specified`,
                     lines: [
                       {
-                        line: p.apply_to_line_num,
+                        line: p.listen_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      },
+                      {
+                        line: p.conditions_line_num,
                         name: x.fileName,
                         path: x.filePath
                       }
@@ -437,6 +442,28 @@ export function checkTileParameters<T extends types.dzType>(
                     lines: [
                       {
                         line: p.apply_to_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              }
+
+              if (common.isDefined(p.listen) && common.isDefined(p.fractions)) {
+                item.errors.push(
+                  new BmError({
+                    title: common.ErTitleEnum.PARAMETER_WRONG_COMBINATION_STORE,
+                    message: `found that both parameters "${common.ParameterEnum.Fractions}" and "${common.ParameterEnum.Listen}" are specified`,
+                    lines: [
+                      {
+                        line: p.listen_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      },
+                      {
+                        line: p.fractions_line_num,
                         name: x.fileName,
                         path: x.filePath
                       }

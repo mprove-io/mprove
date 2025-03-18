@@ -1,0 +1,27 @@
+dashboard: d1
+parameters:
+- filter: products_brand
+  store: store_model_s1
+  store_result: string
+  fractions: 
+  - logic: OR
+    type: equal
+    controls:
+    - input: value_input
+      value: abc
+tiles:  
+- title: t1
+  model: store_model_s1
+  select: 
+  - dim1
+  parameters:
+  - apply_to: dim1
+    listen: products_brand
+    fractions:
+    - logic: OR
+      type: equal
+      controls:
+      - input: value_input
+        value: abc
+
+

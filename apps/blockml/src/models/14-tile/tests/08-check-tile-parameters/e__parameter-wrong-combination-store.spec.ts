@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildDashboardTile;
 let func = common.FuncEnum.CheckTileParameters;
-let testId = 'e__parameter-wrong-combination';
+let testId = 'e__parameter-wrong-combination-store';
 
 test('1', async t => {
   let errors: BmError[];
@@ -33,7 +33,7 @@ test('1', async t => {
 
     let connection: common.ProjectConnection = {
       connectionId: 'c1',
-      type: common.ConnectionTypeEnum.PostgreSQL
+      type: common.ConnectionTypeEnum.Api
     };
 
     await structService.rebuildStruct({
@@ -63,7 +63,7 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entDashboards.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.PARAMETER_WRONG_COMBINATION);
-  t.is(errors[0].lines[0].line, 14);
-  t.is(errors[0].lines[1].line, 15);
+  t.is(errors[0].title, common.ErTitleEnum.PARAMETER_WRONG_COMBINATION_STORE);
+  t.is(errors[0].lines[0].line, 19);
+  t.is(errors[0].lines[1].line, 20);
 });

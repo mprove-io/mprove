@@ -1,0 +1,20 @@
+report: r1
+title: t
+parameters:
+- filter: f1
+  result: string
+  conditions:
+  - 'any'
+rows:  
+- row_id: A
+  type: metric
+  metric: m1_orders_mea1_by_orders_created  
+  parameters:
+  - apply_to: orders.dim1
+    listen: f1
+    conditions:
+    - any
+
+
+
+
