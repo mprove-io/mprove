@@ -7,7 +7,7 @@ import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildReport;
-let func = common.FuncEnum.CheckReportRow;
+let func = common.FuncEnum.CheckReportRowParameters;
 let testId = 'e__missing-listen-or-conditions';
 
 test('1', async t => {

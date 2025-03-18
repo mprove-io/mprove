@@ -3,7 +3,6 @@ import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
-import { STORE_MODEL_PREFIX } from '~common/constants/top';
 
 let func = common.FuncEnum.CheckReportRow;
 
@@ -179,64 +178,6 @@ export function checkReportRow(
           })
         );
         return;
-      }
-
-      if (common.isDefined(row.parameters)) {
-        row.parameters.forEach(p => {
-          let pKeysLineNums: number[] = Object.keys(p)
-            .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-            .map(y => p[y as keyof common.FileReportRowParameter] as number);
-
-          if (common.isUndefined(p.apply_to)) {
-            item.errors.push(
-              new BmError({
-                title: common.ErTitleEnum.MISSING_APPLY_TO,
-                message: `parameter "${common.ParameterEnum.ApplyTo}" is required`,
-                lines: [
-                  {
-                    line: Math.min(...pKeysLineNums),
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-
-          let isStore = false;
-
-          if (common.isDefined(row.metric)) {
-            let metric = metrics.find(m => m.metricId === row.metric);
-            isStore = metric?.modelId.startsWith(STORE_MODEL_PREFIX);
-          }
-
-          // TODO: add more store checks
-
-          if (isStore === false) {
-            if (
-              common.isUndefined(p.listen) &&
-              common.isUndefined(p.conditions)
-            ) {
-              item.errors.push(
-                new BmError({
-                  title: common.ErTitleEnum.MISSING_LISTEN_OR_CONDITIONS,
-                  message:
-                    `"${common.ParameterEnum.Listen}" or ` +
-                    `"${common.ParameterEnum.Conditions}" must be specified for a row parameter`,
-                  lines: [
-                    {
-                      line: Math.min(...pKeysLineNums),
-                      name: x.fileName,
-                      path: x.filePath
-                    }
-                  ]
-                })
-              );
-              return;
-            }
-          }
-        });
       }
     });
 
