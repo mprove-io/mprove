@@ -1,0 +1,12 @@
+report: r1
+title: t
+rows:  
+- row_id: A
+  type: metric
+  metric: s1_mea1_by_t1 
+  parameters:
+  - apply_to: unk
+    fractions: []
+
+
+

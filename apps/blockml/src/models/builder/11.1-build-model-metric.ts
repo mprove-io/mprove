@@ -37,6 +37,9 @@ export function buildModelMetric(
     cs
   );
 
+  // console.log('metrics');
+  // console.log(metrics);
+
   return {
     models: models,
     metrics: metrics

@@ -622,6 +622,7 @@ export class RebuildStructService {
         reports: reports,
         metrics: metrics,
         models: models,
+        stores: stores,
         structId: item.structId,
         caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters

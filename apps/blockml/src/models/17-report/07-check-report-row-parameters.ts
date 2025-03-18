@@ -14,13 +14,21 @@ export function checkReportRowParameters(
     reports: common.FileReport[];
     metrics: common.ModelMetric[];
     models: common.FileModel[];
+    stores: common.FileStore[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId, metrics, models, caseSensitiveStringFilters } = item;
+  let {
+    caller,
+    structId,
+    metrics,
+    models,
+    stores,
+    caseSensitiveStringFilters
+  } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newReports: common.FileReport[] = [];
@@ -53,37 +61,60 @@ export function checkReportRowParameters(
             return;
           }
 
+          // let model: common.FileModel;
+          let store;
+
           let isStore = false;
 
-          if (common.isDefined(row.metric)) {
-            let metric = metrics.find(m => m.metricId === row.metric);
-            isStore = metric?.modelId.startsWith(STORE_MODEL_PREFIX);
+          // if (common.isDefined(row.metric)) {
+          let metric = metrics.find(m => m.metricId === row.metric);
+          isStore = metric?.modelId.startsWith(STORE_MODEL_PREFIX);
+          // }
+
+          if (
+            isStore === false &&
+            common.isUndefined(p.listen) &&
+            common.isUndefined(p.conditions)
+          ) {
+            item.errors.push(
+              new BmError({
+                title: common.ErTitleEnum.MISSING_LISTEN_OR_CONDITIONS,
+                message:
+                  `"${common.ParameterEnum.Listen}" or ` +
+                  `"${common.ParameterEnum.Conditions}" must be specified for a row parameter`,
+                lines: [
+                  {
+                    line: Math.min(...pKeysLineNums),
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
           }
 
-          // TODO: add more store checks
-
-          if (isStore === false) {
-            if (
-              common.isUndefined(p.listen) &&
-              common.isUndefined(p.conditions)
-            ) {
-              item.errors.push(
-                new BmError({
-                  title: common.ErTitleEnum.MISSING_LISTEN_OR_CONDITIONS,
-                  message:
-                    `"${common.ParameterEnum.Listen}" or ` +
-                    `"${common.ParameterEnum.Conditions}" must be specified for a row parameter`,
-                  lines: [
-                    {
-                      line: Math.min(...pKeysLineNums),
-                      name: x.fileName,
-                      path: x.filePath
-                    }
-                  ]
-                })
-              );
-              return;
-            }
+          if (
+            isStore === true &&
+            common.isUndefined(p.listen) &&
+            common.isUndefined(p.fractions)
+          ) {
+            item.errors.push(
+              new BmError({
+                title: common.ErTitleEnum.MISSING_LISTEN_OR_FRACTIONS,
+                message:
+                  `"${common.ParameterEnum.Listen}" or ` +
+                  `"${common.ParameterEnum.Conditions}" must be specified for a tile parameter`,
+                lines: [
+                  {
+                    line: Math.min(...pKeysLineNums),
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
           }
         });
 
@@ -135,6 +166,14 @@ export function checkReportRowParameters(
         .forEach(row => {
           let metric = metrics.find(m => m.metricId === row.metric);
           let isStore = metric?.modelId.startsWith(STORE_MODEL_PREFIX);
+
+          let store: common.FileStore;
+
+          if (isStore === true) {
+            store = stores.find(
+              m => `${STORE_MODEL_PREFIX}_${m.name}` === row.model
+            );
+          }
 
           row.parameters
             .filter(p => common.isDefined(p.apply_to))
@@ -362,7 +401,29 @@ export function checkReportRowParameters(
               }
 
               if (isStore === true) {
-                // TODO: check parameters
+                let storeField = store.fields.find(
+                  sField => sField.name === p.apply_to
+                );
+
+                if (common.isUndefined(storeField)) {
+                  item.errors.push(
+                    new BmError({
+                      title:
+                        common.ErTitleEnum.APPLY_TO_REFS_MISSING_STORE_FIELD,
+                      message:
+                        `"${p.apply_to}" references missing or not valid field ` +
+                        `of store "${store.name}" fields section`,
+                      lines: [
+                        {
+                          line: p.apply_to_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
+                }
 
                 p.fractions?.forEach(fraction => {
                   barSpecial.checkStoreFractionControls(

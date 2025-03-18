@@ -9,6 +9,7 @@ export function buildReport(
     reports: common.FileReport[];
     metrics: common.ModelMetric[];
     models: common.FileModel[];
+    stores: common.FileStore[];
     errors: BmError[];
     structId: string;
     caseSensitiveStringFilters: boolean;
@@ -96,6 +97,7 @@ export function buildReport(
       reports: reports,
       metrics: item.metrics,
       models: item.models,
+      stores: item.stores,
       structId: item.structId,
       caseSensitiveStringFilters: item.caseSensitiveStringFilters,
       errors: item.errors,

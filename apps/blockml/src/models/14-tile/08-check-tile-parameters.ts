@@ -158,7 +158,7 @@ export function checkTileParameters<T extends types.dzType>(
         let isStore = tile.model.startsWith(STORE_MODEL_PREFIX);
 
         let model: common.FileModel;
-        let store;
+        let store: common.FileStore;
 
         if (isStore === true) {
           store = stores.find(
@@ -423,7 +423,28 @@ export function checkTileParameters<T extends types.dzType>(
             }
 
             if (isStore === true) {
-              // TODO: check parameters
+              let storeField = store.fields.find(
+                sField => sField.name === p.apply_to
+              );
+
+              if (common.isUndefined(storeField)) {
+                item.errors.push(
+                  new BmError({
+                    title: common.ErTitleEnum.APPLY_TO_REFS_MISSING_STORE_FIELD,
+                    message:
+                      `"${p.apply_to}" references missing or not valid field ` +
+                      `of store "${store.name}" fields section`,
+                    lines: [
+                      {
+                        line: p.apply_to_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              }
 
               p.fractions?.forEach(pf => {
                 barSpecial.checkStoreFractionControls(

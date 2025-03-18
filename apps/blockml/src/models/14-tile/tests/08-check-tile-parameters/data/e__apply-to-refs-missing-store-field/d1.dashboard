@@ -1,0 +1,11 @@
+dashboard: d1
+tiles:  
+- title: t1
+  model: store_model_s1
+  select: 
+  - dim1
+  parameters:
+  - apply_to: unk
+    fractions: []
+
+
