@@ -25,7 +25,7 @@ export function buildReportRowParameterFractions(
   let newReports: common.FileReport[] = [];
 
   item.reports.forEach(x => {
-    // let errorsOnStart = item.errors.length;
+    let errorsOnStart = item.errors.length;
 
     x.rows
       .filter(row => common.isDefined(row.parameters) && row.isStore === false)
@@ -54,7 +54,7 @@ export function buildReportRowParameterFractions(
             // console.log('bricks');
             // console.log(bricks);
 
-            let p = processFilter({
+            let pf = processFilter({
               caseSensitiveStringFilters: caseSensitiveStringFilters,
               filterBricks: bricks,
               result: rowParameter.notStoreApplyToResult,
@@ -62,17 +62,8 @@ export function buildReportRowParameterFractions(
               getTimeRange: false
             });
 
-            if (p.valid !== 1) {
-              // TODO: add error
-              let fractionAny: common.Fraction = {
-                brick: 'any',
-                operator: common.FractionOperatorEnum.Or,
-                type: common.getFractionTypeForAny(
-                  rowParameter.notStoreApplyToResult
-                )
-              };
-
-              fractions = [fractionAny];
+            if (pf.valid === 0) {
+              // checked in 07-check-report-row-parameters
             }
 
             rowParameter.apiFractions = fractions;
@@ -82,9 +73,9 @@ export function buildReportRowParameterFractions(
           });
       });
 
-    // if (errorsOnStart === item.errors.length) {
-    newReports.push(x);
-    // }
+    if (errorsOnStart === item.errors.length) {
+      newReports.push(x);
+    }
   });
 
   helper.log(
