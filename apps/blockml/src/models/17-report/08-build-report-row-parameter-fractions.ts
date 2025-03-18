@@ -46,7 +46,7 @@ export function buildReportRowParameterFractions(
 
             let fractions: common.Fraction[] = [];
 
-            let pf = processFilter({
+            let r = processFilter({
               caseSensitiveStringFilters: caseSensitiveStringFilters,
               filterBricks: bricks,
               result: rowParameter.notStoreApplyToResult,
@@ -54,7 +54,7 @@ export function buildReportRowParameterFractions(
               getTimeRange: false
             });
 
-            if (pf.valid === 0) {
+            if (r.valid === 0) {
               // already checked in 07-check-report-row-parameters
             }
 

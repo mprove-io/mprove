@@ -78,15 +78,14 @@ export function checkReportRowParameters(
         )
         .forEach(row => {
           let metric = metrics.find(m => m.metricId === row.metric);
-          let model = models.find(y => y.name === metric.modelId);
-
-          let isStore = model?.model.startsWith(STORE_MODEL_PREFIX);
+          let isStore = metric?.modelId.startsWith(STORE_MODEL_PREFIX);
 
           row.parameters
             .filter(p => common.isDefined(p.apply_to))
             .forEach(p => {
               if (isStore === false) {
-                // TODO: add more store checks
+                let model = models.find(y => y.name === metric.modelId);
+
                 let reg =
                   common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
                 let r = reg.exec(p.apply_to);
@@ -304,6 +303,26 @@ export function checkReportRowParameters(
                     return;
                   }
                 }
+              }
+
+              if (isStore === true) {
+                // TODO: check parameters
+
+                p.fractions?.forEach(fraction => {
+                  barSpecial.checkStoreFractionControls(
+                    {
+                      skipOptions: true,
+                      controls: fraction.controls,
+                      controlsLineNum: fraction.controls_line_num,
+                      fileName: x.fileName,
+                      filePath: x.filePath,
+                      structId: item.structId,
+                      errors: item.errors,
+                      caller: item.caller
+                    },
+                    cs
+                  );
+                });
               }
             });
         });

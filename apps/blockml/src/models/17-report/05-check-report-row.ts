@@ -204,14 +204,12 @@ export function checkReportRow(
             return;
           }
 
-          let model;
+          let isStore = false;
 
           if (common.isDefined(row.metric)) {
             let metric = metrics.find(m => m.metricId === row.metric);
-            model = models.find(y => y.model === metric.modelId);
+            isStore = metric?.modelId.startsWith(STORE_MODEL_PREFIX);
           }
-
-          let isStore = model?.model.startsWith(STORE_MODEL_PREFIX);
 
           // TODO: add more store checks
 
