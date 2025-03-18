@@ -6,7 +6,12 @@ rows:
   metric: s1_mea1_by_t1 
   parameters:
   - apply_to: unk
-    fractions: []
+    fractions: 
+    - logic: OR
+      type: equal
+      controls:
+      - input: value_input
+        value: abc
 
 
 
