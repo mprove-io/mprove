@@ -1,4 +1,3 @@
-import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { FieldAny } from './field-any';
 import { FileBasic } from './file-basic';
 import { FilePartTile } from './file-part-tile';
@@ -36,5 +35,5 @@ export interface FileDashboard extends FileBasic {
 
   //
 
-  filters?: FilterBricksDictionary;
+  // filters?: FilterBricksDictionary;
 }

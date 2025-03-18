@@ -26,15 +26,17 @@ export function checkVmdrFilterConditions<T extends types.vsmdrType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    x.filters = {};
+    // x.filters = {};
 
     x.fields.forEach(field => {
-      if (field.fieldClass !== common.FieldClassEnum.Filter) {
+      if (
+        field.fieldClass !== common.FieldClassEnum.Filter ||
+        common.isDefined(field.store)
+      ) {
         return;
       }
 
       if (common.isUndefined(field.conditions)) {
-        // TODO: check logic for store
         field.conditions = ['any'];
       }
 
@@ -66,7 +68,7 @@ export function checkVmdrFilterConditions<T extends types.vsmdrType>(
         return;
       }
 
-      x.filters[field.name] = common.makeCopy(field.conditions);
+      // x.filters[field.name] = common.makeCopy(field.conditions);
     });
 
     if (errorsOnStart === item.errors.length) {

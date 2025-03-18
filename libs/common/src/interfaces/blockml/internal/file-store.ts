@@ -1,4 +1,3 @@
-import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { ProjectConnection } from '../project-connection';
 import { FieldAny } from './field-any';
 import { FileBasic } from './file-basic';
@@ -74,5 +73,5 @@ export interface FileStore extends FileBasic {
     };
   };
 
-  filters?: FilterBricksDictionary; // only for types
+  // filters?: FilterBricksDictionary; // only for types
 }

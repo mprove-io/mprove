@@ -1,4 +1,3 @@
-import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { FieldAny } from './field-any';
 import { FileBasic } from './file-basic';
 import { FileChartOptions } from './file-chart-options';
@@ -35,5 +34,5 @@ export interface FileReport extends FileBasic {
     options?: FileChartOptions;
   }[];
 
-  filters?: FilterBricksDictionary;
+  // filters?: FilterBricksDictionary;
 }

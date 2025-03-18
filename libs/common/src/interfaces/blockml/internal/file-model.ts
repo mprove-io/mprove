@@ -1,4 +1,3 @@
-import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { ProjectConnection } from '../project-connection';
 import { FieldAny } from './field-any';
 import { FileBasic } from './file-basic';
@@ -71,7 +70,7 @@ export interface FileModel extends FileBasic {
     };
   };
 
-  filters?: FilterBricksDictionary;
+  // filters?: FilterBricksDictionary;
 
   alwaysJoinUnique?: {
     [as: string]: number;

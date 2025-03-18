@@ -1,4 +1,3 @@
-import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { ProjectConnection } from '../project-connection';
 import { FieldAny } from './field-any';
 import { FileBasic } from './file-basic';
@@ -67,7 +66,7 @@ export interface FileView extends FileBasic {
 
   viewDeps?: string[]; // for web deps graph
 
-  filters?: FilterBricksDictionary;
+  // filters?: FilterBricksDictionary;
 
   derivedTableStart?: string[];
 
