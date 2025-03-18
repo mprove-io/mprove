@@ -51,7 +51,7 @@ export function wrapDashboards(item: {
         storeResult: field.store_result,
         storeFilter: field.store_filter,
         fractions: common.isUndefined(field.store)
-          ? field.fieldFractions
+          ? field.apiFractions
           : field.fractions.map(y => {
               let store = stores.find(
                 s => `${STORE_MODEL_PREFIX}_${s.name}` === field.store

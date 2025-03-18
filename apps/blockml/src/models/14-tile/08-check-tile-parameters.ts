@@ -453,8 +453,8 @@ export function checkTileParameters<T extends types.dzType>(
                 // console.log('dashboardField.fractions');
                 // console.log(dashboardField.fractions);
 
-                // console.log('dashboardField.fieldFractions');
-                // console.log(dashboardField.fieldFractions);
+                // console.log('dashboardField.apiFractions');
+                // console.log(dashboardField.apiFractions);
 
                 p.fractions = dashboardField.fractions;
               }

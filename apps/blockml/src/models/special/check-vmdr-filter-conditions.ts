@@ -40,13 +40,13 @@ export function checkVmdrFilterConditions<T extends types.vsmdrType>(
         field.conditions = ['any'];
       }
 
-      field.fieldFractions = [];
+      field.apiFractions = [];
 
       let p = processFilter({
         caseSensitiveStringFilters: caseSensitiveStringFilters,
         filterBricks: field.conditions,
         result: field.result,
-        fractions: field.fieldFractions
+        fractions: field.apiFractions
       });
 
       if (p.valid === 0) {

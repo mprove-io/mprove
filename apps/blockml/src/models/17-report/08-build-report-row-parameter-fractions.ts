@@ -28,21 +28,16 @@ export function buildReportRowParameterFractions(
     let errorsOnStart = item.errors.length;
 
     x.rows
-      .filter(row => common.isDefined(row.parameters) && row.isStore === false)
+      .filter(row => common.isDefined(row.parameters))
       .forEach(row => {
-        row.parameters
-          .filter(
-            rowParameter =>
-              common.isDefined(rowParameter.conditions) ||
-              common.isDefined(rowParameter.listen)
-          )
-          .forEach(rowParameter => {
-            // console.log('rowParameter');
-            // console.log(rowParameter);
+        row.parameters.forEach(rowParameter => {
+          // console.log('rowParameter');
+          // console.log(rowParameter);
 
-            // console.log('rowParameter.listen');
-            // console.log(rowParameter.listen);
+          // console.log('rowParameter.listen');
+          // console.log(rowParameter.listen);
 
+          if (common.isDefined(rowParameter.conditions)) {
             let bricks = common.isDefined(rowParameter.listen)
               ? x.fields.find(
                   reportField => reportField.name === rowParameter.listen
@@ -50,9 +45,6 @@ export function buildReportRowParameterFractions(
               : rowParameter.conditions;
 
             let fractions: common.Fraction[] = [];
-
-            // console.log('bricks');
-            // console.log(bricks);
 
             let pf = processFilter({
               caseSensitiveStringFilters: caseSensitiveStringFilters,
@@ -63,14 +55,21 @@ export function buildReportRowParameterFractions(
             });
 
             if (pf.valid === 0) {
-              // checked in 07-check-report-row-parameters
+              // already checked in 07-check-report-row-parameters
             }
 
             rowParameter.apiFractions = fractions;
+          }
 
-            // console.log('rowParameter.apiFractions');
-            // console.log(rowParameter.apiFractions);
-          });
+          // same logic already applied on backend
+          // if (common.isDefined(rowParameter.listen)) {
+          //   let reportField = (<common.FileReport>x).fields.find(
+          //     f => f.name === rowParameter.listen
+          //   );
+
+          //   rowParameter.fractions = reportField.apiFractions;
+          // }
+        });
       });
 
     if (errorsOnStart === item.errors.length) {

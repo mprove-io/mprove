@@ -37,10 +37,11 @@ export interface FieldFilter {
   fractions_line_num?: number;
 
   //
+  apiFractions?: Fraction[];
+
   filter?: string;
 
   name?: string;
   name_line_num?: number;
   fieldClass?: enums.FieldClassEnum;
-  fieldFractions?: Fraction[];
 }

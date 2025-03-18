@@ -49,7 +49,7 @@ export function wrapReports(item: {
         storeResult: field.store_result,
         storeFilter: field.store_filter,
         fractions: common.isUndefined(field.store)
-          ? field.fieldFractions
+          ? field.apiFractions
           : field.fractions.map(y => {
               let store = models.find(model => model.modelId === field.store)
                 .content as FileStore;

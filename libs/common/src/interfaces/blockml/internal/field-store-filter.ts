@@ -27,5 +27,5 @@ export interface FieldStoreFilter {
   name_line_num?: number;
 
   fieldClass?: enums.FieldClassEnum;
-  fieldFractions?: Fraction[];
+  apiFractions?: Fraction[];
 }
