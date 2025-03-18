@@ -96,8 +96,6 @@ export function prepareTile(item: {
     });
   }
 
-  // TODO: check tile listen for store
-
   if (
     isForDashboard === true &&
     isDefined(tile) &&
