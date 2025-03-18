@@ -171,6 +171,58 @@ export function checkTileParameters<T extends types.dzType>(
         tile.parameters
           .filter(p => common.isDefined(p.apply_to))
           .forEach(p => {
+            if (
+              common.isDefined(p.listen) &&
+              x.fileExt === common.FileExtensionEnum.Chart
+            ) {
+              item.errors.push(
+                new BmError({
+                  title:
+                    common.ErTitleEnum.CHART_TILE_PARAMETER_CAN_NOT_HAVE_LISTEN,
+                  message:
+                    `${common.FileExtensionEnum.Chart} does not support ` +
+                    `"${common.ParameterEnum.Listen}" parameter for tiles`,
+                  lines: [
+                    {
+                      line: p.listen_line_num,
+                      name: x.fileName,
+                      path: x.filePath
+                    }
+                  ]
+                })
+              );
+              return;
+            }
+
+            let dashboardField;
+
+            if (common.isDefined(p.listen)) {
+              dashboardField = (<common.FileDashboard>x).fields.find(
+                f => f.name === p.listen
+              );
+
+              if (common.isUndefined(dashboardField)) {
+                item.errors.push(
+                  new BmError({
+                    title:
+                      common.ErTitleEnum
+                        .TILE_PARAMETER_LISTENS_TO_MISSING_DASHBOARD_FILTER,
+                    message:
+                      `tile parameter listens dashboard filter "${p.listen}" ` +
+                      'that is missing or not valid',
+                    lines: [
+                      {
+                        line: p.listen_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              }
+            }
+
             let listener;
 
             if (isStore === false) {
@@ -350,53 +402,8 @@ export function checkTileParameters<T extends types.dzType>(
                 }
               }
 
-              if (
-                common.isDefined(p.listen) &&
-                x.fileExt === common.FileExtensionEnum.Chart
-              ) {
-                item.errors.push(
-                  new BmError({
-                    title:
-                      common.ErTitleEnum
-                        .CHART_TILE_PARAMETER_CAN_NOT_HAVE_LISTEN,
-                    message:
-                      `${common.FileExtensionEnum.Chart} does not support ` +
-                      `"${common.ParameterEnum.Listen}" parameter for tiles`,
-                    lines: [
-                      {
-                        line: p.listen_line_num,
-                        name: x.fileName,
-                        path: x.filePath
-                      }
-                    ]
-                  })
-                );
-                return;
-              } else if (common.isDefined(p.listen)) {
-                let dashboardField = (<common.FileDashboard>x).fields.find(
-                  f => f.name === p.listen
-                );
-
-                if (common.isUndefined(dashboardField)) {
-                  item.errors.push(
-                    new BmError({
-                      title:
-                        common.ErTitleEnum
-                          .TILE_PARAMETER_LISTENS_TO_MISSING_DASHBOARD_FILTER,
-                      message:
-                        `tile parameter listens dashboard filter "${p.listen}" ` +
-                        'that is missing or not valid',
-                      lines: [
-                        {
-                          line: p.listen_line_num,
-                          name: x.fileName,
-                          path: x.filePath
-                        }
-                      ]
-                    })
-                  );
-                  return;
-                } else if (dashboardField.result !== pResult) {
+              if (common.isDefined(p.listen)) {
+                if (dashboardField.result !== pResult) {
                   item.errors.push(
                     new BmError({
                       title:
@@ -490,6 +497,59 @@ export function checkTileParameters<T extends types.dzType>(
                 return;
               }
 
+              if (
+                common.isDefined(p.listen) &&
+                common.isDefined(dashboardField.store_filter) &&
+                common.isDefined(storeField) &&
+                (storeField.fieldClass !== common.FieldClassEnum.Filter ||
+                  storeField.name !== dashboardField.store_filter)
+              ) {
+                if (common.isDefined(p.fractions) && p.fractions.length === 0) {
+                  item.errors.push(
+                    new BmError({
+                      title:
+                        common.ErTitleEnum
+                          .APPLY_TO_AND_LISTEN_STORE_FILTER_MISMATCH,
+                      message: `apply_to must reference to the same store filter as it listens to`,
+                      lines: [
+                        {
+                          line: p.apply_to_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
+                }
+              }
+
+              if (
+                common.isDefined(p.listen) &&
+                common.isDefined(dashboardField.store_result) &&
+                common.isDefined(storeField) &&
+                storeField.result !== dashboardField.store_result
+              ) {
+                if (common.isDefined(p.fractions) && p.fractions.length === 0) {
+                  item.errors.push(
+                    new BmError({
+                      title:
+                        common.ErTitleEnum
+                          .APPLY_TO_AND_LISTEN_STORE_RESULT_MISMATCH,
+                      message: `apply_to must reference to a store field with the same result as it listens to`,
+                      lines: [
+                        {
+                          line: p.apply_to_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
+                }
+              }
+
               p.fractions?.forEach(pf => {
                 barSpecial.checkStoreFractionControls(
                   {
@@ -509,10 +569,6 @@ export function checkTileParameters<T extends types.dzType>(
               listener = p.apply_to;
 
               if (common.isDefined(p.listen)) {
-                let dashboardField = (<common.FileDashboard>x).fields.find(
-                  f => f.name === p.listen
-                );
-
                 tile.listen[listener] = dashboardField.name;
 
                 // console.log('dashboardField.fractions');

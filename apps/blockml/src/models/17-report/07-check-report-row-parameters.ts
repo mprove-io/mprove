@@ -178,6 +178,33 @@ export function checkReportRowParameters(
           row.parameters
             .filter(p => common.isDefined(p.apply_to))
             .forEach(p => {
+              let reportField;
+
+              if (common.isDefined(p.listen)) {
+                reportField = x.fields.find(f => f.name === p.listen);
+
+                if (common.isUndefined(reportField)) {
+                  item.errors.push(
+                    new BmError({
+                      title:
+                        common.ErTitleEnum
+                          .ROW_PARAMETER_LISTENS_TO_MISSING_REPORT_FILTER,
+                      message:
+                        `row parameter listens report filter "${p.listen}" ` +
+                        'that is missing or not valid',
+                      lines: [
+                        {
+                          line: p.listen_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
+                }
+              }
+
               if (isStore === false) {
                 let model = models.find(y => y.name === metric.modelId);
 
@@ -361,28 +388,7 @@ export function checkReportRowParameters(
                 }
 
                 if (common.isDefined(p.listen)) {
-                  let reportField = x.fields.find(f => f.name === p.listen);
-
-                  if (common.isUndefined(reportField)) {
-                    item.errors.push(
-                      new BmError({
-                        title:
-                          common.ErTitleEnum
-                            .ROW_PARAMETER_LISTENS_TO_MISSING_REPORT_FILTER,
-                        message:
-                          `row parameter listens report filter "${p.listen}" ` +
-                          'that is missing or not valid',
-                        lines: [
-                          {
-                            line: p.listen_line_num,
-                            name: x.fileName,
-                            path: x.filePath
-                          }
-                        ]
-                      })
-                    );
-                    return;
-                  } else if (reportField.result !== pResult) {
+                  if (reportField.result !== pResult) {
                     item.errors.push(
                       new BmError({
                         title:
@@ -471,6 +477,65 @@ export function checkReportRowParameters(
                     })
                   );
                   return;
+                }
+
+                if (
+                  common.isDefined(p.listen) &&
+                  common.isDefined(reportField.store_filter) &&
+                  common.isDefined(storeField) &&
+                  (storeField.fieldClass !== common.FieldClassEnum.Filter ||
+                    storeField.name !== reportField.store_filter)
+                ) {
+                  if (
+                    common.isDefined(p.fractions) &&
+                    p.fractions.length === 0
+                  ) {
+                    item.errors.push(
+                      new BmError({
+                        title:
+                          common.ErTitleEnum
+                            .APPLY_TO_AND_LISTEN_STORE_FILTER_MISMATCH,
+                        message: `apply_to must reference to the same store filter as it listens to`,
+                        lines: [
+                          {
+                            line: p.apply_to_line_num,
+                            name: x.fileName,
+                            path: x.filePath
+                          }
+                        ]
+                      })
+                    );
+                    return;
+                  }
+                }
+
+                if (
+                  common.isDefined(p.listen) &&
+                  common.isDefined(reportField.store_result) &&
+                  common.isDefined(storeField) &&
+                  storeField.result !== reportField.store_result
+                ) {
+                  if (
+                    common.isDefined(p.fractions) &&
+                    p.fractions.length === 0
+                  ) {
+                    item.errors.push(
+                      new BmError({
+                        title:
+                          common.ErTitleEnum
+                            .APPLY_TO_AND_LISTEN_STORE_RESULT_MISMATCH,
+                        message: `apply_to must reference to a store field with the same result as it listens to`,
+                        lines: [
+                          {
+                            line: p.apply_to_line_num,
+                            name: x.fileName,
+                            path: x.filePath
+                          }
+                        ]
+                      })
+                    );
+                    return;
+                  }
                 }
 
                 p.fractions?.forEach(fraction => {
