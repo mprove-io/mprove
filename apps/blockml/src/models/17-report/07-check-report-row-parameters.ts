@@ -456,6 +456,23 @@ export function checkReportRowParameters(
                   return;
                 }
 
+                if (common.isDefined(p.fractions) && p.fractions.length === 0) {
+                  item.errors.push(
+                    new BmError({
+                      title: common.ErTitleEnum.APPLY_TO_FRACTIONS_IS_EMPTY,
+                      message: `apply_to fractions can not be empty`,
+                      lines: [
+                        {
+                          line: p.fractions_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
+                }
+
                 p.fractions?.forEach(fraction => {
                   barSpecial.checkStoreFractionControls(
                     {
