@@ -3,7 +3,7 @@ export * from './2-gen-sql';
 export * from './build-view-model';
 export * from './check-access';
 export * from './check-model-name';
-export * from './check-store-apply-to-fraction';
+export * from './check-store-fraction';
 export * from './check-store-fraction-control-options';
 export * from './check-store-fraction-controls';
 export * from './check-top-parameters';

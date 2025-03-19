@@ -8,11 +8,11 @@ import { FileFraction } from '~common/_index';
 
 let func = common.FuncEnum.CheckStoreFractionControls;
 
-export function checkStoreApplyToFraction(
+export function checkStoreFraction(
   item: {
-    applyToStoreFilter: common.FieldStoreFilter;
-    applyToStoreResult: string;
-    applyToStoreFractionTypes: common.FileStoreFractionType[];
+    storeFilter: common.FieldStoreFilter;
+    storeResult: string;
+    storeFractionTypes: common.FileStoreFractionType[];
     fractions: common.FileFraction[];
     fractionsLineNum: number;
     fileName: string;
@@ -116,7 +116,7 @@ export function checkStoreApplyToFraction(
         }
 
         if (
-          common.isDefined(item.applyToStoreResult) &&
+          common.isDefined(item.storeResult) &&
           common.isUndefined(fraction.logic)
         ) {
           let fractionLineNums: number[] = Object.keys(fraction)
@@ -140,7 +140,7 @@ export function checkStoreApplyToFraction(
         }
 
         if (
-          common.isDefined(item.applyToStoreFilter) &&
+          common.isDefined(item.storeFilter) &&
           common.isDefined(fraction.logic)
         ) {
           item.errors.push(
@@ -182,7 +182,7 @@ export function checkStoreApplyToFraction(
         }
 
         if (
-          common.isDefined(item.applyToStoreResult) &&
+          common.isDefined(item.storeResult) &&
           common.isUndefined(fraction.type)
         ) {
           let fractionLineNums: number[] = Object.keys(fraction)
@@ -206,7 +206,7 @@ export function checkStoreApplyToFraction(
         }
 
         if (
-          common.isDefined(item.applyToStoreFilter) &&
+          common.isDefined(item.storeFilter) &&
           common.isDefined(fraction.type)
         ) {
           item.errors.push(
@@ -228,7 +228,7 @@ export function checkStoreApplyToFraction(
         }
 
         if (common.isDefined(fraction.type)) {
-          let storeFractionType = item.applyToStoreFractionTypes.find(
+          let storeFractionType = item.storeFractionTypes.find(
             ft => ft.type === fraction.type
           );
 
@@ -236,7 +236,7 @@ export function checkStoreApplyToFraction(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.FRACTION_WRONG_TYPE,
-                message: `${common.ParameterEnum.Type} references missing "${fraction.type}" of store result "${item.applyToStoreResult}"`,
+                message: `${common.ParameterEnum.Type} references missing "${fraction.type}" of store result "${item.storeResult}"`,
                 lines: [
                   {
                     line: fraction.type_line_num,

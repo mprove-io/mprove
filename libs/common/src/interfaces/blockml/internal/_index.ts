@@ -38,6 +38,7 @@ export * from './file-store-field-time-group';
 export * from './file-store-fraction-control';
 export * from './file-store-fraction-control-option';
 export * from './file-store-fraction-type';
+export * from './file-store-result';
 export * from './file-tile-parameter';
 export * from './file-udf';
 export * from './file-view';

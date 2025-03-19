@@ -7,6 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 export function buildDashboard(
   item: {
     dashboards: common.FileDashboard[];
+    stores: common.FileStore[];
     errors: BmError[];
     structId: string;
     caseSensitiveStringFilters: boolean;
@@ -29,6 +30,7 @@ export function buildDashboard(
   dashboards = barDashboard.checkDashboardTopParameters(
     {
       dashboards: dashboards,
+      stores: item.stores,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller

@@ -499,6 +499,7 @@ export class RebuildStructService {
     dashboards = barBuilder.buildDashboard(
       {
         dashboards: dashboards,
+        stores: stores,
         structId: item.structId,
         caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters

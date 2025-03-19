@@ -560,17 +560,17 @@ export function checkTileParameters<T extends types.dzType>(
                   ).fraction_types;
                 }
 
-                barSpecial.checkStoreApplyToFraction(
+                barSpecial.checkStoreFraction(
                   {
-                    applyToStoreFilter:
+                    storeFilter:
                       storeField.fieldClass === common.FieldClassEnum.Filter
                         ? storeField
                         : undefined,
-                    applyToStoreResult:
+                    storeResult:
                       storeField.fieldClass === common.FieldClassEnum.Filter
                         ? undefined
                         : storeField.result,
-                    applyToStoreFractionTypes: applyToStoreFractionTypes,
+                    storeFractionTypes: applyToStoreFractionTypes,
                     fractions: p.fractions,
                     fractionsLineNum: p.fractions_line_num,
                     fileName: x.fileName,

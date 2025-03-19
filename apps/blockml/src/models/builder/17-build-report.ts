@@ -42,6 +42,7 @@ export function buildReport(
   reports = barReport.checkReportTopParameters(
     {
       reports: reports,
+      stores: item.stores,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller

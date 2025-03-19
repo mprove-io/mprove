@@ -10,13 +10,14 @@ let func = common.FuncEnum.CheckDashboardTopParameters;
 export function checkDashboardTopParameters(
   item: {
     dashboards: common.FileDashboard[];
+    stores: common.FileStore[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId } = item;
+  let { caller, structId, stores } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newDashboards: common.FileReport[] = [];
@@ -27,6 +28,7 @@ export function checkDashboardTopParameters(
     barSpecial.checkTopParameters(
       {
         fields: x.fields,
+        stores: stores,
         parametersLineNum: x.parameters_line_num,
         fileName: x.fileName,
         filePath: x.filePath,
