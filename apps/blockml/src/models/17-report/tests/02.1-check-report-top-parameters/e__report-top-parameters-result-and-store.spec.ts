@@ -6,9 +6,9 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildDashboard;
-let func = common.FuncEnum.CheckDashboardTopParameters;
-let testId = 'e__dashboard-top-parameter-result-and-store';
+let caller = common.CallerEnum.BuildReport;
+let func = common.FuncEnum.CheckReportTopParameters;
+let testId = 'e__report-top-parameters-result-and-store';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,7 +63,7 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entReports.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.TOP_PARAMETER_RESULT_AND_STORE);
-  t.is(errors[0].lines[0].line, 4);
-  t.is(errors[0].lines[1].line, 5);
+  t.is(errors[0].title, common.ErTitleEnum.TOP_PARAMETERS_RESULT_AND_STORE);
+  t.is(errors[0].lines[0].line, 5);
+  t.is(errors[0].lines[1].line, 6);
 });

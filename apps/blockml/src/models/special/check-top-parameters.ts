@@ -29,8 +29,8 @@ export function checkTopParameters(
     if (common.isDefined(field.result) && common.isDefined(field.store)) {
       item.errors.push(
         new BmError({
-          title: common.ErTitleEnum.TOP_PARAMETER_RESULT_AND_STORE,
-          message: `top parameter "result" and "store" do not work together`,
+          title: common.ErTitleEnum.TOP_PARAMETERS_RESULT_AND_STORE,
+          message: `top parameters "result" and "store" do not work together`,
           lines: [
             {
               line: field.result_line_num,
