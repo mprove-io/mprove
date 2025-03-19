@@ -283,27 +283,66 @@ export function checkTopParameters(
         }
       }
 
-      if (common.isDefined(field.fractions)) {
-        barSpecial.checkStoreFraction(
-          {
-            storeFilter: common.isDefined(field.store_filter)
-              ? storeFilter
-              : undefined,
-            storeResult: field.store_result,
-            storeFractionTypes: storeResult?.fraction_types,
-            fractions: field.fractions,
-            fractionsLineNum: field.fractions_line_num,
-            fileName: item.fileName,
-            filePath: item.filePath,
-            structId: item.structId,
-            errors: item.errors,
-            caller: item.caller
-          },
-          cs
+      if (common.isUndefined(field.fractions)) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.MISSING_FRACTIONS,
+            message: `fractions parameter is required`,
+            lines: [
+              {
+                line: Math.min(...fieldLineNums),
+                name: item.fileName,
+                path: item.filePath
+              }
+            ]
+          })
         );
+        return;
       }
 
-      field.fractions?.forEach(fraction => {
+      if (
+        common.isDefined(storeFilter?.max_fractions) &&
+        field.fractions.length > Number(storeFilter.max_fractions)
+      ) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.MAX_FRACTIONS_EXCEEDED,
+            message: `fractions length ${
+              field.fractions.length
+            } exceeded store filter max_fractions ${Number(
+              storeFilter.max_fractions
+            )}`,
+            lines: [
+              {
+                line: field.fractions_line_num,
+                name: item.fileName,
+                path: item.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      barSpecial.checkStoreFraction(
+        {
+          storeFilter: common.isDefined(field.store_filter)
+            ? storeFilter
+            : undefined,
+          storeResult: field.store_result,
+          storeFractionTypes: storeResult?.fraction_types,
+          fractions: field.fractions,
+          fractionsLineNum: field.fractions_line_num,
+          fileName: item.fileName,
+          filePath: item.filePath,
+          structId: item.structId,
+          errors: item.errors,
+          caller: item.caller
+        },
+        cs
+      );
+
+      field.fractions.forEach(fraction => {
         barSpecial.checkStoreFractionControls(
           {
             skipOptions: true,
