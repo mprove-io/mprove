@@ -371,3 +371,8 @@ export const STORE_FIELD_DETAIL_VALUES = [
   enums.DetailUnitEnum.Minutes,
   enums.DetailUnitEnum.Timestamps
 ];
+
+export const LOGIC_VALUES = [
+  enums.FractionLogicEnum.Or,
+  enums.FractionLogicEnum.AndNot
+];

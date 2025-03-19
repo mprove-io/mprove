@@ -550,6 +550,39 @@ export function checkTileParameters<T extends types.dzType>(
                 }
               }
 
+              if (common.isDefined(p.fractions)) {
+                let applyToStoreFractionTypes: common.FileStoreFractionType[] =
+                  [];
+
+                if (storeField.fieldClass !== common.FieldClassEnum.Filter) {
+                  applyToStoreFractionTypes = store.results.find(
+                    sResult => sResult.result === storeField.result
+                  ).fraction_types;
+                }
+
+                barSpecial.checkStoreApplyToFraction(
+                  {
+                    applyToStoreFilter:
+                      storeField.fieldClass === common.FieldClassEnum.Filter
+                        ? storeField
+                        : undefined,
+                    applyToStoreResult:
+                      storeField.fieldClass === common.FieldClassEnum.Filter
+                        ? undefined
+                        : storeField.result,
+                    applyToStoreFractionTypes: applyToStoreFractionTypes,
+                    fractions: p.fractions,
+                    fractionsLineNum: p.fractions_line_num,
+                    fileName: x.fileName,
+                    filePath: x.filePath,
+                    structId: item.structId,
+                    errors: item.errors,
+                    caller: item.caller
+                  },
+                  cs
+                );
+              }
+
               p.fractions?.forEach(pf => {
                 barSpecial.checkStoreFractionControls(
                   {

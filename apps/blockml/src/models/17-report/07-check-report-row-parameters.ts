@@ -4,7 +4,7 @@ import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
-import { STORE_MODEL_PREFIX } from '~common/_index';
+import { FileStoreFractionType, STORE_MODEL_PREFIX } from '~common/_index';
 
 let func = common.FuncEnum.CheckReportRowParameters;
 
@@ -536,6 +536,38 @@ export function checkReportRowParameters(
                     );
                     return;
                   }
+                }
+
+                if (common.isDefined(p.fractions)) {
+                  let applyToStoreFractionTypes: FileStoreFractionType[] = [];
+
+                  if (storeField.fieldClass !== common.FieldClassEnum.Filter) {
+                    applyToStoreFractionTypes = store.results.find(
+                      sResult => sResult.result === storeField.result
+                    ).fraction_types;
+                  }
+
+                  barSpecial.checkStoreApplyToFraction(
+                    {
+                      applyToStoreFilter:
+                        storeField.fieldClass === common.FieldClassEnum.Filter
+                          ? storeField
+                          : undefined,
+                      applyToStoreResult:
+                        storeField.fieldClass === common.FieldClassEnum.Filter
+                          ? undefined
+                          : storeField.result,
+                      applyToStoreFractionTypes: applyToStoreFractionTypes,
+                      fractions: p.fractions,
+                      fractionsLineNum: p.fractions_line_num,
+                      fileName: x.fileName,
+                      filePath: x.filePath,
+                      structId: item.structId,
+                      errors: item.errors,
+                      caller: item.caller
+                    },
+                    cs
+                  );
                 }
 
                 p.fractions?.forEach(fraction => {

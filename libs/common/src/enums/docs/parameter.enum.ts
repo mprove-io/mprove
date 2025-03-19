@@ -34,6 +34,7 @@ export enum ParameterEnum {
   Controls = 'controls',
   FractionControls = 'fraction_controls',
   Fractions = 'fractions',
+  Logic = 'logic',
   ApplyTo = 'apply_to',
   FormatNumber = 'format_number',
   Formula = 'formula',
