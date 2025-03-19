@@ -39,6 +39,16 @@ export function buildReport(
     cs
   );
 
+  reports = barReport.checkReportTopParameters(
+    {
+      reports: reports,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   reports = barReport.checkReportFilterConditions(
     {
       reports: reports,

@@ -26,6 +26,16 @@ export function buildDashboard(
     cs
   );
 
+  dashboards = barDashboard.checkDashboardTopParameters(
+    {
+      dashboards: dashboards,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   dashboards = barDashboard.checkDashboardFilterConditions(
     {
       dashboards: dashboards,

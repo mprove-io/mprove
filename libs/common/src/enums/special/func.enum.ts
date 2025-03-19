@@ -117,7 +117,8 @@ export enum FuncEnum {
   CreateModelMetrics = '11.1-model-metric/02-create-model-metrics',
 
   CheckDashboardAccess = '12-dashboard/01-check-dashboard-access',
-  CheckDashboardFilterConditions = '12-dashboard/02-check-dashboard-filter-conditions',
+  CheckDashboardTopParameters = '12-dashboard/02.1-check-dashboard-top-parameters',
+  CheckDashboardFilterConditions = '12-dashboard/02.2-check-dashboard-filter-conditions',
   CheckDashboardTilesExist = '12-dashboard/03-check-dashboard-tiles-exist',
 
   CheckChartAccess = '13-chart/01-check-chart-access',
@@ -143,8 +144,8 @@ export enum FuncEnum {
 
   CheckReport = '17-report/01-check-report',
   CheckReportAccess = '17-report/02-check-report-access',
-  CheckReportFilterConditions = '17-report/02.1-check-report-filter-conditions',
-  MakeReportParameters = '17-report/05.5-make-report-parameters',
+  CheckReportTopParameters = '17-report/02.1-check-report-top-parameters',
+  CheckReportFilterConditions = '17-report/02.2-check-report-filter-conditions',
   CheckReportRowUnknownParameters = '17-report/03-check-report-row-unknown-parameters',
   CheckReportRowUnknownParams = '17-report/04-check-report-row-unknown-params',
   CheckReportRow = '17-report/05-check-report-row',
