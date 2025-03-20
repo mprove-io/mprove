@@ -25,6 +25,8 @@ export function checkTopParameters(
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   item.fields.forEach(field => {
+    let errorsOnStart = item.errors.length;
+
     let fieldLineNums: number[] = Object.keys(field)
       .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
       .map(y => field[y as keyof common.FieldFilter] as number);
@@ -300,6 +302,23 @@ export function checkTopParameters(
         return;
       }
 
+      if (field.fractions.length === 0) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.FRACTIONS_IS_EMPTY,
+            message: `fractions can not be empty`,
+            lines: [
+              {
+                line: field.fractions_line_num,
+                name: item.fileName,
+                path: item.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
       if (
         common.isDefined(storeFilter?.max_fractions) &&
         field.fractions.length > Number(storeFilter.max_fractions)
@@ -356,6 +375,26 @@ export function checkTopParameters(
           },
           cs
         );
+
+        if (errorsOnStart === item.errors.length) {
+          barSpecial.checkStoreFractionControlsUse(
+            {
+              controls: fraction.controls,
+              storeControls: common.isDefined(storeFilter)
+                ? storeFilter.fraction_controls
+                : storeResult.fraction_types.find(
+                    ft => ft.type === fraction.type
+                  ).controls,
+              controlsLineNum: fraction.controls_line_num,
+              fileName: item.fileName,
+              filePath: item.filePath,
+              structId: item.structId,
+              errors: item.errors,
+              caller: item.caller
+            },
+            cs
+          );
+        }
       });
     }
   });

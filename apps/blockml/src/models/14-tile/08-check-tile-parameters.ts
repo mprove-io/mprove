@@ -483,8 +483,8 @@ export function checkTileParameters<T extends types.dzType>(
               if (common.isDefined(p.fractions) && p.fractions.length === 0) {
                 item.errors.push(
                   new BmError({
-                    title: common.ErTitleEnum.APPLY_TO_FRACTIONS_IS_EMPTY,
-                    message: `apply_to fractions can not be empty`,
+                    title: common.ErTitleEnum.FRACTIONS_IS_EMPTY,
+                    message: `fractions can not be empty`,
                     lines: [
                       {
                         line: p.fractions_line_num,
@@ -550,14 +550,38 @@ export function checkTileParameters<T extends types.dzType>(
                 }
               }
 
-              if (common.isDefined(p.fractions)) {
-                let applyToStoreFractionTypes: common.FileStoreFractionType[] =
-                  [];
+              let storeResult: common.FileStoreResult;
 
-                if (storeField.fieldClass !== common.FieldClassEnum.Filter) {
-                  applyToStoreFractionTypes = store.results.find(
-                    sResult => sResult.result === storeField.result
-                  ).fraction_types;
+              if (storeField.fieldClass !== common.FieldClassEnum.Filter) {
+                storeResult = store.results.find(
+                  sResult => sResult.result === storeField.result
+                );
+              }
+
+              if (common.isDefined(p.fractions)) {
+                if (
+                  storeField.fieldClass === common.FieldClassEnum.Filter &&
+                  common.isDefined(storeField.max_fractions) &&
+                  p.fractions.length > Number(storeField.max_fractions)
+                ) {
+                  item.errors.push(
+                    new BmError({
+                      title: common.ErTitleEnum.MAX_FRACTIONS_EXCEEDED,
+                      message: `fractions length ${
+                        p.fractions.length
+                      } exceeded store filter max_fractions ${Number(
+                        storeField.max_fractions
+                      )}`,
+                      lines: [
+                        {
+                          line: p.fractions_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
                 }
 
                 barSpecial.checkStoreFraction(
@@ -570,7 +594,7 @@ export function checkTileParameters<T extends types.dzType>(
                       storeField.fieldClass === common.FieldClassEnum.Filter
                         ? undefined
                         : storeField.result,
-                    storeFractionTypes: applyToStoreFractionTypes,
+                    storeFractionTypes: storeResult?.fraction_types,
                     fractions: p.fractions,
                     fractionsLineNum: p.fractions_line_num,
                     fileName: x.fileName,
@@ -581,23 +605,44 @@ export function checkTileParameters<T extends types.dzType>(
                   },
                   cs
                 );
-              }
 
-              p.fractions?.forEach(pf => {
-                barSpecial.checkStoreFractionControls(
-                  {
-                    skipOptions: true,
-                    controls: pf.controls,
-                    controlsLineNum: pf.controls_line_num,
-                    fileName: x.fileName,
-                    filePath: x.filePath,
-                    structId: item.structId,
-                    errors: item.errors,
-                    caller: item.caller
-                  },
-                  cs
-                );
-              });
+                p.fractions.forEach(fraction => {
+                  barSpecial.checkStoreFractionControls(
+                    {
+                      skipOptions: true,
+                      controls: fraction.controls,
+                      controlsLineNum: fraction.controls_line_num,
+                      fileName: x.fileName,
+                      filePath: x.filePath,
+                      structId: item.structId,
+                      errors: item.errors,
+                      caller: item.caller
+                    },
+                    cs
+                  );
+
+                  if (errorsOnStart === item.errors.length) {
+                    barSpecial.checkStoreFractionControlsUse(
+                      {
+                        controls: fraction.controls,
+                        storeControls:
+                          storeField.fieldClass === common.FieldClassEnum.Filter
+                            ? storeField.fraction_controls
+                            : storeResult.fraction_types.find(
+                                ft => ft.type === fraction.type
+                              ).controls,
+                        controlsLineNum: fraction.controls_line_num,
+                        fileName: x.fileName,
+                        filePath: x.filePath,
+                        structId: item.structId,
+                        errors: item.errors,
+                        caller: item.caller
+                      },
+                      cs
+                    );
+                  }
+                });
+              }
 
               listener = p.apply_to;
 

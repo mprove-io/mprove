@@ -156,6 +156,7 @@ export enum FuncEnum {
   CheckAccess = 'special/check-access',
   CheckVmdrFilterConditions = 'special/check-vmdr-filter-conditions',
   CheckStoreFractionControls = 'special/check-store-fraction-controls',
+  CheckStoreFractionControlsUse = 'special/check-store-fraction-controls-use',
   CheckStoreFractionControlOptions = 'special/check-store-fraction-control-options',
   CheckVmdrSuggestModelDimension = 'special/check-vmdr-suggest-model-dimension',
   CheckModelName = 'special/check-model-name',

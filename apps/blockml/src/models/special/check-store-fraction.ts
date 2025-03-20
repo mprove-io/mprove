@@ -248,6 +248,50 @@ export function checkStoreFraction(
             );
             return;
           }
+
+          if (fraction.controls.length !== storeFractionType.controls.length) {
+            item.errors.push(
+              new BmError({
+                title:
+                  common.ErTitleEnum
+                    .FRACTION_CONTROLS_LENGTH_DOES_NOT_MATCH_STORE_RESULT,
+                message: `fraction controls length must be the same as store result controls length`,
+                lines: [
+                  {
+                    line: fraction.logic_line_num,
+                    name: item.fileName,
+                    path: item.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+        }
+
+        if (
+          common.isDefined(item.storeFilter) &&
+          common.isDefined(
+            fraction.controls.length !==
+              item.storeFilter.fraction_controls.length
+          )
+        ) {
+          item.errors.push(
+            new BmError({
+              title:
+                common.ErTitleEnum
+                  .FRACTION_CONTROLS_LENGTH_DOES_NOT_MATCH_STORE_FILTER,
+              message: `fraction controls length must be the same as store filter fraction_controls length`,
+              lines: [
+                {
+                  line: fraction.logic_line_num,
+                  name: item.fileName,
+                  path: item.filePath
+                }
+              ]
+            })
+          );
+          return;
         }
       });
   });

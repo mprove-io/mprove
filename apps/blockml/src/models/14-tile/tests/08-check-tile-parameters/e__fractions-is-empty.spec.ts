@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildDashboardTile;
 let func = common.FuncEnum.CheckTileParameters;
-let testId = 'e__apply-to-fractions-is-empty';
+let testId = 'e__fractions-is-empty';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,6 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entDashboards.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.APPLY_TO_FRACTIONS_IS_EMPTY);
+  t.is(errors[0].title, common.ErTitleEnum.FRACTIONS_IS_EMPTY);
   t.is(errors[0].lines[0].line, 9);
 });
