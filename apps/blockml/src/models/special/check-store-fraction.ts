@@ -258,7 +258,7 @@ export function checkStoreFraction(
                 message: `fraction controls length must be the same as store result controls length`,
                 lines: [
                   {
-                    line: fraction.logic_line_num,
+                    line: fraction.controls_line_num,
                     name: item.fileName,
                     path: item.filePath
                   }
@@ -271,10 +271,7 @@ export function checkStoreFraction(
 
         if (
           common.isDefined(item.storeFilter) &&
-          common.isDefined(
-            fraction.controls.length !==
-              item.storeFilter.fraction_controls.length
-          )
+          fraction.controls.length !== item.storeFilter.fraction_controls.length
         ) {
           item.errors.push(
             new BmError({
@@ -284,7 +281,7 @@ export function checkStoreFraction(
               message: `fraction controls length must be the same as store filter fraction_controls length`,
               lines: [
                 {
-                  line: fraction.logic_line_num,
+                  line: fraction.controls_line_num,
                   name: item.fileName,
                   path: item.filePath
                 }
