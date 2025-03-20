@@ -7,8 +7,8 @@ import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildReport;
-let func = common.FuncEnum.CheckReportRowParameters;
-let testId = 'e__fractions-is-empty';
+let func = common.FuncEnum.CheckReportTopParameters;
+let testId = 'e__report-missing-fractions';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,6 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entReports.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.FRACTIONS_IS_EMPTY);
-  t.is(errors[0].lines[0].line, 19);
+  t.is(errors[0].title, common.ErTitleEnum.MISSING_FRACTIONS);
+  t.is(errors[0].lines[0].line, 4);
 });

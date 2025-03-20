@@ -483,7 +483,7 @@ export function checkTileParameters<T extends types.dzType>(
               if (common.isDefined(p.fractions) && p.fractions.length === 0) {
                 item.errors.push(
                   new BmError({
-                    title: common.ErTitleEnum.FRACTIONS_IS_EMPTY,
+                    title: common.ErTitleEnum.FRACTIONS_LIST_IS_EMPTY,
                     message: `fractions can not be empty`,
                     lines: [
                       {

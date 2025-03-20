@@ -29,7 +29,8 @@ export function checkTopParameters(
 
     let fieldLineNums: number[] = Object.keys(field)
       .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-      .map(y => field[y as keyof common.FieldFilter] as number);
+      .map(y => field[y as keyof common.FieldFilter] as number)
+      .filter(n => n !== 0);
 
     if (common.isDefined(field.result) && common.isDefined(field.store)) {
       item.errors.push(
@@ -282,7 +283,7 @@ export function checkTopParameters(
       if (field.fractions.length === 0) {
         item.errors.push(
           new BmError({
-            title: common.ErTitleEnum.FRACTIONS_IS_EMPTY,
+            title: common.ErTitleEnum.FRACTIONS_LIST_IS_EMPTY,
             message: `fractions can not be empty`,
             lines: [
               {

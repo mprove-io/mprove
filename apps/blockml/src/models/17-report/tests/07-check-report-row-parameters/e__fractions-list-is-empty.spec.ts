@@ -6,13 +6,13 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildDashboardTile;
-let func = common.FuncEnum.CheckTileParameters;
-let testId = 'e__fractions-is-empty';
+let caller = common.CallerEnum.BuildReport;
+let func = common.FuncEnum.CheckReportRowParameters;
+let testId = 'e__fractions-list-is-empty';
 
 test('1', async t => {
   let errors: BmError[];
-  let entDashboards: common.FileDashboard[];
+  let entReports: common.FileReport[];
 
   let wLogger;
   let configService;
@@ -33,7 +33,7 @@ test('1', async t => {
 
     let connection: common.ProjectConnection = {
       connectionId: 'c1',
-      type: common.ConnectionTypeEnum.Api
+      type: common.ConnectionTypeEnum.GoogleApi
     };
 
     await structService.rebuildStruct({
@@ -47,7 +47,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    entDashboards = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
+    entReports = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -61,8 +61,8 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entDashboards.length, 0);
+  t.is(entReports.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.FRACTIONS_IS_EMPTY);
-  t.is(errors[0].lines[0].line, 9);
+  t.is(errors[0].title, common.ErTitleEnum.FRACTIONS_LIST_IS_EMPTY);
+  t.is(errors[0].lines[0].line, 19);
 });
