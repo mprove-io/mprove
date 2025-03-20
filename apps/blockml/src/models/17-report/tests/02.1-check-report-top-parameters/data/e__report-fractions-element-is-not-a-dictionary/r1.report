@@ -1,0 +1,11 @@
+report: r1
+title: t
+parameters:
+- filter: f1
+  store: store_model_s1
+  store_filter: f1
+  fractions: 
+  - abc
+rows: []
+
+

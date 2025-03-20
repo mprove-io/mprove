@@ -6,7 +6,7 @@ import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 import { FileFraction } from '~common/_index';
 
-let func = common.FuncEnum.CheckStoreFractionControls;
+let func = common.FuncEnum.CheckStoreFraction;
 
 export function checkStoreFraction(
   item: {

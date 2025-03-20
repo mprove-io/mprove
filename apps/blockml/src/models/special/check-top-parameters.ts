@@ -339,30 +339,12 @@ export function checkTopParameters(
         cs
       );
 
-      field.fractions.forEach(fraction => {
-        barSpecial.checkStoreFractionControls(
-          {
-            skipOptions: true,
-            controls: fraction.controls,
-            controlsLineNum: fraction.controls_line_num,
-            fileName: item.fileName,
-            filePath: item.filePath,
-            structId: item.structId,
-            errors: item.errors,
-            caller: item.caller
-          },
-          cs
-        );
-
-        if (errorsOnStart === item.errors.length) {
-          barSpecial.checkStoreFractionControlsUse(
+      if (errorsOnStart === item.errors.length) {
+        field.fractions.forEach(fraction => {
+          barSpecial.checkStoreFractionControls(
             {
+              skipOptions: true,
               controls: fraction.controls,
-              storeControls: common.isDefined(storeFilter)
-                ? storeFilter.fraction_controls
-                : storeResult.fraction_types.find(
-                    ft => ft.type === fraction.type
-                  ).controls,
               controlsLineNum: fraction.controls_line_num,
               fileName: item.fileName,
               filePath: item.filePath,
@@ -372,8 +354,28 @@ export function checkTopParameters(
             },
             cs
           );
-        }
-      });
+
+          if (errorsOnStart === item.errors.length) {
+            barSpecial.checkStoreFractionControlsUse(
+              {
+                controls: fraction.controls,
+                storeControls: common.isDefined(storeFilter)
+                  ? storeFilter.fraction_controls
+                  : storeResult.fraction_types.find(
+                      ft => ft.type === fraction.type
+                    ).controls,
+                controlsLineNum: fraction.controls_line_num,
+                fileName: item.fileName,
+                filePath: item.filePath,
+                structId: item.structId,
+                errors: item.errors,
+                caller: item.caller
+              },
+              cs
+            );
+          }
+        });
+      }
     }
   });
 

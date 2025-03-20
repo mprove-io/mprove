@@ -606,31 +606,12 @@ export function checkTileParameters<T extends types.dzType>(
                   cs
                 );
 
-                p.fractions.forEach(fraction => {
-                  barSpecial.checkStoreFractionControls(
-                    {
-                      skipOptions: true,
-                      controls: fraction.controls,
-                      controlsLineNum: fraction.controls_line_num,
-                      fileName: x.fileName,
-                      filePath: x.filePath,
-                      structId: item.structId,
-                      errors: item.errors,
-                      caller: item.caller
-                    },
-                    cs
-                  );
-
-                  if (errorsOnStart === item.errors.length) {
-                    barSpecial.checkStoreFractionControlsUse(
+                if (errorsOnStart === item.errors.length) {
+                  p.fractions.forEach(fraction => {
+                    barSpecial.checkStoreFractionControls(
                       {
+                        skipOptions: true,
                         controls: fraction.controls,
-                        storeControls:
-                          storeField.fieldClass === common.FieldClassEnum.Filter
-                            ? storeField.fraction_controls
-                            : storeResult.fraction_types.find(
-                                ft => ft.type === fraction.type
-                              ).controls,
                         controlsLineNum: fraction.controls_line_num,
                         fileName: x.fileName,
                         filePath: x.filePath,
@@ -640,8 +621,30 @@ export function checkTileParameters<T extends types.dzType>(
                       },
                       cs
                     );
-                  }
-                });
+
+                    if (errorsOnStart === item.errors.length) {
+                      barSpecial.checkStoreFractionControlsUse(
+                        {
+                          controls: fraction.controls,
+                          storeControls:
+                            storeField.fieldClass ===
+                            common.FieldClassEnum.Filter
+                              ? storeField.fraction_controls
+                              : storeResult.fraction_types.find(
+                                  ft => ft.type === fraction.type
+                                ).controls,
+                          controlsLineNum: fraction.controls_line_num,
+                          fileName: x.fileName,
+                          filePath: x.filePath,
+                          structId: item.structId,
+                          errors: item.errors,
+                          caller: item.caller
+                        },
+                        cs
+                      );
+                    }
+                  });
+                }
               }
 
               listener = p.apply_to;
