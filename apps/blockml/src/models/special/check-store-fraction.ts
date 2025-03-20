@@ -29,6 +29,10 @@ export function checkStoreFraction(
   let errorsOnStart = item.errors.length;
 
   item.fractions.forEach(fraction => {
+    let fractionLineNums: number[] = Object.keys(fraction)
+      .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
+      .map(y => fraction[y as keyof FileFraction] as number);
+
     if (common.isDefined(fraction) && fraction.constructor !== Object) {
       item.errors.push(
         new BmError({
@@ -114,183 +118,190 @@ export function checkStoreFraction(
           );
           return;
         }
-
-        if (
-          common.isDefined(item.storeResult) &&
-          common.isUndefined(fraction.logic)
-        ) {
-          let fractionLineNums: number[] = Object.keys(fraction)
-            .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-            .map(y => fraction[y as keyof FileFraction] as number);
-
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.FRACTION_MISSING_LOGIC,
-              message: `parameter "${common.ParameterEnum.Logic}" must be specified`,
-              lines: [
-                {
-                  line: Math.min(...fractionLineNums),
-                  name: item.fileName,
-                  path: item.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
-
-        if (
-          common.isDefined(item.storeFilter) &&
-          common.isDefined(fraction.logic)
-        ) {
-          item.errors.push(
-            new BmError({
-              title:
-                common.ErTitleEnum
-                  .FRACTION_CAN_NOT_USE_LOGIC_PARAMETER_WITH_STORE_FILTER,
-              message: `parameter "${common.ParameterEnum.Logic}" can not be used with store filter`,
-              lines: [
-                {
-                  line: fraction.logic_line_num,
-                  name: item.fileName,
-                  path: item.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
-
-        if (
-          common.isDefined(fraction.logic) &&
-          common.LOGIC_VALUES.map(v => v.toString()).indexOf(fraction.logic) < 0
-        ) {
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.FRACTION_WRONG_LOGIC,
-              message: `${common.ParameterEnum.Logic} value must be "OR" or "AND_NOT"`,
-              lines: [
-                {
-                  line: fraction.logic_line_num,
-                  name: item.fileName,
-                  path: item.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
-
-        if (
-          common.isDefined(item.storeResult) &&
-          common.isUndefined(fraction.type)
-        ) {
-          let fractionLineNums: number[] = Object.keys(fraction)
-            .filter(y => y.match(common.MyRegex.ENDS_WITH_LINE_NUM()))
-            .map(y => fraction[y as keyof FileFraction] as number);
-
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.FRACTION_MISSING_TYPE,
-              message: `parameter "${common.ParameterEnum.Type}" must be specified`,
-              lines: [
-                {
-                  line: Math.min(...fractionLineNums),
-                  name: item.fileName,
-                  path: item.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
-
-        if (
-          common.isDefined(item.storeFilter) &&
-          common.isDefined(fraction.type)
-        ) {
-          item.errors.push(
-            new BmError({
-              title:
-                common.ErTitleEnum
-                  .FRACTION_CAN_NOT_USE_TYPE_PARAMETER_WITH_STORE_FILTER,
-              message: `parameter "${common.ParameterEnum.Type}" can not be used with store filter`,
-              lines: [
-                {
-                  line: fraction.logic_line_num,
-                  name: item.fileName,
-                  path: item.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
-
-        if (common.isDefined(fraction.type)) {
-          let storeFractionType = item.storeFractionTypes.find(
-            ft => ft.type === fraction.type
-          );
-
-          if (common.isUndefined(storeFractionType)) {
-            item.errors.push(
-              new BmError({
-                title: common.ErTitleEnum.FRACTION_WRONG_TYPE,
-                message: `${common.ParameterEnum.Type} references missing "${fraction.type}" of store result "${item.storeResult}"`,
-                lines: [
-                  {
-                    line: fraction.type_line_num,
-                    name: item.fileName,
-                    path: item.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-
-          if (fraction.controls.length !== storeFractionType.controls.length) {
-            item.errors.push(
-              new BmError({
-                title:
-                  common.ErTitleEnum
-                    .FRACTION_CONTROLS_LENGTH_DOES_NOT_MATCH_STORE_RESULT,
-                message: `fraction controls length must be the same as store result controls length`,
-                lines: [
-                  {
-                    line: fraction.controls_line_num,
-                    name: item.fileName,
-                    path: item.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-        }
-
-        if (
-          common.isDefined(item.storeFilter) &&
-          fraction.controls.length !== item.storeFilter.fraction_controls.length
-        ) {
-          item.errors.push(
-            new BmError({
-              title:
-                common.ErTitleEnum
-                  .FRACTION_CONTROLS_LENGTH_DOES_NOT_MATCH_STORE_FILTER,
-              message: `fraction controls length must be the same as store filter fraction_controls length`,
-              lines: [
-                {
-                  line: fraction.controls_line_num,
-                  name: item.fileName,
-                  path: item.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
       });
+
+    if (
+      common.isDefined(item.storeResult) &&
+      common.isUndefined(fraction.logic)
+    ) {
+      item.errors.push(
+        new BmError({
+          title: common.ErTitleEnum.FRACTION_MISSING_LOGIC,
+          message: `parameter "${common.ParameterEnum.Logic}" must be specified`,
+          lines: [
+            {
+              line: Math.min(...fractionLineNums),
+              name: item.fileName,
+              path: item.filePath
+            }
+          ]
+        })
+      );
+      return;
+    }
+
+    if (
+      common.isDefined(item.storeFilter) &&
+      common.isDefined(fraction.logic)
+    ) {
+      item.errors.push(
+        new BmError({
+          title:
+            common.ErTitleEnum
+              .FRACTION_CAN_NOT_USE_LOGIC_PARAMETER_WITH_STORE_FILTER,
+          message: `parameter "${common.ParameterEnum.Logic}" can not be used with store filter`,
+          lines: [
+            {
+              line: fraction.logic_line_num,
+              name: item.fileName,
+              path: item.filePath
+            }
+          ]
+        })
+      );
+      return;
+    }
+
+    if (
+      common.isDefined(fraction.logic) &&
+      common.LOGIC_VALUES.map(v => v.toString()).indexOf(fraction.logic) < 0
+    ) {
+      item.errors.push(
+        new BmError({
+          title: common.ErTitleEnum.FRACTION_WRONG_LOGIC,
+          message: `${common.ParameterEnum.Logic} value must be "OR" or "AND_NOT"`,
+          lines: [
+            {
+              line: fraction.logic_line_num,
+              name: item.fileName,
+              path: item.filePath
+            }
+          ]
+        })
+      );
+      return;
+    }
+
+    if (
+      common.isDefined(item.storeResult) &&
+      common.isUndefined(fraction.type)
+    ) {
+      item.errors.push(
+        new BmError({
+          title: common.ErTitleEnum.FRACTION_MISSING_TYPE,
+          message: `parameter "${common.ParameterEnum.Type}" must be specified`,
+          lines: [
+            {
+              line: Math.min(...fractionLineNums),
+              name: item.fileName,
+              path: item.filePath
+            }
+          ]
+        })
+      );
+      return;
+    }
+
+    if (
+      common.isDefined(item.storeResult) &&
+      common.isUndefined(fraction.type)
+    ) {
+      item.errors.push(
+        new BmError({
+          title: common.ErTitleEnum.FRACTION_MISSING_TYPE,
+          message: `parameter "${common.ParameterEnum.Type}" must be specified`,
+          lines: [
+            {
+              line: Math.min(...fractionLineNums),
+              name: item.fileName,
+              path: item.filePath
+            }
+          ]
+        })
+      );
+      return;
+    }
+
+    if (common.isUndefined(fraction.controls)) {
+      item.errors.push(
+        new BmError({
+          title: common.ErTitleEnum.FRACTION_MISSING_CONTROLS,
+          message: `parameter "${common.ParameterEnum.Controls}" is required`,
+          lines: [
+            {
+              line: Math.min(...fractionLineNums),
+              name: item.fileName,
+              path: item.filePath
+            }
+          ]
+        })
+      );
+      return;
+    }
+
+    if (common.isDefined(fraction.type)) {
+      let storeFractionType = item.storeFractionTypes.find(
+        ft => ft.type === fraction.type
+      );
+
+      if (common.isUndefined(storeFractionType)) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.FRACTION_WRONG_TYPE,
+            message: `${common.ParameterEnum.Type} references missing "${fraction.type}" of store result "${item.storeResult}"`,
+            lines: [
+              {
+                line: fraction.type_line_num,
+                name: item.fileName,
+                path: item.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      if (fraction.controls.length !== storeFractionType.controls.length) {
+        item.errors.push(
+          new BmError({
+            title:
+              common.ErTitleEnum
+                .FRACTION_CONTROLS_LENGTH_DOES_NOT_MATCH_STORE_RESULT,
+            message: `fraction controls length must be the same as store result controls length`,
+            lines: [
+              {
+                line: fraction.controls_line_num,
+                name: item.fileName,
+                path: item.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+    }
+
+    if (
+      common.isDefined(item.storeFilter) &&
+      fraction.controls.length !== item.storeFilter.fraction_controls.length
+    ) {
+      item.errors.push(
+        new BmError({
+          title:
+            common.ErTitleEnum
+              .FRACTION_CONTROLS_LENGTH_DOES_NOT_MATCH_STORE_FILTER,
+          message: `fraction controls length must be the same as store filter fraction_controls length`,
+          lines: [
+            {
+              line: fraction.controls_line_num,
+              name: item.fileName,
+              path: item.filePath
+            }
+          ]
+        })
+      );
+      return;
+    }
   });
 
   return item.errors;

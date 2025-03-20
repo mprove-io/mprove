@@ -3,10 +3,10 @@ title: t
 parameters:
 - filter: f1
   store: store_model_s1
-  store_filter: f1
+  store_result: string
   fractions: 
-  - unk: a
-    controls: 
+  - type: equal
+    controls:
     - input: value_input
       value: a
 rows: []
