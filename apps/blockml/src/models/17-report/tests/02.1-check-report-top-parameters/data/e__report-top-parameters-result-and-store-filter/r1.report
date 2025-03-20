@@ -1,0 +1,9 @@
+report: r1
+title: t
+parameters:
+- filter: f1
+  result: string
+  store_filter: f1
+rows: []
+
+

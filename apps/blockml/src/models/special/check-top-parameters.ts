@@ -54,29 +54,6 @@ export function checkTopParameters(
     }
 
     if (
-      common.isUndefined(field.result) &&
-      common.isUndefined(field.store_result) &&
-      common.isUndefined(field.store_filter)
-    ) {
-      item.errors.push(
-        new BmError({
-          title:
-            common.ErTitleEnum
-              .TOP_PARAMETERS_RESULT_OR_STORE_RESULT_OR_STORE_FILTER,
-          message: `one of filter parameters ["result", "store_result" or "store_filter"] must be specified`,
-          lines: [
-            {
-              line: Math.min(...fieldLineNums),
-              name: item.fileName,
-              path: item.filePath
-            }
-          ]
-        })
-      );
-      return;
-    }
-
-    if (
       common.isDefined(field.result) &&
       common.isDefined(field.store_filter)
     ) {

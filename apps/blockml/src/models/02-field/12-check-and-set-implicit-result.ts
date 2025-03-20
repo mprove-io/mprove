@@ -64,7 +64,11 @@ export function checkAndSetImplicitResult<T extends types.vsmdrType>(
             }
 
             case common.FieldClassEnum.Filter: {
-              if (common.isUndefined(field.store)) {
+              if (
+                common.isUndefined(field.store) &&
+                common.isUndefined(field.store_filter) &&
+                common.isUndefined(field.store_result)
+              ) {
                 item.errors.push(
                   new BmError({
                     title: common.ErTitleEnum.MISSING_FILTER_RESULT,
