@@ -1,0 +1,20 @@
+store: s1
+connection: c1
+method: POST
+url_path: return '/abc'
+body: return {}
+response: return {}
+parameters:
+- filter: f1
+  max_fractions: 1
+  fraction_controls:
+  - switch: c1
+results: 
+- result: string
+  fraction_types:
+  - type: equal
+    controls: 
+    - input: value_input
+fields:
+- dimension: dim1
+  result: string

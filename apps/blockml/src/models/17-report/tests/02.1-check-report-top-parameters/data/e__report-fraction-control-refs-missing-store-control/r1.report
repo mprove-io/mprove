@@ -1,0 +1,22 @@
+report: r1
+title: t
+parameters:
+- filter: f1
+  store: store_model_s1
+  store_filter: f1
+  fractions: 
+  - controls:
+    - input: unk
+      value: a
+- filter: f2
+  store: store_model_s1
+  store_result: string
+  fractions: 
+  - logic: OR
+    type: equal
+    controls:
+    - input: unk
+      value: a
+rows: []
+
+

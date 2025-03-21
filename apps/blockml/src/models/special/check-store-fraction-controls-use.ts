@@ -28,7 +28,7 @@ export function checkStoreFractionControlsUse(
     if (common.isUndefined(storeControl)) {
       item.errors.push(
         new BmError({
-          title: common.ErTitleEnum.FRACTION_CONTROL_MISSING_STORE_CONTROL,
+          title: common.ErTitleEnum.FRACTION_CONTROL_REFS_MISSING_STORE_CONTROL,
           message: `store control "${control.name}" is missing or not valid`,
           lines: [
             {
@@ -42,9 +42,7 @@ export function checkStoreFractionControlsUse(
       return;
     }
 
-    if (
-      common.isUndefined(storeControl.controlClass !== control.controlClass)
-    ) {
+    if (storeControl.controlClass !== control.controlClass) {
       item.errors.push(
         new BmError({
           title: common.ErTitleEnum.FRACTION_CONTROL_CLASS_MISMATCH,
@@ -62,12 +60,9 @@ export function checkStoreFractionControlsUse(
     }
 
     if (
-      common.isUndefined(
-        control.controlClass === common.ControlClassEnum.Selector &&
-          storeControl.options
-            .map(option => option.value)
-            .indexOf(control.value) < 0
-      )
+      control.controlClass === common.ControlClassEnum.Selector &&
+      storeControl.options.map(option => option.value).indexOf(control.value) <
+        0
     ) {
       item.errors.push(
         new BmError({
@@ -87,10 +82,8 @@ export function checkStoreFractionControlsUse(
     }
 
     if (
-      common.isUndefined(
-        control.controlClass === common.ControlClassEnum.Switch &&
-          !control.value.match(common.MyRegex.TRUE_FALSE())
-      )
+      control.controlClass === common.ControlClassEnum.Switch &&
+      !control.value.match(common.MyRegex.TRUE_FALSE())
     ) {
       item.errors.push(
         new BmError({
