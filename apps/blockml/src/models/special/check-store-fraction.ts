@@ -162,6 +162,25 @@ export function checkStoreFraction(
       return;
     }
 
+    if (common.isDefined(item.storeFilter) && common.isDefined(fraction.type)) {
+      item.errors.push(
+        new BmError({
+          title:
+            common.ErTitleEnum
+              .FRACTION_CAN_NOT_USE_TYPE_PARAMETER_WITH_STORE_FILTER,
+          message: `parameter "${common.ParameterEnum.Type}" can not be used with store filter`,
+          lines: [
+            {
+              line: fraction.type_line_num,
+              name: item.fileName,
+              path: item.filePath
+            }
+          ]
+        })
+      );
+      return;
+    }
+
     if (
       common.isDefined(fraction.logic) &&
       common.LOGIC_VALUES.map(v => v.toString()).indexOf(fraction.logic) < 0
