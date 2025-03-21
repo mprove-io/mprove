@@ -231,7 +231,7 @@
                   <ng-select
                     #requestPartTypeSelect
                     data-cy="requestPartTypeSelect"
-                    class="w-[200px] flex-shrink-0 text-base focus:outline-none"
+                    class="w-[250px] flex-shrink-0 text-base focus:outline-none"
                     [items]="requestPartTypeList"
                     [clearable]="false"
                     [searchable]="false"
@@ -407,10 +407,9 @@
                       *ngIf="
                         mconfig.isStoreModel === true &&
                         [
-                          requestPartTypeEnumBodyStart,
-                          requestPartTypeEnumBodyFunction,
-                          requestPartTypeEnumUrlPathStart,
-                          requestPartTypeEnumUrlPathFunction
+                          requestPartTypeEnumReqTemplate,
+                          requestPartTypeEnumReqFunction,
+                          requestPartTypeEnumReqUrlPath
                         ].indexOf(
                           requestPartTypeForm.controls['requestPartType'].value
                         ) > -1
@@ -422,19 +421,19 @@
                       *ngIf="
                         mconfig.isStoreModel === true &&
                         [
-                          requestPartTypeEnumBody,
-                          requestPartTypeEnumUrlPath
+                          requestPartTypeEnumReqJsonParts,
+                          requestPartTypeEnumReqBody
                         ].indexOf(
                           requestPartTypeForm.controls['requestPartType'].value
                         ) > -1
                       "
                       [jsonContent]="
                         requestPartTypeForm.controls['requestPartType']
-                          .value === requestPartTypeEnumBody
-                          ? mconfig.storePart?.bodyFuncResult
+                          .value === requestPartTypeEnumReqJsonParts
+                          ? mconfig.storePart?.reqJsonParts
                           : requestPartTypeForm.controls['requestPartType']
-                              .value === requestPartTypeEnumUrlPath
-                          ? mconfig.storePart?.urlPathFuncResult
+                              .value === requestPartTypeEnumReqBody
+                          ? mconfig.storePart?.reqBody
                           : undefined
                       "
                     ></m-json-viewer>

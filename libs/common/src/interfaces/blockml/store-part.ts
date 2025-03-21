@@ -2,20 +2,17 @@ import { IsString } from 'class-validator';
 
 export class StorePart {
   @IsString()
-  urlPath: string;
+  reqTemplate: string;
 
   @IsString()
-  urlPathFunc: string;
+  reqFunction: string;
 
   @IsString()
-  urlPathFuncResult: string;
+  reqJsonParts: string;
 
   @IsString()
-  body: string;
+  reqBody: string;
 
   @IsString()
-  bodyFunc: string;
-
-  @IsString()
-  bodyFuncResult: string;
+  reqUrlPath: string;
 }

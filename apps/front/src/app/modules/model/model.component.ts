@@ -88,13 +88,11 @@ export class ModelComponent implements OnInit, OnDestroy {
   chartTypeEnum = common.ChartTypeEnum;
   requestPartTypeEnum = common.RequestPartTypeEnum;
 
-  requestPartTypeEnumBodyStart = common.RequestPartTypeEnum.BodyStart;
-  requestPartTypeEnumBodyFunction = common.RequestPartTypeEnum.BodyFunction;
-  requestPartTypeEnumBody = common.RequestPartTypeEnum.Body;
-  requestPartTypeEnumUrlPathStart = common.RequestPartTypeEnum.UrlPathStart;
-  requestPartTypeEnumUrlPathFunction =
-    common.RequestPartTypeEnum.UrlPathFunction;
-  requestPartTypeEnumUrlPath = common.RequestPartTypeEnum.UrlPath;
+  requestPartTypeEnumReqTemplate = common.RequestPartTypeEnum.ReqTemplate;
+  requestPartTypeEnumReqFunction = common.RequestPartTypeEnum.ReqFunction;
+  requestPartTypeEnumReqJsonParts = common.RequestPartTypeEnum.ReqJsonParts;
+  requestPartTypeEnumReqBody = common.RequestPartTypeEnum.ReqBody;
+  requestPartTypeEnumReqUrlPath = common.RequestPartTypeEnum.ReqUrlPath;
 
   chartTypeEnumTable = common.ChartTypeEnum.Table;
   chartTypeEnumLine = common.ChartTypeEnum.Line;
@@ -325,33 +323,29 @@ export class ModelComponent implements OnInit, OnDestroy {
   });
 
   requestPartTypeForm: FormGroup = this.fb.group({
-    requestPartType: [common.RequestPartTypeEnum.Body]
+    requestPartType: [common.RequestPartTypeEnum.ReqJsonParts]
   });
 
   requestPartTypeList: RequestPartTypeItem[] = [
     {
-      label: 'Url Path Start',
-      value: common.RequestPartTypeEnum.UrlPathStart
+      label: 'Request Template',
+      value: common.RequestPartTypeEnum.ReqTemplate
     },
     {
-      label: 'Url Path Function',
-      value: common.RequestPartTypeEnum.UrlPathFunction
+      label: 'Request Function',
+      value: common.RequestPartTypeEnum.ReqFunction
     },
     {
-      label: 'Url Path',
-      value: common.RequestPartTypeEnum.UrlPath
+      label: 'Request JSON Parts',
+      value: common.RequestPartTypeEnum.ReqJsonParts
     },
     {
-      label: 'Body Start',
-      value: common.RequestPartTypeEnum.BodyStart
+      label: 'Request Body',
+      value: common.RequestPartTypeEnum.ReqBody
     },
     {
-      label: 'Body Function',
-      value: common.RequestPartTypeEnum.BodyFunction
-    },
-    {
-      label: 'Body',
-      value: common.RequestPartTypeEnum.Body
+      label: 'Request Url Path',
+      value: common.RequestPartTypeEnum.ReqUrlPath
     }
   ];
 
@@ -750,31 +744,27 @@ export class ModelComponent implements OnInit, OnDestroy {
 
     if (
       [
-        common.RequestPartTypeEnum.BodyStart,
-        common.RequestPartTypeEnum.BodyFunction,
-        common.RequestPartTypeEnum.UrlPathStart,
-        common.RequestPartTypeEnum.UrlPathFunction
+        common.RequestPartTypeEnum.ReqTemplate,
+        common.RequestPartTypeEnum.ReqFunction,
+        common.RequestPartTypeEnum.ReqUrlPath
       ].indexOf(value) > -1
     ) {
       this.jsContent =
-        value === common.RequestPartTypeEnum.BodyStart
-          ? `// function to make request body (before interpolation)
-${this.mconfig.storePart?.body}`
-          : value === common.RequestPartTypeEnum.BodyFunction
-          ? `// function to make request body (after interpolation)
-${this.mconfig.storePart?.bodyFunc}`
-          : value === common.RequestPartTypeEnum.Body
+        value === common.RequestPartTypeEnum.ReqTemplate
+          ? `// function to make request urlPath and body (before interpolation)
+${this.mconfig.storePart?.reqTemplate}`
+          : value === common.RequestPartTypeEnum.ReqFunction
+          ? `// function to make request urlPath and body (after interpolation)
+${this.mconfig.storePart?.reqFunction}`
+          : value === common.RequestPartTypeEnum.ReqJsonParts
+          ? `// request urlPath and body
+${this.mconfig.storePart?.reqJsonParts}`
+          : value === common.RequestPartTypeEnum.ReqBody
           ? `// request body
-${this.mconfig.storePart?.bodyFuncResult}`
-          : value === common.RequestPartTypeEnum.UrlPathStart
-          ? `// function to make request url path (before interpolation)
-${this.mconfig.storePart?.urlPath}`
-          : value === common.RequestPartTypeEnum.UrlPathFunction
-          ? `// function to make request url path (after interpolation)
-${this.mconfig.storePart?.urlPathFunc}`
-          : value === common.RequestPartTypeEnum.UrlPath
+${this.mconfig.storePart?.reqBody}`
+          : value === common.RequestPartTypeEnum.ReqUrlPath
           ? `// request url path
-${this.mconfig.storePart?.urlPathFuncResult}`
+${this.mconfig.storePart?.reqUrlPath}`
           : undefined;
     }
   }

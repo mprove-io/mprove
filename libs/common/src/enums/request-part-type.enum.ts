@@ -1,8 +1,7 @@
 export enum RequestPartTypeEnum {
-  UrlPathStart = 'UrlPathStart',
-  UrlPathFunction = 'UrlPathFunction',
-  UrlPath = 'UrlPath',
-  BodyStart = 'BodyStart',
-  BodyFunction = 'BodyFunction',
-  Body = 'Body'
+  ReqTemplate = 'ReqTemplate',
+  ReqFunction = 'ReqFunction',
+  ReqJsonParts = 'ReqJsonParts',
+  ReqBody = 'ReqBody',
+  ReqUrlPath = 'ReqUrlPath'
 }

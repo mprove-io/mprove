@@ -100,26 +100,7 @@ export class MconfigsService {
       )
     });
 
-    let processedUrlPath = await this.storeService.transformStoreRequestPart({
-      input: (model.content as common.FileStore).url_path,
-      mconfig: newMconfig,
-      storeModel: model,
-      storeParam: common.ParameterEnum.UrlPath,
-      caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
-      metricsStartDateYYYYMMDD: undefined,
-      metricsEndDateYYYYMMDD: undefined
-    });
-
-    if (common.isDefined(processedUrlPath.errorMessage)) {
-      isError = true;
-      errorMessage = `store url_path processing Error: ${processedUrlPath.errorMessage}`;
-    }
-
-    let apiUrl = common.isDefined(processedUrlPath.errorMessage)
-      ? `store.url_path Error: ${processedUrlPath.errorMessage}`
-      : connection.baseUrl + JSON.parse(processedUrlPath.result);
-
-    let processedBody = await this.storeService.transformStoreRequestPart({
+    let processedRequest = await this.storeService.transformStoreRequestPart({
       input: (model.content as common.FileStore).body,
       mconfig: newMconfig,
       storeModel: model,
@@ -129,20 +110,23 @@ export class MconfigsService {
       metricsEndDateYYYYMMDD: undefined
     });
 
-    if (common.isDefined(processedBody.errorMessage)) {
+    if (common.isDefined(processedRequest.errorMessage)) {
       isError = true;
-      let errorMessagePrefix = common.isDefined(errorMessage)
-        ? `${errorMessage}, `
-        : '';
-      errorMessage = `${errorMessagePrefix}store body processing Error: ${processedBody.errorMessage}`;
+      errorMessage = `store request processing Error: ${processedRequest.errorMessage}`;
     }
 
-    let apiBody = common.isDefined(processedBody.errorMessage)
-      ? `store.body Error: ${processedBody.errorMessage}`
-      : processedBody.result;
+    let apiUrlPath =
+      isError === true
+        ? errorMessage
+        : (JSON.parse(processedRequest.result) as any).urlPath;
 
-    // console.log('apiBody');
-    // console.log(apiBody);
+    let apiUrl =
+      isError === true ? errorMessage : connection.baseUrl + apiUrlPath;
+
+    let apiBody =
+      isError === true
+        ? errorMessage
+        : JSON.parse(processedRequest.result).body;
 
     let queryId = nodeCommon.makeQueryId({
       sql: undefined,
@@ -150,16 +134,12 @@ export class MconfigsService {
       storeModelId: model.modelId,
       storeMethod: (model.content as common.FileStore)
         .method as common.StoreMethodEnum,
-      storeUrlPath: apiUrl,
-      storeBody: apiBody,
+      storeRequestJsonPartsString: processedRequest.result,
       orgId: project.orgId,
       projectId: project.projectId,
       envId: envId,
       connectionId: model.connectionId
     });
-
-    // console.log('queryId');
-    // console.log(queryId);
 
     newQuery = {
       queryId: queryId,
@@ -196,12 +176,11 @@ export class MconfigsService {
     newMconfig.queryId = newQuery.queryId;
     newMconfig.temp = true;
     newMconfig.storePart = {
-      urlPath: (model.content as common.FileStore).url_path,
-      urlPathFunc: processedUrlPath.userCode,
-      urlPathFuncResult: processedUrlPath.result,
-      body: (model.content as common.FileStore).body,
-      bodyFunc: processedBody.userCode,
-      bodyFuncResult: processedBody.result
+      reqTemplate: (model.content as common.FileStore).body,
+      reqFunction: processedRequest.userCode,
+      reqJsonParts: processedRequest.result,
+      reqBody: JSON.stringify(apiBody),
+      reqUrlPath: apiUrlPath
     };
 
     return { isError: isError, newMconfig: newMconfig, newQuery: newQuery };

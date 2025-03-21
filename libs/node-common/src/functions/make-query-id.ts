@@ -7,8 +7,7 @@ export function makeQueryId(item: {
   storeStructId: string;
   storeModelId: string;
   storeMethod: enums.StoreMethodEnum;
-  storeUrlPath: string;
-  storeBody: string;
+  storeRequestJsonPartsString: string;
   orgId: string;
   projectId: string;
   envId: string;
@@ -23,8 +22,7 @@ export function makeQueryId(item: {
     storeStructId,
     storeModelId,
     storeMethod,
-    storeUrlPath,
-    storeBody
+    storeRequestJsonPartsString
   } = item;
 
   let preText = common.isDefined(sql)
@@ -32,8 +30,7 @@ export function makeQueryId(item: {
     : storeStructId +
       storeModelId +
       storeMethod.toString() +
-      storeUrlPath +
-      storeBody;
+      storeRequestJsonPartsString;
 
   let text = preText + orgId + projectId + envId + connectionId;
 

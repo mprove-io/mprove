@@ -5,12 +5,6 @@ description: '...'
 access_users: []
 access_roles: []
 method: POST
-url_path: |
-  let queryParameters = $QUERY_PARAMETERS;
-
-  let propertyId = queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'ga_property')?.value;
-  
-  return `/v1beta/properties/${propertyId}:runReport`;
 body: |
   let storeFields = $STORE_FIELDS;
   let queryOrderBy = $QUERY_ORDER_BY;
@@ -190,7 +184,11 @@ body: |
     offset: undefined // not supported
   }
 
-  return body;
+  let propertyId = queryParameters.find(x => x['fieldId'] === 'top_config')?.fractions[0].controls.find(control => control.name === 'ga_property')?.value;
+  
+  let urlPath = `/v1beta/properties/${propertyId}:runReport`;
+
+  return { urlPath: urlPath, body: body };
 response: |
   let data = $RESPONSE_DATA;
   let storeFields = $STORE_FIELDS;
