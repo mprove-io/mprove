@@ -399,6 +399,11 @@ export function checkReportRowParameters(
                           `listener "${p.apply_to}" result "${pResult}"`,
                         lines: [
                           {
+                            line: p.apply_to_line_num,
+                            name: x.fileName,
+                            path: x.filePath
+                          },
+                          {
                             line: p.listen_line_num,
                             name: x.fileName,
                             path: x.filePath
@@ -486,27 +491,27 @@ export function checkReportRowParameters(
                   (storeField.fieldClass !== common.FieldClassEnum.Filter ||
                     storeField.name !== reportField.store_filter)
                 ) {
-                  if (
-                    common.isDefined(p.fractions) &&
-                    p.fractions.length === 0
-                  ) {
-                    item.errors.push(
-                      new BmError({
-                        title:
-                          common.ErTitleEnum
-                            .APPLY_TO_AND_LISTEN_STORE_FILTER_MISMATCH,
-                        message: `apply_to must reference to the same store filter as it listens to`,
-                        lines: [
-                          {
-                            line: p.apply_to_line_num,
-                            name: x.fileName,
-                            path: x.filePath
-                          }
-                        ]
-                      })
-                    );
-                    return;
-                  }
+                  item.errors.push(
+                    new BmError({
+                      title:
+                        common.ErTitleEnum
+                          .APPLY_TO_AND_LISTEN_STORE_FILTER_MISMATCH,
+                      message: `apply_to must reference to the same store filter as it listens to`,
+                      lines: [
+                        {
+                          line: p.apply_to_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        },
+                        {
+                          line: p.listen_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
                 }
 
                 if (
@@ -515,27 +520,27 @@ export function checkReportRowParameters(
                   common.isDefined(storeField) &&
                   storeField.result !== reportField.store_result
                 ) {
-                  if (
-                    common.isDefined(p.fractions) &&
-                    p.fractions.length === 0
-                  ) {
-                    item.errors.push(
-                      new BmError({
-                        title:
-                          common.ErTitleEnum
-                            .APPLY_TO_AND_LISTEN_STORE_RESULT_MISMATCH,
-                        message: `apply_to must reference to a store field with the same result as it listens to`,
-                        lines: [
-                          {
-                            line: p.apply_to_line_num,
-                            name: x.fileName,
-                            path: x.filePath
-                          }
-                        ]
-                      })
-                    );
-                    return;
-                  }
+                  item.errors.push(
+                    new BmError({
+                      title:
+                        common.ErTitleEnum
+                          .APPLY_TO_AND_LISTEN_STORE_RESULT_MISMATCH,
+                      message: `apply_to must reference to a store field with the same result as it listens to`,
+                      lines: [
+                        {
+                          line: p.apply_to_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        },
+                        {
+                          line: p.listen_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
                 }
 
                 let storeResult: common.FileStoreResult;
