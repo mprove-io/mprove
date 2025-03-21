@@ -84,7 +84,7 @@ export function wrapReports(item: {
                         let optionOr: common.FractionSubTypeOption = {
                           logicGroup: common.FractionLogicEnum.Or,
                           typeValue: ft.type,
-                          value: common.FractionLogicEnum.Or + ft.type,
+                          value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
                           label: ft.label
                         };
                         options.push(optionOr);
@@ -96,7 +96,7 @@ export function wrapReports(item: {
                       ) {
                         let optionAndNot: common.FractionSubTypeOption = {
                           logicGroup: common.FractionLogicEnum.AndNot,
-                          value: common.FractionLogicEnum.AndNot + ft.type,
+                          value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
                           typeValue: ft.type,
                           label: ft.label
                         };
@@ -344,8 +344,7 @@ export function wrapReports(item: {
                                       let optionOr: FractionSubTypeOption = {
                                         logicGroup: common.FractionLogicEnum.Or,
                                         typeValue: ft.type,
-                                        value:
-                                          common.FractionLogicEnum.Or + ft.type,
+                                        value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
                                         label: ft.label
                                       };
                                       options.push(optionOr);
@@ -361,9 +360,7 @@ export function wrapReports(item: {
                                         {
                                           logicGroup:
                                             common.FractionLogicEnum.AndNot,
-                                          value:
-                                            common.FractionLogicEnum.AndNot +
-                                            ft.type,
+                                          value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
                                           typeValue: ft.type,
                                           label: ft.label
                                         };
