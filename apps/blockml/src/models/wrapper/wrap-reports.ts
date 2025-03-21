@@ -77,31 +77,21 @@ export function wrapReports(item: {
                     .fraction_types.map(ft => {
                       let options = [];
 
-                      if (
-                        common.isUndefined(ft.or) ||
-                        toBooleanFromLowercaseString(ft.or) === true
-                      ) {
-                        let optionOr: common.FractionSubTypeOption = {
-                          logicGroup: common.FractionLogicEnum.Or,
-                          typeValue: ft.type,
-                          value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
-                          label: ft.label
-                        };
-                        options.push(optionOr);
-                      }
+                      let optionOr: common.FractionSubTypeOption = {
+                        logicGroup: common.FractionLogicEnum.Or,
+                        typeValue: ft.type,
+                        value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                        label: ft.label
+                      };
+                      options.push(optionOr);
 
-                      if (
-                        common.isUndefined(ft.and_not) ||
-                        toBooleanFromLowercaseString(ft.and_not) === true
-                      ) {
-                        let optionAndNot: common.FractionSubTypeOption = {
-                          logicGroup: common.FractionLogicEnum.AndNot,
-                          value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
-                          typeValue: ft.type,
-                          label: ft.label
-                        };
-                        options.push(optionAndNot);
-                      }
+                      let optionAndNot: common.FractionSubTypeOption = {
+                        logicGroup: common.FractionLogicEnum.AndNot,
+                        value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                        typeValue: ft.type,
+                        label: ft.label
+                      };
+                      options.push(optionAndNot);
 
                       return options;
                     })
@@ -336,36 +326,22 @@ export function wrapReports(item: {
                                   .fraction_types.map(ft => {
                                     let options = [];
 
-                                    if (
-                                      common.isUndefined(ft.or) ||
-                                      toBooleanFromLowercaseString(ft.or) ===
-                                        true
-                                    ) {
-                                      let optionOr: FractionSubTypeOption = {
-                                        logicGroup: common.FractionLogicEnum.Or,
-                                        typeValue: ft.type,
-                                        value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
-                                        label: ft.label
-                                      };
-                                      options.push(optionOr);
-                                    }
+                                    let optionOr: FractionSubTypeOption = {
+                                      logicGroup: common.FractionLogicEnum.Or,
+                                      typeValue: ft.type,
+                                      value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                                      label: ft.label
+                                    };
+                                    options.push(optionOr);
 
-                                    if (
-                                      common.isUndefined(ft.and_not) ||
-                                      toBooleanFromLowercaseString(
-                                        ft.and_not
-                                      ) === true
-                                    ) {
-                                      let optionAndNot: FractionSubTypeOption =
-                                        {
-                                          logicGroup:
-                                            common.FractionLogicEnum.AndNot,
-                                          value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
-                                          typeValue: ft.type,
-                                          label: ft.label
-                                        };
-                                      options.push(optionAndNot);
-                                    }
+                                    let optionAndNot: FractionSubTypeOption = {
+                                      logicGroup:
+                                        common.FractionLogicEnum.AndNot,
+                                      value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                                      typeValue: ft.type,
+                                      label: ft.label
+                                    };
+                                    options.push(optionAndNot);
 
                                     return options;
                                   })

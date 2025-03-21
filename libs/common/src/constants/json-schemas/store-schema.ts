@@ -17,7 +17,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
     'fields'
   ],
   properties: {
-    store_model: {
+    store: {
       type: 'string'
     },
     connection: {
@@ -101,12 +101,6 @@ export const STORE_SCHEMA: JSONSchema7 = {
                 },
                 label: {
                   type: 'string'
-                },
-                or: {
-                  type: 'boolean'
-                },
-                and_not: {
-                  type: 'boolean'
                 },
                 meta: {},
                 controls: {

@@ -8,12 +8,6 @@ export interface FileStoreFractionType {
   label?: string;
   label_line_num?: number;
 
-  or?: string;
-  or_line_num?: number;
-
-  and_not?: string;
-  and_not_line_num?: number;
-
   meta?: any;
   meta_line_num?: any;
 

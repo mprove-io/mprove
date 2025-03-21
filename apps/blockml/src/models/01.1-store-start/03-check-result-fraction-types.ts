@@ -58,8 +58,6 @@ export function checkResultFractionTypes(
               [
                 common.ParameterEnum.Type.toString(),
                 common.ParameterEnum.Label.toString(),
-                common.ParameterEnum.Or.toString(),
-                common.ParameterEnum.AndNot.toString(),
                 common.ParameterEnum.Meta.toString(),
                 common.ParameterEnum.Controls.toString()
               ].indexOf(parameter) < 0
@@ -166,46 +164,6 @@ export function checkResultFractionTypes(
                 lines: [
                   {
                     line: Math.min(...fractionTypeElementKeyLineNums),
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-
-          if (
-            common.isDefined(fractionTypesElement.or) &&
-            !fractionTypesElement.or.match(common.MyRegex.TRUE_FALSE())
-          ) {
-            item.errors.push(
-              new BmError({
-                title: common.ErTitleEnum.WRONG_OR,
-                message: `parameter "${common.ParameterEnum.Or}" must be 'true' or 'false' if specified`,
-                lines: [
-                  {
-                    line: fractionTypesElement.or_line_num,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-
-          if (
-            common.isDefined(fractionTypesElement.and_not) &&
-            !fractionTypesElement.and_not.match(common.MyRegex.TRUE_FALSE())
-          ) {
-            item.errors.push(
-              new BmError({
-                title: common.ErTitleEnum.WRONG_AND_NOT,
-                message: `parameter "${common.ParameterEnum.AndNot}" must be 'true' or 'false' if specified`,
-                lines: [
-                  {
-                    line: fractionTypesElement.and_not_line_num,
                     name: x.fileName,
                     path: x.filePath
                   }

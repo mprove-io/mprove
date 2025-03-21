@@ -302,8 +302,6 @@ results:
   fraction_types:
   - type: equal
     label: Equal
-    or: true
-    and_not: true
     meta: 
       operation: EQUAL
       filter_type: numericFilter
@@ -311,8 +309,6 @@ results:
     - input: value_input
 
   - type: less_than
-    or: true
-    and_not: false
     meta: 
       operation: LESS_THAN
       filter_type: numericFilter
@@ -320,7 +316,6 @@ results:
     - input: value_input
 
   - type: less_than_or_equal
-    and_not: false
     meta: 
       operation: LESS_THAN_OR_EQUAL
       filter_type: numericFilter
@@ -328,7 +323,6 @@ results:
     - input: value_input
 
   - type: greater_than
-    and_not: false
     meta: 
       operation: GREATER_THAN
       filter_type: numericFilter
@@ -336,7 +330,6 @@ results:
     - input: value_input
 
   - type: greater_than_or_equal
-    and_not: false
     meta: 
       operation: GREATER_THAN_OR_EQUAL
       filter_type: numericFilter

@@ -13,11 +13,7 @@ import {
 } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-import {
-  FractionSubTypeOption,
-  ModelNode,
-  toBooleanFromLowercaseString
-} from '~common/_index';
+import { FractionSubTypeOption, ModelNode } from '~common/_index';
 import { ModelQuery, ModelState } from '~front/app/queries/model.query';
 import { MqQuery } from '~front/app/queries/mq.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -281,10 +277,7 @@ export class ModelTreeComponent implements AfterViewInit {
 
         let logicGroup = common.isUndefined(storeResultFraction)
           ? undefined
-          : common.isUndefined(storeResultFraction.or) ||
-            toBooleanFromLowercaseString(storeResultFraction.or) === true
-          ? common.FractionLogicEnum.Or
-          : common.FractionLogicEnum.AndNot;
+          : common.FractionLogicEnum.Or;
 
         let storeFractionSubTypeOptions = common.isUndefined(
           storeResultFraction
@@ -295,31 +288,21 @@ export class ModelTreeComponent implements AfterViewInit {
               .fraction_types.map(ft => {
                 let options = [];
 
-                if (
-                  common.isUndefined(ft.or) ||
-                  toBooleanFromLowercaseString(ft.or) === true
-                ) {
-                  let optionOr: FractionSubTypeOption = {
-                    logicGroup: common.FractionLogicEnum.Or,
-                    typeValue: ft.type,
-                    value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
-                    label: ft.label
-                  };
-                  options.push(optionOr);
-                }
+                let optionOr: FractionSubTypeOption = {
+                  logicGroup: common.FractionLogicEnum.Or,
+                  typeValue: ft.type,
+                  value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                  label: ft.label
+                };
+                options.push(optionOr);
 
-                if (
-                  common.isUndefined(ft.and_not) ||
-                  toBooleanFromLowercaseString(ft.and_not) === true
-                ) {
-                  let optionAndNot: FractionSubTypeOption = {
-                    logicGroup: common.FractionLogicEnum.AndNot,
-                    value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
-                    typeValue: ft.type,
-                    label: ft.label
-                  };
-                  options.push(optionAndNot);
-                }
+                let optionAndNot: FractionSubTypeOption = {
+                  logicGroup: common.FractionLogicEnum.AndNot,
+                  value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                  typeValue: ft.type,
+                  label: ft.label
+                };
+                options.push(optionAndNot);
 
                 return options;
               })

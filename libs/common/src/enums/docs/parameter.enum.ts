@@ -28,8 +28,6 @@ export enum ParameterEnum {
   Filter = 'filter',
   MaxFractions = 'max_fractions',
   Required = 'required',
-  Or = 'or',
-  AndNot = 'and_not',
   Meta = 'meta',
   Controls = 'controls',
   FractionControls = 'fraction_controls',
