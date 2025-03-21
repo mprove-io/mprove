@@ -146,17 +146,17 @@ export class ReportEditListenersDialogComponent implements OnInit {
               (this.report as ReportX2).fields.forEach(reportField => {
                 modelFields[reportField.id] =
                   common.isDefined(reportField.storeResult) &&
-                  reportField.store === model.modelId
+                  reportField.storeModel === model.modelId
                     ? [
                         <ModelField>{ id: undefined },
                         ...model.fields.filter(
                           y =>
                             y.result === reportField.storeResult &&
-                            model.modelId === reportField.store
+                            model.modelId === reportField.storeModel
                         )
                       ]
                     : common.isDefined(reportField.storeFilter) &&
-                      reportField.store === model.modelId
+                      reportField.storeModel === model.modelId
                     ? [
                         <ModelField>{ id: undefined },
                         ...model.fields.filter(y =>
@@ -166,7 +166,7 @@ export class ReportEditListenersDialogComponent implements OnInit {
                         )
                       ]
                     : model.isStoreModel === false &&
-                      common.isUndefined(reportField.store)
+                      common.isUndefined(reportField.storeModel)
                     ? [
                         <ModelField>{ id: undefined },
                         ...model.fields.filter(

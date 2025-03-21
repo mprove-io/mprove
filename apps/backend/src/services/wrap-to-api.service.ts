@@ -84,8 +84,8 @@ export class WrapToApiService {
     let dashboardExtendedFilters = makeDashboardFiltersX(dashboard);
 
     let storeModelIds = dashboard.fields
-      .filter(x => common.isDefined(x.store))
-      .map(x => x.store);
+      .filter(x => common.isDefined(x.storeModel))
+      .map(x => x.storeModel);
 
     let dashboardX: common.DashboardX = {
       structId: dashboard.structId,

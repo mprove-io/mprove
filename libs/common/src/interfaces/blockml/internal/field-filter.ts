@@ -18,8 +18,8 @@ export interface FieldFilter {
   result?: enums.FieldResultEnum;
   result_line_num?: number;
 
-  store?: string;
-  store_line_num?: number;
+  store_model?: string;
+  store_model_line_num?: number;
 
   store_result?: string;
   store_result_line_num?: number;

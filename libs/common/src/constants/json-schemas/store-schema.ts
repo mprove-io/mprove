@@ -17,7 +17,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
     'fields'
   ],
   properties: {
-    store: {
+    store_model: {
       type: 'string'
     },
     connection: {

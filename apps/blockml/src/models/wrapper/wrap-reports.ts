@@ -37,22 +37,24 @@ export function wrapReports(item: {
         label: field.label,
         result: field.result,
         maxFractions:
-          common.isDefined(field.store) && common.isDefined(field.store_filter)
+          common.isDefined(field.store_model) &&
+          common.isDefined(field.store_filter)
             ? Number(
                 (
-                  models.find(model => model.modelId === field.store)
+                  models.find(model => model.modelId === field.store_model)
                     .content as FileStore
                 ).fields.find(k => k.name === field.store_filter).max_fractions
               )
             : undefined,
-        store: field.store,
+        storeModel: field.store_model,
         storeResult: field.store_result,
         storeFilter: field.store_filter,
-        fractions: common.isUndefined(field.store)
+        fractions: common.isUndefined(field.store_model)
           ? field.apiFractions
           : field.fractions.map(y => {
-              let store = models.find(model => model.modelId === field.store)
-                .content as FileStore;
+              let store = models.find(
+                model => model.modelId === field.store_model
+              ).content as FileStore;
 
               let storeResultCurrentTypeFraction: common.FileStoreFractionType;
 

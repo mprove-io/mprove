@@ -36,9 +36,11 @@
           [fieldResult]="
             !!filter.storeResult ? filter.storeResult : filter.result
           "
-          [modelContent]="getModelContent(filter.store)"
+          [modelContent]="getModelContent(filter.storeModel)"
           [metricsStartDateYYYYMMDD]="report?.metricsStartDateYYYYMMDD"
-          [metricsEndDateYYYYMMDD]="getMetricsEndDateYYYYMMDD(filter.store)"
+          [metricsEndDateYYYYMMDD]="
+            getMetricsEndDateYYYYMMDD(filter.storeModel)
+          "
           [isMetricsPage]="true"
           [fraction]="fraction"
           [fractionIndex]="fractionIndex"

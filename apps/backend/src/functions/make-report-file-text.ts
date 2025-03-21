@@ -70,10 +70,10 @@ export function makeReportFileText(item: {
                 ? field.description
                 : undefined,
             result: field.result,
-            store: field.store,
+            store: field.storeModel,
             store_result: field.storeResult,
             store_filter: field.storeFilter,
-            fractions: common.isUndefined(field.store)
+            fractions: common.isUndefined(field.storeModel)
               ? undefined
               : field.fractions?.map(mconfigFraction => {
                   let fileFraction: FileFraction = {};
@@ -181,7 +181,7 @@ export function makeReportFileText(item: {
                 }),
             suggest_model_dimension: field.suggestModelDimension,
             conditions:
-              common.isUndefined(field.store) &&
+              common.isUndefined(field.storeModel) &&
               common.isDefined(field.fractions) &&
               field.fractions.length > 0
                 ? field.fractions.map(x => x.brick)

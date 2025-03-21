@@ -723,7 +723,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
       maxFractions: common.isDefined(storeFilter)
         ? Number(storeFilter.max_fractions)
         : undefined,
-      store:
+      storeModel:
         this.modelTypeForm.controls['modelType'].value ===
         common.ModelTypeEnum.Store
           ? this.storeModelForm.controls['storeModel'].value

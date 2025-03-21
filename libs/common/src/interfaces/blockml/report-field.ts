@@ -42,7 +42,7 @@ export class ReportField {
 
   @IsOptional()
   @IsString()
-  store: string;
+  storeModel: string;
 
   @IsOptional()
   @IsString()

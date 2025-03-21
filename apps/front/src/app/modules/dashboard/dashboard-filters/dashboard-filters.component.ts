@@ -62,9 +62,9 @@ export class DashboardFiltersComponent {
 
     let newFraction: common.Fraction;
 
-    if (common.isDefined(dashboardField.store)) {
+    if (common.isDefined(dashboardField.storeModel)) {
       let store = this.dashboard.storeModels.find(
-        x => x.modelId === dashboardField.store
+        x => x.modelId === dashboardField.storeModel
       );
 
       let storeFilter = common.isDefined(dashboardField.storeFilter)

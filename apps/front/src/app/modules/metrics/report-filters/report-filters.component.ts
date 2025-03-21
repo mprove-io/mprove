@@ -57,10 +57,10 @@ export class ReportFiltersComponent {
 
     let newFraction: common.Fraction;
 
-    if (common.isDefined(reportField.store)) {
+    if (common.isDefined(reportField.storeModel)) {
       let store = this.modelsQuery
         .getValue()
-        .models.find(m => m.modelId === reportField.store);
+        .models.find(m => m.modelId === reportField.storeModel);
       // let store = this.dashboard.storeModels.find(
       //   x => x.modelId === reportField.store
       // );

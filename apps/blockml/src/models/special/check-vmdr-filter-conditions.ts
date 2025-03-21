@@ -31,7 +31,7 @@ export function checkVmdrFilterConditions<T extends types.vsmdrType>(
     x.fields.forEach(field => {
       if (
         field.fieldClass !== common.FieldClassEnum.Filter ||
-        common.isDefined(field.store)
+        common.isDefined(field.store_model)
       ) {
         return;
       }

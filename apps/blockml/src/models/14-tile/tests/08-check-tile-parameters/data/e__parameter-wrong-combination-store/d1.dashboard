@@ -1,7 +1,7 @@
 dashboard: d1
 parameters:
 - filter: products_brand
-  store: store_model_s1
+  store_model: store_model_s1
   store_result: string
   fractions: 
   - logic: OR

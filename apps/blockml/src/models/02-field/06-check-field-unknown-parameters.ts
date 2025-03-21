@@ -294,7 +294,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                     common.ParameterEnum.SuggestModelDimension.toString(),
                     common.ParameterEnum.Conditions.toString(),
                     common.ParameterEnum.Fractions.toString(),
-                    common.ParameterEnum.Store.toString(),
+                    common.ParameterEnum.StoreModel.toString(),
                     common.ParameterEnum.StoreFilter.toString(),
                     common.ParameterEnum.StoreResult.toString()
                   ].indexOf(parameter) < 0)

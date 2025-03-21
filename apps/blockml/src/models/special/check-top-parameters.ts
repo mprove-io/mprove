@@ -32,7 +32,7 @@ export function checkTopParameters(
       .map(y => field[y as keyof common.FieldFilter] as number)
       .filter(n => n !== 0);
 
-    if (common.isDefined(field.result) && common.isDefined(field.store)) {
+    if (common.isDefined(field.result) && common.isDefined(field.store_model)) {
       item.errors.push(
         new BmError({
           title: common.ErTitleEnum.TOP_PARAMETERS_RESULT_AND_STORE,
@@ -44,7 +44,7 @@ export function checkTopParameters(
               path: item.filePath
             },
             {
-              line: field.store_line_num,
+              line: field.store_model_line_num,
               name: item.fileName,
               path: item.filePath
             }
@@ -132,7 +132,7 @@ export function checkTopParameters(
 
     if (
       common.isDefined(field.store_filter) &&
-      common.isUndefined(field.store)
+      common.isUndefined(field.store_model)
     ) {
       item.errors.push(
         new BmError({
@@ -152,7 +152,7 @@ export function checkTopParameters(
 
     if (
       common.isDefined(field.store_result) &&
-      common.isUndefined(field.store)
+      common.isUndefined(field.store_model)
     ) {
       item.errors.push(
         new BmError({
@@ -171,7 +171,7 @@ export function checkTopParameters(
     }
 
     if (
-      common.isDefined(field.store) &&
+      common.isDefined(field.store_model) &&
       common.isUndefined(field.store_filter) &&
       common.isUndefined(field.store_result)
     ) {
@@ -181,7 +181,7 @@ export function checkTopParameters(
           message: `filter parameter "store_filter" or "store_result" is required when "store" specified`,
           lines: [
             {
-              line: field.store_line_num,
+              line: field.store_model_line_num,
               name: item.fileName,
               path: item.filePath
             }
@@ -191,19 +191,19 @@ export function checkTopParameters(
       return;
     }
 
-    if (common.isDefined(field.store)) {
+    if (common.isDefined(field.store_model)) {
       let store = stores.find(
-        m => `${STORE_MODEL_PREFIX}_${m.name}` === field.store
+        m => `${STORE_MODEL_PREFIX}_${m.name}` === field.store_model
       );
 
       if (common.isUndefined(store)) {
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.TOP_PARAMETER_REFS_MISSING_STORE,
-            message: `store "${field.store}" is missing or not valid`,
+            message: `store "${field.store_model}" is missing or not valid`,
             lines: [
               {
-                line: field.store_line_num,
+                line: field.store_model_line_num,
                 name: item.fileName,
                 path: item.filePath
               }

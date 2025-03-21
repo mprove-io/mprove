@@ -2,7 +2,7 @@ report: r1
 title: t
 parameters:
 - filter: f1
-  store: unk
+  store_model: unk
   store_filter: f1
 rows: []
 

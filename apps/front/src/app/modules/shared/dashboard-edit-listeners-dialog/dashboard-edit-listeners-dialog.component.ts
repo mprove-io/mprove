@@ -139,17 +139,17 @@ export class DashboardEditListenersDialogComponent implements OnInit {
               (this.dashboard as DashboardX2).fields.forEach(dashField => {
                 modelFields[dashField.id] =
                   common.isDefined(dashField.storeResult) &&
-                  dashField.store === model.modelId
+                  dashField.storeModel === model.modelId
                     ? [
                         <ModelField>{ id: undefined },
                         ...model.fields.filter(
                           y =>
                             y.result === dashField.storeResult &&
-                            model.modelId === dashField.store
+                            model.modelId === dashField.storeModel
                         )
                       ]
                     : common.isDefined(dashField.storeFilter) &&
-                      dashField.store === model.modelId
+                      dashField.storeModel === model.modelId
                     ? [
                         <ModelField>{ id: undefined },
                         ...model.fields.filter(y =>
@@ -159,7 +159,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
                         )
                       ]
                     : model.isStoreModel === false &&
-                      common.isUndefined(dashField.store)
+                      common.isUndefined(dashField.storeModel)
                     ? [
                         <ModelField>{ id: undefined },
                         ...model.fields.filter(

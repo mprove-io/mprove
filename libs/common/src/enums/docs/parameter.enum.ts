@@ -92,6 +92,7 @@ export enum ParameterEnum {
   Unnest = 'unnest',
   View = 'view',
   Store = 'store',
+  StoreModel = 'store_model',
   StoreFilter = 'store_filter',
   StoreResult = 'store_result',
   Method = 'method',

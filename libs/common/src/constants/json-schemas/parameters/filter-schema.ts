@@ -23,7 +23,7 @@ export const FILTER_SCHEMA: JSONSchema7 = {
       type: 'string',
       enum: constants.FILTER_RESULT_VALUES
     },
-    store: {
+    store_model: {
       type: 'string'
     },
     store_result: {

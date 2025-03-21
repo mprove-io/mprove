@@ -30,7 +30,7 @@ export class DashboardField {
 
   @IsOptional()
   @IsString()
-  store: string;
+  storeModel: string;
 
   @IsOptional()
   @IsString()

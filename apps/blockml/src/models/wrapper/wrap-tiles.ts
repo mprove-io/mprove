@@ -40,7 +40,7 @@ export function wrapTiles(item: {
 
     if (isStore === true) {
       store = stores.find(
-        m => `${STORE_MODEL_PREFIX}_${m.name}` === tile.model
+        s => `${STORE_MODEL_PREFIX}_${s.name}` === tile.model
       );
     } else {
       model = models.find(m => m.name === tile.model);

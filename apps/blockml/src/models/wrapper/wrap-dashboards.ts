@@ -40,21 +40,24 @@ export function wrapDashboards(item: {
         label: field.label,
         result: field.result,
         maxFractions:
-          common.isDefined(field.store) && common.isDefined(field.store_filter)
+          common.isDefined(field.store_model) &&
+          common.isDefined(field.store_filter)
             ? Number(
                 stores
-                  .find(s => `${STORE_MODEL_PREFIX}_${s.name}` === field.store)
+                  .find(
+                    s => `${STORE_MODEL_PREFIX}_${s.name}` === field.store_model
+                  )
                   .fields.find(k => k.name === field.store_filter).max_fractions
               )
             : undefined,
-        store: field.store,
+        storeModel: field.store_model,
         storeResult: field.store_result,
         storeFilter: field.store_filter,
-        fractions: common.isUndefined(field.store)
+        fractions: common.isUndefined(field.store_model)
           ? field.apiFractions
           : field.fractions.map(y => {
               let store = stores.find(
-                s => `${STORE_MODEL_PREFIX}_${s.name}` === field.store
+                s => `${STORE_MODEL_PREFIX}_${s.name}` === field.store_model
               );
 
               let storeResultCurrentTypeFraction: common.FileStoreFractionType;
