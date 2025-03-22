@@ -1,8 +1,7 @@
 store: s1
 connection: c1
-body: return {}
+body: return { urlPath: '/abc', body: {} }
 method: POST
-url_path: a/b/c
 results: []
 field_groups: []
 fields: []

@@ -1,7 +1,6 @@
 store: s1
 connection: c1
-body: return {}
-url_path: a/b/c
+body: return { urlPath: '/abc', body: {} }
 response: return {}
 results: []
 field_groups: []

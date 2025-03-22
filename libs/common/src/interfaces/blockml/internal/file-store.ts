@@ -25,9 +25,6 @@ export interface FileStore extends FileBasic {
   method?: string;
   method_line_num?: number;
 
-  url_path?: string;
-  url_path_line_num?: number;
-
   body?: string;
   body_line_num?: number;
 

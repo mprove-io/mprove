@@ -10,7 +10,6 @@ export const STORE_SCHEMA: JSONSchema7 = {
     'store',
     'connection',
     'method',
-    'url_path',
     'body',
     'response',
     'results',
@@ -42,9 +41,6 @@ export const STORE_SCHEMA: JSONSchema7 = {
       }
     },
     method: {
-      type: 'string'
-    },
-    url_path: {
       type: 'string'
     },
     body: {
