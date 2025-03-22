@@ -75,7 +75,7 @@ export function createModelMetrics(
           let partLabel = `${partNodeLabel} ${partFieldLabel}`;
 
           let modelMetric: common.ModelMetric = {
-            metricId: `${store.name}_${partId}_by_${timeId}`,
+            metricId: `${STORE_MODEL_PREFIX}_${store.name}_${partId}_by_${timeId}`,
             filePath: store.filePath,
             partId: partId,
             modelId: `${STORE_MODEL_PREFIX}_${store.name}`,
