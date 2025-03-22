@@ -1,7 +1,7 @@
 store: s1
 connection: c1
 method: POST
-body: return { urlPath: '/abc', body: {} }
+request: return {}
 response: return {}
 results: 
 - result: string

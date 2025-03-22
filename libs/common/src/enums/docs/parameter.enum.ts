@@ -94,7 +94,7 @@ export enum ParameterEnum {
   StoreFilter = 'store_filter',
   StoreResult = 'store_result',
   Method = 'method',
-  Body = 'body',
+  Request = 'request',
   Response = 'response',
   Results = 'results',
   DateRangeIncludesRightSide = 'date_range_includes_right_side',

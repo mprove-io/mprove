@@ -100,11 +100,11 @@ export class MconfigsService {
       )
     });
 
-    let processedRequest = await this.storeService.transformStoreRequestPart({
-      input: (model.content as common.FileStore).body,
+    let processedRequest = await this.storeService.transformStoreRequest({
+      input: (model.content as common.FileStore).request,
       mconfig: newMconfig,
       storeModel: model,
-      storeParam: common.ParameterEnum.Body,
+      storeParam: common.ParameterEnum.Request,
       caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
       metricsStartDateYYYYMMDD: undefined,
       metricsEndDateYYYYMMDD: undefined
@@ -176,7 +176,7 @@ export class MconfigsService {
     newMconfig.queryId = newQuery.queryId;
     newMconfig.temp = true;
     newMconfig.storePart = {
-      reqTemplate: (model.content as common.FileStore).body,
+      reqTemplate: (model.content as common.FileStore).request,
       reqFunction: processedRequest.userCode,
       reqJsonParts: processedRequest.result,
       reqBody: JSON.stringify(apiBody),

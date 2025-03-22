@@ -1,6 +1,6 @@
 store: s1
 connection: c1
-body: return { urlPath: '/abc', body: {} }
+request: return {}
 method: POST
 results: []
 field_groups: []

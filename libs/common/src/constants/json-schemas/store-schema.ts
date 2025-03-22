@@ -10,7 +10,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
     'store',
     'connection',
     'method',
-    'body',
+    'request',
     'response',
     'results',
     'fields'
@@ -43,7 +43,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
     method: {
       type: 'string'
     },
-    body: {
+    request: {
       type: 'string'
     },
     response: {

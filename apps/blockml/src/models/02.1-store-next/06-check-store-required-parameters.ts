@@ -40,11 +40,11 @@ export function checkStoreRequiredParameters(
       return;
     }
 
-    if (common.isUndefined(x.body)) {
+    if (common.isUndefined(x.request)) {
       item.errors.push(
         new BmError({
-          title: common.ErTitleEnum.MISSING_BODY,
-          message: `parameter "${common.ParameterEnum.Body}" is required for ${x.fileExt} file`,
+          title: common.ErTitleEnum.MISSING_REQUEST,
+          message: `parameter "${common.ParameterEnum.Request}" is required for ${x.fileExt} file`,
           lines: [
             {
               line: 0,

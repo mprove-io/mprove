@@ -244,7 +244,7 @@ export class StoreService {
     return newMconfig;
   }
 
-  async transformStoreRequestPart(item: {
+  async transformStoreRequest(item: {
     input: string;
     mconfig: common.Mconfig;
     storeModel: common.Model;

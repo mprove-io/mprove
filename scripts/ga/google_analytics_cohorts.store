@@ -5,7 +5,7 @@ description: '...'
 access_users: []
 access_roles: []
 method: POST
-body: |
+request: |
   let storeFields = $STORE_FIELDS;
   let queryOrderBy = $QUERY_ORDER_BY;
   let selectedDimensions = $QUERY_SELECTED_DIMENSIONS;

@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildStoreNext;
 let func = common.FuncEnum.CheckStoreRequiredParameters;
-let testId = 'e__missing-body';
+let testId = 'e__missing-request';
 
 test('1', async t => {
   let errors: BmError[];
@@ -63,6 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entStores.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.MISSING_BODY);
+  t.is(errors[0].title, common.ErTitleEnum.MISSING_REQUEST);
   t.is(errors[0].lines[0].line, 0);
 });
