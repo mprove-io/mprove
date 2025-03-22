@@ -1,5 +1,5 @@
 store: google_analytics
-connection: c6_google
+connection: c7_google
 label: Google Analytics
 description: '...'
 access_users: []

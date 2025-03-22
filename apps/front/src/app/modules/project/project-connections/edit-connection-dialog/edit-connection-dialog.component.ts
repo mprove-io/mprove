@@ -206,10 +206,20 @@ export class EditConnectionDialogComponent implements OnInit {
           )
         ]
       ],
+      scopes: this.fb.array(
+        common.isUndefined(this.dataItem.connection.googleAuthScopes)
+          ? []
+          : this.dataItem.connection.googleAuthScopes.map(scope => {
+              let newScope = {
+                value: scope
+              };
+              return this.fb.group(newScope);
+            })
+      ),
       headers: this.fb.array(
         common.isUndefined(this.dataItem.connection.headers)
           ? []
-          : this.dataItem.connection.headers?.map(header => {
+          : this.dataItem.connection.headers.map(header => {
               let newHeader = {
                 key: header.key,
                 value: '' // backend returns HEADER_VALUE_IS_HIDDEN
@@ -245,20 +255,36 @@ export class EditConnectionDialogComponent implements OnInit {
     return this.editConnectionForm.controls['headers'] as FormArray;
   }
 
+  getScopes(): FormArray {
+    return this.editConnectionForm.controls['scopes'] as FormArray;
+  }
+
   addHeader() {
-    const headerGroup = this.fb.group({
+    let headerGroup = this.fb.group({
       key: [''],
       value: ['']
     });
     this.getHeaders().push(headerGroup);
   }
 
+  addScope() {
+    let scopeGroup = this.fb.group({
+      value: ['']
+    });
+    this.getScopes().push(scopeGroup);
+  }
+
   removeHeader(index: number) {
     this.getHeaders().removeAt(index);
   }
 
+  removeScope(index: number) {
+    this.getScopes().removeAt(index);
+  }
+
   showLog() {
     console.log(this.editConnectionForm.get('headers').value);
+    console.log(this.editConnectionForm.get('scopes').value);
   }
 
   toggleSSL() {
@@ -285,6 +311,12 @@ export class EditConnectionDialogComponent implements OnInit {
         ? JSON.parse(this.editConnectionForm.value.serviceAccountCredentials)
         : undefined,
       headers: this.editConnectionForm.value.headers,
+      googleAuthScopes:
+        [common.ConnectionTypeEnum.GoogleApi].indexOf(
+          this.editConnectionForm.get('type').value
+        ) > -1
+          ? this.editConnectionForm.value.scopes.map((x: any) => x.value)
+          : [],
       bigqueryQuerySizeLimitGb: common.isDefined(
         this.editConnectionForm.value.bigqueryQuerySizeLimitGb
       )

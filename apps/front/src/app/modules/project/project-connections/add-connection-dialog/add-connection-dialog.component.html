@@ -191,6 +191,53 @@
 
     <div
       *ngIf="
+        [typeGoogleApi].indexOf(addConnectionForm.controls['type'].value) > -1
+      "
+    >
+      <div class="mb-6 flex flex-row items-center">
+        <div class="flex w-[200px] flex-shrink-0">Scopes</div>
+
+        <button
+          type="button"
+          data-cy="addConnectionDialogAddScopeButton"
+          class="border-blue3 text-blue3 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium hover:bg-white focus:outline-none"
+          (click)="addScope()"
+          >Add Scope</button
+        >
+      </div>
+
+      <div formArrayName="scopes">
+        <div class="flex flex-col">
+          <div *ngFor="let scopes of getScopes().controls; let i = index">
+            <div
+              [formGroupName]="i"
+              class="mb-6 flex w-[700px] flex-row items-center"
+            >
+              <button
+                class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 focus:outline-none"
+                (click)="removeScope(i)"
+              >
+                <m-trash-icon></m-trash-icon>
+              </button>
+
+              <div class="ml-5 select-none">Scope</div>
+
+              <input
+                class="form-input border-gray3 focus:border-blue3 ml-5 w-full rounded"
+                autocomplete="off"
+                spellcheck="false"
+                data-cy="addConnectionScope"
+                formControlName="value"
+                placeholder="https://www.googleapis.com/auth/analytics.readonly"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      *ngIf="
         [typeApi, typeGoogleApi].indexOf(
           addConnectionForm.controls['type'].value
         ) > -1
@@ -202,7 +249,7 @@
         <button
           type="button"
           data-cy="addConnectionDialogAddHeaderButton"
-          class="h-11 flex-shrink-0 select-none rounded border border-gray-400 px-4 py-2 text-base font-medium text-gray-500 hover:bg-white focus:outline-none"
+          class="border-blue3 text-blue3 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium hover:bg-white focus:outline-none"
           (click)="addHeader()"
           >Add Header</button
         >

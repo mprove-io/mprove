@@ -230,6 +230,11 @@ export class AddConnectionDialogComponent implements OnInit {
           )
         ]
       ],
+      scopes: this.fb.array([
+        this.fb.group({
+          value: 'https://www.googleapis.com/auth/analytics.readonly'
+        })
+      ]),
       headers: this.fb.array([])
       // headers: this.fb.array([
       //   this.fb.group({ key: 'a1', value: 'v1' }),
@@ -263,20 +268,36 @@ export class AddConnectionDialogComponent implements OnInit {
     return this.addConnectionForm.controls['headers'] as FormArray;
   }
 
+  getScopes(): FormArray {
+    return this.addConnectionForm.controls['scopes'] as FormArray;
+  }
+
   addHeader() {
-    const headerGroup = this.fb.group({
+    let headerGroup = this.fb.group({
       key: [''],
       value: ['']
     });
     this.getHeaders().push(headerGroup);
   }
 
+  addScope() {
+    let scopeGroup = this.fb.group({
+      value: ['']
+    });
+    this.getScopes().push(scopeGroup);
+  }
+
   removeHeader(index: number) {
     this.getHeaders().removeAt(index);
   }
 
+  removeScope(index: number) {
+    this.getScopes().removeAt(index);
+  }
+
   showLog() {
     console.log(this.addConnectionForm.get('headers').value);
+    console.log(this.addConnectionForm.get('scopes').value);
   }
 
   openEnvSelect() {
@@ -319,6 +340,17 @@ export class AddConnectionDialogComponent implements OnInit {
     ) {
       this.addConnectionForm.controls['baseUrl'].reset();
       this.addConnectionForm.controls['headers'].reset();
+      this.addConnectionForm.controls['scopes'].reset();
+    }
+
+    if ([common.ConnectionTypeEnum.GoogleApi].indexOf(type) > -1) {
+      this.addConnectionForm.controls['baseUrl'].setValue(
+        'https://analyticsdata.googleapis.com'
+      );
+    }
+
+    if ([common.ConnectionTypeEnum.Api].indexOf(type) > -1) {
+      this.addConnectionForm.controls['baseUrl'].reset();
     }
 
     if (
@@ -387,6 +419,12 @@ export class AddConnectionDialogComponent implements OnInit {
         ? JSON.parse(this.addConnectionForm.value.serviceAccountCredentials)
         : undefined,
       headers: this.addConnectionForm.value.headers,
+      googleAuthScopes:
+        [common.ConnectionTypeEnum.GoogleApi].indexOf(
+          this.addConnectionForm.get('type').value
+        ) > -1
+          ? this.addConnectionForm.value.scopes.map((x: any) => x.value)
+          : [],
       bigqueryQuerySizeLimitGb: common.isDefined(
         this.addConnectionForm.value.bigqueryQuerySizeLimitGb
       )

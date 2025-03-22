@@ -101,7 +101,6 @@ export class RunQueriesController {
         email: (connection.serviceAccountCredentials as any).client_email,
         key: (connection.serviceAccountCredentials as any).private_key,
         scopes: connection.googleAuthScopes
-        // ['https://www.googleapis.com/auth/analytics.readonly']
       });
 
       let tokens = await authClient.authorize();
