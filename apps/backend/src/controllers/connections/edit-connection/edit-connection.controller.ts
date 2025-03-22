@@ -50,6 +50,7 @@ export class EditConnectionController {
       baseUrl,
       serviceAccountCredentials,
       headers,
+      googleAuthScopes,
       bigqueryQuerySizeLimitGb,
       account,
       warehouse,
@@ -77,6 +78,7 @@ export class EditConnectionController {
 
     connection.baseUrl = baseUrl;
     connection.headers = headers;
+    connection.googleAuthScopes = googleAuthScopes;
     connection.isSsl = isSSL;
     connection.account = account;
     connection.warehouse = warehouse;

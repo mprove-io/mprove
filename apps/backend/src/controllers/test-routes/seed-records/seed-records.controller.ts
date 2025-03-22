@@ -191,6 +191,7 @@ export class SeedRecordsController {
           type: x.type,
           baseUrl: x.baseUrl,
           headers: x.headers,
+          googleAuthScopes: x.googleAuthScopes,
           host: x.host,
           port: x.port,
           database: x.database,

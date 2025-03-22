@@ -42,6 +42,7 @@ export class WrapToApiService {
         };
         return newHeader;
       }),
+      googleAuthScopes: x.googleAuthScopes,
       googleCloudProject: x.googleCloudProject,
       googleCloudClientEmail: x.googleCloudClientEmail,
       bigqueryQuerySizeLimitGb: x.bigqueryQuerySizeLimitGb,

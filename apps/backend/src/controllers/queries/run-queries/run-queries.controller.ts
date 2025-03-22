@@ -100,8 +100,8 @@ export class RunQueriesController {
       let authClient = new JWT({
         email: (connection.serviceAccountCredentials as any).client_email,
         key: (connection.serviceAccountCredentials as any).private_key,
-        // TODO: add scopes to connection dialogs
-        scopes: ['https://www.googleapis.com/auth/analytics.readonly']
+        scopes: connection.googleAuthScopes
+        // ['https://www.googleapis.com/auth/analytics.readonly']
       });
 
       let tokens = await authClient.authorize();

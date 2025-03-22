@@ -190,6 +190,7 @@ export class MakerService {
     type: common.ConnectionTypeEnum;
     baseUrl: string;
     headers: common.ConnectionHeader[];
+    googleAuthScopes: string[];
     host: string;
     port: number;
     database: string;
@@ -209,6 +210,7 @@ export class MakerService {
       isSSL,
       baseUrl,
       headers,
+      googleAuthScopes,
       host,
       port,
       database,
@@ -232,6 +234,7 @@ export class MakerService {
       type: type,
       baseUrl: baseUrl,
       headers: headers,
+      googleAuthScopes: googleAuthScopes,
       serviceAccountCredentials: serviceAccountCredentials,
       googleCloudProject: serviceAccountCredentials?.project_id,
       googleCloudClientEmail: serviceAccountCredentials?.client_email,

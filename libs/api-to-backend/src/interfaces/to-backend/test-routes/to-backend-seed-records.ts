@@ -144,6 +144,11 @@ export class ToBackendSeedRecordsRequestPayloadConnectionsItem {
   headers?: common.ConnectionHeader[];
 
   @IsOptional()
+  @ValidateNested()
+  @IsString({ each: true })
+  googleAuthScopes?: string[];
+
+  @IsOptional()
   @IsInt()
   bigqueryQuerySizeLimitGb?: number;
 

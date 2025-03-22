@@ -350,6 +350,7 @@ export class AppModule implements OnModuleInit {
                 type: common.ConnectionTypeEnum.PostgreSQL,
                 baseUrl: undefined,
                 headers: undefined,
+                googleAuthScopes: undefined,
                 host: this.cs.get<
                   interfaces.Config['firstProjectDwhPostgresHost']
                 >('firstProjectDwhPostgresHost'),
@@ -392,6 +393,7 @@ export class AppModule implements OnModuleInit {
                 type: common.ConnectionTypeEnum.ClickHouse,
                 baseUrl: undefined,
                 headers: undefined,
+                googleAuthScopes: undefined,
                 host: 'dwh-clickhouse',
                 port: 8123,
                 username: 'c_user',
@@ -442,6 +444,7 @@ export class AppModule implements OnModuleInit {
                 type: common.ConnectionTypeEnum.BigQuery,
                 baseUrl: undefined,
                 headers: undefined,
+                googleAuthScopes: undefined,
                 host: undefined,
                 port: undefined,
                 database: undefined,
@@ -480,6 +483,7 @@ export class AppModule implements OnModuleInit {
                 type: common.ConnectionTypeEnum.SnowFlake,
                 baseUrl: undefined,
                 headers: undefined,
+                googleAuthScopes: undefined,
                 host: undefined,
                 port: undefined,
                 database: undefined,

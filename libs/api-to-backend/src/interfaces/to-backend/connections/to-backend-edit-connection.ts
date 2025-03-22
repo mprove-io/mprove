@@ -32,6 +32,10 @@ export class ToBackendEditConnectionRequestPayload {
   headers?: common.ConnectionHeader[];
 
   @IsOptional()
+  @IsString({ each: true })
+  googleAuthScopes?: string[];
+
+  @IsOptional()
   @IsInt()
   bigqueryQuerySizeLimitGb?: number;
 

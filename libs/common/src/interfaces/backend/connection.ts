@@ -44,6 +44,9 @@ export class Connection {
   @Type(() => ConnectionHeader)
   headers: ConnectionHeader[];
 
+  @IsString({ each: true })
+  googleAuthScopes?: string[];
+
   @IsString()
   host: string;
 

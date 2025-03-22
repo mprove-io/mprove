@@ -24,6 +24,7 @@ export const connectionsTable = pgTable(
     type: varchar('type').$type<common.ConnectionTypeEnum>().notNull(),
     baseUrl: varchar('base_url'),
     headers: json('headers').$type<common.ConnectionHeader[]>(),
+    googleAuthScopes: json('google_auth_scopes').$type<string[]>(),
     serviceAccountCredentials: json('service_account_credentials'),
     googleCloudProject: varchar('google_cloud_project'),
     googleCloudClientEmail: varchar('google_cloud_client_email'),
