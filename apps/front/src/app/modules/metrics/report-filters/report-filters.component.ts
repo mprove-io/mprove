@@ -138,7 +138,7 @@ export class ReportFiltersComponent {
         storeFractionLogicGroupWithSubType:
           common.isDefined(logicGroup) &&
           common.isDefined(storeResultFirstTypeFraction?.type)
-            ? logicGroup + storeResultFirstTypeFraction.type
+            ? `${logicGroup}${common.TRIPLE_UNDERSCORE}${storeResultFirstTypeFraction.type}`
             : undefined,
         controls: common.isUndefined(storeResultFirstTypeFraction)
           ? storeFilter.fraction_controls.map(control => {

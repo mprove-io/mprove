@@ -333,7 +333,7 @@ export class ModelTreeComponent implements AfterViewInit {
           storeFractionLogicGroupWithSubType:
             common.isDefined(logicGroup) &&
             common.isDefined(storeResultFraction?.type)
-              ? logicGroup + storeResultFraction.type
+              ? `${logicGroup}${common.TRIPLE_UNDERSCORE}${storeResultFraction.type}`
               : undefined,
           controls: common.isUndefined(storeResultFraction)
             ? storeFilter.fraction_controls.map(control => {

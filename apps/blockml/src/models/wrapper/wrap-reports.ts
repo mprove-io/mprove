@@ -130,7 +130,7 @@ export function wrapReports(item: {
                   field.store_filter
                 )
                   ? undefined
-                  : y.logic + y.type,
+                  : `${y.logic}${common.TRIPLE_UNDERSCORE}${y.type}`,
                 controls: y.controls.map(
                   (control: common.FileFractionControl) => {
                     if (common.isDefined(control.input)) {
@@ -388,7 +388,7 @@ export function wrapReports(item: {
                               storeField.fieldClass ===
                               common.FieldClassEnum.Filter
                                 ? undefined
-                                : y.logic + y.type,
+                                : `${y.logic}${common.TRIPLE_UNDERSCORE}${y.type}`,
                             controls: y.controls.map(
                               (control: FileFractionControl) => {
                                 if (common.isDefined(control.input)) {

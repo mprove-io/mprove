@@ -184,7 +184,7 @@ export function wrapTiles(item: {
               storeFractionLogicGroupWithSubType:
                 storeField.fieldClass === common.FieldClassEnum.Filter
                   ? undefined
-                  : y.logic + y.type,
+                  : `${y.logic}${common.TRIPLE_UNDERSCORE}${y.type}`,
               controls: y.controls.map((control: FileFractionControl) => {
                 let storeControl =
                   storeField.fieldClass === common.FieldClassEnum.Filter

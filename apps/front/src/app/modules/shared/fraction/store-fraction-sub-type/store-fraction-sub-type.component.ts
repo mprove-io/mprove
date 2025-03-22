@@ -69,7 +69,7 @@ export class StoreFractionSubTypeComponent {
             k => k.typeValue === item.typeValue
           ).label
         : item.typeValue,
-      storeFractionLogicGroupWithSubType: item.logicGroup + item.typeValue,
+      storeFractionLogicGroupWithSubType: `${item.logicGroup}${common.TRIPLE_UNDERSCORE}${item.typeValue}`,
       controls: (this.modelContent as common.FileStore).results
         .find(r => r.result === this.fieldResult)
         .fraction_types.find(ft => ft.type === item.typeValue)
