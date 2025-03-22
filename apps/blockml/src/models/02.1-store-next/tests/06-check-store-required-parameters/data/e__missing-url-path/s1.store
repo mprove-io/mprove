@@ -1,8 +1,0 @@
-store: s1
-connection: c1
-body: return {}
-method: POST
-response: return {}
-results: []
-field_groups: []
-fields: []

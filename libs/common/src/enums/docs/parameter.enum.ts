@@ -94,7 +94,6 @@ export enum ParameterEnum {
   StoreFilter = 'store_filter',
   StoreResult = 'store_result',
   Method = 'method',
-  UrlPath = 'url_path',
   Body = 'body',
   Response = 'response',
   Results = 'results',

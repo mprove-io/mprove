@@ -40,23 +40,6 @@ export function checkStoreRequiredParameters(
       return;
     }
 
-    if (common.isUndefined(x.url_path)) {
-      item.errors.push(
-        new BmError({
-          title: common.ErTitleEnum.MISSING_URL_PATH,
-          message: `parameter "${common.ParameterEnum.UrlPath}" is required for ${x.fileExt} file`,
-          lines: [
-            {
-              line: 0,
-              name: x.fileName,
-              path: x.filePath
-            }
-          ]
-        })
-      );
-      return;
-    }
-
     if (common.isUndefined(x.body)) {
       item.errors.push(
         new BmError({
