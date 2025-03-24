@@ -66,7 +66,7 @@ export enum ErTitleEnum {
   // store field_groups
   FIELD_GROUP_IS_NOT_A_DICTIONARY = 'FIELD_GROUP_IS_NOT_A_DICTIONARY',
   UNKNOWN_FIELD_GROUP_PARAMETER = 'UNKNOWN_FIELD_GROUP_PARAMETER',
-  MISSING_GROUP = 'MISSING_GROUP',
+  MISSING_GROUP = 'MISSING_GROUP', // TODO: check missing group or time_group in fields
   DUPLICATE_GROUPS = 'DUPLICATE_GROUPS',
 
   // store field_time_groups
