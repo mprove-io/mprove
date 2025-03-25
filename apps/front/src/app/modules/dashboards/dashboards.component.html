@@ -118,7 +118,7 @@
       </div>
 
       <div class="mt-6 flex h-2 flex-1 flex-row">
-        <div class="mb-6 flex w-1/4">
+        <div class="mb-6 flex w-1/4 flex-shrink-0">
           <div class="flex w-full flex-grow rounded bg-white shadow">
             <div
               class="text-gray1 mr-5 mt-6 flex w-full flex-col pl-5 text-base"
@@ -267,7 +267,12 @@
         </div>
 
         <div class="mb-6 ml-6 flex flex-grow rounded bg-white shadow">
+          <div class="flex overflow-auto">
+            <router-outlet *ngIf="lastUrl !== pathDashboards"></router-outlet>
+          </div>
+
           <div
+            *ngIf="lastUrl === pathDashboards"
             class="ml-5 mr-5 mt-10 flex w-full flex-col divide-y divide-gray-500"
           >
             <div
@@ -517,6 +522,7 @@
     </div>
   </div>
 
+  <div *ngIf="routerEvents$ | async"></div>
   <div *ngIf="dashboards$ | async"></div>
   <div *ngIf="dashboard$ | async"></div>
   <div *ngIf="nav$ | async"></div>

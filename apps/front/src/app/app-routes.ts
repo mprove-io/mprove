@@ -229,7 +229,18 @@ export const appRoutes: Routes = [
                           {
                             component: DashboardsComponent,
                             path: common.PATH_DASHBOARDS,
-                            resolve: [StructDashboardsResolver]
+                            resolve: [StructDashboardsResolver],
+                            children: [
+                              {
+                                component: DashboardComponent,
+                                canDeactivate: [DeactivateGuard],
+                                path:
+                                  common.PATH_DASHBOARD +
+                                  `/:${common.PARAMETER_DASHBOARD_ID}`,
+                                resolve: [StructDashboardResolver],
+                                children: []
+                              }
+                            ]
                           },
                           {
                             component: ModelsComponent,
@@ -276,15 +287,6 @@ export const appRoutes: Routes = [
                                 resolve: [StructReportResolver]
                               }
                             ]
-                          },
-                          {
-                            component: DashboardComponent,
-                            canDeactivate: [DeactivateGuard],
-                            path:
-                              common.PATH_DASHBOARD +
-                              `/:${common.PARAMETER_DASHBOARD_ID}`,
-                            resolve: [StructDashboardResolver],
-                            children: []
                           }
                         ]
                       }

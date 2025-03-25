@@ -121,6 +121,7 @@ export class NavigateService {
         this.nav.branchId,
         common.PATH_ENV,
         this.nav.envId,
+        common.PATH_DASHBOARDS,
         common.PATH_DASHBOARD,
         dashboardId
       ],

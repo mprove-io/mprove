@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, take, tap } from 'rxjs/operators';
 import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -31,6 +31,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   pageTitle = constants.DASHBOARDS_PAGE_TITLE;
 
   dashboardDeletedFnBindThis = this.dashboardDeletedFn.bind(this);
+
+  pathDashboards = common.PATH_DASHBOARDS;
 
   // groups: string[];
 
@@ -125,6 +127,17 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     })
   );
 
+  lastUrl: string;
+
+  routerEvents$ = this.router.events.pipe(
+    filter(ev => ev instanceof NavigationEnd),
+    tap((x: any) => {
+      let ar = x.url.split('/');
+      this.lastUrl = ar[ar.length - 1];
+      this.cd.detectChanges();
+    })
+  );
+
   private timer: any;
 
   constructor(
@@ -146,6 +159,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
+
+    let ar = this.router.url.split('/');
+    this.lastUrl = ar[ar.length - 1];
 
     this.word = this.route.snapshot.queryParamMap.get('search');
     this.searchWordChange();
