@@ -1,6 +1,6 @@
 <div class="bg-blue1 flex h-full cursor-default flex-col">
   <div class="mx-6 mt-8 flex h-2 flex-1 flex-row">
-    <div class="flex flex-grow flex-col">
+    <div class="flex min-w-[2px] flex-grow flex-col">
       <div class="flex h-11 flex-row items-center">
         <div
           data-cy="dashboardsTitle"
@@ -266,7 +266,9 @@
           </div>
         </div>
 
-        <div class="mb-6 ml-6 flex flex-grow rounded bg-white shadow">
+        <div
+          class="mb-6 ml-6 flex min-w-[2px] flex-grow rounded bg-white shadow"
+        >
           <div class="flex overflow-auto">
             <router-outlet *ngIf="lastUrl !== pathDashboards"></router-outlet>
           </div>
