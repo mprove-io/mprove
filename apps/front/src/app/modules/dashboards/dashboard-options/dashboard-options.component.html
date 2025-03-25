@@ -15,6 +15,7 @@
     'cursor-default text-gray-400': dashboard.temp === true,
     'cursor-pointer hover:bg-blue-200': dashboard.temp === false,
   }"
+    (click)="clickMenu($event)"
   >
     <m-dots-vertical-icon></m-dots-vertical-icon>
   </button>

@@ -35,6 +35,10 @@ export class DashboardOptionsComponent {
     private cd: ChangeDetectorRef
   ) {}
 
+  clickMenu(event: MouseEvent) {
+    event.stopPropagation();
+  }
+
   goToFile(event?: MouseEvent) {
     event.stopPropagation();
 

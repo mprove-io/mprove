@@ -23,7 +23,6 @@ import { appRoutes } from './app/app-routes';
 import { AppComponent } from './app/app.component';
 import { AuthModule } from './app/modules/auth/auth.module';
 import { ChartsModule } from './app/modules/charts/charts.module';
-import { DashboardModule } from './app/modules/dashboard/dashboard.module';
 import { DashboardsModule } from './app/modules/dashboards/dashboards.module';
 import { FilesModule } from './app/modules/files/files.module';
 import { MetricsModule } from './app/modules/metrics/metrics.module';
@@ -59,7 +58,6 @@ bootstrapApplication(AppComponent, {
       ProjectModule,
       FilesModule,
       ModelModule,
-      DashboardModule,
       NgxSpinnerModule,
       BrowserAnimationsModule,
       MonacoEditorModule.forRoot({

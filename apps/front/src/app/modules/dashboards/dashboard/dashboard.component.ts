@@ -35,7 +35,6 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
-import { DashboardTileChartComponent } from '../shared/dashboard-tile-chart/dashboard-tile-chart.component';
 
 import { ActivatedRoute, Router } from '@angular/router';
 import uFuzzy from '@leeoniya/ufuzzy';
@@ -43,6 +42,7 @@ import { UiQuery } from '~front/app/queries/ui.query';
 import { StructDashboardResolver } from '~front/app/resolvers/struct-dashboard.resolver';
 import { UiService } from '~front/app/services/ui.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { DashboardTileChartComponent } from '../../shared/dashboard-tile-chart/dashboard-tile-chart.component';
 
 class LayoutItem {
   id: string;

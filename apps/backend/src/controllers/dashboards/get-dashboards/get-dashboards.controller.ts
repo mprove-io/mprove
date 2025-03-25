@@ -73,6 +73,7 @@ export class GetDashboardsController {
     let dashboards = (await this.db.drizzle
       .select({
         dashboardId: dashboardsTable.dashboardId,
+        temp: dashboardsTable.temp,
         filePath: dashboardsTable.filePath,
         accessUsers: dashboardsTable.accessUsers,
         accessRoles: dashboardsTable.accessRoles,
@@ -85,10 +86,7 @@ export class GetDashboardsController {
       })
       .from(dashboardsTable)
       .where(
-        and(
-          eq(dashboardsTable.structId, bridge.structId),
-          eq(dashboardsTable.temp, false)
-        )
+        and(eq(dashboardsTable.structId, bridge.structId))
       )) as schemaPostgres.DashboardEnt[];
 
     // let dashboards = await this.dashboardsRepository.find({

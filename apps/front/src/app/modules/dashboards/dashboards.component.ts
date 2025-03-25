@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { take, tap } from 'rxjs/operators';
+import { filter, take, tap } from 'rxjs/operators';
 import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
@@ -15,6 +15,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { DashboardQuery } from '~front/app/queries/dashboard.query';
 
 export class ModelXWithTotalDashboards extends common.ModelX {
   totalDashboards: number;
@@ -37,13 +38,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   showTiles = false;
 
   isShow = true;
-
-  dashboardsModels: ModelXWithTotalDashboards[];
-  hasAccessModels: common.ModelX[] = [];
-
-  dashboards: common.DashboardX[];
-  dashboardsFilteredByWord: common.DashboardX[];
-  filteredDashboards: common.DashboardX[];
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -69,9 +63,20 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     })
   );
 
+  dashboardsModels: ModelXWithTotalDashboards[];
+  hasAccessModels: common.ModelX[] = [];
+
+  draftsLength: number;
+
+  dashboards: common.DashboardX[];
+  dashboardsFilteredByWord: common.DashboardX[];
+  filteredDashboards: common.DashboardX[];
+
   dashboards$ = this.dashboardsQuery.select().pipe(
     tap(x => {
       this.dashboards = x.dashboards;
+
+      this.draftsLength = this.dashboards.filter(y => y.temp === true).length;
 
       this.modelsQuery
         .select()
@@ -98,6 +103,15 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     })
   );
 
+  dashboard: common.DashboardX;
+  dashboard$ = this.dashboardQuery.select().pipe(
+    filter(x => common.isDefined(x.dashboardId)),
+    tap(x => {
+      this.dashboard = x;
+      this.cd.detectChanges();
+    })
+  );
+
   modelId: string;
 
   word: string;
@@ -121,6 +135,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private dashboardsQuery: DashboardsQuery,
+    private dashboardQuery: DashboardQuery,
     private modelsQuery: ModelsQuery,
     private memberQuery: MemberQuery,
     private myDialogService: MyDialogService,
@@ -199,6 +214,16 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     this.makeFilteredDashboards();
     this.cd.detectChanges();
+  }
+
+  deleteDrafts() {}
+
+  deleteDraftDashboard(event: any, dashboard: common.DashboardX) {
+    event.stopPropagation();
+  }
+
+  dashboardSaveAs(event: any) {
+    event.stopPropagation();
   }
 
   trackByFn(index: number, item: common.DashboardX) {

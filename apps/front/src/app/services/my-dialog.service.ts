@@ -10,11 +10,11 @@ import {
 import {
   DashboardAddFilterDialogComponent,
   DashboardAddFilterDialogData
-} from '../modules/dashboard/dashboard-add-filter-dialog/dashboard-add-filter-dialog.component';
+} from '../modules/dashboards/dashboard-add-filter-dialog/dashboard-add-filter-dialog.component';
 import {
   DashboardAddTileDialogComponent,
   DashboardAddTileDialogData
-} from '../modules/dashboard/dashboard-add-tile-dialog/dashboard-add-tile-dialog.component';
+} from '../modules/dashboards/dashboard-add-tile-dialog/dashboard-add-tile-dialog.component';
 import {
   DashboardsNewDialogComponent,
   DashboardsNewDialogData
