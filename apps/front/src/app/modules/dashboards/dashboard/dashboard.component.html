@@ -131,7 +131,7 @@
                       isExplorer === true &&
                       dashboard.temp === false &&
                       dashboard.canEditOrDeleteDashboard === true,
-                    'cursor-default bg-gray-400  text-white':
+                    'cursor-default bg-gray-400 text-white':
                       isExplorer === false ||
                       dashboard.temp === true ||
                       dashboard.canEditOrDeleteDashboard === false
@@ -351,7 +351,7 @@
           class="mr-6 mt-1 flex h-2 flex-grow flex-row overflow-auto pl-6 pt-6"
         >
           <ktd-grid
-            class="w-[97vw]"
+            class="w-[70vw]"
             *ngIf="dashboard.tiles"
             [compactType]="compactType"
             [preventCollision]="preventCollision"

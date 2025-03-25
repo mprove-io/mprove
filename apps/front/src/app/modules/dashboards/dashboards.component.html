@@ -267,11 +267,12 @@
         </div>
 
         <div
-          class="mb-6 ml-6 flex min-w-[2px] flex-grow rounded bg-white shadow"
+          class="mb-6 ml-6 flex min-w-[2px] flex-grow"
+          [ngClass]="{
+            'rounded bg-white shadow': lastUrl === pathDashboards
+          }"
         >
-          <div class="flex overflow-auto">
-            <router-outlet *ngIf="lastUrl !== pathDashboards"></router-outlet>
-          </div>
+          <router-outlet *ngIf="lastUrl !== pathDashboards"></router-outlet>
 
           <div
             *ngIf="lastUrl === pathDashboards"
