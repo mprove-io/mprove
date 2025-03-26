@@ -3,18 +3,11 @@
     <div class="mt-8 flex min-w-[2px] flex-grow flex-col" *ngIf="!!dashboard">
       <div class="flex h-11 flex-row items-center justify-between">
         <div class="flex w-full flex-row items-center">
-          <div class="flex flex-1 flex-row items-center">
-            <!-- <div
-              data-cy="dashboardTitle"
-              class="text-gray1 flex items-center self-center text-2xl font-semibold"
-            >
-              {{ pageTitle }}
-            </div> -->
-
-            <div class="text-gray1 ml-5 text-xl">{{
+          <div class="flex flex-row items-center">
+            <!-- <div class="text-gray1 ml-5 text-xl">{{
               (dashboard.title ? dashboard.title : dashboard.dashboardId)
                 | capitalize
-            }}</div>
+            }}</div> -->
 
             <ng-template #templateAddTile>
               <div *ngIf="isExplorer === false">Explorer role required</div>
@@ -169,11 +162,9 @@
             </form>
           </div>
 
-          <!-- <div class="flex-grow"></div> -->
+          <div class="flex-grow"></div>
 
-          <!-- <div class="flex-grow"></div> -->
-
-          <div class="flex flex-1 flex-row justify-end">
+          <div class="flex flex-row justify-end">
             <div
               *ngIf="!!firstCompletedQuery"
               class="flex flex-row items-center justify-end"
