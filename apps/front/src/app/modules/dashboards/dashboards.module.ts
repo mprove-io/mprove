@@ -12,11 +12,13 @@ import { SharedModule } from '../shared/shared.module';
 import { DashboardFiltersComponent } from './dashboard-filters/dashboard-filters.component';
 import { DashboardOptionsComponent } from './dashboard-options/dashboard-options.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardsListComponent } from './dashboards-list/dashboards-list.component';
 import { DashboardsComponent } from './dashboards.component';
 
 @NgModule({
   declarations: [
     DashboardsComponent,
+    DashboardsListComponent,
     DashboardComponent,
     DashboardFiltersComponent,
     DashboardOptionsComponent

@@ -14,6 +14,7 @@ import { UpdatePasswordComponent } from './modules/auth/password/03-update-passw
 import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-password-was-set/new-password-was-set.component';
 import { ChartsComponent } from './modules/charts/charts.component';
 import { DashboardComponent } from './modules/dashboards/dashboard/dashboard.component';
+import { DashboardsListComponent } from './modules/dashboards/dashboards-list/dashboards-list.component';
 import { DashboardsComponent } from './modules/dashboards/dashboards.component';
 import { FileEditorComponent } from './modules/files/file-editor/file-editor.component';
 import { FilesComponent } from './modules/files/files.component';
@@ -237,8 +238,12 @@ export const appRoutes: Routes = [
                                 path:
                                   common.PATH_DASHBOARD +
                                   `/:${common.PARAMETER_DASHBOARD_ID}`,
-                                resolve: [StructDashboardResolver],
-                                children: []
+                                resolve: [StructDashboardResolver]
+                              },
+                              {
+                                component: DashboardsListComponent,
+                                canDeactivate: [DeactivateGuard],
+                                path: common.PATH_DASHBOARDS_LIST
                               }
                             ]
                           },

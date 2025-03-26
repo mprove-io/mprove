@@ -16,6 +16,7 @@ import { constants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
+import { FilteredDashboardsQuery } from '~front/app/queries/filtered-dashboards.query';
 
 export class ModelXWithTotalDashboards extends common.ModelX {
   totalDashboards: number;
@@ -32,7 +33,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   dashboardDeletedFnBindThis = this.dashboardDeletedFn.bind(this);
 
-  pathDashboards = common.PATH_DASHBOARDS;
+  pathDashboardsList = common.PATH_DASHBOARDS_LIST;
 
   // groups: string[];
 
@@ -65,7 +66,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     })
   );
 
-  dashboardsModels: ModelXWithTotalDashboards[];
   hasAccessModels: common.ModelX[] = [];
 
   draftsLength: number;
@@ -86,20 +86,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         .subscribe(ml => {
           this.hasAccessModels = ml.models.filter(m => m.hasAccess === true);
 
-          this.dashboardsModels = ml.models.map(y =>
-            Object.assign({}, y, <ModelXWithTotalDashboards>{
-              totalDashboards: this.dashboards.filter(
-                v => v.tiles.map(rp => rp.modelId).indexOf(y.modelId) > -1
-              ).length
-            })
-          );
-
-          // let allGroups = this.vizs.map(v => v.gr);
-          // let definedGroups = allGroups.filter(y => common.isDefined(y));
-          // this.groups = [...new Set(definedGroups)];
-
           this.makeFilteredDashboards();
-
           this.cd.detectChanges();
         });
     })
@@ -107,7 +94,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   dashboard: common.DashboardX;
   dashboard$ = this.dashboardQuery.select().pipe(
-    filter(x => common.isDefined(x.dashboardId)),
     tap(x => {
       this.dashboard = x;
       this.cd.detectChanges();
@@ -148,6 +134,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private dashboardsQuery: DashboardsQuery,
+    private filteredDashboardsQuery: FilteredDashboardsQuery,
     private dashboardQuery: DashboardQuery,
     private modelsQuery: ModelsQuery,
     private memberQuery: MemberQuery,
@@ -165,22 +152,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     this.word = this.route.snapshot.queryParamMap.get('search');
     this.searchWordChange();
-  }
-
-  modelOnClick(modelId: string) {
-    if (this.modelId === modelId) {
-      return;
-    }
-    this.modelId = modelId;
-    this.makeFilteredDashboards();
-  }
-
-  allModelsOnClick() {
-    if (common.isUndefined(this.modelId)) {
-      return;
-    }
-    this.modelId = undefined;
-    this.makeFilteredDashboards();
   }
 
   makeFilteredDashboards() {
@@ -212,15 +183,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
     });
 
-    this.dashboardsModels = this.dashboardsModels
-      .map(x =>
-        Object.assign({}, x, {
-          totalDashboards: this.dashboardsFilteredByWord.filter(
-            d => d.tiles.map(rp => rp.modelId).indexOf(x.modelId) > -1
-          ).length
-        })
-      )
-      .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0));
+    this.filteredDashboardsQuery.update({
+      filteredDashboards: this.filteredDashboards
+    });
   }
 
   dashboardDeletedFn(deletedDashboardId: string) {
@@ -234,18 +199,12 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   deleteDrafts() {}
 
-  addDashboard() {}
-
   deleteDraftDashboard(event: any, dashboard: common.DashboardX) {
     event.stopPropagation();
   }
 
   dashboardSaveAs(event: any) {
     event.stopPropagation();
-  }
-
-  trackByFn(index: number, item: common.DashboardX) {
-    return item.dashboardId;
   }
 
   searchWordChange() {
@@ -289,14 +248,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.location.replaceState(url);
   }
 
-  newDashboard() {
+  addDashboard() {
     this.myDialogService.showDashboardsNew({
       apiService: this.apiService
     });
-  }
-
-  rowMenuOnClick(event: any) {
-    event.stopPropagation();
   }
 
   goToDashboardFile(event: any, dashboard: common.DashboardX) {
@@ -308,14 +263,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.navigateService.navigateToFileLine({
       panel: common.PanelEnum.Tree,
       underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
-    });
-  }
-
-  goToMconfig(tile: common.TileX) {
-    this.navigateService.navigateMconfigQuery({
-      modelId: tile.modelId,
-      mconfigId: tile.mconfigId,
-      queryId: tile.queryId
     });
   }
 
@@ -334,29 +281,12 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  goToModel(modelId: string) {
-    this.navigateService.navigateToModel(modelId);
-  }
-
-  refreshShow() {
-    // this.isShow = false;
-    // setTimeout(() => {
-    //   this.isShow = true;
-    // });
-  }
-
-  toggleShowFilters() {
-    this.showBricks = !this.showBricks;
-    this.refreshShow();
-  }
-
-  toggleShowTiles() {
-    this.showTiles = !this.showTiles;
-    this.refreshShow();
-  }
-
   navigateToDashboard(dashboardId: string) {
     this.navigateService.navigateToDashboard(dashboardId);
+  }
+
+  navigateToDashboardsList() {
+    this.navigateService.navigateToDashboardsList();
   }
 
   ngOnDestroy() {
