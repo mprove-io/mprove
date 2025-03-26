@@ -1,10 +1,10 @@
 <div class="bg-blue1 flex h-full cursor-default flex-col">
-  <div class="mx-6 mt-8 flex h-2 flex-1 flex-row">
+  <div class="mx-6 flex h-2 flex-1 flex-row">
     <div class="flex min-w-[2px] flex-grow flex-col">
       <div class="flex h-2 flex-1 flex-row">
-        <div class="mb-6 flex w-1/4 flex-shrink-0 bg-blue-200">
-          <div class="flex w-full flex-col bg-red-200">
-            <div class="flex h-11 flex-row items-center">
+        <div class="mb-6 flex w-1/4 flex-shrink-0">
+          <div class="flex w-full flex-col">
+            <div class="mt-8 flex h-11 flex-row items-center">
               <div
                 data-cy="dashboardsTitle"
                 class="text-gray1 flex items-center self-center text-2xl font-semibold"
@@ -266,7 +266,7 @@
           <router-outlet *ngIf="lastUrl !== pathDashboards"></router-outlet>
 
           <div class="flex flex-col" *ngIf="lastUrl === pathDashboards">
-            <div class="flex flex-row">
+            <div class="mt-8 flex h-11 flex-row">
               <div
                 class="ml-10 flex cursor-pointer flex-row items-center"
                 (click)="toggleShowFilters()"
