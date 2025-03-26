@@ -234,6 +234,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   deleteDrafts() {}
 
+  addDashboard() {}
+
   deleteDraftDashboard(event: any, dashboard: common.DashboardX) {
     event.stopPropagation();
   }
