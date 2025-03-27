@@ -114,7 +114,7 @@
                     <div class="flex flex-grow"></div>
 
                     <button
-                      *ngIf="draftsLength > 0"
+                      *ngIf="filteredDraftsLength > 0"
                       class="mr-10 flex flex-row items-center rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-gray-100 focus:outline-none"
                       (click)="deleteDrafts()"
                     >
@@ -127,11 +127,14 @@
                     class="mb-5 mt-5 flex h-2 flex-grow flex-col overflow-y-auto"
                   >
                     <div
-                      *ngFor="let d of dashboards; let i = index"
+                      *ngFor="let d of filteredDashboards; let i = index"
                       (click)="navigateToDashboard(d.dashboardId)"
                     >
                       <div
-                        *ngIf="draftsLength >= 0 && i === draftsLength"
+                        *ngIf="
+                          filteredDraftsLength >= 0 &&
+                          i === filteredDraftsLength
+                        "
                         class="ml-[25px] mr-[45px] divide-y divide-gray-300"
                       >
                         <div></div>

@@ -92,7 +92,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   hasAccessModels: common.ModelX[] = [];
 
-  draftsLength: number;
+  filteredDraftsLength: number;
 
   dashboards: common.DashboardX[];
   dashboardsFilteredByWord: common.DashboardX[];
@@ -101,8 +101,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   dashboards$ = this.dashboardsQuery.select().pipe(
     tap(x => {
       this.dashboards = x.dashboards;
-
-      this.draftsLength = this.dashboards.filter(y => y.temp === true).length;
 
       this.modelsQuery
         .select()
@@ -221,12 +219,24 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       let aTitle = a.title || a.dashboardId;
       let bTitle = b.title || b.dashboardId;
 
-      return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+      return b.temp === true && a.temp !== true
+        ? 1
+        : a.temp === true && b.temp !== true
+        ? -1
+        : aTitle > bTitle
+        ? 1
+        : bTitle > aTitle
+        ? -1
+        : 0;
     });
 
     this.filteredDashboardsQuery.update({
       filteredDashboards: this.filteredDashboards
     });
+
+    this.filteredDraftsLength = this.filteredDashboards.filter(
+      y => y.temp === true
+    ).length;
   }
 
   dashboardDeletedFn(deletedDashboardId: string) {
