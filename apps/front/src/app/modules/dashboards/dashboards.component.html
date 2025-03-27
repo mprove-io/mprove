@@ -2,7 +2,7 @@
   <div class="mx-6 flex h-2 flex-1 flex-row">
     <div class="flex min-w-[2px] flex-grow flex-col">
       <div class="flex h-2 flex-1 flex-row">
-        <div class="mb-6 flex w-1/4 flex-shrink-0">
+        <div class="mb-6 flex w-1/5 flex-shrink-0">
           <div class="flex w-full flex-col">
             <div class="mt-8 flex h-11 flex-row items-center">
               <div
@@ -81,7 +81,7 @@
             </div>
 
             <div class="mt-6 flex w-full flex-grow rounded bg-white shadow">
-              <div class="text-gray1 mr-5 mt-6 flex w-full flex-col text-base">
+              <div class="text-gray1 mt-6 flex w-full flex-col text-base">
                 <div class="flex flex-1 flex-col">
                   <div class="flex h-11 flex-row items-center">
                     <m-search-icon class="text-gray1 ml-6"></m-search-icon>
@@ -90,8 +90,8 @@
                       spellcheck="false"
                       autocomplete="off"
                       data-cy="dashboardsSearchInput"
-                      class="form-input focus:border-blue3 ml-3 h-10 w-[250px] rounded border-gray-400 bg-white"
-                      placeholder="Search by Title, File Name"
+                      class="form-input focus:border-blue3 ml-3 h-10 w-[225px] rounded border-gray-400 bg-white"
+                      placeholder="Search by Title or File"
                       [ngClass]="{
                         'bg-purple-200': !!word
                       }"
@@ -115,7 +115,7 @@
 
                     <button
                       *ngIf="draftsLength > 0"
-                      class="ml-5 mr-5 flex flex-row items-center rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-gray-100 focus:outline-none"
+                      class="mr-10 flex flex-row items-center rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-gray-100 focus:outline-none"
                       (click)="deleteDrafts()"
                     >
                       <m-trash-icon></m-trash-icon>
@@ -132,13 +132,13 @@
                     >
                       <div
                         *ngIf="draftsLength >= 0 && i === draftsLength"
-                        class="ml-[25px] mr-[20px] divide-y divide-gray-300"
+                        class="ml-[25px] mr-[45px] divide-y divide-gray-300"
                       >
                         <div></div>
                         <div></div>
                       </div>
                       <div
-                        class="hover:bg-blue2 group ml-6 mr-5 flex h-11 flex-row items-center rounded px-4 hover:cursor-pointer"
+                        class="hover:bg-blue2 group ml-6 mr-10 flex h-11 flex-row items-center rounded px-4 hover:cursor-pointer"
                       >
                         <div class="mr-3 flex h-2 items-center">
                           <div

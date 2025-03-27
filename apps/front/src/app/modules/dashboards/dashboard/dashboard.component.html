@@ -46,7 +46,7 @@
                     isExplorer === true &&
                     dashboard.temp === false &&
                     dashboard.canEditOrDeleteDashboard === true,
-                  'cursor-default bg-gray-400 text-white':
+                  'cursor-default border-gray-300 text-gray-400':
                     isExplorer === false ||
                     dashboard.temp === true ||
                     dashboard.canEditOrDeleteDashboard === false
@@ -81,7 +81,7 @@
                 [ngClass]="{
                   'border-gray-400 text-gray-500 hover:bg-white':
                     dashboard.tiles.length > 0 && dashboard.fields.length > 0,
-                  'cursor-default  border-gray-300 text-gray-400':
+                  'cursor-default border-gray-300 text-gray-400':
                     dashboard.tiles.length === 0 ||
                     dashboard.fields.length === 0
                 }"
