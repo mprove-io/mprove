@@ -304,6 +304,11 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   dashboardSaveAs(event: any) {
     event.stopPropagation();
+
+    this.myDialogService.showDashboardSaveAs({
+      apiService: this.apiService,
+      dashboard: this.dashboard
+    });
   }
 
   searchWordChange() {
