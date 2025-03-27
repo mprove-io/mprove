@@ -132,8 +132,7 @@
                     >
                       <div
                         *ngIf="
-                          filteredDraftsLength >= 0 &&
-                          i === filteredDraftsLength
+                          filteredDraftsLength > 0 && i === filteredDraftsLength
                         "
                         class="ml-[25px] mr-[45px] divide-y divide-gray-300"
                       >

@@ -19,6 +19,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { UiService } from '~front/app/services/ui.service';
+import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
@@ -251,7 +252,51 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  deleteDrafts() {}
+  deleteDrafts() {
+    let dashboardIds = this.filteredDashboards
+      .filter(d => d.temp === true)
+      .map(d => d.dashboardId);
+
+    let payload: apiToBackend.ToBackendDeleteDraftDashboardsRequestPayload = {
+      projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
+      branchId: this.nav.branchId,
+      envId: this.nav.envId,
+      dashboardIds: dashboardIds
+    };
+
+    this.apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum
+            .ToBackendDeleteDraftDashboards,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendDeleteDraftReportsResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.dashboardsQuery.update({
+              dashboards: this.dashboards.filter(
+                d => dashboardIds.indexOf(d.dashboardId) < 0
+              )
+            });
+
+            // this.filteredDashboardsQuery.update({
+            //   filteredDashboards: this.filteredDashboards.filter(
+            //     d => dashboardIds.indexOf(d.dashboardId) < 0
+            //   )
+            // });
+
+            if (dashboardIds.indexOf(this.dashboard.dashboardId) > -1) {
+              this.navigateService.navigateToDashboards();
+            }
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
 
   deleteDraftDashboard(event: any, dashboard: common.DashboardX) {
     event.stopPropagation();

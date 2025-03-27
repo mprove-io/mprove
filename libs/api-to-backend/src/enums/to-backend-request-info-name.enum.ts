@@ -110,6 +110,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendCreateDashboard = 'api/ToBackendCreateDashboard',
   ToBackendModifyDashboard = 'api/ToBackendModifyDashboard',
   ToBackendDeleteDashboard = 'api/ToBackendDeleteDashboard',
+  ToBackendDeleteDraftDashboards = 'api/ToBackendDeleteDraftDashboards',
   //
   ToBackendGetCharts = 'api/ToBackendGetCharts',
   ToBackendGetChart = 'api/ToBackendGetChart',

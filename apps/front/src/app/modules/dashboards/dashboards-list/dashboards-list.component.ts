@@ -38,7 +38,9 @@ export class DashboardsListComponent {
   filteredDashboards: common.DashboardX[];
   filteredDashboards$ = this.filteredDashboardsQuery.select().pipe(
     tap(x => {
-      this.filteredDashboards = x.filteredDashboards;
+      this.filteredDashboards = x.filteredDashboards.filter(
+        d => d.temp === false
+      );
     })
   );
 

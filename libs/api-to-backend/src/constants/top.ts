@@ -202,6 +202,8 @@ export const nameToClass = {
     interfaces.ToBackendModifyDashboardRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteDashboard]:
     interfaces.ToBackendDeleteDashboardRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftDashboards]:
+    interfaces.ToBackendDeleteDraftDashboardsRequest,
   //
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetCharts]:
     interfaces.ToBackendGetChartsRequest,
