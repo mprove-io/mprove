@@ -197,7 +197,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     let idxs;
 
     if (common.isDefinedAndNotEmpty(this.word)) {
-      let haystack = this.dashboards.map(x => `${x.title} ${x.dashboardId}`);
+      // let haystack = this.dashboards.map(x => `${x.title} ${x.dashboardId}`);
+      let haystack = this.dashboards.map(x =>
+        common.isDefined(x.title) ? `${x.title}` : `${x.dashboardId}`
+      );
       let opts = {};
       let uf = new uFuzzy(opts);
       idxs = uf.filter(haystack, this.word);
