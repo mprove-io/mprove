@@ -66,7 +66,7 @@ export class FilesComponent implements OnInit {
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
     tap((x: any) => {
-      let ar = x.url.split('/');
+      let ar = x.url.split('?')[0].split('/');
       this.lastUrl = ar[ar.length - 1];
       this.cd.detectChanges();
     })
@@ -115,7 +115,7 @@ export class FilesComponent implements OnInit {
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
 
-    let ar = this.router.url.split('/');
+    let ar = this.router.url.split('?')[0].split('/');
     this.lastUrl = ar[ar.length - 1];
   }
 

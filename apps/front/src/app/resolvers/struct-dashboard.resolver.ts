@@ -51,11 +51,12 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
   }
 
   resolveRoute(item: {
+    dashboardId?: string;
     route: ActivatedRouteSnapshot;
     showSpinner: boolean;
     timezone: string;
   }): Observable<boolean> {
-    let { route, showSpinner, timezone } = item;
+    let { dashboardId, route, showSpinner, timezone } = item;
 
     let nav: NavState;
     this.navQuery
@@ -80,7 +81,9 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let parametersDashboardId = route.params[common.PARAMETER_DASHBOARD_ID];
+    let parametersDashboardId = common.isDefined(dashboardId)
+      ? dashboardId
+      : route?.params[common.PARAMETER_DASHBOARD_ID];
 
     let payload: apiToBackend.ToBackendGetDashboardRequestPayload = {
       projectId: nav.projectId,

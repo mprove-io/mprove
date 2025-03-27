@@ -277,11 +277,17 @@ export class NavigateService {
       common.PATH_DASHBOARDS
     ];
 
+    let uiState = this.uiQuery.getValue();
+
+    let extra = {
+      queryParams: { timezone: uiState.timezone.split('/').join('-') }
+    };
+
     if (common.isDefined(item?.extra)) {
-      this.router.navigate(navTo, item?.extra);
-    } else {
-      this.router.navigate(navTo);
+      extra = Object.assign({}, extra, item?.extra);
     }
+
+    this.router.navigate(navTo, extra);
   }
 
   navigateToDashboardsList() {
@@ -294,6 +300,8 @@ export class NavigateService {
       .subscribe();
 
     let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+
+    let uiState = this.uiQuery.getValue();
 
     let navTo = [
       common.PATH_ORG,
@@ -310,7 +318,9 @@ export class NavigateService {
       common.PATH_DASHBOARDS_LIST
     ];
 
-    this.router.navigate(navTo);
+    this.router.navigate(navTo, {
+      queryParams: { timezone: uiState.timezone.split('/').join('-') }
+    });
   }
 
   reloadCharts() {

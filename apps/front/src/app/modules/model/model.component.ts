@@ -123,7 +123,7 @@ export class ModelComponent implements OnInit, OnDestroy {
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
     tap((x: any) => {
-      let ar = x.url.split('/');
+      let ar = x.url.split('?')[0].split('/');
       this.lastUrl = ar[ar.length - 1];
       this.cd.detectChanges();
     })

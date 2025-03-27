@@ -1,22 +1,26 @@
 import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import uFuzzy from '@leeoniya/ufuzzy';
 import { filter, take, tap } from 'rxjs/operators';
+import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { DashboardsQuery } from '~front/app/queries/dashboards.query';
+import { FilteredDashboardsQuery } from '~front/app/queries/filtered-dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { StructQuery } from '~front/app/queries/struct.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
+import { StructDashboardResolver } from '~front/app/resolvers/struct-dashboard.resolver';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { UiService } from '~front/app/services/ui.service';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
-
-import uFuzzy from '@leeoniya/ufuzzy';
-import { DashboardQuery } from '~front/app/queries/dashboard.query';
-import { FilteredDashboardsQuery } from '~front/app/queries/filtered-dashboards.query';
 
 export class ModelXWithTotalDashboards extends common.ModelX {
   totalDashboards: number;
@@ -41,6 +45,26 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   showTiles = false;
 
   isShow = true;
+
+  timezoneForm = this.fb.group({
+    timezone: [
+      {
+        value: undefined
+      }
+    ]
+  });
+
+  timezones = common.getTimezones();
+
+  struct$ = this.structQuery.select().pipe(
+    tap(x => {
+      if (x.allowTimezones === false) {
+        this.timezoneForm.controls['timezone'].disable();
+      } else {
+        this.timezoneForm.controls['timezone'].enable();
+      }
+    })
+  );
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -96,6 +120,18 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   dashboard$ = this.dashboardQuery.select().pipe(
     tap(x => {
       this.dashboard = x;
+
+      let uiState = this.uiQuery.getValue();
+      this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
+
+      if (common.isDefined(this.dashboard?.dashboardId)) {
+        this.title.setTitle(
+          `${this.pageTitle} - ${
+            this.dashboard?.title || this.dashboard?.dashboardId
+          }`
+        );
+      }
+
       this.cd.detectChanges();
     })
   );
@@ -118,7 +154,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
     tap((x: any) => {
-      let ar = x.url.split('/');
+      let ar = x.url.split('?')[0].split('/');
       this.lastUrl = ar[ar.length - 1];
       this.cd.detectChanges();
     })
@@ -130,6 +166,11 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
+    private fb: FormBuilder,
+    private uiQuery: UiQuery,
+    private uiService: UiService,
+    private structDashboardResolver: StructDashboardResolver,
+    private structQuery: StructQuery,
     private apiService: ApiService,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
@@ -147,7 +188,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
 
-    let ar = this.router.url.split('/');
+    let ar = this.router.url.split('?')[0].split('/');
     this.lastUrl = ar[ar.length - 1];
 
     this.word = this.route.snapshot.queryParamMap.get('search');
@@ -216,10 +257,29 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       this.makeFilteredDashboards();
       this.cd.detectChanges();
 
+      let uiState = this.uiQuery.getValue();
+      let timezoneParam = this.route.snapshot.queryParamMap.get('timezone');
+      let structState = this.structQuery.getValue();
+
+      let timezone =
+        structState.allowTimezones === false
+          ? structState.defaultTimezone
+          : common.isDefined(timezoneParam)
+          ? timezoneParam.split('-').join('/')
+          : uiState.timezone;
+
+      if (uiState.timezone !== timezone) {
+        this.uiQuery.updatePart({ timezone: timezone });
+        this.uiService.setUserUi({ timezone: timezone });
+
+        this.timezoneForm.controls['timezone'].setValue(timezone);
+      }
+
       let url = this.router
         .createUrlTree([], {
           relativeTo: this.route,
           queryParams: {
+            timezone: timezone.split('/').join('-'),
             search: common.isDefinedAndNotEmpty(this.word)
               ? this.word
               : undefined
@@ -236,10 +296,22 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.makeFilteredDashboards();
     this.cd.detectChanges();
 
+    let uiState = this.uiQuery.getValue();
+    let timezoneParam = this.route.snapshot.queryParamMap.get('timezone');
+    let structState = this.structQuery.getValue();
+
+    let timezone =
+      structState.allowTimezones === false
+        ? structState.defaultTimezone
+        : common.isDefined(timezoneParam)
+        ? timezoneParam.split('-').join('/')
+        : uiState.timezone;
+
     let url = this.router
       .createUrlTree([], {
         relativeTo: this.route,
         queryParams: {
+          timezone: timezone.split('/').join('-'),
           search: common.isDefinedAndNotEmpty(this.word) ? this.word : undefined
         }
       })
@@ -286,7 +358,62 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   }
 
   navigateToDashboardsList() {
+    this.title.setTitle(this.pageTitle);
+
     this.navigateService.navigateToDashboardsList();
+  }
+
+  timezoneChange() {
+    (document.activeElement as HTMLElement).blur();
+
+    let timezone = this.timezoneForm.controls['timezone'].value;
+
+    this.uiQuery.updatePart({ timezone: timezone });
+    this.uiService.setUserUi({ timezone: timezone });
+
+    let uiState = this.uiQuery.getValue();
+
+    if (this.lastUrl === common.PATH_DASHBOARDS) {
+      this.navigateService.navigateToDashboards();
+    } else if (this.lastUrl === common.PATH_DASHBOARDS_LIST) {
+      this.navigateService.navigateToDashboardsList();
+    } else if (common.isDefined(this.dashboard.dashboardId)) {
+      this.structDashboardResolver
+        .resolveRoute({
+          dashboardId: this.dashboard.dashboardId,
+          route: this.route.snapshot,
+          showSpinner: true,
+          timezone: uiState.timezone
+        })
+        .pipe(
+          tap(x => {
+            let uiStateB = this.uiQuery.getValue();
+
+            let url = this.router
+              .createUrlTree([], {
+                relativeTo: this.route,
+                queryParams: {
+                  timezone: uiStateB.timezone.split('/').join('-')
+                }
+              })
+              .toString();
+
+            this.location.go(url);
+          }),
+          take(1)
+        )
+        .subscribe();
+    }
+  }
+
+  timezoneSearchFn(term: string, timezone: { value: string; label: string }) {
+    let haystack = [`${timezone.label}`];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
   }
 
   ngOnDestroy() {

@@ -37,7 +37,6 @@ import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 
 import { ActivatedRoute, Router } from '@angular/router';
-import uFuzzy from '@leeoniya/ufuzzy';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { StructDashboardResolver } from '~front/app/resolvers/struct-dashboard.resolver';
 import { UiService } from '~front/app/services/ui.service';
@@ -95,16 +94,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isShow = true;
 
-  timezoneForm = this.fb.group({
-    timezone: [
-      {
-        value: undefined
-      }
-    ]
-  });
-
-  timezones = common.getTimezones();
-
   isCompleted = false;
   firstCompletedQuery: common.Query;
 
@@ -118,10 +107,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       // console.log(this.dashboard.extendedFilters);
 
       this.checkQueries();
-
-      let uiState = this.uiQuery.getValue();
-
-      this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
 
       this.title.setTitle(
         `${this.pageTitle} - ${
@@ -150,16 +135,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       );
 
       this.cd.detectChanges();
-    })
-  );
-
-  struct$ = this.structQuery.select().pipe(
-    tap(x => {
-      if (x.allowTimezones === false) {
-        this.timezoneForm.controls['timezone'].disable();
-      } else {
-        this.timezoneForm.controls['timezone'].enable();
-      }
     })
   );
 
@@ -215,37 +190,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    let uiState = this.uiQuery.getValue();
-
-    let timezoneParam = this.route.snapshot.queryParamMap.get('timezone');
-
-    let structState = this.structQuery.getValue();
-
-    let timezone =
-      structState.allowTimezones === false
-        ? structState.defaultTimezone
-        : common.isDefined(timezoneParam)
-        ? timezoneParam.split('-').join('/')
-        : uiState.timezone;
-
-    if (uiState.timezone !== timezone) {
-      this.uiQuery.updatePart({ timezone: timezone });
-      this.uiService.setUserUi({ timezone: timezone });
-    }
-
-    this.timezoneForm.controls['timezone'].setValue(timezone);
-
-    if (common.isUndefined(timezoneParam) || timezoneParam !== timezone) {
-      let url = this.router
-        .createUrlTree([], {
-          relativeTo: this.route,
-          queryParams: { timezone: timezone.split('/').join('-') }
-        })
-        .toString();
-
-      this.location.replaceState(url);
-    }
-
     this.resizeSubscription = merge(
       fromEvent(window, 'resize'),
       fromEvent(window, 'orientationchange')
@@ -395,42 +339,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.refreshShow();
   }
 
-  timezoneChange() {
-    (document.activeElement as HTMLElement).blur();
-
-    let timezone = this.timezoneForm.controls['timezone'].value;
-
-    this.uiQuery.updatePart({ timezone: timezone });
-    this.uiService.setUserUi({ timezone: timezone });
-
-    let uiState = this.uiQuery.getValue();
-
-    this.structDashboardResolver
-      .resolveRoute({
-        route: this.route.snapshot,
-        showSpinner: true,
-        timezone: uiState.timezone
-      })
-      .pipe(
-        tap(x => {
-          let uiStateB = this.uiQuery.getValue();
-
-          let url = this.router
-            .createUrlTree([], {
-              relativeTo: this.route,
-              queryParams: {
-                timezone: uiStateB.timezone.split('/').join('-')
-              }
-            })
-            .toString();
-
-          this.location.go(url);
-        }),
-        take(1)
-      )
-      .subscribe();
-  }
-
   run() {
     this.startRunButtonTimer();
 
@@ -565,18 +473,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       newDashboardFields: this.dashboard.fields,
       deleteFilterFieldId: filterFieldId,
       deleteFilterTileTitle: tileTitle,
-      timezone: this.timezoneForm.controls['timezone'].value
+      timezone: this.uiQuery.getValue().timezone
     });
-  }
-
-  timezoneSearchFn(term: string, timezone: { value: string; label: string }) {
-    let haystack = [`${timezone.label}`];
-
-    let opts = {};
-    let uf = new uFuzzy(opts);
-    let idxs = uf.filter(haystack, term);
-
-    return idxs != null && idxs.length > 0;
   }
 
   canDeactivate(): Promise<boolean> | boolean {

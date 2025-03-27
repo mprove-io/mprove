@@ -115,51 +115,6 @@
                 >Show Tile Parameters</div
               >
             </div>
-
-            <div
-              class="text-gray1 ml-10 flex h-9 select-none items-center text-base"
-              >Timezone</div
-            >
-
-            <form
-              class="ml-5"
-              [formGroup]="timezoneForm"
-              tp="Timezone change is not allowed"
-              [tpIsEnabled]="
-                timezoneForm.controls['timezone'].disabled === true
-              "
-            >
-              <ng-select
-                #dashboardTimezoneSelect
-                data-cy="dashboardTimezoneSelect"
-                class="w-[300px] text-base"
-                [items]="timezones"
-                [clearable]="false"
-                [searchable]="true"
-                [searchFn]="timezoneSearchFn"
-                (change)="timezoneChange()"
-                (keyup.esc)="
-                  $event.stopImmediatePropagation();
-                  dashboardTimezoneSelect.blur()
-                "
-                (keyup.enter)="
-                  $event.stopImmediatePropagation();
-                  dashboardTimezoneSelect.blur()
-                "
-                appendTo="body"
-                bindLabel="label"
-                bindValue="value"
-                formControlName="timezone"
-              >
-                <ng-template ng-label-tmp let-item="item">
-                  <div class="truncate">{{ item.label }}</div>
-                </ng-template>
-
-                <ng-template ng-option-tmp let-item="item">
-                  <div class="truncate">{{ item.label }}</div>
-                </ng-template>
-              </ng-select>
-            </form>
           </div>
 
           <div class="flex-grow"></div>
@@ -397,6 +352,5 @@
 
 <div *ngIf="dashboard$ | async"></div>
 <div *ngIf="nav$ | async"></div>
-<div *ngIf="struct$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
 <div *ngIf="alias$ | async"></div>

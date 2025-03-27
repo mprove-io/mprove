@@ -81,9 +81,7 @@
             </div>
 
             <div class="mt-6 flex w-full flex-grow rounded bg-white shadow">
-              <div
-                class="text-gray1 mr-5 mt-6 flex w-full flex-col pl-5 text-base"
-              >
+              <div class="text-gray1 mr-5 mt-6 flex w-full flex-col text-base">
                 <div class="flex flex-1 flex-col">
                   <div class="flex h-11 flex-row items-center">
                     <m-search-icon class="text-gray1 ml-6"></m-search-icon>
@@ -207,6 +205,54 @@
                       </div>
                     </div>
                   </div>
+
+                  <div class="mb-5 mr-5 mt-5 flex h-11 flex-row items-center">
+                    <div class="text-gray1 ml-6 select-none text-base"
+                      >Timezone</div
+                    >
+
+                    <div class="ml-5 flex max-w-[260px] flex-1">
+                      <form
+                        class="w-full"
+                        [formGroup]="timezoneForm"
+                        tp="Timezone change is not allowed"
+                        [tpIsEnabled]="
+                          timezoneForm.controls['timezone'].disabled === true
+                        "
+                      >
+                        <ng-select
+                          #metricsTimezoneSelect
+                          data-cy="metricsTimezoneSelect"
+                          class="w-full text-base"
+                          [items]="timezones"
+                          [clearable]="false"
+                          [searchable]="true"
+                          [searchFn]="timezoneSearchFn"
+                          (change)="timezoneChange()"
+                          (keyup.esc)="
+                            $event.stopImmediatePropagation();
+                            metricsTimezoneSelect.blur()
+                          "
+                          (keyup.enter)="
+                            $event.stopImmediatePropagation();
+                            metricsTimezoneSelect.blur()
+                          "
+                          appendTo="body"
+                          bindLabel="label"
+                          bindValue="value"
+                          formControlName="timezone"
+                        >
+                          <ng-template ng-label-tmp let-item="item">
+                            <div class="truncate">{{ item.label }}</div>
+                          </ng-template>
+
+                          <ng-template ng-option-tmp let-item="item">
+                            <div class="truncate">{{ item.label }}</div>
+                          </ng-template>
+                        </ng-select>
+                      </form>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -229,6 +275,7 @@
   <div *ngIf="dashboard$ | async"></div>
   <div *ngIf="nav$ | async"></div>
   <div *ngIf="member$ | async"></div>
+  <div *ngIf="struct$ | async"></div>
   <div *ngIf="isExplorer$ | async"></div>
   <div *ngIf="alias$ | async"></div>
 
