@@ -92,14 +92,16 @@ export class DeleteDraftDashboardsController {
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
-          await tx.delete(dashboardsTable).where(
-            and(
-              inArray(dashboardsTable.dashboardId, dashboardIds),
-              eq(dashboardsTable.temp, true),
-              // eq(dashboardsTable.creatorId, user.userId), // TODO: creatorId
-              eq(dashboardsTable.structId, bridge.structId)
-            )
-          );
+          await tx
+            .delete(dashboardsTable)
+            .where(
+              and(
+                inArray(dashboardsTable.dashboardId, dashboardIds),
+                eq(dashboardsTable.temp, true),
+                eq(dashboardsTable.creatorId, user.userId),
+                eq(dashboardsTable.structId, bridge.structId)
+              )
+            );
         }),
       getRetryOption(this.cs, this.logger)
     );

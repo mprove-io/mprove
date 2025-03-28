@@ -91,6 +91,8 @@ export class WrapToApiService {
     let dashboardX: common.DashboardX = {
       structId: dashboard.structId,
       dashboardId: dashboard.dashboardId,
+      temp: dashboard.temp,
+      creatorId: dashboard.creatorId,
       author: author,
       canEditOrDeleteDashboard: canEditOrDeleteDashboard,
       filePath: dashboard.filePath,
@@ -123,7 +125,6 @@ export class WrapToApiService {
         storeModelIds.length > 0
           ? models.filter(model => storeModelIds.indexOf(model.modelId) > -1)
           : [],
-      temp: dashboard.temp,
       serverTs: dashboard.serverTs
     };
 

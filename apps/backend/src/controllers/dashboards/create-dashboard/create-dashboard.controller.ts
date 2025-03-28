@@ -183,6 +183,8 @@ export class CreateDashboardController {
       let newDashboard: common.DashboardX = {
         structId: undefined,
         dashboardId: newDashboardId,
+        temp: false,
+        creatorId: undefined,
         filePath: undefined,
         content: undefined,
         accessUsers: undefined,
@@ -195,8 +197,7 @@ export class CreateDashboardController {
         serverTs: undefined,
         extendedFilters: [],
         storeModels: [],
-        fields: [],
-        temp: false
+        fields: []
       };
 
       dashboardFileText = makeDashboardFileText({

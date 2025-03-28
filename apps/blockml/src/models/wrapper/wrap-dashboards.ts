@@ -205,6 +205,8 @@ export function wrapDashboards(item: {
     apiDashboards.push({
       structId: structId,
       dashboardId: x.name,
+      temp: false,
+      creatorId: undefined,
       filePath: x.filePath,
       content: x,
       accessUsers: x.access_users || [],
@@ -215,7 +217,6 @@ export function wrapDashboards(item: {
       hidden: common.toBooleanFromLowercaseString(x.hidden),
       fields: dashFields,
       tiles: apiTiles,
-      temp: false,
       serverTs: 1
     });
   });

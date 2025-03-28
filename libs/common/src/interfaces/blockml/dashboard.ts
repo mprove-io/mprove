@@ -16,6 +16,12 @@ export class Dashboard {
   @IsString()
   dashboardId: string;
 
+  @IsBoolean()
+  temp: boolean;
+
+  @IsString()
+  creatorId: string;
+
   @IsString()
   filePath: string;
 
@@ -44,9 +50,6 @@ export class Dashboard {
   @ValidateNested()
   @Type(() => Tile)
   tiles: Tile[];
-
-  @IsBoolean()
-  temp: boolean;
 
   @IsOptional()
   @IsString()

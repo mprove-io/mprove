@@ -263,6 +263,7 @@ export class GetDashboardController {
     }
 
     newDashboard.temp = fromDashboard.temp;
+    newDashboard.creatorId = fromDashboard.creatorId;
 
     let dashboardMconfigIds = newDashboard.tiles.map(x => x.mconfigId);
     let dashboardMconfigs = mconfigs.filter(

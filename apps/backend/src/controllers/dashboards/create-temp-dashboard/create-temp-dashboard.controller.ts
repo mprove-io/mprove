@@ -277,6 +277,7 @@ export class CreateTempDashboardController {
     }
 
     newDashboard.temp = true;
+    newDashboard.creatorId = user.userId;
 
     let dashboardMconfigIds = newDashboard.tiles.map(x => x.mconfigId);
     let dashboardMconfigs = mconfigs.filter(
