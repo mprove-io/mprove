@@ -1,5 +1,5 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, or } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
@@ -86,7 +86,13 @@ export class GetDashboardsController {
       })
       .from(dashboardsTable)
       .where(
-        and(eq(dashboardsTable.structId, bridge.structId))
+        and(
+          eq(dashboardsTable.structId, bridge.structId),
+          or(
+            eq(dashboardsTable.draft, false),
+            eq(dashboardsTable.creatorId, user.userId)
+          )
+        )
       )) as schemaPostgres.DashboardEnt[];
 
     // let dashboards = await this.dashboardsRepository.find({
