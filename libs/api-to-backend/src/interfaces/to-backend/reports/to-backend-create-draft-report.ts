@@ -80,7 +80,7 @@ export class ToBackendCreateDraftReportResponsePayload {
   userMember: common.Member;
 
   @ValidateNested()
-  @Type(() => common.Report)
+  @Type(() => common.ReportX)
   report: common.ReportX;
 }
 

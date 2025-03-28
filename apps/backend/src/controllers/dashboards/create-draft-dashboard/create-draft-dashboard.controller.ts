@@ -7,6 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { and, eq, inArray } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
@@ -15,6 +16,8 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -27,6 +30,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 
 let retry = require('async-retry');
@@ -45,6 +49,7 @@ export class CreateDraftDashboardController {
     private envsService: EnvsService,
     private bridgesService: BridgesService,
     private wrapToEntService: WrapToEntService,
+    private wrapToApiService: WrapToApiService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -157,7 +162,7 @@ export class CreateDraftDashboardController {
     let dashboardFileText = makeDashboardFileText({
       dashboard: fromDashboard,
       newDashboardId: newDashboardId,
-      newTitle: fromDashboard.title,
+      newTitle: newDashboardId,
       roles: fromDashboard.accessRoles.join(', '),
       users: fromDashboard.accessUsers.join(', '),
       deleteFilterFieldId: deleteFilterFieldId,
@@ -313,16 +318,80 @@ export class CreateDraftDashboardController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     dashboards: [wrapper.wrapToEntityDashboard(newDashboard)],
-    //     mconfigs: dashboardMconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
-    //     queries: dashboardQueries.map(x => wrapper.wrapToEntityQuery(x))
-    //   }
-    // });
+    let dashboardParts = (await this.db.drizzle
+      .select({
+        dashboardId: dashboardsTable.dashboardId,
+        draft: dashboardsTable.draft,
+        filePath: dashboardsTable.filePath,
+        accessUsers: dashboardsTable.accessUsers,
+        accessRoles: dashboardsTable.accessRoles,
+        title: dashboardsTable.title,
+        gr: dashboardsTable.gr,
+        hidden: dashboardsTable.hidden,
+        fields: dashboardsTable.fields,
+        tiles: dashboardsTable.tiles,
+        description: dashboardsTable.description
+      })
+      .from(dashboardsTable)
+      .where(
+        and(
+          eq(dashboardsTable.dashboardId, newDashboard.dashboardId),
+          eq(dashboardsTable.structId, bridge.structId),
+          eq(dashboardsTable.creatorId, user.userId)
+        )
+      )) as schemaPostgres.DashboardEnt[];
 
-    let payload = {};
+    let dashboardPartsGrantedAccess = dashboardParts.filter(x =>
+      helper.checkAccess({
+        userAlias: user.alias,
+        member: userMember,
+        entity: x
+      })
+    );
+
+    let modelIdsWithDuplicates = newDashboard.tiles.map(tile => tile.modelId);
+    let uniqueModelIds = [...new Set(modelIdsWithDuplicates)];
+
+    let models = (await this.db.drizzle
+      .select({
+        modelId: modelsTable.modelId,
+        accessUsers: modelsTable.accessUsers,
+        accessRoles: modelsTable.accessRoles,
+        hidden: modelsTable.hidden,
+        connectionId: modelsTable.connectionId
+      })
+      .from(modelsTable)
+      .where(
+        and(
+          eq(modelsTable.structId, bridge.structId),
+          inArray(modelsTable.modelId, uniqueModelIds)
+        )
+      )) as schemaPostgres.ModelEnt[];
+
+    let newDashboardParts = dashboardPartsGrantedAccess.map(x =>
+      this.wrapToApiService.wrapToApiDashboard({
+        dashboard: x,
+        mconfigs: [],
+        queries: [],
+        member: this.wrapToApiService.wrapToApiMember(userMember),
+        models: models.map(model =>
+          this.wrapToApiService.wrapToApiModel({
+            model: model,
+            hasAccess: helper.checkAccess({
+              userAlias: user.alias,
+              member: userMember,
+              entity: model
+            })
+          })
+        ),
+        isAddMconfigAndQuery: false
+      })
+    );
+
+    let payload: apiToBackend.ToBackendCreateDraftDashboardResponsePayload = {
+      newDashboardPart:
+        newDashboardParts.length > 0 ? newDashboardParts[0] : undefined
+    };
 
     return payload;
   }

@@ -84,6 +84,13 @@ export class DashboardService {
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateDraftDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let dashboardPart = resp.payload.newDashboardPart;
+
+            let dashboards = this.dashboardsQuery.getValue().dashboards;
+            let newDashboards = [dashboardPart, ...dashboards];
+
+            this.dashboardsQuery.update({ dashboards: newDashboards });
+
             this.navigateService.navigateToDashboard(newDashboardId);
           }
         }),

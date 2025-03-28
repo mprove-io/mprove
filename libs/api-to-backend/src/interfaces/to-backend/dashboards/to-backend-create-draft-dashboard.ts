@@ -53,6 +53,14 @@ export class ToBackendCreateDraftDashboardRequest extends ToBackendRequest {
   payload: ToBackendCreateDraftDashboardRequestPayload;
 }
 
+export class ToBackendCreateDraftDashboardResponsePayload {
+  @ValidateNested()
+  @Type(() => common.DashboardX)
+  newDashboardPart: common.DashboardX;
+}
+
 export class ToBackendCreateDraftDashboardResponse extends common.MyResponse {
-  payload: { [k in any]: never };
+  @ValidateNested()
+  @Type(() => ToBackendCreateDraftDashboardResponsePayload)
+  payload: ToBackendCreateDraftDashboardResponsePayload;
 }
