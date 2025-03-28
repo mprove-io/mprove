@@ -205,7 +205,7 @@ export function wrapDashboards(item: {
     apiDashboards.push({
       structId: structId,
       dashboardId: x.name,
-      temp: false,
+      draft: false,
       creatorId: undefined,
       filePath: x.filePath,
       content: x,

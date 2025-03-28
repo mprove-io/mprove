@@ -33,11 +33,11 @@
                   data-cy="dashboardsAddDashboardButton"
                   class="h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
                   [ngClass]="{
-                    'cursor-pointer border-gray-400 text-gray-500 hover:bg-white':
+                    'border-gray-400 text-gray-500 hover:bg-white':
                       alias !== restrictedUserAlias &&
                       isExplorer === true &&
                       hasAccessModels.length > 0,
-                    'cursor-default bg-gray-400 text-white':
+                    'cursor-default border-gray-300 text-gray-400':
                       alias === restrictedUserAlias ||
                       isExplorer === false ||
                       hasAccessModels.length === 0
@@ -163,7 +163,7 @@
 
                         <button
                           *ngIf="
-                            dashboard?.temp === true &&
+                            dashboard?.draft === true &&
                             d.dashboardId === dashboard?.dashboardId
                           "
                           type="button"
@@ -183,7 +183,7 @@
 
                         <button
                           *ngIf="
-                            dashboard?.temp === true &&
+                            dashboard?.draft === true &&
                             d.dashboardId === dashboard?.dashboardId
                           "
                           class="ml-3 flex h-9 flex-shrink-0 items-center justify-center space-x-2 rounded px-3 text-gray-500 hover:bg-white focus:outline-none"
@@ -197,7 +197,7 @@
                         </button>
 
                         <div
-                          *ngIf="d.temp === false"
+                          *ngIf="d.draft === false"
                           class="invisible ml-2 flex group-hover:visible"
                         >
                           <m-dashboard-options

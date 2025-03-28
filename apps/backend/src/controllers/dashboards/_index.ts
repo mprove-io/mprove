@@ -1,5 +1,5 @@
 export * from './create-dashboard/create-dashboard.controller';
-export * from './create-temp-dashboard/create-temp-dashboard.controller';
+export * from './create-draft-dashboard/create-draft-dashboard.controller';
 export * from './delete-dashboard/delete-dashboard.controller';
 export * from './delete-draft-dashboards/delete-draft-dashboards.controller';
 export * from './get-dashboard/get-dashboard.controller';

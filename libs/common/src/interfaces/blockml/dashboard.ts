@@ -17,7 +17,7 @@ export class Dashboard {
   dashboardId: string;
 
   @IsBoolean()
-  temp: boolean;
+  draft: boolean;
 
   @IsString()
   creatorId: string;

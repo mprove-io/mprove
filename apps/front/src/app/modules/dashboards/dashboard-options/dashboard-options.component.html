@@ -1,6 +1,6 @@
 <div
   tp="Save dashboard to enable options"
-  [tpIsEnabled]="dashboard.temp === true"
+  [tpIsEnabled]="dashboard.draft === true"
 >
   <button
     data-cy="dashboardOptionsMenuButton"
@@ -10,10 +10,10 @@
     [tpHideOnEscape]="true"
     tpVariation="menu"
     className="my-menu"
-    [disabled]="dashboard.temp === true"
+    [disabled]="dashboard.draft === true"
     [ngClass]="{
-    'cursor-default text-gray-400': dashboard.temp === true,
-    'cursor-pointer hover:bg-blue-200': dashboard.temp === false,
+    'cursor-default text-gray-400': dashboard.draft === true,
+    'cursor-pointer hover:bg-blue-200': dashboard.draft === false,
   }"
     (click)="clickMenu($event)"
   >

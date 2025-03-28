@@ -223,9 +223,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       let aTitle = a.title || a.dashboardId;
       let bTitle = b.title || b.dashboardId;
 
-      return b.temp === true && a.temp !== true
+      return b.draft === true && a.draft !== true
         ? 1
-        : a.temp === true && b.temp !== true
+        : a.draft === true && b.draft !== true
         ? -1
         : aTitle > bTitle
         ? 1
@@ -239,7 +239,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
 
     this.filteredDraftsLength = this.filteredDashboards.filter(
-      y => y.temp === true
+      y => y.draft === true
     ).length;
   }
 
@@ -254,7 +254,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   deleteDrafts() {
     let dashboardIds = this.filteredDashboards
-      .filter(d => d.temp === true)
+      .filter(d => d.draft === true)
       .map(d => d.dashboardId);
 
     let payload: apiToBackend.ToBackendDeleteDraftDashboardsRequestPayload = {

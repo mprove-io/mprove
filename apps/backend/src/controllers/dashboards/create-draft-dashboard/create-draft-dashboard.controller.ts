@@ -33,7 +33,7 @@ let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
-export class CreateTempDashboardController {
+export class CreateDraftDashboardController {
   constructor(
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
@@ -50,12 +50,12 @@ export class CreateTempDashboardController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempDashboard)
-  async createTempDashboard(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftDashboard)
+  async createDraftDashboard(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
-    let reqValid: apiToBackend.ToBackendCreateTempDashboardRequest =
+    let reqValid: apiToBackend.ToBackendCreateDraftDashboardRequest =
       request.body;
 
     let { traceId } = reqValid.info;
@@ -276,7 +276,7 @@ export class CreateTempDashboardController {
       });
     }
 
-    newDashboard.temp = true;
+    newDashboard.draft = true;
     newDashboard.creatorId = user.userId;
 
     let dashboardMconfigIds = newDashboard.tiles.map(x => x.mconfigId);

@@ -112,7 +112,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     this.dashboard = this.ref.data.dashboard as common.DashboardX;
 
     this.selectedDashboardId =
-      this.dashboard.temp === false &&
+      this.dashboard.draft === false &&
       this.dashboard.canEditOrDeleteDashboard === true
         ? this.dashboard.dashboardId
         : undefined;

@@ -26,7 +26,7 @@ export class DashboardService {
     this.nav$.subscribe();
   }
 
-  navCreateTempDashboard(item: {
+  navCreateDraftDashboard(item: {
     tiles: common.TileX[];
     oldDashboardId: string;
     newDashboardId: string;
@@ -56,7 +56,7 @@ export class DashboardService {
       newTiles.push(y);
     });
 
-    let payload: apiToBackend.ToBackendCreateTempDashboardRequestPayload = {
+    let payload: apiToBackend.ToBackendCreateDraftDashboardRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -74,11 +74,11 @@ export class DashboardService {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendCreateTempDashboard,
+            .ToBackendCreateDraftDashboard,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateTempDashboardResponse) => {
+        tap((resp: apiToBackend.ToBackendCreateDraftDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.navigateService.navigateToDashboard(newDashboardId);
           }

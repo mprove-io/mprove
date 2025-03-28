@@ -1,5 +1,5 @@
 export * from './to-backend-create-dashboard';
-export * from './to-backend-create-temp-dashboard';
+export * from './to-backend-create-draft-dashboard';
 export * from './to-backend-delete-dashboard';
 export * from './to-backend-delete-draft-dashboards';
 export * from './to-backend-get-dashboard';

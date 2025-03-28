@@ -29,7 +29,7 @@ export const dashboardsTable = pgTable(
     fields: json('fields').$type<common.DashboardField[]>().notNull(),
     tiles: json('tiles').$type<common.Tile[]>().notNull(),
     creatorId: varchar('creator_id', { length: 32 }), // user_id
-    temp: boolean('temp').notNull(),
+    draft: boolean('draft').notNull(),
     description: varchar('description'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

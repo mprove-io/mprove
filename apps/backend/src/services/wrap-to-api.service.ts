@@ -91,7 +91,7 @@ export class WrapToApiService {
     let dashboardX: common.DashboardX = {
       structId: dashboard.structId,
       dashboardId: dashboard.dashboardId,
-      temp: dashboard.temp,
+      draft: dashboard.draft,
       creatorId: dashboard.creatorId,
       author: author,
       canEditOrDeleteDashboard: canEditOrDeleteDashboard,

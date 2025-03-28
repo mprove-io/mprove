@@ -39,7 +39,7 @@ export class DashboardsListComponent {
   filteredDashboards$ = this.filteredDashboardsQuery.select().pipe(
     tap(x => {
       this.filteredDashboards = x.filteredDashboards.filter(
-        d => d.temp === false
+        d => d.draft === false
       );
     })
   );

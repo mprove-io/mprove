@@ -257,7 +257,7 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
 
     this.dashboardQuery.updatePart({
       tiles: newTiles,
-      temp: true
+      draft: true
     });
   }
 

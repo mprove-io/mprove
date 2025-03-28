@@ -1,0 +1,1 @@
+ALTER TABLE "dashboards" RENAME COLUMN "temp" TO "draft";

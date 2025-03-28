@@ -8,7 +8,7 @@ export class DashboardState extends common.DashboardX {}
 let dashboardState: DashboardState = {
   structId: undefined,
   dashboardId: undefined,
-  temp: true,
+  draft: true,
   creatorId: undefined,
   filePath: undefined,
   content: undefined,

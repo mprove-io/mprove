@@ -28,7 +28,7 @@ export class WrapToEntService {
       }),
       structId: dashboard.structId,
       dashboardId: dashboard.dashboardId,
-      temp: dashboard.temp,
+      draft: dashboard.draft,
       creatorId: dashboard.creatorId,
       filePath: dashboard.filePath,
       content: dashboard.content,

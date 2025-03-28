@@ -45,7 +45,7 @@ export class DashboardFiltersComponent {
       ...this.dashboard.fields.slice(fieldIndex + 1)
     ];
 
-    this.dashboardService.navCreateTempDashboard({
+    this.dashboardService.navCreateDraftDashboard({
       tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
@@ -188,7 +188,7 @@ export class DashboardFiltersComponent {
       ...this.dashboard.fields.slice(fieldIndex + 1)
     ];
 
-    this.dashboardService.navCreateTempDashboard({
+    this.dashboardService.navCreateDraftDashboard({
       tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
@@ -238,7 +238,7 @@ export class DashboardFiltersComponent {
       ];
     }
 
-    this.dashboardService.navCreateTempDashboard({
+    this.dashboardService.navCreateDraftDashboard({
       tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
@@ -262,7 +262,7 @@ export class DashboardFiltersComponent {
       });
     });
 
-    this.dashboardService.navCreateTempDashboard({
+    this.dashboardService.navCreateDraftDashboard({
       tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),

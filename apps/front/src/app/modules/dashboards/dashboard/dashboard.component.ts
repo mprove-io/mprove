@@ -466,7 +466,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteFilterFn(item: DeleteFilterFnItem) {
     let { filterFieldId, tileTitle } = item;
 
-    this.dashboardService.navCreateTempDashboard({
+    this.dashboardService.navCreateDraftDashboard({
       tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),

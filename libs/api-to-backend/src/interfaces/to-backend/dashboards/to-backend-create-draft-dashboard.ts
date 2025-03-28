@@ -8,7 +8,7 @@ import {
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
-export class ToBackendCreateTempDashboardRequestPayload {
+export class ToBackendCreateDraftDashboardRequestPayload {
   @IsString()
   projectId: string;
 
@@ -47,12 +47,12 @@ export class ToBackendCreateTempDashboardRequestPayload {
   timezone: string;
 }
 
-export class ToBackendCreateTempDashboardRequest extends ToBackendRequest {
+export class ToBackendCreateDraftDashboardRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendCreateTempDashboardRequestPayload)
-  payload: ToBackendCreateTempDashboardRequestPayload;
+  @Type(() => ToBackendCreateDraftDashboardRequestPayload)
+  payload: ToBackendCreateDraftDashboardRequestPayload;
 }
 
-export class ToBackendCreateTempDashboardResponse extends common.MyResponse {
+export class ToBackendCreateDraftDashboardResponse extends common.MyResponse {
   payload: { [k in any]: never };
 }

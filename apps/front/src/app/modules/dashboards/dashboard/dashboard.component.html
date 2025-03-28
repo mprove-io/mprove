@@ -12,14 +12,14 @@
             <ng-template #templateAddTile>
               <div *ngIf="isExplorer === false">Explorer role required</div>
 
-              <div *ngIf="isExplorer === true && dashboard.temp === true"
+              <div *ngIf="isExplorer === true && dashboard.draft === true"
                 >Save changes to be able to add tiles</div
               >
 
               <div
                 *ngIf="
                   isExplorer === true &&
-                  dashboard.temp === false &&
+                  dashboard.draft === false &&
                   dashboard.canEditOrDeleteDashboard === false
                 "
                 >Only the dashboard author, project editors, and administrators
@@ -32,7 +32,7 @@
               [tp]="templateAddTile"
               [tpIsEnabled]="
                 isExplorer === false ||
-                dashboard.temp === true ||
+                dashboard.draft === true ||
                 dashboard.canEditOrDeleteDashboard === false
               "
               class="ml-5 flex h-11 flex-shrink-0"
@@ -44,17 +44,17 @@
                 [ngClass]="{
                   'border-gray-400 text-gray-500 hover:bg-white':
                     isExplorer === true &&
-                    dashboard.temp === false &&
+                    dashboard.draft === false &&
                     dashboard.canEditOrDeleteDashboard === true,
                   'cursor-default border-gray-300 text-gray-400':
                     isExplorer === false ||
-                    dashboard.temp === true ||
+                    dashboard.draft === true ||
                     dashboard.canEditOrDeleteDashboard === false
                 }"
                 (click)="addTile()"
                 [disabled]="
                   isExplorer === false ||
-                  dashboard.temp === true ||
+                  dashboard.draft === true ||
                   dashboard.canEditOrDeleteDashboard === false
                 "
                 >Add Tile</button
@@ -157,16 +157,16 @@
                   data-cy="dashboardSaveAsButton"
                   class="h-12 rounded border px-6 text-base font-medium focus:outline-none"
                   [ngClass]="{
-                    'text-white': dashboard.temp === true,
+                    'text-white': dashboard.draft === true,
                     'bg-pink-500':
-                      dashboard.temp === true &&
+                      dashboard.draft === true &&
                       isExplorer === true &&
                       alias !== restrictedUserAlias,
                     'cursor-default bg-gray-400':
-                      dashboard.temp === true &&
+                      dashboard.draft === true &&
                       (isExplorer === false || alias === restrictedUserAlias),
                     ' border-gray-400 text-gray-500 hover:bg-white':
-                      dashboard.temp === false &&
+                      dashboard.draft === false &&
                       isExplorer === true &&
                       alias !== restrictedUserAlias
                   }"

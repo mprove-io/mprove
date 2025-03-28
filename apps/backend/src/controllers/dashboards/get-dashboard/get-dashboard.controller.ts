@@ -215,11 +215,11 @@ export class GetDashboardController {
     let newDashboardFile: common.DiskCatalogFile = {
       projectId: projectId,
       repoId: repoId,
-      fileId: fromDashboard.temp === true ? fileId : dashboardFile.fileId,
+      fileId: fromDashboard.draft === true ? fileId : dashboardFile.fileId,
       pathString:
-        fromDashboard.temp === true ? pathString : dashboardFile.pathString,
+        fromDashboard.draft === true ? pathString : dashboardFile.pathString,
       fileNodeId:
-        fromDashboard.temp === true ? fileNodeId : dashboardFile.fileNodeId,
+        fromDashboard.draft === true ? fileNodeId : dashboardFile.fileNodeId,
       name: fileName,
       content: dashboardFileText
     };
@@ -262,7 +262,7 @@ export class GetDashboardController {
       });
     }
 
-    newDashboard.temp = fromDashboard.temp;
+    newDashboard.draft = fromDashboard.draft;
     newDashboard.creatorId = fromDashboard.creatorId;
 
     let dashboardMconfigIds = newDashboard.tiles.map(x => x.mconfigId);

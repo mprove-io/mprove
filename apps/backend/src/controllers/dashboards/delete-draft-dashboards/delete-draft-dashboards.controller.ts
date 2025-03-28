@@ -97,7 +97,7 @@ export class DeleteDraftDashboardsController {
             .where(
               and(
                 inArray(dashboardsTable.dashboardId, dashboardIds),
-                eq(dashboardsTable.temp, true),
+                eq(dashboardsTable.draft, true),
                 eq(dashboardsTable.creatorId, user.userId),
                 eq(dashboardsTable.structId, bridge.structId)
               )

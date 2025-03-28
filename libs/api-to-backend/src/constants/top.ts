@@ -194,8 +194,8 @@ export const nameToClass = {
     interfaces.ToBackendGetDashboardsRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetDashboard]:
     interfaces.ToBackendGetDashboardRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendCreateTempDashboard]:
-    interfaces.ToBackendCreateTempDashboardRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendCreateDraftDashboard]:
+    interfaces.ToBackendCreateDraftDashboardRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard]:
     interfaces.ToBackendCreateDashboardRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendModifyDashboard]:

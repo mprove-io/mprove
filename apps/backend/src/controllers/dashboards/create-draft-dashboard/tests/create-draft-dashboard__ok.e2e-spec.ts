@@ -6,7 +6,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-create-temp-dashboard__ok';
+let testId = 'backend-create-draft-dashboard__ok';
 
 let traceId = testId;
 
@@ -26,7 +26,7 @@ let oldDashboardId = 'ec_d1';
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendCreateTempDashboardResponse;
+  let resp: apiToBackend.ToBackendCreateDraftDashboardResponse;
 
   try {
     prep = await prepareTest({
@@ -111,10 +111,10 @@ test('1', async t => {
     // console.log('resp1');
     // console.log(resp1);
 
-    let req: apiToBackend.ToBackendCreateTempDashboardRequest = {
+    let req: apiToBackend.ToBackendCreateDraftDashboardRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendCreateTempDashboard,
+          .ToBackendCreateDraftDashboard,
         traceId: traceId,
         idempotencyKey: common.makeId()
       },
@@ -134,7 +134,7 @@ test('1', async t => {
     };
 
     resp =
-      await helper.sendToBackend<apiToBackend.ToBackendCreateTempDashboardResponse>(
+      await helper.sendToBackend<apiToBackend.ToBackendCreateDraftDashboardResponse>(
         {
           httpServer: prep.httpServer,
           loginToken: prep.loginToken,
