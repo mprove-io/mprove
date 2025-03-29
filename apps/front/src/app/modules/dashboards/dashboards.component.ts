@@ -36,8 +36,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   pageTitle = constants.DASHBOARDS_PAGE_TITLE;
 
-  dashboardDeletedFnBindThis = this.dashboardDeletedFn.bind(this);
-
   pathDashboardsList = common.PATH_DASHBOARDS_LIST;
 
   // groups: string[];
@@ -244,31 +242,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     ).length;
   }
 
-  dashboardDeletedFn(deletedDashboardId: string) {
-    this.dashboards = this.dashboards.filter(
-      x => x.dashboardId !== deletedDashboardId
-    );
-
-    this.makeFilteredDashboards();
-    this.cd.detectChanges();
-  }
-
-  deleteDrafts() {
-    this.dashboardService.deleteDraftDashboards({
-      dashboardIds: this.filteredDashboards
-        .filter(d => d.draft === true)
-        .map(d => d.dashboardId)
-    });
-  }
-
-  deleteDraftDashboard(event: any, dashboard: common.DashboardX) {
-    event.stopPropagation();
-
-    this.dashboardService.deleteDraftDashboards({
-      dashboardIds: [dashboard.dashboardId]
-    });
-  }
-
   dashboardSaveAs(event: any) {
     event.stopPropagation();
 
@@ -356,33 +329,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  goToDashboardFile(event: any, dashboard: common.DashboardX) {
-    event.stopPropagation();
-
-    let fileIdAr = dashboard.filePath.split('/');
-    fileIdAr.shift();
-
-    this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
-      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
-    });
-  }
-
-  deleteDashboard(event: MouseEvent, item: common.DashboardX) {
-    event.stopPropagation();
-
-    this.myDialogService.showDeleteDashboard({
-      dashboard: item,
-      apiService: this.apiService,
-      dashboardDeletedFnBindThis: this.dashboardDeletedFnBindThis,
-      projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
-      isRepoProd: this.nav.isRepoProd,
-      isStartSpinnerUntilNavEnd: false
-    });
-  }
-
   navigateToDashboard(dashboardId: string) {
     this.navigateService.navigateToDashboard(dashboardId);
   }
@@ -391,6 +337,22 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.title.setTitle(this.pageTitle);
 
     this.navigateService.navigateToDashboardsList();
+  }
+
+  deleteDrafts() {
+    this.dashboardService.deleteDraftDashboards({
+      dashboardIds: this.filteredDashboards
+        .filter(d => d.draft === true)
+        .map(d => d.dashboardId)
+    });
+  }
+
+  deleteDraftDashboard(event: any, dashboard: common.DashboardX) {
+    event.stopPropagation();
+
+    this.dashboardService.deleteDraftDashboards({
+      dashboardIds: [dashboard.dashboardId]
+    });
   }
 
   timezoneChange() {
