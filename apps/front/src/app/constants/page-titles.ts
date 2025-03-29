@@ -37,5 +37,5 @@ export const PROJECT_DELETED_PAGE_TITLE = 'Project Deleted';
 // dynamic
 
 export const MODEL_PAGE_TITLE = 'Model';
-export const METRICS_PAGE_TITLE = 'Metrics';
+export const METRICS_PAGE_TITLE = 'Reports';
 export const DASHBOARD_PAGE_TITLE = 'Dashboard';

@@ -108,7 +108,7 @@ export class ReportComponent {
     {
       field: 'name',
       pinned: 'left',
-      minWidth: 550, // metricsColumnNameWidth
+      minWidth: 600, // metricsColumnNameWidth
       headerComponent: MetricHeaderComponent,
       cellRenderer: MetricRendererComponent
     },
