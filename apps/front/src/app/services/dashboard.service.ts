@@ -30,6 +30,50 @@ export class DashboardService {
     this.nav$.subscribe();
   }
 
+  editDashboard(item: {
+    isDraft: boolean;
+    tiles: common.TileX[];
+    oldDashboardId: string;
+    newDashboardId: string;
+    newDashboardFields: common.DashboardField[];
+    deleteFilterFieldId: string;
+    deleteFilterTileTitle: string;
+    timezone: string;
+  }) {
+    let {
+      isDraft,
+      tiles,
+      oldDashboardId,
+      newDashboardId,
+      newDashboardFields,
+      deleteFilterFieldId,
+      deleteFilterTileTitle,
+      timezone
+    } = item;
+
+    if (isDraft === true) {
+      this.editDraftDashboard({
+        tiles: tiles,
+        oldDashboardId: oldDashboardId,
+        newDashboardId: newDashboardId,
+        newDashboardFields: newDashboardFields,
+        deleteFilterFieldId: deleteFilterFieldId,
+        deleteFilterTileTitle: deleteFilterTileTitle,
+        timezone: timezone
+      });
+    } else {
+      this.navCreateDraftDashboard({
+        tiles: tiles,
+        oldDashboardId: oldDashboardId,
+        newDashboardId: newDashboardId,
+        newDashboardFields: newDashboardFields,
+        deleteFilterFieldId: deleteFilterFieldId,
+        deleteFilterTileTitle: deleteFilterTileTitle,
+        timezone: timezone
+      });
+    }
+  }
+
   navCreateDraftDashboard(item: {
     tiles: common.TileX[];
     oldDashboardId: string;
@@ -92,6 +136,69 @@ export class DashboardService {
             this.dashboardsQuery.update({ dashboards: newDashboards });
 
             this.navigateService.navigateToDashboard(newDashboardId);
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  editDraftDashboard(item: {
+    tiles: common.TileX[];
+    oldDashboardId: string;
+    newDashboardId: string;
+    newDashboardFields: common.DashboardField[];
+    deleteFilterFieldId: string;
+    deleteFilterTileTitle: string;
+    timezone: string;
+  }) {
+    this.spinner.show(constants.APP_SPINNER_NAME);
+
+    let {
+      tiles,
+      oldDashboardId,
+      newDashboardId,
+      newDashboardFields,
+      deleteFilterFieldId,
+      deleteFilterTileTitle,
+      timezone
+    } = item;
+
+    let newTiles: common.TileX[] = [];
+
+    tiles.forEach(x => {
+      let y: any = common.makeCopy(x);
+      delete y.query;
+      delete y.mconfig;
+      newTiles.push(y);
+    });
+
+    let payload: apiToBackend.ToBackendEditDraftDashboardRequestPayload = {
+      projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
+      branchId: this.nav.branchId,
+      envId: this.nav.envId,
+      oldDashboardId: oldDashboardId,
+      newDashboardId: newDashboardId,
+      newDashboardFields: newDashboardFields,
+      tiles: newTiles,
+      deleteFilterFieldId: deleteFilterFieldId,
+      deleteFilterTileTitle: deleteFilterTileTitle,
+      timezone: timezone
+    };
+
+    this.apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditDraftDashboard,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendEditDraftDashboardResponse) => {
+          this.spinner.hide(constants.APP_SPINNER_NAME);
+
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.dashboardQuery.update(resp.payload.dashboard);
           }
         }),
         take(1)

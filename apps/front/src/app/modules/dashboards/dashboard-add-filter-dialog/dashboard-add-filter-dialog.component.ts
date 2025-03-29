@@ -739,7 +739,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
     let dashboardService: DashboardService = this.ref.data.dashboardService;
 
-    dashboardService.navCreateDraftDashboard({
+    dashboardService.editDashboard({
+      isDraft: this.dashboard.draft,
       tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
