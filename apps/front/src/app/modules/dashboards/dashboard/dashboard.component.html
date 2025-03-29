@@ -181,7 +181,7 @@
               <button
                 type="button"
                 data-cy="dashboardRunButton"
-                class="ml-5 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
+                class="ml-5 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
                 [ngClass]="{
                   'bg-blue3': dashboard.tiles.length > 0,
                   'cursor-default':
@@ -211,12 +211,6 @@
                   </ngx-spinner>
                 </div>
               </button>
-
-              <div class="relative ml-5">
-                <m-dashboard-options
-                  [dashboard]="dashboard"
-                ></m-dashboard-options>
-              </div>
             </div>
           </div>
         </div>

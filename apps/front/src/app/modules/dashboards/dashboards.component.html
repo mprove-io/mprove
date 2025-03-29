@@ -172,7 +172,7 @@
                           (click)="dashboardSaveAs($event)"
                         >
                           <div
-                            class="flex h-8 flex-shrink-0 flex-row items-center justify-start space-x-2 rounded px-2 hover:bg-white"
+                            class="flex h-8 flex-shrink-0 flex-row items-center justify-start space-x-2 rounded px-2 hover:bg-blue-200"
                           >
                             <m-save-icon class="text-gray-500"></m-save-icon>
                             <!-- <div class="flex justify-start text-gray-500"
@@ -186,7 +186,7 @@
                             dashboard?.draft === true &&
                             d.dashboardId === dashboard?.dashboardId
                           "
-                          class="ml-2 flex h-9 flex-shrink-0 items-center justify-center space-x-2 rounded px-2 text-gray-500 hover:bg-white focus:outline-none"
+                          class="ml-2 flex h-9 flex-shrink-0 items-center justify-center space-x-2 rounded px-2 text-gray-500 hover:bg-blue-200 focus:outline-none"
                           (click)="deleteDraftDashboard($event, d)"
                         >
                           <m-trash-icon></m-trash-icon>
