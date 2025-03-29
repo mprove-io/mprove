@@ -26,8 +26,6 @@ export class DashboardOptionsComponent {
   // @Output()
   // runDryEvent = new EventEmitter();
 
-  dashboardDeletedFnBindThis = this.dashboardDeletedFn.bind(this);
-
   constructor(
     private myDialogService: MyDialogService,
     private navigateService: NavigateService,
@@ -59,7 +57,6 @@ export class DashboardOptionsComponent {
     this.myDialogService.showDeleteDashboard({
       dashboard: this.dashboard,
       apiService: this.apiService,
-      dashboardDeletedFnBindThis: this.dashboardDeletedFnBindThis,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
@@ -68,9 +65,5 @@ export class DashboardOptionsComponent {
         this.dashboardQuery.getValue().dashboardId ===
         this.dashboard.dashboardId
     });
-  }
-
-  dashboardDeletedFn(deletedDashboardId: string) {
-    // this.navigateService.navigateToDashboards();
   }
 }

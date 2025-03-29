@@ -19,7 +19,6 @@ import { constants } from '~front/barrels/constants';
 
 export interface DeleteDashboardDialogData {
   apiService: ApiService;
-  dashboardDeletedFnBindThis: any;
   dashboard: common.Dashboard;
   projectId: string;
   branchId: string;
@@ -86,8 +85,6 @@ export class DeleteDashboardDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            // this.ref.data.dashboardDeletedFnBindThis(dashboard.dashboardId);
-
             let dashboards = this.dashboardsQuery.getValue().dashboards;
 
             this.dashboardsQuery.update({

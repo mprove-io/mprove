@@ -14,8 +14,6 @@ import { FilteredDashboardsQuery } from '~front/app/queries/filtered-dashboards.
   templateUrl: './dashboards-list.component.html'
 })
 export class DashboardsListComponent {
-  dashboardDeletedFnBindThis = this.dashboardDeletedFn.bind(this);
-
   showBricks = false;
   showTiles = false;
 
@@ -82,21 +80,12 @@ export class DashboardsListComponent {
     });
   }
 
-  dashboardDeletedFn(deletedDashboardId: string) {
-    // this.filteredDashboards = this.filteredDashboards.filter(
-    //   x => x.dashboardId !== deletedDashboardId
-    // );
-    // // this.makeFilteredDashboards();
-    // this.cd.detectChanges();
-  }
-
   deleteDashboard(event: MouseEvent, item: common.DashboardX) {
     event.stopPropagation();
 
     this.myDialogService.showDeleteDashboard({
       dashboard: item,
       apiService: this.apiService,
-      dashboardDeletedFnBindThis: this.dashboardDeletedFnBindThis,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
