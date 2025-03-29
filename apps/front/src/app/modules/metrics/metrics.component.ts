@@ -66,6 +66,9 @@ export class MetricsComponent implements OnInit, OnDestroy {
     this.timeSpecSelectElement?.close();
   }
 
+  lastUrl = 'undef';
+  pathReportsList = common.PATH_REPORTS_LIST;
+
   pageTitle = frontConstants.METRICS_PAGE_TITLE;
 
   rowTypeFormula = common.RowTypeEnum.Formula;
@@ -931,6 +934,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
     //   this.cd.detectChanges();
     // });
   }
+
+  navigateToReportsList() {}
+
+  newReport() {}
 
   // toggleShowMetricsChart() {
   //   let showMetricsChart = !this.showMetricsChart;
