@@ -68,6 +68,14 @@ export class ToBackendModifyDashboardRequest extends ToBackendRequest {
   payload: ToBackendModifyDashboardRequestPayload;
 }
 
+export class ToBackendModifyDashboardResponsePayload {
+  @ValidateNested()
+  @Type(() => common.DashboardX)
+  newDashboardPart: common.DashboardX;
+}
+
 export class ToBackendModifyDashboardResponse extends common.MyResponse {
-  payload: { [k in any]: never };
+  @ValidateNested()
+  @Type(() => ToBackendModifyDashboardResponsePayload)
+  payload: ToBackendModifyDashboardResponsePayload;
 }

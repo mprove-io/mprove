@@ -166,10 +166,9 @@ export class DashboardSaveAsDialogComponent implements OnInit {
                 return x;
               });
 
-            this.makePathAndSetTitle();
+            this.makePathAndSetValues();
 
             this.spinner.hide(this.spinnerName);
-
             this.cd.detectChanges();
           }
         })
@@ -224,7 +223,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   existingDashboardOnClick() {
     this.saveAs = DashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD;
 
-    this.makePathAndSetTitle();
+    this.makePathAndSetValues();
   }
 
   saveAsNewDashboard(item: { newTitle: string; roles: string; users: string }) {
@@ -261,14 +260,28 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            // let dashboardPart = resp.payload.newDashboardPart;
+            let dashboardPart = resp.payload.newDashboardPart;
+            if (common.isDefined(dashboardPart)) {
+              let dashboards = this.dashboardsQuery.getValue().dashboards;
 
-            // let dashboards = this.dashboardsQuery.getValue().dashboards;
-            // let newDashboards = [dashboardPart, ...dashboards];
+              let newDashboards = [
+                dashboardPart,
+                ...dashboards.filter(
+                  d =>
+                    d.dashboardId !== dashboardPart.dashboardId &&
+                    !(
+                      d.draft === true &&
+                      d.dashboardId === this.dashboard.dashboardId
+                    )
+                )
+              ];
 
-            // this.dashboardsQuery.update({ dashboards: newDashboards });
+              this.dashboardsQuery.update({ dashboards: newDashboards });
 
-            this.navigateService.navigateToDashboard(this.newDashboardId);
+              this.navigateService.navigateToDashboard(this.newDashboardId);
+            } else {
+              this.spinner.hide(this.spinnerName);
+            }
           }
         }),
         take(1)
@@ -314,19 +327,31 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendModifyDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            // let dashboards = this.dashboardsQuery.getValue().dashboards;
+            let dashboardPart = resp.payload.newDashboardPart;
 
-            // let newDashboards = [
-            //   ...dashboards.filter(
-            //     d =>
-            //       d.draft === false ||
-            //       d.dashboardId !== this.dashboard.dashboardId
-            //   )
-            // ];
+            if (common.isDefined(dashboardPart)) {
+              let dashboards = this.dashboardsQuery.getValue().dashboards;
 
-            // this.dashboardsQuery.update({ dashboards: newDashboards });
+              let newDashboards = [
+                dashboardPart,
+                ...dashboards.filter(
+                  d =>
+                    d.dashboardId !== dashboardPart.dashboardId &&
+                    !(
+                      d.draft === true &&
+                      d.dashboardId === this.dashboard.dashboardId
+                    )
+                )
+              ];
 
-            this.navigateService.navigateToDashboard(this.selectedDashboardId);
+              this.dashboardsQuery.update({ dashboards: newDashboards });
+
+              this.navigateService.navigateToDashboard(
+                this.selectedDashboardId
+              );
+            } else {
+              this.spinner.hide(this.spinnerName);
+            }
           }
         }),
         take(1)
@@ -335,10 +360,10 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   }
 
   selectedChange() {
-    this.makePathAndSetTitle();
+    this.makePathAndSetValues();
   }
 
-  makePathAndSetTitle() {
+  makePathAndSetValues() {
     if (
       common.isUndefined(this.selectedDashboardId) ||
       common.isUndefined(this.dashboards)
@@ -358,6 +383,12 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       this.selectedDashboardPath = parts.join(' / ');
 
       this.titleForm.controls['title'].setValue(selectedDashboard.title);
+      this.rolesForm.controls['roles'].setValue(
+        selectedDashboard.accessRoles.join(', ')
+      );
+      this.usersForm.controls['users'].setValue(
+        selectedDashboard.accessUsers.join(', ')
+      );
     }
   }
 

@@ -92,12 +92,12 @@ export class ModifyDashboardController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckExists({
+    let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.userId
     });
 
-    if (member.isExplorer === false) {
+    if (userMember.isExplorer === false) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
       });
@@ -112,7 +112,7 @@ export class ModifyDashboardController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
@@ -131,7 +131,7 @@ export class ModifyDashboardController {
       this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (
-      member.isAdmin === false &&
+      userMember.isAdmin === false &&
       projectId === firstProjectId &&
       repoId === common.PROD_REPO_ID
     ) {
@@ -148,7 +148,7 @@ export class ModifyDashboardController {
 
     let fromDashboard = await this.dashboardsService.getDashboardXCheckAccess({
       user: user,
-      member: member,
+      member: userMember,
       dashboard: fromDashboardEntity,
       bridge: bridge,
       projectId: projectId
@@ -160,7 +160,7 @@ export class ModifyDashboardController {
         dashboardId: toDashboardId
       });
 
-    if (member.isAdmin === false && member.isEditor === false) {
+    if (userMember.isAdmin === false && userMember.isEditor === false) {
       this.dashboardsService.checkDashboardPath({
         userAlias: user.alias,
         filePath: toDashboardEntity.filePath
@@ -185,7 +185,7 @@ export class ModifyDashboardController {
 
       let isAccessGranted = helper.checkAccess({
         userAlias: user.alias,
-        member: member,
+        member: userMember,
         entity: mconfigModel
       });
 
@@ -344,11 +344,6 @@ export class ModifyDashboardController {
                 )
               );
 
-            // await this.dashboardsRepository.delete({
-            //   dashboard_id: toDashboardId,
-            //   struct_id: bridge.struct_id
-            // });
-
             let fileIdAr = toDashboardEntity.filePath.split('/');
             fileIdAr.shift();
             let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
@@ -359,64 +354,62 @@ export class ModifyDashboardController {
                 underscoreFileId: underscoreFileId
               }
             });
+          } else {
+            await tx
+              .delete(dashboardsTable)
+              .where(
+                and(
+                  eq(dashboardsTable.dashboardId, fromDashboardId),
+                  eq(dashboardsTable.structId, bridge.structId)
+                )
+              );
+
+            let dashboardMconfigIds = newDashboard.tiles.map(x => x.mconfigId);
+            let dashboardMconfigs = mconfigs.filter(
+              x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
+            );
+
+            let dashboardQueryIds = newDashboard.tiles.map(x => x.queryId);
+            let dashboardQueries = queries.filter(
+              x => dashboardQueryIds.indexOf(x.queryId) > -1
+            );
+
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                mconfigs: dashboardMconfigs.map(x =>
+                  this.wrapToEntService.wrapToEntityMconfig(x)
+                )
+              },
+              insertOrUpdate: {
+                dashboards: common.isDefined(newDashboard)
+                  ? [this.wrapToEntService.wrapToEntityDashboard(newDashboard)]
+                  : undefined,
+                structs: [struct],
+                bridges: [...branchBridges]
+              },
+              insertOrDoNothing: {
+                queries: dashboardQueries.map(x =>
+                  this.wrapToEntService.wrapToEntityQuery(x)
+                )
+              }
+            });
           }
-
-          let dashboardMconfigIds = newDashboard.tiles.map(x => x.mconfigId);
-          let dashboardMconfigs = mconfigs.filter(
-            x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
-          );
-
-          let dashboardQueryIds = newDashboard.tiles.map(x => x.queryId);
-          let dashboardQueries = queries.filter(
-            x => dashboardQueryIds.indexOf(x.queryId) > -1
-          );
-
-          await this.db.packer.write({
-            tx: tx,
-            insert: {
-              mconfigs: dashboardMconfigs.map(x =>
-                this.wrapToEntService.wrapToEntityMconfig(x)
-              )
-            },
-            insertOrUpdate: {
-              dashboards: common.isDefined(newDashboard)
-                ? [this.wrapToEntService.wrapToEntityDashboard(newDashboard)]
-                : undefined,
-              structs: [struct],
-              bridges: [...branchBridges]
-            },
-            insertOrDoNothing: {
-              queries: dashboardQueries.map(x =>
-                this.wrapToEntService.wrapToEntityQuery(x)
-              )
-            }
-          });
-
-          // await this.dbService.writeRecords({
-          //   modify: true,
-          //   records: {
-          //     dashboards: common.isDefined(newDashboard)
-          //       ? [wrapper.wrapToEntityDashboard(newDashboard)]
-          //       : undefined,
-          //     structs: [struct],
-          //     bridges: [...branchBridges]
-          //   }
-          // });
-
-          // await this.dbService.writeRecords({
-          //   modify: false,
-          //   records: {
-          //     mconfigs: dashboardMconfigs.map(x =>
-          //       wrapper.wrapToEntityMconfig(x)
-          //     ),
-          //     queries: dashboardQueries.map(x => wrapper.wrapToEntityQuery(x))
-          //   }
-          // });
         }),
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload = {};
+    let newDashboardParts = await this.dashboardsService.getDashboardParts({
+      structId: bridge.structId,
+      user: user,
+      userMember: userMember,
+      newDashboard: newDashboard
+    });
+
+    let payload: apiToBackend.ToBackendModifyDashboardResponsePayload = {
+      newDashboardPart:
+        newDashboardParts.length > 0 ? newDashboardParts[0] : undefined
+    };
 
     return payload;
   }

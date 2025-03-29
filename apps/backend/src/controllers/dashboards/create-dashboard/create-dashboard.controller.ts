@@ -18,6 +18,7 @@ import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -86,12 +87,12 @@ export class CreateDashboardController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckExists({
+    let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.userId
     });
 
-    if (member.isExplorer === false) {
+    if (userMember.isExplorer === false) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
       });
@@ -106,7 +107,7 @@ export class CreateDashboardController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
@@ -125,7 +126,7 @@ export class CreateDashboardController {
       this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
     if (
-      member.isAdmin === false &&
+      userMember.isAdmin === false &&
       projectId === firstProjectId &&
       repoId === common.PROD_REPO_ID
     ) {
@@ -146,7 +147,7 @@ export class CreateDashboardController {
       let fromDashboard = await this.dashboardsService.getDashboardXCheckAccess(
         {
           user: user,
-          member: member,
+          member: userMember,
           dashboard: fromDashboardEntity,
           bridge: bridge,
           projectId: projectId
@@ -327,50 +328,51 @@ export class CreateDashboardController {
 
     await retry(
       async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insert: {
-                dashboards: [
-                  this.wrapToEntService.wrapToEntityDashboard(dashboard)
-                ],
-                mconfigs: dashboardMconfigs.map(x =>
-                  this.wrapToEntService.wrapToEntityMconfig(x)
-                )
-              },
-              insertOrUpdate: {
-                structs: [struct],
-                bridges: [...branchBridges]
-              },
-              insertOrDoNothing: {
-                queries: dashboardQueries.map(x =>
-                  this.wrapToEntService.wrapToEntityQuery(x)
-                )
-              }
-            })
-        ),
+        await this.db.drizzle.transaction(async tx => {
+          await tx
+            .delete(dashboardsTable)
+            .where(
+              and(
+                eq(dashboardsTable.dashboardId, fromDashboardId),
+                eq(dashboardsTable.structId, bridge.structId)
+              )
+            );
+
+          await this.db.packer.write({
+            tx: tx,
+            insert: {
+              dashboards: [
+                this.wrapToEntService.wrapToEntityDashboard(dashboard)
+              ],
+              mconfigs: dashboardMconfigs.map(x =>
+                this.wrapToEntService.wrapToEntityMconfig(x)
+              )
+            },
+            insertOrUpdate: {
+              structs: [struct],
+              bridges: [...branchBridges]
+            },
+            insertOrDoNothing: {
+              queries: dashboardQueries.map(x =>
+                this.wrapToEntService.wrapToEntityQuery(x)
+              )
+            }
+          });
+        }),
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     dashboards: [wrapper.wrapToEntityDashboard(dashboard)],
-    //     mconfigs: dashboardMconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
-    //     queries: dashboardQueries.map(x => wrapper.wrapToEntityQuery(x))
-    //   }
-    // });
+    let newDashboardParts = await this.dashboardsService.getDashboardParts({
+      structId: bridge.structId,
+      user: user,
+      userMember: userMember,
+      newDashboard: dashboard
+    });
 
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     structs: [struct],
-    //     bridges: [...branchBridges]
-    //   }
-    // });
-
-    let payload = {};
+    let payload: apiToBackend.ToBackendModifyDashboardResponsePayload = {
+      newDashboardPart:
+        newDashboardParts.length > 0 ? newDashboardParts[0] : undefined
+    };
 
     return payload;
   }

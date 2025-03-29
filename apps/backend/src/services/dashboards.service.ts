@@ -144,4 +144,87 @@ export class DashboardsService {
 
     return dashboardX;
   }
+
+  async getDashboardParts(item: {
+    structId: string;
+    user: schemaPostgres.UserEnt;
+    userMember: schemaPostgres.MemberEnt;
+    newDashboard: common.Dashboard;
+  }) {
+    let { structId, user, userMember, newDashboard } = item;
+
+    let dashboardParts = (await this.db.drizzle
+      .select({
+        dashboardId: dashboardsTable.dashboardId,
+        draft: dashboardsTable.draft,
+        filePath: dashboardsTable.filePath,
+        accessUsers: dashboardsTable.accessUsers,
+        accessRoles: dashboardsTable.accessRoles,
+        title: dashboardsTable.title,
+        gr: dashboardsTable.gr,
+        hidden: dashboardsTable.hidden,
+        fields: dashboardsTable.fields,
+        tiles: dashboardsTable.tiles,
+        description: dashboardsTable.description
+      })
+      .from(dashboardsTable)
+      .where(
+        and(
+          eq(dashboardsTable.dashboardId, newDashboard.dashboardId),
+          eq(dashboardsTable.structId, structId),
+          newDashboard.draft === true
+            ? eq(dashboardsTable.creatorId, user.userId)
+            : eq(dashboardsTable.draft, false)
+        )
+      )) as schemaPostgres.DashboardEnt[];
+
+    let dashboardPartsGrantedAccess = dashboardParts.filter(x =>
+      helper.checkAccess({
+        userAlias: user.alias,
+        member: userMember,
+        entity: x
+      })
+    );
+
+    let modelIdsWithDuplicates = newDashboard.tiles.map(tile => tile.modelId);
+    let uniqueModelIds = [...new Set(modelIdsWithDuplicates)];
+
+    let models = (await this.db.drizzle
+      .select({
+        modelId: modelsTable.modelId,
+        accessUsers: modelsTable.accessUsers,
+        accessRoles: modelsTable.accessRoles,
+        hidden: modelsTable.hidden,
+        connectionId: modelsTable.connectionId
+      })
+      .from(modelsTable)
+      .where(
+        and(
+          eq(modelsTable.structId, structId),
+          inArray(modelsTable.modelId, uniqueModelIds)
+        )
+      )) as schemaPostgres.ModelEnt[];
+
+    let newDashboardParts = dashboardPartsGrantedAccess.map(x =>
+      this.wrapToApiService.wrapToApiDashboard({
+        dashboard: x,
+        mconfigs: [],
+        queries: [],
+        member: this.wrapToApiService.wrapToApiMember(userMember),
+        models: models.map(model =>
+          this.wrapToApiService.wrapToApiModel({
+            model: model,
+            hasAccess: helper.checkAccess({
+              userAlias: user.alias,
+              member: userMember,
+              entity: model
+            })
+          })
+        ),
+        isAddMconfigAndQuery: false
+      })
+    );
+
+    return newDashboardParts;
+  }
 }
