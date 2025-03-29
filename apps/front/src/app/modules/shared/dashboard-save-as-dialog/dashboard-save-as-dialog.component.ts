@@ -11,6 +11,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
+import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
@@ -53,7 +54,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   dashboard: common.DashboardX;
 
   titleForm: FormGroup = this.fb.group({
-    title: [undefined, [Validators.maxLength(255)]]
+    title: [undefined, [Validators.required, Validators.maxLength(255)]]
   });
 
   rolesForm: FormGroup = this.fb.group({
@@ -104,6 +105,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     private navQuery: NavQuery,
     private structQuery: StructQuery,
     private navigateService: NavigateService,
+    private dashboardsQuery: DashboardsQuery,
     private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef
   ) {}
@@ -117,10 +119,6 @@ export class DashboardSaveAsDialogComponent implements OnInit {
         ? this.dashboard.dashboardId
         : undefined;
 
-    setValueAndMark({
-      control: this.titleForm.controls['title'],
-      value: this.dashboard.title
-    });
     setValueAndMark({
       control: this.rolesForm.controls['roles'],
       value: this.dashboard.accessRoles?.join(', ')
@@ -161,12 +159,14 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.dashboards = resp.payload.dashboards.map(x => {
-              (x as any).disabled = !x.canEditOrDeleteDashboard;
-              return x;
-            });
+            this.dashboards = resp.payload.dashboards
+              .filter(d => d.draft === false)
+              .map(x => {
+                (x as any).disabled = x.canEditOrDeleteDashboard === false;
+                return x;
+              });
 
-            this.makePath();
+            this.makePathAndSetTitle();
 
             this.spinner.hide(this.spinnerName);
 
@@ -182,6 +182,10 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   }
 
   save() {
+    this.titleForm.markAllAsTouched();
+    this.rolesForm.markAllAsTouched();
+    this.usersForm.markAllAsTouched();
+
     if (
       this.titleForm.controls['title'].valid &&
       this.rolesForm.controls['roles'].valid &&
@@ -213,10 +217,14 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
   newDashboardOnClick() {
     this.saveAs = DashboardSaveAsEnum.NEW_DASHBOARD;
+
+    this.titleForm.controls['title'].setValue(undefined);
   }
 
   existingDashboardOnClick() {
     this.saveAs = DashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD;
+
+    this.makePathAndSetTitle();
   }
 
   saveAsNewDashboard(item: { newTitle: string; roles: string; users: string }) {
@@ -253,11 +261,14 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.navigateService.navigateToDashboards({
-              extra: {
-                queryParams: { search: this.newDashboardId }
-              }
-            });
+            // let dashboardPart = resp.payload.newDashboardPart;
+
+            // let dashboards = this.dashboardsQuery.getValue().dashboards;
+            // let newDashboards = [dashboardPart, ...dashboards];
+
+            // this.dashboardsQuery.update({ dashboards: newDashboards });
+
+            this.navigateService.navigateToDashboard(this.newDashboardId);
           }
         }),
         take(1)
@@ -303,11 +314,19 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendModifyDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.navigateService.navigateToDashboards({
-              extra: {
-                queryParams: { search: this.selectedDashboardId }
-              }
-            });
+            // let dashboards = this.dashboardsQuery.getValue().dashboards;
+
+            // let newDashboards = [
+            //   ...dashboards.filter(
+            //     d =>
+            //       d.draft === false ||
+            //       d.dashboardId !== this.dashboard.dashboardId
+            //   )
+            // ];
+
+            // this.dashboardsQuery.update({ dashboards: newDashboards });
+
+            this.navigateService.navigateToDashboard(this.selectedDashboardId);
           }
         }),
         take(1)
@@ -316,10 +335,10 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   }
 
   selectedChange() {
-    this.makePath();
+    this.makePathAndSetTitle();
   }
 
-  makePath() {
+  makePathAndSetTitle() {
     if (
       common.isUndefined(this.selectedDashboardId) ||
       common.isUndefined(this.dashboards)
@@ -337,6 +356,8 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       parts.shift();
 
       this.selectedDashboardPath = parts.join(' / ');
+
+      this.titleForm.controls['title'].setValue(selectedDashboard.title);
     }
   }
 

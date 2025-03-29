@@ -254,22 +254,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.refreshShow();
   }
 
-  onResizeEnded(event: any) {
-    this.dashboardQuery.update(
-      Object.assign({}, this.dashboard, {
-        temp: true
-      })
-    );
-  }
-
-  tileDeleted() {
-    this.dashboardQuery.update(
-      Object.assign({}, this.dashboard, {
-        temp: true
-      })
-    );
-  }
-
   tileQueryUpdated(query: common.Query, tileTitle: string) {
     let tile = this.dashboard.tiles.find(x => x.title === tileTitle);
     if (common.isDefined(tile) && tile.query.queryId === query.queryId) {
@@ -311,6 +295,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onDragEnded(event: any) {
+    console.log('onDragEnded');
+
     // this.preventCollision = false;
     this.dashboardQuery.update(
       Object.assign({}, this.dashboard, {
@@ -319,8 +305,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
+  onResizeEnded(event: any) {
+    console.log('onResizeEnded');
+
+    this.dashboardQuery.update(
+      Object.assign({}, this.dashboard, {
+        temp: true
+      })
+    );
+  }
+
   onLayoutUpdated(layout: KtdGridLayout) {
-    // console.log('onLayoutUpdated', layout);
+    console.log('onLayoutUpdated', layout);
 
     let newDashboard = Object.assign({}, this.dashboard, {
       temp: true,
@@ -337,6 +333,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dashboardQuery.update(newDashboard);
 
     this.refreshShow();
+  }
+
+  tileDeleted() {
+    this.dashboardQuery.update(
+      Object.assign({}, this.dashboard, {
+        temp: true
+      })
+    );
   }
 
   run() {
