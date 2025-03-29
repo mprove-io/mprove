@@ -83,12 +83,11 @@ export class DashboardsListComponent {
   }
 
   dashboardDeletedFn(deletedDashboardId: string) {
-    this.filteredDashboards = this.filteredDashboards.filter(
-      x => x.dashboardId !== deletedDashboardId
-    );
-
-    // this.makeFilteredDashboards();
-    this.cd.detectChanges();
+    // this.filteredDashboards = this.filteredDashboards.filter(
+    //   x => x.dashboardId !== deletedDashboardId
+    // );
+    // // this.makeFilteredDashboards();
+    // this.cd.detectChanges();
   }
 
   deleteDashboard(event: MouseEvent, item: common.DashboardX) {

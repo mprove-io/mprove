@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { tap } from 'rxjs/operators';
+import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
@@ -30,6 +31,7 @@ export class DashboardOptionsComponent {
   constructor(
     private myDialogService: MyDialogService,
     private navigateService: NavigateService,
+    private dashboardQuery: DashboardQuery,
     private navQuery: NavQuery,
     private apiService: ApiService,
     private cd: ChangeDetectorRef
@@ -62,11 +64,13 @@ export class DashboardOptionsComponent {
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       isRepoProd: this.nav.isRepoProd,
-      isStartSpinnerUntilNavEnd: true
+      isStartSpinnerUntilNavEnd:
+        this.dashboardQuery.getValue().dashboardId ===
+        this.dashboard.dashboardId
     });
   }
 
   dashboardDeletedFn(deletedDashboardId: string) {
-    this.navigateService.navigateToDashboards();
+    // this.navigateService.navigateToDashboards();
   }
 }

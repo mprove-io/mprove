@@ -9,7 +9,10 @@ import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { DashboardQuery } from '~front/app/queries/dashboard.query';
+import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { ApiService } from '~front/app/services/api.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -41,7 +44,10 @@ export class DeleteDashboardDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<DeleteDashboardDialogData>,
     private spinner: NgxSpinnerService,
-    private router: Router
+    private router: Router,
+    private dashboardsQuery: DashboardsQuery,
+    private dashboardQuery: DashboardQuery,
+    private navigateService: NavigateService
   ) {}
 
   ngOnInit(): void {
@@ -80,7 +86,21 @@ export class DeleteDashboardDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.ref.data.dashboardDeletedFnBindThis(dashboard.dashboardId);
+            // this.ref.data.dashboardDeletedFnBindThis(dashboard.dashboardId);
+
+            let dashboards = this.dashboardsQuery.getValue().dashboards;
+
+            this.dashboardsQuery.update({
+              dashboards: dashboards.filter(
+                d => d.dashboardId !== dashboard.dashboardId
+              )
+            });
+
+            let currentDashboard = this.dashboardQuery.getValue();
+
+            if (currentDashboard.dashboardId === dashboard.dashboardId) {
+              this.navigateService.navigateToDashboards();
+            }
           }
         }),
         take(1)
