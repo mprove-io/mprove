@@ -43,6 +43,12 @@ export class ReportComponent {
   //   this.agGrid.api.deselectAll();
   // }
 
+  overlayNoRowsTemplate = `
+    <span style="font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 20px; color: #4D4F5C">
+      To add a row, click the plus button in the upper left corner
+    </span>
+  `;
+
   updateColumnSizes = debounce(
     300,
     paramsColumn => {
