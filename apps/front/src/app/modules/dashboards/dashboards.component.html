@@ -263,7 +263,14 @@
 
         <div class="flex h-full flex-1 flex-col">
           <div class="ml-6 flex h-full flex-grow">
-            <div class="h-full w-full">
+            <div
+              class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+              *ngIf="lastUrl === pathDashboards"
+            >
+              Select Dashboard
+            </div>
+
+            <div class="h-full w-full" *ngIf="lastUrl !== pathDashboards">
               <router-outlet></router-outlet>
             </div>
           </div>

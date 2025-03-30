@@ -37,6 +37,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   pageTitle = constants.DASHBOARDS_PAGE_TITLE;
 
   pathDashboardsList = common.PATH_DASHBOARDS_LIST;
+  pathDashboards = common.PATH_DASHBOARDS;
 
   // groups: string[];
 
