@@ -39,8 +39,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   pathDashboardsList = common.PATH_DASHBOARDS_LIST;
   pathDashboards = common.PATH_DASHBOARDS;
 
-  // groups: string[];
-
   showBricks = false;
   showTiles = false;
 
@@ -134,10 +132,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     })
   );
 
-  modelId: string;
-
   word: string;
-  // fileName: string;
 
   alias: string;
   alias$ = this.userQuery.alias$.pipe(
@@ -190,16 +185,61 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     let ar = this.router.url.split('?')[0].split('/');
     this.lastUrl = ar[ar.length - 1];
 
-    this.word = this.route.snapshot.queryParamMap.get('search');
+    let uiState = this.uiQuery.getValue();
+    let timezoneParam = this.route.snapshot.queryParamMap.get('timezone');
+    let structState = this.structQuery.getValue();
+
+    let timezone =
+      structState.allowTimezones === false
+        ? structState.defaultTimezone
+        : common.isDefined(timezoneParam)
+        ? timezoneParam.split('-').join('/')
+        : uiState.timezone;
+
+    if (uiState.timezone !== timezone) {
+      this.uiQuery.updatePart({ timezone: timezone });
+      this.uiService.setUserUi({ timezone: timezone });
+
+      this.timezoneForm.controls['timezone'].setValue(timezone);
+    }
+
     this.searchWordChange();
+  }
+
+  dashboardSaveAs(event: any) {
+    event.stopPropagation();
+
+    this.myDialogService.showDashboardSaveAs({
+      apiService: this.apiService,
+      dashboard: this.dashboard
+    });
+  }
+
+  searchWordChange() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+
+    this.timer = setTimeout(() => {
+      this.makeFilteredDashboards();
+      this.cd.detectChanges();
+    }, 600);
+  }
+
+  resetSearch() {
+    this.word = undefined;
+    this.makeFilteredDashboards();
+    this.cd.detectChanges();
   }
 
   makeFilteredDashboards() {
     let idxs;
 
+    let draftDashboards = this.dashboards.filter(x => x.draft === true);
+    let nonDraftDashboards = this.dashboards.filter(x => x.draft === false);
+
     if (common.isDefinedAndNotEmpty(this.word)) {
-      // let haystack = this.dashboards.map(x => `${x.title} ${x.dashboardId}`);
-      let haystack = this.dashboards.map(x =>
+      let haystack = nonDraftDashboards.map(x =>
         common.isDefined(x.title) ? `${x.title}` : `${x.dashboardId}`
       );
       let opts = {};
@@ -209,15 +249,14 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     this.dashboardsFilteredByWord = common.isDefinedAndNotEmpty(this.word)
       ? idxs != null && idxs.length > 0
-        ? idxs.map(idx => this.dashboards[idx])
+        ? idxs.map(idx => nonDraftDashboards[idx])
         : []
-      : this.dashboards;
+      : nonDraftDashboards;
 
-    this.filteredDashboards = common.isDefined(this.modelId)
-      ? this.dashboardsFilteredByWord.filter(
-          d => d.tiles.map(rp => rp.modelId).indexOf(this.modelId) > -1
-        )
-      : this.dashboardsFilteredByWord;
+    this.filteredDashboards = [
+      ...draftDashboards,
+      ...this.dashboardsFilteredByWord
+    ];
 
     this.filteredDashboards = this.filteredDashboards.sort((a, b) => {
       let aTitle = a.title || a.dashboardId;
@@ -241,87 +280,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.filteredDraftsLength = this.filteredDashboards.filter(
       y => y.draft === true
     ).length;
-  }
-
-  dashboardSaveAs(event: any) {
-    event.stopPropagation();
-
-    this.myDialogService.showDashboardSaveAs({
-      apiService: this.apiService,
-      dashboard: this.dashboard
-    });
-  }
-
-  searchWordChange() {
-    if (this.timer) {
-      clearTimeout(this.timer);
-    }
-
-    this.timer = setTimeout(() => {
-      this.makeFilteredDashboards();
-      this.cd.detectChanges();
-
-      let uiState = this.uiQuery.getValue();
-      let timezoneParam = this.route.snapshot.queryParamMap.get('timezone');
-      let structState = this.structQuery.getValue();
-
-      let timezone =
-        structState.allowTimezones === false
-          ? structState.defaultTimezone
-          : common.isDefined(timezoneParam)
-          ? timezoneParam.split('-').join('/')
-          : uiState.timezone;
-
-      if (uiState.timezone !== timezone) {
-        this.uiQuery.updatePart({ timezone: timezone });
-        this.uiService.setUserUi({ timezone: timezone });
-
-        this.timezoneForm.controls['timezone'].setValue(timezone);
-      }
-
-      let url = this.router
-        .createUrlTree([], {
-          relativeTo: this.route,
-          queryParams: {
-            timezone: timezone.split('/').join('-'),
-            search: common.isDefinedAndNotEmpty(this.word)
-              ? this.word
-              : undefined
-          }
-        })
-        .toString();
-
-      this.location.replaceState(url);
-    }, 600);
-  }
-
-  resetSearch() {
-    this.word = undefined;
-    this.makeFilteredDashboards();
-    this.cd.detectChanges();
-
-    let uiState = this.uiQuery.getValue();
-    let timezoneParam = this.route.snapshot.queryParamMap.get('timezone');
-    let structState = this.structQuery.getValue();
-
-    let timezone =
-      structState.allowTimezones === false
-        ? structState.defaultTimezone
-        : common.isDefined(timezoneParam)
-        ? timezoneParam.split('-').join('/')
-        : uiState.timezone;
-
-    let url = this.router
-      .createUrlTree([], {
-        relativeTo: this.route,
-        queryParams: {
-          timezone: timezone.split('/').join('-'),
-          search: common.isDefinedAndNotEmpty(this.word) ? this.word : undefined
-        }
-      })
-      .toString();
-
-    this.location.replaceState(url);
   }
 
   addDashboard() {
