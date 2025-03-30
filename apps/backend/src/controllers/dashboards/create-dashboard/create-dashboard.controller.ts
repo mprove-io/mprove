@@ -369,7 +369,7 @@ export class CreateDashboardController {
       newDashboard: dashboard
     });
 
-    let payload: apiToBackend.ToBackendModifyDashboardResponsePayload = {
+    let payload: apiToBackend.ToBackendCreateDashboardResponsePayload = {
       newDashboardPart:
         newDashboardParts.length > 0 ? newDashboardParts[0] : undefined
     };

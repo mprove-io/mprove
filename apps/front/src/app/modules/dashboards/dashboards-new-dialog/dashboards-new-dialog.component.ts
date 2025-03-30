@@ -17,6 +17,7 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
@@ -93,6 +94,7 @@ export class DashboardsNewDialogComponent implements OnInit {
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navigateService: NavigateService,
+    private dashboardsQuery: DashboardsQuery,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private structQuery: StructQuery,
@@ -158,7 +160,28 @@ export class DashboardsNewDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.navigateService.navigateToDashboard(this.newDashboardId);
+            let dashboardPart = resp.payload.newDashboardPart;
+            if (common.isDefined(dashboardPart)) {
+              let dashboards = this.dashboardsQuery.getValue().dashboards;
+
+              let newDashboards = [
+                dashboardPart,
+                ...dashboards.filter(
+                  d =>
+                    d.dashboardId !== dashboardPart.dashboardId &&
+                    !(
+                      d.draft === true &&
+                      d.dashboardId === this.dashboard.dashboardId
+                    )
+                )
+              ];
+
+              this.dashboardsQuery.update({ dashboards: newDashboards });
+
+              this.navigateService.navigateToDashboard(this.newDashboardId);
+            } else {
+              this.spinner.hide(constants.APP_SPINNER_NAME);
+            }
           }
         }),
         take(1)
