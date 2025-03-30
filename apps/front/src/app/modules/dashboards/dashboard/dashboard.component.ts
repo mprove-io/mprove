@@ -41,6 +41,7 @@ import { UiQuery } from '~front/app/queries/ui.query';
 import { StructDashboardResolver } from '~front/app/resolvers/struct-dashboard.resolver';
 import { UiService } from '~front/app/services/ui.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
+import { interfaces } from '~front/barrels/interfaces';
 import { DashboardTileChartComponent } from '../../shared/dashboard-tile-chart/dashboard-tile-chart.component';
 
 class LayoutItem {
@@ -291,35 +292,23 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onDragStarted(event: any) {
+    // console.log('onDragStarted');
     // this.preventCollision = true;
   }
 
   onDragEnded(event: any) {
-    console.log('onDragEnded');
-
+    // console.log('onDragEnded');
     // this.preventCollision = false;
-    this.dashboardQuery.update(
-      Object.assign({}, this.dashboard, {
-        temp: true
-      })
-    );
   }
 
   onResizeEnded(event: any) {
-    console.log('onResizeEnded');
-
-    this.dashboardQuery.update(
-      Object.assign({}, this.dashboard, {
-        temp: true
-      })
-    );
+    // console.log('onResizeEnded');
   }
 
   onLayoutUpdated(layout: KtdGridLayout) {
-    console.log('onLayoutUpdated', layout);
+    // console.log('onLayoutUpdated', layout);
 
     let newDashboard = Object.assign({}, this.dashboard, {
-      temp: true,
       tiles: this.dashboard.tiles.map((tile, i: number) => {
         tile.plateX = layout[i].x;
         tile.plateY = layout[i].y;
@@ -333,14 +322,41 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dashboardQuery.update(newDashboard);
 
     this.refreshShow();
+
+    this.dashboardService.editDashboard({
+      isDraft: this.dashboard.draft,
+      tiles: this.dashboard.tiles,
+      oldDashboardId: this.dashboard.dashboardId,
+      newDashboardId: common.makeId(),
+      newDashboardFields: this.dashboard.fields,
+      deleteFilterFieldId: undefined,
+      deleteFilterTileTitle: undefined,
+      timezone: this.uiQuery.getValue().timezone
+    });
   }
 
-  tileDeleted() {
-    this.dashboardQuery.update(
-      Object.assign({}, this.dashboard, {
-        temp: true
-      })
-    );
+  tileDeleted(eventtDashTileDeleted: interfaces.EventDashTileDeleted) {
+    let tileIndex = eventtDashTileDeleted.tileIndex;
+
+    let newTiles = [
+      ...this.dashboard.tiles.slice(0, tileIndex),
+      ...this.dashboard.tiles.slice(tileIndex + 1)
+    ];
+
+    this.dashboardQuery.updatePart({
+      tiles: newTiles
+    });
+
+    this.dashboardService.editDashboard({
+      isDraft: this.dashboard.draft,
+      tiles: this.dashboard.tiles,
+      oldDashboardId: this.dashboard.dashboardId,
+      newDashboardId: common.makeId(),
+      newDashboardFields: this.dashboard.fields,
+      deleteFilterFieldId: undefined,
+      deleteFilterTileTitle: undefined,
+      timezone: this.uiQuery.getValue().timezone
+    });
   }
 
   run() {

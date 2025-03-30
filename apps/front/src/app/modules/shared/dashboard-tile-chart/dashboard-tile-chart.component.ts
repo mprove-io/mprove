@@ -23,6 +23,7 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { interfaces } from '~front/barrels/interfaces';
 import { ChartViewComponent } from '../chart-view/chart-view.component';
 
 @Component({
@@ -63,7 +64,9 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
   @Input()
   isShow: boolean;
 
-  @Output() repDeleted = new EventEmitter<string>();
+  @Output() dashTileDeleted =
+    new EventEmitter<interfaces.EventDashTileDeleted>();
+
   @Output() queryUpdated = new EventEmitter<common.Query>();
 
   qData: QDataRow[];
@@ -244,21 +247,13 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
   deleteTile(event: MouseEvent) {
     event.stopPropagation();
 
-    let deleteTileIndex = this.dashboard.tiles.findIndex(
-      x => x.mconfigId === this.mconfig.mconfigId
-    );
+    let eventDashTileDeleted: interfaces.EventDashTileDeleted = {
+      tileIndex: this.dashboard.tiles.findIndex(
+        x => x.mconfigId === this.mconfig.mconfigId
+      )
+    };
 
-    let newTiles = [
-      ...this.dashboard.tiles.slice(0, deleteTileIndex),
-      ...this.dashboard.tiles.slice(deleteTileIndex + 1)
-    ];
-
-    this.repDeleted.emit();
-
-    this.dashboardQuery.updatePart({
-      tiles: newTiles,
-      draft: true
-    });
+    this.dashTileDeleted.emit(eventDashTileDeleted);
   }
 
   showChart() {

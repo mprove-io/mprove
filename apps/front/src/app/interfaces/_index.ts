@@ -8,5 +8,6 @@ export * from './event-chart-series-element-update';
 export * from './event-chart-toggle-series';
 export * from './event-chart-toggle-y-axis-element';
 export * from './event-chart-y-axis-element-update';
+export * from './event-dash-tile-deleted';
 export * from './event-fraction-update';
 export * from './series-part';

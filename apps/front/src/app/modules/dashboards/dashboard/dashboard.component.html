@@ -328,7 +328,7 @@
                   [mconfig]="item.tile.mconfig"
                   [query]="item.tile.query"
                   [showBricks]="showBricks"
-                  (repDeleted)="tileDeleted()"
+                  (dashTileDeleted)="tileDeleted($event)"
                   (queryUpdated)="tileQueryUpdated($event, item.tile.title)"
                 ></m-dashboard-tile-chart>
               </div>
