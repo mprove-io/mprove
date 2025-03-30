@@ -23,8 +23,8 @@ export const REPORT_ROW_DEFAULT_SHOW_CHART = false;
 export const DASHBOARD_FIELD_DEFAULT_HIDDEN = false;
 export const REPORT_FIELD_DEFAULT_HIDDEN = false;
 
-export const TILE_DEFAULT_PLATE_WIDTH = 8;
-export const TILE_DEFAULT_PLATE_HEIGHT = 12;
+export const TILE_DEFAULT_PLATE_WIDTH = 12;
+export const TILE_DEFAULT_PLATE_HEIGHT = 10;
 export const TILE_DEFAULT_PLATE_X = 0;
 export const TILE_DEFAULT_PLATE_Y = 0;
 
