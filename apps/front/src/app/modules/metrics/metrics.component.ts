@@ -26,7 +26,7 @@ import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
-import { ReportQuery, emptyReport } from '~front/app/queries/report.query';
+import { ReportQuery } from '~front/app/queries/report.query';
 import { ReportsQuery } from '~front/app/queries/reports.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { RepChartData, UiQuery } from '~front/app/queries/ui.query';
@@ -185,7 +185,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
   reports: common.ReportX[];
   reports$ = this.reportsQuery.select().pipe(
     tap(x => {
-      this.reports = [emptyReport, ...x.reports];
+      this.reports = x.reports;
       this.draftsLength = this.reports.filter(y => y.draft === true).length;
 
       this.cd.detectChanges();
@@ -937,7 +937,11 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   navigateToReportsList() {}
 
-  newReport() {}
+  newReport() {
+    this.navigateService.navigateToMetricsRep({
+      reportId: common.EMPTY_REPORT_ID
+    });
+  }
 
   // toggleShowMetricsChart() {
   //   let showMetricsChart = !this.showMetricsChart;
