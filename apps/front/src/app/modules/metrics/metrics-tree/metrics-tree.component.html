@@ -11,8 +11,8 @@
       <div
         class="group-bar flex w-full flex-row"
         [ngClass]="{
-          'h-[60px]': node.data.isField === false,
-          'h-11 pl-6 pr-10': node.data.isField === true
+          'h-[60px] pl-2': node.data.isField === false,
+          'h-11 pl-8 pr-10': node.data.isField === true
         }"
       >
         <div
@@ -63,13 +63,13 @@
               <div class="text-gray1 ml-0 flex-grow truncate">
                 <div class="flex flex-col">
                   <div class="flex">
-                    <span
-                      class="truncate text-base"
+                    <!-- <span
                       [ngClass]="{
                         'ml-3': node.hasChildren === true,
-                        'ml-5': node.hasChildren === false
+                        'ml-2': node.hasChildren === false
                       }"
-                    >
+                    ></span> -->
+                    <span class="ml-3 truncate text-base">
                       <span *ngIf="node.data.isField === true">
                         <span>{{ node.data.metric.partNodeLabel }}</span>
 

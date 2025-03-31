@@ -333,47 +333,46 @@
         <div class="flex w-1/5 flex-shrink-0" *ngIf="isShowLeft === true">
           <div class="flex w-full flex-grow rounded bg-white shadow">
             <div class="text-gray1 mt-6 flex w-full flex-col text-base">
-              <div class="flex flex-1 flex-col">
-                <div class="flex h-11 flex-row items-center">
-                  <m-search-icon class="text-gray1 ml-6"></m-search-icon>
+              <div class="flex h-11 flex-row items-center">
+                <m-search-icon class="text-gray1 ml-6"></m-search-icon>
 
-                  <input
-                    spellcheck="false"
-                    autocomplete="off"
-                    data-cy="dashboardsSearchInput"
-                    class="form-input focus:border-blue3 ml-3 h-10 w-[225px] rounded border-gray-400 bg-white"
-                    placeholder="Search"
+                <input
+                  spellcheck="false"
+                  autocomplete="off"
+                  data-cy="dashboardsSearchInput"
+                  class="form-input focus:border-blue3 ml-3 h-10 w-[225px] rounded border-gray-400 bg-white"
+                  placeholder="Search"
+                  [ngClass]="{
+                    'bg-purple-200': !!word
+                  }"
+                  [(ngModel)]="word"
+                  (ngModelChange)="searchWordChange()"
+                />
+
+                <div class="h-9 w-9">
+                  <m-delete-icon
+                    *ngIf="!!word"
+                    class="text-gray1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                     [ngClass]="{
-                      'bg-purple-200': !!word
+                      'cursor-pointer bg-purple-200 hover:bg-purple-300': !!word
                     }"
-                    [(ngModel)]="word"
-                    (ngModelChange)="searchWordChange()"
-                  />
-
-                  <div class="h-9 w-9">
-                    <m-delete-icon
-                      *ngIf="!!word"
-                      class="text-gray1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-                      [ngClass]="{
-                        'cursor-pointer bg-purple-200 hover:bg-purple-300':
-                          !!word
-                      }"
-                      (click)="resetSearch()"
-                    ></m-delete-icon>
-                  </div>
-
-                  <div class="flex flex-grow"></div>
-
-                  <button
-                    *ngIf="filteredDraftsLength > 0"
-                    class="mr-10 flex flex-row items-center rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-gray-100 focus:outline-none"
-                    (click)="deleteDrafts()"
-                  >
-                    <m-trash-icon></m-trash-icon>
-                    <div class="ml-3">Drafts</div>
-                  </button>
+                    (click)="resetSearch()"
+                  ></m-delete-icon>
                 </div>
 
+                <div class="flex flex-grow"></div>
+
+                <button
+                  *ngIf="filteredDraftsLength > 0"
+                  class="mr-10 flex flex-row items-center rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-gray-100 focus:outline-none"
+                  (click)="deleteDrafts()"
+                >
+                  <m-trash-icon></m-trash-icon>
+                  <div class="ml-3">Drafts</div>
+                </button>
+              </div>
+
+              <div class="flex h-2 flex-1 flex-col">
                 <div
                   class="mb-5 mt-5 flex h-2 flex-grow flex-col overflow-y-auto"
                 >
@@ -460,62 +459,84 @@
                 </div>
               </div>
 
-              <div class="flex flex-1 flex-col">
-                <div class="mb-3 ml-5 mr-10 flex h-11 flex-row items-center">
+              <div
+                class="mt-5 flex flex-col"
+                [ngClass]="{
+                  'flex-1': metricsIsExpanded
+                }"
+              >
+                <!-- <div class="mb-3 ml-5 mr-10 flex h-11 flex-row items-center">
                   <div class="flex text-lg font-semibold">METRICS</div>
                   <div class="flex flex-grow"></div>
+                </div> -->
+
+                <div
+                  (click)="toggleMetricsPanel()"
+                  class="text-gray1 mb-2 mr-10 flex h-11 cursor-pointer select-none flex-row items-center space-x-2 px-5 text-lg font-semibold"
+                >
+                  <div class="flex flex-row items-center space-x-2">
+                    <m-chevron-right-icon
+                      *ngIf="!metricsIsExpanded"
+                    ></m-chevron-right-icon>
+                    <m-chevron-down-icon
+                      *ngIf="metricsIsExpanded"
+                    ></m-chevron-down-icon>
+
+                    <div> METRICS </div>
+                  </div>
                 </div>
 
                 <m-metrics-tree
+                  *ngIf="metricsIsExpanded === true"
                   class="flex w-full flex-1 flex-shrink-0"
                 ></m-metrics-tree>
-              </div>
 
-              <div class="mb-5 mr-10 mt-5 flex h-11 flex-row items-center">
-                <div class="text-gray1 ml-6 select-none text-base"
-                  >Timezone</div
-                >
-
-                <div class="ml-5 flex max-w-[260px] flex-1">
-                  <form
-                    class="w-full"
-                    [formGroup]="timezoneForm"
-                    tp="Timezone change is not allowed"
-                    [tpIsEnabled]="
-                      timezoneForm.controls['timezone'].disabled === true
-                    "
+                <div class="mb-5 mr-10 mt-5 flex h-11 flex-row items-center">
+                  <div class="text-gray1 ml-6 select-none text-base"
+                    >Timezone</div
                   >
-                    <ng-select
-                      #metricsTimezoneSelect
-                      data-cy="metricsTimezoneSelect"
-                      class="w-full text-base"
-                      [items]="timezones"
-                      [clearable]="false"
-                      [searchable]="true"
-                      [searchFn]="timezoneSearchFn"
-                      (change)="timezoneChange()"
-                      (keyup.esc)="
-                        $event.stopImmediatePropagation();
-                        metricsTimezoneSelect.blur()
-                      "
-                      (keyup.enter)="
-                        $event.stopImmediatePropagation();
-                        metricsTimezoneSelect.blur()
-                      "
-                      appendTo="body"
-                      bindLabel="label"
-                      bindValue="value"
-                      formControlName="timezone"
-                    >
-                      <ng-template ng-label-tmp let-item="item">
-                        <div class="truncate">{{ item.label }}</div>
-                      </ng-template>
 
-                      <ng-template ng-option-tmp let-item="item">
-                        <div class="truncate">{{ item.label }}</div>
-                      </ng-template>
-                    </ng-select>
-                  </form>
+                  <div class="ml-5 flex max-w-[260px] flex-1">
+                    <form
+                      class="w-full"
+                      [formGroup]="timezoneForm"
+                      tp="Timezone change is not allowed"
+                      [tpIsEnabled]="
+                        timezoneForm.controls['timezone'].disabled === true
+                      "
+                    >
+                      <ng-select
+                        #metricsTimezoneSelect
+                        data-cy="metricsTimezoneSelect"
+                        class="w-full text-base"
+                        [items]="timezones"
+                        [clearable]="false"
+                        [searchable]="true"
+                        [searchFn]="timezoneSearchFn"
+                        (change)="timezoneChange()"
+                        (keyup.esc)="
+                          $event.stopImmediatePropagation();
+                          metricsTimezoneSelect.blur()
+                        "
+                        (keyup.enter)="
+                          $event.stopImmediatePropagation();
+                          metricsTimezoneSelect.blur()
+                        "
+                        appendTo="body"
+                        bindLabel="label"
+                        bindValue="value"
+                        formControlName="timezone"
+                      >
+                        <ng-template ng-label-tmp let-item="item">
+                          <div class="truncate">{{ item.label }}</div>
+                        </ng-template>
+
+                        <ng-template ng-option-tmp let-item="item">
+                          <div class="truncate">{{ item.label }}</div>
+                        </ng-template>
+                      </ng-select>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>

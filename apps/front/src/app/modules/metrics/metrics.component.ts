@@ -96,6 +96,7 @@ export class MetricsComponent implements OnInit, OnDestroy {
 
   emptyReportId = common.EMPTY_REPORT_ID;
 
+  metricsIsExpanded = false;
   filtersIsExpanded = false;
 
   notEmptySelectQueriesLength = 0;
@@ -875,6 +876,10 @@ export class MetricsComponent implements OnInit, OnDestroy {
         take(1)
       )
       .subscribe();
+  }
+
+  toggleMetricsPanel() {
+    this.metricsIsExpanded = !this.metricsIsExpanded;
   }
 
   toggleFiltersPanel() {
