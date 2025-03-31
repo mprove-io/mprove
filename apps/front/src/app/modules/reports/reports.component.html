@@ -180,149 +180,156 @@
             </div>
           </div>
 
-          <div class="text-gray1 ml-[44px] select-none text-xl font-semibold"
-            >Detail</div
+          <div
+            *ngIf="lastUrl !== pathReports"
+            class="flex w-full flex-row items-center"
           >
-
-          <form class="ml-6" [formGroup]="timeSpecForm">
-            <ng-select
-              #timeSpecSelect
-              data-cy="timeSpecSelect"
-              class="popup-55 w-[160px]"
-              [items]="timeSpecList"
-              [clearable]="false"
-              [searchable]="false"
-              (change)="timeSpecChange()"
-              (keyup.esc)="
-                $event.stopImmediatePropagation(); timeSpecSelect.blur()
-              "
-              (keyup.enter)="
-                $event.stopImmediatePropagation(); timeSpecSelect.blur()
-              "
-              appendTo="body"
-              bindLabel="label"
-              bindValue="value"
-              formControlName="timeSpec"
+            <div class="text-gray1 ml-[44px] select-none text-xl font-semibold"
+              >Detail</div
             >
-              <ng-template ng-label-tmp let-item="item">
-                <div class="ml-1 truncate">{{ item.label }}</div>
-              </ng-template>
 
-              <ng-template ng-option-tmp let-item="item">
-                <div class="ml-1 truncate">{{ item.label }}</div>
-              </ng-template>
-            </ng-select>
-          </form>
-
-          <div class="text-gray1 ml-6 select-none text-base">Time</div>
-
-          <div
-            class="flex flex-row items-center justify-start"
-            *ngFor="let fraction of fractions"
-          >
-            <m-fraction-ts
-              class="ml-4 mt-[28px]"
-              [fraction]="fraction"
-              [isFirst]="true"
-              [isMetrics]="true"
-              [fractionIndex]="0"
-              (fractionUpdate)="fractionUpdate($event)"
-            ></m-fraction-ts>
-          </div>
-
-          <div
-            class="ml-4 flex h-8 w-8 flex-shrink-0 text-amber-500"
-            tp="Exceeded time columns limit ({{
-              report.timeColumnsLimit
-            }}). Change time detail or reduce time filter window."
-            *ngIf="report?.isTimeColumnsLimitExceeded === true"
-          >
-            <m-exclamation-icon></m-exclamation-icon>
-          </div>
-
-          <div
-            class="text-red1 ml-4 flex h-8 w-8 flex-shrink-0"
-            tp="The left boundary value of the time range must be less than the right boundary value"
-            *ngIf="
-              report?.rangeOpen >= report?.rangeClose &&
-              report?.timeRangeFraction.type === fractionTypeIsInRange
-            "
-          >
-            <m-exclamation-icon></m-exclamation-icon>
-          </div>
-
-          <div class="flex-grow"></div>
-
-          <div
-            *ngIf="!!lastCompletedQuery"
-            class="flex flex-row items-center justify-end"
-          >
-            <m-query-status
-              [query]="lastCompletedQuery"
-              [showDataRowsLength]="false"
-              [showLastCompleteDuration]="false"
-              [completedWord]="'Completed'"
-            ></m-query-status>
-          </div>
-
-          <div class="flex flex-shrink-0 flex-row">
-            <div
-              class="flex cursor-pointer flex-row items-center"
-              (click)="toggleAutoRun()"
-            >
-              <ui-switch class="ml-7 mt-1" [checked]="isAutoRun"></ui-switch>
-
-              <div
-                class="text-gray1 ml-5 flex h-9 flex-shrink-0 select-none items-center text-base"
-                >Auto Run</div
+            <form class="ml-6" [formGroup]="timeSpecForm">
+              <ng-select
+                #timeSpecSelect
+                data-cy="timeSpecSelect"
+                class="popup-55 w-[160px]"
+                [items]="timeSpecList"
+                [clearable]="false"
+                [searchable]="false"
+                (change)="timeSpecChange()"
+                (keyup.esc)="
+                  $event.stopImmediatePropagation(); timeSpecSelect.blur()
+                "
+                (keyup.enter)="
+                  $event.stopImmediatePropagation(); timeSpecSelect.blur()
+                "
+                appendTo="body"
+                bindLabel="label"
+                bindValue="value"
+                formControlName="timeSpec"
               >
+                <ng-template ng-label-tmp let-item="item">
+                  <div class="ml-1 truncate">{{ item.label }}</div>
+                </ng-template>
+
+                <ng-template ng-option-tmp let-item="item">
+                  <div class="ml-1 truncate">{{ item.label }}</div>
+                </ng-template>
+              </ng-select>
+            </form>
+
+            <div class="text-gray1 ml-6 select-none text-base">Time</div>
+
+            <div
+              class="flex flex-row items-center justify-start"
+              *ngFor="let fraction of fractions"
+            >
+              <m-fraction-ts
+                class="ml-4 mt-[28px]"
+                [fraction]="fraction"
+                [isFirst]="true"
+                [isMetrics]="true"
+                [fractionIndex]="0"
+                (fractionUpdate)="fractionUpdate($event)"
+              ></m-fraction-ts>
             </div>
 
-            <button
-              type="button"
-              data-cy="metricsRunButton"
-              class="ml-5 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
-              [ngClass]="{
-                'bg-blue3':
-                  notEmptySelectQueriesLength > 0 &&
-                  (report?.rangeOpen < report?.rangeClose ||
-                    report?.timeRangeFraction.type !== fractionTypeIsInRange),
-                'cursor-default':
+            <div
+              class="ml-4 flex h-8 w-8 flex-shrink-0 text-amber-500"
+              tp="Exceeded time columns limit ({{
+                report.timeColumnsLimit
+              }}). Change time detail or reduce time filter window."
+              *ngIf="report?.isTimeColumnsLimitExceeded === true"
+            >
+              <m-exclamation-icon></m-exclamation-icon>
+            </div>
+
+            <div
+              class="text-red1 ml-4 flex h-8 w-8 flex-shrink-0"
+              tp="The left boundary value of the time range must be less than the right boundary value"
+              *ngIf="
+                report?.rangeOpen >= report?.rangeClose &&
+                report?.timeRangeFraction?.type === fractionTypeIsInRange
+              "
+            >
+              <m-exclamation-icon></m-exclamation-icon>
+            </div>
+
+            <div class="flex-grow"></div>
+
+            <div
+              *ngIf="!!lastCompletedQuery"
+              class="flex flex-row items-center justify-end"
+            >
+              <m-query-status
+                [query]="lastCompletedQuery"
+                [showDataRowsLength]="false"
+                [showLastCompleteDuration]="false"
+                [completedWord]="'Completed'"
+              ></m-query-status>
+            </div>
+
+            <div class="flex flex-shrink-0 flex-row">
+              <div
+                class="flex cursor-pointer flex-row items-center"
+                (click)="toggleAutoRun()"
+              >
+                <ui-switch class="ml-7 mt-1" [checked]="isAutoRun"></ui-switch>
+
+                <div
+                  class="text-gray1 ml-5 flex h-9 flex-shrink-0 select-none items-center text-base"
+                  >Auto Run</div
+                >
+              </div>
+
+              <button
+                type="button"
+                data-cy="metricsRunButton"
+                class="ml-5 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
+                [ngClass]="{
+                  'bg-blue3':
+                    notEmptySelectQueriesLength > 0 &&
+                    (report?.rangeOpen < report?.rangeClose ||
+                      report?.timeRangeFraction?.type !==
+                        fractionTypeIsInRange),
+                  'cursor-default':
+                    notEmptySelectQueriesLength === 0 ||
+                    isRunButtonPressed === true ||
+                    (report?.rangeOpen >= report?.rangeClose &&
+                      report?.timeRangeFraction?.type ===
+                        fractionTypeIsInRange),
+                  'bg-gray-400':
+                    notEmptySelectQueriesLength === 0 ||
+                    (report?.rangeOpen >= report?.rangeClose &&
+                      report?.timeRangeFraction?.type === fractionTypeIsInRange)
+                }"
+                (click)="run()"
+                [disabled]="
                   notEmptySelectQueriesLength === 0 ||
                   isRunButtonPressed === true ||
                   (report?.rangeOpen >= report?.rangeClose &&
-                    report?.timeRangeFraction.type === fractionTypeIsInRange),
-                'bg-gray-400':
-                  notEmptySelectQueriesLength === 0 ||
-                  (report?.rangeOpen >= report?.rangeClose &&
-                    report?.timeRangeFraction.type === fractionTypeIsInRange)
-              }"
-              (click)="run()"
-              [disabled]="
-                notEmptySelectQueriesLength === 0 ||
-                isRunButtonPressed === true ||
-                (report?.rangeOpen >= report?.rangeClose &&
-                  report?.timeRangeFraction.type === fractionTypeIsInRange)
-              "
-            >
-              <div *ngIf="isRunButtonPressed === false">Run</div>
-              <div
-                *ngIf="isRunButtonPressed === true"
-                class="relative flex h-9 w-9 flex-shrink-0"
+                    report?.timeRangeFraction?.type === fractionTypeIsInRange)
+                "
               >
-                <ngx-spinner
-                  [name]="metricsRunButtonSpinnerName"
-                  color="rgba(255, 255, 255, 1)"
-                  bdColor="rgba(0, 0, 0, 0)"
-                  size="default"
-                  type="ball-clip-rotate"
-                  [fullScreen]="false"
-                  [disableAnimation]="true"
-                  [zIndex]="99998"
+                <div *ngIf="isRunButtonPressed === false">Run</div>
+                <div
+                  *ngIf="isRunButtonPressed === true"
+                  class="relative flex h-9 w-9 flex-shrink-0"
                 >
-                </ngx-spinner>
-              </div>
-            </button>
+                  <ngx-spinner
+                    [name]="metricsRunButtonSpinnerName"
+                    color="rgba(255, 255, 255, 1)"
+                    bdColor="rgba(0, 0, 0, 0)"
+                    size="default"
+                    type="ball-clip-rotate"
+                    [fullScreen]="false"
+                    [disableAnimation]="true"
+                    [zIndex]="99998"
+                  >
+                  </ngx-spinner>
+                </div>
+              </button>
+            </div>
           </div>
 
           <!-- <div class="text-gray1 flex flex-row items-center text-base"> </div> -->
@@ -543,7 +550,21 @@
           </div>
         </div>
 
-        <div class="ml-6 flex min-w-[2px] flex-grow flex-col">
+        <div
+          *ngIf="lastUrl === pathReports"
+          class="ml-6 flex min-w-[2px] flex-grow flex-col"
+        >
+          <div
+            class="text-gray1 mb-[80px] flex h-full w-full select-none items-center justify-center text-xl"
+          >
+            Select Report
+          </div>
+        </div>
+
+        <div
+          *ngIf="lastUrl !== pathReports"
+          class="ml-6 flex min-w-[2px] flex-grow flex-col"
+        >
           <div class="divide-y divide-gray-300">
             <div></div>
             <div></div>
@@ -749,6 +770,7 @@
   </div>
 </div>
 
+<div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="report$ | async"></div>
 <div *ngIf="reports$ | async"></div>
 <div *ngIf="reportChartData$ | async"></div>

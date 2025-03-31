@@ -5,9 +5,9 @@
     <m-logo></m-logo>
 
     <!-- <div class="flex flex-1"></div> -->
-    <div class="flex flex-1"></div>
+    <!-- <div class="flex flex-1"></div> -->
 
-    <div class="flex flex-row items-center">
+    <div class="ml-10 flex flex-row items-center">
       <div *ngIf="!!nav && !!nav.projectId" class="flex flex-row items-center">
         <div class="select-none font-semibold text-gray-400">Env</div>
         <m-env-select class="ml-5"></m-env-select>
@@ -49,18 +49,6 @@
               <div class="flex w-[60px] items-center justify-center">Files</div>
             </div>
           </button>
-
-          <button
-            class="text-gray1 ml-5 block flex h-10 w-[80px] items-center justify-center text-left text-base focus:outline-none"
-            [ngClass]="{
-              'cursor-default text-gray-400':
-                !nav || !nav.projectId || needSave === true,
-              'font-semibold': isModelsRouteActive === true
-            }"
-            (click)="navigateModels()"
-            [disabled]="!nav || !nav.projectId || needSave === true"
-            >Models</button
-          >
         </div>
       </div>
     </div>
@@ -71,6 +59,18 @@
       *ngIf="!!nav && !!nav.projectId"
       class="flex flex-row items-center space-x-5"
     >
+      <button
+        class="text-gray1 ml-5 block flex h-10 w-[80px] items-center justify-center text-left text-base focus:outline-none"
+        [ngClass]="{
+          'cursor-default text-gray-400':
+            !nav || !nav.projectId || needSave === true,
+          'font-semibold': isModelsRouteActive === true
+        }"
+        (click)="navigateModels()"
+        [disabled]="!nav || !nav.projectId || needSave === true"
+        >Models</button
+      >
+
       <button
         class="text-gray1 block flex h-10 w-[80px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{

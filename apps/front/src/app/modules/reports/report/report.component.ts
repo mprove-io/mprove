@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  ViewChild
+} from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
   ColDef,
@@ -37,7 +42,7 @@ import { StatusRendererComponent } from './status-renderer/status-renderer.compo
   styleUrls: ['report.component.scss'],
   templateUrl: './report.component.html'
 })
-export class ReportComponent {
+export class ReportComponent implements OnDestroy {
   // @HostListener('window:keyup.esc')
   // onEscKeyUp() {
   //   this.agGrid.api.deselectAll();
@@ -485,35 +490,49 @@ export class ReportComponent {
 
     return rowHeight;
   }
-}
 
-function countLines(item: { input: any; lines: number }) {
-  let { input, lines } = item;
-  if (common.isUndefined(input)) {
-    lines = lines + 1;
-  } else if (Array.isArray(input)) {
-    //
-    input.forEach((x: any) => {
-      lines = countLines({ input: x, lines: lines });
+  ngOnDestroy() {
+    this.reportQuery.reset();
+    this.uiQuery.updatePart({
+      reportSelectedNodes: [],
+      gridApi: null,
+      gridData: [],
+      chartFormulaData: null,
+      repChartData: {
+        rows: [],
+        columns: []
+      }
     });
-
-    if (input.length > 0) {
-      lines = lines + 2;
-    } else {
-      lines = lines + 1;
-    }
-  } else if (input.constructor === Object) {
-    //
-    Object.keys(input).forEach((y: any) => {
-      lines = countLines({ input: input[y], lines: lines });
-    });
-    if (Object.keys(input).length > 0) {
-      lines = lines + 2;
-    } else {
-      lines = lines + 1;
-    }
-  } else {
-    lines = lines + 1;
   }
-  return lines;
 }
+
+// function countLines(item: { input: any; lines: number }) {
+//   let { input, lines } = item;
+//   if (common.isUndefined(input)) {
+//     lines = lines + 1;
+//   } else if (Array.isArray(input)) {
+//     //
+//     input.forEach((x: any) => {
+//       lines = countLines({ input: x, lines: lines });
+//     });
+
+//     if (input.length > 0) {
+//       lines = lines + 2;
+//     } else {
+//       lines = lines + 1;
+//     }
+//   } else if (input.constructor === Object) {
+//     //
+//     Object.keys(input).forEach((y: any) => {
+//       lines = countLines({ input: input[y], lines: lines });
+//     });
+//     if (Object.keys(input).length > 0) {
+//       lines = lines + 2;
+//     } else {
+//       lines = lines + 1;
+//     }
+//   } else {
+//     lines = lines + 1;
+//   }
+//   return lines;
+// }

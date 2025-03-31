@@ -9,13 +9,14 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { IRowNode } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
 import {
   Subscription,
   combineLatest,
   concatMap,
+  filter,
   interval,
   of,
   take,
@@ -67,7 +68,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.timeSpecSelectElement?.close();
   }
 
-  lastUrl = 'undef';
+  pathReports = common.PATH_REPORTS;
   pathReportsList = common.PATH_REPORTS_LIST;
 
   pageTitle = frontConstants.METRICS_PAGE_TITLE;
@@ -608,6 +609,17 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   private timer: any;
 
+  lastUrl: string;
+
+  routerEvents$ = this.router.events.pipe(
+    filter(ev => ev instanceof NavigationEnd),
+    tap((x: any) => {
+      let ar = x.url.split('?')[0].split('/');
+      this.lastUrl = ar[ar.length - 1];
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
@@ -635,6 +647,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
+
+    let ar = this.router.url.split('?')[0].split('/');
+    this.lastUrl = ar[ar.length - 1];
 
     let uiState = this.uiQuery.getValue();
 
@@ -901,7 +916,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       this.isShow = false;
     }
 
-    this.uiQuery.getValue().gridApi.deselectAll();
+    this.uiQuery.getValue().gridApi?.deselectAll();
 
     this.navigateService.navigateToMetricsRep({
       reportId: report.reportId
@@ -1059,16 +1074,5 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.stopCheckRunning();
     this.metricsQuery.reset();
     this.reportsQuery.reset();
-    this.reportQuery.reset();
-    this.uiQuery.updatePart({
-      reportSelectedNodes: [],
-      gridApi: null,
-      gridData: [],
-      chartFormulaData: null,
-      repChartData: {
-        rows: [],
-        columns: []
-      }
-    });
   }
 }
