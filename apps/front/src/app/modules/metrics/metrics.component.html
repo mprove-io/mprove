@@ -332,16 +332,41 @@
       <div class="mt-6 flex flex-grow flex-row">
         <div class="flex w-1/5 flex-shrink-0" *ngIf="isShowLeft === true">
           <div class="flex w-full flex-grow rounded bg-white shadow">
-            <div class="text-gray1 mr-5 mt-6 flex w-full flex-col text-base">
+            <div class="text-gray1 mt-6 flex w-full flex-col text-base">
               <div class="flex flex-1 flex-col">
-                <div class="mb-3 ml-5 mr-5 flex h-11 flex-row items-center">
-                  <!-- <div class="flex text-lg font-semibold">REPORTS</div> -->
+                <div class="flex h-11 flex-row items-center">
+                  <m-search-icon class="text-gray1 ml-6"></m-search-icon>
+
+                  <input
+                    spellcheck="false"
+                    autocomplete="off"
+                    data-cy="dashboardsSearchInput"
+                    class="form-input focus:border-blue3 ml-3 h-10 w-[225px] rounded border-gray-400 bg-white"
+                    placeholder="Search"
+                    [ngClass]="{
+                      'bg-purple-200': !!word
+                    }"
+                    [(ngModel)]="word"
+                    (ngModelChange)="searchWordChange()"
+                  />
+
+                  <div class="h-9 w-9">
+                    <m-delete-icon
+                      *ngIf="!!word"
+                      class="text-gray1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                      [ngClass]="{
+                        'cursor-pointer bg-purple-200 hover:bg-purple-300':
+                          !!word
+                      }"
+                      (click)="resetSearch()"
+                    ></m-delete-icon>
+                  </div>
 
                   <div class="flex flex-grow"></div>
 
                   <button
-                    *ngIf="draftsLength > 0"
-                    class="ml-5 flex flex-row items-center rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-gray-100 focus:outline-none"
+                    *ngIf="filteredDraftsLength > 0"
+                    class="mr-10 flex flex-row items-center rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-gray-100 focus:outline-none"
                     (click)="deleteDrafts()"
                   >
                     <m-trash-icon></m-trash-icon>
@@ -349,20 +374,24 @@
                   </button>
                 </div>
 
-                <div class="mb-5 flex h-2 flex-grow flex-col overflow-y-auto">
+                <div
+                  class="mb-5 mt-5 flex h-2 flex-grow flex-col overflow-y-auto"
+                >
                   <div
-                    *ngFor="let r of reports; let i = index"
+                    *ngFor="let r of filteredReports; let i = index"
                     (click)="navToReport(r)"
                   >
                     <div
-                      *ngIf="draftsLength > 0 && i === draftsLength"
-                      class="ml-[25px] mr-[20px] divide-y divide-gray-300"
+                      *ngIf="
+                        filteredDraftsLength > 0 && i === filteredDraftsLength
+                      "
+                      class="ml-[25px] mr-[45px] divide-y divide-gray-300"
                     >
                       <div></div>
                       <div></div>
                     </div>
                     <div
-                      class="hover:bg-blue2 group ml-6 mr-5 flex h-11 flex-row items-center rounded pl-4 pr-2 hover:cursor-pointer"
+                      class="hover:bg-blue2 group ml-6 mr-10 flex h-11 flex-row items-center rounded pl-4 pr-2 hover:cursor-pointer"
                     >
                       <div class="mr-3 flex h-2 items-center">
                         <div
@@ -432,7 +461,7 @@
               </div>
 
               <div class="flex flex-1 flex-col">
-                <div class="mb-3 ml-5 mr-5 flex h-11 flex-row items-center">
+                <div class="mb-3 ml-5 mr-10 flex h-11 flex-row items-center">
                   <div class="flex text-lg font-semibold">METRICS</div>
                   <div class="flex flex-grow"></div>
                 </div>
@@ -442,7 +471,7 @@
                 ></m-metrics-tree>
               </div>
 
-              <div class="mb-5 mr-5 mt-5 flex h-11 flex-row items-center">
+              <div class="mb-5 mr-10 mt-5 flex h-11 flex-row items-center">
                 <div class="text-gray1 ml-6 select-none text-base"
                   >Timezone</div
                 >

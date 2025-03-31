@@ -88,8 +88,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     })
   );
 
-  hasAccessModels: common.ModelX[] = [];
-
   filteredDraftsLength: number;
 
   dashboards: common.DashboardX[];
@@ -100,15 +98,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.dashboards = x.dashboards;
 
-      this.modelsQuery
-        .select()
-        .pipe(take(1))
-        .subscribe(ml => {
-          this.hasAccessModels = ml.models.filter(m => m.hasAccess === true);
-
-          this.makeFilteredDashboards();
-          this.cd.detectChanges();
-        });
+      this.makeFilteredDashboards();
+      this.cd.detectChanges();
     })
   );
 

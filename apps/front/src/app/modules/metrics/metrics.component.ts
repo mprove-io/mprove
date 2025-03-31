@@ -45,6 +45,7 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import { EChartsInitOpts, EChartsOption } from 'echarts';
 import { DataPoint } from '~front/app/interfaces/data-point';
 import { SeriesPart } from '~front/app/interfaces/series-part';
+import { FilteredReportsQuery } from '~front/app/queries/filtered-reports.query';
 import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { DataService } from '~front/app/services/data.service';
 
@@ -180,14 +181,19 @@ export class MetricsComponent implements OnInit, OnDestroy {
     })
   );
 
-  draftsLength: number;
+  word: string;
+
+  filteredDraftsLength: number;
 
   reports: common.ReportX[];
+  reportsFilteredByWord: common.ReportX[];
+  filteredReports: common.ReportX[];
+
   reports$ = this.reportsQuery.select().pipe(
     tap(x => {
       this.reports = x.reports;
-      this.draftsLength = this.reports.filter(y => y.draft === true).length;
 
+      this.makeFilteredReports();
       this.cd.detectChanges();
     })
   );
@@ -599,11 +605,14 @@ export class MetricsComponent implements OnInit, OnDestroy {
     })
   );
 
+  private timer: any;
+
   constructor(
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private metricsQuery: MetricsQuery,
     private reportsQuery: ReportsQuery,
+    private filteredReportsQuery: FilteredReportsQuery,
     private reportQuery: ReportQuery,
     private uiQuery: UiQuery,
     private memberQuery: MemberQuery,
@@ -917,6 +926,70 @@ export class MetricsComponent implements OnInit, OnDestroy {
       ),
       report: this.report
     });
+  }
+
+  searchWordChange() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+
+    this.timer = setTimeout(() => {
+      this.makeFilteredReports();
+      this.cd.detectChanges();
+    }, 600);
+  }
+
+  resetSearch() {
+    this.word = undefined;
+    this.makeFilteredReports();
+    this.cd.detectChanges();
+  }
+
+  makeFilteredReports() {
+    let idxs;
+
+    let draftReports = this.reports.filter(x => x.draft === true);
+    let nonDraftReports = this.reports.filter(x => x.draft === false);
+
+    if (common.isDefinedAndNotEmpty(this.word)) {
+      let haystack = nonDraftReports.map(x =>
+        common.isDefined(x.title) ? `${x.title}` : `${x.reportId}`
+      );
+      let opts = {};
+      let uf = new uFuzzy(opts);
+      idxs = uf.filter(haystack, this.word);
+    }
+
+    this.reportsFilteredByWord = common.isDefinedAndNotEmpty(this.word)
+      ? idxs != null && idxs.length > 0
+        ? idxs.map(idx => nonDraftReports[idx])
+        : []
+      : nonDraftReports;
+
+    this.filteredReports = [...draftReports, ...this.reportsFilteredByWord];
+
+    this.filteredReports = this.filteredReports.sort((a, b) => {
+      let aTitle = a.title || a.reportId;
+      let bTitle = b.title || b.reportId;
+
+      return b.draft === true && a.draft !== true
+        ? 1
+        : a.draft === true && b.draft !== true
+        ? -1
+        : aTitle > bTitle
+        ? 1
+        : bTitle > aTitle
+        ? -1
+        : 0;
+    });
+
+    this.filteredReportsQuery.update({
+      filteredReports: this.filteredReports
+    });
+
+    this.filteredDraftsLength = this.filteredReports.filter(
+      y => y.draft === true
+    ).length;
   }
 
   toggleAutoRun() {
