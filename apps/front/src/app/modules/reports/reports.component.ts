@@ -801,7 +801,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.uiQuery.updatePart({ timezone: timezone });
     this.uiService.setUserUi({ timezone: timezone });
 
-    this.getRep();
+    if (
+      this.lastUrl !== this.pathReports &&
+      this.lastUrl !== this.pathReportsList
+    ) {
+      this.getReport();
+    }
   }
 
   timeSpecChange(timeSpecValue?: common.TimeSpecEnum) {
@@ -852,15 +857,15 @@ export class ReportsComponent implements OnInit, OnDestroy {
       this.uiQuery.updatePart({ timeSpec: timeSpec });
     }
 
-    this.getRep();
+    this.getReport();
   }
 
   fractionUpdate(event$: any) {
     this.uiQuery.updatePart({ timeRangeFraction: event$.fraction });
-    this.getRep();
+    this.getReport();
   }
 
-  getRep() {
+  getReport() {
     let uiState = this.uiQuery.getValue();
 
     this.structRepResolver
@@ -1028,7 +1033,21 @@ export class ReportsComponent implements OnInit, OnDestroy {
     // });
   }
 
-  navigateToReportsList() {}
+  navigateToReportsList() {
+    this.reportQuery.reset();
+    this.uiQuery.updatePart({
+      reportSelectedNodes: [],
+      gridApi: null,
+      gridData: [],
+      chartFormulaData: null,
+      repChartData: {
+        rows: [],
+        columns: []
+      }
+    });
+
+    this.navigateService.navigateToReportsList();
+  }
 
   newReport() {
     this.navigateService.navigateToMetricsRep({
@@ -1071,8 +1090,20 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    console.log('reports ngOnDestroy');
     this.stopCheckRunning();
     this.metricsQuery.reset();
     this.reportsQuery.reset();
+    this.reportQuery.reset();
+    this.uiQuery.updatePart({
+      reportSelectedNodes: [],
+      gridApi: null,
+      gridData: [],
+      chartFormulaData: null,
+      repChartData: {
+        rows: [],
+        columns: []
+      }
+    });
   }
 }

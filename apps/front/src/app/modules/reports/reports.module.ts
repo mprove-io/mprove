@@ -23,6 +23,7 @@ import { RowIdHeaderComponent } from './report/row-id-header/row-id-header.compo
 import { RowIdRendererComponent } from './report/row-id-renderer/row-id-renderer.component';
 import { StatusHeaderComponent } from './report/status-header/status-header.component';
 import { StatusRendererComponent } from './report/status-renderer/status-renderer.component';
+import { ReportsListComponent } from './reports-list/reports-list.component';
 import { ReportsComponent } from './reports.component';
 import { RowFiltersComponent } from './row-filters/row-filters.component';
 import { RowComponent } from './row/row.component';
@@ -30,6 +31,7 @@ import { RowComponent } from './row/row.component';
 @NgModule({
   declarations: [
     ReportsComponent,
+    ReportsListComponent,
     MetricsTreeComponent,
     ReportComponent,
     ReportFiltersComponent,

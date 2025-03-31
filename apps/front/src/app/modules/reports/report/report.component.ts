@@ -1,9 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  ViewChild
-} from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
   ColDef,
@@ -42,7 +37,7 @@ import { StatusRendererComponent } from './status-renderer/status-renderer.compo
   styleUrls: ['report.component.scss'],
   templateUrl: './report.component.html'
 })
-export class ReportComponent implements OnDestroy {
+export class ReportComponent {
   // @HostListener('window:keyup.esc')
   // onEscKeyUp() {
   //   this.agGrid.api.deselectAll();
@@ -489,20 +484,6 @@ export class ReportComponent implements OnDestroy {
     params.data.finalRowHeight = rowHeight;
 
     return rowHeight;
-  }
-
-  ngOnDestroy() {
-    this.reportQuery.reset();
-    this.uiQuery.updatePart({
-      reportSelectedNodes: [],
-      gridApi: null,
-      gridData: [],
-      chartFormulaData: null,
-      repChartData: {
-        rows: [],
-        columns: []
-      }
-    });
   }
 }
 

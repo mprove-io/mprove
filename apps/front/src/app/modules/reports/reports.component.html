@@ -181,7 +181,7 @@
           </div>
 
           <div
-            *ngIf="lastUrl !== pathReports"
+            *ngIf="lastUrl !== pathReports && lastUrl !== pathReportsList"
             class="flex w-full flex-row items-center"
           >
             <div class="text-gray1 ml-[44px] select-none text-xl font-semibold"
@@ -331,12 +331,10 @@
               </button>
             </div>
           </div>
-
-          <!-- <div class="text-gray1 flex flex-row items-center text-base"> </div> -->
         </div>
       </div>
 
-      <div class="mt-6 flex flex-grow flex-row">
+      <div class="mt-6 flex h-2 flex-1 flex-row">
         <div class="flex w-1/5 flex-shrink-0" *ngIf="isShowLeft === true">
           <div class="flex w-full flex-grow rounded bg-white shadow">
             <div class="text-gray1 mt-6 flex w-full flex-col text-base">
@@ -561,8 +559,16 @@
           </div>
         </div>
 
+        <div *ngIf="lastUrl === pathReportsList" class="flex flex-1 flex-col">
+          <div class="ml-6 flex h-full flex-grow">
+            <div class="h-full w-full">
+              <router-outlet></router-outlet>
+            </div>
+          </div>
+        </div>
+
         <div
-          *ngIf="lastUrl !== pathReports"
+          *ngIf="lastUrl !== pathReports && lastUrl !== pathReportsList"
           class="ml-6 flex min-w-[2px] flex-grow flex-col"
         >
           <div class="divide-y divide-gray-300">

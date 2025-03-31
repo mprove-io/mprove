@@ -33,6 +33,7 @@ import { ProjectEvsComponent } from './modules/project/project-evs/project-evs.c
 import { ProjectSettingsComponent } from './modules/project/project-settings/project-settings.component';
 import { ProjectTeamComponent } from './modules/project/project-team/project-team.component';
 import { ReportComponent } from './modules/reports/report/report.component';
+import { ReportsListComponent } from './modules/reports/reports-list/reports-list.component';
 import { ReportsComponent } from './modules/reports/reports.component';
 import { LoginSuccessComponent } from './modules/special/login-success/login-success.component';
 import { NotFoundComponent } from './modules/special/not-found/not-found.component';
@@ -290,6 +291,11 @@ export const appRoutes: Routes = [
                                   common.PATH_REPORT +
                                   `/:${common.PARAMETER_REPORT_ID}`,
                                 resolve: [StructReportResolver]
+                              },
+                              {
+                                component: ReportsListComponent,
+                                canDeactivate: [DeactivateGuard],
+                                path: common.PATH_REPORTS_LIST
                               }
                             ]
                           }

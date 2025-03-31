@@ -323,6 +323,42 @@ export class NavigateService {
     });
   }
 
+  navigateToReportsList() {
+    let userId;
+    this.userQuery.userId$
+      .pipe(
+        tap(x => (userId = x)),
+        take(1)
+      )
+      .subscribe();
+
+    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+
+    let uiState = this.uiQuery.getValue();
+
+    let navTo = [
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
+      common.PATH_REPORTS,
+      common.PATH_REPORTS_LIST
+    ];
+
+    this.router.navigate(
+      navTo
+      //   , {
+      //   queryParams: { timezone: uiState.timezone.split('/').join('-') }
+      // }
+    );
+  }
+
   reloadCharts() {
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
