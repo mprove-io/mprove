@@ -1,13 +1,13 @@
 <ng-select
   *ngIf="showEmptySelector === true"
-  class="w-56 text-base"
+  class="w-[150px] text-base"
 ></ng-select>
 
 <ng-select
   *ngIf="showEmptySelector === false"
   #envSelect
   data-cy="envSelect"
-  class="w-56 text-base"
+  class="w-[150px] text-base"
   (open)="openEnvSelect()"
   [loading]="envsListLoading"
   [items]="envsList"
@@ -24,9 +24,7 @@
   bindValue="envId"
 >
   <ng-template ng-label-tmp let-item="item">
-    <div class="ml-1 truncate">
-      <span class="mr-2 text-gray-400">Env:</span>{{ item.envId }}</div
-    >
+    <div class="ml-1 truncate"> {{ item.envId }}</div>
   </ng-template>
 
   <ng-template ng-option-tmp let-item="item">

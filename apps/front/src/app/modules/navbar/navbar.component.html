@@ -4,14 +4,16 @@
   >
     <m-logo></m-logo>
 
-    <div class="flex flex-1"></div>
+    <!-- <div class="flex flex-1"></div> -->
     <div class="flex flex-1"></div>
 
     <div class="flex flex-row items-center">
       <div *ngIf="!!nav && !!nav.projectId" class="flex flex-row items-center">
-        <m-env-select></m-env-select>
+        <div class="select-none font-semibold text-gray-400">Env</div>
+        <m-env-select class="ml-5"></m-env-select>
 
-        <m-branch-select class="ml-8"></m-branch-select>
+        <div class="ml-10 select-none font-semibold text-gray-400">Branch</div>
+        <m-branch-select class="ml-5"></m-branch-select>
 
         <div class="flex w-[240px] flex-row justify-start">
           <button
@@ -70,15 +72,15 @@
       class="flex flex-row items-center space-x-5"
     >
       <button
-        class="text-gray1 block flex h-10 w-[90px] items-center justify-center text-left text-base focus:outline-none"
+        class="text-gray1 block flex h-10 w-[80px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,
-          'font-semibold': isReportsRouteActive === true
+          'font-semibold': isChartsRouteActive === true
         }"
-        (click)="navigateMetrics()"
+        (click)="navigateCharts()"
         [disabled]="!nav || !nav.projectId || needSave === true"
-        >Reports</button
+        >Charts</button
       >
 
       <button
@@ -94,15 +96,15 @@
       >
 
       <button
-        class="text-gray1 block flex h-10 w-[80px] items-center justify-center text-left text-base focus:outline-none"
+        class="text-gray1 block flex h-10 w-[90px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,
-          'font-semibold': isChartsRouteActive === true
+          'font-semibold': isReportsRouteActive === true
         }"
-        (click)="navigateCharts()"
+        (click)="navigateMetrics()"
         [disabled]="!nav || !nav.projectId || needSave === true"
-        >Charts</button
+        >Reports</button
       >
     </div>
 
@@ -110,13 +112,15 @@
     <div class="flex flex-1"></div>
 
     <div class="flex flex-row items-center">
-      <m-project-select></m-project-select>
+      <div class="select-none font-semibold text-gray-400">Project</div>
       <m-project-menu></m-project-menu>
+      <m-project-select class="ml-2"></m-project-select>
 
-      <m-org-select class="ml-5"></m-org-select>
+      <div class="ml-10 select-none font-semibold text-gray-400">Org</div>
       <m-org-menu></m-org-menu>
+      <m-org-select class="ml-2"></m-org-select>
 
-      <m-user-menu></m-user-menu>
+      <m-user-menu class="ml-3"></m-user-menu>
     </div>
   </div>
 
