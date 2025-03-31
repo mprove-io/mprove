@@ -162,8 +162,8 @@ export const nameToClass = {
   [enums.ToBackendRequestInfoNameEnum.ToBackendValidateFiles]:
     interfaces.ToBackendValidateFilesRequest,
   //
-  [enums.ToBackendRequestInfoNameEnum.ToBackendGetMetrics]:
-    interfaces.ToBackendGetMetricsRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendGetReports]:
+    interfaces.ToBackendGetReportsRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields]:
     interfaces.ToBackendGetSuggestFieldsRequest,
   //

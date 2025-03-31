@@ -173,18 +173,18 @@ export class GetStateCommand extends CustomCommand {
         host: this.context.config.mproveCliHost
       });
 
-    let getMetricsReqPayload: apiToBackend.ToBackendGetMetricsRequestPayload = {
+    let getReportsReqPayload: apiToBackend.ToBackendGetReportsRequestPayload = {
       projectId: this.projectId,
       isRepoProd: isRepoProd,
       branchId: this.branch,
       envId: this.env
     };
 
-    let getMetricsResp = await mreq<apiToBackend.ToBackendGetMetricsResponse>({
+    let getReportsResp = await mreq<apiToBackend.ToBackendGetReportsResponse>({
       loginToken: loginToken,
       pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMetrics,
-      payload: getChartsReqPayload,
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReports,
+      payload: getReportsReqPayload,
       host: this.context.config.mproveCliHost
     });
 
@@ -229,7 +229,7 @@ export class GetStateCommand extends CustomCommand {
     }
 
     if (this.getMetrics === true) {
-      log.metrics = getMetricsResp.payload.metrics.map(x => {
+      log.metrics = getReportsResp.payload.metrics.map(x => {
         let metric: any = {
           metricId: x.metricId,
           name: `${x.partNodeLabel} ${x.partFieldLabel} by ${x.timeNodeLabel} ${x.timeFieldLabel} - ${x.topLabel}`
@@ -240,7 +240,7 @@ export class GetStateCommand extends CustomCommand {
     }
 
     if (this.getReports === true) {
-      log.reports = getMetricsResp.payload.reports.map(x => {
+      log.reports = getReportsResp.payload.reports.map(x => {
         let url = getReportUrl({
           host: this.context.config.mproveCliHost,
           orgId: getRepoResp.payload.repo.orgId,

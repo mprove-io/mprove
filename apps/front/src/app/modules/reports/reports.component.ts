@@ -55,10 +55,10 @@ export class TimeSpecItem {
 }
 
 @Component({
-  selector: 'm-metrics',
-  templateUrl: './metrics.component.html'
+  selector: 'm-reports',
+  templateUrl: './reports.component.html'
 })
-export class MetricsComponent implements OnInit, OnDestroy {
+export class ReportsComponent implements OnInit, OnDestroy {
   @ViewChild('timeSpecSelect', { static: false })
   timeSpecSelectElement: NgSelectComponent;
 

@@ -3,7 +3,7 @@ import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
-export class ToBackendGetMetricsRequestPayload {
+export class ToBackendGetReportsRequestPayload {
   @IsString()
   projectId: string;
 
@@ -17,13 +17,13 @@ export class ToBackendGetMetricsRequestPayload {
   envId: string;
 }
 
-export class ToBackendGetMetricsRequest extends ToBackendRequest {
+export class ToBackendGetReportsRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendGetMetricsRequestPayload)
-  payload: ToBackendGetMetricsRequestPayload;
+  @Type(() => ToBackendGetReportsRequestPayload)
+  payload: ToBackendGetReportsRequestPayload;
 }
 
-export class ToBackendGetMetricsResponsePayload {
+export class ToBackendGetReportsResponsePayload {
   @IsBoolean()
   needValidate: boolean;
 
@@ -46,8 +46,8 @@ export class ToBackendGetMetricsResponsePayload {
   storeModels: common.ModelX[];
 }
 
-export class ToBackendGetMetricsResponse extends common.MyResponse {
+export class ToBackendGetReportsResponse extends common.MyResponse {
   @ValidateNested()
-  @Type(() => ToBackendGetMetricsResponsePayload)
-  payload: ToBackendGetMetricsResponsePayload;
+  @Type(() => ToBackendGetReportsResponsePayload)
+  payload: ToBackendGetReportsResponsePayload;
 }

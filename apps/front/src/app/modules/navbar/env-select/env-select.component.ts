@@ -136,8 +136,8 @@ export class EnvSelectComponent {
       this.selectedEnvId
     ];
 
-    if (urlParts[11] === common.PATH_METRICS) {
-      navArray.push(common.PATH_METRICS);
+    if (urlParts[11] === common.PATH_REPORTS) {
+      navArray.push(common.PATH_REPORTS);
       navArray.push(common.PATH_REPORT);
       navArray.push(common.LAST_SELECTED_REPORT_ID);
     } else if (
@@ -156,7 +156,7 @@ export class EnvSelectComponent {
       navArray.push(common.PATH_FILES);
     }
 
-    if (urlParts[11] === common.PATH_METRICS) {
+    if (urlParts[11] === common.PATH_REPORTS) {
       let uiState = this.uiQuery.getValue();
       uiState.gridApi.deselectAll();
 

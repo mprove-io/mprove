@@ -25,5 +25,5 @@ export function getReportUrl(item: {
 
   let timeRangeUnderscore = timeRange.split(' ').join('_');
 
-  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/metrics/report/${reportId}?timezone=${timezone}&timeSpec=${timeSpec}&timeRange=${timeRangeUnderscore}`;
+  return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/reports/report/${reportId}?timezone=${timezone}&timeSpec=${timeSpec}&timeRange=${timeRangeUnderscore}`;
 }

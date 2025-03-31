@@ -87,14 +87,14 @@ export const PATH_CHARTS = 'charts';
 export const PATH_ENV_VARIABLES = 'env-variables';
 export const PATH_DASHBOARDS = 'dashboards';
 export const PATH_DASHBOARDS_LIST = 'dashboards-list';
-export const PATH_REPORTS_LIST = 'reports-list';
 export const PATH_DASHBOARD = 'dashboard';
 export const PATH_MODELS = 'models';
 export const PATH_FILE = 'file';
 export const PATH_MODEL = 'model';
 export const PATH_MCONFIG = 'mconfig';
 export const PATH_QUERY = 'query';
-export const PATH_METRICS = 'metrics';
+export const PATH_REPORTS = 'reports';
+export const PATH_REPORTS_LIST = 'reports-list';
 export const PATH_REPORT = 'report';
 
 export const PATH_ORG = 'org';

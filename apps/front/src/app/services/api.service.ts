@@ -229,7 +229,7 @@ export class ApiService {
               uiState.gridApi.deselectAll();
             }
 
-            this.resolveMetricsRoute({
+            this.resolveReportsRoute({
               showSpinner: true
             })
               .pipe(
@@ -347,7 +347,7 @@ export class ApiService {
     return EMPTY;
   }
 
-  resolveMetricsRoute(item: { showSpinner: boolean }): Observable<boolean> {
+  resolveReportsRoute(item: { showSpinner: boolean }): Observable<boolean> {
     let { showSpinner } = item;
 
     let nav: NavState;
@@ -358,7 +358,7 @@ export class ApiService {
         nav = x;
       });
 
-    let payload: apiToBackend.ToBackendGetMetricsRequestPayload = {
+    let payload: apiToBackend.ToBackendGetReportsRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -367,11 +367,11 @@ export class ApiService {
 
     return this.req({
       pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMetrics,
+        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReports,
       payload: payload,
       showSpinner: showSpinner
     }).pipe(
-      map((resp: apiToBackend.ToBackendGetMetricsResponse) => {
+      map((resp: apiToBackend.ToBackendGetReportsResponse) => {
         if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
           this.memberQuery.update(resp.payload.userMember);
 

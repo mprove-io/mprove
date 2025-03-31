@@ -10,7 +10,6 @@ export * from './files/_index';
 export * from './folders/_index';
 export * from './mconfigs/_index';
 export * from './members/_index';
-export * from './metrics/_index';
 export * from './models/_index';
 export * from './nav/_index';
 export * from './org-users/_index';

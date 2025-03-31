@@ -48,14 +48,6 @@ import {
   RenameFolderDialogData
 } from '../modules/files/files-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
 import {
-  DeleteReportDialogComponent,
-  DeleteReportDialogData
-} from '../modules/metrics/delete-report-dialog/delete-report-dialog.component';
-import {
-  ReportAddFilterDialogComponent,
-  ReportAddFilterDialogData
-} from '../modules/metrics/report-add-filter-dialog/report-add-filter-dialog.component';
-import {
   CreateBranchDialogComponent,
   CreateBranchDialogData
 } from '../modules/navbar/branch-select/create-branch-dialog/create-branch-dialog.component';
@@ -156,6 +148,14 @@ import {
   RemoveMemberDialogComponent,
   RemoveMemberDialogData
 } from '../modules/project/project-team/remove-member-dialog/remove-member-dialog.component';
+import {
+  DeleteReportDialogComponent,
+  DeleteReportDialogData
+} from '../modules/reports/delete-report-dialog/delete-report-dialog.component';
+import {
+  ReportAddFilterDialogComponent,
+  ReportAddFilterDialogData
+} from '../modules/reports/report-add-filter-dialog/report-add-filter-dialog.component';
 import {
   ChartDialogComponent,
   ChartDialogData

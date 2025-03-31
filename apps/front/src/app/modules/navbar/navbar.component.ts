@@ -39,7 +39,7 @@ export class NavbarComponent implements OnInit {
   isChartsRouteActive: boolean;
   isDashboardsRouteActive: boolean;
   isModelsRouteActive: boolean;
-  isMetricsRouteActive: boolean;
+  isReportsRouteActive: boolean;
 
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
@@ -91,7 +91,7 @@ export class NavbarComponent implements OnInit {
 
     this.isModelsRouteActive = url.split('/')[11] === constants.PATH_MODELS;
 
-    this.isMetricsRouteActive = url.split('/')[11] === constants.PATH_METRICS;
+    this.isReportsRouteActive = url.split('/')[11] === constants.PATH_REPORTS;
 
     this.cd.detectChanges();
   }
@@ -164,7 +164,7 @@ export class NavbarComponent implements OnInit {
   }
 
   navigateMetrics() {
-    if (this.isMetricsRouteActive === true) {
+    if (this.isReportsRouteActive === true) {
       return;
     }
 

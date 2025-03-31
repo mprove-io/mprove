@@ -25,7 +25,6 @@ import { AuthModule } from './app/modules/auth/auth.module';
 import { ChartsModule } from './app/modules/charts/charts.module';
 import { DashboardsModule } from './app/modules/dashboards/dashboards.module';
 import { FilesModule } from './app/modules/files/files.module';
-import { MetricsModule } from './app/modules/metrics/metrics.module';
 import { ModelModule } from './app/modules/model/model.module';
 import { ModelsModule } from './app/modules/models/models.module';
 import { NavModule } from './app/modules/nav/nav.module';
@@ -33,6 +32,7 @@ import { NavbarModule } from './app/modules/navbar/navbar.module';
 import { OrgModule } from './app/modules/org/org.module';
 import { ProfileModule } from './app/modules/profile/profile.module';
 import { ProjectModule } from './app/modules/project/project.module';
+import { ReportsModule } from './app/modules/reports/reports.module';
 import { SharedModule } from './app/modules/shared/shared.module';
 import { SpecialModule } from './app/modules/special/special.module';
 import { CustomMonacoProviderService } from './app/services/custom-monaco-provider.service';
@@ -71,7 +71,7 @@ bootstrapApplication(AppComponent, {
       ChartsModule,
       DashboardsModule,
       ModelsModule,
-      MetricsModule,
+      ReportsModule,
       UiSwitchModule
     ),
     provideRouter(appRoutes),

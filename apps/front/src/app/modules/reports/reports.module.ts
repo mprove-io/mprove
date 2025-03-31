@@ -11,7 +11,6 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
 import { MetricsTreeComponent } from './metrics-tree/metrics-tree.component';
-import { MetricsComponent } from './metrics.component';
 import { ReportFiltersComponent } from './report-filters/report-filters.component';
 import { ReportOptionsComponent } from './report-options/report-options.component';
 import { ChartHeaderComponent } from './report/chart-header/chart-header.component';
@@ -24,12 +23,13 @@ import { RowIdHeaderComponent } from './report/row-id-header/row-id-header.compo
 import { RowIdRendererComponent } from './report/row-id-renderer/row-id-renderer.component';
 import { StatusHeaderComponent } from './report/status-header/status-header.component';
 import { StatusRendererComponent } from './report/status-renderer/status-renderer.component';
+import { ReportsComponent } from './reports.component';
 import { RowFiltersComponent } from './row-filters/row-filters.component';
 import { RowComponent } from './row/row.component';
 
 @NgModule({
   declarations: [
-    MetricsComponent,
+    ReportsComponent,
     MetricsTreeComponent,
     ReportComponent,
     ReportFiltersComponent,
@@ -61,4 +61,4 @@ import { RowComponent } from './row/row.component';
     AgGridModule
   ]
 })
-export class MetricsModule {}
+export class ReportsModule {}

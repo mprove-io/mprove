@@ -20,7 +20,7 @@ import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
-export class GetMetricsController {
+export class GetReportsController {
   constructor(
     private membersService: MembersService,
     private projectsService: ProjectsService,
@@ -32,12 +32,12 @@ export class GetMetricsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMetrics)
-  async getMetrics(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReports)
+  async getReports(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
-    let reqValid: apiToBackend.ToBackendGetMetricsRequest = request.body;
+    let reqValid: apiToBackend.ToBackendGetReportsRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
@@ -158,7 +158,7 @@ export class GetMetricsController {
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let payload: apiToBackend.ToBackendGetMetricsResponsePayload = {
+    let payload: apiToBackend.ToBackendGetReportsResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: apiMember,

@@ -83,7 +83,7 @@ export class LoginSuccessComponent implements OnInit {
               branchId,
               common.PATH_ENV,
               envId,
-              common.PATH_METRICS,
+              common.PATH_REPORTS,
               common.PATH_REPORT,
               common.LAST_SELECTED_REPORT_ID
             ];

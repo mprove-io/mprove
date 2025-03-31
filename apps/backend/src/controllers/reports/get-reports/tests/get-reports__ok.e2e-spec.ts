@@ -24,7 +24,7 @@ let projectName = testId;
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetMetricsResponse;
+  let resp: apiToBackend.ToBackendGetReportsResponse;
 
   try {
     prep = await prepareTest({
@@ -83,9 +83,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetMetricsRequest = {
+    let req: apiToBackend.ToBackendGetReportsRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMetrics,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReports,
         traceId: traceId,
         idempotencyKey: common.makeId()
       },
@@ -97,7 +97,7 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendGetMetricsResponse>(
+    resp = await helper.sendToBackend<apiToBackend.ToBackendGetReportsResponse>(
       {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,

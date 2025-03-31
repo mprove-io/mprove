@@ -9,7 +9,7 @@ import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
 
 @Injectable({ providedIn: 'root' })
-export class StructMetricsResolver implements Resolve<Observable<boolean>> {
+export class StructReportsResolver implements Resolve<Observable<boolean>> {
   constructor(
     private router: Router,
     private uiQuery: UiQuery,
@@ -51,7 +51,7 @@ export class StructMetricsResolver implements Resolve<Observable<boolean>> {
       return of(true);
     }
 
-    return this.apiService.resolveMetricsRoute({
+    return this.apiService.resolveReportsRoute({
       showSpinner: false
     });
   }

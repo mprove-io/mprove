@@ -286,7 +286,7 @@ export class CreateMemberController {
         project.defaultBranch,
         common.PATH_ENV,
         common.PROJECT_ENV_PROD,
-        common.PATH_METRICS,
+        common.PATH_REPORTS,
         common.PATH_REPORT,
         common.EMPTY_REPORT_ID
       ].join('/');

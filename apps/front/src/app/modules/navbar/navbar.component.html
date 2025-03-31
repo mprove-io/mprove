@@ -74,7 +74,7 @@
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,
-          'font-semibold': isMetricsRouteActive === true
+          'font-semibold': isReportsRouteActive === true
         }"
         (click)="navigateMetrics()"
         [disabled]="!nav || !nav.projectId || needSave === true"

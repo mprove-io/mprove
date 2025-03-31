@@ -135,7 +135,7 @@ export class ProjectSelectComponent {
       branchId,
       common.PATH_ENV,
       common.PROJECT_ENV_PROD,
-      common.PATH_METRICS,
+      common.PATH_REPORTS,
       common.PATH_REPORT,
       common.LAST_SELECTED_REPORT_ID
     ];

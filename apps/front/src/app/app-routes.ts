@@ -18,8 +18,6 @@ import { DashboardsListComponent } from './modules/dashboards/dashboards-list/da
 import { DashboardsComponent } from './modules/dashboards/dashboards.component';
 import { FileEditorComponent } from './modules/files/file-editor/file-editor.component';
 import { FilesComponent } from './modules/files/files.component';
-import { MetricsComponent } from './modules/metrics/metrics.component';
-import { ReportComponent } from './modules/metrics/report/report.component';
 import { MconfigComponent } from './modules/model/mconfig/mconfig.component';
 import { ModelComponent } from './modules/model/model.component';
 import { QueryComponent } from './modules/model/query/query.component';
@@ -34,6 +32,8 @@ import { ProjectEnvironmentsComponent } from './modules/project/project-environm
 import { ProjectEvsComponent } from './modules/project/project-evs/project-evs.component';
 import { ProjectSettingsComponent } from './modules/project/project-settings/project-settings.component';
 import { ProjectTeamComponent } from './modules/project/project-team/project-team.component';
+import { ReportComponent } from './modules/reports/report/report.component';
+import { ReportsComponent } from './modules/reports/reports.component';
 import { LoginSuccessComponent } from './modules/special/login-success/login-success.component';
 import { NotFoundComponent } from './modules/special/not-found/not-found.component';
 import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.component';
@@ -59,10 +59,10 @@ import { RepoStructResolver } from './resolvers/repo-struct.resolver';
 import { StructChartsResolver } from './resolvers/struct-charts.resolver';
 import { StructDashboardResolver } from './resolvers/struct-dashboard.resolver';
 import { StructDashboardsResolver } from './resolvers/struct-dashboards.resolver';
-import { StructMetricsResolver } from './resolvers/struct-metrics.resolver';
 import { StructModelResolver } from './resolvers/struct-model.resolver';
 import { StructModelsResolver } from './resolvers/struct-models.resolver';
 import { StructReportResolver } from './resolvers/struct-report.resolver';
+import { StructReportsResolver } from './resolvers/struct-reports.resolver';
 
 export const appRoutes: Routes = [
   {
@@ -279,10 +279,10 @@ export const appRoutes: Routes = [
                             ]
                           },
                           {
-                            component: MetricsComponent,
+                            component: ReportsComponent,
                             canDeactivate: [DeactivateGuard],
-                            path: common.PATH_METRICS,
-                            resolve: [StructMetricsResolver],
+                            path: common.PATH_REPORTS,
+                            resolve: [StructReportsResolver],
                             children: [
                               {
                                 component: ReportComponent,

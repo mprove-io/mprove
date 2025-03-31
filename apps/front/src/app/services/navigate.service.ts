@@ -167,7 +167,7 @@ export class NavigateService {
         this.nav.projectDefaultBranch,
         common.PATH_ENV,
         common.PROJECT_ENV_PROD,
-        common.PATH_METRICS,
+        common.PATH_REPORTS,
         common.PATH_REPORT,
         common.LAST_SELECTED_REPORT_ID
       ];
@@ -414,7 +414,7 @@ export class NavigateService {
       this.nav.branchId,
       common.PATH_ENV,
       this.nav.envId,
-      common.PATH_METRICS,
+      common.PATH_REPORTS,
       common.PATH_REPORT,
       reportId
     ];
