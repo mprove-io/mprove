@@ -283,10 +283,14 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.navigateService.navigateToDashboard(dashboardId);
   }
 
-  navigateToDashboardsList() {
+  toggleDashboardsList() {
     this.title.setTitle(this.pageTitle);
 
-    this.navigateService.navigateToDashboardsList();
+    if (this.lastUrl === this.pathDashboardsList) {
+      this.navigateService.navigateToDashboards();
+    } else {
+      this.navigateService.navigateToDashboardsList();
+    }
   }
 
   deleteDrafts() {

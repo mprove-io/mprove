@@ -9,7 +9,7 @@
             <div class="flex flex-row">
               <div
                 data-cy="metricsTitle"
-                class="text-gray1 flex items-center self-center text-2xl font-semibold"
+                class="text-gray1 flex select-none items-center self-center text-2xl font-semibold"
               >
                 {{ pageTitle }}
               </div>
@@ -27,9 +27,10 @@
                 <m-view-list-icon
                   class="ml-5 cursor-pointer"
                   [ngClass]="{
-                    'text-blue-500': lastUrl === pathReportsList
+                    'text-gray-500': lastUrl === pathReportsList,
+                    'text-gray-400': lastUrl !== pathReportsList
                   }"
-                  (click)="navigateToReportsList()"
+                  (click)="toggleReportsList()"
                 ></m-view-list-icon>
 
                 <div class="ml-10">

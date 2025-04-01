@@ -7,16 +7,17 @@
             <div class="mt-8 flex h-11 flex-row items-center">
               <div
                 data-cy="dashboardsTitle"
-                class="text-gray1 flex items-center self-center text-2xl font-semibold"
+                class="text-gray1 flex select-none items-center self-center text-2xl font-semibold"
                 >{{ pageTitle }}
               </div>
 
               <m-view-list-icon
                 class="ml-10 cursor-pointer"
                 [ngClass]="{
-                  'text-blue-500': lastUrl === pathDashboardsList
+                  'text-gray-500': lastUrl === pathDashboardsList,
+                  'text-gray-400': lastUrl !== pathDashboardsList
                 }"
-                (click)="navigateToDashboardsList()"
+                (click)="toggleDashboardsList()"
               ></m-view-list-icon>
 
               <div

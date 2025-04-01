@@ -160,7 +160,7 @@ export class NavbarComponent implements OnInit {
   }
 
   navigateDashboards() {
-    if (this.isReportsRouteActive === true) {
+    if (this.isDashboardsRouteActive === true) {
       return;
     }
 
@@ -168,7 +168,7 @@ export class NavbarComponent implements OnInit {
   }
 
   navigateReports() {
-    if (this.isDashboardsRouteActive === true) {
+    if (this.isReportsRouteActive === true) {
       return;
     }
 

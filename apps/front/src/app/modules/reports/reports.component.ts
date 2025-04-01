@@ -1031,20 +1031,26 @@ export class ReportsComponent implements OnInit, OnDestroy {
     // });
   }
 
-  navigateToReportsList() {
-    this.reportQuery.reset();
-    this.uiQuery.updatePart({
-      reportSelectedNodes: [],
-      gridApi: null,
-      gridData: [],
-      chartFormulaData: null,
-      repChartData: {
-        rows: [],
-        columns: []
-      }
-    });
+  toggleReportsList() {
+    this.title.setTitle(this.pageTitle);
 
-    this.navigateService.navigateToReportsList();
+    if (this.lastUrl === this.pathReportsList) {
+      this.navigateService.navigateToReports();
+    } else {
+      this.reportQuery.reset();
+      this.uiQuery.updatePart({
+        reportSelectedNodes: [],
+        gridApi: null,
+        gridData: [],
+        chartFormulaData: null,
+        repChartData: {
+          rows: [],
+          columns: []
+        }
+      });
+
+      this.navigateService.navigateToReportsList();
+    }
   }
 
   newReport() {
