@@ -1,28 +1,4 @@
 <div class="flex h-full flex-col">
-  <!-- <div class="mt-8 flex h-11 flex-shrink-0 flex-row">
-    <div
-      class="ml-10 flex cursor-pointer flex-row items-center"
-      (click)="toggleShowFilters()"
-    >
-      <ui-switch [checked]="showBricks"></ui-switch>
-
-      <div class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
-        >Show Parameters</div
-      >
-    </div>
-
-    <div
-      class="ml-5 flex cursor-pointer flex-row items-center"
-      (click)="toggleShowTiles()"
-    >
-      <ui-switch [checked]="showTiles"></ui-switch>
-
-      <div class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
-        >Show Tiles</div
-      >
-    </div>
-  </div> -->
-
   <div class="flex flex-grow overflow-y-auto rounded bg-white shadow">
     <div class="ml-5 mr-5 mt-10 flex w-full flex-col divide-y divide-gray-500">
       <div
@@ -32,7 +8,6 @@
         <div class="flex w-1/3">Report</div>
         <div class="flex w-1/6">File</div>
         <div class="flex flex-1 flex-row space-x-5">
-          <div class="flex flex-1" *ngIf="showTiles === true">Model</div>
           <div class="flex flex-1">Access Roles</div>
           <div class="flex flex-1">Access Users</div>
           <div class="flex flex-1">Author</div>
@@ -128,8 +103,6 @@
               </div>
 
               <div class="flex flex-1 flex-row space-x-5 text-base">
-                <div class="flex flex-1" *ngIf="showTiles === true"> </div>
-
                 <div class="flex flex-1 flex-wrap truncate py-3 text-base">
                   <span
                     *ngFor="let role of item.accessRoles"
@@ -154,91 +127,6 @@
                   <span>
                     {{ item.author }}
                   </span>
-                </div>
-              </div>
-            </div>
-
-            <div
-              *ngIf="showBricks === true && item?.fields.length > 0"
-              class="flex flex-row"
-            >
-              <div class="flex w-12 cursor-default"></div>
-
-              <div class="flex flex-row items-start">
-                <m-bricks
-                  class="mb-6 ml-10 mt-3 flex max-h-[120px] max-w-max flex-shrink-0 overflow-auto"
-                  [extendedFilters]="item.extendedFilters"
-                  [isKeepBackgroundColor]="false"
-                ></m-bricks>
-              </div>
-
-              <div class="flex w-1/6 cursor-default"></div>
-            </div>
-
-            <div
-              *ngIf="showTiles === true"
-              class="mb-5 mt-3 flex-1 flex-col space-y-3"
-            >
-              <div
-                *ngFor="let row of item.rows"
-                class="flex cursor-default flex-row space-x-5 text-base"
-              >
-                <div class="flex w-12"></div>
-
-                <div class="text-gray1 flex w-1/3 flex-row items-center">
-                  <div class="flex flex-wrap truncate pl-5">
-                    <span class="truncate">
-                      {{ row.name | capitalize }}
-                    </span>
-                  </div>
-
-                  <div class="relative mx-5 flex h-2 w-9 flex-shrink-0">
-                    <ngx-spinner
-                      [name]="row.rowId"
-                      color="rgba(54, 94, 224, 100)"
-                      bdColor="rgba(0, 0, 0, 0)"
-                      size="default"
-                      type="ball-clip-rotate"
-                      [fullScreen]="false"
-                      [disableAnimation]="true"
-                      [zIndex]="99998"
-                    >
-                    </ngx-spinner>
-                  </div>
-                </div>
-
-                <div class="flex w-1/6"></div>
-
-                <div class="flex flex-1 flex-row space-x-5">
-                  <ng-template #templateReportsTileModel>
-                    <div *ngIf="isExplorer === false"
-                      >Explorer role required</div
-                    >
-                    <div *ngIf="isExplorer === true">No access to model</div>
-                  </ng-template>
-
-                  <div
-                    class="flex flex-1 cursor-default flex-row truncate"
-                    [tp]="templateReportsTileModel"
-                    [tpIsEnabled]="row.hasAccessToModel === false"
-                  >
-                    <div
-                      class="flex items-start truncate pr-10 focus:outline-none"
-                    >
-                      <span class="truncate">
-                        {{ row.metricId | capitalize }}
-                      </span>
-                    </div>
-
-                    <m-lock-closed-icon
-                      class="mb-1 ml-2 text-gray-400"
-                      *ngIf="row.hasAccessToModel === false"
-                    ></m-lock-closed-icon>
-                  </div>
-
-                  <div class="flex flex-1"></div>
-                  <div class="flex flex-1"></div>
-                  <div class="flex flex-1"></div>
                 </div>
               </div>
             </div>

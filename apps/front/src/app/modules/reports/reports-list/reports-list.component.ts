@@ -14,9 +14,6 @@ import { FilteredReportsQuery } from '~front/app/queries/filtered-reports.query'
   templateUrl: './reports-list.component.html'
 })
 export class ReportsListComponent {
-  showBricks = false;
-  showTiles = false;
-
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
     tap(x => {
@@ -49,14 +46,6 @@ export class ReportsListComponent {
     private myDialogService: MyDialogService,
     private navigateService: NavigateService
   ) {}
-
-  toggleShowFilters() {
-    this.showBricks = !this.showBricks;
-  }
-
-  toggleShowTiles() {
-    this.showTiles = !this.showTiles;
-  }
 
   navigateToReport(reportId: string) {
     this.navigateService.navigateToReport({

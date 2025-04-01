@@ -14,9 +14,6 @@ import { FilteredDashboardsQuery } from '~front/app/queries/filtered-dashboards.
   templateUrl: './dashboards-list.component.html'
 })
 export class DashboardsListComponent {
-  showBricks = false;
-  showTiles = false;
-
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
     tap(x => {
@@ -51,14 +48,6 @@ export class DashboardsListComponent {
     private myDialogService: MyDialogService,
     private navigateService: NavigateService
   ) {}
-
-  toggleShowFilters() {
-    this.showBricks = !this.showBricks;
-  }
-
-  toggleShowTiles() {
-    this.showTiles = !this.showTiles;
-  }
 
   navigateToDashboard(dashboardId: string) {
     this.navigateService.navigateToDashboard(dashboardId);
