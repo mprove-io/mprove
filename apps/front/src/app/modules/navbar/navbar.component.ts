@@ -102,6 +102,32 @@ export class NavbarComponent implements OnInit {
     this.uiQuery.updatePart({ panel: common.PanelEnum.Tree });
   }
 
+  navigateModels() {
+    let userId;
+    this.userQuery.userId$
+      .pipe(
+        tap(x => (userId = x)),
+        take(1)
+      )
+      .subscribe();
+
+    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+
+    this.router.navigate([
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
+      common.PATH_MODELS
+    ]);
+  }
+
   navigateCharts() {
     let userId;
     this.userQuery.userId$
@@ -134,37 +160,15 @@ export class NavbarComponent implements OnInit {
   }
 
   navigateDashboards() {
+    if (this.isReportsRouteActive === true) {
+      return;
+    }
+
     this.navigateService.navigateToDashboards();
   }
 
-  navigateModels() {
-    let userId;
-    this.userQuery.userId$
-      .pipe(
-        tap(x => (userId = x)),
-        take(1)
-      )
-      .subscribe();
-
-    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
-
-    this.router.navigate([
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_PROJECT,
-      this.nav.projectId,
-      common.PATH_REPO,
-      repoId,
-      common.PATH_BRANCH,
-      this.nav.branchId,
-      common.PATH_ENV,
-      this.nav.envId,
-      common.PATH_MODELS
-    ]);
-  }
-
-  navigateMetrics() {
-    if (this.isReportsRouteActive === true) {
+  navigateReports() {
+    if (this.isDashboardsRouteActive === true) {
       return;
     }
 
