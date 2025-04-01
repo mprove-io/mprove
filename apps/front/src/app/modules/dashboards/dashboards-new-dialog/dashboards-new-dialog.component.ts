@@ -178,7 +178,9 @@ export class DashboardsNewDialogComponent implements OnInit {
 
               this.dashboardsQuery.update({ dashboards: newDashboards });
 
-              this.navigateService.navigateToDashboard(this.newDashboardId);
+              this.navigateService.navigateToDashboard({
+                dashboardId: this.newDashboardId
+              });
             } else {
               this.spinner.hide(constants.APP_SPINNER_NAME);
             }

@@ -21,6 +21,7 @@ export class UiService {
     modelTreeLevels?: common.ModelTreeLevelsEnum;
     showHours?: boolean;
     projectReportLinks?: common.ProjectReportLink[];
+    projectDashboardLinks?: common.ProjectDashboardLink[];
     timezone?: string;
   }) {
     let {
@@ -35,6 +36,7 @@ export class UiService {
       modelTreeLevels,
       showHours,
       projectReportLinks,
+      projectDashboardLinks,
       timezone
     } = item;
 
@@ -76,7 +78,10 @@ export class UiService {
       showHours: common.isDefined(showHours) ? showHours : uiState.showHours,
       projectReportLinks: common.isDefined(projectReportLinks)
         ? projectReportLinks
-        : uiState.projectReportLinks
+        : uiState.projectReportLinks,
+      projectDashboardLinks: common.isDefined(projectDashboardLinks)
+        ? projectDashboardLinks
+        : uiState.projectDashboardLinks
     };
 
     let payload: apiToBackend.ToBackendSetUserUiRequestPayload = {

@@ -22,7 +22,7 @@ import {
   take,
   tap
 } from 'rxjs';
-import { makeRepQueryParams } from '~front/app/functions/make-query-params';
+import { makeQueryParams } from '~front/app/functions/make-query-params';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -883,7 +883,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
           let url = this.router
             .createUrlTree([], {
               relativeTo: this.route,
-              queryParams: makeRepQueryParams({
+              queryParams: makeQueryParams({
                 timezone: uiStateB.timezone,
                 timeSpec: uiStateB.timeSpec,
                 timeRangeFraction: uiStateB.timeRangeFraction

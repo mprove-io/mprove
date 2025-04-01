@@ -278,7 +278,9 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
               this.dashboardsQuery.update({ dashboards: newDashboards });
 
-              this.navigateService.navigateToDashboard(this.newDashboardId);
+              this.navigateService.navigateToDashboard({
+                dashboardId: this.newDashboardId
+              });
             } else {
               this.spinner.hide(this.spinnerName);
             }
@@ -346,9 +348,9 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
               this.dashboardsQuery.update({ dashboards: newDashboards });
 
-              this.navigateService.navigateToDashboard(
-                this.selectedDashboardId
-              );
+              this.navigateService.navigateToDashboard({
+                dashboardId: this.selectedDashboardId
+              });
             } else {
               this.spinner.hide(this.spinnerName);
             }

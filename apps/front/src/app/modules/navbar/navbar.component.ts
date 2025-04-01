@@ -164,7 +164,9 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
-    this.navigateService.navigateToDashboards();
+    this.navigateService.navigateToDashboard({
+      dashboardId: common.LAST_SELECTED_DASHBOARD_ID
+    });
   }
 
   navigateReports() {

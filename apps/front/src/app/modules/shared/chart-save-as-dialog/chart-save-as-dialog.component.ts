@@ -409,7 +409,9 @@ export class ChartSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendModifyDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.navigateService.navigateToDashboard(this.selectedDashboardId);
+            this.navigateService.navigateToDashboard({
+              dashboardId: this.selectedDashboardId
+            });
           }
         }),
         take(1)

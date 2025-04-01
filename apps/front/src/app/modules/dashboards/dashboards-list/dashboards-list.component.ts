@@ -50,7 +50,7 @@ export class DashboardsListComponent {
   ) {}
 
   navigateToDashboard(dashboardId: string) {
-    this.navigateService.navigateToDashboard(dashboardId);
+    this.navigateService.navigateToDashboard({ dashboardId: dashboardId });
   }
 
   rowMenuOnClick(event: any) {

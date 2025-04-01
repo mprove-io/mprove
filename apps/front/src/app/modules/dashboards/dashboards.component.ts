@@ -108,6 +108,55 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.dashboard = x;
 
+      if (x.draft === false) {
+        let links = this.uiQuery.getValue().projectDashboardLinks;
+
+        let nav = this.navQuery.getValue();
+        let link: common.ProjectDashboardLink = links.find(
+          l => l.projectId === nav.projectId && l.draft === x.draft
+        );
+
+        let newProjectDashboardLinks;
+
+        if (common.isDefined(link)) {
+          let newLink = {
+            projectId: nav.projectId,
+            draft: x.draft,
+            dashboardId: x.dashboardId,
+            lastNavTs: Date.now()
+          };
+
+          newProjectDashboardLinks = [
+            newLink,
+            ...links.filter(
+              r => !(r.projectId === nav.projectId && r.draft === x.draft)
+            )
+          ];
+        } else {
+          let newLink = {
+            projectId: nav.projectId,
+            draft: x.draft,
+            dashboardId: x.dashboardId,
+            lastNavTs: Date.now()
+          };
+
+          newProjectDashboardLinks = [newLink, ...links];
+        }
+
+        let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
+
+        newProjectDashboardLinks = newProjectDashboardLinks.filter(
+          l => l.lastNavTs >= oneYearAgoTimestamp
+        );
+
+        this.uiQuery.updatePart({
+          projectDashboardLinks: newProjectDashboardLinks
+        });
+        this.uiService.setUserUi({
+          projectDashboardLinks: newProjectDashboardLinks
+        });
+      }
+
       let uiState = this.uiQuery.getValue();
       this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
 
@@ -280,7 +329,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   }
 
   navigateToDashboard(dashboardId: string) {
-    this.navigateService.navigateToDashboard(dashboardId);
+    this.navigateService.navigateToDashboard({
+      dashboardId: dashboardId
+    });
   }
 
   toggleDashboardsList() {

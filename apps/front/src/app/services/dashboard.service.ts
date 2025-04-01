@@ -135,7 +135,9 @@ export class DashboardService {
 
             this.dashboardsQuery.update({ dashboards: newDashboards });
 
-            this.navigateService.navigateToDashboard(newDashboardId);
+            this.navigateService.navigateToDashboard({
+              dashboardId: newDashboardId
+            });
           }
         }),
         take(1)

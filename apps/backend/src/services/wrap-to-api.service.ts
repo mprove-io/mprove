@@ -559,6 +559,10 @@ export class WrapToApiService {
           ? user.ui?.projectReportLinks
           : constants.DEFAULT_UI.projectReportLinks,
 
+        projectDashboardLinks: common.isDefined(user.ui?.projectDashboardLinks)
+          ? user.ui?.projectDashboardLinks
+          : constants.DEFAULT_UI.projectDashboardLinks,
+
         modelTreeLevels: common.isDefined(user.ui?.modelTreeLevels)
           ? user.ui?.modelTreeLevels
           : constants.DEFAULT_UI.modelTreeLevels

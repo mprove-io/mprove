@@ -1,6 +1,6 @@
 import { common } from '~front/barrels/common';
 
-export function makeRepQueryParams(item: {
+export function makeQueryParams(item: {
   timezone: string;
   timeSpec: common.TimeSpecEnum;
   timeRangeFraction: common.Fraction;
@@ -10,7 +10,7 @@ export function makeRepQueryParams(item: {
   let queryParams = {
     timezone: timezone.split('/').join('-'),
     timeSpec: timeSpec,
-    timeRange: timeRangeFraction.brick
+    timeRange: timeRangeFraction?.brick
       .split('/')
       .join('-')
       .split(' ')

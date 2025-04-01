@@ -9,7 +9,7 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import { filter, take, tap } from 'rxjs/operators';
 import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';
-import { makeRepQueryParams } from '~front/app/functions/make-query-params';
+import { makeQueryParams } from '~front/app/functions/make-query-params';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -320,22 +320,21 @@ export class BranchSelectComponent {
       this.nav.envId
     ];
 
-    if (urlParts[11] === common.PATH_REPORTS) {
-      navArray.push(common.PATH_REPORTS);
-      navArray.push(common.PATH_REPORT);
-      navArray.push(common.LAST_SELECTED_REPORT_ID);
-    } else if (
+    if (
       urlParts[11] === common.PATH_MODELS ||
       urlParts[11] === common.PATH_MODEL
     ) {
       navArray.push(common.PATH_MODELS);
-    } else if (
-      urlParts[11] === common.PATH_DASHBOARDS ||
-      urlParts[11] === common.PATH_DASHBOARD
-    ) {
-      navArray.push(common.PATH_DASHBOARDS);
     } else if (urlParts[11] === common.PATH_CHARTS) {
       navArray.push(common.PATH_CHARTS);
+    } else if (urlParts[11] === common.PATH_DASHBOARDS) {
+      navArray.push(common.PATH_DASHBOARDS);
+      navArray.push(common.PATH_DASHBOARD);
+      navArray.push(common.LAST_SELECTED_DASHBOARD_ID);
+    } else if (urlParts[11] === common.PATH_REPORTS) {
+      navArray.push(common.PATH_REPORTS);
+      navArray.push(common.PATH_REPORT);
+      navArray.push(common.LAST_SELECTED_REPORT_ID);
     } else {
       navArray.push(common.PATH_FILES);
     }
@@ -345,10 +344,20 @@ export class BranchSelectComponent {
       uiState.gridApi.deselectAll();
 
       this.router.navigate(navArray, {
-        queryParams: makeRepQueryParams({
+        queryParams: makeQueryParams({
           timezone: uiState.timezone,
           timeSpec: uiState.timeSpec,
           timeRangeFraction: uiState.timeRangeFraction
+        })
+      });
+    } else if (urlParts[11] === common.PATH_DASHBOARDS) {
+      let uiState = this.uiQuery.getValue();
+
+      this.router.navigate(navArray, {
+        queryParams: makeQueryParams({
+          timezone: uiState.timezone,
+          timeSpec: undefined,
+          timeRangeFraction: undefined
         })
       });
     } else {

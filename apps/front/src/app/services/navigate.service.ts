@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
-import { makeRepQueryParams } from '../functions/make-query-params';
+import { makeQueryParams } from '../functions/make-query-params';
 import { ModelQuery, ModelState } from '../queries/model.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { UiQuery } from '../queries/ui.query';
@@ -103,7 +103,9 @@ export class NavigateService {
     ]);
   }
 
-  navigateToDashboard(dashboardId: string) {
+  navigateToDashboard(item: { dashboardId: string }) {
+    let { dashboardId } = item;
+
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
@@ -146,34 +148,6 @@ export class NavigateService {
       this.nav.envId,
       common.PATH_FILES
     ]);
-  }
-
-  navigateToProductionDefaultBranchProdMetrics() {
-    if (
-      common.isDefined(this.nav.orgId) &&
-      common.isDefined(this.nav.projectId)
-    ) {
-      // let repoId =
-      //   this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
-
-      let navTo = [
-        common.PATH_ORG,
-        this.nav.orgId,
-        common.PATH_PROJECT,
-        this.nav.projectId,
-        common.PATH_REPO,
-        common.PROD_REPO_ID,
-        common.PATH_BRANCH,
-        this.nav.projectDefaultBranch,
-        common.PATH_ENV,
-        common.PROJECT_ENV_PROD,
-        common.PATH_REPORTS,
-        common.PATH_REPORT,
-        common.LAST_SELECTED_REPORT_ID
-      ];
-
-      this.router.navigate(navTo);
-    }
   }
 
   navigateTo(item: { navParts: string[] }) {
@@ -477,7 +451,7 @@ export class NavigateService {
     ];
 
     this.router.navigate(navTo, {
-      queryParams: makeRepQueryParams({
+      queryParams: makeQueryParams({
         timezone: uiState.timezone,
         timeSpec: uiState.timeSpec,
         timeRangeFraction: uiState.timeRangeFraction

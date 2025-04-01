@@ -5,26 +5,30 @@ import {
   Router,
   RouterStateSnapshot
 } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { DashboardQuery } from '../queries/dashboard.query';
+import { DashboardsQuery } from '../queries/dashboards.query';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
+import { NavigateService } from '../services/navigate.service';
 import { UiService } from '../services/ui.service';
 
 @Injectable({ providedIn: 'root' })
 export class StructDashboardResolver implements Resolve<Observable<boolean>> {
   constructor(
     private apiService: ApiService,
+    private navigateService: NavigateService,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
+    private dashboardsQuery: DashboardsQuery,
     private dashboardQuery: DashboardQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,
@@ -84,6 +88,68 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
     let parametersDashboardId = common.isDefined(dashboardId)
       ? dashboardId
       : route?.params[common.PARAMETER_DASHBOARD_ID];
+
+    if (parametersDashboardId === common.LAST_SELECTED_DASHBOARD_ID) {
+      let projectDashboardLinks = this.uiQuery.getValue().projectDashboardLinks;
+      let dashboards = this.dashboardsQuery.getValue().dashboards;
+
+      let draftLink = projectDashboardLinks.find(
+        link => link.draft === true && link.projectId === nav.projectId
+      );
+
+      let pLink = projectDashboardLinks.find(
+        link => link.draft === false && link.projectId === nav.projectId
+      );
+
+      if (
+        common.isDefined(draftLink) &&
+        (common.isUndefined(pLink) || draftLink.lastNavTs > pLink.lastNavTs)
+      ) {
+        let draftDashboard = dashboards.find(
+          r => r.dashboardId === draftLink.dashboardId && r.draft === true
+        );
+
+        if (common.isDefined(draftDashboard)) {
+          this.navigateService.navigateToDashboard({
+            dashboardId: draftDashboard.dashboardId
+          });
+
+          return of(false);
+        } else if (common.isDefined(pLink)) {
+          let pDashboard = dashboards.find(
+            r => r.dashboardId === pLink.dashboardId && r.draft === false
+          );
+
+          if (common.isDefined(pDashboard)) {
+            this.navigateService.navigateToDashboard({
+              dashboardId: pDashboard.dashboardId
+            });
+          } else {
+            this.navigateService.navigateToDashboards();
+          }
+
+          return of(false);
+        }
+      } else if (common.isDefined(pLink)) {
+        let pDashboard = dashboards.find(
+          r => r.dashboardId === pLink.dashboardId && r.draft === false
+        );
+
+        if (common.isDefined(pDashboard)) {
+          this.navigateService.navigateToDashboard({
+            dashboardId: pDashboard.dashboardId
+          });
+        } else {
+          this.navigateService.navigateToDashboards();
+        }
+
+        return of(false);
+      } else {
+        this.navigateService.navigateToDashboards();
+
+        return of(false);
+      }
+    }
 
     let payload: apiToBackend.ToBackendGetDashboardRequestPayload = {
       projectId: nav.projectId,
