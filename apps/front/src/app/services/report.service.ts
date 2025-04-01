@@ -136,7 +136,7 @@ export class ReportService {
 
             this.reportsQuery.update({ reports: newReports });
 
-            this.navigateService.navigateToMetricsRep({
+            this.navigateService.navigateToReport({
               reportId: report.reportId
             });
           }
@@ -243,7 +243,7 @@ export class ReportService {
             this.reportsQuery.update({ reports: newReports });
 
             if (reportIds.indexOf(report.reportId) > -1) {
-              this.navigateService.navigateToMetricsRep({
+              this.navigateService.navigateToReport({
                 reportId: common.EMPTY_REPORT_ID
               });
             }

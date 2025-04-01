@@ -59,8 +59,10 @@ export class ReportsListComponent {
   }
 
   navigateToReport(reportId: string) {
-    // TODO:
-    // this.navigateService.navigateToReport(reportId);
+    this.navigateService.navigateToReport({
+      reportId: reportId,
+      skipDeselect: true
+    });
   }
 
   rowMenuOnClick(event: any) {
@@ -81,17 +83,16 @@ export class ReportsListComponent {
 
   deleteReport(event: MouseEvent, item: common.ReportX) {
     event.stopPropagation();
-    // TODO:
 
-    // this.myDialogService.showDeleteReport({
-    //   report: item,
-    //   apiService: this.apiService,
-    //   projectId: this.nav.projectId,
-    //   branchId: this.nav.branchId,
-    //   envId: this.nav.envId,
-    //   isRepoProd: this.nav.isRepoProd,
-    //   isStartSpinnerUntilNavEnd: false
-    // });
+    this.myDialogService.showDeleteReport({
+      report: item,
+      apiService: this.apiService,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      envId: this.nav.envId,
+      isRepoProd: this.nav.isRepoProd,
+      isStartSpinnerUntilNavEnd: false
+    });
   }
 
   trackByFn(index: number, item: common.ReportX) {

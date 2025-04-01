@@ -923,7 +923,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     this.uiQuery.getValue().gridApi?.deselectAll();
 
-    this.navigateService.navigateToMetricsRep({
+    this.navigateService.navigateToReport({
       reportId: report.reportId
     });
   }
@@ -1050,7 +1050,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   newReport() {
-    this.navigateService.navigateToMetricsRep({
+    this.navigateService.navigateToReport({
       reportId: common.EMPTY_REPORT_ID
     });
   }

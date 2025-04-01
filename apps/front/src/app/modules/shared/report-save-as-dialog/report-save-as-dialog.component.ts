@@ -256,7 +256,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
             this.spinner.hide(constants.APP_SPINNER_NAME); // route params do not change
 
-            this.navigateService.navigateToMetricsRep({
+            this.navigateService.navigateToReport({
               reportId: resp.payload.report.reportId
             });
           }
@@ -346,7 +346,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
             this.reportsQuery.update({ reports: newReportsC });
 
-            this.navigateService.navigateToMetricsRep({
+            this.navigateService.navigateToReport({
               reportId: resp.payload.report.reportId
             });
           }

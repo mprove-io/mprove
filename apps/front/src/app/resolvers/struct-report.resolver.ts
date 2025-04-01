@@ -132,7 +132,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
         );
 
         if (common.isDefined(draftReport)) {
-          this.navigateService.navigateToMetricsRep({
+          this.navigateService.navigateToReport({
             reportId: draftReport.reportId
           });
 
@@ -146,11 +146,11 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
           );
 
           if (common.isDefined(pReport)) {
-            this.navigateService.navigateToMetricsRep({
+            this.navigateService.navigateToReport({
               reportId: pReport.reportId
             });
           } else {
-            this.navigateService.navigateToMetricsRep({
+            this.navigateService.navigateToReport({
               reportId: common.EMPTY_REPORT_ID,
               skipDeselect: true
             });
@@ -167,11 +167,11 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
         );
 
         if (common.isDefined(pReport)) {
-          this.navigateService.navigateToMetricsRep({
+          this.navigateService.navigateToReport({
             reportId: pReport.reportId
           });
         } else {
-          this.navigateService.navigateToMetricsRep({
+          this.navigateService.navigateToReport({
             reportId: common.EMPTY_REPORT_ID,
             skipDeselect: true
           });
@@ -179,7 +179,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
 
         return of(false);
       } else {
-        this.navigateService.navigateToMetricsRep({
+        this.navigateService.navigateToReport({
           reportId: common.EMPTY_REPORT_ID,
           skipDeselect: true
         });

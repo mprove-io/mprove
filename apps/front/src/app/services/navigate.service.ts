@@ -323,6 +323,44 @@ export class NavigateService {
     });
   }
 
+  navigateToReports(item?: { extra?: any }) {
+    let userId;
+    this.userQuery.userId$
+      .pipe(
+        tap(x => (userId = x)),
+        take(1)
+      )
+      .subscribe();
+
+    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+
+    let navTo = [
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
+      common.PATH_REPORTS
+    ];
+
+    let uiState = this.uiQuery.getValue();
+
+    let extra = {
+      queryParams: { timezone: uiState.timezone.split('/').join('-') }
+    };
+
+    if (common.isDefined(item?.extra)) {
+      extra = Object.assign({}, extra, item?.extra);
+    }
+
+    this.router.navigate(navTo, extra);
+  }
+
   navigateToReportsList() {
     let userId;
     this.userQuery.userId$
@@ -427,7 +465,7 @@ export class NavigateService {
     });
   }
 
-  navigateToMetricsRep(item: { reportId: string; skipDeselect?: boolean }) {
+  navigateToReport(item: { reportId: string; skipDeselect?: boolean }) {
     let { reportId, skipDeselect } = item;
 
     let uiState = this.uiQuery.getValue();

@@ -9,14 +9,16 @@ import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { ReportQuery } from '~front/app/queries/report.query';
+import { ReportsQuery } from '~front/app/queries/reports.query';
 import { ApiService } from '~front/app/services/api.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 export interface DeleteReportDialogData {
   apiService: ApiService;
-  reportDeletedFnBindThis: any;
   report: common.ReportX;
   projectId: string;
   branchId: string;
@@ -41,6 +43,9 @@ export class DeleteReportDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<DeleteReportDialogData>,
     private spinner: NgxSpinnerService,
+    private reportsQuery: ReportsQuery,
+    private reportQuery: ReportQuery,
+    private navigateService: NavigateService,
     private router: Router
   ) {}
 
@@ -80,7 +85,17 @@ export class DeleteReportDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteReportResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.ref.data.reportDeletedFnBindThis(report.reportId);
+            let reports = this.reportsQuery.getValue().reports;
+
+            this.reportsQuery.update({
+              reports: reports.filter(d => d.reportId !== report.reportId)
+            });
+
+            let currentReport = this.reportQuery.getValue();
+
+            if (currentReport.reportId === report.reportId) {
+              this.navigateService.navigateToReports();
+            }
           }
         }),
         take(1)

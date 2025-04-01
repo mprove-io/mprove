@@ -234,7 +234,7 @@ export class ApiService {
             })
               .pipe(
                 tap(x => {
-                  this.navigateService.navigateToMetricsRep({
+                  this.navigateService.navigateToReport({
                     reportId: common.EMPTY_REPORT_ID
                   });
                 }),

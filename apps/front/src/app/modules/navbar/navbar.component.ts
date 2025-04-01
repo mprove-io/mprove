@@ -168,7 +168,7 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
-    this.navigateService.navigateToMetricsRep({
+    this.navigateService.navigateToReport({
       reportId: common.LAST_SELECTED_REPORT_ID,
       skipDeselect: true
     });

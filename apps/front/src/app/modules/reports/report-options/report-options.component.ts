@@ -16,8 +16,6 @@ export class ReportOptionsComponent {
   @Input()
   report: common.ReportX;
 
-  reportDeletedFnBindThis = this.reportDeletedFn.bind(this);
-
   constructor(
     private navigateService: NavigateService,
     private apiService: ApiService,
@@ -54,7 +52,6 @@ export class ReportOptionsComponent {
     this.myDialogService.showDeleteReport({
       report: this.report,
       apiService: this.apiService,
-      reportDeletedFnBindThis: this.reportDeletedFnBindThis,
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
@@ -62,29 +59,5 @@ export class ReportOptionsComponent {
       isStartSpinnerUntilNavEnd:
         selectedReport.reportId === this.report.reportId
     });
-  }
-
-  reportDeletedFn(deletedReportId: string) {
-    let selectedReport = this.reportQuery.getValue();
-    let reports = this.reportsQuery.getValue().reports;
-
-    let reportIndex = reports.findIndex(x => x.reportId === deletedReportId);
-
-    let newReports = [
-      ...reports.slice(0, reportIndex),
-      ...reports.slice(reportIndex + 1)
-    ];
-
-    this.reportsQuery.update({ reports: newReports });
-
-    let uiState = this.uiQuery.getValue();
-
-    if (selectedReport.reportId === deletedReportId) {
-      uiState.gridApi.deselectAll();
-
-      this.navigateService.navigateToMetricsRep({
-        reportId: common.EMPTY_REPORT_ID
-      });
-    }
   }
 }
