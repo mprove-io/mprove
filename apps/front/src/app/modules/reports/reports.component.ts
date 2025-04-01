@@ -921,8 +921,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
       this.isShow = false;
     }
 
-    this.uiQuery.getValue().gridApi?.deselectAll();
-
     this.navigateService.navigateToReport({
       reportId: report.reportId
     });
@@ -1054,18 +1052,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
       reportId: common.EMPTY_REPORT_ID
     });
   }
-
-  // toggleShowMetricsChart() {
-  //   let showMetricsChart = !this.showMetricsChart;
-
-  //   this.uiQuery.updatePart({
-  //     showMetricsChart: showMetricsChart
-  //   });
-
-  //   this.uiService.setUserUi({
-  //     showMetricsChart: showMetricsChart
-  //   });
-  // }
 
   toggleShowMetricsChartSettings() {
     let showMetricsChartSettings = !this.showMetricsChartSettings;

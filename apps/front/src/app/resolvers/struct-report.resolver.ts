@@ -150,10 +150,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
               reportId: pReport.reportId
             });
           } else {
-            this.navigateService.navigateToReport({
-              reportId: common.EMPTY_REPORT_ID,
-              skipDeselect: true
-            });
+            this.navigateService.navigateToReports();
           }
 
           return of(false);
@@ -171,18 +168,12 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
             reportId: pReport.reportId
           });
         } else {
-          this.navigateService.navigateToReport({
-            reportId: common.EMPTY_REPORT_ID,
-            skipDeselect: true
-          });
+          this.navigateService.navigateToReports();
         }
 
         return of(false);
       } else {
-        this.navigateService.navigateToReport({
-          reportId: common.EMPTY_REPORT_ID,
-          skipDeselect: true
-        });
+        this.navigateService.navigateToReports();
 
         return of(false);
       }

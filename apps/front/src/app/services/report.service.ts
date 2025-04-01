@@ -243,9 +243,7 @@ export class ReportService {
             this.reportsQuery.update({ reports: newReports });
 
             if (reportIds.indexOf(report.reportId) > -1) {
-              this.navigateService.navigateToReport({
-                reportId: common.EMPTY_REPORT_ID
-              });
+              this.navigateService.navigateToReports();
             }
           }
         }),
