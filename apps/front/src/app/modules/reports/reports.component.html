@@ -560,7 +560,12 @@
         </div>
 
         <div *ngIf="lastUrl === pathReportsList" class="flex flex-1 flex-col">
-          <div class="ml-6 flex h-full flex-grow">
+          <div
+            class="flex h-full flex-grow"
+            [ngClass]="{
+              'ml-6': isShowLeft === true
+            }"
+          >
             <div class="h-full w-full">
               <router-outlet></router-outlet>
             </div>
@@ -569,7 +574,10 @@
 
         <div
           *ngIf="lastUrl !== pathReports && lastUrl !== pathReportsList"
-          class="ml-6 flex min-w-[2px] flex-grow flex-col"
+          class="flex min-w-[2px] flex-grow flex-col"
+          [ngClass]="{
+            'ml-6': isShowLeft === true
+          }"
         >
           <div class="divide-y divide-gray-300">
             <div></div>
