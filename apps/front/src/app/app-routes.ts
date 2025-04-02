@@ -19,9 +19,9 @@ import { DashboardsComponent } from './modules/dashboards/dashboards.component';
 import { FileEditorComponent } from './modules/files/file-editor/file-editor.component';
 import { FilesComponent } from './modules/files/files.component';
 import { MconfigComponent } from './modules/model/mconfig/mconfig.component';
+import { MdlComponent } from './modules/model/mdl/mdl.component';
 import { ModelComponent } from './modules/model/model.component';
 import { QueryComponent } from './modules/model/query/query.component';
-import { ModelsComponent } from './modules/models/models.component';
 import { NavComponent } from './modules/nav/nav.component';
 import { NavbarComponent } from './modules/navbar/navbar.component';
 import { OrgAccountComponent } from './modules/org/org-account/org-account.component';
@@ -248,32 +248,39 @@ export const appRoutes: Routes = [
                               }
                             ]
                           },
-                          {
-                            component: ModelsComponent,
-                            path: common.PATH_MODELS,
-                            resolve: [StructModelsResolver]
-                          },
+                          // {
+                          //   component: ModelsComponent,
+                          //   path: common.PATH_MODELS,
+                          //   resolve: [StructModelsResolver]
+                          // },
                           {
                             component: ModelComponent,
-                            canDeactivate: [DeactivateGuard],
-                            path:
-                              common.PATH_MODEL +
-                              `/:${common.PARAMETER_MODEL_ID}`,
-                            resolve: [StructModelResolver],
+                            path: common.PATH_MODELS,
+                            resolve: [StructModelsResolver],
                             children: [
                               {
-                                component: MconfigComponent,
+                                component: MdlComponent,
+                                canDeactivate: [DeactivateGuard],
                                 path:
-                                  common.PATH_MCONFIG +
-                                  `/:${common.PARAMETER_MCONFIG_ID}`,
-                                resolve: [MconfigResolver],
+                                  common.PATH_MODEL +
+                                  `/:${common.PARAMETER_MODEL_ID}`,
+                                resolve: [StructModelResolver],
                                 children: [
                                   {
-                                    component: QueryComponent,
+                                    component: MconfigComponent,
                                     path:
-                                      common.PATH_QUERY +
-                                      `/:${common.PARAMETER_QUERY_ID}`,
-                                    resolve: [QueryResolver]
+                                      common.PATH_MCONFIG +
+                                      `/:${common.PARAMETER_MCONFIG_ID}`,
+                                    resolve: [MconfigResolver],
+                                    children: [
+                                      {
+                                        component: QueryComponent,
+                                        path:
+                                          common.PATH_QUERY +
+                                          `/:${common.PARAMETER_QUERY_ID}`,
+                                        resolve: [QueryResolver]
+                                      }
+                                    ]
                                   }
                                 ]
                               }

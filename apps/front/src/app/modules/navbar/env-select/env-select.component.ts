@@ -136,10 +136,7 @@ export class EnvSelectComponent {
       this.selectedEnvId
     ];
 
-    if (
-      urlParts[11] === common.PATH_MODELS ||
-      urlParts[11] === common.PATH_MODEL
-    ) {
+    if (urlParts[11] === common.PATH_MODELS) {
       navArray.push(common.PATH_MODELS);
     } else if (urlParts[11] === common.PATH_CHARTS) {
       navArray.push(common.PATH_CHARTS);

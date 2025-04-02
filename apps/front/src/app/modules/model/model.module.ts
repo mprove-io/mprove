@@ -13,6 +13,7 @@ import { ChartOptionsComponent } from './chart-options/chart-options.component';
 import { JsViewerComponent } from './js-viewer/js-viewer.component';
 import { JsonViewerComponent } from './json-viewer/json-viewer.component';
 import { MconfigComponent } from './mconfig/mconfig.component';
+import { MdlComponent } from './mdl/mdl.component';
 import { ModelFiltersComponent } from './model-filters/model-filters.component';
 import { FieldOptionsComponent } from './model-tree/field-options/field-options.component';
 import { ModelTreeComponent } from './model-tree/model-tree.component';
@@ -25,6 +26,7 @@ import { SqlComponent } from './sql/sql.component';
 @NgModule({
   declarations: [
     ModelComponent,
+    MdlComponent,
     ModelTreeComponent,
     MconfigComponent,
     QueryComponent,
