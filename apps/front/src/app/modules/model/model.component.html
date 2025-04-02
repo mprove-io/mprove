@@ -146,12 +146,62 @@
         </div>
       </div>
 
-      <div class="mt-6 flex flex-grow flex-row">
-        <m-model-tree
-          class="flex w-1/4 flex-shrink-0"
-          (expandFilters)="expandFiltersPanel()"
-          (expandData)="expandDataPanel()"
-        ></m-model-tree>
+      <div class="mt-6 flex w-full flex-grow flex-row">
+        <div
+          class="flex h-full w-1/4 flex-shrink-0 flex-col rounded bg-white shadow"
+        >
+          <m-model-tree
+            class="flex flex-1"
+            (expandFilters)="expandFiltersPanel()"
+            (expandData)="expandDataPanel()"
+          ></m-model-tree>
+
+          <div class="mb-5 ml-6 mr-10 mt-5 flex h-11 flex-row items-center">
+            <div class="text-gray1 select-none text-base">Timezone</div>
+
+            <div class="ml-5 flex max-w-[260px] flex-1">
+              <form
+                class="w-full"
+                [formGroup]="timezoneForm"
+                tp="Timezone change is not allowed"
+                [tpIsEnabled]="
+                  timezoneForm.controls['timezone'].disabled === true
+                "
+              >
+                <ng-select
+                  #modelTimezoneSelect
+                  data-cy="modelTimezoneSelect"
+                  class="w-full text-base"
+                  [items]="timezones"
+                  [clearable]="false"
+                  [searchable]="true"
+                  [searchFn]="timezoneSearchFn"
+                  (change)="timezoneChange()"
+                  (keyup.esc)="
+                    $event.stopImmediatePropagation();
+                    modelTimezoneSelect.blur()
+                  "
+                  (keyup.enter)="
+                    $event.stopImmediatePropagation();
+                    modelTimezoneSelect.blur()
+                  "
+                  appendTo="body"
+                  bindLabel="label"
+                  bindValue="value"
+                  formControlName="timezone"
+                >
+                  <ng-template ng-label-tmp let-item="item">
+                    <div class="truncate">{{ item.label }}</div>
+                  </ng-template>
+
+                  <ng-template ng-option-tmp let-item="item">
+                    <div class="truncate">{{ item.label }}</div>
+                  </ng-template>
+                </ng-select>
+              </form>
+            </div>
+          </div>
+        </div>
 
         <div
           class="ml-6 flex min-w-[2px] flex-grow flex-col space-y-2"
@@ -172,6 +222,43 @@
                   (toggleEvent)="toggleDataPanel()"
                   [showToggle]="false"
                 ></m-panel-title>
+
+                <div
+                  class="ml-5 flex cursor-pointer flex-row items-center"
+                  (click)="toggleFormat()"
+                >
+                  <div
+                    class="text-gray1 flex h-9 select-none items-center text-base"
+                    >Format</div
+                  >
+
+                  <ui-switch class="ml-5" [checked]="isFormat"></ui-switch>
+                </div>
+
+                <div class="text-gray1 ml-5 select-none text-base">Limit</div>
+
+                <div
+                  [formGroup]="limitForm"
+                  class="ml-3 mr-10 flex flex-col items-start"
+                >
+                  <div class="h-6"></div>
+                  <input
+                    autocomplete="off"
+                    spellcheck="false"
+                    data-cy="modelLimitInput"
+                    class="form-input border-gray3 focus:border-blue3 h-[36px] w-32 rounded"
+                    [ngClass]="{
+                      'border-red-600':
+                        limitForm.controls['limit'].invalid &&
+                        limitForm.controls['limit'].touched
+                    }"
+                    formControlName="limit"
+                    (blur)="limitBlur()"
+                  />
+                  <m-validation
+                    [control]="limitForm.controls['limit']"
+                  ></m-validation>
+                </div>
 
                 <button
                   *ngIf="mconfig?.select.length > 0"
@@ -271,98 +358,6 @@
                 </div>
 
                 <div class="flex-1"></div>
-
-                <div
-                  *ngIf="mconfig?.select.length > 0"
-                  class="text-gray1 ml-5 select-none text-base"
-                  >Timezone</div
-                >
-
-                <form
-                  class="ml-3"
-                  [formGroup]="timezoneForm"
-                  tp="Timezone change is not allowed"
-                  [tpIsEnabled]="
-                    timezoneForm.controls['timezone'].disabled === true
-                  "
-                  *ngIf="mconfig?.select.length > 0"
-                >
-                  <ng-select
-                    #modelTimezoneSelect
-                    data-cy="modelTimezoneSelect"
-                    class="w-[300px] text-base"
-                    [items]="timezones"
-                    [clearable]="false"
-                    [searchable]="true"
-                    [searchFn]="timezoneSearchFn"
-                    (change)="timezoneChange()"
-                    (keyup.esc)="
-                      $event.stopImmediatePropagation();
-                      modelTimezoneSelect.blur()
-                    "
-                    (keyup.enter)="
-                      $event.stopImmediatePropagation();
-                      modelTimezoneSelect.blur()
-                    "
-                    appendTo="body"
-                    bindLabel="label"
-                    bindValue="value"
-                    formControlName="timezone"
-                  >
-                    <!-- <ng-template ng-header-tmp>
-                  <div class="flex text-base text-gray-400 h-10 justify-center items-center select-none"> TIMEZONE </div>
-                </ng-template> -->
-                    <ng-template ng-label-tmp let-item="item">
-                      <div>{{ item.label }}</div>
-                    </ng-template>
-
-                    <ng-template ng-option-tmp let-item="item">
-                      <div>{{ item.label }}</div>
-                    </ng-template>
-                  </ng-select>
-                </form>
-
-                <div
-                  *ngIf="mconfig?.select.length > 0"
-                  class="text-gray1 ml-5 select-none text-base"
-                  >Limit</div
-                >
-
-                <div
-                  *ngIf="mconfig?.select.length > 0"
-                  [formGroup]="limitForm"
-                  class="ml-3 flex flex-col items-start"
-                >
-                  <div class="h-6"></div>
-                  <input
-                    autocomplete="off"
-                    spellcheck="false"
-                    data-cy="modelLimitInput"
-                    class="form-input border-gray3 focus:border-blue3 h-[36px] w-32 rounded"
-                    [ngClass]="{
-                      'border-red-600':
-                        limitForm.controls['limit'].invalid &&
-                        limitForm.controls['limit'].touched
-                    }"
-                    formControlName="limit"
-                    (blur)="limitBlur()"
-                  />
-                  <m-validation
-                    [control]="limitForm.controls['limit']"
-                  ></m-validation>
-                </div>
-
-                <div
-                  class="ml-5 flex cursor-pointer flex-row items-center"
-                  (click)="toggleFormat()"
-                >
-                  <ui-switch [checked]="isFormat"></ui-switch>
-
-                  <div
-                    class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
-                    >Format</div
-                  >
-                </div>
               </div>
 
               <div

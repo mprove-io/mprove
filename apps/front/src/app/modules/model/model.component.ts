@@ -903,13 +903,6 @@ ${this.mconfig.storePart?.reqUrlPath}`
       .subscribe();
   }
 
-  canDeactivate(): Promise<boolean> | boolean {
-    // console.log('canDeactivateModel')
-    this.mqQuery.reset();
-    this.modelQuery.reset();
-    return true;
-  }
-
   timezoneSearchFn(term: string, timezone: { value: string; label: string }) {
     let haystack = [`${timezone.label}`];
 
@@ -922,6 +915,9 @@ ${this.mconfig.storePart?.reqUrlPath}`
 
   ngOnDestroy() {
     // console.log('ngOnDestroyModel')
+    this.mqQuery.reset();
+    this.modelQuery.reset();
+
     this.runButtonTimerSubscription?.unsubscribe();
     this.cancelButtonTimerSubscription?.unsubscribe();
 

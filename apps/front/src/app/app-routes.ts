@@ -260,7 +260,6 @@ export const appRoutes: Routes = [
                             children: [
                               {
                                 component: MdlComponent,
-                                canDeactivate: [DeactivateGuard],
                                 path:
                                   common.PATH_MODEL +
                                   `/:${common.PARAMETER_MODEL_ID}`,
