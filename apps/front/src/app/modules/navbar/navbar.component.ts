@@ -84,12 +84,13 @@ export class NavbarComponent implements OnInit {
     this.isFilesRouteActive = url.split('/')[11] === constants.PATH_FILES;
 
     this.isChartsRouteActive =
-      url.split('?')[0]?.split('/')[11] === constants.PATH_CHARTS;
+      url.split('?')[0]?.split('/')[11] === constants.PATH_CHARTS0;
 
     this.isDashboardsRouteActive =
       url.split('?')[0]?.split('/')[11] === constants.PATH_DASHBOARDS;
 
-    this.isModelsRouteActive = url.split('/')[11] === constants.PATH_MODELS;
+    this.isModelsRouteActive =
+      url.split('/')[11] === constants.PATH_CHARTS_AND_MODELS;
 
     this.isReportsRouteActive = url.split('/')[11] === constants.PATH_REPORTS;
 
@@ -124,7 +125,7 @@ export class NavbarComponent implements OnInit {
       this.nav.branchId,
       common.PATH_ENV,
       this.nav.envId,
-      common.PATH_MODELS
+      common.PATH_CHARTS_AND_MODELS
     ]);
   }
 
@@ -153,7 +154,7 @@ export class NavbarComponent implements OnInit {
         this.nav.branchId,
         common.PATH_ENV,
         this.nav.envId,
-        common.PATH_CHARTS
+        common.PATH_CHARTS0
       ],
       { queryParams: { timezone: uiState.timezone.split('/').join('-') } }
     );

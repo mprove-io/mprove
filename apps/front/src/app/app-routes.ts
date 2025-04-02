@@ -223,30 +223,11 @@ export const appRoutes: Routes = [
                               }
                             ]
                           },
+
                           {
                             component: ChartsComponent,
-                            path: common.PATH_CHARTS,
+                            path: common.PATH_CHARTS0,
                             resolve: [StructChartsResolver]
-                          },
-                          {
-                            component: DashboardsComponent,
-                            path: common.PATH_DASHBOARDS,
-                            resolve: [StructDashboardsResolver],
-                            children: [
-                              {
-                                component: DashboardComponent,
-                                canDeactivate: [DeactivateGuard],
-                                path:
-                                  common.PATH_DASHBOARD +
-                                  `/:${common.PARAMETER_DASHBOARD_ID}`,
-                                resolve: [StructDashboardResolver]
-                              },
-                              {
-                                component: DashboardsListComponent,
-                                canDeactivate: [DeactivateGuard],
-                                path: common.PATH_DASHBOARDS_LIST
-                              }
-                            ]
                           },
                           // {
                           //   component: ModelsComponent,
@@ -255,7 +236,7 @@ export const appRoutes: Routes = [
                           // },
                           {
                             component: ModelComponent,
-                            path: common.PATH_MODELS,
+                            path: common.PATH_CHARTS_AND_MODELS,
                             resolve: [StructModelsResolver],
                             children: [
                               {
@@ -282,6 +263,26 @@ export const appRoutes: Routes = [
                                     ]
                                   }
                                 ]
+                              }
+                            ]
+                          },
+                          {
+                            component: DashboardsComponent,
+                            path: common.PATH_DASHBOARDS,
+                            resolve: [StructDashboardsResolver],
+                            children: [
+                              {
+                                component: DashboardComponent,
+                                canDeactivate: [DeactivateGuard],
+                                path:
+                                  common.PATH_DASHBOARD +
+                                  `/:${common.PARAMETER_DASHBOARD_ID}`,
+                                resolve: [StructDashboardResolver]
+                              },
+                              {
+                                component: DashboardsListComponent,
+                                canDeactivate: [DeactivateGuard],
+                                path: common.PATH_DASHBOARDS_LIST
                               }
                             ]
                           },

@@ -68,18 +68,6 @@
         }"
         (click)="navigateModels()"
         [disabled]="!nav || !nav.projectId || needSave === true"
-        >Models</button
-      >
-
-      <button
-        class="text-gray1 block flex h-10 w-[80px] items-center justify-center text-left text-base focus:outline-none"
-        [ngClass]="{
-          'cursor-default text-gray-400':
-            !nav || !nav.projectId || needSave === true,
-          'font-semibold': isChartsRouteActive === true
-        }"
-        (click)="navigateCharts()"
-        [disabled]="!nav || !nav.projectId || needSave === true"
         >Charts</button
       >
 
@@ -105,6 +93,18 @@
         (click)="navigateReports()"
         [disabled]="!nav || !nav.projectId || needSave === true"
         >Reports</button
+      >
+
+      <button
+        class="text-gray1 block flex h-10 w-[80px] items-center justify-center text-left text-base focus:outline-none"
+        [ngClass]="{
+          'cursor-default text-gray-400':
+            !nav || !nav.projectId || needSave === true,
+          'font-semibold': isChartsRouteActive === true
+        }"
+        (click)="navigateCharts()"
+        [disabled]="!nav || !nav.projectId || needSave === true"
+        >Charts0</button
       >
     </div>
 

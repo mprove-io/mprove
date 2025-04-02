@@ -86,10 +86,10 @@ export const PATH_ENV_VARIABLES = 'env-variables';
 
 export const PATH_FILES = 'files';
 export const PATH_FILE = 'file';
-export const PATH_MODELS = 'models';
+export const PATH_CHARTS0 = 'charts0';
+export const PATH_CHARTS_AND_MODELS = 'charts';
 export const PATH_MODEL = 'model';
 export const PATH_MCONFIG = 'mconfig';
-export const PATH_CHARTS = 'charts';
 export const PATH_QUERY = 'query';
 export const PATH_DASHBOARDS = 'dashboards';
 export const PATH_DASHBOARDS_LIST = 'dashboards-list';
