@@ -41,6 +41,7 @@ import { constants as frontConstants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
+import { ModelsQuery } from '~front/app/queries/models.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { DataService } from '~front/app/services/data.service';
 import { UiService } from '~front/app/services/ui.service';
@@ -102,12 +103,20 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   lastUrl: string;
 
+  models: ModelState[];
+  models$ = this.modelsQuery.select().pipe(
+    tap(ml => {
+      this.models = ml.models;
+      this.cd.detectChanges();
+    })
+  );
+
   model: ModelState;
   model$ = this.modelQuery.select().pipe(
     tap(x => {
       this.model = x;
 
-      this.title.setTitle(`${this.pageTitle} - ${this.model?.label}`);
+      this.modelForm.controls['model'].setValue(this.model.modelId);
       this.cd.detectChanges();
     })
   );
@@ -289,6 +298,14 @@ export class ModelComponent implements OnInit, OnDestroy {
     })
   );
 
+  modelForm = this.fb.group({
+    model: [
+      {
+        value: undefined
+      }
+    ]
+  });
+
   timezoneForm = this.fb.group({
     timezone: [
       {
@@ -416,6 +433,7 @@ export class ModelComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
+    private modelsQuery: ModelsQuery,
     private modelQuery: ModelQuery,
     private userQuery: UserQuery,
     private mqQuery: MqQuery,
@@ -582,6 +600,13 @@ export class ModelComponent implements OnInit, OnDestroy {
     this.mconfigService.navCreateTempMconfigAndQuery({
       newMconfig: newMconfig
     });
+  }
+
+  modelChange() {
+    (document.activeElement as HTMLElement).blur();
+
+    let modelId = this.modelForm.controls['model'].value;
+    this.navigateService.navigateToModel(modelId);
   }
 
   timezoneChange() {

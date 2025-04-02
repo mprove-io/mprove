@@ -11,11 +11,11 @@
               {{ pageTitle }}
             </div>
 
-            <div class="text-gray1 text-xl">{{
+            <!-- <div class="text-gray1 text-xl">{{
               model?.label | capitalize
-            }}</div>
+            }}</div> -->
 
-            <button
+            <!-- <button
               class="flex flex-row items-center text-blue-500 focus:outline-none"
               *ngIf="model?.modelId"
               (click)="goToFile()"
@@ -29,7 +29,7 @@
                   ]
                 }}
               </span>
-            </button>
+            </button> -->
           </div>
 
           <div class="flex-grow"></div>
@@ -156,10 +156,50 @@
             (expandData)="expandDataPanel()"
           ></m-model-tree>
 
-          <div class="mb-5 ml-6 mr-10 mt-5 flex h-11 flex-row items-center">
-            <div class="text-gray1 select-none text-base">Timezone</div>
+          <div class="ml-6 mr-10 mt-5 flex h-11 flex-row items-center">
+            <div class="text-gray1 w-[85px] select-none text-base">Model</div>
 
-            <div class="ml-5 flex max-w-[260px] flex-1">
+            <div class="ml-5 flex max-w-[300px] flex-1">
+              <form class="w-full" [formGroup]="modelForm">
+                <ng-select
+                  #chartsModelSelect
+                  data-cy="chartsModelSelect"
+                  class="w-full text-base"
+                  [items]="models"
+                  [clearable]="false"
+                  [searchable]="true"
+                  (change)="modelChange()"
+                  (keyup.esc)="
+                    $event.stopImmediatePropagation();
+                    modelTimezoneSelect.blur()
+                  "
+                  (keyup.enter)="
+                    $event.stopImmediatePropagation();
+                    modelTimezoneSelect.blur()
+                  "
+                  appendTo="body"
+                  bindLabel="label"
+                  bindValue="modelId"
+                  formControlName="model"
+                >
+                  <ng-template ng-label-tmp let-item="item">
+                    <div class="truncate">{{ item.label }}</div>
+                  </ng-template>
+
+                  <ng-template ng-option-tmp let-item="item">
+                    <div class="truncate">{{ item.label }}</div>
+                  </ng-template>
+                </ng-select>
+              </form>
+            </div>
+          </div>
+
+          <div class="mb-5 ml-6 mr-10 mt-5 flex h-11 flex-row items-center">
+            <div class="text-gray1 w-[85px] select-none text-base"
+              >Timezone</div
+            >
+
+            <div class="ml-5 flex max-w-[300px] flex-1">
               <form
                 class="w-full"
                 [formGroup]="timezoneForm"
@@ -812,6 +852,7 @@
 
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="nav$ | async"></div>
+<div *ngIf="models$ | async"></div>
 <div *ngIf="model$ | async"></div>
 <div *ngIf="mq$ | async"></div>
 <div *ngIf="struct$ | async"></div>
