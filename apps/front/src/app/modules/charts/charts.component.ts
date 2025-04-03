@@ -130,11 +130,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
   private timer: any;
 
   timezoneForm = this.fb.group({
-    timezone: [
-      {
-        value: undefined
-      }
-    ]
+    timezone: [undefined]
   });
 
   timezones = common.getTimezones();

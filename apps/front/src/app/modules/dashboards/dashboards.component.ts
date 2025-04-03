@@ -45,11 +45,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   isShow = true;
 
   timezoneForm = this.fb.group({
-    timezone: [
-      {
-        value: undefined
-      }
-    ]
+    timezone: [undefined]
   });
 
   timezones = common.getTimezones();

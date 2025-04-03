@@ -110,11 +110,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
   report: common.ReportX;
 
   modelTypeForm = this.fb.group({
-    modelType: [
-      {
-        value: undefined
-      }
-    ]
+    modelType: [undefined]
   });
 
   modelTypesList: ModelTypeItem[] = [
@@ -137,19 +133,11 @@ export class ReportAddFilterDialogComponent implements OnInit {
   storeModel: common.Model;
 
   storeModelForm = this.fb.group({
-    storeModel: [
-      {
-        value: undefined
-      }
-    ]
+    storeModel: [undefined]
   });
 
   storeFilterForForm = this.fb.group({
-    storeFilterFor: [
-      {
-        value: undefined
-      }
-    ]
+    storeFilterFor: [undefined]
   });
 
   storeFilterForList: StoreFilterForItem[] = [
@@ -168,11 +156,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
   selectedModelLoaded = false;
 
   storeFilterForm = this.fb.group({
-    storeFilter: [
-      {
-        value: undefined
-      }
-    ]
+    storeFilter: [undefined]
   });
 
   suggestFields: common.SuggestField[] = [];

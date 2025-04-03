@@ -326,19 +326,11 @@ export class ModelComponent implements OnInit, OnDestroy {
   );
 
   modelForm = this.fb.group({
-    model: [
-      {
-        value: undefined
-      }
-    ]
+    model: [undefined]
   });
 
   timezoneForm = this.fb.group({
-    timezone: [
-      {
-        value: undefined
-      }
-    ]
+    timezone: [undefined]
   });
 
   timezones = common.getTimezones();

@@ -201,21 +201,13 @@ export class ReportsComponent implements OnInit, OnDestroy {
   );
 
   timezoneForm = this.fb.group({
-    timezone: [
-      {
-        value: undefined
-      }
-    ]
+    timezone: [undefined]
   });
 
   timezones = common.getTimezones();
 
   timeSpecForm = this.fb.group({
-    timeSpec: [
-      {
-        value: undefined
-      }
-    ]
+    timeSpec: [undefined]
   });
 
   timeSpecList: TimeSpecItem[] = [
@@ -1082,7 +1074,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log('reports ngOnDestroy');
+    // console.log('reports ngOnDestroy');
     this.stopCheckRunning();
     this.metricsQuery.reset();
     this.reportsQuery.reset();
