@@ -11,51 +11,6 @@
               {{ pageTitle }}
             </div>
 
-            <m-view-list-icon
-              class="ml-5 cursor-pointer"
-              [ngClass]="{
-                'text-gray-500': lastUrl === pathChartsList,
-                'text-gray-400': lastUrl !== pathChartsList
-              }"
-              (click)="toggleChartsList()"
-            ></m-view-list-icon>
-
-            <div
-              [tp]="templateNewChart"
-              [tpIsEnabled]="
-                alias === restrictedUserAlias || isExplorer === false
-              "
-              class="ml-5"
-            >
-              <button
-                type="button"
-                data-cy="chartsAddChartButton"
-                class="h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
-                [ngClass]="{
-                  'border-gray-400 text-gray-500 hover:bg-white':
-                    alias !== restrictedUserAlias && isExplorer === true,
-                  'cursor-default border-gray-300 text-gray-400':
-                    alias === restrictedUserAlias || isExplorer === false
-                }"
-                (click)="addChart()"
-                [disabled]="
-                  alias === restrictedUserAlias || isExplorer === false
-                "
-                >New Chart</button
-              >
-            </div>
-
-            <ng-template #templateNewChart>
-              <div *ngIf="alias === restrictedUserAlias"
-                >User is restricted. Sign Up at https://mprove.io to get full
-                access.</div
-              >
-
-              <div *ngIf="alias !== restrictedUserAlias && isExplorer === false"
-                >Explorer role required</div
-              >
-            </ng-template>
-
             <!-- <div class="text-gray1 text-xl">{{
               model?.label | capitalize
             }}</div> -->
@@ -75,6 +30,196 @@
                 }}
               </span>
             </button> -->
+          </div>
+
+          <div class="flex h-11 flex-shrink-0 flex-row items-center">
+            <div class="text-gray1 ml-[50px] select-none text-lg">Model</div>
+
+            <div class="ml-5 flex w-2 w-[300px] flex-1">
+              <form class="w-full" [formGroup]="modelForm">
+                <ng-select
+                  #chartsModelSelect
+                  data-cy="chartsModelSelect"
+                  class="model-select w-full text-base"
+                  [items]="models"
+                  [clearable]="false"
+                  [searchable]="true"
+                  (change)="modelChange()"
+                  (keyup.esc)="
+                    $event.stopImmediatePropagation();
+                    modelTimezoneSelect.blur()
+                  "
+                  (keyup.enter)="
+                    $event.stopImmediatePropagation();
+                    modelTimezoneSelect.blur()
+                  "
+                  appendTo="body"
+                  bindLabel="label"
+                  bindValue="modelId"
+                  formControlName="model"
+                >
+                  <ng-template ng-label-tmp let-item="item">
+                    <div class="truncate">{{ item.label }}</div>
+                  </ng-template>
+
+                  <ng-template ng-option-tmp let-item="item">
+                    <div class="truncate">{{ item.label }}</div>
+                  </ng-template>
+                </ng-select>
+              </form>
+            </div>
+
+            <!-- <div
+              [tp]="templateNewModel"
+              [tpIsEnabled]="
+                alias === restrictedUserAlias || isExplorer === false
+              "
+              class="ml-5 mr-6 flex-shrink-0"
+            >
+              <button
+                type="button"
+                data-cy="chartsAddChartButton"
+                class="h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
+                [ngClass]="{
+                  'border-gray-400 text-gray-500 hover:bg-white':
+                    alias !== restrictedUserAlias && isExplorer === true,
+                  'cursor-default border-gray-300 text-gray-400':
+                    alias === restrictedUserAlias || isExplorer === false
+                }"
+                (click)="addModel()"
+                [disabled]="
+                  alias === restrictedUserAlias || isExplorer === false
+                "
+                >New Model</button
+              >
+
+              <ng-template #templateNewModel>
+                <div *ngIf="alias === restrictedUserAlias"
+                  >User is restricted. Sign Up at https://mprove.io to get full
+                  access.</div
+                >
+
+                <div
+                  *ngIf="alias !== restrictedUserAlias && isExplorer === false"
+                  >Explorer role required</div
+                >
+              </ng-template>
+            </div> -->
+          </div>
+
+          <div
+            class="ml-5 flex w-[70px] cursor-pointer flex-row items-center"
+            (click)="toggleSchemaPanel()"
+          >
+            <div
+              class="text-gray1 flex h-9 select-none items-center text-base"
+              [ngClass]="{
+                'font-semibold': schemaIsExpanded === true
+              }"
+              >Schema</div
+            >
+
+            <!-- <ui-switch class="ml-5" [checked]="schemaIsExpanded"></ui-switch> -->
+          </div>
+
+          <div
+            [tp]="templateNewChart"
+            [tpIsEnabled]="
+              alias === restrictedUserAlias || isExplorer === false
+            "
+            class="ml-[70px]"
+          >
+            <button
+              type="button"
+              data-cy="chartsAddChartButton"
+              class="h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
+              [ngClass]="{
+                'border-gray-400 text-gray-500 hover:bg-white':
+                  alias !== restrictedUserAlias && isExplorer === true,
+                'cursor-default border-gray-300 text-gray-400':
+                  alias === restrictedUserAlias || isExplorer === false
+              }"
+              (click)="addChart()"
+              [disabled]="alias === restrictedUserAlias || isExplorer === false"
+              >New Chart</button
+            >
+          </div>
+
+          <ng-template #templateNewChart>
+            <div *ngIf="alias === restrictedUserAlias"
+              >User is restricted. Sign Up at https://mprove.io to get full
+              access.</div
+            >
+
+            <div *ngIf="alias !== restrictedUserAlias && isExplorer === false"
+              >Explorer role required</div
+            >
+          </ng-template>
+
+          <m-view-list-icon
+            class="ml-5 cursor-pointer"
+            [ngClass]="{
+              'text-gray-500': lastUrl === pathChartsList,
+              'text-gray-400': lastUrl !== pathChartsList
+            }"
+            (click)="toggleChartsList()"
+          ></m-view-list-icon>
+
+          <m-view-list-icon
+            class="ml-5 mr-5 cursor-pointer"
+            [ngClass]="{
+              'text-gray-500': lastUrl === pathChartsList,
+              'text-gray-400': lastUrl !== pathChartsList
+            }"
+            (click)="toggleModelsList()"
+          ></m-view-list-icon>
+
+          <div
+            class="mb-5 ml-6 mr-10 mt-5 flex h-11 w-[400px] flex-row items-center"
+          >
+            <div class="text-gray1 select-none text-base">Timezone</div>
+
+            <div class="ml-5 flex max-w-[300px] flex-1">
+              <form
+                class="w-full"
+                [formGroup]="timezoneForm"
+                tp="Timezone change is not allowed"
+                [tpIsEnabled]="
+                  timezoneForm.controls['timezone'].disabled === true
+                "
+              >
+                <ng-select
+                  #modelTimezoneSelect
+                  data-cy="modelTimezoneSelect"
+                  class="w-full text-base"
+                  [items]="timezones"
+                  [clearable]="false"
+                  [searchable]="true"
+                  [searchFn]="timezoneSearchFn"
+                  (change)="timezoneChange()"
+                  (keyup.esc)="
+                    $event.stopImmediatePropagation();
+                    modelTimezoneSelect.blur()
+                  "
+                  (keyup.enter)="
+                    $event.stopImmediatePropagation();
+                    modelTimezoneSelect.blur()
+                  "
+                  appendTo="body"
+                  bindLabel="label"
+                  bindValue="value"
+                  formControlName="timezone"
+                >
+                  <ng-template ng-label-tmp let-item="item">
+                    <div class="truncate">{{ item.label }}</div>
+                  </ng-template>
+
+                  <ng-template ng-option-tmp let-item="item">
+                    <div class="truncate">{{ item.label }}</div>
+                  </ng-template>
+                </ng-select>
+              </form>
+            </div>
           </div>
 
           <div class="flex-grow"></div>
@@ -195,92 +340,6 @@
         <div
           class="flex h-full w-1/4 flex-shrink-0 flex-col rounded bg-white shadow"
         >
-          <div
-            class="mt-5 flex h-11 w-full flex-shrink-0 flex-row items-center"
-          >
-            <div class="text-gray1 ml-6 select-none text-lg">Model</div>
-
-            <div class="ml-5 flex w-2 max-w-[400px] flex-1 bg-yellow-200">
-              <form class="w-full" [formGroup]="modelForm">
-                <ng-select
-                  #chartsModelSelect
-                  data-cy="chartsModelSelect"
-                  class="model-select w-full text-base"
-                  [items]="models"
-                  [clearable]="false"
-                  [searchable]="true"
-                  (change)="modelChange()"
-                  (keyup.esc)="
-                    $event.stopImmediatePropagation();
-                    modelTimezoneSelect.blur()
-                  "
-                  (keyup.enter)="
-                    $event.stopImmediatePropagation();
-                    modelTimezoneSelect.blur()
-                  "
-                  appendTo="body"
-                  bindLabel="label"
-                  bindValue="modelId"
-                  formControlName="model"
-                >
-                  <ng-template ng-label-tmp let-item="item">
-                    <div class="truncate">{{ item.label }}</div>
-                  </ng-template>
-
-                  <ng-template ng-option-tmp let-item="item">
-                    <div class="truncate">{{ item.label }}</div>
-                  </ng-template>
-                </ng-select>
-              </form>
-            </div>
-
-            <m-view-list-icon
-              class="ml-5 mr-5 cursor-pointer"
-              [ngClass]="{
-                'text-gray-500': lastUrl === pathChartsList,
-                'text-gray-400': lastUrl !== pathChartsList
-              }"
-              (click)="toggleModelsList()"
-            ></m-view-list-icon>
-
-            <!-- <div
-              [tp]="templateNewModel"
-              [tpIsEnabled]="
-                alias === restrictedUserAlias || isExplorer === false
-              "
-              class="ml-5 mr-6 flex-shrink-0"
-            >
-              <button
-                type="button"
-                data-cy="chartsAddChartButton"
-                class="h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
-                [ngClass]="{
-                  'border-gray-400 text-gray-500 hover:bg-white':
-                    alias !== restrictedUserAlias && isExplorer === true,
-                  'cursor-default border-gray-300 text-gray-400':
-                    alias === restrictedUserAlias || isExplorer === false
-                }"
-                (click)="addModel()"
-                [disabled]="
-                  alias === restrictedUserAlias || isExplorer === false
-                "
-                >New Model</button
-              >
-
-              <ng-template #templateNewModel>
-                <div *ngIf="alias === restrictedUserAlias"
-                  >User is restricted. Sign Up at https://mprove.io to get full
-                  access.</div
-                >
-
-                <div
-                  *ngIf="alias !== restrictedUserAlias && isExplorer === false"
-                  >Explorer role required</div
-                >
-              </ng-template>
-            </div> -->
-          </div>
-
           <div class="mt-6 flex h-11 flex-row items-center">
             <m-search-icon class="text-gray1 ml-6"></m-search-icon>
 
@@ -327,9 +386,10 @@
           </div>
 
           <div
+            *ngIf="schemaIsExpanded"
             class="mt-5 flex flex-col"
             [ngClass]="{
-              'flex-1': schemaIsExpanded
+              'flex-[3]': schemaIsExpanded
             }"
           >
             <div
@@ -340,12 +400,12 @@
                   class="flex flex-row items-center"
                   (click)="toggleSchemaPanel()"
                 >
-                  <m-chevron-right-icon
+                  <!-- <m-chevron-right-icon
                     *ngIf="!schemaIsExpanded"
                   ></m-chevron-right-icon>
                   <m-chevron-down-icon
                     *ngIf="schemaIsExpanded"
-                  ></m-chevron-down-icon>
+                  ></m-chevron-down-icon> -->
 
                   <div
                     class="text-gray1 flex cursor-pointer pl-3 pr-5 text-lg font-semibold"
@@ -376,22 +436,22 @@
                 >
 
                 <!-- <div
-      class="w-[80px] cursor-pointer select-none"
-      [ngClass]="{ 
-        'font-semibold': modelTreeLevels === modelTreeLevelsFlatTime
-      }"
-      (click)="setModelTreeLevels(modelTreeLevelsFlatTime)"
-      >FlatTime</div
-    > -->
+    class="w-[80px] cursor-pointer select-none"
+    [ngClass]="{ 
+      'font-semibold': modelTreeLevels === modelTreeLevelsFlatTime
+    }"
+    (click)="setModelTreeLevels(modelTreeLevelsFlatTime)"
+    >FlatTime</div
+  > -->
 
                 <!-- <div
-      class="w-[150px] cursor-pointer select-none"
-      [ngClass]="{
-        'font-semibold': modelTreeLevels === modelTreeLevelsNestedFlatTime
-      }"
-      (click)="setModelTreeLevels(modelTreeLevelsNestedFlatTime)"
-      >NestedFlatTime</div
-    > -->
+    class="w-[150px] cursor-pointer select-none"
+    [ngClass]="{
+      'font-semibold': modelTreeLevels === modelTreeLevelsNestedFlatTime
+    }"
+    (click)="setModelTreeLevels(modelTreeLevelsNestedFlatTime)"
+    >NestedFlatTime</div
+  > -->
               </div>
             </div>
 
@@ -401,54 +461,6 @@
               (expandFilters)="expandFiltersPanel()"
               (expandData)="expandDataPanel()"
             ></m-model-tree>
-          </div>
-
-          <div class="mb-5 ml-6 mr-10 mt-5 flex h-11 flex-row items-center">
-            <div class="text-gray1 w-[85px] select-none text-base"
-              >Timezone</div
-            >
-
-            <div class="ml-5 flex max-w-[300px] flex-1">
-              <form
-                class="w-full"
-                [formGroup]="timezoneForm"
-                tp="Timezone change is not allowed"
-                [tpIsEnabled]="
-                  timezoneForm.controls['timezone'].disabled === true
-                "
-              >
-                <ng-select
-                  #modelTimezoneSelect
-                  data-cy="modelTimezoneSelect"
-                  class="w-full text-base"
-                  [items]="timezones"
-                  [clearable]="false"
-                  [searchable]="true"
-                  [searchFn]="timezoneSearchFn"
-                  (change)="timezoneChange()"
-                  (keyup.esc)="
-                    $event.stopImmediatePropagation();
-                    modelTimezoneSelect.blur()
-                  "
-                  (keyup.enter)="
-                    $event.stopImmediatePropagation();
-                    modelTimezoneSelect.blur()
-                  "
-                  appendTo="body"
-                  bindLabel="label"
-                  bindValue="value"
-                  formControlName="timezone"
-                >
-                  <ng-template ng-label-tmp let-item="item">
-                    <div class="truncate">{{ item.label }}</div>
-                  </ng-template>
-
-                  <ng-template ng-option-tmp let-item="item">
-                    <div class="truncate">{{ item.label }}</div>
-                  </ng-template>
-                </ng-select>
-              </form>
-            </div>
           </div>
         </div>
 

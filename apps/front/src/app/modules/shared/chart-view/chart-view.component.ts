@@ -164,7 +164,7 @@ export class ChartViewComponent implements OnChanges {
 
       if (this.eChartsTypes.indexOf(this.chart.type) > -1) {
         this.seriesData =
-          this.qData.length > 0 &&
+          this.qData?.length > 0 &&
           common.isDefined(this.chart.xField) &&
           common.isDefined(this.chart.yFields) &&
           this.chart.yFields.length > 0
