@@ -57,12 +57,10 @@
             </ng-template>
           </div>
 
-          <div
-            class="mb-5 ml-6 mr-10 mt-5 flex h-11 w-[400px] flex-row items-center"
-          >
+          <div class="mb-5 ml-6 mr-10 mt-5 flex h-11 flex-row items-center">
             <div class="text-gray1 ml-5 select-none text-base">Timezone</div>
 
-            <div class="ml-5 flex max-w-[300px] flex-1">
+            <div class="ml-5 flex w-[260px] flex-1">
               <form
                 class="w-full"
                 [formGroup]="timezoneForm"
@@ -102,6 +100,31 @@
                   </ng-template>
                 </ng-select>
               </form>
+            </div>
+
+            <div class="text-gray1 ml-5 select-none text-base">Limit</div>
+
+            <div
+              [formGroup]="limitForm"
+              class="ml-3 mr-10 flex flex-col items-start"
+            >
+              <div class="h-6"></div>
+              <input
+                autocomplete="off"
+                spellcheck="false"
+                data-cy="modelLimitInput"
+                class="form-input border-gray3 focus:border-blue3 h-[36px] w-32 rounded"
+                [ngClass]="{
+                  'border-red-600':
+                    limitForm.controls['limit'].invalid &&
+                    limitForm.controls['limit'].touched
+                }"
+                formControlName="limit"
+                (blur)="limitBlur()"
+              />
+              <m-validation
+                [control]="limitForm.controls['limit']"
+              ></m-validation>
             </div>
           </div>
 
@@ -432,31 +455,6 @@
                   >
 
                   <ui-switch class="ml-5" [checked]="isFormat"></ui-switch>
-                </div>
-
-                <div class="text-gray1 ml-5 select-none text-base">Limit</div>
-
-                <div
-                  [formGroup]="limitForm"
-                  class="ml-3 mr-10 flex flex-col items-start"
-                >
-                  <div class="h-6"></div>
-                  <input
-                    autocomplete="off"
-                    spellcheck="false"
-                    data-cy="modelLimitInput"
-                    class="form-input border-gray3 focus:border-blue3 h-[36px] w-32 rounded"
-                    [ngClass]="{
-                      'border-red-600':
-                        limitForm.controls['limit'].invalid &&
-                        limitForm.controls['limit'].touched
-                    }"
-                    formControlName="limit"
-                    (blur)="limitBlur()"
-                  />
-                  <m-validation
-                    [control]="limitForm.controls['limit']"
-                  ></m-validation>
                 </div>
 
                 <button
