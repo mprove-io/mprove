@@ -17,7 +17,7 @@
     *ngIf="
       isSelectValid === true &&
       chart.isValid === true &&
-      qData.length === 0 &&
+      qData?.length === 0 &&
       (queryStatus === queryStatusEnum.New ||
         queryStatus === queryStatusEnum.Canceled)
     "
@@ -29,7 +29,7 @@
     *ngIf="
       isSelectValid === true &&
       chart.isValid === true &&
-      qData.length === 0 &&
+      qData?.length === 0 &&
       queryStatus === queryStatusEnum.Running
     "
     class="flex h-full select-none items-center justify-center text-lg font-semibold text-gray-500"
@@ -40,7 +40,7 @@
     *ngIf="
       isSelectValid === true &&
       chart.isValid === true &&
-      qData.length === 0 &&
+      qData?.length === 0 &&
       queryStatus === queryStatusEnum.Completed
     "
     class="flex h-full select-none items-center justify-center text-lg font-semibold text-gray-500"
@@ -64,7 +64,7 @@
       isSelectValid === true &&
       eChartsTypes.indexOf(chart.type) > -1 &&
       chart.isValid === true &&
-      qData.length > 0
+      qData?.length > 0
     "
   >
     <m-chart-box
@@ -81,7 +81,7 @@
       isSelectValid === true &&
       chart.type === chartTypeEnum.Table &&
       chart.isValid === true &&
-      qData.length > 0
+      qData?.length > 0
     "
     [isFormat]="chart.format === false ? false : true"
     [qData]="qData"

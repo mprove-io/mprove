@@ -1,49 +1,4 @@
 <div class="flex w-full flex-col">
-  <div class="ml-[56px] flex h-20 flex-row items-center">
-    <div
-      class="text-gray1 mb-1 flex select-none flex-row items-center pr-5 text-xl font-semibold"
-    >
-      Fields
-    </div>
-
-    <button
-      class="ml-2 w-[54px] cursor-pointer select-none items-center text-lg"
-      [ngClass]="{
-        'font-semibold': modelTreeLevels === modelTreeLevelsFlat
-      }"
-      (click)="setModelTreeLevels(modelTreeLevelsFlat)"
-    >
-      Flat
-    </button>
-
-    <button
-      class="ml-2 w-[83px] cursor-pointer select-none py-3 text-lg"
-      [ngClass]="{
-        'font-semibold': modelTreeLevels === modelTreeLevelsNested
-      }"
-      (click)="setModelTreeLevels(modelTreeLevelsNested)"
-      >Nested</button
-    >
-
-    <!-- <div
-      class="w-[80px] cursor-pointer select-none"
-      [ngClass]="{
-        'font-semibold': modelTreeLevels === modelTreeLevelsFlatTime
-      }"
-      (click)="setModelTreeLevels(modelTreeLevelsFlatTime)"
-      >FlatTime</div
-    > -->
-
-    <!-- <div
-      class="w-[150px] cursor-pointer select-none"
-      [ngClass]="{
-        'font-semibold': modelTreeLevels === modelTreeLevelsNestedFlatTime
-      }"
-      (click)="setModelTreeLevels(modelTreeLevelsNestedFlatTime)"
-      >NestedFlatTime</div
-    > -->
-  </div>
-
   <div class="ml-6 mr-9 flex flex-col divide-y divide-gray-300">
     <div class="flex flex-row"></div>
     <div class="flex flex-row"></div>

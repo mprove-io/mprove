@@ -150,11 +150,50 @@
         <div
           class="flex h-full w-1/4 flex-shrink-0 flex-col rounded bg-white shadow"
         >
-          <m-model-tree
-            class="flex flex-1"
-            (expandFilters)="expandFiltersPanel()"
-            (expandData)="expandDataPanel()"
-          ></m-model-tree>
+          <div class="flex h-11 flex-row items-center">
+            <m-search-icon class="text-gray1 ml-6"></m-search-icon>
+
+            <!-- <input
+              spellcheck="false"
+              autocomplete="off"
+              data-cy="dashboardsSearchInput"
+              class="form-input focus:border-blue3 ml-3 h-10 w-[225px] rounded border-gray-400 bg-white"
+              placeholder="Search"
+              [ngClass]="{
+                'bg-purple-200': !!word
+              }"
+              [(ngModel)]="word"
+              (ngModelChange)="searchWordChange()"
+            />
+
+            <div class="h-9 w-9">
+              <m-delete-icon
+                *ngIf="!!word"
+                class="text-gray1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                [ngClass]="{
+                  'cursor-pointer bg-purple-200 hover:bg-purple-300': !!word
+                }"
+                (click)="resetSearch()"
+              ></m-delete-icon>
+            </div>
+
+            <div class="flex flex-grow"></div>
+
+            <button
+              *ngIf="filteredDraftsLength > 0"
+              class="mr-10 flex flex-row items-center rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-gray-100 focus:outline-none"
+              (click)="deleteDrafts()"
+            >
+              <m-trash-icon></m-trash-icon>
+              <div class="ml-3">Drafts</div>
+            </button> -->
+          </div>
+
+          <div class="flex h-2 flex-1 flex-col">
+            <div class="mb-5 mt-5 flex h-2 flex-grow flex-col overflow-y-auto"
+              >Charts list
+            </div>
+          </div>
 
           <div class="ml-6 mr-10 mt-5 flex h-11 flex-row items-center">
             <div class="text-gray1 w-[85px] select-none text-base">Model</div>
@@ -192,6 +231,83 @@
                 </ng-select>
               </form>
             </div>
+          </div>
+
+          <div
+            class="mt-5 flex flex-col"
+            [ngClass]="{
+              'flex-1': schemaIsExpanded
+            }"
+          >
+            <div
+              class="text-gray1 mb-2 mr-10 flex h-11 select-none flex-row items-center px-5"
+            >
+              <div class="flex flex-row items-center">
+                <div
+                  class="flex flex-row items-center"
+                  (click)="toggleSchemaPanel()"
+                >
+                  <m-chevron-right-icon
+                    *ngIf="!schemaIsExpanded"
+                  ></m-chevron-right-icon>
+                  <m-chevron-down-icon
+                    *ngIf="schemaIsExpanded"
+                  ></m-chevron-down-icon>
+
+                  <div
+                    class="text-gray1 flex cursor-pointer px-5 text-lg font-semibold"
+                  >
+                    SCHEMA
+                  </div>
+                </div>
+
+                <button
+                  *ngIf="schemaIsExpanded"
+                  class="ml-2 w-[54px] cursor-pointer select-none items-center text-lg"
+                  [ngClass]="{
+                    'font-semibold': modelTreeLevels === modelTreeLevelsFlat
+                  }"
+                  (click)="setModelTreeLevels(modelTreeLevelsFlat)"
+                >
+                  Flat
+                </button>
+
+                <button
+                  *ngIf="schemaIsExpanded"
+                  class="ml-2 w-[83px] cursor-pointer select-none py-3 text-lg"
+                  [ngClass]="{
+                    'font-semibold': modelTreeLevels === modelTreeLevelsNested
+                  }"
+                  (click)="setModelTreeLevels(modelTreeLevelsNested)"
+                  >Nested</button
+                >
+
+                <!-- <div
+      class="w-[80px] cursor-pointer select-none"
+      [ngClass]="{ 
+        'font-semibold': modelTreeLevels === modelTreeLevelsFlatTime
+      }"
+      (click)="setModelTreeLevels(modelTreeLevelsFlatTime)"
+      >FlatTime</div
+    > -->
+
+                <!-- <div
+      class="w-[150px] cursor-pointer select-none"
+      [ngClass]="{
+        'font-semibold': modelTreeLevels === modelTreeLevelsNestedFlatTime
+      }"
+      (click)="setModelTreeLevels(modelTreeLevelsNestedFlatTime)"
+      >NestedFlatTime</div
+    > -->
+              </div>
+            </div>
+
+            <m-model-tree
+              *ngIf="schemaIsExpanded"
+              class="flex flex-1"
+              (expandFilters)="expandFiltersPanel()"
+              (expandData)="expandDataPanel()"
+            ></m-model-tree>
           </div>
 
           <div class="mb-5 ml-6 mr-10 mt-5 flex h-11 flex-row items-center">
@@ -852,6 +968,7 @@
 
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="nav$ | async"></div>
+<div *ngIf="uiQuery$ | async"></div>
 <div *ngIf="models$ | async"></div>
 <div *ngIf="model$ | async"></div>
 <div *ngIf="mq$ | async"></div>

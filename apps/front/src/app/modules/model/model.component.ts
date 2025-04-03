@@ -84,6 +84,13 @@ export class ModelComponent implements OnInit, OnDestroy {
   isRunButtonPressed = false;
   isCancelButtonPressed = false;
 
+  schemaIsExpanded = false;
+
+  // modelTreeLevelsFlatTime = common.ModelTreeLevelsEnum.FlatTime;
+  modelTreeLevelsFlat = common.ModelTreeLevelsEnum.Flat;
+  // modelTreeLevelsNestedFlatTime = common.ModelTreeLevelsEnum.NestedFlatTime;
+  modelTreeLevelsNested = common.ModelTreeLevelsEnum.Nested;
+
   queryStatusEnum = common.QueryStatusEnum;
   connectionTypeEnum = common.ConnectionTypeEnum;
   chartTypeEnum = common.ChartTypeEnum;
@@ -102,6 +109,15 @@ export class ModelComponent implements OnInit, OnDestroy {
   chartTypeEnumPie = common.ChartTypeEnum.Pie;
 
   lastUrl: string;
+
+  modelTreeLevels = common.ModelTreeLevelsEnum.FlatTime;
+
+  uiQuery$ = this.uiQuery.select().pipe(
+    tap(ui => {
+      this.modelTreeLevels = ui.modelTreeLevels;
+      this.cd.detectChanges();
+    })
+  );
 
   models: ModelState[];
   models$ = this.modelsQuery.select().pipe(
@@ -936,6 +952,20 @@ ${this.mconfig.storePart?.reqUrlPath}`
     let idxs = uf.filter(haystack, term);
 
     return idxs != null && idxs.length > 0;
+  }
+
+  toggleSchemaPanel() {
+    this.schemaIsExpanded = !this.schemaIsExpanded;
+  }
+
+  setModelTreeLevels(modelTreeLevels: common.ModelTreeLevelsEnum) {
+    this.uiQuery.updatePart({
+      modelTreeLevels: modelTreeLevels
+    });
+
+    this.uiService.setUserUi({
+      modelTreeLevels: modelTreeLevels
+    });
   }
 
   ngOnDestroy() {
