@@ -87,7 +87,7 @@ export class ModelComponent implements OnInit, OnDestroy {
   isRunButtonPressed = false;
   isCancelButtonPressed = false;
 
-  schemaIsExpanded = false;
+  schemaIsExpanded = true;
 
   // modelTreeLevelsFlatTime = common.ModelTreeLevelsEnum.FlatTime;
   modelTreeLevelsFlat = common.ModelTreeLevelsEnum.Flat;
