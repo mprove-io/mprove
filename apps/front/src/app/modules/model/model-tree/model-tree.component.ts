@@ -616,7 +616,7 @@ export class ModelTreeComponent implements AfterViewInit {
   }
 
   filterHidden() {
-    this.itemsTree.treeModel.doForAll((node: TreeNode) => {
+    this.itemsTree?.treeModel.doForAll((node: TreeNode) => {
       let isHidden =
         node.parent && node.parent.parent
           ? node.parent.parent.data.hidden ||

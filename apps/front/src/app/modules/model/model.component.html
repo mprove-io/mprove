@@ -168,7 +168,7 @@
 
             <div
               *ngIf="query?.status !== queryStatusEnum.Running"
-              tp="No selected fields"
+              tp="Select Model Fields"
               class="ml-5"
               [tpIsEnabled]="mconfig?.select.length === 0"
             >
@@ -574,7 +574,7 @@
                 <div
                   *ngIf="mconfig?.select.length === 0"
                   class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
-                  >No selected fields</div
+                  >Select Model Fields</div
                 >
 
                 <div
@@ -954,7 +954,7 @@
                 <div
                   *ngIf="mconfig?.select.length === 0"
                   class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
-                  >No selected fields</div
+                  >Select Model Fields</div
                 >
 
                 <div
