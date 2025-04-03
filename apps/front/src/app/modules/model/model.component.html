@@ -58,7 +58,41 @@
           </div>
 
           <div class="mb-5 ml-6 mr-10 mt-5 flex h-11 flex-row items-center">
-            <div class="text-gray1 ml-5 select-none text-base">Timezone</div>
+            <div
+              class="ml-5 flex cursor-pointer flex-row items-center"
+              (click)="toggleFormat()"
+            >
+              <div
+                class="text-gray1 flex h-9 select-none items-center text-base"
+                >Format</div
+              >
+
+              <ui-switch class="ml-5" [checked]="isFormat"></ui-switch>
+            </div>
+
+            <div class="text-gray1 ml-10 select-none text-base">Limit</div>
+
+            <div [formGroup]="limitForm" class="ml-5 flex flex-col items-start">
+              <div class="h-6"></div>
+              <input
+                autocomplete="off"
+                spellcheck="false"
+                data-cy="modelLimitInput"
+                class="form-input border-gray3 focus:border-blue3 h-[36px] w-32 rounded"
+                [ngClass]="{
+                  'border-red-600':
+                    limitForm.controls['limit'].invalid &&
+                    limitForm.controls['limit'].touched
+                }"
+                formControlName="limit"
+                (blur)="limitBlur()"
+              />
+              <m-validation
+                [control]="limitForm.controls['limit']"
+              ></m-validation>
+            </div>
+
+            <div class="text-gray1 ml-10 select-none text-base">Timezone</div>
 
             <div class="ml-5 flex w-[260px] flex-1">
               <form
@@ -102,35 +136,21 @@
               </form>
             </div>
 
-            <div class="text-gray1 ml-5 select-none text-base">Limit</div>
-
             <div
-              [formGroup]="limitForm"
-              class="ml-3 mr-10 flex flex-col items-start"
+              *ngIf="!!mconfig && mconfig.warnSelect.length > 0"
+              class="ml-5 flex h-8 w-8 flex-shrink-0 text-purple-500"
+              tp="Warning: The selected fields [{{
+                mconfig.warnSelect.join(', ')
+              }}] may use unsafe aggregations and produce incorrect results"
+              placement="left"
             >
-              <div class="h-6"></div>
-              <input
-                autocomplete="off"
-                spellcheck="false"
-                data-cy="modelLimitInput"
-                class="form-input border-gray3 focus:border-blue3 h-[36px] w-32 rounded"
-                [ngClass]="{
-                  'border-red-600':
-                    limitForm.controls['limit'].invalid &&
-                    limitForm.controls['limit'].touched
-                }"
-                formControlName="limit"
-                (blur)="limitBlur()"
-              />
-              <m-validation
-                [control]="limitForm.controls['limit']"
-              ></m-validation>
+              <m-exclamation-icon></m-exclamation-icon>
             </div>
           </div>
 
           <div class="flex-grow"></div>
 
-          <div class="text-gray1 flex flex-row items-center text-base">
+          <div class="text-gray1 mr-9 flex flex-row items-center text-base">
             <!-- <div *ngIf="isRunningDry === true">Calculating ... </div> -->
             <!-- <div *ngIf="isRunning === true">Running ... </div> -->
             <!-- <div *ngIf="isCanceling === true">Canceling ... </div> -->
@@ -230,14 +250,14 @@
               </button>
             </div>
 
-            <div class="relative ml-5">
+            <!-- <div class="relative ml-5">
               <m-query-options
                 [showRunDryButton]="
                   query?.connectionType === connectionTypeEnum.BigQuery
                 "
                 (runDryEvent)="runDry()"
               ></m-query-options>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -437,124 +457,111 @@
           >
             <div class="flex h-full flex-col">
               <div class="mr-5 flex h-20 flex-shrink-0 flex-row items-center">
-                <m-panel-title
-                  class="mb-1"
-                  [title]="'Data'"
-                  [isExpanded]="dataIsExpanded"
-                  (toggleEvent)="toggleDataPanel()"
-                  [showToggle]="false"
-                ></m-panel-title>
+                <div class="flex flex-1 flex-row items-center">
+                  <m-panel-title
+                    class="mb-1"
+                    [title]="'Data'"
+                    [isExpanded]="dataIsExpanded"
+                    (toggleEvent)="toggleDataPanel()"
+                    [showToggle]="false"
+                  ></m-panel-title>
 
-                <div
-                  class="ml-5 flex cursor-pointer flex-row items-center"
-                  (click)="toggleFormat()"
-                >
-                  <div
-                    class="text-gray1 flex h-9 select-none items-center text-base"
-                    >Format</div
-                  >
+                  <!-- <button
+                      *ngIf="mconfig?.select.length > 0"
+                      class="text-gray1 ml-2 w-[84px] select-none items-center py-3 text-lg focus:outline-none"
+                      [ngClass]="{
+                        'font-semibold':
+                          resultsIsShow === true &&
+                          rightIsShow === false &&
+                          resultsIsShowTemp === false,
+                        'cursor-default text-gray-400':
+                          !dataIsExpanded || mconfig?.select.length === 0
+                      }"
+                      (click)="toggleResults()"
+                      >Results</button
+                    > -->
 
-                  <ui-switch class="ml-5" [checked]="isFormat"></ui-switch>
+                  <!-- <button
+                      *ngIf="mconfig?.select.length > 0"
+                      class="text-gray1 ml-2 w-[70px] select-none items-center py-3 text-lg focus:outline-none"
+                      [ngClass]="{
+                        'font-semibold':
+                          resultsIsShow === true && rightIsShow === true,
+                        'cursor-default text-gray-400':
+                          !dataIsExpanded || mconfig?.select.length === 0
+                      }"
+                      (click)="toggleSplit()"
+                      >Split</button
+                    > -->
+
+                  <!-- <button
+                      *ngIf="mconfig?.select.length > 0"
+                      class="text-gray1 ml-2 select-none items-center py-3 text-lg focus:outline-none"
+                      [ngClass]="{
+                        'font-semibold':
+                          rightIsShow === true && resultsIsShow === false,
+                        'cursor-default text-gray-400':
+                          !dataIsExpanded || mconfig?.select.length === 0,
+                        'w-[56]': mconfig.isStoreModel === false,
+                        'w-[100px]': mconfig.isStoreModel === true
+                      }"
+                      (click)="toggleRight()"
+                    >
+                      {{
+                        mconfig.isStoreModel === false ? 'SQL' : 'Request'
+                      }}</button
+                    > -->
                 </div>
 
-                <button
-                  *ngIf="mconfig?.select.length > 0"
-                  class="text-gray1 ml-2 w-[84px] select-none items-center py-3 text-lg focus:outline-none"
-                  [ngClass]="{
-                    'font-semibold':
-                      resultsIsShow === true &&
-                      rightIsShow === false &&
-                      resultsIsShowTemp === false,
-                    'cursor-default text-gray-400':
-                      !dataIsExpanded || mconfig?.select.length === 0
-                  }"
-                  (click)="toggleResults()"
-                  >Results</button
-                >
+                <div class="flex flex-1 flex-row items-center">
+                  <m-panel-title
+                    class="mb-1"
+                    [title]="'Info'"
+                    [isExpanded]="dataIsExpanded"
+                    (toggleEvent)="toggleDataPanel()"
+                    [showToggle]="false"
+                  ></m-panel-title>
 
-                <button
-                  *ngIf="mconfig?.select.length > 0"
-                  class="text-gray1 ml-2 w-[70px] select-none items-center py-3 text-lg focus:outline-none"
-                  [ngClass]="{
-                    'font-semibold':
-                      resultsIsShow === true && rightIsShow === true,
-                    'cursor-default text-gray-400':
-                      !dataIsExpanded || mconfig?.select.length === 0
-                  }"
-                  (click)="toggleSplit()"
-                  >Split</button
-                >
-
-                <button
-                  *ngIf="mconfig?.select.length > 0"
-                  class="text-gray1 ml-2 select-none items-center py-3 text-lg focus:outline-none"
-                  [ngClass]="{
-                    'font-semibold':
-                      rightIsShow === true && resultsIsShow === false,
-                    'cursor-default text-gray-400':
-                      !dataIsExpanded || mconfig?.select.length === 0,
-                    'w-[56]': mconfig.isStoreModel === false,
-                    'w-[100px]': mconfig.isStoreModel === true
-                  }"
-                  (click)="toggleRight()"
-                >
-                  {{
-                    mconfig.isStoreModel === false ? 'SQL' : 'Request'
-                  }}</button
-                >
-
-                <form
-                  [formGroup]="requestPartTypeForm"
-                  *ngIf="
-                    mconfig.isStoreModel === true &&
-                    mconfig?.select.length > 0 &&
-                    rightIsShow === true
-                  "
-                  class="ml-5"
-                >
-                  <ng-select
-                    #requestPartTypeSelect
-                    data-cy="requestPartTypeSelect"
-                    class="w-[250px] flex-shrink-0 text-base focus:outline-none"
-                    [items]="requestPartTypeList"
-                    [clearable]="false"
-                    [searchable]="false"
-                    (change)="requestPartTypeChange($event)"
-                    (keyup.esc)="
-                      $event.stopImmediatePropagation();
-                      requestPartTypeSelect.blur()
+                  <form
+                    [formGroup]="requestPartTypeForm"
+                    *ngIf="
+                      mconfig.isStoreModel === true &&
+                      mconfig?.select.length > 0 &&
+                      rightIsShow === true
                     "
-                    (keyup.enter)="
-                      $event.stopImmediatePropagation();
-                      requestPartTypeSelect.blur()
-                    "
-                    appendTo="body"
-                    bindLabel="label"
-                    bindValue="value"
-                    formControlName="requestPartType"
+                    class="ml-5"
                   >
-                    <ng-template ng-label-tmp let-item="item">
-                      <div>{{ item.label }}</div>
-                    </ng-template>
+                    <ng-select
+                      #requestPartTypeSelect
+                      data-cy="requestPartTypeSelect"
+                      class="w-[250px] flex-shrink-0 text-base focus:outline-none"
+                      [items]="requestPartTypeList"
+                      [clearable]="false"
+                      [searchable]="false"
+                      (change)="requestPartTypeChange($event)"
+                      (keyup.esc)="
+                        $event.stopImmediatePropagation();
+                        requestPartTypeSelect.blur()
+                      "
+                      (keyup.enter)="
+                        $event.stopImmediatePropagation();
+                        requestPartTypeSelect.blur()
+                      "
+                      appendTo="body"
+                      bindLabel="label"
+                      bindValue="value"
+                      formControlName="requestPartType"
+                    >
+                      <ng-template ng-label-tmp let-item="item">
+                        <div>{{ item.label }}</div>
+                      </ng-template>
 
-                    <ng-template ng-option-tmp let-item="item">
-                      <div>{{ item.label }}</div>
-                    </ng-template>
-                  </ng-select>
-                </form>
-
-                <div
-                  *ngIf="!!mconfig && mconfig.warnSelect.length > 0"
-                  class="ml-5 flex h-8 w-8 flex-shrink-0 text-purple-500"
-                  tp="Warning: The selected fields [{{
-                    mconfig.warnSelect.join(', ')
-                  }}] may use unsafe aggregations and produce incorrect results"
-                  placement="left"
-                >
-                  <m-exclamation-icon></m-exclamation-icon>
+                      <ng-template ng-option-tmp let-item="item">
+                        <div>{{ item.label }}</div>
+                      </ng-template>
+                    </ng-select>
+                  </form>
                 </div>
-
-                <div class="flex-1"></div>
               </div>
 
               <div
