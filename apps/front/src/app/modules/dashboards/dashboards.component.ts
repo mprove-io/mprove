@@ -235,9 +235,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     if (uiState.timezone !== timezone) {
       this.uiQuery.updatePart({ timezone: timezone });
       this.uiService.setUserUi({ timezone: timezone });
-
-      this.timezoneForm.controls['timezone'].setValue(timezone);
     }
+
+    this.timezoneForm.controls['timezone'].setValue(timezone);
 
     this.searchWordChange();
   }

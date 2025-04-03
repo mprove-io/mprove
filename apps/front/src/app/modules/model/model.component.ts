@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription, from, interval, of } from 'rxjs';
 import {
@@ -129,6 +129,10 @@ export class ModelComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
     })
   );
+
+  word: string;
+
+  filteredDraftsLength: number;
 
   models: ModelState[];
   models$ = this.modelsQuery.select().pipe(
@@ -449,6 +453,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
@@ -474,6 +479,26 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
+
+    let uiState = this.uiQuery.getValue();
+    let timezoneParam = this.route.snapshot.queryParamMap.get('timezone');
+    let structState = this.structQuery.getValue();
+
+    let timezone =
+      structState.allowTimezones === false
+        ? structState.defaultTimezone
+        : common.isDefined(timezoneParam)
+        ? timezoneParam.split('-').join('/')
+        : uiState.timezone;
+
+    if (uiState.timezone !== timezone) {
+      this.uiQuery.updatePart({ timezone: timezone });
+      this.uiService.setUserUi({ timezone: timezone });
+    }
+
+    this.timezoneForm.controls['timezone'].setValue(timezone);
+
+    this.searchWordChange();
 
     let nav: NavState;
     this.navQuery
@@ -634,16 +659,18 @@ export class ModelComponent implements OnInit, OnDestroy {
 
     let timezone = this.timezoneForm.controls['timezone'].value;
 
-    let newMconfig = this.structService.makeMconfig();
-
-    newMconfig.timezone = timezone;
-
     this.uiQuery.updatePart({ timezone: timezone });
     this.uiService.setUserUi({ timezone: timezone });
 
-    this.mconfigService.navCreateTempMconfigAndQuery({
-      newMconfig: newMconfig
-    });
+    if (common.isDefined(this.model?.modelId)) {
+      let newMconfig = this.structService.makeMconfig();
+
+      newMconfig.timezone = timezone;
+
+      this.mconfigService.navCreateTempMconfigAndQuery({
+        newMconfig: newMconfig
+      });
+    }
   }
 
   run() {
@@ -1011,6 +1038,10 @@ ${this.mconfig.storePart?.reqUrlPath}`
     //   this.navigateService.navigateToReportsList();
     // }
   }
+
+  searchWordChange() {}
+  resetSearch() {}
+  deleteDrafts() {}
 
   addChart() {}
 
