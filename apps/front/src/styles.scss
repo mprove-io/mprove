@@ -241,6 +241,18 @@ ngneat-dialog {
   }
 }
 
+.ng-select.model-select .ng-select-container {
+  height: 44px;
+
+  .ng-value-container {
+    margin-top: 2px;
+  }
+
+  .ng-value-container .ng-input > input {
+    margin-top: 3px;
+  }
+}
+
 .ng-select.new-metric-select .ng-select-container {
   height: 44px;
 

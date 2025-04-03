@@ -3,13 +3,58 @@
     <div class="mx-6 mb-6 mt-8 flex min-w-[2px] flex-grow flex-col">
       <div class="flex h-11 flex-row items-center justify-between">
         <div class="flex w-full flex-row items-center">
-          <div class="flex flex-row items-center space-x-5">
+          <div class="flex flex-row items-center">
             <div
               data-cy="modelTitle"
               class="text-gray1 flex items-center self-center text-2xl font-semibold"
             >
               {{ pageTitle }}
             </div>
+
+            <m-view-list-icon
+              class="ml-5 cursor-pointer"
+              [ngClass]="{
+                'text-gray-500': lastUrl === pathChartsList,
+                'text-gray-400': lastUrl !== pathChartsList
+              }"
+              (click)="toggleChartsList()"
+            ></m-view-list-icon>
+
+            <div
+              [tp]="templateNewChart"
+              [tpIsEnabled]="
+                alias === restrictedUserAlias || isExplorer === false
+              "
+              class="ml-5"
+            >
+              <button
+                type="button"
+                data-cy="chartsAddChartButton"
+                class="h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
+                [ngClass]="{
+                  'border-gray-400 text-gray-500 hover:bg-white':
+                    alias !== restrictedUserAlias && isExplorer === true,
+                  'cursor-default border-gray-300 text-gray-400':
+                    alias === restrictedUserAlias || isExplorer === false
+                }"
+                (click)="addChart()"
+                [disabled]="
+                  alias === restrictedUserAlias || isExplorer === false
+                "
+                >New Chart</button
+              >
+            </div>
+
+            <ng-template #templateNewChart>
+              <div *ngIf="alias === restrictedUserAlias"
+                >User is restricted. Sign Up at https://mprove.io to get full
+                access.</div
+              >
+
+              <div *ngIf="alias !== restrictedUserAlias && isExplorer === false"
+                >Explorer role required</div
+              >
+            </ng-template>
 
             <!-- <div class="text-gray1 text-xl">{{
               model?.label | capitalize
@@ -150,7 +195,93 @@
         <div
           class="flex h-full w-1/4 flex-shrink-0 flex-col rounded bg-white shadow"
         >
-          <div class="flex h-11 flex-row items-center">
+          <div
+            class="mt-5 flex h-11 w-full flex-shrink-0 flex-row items-center"
+          >
+            <div class="text-gray1 ml-6 select-none text-lg">Model</div>
+
+            <div class="ml-5 flex w-2 max-w-[400px] flex-1 bg-yellow-200">
+              <form class="w-full" [formGroup]="modelForm">
+                <ng-select
+                  #chartsModelSelect
+                  data-cy="chartsModelSelect"
+                  class="model-select w-full text-base"
+                  [items]="models"
+                  [clearable]="false"
+                  [searchable]="true"
+                  (change)="modelChange()"
+                  (keyup.esc)="
+                    $event.stopImmediatePropagation();
+                    modelTimezoneSelect.blur()
+                  "
+                  (keyup.enter)="
+                    $event.stopImmediatePropagation();
+                    modelTimezoneSelect.blur()
+                  "
+                  appendTo="body"
+                  bindLabel="label"
+                  bindValue="modelId"
+                  formControlName="model"
+                >
+                  <ng-template ng-label-tmp let-item="item">
+                    <div class="truncate">{{ item.label }}</div>
+                  </ng-template>
+
+                  <ng-template ng-option-tmp let-item="item">
+                    <div class="truncate">{{ item.label }}</div>
+                  </ng-template>
+                </ng-select>
+              </form>
+            </div>
+
+            <m-view-list-icon
+              class="ml-5 mr-5 cursor-pointer"
+              [ngClass]="{
+                'text-gray-500': lastUrl === pathChartsList,
+                'text-gray-400': lastUrl !== pathChartsList
+              }"
+              (click)="toggleModelsList()"
+            ></m-view-list-icon>
+
+            <!-- <div
+              [tp]="templateNewModel"
+              [tpIsEnabled]="
+                alias === restrictedUserAlias || isExplorer === false
+              "
+              class="ml-5 mr-6 flex-shrink-0"
+            >
+              <button
+                type="button"
+                data-cy="chartsAddChartButton"
+                class="h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
+                [ngClass]="{
+                  'border-gray-400 text-gray-500 hover:bg-white':
+                    alias !== restrictedUserAlias && isExplorer === true,
+                  'cursor-default border-gray-300 text-gray-400':
+                    alias === restrictedUserAlias || isExplorer === false
+                }"
+                (click)="addModel()"
+                [disabled]="
+                  alias === restrictedUserAlias || isExplorer === false
+                "
+                >New Model</button
+              >
+
+              <ng-template #templateNewModel>
+                <div *ngIf="alias === restrictedUserAlias"
+                  >User is restricted. Sign Up at https://mprove.io to get full
+                  access.</div
+                >
+
+                <div
+                  *ngIf="alias !== restrictedUserAlias && isExplorer === false"
+                  >Explorer role required</div
+                >
+              </ng-template>
+            </div> -->
+          </div>
+
+          <div class="mt-6 flex h-11 flex-row items-center">
             <m-search-icon class="text-gray1 ml-6"></m-search-icon>
 
             <!-- <input
@@ -189,48 +320,10 @@
             </button> -->
           </div>
 
-          <div class="flex h-2 flex-1 flex-col">
-            <div class="mb-5 mt-5 flex h-2 flex-grow flex-col overflow-y-auto"
+          <div class="flex h-2 w-full flex-1 flex-col">
+            <!-- <div class="mb-5 mt-5 flex h-2 flex-grow flex-col overflow-y-auto"
               >Charts list
-            </div>
-          </div>
-
-          <div class="ml-6 mr-10 mt-5 flex h-11 flex-row items-center">
-            <div class="text-gray1 w-[85px] select-none text-base">Model</div>
-
-            <div class="ml-5 flex max-w-[300px] flex-1">
-              <form class="w-full" [formGroup]="modelForm">
-                <ng-select
-                  #chartsModelSelect
-                  data-cy="chartsModelSelect"
-                  class="w-full text-base"
-                  [items]="models"
-                  [clearable]="false"
-                  [searchable]="true"
-                  (change)="modelChange()"
-                  (keyup.esc)="
-                    $event.stopImmediatePropagation();
-                    modelTimezoneSelect.blur()
-                  "
-                  (keyup.enter)="
-                    $event.stopImmediatePropagation();
-                    modelTimezoneSelect.blur()
-                  "
-                  appendTo="body"
-                  bindLabel="label"
-                  bindValue="modelId"
-                  formControlName="model"
-                >
-                  <ng-template ng-label-tmp let-item="item">
-                    <div class="truncate">{{ item.label }}</div>
-                  </ng-template>
-
-                  <ng-template ng-option-tmp let-item="item">
-                    <div class="truncate">{{ item.label }}</div>
-                  </ng-template>
-                </ng-select>
-              </form>
-            </div>
+            </div> -->
           </div>
 
           <div
@@ -255,9 +348,9 @@
                   ></m-chevron-down-icon>
 
                   <div
-                    class="text-gray1 flex cursor-pointer px-5 text-lg font-semibold"
+                    class="text-gray1 flex cursor-pointer pl-3 pr-5 text-lg font-semibold"
                   >
-                    SCHEMA
+                    MODEL FIELDS
                   </div>
                 </div>
 
@@ -969,6 +1062,7 @@
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="uiQuery$ | async"></div>
+<div *ngIf="isExplorer$ | async"></div>
 <div *ngIf="models$ | async"></div>
 <div *ngIf="model$ | async"></div>
 <div *ngIf="mq$ | async"></div>

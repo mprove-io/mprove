@@ -41,6 +41,7 @@ import { constants as frontConstants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
+import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { DataService } from '~front/app/services/data.service';
@@ -74,9 +75,11 @@ export class ModelComponent implements OnInit, OnDestroy {
     this.chartTypeSelectElement?.close();
   }
 
-  restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
-
   pageTitle = frontConstants.MODEL_PAGE_TITLE;
+
+  pathChartsList = common.PATH_CHARTS_LIST;
+
+  restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
 
   modelRunButtonSpinnerName = 'modelRunButtonSpinnerName';
   modelCancelButtonSpinnerName = 'modelCancelButtonSpinnerName';
@@ -115,6 +118,14 @@ export class ModelComponent implements OnInit, OnDestroy {
   uiQuery$ = this.uiQuery.select().pipe(
     tap(ui => {
       this.modelTreeLevels = ui.modelTreeLevels;
+      this.cd.detectChanges();
+    })
+  );
+
+  isExplorer = false;
+  isExplorer$ = this.memberQuery.isExplorer$.pipe(
+    tap(x => {
+      this.isExplorer = x;
       this.cd.detectChanges();
     })
   );
@@ -465,6 +476,7 @@ export class ModelComponent implements OnInit, OnDestroy {
     private dataSizeService: DataSizeService,
     private dataService: DataService,
     private myDialogService: MyDialogService,
+    private memberQuery: MemberQuery,
     private title: Title
   ) {}
 
@@ -967,6 +979,50 @@ ${this.mconfig.storePart?.reqUrlPath}`
       modelTreeLevels: modelTreeLevels
     });
   }
+
+  toggleChartsList() {
+    // this.title.setTitle(this.pageTitle);
+    // if (this.lastUrl === this.pathReportsList) {
+    //   this.navigateService.navigateToReports();
+    // } else {
+    //   this.reportQuery.reset();
+    //   this.uiQuery.updatePart({
+    //     reportSelectedNodes: [],
+    //     gridApi: null,
+    //     gridData: [],
+    //     chartFormulaData: null,
+    //     repChartData: {
+    //       rows: [],
+    //       columns: []
+    //     }
+    //   });
+    //   this.navigateService.navigateToReportsList();
+    // }
+  }
+
+  toggleModelsList() {
+    // this.title.setTitle(this.pageTitle);
+    // if (this.lastUrl === this.pathReportsList) {
+    //   this.navigateService.navigateToReports();
+    // } else {
+    //   this.reportQuery.reset();
+    //   this.uiQuery.updatePart({
+    //     reportSelectedNodes: [],
+    //     gridApi: null,
+    //     gridData: [],
+    //     chartFormulaData: null,
+    //     repChartData: {
+    //       rows: [],
+    //       columns: []
+    //     }
+    //   });
+    //   this.navigateService.navigateToReportsList();
+    // }
+  }
+
+  addChart() {}
+
+  addModel() {}
 
   ngOnDestroy() {
     // console.log('ngOnDestroyModel')

@@ -43,11 +43,7 @@
                   "
                   >New Dashboard</button
                 >
-              </div>
 
-              <div class="flex-grow"></div>
-
-              <div class="text-gray1 flex flex-row items-center text-base">
                 <ng-template #templateNewDashboard>
                   <div *ngIf="alias === restrictedUserAlias"
                     >User is restricted. Sign Up at https://mprove.io to get
@@ -62,6 +58,8 @@
                   >
                 </ng-template>
               </div>
+
+              <div class="flex-grow"></div>
             </div>
 
             <div class="mt-6 flex w-full flex-grow rounded bg-white shadow">
