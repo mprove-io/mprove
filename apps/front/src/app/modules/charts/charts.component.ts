@@ -1011,7 +1011,7 @@ ${this.mconfig.storePart?.reqUrlPath}`
       this.navigateService.navigateToModels();
     } else {
       this.mqQuery.reset();
-      this.modelQuery.reset();
+      // this.modelQuery.reset();
       this.navigateService.navigateToChartsList();
     }
   }
@@ -1023,7 +1023,7 @@ ${this.mconfig.storePart?.reqUrlPath}`
       this.navigateService.navigateToModels();
     } else {
       this.mqQuery.reset();
-      this.modelQuery.reset();
+      // this.modelQuery.reset();
       this.navigateService.navigateToModelsList();
     }
   }

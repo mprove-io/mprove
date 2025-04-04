@@ -320,7 +320,9 @@
             </div> -->
           </div>
 
-          <div class="flex h-11 w-full flex-shrink-0 flex-row items-center">
+          <div
+            class="mt-6 flex h-11 w-full flex-shrink-0 flex-row items-center"
+          >
             <div class="text-gray1 ml-6 select-none text-lg">Model</div>
 
             <div class="ml-5 flex w-2 flex-1">
@@ -356,7 +358,7 @@
             </div>
 
             <m-view-list-icon
-              class="ml-5 cursor-pointer"
+              class="ml-5 mr-9 cursor-pointer"
               [ngClass]="{
                 'text-gray-500': lastUrl === pathModelsList,
                 'text-gray-400': lastUrl !== pathModelsList
@@ -364,7 +366,7 @@
               (click)="toggleModelsList()"
             ></m-view-list-icon>
 
-            <div
+            <!-- <div
               [tp]="templateNewModel"
               [tpIsEnabled]="
                 alias === restrictedUserAlias || isExplorer === false
@@ -399,7 +401,7 @@
                   >Explorer role required</div
                 >
               </ng-template>
-            </div>
+            </div> -->
           </div>
 
           <div
@@ -411,7 +413,7 @@
             <div
               class="text-gray1 mb-2 ml-6 mr-10 flex h-11 select-none flex-row items-center"
             >
-              <div class="flex flex-row items-center">
+              <div class="flex flex-row items-center" *ngIf="!!model?.modelId">
                 <div class="flex flex-row items-center">
                   <div
                     class="text-gray1 flex cursor-pointer pr-5 text-lg font-semibold"
@@ -421,7 +423,6 @@
                 </div>
 
                 <button
-                  *ngIf="!!model?.modelId"
                   class="ml-2 w-[54px] cursor-pointer select-none items-center text-lg"
                   [ngClass]="{
                     'font-semibold': modelTreeLevels === modelTreeLevelsFlat
@@ -432,7 +433,6 @@
                 </button>
 
                 <button
-                  *ngIf="!!model?.modelId"
                   class="ml-2 w-[83px] cursor-pointer select-none py-3 text-lg"
                   [ngClass]="{
                     'font-semibold': modelTreeLevels === modelTreeLevelsNested
@@ -441,6 +441,14 @@
                   >Nested</button
                 >
               </div>
+            </div>
+
+            <div
+              class="ml-6 mr-9 flex flex-col divide-y divide-gray-300"
+              *ngIf="!!model?.modelId"
+            >
+              <div class="flex flex-row"></div>
+              <div class="flex flex-row"></div>
             </div>
 
             <m-model-tree
