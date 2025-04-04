@@ -59,10 +59,10 @@ export class ChartTypeItem {
 }
 
 @Component({
-  selector: 'm-model',
-  templateUrl: './model.component.html'
+  selector: 'm-charts',
+  templateUrl: './charts.component.html'
 })
-export class ModelComponent implements OnInit, OnDestroy {
+export class ChartsComponent implements OnInit, OnDestroy {
   @ViewChild('requestPartTypeSelect', { static: false })
   requestPartTypeSelectElement: NgSelectComponent;
 

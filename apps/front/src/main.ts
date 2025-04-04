@@ -22,9 +22,9 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import { appRoutes } from './app/app-routes';
 import { AppComponent } from './app/app.component';
 import { AuthModule } from './app/modules/auth/auth.module';
+import { ChartsModule } from './app/modules/charts/charts.module';
 import { DashboardsModule } from './app/modules/dashboards/dashboards.module';
 import { FilesModule } from './app/modules/files/files.module';
-import { ModelModule } from './app/modules/model/model.module';
 import { NavModule } from './app/modules/nav/nav.module';
 import { NavbarModule } from './app/modules/navbar/navbar.module';
 import { OrgModule } from './app/modules/org/org.module';
@@ -55,7 +55,7 @@ bootstrapApplication(AppComponent, {
       OrgModule,
       ProjectModule,
       FilesModule,
-      ModelModule,
+      ChartsModule,
       NgxSpinnerModule,
       BrowserAnimationsModule,
       MonacoEditorModule.forRoot({
