@@ -271,7 +271,7 @@
         </div>
       </div>
 
-      <div class="mt-6 flex w-full flex-grow flex-row">
+      <div class="mt-6 flex h-2 w-full flex-1 flex-row">
         <div
           class="flex h-full w-1/4 flex-shrink-0 flex-col rounded bg-white shadow"
         >
@@ -453,25 +453,39 @@
         </div>
 
         <div
-          class="ml-6 flex min-w-[2px] flex-grow flex-col"
+          class="flex h-full flex-1 flex-col"
           *ngIf="
-            lastUrl !== pathChartsList &&
-            lastUrl !== pathModelsList &&
-            (lastUrl === pathCharts || mconfig?.select.length === 0)
+            !(
+              lastUrl !== pathCharts &&
+              lastUrl !== pathChartsList &&
+              lastUrl !== pathModelsList &&
+              mconfig?.select.length > 0
+            )
           "
         >
-          <div
-            class="text-gray1 mb-[80px] flex h-full w-full select-none items-center justify-center text-xl"
-          >
-            Select Chart or Model Fields
-          </div>
-        </div>
+          <div class="ml-6 flex h-full flex-grow">
+            <div
+              class="ml-6 flex min-w-[2px] flex-grow flex-col"
+              *ngIf="
+                lastUrl !== pathChartsList &&
+                lastUrl !== pathModelsList &&
+                (lastUrl === pathCharts || mconfig?.select.length === 0)
+              "
+            >
+              <div
+                class="text-gray1 mb-[80px] flex h-full w-full select-none items-center justify-center text-xl"
+              >
+                Select Chart or Model Fields
+              </div>
+            </div>
 
-        <div
-          class="h-full w-full"
-          *ngIf="lastUrl === pathChartsList || lastUrl === pathModelsList"
-        >
-          <router-outlet></router-outlet>
+            <div
+              class="h-full w-full"
+              *ngIf="lastUrl === pathChartsList || lastUrl === pathModelsList"
+            >
+              <router-outlet></router-outlet>
+            </div>
+          </div>
         </div>
 
         <div
