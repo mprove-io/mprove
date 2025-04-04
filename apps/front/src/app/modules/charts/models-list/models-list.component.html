@@ -37,9 +37,7 @@
         >
           <div class="flex w-9"></div>
           <div class="flex w-1/4">Model</div>
-          <div class="flex w-1/6">
-            {{ showJoins === true ? 'Model Id / Join Alias' : 'Model Id' }}</div
-          >
+          <div class="flex w-1/6"> Model Id</div>
           <div class="flex w-1/6">File</div>
           <div class="flex flex-1 flex-row space-x-5">
             <div class="flex flex-1">Connection</div>
@@ -52,7 +50,7 @@
 
       <div
         class="h-2 flex-1 overflow-y-auto"
-        *ngIf="isShow === true && filteredModels?.length > 0"
+        *ngIf="filteredModels?.length > 0"
       >
         <div
           *ngFor="let item of filteredModels; trackBy: trackByFn"
@@ -164,55 +162,6 @@
                   >
                     {{ user }}
                   </span>
-                </div>
-              </div>
-            </div>
-
-            <div
-              class="mb-5 mr-5 mt-3 flex w-full flex-col items-center space-y-3 px-5 text-base focus:outline-none"
-              *ngIf="showJoins === true"
-            >
-              <div
-                class="flex w-full cursor-default flex-row space-x-5"
-                *ngFor="let node of item.nodes"
-              >
-                <div class="flex w-9 cursor-default"></div>
-
-                <div class="flex w-1/4 truncate pl-5">
-                  <span class="truncate">
-                    {{ node.label }}
-                  </span>
-                </div>
-
-                <div class="flex w-1/6 items-start truncate focus:outline-none">
-                  <div class="flex">
-                    <span class="truncate">
-                      {{ node.id || item.modelId }}
-                    </span>
-                  </div>
-                </div>
-
-                <div
-                  class="flex w-1/6 items-start truncate focus:outline-none"
-                  (click)="goToFile($event, node, item)"
-                >
-                  <div class="flex cursor-pointer hover:text-blue-500">
-                    <span class="truncate">
-                      {{
-                        !!node.viewFilePath
-                          ? node.viewFilePath.split('/')[
-                              node.viewFilePath.split('/').length - 1
-                            ]
-                          : item.modelId
-                      }}
-                    </span>
-                  </div>
-                </div>
-
-                <div class="flex flex-1 flex-row">
-                  <div class="flex flex-1"></div>
-                  <div class="flex flex-1"></div>
-                  <div class="flex flex-1"></div>
                 </div>
               </div>
             </div>

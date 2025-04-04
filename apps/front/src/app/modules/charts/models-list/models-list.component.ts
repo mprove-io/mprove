@@ -20,11 +20,6 @@ export class ModelsListComponent implements OnInit, OnDestroy {
 
   // groups: string[];
 
-  showViewModels = true;
-  showJoins = false;
-
-  isShow = true;
-
   models: common.ModelX[];
   modelsFilteredByWord: common.ModelX[];
   filteredModels: common.ModelX[];
@@ -76,10 +71,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
   makeFilteredModels() {
     let idxs;
 
-    let modelsA =
-      this.showViewModels === true
-        ? this.models
-        : this.models.filter(x => x.isViewModel === false);
+    let modelsA = this.models;
 
     if (common.isDefinedAndNotEmpty(this.word)) {
       let haystack = modelsA.map(x => `${x.label} ${x.modelId}`);
@@ -185,24 +177,6 @@ export class ModelsListComponent implements OnInit, OnDestroy {
       panel: common.PanelEnum.Tree,
       underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
     });
-  }
-
-  refreshShow() {
-    // this.isShow = false;
-    // setTimeout(() => {
-    //   this.isShow = true;
-    // });
-  }
-
-  toggleShowViewModels() {
-    this.showViewModels = !this.showViewModels;
-    this.makeFilteredModels();
-    this.refreshShow();
-  }
-
-  toggleShowJoins() {
-    this.showJoins = !this.showJoins;
-    this.refreshShow();
   }
 
   navigateToModel(item: common.ModelX) {
