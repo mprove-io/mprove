@@ -12,15 +12,16 @@ import { ForgotPasswordComponent } from './modules/auth/password/01-forgot-passw
 import { PasswordResetSentComponent } from './modules/auth/password/02-password-reset-sent/password-reset-sent.component';
 import { UpdatePasswordComponent } from './modules/auth/password/03-update-password/update-password.component';
 import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-password-was-set/new-password-was-set.component';
-import { ChartsComponent } from './modules/charts/charts.component';
 import { DashboardComponent } from './modules/dashboards/dashboard/dashboard.component';
 import { DashboardsListComponent } from './modules/dashboards/dashboards-list/dashboards-list.component';
 import { DashboardsComponent } from './modules/dashboards/dashboards.component';
 import { FileEditorComponent } from './modules/files/file-editor/file-editor.component';
 import { FilesComponent } from './modules/files/files.component';
+import { ChartsListComponent } from './modules/model/charts-list/charts-list.component';
 import { MconfigComponent } from './modules/model/mconfig/mconfig.component';
 import { MdlComponent } from './modules/model/mdl/mdl.component';
 import { ModelComponent } from './modules/model/model.component';
+import { ModelsListComponent } from './modules/model/models-list/models-list.component';
 import { QueryComponent } from './modules/model/query/query.component';
 import { NavComponent } from './modules/nav/nav.component';
 import { NavbarComponent } from './modules/navbar/navbar.component';
@@ -57,7 +58,6 @@ import { ProjectResolver } from './resolvers/project.resolver';
 import { RepoIdResolver } from './resolvers/repo-id.resolver';
 import { RepoStructFilesResolver } from './resolvers/repo-struct-files.resolver';
 import { RepoStructResolver } from './resolvers/repo-struct.resolver';
-import { StructChartsResolver } from './resolvers/struct-charts.resolver';
 import { StructDashboardResolver } from './resolvers/struct-dashboard.resolver';
 import { StructDashboardsResolver } from './resolvers/struct-dashboards.resolver';
 import { StructModelResolver } from './resolvers/struct-model.resolver';
@@ -223,22 +223,19 @@ export const appRoutes: Routes = [
                               }
                             ]
                           },
-
-                          {
-                            component: ChartsComponent,
-                            path: common.PATH_CHARTS0,
-                            resolve: [StructChartsResolver]
-                          },
-                          // {
-                          //   component: ModelsComponent,
-                          //   path: common.PATH_MODELS,
-                          //   resolve: [StructModelsResolver]
-                          // },
                           {
                             component: ModelComponent,
                             path: common.PATH_CHARTS,
                             resolve: [StructModelsResolver],
                             children: [
+                              {
+                                component: ChartsListComponent,
+                                path: common.PATH_CHARTS_LIST
+                              },
+                              {
+                                component: ModelsListComponent,
+                                path: common.PATH_MODELS_LIST
+                              },
                               {
                                 component: MdlComponent,
                                 path:

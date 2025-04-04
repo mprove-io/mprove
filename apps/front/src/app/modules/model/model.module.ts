@@ -1,4 +1,5 @@
 import { TreeModule } from '@ali-hm/angular-tree-component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -10,6 +11,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
 import { ChartOptionsComponent } from './chart-options/chart-options.component';
+import { ChartsListComponent } from './charts-list/charts-list.component';
 import { JsViewerComponent } from './js-viewer/js-viewer.component';
 import { JsonViewerComponent } from './json-viewer/json-viewer.component';
 import { MconfigComponent } from './mconfig/mconfig.component';
@@ -18,6 +20,7 @@ import { ModelFiltersComponent } from './model-filters/model-filters.component';
 import { FieldOptionsComponent } from './model-tree/field-options/field-options.component';
 import { ModelTreeComponent } from './model-tree/model-tree.component';
 import { ModelComponent } from './model.component';
+import { ModelsListComponent } from './models-list/models-list.component';
 import { PanelTitleComponent } from './panel-title/panel-title.component';
 import { QueryOptionsComponent } from './query-options/query-options.component';
 import { QueryComponent } from './query/query.component';
@@ -26,6 +29,8 @@ import { SqlComponent } from './sql/sql.component';
 @NgModule({
   declarations: [
     ModelComponent,
+    ChartsListComponent,
+    ModelsListComponent,
     MdlComponent,
     ModelTreeComponent,
     MconfigComponent,
@@ -50,7 +55,8 @@ import { SqlComponent } from './sql/sql.component';
     UiSwitchModule,
     NgxSpinnerModule,
     TippyDirective,
-    MonacoEditorModule
+    MonacoEditorModule,
+    ScrollingModule
   ]
 })
 export class ModelModule {}

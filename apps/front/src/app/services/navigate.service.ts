@@ -160,30 +160,32 @@ export class NavigateService {
   navigateToCharts(item?: { navParts?: string[]; extra?: any }) {
     let { navParts, extra } = item;
 
-    let repoId =
-      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
+    // TODO: navigateToCharts
 
-    let navTo = common.isDefined(navParts)
-      ? navParts
-      : [
-          common.PATH_ORG,
-          this.nav.orgId,
-          common.PATH_PROJECT,
-          this.nav.projectId,
-          common.PATH_REPO,
-          repoId,
-          common.PATH_BRANCH,
-          this.nav.branchId,
-          common.PATH_ENV,
-          this.nav.envId,
-          common.PATH_CHARTS0
-        ];
+    // let repoId =
+    //   this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
-    if (common.isDefined(extra)) {
-      this.router.navigate(navTo, extra);
-    } else {
-      this.router.navigate(navTo);
-    }
+    // let navTo = common.isDefined(navParts)
+    //   ? navParts
+    //   : [
+    //       common.PATH_ORG,
+    //       this.nav.orgId,
+    //       common.PATH_PROJECT,
+    //       this.nav.projectId,
+    //       common.PATH_REPO,
+    //       repoId,
+    //       common.PATH_BRANCH,
+    //       this.nav.branchId,
+    //       common.PATH_ENV,
+    //       this.nav.envId,
+    //       common.PATH_CHARTS
+    //     ];
+
+    // if (common.isDefined(extra)) {
+    //   this.router.navigate(navTo, extra);
+    // } else {
+    //   this.router.navigate(navTo);
+    // }
   }
 
   windowOpenModels() {
@@ -223,6 +225,64 @@ export class NavigateService {
       common.PATH_ENV,
       this.nav.envId,
       common.PATH_CHARTS
+    ];
+
+    this.router.navigate(navTo);
+  }
+
+  navigateToChartsList() {
+    let userId;
+    this.userQuery.userId$
+      .pipe(
+        tap(x => (userId = x)),
+        take(1)
+      )
+      .subscribe();
+
+    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+
+    let navTo = [
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
+      common.PATH_CHARTS,
+      common.PATH_CHARTS_LIST
+    ];
+
+    this.router.navigate(navTo);
+  }
+
+  navigateToModelsList() {
+    let userId;
+    this.userQuery.userId$
+      .pipe(
+        tap(x => (userId = x)),
+        take(1)
+      )
+      .subscribe();
+
+    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+
+    let navTo = [
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
+      common.PATH_CHARTS,
+      common.PATH_MODELS_LIST
     ];
 
     this.router.navigate(navTo);
@@ -300,6 +360,8 @@ export class NavigateService {
   }
 
   reloadCharts() {
+    // TODO: check reloadCharts logic
+
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
@@ -328,7 +390,7 @@ export class NavigateService {
         this.nav.branchId,
         common.PATH_ENV,
         this.nav.envId,
-        common.PATH_CHARTS0
+        common.PATH_CHARTS
       ])
     );
   }

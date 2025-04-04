@@ -358,8 +358,8 @@
             <m-view-list-icon
               class="ml-5 cursor-pointer"
               [ngClass]="{
-                'text-gray-500': lastUrl === pathChartsList,
-                'text-gray-400': lastUrl !== pathChartsList
+                'text-gray-500': lastUrl === pathModelsList,
+                'text-gray-400': lastUrl !== pathModelsList
               }"
               (click)="toggleModelsList()"
             ></m-view-list-icon>
@@ -454,15 +454,12 @@
 
         <div
           class="ml-6 flex min-w-[2px] flex-grow flex-col"
-          *ngIf="lastUrl === pathCharts || mconfig?.select.length === 0"
+          *ngIf="
+            lastUrl !== pathChartsList &&
+            lastUrl !== pathModelsList &&
+            (lastUrl === pathCharts || mconfig?.select.length === 0)
+          "
         >
-          <!-- <div
-            class="text-gray1 mb-[80px] flex h-full w-full select-none items-center justify-center text-xl"
-          >
-            {{
-              lastUrl === pathCharts ? 'Select Chart' : 'Select Model Fields'
-            }}
-          </div> -->
           <div
             class="text-gray1 mb-[80px] flex h-full w-full select-none items-center justify-center text-xl"
           >
@@ -471,8 +468,20 @@
         </div>
 
         <div
+          class="h-full w-full"
+          *ngIf="lastUrl === pathChartsList || lastUrl === pathModelsList"
+        >
+          <router-outlet></router-outlet>
+        </div>
+
+        <div
           class="ml-6 flex min-w-[2px] flex-grow flex-col space-y-2"
-          *ngIf="lastUrl !== pathCharts && mconfig?.select.length > 0"
+          *ngIf="
+            lastUrl !== pathCharts &&
+            lastUrl !== pathChartsList &&
+            lastUrl !== pathModelsList &&
+            mconfig?.select.length > 0
+          "
         >
           <div
             class="w-full rounded bg-white shadow"

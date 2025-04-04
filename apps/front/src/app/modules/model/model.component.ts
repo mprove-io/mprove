@@ -79,6 +79,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   pathCharts = common.PATH_CHARTS;
   pathChartsList = common.PATH_CHARTS_LIST;
+  pathModelsList = common.PATH_MODELS_LIST;
 
   restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
 
@@ -1004,43 +1005,27 @@ ${this.mconfig.storePart?.reqUrlPath}`
   }
 
   toggleChartsList() {
-    // this.title.setTitle(this.pageTitle);
-    // if (this.lastUrl === this.pathReportsList) {
-    //   this.navigateService.navigateToReports();
-    // } else {
-    //   this.reportQuery.reset();
-    //   this.uiQuery.updatePart({
-    //     reportSelectedNodes: [],
-    //     gridApi: null,
-    //     gridData: [],
-    //     chartFormulaData: null,
-    //     repChartData: {
-    //       rows: [],
-    //       columns: []
-    //     }
-    //   });
-    //   this.navigateService.navigateToReportsList();
-    // }
+    this.title.setTitle(this.pageTitle);
+
+    if (this.lastUrl === this.pathChartsList) {
+      this.navigateService.navigateToModels();
+    } else {
+      this.mqQuery.reset();
+      this.modelQuery.reset();
+      this.navigateService.navigateToChartsList();
+    }
   }
 
   toggleModelsList() {
-    // this.title.setTitle(this.pageTitle);
-    // if (this.lastUrl === this.pathReportsList) {
-    //   this.navigateService.navigateToReports();
-    // } else {
-    //   this.reportQuery.reset();
-    //   this.uiQuery.updatePart({
-    //     reportSelectedNodes: [],
-    //     gridApi: null,
-    //     gridData: [],
-    //     chartFormulaData: null,
-    //     repChartData: {
-    //       rows: [],
-    //       columns: []
-    //     }
-    //   });
-    //   this.navigateService.navigateToReportsList();
-    // }
+    this.title.setTitle(this.pageTitle);
+
+    if (this.lastUrl === this.pathModelsList) {
+      this.navigateService.navigateToModels();
+    } else {
+      this.mqQuery.reset();
+      this.modelQuery.reset();
+      this.navigateService.navigateToModelsList();
+    }
   }
 
   searchWordChange() {}

@@ -35,10 +35,10 @@ class ModelXWithTotalCharts extends common.ModelX {
 }
 
 @Component({
-  selector: 'm-charts',
-  templateUrl: './charts.component.html'
+  selector: 'm-charts-list',
+  templateUrl: './charts-list.component.html'
 })
-export class ChartsComponent implements OnInit, OnDestroy {
+export class ChartsListComponent implements OnInit, OnDestroy {
   restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
 
   pageTitle = constants.CHARTS_PAGE_TITLE;
@@ -341,12 +341,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
       .toString();
 
     this.location.replaceState(url);
-  }
-
-  newChart() {
-    this.myDialogService.showNewChart({
-      models: this.hasAccessModels
-    });
   }
 
   refreshShow() {

@@ -4,10 +4,6 @@ import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
 import {
-  NewChartDialogComponent,
-  NewChartDialogData
-} from '../modules/charts/new-chart-dialog/new-chart-dialog.component';
-import {
   DashboardAddFilterDialogComponent,
   DashboardAddFilterDialogData
 } from '../modules/dashboards/dashboard-add-filter-dialog/dashboard-add-filter-dialog.component';
@@ -421,15 +417,6 @@ export class MyDialogService {
       closeButton: false,
       data: item,
       width: 640
-    });
-  }
-
-  showNewChart(item: NewChartDialogData): void {
-    this.dialogService.open(NewChartDialogComponent, {
-      enableClose: false,
-      closeButton: true,
-      data: item,
-      height: '50vh'
     });
   }
 

@@ -138,8 +138,6 @@ export class EnvSelectComponent {
 
     if (urlParts[11] === common.PATH_CHARTS) {
       navArray.push(common.PATH_CHARTS);
-    } else if (urlParts[11] === common.PATH_CHARTS0) {
-      navArray.push(common.PATH_CHARTS0);
     } else if (urlParts[11] === common.PATH_DASHBOARDS) {
       navArray.push(common.PATH_DASHBOARDS);
       navArray.push(common.PATH_DASHBOARD);

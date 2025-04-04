@@ -94,18 +94,6 @@
         [disabled]="!nav || !nav.projectId || needSave === true"
         >Reports</button
       >
-
-      <button
-        class="text-gray1 block flex h-10 w-[80px] items-center justify-center text-left text-base focus:outline-none"
-        [ngClass]="{
-          'cursor-default text-gray-400':
-            !nav || !nav.projectId || needSave === true,
-          'font-semibold': isCharts0RouteActive === true
-        }"
-        (click)="navigateCharts0()"
-        [disabled]="!nav || !nav.projectId || needSave === true"
-        >Charts0</button
-      >
     </div>
 
     <div class="flex flex-1"></div>

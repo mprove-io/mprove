@@ -12,10 +12,10 @@ import { constants } from '~front/barrels/constants';
 import uFuzzy from '@leeoniya/ufuzzy';
 
 @Component({
-  selector: 'm-models',
-  templateUrl: './models.component.html'
+  selector: 'm-models-list',
+  templateUrl: './models-list.component.html'
 })
-export class ModelsComponent implements OnInit, OnDestroy {
+export class ModelsListComponent implements OnInit, OnDestroy {
   pageTitle = constants.MODELS_PAGE_TITLE;
 
   // groups: string[];

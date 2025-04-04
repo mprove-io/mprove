@@ -39,7 +39,6 @@ export class NavbarComponent implements OnInit {
   isChartsRouteActive: boolean;
   isDashboardsRouteActive: boolean;
   isReportsRouteActive: boolean;
-  isCharts0RouteActive: boolean;
 
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
@@ -93,9 +92,6 @@ export class NavbarComponent implements OnInit {
     this.isReportsRouteActive =
       url.split('?')[0]?.split('/')[11] === constants.PATH_REPORTS;
 
-    this.isCharts0RouteActive =
-      url.split('?')[0]?.split('/')[11] === constants.PATH_CHARTS0;
-
     this.cd.detectChanges();
   }
 
@@ -133,41 +129,6 @@ export class NavbarComponent implements OnInit {
       this.nav.envId,
       common.PATH_CHARTS
     ]);
-  }
-
-  navigateCharts0() {
-    if (this.isCharts0RouteActive === true) {
-      return;
-    }
-
-    let userId;
-    this.userQuery.userId$
-      .pipe(
-        tap(x => (userId = x)),
-        take(1)
-      )
-      .subscribe();
-
-    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
-
-    let uiState = this.uiQuery.getValue();
-
-    this.router.navigate(
-      [
-        common.PATH_ORG,
-        this.nav.orgId,
-        common.PATH_PROJECT,
-        this.nav.projectId,
-        common.PATH_REPO,
-        repoId,
-        common.PATH_BRANCH,
-        this.nav.branchId,
-        common.PATH_ENV,
-        this.nav.envId,
-        common.PATH_CHARTS0
-      ],
-      { queryParams: { timezone: uiState.timezone.split('/').join('-') } }
-    );
   }
 
   navigateDashboards() {
