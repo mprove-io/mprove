@@ -77,6 +77,7 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   pageTitle = frontConstants.MODEL_PAGE_TITLE;
 
+  pathCharts = common.PATH_CHARTS;
   pathChartsList = common.PATH_CHARTS_LIST;
 
   restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
@@ -169,7 +170,7 @@ export class ModelComponent implements OnInit, OnDestroy {
     })
   );
 
-  isShow = true;
+  // isShow = true;
 
   filtersIsExpanded = false;
   chartIsExpanded = true;
@@ -479,6 +480,9 @@ export class ModelComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
+
+    let ar = this.router.url.split('?')[0].split('/');
+    this.lastUrl = ar[ar.length - 1];
 
     let uiState = this.uiQuery.getValue();
     let timezoneParam = this.route.snapshot.queryParamMap.get('timezone');

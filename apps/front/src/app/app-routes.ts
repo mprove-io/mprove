@@ -236,7 +236,7 @@ export const appRoutes: Routes = [
                           // },
                           {
                             component: ModelComponent,
-                            path: common.PATH_CHARTS_AND_MODELS,
+                            path: common.PATH_CHARTS,
                             resolve: [StructModelsResolver],
                             children: [
                               {

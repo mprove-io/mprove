@@ -68,7 +68,7 @@ export class NavigateService {
       this.nav.branchId,
       common.PATH_ENV,
       this.nav.envId,
-      common.PATH_CHARTS_AND_MODELS,
+      common.PATH_CHARTS,
       common.PATH_MODEL,
       common.isDefined(modelId) ? modelId : this.model.modelId,
       common.PATH_MCONFIG,
@@ -95,7 +95,7 @@ export class NavigateService {
       this.nav.branchId,
       common.PATH_ENV,
       this.nav.envId,
-      common.PATH_CHARTS_AND_MODELS,
+      common.PATH_CHARTS,
       common.PATH_MODEL,
       toModelId,
       common.PATH_MCONFIG,
@@ -201,7 +201,7 @@ export class NavigateService {
       this.nav.branchId,
       common.PATH_ENV,
       this.nav.envId,
-      common.PATH_CHARTS_AND_MODELS
+      common.PATH_CHARTS
     ];
 
     window.open(navTo.join('/'), '_self');
@@ -222,7 +222,7 @@ export class NavigateService {
       this.nav.branchId,
       common.PATH_ENV,
       this.nav.envId,
-      common.PATH_CHARTS_AND_MODELS
+      common.PATH_CHARTS
     ];
 
     this.router.navigate(navTo);

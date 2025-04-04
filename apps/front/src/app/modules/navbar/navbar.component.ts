@@ -38,8 +38,8 @@ export class NavbarComponent implements OnInit {
   isFilesRouteActive: boolean;
   isChartsRouteActive: boolean;
   isDashboardsRouteActive: boolean;
-  isModelsRouteActive: boolean;
   isReportsRouteActive: boolean;
+  isCharts0RouteActive: boolean;
 
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
@@ -81,18 +81,20 @@ export class NavbarComponent implements OnInit {
   }
 
   checkUrls(url: string) {
-    this.isFilesRouteActive = url.split('/')[11] === constants.PATH_FILES;
+    this.isFilesRouteActive =
+      url.split('?')[0]?.split('/')[11] === constants.PATH_FILES;
 
     this.isChartsRouteActive =
-      url.split('?')[0]?.split('/')[11] === constants.PATH_CHARTS0;
+      url.split('?')[0]?.split('/')[11] === constants.PATH_CHARTS;
 
     this.isDashboardsRouteActive =
       url.split('?')[0]?.split('/')[11] === constants.PATH_DASHBOARDS;
 
-    this.isModelsRouteActive =
-      url.split('/')[11] === constants.PATH_CHARTS_AND_MODELS;
+    this.isReportsRouteActive =
+      url.split('?')[0]?.split('/')[11] === constants.PATH_REPORTS;
 
-    this.isReportsRouteActive = url.split('/')[11] === constants.PATH_REPORTS;
+    this.isCharts0RouteActive =
+      url.split('?')[0]?.split('/')[11] === constants.PATH_CHARTS0;
 
     this.cd.detectChanges();
   }
@@ -103,7 +105,11 @@ export class NavbarComponent implements OnInit {
     this.uiQuery.updatePart({ panel: common.PanelEnum.Tree });
   }
 
-  navigateModels() {
+  navigateCharts() {
+    if (this.isChartsRouteActive === true) {
+      return;
+    }
+
     let userId;
     this.userQuery.userId$
       .pipe(
@@ -125,11 +131,15 @@ export class NavbarComponent implements OnInit {
       this.nav.branchId,
       common.PATH_ENV,
       this.nav.envId,
-      common.PATH_CHARTS_AND_MODELS
+      common.PATH_CHARTS
     ]);
   }
 
-  navigateCharts() {
+  navigateCharts0() {
+    if (this.isCharts0RouteActive === true) {
+      return;
+    }
+
     let userId;
     this.userQuery.userId$
       .pipe(

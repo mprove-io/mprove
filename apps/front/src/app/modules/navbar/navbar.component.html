@@ -64,9 +64,9 @@
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,
-          'font-semibold': isModelsRouteActive === true
+          'font-semibold': isChartsRouteActive === true
         }"
-        (click)="navigateModels()"
+        (click)="navigateCharts()"
         [disabled]="!nav || !nav.projectId || needSave === true"
         >Charts</button
       >
@@ -100,9 +100,9 @@
         [ngClass]="{
           'cursor-default text-gray-400':
             !nav || !nav.projectId || needSave === true,
-          'font-semibold': isChartsRouteActive === true
+          'font-semibold': isCharts0RouteActive === true
         }"
-        (click)="navigateCharts()"
+        (click)="navigateCharts0()"
         [disabled]="!nav || !nav.projectId || needSave === true"
         >Charts0</button
       >

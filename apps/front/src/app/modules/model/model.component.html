@@ -25,7 +25,7 @@
               [tpIsEnabled]="
                 alias === restrictedUserAlias || isExplorer === false
               "
-              class="ml-10"
+              class="ml-5"
             >
               <button
                 type="button"
@@ -57,83 +57,91 @@
             </ng-template>
           </div>
 
-          <div class="mb-5 ml-6 mr-10 mt-5 flex h-11 flex-row items-center">
-            <div
-              class="ml-5 flex cursor-pointer flex-row items-center"
-              (click)="toggleFormat()"
-            >
+          <div
+            class="flex h-11 flex-1 flex-row items-center"
+            *ngIf="lastUrl !== pathCharts && mconfig?.select.length > 0"
+          >
+            <div class="mb-5 ml-6 mr-10 mt-5 flex h-11 flex-row items-center">
               <div
-                class="text-gray1 flex h-9 select-none items-center text-base"
-                >Format</div
+                class="ml-5 flex cursor-pointer flex-row items-center"
+                (click)="toggleFormat()"
               >
-
-              <ui-switch class="ml-5" [checked]="isFormat"></ui-switch>
-            </div>
-
-            <div class="text-gray1 ml-10 select-none text-base">Limit</div>
-
-            <div [formGroup]="limitForm" class="ml-5 flex flex-col items-start">
-              <div class="h-6"></div>
-              <input
-                autocomplete="off"
-                spellcheck="false"
-                data-cy="modelLimitInput"
-                class="form-input border-gray3 focus:border-blue3 h-[36px] w-32 rounded"
-                [ngClass]="{
-                  'border-red-600':
-                    limitForm.controls['limit'].invalid &&
-                    limitForm.controls['limit'].touched
-                }"
-                formControlName="limit"
-                (blur)="limitBlur()"
-              />
-              <m-validation
-                [control]="limitForm.controls['limit']"
-              ></m-validation>
-            </div>
-
-            <div class="text-gray1 ml-10 select-none text-base">Timezone</div>
-
-            <div class="ml-5 flex w-[260px] flex-1">
-              <form
-                class="w-full"
-                [formGroup]="timezoneForm"
-                tp="Timezone change is not allowed"
-                [tpIsEnabled]="
-                  timezoneForm.controls['timezone'].disabled === true
-                "
-              >
-                <ng-select
-                  #modelTimezoneSelect
-                  data-cy="modelTimezoneSelect"
-                  class="w-full text-base"
-                  [items]="timezones"
-                  [clearable]="false"
-                  [searchable]="true"
-                  [searchFn]="timezoneSearchFn"
-                  (change)="timezoneChange()"
-                  (keyup.esc)="
-                    $event.stopImmediatePropagation();
-                    modelTimezoneSelect.blur()
-                  "
-                  (keyup.enter)="
-                    $event.stopImmediatePropagation();
-                    modelTimezoneSelect.blur()
-                  "
-                  appendTo="body"
-                  bindLabel="label"
-                  bindValue="value"
-                  formControlName="timezone"
+                <div
+                  class="text-gray1 flex h-9 select-none items-center text-base"
+                  >Format</div
                 >
-                  <ng-template ng-label-tmp let-item="item">
-                    <div class="truncate">{{ item.label }}</div>
-                  </ng-template>
 
-                  <ng-template ng-option-tmp let-item="item">
-                    <div class="truncate">{{ item.label }}</div>
-                  </ng-template>
-                </ng-select>
-              </form>
+                <ui-switch class="ml-5" [checked]="isFormat"></ui-switch>
+              </div>
+
+              <div class="text-gray1 ml-10 select-none text-base">Limit</div>
+
+              <div
+                [formGroup]="limitForm"
+                class="ml-5 flex flex-col items-start"
+              >
+                <div class="h-6"></div>
+                <input
+                  autocomplete="off"
+                  spellcheck="false"
+                  data-cy="modelLimitInput"
+                  class="form-input border-gray3 focus:border-blue3 h-[36px] w-32 rounded"
+                  [ngClass]="{
+                    'border-red-600':
+                      limitForm.controls['limit'].invalid &&
+                      limitForm.controls['limit'].touched
+                  }"
+                  formControlName="limit"
+                  (blur)="limitBlur()"
+                />
+                <m-validation
+                  [control]="limitForm.controls['limit']"
+                ></m-validation>
+              </div>
+
+              <div class="text-gray1 ml-10 select-none text-base">Timezone</div>
+
+              <div class="ml-5 flex w-[260px] flex-1">
+                <form
+                  class="w-full"
+                  [formGroup]="timezoneForm"
+                  tp="Timezone change is not allowed"
+                  [tpIsEnabled]="
+                    timezoneForm.controls['timezone'].disabled === true
+                  "
+                >
+                  <ng-select
+                    #modelTimezoneSelect
+                    data-cy="modelTimezoneSelect"
+                    class="w-full text-base"
+                    [items]="timezones"
+                    [clearable]="false"
+                    [searchable]="true"
+                    [searchFn]="timezoneSearchFn"
+                    (change)="timezoneChange()"
+                    (keyup.esc)="
+                      $event.stopImmediatePropagation();
+                      modelTimezoneSelect.blur()
+                    "
+                    (keyup.enter)="
+                      $event.stopImmediatePropagation();
+                      modelTimezoneSelect.blur()
+                    "
+                    appendTo="body"
+                    bindLabel="label"
+                    bindValue="value"
+                    formControlName="timezone"
+                  >
+                    <ng-template ng-label-tmp let-item="item">
+                      <div class="truncate">{{ item.label }}</div>
+                    </ng-template>
+
+                    <ng-template ng-option-tmp let-item="item">
+                      <div class="truncate">{{ item.label }}</div>
+                    </ng-template>
+                  </ng-select>
+                </form>
+              </div>
             </div>
 
             <div
@@ -146,97 +154,56 @@
             >
               <m-exclamation-icon></m-exclamation-icon>
             </div>
-          </div>
 
-          <div class="flex-grow"></div>
+            <div class="flex-grow"></div>
 
-          <div class="text-gray1 mr-9 flex flex-row items-center text-base">
-            <!-- <div *ngIf="isRunningDry === true">Calculating ... </div> -->
-            <!-- <div *ngIf="isRunning === true">Running ... </div> -->
-            <!-- <div *ngIf="isCanceling === true">Canceling ... </div> -->
+            <div class="text-gray1 mr-9 flex flex-row items-center text-base">
+              <!-- <div *ngIf="isRunningDry === true">Calculating ... </div> -->
+              <!-- <div *ngIf="isRunning === true">Running ... </div> -->
+              <!-- <div *ngIf="isCanceling === true">Canceling ... </div> -->
 
-            <div *ngIf="!!dryQueryEstimate"
-              >Estimate - {{ dryDataSize }} - {{ dryTimeAgo$ | async }}
-            </div>
-
-            <m-query-status
-              *ngIf="!dryQueryEstimate"
-              [query]="query"
-              [showDataRowsLength]="true"
-              [showLastCompleteDuration]="true"
-              [completedWord]="'Completed'"
-            ></m-query-status>
-
-            <div
-              class="ml-5 flex cursor-pointer flex-row items-center"
-              (click)="toggleAutoRun()"
-            >
-              <ui-switch [checked]="isAutoRun"></ui-switch>
-
-              <div
-                class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
-                >Auto Run</div
-              >
-            </div>
-
-            <button
-              type="button"
-              *ngIf="query?.status === queryStatusEnum.Running"
-              data-cy="modelCancelButton"
-              class="ml-5 flex h-12 w-24 items-center justify-center rounded bg-red-600 py-2 text-base font-medium text-white focus:outline-none"
-              [ngClass]="{
-                'cursor-default': isCancelButtonPressed === true
-              }"
-              (click)="cancel()"
-              [disabled]="isCancelButtonPressed === true"
-            >
-              <div *ngIf="isCancelButtonPressed === false">Cancel</div>
-              <div
-                *ngIf="isCancelButtonPressed === true"
-                class="relative flex h-9 w-9 flex-shrink-0"
-              >
-                <ngx-spinner
-                  [name]="modelCancelButtonSpinnerName"
-                  color="rgba(255, 255, 255, 1)"
-                  bdColor="rgba(0, 0, 0, 0)"
-                  size="default"
-                  type="ball-clip-rotate"
-                  [fullScreen]="false"
-                  [disableAnimation]="true"
-                  [zIndex]="99998"
-                >
-                </ngx-spinner>
+              <div *ngIf="!!dryQueryEstimate"
+                >Estimate - {{ dryDataSize }} - {{ dryTimeAgo$ | async }}
               </div>
-            </button>
 
-            <div
-              *ngIf="query?.status !== queryStatusEnum.Running"
-              tp="Select Model Fields"
-              class="ml-5"
-              [tpIsEnabled]="mconfig?.select.length === 0"
-            >
+              <m-query-status
+                *ngIf="!dryQueryEstimate"
+                [query]="query"
+                [showDataRowsLength]="true"
+                [showLastCompleteDuration]="true"
+                [completedWord]="'Completed'"
+              ></m-query-status>
+
+              <div
+                class="ml-5 flex cursor-pointer flex-row items-center"
+                (click)="toggleAutoRun()"
+              >
+                <ui-switch [checked]="isAutoRun"></ui-switch>
+
+                <div
+                  class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
+                  >Auto Run</div
+                >
+              </div>
+
               <button
                 type="button"
-                data-cy="modelRunButton"
-                class="flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
+                *ngIf="query?.status === queryStatusEnum.Running"
+                data-cy="modelCancelButton"
+                class="ml-5 flex h-12 w-24 items-center justify-center rounded bg-red-600 py-2 text-base font-medium text-white focus:outline-none"
                 [ngClass]="{
-                  'bg-blue3': mconfig?.select.length > 0,
-                  'cursor-default':
-                    mconfig?.select.length === 0 || isRunButtonPressed === true,
-                  'bg-gray-400': mconfig?.select.length === 0
+                  'cursor-default': isCancelButtonPressed === true
                 }"
-                (click)="run()"
-                [disabled]="
-                  mconfig?.select.length === 0 || isRunButtonPressed === true
-                "
+                (click)="cancel()"
+                [disabled]="isCancelButtonPressed === true"
               >
-                <div *ngIf="isRunButtonPressed === false">Run</div>
+                <div *ngIf="isCancelButtonPressed === false">Cancel</div>
                 <div
-                  *ngIf="isRunButtonPressed === true"
+                  *ngIf="isCancelButtonPressed === true"
                   class="relative flex h-9 w-9 flex-shrink-0"
                 >
                   <ngx-spinner
-                    [name]="modelRunButtonSpinnerName"
+                    [name]="modelCancelButtonSpinnerName"
                     color="rgba(255, 255, 255, 1)"
                     bdColor="rgba(0, 0, 0, 0)"
                     size="default"
@@ -248,9 +215,50 @@
                   </ngx-spinner>
                 </div>
               </button>
-            </div>
 
-            <!-- <div class="relative ml-5">
+              <div
+                *ngIf="query?.status !== queryStatusEnum.Running"
+                tp="Select Model Fields"
+                class="ml-5"
+                [tpIsEnabled]="mconfig?.select.length === 0"
+              >
+                <button
+                  type="button"
+                  data-cy="modelRunButton"
+                  class="flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
+                  [ngClass]="{
+                    'bg-blue3': mconfig?.select.length > 0,
+                    'cursor-default':
+                      mconfig?.select.length === 0 ||
+                      isRunButtonPressed === true,
+                    'bg-gray-400': mconfig?.select.length === 0
+                  }"
+                  (click)="run()"
+                  [disabled]="
+                    mconfig?.select.length === 0 || isRunButtonPressed === true
+                  "
+                >
+                  <div *ngIf="isRunButtonPressed === false">Run</div>
+                  <div
+                    *ngIf="isRunButtonPressed === true"
+                    class="relative flex h-9 w-9 flex-shrink-0"
+                  >
+                    <ngx-spinner
+                      [name]="modelRunButtonSpinnerName"
+                      color="rgba(255, 255, 255, 1)"
+                      bdColor="rgba(0, 0, 0, 0)"
+                      size="default"
+                      type="ball-clip-rotate"
+                      [fullScreen]="false"
+                      [disableAnimation]="true"
+                      [zIndex]="99998"
+                    >
+                    </ngx-spinner>
+                  </div>
+                </button>
+              </div>
+
+              <!-- <div class="relative ml-5">
               <m-query-options
                 [showRunDryButton]="
                   query?.connectionType === connectionTypeEnum.BigQuery
@@ -258,6 +266,7 @@
                 (runDryEvent)="runDry()"
               ></m-query-options>
             </div> -->
+            </div>
           </div>
         </div>
       </div>
@@ -325,12 +334,10 @@
                   [searchable]="true"
                   (change)="modelChange()"
                   (keyup.esc)="
-                    $event.stopImmediatePropagation();
-                    modelTimezoneSelect.blur()
+                    $event.stopImmediatePropagation(); chartsModelSelect.blur()
                   "
                   (keyup.enter)="
-                    $event.stopImmediatePropagation();
-                    modelTimezoneSelect.blur()
+                    $event.stopImmediatePropagation(); chartsModelSelect.blur()
                   "
                   appendTo="body"
                   bindLabel="label"
@@ -414,7 +421,7 @@
                 </div>
 
                 <button
-                  *ngIf="schemaIsExpanded"
+                  *ngIf="!!model?.modelId"
                   class="ml-2 w-[54px] cursor-pointer select-none items-center text-lg"
                   [ngClass]="{
                     'font-semibold': modelTreeLevels === modelTreeLevelsFlat
@@ -425,7 +432,7 @@
                 </button>
 
                 <button
-                  *ngIf="schemaIsExpanded"
+                  *ngIf="!!model?.modelId"
                   class="ml-2 w-[83px] cursor-pointer select-none py-3 text-lg"
                   [ngClass]="{
                     'font-semibold': modelTreeLevels === modelTreeLevelsNested
@@ -446,8 +453,26 @@
         </div>
 
         <div
+          class="ml-6 flex min-w-[2px] flex-grow flex-col"
+          *ngIf="lastUrl === pathCharts || mconfig?.select.length === 0"
+        >
+          <!-- <div
+            class="text-gray1 mb-[80px] flex h-full w-full select-none items-center justify-center text-xl"
+          >
+            {{
+              lastUrl === pathCharts ? 'Select Chart' : 'Select Model Fields'
+            }}
+          </div> -->
+          <div
+            class="text-gray1 mb-[80px] flex h-full w-full select-none items-center justify-center text-xl"
+          >
+            Select Chart or Model Fields
+          </div>
+        </div>
+
+        <div
           class="ml-6 flex min-w-[2px] flex-grow flex-col space-y-2"
-          *ngIf="isShow === true"
+          *ngIf="lastUrl !== pathCharts && mconfig?.select.length > 0"
         >
           <div
             class="w-full rounded bg-white shadow"
