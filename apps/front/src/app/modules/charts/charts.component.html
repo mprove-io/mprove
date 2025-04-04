@@ -508,269 +508,6 @@
           <div
             class="w-full rounded bg-white shadow"
             [ngClass]="{
-              'flex-1': dataIsExpanded
-            }"
-          >
-            <div class="flex h-full flex-col">
-              <div class="mr-5 flex h-20 flex-shrink-0 flex-row items-center">
-                <div class="flex flex-1 flex-row items-center">
-                  <m-panel-title
-                    class="mb-1"
-                    [title]="'Data'"
-                    [isExpanded]="dataIsExpanded"
-                    (toggleEvent)="toggleDataPanel()"
-                    [showToggle]="false"
-                  ></m-panel-title>
-
-                  <!-- <button
-                      *ngIf="mconfig?.select.length > 0"
-                      class="text-gray1 ml-2 w-[84px] select-none items-center py-3 text-lg focus:outline-none"
-                      [ngClass]="{
-                        'font-semibold':
-                          resultsIsShow === true &&
-                          rightIsShow === false &&
-                          resultsIsShowTemp === false,
-                        'cursor-default text-gray-400':
-                          !dataIsExpanded || mconfig?.select.length === 0
-                      }"
-                      (click)="toggleResults()"
-                      >Results</button
-                    > -->
-
-                  <!-- <button
-                      *ngIf="mconfig?.select.length > 0"
-                      class="text-gray1 ml-2 w-[70px] select-none items-center py-3 text-lg focus:outline-none"
-                      [ngClass]="{
-                        'font-semibold':
-                          resultsIsShow === true && rightIsShow === true,
-                        'cursor-default text-gray-400':
-                          !dataIsExpanded || mconfig?.select.length === 0
-                      }"
-                      (click)="toggleSplit()"
-                      >Split</button
-                    > -->
-
-                  <!-- <button
-                      *ngIf="mconfig?.select.length > 0"
-                      class="text-gray1 ml-2 select-none items-center py-3 text-lg focus:outline-none"
-                      [ngClass]="{
-                        'font-semibold':
-                          rightIsShow === true && resultsIsShow === false,
-                        'cursor-default text-gray-400':
-                          !dataIsExpanded || mconfig?.select.length === 0,
-                        'w-[56]': mconfig.isStoreModel === false,
-                        'w-[100px]': mconfig.isStoreModel === true
-                      }"
-                      (click)="toggleRight()"
-                    >
-                      {{
-                        mconfig.isStoreModel === false ? 'SQL' : 'Request'
-                      }}</button
-                    > -->
-                </div>
-
-                <div class="flex flex-1 flex-row items-center">
-                  <m-panel-title
-                    class="mb-1"
-                    [title]="'Info'"
-                    [isExpanded]="dataIsExpanded"
-                    (toggleEvent)="toggleDataPanel()"
-                    [showToggle]="false"
-                  ></m-panel-title>
-
-                  <form
-                    [formGroup]="requestPartTypeForm"
-                    *ngIf="
-                      mconfig.isStoreModel === true &&
-                      mconfig?.select.length > 0 &&
-                      rightIsShow === true
-                    "
-                    class="ml-5"
-                  >
-                    <ng-select
-                      #requestPartTypeSelect
-                      data-cy="requestPartTypeSelect"
-                      class="w-[250px] flex-shrink-0 text-base focus:outline-none"
-                      [items]="requestPartTypeList"
-                      [clearable]="false"
-                      [searchable]="false"
-                      (change)="requestPartTypeChange($event)"
-                      (keyup.esc)="
-                        $event.stopImmediatePropagation();
-                        requestPartTypeSelect.blur()
-                      "
-                      (keyup.enter)="
-                        $event.stopImmediatePropagation();
-                        requestPartTypeSelect.blur()
-                      "
-                      appendTo="body"
-                      bindLabel="label"
-                      bindValue="value"
-                      formControlName="requestPartType"
-                    >
-                      <ng-template ng-label-tmp let-item="item">
-                        <div>{{ item.label }}</div>
-                      </ng-template>
-
-                      <ng-template ng-option-tmp let-item="item">
-                        <div>{{ item.label }}</div>
-                      </ng-template>
-                    </ng-select>
-                  </form>
-                </div>
-              </div>
-
-              <div
-                class="ml-6 mr-5 flex flex-col divide-y divide-gray-300"
-                *ngIf="dataIsExpanded"
-              >
-                <div class="flex flex-row"></div>
-                <div class="flex flex-row"></div>
-              </div>
-
-              <div
-                class="mx-5 mb-5 mt-5 flex h-2 flex-grow"
-                *ngIf="dataIsExpanded"
-              >
-                <div
-                  *ngIf="mconfig?.select.length === 0"
-                  class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
-                  >Select Model Fields</div
-                >
-
-                <div
-                  *ngIf="mconfig?.select.length > 0"
-                  class="flex h-full w-full flex-row items-start justify-center space-x-5"
-                >
-                  <div
-                    *ngIf="resultsIsShow"
-                    class="h-full w-2 flex-1 overflow-auto"
-                  >
-                    <m-main-table
-                      [isEdit]="true"
-                      [isFormat]="isFormat"
-                      [mconfig]="mconfig"
-                      [qData]="qData"
-                      [mconfigFields]="mconfig.fields"
-                    ></m-main-table>
-                  </div>
-
-                  <div *ngIf="rightIsShow" class="h-full w-2 flex-1">
-                    <m-sql *ngIf="mconfig.isStoreModel === false"></m-sql>
-
-                    <m-js-viewer
-                      *ngIf="
-                        mconfig.isStoreModel === true &&
-                        [
-                          requestPartTypeEnumReqTemplate,
-                          requestPartTypeEnumReqFunction,
-                          requestPartTypeEnumReqUrlPath
-                        ].indexOf(
-                          requestPartTypeForm.controls['requestPartType'].value
-                        ) > -1
-                      "
-                      [jsContent]="jsContent"
-                    ></m-js-viewer>
-
-                    <m-json-viewer
-                      *ngIf="
-                        mconfig.isStoreModel === true &&
-                        [
-                          requestPartTypeEnumReqJsonParts,
-                          requestPartTypeEnumReqBody
-                        ].indexOf(
-                          requestPartTypeForm.controls['requestPartType'].value
-                        ) > -1
-                      "
-                      [jsonContent]="
-                        requestPartTypeForm.controls['requestPartType']
-                          .value === requestPartTypeEnumReqJsonParts
-                          ? mconfig.storePart?.reqJsonParts
-                          : requestPartTypeForm.controls['requestPartType']
-                              .value === requestPartTypeEnumReqBody
-                          ? mconfig.storePart?.reqBody
-                          : undefined
-                      "
-                    ></m-json-viewer>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="w-full">
-            <div class="flex flex-col">
-              <div class="mr-5 flex flex-shrink-0 flex-grow flex-row">
-                <!-- <div
-                  class="text-gray1 ml-6 mt-4 flex h-full min-h-[76px] w-full flex-shrink-0 select-none pt-4 text-xl"
-                  *ngIf="mconfig?.extendedFilters.length === 0"
-                  >No parameters</div
-                > -->
-
-                <div
-                  class="mt-4 flex min-h-[76px] flex-shrink-0 flex-grow flex-row"
-                >
-                  <div
-                    (click)="toggleFiltersPanel()"
-                    class="text-gray1 mt-1 flex h-11 select-none flex-row items-start space-x-2 px-5 py-3 text-xl font-semibold"
-                    [ngClass]="{
-                      'cursor-pointer': mconfig?.extendedFilters.length > 0,
-                      'cursor-default': mconfig?.extendedFilters.length === 0
-                    }"
-                  >
-                    <div class="flex flex-row items-center space-x-2">
-                      <m-chevron-right-icon
-                        *ngIf="
-                          !filtersIsExpanded &&
-                          mconfig?.extendedFilters.length > 0
-                        "
-                      ></m-chevron-right-icon>
-
-                      <m-chevron-down-icon
-                        *ngIf="
-                          filtersIsExpanded &&
-                          mconfig?.extendedFilters.length > 0
-                        "
-                      ></m-chevron-down-icon>
-
-                      <div
-                        class="h-6 w-6"
-                        *ngIf="mconfig?.extendedFilters.length === 0"
-                      ></div>
-
-                      <div> Parameters </div>
-                    </div>
-                  </div>
-
-                  <div
-                    class="flex flex-row items-start"
-                    *ngIf="
-                      !filtersIsExpanded && mconfig?.extendedFilters.length > 0
-                    "
-                  >
-                    <m-bricks
-                      class="mb-5 ml-3 mr-5 mt-3 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
-                      [extendedFilters]="mconfig.extendedFilters"
-                      [isKeepBackgroundColor]="false"
-                    ></m-bricks>
-                  </div>
-
-                  <div
-                    class="ml-3 max-h-[260px] w-2 flex-1 overflow-auto"
-                    *ngIf="filtersIsExpanded"
-                  >
-                    <m-model-filters
-                      [modelContent]="model.content"
-                    ></m-model-filters>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="w-full rounded bg-white shadow"
-            [ngClass]="{
               'h-[44%]': chartIsExpanded
             }"
           >
@@ -1059,6 +796,269 @@
                       [mconfigFields]="mconfig.fields"
                       [queryId]="mconfig?.queryId"
                     ></m-chart-editor>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="w-full">
+            <div class="flex flex-col">
+              <div class="mr-5 flex flex-shrink-0 flex-grow flex-row">
+                <!-- <div
+                  class="text-gray1 ml-6 mt-4 flex h-full min-h-[76px] w-full flex-shrink-0 select-none pt-4 text-xl"
+                  *ngIf="mconfig?.extendedFilters.length === 0"
+                  >No parameters</div
+                > -->
+
+                <div
+                  class="mt-4 flex min-h-[76px] flex-shrink-0 flex-grow flex-row"
+                >
+                  <div
+                    (click)="toggleFiltersPanel()"
+                    class="text-gray1 mt-1 flex h-11 select-none flex-row items-start space-x-2 px-5 py-3 text-xl font-semibold"
+                    [ngClass]="{
+                      'cursor-pointer': mconfig?.extendedFilters.length > 0,
+                      'cursor-default': mconfig?.extendedFilters.length === 0
+                    }"
+                  >
+                    <div class="flex flex-row items-center space-x-2">
+                      <m-chevron-right-icon
+                        *ngIf="
+                          !filtersIsExpanded &&
+                          mconfig?.extendedFilters.length > 0
+                        "
+                      ></m-chevron-right-icon>
+
+                      <m-chevron-down-icon
+                        *ngIf="
+                          filtersIsExpanded &&
+                          mconfig?.extendedFilters.length > 0
+                        "
+                      ></m-chevron-down-icon>
+
+                      <div
+                        class="h-6 w-6"
+                        *ngIf="mconfig?.extendedFilters.length === 0"
+                      ></div>
+
+                      <div> Parameters </div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="flex flex-row items-start"
+                    *ngIf="
+                      !filtersIsExpanded && mconfig?.extendedFilters.length > 0
+                    "
+                  >
+                    <m-bricks
+                      class="mb-5 ml-3 mr-5 mt-3 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
+                      [extendedFilters]="mconfig.extendedFilters"
+                      [isKeepBackgroundColor]="false"
+                    ></m-bricks>
+                  </div>
+
+                  <div
+                    class="ml-3 max-h-[260px] w-2 flex-1 overflow-auto"
+                    *ngIf="filtersIsExpanded"
+                  >
+                    <m-model-filters
+                      [modelContent]="model.content"
+                    ></m-model-filters>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="w-full rounded bg-white shadow"
+            [ngClass]="{
+              'flex-1': dataIsExpanded
+            }"
+          >
+            <div class="flex h-full flex-col">
+              <div class="mr-5 flex h-20 flex-shrink-0 flex-row items-center">
+                <div class="flex flex-1 flex-row items-center">
+                  <m-panel-title
+                    class="mb-1"
+                    [title]="'Data'"
+                    [isExpanded]="dataIsExpanded"
+                    (toggleEvent)="toggleDataPanel()"
+                    [showToggle]="false"
+                  ></m-panel-title>
+
+                  <!-- <button
+                    *ngIf="mconfig?.select.length > 0"
+                    class="text-gray1 ml-2 w-[84px] select-none items-center py-3 text-lg focus:outline-none"
+                    [ngClass]="{
+                      'font-semibold':
+                        resultsIsShow === true &&
+                        rightIsShow === false &&
+                        resultsIsShowTemp === false,
+                      'cursor-default text-gray-400':
+                        !dataIsExpanded || mconfig?.select.length === 0
+                    }"
+                    (click)="toggleResults()"
+                    >Results</button
+                  > -->
+
+                  <!-- <button
+                    *ngIf="mconfig?.select.length > 0"
+                    class="text-gray1 ml-2 w-[70px] select-none items-center py-3 text-lg focus:outline-none"
+                    [ngClass]="{
+                      'font-semibold':
+                        resultsIsShow === true && rightIsShow === true,
+                      'cursor-default text-gray-400':
+                        !dataIsExpanded || mconfig?.select.length === 0
+                    }"
+                    (click)="toggleSplit()"
+                    >Split</button
+                  > -->
+
+                  <!-- <button
+                    *ngIf="mconfig?.select.length > 0"
+                    class="text-gray1 ml-2 select-none items-center py-3 text-lg focus:outline-none"
+                    [ngClass]="{
+                      'font-semibold':
+                        rightIsShow === true && resultsIsShow === false,
+                      'cursor-default text-gray-400':
+                        !dataIsExpanded || mconfig?.select.length === 0,
+                      'w-[56]': mconfig.isStoreModel === false,
+                      'w-[100px]': mconfig.isStoreModel === true
+                    }"
+                    (click)="toggleRight()"
+                  >
+                    {{
+                      mconfig.isStoreModel === false ? 'SQL' : 'Request'
+                    }}</button
+                  > -->
+                </div>
+
+                <div class="flex flex-1 flex-row items-center">
+                  <m-panel-title
+                    class="mb-1"
+                    [title]="'Info'"
+                    [isExpanded]="dataIsExpanded"
+                    (toggleEvent)="toggleDataPanel()"
+                    [showToggle]="false"
+                  ></m-panel-title>
+
+                  <form
+                    [formGroup]="requestPartTypeForm"
+                    *ngIf="
+                      mconfig.isStoreModel === true &&
+                      mconfig?.select.length > 0 &&
+                      rightIsShow === true
+                    "
+                    class="ml-5"
+                  >
+                    <ng-select
+                      #requestPartTypeSelect
+                      data-cy="requestPartTypeSelect"
+                      class="w-[250px] flex-shrink-0 text-base focus:outline-none"
+                      [items]="requestPartTypeList"
+                      [clearable]="false"
+                      [searchable]="false"
+                      (change)="requestPartTypeChange($event)"
+                      (keyup.esc)="
+                        $event.stopImmediatePropagation();
+                        requestPartTypeSelect.blur()
+                      "
+                      (keyup.enter)="
+                        $event.stopImmediatePropagation();
+                        requestPartTypeSelect.blur()
+                      "
+                      appendTo="body"
+                      bindLabel="label"
+                      bindValue="value"
+                      formControlName="requestPartType"
+                    >
+                      <ng-template ng-label-tmp let-item="item">
+                        <div>{{ item.label }}</div>
+                      </ng-template>
+
+                      <ng-template ng-option-tmp let-item="item">
+                        <div>{{ item.label }}</div>
+                      </ng-template>
+                    </ng-select>
+                  </form>
+                </div>
+              </div>
+
+              <div
+                class="ml-6 mr-5 flex flex-col divide-y divide-gray-300"
+                *ngIf="dataIsExpanded"
+              >
+                <div class="flex flex-row"></div>
+                <div class="flex flex-row"></div>
+              </div>
+
+              <div
+                class="mx-5 mb-5 mt-5 flex h-2 flex-grow"
+                *ngIf="dataIsExpanded"
+              >
+                <div
+                  *ngIf="mconfig?.select.length === 0"
+                  class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+                  >Select Model Fields</div
+                >
+
+                <div
+                  *ngIf="mconfig?.select.length > 0"
+                  class="flex h-full w-full flex-row items-start justify-center space-x-5"
+                >
+                  <div
+                    *ngIf="resultsIsShow"
+                    class="h-full w-2 flex-1 overflow-auto"
+                  >
+                    <m-main-table
+                      [isEdit]="true"
+                      [isFormat]="isFormat"
+                      [mconfig]="mconfig"
+                      [qData]="qData"
+                      [mconfigFields]="mconfig.fields"
+                    ></m-main-table>
+                  </div>
+
+                  <div *ngIf="rightIsShow" class="h-full w-2 flex-1">
+                    <m-sql *ngIf="mconfig.isStoreModel === false"></m-sql>
+
+                    <m-js-viewer
+                      *ngIf="
+                        mconfig.isStoreModel === true &&
+                        [
+                          requestPartTypeEnumReqTemplate,
+                          requestPartTypeEnumReqFunction,
+                          requestPartTypeEnumReqUrlPath
+                        ].indexOf(
+                          requestPartTypeForm.controls['requestPartType'].value
+                        ) > -1
+                      "
+                      [jsContent]="jsContent"
+                    ></m-js-viewer>
+
+                    <m-json-viewer
+                      *ngIf="
+                        mconfig.isStoreModel === true &&
+                        [
+                          requestPartTypeEnumReqJsonParts,
+                          requestPartTypeEnumReqBody
+                        ].indexOf(
+                          requestPartTypeForm.controls['requestPartType'].value
+                        ) > -1
+                      "
+                      [jsonContent]="
+                        requestPartTypeForm.controls['requestPartType']
+                          .value === requestPartTypeEnumReqJsonParts
+                          ? mconfig.storePart?.reqJsonParts
+                          : requestPartTypeForm.controls['requestPartType']
+                              .value === requestPartTypeEnumReqBody
+                          ? mconfig.storePart?.reqBody
+                          : undefined
+                      "
+                    ></m-json-viewer>
                   </div>
                 </div>
               </div>
