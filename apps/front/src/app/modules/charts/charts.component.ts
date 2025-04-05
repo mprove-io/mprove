@@ -175,7 +175,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   filtersIsExpanded = false;
   chartIsExpanded = true;
-  dataIsExpanded = true;
 
   mconfig: common.MconfigX;
   query: common.Query;
@@ -603,12 +602,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
     }
   }
 
-  expandDataPanel() {
-    if (this.dataIsExpanded === false) {
-      this.toggleDataPanel();
-    }
-  }
-
   toggleFiltersPanel() {
     if (this.mconfig.extendedFilters.length > 0) {
       this.filtersIsExpanded = !this.filtersIsExpanded;
@@ -621,10 +614,9 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.refreshShow();
   }
 
-  toggleDataPanel() {
-    this.dataIsExpanded = !this.dataIsExpanded;
-    this.refreshShow();
-  }
+  toggleDataPanel() {}
+
+  toggleInfoPanel() {}
 
   goToFile() {
     let fileIdAr = this.model.filePath.split('/');

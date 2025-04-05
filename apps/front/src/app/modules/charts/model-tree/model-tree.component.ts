@@ -55,9 +55,6 @@ export class ModelTreeComponent implements AfterViewInit {
   @Output()
   expandFilters = new EventEmitter();
 
-  @Output()
-  expandData = new EventEmitter();
-
   model: ModelState;
   mconfig: common.MconfigX;
   modelTreeLevels = common.ModelTreeLevelsEnum.FlatTime;
@@ -210,8 +207,6 @@ export class ModelTreeComponent implements AfterViewInit {
     } else {
       newMconfig.select = [...newMconfig.select, node.data.id];
     }
-
-    this.expandData.emit();
 
     let fields: common.ModelField[];
     this.modelQuery.fields$

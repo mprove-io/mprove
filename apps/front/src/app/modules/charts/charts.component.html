@@ -416,7 +416,6 @@
               *ngIf="schemaIsExpanded"
               class="flex flex-1"
               (expandFilters)="expandFiltersPanel()"
-              (expandData)="expandDataPanel()"
             ></m-model-tree>
           </div>
         </div>
@@ -481,9 +480,120 @@
                   [showToggle]="true"
                 ></m-panel-title>
 
+                <div *ngIf="mconfig?.select.length > 0" class="relative">
+                  <m-chart-options
+                    [mconfig]="mconfig"
+                    [isDisabled]="
+                      isSelectValid === false ||
+                      mconfig.chart.isValid === false ||
+                      chartTitleForm.valid === false
+                    "
+                  ></m-chart-options>
+                </div>
+
+                <button
+                  *ngIf="mconfig?.select.length > 0"
+                  data-cy="modelShowChartButton"
+                  class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  (click)="showChart($event)"
+                >
+                  <m-full-screen-icon></m-full-screen-icon>
+                </button>
+
+                <ng-template #templateChartSaveAs>
+                  <div
+                    *ngIf="
+                      isSelectValid === false ||
+                      mconfig?.chart?.isValid === false ||
+                      chartTitleForm?.valid === false
+                    "
+                    >Chart is not valid</div
+                  >
+
+                  <div
+                    *ngIf="
+                      isSelectValid === true &&
+                      mconfig?.chart?.isValid === true &&
+                      chartTitleForm?.valid === true &&
+                      alias === restrictedUserAlias
+                    "
+                    >User is restricted. Sign Up at https://mprove.io to get
+                    full access.</div
+                  >
+                </ng-template>
+
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="ml-10 flex flex-row items-center justify-start space-x-5"
+                  class="ml-10"
+                  [tp]="templateChartSaveAs"
+                  [tpIsEnabled]="
+                    isSelectValid === false ||
+                    mconfig?.chart?.isValid === false ||
+                    chartTitleForm?.valid === false ||
+                    alias === restrictedUserAlias
+                  "
+                >
+                  <button
+                    type="button"
+                    data-cy="modelSaveAsButton"
+                    class="w-28 flex-shrink-0 rounded py-2 text-base font-medium focus:outline-none"
+                    [ngClass]="{
+                      'text-blue3 border-2 bg-white':
+                        isSelectValid === true &&
+                        mconfig.chart.isValid === true &&
+                        chartTitleForm.valid === true &&
+                        alias !== restrictedUserAlias,
+                      'cursor-default bg-gray-400 text-white':
+                        isSelectValid === false ||
+                        mconfig.chart.isValid === false ||
+                        chartTitleForm.valid === false ||
+                        alias === restrictedUserAlias
+                    }"
+                    (click)="saveAs()"
+                    [disabled]="
+                      isSelectValid === false ||
+                      mconfig.chart.isValid === false ||
+                      chartTitleForm.valid === false ||
+                      alias === restrictedUserAlias
+                    "
+                    >Save As</button
+                  >
+                </div>
+
+                <div
+                  *ngIf="mconfig?.select.length > 0"
+                  class="text-gray1 ml-10 select-none text-base"
+                  >Title</div
+                >
+
+                <div
+                  *ngIf="mconfig?.select.length > 0"
+                  [formGroup]="chartTitleForm"
+                  class="ml-5 mr-5 flex w-full flex-col items-start"
+                >
+                  <div class="h-6"></div>
+                  <input
+                    autocomplete="off"
+                    spellcheck="false"
+                    data-cy="modelChartTitleInput"
+                    class="form-input border-gray3 focus:border-blue3 h-[36px] w-full rounded"
+                    [ngClass]="{
+                      'border-red-600':
+                        chartTitleForm.controls['chartTitle'].invalid &&
+                        chartTitleForm.controls['chartTitle'].touched
+                    }"
+                    formControlName="chartTitle"
+                    placeholder="Title"
+                    (blur)="chartTitleBlur()"
+                  />
+                  <m-validation
+                    [control]="chartTitleForm.controls['chartTitle']"
+                  ></m-validation>
+                </div>
+
+                <div
+                  *ngIf="mconfig?.select.length > 0"
+                  class="flex w-1/3 flex-shrink-0 flex-row items-center justify-end space-x-5 pr-5"
                 >
                   <m-chart-table-icon
                     class="h-6 w-6 cursor-pointer"
@@ -534,167 +644,56 @@
                     }"
                     (click)="chartTypeChange(chartTypeEnumPie)"
                   ></m-chart-pie-icon>
-                </div>
 
-                <form
-                  [formGroup]="chartTypeForm"
-                  *ngIf="mconfig?.select.length > 0"
-                  class="ml-5"
-                >
-                  <ng-select
-                    #chartTypeSelect
-                    data-cy="chartTypeSelect"
-                    class="chart-type-select w-[200px] text-base focus:outline-none"
-                    [items]="chartTypesList"
-                    [clearable]="false"
-                    [searchable]="false"
-                    (change)="chartTypeChange()"
-                    (keyup.esc)="
-                      $event.stopImmediatePropagation(); chartTypeSelect.blur()
-                    "
-                    (keyup.enter)="
-                      $event.stopImmediatePropagation(); chartTypeSelect.blur()
-                    "
-                    appendTo="body"
-                    bindLabel="label"
-                    bindValue="value"
-                    formControlName="chartType"
+                  <form
+                    [formGroup]="chartTypeForm"
+                    *ngIf="mconfig?.select.length > 0"
+                    class="ml-5"
                   >
-                    <ng-template ng-label-tmp let-item="item">
-                      <div
-                        class="ml-1 flex flex-row items-center justify-start space-x-2"
-                      >
-                        <img class="h-6 w-6" [src]="item.iconPath" />
-                        <div> {{ item.label }} </div>
-                      </div>
-                    </ng-template>
-                    <ng-template
-                      ng-option-tmp
-                      let-item="item"
-                      let-index="index"
-                      let-search="searchTerm"
+                    <ng-select
+                      #chartTypeSelect
+                      data-cy="chartTypeSelect"
+                      class="chart-type-select w-[200px] text-base focus:outline-none"
+                      [items]="chartTypesList"
+                      [clearable]="false"
+                      [searchable]="false"
+                      (change)="chartTypeChange()"
+                      (keyup.esc)="
+                        $event.stopImmediatePropagation();
+                        chartTypeSelect.blur()
+                      "
+                      (keyup.enter)="
+                        $event.stopImmediatePropagation();
+                        chartTypeSelect.blur()
+                      "
+                      appendTo="body"
+                      bindLabel="label"
+                      bindValue="value"
+                      formControlName="chartType"
                     >
-                      <div
-                        class="ml-1 flex flex-row items-center justify-start space-x-2"
+                      <ng-template ng-label-tmp let-item="item">
+                        <div
+                          class="ml-1 flex flex-row items-center justify-start space-x-2"
+                        >
+                          <img class="h-6 w-6" [src]="item.iconPath" />
+                          <div> {{ item.label }} </div>
+                        </div>
+                      </ng-template>
+                      <ng-template
+                        ng-option-tmp
+                        let-item="item"
+                        let-index="index"
+                        let-search="searchTerm"
                       >
-                        <img class="h-6 w-6" [src]="item.iconPath" />
-                        <div> {{ item.label }} </div>
-                      </div>
-                    </ng-template>
-                  </ng-select>
-                </form>
-
-                <div
-                  *ngIf="mconfig?.select.length > 0"
-                  class="text-gray1 ml-10 select-none text-base"
-                  >Title</div
-                >
-
-                <div
-                  *ngIf="mconfig?.select.length > 0"
-                  [formGroup]="chartTitleForm"
-                  class="ml-5 flex w-full flex-col items-start"
-                >
-                  <div class="h-6"></div>
-                  <input
-                    autocomplete="off"
-                    spellcheck="false"
-                    data-cy="modelChartTitleInput"
-                    class="form-input border-gray3 focus:border-blue3 h-[36px] w-full rounded"
-                    [ngClass]="{
-                      'border-red-600':
-                        chartTitleForm.controls['chartTitle'].invalid &&
-                        chartTitleForm.controls['chartTitle'].touched
-                    }"
-                    formControlName="chartTitle"
-                    placeholder="Title"
-                    (blur)="chartTitleBlur()"
-                  />
-                  <m-validation
-                    [control]="chartTitleForm.controls['chartTitle']"
-                  ></m-validation>
-                </div>
-
-                <div class="flex-1"></div>
-
-                <ng-template #templateChartSaveAs>
-                  <div
-                    *ngIf="
-                      isSelectValid === false ||
-                      mconfig?.chart?.isValid === false ||
-                      chartTitleForm?.valid === false
-                    "
-                    >Chart is not valid</div
-                  >
-
-                  <div
-                    *ngIf="
-                      isSelectValid === true &&
-                      mconfig?.chart?.isValid === true &&
-                      chartTitleForm?.valid === true &&
-                      alias === restrictedUserAlias
-                    "
-                    >User is restricted. Sign Up at https://mprove.io to get
-                    full access.</div
-                  >
-                </ng-template>
-
-                <div
-                  *ngIf="mconfig?.select.length > 0"
-                  class="ml-[138px]"
-                  [tp]="templateChartSaveAs"
-                  [tpIsEnabled]="
-                    isSelectValid === false ||
-                    mconfig?.chart?.isValid === false ||
-                    chartTitleForm?.valid === false ||
-                    alias === restrictedUserAlias
-                  "
-                >
-                  <button
-                    type="button"
-                    data-cy="modelSaveAsButton"
-                    class="w-28 flex-shrink-0 rounded py-2 text-base font-medium focus:outline-none"
-                    [ngClass]="{
-                      'text-blue3 border-2 bg-white':
-                        isSelectValid === true &&
-                        mconfig.chart.isValid === true &&
-                        chartTitleForm.valid === true &&
-                        alias !== restrictedUserAlias,
-                      'cursor-default bg-gray-400 text-white':
-                        isSelectValid === false ||
-                        mconfig.chart.isValid === false ||
-                        chartTitleForm.valid === false ||
-                        alias === restrictedUserAlias
-                    }"
-                    (click)="saveAs()"
-                    [disabled]="
-                      isSelectValid === false ||
-                      mconfig.chart.isValid === false ||
-                      chartTitleForm.valid === false ||
-                      alias === restrictedUserAlias
-                    "
-                    >Save As</button
-                  >
-                </div>
-
-                <button
-                  *ngIf="mconfig?.select.length > 0"
-                  data-cy="modelShowChartButton"
-                  class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
-                  (click)="showChart($event)"
-                >
-                  <m-full-screen-icon></m-full-screen-icon>
-                </button>
-
-                <div *ngIf="mconfig?.select.length > 0" class="relative ml-3">
-                  <m-chart-options
-                    [mconfig]="mconfig"
-                    [isDisabled]="
-                      isSelectValid === false ||
-                      mconfig.chart.isValid === false ||
-                      chartTitleForm.valid === false
-                    "
-                  ></m-chart-options>
+                        <div
+                          class="ml-1 flex flex-row items-center justify-start space-x-2"
+                        >
+                          <img class="h-6 w-6" [src]="item.iconPath" />
+                          <div> {{ item.label }} </div>
+                        </div>
+                      </ng-template>
+                    </ng-select>
+                  </form>
                 </div>
               </div>
 
@@ -833,19 +832,14 @@
             </div>
           </div>
 
-          <div
-            class="w-full rounded bg-white shadow"
-            [ngClass]="{
-              'flex-1': dataIsExpanded
-            }"
-          >
+          <div class="w-full flex-1 rounded bg-white shadow">
             <div class="flex h-full flex-col">
               <div class="mr-5 flex h-20 flex-shrink-0 flex-row items-center">
                 <div class="flex flex-1 flex-row items-center">
                   <m-panel-title
                     class="mb-1"
                     [title]="'Data'"
-                    [isExpanded]="dataIsExpanded"
+                    [isExpanded]="true"
                     (toggleEvent)="toggleDataPanel()"
                     [showToggle]="false"
                   ></m-panel-title>
@@ -940,8 +934,8 @@
                   <m-panel-title
                     class="mb-1"
                     [title]="'Info'"
-                    [isExpanded]="dataIsExpanded"
-                    (toggleEvent)="toggleDataPanel()"
+                    [isExpanded]="true"
+                    (toggleEvent)="toggleInfoPanel()"
                     [showToggle]="false"
                   ></m-panel-title>
 
@@ -987,18 +981,12 @@
                 </div>
               </div>
 
-              <div
-                class="ml-6 mr-5 flex flex-col divide-y divide-gray-300"
-                *ngIf="dataIsExpanded"
-              >
+              <div class="ml-6 mr-5 flex flex-col divide-y divide-gray-300">
                 <div class="flex flex-row"></div>
                 <div class="flex flex-row"></div>
               </div>
 
-              <div
-                class="mx-5 mb-5 mt-5 flex h-2 flex-grow"
-                *ngIf="dataIsExpanded"
-              >
+              <div class="mx-5 mb-5 mt-5 flex h-2 flex-grow">
                 <div
                   *ngIf="mconfig?.select.length === 0"
                   class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"

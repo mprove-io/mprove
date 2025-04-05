@@ -7,8 +7,6 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
-  Output,
   ViewChild
 } from '@angular/core';
 import { tap } from 'rxjs/operators';
@@ -34,8 +32,7 @@ export class MetricNode {
 
 @Component({
   selector: 'm-metrics-tree',
-  templateUrl: './metrics-tree.component.html',
-  styleUrls: ['metrics-tree.component.scss']
+  templateUrl: './metrics-tree.component.html'
 })
 export class MetricsTreeComponent implements AfterViewInit {
   nodeClassInfo = common.FieldClassEnum.Info;
@@ -46,12 +43,6 @@ export class MetricsTreeComponent implements AfterViewInit {
   fieldResultTs = common.FieldResultEnum.Ts;
 
   nodes: MetricNode[] = [];
-
-  @Output()
-  expandFilters = new EventEmitter();
-
-  @Output()
-  expandData = new EventEmitter();
 
   metrics: MetricsState;
   metrics$ = this.metricsQuery.select().pipe(
