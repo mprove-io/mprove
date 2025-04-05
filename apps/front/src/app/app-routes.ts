@@ -58,10 +58,10 @@ import { ProjectResolver } from './resolvers/project.resolver';
 import { RepoIdResolver } from './resolvers/repo-id.resolver';
 import { RepoStructFilesResolver } from './resolvers/repo-struct-files.resolver';
 import { RepoStructResolver } from './resolvers/repo-struct.resolver';
+import { StructChartsResolver } from './resolvers/struct-charts.resolver';
 import { StructDashboardResolver } from './resolvers/struct-dashboard.resolver';
 import { StructDashboardsResolver } from './resolvers/struct-dashboards.resolver';
 import { StructModelResolver } from './resolvers/struct-model.resolver';
-import { StructModelsResolver } from './resolvers/struct-models.resolver';
 import { StructReportResolver } from './resolvers/struct-report.resolver';
 import { StructReportsResolver } from './resolvers/struct-reports.resolver';
 
@@ -226,7 +226,7 @@ export const appRoutes: Routes = [
                           {
                             component: ChartsComponent,
                             path: common.PATH_CHARTS,
-                            resolve: [StructModelsResolver],
+                            resolve: [StructChartsResolver],
                             children: [
                               {
                                 component: ChartsListComponent,

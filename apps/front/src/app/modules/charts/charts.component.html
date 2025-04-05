@@ -275,10 +275,74 @@
             </button>
           </div>
 
-          <div class="flex h-2 w-full flex-1 flex-col">
-            <!-- <div class="mb-5 mt-5 flex h-2 flex-grow flex-col overflow-y-auto"
-              >Charts list
-            </div> -->
+          <div class="flex h-2 flex-1 flex-col">
+            <div class="mb-5 mt-5 flex h-2 flex-grow flex-col overflow-y-auto">
+              <div
+                *ngFor="let c of filteredCharts; let i = index"
+                (click)="navToChart(c)"
+              >
+                <div
+                  *ngIf="filteredDraftsLength > 0 && i === filteredDraftsLength"
+                  class="ml-[25px] mr-[45px] divide-y divide-gray-300"
+                >
+                  <div></div>
+                  <div></div>
+                </div>
+                <div
+                  class="hover:bg-blue2 group ml-6 mr-10 flex h-11 flex-row items-center rounded pl-4 pr-2 hover:cursor-pointer"
+                >
+                  <div class="mr-3 flex h-2 items-center">
+                    <div
+                      *ngIf="c.chartId === chart?.chartId"
+                      data-cy="chartsSelectedSymbol"
+                      class="bg-blue3 h-7 w-1 rounded-full text-white focus:outline-none"
+                    ></div>
+
+                    <div
+                      *ngIf="c.chartId !== chart?.chartId"
+                      class="h-7 w-1"
+                    ></div>
+                  </div>
+
+                  <div class="text-gray1 truncate">
+                    {{ c.title | capitalize }}
+                  </div>
+
+                  <div class="flex flex-grow"></div>
+
+                  <!-- <button
+                    *ngIf="chart.draft === true && c.chartId === chart.chartId"
+                    type="button"
+                    data-cy="chartSaveAsButton"
+                    class="ml-3 flex h-11 items-center justify-center rounded focus:outline-none"
+                    (click)="chartSaveAs($event)"
+                  >
+                    <div
+                      class="flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center space-x-2 rounded px-2 hover:bg-blue-200"
+                    >
+                      <m-save-icon class="text-gray-500"></m-save-icon>
+                    </div>
+                  </button> -->
+
+                  <!-- <button
+                    *ngIf="chart.draft === true && c.chartId === chart.chartId"
+                    class="ml-3 flex h-9 flex-shrink-0 items-center justify-center space-x-2 rounded px-2 text-gray-500 hover:bg-blue-200 focus:outline-none"
+                    (click)="deleteDraftChart($event, c)"
+                  >
+                    <m-trash-icon></m-trash-icon>
+                  </button> -->
+
+                  <!-- <div
+                    *ngIf="
+                      c.draft === false && c.chartId !== emptyChartId
+                    "
+                    class="invisible ml-2 flex group-hover:visible"
+                  >
+                    <m-chart-options [chart]="c"></m-chart-options>
+                  </div> -->
+                </div>
+              </div>
+            </div>
           </div>
 
           <div
@@ -480,7 +544,7 @@
                   [showToggle]="true"
                 ></m-panel-title>
 
-                <div *ngIf="mconfig?.select.length > 0" class="relative">
+                <!-- <div *ngIf="mconfig?.select.length > 0" class="relative">
                   <m-chart-options
                     [mconfig]="mconfig"
                     [isDisabled]="
@@ -489,16 +553,7 @@
                       chartTitleForm.valid === false
                     "
                   ></m-chart-options>
-                </div>
-
-                <button
-                  *ngIf="mconfig?.select.length > 0"
-                  data-cy="modelShowChartButton"
-                  class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-                  (click)="showChart($event)"
-                >
-                  <m-full-screen-icon></m-full-screen-icon>
-                </button>
+                </div> -->
 
                 <ng-template #templateChartSaveAs>
                   <div
@@ -524,7 +579,7 @@
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="ml-10"
+                  class="ml-5"
                   [tp]="templateChartSaveAs"
                   [tpIsEnabled]="
                     isSelectValid === false ||
@@ -559,6 +614,15 @@
                     >Save As</button
                   >
                 </div>
+
+                <button
+                  *ngIf="mconfig?.select.length > 0"
+                  data-cy="modelShowChartButton"
+                  class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  (click)="showChart($event)"
+                >
+                  <m-full-screen-icon></m-full-screen-icon>
+                </button>
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
@@ -1062,6 +1126,7 @@
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="uiQuery$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
+<div *ngIf="charts$ | async"></div>
 <div *ngIf="models$ | async"></div>
 <div *ngIf="model$ | async"></div>
 <div *ngIf="mq$ | async"></div>

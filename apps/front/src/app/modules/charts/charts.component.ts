@@ -41,6 +41,8 @@ import { constants as frontConstants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
+import { ChartsQuery } from '~front/app/queries/charts.query';
+import { FilteredChartsQuery } from '~front/app/queries/filtered-charts.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -134,7 +136,20 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   word: string;
 
-  filteredDraftsLength: number;
+  filteredDraftsLength = 0;
+
+  charts: common.ChartX[];
+  chartsFilteredByWord: common.ChartX[];
+  filteredCharts: common.ChartX[];
+
+  charts$ = this.chartsQuery.select().pipe(
+    tap(x => {
+      this.charts = x.charts;
+
+      this.makeFilteredCharts();
+      this.cd.detectChanges();
+    })
+  );
 
   models: ModelState[];
   models$ = this.modelsQuery.select().pipe(
@@ -143,6 +158,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
     })
   );
+
+  chart: common.ChartX;
 
   model: ModelState;
   model$ = this.modelQuery.select().pipe(
@@ -452,12 +469,16 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   jsContent: string;
 
+  private timer: any;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
+    private chartsQuery: ChartsQuery,
+    private filteredChartsQuery: FilteredChartsQuery,
     private modelsQuery: ModelsQuery,
     private modelQuery: ModelQuery,
     private userQuery: UserQuery,
@@ -1020,9 +1041,95 @@ ${this.mconfig.storePart?.reqUrlPath}`
     }
   }
 
-  searchWordChange() {}
-  resetSearch() {}
+  searchWordChange() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+
+    this.timer = setTimeout(() => {
+      this.makeFilteredCharts();
+      this.cd.detectChanges();
+    }, 600);
+  }
+
+  resetSearch() {
+    this.word = undefined;
+    this.makeFilteredCharts();
+    this.cd.detectChanges();
+  }
+
+  navToChart(chart: common.ChartX) {
+    // this.navigateService.navigateToReport({
+    //   reportId: report.reportId
+    // });
+  }
+
   deleteDrafts() {}
+
+  deleteDraftChart(event: any, chart: common.ChartX) {
+    event.stopPropagation();
+    // this.reportService.deleteDraftReports({ reportIds: [chart.reportId] });
+  }
+
+  makeFilteredCharts() {
+    let idxs;
+
+    // TODO:
+
+    let draftCharts: common.ChartX[] =
+      // this.charts.filter(x => x.draft === true)
+      [];
+
+    // TODO:
+    let nonDraftCharts =
+      // .filter(x => x.draft === false)
+      this.charts;
+
+    if (common.isDefinedAndNotEmpty(this.word)) {
+      let haystack = nonDraftCharts.map(x =>
+        common.isDefined(x.title) ? `${x.title}` : `${x.chartId}`
+      );
+      let opts = {};
+      let uf = new uFuzzy(opts);
+      idxs = uf.filter(haystack, this.word);
+    }
+
+    this.chartsFilteredByWord = common.isDefinedAndNotEmpty(this.word)
+      ? idxs != null && idxs.length > 0
+        ? idxs.map(idx => nonDraftCharts[idx])
+        : []
+      : nonDraftCharts;
+
+    this.filteredCharts = [...draftCharts, ...this.chartsFilteredByWord];
+
+    this.filteredCharts = this.filteredCharts.sort((a, b) => {
+      let aTitle = a.title || a.chartId;
+      let bTitle = b.title || b.chartId;
+
+      // TODO:
+      // return b.draft === true && a.draft !== true
+      // ? 1
+      // : a.draft === true && b.draft !== true
+      // ? -1
+      // :
+      // aTitle > bTitle
+      // ? 1
+      // : bTitle > aTitle
+      // ? -1
+      // : 0;
+
+      return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+    });
+
+    this.filteredChartsQuery.update({
+      filteredCharts: this.filteredCharts
+    });
+
+    // TODO:
+    // this.filteredDraftsLength = this.filteredCharts.filter(
+    //   y => y.draft === true
+    // ).length;
+  }
 
   addChart() {}
 
