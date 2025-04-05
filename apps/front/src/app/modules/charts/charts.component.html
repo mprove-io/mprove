@@ -1,5 +1,5 @@
 <div class="bg-blue1 flex h-full cursor-default flex-col">
-  <div class="flex h-2 flex-1 flex-row overflow-y-auto">
+  <div class="flex h-2 flex-1 flex-row overflow-y-hidden">
     <div class="mx-6 mb-6 mt-8 flex min-w-[2px] flex-grow flex-col">
       <div class="flex h-11 flex-row items-center justify-between">
         <div class="flex w-full flex-row items-center">
@@ -536,14 +536,14 @@
                   <button
                     type="button"
                     data-cy="modelSaveAsButton"
-                    class="w-28 flex-shrink-0 rounded py-2 text-base font-medium focus:outline-none"
+                    class="w-28 flex-shrink-0 rounded border py-2 text-base font-medium focus:outline-none"
                     [ngClass]="{
-                      'text-blue3 border-2 bg-white':
+                      'border-gray-400 text-gray-500 hover:bg-white':
                         isSelectValid === true &&
                         mconfig.chart.isValid === true &&
                         chartTitleForm.valid === true &&
                         alias !== restrictedUserAlias,
-                      'cursor-default bg-gray-400 text-white':
+                      'cursor-default border-gray-300 text-gray-400':
                         isSelectValid === false ||
                         mconfig.chart.isValid === false ||
                         chartTitleForm.valid === false ||
