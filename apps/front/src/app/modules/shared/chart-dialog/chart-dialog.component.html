@@ -1,4 +1,10 @@
-<div class="flex h-[87vh] w-[70vw] flex-col p-10">
+<div
+  class="flex w-[66vw] flex-col p-10"
+  [ngClass]="{
+    'h-[87vh]': showNav === true,
+    'h-[77vh]': showNav === false
+  }"
+>
   <div class="min-h-9 mb-5 flex flex-1 flex-row justify-center text-xl">
     <div class="flex w-1/4 flex-1 flex-row items-center justify-start"> </div>
 
@@ -12,7 +18,7 @@
 
   <div
     *ngIf="isShowInit === false && showNav === true"
-    class="text-gray1 mb-5 flex w-full flex-row items-center justify-start"
+    class="text-gray1 mb-10 flex w-full flex-row items-center justify-start"
   >
     <!-- <div
       class="flex cursor-pointer flex-row items-center justify-start"
@@ -32,7 +38,7 @@
         class="flex h-11 max-w-[850px] flex-1 flex-row items-center space-x-5"
       >
         <div
-          class="text-gray1 ml-5 flex flex-shrink-0 select-none items-center text-lg font-semibold"
+          class="text-gray1 flex flex-shrink-0 select-none items-center text-lg font-semibold"
           >Group by</div
         >
 
@@ -78,21 +84,6 @@
       </div>
     </div>
 
-    <div
-      *ngIf="isData === true && mconfig?.fields?.length > 0"
-      class="ml-10 flex h-11 cursor-pointer flex-row items-center"
-      (click)="toggleFormat()"
-    >
-      <ui-switch
-        class="mb-1 flex flex-row items-center"
-        [checked]="isFormat"
-      ></ui-switch>
-
-      <div class="text-gray1 ml-5 flex h-11 select-none items-center text-base"
-        >Format
-      </div>
-    </div>
-
     <div class="flex flex-1 flex-row items-center justify-end">
       <div *ngIf="!!query" class="ml-5 flex flex-row items-center justify-end">
         <m-query-status
@@ -120,8 +111,8 @@
         [ngClass]="{
           'cursor-default bg-gray-400':
             isRunButtonPressed === true || query?.status === queryStatusRunning,
-          ' bg-blue3 cursor-pointer':
-            isRunButtonPressed === false && query?.status !== queryStatusRunning,
+          'bg-blue3 cursor-pointer':
+            isRunButtonPressed === false && query?.status !== queryStatusRunning
         }"
         (click)="run()"
         [disabled]="
@@ -178,51 +169,13 @@
   </div>
 
   <div
-    *ngIf="isShowInit === false"
-    class="flex flex-col"
-    [ngClass]="{
-      'max-h-[31%] min-h-[31%]':
-        mconfig?.chart.type === chartTypeEnumLine ||
-        mconfig?.chart.type === chartTypeEnumBar ||
-        mconfig?.chart.type === chartTypeEnumScatter,
-      'max-h-[30%] min-h-[30%]':
-        mconfig?.chart.type !== chartTypeEnumLine &&
-        mconfig?.chart.type !== chartTypeEnumBar &&
-        mconfig?.chart.type !== chartTypeEnumScatter
-    }"
-  >
-    <div
-      *ngIf="isData === true && mconfig?.fields?.length > 0"
-      class="flex w-full max-w-max flex-1 overflow-auto"
-    >
-      <m-main-table
-        [isEdit]="false"
-        [isFormat]="isFormat"
-        [mconfig]="mconfig"
-        [qData]="qData"
-        [mconfigFields]="mconfig?.fields"
-      ></m-main-table>
-    </div>
-
-    <div class="flex flex-shrink-0 flex-row items-start">
-      <m-bricks
-        class="mt-7 flex max-h-[150px] max-w-max overflow-auto"
-        *ngIf="mconfig?.filters.length > 0"
-        [extendedFilters]="mconfig.extendedFilters"
-        [listen]="ref.data.listen"
-        [isKeepBackgroundColor]="false"
-      ></m-bricks>
-    </div>
-  </div>
-
-  <div
     *ngIf="
       isShowInit === false &&
       mconfig?.fields?.length > 0 &&
       isSelectValid === true &&
       mconfig?.chart.isValid === true
     "
-    class="mt-10 flex h-full flex-grow flex-row overflow-auto"
+    class="flex h-full flex-grow flex-row overflow-auto"
     [ngClass]="{
       'justify-center':
         mconfig?.chart.type !== chartTypeEnumTable ||
@@ -248,10 +201,75 @@
   </div>
 
   <div
+    *ngIf="isShowInit === false"
+    class="mt-10 flex flex-row"
+    [ngClass]="{
+      'max-h-[24%] min-h-[24%]':
+        showNav === true &&
+        (mconfig?.chart.type === chartTypeEnumLine ||
+          mconfig?.chart.type === chartTypeEnumBar ||
+          mconfig?.chart.type === chartTypeEnumScatter),
+      'max-h-[23%] min-h-[23%]':
+        showNav === true &&
+        mconfig?.chart.type !== chartTypeEnumLine &&
+        mconfig?.chart.type !== chartTypeEnumBar &&
+        mconfig?.chart.type !== chartTypeEnumScatter,
+      'max-h-[29%] min-h-[29%]':
+        showNav === false &&
+        (mconfig?.chart.type === chartTypeEnumLine ||
+          mconfig?.chart.type === chartTypeEnumBar ||
+          mconfig?.chart.type === chartTypeEnumScatter),
+      'max-h-[28%] min-h-[28%]':
+        showNav === false &&
+        mconfig?.chart.type !== chartTypeEnumLine &&
+        mconfig?.chart.type !== chartTypeEnumBar &&
+        mconfig?.chart.type !== chartTypeEnumScatter
+    }"
+  >
+    <div
+      *ngIf="isData === true && mconfig?.fields?.length > 0"
+      class="flex w-full max-w-max flex-1 overflow-auto"
+    >
+      <m-main-table
+        [isEdit]="false"
+        [isFormat]="isFormat"
+        [mconfig]="mconfig"
+        [qData]="qData"
+        [mconfigFields]="mconfig?.fields"
+      ></m-main-table>
+    </div>
+
+    <div class="ml-10 flex flex-shrink-0 flex-row items-start">
+      <m-bricks
+        class="flex max-h-[150px] max-w-max overflow-auto"
+        *ngIf="mconfig?.filters.length > 0"
+        [extendedFilters]="mconfig.extendedFilters"
+        [listen]="ref.data.listen"
+        [isKeepBackgroundColor]="false"
+      ></m-bricks>
+    </div>
+  </div>
+
+  <div
     class="mt-7 flex cursor-default flex-row items-center justify-start"
     *ngIf="isShowInit === false && showNav === true"
   >
-    <div class="text-base font-semibold text-gray-400">Model:</div>
+    <div
+      *ngIf="isData === true && mconfig?.fields?.length > 0"
+      class="flex h-11 cursor-pointer flex-row items-center"
+      (click)="toggleFormat()"
+    >
+      <div class="text-gray1 flex h-11 select-none items-center text-base"
+        >Format
+      </div>
+
+      <ui-switch
+        class="mb-1 ml-5 flex flex-row items-center"
+        [checked]="isFormat"
+      ></ui-switch>
+    </div>
+
+    <div class="ml-10 text-base font-semibold text-gray-400">Model:</div>
 
     <ng-template #templateChartDialogModel>
       <div *ngIf="isExplorer === false">Explorer role required</div>

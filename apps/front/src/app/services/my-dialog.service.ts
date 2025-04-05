@@ -313,8 +313,8 @@ export class MyDialogService {
       enableClose: false,
       closeButton: true,
       data: item,
-      width: '70vw',
-      height: '87vh'
+      width: '66vw',
+      height: item.showNav === true ? '87vh' : '77vh'
     });
   }
 
@@ -323,8 +323,8 @@ export class MyDialogService {
       enableClose: false,
       closeButton: true,
       data: item,
-      width: '60vw',
-      height: '50vh'
+      width: '66vw',
+      height: '60vh'
     });
   }
 

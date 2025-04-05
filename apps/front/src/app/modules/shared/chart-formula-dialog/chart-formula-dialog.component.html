@@ -1,15 +1,22 @@
-<div class="flex h-[50vh] w-[60vw] flex-col p-10" [hidden]="isShow === false">
+<div
+  class="flex h-[60vh] w-[66vw] flex-col px-10 pb-[135px] pt-[135px]"
+  [hidden]="isShow === false"
+>
   <div
     *ngIf="isShow === true"
-    class="mt-5 flex h-full w-full flex-grow overflow-auto"
+    class="center flex h-full w-full flex-grow flex-row justify-center overflow-auto"
   >
-    <m-chart-box
+    <div
+      class="aspect-[3/1] h-full overflow-auto border border-gray-300 pt-5"
       *ngIf="recordsWithValuesLength > 0 && !!eChartInitOpts && !!eChartOptions"
-      [eChartInitOpts]="eChartInitOpts"
-      [eChartOptions]="eChartOptions"
-      [chartInstanceId]="'metrics-chart'"
-      style="height: 100%; width: 100%"
-    ></m-chart-box>
+    >
+      <m-chart-box
+        [eChartInitOpts]="eChartInitOpts"
+        [eChartOptions]="eChartOptions"
+        [chartInstanceId]="'metrics-chart'"
+        style="height: 100%; width: 100%"
+      ></m-chart-box>
+    </div>
 
     <div
       *ngIf="dataPoints.length > 0 && recordsWithValuesLength === 0"
