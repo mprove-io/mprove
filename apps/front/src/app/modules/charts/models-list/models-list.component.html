@@ -1,6 +1,6 @@
 <div class="flex h-full flex-col">
   <div class="flex flex-grow overflow-y-auto rounded bg-white shadow">
-    <div class="ml-5 mr-5 mt-10 flex w-full flex-col">
+    <div class="ml-5 mr-5 mt-6 flex w-full flex-col">
       <div class="flex h-11 flex-row items-center">
         <m-search-icon class="text-gray1 ml-8"></m-search-icon>
 
@@ -172,10 +172,13 @@
       </div>
 
       <div
-        class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+        class="h-2 flex-1 overflow-y-auto"
         *ngIf="filteredModels?.length === 0"
-        >No models</div
-      >
+        ><div
+          class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+          >No models</div
+        >
+      </div>
     </div>
   </div>
 </div>
