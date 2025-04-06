@@ -11,15 +11,6 @@
                 >{{ pageTitle }}
               </div>
 
-              <m-view-list-icon
-                class="ml-5 cursor-pointer"
-                [ngClass]="{
-                  'text-blue-500': lastUrl === pathDashboardsList,
-                  'text-gray-400': lastUrl !== pathDashboardsList
-                }"
-                (click)="toggleDashboardsList()"
-              ></m-view-list-icon>
-
               <div class="flex flex-grow"></div>
 
               <div
@@ -27,7 +18,7 @@
                 [tpIsEnabled]="
                   alias === restrictedUserAlias || isExplorer === false
                 "
-                class="ml-5 mr-10"
+                class="ml-5"
               >
                 <button
                   type="button"
@@ -60,6 +51,15 @@
                   >
                 </ng-template>
               </div>
+
+              <m-view-list-icon
+                class="ml-5 cursor-pointer"
+                [ngClass]="{
+                  'text-blue-500': lastUrl === pathDashboardsList,
+                  'text-gray-400': lastUrl !== pathDashboardsList
+                }"
+                (click)="toggleDashboardsList()"
+              ></m-view-list-icon>
             </div>
 
             <div class="mt-6 flex w-full flex-grow rounded bg-white shadow">

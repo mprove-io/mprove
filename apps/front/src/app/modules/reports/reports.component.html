@@ -14,15 +14,6 @@
                 {{ pageTitle }}
               </div>
 
-              <m-view-list-icon
-                class="ml-5 cursor-pointer"
-                [ngClass]="{
-                  'text-blue-500': lastUrl === pathReportsList,
-                  'text-gray-400': lastUrl !== pathReportsList
-                }"
-                (click)="toggleReportsList()"
-              ></m-view-list-icon>
-
               <m-menu-book-icon
                 class="lex-shrink-0 ml-5 cursor-pointer"
                 [ngClass]="{
@@ -34,7 +25,7 @@
 
               <div class="flex-grow"></div>
 
-              <div class="ml-5 mr-10">
+              <div class="ml-5">
                 <button
                   type="button"
                   data-cy="metricsNewReportButton"
@@ -43,6 +34,15 @@
                   >New Report</button
                 >
               </div>
+
+              <m-view-list-icon
+                class="ml-5 cursor-pointer"
+                [ngClass]="{
+                  'text-blue-500': lastUrl === pathReportsList,
+                  'text-gray-400': lastUrl !== pathReportsList
+                }"
+                (click)="toggleReportsList()"
+              ></m-view-list-icon>
             </div>
 
             <!-- <button

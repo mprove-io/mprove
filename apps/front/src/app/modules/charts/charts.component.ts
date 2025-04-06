@@ -1053,9 +1053,11 @@ ${this.mconfig.storePart?.reqUrlPath}`
   }
 
   navToChart(chart: common.ChartX) {
-    // this.navigateService.navigateToReport({
-    //   reportId: report.reportId
-    // });
+    this.navigateService.navigateMconfigQuery({
+      modelId: chart.modelId,
+      mconfigId: chart.tiles[0].mconfigId,
+      queryId: chart.tiles[0].queryId
+    });
   }
 
   deleteDrafts() {}

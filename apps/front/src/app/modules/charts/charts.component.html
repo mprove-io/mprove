@@ -11,15 +11,6 @@
               {{ pageTitle }}
             </div>
 
-            <m-view-list-icon
-              class="ml-5 cursor-pointer"
-              [ngClass]="{
-                'text-blue-500': lastUrl === pathChartsList,
-                'text-gray-400': lastUrl !== pathChartsList
-              }"
-              (click)="toggleChartsList()"
-            ></m-view-list-icon>
-
             <div class="text-gray1 ml-5 select-none text-base">Timezone</div>
 
             <div class="ml-5 flex w-2 flex-1">
@@ -99,6 +90,15 @@
                 >Explorer role required</div
               >
             </ng-template>
+
+            <m-view-list-icon
+              class="ml-5 cursor-pointer"
+              [ngClass]="{
+                'text-blue-500': lastUrl === pathChartsList,
+                'text-gray-400': lastUrl !== pathChartsList
+              }"
+              (click)="toggleChartsList()"
+            ></m-view-list-icon>
           </div>
 
           <div
@@ -356,15 +356,6 @@
                 >MODEL</div
               >
 
-              <m-view-list-icon
-                class="ml-5 cursor-pointer"
-                [ngClass]="{
-                  'text-blue-500': lastUrl === pathModelsList,
-                  'text-gray-400': lastUrl !== pathModelsList
-                }"
-                (click)="toggleModelsList()"
-              ></m-view-list-icon>
-
               <button
                 class="ml-5 w-[54px] cursor-pointer select-none items-center text-lg"
                 [ngClass]="{
@@ -384,7 +375,7 @@
                 >Tree</button
               >
 
-              <div class="ml-5 mr-9 flex w-2 flex-1">
+              <div class="ml-5 flex w-2 flex-1">
                 <form class="w-full" [formGroup]="modelForm">
                   <ng-select
                     #chartsModelSelect
@@ -417,6 +408,15 @@
                   </ng-select>
                 </form>
               </div>
+
+              <m-view-list-icon
+                class="ml-5 mr-9 cursor-pointer"
+                [ngClass]="{
+                  'text-blue-500': lastUrl === pathModelsList,
+                  'text-gray-400': lastUrl !== pathModelsList
+                }"
+                (click)="toggleModelsList()"
+              ></m-view-list-icon>
 
               <!-- <div
                 [tp]="templateNewModel"

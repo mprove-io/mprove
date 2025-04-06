@@ -10,7 +10,6 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
-import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { ChartsQuery } from '~front/app/queries/charts.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
@@ -383,8 +382,6 @@ export class ChartsListComponent implements OnInit, OnDestroy {
     this.showModelId = false;
   }
 
-  navigateToChart(chartId: string) {}
-
   explore(event: any, item: common.ChartX) {
     event.stopPropagation();
 
@@ -396,71 +393,10 @@ export class ChartsListComponent implements OnInit, OnDestroy {
   }
 
   async showChart(item: common.ChartX) {
-    this.spinner.show(item.chartId);
-
-    let payloadGetChart: apiToBackend.ToBackendGetChartRequestPayload = {
-      projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
-      isRepoProd: this.nav.isRepoProd,
-      chartId: item.chartId,
-      timezone: this.timezoneForm.controls['timezone'].value
-    };
-
-    let query: common.Query;
-    let mconfig: common.MconfigX;
-
-    await this.apiService
-      .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
-        payload: payloadGetChart
-      })
-      .pipe(
-        tap((resp: apiToBackend.ToBackendGetChartResponse) => {
-          this.spinner.hide(item.chartId);
-
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.memberQuery.update(resp.payload.userMember);
-
-            query = resp.payload.chart.tiles[0].query;
-            mconfig = resp.payload.chart.tiles[0].mconfig;
-          }
-        })
-      )
-      .toPromise();
-
-    if (common.isUndefined(query)) {
-      return;
-    }
-
-    let qData =
-      mconfig.queryId === query.queryId
-        ? this.dataService.makeQData({
-            query: query,
-            mconfigFields: mconfig.fields
-          })
-        : [];
-
-    let checkSelectResult = getSelectValid({
-      chart: mconfig.chart,
-      mconfigFields: mconfig.fields,
-      isStoreModel: mconfig.isStoreModel
-    });
-
-    let isSelectValid = checkSelectResult.isSelectValid;
-    // let errorMessage = checkSelectResult.errorMessage;
-
-    this.myDialogService.showChart({
-      apiService: this.apiService,
-      mconfig: mconfig,
-      query: query,
-      qData: qData,
-      canAccessModel: item.tiles[0].hasAccessToModel,
-      showNav: true,
-      isSelectValid: isSelectValid,
-      dashboardId: undefined,
-      chartId: item.chartId
+    this.navigateService.navigateMconfigQuery({
+      modelId: item.modelId,
+      mconfigId: item.tiles[0].mconfigId,
+      queryId: item.tiles[0].queryId
     });
   }
 
