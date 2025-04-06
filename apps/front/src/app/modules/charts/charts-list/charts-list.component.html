@@ -6,7 +6,26 @@
       >
         <div class="flex w-9"></div>
         <div class="flex w-1/3">Chart</div>
-        <div class="flex w-1/6">Chart Id</div>
+        <div class="flex w-1/6">
+          <button
+            class="cursor-pointer select-none"
+            [ngClass]="{
+              'text-gray-400': showModelId === false
+            }"
+            (click)="setShowModelIdTrue()"
+            >Model Id</button
+          >
+
+          <button
+            class="ml-5 cursor-pointer select-none items-center"
+            [ngClass]="{
+              'text-gray-400': showModelId === true
+            }"
+            (click)="setShowModelIdFalse()"
+          >
+            Chart Id
+          </button>
+        </div>
         <div class="flex flex-1 flex-row space-x-5">
           <!-- <div class="flex flex-1">Model</div> -->
           <div class="flex flex-1">Access Roles</div>
@@ -123,33 +142,35 @@
 
               <div
                 class="flex w-1/6 items-start truncate py-3 focus:outline-none"
+                *ngIf="showModelId === false"
               >
                 <span class="truncate"> {{ item.chartId }} </span>
               </div>
 
-              <div class="flex flex-1 flex-row space-x-5 text-base">
+              <div
+                *ngIf="showModelId === true"
+                class="flex w-1/6 flex-row truncate py-3"
+                [tp]="templateChartsModel"
+                [tpIsEnabled]="item.tiles[0].hasAccessToModel === false"
+              >
                 <ng-template #templateChartsModel>
                   <div *ngIf="isExplorer === false">Explorer role required</div>
                   <div *ngIf="isExplorer === true">No access to model</div>
                 </ng-template>
 
-                <!-- <div
-                  class="flex flex-1 flex-row truncate py-3"
-                  [tp]="templateChartsModel"
-                  [tpIsEnabled]="item.tiles[0].hasAccessToModel === false"
-                >
-                  <div class="flex items-start truncate focus:outline-none">
-                    <span class="truncate">
-                      {{ item.tiles[0].modelLabel | capitalize }}
-                    </span>
-                  </div>
+                <div class="flex items-start truncate focus:outline-none">
+                  <span class="truncate">
+                    {{ item.tiles[0].modelLabel | capitalize }}
+                  </span>
+                </div>
 
-                  <m-lock-closed-icon
-                    class="mb-1 ml-2 text-gray-400"
-                    *ngIf="item.tiles[0].hasAccessToModel === false"
-                  ></m-lock-closed-icon>
-                </div> -->
+                <m-lock-closed-icon
+                  class="mb-1 ml-2 text-gray-400"
+                  *ngIf="item.tiles[0].hasAccessToModel === false"
+                ></m-lock-closed-icon>
+              </div>
 
+              <div class="flex flex-1 flex-row space-x-5 text-base">
                 <div class="flex flex-1 flex-wrap truncate py-3 text-base">
                   <span
                     *ngFor="let role of item.accessRoles"

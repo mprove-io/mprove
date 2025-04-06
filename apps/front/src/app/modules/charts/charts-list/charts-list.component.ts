@@ -47,6 +47,8 @@ export class ChartsListComponent implements OnInit, OnDestroy {
 
   // groups: string[];
 
+  showModelId = true;
+
   showList = true;
   showBricks = false;
 
@@ -371,6 +373,14 @@ export class ChartsListComponent implements OnInit, OnDestroy {
   toggleShowFilters() {
     this.showBricks = !this.showBricks;
     this.refreshShow();
+  }
+
+  setShowModelIdTrue() {
+    this.showModelId = true;
+  }
+
+  setShowModelIdFalse() {
+    this.showModelId = false;
   }
 
   navigateToChart(chartId: string) {}
