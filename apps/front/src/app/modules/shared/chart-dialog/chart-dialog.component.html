@@ -178,10 +178,9 @@
     [ngClass]="{
       'justify-center':
         mconfig?.chart.type !== chartTypeEnumTable ||
-        query?.status !== queryStatusCompleted,
+        query?.lastCompleteTs <= 1,
       'justify-start':
-        mconfig?.chart.type === chartTypeEnumTable &&
-        query?.status === queryStatusCompleted
+        query?.lastCompleteTs > 1 && mconfig?.chart.type === chartTypeEnumTable
     }"
   >
     <m-chart-view
