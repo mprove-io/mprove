@@ -20,12 +20,14 @@
                 (click)="toggleDashboardsList()"
               ></m-view-list-icon>
 
+              <div class="flex flex-grow"></div>
+
               <div
                 [tp]="templateNewDashboard"
                 [tpIsEnabled]="
                   alias === restrictedUserAlias || isExplorer === false
                 "
-                class="ml-5"
+                class="ml-5 mr-10"
               >
                 <button
                   type="button"
@@ -58,8 +60,6 @@
                   >
                 </ng-template>
               </div>
-
-              <div class="flex-grow"></div>
             </div>
 
             <div class="mt-6 flex w-full flex-grow rounded bg-white shadow">

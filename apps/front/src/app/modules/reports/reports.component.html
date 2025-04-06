@@ -6,7 +6,7 @@
           <div
             class="flex w-1/5 flex-shrink-0 flex-row items-center justify-between"
           >
-            <div class="flex flex-row">
+            <div class="flex w-full flex-row items-center">
               <div
                 data-cy="metricsTitle"
                 class="text-gray1 flex select-none items-center self-center text-2xl font-semibold"
@@ -14,59 +14,38 @@
                 {{ pageTitle }}
               </div>
 
-              <div class="ml-5 flex flex-row items-center">
-                <m-view-list-icon
-                  class="cursor-pointer"
-                  [ngClass]="{
-                    'text-blue-500': lastUrl === pathReportsList,
-                    'text-gray-400': lastUrl !== pathReportsList
-                  }"
-                  (click)="toggleReportsList()"
-                ></m-view-list-icon>
+              <m-view-list-icon
+                class="ml-5 cursor-pointer"
+                [ngClass]="{
+                  'text-blue-500': lastUrl === pathReportsList,
+                  'text-gray-400': lastUrl !== pathReportsList
+                }"
+                (click)="toggleReportsList()"
+              ></m-view-list-icon>
 
-                <m-menu-book-icon
-                  class="lex-shrink-0 ml-5 cursor-pointer"
-                  [ngClass]="{
-                    'text-gray-500': isShowLeft === true,
-                    'text-gray-400': isShowLeft === false
-                  }"
-                  (click)="toggleShowLeft()"
-                ></m-menu-book-icon>
+              <m-menu-book-icon
+                class="lex-shrink-0 ml-5 cursor-pointer"
+                [ngClass]="{
+                  'text-gray-500': isShowLeft === true,
+                  'text-gray-400': isShowLeft === false
+                }"
+                (click)="toggleShowLeft()"
+              ></m-menu-book-icon>
 
-                <div class="ml-5">
-                  <button
-                    type="button"
-                    data-cy="metricsNewReportButton"
-                    class="h-11 flex-shrink-0 select-none rounded border border-gray-400 px-4 py-2 text-base font-medium text-gray-500 hover:bg-white focus:outline-none"
-                    (click)="newReport()"
-                    >New Report</button
-                  >
-                </div>
+              <div class="flex-grow"></div>
 
-                <!-- <m-table-cells-icon
-                  class="flex-shrink-0 cursor-pointer"
-                  [ngClass]="{
-                    'text-gray-500': isShowTable === true,
-                    'text-gray-400': isShowTable === false
-                  }"
-                  (click)="toggleShowTable()"
-                ></m-table-cells-icon> -->
-
-                <!-- <m-insights-icon
-                  class="flex-shrink-0 cursor-pointer"
-                  [ngClass]="{
-                    'text-gray-500': showMetricsChart === true,
-                    'text-gray-400': showMetricsChart === false
-                  }"
-                  (click)="toggleShowMetricsChart()"
-                ></m-insights-icon> -->
+              <div class="ml-5 mr-10">
+                <button
+                  type="button"
+                  data-cy="metricsNewReportButton"
+                  class="h-11 flex-shrink-0 select-none rounded border border-gray-400 px-4 py-2 text-base font-medium text-gray-500 hover:bg-white focus:outline-none"
+                  (click)="newReport()"
+                  >New Report</button
+                >
               </div>
             </div>
 
-            <!-- <div class="flex-grow"></div> -->
-
-            <div class="flex flex-1 flex-row items-center justify-start">
-              <!-- <button
+            <!-- <button
             class="ml-2 flex h-9 select-none items-center justify-center rounded border border-2 w-[36px] py-3 text-lg font-semibold focus:outline-none"
             [ngClass]="{
               'text-blue-500':
@@ -78,7 +57,7 @@
             >T</button
           > -->
 
-              <!-- <button
+            <!-- <button
             class="ml-2 flex h-9 select-none items-center justify-center rounded border border-2 w-[36px] py-3 text-lg font-semibold focus:outline-none"
             [ngClass]="{
               'text-blue-500':
@@ -90,7 +69,7 @@
             >M</button
           > -->
 
-              <!-- <button
+            <!-- <button
             class="ml-2 flex h-9 select-none items-center justify-center rounded border border-2 w-[36px] py-3 text-lg font-semibold focus:outline-none"
             [ngClass]="{
               'text-blue-500':
@@ -102,7 +81,7 @@
             >H</button
           > -->
 
-              <!-- <button
+            <!-- <button
                 class="ml-5 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
                 [ngClass]="{
                   'text-blue-500':
@@ -117,7 +96,7 @@
                 <div> T </div>
               </button> -->
 
-              <!-- <button
+            <!-- <button
                 class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
                 [ngClass]="{
                   'text-blue-500':
@@ -130,7 +109,7 @@
                 >Q</button
               > -->
 
-              <!-- <button
+            <!-- <button
                 class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
                 [ngClass]="{
                   'text-blue-500':
@@ -142,7 +121,7 @@
                 >Y</button
               > -->
 
-              <!-- <button
+            <!-- <button
                 class="ml-5 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
                 [ngClass]="{
                   'text-blue-500':
@@ -155,7 +134,7 @@
                 <div> D </div>
               </button> -->
 
-              <!-- <button
+            <!-- <button
                 class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
                 [ngClass]="{
                   'text-blue-500':
@@ -167,7 +146,7 @@
                 >W</button
               > -->
 
-              <!-- <button
+            <!-- <button
                 class="ml-2 flex h-9 w-[36px] select-none items-center justify-center rounded border border-2 py-3 text-lg font-semibold focus:outline-none"
                 [ngClass]="{
                   'text-blue-500':
@@ -178,7 +157,6 @@
                 (click)="timeSpecChange(timeSpecMonths)"
                 >M</button
               > -->
-            </div>
           </div>
 
           <div
