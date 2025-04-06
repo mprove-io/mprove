@@ -20,16 +20,6 @@
     *ngIf="isShowInit === false && showNav === true"
     class="text-gray1 mb-10 flex w-full flex-row items-center justify-start"
   >
-    <!-- <div
-      class="flex cursor-pointer flex-row items-center justify-start"
-      (click)="toggleData()"
-      ><ui-switch class="mb-1" [checked]="isData"></ui-switch>
-
-      <div class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
-        >Show Data
-      </div>
-    </div> -->
-
     <div
       *ngIf="!!ref.data.metricId"
       class="flex flex-1 flex-row items-center justify-start"
