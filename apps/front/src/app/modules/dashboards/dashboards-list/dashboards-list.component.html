@@ -8,7 +8,7 @@
       >
         <div class="flex w-12"></div>
         <div class="flex w-1/3">Dashboard</div>
-        <div class="flex w-1/6">File</div>
+        <div class="flex w-1/6">Dashboard Id</div>
         <div class="flex flex-1 flex-row space-x-5">
           <div class="flex flex-1">Access Roles</div>
           <div class="flex flex-1">Access Users</div>
@@ -88,20 +88,16 @@
 
               <div class="flex w-1/3 truncate py-3">
                 <span class="truncate">
-                  {{ item.title || item.dashboardId | capitalize }}
+                  {{
+                    !!item.title ? (item.title | capitalize) : item.dashboardId
+                  }}
                 </span>
               </div>
 
               <div
                 class="flex w-1/6 items-start truncate py-3 focus:outline-none"
               >
-                <span class="truncate">
-                  {{
-                    item.filePath.split('/')[
-                      item.filePath.split('/').length - 1
-                    ]
-                  }}
-                </span>
+                <span class="truncate"> {{ item.dashboardId }} </span>
               </div>
 
               <div class="flex flex-1 flex-row space-x-5 text-base">
