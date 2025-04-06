@@ -11,7 +11,16 @@
               {{ pageTitle }}
             </div>
 
-            <div class="text-gray1 ml-10 select-none text-base">Timezone</div>
+            <m-view-list-icon
+              class="ml-5 cursor-pointer"
+              [ngClass]="{
+                'text-gray-500': lastUrl === pathChartsList,
+                'text-gray-400': lastUrl !== pathChartsList
+              }"
+              (click)="toggleChartsList()"
+            ></m-view-list-icon>
+
+            <div class="text-gray1 ml-5 select-none text-base">Timezone</div>
 
             <div class="ml-5 flex w-2 flex-1">
               <form
@@ -54,15 +63,6 @@
                 </ng-select>
               </form>
             </div>
-
-            <m-view-list-icon
-              class="ml-5 cursor-pointer"
-              [ngClass]="{
-                'text-gray-500': lastUrl === pathChartsList,
-                'text-gray-400': lastUrl !== pathChartsList
-              }"
-              (click)="toggleChartsList()"
-            ></m-view-list-icon>
 
             <div
               [tp]="templateNewChart"
@@ -236,47 +236,47 @@
         <div
           class="flex h-full w-1/4 flex-shrink-0 flex-col rounded bg-white shadow"
         >
-          <div class="mt-6 flex h-11 flex-row items-center">
-            <m-search-icon class="text-gray1 ml-6"></m-search-icon>
+          <div class="flex h-2 h-[44%] flex-col">
+            <div class="mt-6 flex h-11 flex-row items-center">
+              <m-search-icon class="text-gray1 ml-6"></m-search-icon>
 
-            <input
-              spellcheck="false"
-              autocomplete="off"
-              data-cy="chartsSearchInput"
-              class="form-input focus:border-blue3 ml-3 h-10 w-[225px] rounded border-gray-400"
-              placeholder="Search"
-              [ngClass]="{
-                'bg-purple-200': !!word
-              }"
-              [(ngModel)]="word"
-              (ngModelChange)="searchWordChange()"
-            />
-
-            <div class="h-9 w-9">
-              <m-delete-icon
-                *ngIf="!!word"
-                class="text-gray1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+              <input
+                spellcheck="false"
+                autocomplete="off"
+                data-cy="chartsSearchInput"
+                class="form-input focus:border-blue3 ml-3 h-10 w-[225px] rounded border-gray-400"
+                placeholder="Search"
                 [ngClass]="{
-                  'cursor-pointer bg-purple-200 hover:bg-purple-300': !!word
+                  'bg-purple-200': !!word
                 }"
-                (click)="resetSearch()"
-              ></m-delete-icon>
+                [(ngModel)]="word"
+                (ngModelChange)="searchWordChange()"
+              />
+
+              <div class="h-9 w-9">
+                <m-delete-icon
+                  *ngIf="!!word"
+                  class="text-gray1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  [ngClass]="{
+                    'cursor-pointer bg-purple-200 hover:bg-purple-300': !!word
+                  }"
+                  (click)="resetSearch()"
+                ></m-delete-icon>
+              </div>
+
+              <div class="flex flex-grow"></div>
+
+              <button
+                *ngIf="filteredDraftsLength > 0"
+                class="mr-10 flex flex-row items-center rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-gray-100 focus:outline-none"
+                (click)="deleteDrafts()"
+              >
+                <m-trash-icon></m-trash-icon>
+                <div class="ml-3">Drafts</div>
+              </button>
             </div>
 
-            <div class="flex flex-grow"></div>
-
-            <button
-              *ngIf="filteredDraftsLength > 0"
-              class="mr-10 flex flex-row items-center rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-gray-100 focus:outline-none"
-              (click)="deleteDrafts()"
-            >
-              <m-trash-icon></m-trash-icon>
-              <div class="ml-3">Drafts</div>
-            </button>
-          </div>
-
-          <div class="flex h-2 flex-1 flex-col">
-            <div class="mt-5 flex h-2 flex-grow flex-col overflow-y-auto">
+            <div class="mb-5 mt-5 flex h-2 flex-grow flex-col overflow-y-auto">
               <div
                 *ngFor="let c of filteredCharts; let i = index"
                 (click)="navToChart(c)"
@@ -343,165 +343,126 @@
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="ml-6 mr-9 flex flex-col divide-y divide-gray-300">
-            <div class="flex flex-row"></div>
-            <div class="flex flex-row"></div>
-          </div>
-
-          <div
-            class="mt-6 flex h-11 w-full flex-shrink-0 flex-row items-center"
-          >
-            <div class="text-gray1 ml-6 select-none text-lg font-semibold"
-              >MODEL</div
-            >
-
-            <div class="ml-5 flex w-2 flex-1">
-              <form class="w-full" [formGroup]="modelForm">
-                <ng-select
-                  #chartsModelSelect
-                  data-cy="chartsModelSelect"
-                  class="model-select w-full text-base"
-                  [items]="models"
-                  [clearable]="false"
-                  [searchable]="true"
-                  (change)="modelChange()"
-                  (keyup.esc)="
-                    $event.stopImmediatePropagation(); chartsModelSelect.blur()
-                  "
-                  (keyup.enter)="
-                    $event.stopImmediatePropagation(); chartsModelSelect.blur()
-                  "
-                  appendTo="body"
-                  bindLabel="label"
-                  bindValue="modelId"
-                  formControlName="model"
-                >
-                  <ng-template ng-label-tmp let-item="item">
-                    <div class="truncate">{{ item.label }}</div>
-                  </ng-template>
-
-                  <ng-template ng-option-tmp let-item="item">
-                    <div class="truncate">{{ item.label }}</div>
-                  </ng-template>
-                </ng-select>
-              </form>
+            <div class="ml-6 mr-9 flex flex-col divide-y divide-gray-300">
+              <div class="flex flex-row"></div>
+              <div class="flex flex-row"></div>
             </div>
-
-            <button
-              class="ml-2 w-[54px] cursor-pointer select-none items-center text-lg"
-              [ngClass]="{
-                'font-semibold': modelTreeLevels === modelTreeLevelsFlat
-              }"
-              (click)="setModelTreeLevels(modelTreeLevelsFlat)"
-            >
-              Flat
-            </button>
-
-            <button
-              class="ml-2 w-[54px] cursor-pointer select-none py-3 text-lg"
-              [ngClass]="{
-                'font-semibold': modelTreeLevels === modelTreeLevelsNested
-              }"
-              (click)="setModelTreeLevels(modelTreeLevelsNested)"
-              >Tree</button
-            >
-
-            <m-view-list-icon
-              class="ml-5 mr-9 cursor-pointer"
-              [ngClass]="{
-                'text-gray-500': lastUrl === pathModelsList,
-                'text-gray-400': lastUrl !== pathModelsList
-              }"
-              (click)="toggleModelsList()"
-            ></m-view-list-icon>
-
-            <!-- <div
-              [tp]="templateNewModel"
-              [tpIsEnabled]="
-                alias === restrictedUserAlias || isExplorer === false
-              "
-              class="ml-5 mr-9 flex-shrink-0"
-            >
-              <button
-                type="button"
-                data-cy="chartsAddChartButton"
-                class="h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
-                [ngClass]="{
-                  'border-gray-400 text-gray-500 hover:bg-white':
-                    alias !== restrictedUserAlias && isExplorer === true,
-                  'cursor-default border-gray-300 text-gray-400':
-                    alias === restrictedUserAlias || isExplorer === false
-                }"
-                (click)="addModel()"
-                [disabled]="
-                  alias === restrictedUserAlias || isExplorer === false
-                "
-                >New
-              </button>
-
-              <ng-template #templateNewModel>
-                <div *ngIf="alias === restrictedUserAlias"
-                  >User is restricted. Sign Up at https://mprove.io to get full
-                  access.</div
-                >
-
-                <div
-                  *ngIf="alias !== restrictedUserAlias && isExplorer === false"
-                  >Explorer role required</div
-                >
-              </ng-template>
-            </div> -->
-          </div>
-
-          <div
-            class="mt-5 flex flex-col"
-            [ngClass]="{
-              'flex-[2]': schemaIsExpanded
-            }"
-          >
-            <!-- <div
-              class="text-gray1 mb-2 ml-6 mr-10 flex h-11 select-none flex-row items-center"
-            >
-              <div class="flex flex-row items-center" *ngIf="!!model?.modelId">
-                <div class="flex flex-row items-center">
-                  <div
-                    class="text-gray1 flex cursor-pointer pr-5 text-lg font-semibold"
-                  >
-                    SCHEMA
-                  </div>
-                </div>
-
-                <button
-                  class="ml-2 w-[54px] cursor-pointer select-none items-center text-lg"
-                  [ngClass]="{
-                    'font-semibold': modelTreeLevels === modelTreeLevelsFlat
-                  }"
-                  (click)="setModelTreeLevels(modelTreeLevelsFlat)"
-                >
-                  Flat
-                </button>
-
-                <button
-                  class="ml-2 w-[83px] cursor-pointer select-none py-3 text-lg"
-                  [ngClass]="{
-                    'font-semibold': modelTreeLevels === modelTreeLevelsNested
-                  }"
-                  (click)="setModelTreeLevels(modelTreeLevelsNested)"
-                  >Nested</button
-                >
-              </div>
-            </div> -->
 
             <div
-              class="ml-6 mr-9 flex flex-col divide-y divide-gray-300"
-              *ngIf="!!model?.modelId"
+              class="mb-5 mt-5 flex h-11 w-full flex-shrink-0 flex-row items-center"
             >
+              <div class="text-gray1 ml-6 select-none text-lg font-semibold"
+                >MODEL</div
+              >
+
+              <m-view-list-icon
+                class="ml-5 cursor-pointer"
+                [ngClass]="{
+                  'text-gray-500': lastUrl === pathModelsList,
+                  'text-gray-400': lastUrl !== pathModelsList
+                }"
+                (click)="toggleModelsList()"
+              ></m-view-list-icon>
+
+              <button
+                class="ml-5 w-[54px] cursor-pointer select-none items-center text-lg"
+                [ngClass]="{
+                  'font-semibold': modelTreeLevels === modelTreeLevelsFlat
+                }"
+                (click)="setModelTreeLevels(modelTreeLevelsFlat)"
+              >
+                Flat
+              </button>
+
+              <button
+                class="ml-2 w-[54px] cursor-pointer select-none py-3 text-lg"
+                [ngClass]="{
+                  'font-semibold': modelTreeLevels === modelTreeLevelsNested
+                }"
+                (click)="setModelTreeLevels(modelTreeLevelsNested)"
+                >Tree</button
+              >
+
+              <div class="ml-5 mr-9 flex w-2 flex-1">
+                <form class="w-full" [formGroup]="modelForm">
+                  <ng-select
+                    #chartsModelSelect
+                    data-cy="chartsModelSelect"
+                    class="model-select w-full text-base"
+                    [items]="models"
+                    [clearable]="false"
+                    [searchable]="true"
+                    (change)="modelChange()"
+                    (keyup.esc)="
+                      $event.stopImmediatePropagation();
+                      chartsModelSelect.blur()
+                    "
+                    (keyup.enter)="
+                      $event.stopImmediatePropagation();
+                      chartsModelSelect.blur()
+                    "
+                    appendTo="body"
+                    bindLabel="label"
+                    bindValue="modelId"
+                    formControlName="model"
+                  >
+                    <ng-template ng-label-tmp let-item="item">
+                      <div class="truncate">{{ item.label }}</div>
+                    </ng-template>
+
+                    <ng-template ng-option-tmp let-item="item">
+                      <div class="truncate">{{ item.label }}</div>
+                    </ng-template>
+                  </ng-select>
+                </form>
+              </div>
+
+              <!-- <div
+                [tp]="templateNewModel"
+                [tpIsEnabled]="
+                  alias === restrictedUserAlias || isExplorer === false
+                "
+                class="ml-5 mr-9 flex-shrink-0"
+              >
+                <button
+                  type="button"
+                  data-cy="chartsAddChartButton"
+                  class="h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
+                  [ngClass]="{
+                    'border-gray-400 text-gray-500 hover:bg-white':
+                      alias !== restrictedUserAlias && isExplorer === true,
+                    'cursor-default border-gray-300 text-gray-400':
+                      alias === restrictedUserAlias || isExplorer === false
+                  }"
+                  (click)="addModel()"
+                  [disabled]="
+                    alias === restrictedUserAlias || isExplorer === false
+                  "
+                  >New
+                </button>
+  
+                <ng-template #templateNewModel>
+                  <div *ngIf="alias === restrictedUserAlias"
+                    >User is restricted. Sign Up at https://mprove.io to get full
+                    access.</div
+                  >
+  
+                  <div
+                    *ngIf="alias !== restrictedUserAlias && isExplorer === false"
+                    >Explorer role required</div
+                  >
+                </ng-template>
+              </div> -->
+            </div>
+
+            <div class="ml-6 mr-9 flex flex-col divide-y divide-gray-300">
               <div class="flex flex-row"></div>
               <div class="flex flex-row"></div>
             </div>
+          </div>
 
+          <div class="flex flex-1 flex-col">
             <m-model-tree
               *ngIf="schemaIsExpanded"
               class="flex flex-1"
