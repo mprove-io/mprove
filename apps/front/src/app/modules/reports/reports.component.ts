@@ -1024,11 +1024,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   toggleReportsList() {
-    this.title.setTitle(this.pageTitle);
+    if (this.lastUrl !== this.pathReportsList) {
+      this.title.setTitle(this.pageTitle);
 
-    if (this.lastUrl === this.pathReportsList) {
-      this.navigateService.navigateToReports();
-    } else {
       this.reportQuery.reset();
       this.uiQuery.updatePart({
         reportSelectedNodes: [],

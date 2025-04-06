@@ -14,7 +14,7 @@
             <m-view-list-icon
               class="ml-5 cursor-pointer"
               [ngClass]="{
-                'text-gray-500': lastUrl === pathChartsList,
+                'text-blue-500': lastUrl === pathChartsList,
                 'text-gray-400': lastUrl !== pathChartsList
               }"
               (click)="toggleChartsList()"
@@ -359,7 +359,7 @@
               <m-view-list-icon
                 class="ml-5 cursor-pointer"
                 [ngClass]="{
-                  'text-gray-500': lastUrl === pathModelsList,
+                  'text-blue-500': lastUrl === pathModelsList,
                   'text-gray-400': lastUrl !== pathModelsList
                 }"
                 (click)="toggleModelsList()"

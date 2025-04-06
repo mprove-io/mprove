@@ -1018,23 +1018,17 @@ ${this.mconfig.storePart?.reqUrlPath}`
   }
 
   toggleChartsList() {
-    this.title.setTitle(this.pageTitle);
+    if (this.lastUrl !== this.pathChartsList) {
+      this.title.setTitle(this.pageTitle);
 
-    if (this.lastUrl === this.pathChartsList) {
-      this.navigateService.navigateToModels();
-    } else {
-      this.mqQuery.reset();
-      // this.modelQuery.reset();
       this.navigateService.navigateToChartsList();
     }
   }
 
   toggleModelsList() {
-    this.title.setTitle(this.pageTitle);
+    if (this.lastUrl !== this.pathModelsList) {
+      this.title.setTitle(this.pageTitle);
 
-    if (this.lastUrl === this.pathModelsList) {
-      this.navigateService.navigateToModels();
-    } else {
       this.mqQuery.reset();
       // this.modelQuery.reset();
       this.navigateService.navigateToModelsList();

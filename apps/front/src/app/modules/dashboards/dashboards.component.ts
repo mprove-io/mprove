@@ -331,11 +331,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   }
 
   toggleDashboardsList() {
-    this.title.setTitle(this.pageTitle);
+    if (this.lastUrl !== this.pathDashboardsList) {
+      this.title.setTitle(this.pageTitle);
 
-    if (this.lastUrl === this.pathDashboardsList) {
-      this.navigateService.navigateToDashboards();
-    } else {
       this.navigateService.navigateToDashboardsList();
     }
   }
