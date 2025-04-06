@@ -14,7 +14,6 @@ import { common } from '~front/barrels/common';
 
 export interface DeleteChartDialogData {
   apiService: ApiService;
-  chartDeletedFnBindThis: any;
   chart: common.Chart;
   projectId: string;
   branchId: string;
@@ -72,7 +71,7 @@ export class DeleteChartDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteChartResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.ref.data.chartDeletedFnBindThis(chart.chartId);
+            // TODO: delete chart logic - update filtered charts
           }
         }),
         take(1)

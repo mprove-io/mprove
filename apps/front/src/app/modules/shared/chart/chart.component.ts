@@ -244,7 +244,6 @@ export class ChartComponent implements OnInit, OnDestroy {
     this.myDialogService.showDeleteChart({
       chart: this.chart,
       apiService: this.apiService,
-      chartDeletedFnBindThis: this.chartDeletedFnBindThis,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,

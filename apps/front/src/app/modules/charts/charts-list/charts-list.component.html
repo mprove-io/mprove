@@ -27,7 +27,6 @@
           </button>
         </div>
         <div class="flex flex-1 flex-row space-x-5">
-          <!-- <div class="flex flex-1">Model</div> -->
           <div class="flex flex-1">Access Roles</div>
           <div class="flex flex-1">Access Users</div>
           <div class="flex flex-1">Author</div>
@@ -35,7 +34,7 @@
       </div>
 
       <div
-        *ngIf="isShow === true && filteredCharts?.length > 0"
+        *ngIf="filteredCharts?.length > 0"
         class="h-2 flex-1 overflow-y-auto"
       >
         <div
@@ -55,7 +54,7 @@
           <div class="flex-grow flex-col">
             <div
               class="text-gray1 hover:border-blue2 hover:bg-blue2 group mr-5 flex w-full flex-row items-start space-x-5 rounded border border-white bg-white px-5 hover:cursor-pointer focus:outline-none"
-              (click)="showChart(item)"
+              (click)="navigateToChart(item)"
             >
               <div class="flex w-9 pt-1">
                 <button
@@ -213,9 +212,6 @@
   </div>
 </div>
 
-<div *ngIf="charts$ | async"></div>
+<div *ngIf="filteredCharts$ | async"></div>
 <div *ngIf="nav$ | async"></div>
-<div *ngIf="member$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
-<div *ngIf="alias$ | async"></div>
-<div *ngIf="struct$ | async"></div>
