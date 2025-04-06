@@ -276,7 +276,7 @@
           </div>
 
           <div class="flex h-2 flex-1 flex-col">
-            <div class="mb-5 mt-5 flex h-2 flex-grow flex-col overflow-y-auto">
+            <div class="mt-5 flex h-2 flex-grow flex-col overflow-y-auto">
               <div
                 *ngFor="let c of filteredCharts; let i = index"
                 (click)="navToChart(c)"
@@ -345,10 +345,17 @@
             </div>
           </div>
 
+          <div class="ml-6 mr-9 flex flex-col divide-y divide-gray-300">
+            <div class="flex flex-row"></div>
+            <div class="flex flex-row"></div>
+          </div>
+
           <div
             class="mt-6 flex h-11 w-full flex-shrink-0 flex-row items-center"
           >
-            <div class="text-gray1 ml-6 select-none text-lg">Model</div>
+            <div class="text-gray1 ml-6 select-none text-lg font-semibold"
+              >MODEL</div
+            >
 
             <div class="ml-5 flex w-2 flex-1">
               <form class="w-full" [formGroup]="modelForm">
@@ -381,6 +388,25 @@
                 </ng-select>
               </form>
             </div>
+
+            <button
+              class="ml-2 w-[54px] cursor-pointer select-none items-center text-lg"
+              [ngClass]="{
+                'font-semibold': modelTreeLevels === modelTreeLevelsFlat
+              }"
+              (click)="setModelTreeLevels(modelTreeLevelsFlat)"
+            >
+              Flat
+            </button>
+
+            <button
+              class="ml-2 w-[54px] cursor-pointer select-none py-3 text-lg"
+              [ngClass]="{
+                'font-semibold': modelTreeLevels === modelTreeLevelsNested
+              }"
+              (click)="setModelTreeLevels(modelTreeLevelsNested)"
+              >Tree</button
+            >
 
             <m-view-list-icon
               class="ml-5 mr-9 cursor-pointer"
@@ -435,7 +461,7 @@
               'flex-[2]': schemaIsExpanded
             }"
           >
-            <div
+            <!-- <div
               class="text-gray1 mb-2 ml-6 mr-10 flex h-11 select-none flex-row items-center"
             >
               <div class="flex flex-row items-center" *ngIf="!!model?.modelId">
@@ -466,7 +492,7 @@
                   >Nested</button
                 >
               </div>
-            </div>
+            </div> -->
 
             <div
               class="ml-6 mr-9 flex flex-col divide-y divide-gray-300"
