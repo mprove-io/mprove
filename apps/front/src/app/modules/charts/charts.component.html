@@ -1061,7 +1061,10 @@
                     ></m-main-table>
                   </div>
 
-                  <div *ngIf="rightIsShow" class="h-full w-2 flex-1">
+                  <div
+                    *ngIf="rightIsShow"
+                    class="h-full w-2 flex-1 border-l border-gray-300"
+                  >
                     <m-sql *ngIf="mconfig.isStoreModel === false"></m-sql>
 
                     <m-js-viewer

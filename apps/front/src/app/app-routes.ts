@@ -15,7 +15,7 @@ import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-passw
 import { ChartComponent } from './modules/charts/chart/chart.component';
 import { ChartsListComponent } from './modules/charts/charts-list/charts-list.component';
 import { ChartsComponent } from './modules/charts/charts.component';
-import { MdlComponent } from './modules/charts/mdl/mdl.component';
+import { ModelComponent } from './modules/charts/model/model.component';
 import { ModelsListComponent } from './modules/charts/models-list/models-list.component';
 import { DashboardComponent } from './modules/dashboards/dashboard/dashboard.component';
 import { DashboardsListComponent } from './modules/dashboards/dashboards-list/dashboards-list.component';
@@ -235,7 +235,7 @@ export const appRoutes: Routes = [
                                 path: common.PATH_MODELS_LIST
                               },
                               {
-                                component: MdlComponent,
+                                component: ModelComponent,
                                 path:
                                   common.PATH_MODEL +
                                   `/:${common.PARAMETER_MODEL_ID}`,
@@ -248,22 +248,6 @@ export const appRoutes: Routes = [
                                       `/:${common.PARAMETER_CHART_ID}`,
                                     resolve: [StructChartResolver]
                                   }
-                                  // {
-                                  //   component: MconfigComponent,
-                                  //   path:
-                                  //     common.PATH_MCONFIG +
-                                  //     `/:${common.PARAMETER_MCONFIG_ID}`,
-                                  //   resolve: [MconfigResolver],
-                                  //   children: [
-                                  //     {
-                                  //       component: QueryComponent,
-                                  //       path:
-                                  //         common.PATH_QUERY +
-                                  //         `/:${common.PARAMETER_QUERY_ID}`,
-                                  //       resolve: [QueryResolver]
-                                  //     }
-                                  //   ]
-                                  // }
                                 ]
                               }
                             ]
