@@ -159,8 +159,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
     })
   );
 
-  chart: common.ChartX;
-
   model: ModelState;
   model$ = this.modelQuery.select().pipe(
     tap(x => {
@@ -196,8 +194,73 @@ export class ChartsComponent implements OnInit, OnDestroy {
   mconfig: common.MconfigX;
   query: common.Query;
 
+  chart: common.ChartX;
   chart$ = this.chartQuery.select().pipe(
     tap(x => {
+      this.chart = x;
+
+      if (x.draft === false) {
+        let links = this.uiQuery.getValue().projectChartLinks;
+
+        let nav = this.navQuery.getValue();
+        let link: common.ProjectChartLink = links.find(
+          l => l.projectId === nav.projectId && l.draft === x.draft
+        );
+
+        let newProjectChartLinks;
+
+        if (common.isDefined(link)) {
+          let newLink = {
+            projectId: nav.projectId,
+            draft: x.draft,
+            chartId: x.chartId,
+            lastNavTs: Date.now()
+          };
+
+          newProjectChartLinks = [
+            newLink,
+            ...links.filter(
+              r => !(r.projectId === nav.projectId && r.draft === x.draft)
+            )
+          ];
+        } else {
+          let newLink = {
+            projectId: nav.projectId,
+            draft: x.draft,
+            chartId: x.chartId,
+            lastNavTs: Date.now()
+          };
+
+          newProjectChartLinks = [newLink, ...links];
+        }
+
+        let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
+
+        newProjectChartLinks = newProjectChartLinks.filter(
+          l => l.lastNavTs >= oneYearAgoTimestamp
+        );
+
+        this.uiQuery.updatePart({
+          projectChartLinks: newProjectChartLinks
+        });
+        this.uiService.setUserUi({
+          projectChartLinks: newProjectChartLinks
+        });
+      }
+
+      let uiState = this.uiQuery.getValue();
+      this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
+
+      if (common.isDefined(this.chart?.chartId)) {
+        this.title.setTitle(
+          `${this.pageTitle} - ${this.chart?.title || this.chart?.chartId}`
+        );
+      }
+
+      //
+      //
+      //
+
       this.dryQueryEstimate = undefined;
 
       let oldMconfig = this.mconfig;
