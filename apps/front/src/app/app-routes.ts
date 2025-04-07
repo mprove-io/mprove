@@ -243,7 +243,6 @@ export const appRoutes: Routes = [
                                 children: [
                                   {
                                     component: ChartComponent,
-                                    canDeactivate: [DeactivateGuard],
                                     path:
                                       common.PATH_CHART +
                                       `/:${common.PARAMETER_CHART_ID}`,
@@ -276,7 +275,6 @@ export const appRoutes: Routes = [
                             children: [
                               {
                                 component: DashboardComponent,
-                                canDeactivate: [DeactivateGuard],
                                 path:
                                   common.PATH_DASHBOARD +
                                   `/:${common.PARAMETER_DASHBOARD_ID}`,
@@ -284,14 +282,12 @@ export const appRoutes: Routes = [
                               },
                               {
                                 component: DashboardsListComponent,
-                                canDeactivate: [DeactivateGuard],
                                 path: common.PATH_DASHBOARDS_LIST
                               }
                             ]
                           },
                           {
                             component: ReportsComponent,
-                            canDeactivate: [DeactivateGuard],
                             path: common.PATH_REPORTS,
                             resolve: [StructReportsResolver],
                             children: [
@@ -304,7 +300,6 @@ export const appRoutes: Routes = [
                               },
                               {
                                 component: ReportsListComponent,
-                                canDeactivate: [DeactivateGuard],
                                 path: common.PATH_REPORTS_LIST
                               }
                             ]

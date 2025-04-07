@@ -498,15 +498,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  canDeactivate(): Promise<boolean> | boolean {
-    // console.log('canDeactivateDashboard')
-    this.dashboardQuery.reset();
-    return true;
-  }
-
   ngOnDestroy() {
     this.runButtonTimerSubscription?.unsubscribe();
     this.resizeSubscription?.unsubscribe();
     this.scrollSubscription?.unsubscribe();
+    //
+    this.dashboardQuery.reset();
   }
 }
