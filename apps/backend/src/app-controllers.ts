@@ -17,15 +17,6 @@ export const appControllers = [
   controllers.EditConnectionController,
   controllers.GetConnectionsController,
 
-  controllers.GetDashboardsController,
-  controllers.GetDashboardController,
-  controllers.CreateDraftDashboardController,
-  controllers.EditDraftDashboardController,
-  controllers.DeleteDraftDashboardsController,
-  controllers.CreateDashboardController,
-  controllers.ModifyDashboardController,
-  controllers.DeleteDashboardController,
-
   controllers.CreateFileController,
   controllers.DeleteFileController,
   controllers.GetFileController,
@@ -45,17 +36,7 @@ export const appControllers = [
   controllers.EditMemberController,
   controllers.GetMembersController,
 
-  controllers.GetReportsController,
-
   controllers.GetSuggestFieldsController,
-
-  controllers.GetReportController,
-  controllers.CreateDraftReportController,
-  controllers.EditDraftReportController,
-  controllers.DeleteDraftReportsController,
-  controllers.DeleteReportController,
-  controllers.SaveCreateReportController,
-  controllers.SaveModifyReportController,
 
   controllers.GetModelController,
   controllers.GetModelsController,
@@ -131,10 +112,29 @@ export const appControllers = [
   controllers.CreateDraftChartController,
   controllers.DeleteChartController,
   controllers.DeleteDraftChartsController,
+  controllers.EditDraftChartController,
   controllers.GetChartController,
   controllers.GetChartsController,
   controllers.SaveCreateChartController,
   controllers.SaveModifyChartController,
+
+  controllers.CreateDraftDashboardController,
+  controllers.DeleteDashboardController,
+  controllers.DeleteDraftDashboardsController,
+  controllers.EditDraftDashboardController,
+  controllers.GetDashboardController,
+  controllers.GetDashboardsController,
+  controllers.CreateDashboardController,
+  controllers.ModifyDashboardController,
+
+  controllers.CreateDraftReportController,
+  controllers.DeleteReportController,
+  controllers.DeleteDraftReportsController,
+  controllers.EditDraftReportController,
+  controllers.GetReportController,
+  controllers.GetReportsController,
+  controllers.SaveCreateReportController,
+  controllers.SaveModifyReportController,
 
   controllers.CheckController
 ];

@@ -16,6 +16,9 @@ export class ToBackendEditDraftChartRequestPayload {
   @IsString()
   envId: string;
 
+  @IsString()
+  chartId: string;
+
   @ValidateNested()
   @Type(() => common.MconfigX)
   mconfig: common.MconfigX;

@@ -12,6 +12,25 @@ export function checkAccess(item: {
 }): boolean {
   let { userAlias, member, entity } = item;
 
+  // TODO: remove and use the same logic for dashboard and report as for edit draft chart
+  if (
+    (
+      entity as
+        | schemaPostgres.ChartEnt
+        | schemaPostgres.DashboardEnt
+        | schemaPostgres.ReportEnt
+    ).draft === true &&
+    member.memberId !==
+      (
+        entity as
+          | schemaPostgres.ChartEnt
+          | schemaPostgres.DashboardEnt
+          | schemaPostgres.ReportEnt
+      ).creatorId
+  ) {
+    return false;
+  }
+
   if (
     common.isDefined((entity as schemaPostgres.ModelEnt).connectionId) && // only models have connection_id
     member.isExplorer === false

@@ -162,25 +162,10 @@ export const nameToClass = {
   [enums.ToBackendRequestInfoNameEnum.ToBackendValidateFiles]:
     interfaces.ToBackendValidateFilesRequest,
   //
-  [enums.ToBackendRequestInfoNameEnum.ToBackendGetReports]:
-    interfaces.ToBackendGetReportsRequest,
+
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields]:
     interfaces.ToBackendGetSuggestFieldsRequest,
-  //
-  [enums.ToBackendRequestInfoNameEnum.ToBackendGetReport]:
-    interfaces.ToBackendGetReportRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendCreateDraftReport]:
-    interfaces.ToBackendCreateDraftReportRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendEditDraftReport]:
-    interfaces.ToBackendEditDraftReportRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReports]:
-    interfaces.ToBackendDeleteDraftReportsRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendSaveCreateReport]:
-    interfaces.ToBackendSaveCreateReportRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport]:
-    interfaces.ToBackendSaveModifyReportRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteReport]:
-    interfaces.ToBackendDeleteReportRequest,
+
   //
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetModels]:
     interfaces.ToBackendGetModelsRequest,
@@ -189,23 +174,7 @@ export const nameToClass = {
   //
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetViews]:
     interfaces.ToBackendGetViewsRequest,
-  //
-  [enums.ToBackendRequestInfoNameEnum.ToBackendGetDashboards]:
-    interfaces.ToBackendGetDashboardsRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendGetDashboard]:
-    interfaces.ToBackendGetDashboardRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendCreateDraftDashboard]:
-    interfaces.ToBackendCreateDraftDashboardRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendEditDraftDashboard]:
-    interfaces.ToBackendEditDraftDashboardRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard]:
-    interfaces.ToBackendCreateDashboardRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendModifyDashboard]:
-    interfaces.ToBackendModifyDashboardRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteDashboard]:
-    interfaces.ToBackendDeleteDashboardRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftDashboards]:
-    interfaces.ToBackendDeleteDraftDashboardsRequest,
+
   //
   [enums.ToBackendRequestInfoNameEnum.ToBackendCreateDraftChart]:
     interfaces.ToBackendCreateDraftChartRequest,
@@ -213,6 +182,8 @@ export const nameToClass = {
     interfaces.ToBackendDeleteChartRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftCharts]:
     interfaces.ToBackendDeleteDraftChartsRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendEditDraftChart]:
+    interfaces.ToBackendEditDraftChartRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetChart]:
     interfaces.ToBackendGetChartRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetCharts]:
@@ -221,6 +192,40 @@ export const nameToClass = {
     interfaces.ToBackendSaveCreateChartRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendSaveModifyChart]:
     interfaces.ToBackendSaveModifyChartRequest,
+  //
+  [enums.ToBackendRequestInfoNameEnum.ToBackendCreateDraftDashboard]:
+    interfaces.ToBackendCreateDraftDashboardRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteDashboard]:
+    interfaces.ToBackendDeleteDashboardRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftDashboards]:
+    interfaces.ToBackendDeleteDraftDashboardsRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendEditDraftDashboard]:
+    interfaces.ToBackendEditDraftDashboardRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendGetDashboard]:
+    interfaces.ToBackendGetDashboardRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendGetDashboards]:
+    interfaces.ToBackendGetDashboardsRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard]:
+    interfaces.ToBackendCreateDashboardRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendModifyDashboard]:
+    interfaces.ToBackendModifyDashboardRequest,
+  //
+  [enums.ToBackendRequestInfoNameEnum.ToBackendCreateDraftReport]:
+    interfaces.ToBackendCreateDraftReportRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteReport]:
+    interfaces.ToBackendDeleteReportRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReports]:
+    interfaces.ToBackendDeleteDraftReportsRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendEditDraftReport]:
+    interfaces.ToBackendEditDraftReportRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendGetReport]:
+    interfaces.ToBackendGetReportRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendGetReports]:
+    interfaces.ToBackendGetReportsRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendSaveCreateReport]:
+    interfaces.ToBackendSaveCreateReportRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport]:
+    interfaces.ToBackendSaveModifyReportRequest,
   //
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetMconfig]:
     interfaces.ToBackendGetMconfigRequest,
