@@ -130,6 +130,7 @@ export const appControllers = [
 
   controllers.CreateDraftChartController,
   controllers.DeleteChartController,
+  controllers.DeleteDraftChartsController,
   controllers.GetChartController,
   controllers.GetChartsController,
   controllers.SaveCreateChartController,

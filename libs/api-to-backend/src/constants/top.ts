@@ -207,16 +207,20 @@ export const nameToClass = {
   [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftDashboards]:
     interfaces.ToBackendDeleteDraftDashboardsRequest,
   //
-  [enums.ToBackendRequestInfoNameEnum.ToBackendGetCharts]:
-    interfaces.ToBackendGetChartsRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendCreateDraftChart]:
+    interfaces.ToBackendCreateDraftChartRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteChart]:
+    interfaces.ToBackendDeleteChartRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftCharts]:
+    interfaces.ToBackendDeleteDraftChartsRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetChart]:
     interfaces.ToBackendGetChartRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendGetCharts]:
+    interfaces.ToBackendGetChartsRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendSaveCreateChart]:
     interfaces.ToBackendSaveCreateChartRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendSaveModifyChart]:
     interfaces.ToBackendSaveModifyChartRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteChart]:
-    interfaces.ToBackendDeleteChartRequest,
   //
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetMconfig]:
     interfaces.ToBackendGetMconfigRequest,

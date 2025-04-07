@@ -50,7 +50,7 @@ export class DeleteChartController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteChart)
-  async createEmptyDashboard(
+  async deleteChart(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
