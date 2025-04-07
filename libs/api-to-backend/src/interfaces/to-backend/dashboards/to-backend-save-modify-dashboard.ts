@@ -8,7 +8,7 @@ import {
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
-export class ToBackendModifyDashboardRequestPayload {
+export class ToBackendSaveModifyDashboardRequestPayload {
   @IsString()
   projectId: string;
 
@@ -62,20 +62,20 @@ export class ToBackendModifyDashboardRequestPayload {
   tilesGrid?: common.TileX[];
 }
 
-export class ToBackendModifyDashboardRequest extends ToBackendRequest {
+export class ToBackendSaveModifyDashboardRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendModifyDashboardRequestPayload)
-  payload: ToBackendModifyDashboardRequestPayload;
+  @Type(() => ToBackendSaveModifyDashboardRequestPayload)
+  payload: ToBackendSaveModifyDashboardRequestPayload;
 }
 
-export class ToBackendModifyDashboardResponsePayload {
+export class ToBackendSaveModifyDashboardResponsePayload {
   @ValidateNested()
   @Type(() => common.DashboardX)
   newDashboardPart: common.DashboardX;
 }
 
-export class ToBackendModifyDashboardResponse extends common.MyResponse {
+export class ToBackendSaveModifyDashboardResponse extends common.MyResponse {
   @ValidateNested()
-  @Type(() => ToBackendModifyDashboardResponsePayload)
-  payload: ToBackendModifyDashboardResponsePayload;
+  @Type(() => ToBackendSaveModifyDashboardResponsePayload)
+  payload: ToBackendSaveModifyDashboardResponsePayload;
 }

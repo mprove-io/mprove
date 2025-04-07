@@ -6,7 +6,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-modify-dashboard__add-tile-ok';
+let testId = 'backend-save-modify-dashboard__replace-tile-ok';
 
 let traceId = testId;
 
@@ -26,7 +26,7 @@ let dashboardId = 'ec_d2';
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendModifyDashboardResponse;
+  let resp: apiToBackend.ToBackendSaveModifyDashboardResponse;
 
   try {
     prep = await prepareTest({
@@ -110,13 +110,10 @@ test('1', async t => {
 
     let fromDashboard = resp1.payload.dashboard;
 
-    let newTile = common.makeCopy(fromDashboard.tiles[0]);
-    newTile.title = 'new title';
-
-    let req: apiToBackend.ToBackendModifyDashboardRequest = {
+    let req: apiToBackend.ToBackendSaveModifyDashboardRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendModifyDashboard,
+          .ToBackendSaveModifyDashboard,
         traceId: traceId,
         idempotencyKey: common.makeId()
       },
@@ -127,13 +124,14 @@ test('1', async t => {
         envId: common.PROJECT_ENV_PROD,
         toDashboardId: dashboardId,
         fromDashboardId: dashboardId,
-        newTile: newTile,
-        isReplaceTile: false
+        newTile: fromDashboard.tiles[0],
+        isReplaceTile: true,
+        selectedTileTitle: fromDashboard.tiles[0].title
       }
     };
 
     resp =
-      await helper.sendToBackend<apiToBackend.ToBackendModifyDashboardResponse>(
+      await helper.sendToBackend<apiToBackend.ToBackendSaveModifyDashboardResponse>(
         {
           httpServer: prep.httpServer,
           loginToken: prep.loginToken,

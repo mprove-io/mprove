@@ -387,7 +387,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       plateY: common.TILE_DEFAULT_PLATE_Y // recalculated on backend
     };
 
-    let payloadModifyDashboard: apiToBackend.ToBackendModifyDashboardRequestPayload =
+    let payloadModifyDashboard: apiToBackend.ToBackendSaveModifyDashboardRequestPayload =
       {
         projectId: this.nav.projectId,
         isRepoProd: this.nav.isRepoProd,
@@ -403,11 +403,12 @@ export class ChartSaveAsDialogComponent implements OnInit {
     apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyDashboard,
+          apiToBackend.ToBackendRequestInfoNameEnum
+            .ToBackendSaveModifyDashboard,
         payload: payloadModifyDashboard
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendModifyDashboardResponse) => {
+        tap((resp: apiToBackend.ToBackendSaveModifyDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.navigateService.navigateToDashboard({
               dashboardId: this.selectedDashboardId

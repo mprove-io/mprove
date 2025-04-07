@@ -138,7 +138,7 @@ export class DashboardsNewDialogComponent implements OnInit {
 
     let { newTitle, roles, users } = item;
 
-    let payload: apiToBackend.ToBackendCreateDashboardRequestPayload = {
+    let payload: apiToBackend.ToBackendSaveCreateDashboardRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -154,11 +154,12 @@ export class DashboardsNewDialogComponent implements OnInit {
     apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard,
+          apiToBackend.ToBackendRequestInfoNameEnum
+            .ToBackendSaveCreateDashboard,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateDashboardResponse) => {
+        tap((resp: apiToBackend.ToBackendSaveCreateDashboardResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let dashboardPart = resp.payload.newDashboardPart;
             if (common.isDefined(dashboardPart)) {

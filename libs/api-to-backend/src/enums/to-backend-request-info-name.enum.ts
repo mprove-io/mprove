@@ -88,30 +88,12 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendSaveFile = 'api/ToBackendSaveFile',
   ToBackendValidateFiles = 'api/ToBackendValidateFiles',
   //
-  ToBackendGetReport = 'api/ToBackendGetReport',
-  ToBackendCreateDraftReport = 'api/ToBackendCreateDraftReport',
-  ToBackendEditDraftReport = 'api/ToBackendEditDraftReport',
-  ToBackendDeleteDraftReports = 'api/ToBackendDeleteDraftReports',
-  ToBackendSaveCreateReport = 'api/ToBackendSaveCreateReport',
-  ToBackendSaveModifyReport = 'api/ToBackendSaveModifyReport',
-  ToBackendDeleteReport = 'api/ToBackendDeleteReport',
-  //
-  ToBackendGetReports = 'api/ToBackendGetReports',
   ToBackendGetSuggestFields = 'api/ToBackendGetSuggestFields',
   //
   ToBackendGetModels = 'api/ToBackendGetModels',
   ToBackendGetModel = 'api/ToBackendGetModel',
   //
   ToBackendGetViews = 'api/ToBackendGetViews',
-  //
-  ToBackendGetDashboards = 'api/ToBackendGetDashboards',
-  ToBackendGetDashboard = 'api/ToBackendGetDashboard',
-  ToBackendCreateDraftDashboard = 'api/ToBackendCreateDraftDashboard',
-  ToBackendEditDraftDashboard = 'api/ToBackendEditDraftDashboard',
-  ToBackendDeleteDraftDashboards = 'api/ToBackendDeleteDraftDashboards',
-  ToBackendCreateDashboard = 'api/ToBackendCreateDashboard',
-  ToBackendModifyDashboard = 'api/ToBackendModifyDashboard',
-  ToBackendDeleteDashboard = 'api/ToBackendDeleteDashboard',
   //
   ToBackendCreateDraftChart = 'api/ToBackendCreateDraftChart',
   ToBackendDeleteChart = 'api/ToBackendDeleteChart',
@@ -121,6 +103,24 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendGetCharts = 'api/ToBackendGetCharts',
   ToBackendSaveCreateChart = 'api/ToBackendSaveCreateChart',
   ToBackendSaveModifyChart = 'api/ToBackendSaveModifyChart',
+  //
+  ToBackendCreateDraftDashboard = 'api/ToBackendCreateDraftDashboard',
+  ToBackendDeleteDashboard = 'api/ToBackendDeleteDashboard',
+  ToBackendDeleteDraftDashboards = 'api/ToBackendDeleteDraftDashboards',
+  ToBackendEditDraftDashboard = 'api/ToBackendEditDraftDashboard',
+  ToBackendGetDashboard = 'api/ToBackendGetDashboard',
+  ToBackendGetDashboards = 'api/ToBackendGetDashboards',
+  ToBackendSaveCreateDashboard = 'api/ToBackendSaveCreateDashboard',
+  ToBackendSaveModifyDashboard = 'api/ToBackendSaveModifyDashboard',
+  //
+  ToBackendCreateDraftReport = 'api/ToBackendCreateDraftReport',
+  ToBackendDeleteDraftReports = 'api/ToBackendDeleteDraftReports',
+  ToBackendDeleteReport = 'api/ToBackendDeleteReport',
+  ToBackendEditDraftReport = 'api/ToBackendEditDraftReport',
+  ToBackendGetReport = 'api/ToBackendGetReport',
+  ToBackendGetReports = 'api/ToBackendGetReports',
+  ToBackendSaveCreateReport = 'api/ToBackendSaveCreateReport',
+  ToBackendSaveModifyReport = 'api/ToBackendSaveModifyReport',
   //
   ToBackendGetMconfig = 'api/ToBackendGetMconfig',
   ToBackendCreateTempMconfig = 'api/ToBackendCreateTempMconfig',

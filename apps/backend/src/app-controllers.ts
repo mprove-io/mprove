@@ -124,8 +124,8 @@ export const appControllers = [
   controllers.EditDraftDashboardController,
   controllers.GetDashboardController,
   controllers.GetDashboardsController,
-  controllers.CreateDashboardController,
-  controllers.ModifyDashboardController,
+  controllers.SaveCreateDashboardController,
+  controllers.SaveModifyDashboardController,
 
   controllers.CreateDraftReportController,
   controllers.DeleteReportController,

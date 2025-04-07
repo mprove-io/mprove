@@ -28,6 +28,7 @@ import { BridgesService } from '~backend/services/bridges.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
+import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
@@ -37,15 +38,16 @@ let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
-export class CreateDashboardController {
+export class SaveModifyDashboardController {
   constructor(
     private branchesService: BranchesService,
     private structsService: StructsService,
     private rabbitService: RabbitService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private dashboardsService: DashboardsService,
     private blockmlService: BlockmlService,
+    private modelsService: ModelsService,
+    private dashboardsService: DashboardsService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
     private wrapToEntService: WrapToEntService,
@@ -54,12 +56,13 @@ export class CreateDashboardController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDashboard)
-  async createEmptyDashboard(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyDashboard)
+  async saveModifyDashboard(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
-    let reqValid: apiToBackend.ToBackendCreateDashboardRequest = request.body;
+    let reqValid: apiToBackend.ToBackendSaveModifyDashboardRequest =
+      request.body;
 
     if (user.alias === common.RESTRICTED_USER_ALIAS) {
       throw new common.ServerError({
@@ -73,11 +76,14 @@ export class CreateDashboardController {
       isRepoProd,
       branchId,
       envId,
-      newDashboardId,
+      toDashboardId,
       fromDashboardId,
-      dashboardTitle,
+      selectedTileTitle,
+      newTile,
+      isReplaceTile,
       accessUsers,
       accessRoles,
+      dashboardTitle,
       tilesGrid
     } = reqValid.payload;
 
@@ -135,25 +141,101 @@ export class CreateDashboardController {
       });
     }
 
+    let fromDashboardEntity =
+      await this.dashboardsService.getDashboardCheckExists({
+        structId: bridge.structId,
+        dashboardId: fromDashboardId
+      });
+
+    let fromDashboard = await this.dashboardsService.getDashboardXCheckAccess({
+      user: user,
+      member: userMember,
+      dashboard: fromDashboardEntity,
+      bridge: bridge,
+      projectId: projectId
+    });
+
+    let toDashboardEntity =
+      await this.dashboardsService.getDashboardCheckExists({
+        structId: bridge.structId,
+        dashboardId: toDashboardId
+      });
+
+    if (userMember.isAdmin === false && userMember.isEditor === false) {
+      this.dashboardsService.checkDashboardPath({
+        userAlias: user.alias,
+        filePath: toDashboardEntity.filePath
+      });
+    }
+
+    // let toDashboard = await this.dashboardsService.getDashboardXCheckAccess({
+    //   user: user,
+    //   member: member,
+    //   dashboard: toDashboardEntity,
+    //   bridge: bridge,
+    //   projectId: projectId
+    // });
+
     let dashboardFileText: string;
 
-    if (common.isDefined(fromDashboardId)) {
-      let fromDashboardEntity =
-        await this.dashboardsService.getDashboardCheckExists({
-          structId: bridge.structId,
-          dashboardId: fromDashboardId
+    if (common.isDefined(newTile)) {
+      let mconfigModel = await this.modelsService.getModelCheckExists({
+        structId: bridge.structId,
+        modelId: newTile.mconfig.modelId
+      });
+
+      let isAccessGranted = helper.checkAccess({
+        userAlias: user.alias,
+        member: userMember,
+        entity: mconfigModel
+      });
+
+      if (isAccessGranted === false) {
+        throw new common.ServerError({
+          message: common.ErEnum.BACKEND_FORBIDDEN_MODEL
         });
+      }
 
-      let fromDashboard = await this.dashboardsService.getDashboardXCheckAccess(
-        {
-          user: user,
-          member: userMember,
-          dashboard: fromDashboardEntity,
-          bridge: bridge,
-          projectId: projectId
-        }
-      );
+      newTile.mconfig.chart.title = newTile.title;
 
+      let plateY = 0;
+
+      fromDashboard.tiles.forEach(tile => {
+        plateY = plateY + tile.plateHeight;
+      });
+
+      newTile.plateY = plateY;
+
+      if (isReplaceTile === true) {
+        let oldTileIndex = fromDashboard.tiles.findIndex(
+          x => x.title === selectedTileTitle
+        );
+
+        let oldTile = fromDashboard.tiles[oldTileIndex];
+
+        newTile.plateWidth = oldTile.plateWidth;
+        newTile.plateHeight = oldTile.plateHeight;
+        newTile.plateX = oldTile.plateX;
+        newTile.plateY = oldTile.plateY;
+
+        fromDashboard.tiles[oldTileIndex] = newTile;
+      } else {
+        fromDashboard.tiles = [...fromDashboard.tiles, newTile];
+      }
+
+      dashboardFileText = makeDashboardFileText({
+        dashboard: fromDashboard,
+        newDashboardId: fromDashboard.dashboardId,
+        newTitle: fromDashboard.title,
+        roles: fromDashboard.accessRoles.join(', '),
+        users: fromDashboard.accessUsers.join(', '),
+        deleteFilterFieldId: undefined,
+        deleteFilterTileTitle: undefined,
+        caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
+        timezone: common.UTC
+      });
+    } else {
+      // dashboard save as - replace existing
       let yTiles: common.TileX[] = [];
 
       tilesGrid.forEach(freshTile => {
@@ -171,39 +253,7 @@ export class CreateDashboardController {
 
       dashboardFileText = makeDashboardFileText({
         dashboard: fromDashboard,
-        newDashboardId: newDashboardId,
-        newTitle: dashboardTitle,
-        roles: accessRoles,
-        users: accessUsers,
-        deleteFilterFieldId: undefined,
-        deleteFilterTileTitle: undefined,
-        caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-        timezone: common.UTC
-      });
-    } else {
-      let newDashboard: common.DashboardX = {
-        structId: undefined,
-        dashboardId: newDashboardId,
-        draft: false,
-        creatorId: undefined,
-        filePath: undefined,
-        content: undefined,
-        accessUsers: undefined,
-        accessRoles: undefined,
-        title: undefined,
-        hidden: undefined,
-        tiles: [],
-        author: undefined,
-        canEditOrDeleteDashboard: undefined,
-        serverTs: undefined,
-        extendedFilters: [],
-        storeModels: [],
-        fields: []
-      };
-
-      dashboardFileText = makeDashboardFileText({
-        dashboard: newDashboard,
-        newDashboardId: newDashboardId,
+        newDashboardId: toDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
         users: accessUsers,
@@ -214,28 +264,9 @@ export class CreateDashboardController {
       });
     }
 
-    let mdir = currentStruct.mproveDirValue;
-
-    if (
-      mdir.length > 2 &&
-      mdir.substring(0, 2) === common.MPROVE_CONFIG_DIR_DOT_SLASH
-    ) {
-      mdir = mdir.substring(2);
-    }
-
-    let parentNodeId =
-      [
-        common.MPROVE_CONFIG_DIR_DOT,
-        common.MPROVE_CONFIG_DIR_DOT_SLASH
-      ].indexOf(currentStruct.mproveDirValue) > -1
-        ? `${projectId}/${common.MPROVE_USERS_FOLDER}/${user.alias}`
-        : `${projectId}/${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}`;
-
-    let fileName = `${newDashboardId}${common.FileExtensionEnum.Dashboard}`;
-
-    let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
+    let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
+        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -243,10 +274,9 @@ export class CreateDashboardController {
         projectId: projectId,
         repoId: repoId,
         branch: branchId,
-        parentNodeId: parentNodeId,
-        fileName: fileName,
+        fileNodeId: toDashboardEntity.filePath,
         userAlias: user.alias,
-        fileText: dashboardFileText,
+        content: dashboardFileText,
         remoteType: project.remoteType,
         gitUrl: project.gitUrl,
         privateKey: project.privateKey,
@@ -255,12 +285,12 @@ export class CreateDashboardController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateFileResponse>({
+      await this.rabbitService.sendToDisk<apiToDisk.ToDiskSaveFileResponse>({
         routingKey: helper.makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
         }),
-        message: toDiskCreateFileRequest,
+        message: toDiskSaveFileRequest,
         checkIsOk: true
       });
 
@@ -287,11 +317,11 @@ export class CreateDashboardController {
       }
     });
 
-    let { dashboards, mconfigs, queries, struct } =
+    let { struct, dashboards, mconfigs, queries } =
       await this.blockmlService.rebuildStruct({
-        traceId,
+        traceId: traceId,
         orgId: project.orgId,
-        projectId,
+        projectId: projectId,
         structId: bridge.structId,
         diskFiles: diskResponse.payload.files,
         mproveDir: diskResponse.payload.mproveDir,
@@ -300,64 +330,72 @@ export class CreateDashboardController {
         overrideTimezone: undefined
       });
 
-    let dashboard = dashboards.find(x => x.dashboardId === newDashboardId);
-
-    if (common.isUndefined(dashboard)) {
-      let fileId = `${parentNodeId}/${fileName}`;
-      let fileIdAr = fileId.split('/');
-      fileIdAr.shift();
-      let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
-
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_CREATE_DASHBOARD_FAIL,
-        data: {
-          underscoreFileId: underscoreFileId
-        }
-      });
-    }
-
-    let dashboardMconfigIds = dashboard.tiles.map(x => x.mconfigId);
-    let dashboardMconfigs = mconfigs.filter(
-      x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
-    );
-
-    let dashboardQueryIds = dashboard.tiles.map(x => x.queryId);
-    let dashboardQueries = queries.filter(
-      x => dashboardQueryIds.indexOf(x.queryId) > -1
-    );
+    let newDashboard = dashboards.find(x => x.dashboardId === toDashboardId);
 
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
-          await tx
-            .delete(dashboardsTable)
-            .where(
-              and(
-                eq(dashboardsTable.dashboardId, fromDashboardId),
-                eq(dashboardsTable.structId, bridge.structId)
-              )
+          if (common.isUndefined(newDashboard)) {
+            await tx
+              .delete(dashboardsTable)
+              .where(
+                and(
+                  eq(dashboardsTable.dashboardId, toDashboardId),
+                  eq(dashboardsTable.structId, bridge.structId)
+                )
+              );
+
+            let fileIdAr = toDashboardEntity.filePath.split('/');
+            fileIdAr.shift();
+            let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
+
+            throw new common.ServerError({
+              message: common.ErEnum.BACKEND_MODIFY_DASHBOARD_FAIL,
+              data: {
+                underscoreFileId: underscoreFileId
+              }
+            });
+          } else {
+            await tx
+              .delete(dashboardsTable)
+              .where(
+                and(
+                  eq(dashboardsTable.dashboardId, fromDashboardId),
+                  eq(dashboardsTable.structId, bridge.structId)
+                )
+              );
+
+            let dashboardMconfigIds = newDashboard.tiles.map(x => x.mconfigId);
+            let dashboardMconfigs = mconfigs.filter(
+              x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
             );
 
-          await this.db.packer.write({
-            tx: tx,
-            insert: {
-              dashboards: [
-                this.wrapToEntService.wrapToEntityDashboard(dashboard)
-              ],
-              mconfigs: dashboardMconfigs.map(x =>
-                this.wrapToEntService.wrapToEntityMconfig(x)
-              )
-            },
-            insertOrUpdate: {
-              structs: [struct],
-              bridges: [...branchBridges]
-            },
-            insertOrDoNothing: {
-              queries: dashboardQueries.map(x =>
-                this.wrapToEntService.wrapToEntityQuery(x)
-              )
-            }
-          });
+            let dashboardQueryIds = newDashboard.tiles.map(x => x.queryId);
+            let dashboardQueries = queries.filter(
+              x => dashboardQueryIds.indexOf(x.queryId) > -1
+            );
+
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                mconfigs: dashboardMconfigs.map(x =>
+                  this.wrapToEntService.wrapToEntityMconfig(x)
+                )
+              },
+              insertOrUpdate: {
+                dashboards: common.isDefined(newDashboard)
+                  ? [this.wrapToEntService.wrapToEntityDashboard(newDashboard)]
+                  : undefined,
+                structs: [struct],
+                bridges: [...branchBridges]
+              },
+              insertOrDoNothing: {
+                queries: dashboardQueries.map(x =>
+                  this.wrapToEntService.wrapToEntityQuery(x)
+                )
+              }
+            });
+          }
         }),
       getRetryOption(this.cs, this.logger)
     );
@@ -366,10 +404,10 @@ export class CreateDashboardController {
       structId: bridge.structId,
       user: user,
       userMember: userMember,
-      newDashboard: dashboard
+      newDashboard: newDashboard
     });
 
-    let payload: apiToBackend.ToBackendCreateDashboardResponsePayload = {
+    let payload: apiToBackend.ToBackendSaveModifyDashboardResponsePayload = {
       newDashboardPart:
         newDashboardParts.length > 0 ? newDashboardParts[0] : undefined
     };

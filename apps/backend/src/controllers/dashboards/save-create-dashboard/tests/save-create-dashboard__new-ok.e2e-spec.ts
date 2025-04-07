@@ -6,7 +6,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-modify-dashboard__save-dashboard-ok';
+let testId = 'backend-save-create-dashboard__new-ok';
 
 let traceId = testId;
 
@@ -21,15 +21,14 @@ let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = testId;
 
-let toDashboardId = 'ec_d2';
-let fromDashboardId = 'ec_d2';
-
 let newTitle = testId;
+
+let dashboardId = common.makeId();
 
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendModifyDashboardResponse;
+  let resp: apiToBackend.ToBackendSaveCreateDashboardResponse;
 
   try {
     prep = await prepareTest({
@@ -88,35 +87,10 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req1: apiToBackend.ToBackendGetDashboardRequest = {
-      info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
-        traceId: traceId,
-        idempotencyKey: common.makeId()
-      },
-      payload: {
-        projectId: projectId,
-        isRepoProd: false,
-        branchId: common.BRANCH_MASTER,
-        envId: common.PROJECT_ENV_PROD,
-        dashboardId: toDashboardId,
-        timezone: 'UTC'
-      }
-    };
-
-    let resp1 =
-      await helper.sendToBackend<apiToBackend.ToBackendGetDashboardResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req1
-      });
-
-    let fromDashboard = resp1.payload.dashboard;
-
-    let req: apiToBackend.ToBackendModifyDashboardRequest = {
+    let req: apiToBackend.ToBackendSaveCreateDashboardRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendModifyDashboard,
+          .ToBackendSaveCreateDashboard,
         traceId: traceId,
         idempotencyKey: common.makeId()
       },
@@ -125,17 +99,13 @@ test('1', async t => {
         isRepoProd: false,
         branchId: common.BRANCH_MASTER,
         envId: common.PROJECT_ENV_PROD,
-        toDashboardId: toDashboardId,
-        fromDashboardId: fromDashboardId,
-        dashboardTitle: newTitle,
-        accessRoles: fromDashboard.accessRoles.join(', '),
-        accessUsers: fromDashboard.accessUsers.join(', '),
-        tilesGrid: fromDashboard.tiles
+        newDashboardId: dashboardId,
+        dashboardTitle: newTitle
       }
     };
 
     resp =
-      await helper.sendToBackend<apiToBackend.ToBackendModifyDashboardResponse>(
+      await helper.sendToBackend<apiToBackend.ToBackendSaveCreateDashboardResponse>(
         {
           httpServer: prep.httpServer,
           loginToken: prep.loginToken,
