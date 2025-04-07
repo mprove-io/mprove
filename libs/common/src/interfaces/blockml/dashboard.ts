@@ -38,10 +38,10 @@ export class Dashboard {
 
   @IsOptional()
   @IsString()
-  gr?: string;
+  gr?: string; // TODO: remove dashboard gr
 
   @IsBoolean()
-  hidden: boolean;
+  hidden: boolean; // TODO: remove dashboard hidden
 
   @ValidateNested()
   @Type(() => DashboardField)

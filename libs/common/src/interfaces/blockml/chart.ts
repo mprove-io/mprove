@@ -41,10 +41,10 @@ export class Chart {
 
   @IsOptional()
   @IsString()
-  gr?: string;
+  gr?: string; // TODO: remove chart gr
 
   @IsBoolean()
-  hidden: boolean;
+  hidden: boolean; // TODO: remove chart hidden
 
   @ValidateNested()
   @Type(() => Tile)
