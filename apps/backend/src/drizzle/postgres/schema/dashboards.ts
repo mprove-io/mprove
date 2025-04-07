@@ -28,9 +28,9 @@ export const dashboardsTable = pgTable(
     hidden: boolean('hidden').notNull(),
     fields: json('fields').$type<common.DashboardField[]>().notNull(),
     tiles: json('tiles').$type<common.Tile[]>().notNull(),
+    description: varchar('description'),
     creatorId: varchar('creator_id', { length: 32 }), // user_id
     draft: boolean('draft').notNull(),
-    description: varchar('description'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

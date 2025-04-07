@@ -3,10 +3,7 @@ import { createStore, select, withProps } from '@ngneat/elf';
 import { common } from '~front/barrels/common';
 import { BaseQuery } from './base.query';
 
-export class MqState {
-  query: common.Query;
-  mconfig: common.MconfigX;
-}
+export class ChartState extends common.ChartX {}
 
 export const emptyMconfig: common.MconfigX = {
   structId: undefined,
@@ -61,17 +58,48 @@ export const emptyQuery: common.Query = {
   serverTs: 1
 };
 
-let mqState: MqState = {
+let emptyTile: common.TileX = {
+  modelId: undefined,
+  modelLabel: undefined,
+  mconfigId: emptyMconfig.mconfigId,
+  queryId: emptyQuery.queryId,
+  listen: undefined,
+  title: 'New Chart',
+  plateWidth: undefined,
+  plateHeight: undefined,
+  plateX: undefined,
+  plateY: undefined,
+  //
   mconfig: emptyMconfig,
-  query: emptyQuery
+  query: emptyQuery,
+  hasAccessToModel: true
+};
+
+export const emptyChart: ChartState = {
+  structId: undefined,
+  chartId: common.EMPTY_CHART_ID,
+  draft: true,
+  creatorId: undefined,
+  title: emptyTile.title,
+  modelId: undefined,
+  modelLabel: undefined,
+  filePath: undefined,
+  accessUsers: [],
+  accessRoles: [],
+  hidden: undefined,
+  serverTs: undefined,
+  //
+  tiles: [emptyTile],
+  author: undefined,
+  canEditOrDeleteChart: undefined
 };
 
 @Injectable({ providedIn: 'root' })
-export class MqQuery extends BaseQuery<MqState> {
-  query$ = this.store.pipe(select(state => state.query));
-  mconfig$ = this.store.pipe(select(state => state.mconfig));
+export class ChartQuery extends BaseQuery<ChartState> {
+  query$ = this.store.pipe(select(state => state.tiles[0].query));
+  mconfig$ = this.store.pipe(select(state => state.tiles[0].mconfig));
 
   constructor() {
-    super(createStore({ name: 'mq' }, withProps<MqState>(mqState)));
+    super(createStore({ name: 'chart' }, withProps<ChartState>(emptyChart)));
   }
 }

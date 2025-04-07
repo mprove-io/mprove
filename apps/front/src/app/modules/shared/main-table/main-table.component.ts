@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
 import { ModelQuery } from '~front/app/queries/model.query';
-import { MqQuery } from '~front/app/queries/mq.query';
 import { QDataRow } from '~front/app/services/data.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { StructService } from '~front/app/services/struct.service';
@@ -33,15 +32,7 @@ export class MainTableComponent {
   @Input()
   isEdit: boolean;
 
-  // mconfig$ = this.mqQuery.mconfig$.pipe(
-  //   tap(x => {
-  //     this.mconfig = x;
-  //     this.cd.detectChanges();
-  //   })
-  // );
-
   constructor(
-    private mqQuery: MqQuery,
     private modelQuery: ModelQuery,
     private mconfigService: MconfigService,
     private structService: StructService,

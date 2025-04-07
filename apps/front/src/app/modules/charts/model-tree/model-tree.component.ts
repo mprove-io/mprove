@@ -14,8 +14,8 @@ import {
 import { combineLatest } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { FractionSubTypeOption, ModelNode } from '~common/_index';
+import { ChartQuery } from '~front/app/queries/chart.query';
 import { ModelQuery, ModelState } from '~front/app/queries/model.query';
-import { MqQuery } from '~front/app/queries/mq.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -61,7 +61,7 @@ export class ModelTreeComponent implements AfterViewInit {
 
   nodesExtra$ = combineLatest([
     this.modelQuery.select(),
-    this.mqQuery.mconfig$,
+    this.chartQuery.mconfig$,
     this.uiQuery.modelTreeLevels$
   ]).pipe(
     tap(
@@ -111,7 +111,7 @@ export class ModelTreeComponent implements AfterViewInit {
   constructor(
     private modelQuery: ModelQuery,
     private cd: ChangeDetectorRef,
-    private mqQuery: MqQuery,
+    private chartQuery: ChartQuery,
     private uiQuery: UiQuery,
     private uiService: UiService,
     private structService: StructService,

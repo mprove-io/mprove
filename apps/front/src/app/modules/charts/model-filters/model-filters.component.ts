@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
-import { MqQuery } from '~front/app/queries/mq.query';
+import { ChartQuery } from '~front/app/queries/chart.query';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { StructService } from '~front/app/services/struct.service';
 import { common } from '~front/barrels/common';
@@ -15,15 +15,16 @@ export class ModelFiltersComponent {
   @Input() modelContent: any;
 
   mconfig: common.MconfigX;
-  mconfig$ = this.mqQuery.mconfig$.pipe(
+
+  chartQuery$ = this.chartQuery.select().pipe(
     tap(x => {
-      this.mconfig = x;
+      this.mconfig = x.tiles[0].mconfig;
       this.cd.detectChanges();
     })
   );
 
   constructor(
-    private mqQuery: MqQuery,
+    private chartQuery: ChartQuery,
     private cd: ChangeDetectorRef,
     private structService: StructService,
     private mconfigService: MconfigService

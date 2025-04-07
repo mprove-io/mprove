@@ -13,6 +13,7 @@ export * from './model-x';
 export * from './org';
 export * from './orgs-item';
 export * from './project';
+export * from './project-chart-link';
 export * from './project-dashboard-link';
 export * from './project-report-link';
 export * from './projects-item';

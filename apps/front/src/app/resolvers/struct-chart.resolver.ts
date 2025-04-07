@@ -10,11 +10,10 @@ import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
-import { DashboardQuery } from '../queries/dashboard.query';
-import { DashboardsQuery } from '../queries/dashboards.query';
+import { ChartQuery } from '../queries/chart.query';
+import { ChartsQuery } from '../queries/charts.query';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
-import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
@@ -28,9 +27,8 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
     private navigateService: NavigateService,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
-    private dashboardsQuery: DashboardsQuery,
-    private dashboardQuery: DashboardQuery,
-    private structQuery: StructQuery,
+    private chartsQuery: ChartsQuery,
+    private chartQuery: ChartQuery,
     private memberQuery: MemberQuery,
     private uiQuery: UiQuery,
     private uiService: UiService,
@@ -55,12 +53,12 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
   }
 
   resolveRoute(item: {
-    dashboardId?: string;
+    chartId?: string;
     route: ActivatedRouteSnapshot;
     showSpinner: boolean;
     timezone: string;
   }): Observable<boolean> {
-    let { dashboardId, route, showSpinner, timezone } = item;
+    let { chartId, route, showSpinner, timezone } = item;
 
     let nav: NavState;
     this.navQuery
@@ -85,19 +83,19 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let parametersDashboardId = common.isDefined(dashboardId)
-      ? dashboardId
-      : route?.params[common.PARAMETER_DASHBOARD_ID];
+    let parametersChartId = common.isDefined(chartId)
+      ? chartId
+      : route?.params[common.PARAMETER_CHART_ID];
 
-    if (parametersDashboardId === common.LAST_SELECTED_DASHBOARD_ID) {
-      let projectDashboardLinks = this.uiQuery.getValue().projectDashboardLinks;
-      let dashboards = this.dashboardsQuery.getValue().dashboards;
+    if (parametersChartId === common.LAST_SELECTED_CHART_ID) {
+      let projectChartLinks = this.uiQuery.getValue().projectChartLinks;
+      let charts = this.chartsQuery.getValue().charts;
 
-      let draftLink = projectDashboardLinks.find(
+      let draftLink = projectChartLinks.find(
         link => link.draft === true && link.projectId === nav.projectId
       );
 
-      let pLink = projectDashboardLinks.find(
+      let pLink = projectChartLinks.find(
         link => link.draft === false && link.projectId === nav.projectId
       );
 
@@ -105,78 +103,82 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
         common.isDefined(draftLink) &&
         (common.isUndefined(pLink) || draftLink.lastNavTs > pLink.lastNavTs)
       ) {
-        let draftDashboard = dashboards.find(
-          r => r.dashboardId === draftLink.dashboardId && r.draft === true
+        let draftChart = charts.find(
+          c => c.chartId === draftLink.chartId && c.draft === true
         );
 
-        if (common.isDefined(draftDashboard)) {
-          this.navigateService.navigateToDashboard({
-            dashboardId: draftDashboard.dashboardId
+        if (common.isDefined(draftChart)) {
+          this.navigateService.navigateToChart({
+            modelId: draftChart.modelId,
+            chartId: draftChart.chartId
           });
 
           return of(false);
         } else if (common.isDefined(pLink)) {
-          let pDashboard = dashboards.find(
-            r => r.dashboardId === pLink.dashboardId && r.draft === false
+          let pChart = charts.find(
+            r => r.chartId === pLink.chartId && r.draft === false
           );
 
-          if (common.isDefined(pDashboard)) {
-            this.navigateService.navigateToDashboard({
-              dashboardId: pDashboard.dashboardId
+          if (common.isDefined(pChart)) {
+            this.navigateService.navigateToChart({
+              modelId: pChart.modelId,
+              chartId: pChart.chartId
             });
           } else {
-            this.navigateService.navigateToDashboards();
+            this.navigateService.navigateToCharts();
           }
 
           return of(false);
         }
       } else if (common.isDefined(pLink)) {
-        let pDashboard = dashboards.find(
-          r => r.dashboardId === pLink.dashboardId && r.draft === false
+        let pChart = charts.find(
+          r => r.chartId === pLink.chartId && r.draft === false
         );
 
-        if (common.isDefined(pDashboard)) {
-          this.navigateService.navigateToDashboard({
-            dashboardId: pDashboard.dashboardId
+        if (common.isDefined(pChart)) {
+          this.navigateService.navigateToChart({
+            modelId: pChart.modelId,
+            chartId: pChart.chartId
           });
         } else {
-          this.navigateService.navigateToDashboards();
+          this.navigateService.navigateToCharts();
         }
 
         return of(false);
       } else {
-        this.navigateService.navigateToDashboards();
+        this.navigateService.navigateToCharts();
 
         return of(false);
       }
     }
 
-    let payload: apiToBackend.ToBackendGetDashboardRequestPayload = {
+    let payload: apiToBackend.ToBackendGetChartRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
       envId: nav.envId,
-      dashboardId: parametersDashboardId,
+      chartId: parametersChartId,
       timezone: timezone
     };
 
     return this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
         payload: payload,
         showSpinner: showSpinner
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetDashboardResponse) => {
+        map((resp: apiToBackend.ToBackendGetChartResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
-            this.structQuery.update(resp.payload.struct);
-            this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
-            });
-            this.dashboardQuery.update(resp.payload.dashboard);
+            // TODO: check logic (like dashboard)
+            // this.structQuery.update(resp.payload.struct);
+            // this.navQuery.updatePart({
+            //   needValidate: resp.payload.needValidate
+            // });
+            this.chartQuery.update(resp.payload.chart);
 
             let uiState = this.uiQuery.getValue();
 

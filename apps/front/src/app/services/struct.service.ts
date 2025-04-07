@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
+import { ChartQuery } from '../queries/chart.query';
 import { ModelQuery, ModelState } from '../queries/model.query';
-import { MqQuery } from '../queries/mq.query';
 import { StructQuery, StructState } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 import { UserQuery, UserState } from '../queries/user.query';
@@ -31,7 +31,7 @@ export class StructService {
   );
 
   mconfig: common.MconfigX;
-  mconfig$ = this.mqQuery.mconfig$.pipe(
+  mconfig$ = this.chartQuery.mconfig$.pipe(
     tap(x => {
       this.mconfig = x;
     })
@@ -42,7 +42,7 @@ export class StructService {
     private structQuery: StructQuery,
     private modelQuery: ModelQuery,
     private uiQuery: UiQuery,
-    private mqQuery: MqQuery
+    private chartQuery: ChartQuery
   ) {
     this.user$.subscribe();
     this.struct$.subscribe();

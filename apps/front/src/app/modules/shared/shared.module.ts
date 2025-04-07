@@ -17,7 +17,6 @@ import { ChartEditorComponent } from './chart-editor/chart-editor.component';
 import { ChartSaveAsDialogComponent } from './chart-save-as-dialog/chart-save-as-dialog.component';
 import { ChartTableComponent } from './chart-table/chart-table.component';
 import { ChartViewComponent } from './chart-view/chart-view.component';
-import { ChartComponent } from './chart/chart.component';
 import { ColorMenuComponent } from './color-menu/color-menu.component';
 import { DashboardEditListenersDialogComponent } from './dashboard-edit-listeners-dialog/dashboard-edit-listeners-dialog.component';
 import { DashboardSaveAsDialogComponent } from './dashboard-save-as-dialog/dashboard-save-as-dialog.component';
@@ -171,7 +170,6 @@ let sharedComponents = [
   ChartTableComponent,
   ChartViewComponent,
   ChartBoxComponent,
-  ChartComponent,
   DashboardTileChartComponent,
   FieldLabelComponent,
   MetricFieldLabelComponent,

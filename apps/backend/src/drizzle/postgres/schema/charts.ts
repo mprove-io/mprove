@@ -28,6 +28,8 @@ export const chartsTable = pgTable(
     gr: varchar('gr'),
     hidden: boolean('hidden').notNull(),
     tiles: json('tiles').$type<common.Tile[]>().notNull(),
+    creatorId: varchar('creator_id', { length: 32 }), // user_id
+    draft: boolean('draft'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

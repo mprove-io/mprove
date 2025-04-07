@@ -20,7 +20,6 @@ export const reportsTable = pgTable(
     structId: varchar('struct_id', { length: 32 }).notNull(),
     reportId: varchar('report_id', { length: 32 }).notNull(), // name
     projectId: varchar('project_id', { length: 32 }).notNull(),
-    creatorId: varchar('creator_id', { length: 32 }), // user_id
     filePath: varchar('file_path'),
     accessUsers: json('access_users').$type<string[]>().notNull(),
     accessRoles: json('access_roles').$type<string[]>().notNull(),
@@ -28,6 +27,7 @@ export const reportsTable = pgTable(
     fields: json('fields').$type<common.ReportField[]>(),
     rows: json('rows').$type<common.Row[]>().notNull(),
     chart: json('chart').$type<common.MconfigChart>(),
+    creatorId: varchar('creator_id', { length: 32 }), // user_id
     draft: boolean('draft').notNull(),
     draftCreatedTs: bigint('draft_created_ts', { mode: 'number' }).notNull(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()

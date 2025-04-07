@@ -49,6 +49,8 @@ export function wrapCharts(item: {
     apiCharts.push({
       structId: structId,
       chartId: x.name,
+      draft: false,
+      creatorId: undefined,
       title: x.tiles[0].title,
       modelId: x.tiles[0].model,
       modelLabel: isStore === true ? store.label : model.label,

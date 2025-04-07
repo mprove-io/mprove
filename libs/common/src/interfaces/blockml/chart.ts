@@ -15,6 +15,12 @@ export class Chart {
   @IsString()
   chartId: string;
 
+  @IsBoolean()
+  draft: boolean;
+
+  @IsString()
+  creatorId: string;
+
   @IsString()
   title: string;
 

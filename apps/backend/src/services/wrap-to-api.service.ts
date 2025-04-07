@@ -555,13 +555,17 @@ export class WrapToApiService {
           ? user.ui?.showHours
           : constants.DEFAULT_UI.showHours,
 
-        projectReportLinks: common.isDefined(user.ui?.projectReportLinks)
-          ? user.ui?.projectReportLinks
-          : constants.DEFAULT_UI.projectReportLinks,
+        projectChartLinks: common.isDefined(user.ui?.projectChartLinks)
+          ? user.ui?.projectChartLinks
+          : constants.DEFAULT_UI.projectChartLinks,
 
         projectDashboardLinks: common.isDefined(user.ui?.projectDashboardLinks)
           ? user.ui?.projectDashboardLinks
           : constants.DEFAULT_UI.projectDashboardLinks,
+
+        projectReportLinks: common.isDefined(user.ui?.projectReportLinks)
+          ? user.ui?.projectReportLinks
+          : constants.DEFAULT_UI.projectReportLinks,
 
         modelTreeLevels: common.isDefined(user.ui?.modelTreeLevels)
           ? user.ui?.modelTreeLevels
@@ -599,6 +603,8 @@ export class WrapToApiService {
     return {
       structId: chart.structId,
       chartId: chart.chartId,
+      draft: chart.draft,
+      creatorId: chart.creatorId,
       author: author,
       canEditOrDeleteChart: canEditOrDeleteChart,
       title: chart.title,

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { MonacoEditorOptions } from 'ng-monaco-editor';
 import { tap } from 'rxjs/operators';
-import { MqQuery } from '~front/app/queries/mq.query';
+import { ChartQuery } from '~front/app/queries/chart.query';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
@@ -22,7 +22,7 @@ export class SqlComponent {
   content: string;
 
   query: common.Query;
-  query$ = this.mqQuery.query$.pipe(
+  query$ = this.chartQuery.query$.pipe(
     tap(x => {
       this.query = x;
       this.content = x.sql;
@@ -30,5 +30,5 @@ export class SqlComponent {
     })
   );
 
-  constructor(private cd: ChangeDetectorRef, private mqQuery: MqQuery) {}
+  constructor(private cd: ChangeDetectorRef, private chartQuery: ChartQuery) {}
 }

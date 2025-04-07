@@ -197,6 +197,8 @@ export class WrapToEntService {
       }),
       structId: chart.structId,
       chartId: chart.chartId,
+      draft: chart.draft,
+      creatorId: chart.creatorId,
       title: chart.title,
       modelId: chart.modelId,
       modelLabel: chart.modelLabel,

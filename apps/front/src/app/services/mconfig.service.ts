@@ -4,10 +4,8 @@ import { take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
-import { ModelQuery } from '../queries/model.query';
-import { MqQuery } from '../queries/mq.query';
+import { ChartQuery } from '../queries/chart.query';
 import { NavQuery, NavState } from '../queries/nav.query';
-import { StructQuery } from '../queries/struct.query';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
 
@@ -21,12 +19,10 @@ export class MconfigService {
   );
 
   constructor(
-    private modelQuery: ModelQuery,
     private apiService: ApiService,
-    private mqQuery: MqQuery,
+    private chartQuery: ChartQuery,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
-    private structQuery: StructQuery,
     private navigateService: NavigateService
   ) {
     this.nav$.subscribe();
@@ -157,7 +153,8 @@ export class MconfigService {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let { mconfig, query } = resp.payload;
 
-            this.mqQuery.update({ mconfig: mconfig, query: query });
+            // TODO: chartQuery
+            // this.chartQuery.update({ mconfig: mconfig, query: query });
 
             this.navigateService.navigateMconfigQuery({
               modelId: mconfig.modelId,
@@ -176,14 +173,14 @@ export class MconfigService {
 
     let { newMconfig } = item;
 
-    newMconfig.queryId = this.mqQuery.getValue().query.queryId;
+    newMconfig.queryId = this.chartQuery.getValue().tiles[0].query.queryId;
 
     let payload: apiToBackend.ToBackendCreateTempMconfigRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      oldMconfigId: this.mqQuery.getValue().mconfig.mconfigId,
+      oldMconfigId: this.chartQuery.getValue().tiles[0].mconfig.mconfigId,
       mconfig: newMconfig
     };
 
@@ -198,7 +195,8 @@ export class MconfigService {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let { mconfig } = resp.payload;
 
-            this.mqQuery.updatePart({ mconfig: mconfig });
+            // TODO: check chartQuery
+            // this.chartQuery.updatePart({ mconfig: mconfig });
 
             this.navigateService.navigateMconfigQuery({
               mconfigId: mconfig.mconfigId,

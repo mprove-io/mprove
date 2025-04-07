@@ -22,7 +22,6 @@ import {
 } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { ModelQuery, ModelState } from '~front/app/queries/model.query';
-import { MqQuery } from '~front/app/queries/mq.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
@@ -41,6 +40,7 @@ import { constants as frontConstants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
+import { ChartQuery } from '~front/app/queries/chart.query';
 import { ChartsQuery } from '~front/app/queries/charts.query';
 import { FilteredChartsQuery } from '~front/app/queries/filtered-charts.query';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -196,14 +196,14 @@ export class ChartsComponent implements OnInit, OnDestroy {
   mconfig: common.MconfigX;
   query: common.Query;
 
-  mq$ = this.mqQuery.select().pipe(
+  chart$ = this.chartQuery.select().pipe(
     tap(x => {
       this.dryQueryEstimate = undefined;
 
       let oldMconfig = this.mconfig;
 
-      this.mconfig = x.mconfig;
-      this.query = x.query;
+      this.mconfig = x.tiles[0].mconfig;
+      this.query = x.tiles[0].query;
 
       // console.log('this.mconfig.extendedFilters');
       // console.log(this.mconfig.extendedFilters);
@@ -482,7 +482,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     private modelsQuery: ModelsQuery,
     private modelQuery: ModelQuery,
     private userQuery: UserQuery,
-    private mqQuery: MqQuery,
+    private chartQuery: ChartQuery,
     private uiQuery: UiQuery,
     private uiService: UiService,
     private apiService: ApiService,
@@ -561,7 +561,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
                     resp.info?.status === common.ResponseInfoStatusEnum.Ok &&
                     this.isQueryIdTheSameAndServerTsChanged(resp.payload.query)
                   ) {
-                    this.mqQuery.updatePart({ query: resp.payload.query });
+                    // TODO: chartQuery
+                    // this.chartQuery.updatePart({ query: resp.payload.query });
                   }
                 })
               );
@@ -727,7 +728,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
                 data: this.query.data
               });
 
-              this.mqQuery.updatePart({ query: query });
+              // TODO: chartQuery
+              // this.chartQuery.updatePart({ query: query });
             }
           }
         }),
@@ -770,7 +772,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
             if (errorQueries.length > 0) {
               if (this.isQueryIdTheSameAndServerTsChanged(errorQueries[0])) {
-                this.mqQuery.updatePart({ query: errorQueries[0] });
+                // TODO: chartQuery
+                // this.chartQuery.updatePart({ query: errorQueries[0] });
               }
             } else {
               this.dryDataSize = this.dataSizeService.getSize(
@@ -818,7 +821,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
               queries.length > 0 &&
               this.isQueryIdTheSameAndServerTsChanged(queries[0])
             ) {
-              this.mqQuery.updatePart({ query: queries[0] });
+              // TODO: chartQuery
+              // this.chartQuery.updatePart({ query: queries[0] });
             }
           }
         }),
@@ -937,11 +941,12 @@ ${this.mconfig.storePart?.reqUrlPath}`
 
   isQueryIdTheSameAndServerTsChanged(respQuery: common.Query) {
     let query: common.Query;
-    this.mqQuery
+    this.chartQuery
       .select()
       .pipe(
         tap(x => {
-          query = x.query;
+          // TODO: chartQuery
+          // query = x.query;
         }),
         take(1)
       )
@@ -1029,7 +1034,7 @@ ${this.mconfig.storePart?.reqUrlPath}`
     if (this.lastUrl !== this.pathModelsList) {
       this.title.setTitle(this.pageTitle);
 
-      this.mqQuery.reset();
+      this.chartQuery.reset();
       // this.modelQuery.reset();
       this.navigateService.navigateToModelsList();
     }
@@ -1053,10 +1058,14 @@ ${this.mconfig.storePart?.reqUrlPath}`
   }
 
   navToChart(chart: common.ChartX) {
-    this.navigateService.navigateMconfigQuery({
+    // this.navigateService.navigateMconfigQuery({
+    //   modelId: chart.modelId,
+    //   mconfigId: chart.tiles[0].mconfigId,
+    //   queryId: chart.tiles[0].queryId
+    // });
+    this.navigateService.navigateToChart({
       modelId: chart.modelId,
-      mconfigId: chart.tiles[0].mconfigId,
-      queryId: chart.tiles[0].queryId
+      chartId: chart.chartId
     });
   }
 
@@ -1133,7 +1142,7 @@ ${this.mconfig.storePart?.reqUrlPath}`
 
   ngOnDestroy() {
     // console.log('ngOnDestroyModel')
-    this.mqQuery.reset();
+    this.chartQuery.reset();
     this.modelQuery.reset();
 
     this.runButtonTimerSubscription?.unsubscribe();

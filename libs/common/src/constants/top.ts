@@ -123,11 +123,13 @@ export const PARAMETER_MCONFIG_ID = 'mconfigId';
 export const PARAMETER_QUERY_ID = 'queryId';
 export const PARAMETER_REPORT_ID = 'reportId';
 
+export const EMPTY_CHART_ID = 'new';
 export const EMPTY_MCONFIG_ID = 'new';
 export const EMPTY_QUERY_ID = 'new';
 export const EMPTY_REPORT_ID = 'new';
-export const LAST_SELECTED_REPORT_ID = 'last-selected';
+export const LAST_SELECTED_CHART_ID = 'last-selected';
 export const LAST_SELECTED_DASHBOARD_ID = 'last-selected';
+export const LAST_SELECTED_REPORT_ID = 'last-selected';
 
 export const PATH_PROJECT = 'project';
 export const PATH_REPO = 'repo';

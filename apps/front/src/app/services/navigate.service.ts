@@ -47,6 +47,33 @@ export class NavigateService {
     this.router.navigate([common.PATH_PROFILE]);
   }
 
+  navigateToModel(modelId?: string) {
+    let repoId =
+      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
+
+    let toModelId = common.isDefined(modelId) ? modelId : this.model.modelId;
+
+    this.router.navigate([
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
+      common.PATH_CHARTS,
+      common.PATH_MODEL,
+      toModelId,
+      common.PATH_MCONFIG,
+      common.EMPTY_MCONFIG_ID,
+      common.PATH_QUERY,
+      common.EMPTY_QUERY_ID
+    ]);
+  }
+
   navigateMconfigQuery(item: {
     mconfigId: string;
     queryId: string;
@@ -78,31 +105,34 @@ export class NavigateService {
     ]);
   }
 
-  navigateToModel(modelId?: string) {
+  navigateToChart(item: { modelId: string; chartId: string }) {
+    let { modelId, chartId } = item;
+
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
-    let toModelId = common.isDefined(modelId) ? modelId : this.model.modelId;
+    let uiState = this.uiQuery.getValue();
 
-    this.router.navigate([
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_PROJECT,
-      this.nav.projectId,
-      common.PATH_REPO,
-      repoId,
-      common.PATH_BRANCH,
-      this.nav.branchId,
-      common.PATH_ENV,
-      this.nav.envId,
-      common.PATH_CHARTS,
-      common.PATH_MODEL,
-      toModelId,
-      common.PATH_MCONFIG,
-      common.EMPTY_MCONFIG_ID,
-      common.PATH_QUERY,
-      common.EMPTY_QUERY_ID
-    ]);
+    this.router.navigate(
+      [
+        common.PATH_ORG,
+        this.nav.orgId,
+        common.PATH_PROJECT,
+        this.nav.projectId,
+        common.PATH_REPO,
+        repoId,
+        common.PATH_BRANCH,
+        this.nav.branchId,
+        common.PATH_ENV,
+        this.nav.envId,
+        common.PATH_CHARTS,
+        common.PATH_MODEL,
+        common.isDefined(modelId) ? modelId : this.model.modelId,
+        common.PATH_CHART,
+        chartId
+      ],
+      { queryParams: { timezone: uiState.timezone.split('/').join('-') } }
+    );
   }
 
   navigateToDashboard(item: { dashboardId: string }) {
