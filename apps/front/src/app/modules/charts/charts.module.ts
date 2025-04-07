@@ -11,11 +11,11 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
 import { ChartOptionsComponent } from './chart-options/chart-options.component';
+import { ChartComponent } from './chart/chart.component';
 import { ChartsListComponent } from './charts-list/charts-list.component';
 import { ChartsComponent } from './charts.component';
 import { JsViewerComponent } from './js-viewer/js-viewer.component';
 import { JsonViewerComponent } from './json-viewer/json-viewer.component';
-import { MconfigComponent } from './mconfig/mconfig.component';
 import { MdlComponent } from './mdl/mdl.component';
 import { ModelFiltersComponent } from './model-filters/model-filters.component';
 import { FieldOptionsComponent } from './model-tree/field-options/field-options.component';
@@ -33,7 +33,7 @@ import { SqlComponent } from './sql/sql.component';
     ModelsListComponent,
     MdlComponent,
     ModelTreeComponent,
-    MconfigComponent,
+    ChartComponent,
     QueryComponent,
     PanelTitleComponent,
     SqlComponent,

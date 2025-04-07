@@ -12,12 +12,11 @@ import { ForgotPasswordComponent } from './modules/auth/password/01-forgot-passw
 import { PasswordResetSentComponent } from './modules/auth/password/02-password-reset-sent/password-reset-sent.component';
 import { UpdatePasswordComponent } from './modules/auth/password/03-update-password/update-password.component';
 import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-password-was-set/new-password-was-set.component';
+import { ChartComponent } from './modules/charts/chart/chart.component';
 import { ChartsListComponent } from './modules/charts/charts-list/charts-list.component';
 import { ChartsComponent } from './modules/charts/charts.component';
-import { MconfigComponent } from './modules/charts/mconfig/mconfig.component';
 import { MdlComponent } from './modules/charts/mdl/mdl.component';
 import { ModelsListComponent } from './modules/charts/models-list/models-list.component';
-import { QueryComponent } from './modules/charts/query/query.component';
 import { DashboardComponent } from './modules/dashboards/dashboard/dashboard.component';
 import { DashboardsListComponent } from './modules/dashboards/dashboards-list/dashboards-list.component';
 import { DashboardsComponent } from './modules/dashboards/dashboards.component';
@@ -45,10 +44,8 @@ import { OrgAccountResolver } from './resolvers/org-account.resolver';
 import { OrgUsersResolver } from './resolvers/org-users.resolver';
 import { OrgResolver } from './resolvers/org.resolver';
 import { FileResolver } from './resolvers/part/file.resolver';
-import { MconfigResolver } from './resolvers/part/mconfig.resolver';
 import { NavBarResolver } from './resolvers/part/navbar.resolver';
 import { ProfileResolver } from './resolvers/part/profile.resolver';
-import { QueryResolver } from './resolvers/part/query.resolver';
 import { ProjectConnectionsResolver } from './resolvers/project-connections.resolver';
 import { ProjectEnvEvsResolver } from './resolvers/project-env-evs.resolver';
 import { ProjectEnvironmentsResolver } from './resolvers/project-environments.resolver';
@@ -58,6 +55,7 @@ import { ProjectResolver } from './resolvers/project.resolver';
 import { RepoIdResolver } from './resolvers/repo-id.resolver';
 import { RepoStructFilesResolver } from './resolvers/repo-struct-files.resolver';
 import { RepoStructResolver } from './resolvers/repo-struct.resolver';
+import { StructChartResolver } from './resolvers/struct-chart.resolver';
 import { StructChartsResolver } from './resolvers/struct-charts.resolver';
 import { StructDashboardResolver } from './resolvers/struct-dashboard.resolver';
 import { StructDashboardsResolver } from './resolvers/struct-dashboards.resolver';
@@ -244,21 +242,29 @@ export const appRoutes: Routes = [
                                 resolve: [StructModelResolver],
                                 children: [
                                   {
-                                    component: MconfigComponent,
+                                    component: ChartComponent,
+                                    canDeactivate: [DeactivateGuard],
                                     path:
-                                      common.PATH_MCONFIG +
-                                      `/:${common.PARAMETER_MCONFIG_ID}`,
-                                    resolve: [MconfigResolver],
-                                    children: [
-                                      {
-                                        component: QueryComponent,
-                                        path:
-                                          common.PATH_QUERY +
-                                          `/:${common.PARAMETER_QUERY_ID}`,
-                                        resolve: [QueryResolver]
-                                      }
-                                    ]
+                                      common.PATH_CHART +
+                                      `/:${common.PARAMETER_CHART_ID}`,
+                                    resolve: [StructChartResolver]
                                   }
+                                  // {
+                                  //   component: MconfigComponent,
+                                  //   path:
+                                  //     common.PATH_MCONFIG +
+                                  //     `/:${common.PARAMETER_MCONFIG_ID}`,
+                                  //   resolve: [MconfigResolver],
+                                  //   children: [
+                                  //     {
+                                  //       component: QueryComponent,
+                                  //       path:
+                                  //         common.PATH_QUERY +
+                                  //         `/:${common.PARAMETER_QUERY_ID}`,
+                                  //       resolve: [QueryResolver]
+                                  //     }
+                                  //   ]
+                                  // }
                                 ]
                               }
                             ]

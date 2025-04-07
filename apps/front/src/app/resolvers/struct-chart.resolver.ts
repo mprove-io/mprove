@@ -1,0 +1,211 @@
+import { Injectable } from '@angular/core';
+import {
+  ActivatedRouteSnapshot,
+  Resolve,
+  Router,
+  RouterStateSnapshot
+} from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { map, take, tap } from 'rxjs/operators';
+import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
+import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
+import { DashboardQuery } from '../queries/dashboard.query';
+import { DashboardsQuery } from '../queries/dashboards.query';
+import { MemberQuery } from '../queries/member.query';
+import { NavQuery, NavState } from '../queries/nav.query';
+import { StructQuery } from '../queries/struct.query';
+import { UiQuery } from '../queries/ui.query';
+import { UserQuery } from '../queries/user.query';
+import { ApiService } from '../services/api.service';
+import { NavigateService } from '../services/navigate.service';
+import { UiService } from '../services/ui.service';
+
+@Injectable({ providedIn: 'root' })
+export class StructChartResolver implements Resolve<Observable<boolean>> {
+  constructor(
+    private apiService: ApiService,
+    private navigateService: NavigateService,
+    private navQuery: NavQuery,
+    private userQuery: UserQuery,
+    private dashboardsQuery: DashboardsQuery,
+    private dashboardQuery: DashboardQuery,
+    private structQuery: StructQuery,
+    private memberQuery: MemberQuery,
+    private uiQuery: UiQuery,
+    private uiService: UiService,
+    private router: Router
+  ) {}
+
+  resolve(
+    route: ActivatedRouteSnapshot,
+    routerStateSnapshot: RouterStateSnapshot
+  ): Observable<boolean> {
+    let timezoneParam: common.TimeSpecEnum = route.queryParams?.timezone;
+
+    let uiState = this.uiQuery.getValue();
+
+    return this.resolveRoute({
+      route: route,
+      showSpinner: false,
+      timezone: common.isDefined(timezoneParam)
+        ? timezoneParam.split('-').join('/')
+        : uiState.timezone
+    });
+  }
+
+  resolveRoute(item: {
+    dashboardId?: string;
+    route: ActivatedRouteSnapshot;
+    showSpinner: boolean;
+    timezone: string;
+  }): Observable<boolean> {
+    let { dashboardId, route, showSpinner, timezone } = item;
+
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(take(1))
+      .subscribe(x => {
+        nav = x;
+      });
+
+    let userId;
+    this.userQuery.userId$
+      .pipe(
+        tap(x => (userId = x)),
+        take(1)
+      )
+      .subscribe();
+
+    checkNavOrgProjectRepoBranchEnv({
+      router: this.router,
+      route: route,
+      nav: nav,
+      userId: userId
+    });
+
+    let parametersDashboardId = common.isDefined(dashboardId)
+      ? dashboardId
+      : route?.params[common.PARAMETER_DASHBOARD_ID];
+
+    if (parametersDashboardId === common.LAST_SELECTED_DASHBOARD_ID) {
+      let projectDashboardLinks = this.uiQuery.getValue().projectDashboardLinks;
+      let dashboards = this.dashboardsQuery.getValue().dashboards;
+
+      let draftLink = projectDashboardLinks.find(
+        link => link.draft === true && link.projectId === nav.projectId
+      );
+
+      let pLink = projectDashboardLinks.find(
+        link => link.draft === false && link.projectId === nav.projectId
+      );
+
+      if (
+        common.isDefined(draftLink) &&
+        (common.isUndefined(pLink) || draftLink.lastNavTs > pLink.lastNavTs)
+      ) {
+        let draftDashboard = dashboards.find(
+          r => r.dashboardId === draftLink.dashboardId && r.draft === true
+        );
+
+        if (common.isDefined(draftDashboard)) {
+          this.navigateService.navigateToDashboard({
+            dashboardId: draftDashboard.dashboardId
+          });
+
+          return of(false);
+        } else if (common.isDefined(pLink)) {
+          let pDashboard = dashboards.find(
+            r => r.dashboardId === pLink.dashboardId && r.draft === false
+          );
+
+          if (common.isDefined(pDashboard)) {
+            this.navigateService.navigateToDashboard({
+              dashboardId: pDashboard.dashboardId
+            });
+          } else {
+            this.navigateService.navigateToDashboards();
+          }
+
+          return of(false);
+        }
+      } else if (common.isDefined(pLink)) {
+        let pDashboard = dashboards.find(
+          r => r.dashboardId === pLink.dashboardId && r.draft === false
+        );
+
+        if (common.isDefined(pDashboard)) {
+          this.navigateService.navigateToDashboard({
+            dashboardId: pDashboard.dashboardId
+          });
+        } else {
+          this.navigateService.navigateToDashboards();
+        }
+
+        return of(false);
+      } else {
+        this.navigateService.navigateToDashboards();
+
+        return of(false);
+      }
+    }
+
+    let payload: apiToBackend.ToBackendGetDashboardRequestPayload = {
+      projectId: nav.projectId,
+      isRepoProd: nav.isRepoProd,
+      branchId: nav.branchId,
+      envId: nav.envId,
+      dashboardId: parametersDashboardId,
+      timezone: timezone
+    };
+
+    return this.apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
+        payload: payload,
+        showSpinner: showSpinner
+      })
+      .pipe(
+        map((resp: apiToBackend.ToBackendGetDashboardResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.memberQuery.update(resp.payload.userMember);
+
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
+            this.dashboardQuery.update(resp.payload.dashboard);
+
+            let uiState = this.uiQuery.getValue();
+
+            if (uiState.timezone !== timezone) {
+              this.uiQuery.updatePart({
+                timezone: timezone
+              });
+              this.uiService.setUserUi({ timezone: timezone });
+            }
+
+            return true;
+          } else if (
+            resp.info?.status === common.ResponseInfoStatusEnum.Error &&
+            resp.info.error.message ===
+              common.ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+          ) {
+            this.router.navigate([
+              common.PATH_ORG,
+              nav.orgId,
+              common.PATH_PROJECT,
+              nav.projectId,
+              common.PATH_SETTINGS
+            ]);
+
+            return false;
+          } else {
+            return false;
+          }
+        })
+      );
+  }
+}
