@@ -123,7 +123,7 @@ export class EditChartInfoDialogComponent implements OnInit {
       let roles: string = this.rolesForm.controls['roles'].value;
       let users: string = this.usersForm.controls['users'].value;
 
-      let payload: apiToBackend.ToBackendModifyChartRequestPayload = {
+      let payload: apiToBackend.ToBackendSaveModifyChartRequestPayload = {
         projectId: this.ref.data.projectId,
         isRepoProd: this.ref.data.isRepoProd,
         branchId: this.ref.data.branchId,
@@ -140,11 +140,11 @@ export class EditChartInfoDialogComponent implements OnInit {
       apiService
         .req({
           pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyChart,
+            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyChart,
           payload: payload
         })
         .pipe(
-          tap(async (resp: apiToBackend.ToBackendModifyChartResponse) => {
+          tap(async (resp: apiToBackend.ToBackendSaveModifyChartResponse) => {
             if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
               this.navigateService.reloadCharts();
             }

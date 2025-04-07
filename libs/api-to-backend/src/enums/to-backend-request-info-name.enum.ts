@@ -115,8 +115,8 @@ export enum ToBackendRequestInfoNameEnum {
   //
   ToBackendGetCharts = 'api/ToBackendGetCharts',
   ToBackendGetChart = 'api/ToBackendGetChart',
-  ToBackendCreateChart = 'api/ToBackendCreateChart',
-  ToBackendModifyChart = 'api/ToBackendModifyChart',
+  ToBackendSaveCreateChart = 'api/ToBackendSaveCreateChart',
+  ToBackendSaveModifyChart = 'api/ToBackendSaveModifyChart',
   ToBackendDeleteChart = 'api/ToBackendDeleteChart',
   //
   ToBackendGetMconfig = 'api/ToBackendGetMconfig',

@@ -8,7 +8,7 @@ import {
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
-export class ToBackendModifyChartRequestPayload {
+export class ToBackendSaveCreateChartRequestPayload {
   @IsString()
   projectId: string;
 
@@ -40,12 +40,20 @@ export class ToBackendModifyChartRequestPayload {
   mconfig: common.MconfigX;
 }
 
-export class ToBackendModifyChartRequest extends ToBackendRequest {
+export class ToBackendSaveCreateChartRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendModifyChartRequestPayload)
-  payload: ToBackendModifyChartRequestPayload;
+  @Type(() => ToBackendSaveCreateChartRequestPayload)
+  payload: ToBackendSaveCreateChartRequestPayload;
 }
 
-export class ToBackendModifyChartResponse extends common.MyResponse {
-  payload: { [k in any]: never };
+export class ToBackendSaveCreateChartResponsePayload {
+  @ValidateNested()
+  @Type(() => common.ChartX)
+  chart: common.ChartX;
+}
+
+export class ToBackendCreateChartResponse extends common.MyResponse {
+  @ValidateNested()
+  @Type(() => ToBackendSaveCreateChartResponsePayload)
+  payload: ToBackendSaveCreateChartResponsePayload;
 }

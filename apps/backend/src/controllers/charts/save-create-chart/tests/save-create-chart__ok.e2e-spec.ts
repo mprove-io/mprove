@@ -6,7 +6,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-modify-chart__ok';
+let testId = 'backend-save-create-chart__ok';
 
 let traceId = testId;
 
@@ -17,18 +17,17 @@ let password = '123456';
 let orgId = testId;
 let orgName = testId;
 
-let newTitle = testId;
-
 let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = testId;
 
-let chartId = 'ec_s1';
+let chartId = common.makeId();
+let newTitle = testId;
 
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendModifyChartResponse;
+  let resp: apiToBackend.ToBackendCreateChartResponse;
 
   try {
     prep = await prepareTest({
@@ -112,9 +111,10 @@ test('1', async t => {
 
     let newMconfig = resp1.payload.dashboard.tiles[0].mconfig;
 
-    let req: apiToBackend.ToBackendModifyChartRequest = {
+    let req: apiToBackend.ToBackendSaveCreateChartRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendModifyChart,
+        name: apiToBackend.ToBackendRequestInfoNameEnum
+          .ToBackendSaveCreateChart,
         traceId: traceId,
         idempotencyKey: common.makeId()
       },
@@ -130,7 +130,7 @@ test('1', async t => {
     };
 
     resp =
-      await helper.sendToBackend<apiToBackend.ToBackendModifyChartResponse>({
+      await helper.sendToBackend<apiToBackend.ToBackendCreateChartResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req

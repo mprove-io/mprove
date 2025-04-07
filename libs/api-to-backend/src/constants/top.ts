@@ -211,10 +211,10 @@ export const nameToClass = {
     interfaces.ToBackendGetChartsRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetChart]:
     interfaces.ToBackendGetChartRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendCreateChart]:
-    interfaces.ToBackendCreateChartRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendModifyChart]:
-    interfaces.ToBackendModifyChartRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendSaveCreateChart]:
+    interfaces.ToBackendSaveCreateChartRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendSaveModifyChart]:
+    interfaces.ToBackendSaveModifyChartRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteChart]:
     interfaces.ToBackendDeleteChartRequest,
   //

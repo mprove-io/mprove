@@ -128,11 +128,11 @@ export const appControllers = [
 
   controllers.GetViewsController,
 
-  controllers.CreateChartController,
+  controllers.SaveCreateChartController,
   controllers.DeleteChartController,
   controllers.GetChartsController,
   controllers.GetChartController,
-  controllers.ModifyChartController,
+  controllers.SaveModifyChartController,
 
   controllers.CheckController
 ];

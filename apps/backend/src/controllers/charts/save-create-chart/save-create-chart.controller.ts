@@ -38,7 +38,7 @@ let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
-export class CreateChartController {
+export class SaveCreateChartController {
   constructor(
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
@@ -56,12 +56,12 @@ export class CreateChartController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateChart)
-  async createEmptyDashboard(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveCreateChart)
+  async saveCreateChart(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
-    let reqValid: apiToBackend.ToBackendCreateChartRequest = request.body;
+    let reqValid: apiToBackend.ToBackendSaveCreateChartRequest = request.body;
 
     if (user.alias === common.RESTRICTED_USER_ALIAS) {
       throw new common.ServerError({
@@ -332,7 +332,7 @@ export class CreateChartController {
     //   where: { struct_id: bridge.struct_id }
     // });
 
-    let payload: apiToBackend.ToBackendCreateChartResponsePayload = {
+    let payload: apiToBackend.ToBackendSaveCreateChartResponsePayload = {
       chart: this.wrapToApiService.wrapToApiChart({
         chart: chartEnt,
         mconfigs: [],
