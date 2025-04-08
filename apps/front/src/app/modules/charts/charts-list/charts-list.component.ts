@@ -34,10 +34,7 @@ export class ChartsListComponent {
   filteredCharts: common.ChartX[];
   filteredCharts$ = this.filteredChartsQuery.select().pipe(
     tap(x => {
-      // TODO: drafts
-      // this.filteredCharts = x.filteredCharts.filter(d => d.draft === false);
-
-      this.filteredCharts = x.filteredCharts;
+      this.filteredCharts = x.filteredCharts.filter(d => d.draft === false);
     })
   );
 

@@ -628,8 +628,15 @@ export class ChartsComponent implements OnInit, OnDestroy {
                     resp.info?.status === common.ResponseInfoStatusEnum.Ok &&
                     this.isQueryIdTheSameAndServerTsChanged(resp.payload.query)
                   ) {
-                    // TODO: chartQuery
-                    // this.chartQuery.updatePart({ query: resp.payload.query });
+                    let newTile = Object.assign({}, this.chart.tiles[0], {
+                      query: resp.payload.query
+                    });
+
+                    let newChart = Object.assign({}, this.chart, {
+                      tiles: [newTile]
+                    });
+
+                    this.chartQuery.update(newChart);
                   }
                 })
               );
@@ -801,8 +808,17 @@ export class ChartsComponent implements OnInit, OnDestroy {
                 data: this.query.data
               });
 
-              // TODO: chartQuery
               // this.chartQuery.updatePart({ query: query });
+
+              let newTile = Object.assign({}, this.chart.tiles[0], {
+                query: query
+              });
+
+              let newChart = Object.assign({}, this.chart, {
+                tiles: [newTile]
+              });
+
+              this.chartQuery.update(newChart);
             }
           }
         }),
@@ -845,8 +861,17 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
             if (errorQueries.length > 0) {
               if (this.isQueryIdTheSameAndServerTsChanged(errorQueries[0])) {
-                // TODO: chartQuery
                 // this.chartQuery.updatePart({ query: errorQueries[0] });
+
+                let newTile = Object.assign({}, this.chart.tiles[0], {
+                  query: errorQueries[0]
+                });
+
+                let newChart = Object.assign({}, this.chart, {
+                  tiles: [newTile]
+                });
+
+                this.chartQuery.update(newChart);
               }
             } else {
               this.dryDataSize = this.dataSizeService.getSize(
@@ -894,8 +919,17 @@ export class ChartsComponent implements OnInit, OnDestroy {
               queries.length > 0 &&
               this.isQueryIdTheSameAndServerTsChanged(queries[0])
             ) {
-              // TODO: chartQuery
               // this.chartQuery.updatePart({ query: queries[0] });
+
+              let newTile = Object.assign({}, this.chart.tiles[0], {
+                query: queries[0]
+              });
+
+              let newChart = Object.assign({}, this.chart, {
+                tiles: [newTile]
+              });
+
+              this.chartQuery.update(newChart);
             }
           }
         }),
@@ -1015,21 +1049,21 @@ ${this.mconfig.storePart?.reqUrlPath}`
   }
 
   isQueryIdTheSameAndServerTsChanged(respQuery: common.Query) {
-    let query: common.Query;
-    this.chartQuery
-      .select()
-      .pipe(
-        tap(x => {
-          // TODO: chartQuery
-          // query = x.query;
-        }),
-        take(1)
-      )
-      .subscribe();
+    // let query: common.Query;
+
+    // this.chartQuery
+    //   .select()
+    //   .pipe(
+    //     tap(x => {
+    //       query = x.tiles[0].query;
+    //     }),
+    //     take(1)
+    //   )
+    //   .subscribe();
 
     return (
-      respQuery.queryId === query.queryId &&
-      respQuery.serverTs !== query.serverTs
+      respQuery.queryId === this.chart.tiles[0].query.queryId &&
+      respQuery.serverTs !== this.chart.tiles[0].query.serverTs
     );
   }
 
