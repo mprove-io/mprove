@@ -264,11 +264,32 @@
                 ></m-delete-icon>
               </div>
 
+              <div
+                class="ml-3 flex cursor-pointer flex-row items-center"
+                (click)="toggleFilterByModel()"
+              >
+                <m-filter-icon
+                  [ngClass]="{
+                    'text-gray-400': isFilterByModel === false,
+                    'text-gray-500': isFilterByModel === true
+                  }"
+                ></m-filter-icon>
+
+                <div
+                  class="ml-3 select-none items-center text-gray-500"
+                  [ngClass]="{
+                    'font-semibold': isFilterByModel === true
+                  }"
+                >
+                  Model
+                </div>
+              </div>
+
               <div class="flex flex-grow"></div>
 
               <button
                 *ngIf="filteredDraftsLength > 0"
-                class="ml-3 mr-10 flex flex-row items-center rounded border px-4 py-2 focus:outline-none"
+                class="ml-5 mr-10 flex flex-row items-center rounded border px-4 py-2 focus:outline-none"
                 [ngClass]="{
                   'border-gray-400 text-gray-500 hover:bg-gray-100':
                     filteredDraftsLength > 0,

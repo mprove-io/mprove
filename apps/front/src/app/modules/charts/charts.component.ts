@@ -91,6 +91,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
   modelRunButtonSpinnerName = 'modelRunButtonSpinnerName';
   modelCancelButtonSpinnerName = 'modelCancelButtonSpinnerName';
 
+  isFilterByModel = true;
+
   isRunButtonPressed = false;
   isCancelButtonPressed = false;
 
@@ -1200,11 +1202,23 @@ ${this.mconfig.storePart?.reqUrlPath}`
   makeFilteredCharts() {
     let idxs;
 
-    let draftCharts: common.ChartX[] = this.charts.filter(
-      x => x.draft === true
-    );
+    let draftCharts: common.ChartX[] =
+      this.isFilterByModel === false
+        ? this.charts.filter(x => x.draft === true)
+        : common.isDefined(this.model?.modelId)
+        ? this.charts.filter(
+            x => x.draft === true && x.modelId === this.model.modelId
+          )
+        : [];
 
-    let nonDraftCharts = this.charts.filter(x => x.draft === false);
+    let nonDraftCharts =
+      this.isFilterByModel === false
+        ? this.charts.filter(x => x.draft === false)
+        : common.isDefined(this.model?.modelId)
+        ? this.charts.filter(
+            x => x.draft === false && x.modelId === this.model.modelId
+          )
+        : [];
 
     if (common.isDefinedAndNotEmpty(this.word)) {
       let haystack = nonDraftCharts.map(x =>
@@ -1250,6 +1264,11 @@ ${this.mconfig.storePart?.reqUrlPath}`
   addChart() {}
 
   addModel() {}
+
+  toggleFilterByModel() {
+    this.isFilterByModel = !this.isFilterByModel;
+    this.makeFilteredCharts();
+  }
 
   ngOnDestroy() {
     // console.log('ngOnDestroyModel')
