@@ -253,10 +253,10 @@
                 (ngModelChange)="searchWordChange()"
               />
 
-              <div class="h-9 w-9">
+              <div class="ml-3 h-9 w-9 flex-shrink-0">
                 <m-delete-icon
                   *ngIf="!!word"
-                  class="text-gray1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  class="text-gray1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                   [ngClass]="{
                     'cursor-pointer bg-purple-200 hover:bg-purple-300': !!word
                   }"
@@ -265,8 +265,9 @@
               </div>
 
               <div
-                class="ml-3 flex cursor-pointer flex-row items-center"
+                class="ml-3 flex flex-shrink-0 cursor-pointer flex-row items-center"
                 (click)="toggleFilterByModel()"
+                tp="Filter Charts by selected Model"
               >
                 <m-filter-icon
                   [ngClass]="{
@@ -289,7 +290,7 @@
 
               <button
                 *ngIf="filteredDraftsLength > 0"
-                class="ml-5 mr-10 flex flex-row items-center rounded border px-4 py-2 focus:outline-none"
+                class="ml-5 mr-10 flex flex-shrink-0 flex-row items-center rounded border px-4 py-2 focus:outline-none"
                 [ngClass]="{
                   'border-gray-400 text-gray-500 hover:bg-gray-100':
                     filteredDraftsLength > 0,
@@ -533,7 +534,7 @@
               <div
                 class="text-gray1 mb-[80px] flex h-full w-full select-none items-center justify-center text-xl"
               >
-                Select Chart or Model Fields
+                Select Model Fields
               </div>
             </div>
 

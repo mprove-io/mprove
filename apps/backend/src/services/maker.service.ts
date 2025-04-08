@@ -8,61 +8,6 @@ import { HashService } from './hash.service';
 export class MakerService {
   constructor(private hashService: HashService) {}
 
-  makeReport(item: {
-    structId: string;
-    reportId: string;
-    projectId: string;
-    creatorId: string;
-    filePath: string;
-    accessUsers: string[];
-    accessRoles: string[];
-    title: string;
-    fields: common.ReportField[];
-    rows: common.Row[];
-    chart: common.MconfigChart;
-    draftCreatedTs?: number;
-    draft: boolean;
-  }) {
-    let {
-      structId,
-      reportId,
-      projectId,
-      creatorId,
-      filePath,
-      accessUsers,
-      accessRoles,
-      title,
-      fields,
-      rows,
-      chart,
-      draft,
-      draftCreatedTs
-    } = item;
-
-    let report: schemaPostgres.ReportEnt = {
-      reportFullId: this.hashService.makeReportFullId({
-        structId: structId,
-        reportId: reportId
-      }),
-      structId: structId,
-      reportId: reportId,
-      projectId: projectId,
-      creatorId: creatorId,
-      filePath: filePath,
-      accessUsers: accessUsers,
-      accessRoles: accessRoles,
-      title: title,
-      fields: fields,
-      rows: rows,
-      chart: chart,
-      draft: draft,
-      draftCreatedTs: draftCreatedTs,
-      serverTs: undefined
-    };
-
-    return report;
-  }
-
   makeMember(item: {
     projectId: string;
     roles?: string[];
@@ -256,5 +201,60 @@ export class MakerService {
     };
 
     return connection;
+  }
+
+  makeReport(item: {
+    structId: string;
+    reportId: string;
+    projectId: string;
+    creatorId: string;
+    filePath: string;
+    accessUsers: string[];
+    accessRoles: string[];
+    title: string;
+    fields: common.ReportField[];
+    rows: common.Row[];
+    chart: common.MconfigChart;
+    draftCreatedTs?: number;
+    draft: boolean;
+  }) {
+    let {
+      structId,
+      reportId,
+      projectId,
+      creatorId,
+      filePath,
+      accessUsers,
+      accessRoles,
+      title,
+      fields,
+      rows,
+      chart,
+      draft,
+      draftCreatedTs
+    } = item;
+
+    let report: schemaPostgres.ReportEnt = {
+      reportFullId: this.hashService.makeReportFullId({
+        structId: structId,
+        reportId: reportId
+      }),
+      structId: structId,
+      reportId: reportId,
+      projectId: projectId,
+      creatorId: creatorId,
+      filePath: filePath,
+      accessUsers: accessUsers,
+      accessRoles: accessRoles,
+      title: title,
+      fields: fields,
+      rows: rows,
+      chart: chart,
+      draft: draft,
+      draftCreatedTs: draftCreatedTs,
+      serverTs: undefined
+    };
+
+    return report;
   }
 }

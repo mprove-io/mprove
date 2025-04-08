@@ -6,6 +6,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { ChartQuery } from '../queries/chart.query';
 import { ChartsQuery } from '../queries/charts.query';
+import { ModelQuery } from '../queries/model.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
@@ -25,7 +26,8 @@ export class ChartService {
     private navigateService: NavigateService,
     private navQuery: NavQuery,
     private chartsQuery: ChartsQuery,
-    private chartQuery: ChartQuery
+    private chartQuery: ChartQuery,
+    private modelQuery: ModelQuery
   ) {
     this.nav$.subscribe();
   }
@@ -168,7 +170,16 @@ export class ChartService {
             let chart = this.chartQuery.getValue();
 
             if (chartIds.indexOf(chart.chartId) > -1) {
-              this.navigateService.navigateToCharts();
+              let model = this.modelQuery.getValue();
+
+              if (common.isDefined(model.modelId)) {
+                this.navigateService.navigateToChart({
+                  modelId: model.modelId,
+                  chartId: common.EMPTY_CHART_ID
+                });
+              } else {
+                this.navigateService.navigateToCharts();
+              }
             }
           }
         }),

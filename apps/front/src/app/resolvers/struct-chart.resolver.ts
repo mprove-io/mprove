@@ -87,6 +87,11 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
       ? chartId
       : route?.params[common.PARAMETER_CHART_ID];
 
+    if (parametersChartId === common.EMPTY_CHART_ID) {
+      this.chartQuery.reset();
+      return of(true);
+    }
+
     if (parametersChartId === common.LAST_SELECTED_CHART_ID) {
       let projectChartLinks = this.uiQuery.getValue().projectChartLinks;
       let charts = this.chartsQuery.getValue().charts;

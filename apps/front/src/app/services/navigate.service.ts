@@ -255,7 +255,9 @@ export class NavigateService {
     this.router.navigate(navTo);
   }
 
-  navigateToChartsList() {
+  navigateToChartsList(item: { modelId: string }) {
+    let { modelId } = item;
+
     let userId;
     this.userQuery.userId$
       .pipe(
@@ -266,20 +268,37 @@ export class NavigateService {
 
     let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
 
-    let navTo = [
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_PROJECT,
-      this.nav.projectId,
-      common.PATH_REPO,
-      repoId,
-      common.PATH_BRANCH,
-      this.nav.branchId,
-      common.PATH_ENV,
-      this.nav.envId,
-      common.PATH_CHARTS,
-      common.PATH_CHARTS_LIST
-    ];
+    let navTo = common.isDefined(modelId)
+      ? [
+          common.PATH_ORG,
+          this.nav.orgId,
+          common.PATH_PROJECT,
+          this.nav.projectId,
+          common.PATH_REPO,
+          repoId,
+          common.PATH_BRANCH,
+          this.nav.branchId,
+          common.PATH_ENV,
+          this.nav.envId,
+          common.PATH_CHARTS,
+          common.PATH_MODEL,
+          modelId,
+          common.PATH_CHARTS_LIST
+        ]
+      : [
+          common.PATH_ORG,
+          this.nav.orgId,
+          common.PATH_PROJECT,
+          this.nav.projectId,
+          common.PATH_REPO,
+          repoId,
+          common.PATH_BRANCH,
+          this.nav.branchId,
+          common.PATH_ENV,
+          this.nav.envId,
+          common.PATH_CHARTS,
+          common.PATH_CHARTS_LIST
+        ];
 
     this.router.navigate(navTo);
   }

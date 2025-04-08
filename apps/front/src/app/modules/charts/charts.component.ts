@@ -170,6 +170,11 @@ export class ChartsComponent implements OnInit, OnDestroy {
       this.model = x;
 
       this.modelForm.controls['model'].setValue(this.model.modelId);
+
+      if (this.isFilterByModel === true) {
+        this.makeFilteredCharts();
+      }
+
       this.cd.detectChanges();
     })
   );
@@ -752,7 +757,17 @@ export class ChartsComponent implements OnInit, OnDestroy {
     (document.activeElement as HTMLElement).blur();
 
     let modelId = this.modelForm.controls['model'].value;
-    this.navigateService.navigateToModel(modelId);
+
+    if (this.lastUrl === this.pathChartsList) {
+      this.navigateService.navigateToChartsList({
+        modelId: modelId
+      });
+    } else if (common.isDefined(this.model?.modelId)) {
+      this.navigateService.navigateToChart({
+        modelId: modelId,
+        chartId: common.EMPTY_CHART_ID
+      });
+    }
   }
 
   timezoneChange() {
@@ -1142,8 +1157,9 @@ ${this.mconfig.storePart?.reqUrlPath}`
   toggleChartsList() {
     if (this.lastUrl !== this.pathChartsList) {
       this.title.setTitle(this.pageTitle);
-
-      this.navigateService.navigateToChartsList();
+      this.navigateService.navigateToChartsList({
+        modelId: this.model?.modelId
+      });
     }
   }
 
@@ -1261,7 +1277,12 @@ ${this.mconfig.storePart?.reqUrlPath}`
     ).length;
   }
 
-  addChart() {}
+  addChart() {
+    this.navigateService.navigateToChart({
+      modelId: this.model.modelId,
+      chartId: common.EMPTY_CHART_ID
+    });
+  }
 
   addModel() {}
 

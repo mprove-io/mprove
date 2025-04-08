@@ -247,6 +247,10 @@ export const appRoutes: Routes = [
                                       common.PATH_CHART +
                                       `/:${common.PARAMETER_CHART_ID}`,
                                     resolve: [StructChartResolver]
+                                  },
+                                  {
+                                    component: ChartsListComponent,
+                                    path: common.PATH_CHARTS_LIST
                                   }
                                 ]
                               }
