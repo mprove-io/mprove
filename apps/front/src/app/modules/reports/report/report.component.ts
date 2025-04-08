@@ -122,7 +122,7 @@ export class ReportComponent {
       field: 'chart' as any,
       pinned: 'left',
       resizable: false,
-      width: 120,
+      width: 70,
       headerComponent: ChartHeaderComponent,
       cellRenderer: ChartRendererComponent
     },

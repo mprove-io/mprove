@@ -3,10 +3,14 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { tap } from 'rxjs';
 import { STORE_MODEL_PREFIX } from '~common/_index';
+import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { ApiService } from '~front/app/services/api.service';
+import { DataService } from '~front/app/services/data.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -46,7 +50,10 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
     private cd: ChangeDetectorRef,
     private metricsQuery: MetricsQuery,
     private uiQuery: UiQuery,
-    private reportQuery: ReportQuery
+    private reportQuery: ReportQuery,
+    private dataService: DataService,
+    private apiService: ApiService,
+    private myDialogService: MyDialogService
   ) {}
 
   agInit(params: ICellRendererParams<DataRow>) {
@@ -96,5 +103,49 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
     }
 
     this.showParameters = this.uiQuery.getValue().showMetricsParameters;
+  }
+
+  showDialog(event?: MouseEvent) {
+    event.stopPropagation();
+
+    // console.log('this.params.data');
+    // console.log(this.params.data);
+
+    if (this.params.data.rowType === common.RowTypeEnum.Metric) {
+      let qData =
+        this.params.data.mconfig.queryId === this.params.data.query.queryId
+          ? this.dataService.makeQData({
+              query: this.params.data.query,
+              mconfigFields: this.params.data.mconfig.fields
+            })
+          : [];
+
+      let selectValidResult = getSelectValid({
+        chart: this.params.data.mconfig.chart,
+        mconfigFields: this.params.data.mconfig.fields,
+        isStoreModel: this.params.data.mconfig.isStoreModel
+      });
+
+      this.myDialogService.showChart({
+        apiService: this.apiService,
+        mconfig: this.params.data.mconfig,
+        query: this.params.data.query,
+        qData: qData,
+        canAccessModel: this.params.data.hasAccessToModel,
+        showNav: this.params.data.rowType === common.RowTypeEnum.Metric,
+        isSelectValid: selectValidResult.isSelectValid,
+        dashboardId: undefined,
+        chartId: undefined,
+        metricId: this.params.data.metricId,
+        isToDuplicateQuery: true
+      });
+    } else {
+      let chartFormulaData = this.uiQuery.getValue().chartFormulaData;
+
+      this.myDialogService.showChartFormula({
+        row: this.params.data,
+        chartFormulaData: chartFormulaData
+      });
+    }
   }
 }

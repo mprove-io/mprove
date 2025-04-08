@@ -16,21 +16,26 @@
 
 <div *ngIf="params.data.rowType === rowTypeMetric" class="font-ms">
   <div class="flex flex-col">
-    <m-row-metric-label
-      [name]="params.value"
-      [isMetric]="true"
-      [isAddPrefixRowId]="false"
-      [isWrap]="false"
-      [rowId]="params.data.rowId"
-      [showMetricsModelName]="showMetricsModelName"
-      [showMetricsTimeFieldName]="showMetricsTimeFieldName"
-      [partNodeLabel]="params.data.partNodeLabel"
-      [partFieldLabel]="params.data.partFieldLabel"
-      [timeNodeLabel]="params.data.timeNodeLabel"
-      [timeFieldLabel]="params.data.timeFieldLabel"
-      [topLabel]="params.data.topLabel"
-      class="flex"
-    ></m-row-metric-label>
+    <div
+      class="flex max-w-min cursor-pointer truncate hover:text-blue-500"
+      (click)="showDialog($event)"
+    >
+      <m-row-metric-label
+        [name]="params.value"
+        [isMetric]="true"
+        [isAddPrefixRowId]="false"
+        [isWrap]="false"
+        [rowId]="params.data.rowId"
+        [showMetricsModelName]="showMetricsModelName"
+        [showMetricsTimeFieldName]="showMetricsTimeFieldName"
+        [partNodeLabel]="params.data.partNodeLabel"
+        [partFieldLabel]="params.data.partFieldLabel"
+        [timeNodeLabel]="params.data.timeNodeLabel"
+        [timeFieldLabel]="params.data.timeFieldLabel"
+        [topLabel]="params.data.topLabel"
+        class="flex"
+      ></m-row-metric-label
+    ></div>
 
     <div
       class="flex flex-row"
