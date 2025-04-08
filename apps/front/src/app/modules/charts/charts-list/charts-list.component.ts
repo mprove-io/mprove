@@ -58,11 +58,15 @@ export class ChartsListComponent {
     this.showModelId = false;
   }
 
-  navigateToChart(item: common.ChartX) {
-    this.navigateService.navigateMconfigQuery({
-      modelId: item.modelId,
-      mconfigId: item.tiles[0].mconfigId,
-      queryId: item.tiles[0].queryId
+  navigateToChart(chartItem: common.ChartX) {
+    // this.navigateService.navigateMconfigQuery({
+    //   modelId: chartItem.modelId,
+    //   mconfigId: chartItem.tiles[0].mconfigId,
+    //   queryId: chartItem.tiles[0].queryId
+    // });
+    this.navigateService.navigateToChart({
+      modelId: chartItem.modelId,
+      chartId: chartItem.chartId
     });
   }
 

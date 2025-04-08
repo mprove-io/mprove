@@ -268,7 +268,14 @@
 
               <button
                 *ngIf="filteredDraftsLength > 0"
-                class="mr-10 flex flex-row items-center rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-gray-100 focus:outline-none"
+                class="ml-3 mr-10 flex flex-row items-center rounded border px-4 py-2 focus:outline-none"
+                [ngClass]="{
+                  'border-gray-400 text-gray-500 hover:bg-gray-100':
+                    filteredDraftsLength > 0,
+                  'cursor-default border-gray-300 text-gray-400':
+                    filteredDraftsLength === 0
+                }"
+                [disabled]="filteredDraftsLength === 0"
                 (click)="deleteDrafts()"
               >
                 <m-trash-icon></m-trash-icon>

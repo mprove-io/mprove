@@ -766,9 +766,15 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
       newMconfig.timezone = timezone;
 
-      this.mconfigService.navCreateTempMconfigAndQuery({
-        newMconfig: newMconfig
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId
       });
+
+      // this.mconfigService.navCreateTempMconfigAndQuery({
+      //   newMconfig: newMconfig
+      // });
     }
   }
 
