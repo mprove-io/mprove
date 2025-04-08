@@ -187,35 +187,30 @@ export class NavigateService {
     this.router.navigate(navParts);
   }
 
-  navigateToCharts(item?: { navParts?: string[]; extra?: any }) {
-    let { navParts, extra } = item;
+  navigateToCharts() {
+    let userId;
+    this.userQuery.userId$
+      .pipe(
+        tap(x => (userId = x)),
+        take(1)
+      )
+      .subscribe();
 
-    // TODO: navigateToCharts
+    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
 
-    // let repoId =
-    //   this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
-
-    // let navTo = common.isDefined(navParts)
-    //   ? navParts
-    //   : [
-    //       common.PATH_ORG,
-    //       this.nav.orgId,
-    //       common.PATH_PROJECT,
-    //       this.nav.projectId,
-    //       common.PATH_REPO,
-    //       repoId,
-    //       common.PATH_BRANCH,
-    //       this.nav.branchId,
-    //       common.PATH_ENV,
-    //       this.nav.envId,
-    //       common.PATH_CHARTS
-    //     ];
-
-    // if (common.isDefined(extra)) {
-    //   this.router.navigate(navTo, extra);
-    // } else {
-    //   this.router.navigate(navTo);
-    // }
+    this.router.navigate([
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
+      common.PATH_CHARTS
+    ]);
   }
 
   windowOpenModels() {

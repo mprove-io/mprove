@@ -352,12 +352,13 @@ export class ChartSaveAsDialogComponent implements OnInit {
           let uiState = this.uiQuery.getValue();
 
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.navigateService.navigateToCharts({
-              extra: {
-                timezone: uiState.timezone.split('/').join('-'),
-                queryParams: { search: resp.payload.chart.chartId }
-              }
-            });
+            // TODO: navigateToChart
+            // this.navigateService.navigateToCharts({
+            //   extra: {
+            //     timezone: uiState.timezone.split('/').join('-'),
+            //     queryParams: { search: resp.payload.chart.chartId }
+            //   }
+            // });
           }
         }),
         take(1)

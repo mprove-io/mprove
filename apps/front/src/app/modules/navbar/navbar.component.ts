@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, take, tap } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { constants } from '~common/barrels/constants';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -106,29 +106,7 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
-    let userId;
-    this.userQuery.userId$
-      .pipe(
-        tap(x => (userId = x)),
-        take(1)
-      )
-      .subscribe();
-
-    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
-
-    this.router.navigate([
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_PROJECT,
-      this.nav.projectId,
-      common.PATH_REPO,
-      repoId,
-      common.PATH_BRANCH,
-      this.nav.branchId,
-      common.PATH_ENV,
-      this.nav.envId,
-      common.PATH_CHARTS
-    ]);
+    this.navigateService.navigateToCharts();
   }
 
   navigateDashboards() {

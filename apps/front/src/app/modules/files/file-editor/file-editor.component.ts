@@ -553,14 +553,13 @@ export class FileEditorComponent implements OnInit, OnDestroy {
         dashboardId: id
       });
     } else if (dotExt === common.FileExtensionEnum.Chart) {
-      this.navigateService.navigateToCharts({
-        extra: {
-          queryParams: {
-            timezone: uiState.timezone.split('/').join('-'),
-            search: id
-          }
-        }
-      });
+      this.navigateService.navigateToCharts();
+
+      // TODO: navigateToChart modelId
+      // this.navigateService.navigateToChart({
+      //   modelId: undefined,
+      //   chartId: id
+      // });
     }
   }
 

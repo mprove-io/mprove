@@ -586,7 +586,9 @@ export class WrapToApiService {
     let { chart, mconfigs, queries, member, isAddMconfigAndQuery, models } =
       item;
 
-    let filePathArray = chart.filePath.split('/');
+    let filePathArray = common.isDefined(chart.filePath)
+      ? chart.filePath.split('/')
+      : [];
 
     let usersFolderIndex = filePathArray.findIndex(
       x => x === common.MPROVE_USERS_FOLDER

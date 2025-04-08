@@ -46,6 +46,7 @@ import { FilteredChartsQuery } from '~front/app/queries/filtered-charts.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { ChartService } from '~front/app/services/chart.service';
 import { DataService } from '~front/app/services/data.service';
 import { UiService } from '~front/app/services/ui.service';
 
@@ -78,6 +79,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
   }
 
   pageTitle = frontConstants.MODEL_PAGE_TITLE;
+
+  emptyChartId = common.EMPTY_CHART_ID;
 
   pathCharts = common.PATH_CHARTS;
   pathChartsList = common.PATH_CHARTS_LIST;
@@ -555,6 +558,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     private spinner: NgxSpinnerService,
     private timeService: TimeService,
     private mconfigService: MconfigService,
+    private chartService: ChartService,
     private dataSizeService: DataSizeService,
     private dataService: DataService,
     private myDialogService: MyDialogService,
@@ -724,9 +728,15 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
     newMconfig.limit = Number(limit.value);
 
-    this.mconfigService.navCreateTempMconfigAndQuery({
-      newMconfig: newMconfig
+    this.chartService.editChart({
+      mconfig: newMconfig,
+      isDraft: this.chart.draft,
+      chartId: this.chart.chartId
     });
+
+    // this.mconfigService.navCreateTempMconfigAndQuery({
+    //   newMconfig: newMconfig
+    // });
   }
 
   modelChange() {
@@ -961,7 +971,9 @@ ${this.mconfig.storePart?.reqUrlPath}`
     });
   }
 
-  saveAs() {
+  chartSaveAs(event: any) {
+    event.stopPropagation();
+
     this.myDialogService.showChartSaveAs({
       apiService: this.apiService,
       mconfig: this.mconfig,
@@ -1132,7 +1144,13 @@ ${this.mconfig.storePart?.reqUrlPath}`
     });
   }
 
-  deleteDrafts() {}
+  deleteDrafts() {
+    this.chartService.deleteDraftCharts({
+      chartIds: this.filteredCharts
+        .filter(x => x.draft === true)
+        .map(x => x.chartId)
+    });
+  }
 
   deleteDraftChart(event: any, chart: common.ChartX) {
     event.stopPropagation();
@@ -1142,16 +1160,11 @@ ${this.mconfig.storePart?.reqUrlPath}`
   makeFilteredCharts() {
     let idxs;
 
-    // TODO:
+    let draftCharts: common.ChartX[] = this.charts.filter(
+      x => x.draft === true
+    );
 
-    let draftCharts: common.ChartX[] =
-      // this.charts.filter(x => x.draft === true)
-      [];
-
-    // TODO:
-    let nonDraftCharts =
-      // .filter(x => x.draft === false)
-      this.charts;
+    let nonDraftCharts = this.charts.filter(x => x.draft === false);
 
     if (common.isDefinedAndNotEmpty(this.word)) {
       let haystack = nonDraftCharts.map(x =>
@@ -1174,29 +1187,24 @@ ${this.mconfig.storePart?.reqUrlPath}`
       let aTitle = a.title || a.chartId;
       let bTitle = b.title || b.chartId;
 
-      // TODO:
-      // return b.draft === true && a.draft !== true
-      // ? 1
-      // : a.draft === true && b.draft !== true
-      // ? -1
-      // :
-      // aTitle > bTitle
-      // ? 1
-      // : bTitle > aTitle
-      // ? -1
-      // : 0;
-
-      return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+      return b.draft === true && a.draft !== true
+        ? 1
+        : a.draft === true && b.draft !== true
+        ? -1
+        : aTitle > bTitle
+        ? 1
+        : bTitle > aTitle
+        ? -1
+        : 0;
     });
 
     this.filteredChartsQuery.update({
       filteredCharts: this.filteredCharts
     });
 
-    // TODO:
-    // this.filteredDraftsLength = this.filteredCharts.filter(
-    //   y => y.draft === true
-    // ).length;
+    this.filteredDraftsLength = this.filteredCharts.filter(
+      y => y.draft === true
+    ).length;
   }
 
   addChart() {}

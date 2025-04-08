@@ -228,7 +228,7 @@ export class DashboardService {
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteDraftReportsResponse) => {
+        tap((resp: apiToBackend.ToBackendDeleteDraftChartsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let dashboards = this.dashboardsQuery.getValue().dashboards;
 

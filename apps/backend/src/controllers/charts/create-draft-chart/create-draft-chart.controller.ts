@@ -179,6 +179,8 @@ export class CreateDraftChartController {
     let newQueryEnt = this.wrapToEntService.wrapToEntityQuery(newQuery);
     let newMconfigEnt = this.wrapToEntService.wrapToEntityMconfig(newMconfig);
 
+    let chartId = common.makeId();
+
     let tile: common.Tile = {
       modelId: newMconfig.modelId,
       modelLabel: newMconfig.modelLabel,
@@ -194,16 +196,16 @@ export class CreateDraftChartController {
 
     let newChart: common.Chart = {
       structId: bridge.structId,
-      chartId: common.makeId(),
+      chartId: chartId,
       draft: true,
       creatorId: user.userId,
-      title: undefined,
+      title: chartId,
       modelId: tile.modelId,
       modelLabel: tile.modelLabel,
       filePath: undefined,
       accessUsers: [],
       accessRoles: [],
-      hidden: undefined,
+      hidden: false,
       tiles: [tile],
       serverTs: undefined
     };

@@ -310,7 +310,7 @@
 
                   <div class="flex flex-grow"></div>
 
-                  <!-- <button
+                  <button
                     *ngIf="chart.draft === true && c.chartId === chart.chartId"
                     type="button"
                     data-cy="chartSaveAsButton"
@@ -322,24 +322,35 @@
                     >
                       <m-save-icon class="text-gray-500"></m-save-icon>
                     </div>
-                  </button> -->
+                  </button>
 
-                  <!-- <button
+                  <button
                     *ngIf="chart.draft === true && c.chartId === chart.chartId"
                     class="ml-3 flex h-9 flex-shrink-0 items-center justify-center space-x-2 rounded px-2 text-gray-500 hover:bg-blue-200 focus:outline-none"
                     (click)="deleteDraftChart($event, c)"
                   >
                     <m-trash-icon></m-trash-icon>
-                  </button> -->
+                  </button>
 
-                  <!-- <div
-                    *ngIf="
-                      c.draft === false && c.chartId !== emptyChartId
-                    "
+                  <div
+                    *ngIf="c.draft === false && c.chartId !== emptyChartId"
                     class="invisible ml-2 flex group-hover:visible"
                   >
-                    <m-chart-options [chart]="c"></m-chart-options>
-                  </div> -->
+                    <m-chart-options
+                      [mconfig]="c.tiles[0].mconfig"
+                    ></m-chart-options>
+                  </div>
+
+                  <!-- <div *ngIf="mconfig?.select.length > 0" class="relative">
+                  <m-chart-options
+                    [mconfig]="mconfig"
+                    [isDisabled]="
+                      isSelectValid === false ||
+                      mconfig.chart.isValid === false ||
+                      chartTitleForm.valid === false
+                    "
+                  ></m-chart-options>
+                </div> -->
                 </div>
               </div>
             </div>
@@ -591,7 +602,7 @@
                         chartTitleForm.valid === false ||
                         alias === restrictedUserAlias
                     }"
-                    (click)="saveAs()"
+                    (click)="chartSaveAs($event)"
                     [disabled]="
                       isSelectValid === false ||
                       mconfig.chart.isValid === false ||

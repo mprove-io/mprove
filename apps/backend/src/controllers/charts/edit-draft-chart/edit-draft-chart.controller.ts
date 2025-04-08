@@ -135,7 +135,7 @@ export class EditDraftChartController {
       });
     }
 
-    if (chart.creatorId === user.userId) {
+    if (chart.creatorId !== user.userId) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_CHART_CREATOR_ID_MISMATCH
       });
@@ -217,13 +217,13 @@ export class EditDraftChartController {
       chartId: chartId,
       draft: true,
       creatorId: user.userId,
-      title: undefined,
+      title: chart.chartId,
       modelId: tile.modelId,
       modelLabel: tile.modelLabel,
       filePath: undefined,
       accessUsers: [],
       accessRoles: [],
-      hidden: undefined,
+      hidden: false,
       tiles: [tile],
       serverTs: undefined
     };
