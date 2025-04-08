@@ -4,8 +4,8 @@ import { ICellRendererParams } from 'ag-grid-community';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { ReportQuery } from '~front/app/queries/report.query';
+import { ChartService } from '~front/app/services/chart.service';
 import { DataService } from '~front/app/services/data.service';
-import { MconfigService } from '~front/app/services/mconfig.service';
 import { TimeService } from '~front/app/services/time.service';
 import { common } from '~front/barrels/common';
 
@@ -280,17 +280,25 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       // console.log('cellMetricsEndDateMs');
       // console.log(cellMetricsEndDateMs);
 
-      this.mconfigService.navCreateTempMconfigAndQuery({
-        newMconfig: newMconfig,
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: false,
+        chartId: undefined,
         cellMetricsStartDateMs: cellMetricsStartDateMs,
         cellMetricsEndDateMs: cellMetricsEndDateMs
       });
+
+      // this.mconfigService.navCreateTempMconfigAndQuery({
+      //   newMconfig: newMconfig,
+      //   cellMetricsStartDateMs: cellMetricsStartDateMs,
+      //   cellMetricsEndDateMs: cellMetricsEndDateMs
+      // });
     }
   }
 
   constructor(
     private dataService: DataService,
-    private mconfigService: MconfigService,
+    private chartService: ChartService,
     private metricsQuery: MetricsQuery,
     private reportQuery: ReportQuery,
     private timeService: TimeService

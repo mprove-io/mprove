@@ -34,8 +34,16 @@ export class ChartService {
     isDraft: boolean;
     mconfig: common.MconfigX;
     chartId: string;
+    cellMetricsStartDateMs?: number;
+    cellMetricsEndDateMs?: number;
   }) {
-    let { isDraft, mconfig, chartId } = item;
+    let {
+      isDraft,
+      mconfig,
+      chartId,
+      cellMetricsStartDateMs,
+      cellMetricsEndDateMs
+    } = item;
 
     if (isDraft === true) {
       this.editDraftChart({
@@ -44,22 +52,30 @@ export class ChartService {
       });
     } else {
       this.navCreateDraftChart({
-        mconfig: mconfig
+        mconfig: mconfig,
+        cellMetricsStartDateMs: cellMetricsStartDateMs,
+        cellMetricsEndDateMs: cellMetricsEndDateMs
       });
     }
   }
 
-  navCreateDraftChart(item: { mconfig: common.MconfigX }) {
+  navCreateDraftChart(item: {
+    mconfig: common.MconfigX;
+    cellMetricsStartDateMs: number;
+    cellMetricsEndDateMs: number;
+  }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { mconfig } = item;
+    let { mconfig, cellMetricsStartDateMs, cellMetricsEndDateMs } = item;
 
     let payload: apiToBackend.ToBackendCreateDraftChartRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      mconfig: mconfig
+      mconfig: mconfig,
+      cellMetricsStartDateMs: cellMetricsStartDateMs,
+      cellMetricsEndDateMs: cellMetricsEndDateMs
     };
 
     this.apiService
