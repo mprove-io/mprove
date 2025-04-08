@@ -57,7 +57,15 @@
             formControlName="groupByField"
           >
             <ng-template ng-label-tmp let-item="item">
-              <m-field-label [column]="item" class="ml-1 flex"></m-field-label>
+              <div
+                *ngIf="item.partLabel === 'Empty' && item.topLabel === 'Empty'"
+              ></div>
+
+              <m-field-label
+                *ngIf="item.partLabel !== 'Empty' || item.topLabel !== 'Empty'"
+                [column]="item"
+                class="ml-1 flex"
+              ></m-field-label>
             </ng-template>
 
             <ng-template

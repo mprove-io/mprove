@@ -91,7 +91,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
   modelRunButtonSpinnerName = 'modelRunButtonSpinnerName';
   modelCancelButtonSpinnerName = 'modelCancelButtonSpinnerName';
 
-  isFilterByModel = true;
+  isFilterByModel = false;
 
   isRunButtonPressed = false;
   isCancelButtonPressed = false;
