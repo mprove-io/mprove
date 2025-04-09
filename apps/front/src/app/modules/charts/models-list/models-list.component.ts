@@ -153,24 +153,10 @@ export class ModelsListComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
 
-  goToModelFile(event: any, model: common.ModelX) {
+  goToFile(event: any, model: common.ModelX) {
     event.stopPropagation();
 
     let fileIdAr = model.filePath.split('/');
-    fileIdAr.shift();
-
-    this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
-      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
-    });
-  }
-
-  goToFile(event: any, node: common.ModelNode, model: common.ModelX) {
-    event.stopPropagation();
-
-    let fileIdAr = common.isDefined(node.viewFilePath)
-      ? node.viewFilePath.split('/')
-      : model.filePath.split('/');
     fileIdAr.shift();
 
     this.navigateService.navigateToFileLine({

@@ -41,10 +41,7 @@
               (click)="navigateToDashboard(item.dashboardId)"
             >
               <div class="flex w-12 pl-3">
-                <div
-                  *ngIf="item.draft === false"
-                  class="invisible flex group-hover:visible"
-                >
+                <div class="invisible flex group-hover:visible">
                   <m-dashboard-options [dashboard]="item"></m-dashboard-options>
                 </div>
               </div>
