@@ -1,13 +1,7 @@
 import { Injectable } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
+import { tap } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
-import { ChartQuery } from '../queries/chart.query';
 import { NavQuery, NavState } from '../queries/nav.query';
-import { ApiService } from './api.service';
-import { NavigateService } from './navigate.service';
 
 @Injectable({ providedIn: 'root' })
 export class MconfigService {
@@ -18,13 +12,7 @@ export class MconfigService {
     })
   );
 
-  constructor(
-    private apiService: ApiService,
-    private chartQuery: ChartQuery,
-    private spinner: NgxSpinnerService,
-    private navQuery: NavQuery,
-    private navigateService: NavigateService
-  ) {
+  constructor(private navQuery: NavQuery) {
     this.nav$.subscribe();
   }
 
@@ -121,44 +109,43 @@ export class MconfigService {
     return newMconfig;
   }
 
-  navCreateTempMconfig(item: { newMconfig: common.MconfigX }) {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+  // navCreateTempMconfig(item: { newMconfig: common.MconfigX }) {
+  //   this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { newMconfig } = item;
+  //   let { newMconfig } = item;
 
-    newMconfig.queryId = this.chartQuery.getValue().tiles[0].query.queryId;
+  //   newMconfig.queryId = this.chartQuery.getValue().tiles[0].query.queryId;
 
-    let payload: apiToBackend.ToBackendCreateTempMconfigRequestPayload = {
-      projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
-      oldMconfigId: this.chartQuery.getValue().tiles[0].mconfig.mconfigId,
-      mconfig: newMconfig
-    };
+  //   let payload: apiToBackend.ToBackendCreateTempMconfigRequestPayload = {
+  //     projectId: this.nav.projectId,
+  //     isRepoProd: this.nav.isRepoProd,
+  //     branchId: this.nav.branchId,
+  //     envId: this.nav.envId,
+  //     oldMconfigId: this.chartQuery.getValue().tiles[0].mconfig.mconfigId,
+  //     mconfig: newMconfig
+  //   };
 
-    this.apiService
-      .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfig,
-        payload: payload
-      })
-      .pipe(
-        tap((resp: apiToBackend.ToBackendCreateTempMconfigResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let { mconfig } = resp.payload;
+  //   this.apiService
+  //     .req({
+  //       pathInfoName:
+  //         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfig,
+  //       payload: payload
+  //     })
+  //     .pipe(
+  //       tap((resp: apiToBackend.ToBackendCreateTempMconfigResponse) => {
+  //         if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+  //           let { mconfig } = resp.payload;
 
-            // TODO: check chartQuery
-            // this.chartQuery.updatePart({ mconfig: mconfig });
+  //           // this.chartQuery.updatePart({ mconfig: mconfig });
 
-            this.navigateService.navigateMconfigQuery({
-              mconfigId: mconfig.mconfigId,
-              queryId: mconfig.queryId
-            });
-          }
-        }),
-        take(1)
-      )
-      .subscribe();
-  }
+  //           this.navigateService.navigateMconfigQuery({
+  //             mconfigId: mconfig.mconfigId,
+  //             queryId: mconfig.queryId
+  //           });
+  //         }
+  //       }),
+  //       take(1)
+  //     )
+  //     .subscribe();
+  // }
 }

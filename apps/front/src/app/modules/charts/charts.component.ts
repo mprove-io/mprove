@@ -1029,8 +1029,15 @@ ${this.mconfig.storePart?.reqUrlPath}`
 
     newMconfig.chart.series.forEach(s => (s.type = newChartType));
 
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
+    // this.mconfigService.navCreateTempMconfig({
+    //   newMconfig: newMconfig
+    // });
+
+    // query not changed
+    this.chartService.editChart({
+      mconfig: newMconfig,
+      isDraft: this.chart.draft,
+      chartId: this.chart.chartId
     });
   }
 
@@ -1073,8 +1080,15 @@ ${this.mconfig.storePart?.reqUrlPath}`
 
     newMconfig.chart.title = chartTitle;
 
-    this.mconfigService.navCreateTempMconfig({
-      newMconfig: newMconfig
+    // this.mconfigService.navCreateTempMconfig({
+    //   newMconfig: newMconfig
+    // });
+
+    // query not changed
+    this.chartService.editChart({
+      mconfig: newMconfig,
+      isDraft: this.chart.draft,
+      chartId: this.chart.chartId
     });
   }
 

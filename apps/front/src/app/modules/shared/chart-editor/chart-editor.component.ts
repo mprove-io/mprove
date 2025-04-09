@@ -11,10 +11,11 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import { setChartSeries } from '~common/_index';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { SeriesPart } from '~front/app/interfaces/series-part';
+import { ChartQuery } from '~front/app/queries/chart.query';
 import { StructQuery } from '~front/app/queries/struct.query';
+import { ChartService } from '~front/app/services/chart.service';
 import { DataService } from '~front/app/services/data.service';
 import { FormatNumberService } from '~front/app/services/format-number.service';
-import { MconfigService } from '~front/app/services/mconfig.service';
 import { ReportService } from '~front/app/services/report.service';
 import { StructService } from '~front/app/services/struct.service';
 import { ValidationService } from '~front/app/services/validation.service';
@@ -153,7 +154,8 @@ export class ChartEditorComponent implements OnChanges {
     private fb: FormBuilder,
     private structService: StructService,
     private structQuery: StructQuery,
-    private mconfigService: MconfigService,
+    private chartQuery: ChartQuery,
+    private chartService: ChartService,
     private dataService: DataService,
     private reportService: ReportService,
     private formatNumberService: FormatNumberService
@@ -354,13 +356,27 @@ export class ChartEditorComponent implements OnChanges {
         if (isValid === true) {
           newMconfig.chart.isValid = true;
 
-          this.mconfigService.navCreateTempMconfig({
-            newMconfig: newMconfig
+          // this.mconfigService.navCreateTempMconfig({
+          //   newMconfig: newMconfig
+          // });
+
+          // query not changed
+          this.chartService.editChart({
+            mconfig: newMconfig,
+            isDraft: this.chartQuery.getValue().draft,
+            chartId: this.chartQuery.getValue().chartId
           });
         }
       } else {
-        this.mconfigService.navCreateTempMconfig({
-          newMconfig: newMconfig
+        // this.mconfigService.navCreateTempMconfig({
+        //   newMconfig: newMconfig
+        // });
+
+        // query not changed
+        this.chartService.editChart({
+          mconfig: newMconfig,
+          isDraft: this.chartQuery.getValue().draft,
+          chartId: this.chartQuery.getValue().chartId
         });
       }
     } else {
