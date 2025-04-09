@@ -1057,7 +1057,8 @@ ${this.mconfig.storePart?.reqUrlPath}`
       showNav: false,
       isSelectValid: this.isSelectValid,
       dashboardId: undefined,
-      chartId: undefined
+      chartId: undefined,
+      isToDuplicateQuery: false
     });
   }
 

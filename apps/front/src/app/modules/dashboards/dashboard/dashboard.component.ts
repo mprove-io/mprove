@@ -335,8 +335,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  tileDeleted(eventtDashTileDeleted: interfaces.EventDashTileDeleted) {
-    let tileIndex = eventtDashTileDeleted.tileIndex;
+  tileDeleted(eventDashTileDeleted: interfaces.EventDashTileDeleted) {
+    let tileIndex = eventDashTileDeleted.tileIndex;
 
     let newTiles = [
       ...this.dashboard.tiles.slice(0, tileIndex),

@@ -14,13 +14,11 @@ import { Subscription, interval, of } from 'rxjs';
 import { concatMap, take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DeleteFilterFnItem } from '~front/app/interfaces/delete-filter-fn-item';
-import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DataService, QDataRow } from '~front/app/services/data.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
@@ -95,11 +93,9 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
     private navQuery: NavQuery,
     private memberQuery: MemberQuery,
     private dataService: DataService,
-    private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
     private myDialogService: MyDialogService,
-    private spinner: NgxSpinnerService,
-    private dashboardQuery: DashboardQuery
+    private spinner: NgxSpinnerService
   ) {}
 
   async ngOnInit() {
@@ -175,18 +171,6 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  explore(event?: MouseEvent) {
-    event.stopPropagation();
-
-    if (this.tile.hasAccessToModel === true) {
-      this.navigateService.navigateMconfigQuery({
-        modelId: this.tile.modelId,
-        mconfigId: this.tile.mconfigId,
-        queryId: this.tile.queryId
-      });
-    }
-  }
-
   updateChartView() {
     this.chartViewComponents.forEach(x => {
       x.chartViewUpdateChart();
@@ -195,53 +179,6 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
 
   showSpinner() {
     this.spinner.show(this.tile.title);
-  }
-
-  run(event?: MouseEvent) {
-    if (common.isDefined(event)) {
-      event.stopPropagation();
-    }
-
-    let nav: NavState;
-    this.navQuery
-      .select()
-      .pipe(
-        tap(x => {
-          nav = x;
-        }),
-        take(1)
-      )
-      .subscribe();
-
-    let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
-      projectId: nav.projectId,
-      queryIds: [this.query.queryId]
-    };
-
-    this.apiService
-      .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
-        payload: payload
-      })
-      .pipe(
-        tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let { runningQueries } = resp.payload;
-
-            this.query = Object.assign(runningQueries[0], {
-              sql: this.query.sql,
-              data: this.query.data
-            });
-
-            this.queryUpdated.emit(this.query);
-
-            this.spinner.show(this.tile.title);
-          }
-        }),
-        take(1)
-      )
-      .subscribe();
   }
 
   deleteTile(event: MouseEvent) {
@@ -258,7 +195,7 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
 
   showChart() {
     this.myDialogService.showChart({
-      updateQueryFn: this.updateQuery.bind(this),
+      // updateQueryFn: this.updateQuery.bind(this),
       apiService: this.apiService,
       mconfig: this.mconfig,
       query: this.query,
@@ -268,7 +205,8 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
       isSelectValid: this.isSelectValid,
       dashboardId: this.dashboard.dashboardId,
       chartId: undefined,
-      listen: this.tile.listen
+      listen: this.tile.listen,
+      isToDuplicateQuery: true
     });
   }
 

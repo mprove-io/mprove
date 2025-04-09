@@ -157,6 +157,7 @@ export class DashboardsService {
       .select({
         dashboardId: dashboardsTable.dashboardId,
         draft: dashboardsTable.draft,
+        creatorId: dashboardsTable.creatorId,
         filePath: dashboardsTable.filePath,
         accessUsers: dashboardsTable.accessUsers,
         accessRoles: dashboardsTable.accessRoles,

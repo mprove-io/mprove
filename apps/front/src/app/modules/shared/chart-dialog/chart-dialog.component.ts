@@ -26,6 +26,7 @@ import { common } from '~front/barrels/common';
 import { SharedModule } from '../shared.module';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { ChartService } from '~front/app/services/chart.service';
 import { constants } from '~front/barrels/constants';
 
 export interface ChartDialogData {
@@ -38,10 +39,10 @@ export interface ChartDialogData {
   showNav: boolean;
   chartId: string;
   dashboardId: string;
-  isToDuplicateQuery?: boolean;
+  isToDuplicateQuery: boolean;
   metricId?: string;
   listen?: { [a: string]: string };
-  updateQueryFn?: any;
+  // updateQueryFn?: any;
 }
 
 @Component({
@@ -114,6 +115,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private dataService: DataService,
+    private chartService: ChartService,
     private memberQuery: MemberQuery,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
@@ -258,13 +260,13 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
                     this.cd.detectChanges();
 
-                    if (
-                      common.isDefined(this.ref.data.updateQueryFn) &&
-                      resp.payload.query.status !==
-                        common.QueryStatusEnum.Running
-                    ) {
-                      this.ref.data.updateQueryFn(resp.payload.query);
-                    }
+                    // if (
+                    //   common.isDefined(this.ref.data.updateQueryFn) &&
+                    //   resp.payload.query.status !==
+                    //     common.QueryStatusEnum.Running
+                    // ) {
+                    //   this.ref.data.updateQueryFn(resp.payload.query);
+                    // }
                   }
                 })
               );
@@ -291,11 +293,31 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
     this.ref.close();
 
-    this.navigateService.navigateMconfigQuery({
-      modelId: this.mconfig.modelId,
-      mconfigId: this.mconfig.mconfigId,
-      queryId: this.query.queryId
+    let newMconfigId = common.makeId();
+    // let newQueryId = common.makeId();
+
+    let mconfigCopy = common.makeCopy(this.mconfig);
+
+    let newMconfig = Object.assign(mconfigCopy, <common.MconfigX>{
+      mconfigId: newMconfigId,
+      queryId: this.query.queryId,
+      temp: true,
+      serverTs: 1
     });
+
+    // TODO: override queryId on backend
+
+    this.chartService.editChart({
+      mconfig: newMconfig,
+      isDraft: false,
+      chartId: undefined
+    });
+
+    // this.navigateService.navigateMconfigQuery({
+    //   modelId: this.mconfig.modelId,
+    //   mconfigId: this.mconfig.mconfigId,
+    //   queryId: this.query.queryId
+    // });
   }
 
   run() {
