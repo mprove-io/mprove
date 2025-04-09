@@ -1,6 +1,8 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
+import { ChartQuery } from '~front/app/queries/chart.query';
 import { ModelQuery } from '~front/app/queries/model.query';
+import { ChartService } from '~front/app/services/chart.service';
 import { QDataRow } from '~front/app/services/data.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { StructService } from '~front/app/services/struct.service';
@@ -32,9 +34,18 @@ export class MainTableComponent {
   @Input()
   isEdit: boolean;
 
+  chart: common.ChartX;
+  chart$ = this.chartQuery.select().pipe(
+    tap(x => {
+      this.chart = x;
+    })
+  );
+
   constructor(
     private modelQuery: ModelQuery,
+    private chartQuery: ChartQuery,
     private mconfigService: MconfigService,
+    private chartService: ChartService,
     private structService: StructService,
     private cd: ChangeDetectorRef
   ) {}
@@ -98,9 +109,15 @@ export class MainTableComponent {
     newMconfig.sorts =
       newMconfig.sortings.length > 0 ? newSorts.join(', ') : null;
 
-    this.mconfigService.navCreateTempMconfigAndQuery({
-      newMconfig: newMconfig
+    this.chartService.editChart({
+      mconfig: newMconfig,
+      isDraft: this.chart.draft,
+      chartId: this.chart.chartId
     });
+
+    // this.mconfigService.navCreateTempMconfigAndQuery({
+    //   newMconfig: newMconfig
+    // });
   }
 
   remove(columnId: string) {
@@ -136,9 +153,15 @@ export class MainTableComponent {
       fields: fields
     });
 
-    this.mconfigService.navCreateTempMconfigAndQuery({
-      newMconfig: newMconfig
+    this.chartService.editChart({
+      mconfig: newMconfig,
+      isDraft: this.chart.draft,
+      chartId: this.chart.chartId
     });
+
+    // this.mconfigService.navCreateTempMconfigAndQuery({
+    //   newMconfig: newMconfig
+    // });
   }
 
   moveLeft(columnId: string) {
@@ -156,9 +179,15 @@ export class MainTableComponent {
 
     newMconfig.select = newColumnsOrder;
 
-    this.mconfigService.navCreateTempMconfigAndQuery({
-      newMconfig: newMconfig
+    this.chartService.editChart({
+      mconfig: newMconfig,
+      isDraft: this.chart.draft,
+      chartId: this.chart.chartId
     });
+
+    // this.mconfigService.navCreateTempMconfigAndQuery({
+    //   newMconfig: newMconfig
+    // });
   }
 
   moveRight(columnId: string) {
@@ -176,8 +205,14 @@ export class MainTableComponent {
 
     newMconfig.select = newColumnsOrder;
 
-    this.mconfigService.navCreateTempMconfigAndQuery({
-      newMconfig: newMconfig
+    this.chartService.editChart({
+      mconfig: newMconfig,
+      isDraft: this.chart.draft,
+      chartId: this.chart.chartId
     });
+
+    // this.mconfigService.navCreateTempMconfigAndQuery({
+    //   newMconfig: newMconfig
+    // });
   }
 }
