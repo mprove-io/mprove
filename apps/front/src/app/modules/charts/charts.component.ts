@@ -1283,10 +1283,12 @@ ${this.mconfig.storePart?.reqUrlPath}`
   }
 
   addChart() {
-    this.navigateService.navigateToChart({
-      modelId: this.model.modelId,
-      chartId: common.EMPTY_CHART_ID
-    });
+    if (common.isDefined(this.model.modelId)) {
+      this.navigateService.navigateToChart({
+        modelId: this.model.modelId,
+        chartId: common.EMPTY_CHART_ID
+      });
+    }
   }
 
   addModel() {}

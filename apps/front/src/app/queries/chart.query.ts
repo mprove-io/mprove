@@ -78,7 +78,7 @@ let emptyTile: common.TileX = {
 export const emptyChart: ChartState = {
   structId: undefined,
   chartId: common.EMPTY_CHART_ID,
-  draft: true,
+  draft: false,
   creatorId: undefined,
   title: emptyTile.title,
   modelId: undefined,
