@@ -1162,6 +1162,8 @@ ${this.mconfig.storePart?.reqUrlPath}`
 
   navToChartsList() {
     if (this.lastUrl !== this.pathChartsList) {
+      this.chartQuery.reset();
+
       this.navigateService.navigateToChartsList({
         modelId: this.model?.modelId
       });

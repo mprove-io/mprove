@@ -11,49 +11,69 @@
               {{ pageTitle }}
             </div>
 
-            <div class="text-gray1 ml-5 select-none text-base">Timezone</div>
+            <div
+              class="ml-10 flex flex-shrink-0 cursor-pointer flex-row items-center"
+              (click)="toggleFilterByModel()"
+              tp="Filter Charts by selected Model"
+            >
+              <m-filter-icon
+                [ngClass]="{
+                  'text-gray-400': isFilterByModel === false,
+                  'text-gray-500': isFilterByModel === true
+                }"
+              ></m-filter-icon>
 
-            <div class="ml-5 flex w-2 flex-1">
-              <form
-                class="w-full"
-                [formGroup]="timezoneForm"
-                tp="Timezone change is not allowed"
-                [tpIsEnabled]="
-                  timezoneForm.controls['timezone'].disabled === true
-                "
+              <div
+                class="ml-3 w-[54px] select-none items-center text-gray-500"
+                [ngClass]="{
+                  'font-semibold': isFilterByModel === true
+                }"
               >
-                <ng-select
-                  #modelTimezoneSelect
-                  data-cy="modelTimezoneSelect"
-                  class="w-full text-base"
-                  [items]="timezones"
-                  [clearable]="false"
-                  [searchable]="true"
-                  [searchFn]="timezoneSearchFn"
-                  (change)="timezoneChange()"
-                  (keyup.esc)="
-                    $event.stopImmediatePropagation();
-                    modelTimezoneSelect.blur()
-                  "
-                  (keyup.enter)="
-                    $event.stopImmediatePropagation();
-                    modelTimezoneSelect.blur()
-                  "
-                  appendTo="body"
-                  bindLabel="label"
-                  bindValue="value"
-                  formControlName="timezone"
-                >
-                  <ng-template ng-label-tmp let-item="item">
-                    <div class="truncate">{{ item.label }}</div>
-                  </ng-template>
-
-                  <ng-template ng-option-tmp let-item="item">
-                    <div class="truncate">{{ item.label }}</div>
-                  </ng-template>
-                </ng-select>
-              </form>
+                Model
+              </div>
             </div>
+
+            <div
+              class="ml-7 flex flex-shrink-0 cursor-pointer flex-row items-center"
+              (click)="navToChartsList()"
+            >
+              <m-view-list-icon
+                [ngClass]="{
+                  'text-blue-500': lastUrl === pathChartsList,
+                  'text-gray-500': lastUrl !== pathChartsList
+                }"
+              ></m-view-list-icon>
+              <div
+                class="ml-3 select-none items-center"
+                [ngClass]="{
+                  'text-blue-500': lastUrl === pathChartsList
+                }"
+              >
+                Charts
+              </div>
+            </div>
+
+            <div
+              class="ml-7 flex flex-shrink-0 cursor-pointer flex-row items-center"
+              (click)="navToModelsList()"
+            >
+              <m-view-list-icon
+                [ngClass]="{
+                  'text-blue-500': lastUrl === pathModelsList,
+                  'text-gray-500': lastUrl !== pathModelsList
+                }"
+              ></m-view-list-icon>
+              <div
+                class="ml-3 select-none items-center"
+                [ngClass]="{
+                  'text-blue-500': lastUrl === pathModelsList
+                }"
+              >
+                Models
+              </div>
+            </div>
+
+            <div class="flex flex-1"></div>
 
             <div
               [tp]="templateNewChart"
@@ -90,15 +110,6 @@
                 >Explorer role required</div
               >
             </ng-template>
-
-            <m-view-list-icon
-              class="ml-5 cursor-pointer"
-              [ngClass]="{
-                'text-blue-500': lastUrl === pathChartsList,
-                'text-gray-400': lastUrl !== pathChartsList
-              }"
-              (click)="navToChartsList()"
-            ></m-view-list-icon>
           </div>
 
           <div
@@ -264,28 +275,6 @@
                 ></m-delete-icon>
               </div>
 
-              <div
-                class="ml-3 flex flex-shrink-0 cursor-pointer flex-row items-center"
-                (click)="toggleFilterByModel()"
-                tp="Filter Charts by selected Model"
-              >
-                <m-filter-icon
-                  [ngClass]="{
-                    'text-gray-400': isFilterByModel === false,
-                    'text-gray-500': isFilterByModel === true
-                  }"
-                ></m-filter-icon>
-
-                <div
-                  class="ml-3 select-none items-center text-gray-500"
-                  [ngClass]="{
-                    'font-semibold': isFilterByModel === true
-                  }"
-                >
-                  Model
-                </div>
-              </div>
-
               <div class="flex flex-grow"></div>
 
               <button
@@ -415,7 +404,7 @@
                 >Tree</button
               >
 
-              <div class="ml-5 flex w-2 flex-1">
+              <div class="ml-5 mr-9 flex w-2 flex-1">
                 <form class="w-full" [formGroup]="modelForm">
                   <ng-select
                     #chartsModelSelect
@@ -448,15 +437,6 @@
                   </ng-select>
                 </form>
               </div>
-
-              <m-view-list-icon
-                class="ml-5 mr-9 cursor-pointer"
-                [ngClass]="{
-                  'text-blue-500': lastUrl === pathModelsList,
-                  'text-gray-400': lastUrl !== pathModelsList
-                }"
-                (click)="navToModelsList()"
-              ></m-view-list-icon>
 
               <!-- <div
                 [tp]="templateNewModel"
@@ -972,6 +952,52 @@
                     <m-validation
                       [control]="limitForm.controls['limit']"
                     ></m-validation>
+                  </div>
+
+                  <div class="text-gray1 ml-5 select-none text-base"
+                    >Timezone</div
+                  >
+
+                  <div class="ml-5 flex w-2 flex-1">
+                    <form
+                      class="w-full"
+                      [formGroup]="timezoneForm"
+                      tp="Timezone change is not allowed"
+                      [tpIsEnabled]="
+                        timezoneForm.controls['timezone'].disabled === true
+                      "
+                    >
+                      <ng-select
+                        #modelTimezoneSelect
+                        data-cy="modelTimezoneSelect"
+                        class="w-full text-base"
+                        [items]="timezones"
+                        [clearable]="false"
+                        [searchable]="true"
+                        [searchFn]="timezoneSearchFn"
+                        (change)="timezoneChange()"
+                        (keyup.esc)="
+                          $event.stopImmediatePropagation();
+                          modelTimezoneSelect.blur()
+                        "
+                        (keyup.enter)="
+                          $event.stopImmediatePropagation();
+                          modelTimezoneSelect.blur()
+                        "
+                        appendTo="body"
+                        bindLabel="label"
+                        bindValue="value"
+                        formControlName="timezone"
+                      >
+                        <ng-template ng-label-tmp let-item="item">
+                          <div class="truncate">{{ item.label }}</div>
+                        </ng-template>
+
+                        <ng-template ng-option-tmp let-item="item">
+                          <div class="truncate">{{ item.label }}</div>
+                        </ng-template>
+                      </ng-select>
+                    </form>
                   </div>
 
                   <!-- <button
