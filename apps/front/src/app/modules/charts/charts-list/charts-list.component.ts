@@ -7,6 +7,7 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 import { FilteredChartsQuery } from '~front/app/queries/filtered-charts.query';
 
@@ -15,6 +16,8 @@ import { FilteredChartsQuery } from '~front/app/queries/filtered-charts.query';
   templateUrl: './charts-list.component.html'
 })
 export class ChartsListComponent {
+  pageTitle = constants.CHARTS_LIST_PAGE_TITLE;
+
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
     tap(x => {

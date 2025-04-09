@@ -16,7 +16,7 @@ import uFuzzy from '@leeoniya/ufuzzy';
   templateUrl: './models-list.component.html'
 })
 export class ModelsListComponent implements OnInit, OnDestroy {
-  pageTitle = constants.MODELS_PAGE_TITLE;
+  pageTitle = constants.MODELS_LIST_PAGE_TITLE;
 
   // groups: string[];
 
@@ -184,7 +184,9 @@ export class ModelsListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.navigateService.navigateToModel(item.modelId);
+    this.navigateService.navigateToModelsList({
+      modelId: item.modelId
+    });
   }
 
   ngOnDestroy() {

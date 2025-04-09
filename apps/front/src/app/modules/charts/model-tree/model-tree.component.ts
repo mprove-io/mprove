@@ -17,6 +17,7 @@ import { FractionSubTypeOption, ModelNode } from '~common/_index';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { ModelQuery, ModelState } from '~front/app/queries/model.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { ChartService } from '~front/app/services/chart.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { StructService } from '~front/app/services/struct.service';
@@ -54,6 +55,13 @@ export class ModelTreeComponent implements AfterViewInit {
 
   @Output()
   expandFilters = new EventEmitter();
+
+  chart: common.ChartX;
+  chart$ = this.chartQuery.select().pipe(
+    tap(x => {
+      this.chart = x;
+    })
+  );
 
   model: ModelState;
   mconfig: common.MconfigX;
@@ -116,6 +124,7 @@ export class ModelTreeComponent implements AfterViewInit {
     private uiService: UiService,
     private structService: StructService,
     private mconfigService: MconfigService,
+    private chartService: ChartService,
     private navigateService: NavigateService
   ) {}
 
@@ -231,9 +240,15 @@ export class ModelTreeComponent implements AfterViewInit {
       fields: fields
     });
 
-    this.mconfigService.navCreateTempMconfigAndQuery({
-      newMconfig: newMconfig
+    this.chartService.editChart({
+      mconfig: newMconfig,
+      isDraft: this.chart.draft,
+      chartId: this.chart.chartId
     });
+
+    // this.mconfigService.navCreateTempMconfigAndQuery({
+    //   newMconfig: newMconfig
+    // });
   }
 
   filterField(node: TreeNode, event: MouseEvent) {
@@ -378,9 +393,15 @@ export class ModelTreeComponent implements AfterViewInit {
       this.expandFilters.emit();
     }
 
-    this.mconfigService.navCreateTempMconfigAndQuery({
-      newMconfig: newMconfig
+    this.chartService.editChart({
+      mconfig: newMconfig,
+      isDraft: this.chart.draft,
+      chartId: this.chart.chartId
     });
+
+    // this.mconfigService.navCreateTempMconfigAndQuery({
+    //   newMconfig: newMconfig
+    // });
   }
 
   makeNodesExtra() {

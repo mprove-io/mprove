@@ -25,8 +25,11 @@ export const PROJECT_TEAM_PAGE_TITLE = 'Project - Team';
 
 export const FILES_PAGE_TITLE = 'Files';
 export const CHARTS_PAGE_TITLE = 'Charts';
+export const CHARTS_LIST_PAGE_TITLE = 'Charts List';
+export const MODELS_LIST_PAGE_TITLE = 'Models List';
 export const DASHBOARDS_PAGE_TITLE = 'Dashboards';
-export const MODELS_PAGE_TITLE = 'Models';
+export const DASHBOARD_PAGE_TITLE = 'Dashboard';
+export const REPORTS_PAGE_TITLE = 'Reports';
 
 export const PAGE_NOT_FOUND_PAGE_TITLE = 'Page Not Found';
 export const ORGANIZATION_DELETED_PAGE_TITLE = 'Organization Deleted';
@@ -35,7 +38,3 @@ export const ORGANIZATION_OWNER_CHANGED_PAGE_TITLE =
 export const PROJECT_DELETED_PAGE_TITLE = 'Project Deleted';
 
 // dynamic
-
-export const MODEL_PAGE_TITLE = 'Charts';
-export const METRICS_PAGE_TITLE = 'Reports';
-export const DASHBOARD_PAGE_TITLE = 'Dashboard';

@@ -251,6 +251,10 @@ export const appRoutes: Routes = [
                                   {
                                     component: ChartsListComponent,
                                     path: common.PATH_CHARTS_LIST
+                                  },
+                                  {
+                                    component: ModelsListComponent,
+                                    path: common.PATH_MODELS_LIST
                                   }
                                 ]
                               }

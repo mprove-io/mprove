@@ -68,7 +68,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.timeSpecSelectElement?.close();
   }
 
-  pageTitle = frontConstants.METRICS_PAGE_TITLE;
+  pageTitle = frontConstants.REPORTS_PAGE_TITLE;
 
   pathReports = common.PATH_REPORTS;
   pathReportsList = common.PATH_REPORTS_LIST;

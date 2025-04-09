@@ -78,7 +78,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.chartTypeSelectElement?.close();
   }
 
-  pageTitle = frontConstants.MODEL_PAGE_TITLE;
+  pageTitle = frontConstants.CHARTS_PAGE_TITLE;
 
   emptyChartId = common.EMPTY_CHART_ID;
 
@@ -762,11 +762,17 @@ export class ChartsComponent implements OnInit, OnDestroy {
       this.navigateService.navigateToChartsList({
         modelId: modelId
       });
-    } else if (common.isDefined(this.model?.modelId)) {
+    } else if (this.lastUrl === this.pathModelsList) {
+      this.navigateService.navigateToModelsList({
+        modelId: modelId
+      });
+    } else if (common.isDefined(modelId)) {
       this.navigateService.navigateToChart({
         modelId: modelId,
         chartId: common.EMPTY_CHART_ID
       });
+    } else {
+      this.navigateService.navigateToCharts();
     }
   }
 
@@ -1154,22 +1160,21 @@ ${this.mconfig.storePart?.reqUrlPath}`
     });
   }
 
-  toggleChartsList() {
+  navToChartsList() {
     if (this.lastUrl !== this.pathChartsList) {
-      this.title.setTitle(this.pageTitle);
       this.navigateService.navigateToChartsList({
         modelId: this.model?.modelId
       });
     }
   }
 
-  toggleModelsList() {
+  navToModelsList() {
     if (this.lastUrl !== this.pathModelsList) {
-      this.title.setTitle(this.pageTitle);
-
       this.chartQuery.reset();
-      // this.modelQuery.reset();
-      this.navigateService.navigateToModelsList();
+
+      this.navigateService.navigateToModelsList({
+        modelId: this.model?.modelId
+      });
     }
   }
 

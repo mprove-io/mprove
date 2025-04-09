@@ -97,7 +97,7 @@
                 'text-blue-500': lastUrl === pathChartsList,
                 'text-gray-400': lastUrl !== pathChartsList
               }"
-              (click)="toggleChartsList()"
+              (click)="navToChartsList()"
             ></m-view-list-icon>
           </div>
 
@@ -455,7 +455,7 @@
                   'text-blue-500': lastUrl === pathModelsList,
                   'text-gray-400': lastUrl !== pathModelsList
                 }"
-                (click)="toggleModelsList()"
+                (click)="navToModelsList()"
               ></m-view-list-icon>
 
               <!-- <div
