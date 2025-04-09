@@ -5,7 +5,8 @@ import type { editor as editorType } from 'monaco-editor';
 import { MarkerSeverity } from 'monaco-editor';
 import { setDiagnosticsOptions } from 'monaco-yaml';
 import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
-import { filter, take, tap } from 'rxjs/operators';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { filter, map, take, tap } from 'rxjs/operators';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -146,6 +147,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     private navQuery: NavQuery,
     private repoQuery: RepoQuery,
     private memberQuery: MemberQuery,
+    private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef,
     private apiService: ApiService,
     private confirmService: ConfirmService,
@@ -553,13 +555,45 @@ export class FileEditorComponent implements OnInit, OnDestroy {
         dashboardId: id
       });
     } else if (dotExt === common.FileExtensionEnum.Chart) {
-      this.navigateService.navigateToCharts();
+      let nav = this.navQuery.getValue();
 
-      // TODO: navigateToChart modelId
-      // this.navigateService.navigateToChart({
-      //   modelId: undefined,
-      //   chartId: id
-      // });
+      let payload: apiToBackend.ToBackendGetChartRequestPayload = {
+        projectId: nav.projectId,
+        isRepoProd: nav.isRepoProd,
+        branchId: nav.branchId,
+        envId: nav.envId,
+        chartId: id,
+        timezone: uiState.timezone
+      };
+
+      this.spinner.show(constants.APP_SPINNER_NAME);
+
+      this.apiService
+        .req({
+          pathInfoName:
+            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
+          payload: payload
+        })
+        .pipe(
+          map((resp: apiToBackend.ToBackendGetChartResponse) => {
+            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+              this.memberQuery.update(resp.payload.userMember);
+
+              if (common.isDefined(resp.payload.chart)) {
+                this.navigateService.navigateToChart({
+                  modelId: resp.payload.chart.modelId,
+                  chartId: id
+                });
+              } else {
+                this.spinner.hide(constants.APP_SPINNER_NAME);
+              }
+            } else {
+              this.spinner.hide(constants.APP_SPINNER_NAME);
+            }
+          }),
+          take(1)
+        )
+        .subscribe();
     }
   }
 
