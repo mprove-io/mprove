@@ -305,10 +305,9 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       serverTs: 1
     });
 
-    // TODO: override queryId on backend
-
     this.chartService.editChart({
       mconfig: newMconfig,
+      isKeepQueryId: true,
       isDraft: false,
       chartId: undefined
     });

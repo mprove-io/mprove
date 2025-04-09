@@ -35,6 +35,7 @@ export class ChartService {
   editChart(item: {
     isDraft: boolean;
     mconfig: common.MconfigX;
+    isKeepQueryId?: boolean;
     chartId: string;
     cellMetricsStartDateMs?: number;
     cellMetricsEndDateMs?: number;
@@ -42,6 +43,7 @@ export class ChartService {
     let {
       isDraft,
       mconfig,
+      isKeepQueryId,
       chartId,
       cellMetricsStartDateMs,
       cellMetricsEndDateMs
@@ -55,6 +57,7 @@ export class ChartService {
     } else {
       this.navCreateDraftChart({
         mconfig: mconfig,
+        isKeepQueryId: isKeepQueryId,
         cellMetricsStartDateMs: cellMetricsStartDateMs,
         cellMetricsEndDateMs: cellMetricsEndDateMs
       });
@@ -63,12 +66,18 @@ export class ChartService {
 
   navCreateDraftChart(item: {
     mconfig: common.MconfigX;
+    isKeepQueryId: boolean;
     cellMetricsStartDateMs: number;
     cellMetricsEndDateMs: number;
   }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { mconfig, cellMetricsStartDateMs, cellMetricsEndDateMs } = item;
+    let {
+      mconfig,
+      isKeepQueryId,
+      cellMetricsStartDateMs,
+      cellMetricsEndDateMs
+    } = item;
 
     let payload: apiToBackend.ToBackendCreateDraftChartRequestPayload = {
       projectId: this.nav.projectId,
@@ -76,6 +85,7 @@ export class ChartService {
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       mconfig: mconfig,
+      isKeepQueryId: isKeepQueryId,
       cellMetricsStartDateMs: cellMetricsStartDateMs,
       cellMetricsEndDateMs: cellMetricsEndDateMs
     };

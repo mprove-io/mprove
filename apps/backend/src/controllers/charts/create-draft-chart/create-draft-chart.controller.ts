@@ -26,6 +26,7 @@ import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { QueriesService } from '~backend/services/queries.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
@@ -45,6 +46,7 @@ export class CreateDraftChartController {
     private branchesService: BranchesService,
     private structsService: StructsService,
     private bridgesService: BridgesService,
+    private queriesService: QueriesService,
     private envsService: EnvsService,
     private wrapToEntService: WrapToEntService,
     private wrapToApiService: WrapToApiService,
@@ -64,6 +66,7 @@ export class CreateDraftChartController {
     let { traceId } = reqValid.info;
     let {
       mconfig,
+      isKeepQueryId,
       projectId,
       isRepoProd,
       branchId,
@@ -73,6 +76,8 @@ export class CreateDraftChartController {
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+
+    let kQueryId = isKeepQueryId === true ? mconfig.queryId : undefined;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -158,9 +163,15 @@ export class CreateDraftChartController {
           : undefined
       });
 
-      newMconfig = mqe.newMconfig;
-      newQuery = mqe.newQuery;
       isError = mqe.isError;
+
+      newMconfig = mqe.newMconfig;
+
+      if (isKeepQueryId === true && isError === false) {
+        newMconfig.queryId = kQueryId;
+      } else {
+        newQuery = mqe.newQuery;
+      }
     } else {
       let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
         {
@@ -192,10 +203,22 @@ export class CreateDraftChartController {
         );
 
       newMconfig = blockmlProcessQueryResponse.payload.mconfig;
-      newQuery = blockmlProcessQueryResponse.payload.query;
+
+      if (isKeepQueryId === true && isError === false) {
+        newMconfig.queryId = kQueryId;
+      } else {
+        newQuery = blockmlProcessQueryResponse.payload.query;
+      }
     }
 
-    let newQueryEnt = this.wrapToEntService.wrapToEntityQuery(newQuery);
+    let newQueryEnt =
+      isKeepQueryId === true && isError === false
+        ? await this.queriesService.getQueryCheckExists({
+            queryId: newMconfig.queryId,
+            projectId: projectId
+          })
+        : this.wrapToEntService.wrapToEntityQuery(newQuery);
+
     let newMconfigEnt = this.wrapToEntService.wrapToEntityMconfig(newMconfig);
 
     let chartId = common.makeId();
@@ -204,7 +227,7 @@ export class CreateDraftChartController {
       modelId: newMconfig.modelId,
       modelLabel: newMconfig.modelLabel,
       mconfigId: newMconfig.mconfigId,
-      queryId: newQuery.queryId,
+      queryId: newMconfig.queryId,
       listen: undefined,
       title: undefined,
       plateWidth: undefined,
@@ -245,7 +268,10 @@ export class CreateDraftChartController {
                 queries: isError === true ? [newQueryEnt] : []
               },
               insertOrDoNothing: {
-                queries: isError === true ? [] : [newQueryEnt]
+                queries:
+                  isError === true || isKeepQueryId === true
+                    ? []
+                    : [newQueryEnt]
               }
             })
         ),
@@ -254,8 +280,8 @@ export class CreateDraftChartController {
 
     let query = await this.db.drizzle.query.queriesTable.findFirst({
       where: and(
-        eq(queriesTable.queryId, newQuery.queryId),
-        eq(queriesTable.projectId, newQuery.projectId)
+        eq(queriesTable.queryId, newQueryEnt.queryId),
+        eq(queriesTable.projectId, newQueryEnt.projectId)
       )
     });
 

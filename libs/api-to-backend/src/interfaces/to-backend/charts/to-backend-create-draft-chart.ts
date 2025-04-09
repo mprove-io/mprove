@@ -27,6 +27,10 @@ export class ToBackendCreateDraftChartRequestPayload {
   mconfig: common.MconfigX;
 
   @IsOptional()
+  @IsBoolean()
+  isKeepQueryId: boolean;
+
+  @IsOptional()
   @IsNumber()
   cellMetricsStartDateMs: number;
 
