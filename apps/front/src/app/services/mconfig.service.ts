@@ -121,53 +121,6 @@ export class MconfigService {
     return newMconfig;
   }
 
-  navCreateTempMconfigAndQuery(item: {
-    newMconfig: common.MconfigX;
-    cellMetricsStartDateMs?: number;
-    cellMetricsEndDateMs?: number;
-  }) {
-    let { newMconfig, cellMetricsStartDateMs, cellMetricsEndDateMs } = item;
-
-    this.spinner.show(constants.APP_SPINNER_NAME);
-
-    let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload =
-      {
-        projectId: this.nav.projectId,
-        isRepoProd: this.nav.isRepoProd,
-        branchId: this.nav.branchId,
-        envId: this.nav.envId,
-        mconfig: newMconfig,
-        cellMetricsStartDateMs: cellMetricsStartDateMs,
-        cellMetricsEndDateMs: cellMetricsEndDateMs
-      };
-
-    this.apiService
-      .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendCreateTempMconfigAndQuery,
-        payload: payload
-      })
-      .pipe(
-        tap((resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let { mconfig, query } = resp.payload;
-
-            // TODO: chartQuery
-            // this.chartQuery.update({ mconfig: mconfig, query: query });
-
-            this.navigateService.navigateMconfigQuery({
-              modelId: mconfig.modelId,
-              mconfigId: mconfig.mconfigId,
-              queryId: mconfig.queryId
-            });
-          }
-        }),
-        take(1)
-      )
-      .subscribe();
-  }
-
   navCreateTempMconfig(item: { newMconfig: common.MconfigX }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
@@ -201,44 +154,6 @@ export class MconfigService {
             this.navigateService.navigateMconfigQuery({
               mconfigId: mconfig.mconfigId,
               queryId: mconfig.queryId
-            });
-          }
-        }),
-        take(1)
-      )
-      .subscribe();
-  }
-
-  navDuplicateMconfigAndQuery(item: { oldMconfigId: string }) {
-    let { oldMconfigId } = item;
-
-    this.spinner.show(constants.APP_SPINNER_NAME);
-
-    let payload: apiToBackend.ToBackendDuplicateMconfigAndQueryRequestPayload =
-      {
-        projectId: this.nav.projectId,
-        isRepoProd: this.nav.isRepoProd,
-        branchId: this.nav.branchId,
-        envId: this.nav.envId,
-        oldMconfigId: oldMconfigId
-      };
-
-    this.apiService
-      .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendDuplicateMconfigAndQuery,
-        payload: payload
-      })
-      .pipe(
-        tap((resp: apiToBackend.ToBackendDuplicateMconfigAndQueryResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let { mconfig, query } = resp.payload;
-
-            this.navigateService.navigateMconfigQuery({
-              mconfigId: mconfig.mconfigId,
-              queryId: mconfig.queryId,
-              modelId: mconfig.modelId
             });
           }
         }),
