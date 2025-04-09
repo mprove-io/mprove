@@ -54,36 +54,6 @@ export class ReportsListComponent {
     });
   }
 
-  rowMenuOnClick(event: any) {
-    event.stopPropagation();
-  }
-
-  goToReportFile(event: any, report: common.ReportX) {
-    event.stopPropagation();
-
-    let fileIdAr = report.filePath.split('/');
-    fileIdAr.shift();
-
-    this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
-      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
-    });
-  }
-
-  deleteReport(event: MouseEvent, item: common.ReportX) {
-    event.stopPropagation();
-
-    this.myDialogService.showDeleteReport({
-      report: item,
-      apiService: this.apiService,
-      projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
-      isRepoProd: this.nav.isRepoProd,
-      isStartSpinnerUntilNavEnd: false
-    });
-  }
-
   trackByFn(index: number, item: common.ReportX) {
     return item.reportId;
   }

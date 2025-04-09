@@ -1,23 +1,23 @@
 <button
   data-cy="reportOptionsMenuButton"
-  class="ml-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+  class="flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
   #t1="tippy"
   [tp]="templateReportOptions"
   [tpHideOnEscape]="true"
   tpVariation="menu"
   className="my-menu"
-  [tpOffset]="[0, 5]"
+  [tpOffset]="[0, 4]"
   (click)="clickMenu($event)"
 >
   <m-dots-vertical-icon></m-dots-vertical-icon>
 </button>
 
 <ng-template #templateReportOptions>
-  <div class="border-gray4 w-48 rounded-md border-2 bg-white shadow-xl">
+  <div class="border-gray4 w-64 rounded-md border-2 bg-white shadow-xl">
     <button
       data-cy="reportOptionsGoToFileButton"
       class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
-      (click)="t1.hide(); goToFileLine($event)"
+      (click)="t1.hide(); goToFile($event)"
       >Go to File</button
     >
 

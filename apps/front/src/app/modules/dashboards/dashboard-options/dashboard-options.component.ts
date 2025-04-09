@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
-import { tap } from 'rxjs/operators';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -14,14 +13,6 @@ import { common } from '~front/barrels/common';
 export class DashboardOptionsComponent {
   @Input()
   dashboard: common.DashboardX;
-
-  nav: NavState;
-  nav$ = this.navQuery.select().pipe(
-    tap(x => {
-      this.nav = x;
-      this.cd.detectChanges();
-    })
-  );
 
   // @Output()
   // runDryEvent = new EventEmitter();
@@ -54,13 +45,15 @@ export class DashboardOptionsComponent {
   deleteDashboard(event: MouseEvent) {
     event.stopPropagation();
 
+    let nav = this.navQuery.getValue();
+
     this.myDialogService.showDeleteDashboard({
       dashboard: this.dashboard,
       apiService: this.apiService,
-      projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
-      isRepoProd: this.nav.isRepoProd,
+      projectId: nav.projectId,
+      branchId: nav.branchId,
+      envId: nav.envId,
+      isRepoProd: nav.isRepoProd,
       isStartSpinnerUntilNavEnd:
         this.dashboardQuery.getValue().dashboardId ===
         this.dashboard.dashboardId

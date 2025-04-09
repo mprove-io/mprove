@@ -30,7 +30,7 @@ export class ReportOptionsComponent {
     event.stopPropagation();
   }
 
-  goToFileLine(event: MouseEvent) {
+  goToFile(event: MouseEvent) {
     event.stopPropagation();
 
     let fileIdAr = this.report.filePath.split('/');
@@ -47,7 +47,6 @@ export class ReportOptionsComponent {
     event.stopPropagation();
 
     let nav = this.navQuery.getValue();
-    let selectedReport = this.reportQuery.getValue();
 
     this.myDialogService.showDeleteReport({
       report: this.report,
@@ -57,7 +56,7 @@ export class ReportOptionsComponent {
       envId: nav.envId,
       isRepoProd: nav.isRepoProd,
       isStartSpinnerUntilNavEnd:
-        selectedReport.reportId === this.report.reportId
+        this.reportQuery.getValue().reportId === this.report.reportId
     });
   }
 }
