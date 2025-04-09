@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
 import { ChartQuery } from '~front/app/queries/chart.query';
+import { ChartService } from '~front/app/services/chart.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { StructService } from '~front/app/services/struct.service';
 import { common } from '~front/barrels/common';
@@ -16,9 +17,12 @@ export class ModelFiltersComponent {
 
   mconfig: common.MconfigX;
 
-  chartQuery$ = this.chartQuery.select().pipe(
+  chart: common.ChartX;
+  chart$ = this.chartQuery.select().pipe(
     tap(x => {
+      this.chart = x;
       this.mconfig = x.tiles[0].mconfig;
+
       this.cd.detectChanges();
     })
   );
@@ -27,6 +31,7 @@ export class ModelFiltersComponent {
     private chartQuery: ChartQuery,
     private cd: ChangeDetectorRef,
     private structService: StructService,
+    private chartService: ChartService,
     private mconfigService: MconfigService
   ) {}
 
@@ -59,9 +64,15 @@ export class ModelFiltersComponent {
       ...newMconfig.filters.slice(filterIndex + 1)
     ];
 
-    this.mconfigService.navCreateTempMconfigAndQuery({
-      newMconfig: newMconfig
+    this.chartService.editChart({
+      mconfig: newMconfig,
+      isDraft: this.chart.draft,
+      chartId: this.chart.chartId
     });
+
+    // this.mconfigService.navCreateTempMconfigAndQuery({
+    //   newMconfig: newMconfig
+    // });
   }
 
   addFraction(filterExtended: common.FilterX, filterIndex: number) {
@@ -196,9 +207,15 @@ export class ModelFiltersComponent {
       ...newMconfig.filters.slice(filterIndex + 1)
     ];
 
-    this.mconfigService.navCreateTempMconfigAndQuery({
-      newMconfig: newMconfig
+    this.chartService.editChart({
+      mconfig: newMconfig,
+      isDraft: this.chart.draft,
+      chartId: this.chart.chartId
     });
+
+    // this.mconfigService.navCreateTempMconfigAndQuery({
+    //   newMconfig: newMconfig
+    // });
   }
 
   deleteFraction(
@@ -232,9 +249,15 @@ export class ModelFiltersComponent {
       ];
     }
 
-    this.mconfigService.navCreateTempMconfigAndQuery({
-      newMconfig: newMconfig
+    this.chartService.editChart({
+      mconfig: newMconfig,
+      isDraft: this.chart.draft,
+      chartId: this.chart.chartId
     });
+
+    // this.mconfigService.navCreateTempMconfigAndQuery({
+    //   newMconfig: newMconfig
+    // });
   }
 
   deleteFilter(filterExtended: common.FilterX) {
@@ -244,8 +267,14 @@ export class ModelFiltersComponent {
       x => x.fieldId !== filterExtended.fieldId
     );
 
-    this.mconfigService.navCreateTempMconfigAndQuery({
-      newMconfig: newMconfig
+    this.chartService.editChart({
+      mconfig: newMconfig,
+      isDraft: this.chart.draft,
+      chartId: this.chart.chartId
     });
+
+    // this.mconfigService.navCreateTempMconfigAndQuery({
+    //   newMconfig: newMconfig
+    // });
   }
 }
