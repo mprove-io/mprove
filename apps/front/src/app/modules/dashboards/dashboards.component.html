@@ -11,6 +11,26 @@
                 >{{ pageTitle }}
               </div>
 
+              <div
+                class="ml-5 flex flex-shrink-0 cursor-pointer flex-row items-center"
+                (click)="navToDashboardsList()"
+              >
+                <m-view-list-icon
+                  [ngClass]="{
+                    'text-blue-500': lastUrl === pathDashboardsList,
+                    'text-gray-500': lastUrl !== pathDashboardsList
+                  }"
+                ></m-view-list-icon>
+                <!-- <div
+                  class="ml-3 select-none items-center"
+                  [ngClass]="{
+                    'text-blue-500': lastUrl === pathDashboardsList
+                  }"
+                >
+                  List
+                </div> -->
+              </div>
+
               <div class="flex flex-grow"></div>
 
               <div
@@ -51,15 +71,6 @@
                   >
                 </ng-template>
               </div>
-
-              <m-view-list-icon
-                class="ml-5 cursor-pointer"
-                [ngClass]="{
-                  'text-blue-500': lastUrl === pathDashboardsList,
-                  'text-gray-400': lastUrl !== pathDashboardsList
-                }"
-                (click)="toggleDashboardsList()"
-              ></m-view-list-icon>
             </div>
 
             <div class="mt-6 flex w-full flex-grow rounded bg-white shadow">

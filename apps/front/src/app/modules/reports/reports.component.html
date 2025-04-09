@@ -23,6 +23,26 @@
                 (click)="toggleShowLeft()"
               ></m-menu-book-icon>
 
+              <div
+                class="ml-5 flex flex-shrink-0 cursor-pointer flex-row items-center"
+                (click)="navToReportsList()"
+              >
+                <m-view-list-icon
+                  [ngClass]="{
+                    'text-blue-500': lastUrl === pathReportsList,
+                    'text-gray-500': lastUrl !== pathReportsList
+                  }"
+                ></m-view-list-icon>
+                <!-- <div
+                  class="ml-3 select-none items-center"
+                  [ngClass]="{
+                    'text-blue-500': lastUrl === pathReportsList
+                  }"
+                >
+                  List
+                </div> -->
+              </div>
+
               <div class="flex-grow"></div>
 
               <div class="ml-5">
@@ -34,15 +54,6 @@
                   >New Report</button
                 >
               </div>
-
-              <m-view-list-icon
-                class="ml-5 cursor-pointer"
-                [ngClass]="{
-                  'text-blue-500': lastUrl === pathReportsList,
-                  'text-gray-400': lastUrl !== pathReportsList
-                }"
-                (click)="toggleReportsList()"
-              ></m-view-list-icon>
             </div>
 
             <!-- <button

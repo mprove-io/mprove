@@ -1023,7 +1023,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     // });
   }
 
-  toggleReportsList() {
+  navToReportsList() {
     if (this.lastUrl !== this.pathReportsList) {
       this.title.setTitle(this.pageTitle);
 
