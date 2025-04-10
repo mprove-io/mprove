@@ -8,7 +8,10 @@ import {
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { ChartQuery } from '~front/app/queries/chart.query';
+import { ChartsQuery } from '~front/app/queries/charts.query';
 import { ApiService } from '~front/app/services/api.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
@@ -36,6 +39,9 @@ export class DeleteChartDialogComponent implements OnInit {
 
   constructor(
     public ref: DialogRef<DeleteChartDialogData>,
+    private navigateService: NavigateService,
+    private chartsQuery: ChartsQuery,
+    private chartQuery: ChartQuery,
     private router: Router
   ) {}
 
@@ -71,7 +77,17 @@ export class DeleteChartDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteChartResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            // TODO: delete chart logic - update filtered charts
+            let charts = this.chartsQuery.getValue().charts;
+
+            this.chartsQuery.update({
+              charts: charts.filter(d => d.chartId !== chart.chartId)
+            });
+
+            let currentChart = this.chartQuery.getValue();
+
+            if (currentChart.chartId === chart.chartId) {
+              this.navigateService.navigateToCharts();
+            }
           }
         }),
         take(1)
