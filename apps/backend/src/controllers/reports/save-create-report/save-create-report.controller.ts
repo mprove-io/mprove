@@ -298,18 +298,16 @@ export class SaveCreateReportController {
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
-          if (fromReport.draft === true) {
-            await tx
-              .delete(reportsTable)
-              .where(
-                and(
-                  eq(reportsTable.projectId, projectId),
-                  eq(reportsTable.reportId, fromReportId),
-                  eq(reportsTable.draft, true),
-                  eq(reportsTable.creatorId, user.userId)
-                )
-              );
-          }
+          await tx
+            .delete(reportsTable)
+            .where(
+              and(
+                eq(reportsTable.draft, true),
+                eq(reportsTable.projectId, projectId),
+                eq(reportsTable.reportId, fromReportId),
+                eq(reportsTable.creatorId, user.userId)
+              )
+            );
 
           await this.db.packer.write({
             tx: tx,

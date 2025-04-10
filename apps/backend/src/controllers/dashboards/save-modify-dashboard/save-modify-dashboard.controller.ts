@@ -335,6 +335,7 @@ export class SaveModifyDashboardController {
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
+          // TODO: add same logic for chart and report
           if (common.isUndefined(newDashboard)) {
             await tx
               .delete(dashboardsTable)
@@ -360,6 +361,7 @@ export class SaveModifyDashboardController {
               .delete(dashboardsTable)
               .where(
                 and(
+                  eq(dashboardsTable.draft, true),
                   eq(dashboardsTable.dashboardId, fromDashboardId),
                   eq(dashboardsTable.structId, bridge.structId)
                 )

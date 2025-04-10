@@ -22,6 +22,9 @@ export class ToBackendSaveModifyChartRequestPayload {
   envId: string;
 
   @IsString()
+  fromChartId: string;
+
+  @IsString()
   chartId: string;
 
   @IsString()

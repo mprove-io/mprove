@@ -334,6 +334,7 @@ export class SaveCreateDashboardController {
             .delete(dashboardsTable)
             .where(
               and(
+                eq(dashboardsTable.draft, true),
                 eq(dashboardsTable.dashboardId, fromDashboardId),
                 eq(dashboardsTable.structId, bridge.structId)
               )

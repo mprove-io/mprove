@@ -81,6 +81,7 @@ export class SaveModifyChartController {
       isRepoProd,
       branchId,
       envId,
+      fromChartId,
       chartId,
       tileTitle,
       accessRoles,
@@ -297,6 +298,16 @@ export class SaveModifyChartController {
                 )
               );
           }
+
+          await tx
+            .delete(chartsTable)
+            .where(
+              and(
+                eq(chartsTable.draft, true),
+                eq(chartsTable.chartId, fromChartId),
+                eq(chartsTable.structId, bridge.structId)
+              )
+            );
 
           await this.db.packer.write({
             tx: tx,

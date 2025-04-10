@@ -131,6 +131,7 @@ export class EditChartInfoDialogComponent implements OnInit {
         isRepoProd: this.ref.data.isRepoProd,
         branchId: this.ref.data.branchId,
         envId: this.ref.data.envId,
+        fromChartId: this.ref.data.chart.chartId,
         chartId: this.ref.data.chart.chartId,
         tileTitle: newTitle.trim(),
         accessRoles: roles,
