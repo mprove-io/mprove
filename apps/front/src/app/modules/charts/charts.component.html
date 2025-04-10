@@ -89,7 +89,7 @@
                 data-cy="chartsAddChartButton"
                 class="h-11 flex-shrink-0 select-none rounded px-5 py-2 text-base focus:outline-none"
                 [ngClass]="{
-                  'text-gray1 bg-blue-200 font-normal':
+                  'text-gray1 bg-green1 font-normal':
                     alias !== restrictedUserAlias &&
                     isExplorer === true &&
                     !!model?.modelId,
@@ -324,8 +324,8 @@
                 <div
                   class="group ml-6 mr-10 flex h-11 flex-row items-center rounded pl-4 pr-2 hover:cursor-pointer"
                   [ngClass]="{
-                    'bg-blue-200': c.chartId === chart?.chartId,
-                    'hover:bg-blue2': c.chartId !== chart?.chartId
+                    'bg-green1': c.chartId === chart?.chartId,
+                    'hover:bg-green2': c.chartId !== chart?.chartId
                   }"
                 >
                   <!-- <div class="mr-3 flex h-2 items-center">
@@ -512,7 +512,9 @@
             }"
           >
             <div class="flex h-full flex-col">
-              <div class="mr-5 flex h-20 flex-shrink-0 flex-row items-center">
+              <div
+                class="mb-5 mr-5 mt-6 flex h-11 flex-shrink-0 flex-row items-center"
+              >
                 <m-panel-title
                   [title]="'Chart'"
                   [isExpanded]="chartIsExpanded"
@@ -605,7 +607,7 @@
                     autocomplete="off"
                     spellcheck="false"
                     data-cy="modelChartTitleInput"
-                    class="form-input border-gray3 focus:border-blue3 h-[36px] w-full rounded"
+                    class="form-input border-gray3 focus:border-blue3 h-10 w-full rounded"
                     [ngClass]="{
                       'border-red-600':
                         chartTitleForm.controls['chartTitle'].invalid &&
