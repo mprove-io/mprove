@@ -97,6 +97,9 @@ export class DashboardAddTileDialogComponent implements OnInit {
   navToModel(modelId: string) {
     this.ref.close();
 
-    this.navigateService.navigateToModel(modelId);
+    this.navigateService.navigateToChart({
+      modelId: modelId,
+      chartId: common.EMPTY_CHART_ID
+    });
   }
 }

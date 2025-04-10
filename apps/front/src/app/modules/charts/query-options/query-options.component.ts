@@ -34,12 +34,6 @@ export class QueryOptionsComponent {
     private cd: ChangeDetectorRef
   ) {}
 
-  clearSelection(event?: MouseEvent) {
-    event.stopPropagation();
-
-    this.navigateService.navigateToModel(this.model.modelId);
-  }
-
   runDry(event?: MouseEvent) {
     event.stopPropagation();
 

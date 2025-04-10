@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { take, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
 import { makeQueryParams } from '../functions/make-query-params';
 import { ModelQuery, ModelState } from '../queries/model.query';
@@ -43,124 +43,14 @@ export class NavigateService {
     this.userId$.subscribe();
   }
 
+  navigateTo(item: { navParts: string[] }) {
+    let { navParts } = item;
+
+    this.router.navigate(navParts);
+  }
+
   navigateToProfile() {
     this.router.navigate([common.PATH_PROFILE]);
-  }
-
-  navigateToModel(modelId?: string) {
-    let repoId =
-      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
-
-    let toModelId = common.isDefined(modelId) ? modelId : this.model.modelId;
-
-    this.router.navigate([
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_PROJECT,
-      this.nav.projectId,
-      common.PATH_REPO,
-      repoId,
-      common.PATH_BRANCH,
-      this.nav.branchId,
-      common.PATH_ENV,
-      this.nav.envId,
-      common.PATH_CHARTS,
-      common.PATH_MODEL,
-      toModelId,
-      common.PATH_MCONFIG,
-      common.EMPTY_MCONFIG_ID,
-      common.PATH_QUERY,
-      common.EMPTY_QUERY_ID
-    ]);
-  }
-
-  navigateMconfigQuery(item: {
-    mconfigId: string;
-    queryId: string;
-    modelId?: string;
-  }) {
-    let { mconfigId, queryId, modelId } = item;
-
-    let repoId =
-      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
-
-    this.router.navigate([
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_PROJECT,
-      this.nav.projectId,
-      common.PATH_REPO,
-      repoId,
-      common.PATH_BRANCH,
-      this.nav.branchId,
-      common.PATH_ENV,
-      this.nav.envId,
-      common.PATH_CHARTS,
-      common.PATH_MODEL,
-      common.isDefined(modelId) ? modelId : this.model.modelId,
-      common.PATH_MCONFIG,
-      mconfigId,
-      common.PATH_QUERY,
-      queryId
-    ]);
-  }
-
-  navigateToChart(item: { modelId: string; chartId: string }) {
-    let { modelId, chartId } = item;
-
-    let repoId =
-      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
-
-    let uiState = this.uiQuery.getValue();
-
-    this.router.navigate(
-      [
-        common.PATH_ORG,
-        this.nav.orgId,
-        common.PATH_PROJECT,
-        this.nav.projectId,
-        common.PATH_REPO,
-        repoId,
-        common.PATH_BRANCH,
-        this.nav.branchId,
-        common.PATH_ENV,
-        this.nav.envId,
-        common.PATH_CHARTS,
-        common.PATH_MODEL,
-        common.isDefined(modelId) ? modelId : this.model.modelId,
-        common.PATH_CHART,
-        chartId
-      ],
-      { queryParams: { timezone: uiState.timezone.split('/').join('-') } }
-    );
-  }
-
-  navigateToDashboard(item: { dashboardId: string }) {
-    let { dashboardId } = item;
-
-    let repoId =
-      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
-
-    let uiState = this.uiQuery.getValue();
-
-    this.router.navigate(
-      [
-        common.PATH_ORG,
-        this.nav.orgId,
-        common.PATH_PROJECT,
-        this.nav.projectId,
-        common.PATH_REPO,
-        repoId,
-        common.PATH_BRANCH,
-        this.nav.branchId,
-        common.PATH_ENV,
-        this.nav.envId,
-        common.PATH_DASHBOARDS,
-        common.PATH_DASHBOARD,
-        dashboardId
-      ],
-      { queryParams: { timezone: uiState.timezone.split('/').join('-') } }
-    );
   }
 
   navigateToFiles(branchId?: string) {
@@ -182,21 +72,43 @@ export class NavigateService {
     ]);
   }
 
-  navigateTo(item: { navParts: string[] }) {
-    let { navParts } = item;
-    this.router.navigate(navParts);
+  navigateToFileLine(item: {
+    panel: common.PanelEnum;
+    underscoreFileId: string;
+    lineNumber?: number;
+  }) {
+    let { panel, underscoreFileId, lineNumber } = item;
+
+    let repoId =
+      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
+
+    let ar: any[] = [
+      common.PATH_ORG,
+      this.nav.orgId,
+      common.PATH_PROJECT,
+      this.nav.projectId,
+      common.PATH_REPO,
+      repoId,
+      common.PATH_BRANCH,
+      this.nav.branchId,
+      common.PATH_ENV,
+      this.nav.envId,
+      common.PATH_FILES,
+      common.PATH_FILE,
+      underscoreFileId
+    ];
+
+    this.router.navigate(ar, {
+      queryParams: {
+        panel: panel,
+        line: lineNumber
+      }
+    });
   }
 
   navigateToCharts() {
-    let userId;
-    this.userQuery.userId$
-      .pipe(
-        tap(x => (userId = x)),
-        take(1)
-      )
-      .subscribe();
-
-    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+    let repoId =
+      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
     this.router.navigate([
       common.PATH_ORG,
@@ -213,60 +125,11 @@ export class NavigateService {
     ]);
   }
 
-  windowOpenModels() {
-    let repoId =
-      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
-
-    let navTo = [
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_PROJECT,
-      this.nav.projectId,
-      common.PATH_REPO,
-      repoId,
-      common.PATH_BRANCH,
-      this.nav.branchId,
-      common.PATH_ENV,
-      this.nav.envId,
-      common.PATH_CHARTS
-    ];
-
-    window.open(navTo.join('/'), '_self');
-  }
-
-  navigateToModels() {
-    let repoId =
-      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
-
-    let navTo = [
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_PROJECT,
-      this.nav.projectId,
-      common.PATH_REPO,
-      repoId,
-      common.PATH_BRANCH,
-      this.nav.branchId,
-      common.PATH_ENV,
-      this.nav.envId,
-      common.PATH_CHARTS
-    ];
-
-    this.router.navigate(navTo);
-  }
-
   navigateToChartsList(item: { modelId: string }) {
     let { modelId } = item;
 
-    let userId;
-    this.userQuery.userId$
-      .pipe(
-        tap(x => (userId = x)),
-        take(1)
-      )
-      .subscribe();
-
-    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+    let repoId =
+      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
     let navTo = common.isDefined(modelId)
       ? [
@@ -306,15 +169,8 @@ export class NavigateService {
   navigateToModelsList(item: { modelId: string }) {
     let { modelId } = item;
 
-    let userId;
-    this.userQuery.userId$
-      .pipe(
-        tap(x => (userId = x)),
-        take(1)
-      )
-      .subscribe();
-
-    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+    let repoId =
+      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
     let navTo = common.isDefined(modelId)
       ? [
@@ -351,16 +207,39 @@ export class NavigateService {
     this.router.navigate(navTo);
   }
 
-  navigateToDashboards(item?: { extra?: any }) {
-    let userId;
-    this.userQuery.userId$
-      .pipe(
-        tap(x => (userId = x)),
-        take(1)
-      )
-      .subscribe();
+  navigateToChart(item: { modelId: string; chartId: string }) {
+    let { modelId, chartId } = item;
 
-    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+    let repoId =
+      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
+
+    let uiState = this.uiQuery.getValue();
+
+    this.router.navigate(
+      [
+        common.PATH_ORG,
+        this.nav.orgId,
+        common.PATH_PROJECT,
+        this.nav.projectId,
+        common.PATH_REPO,
+        repoId,
+        common.PATH_BRANCH,
+        this.nav.branchId,
+        common.PATH_ENV,
+        this.nav.envId,
+        common.PATH_CHARTS,
+        common.PATH_MODEL,
+        common.isDefined(modelId) ? modelId : this.model.modelId,
+        common.PATH_CHART,
+        chartId
+      ],
+      { queryParams: { timezone: uiState.timezone.split('/').join('-') } }
+    );
+  }
+
+  navigateToDashboards(item?: { extra?: any }) {
+    let repoId =
+      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
     let navTo = [
       common.PATH_ORG,
@@ -390,15 +269,8 @@ export class NavigateService {
   }
 
   navigateToDashboardsList() {
-    let userId;
-    this.userQuery.userId$
-      .pipe(
-        tap(x => (userId = x)),
-        take(1)
-      )
-      .subscribe();
-
-    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+    let repoId =
+      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
     let uiState = this.uiQuery.getValue();
 
@@ -422,50 +294,37 @@ export class NavigateService {
     });
   }
 
-  navigateToFileLine(item: {
-    panel: common.PanelEnum;
-    underscoreFileId: string;
-    lineNumber?: number;
-  }) {
-    let { panel, underscoreFileId, lineNumber } = item;
+  navigateToDashboard(item: { dashboardId: string }) {
+    let { dashboardId } = item;
 
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
-    let ar: any[] = [
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_PROJECT,
-      this.nav.projectId,
-      common.PATH_REPO,
-      repoId,
-      common.PATH_BRANCH,
-      this.nav.branchId,
-      common.PATH_ENV,
-      this.nav.envId,
-      common.PATH_FILES,
-      common.PATH_FILE,
-      underscoreFileId
-    ];
+    let uiState = this.uiQuery.getValue();
 
-    this.router.navigate(ar, {
-      queryParams: {
-        panel: panel,
-        line: lineNumber
-      }
-    });
+    this.router.navigate(
+      [
+        common.PATH_ORG,
+        this.nav.orgId,
+        common.PATH_PROJECT,
+        this.nav.projectId,
+        common.PATH_REPO,
+        repoId,
+        common.PATH_BRANCH,
+        this.nav.branchId,
+        common.PATH_ENV,
+        this.nav.envId,
+        common.PATH_DASHBOARDS,
+        common.PATH_DASHBOARD,
+        dashboardId
+      ],
+      { queryParams: { timezone: uiState.timezone.split('/').join('-') } }
+    );
   }
 
   navigateToReports() {
-    let userId;
-    this.userQuery.userId$
-      .pipe(
-        tap(x => (userId = x)),
-        take(1)
-      )
-      .subscribe();
-
-    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+    let repoId =
+      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
     let navTo = [
       common.PATH_ORG,
@@ -485,15 +344,8 @@ export class NavigateService {
   }
 
   navigateToReportsList() {
-    let userId;
-    this.userQuery.userId$
-      .pipe(
-        tap(x => (userId = x)),
-        take(1)
-      )
-      .subscribe();
-
-    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+    let repoId =
+      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
 
     let navTo = [
       common.PATH_ORG,

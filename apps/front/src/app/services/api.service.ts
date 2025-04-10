@@ -16,6 +16,7 @@ import { interfaces } from '~front/barrels/interfaces';
 import { environment } from '~front/environments/environment';
 import { MemberQuery } from '../queries/member.query';
 import { MetricsQuery } from '../queries/metrics.query';
+import { ModelQuery } from '../queries/model.query';
 import { ModelsQuery } from '../queries/models.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ReportsQuery } from '../queries/reports.query';
@@ -34,6 +35,7 @@ export class ApiService {
     private authService: AuthService,
     private spinner: NgxSpinnerService,
     private uiQuery: UiQuery,
+    private modelQuery: ModelQuery,
     private myDialogService: MyDialogService,
     private navigateService: NavigateService,
     private metricsQuery: MetricsQuery,
@@ -195,9 +197,9 @@ export class ApiService {
         [common.ErEnum.BACKEND_FORBIDDEN_MODEL].indexOf(infoErrorMessage) > -1
       ) {
         errorData.description = `Check model access rules`;
-        errorData.buttonText = 'Ok, go to models';
+        errorData.buttonText = 'Ok, go to charts';
         errorData.onClickFnBindThis = (() => {
-          this.navigateService.navigateToModels();
+          this.navigateService.navigateToCharts();
         }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });
@@ -244,7 +246,7 @@ export class ApiService {
               infoErrorMessage
             ) > -1
           ) {
-            this.navigateService.navigateToModels();
+            this.navigateService.navigateToCharts();
           } else if (
             [common.ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST].indexOf(
               infoErrorMessage
@@ -263,9 +265,18 @@ export class ApiService {
               common.ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
             ].indexOf(infoErrorMessage) > -1
           ) {
-            this.navigateService.navigateToModel();
+            let model = this.modelQuery.getValue();
+
+            if (common.isDefined(model.modelId)) {
+              this.navigateService.navigateToChart({
+                modelId: model.modelId,
+                chartId: common.EMPTY_CHART_ID
+              });
+            } else {
+              this.navigateService.navigateToCharts();
+            }
           } else {
-            this.navigateService.navigateToModels();
+            this.navigateService.navigateToCharts();
           }
         }).bind(this);
 
