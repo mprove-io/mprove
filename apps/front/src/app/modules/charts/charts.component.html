@@ -354,21 +354,8 @@
                     *ngIf="c.draft === false && c.chartId !== emptyChartId"
                     class="invisible ml-2 flex group-hover:visible"
                   >
-                    <m-chart-options
-                      [mconfig]="c.tiles[0].mconfig"
-                    ></m-chart-options>
+                    <m-chart-options [chart]="c"></m-chart-options>
                   </div>
-
-                  <!-- <div *ngIf="mconfig?.select.length > 0" class="relative">
-                  <m-chart-options
-                    [mconfig]="mconfig"
-                    [isDisabled]="
-                      isSelectValid === false ||
-                      mconfig.chart.isValid === false ||
-                      chartTitleForm.valid === false
-                    "
-                  ></m-chart-options>
-                </div> -->
                 </div>
               </div>
             </div>
@@ -437,43 +424,6 @@
                   </ng-select>
                 </form>
               </div>
-
-              <!-- <div
-                [tp]="templateNewModel"
-                [tpIsEnabled]="
-                  alias === restrictedUserAlias || isExplorer === false
-                "
-                class="ml-5 mr-9 flex-shrink-0"
-              >
-                <button
-                  type="button"
-                  data-cy="chartsAddChartButton"
-                  class="h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
-                  [ngClass]="{
-                    'border-gray-400 text-gray-500 hover:bg-white':
-                      alias !== restrictedUserAlias && isExplorer === true,
-                    'cursor-default border-gray-300 text-gray-400':
-                      alias === restrictedUserAlias || isExplorer === false
-                  }"
-                  (click)="addModel()"
-                  [disabled]="
-                    alias === restrictedUserAlias || isExplorer === false
-                  "
-                  >New
-                </button>
-  
-                <ng-template #templateNewModel>
-                  <div *ngIf="alias === restrictedUserAlias"
-                    >User is restricted. Sign Up at https://mprove.io to get full
-                    access.</div
-                  >
-  
-                  <div
-                    *ngIf="alias !== restrictedUserAlias && isExplorer === false"
-                    >Explorer role required</div
-                  >
-                </ng-template>
-              </div> -->
             </div>
 
             <div class="ml-6 mr-9 flex flex-col divide-y divide-gray-300">
@@ -550,17 +500,6 @@
                   (toggleEvent)="toggleChartPanel()"
                   [showToggle]="true"
                 ></m-panel-title>
-
-                <!-- <div *ngIf="mconfig?.select.length > 0" class="relative">
-                  <m-chart-options
-                    [mconfig]="mconfig"
-                    [isDisabled]="
-                      isSelectValid === false ||
-                      mconfig.chart.isValid === false ||
-                      chartTitleForm.valid === false
-                    "
-                  ></m-chart-options>
-                </div> -->
 
                 <ng-template #templateChartSaveAs>
                   <div
@@ -999,52 +938,6 @@
                       </ng-select>
                     </form>
                   </div>
-
-                  <!-- <button
-                    *ngIf="mconfig?.select.length > 0"
-                    class="text-gray1 ml-2 w-[84px] select-none items-center py-3 text-lg focus:outline-none"
-                    [ngClass]="{
-                      'font-semibold':
-                        resultsIsShow === true &&
-                        rightIsShow === false &&
-                        resultsIsShowTemp === false,
-                      'cursor-default text-gray-400':
-                        !dataIsExpanded || mconfig?.select.length === 0
-                    }"
-                    (click)="toggleResults()"
-                    >Results</button
-                  > -->
-
-                  <!-- <button
-                    *ngIf="mconfig?.select.length > 0"
-                    class="text-gray1 ml-2 w-[70px] select-none items-center py-3 text-lg focus:outline-none"
-                    [ngClass]="{
-                      'font-semibold':
-                        resultsIsShow === true && rightIsShow === true,
-                      'cursor-default text-gray-400':
-                        !dataIsExpanded || mconfig?.select.length === 0
-                    }"
-                    (click)="toggleSplit()"
-                    >Split</button
-                  > -->
-
-                  <!-- <button
-                    *ngIf="mconfig?.select.length > 0"
-                    class="text-gray1 ml-2 select-none items-center py-3 text-lg focus:outline-none"
-                    [ngClass]="{
-                      'font-semibold':
-                        rightIsShow === true && resultsIsShow === false,
-                      'cursor-default text-gray-400':
-                        !dataIsExpanded || mconfig?.select.length === 0,
-                      'w-[56]': mconfig.isStoreModel === false,
-                      'w-[100px]': mconfig.isStoreModel === true
-                    }"
-                    (click)="toggleRight()"
-                  >
-                    {{
-                      mconfig.isStoreModel === false ? 'SQL' : 'Request'
-                    }}</button
-                  > -->
                 </div>
 
                 <div class="flex flex-1 flex-row items-center">

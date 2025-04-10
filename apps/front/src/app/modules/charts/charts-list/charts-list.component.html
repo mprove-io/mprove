@@ -1,10 +1,10 @@
 <div class="flex h-full flex-col">
   <div class="flex flex-grow overflow-y-auto rounded bg-white shadow">
-    <div class="ml-5 mr-5 mt-10 flex w-full flex-col divide-y divide-gray-500">
+    <div class="ml-5 mr-5 mt-12 flex w-full flex-col divide-y divide-gray-500">
       <div
         class="text-gray1 mb-3 mr-5 flex flex-row space-x-5 text-base font-semibold"
       >
-        <div class="flex w-9"></div>
+        <div class="flex w-12"></div>
         <div class="flex w-1/3">Chart</div>
         <div class="flex w-1/6">
           <button
@@ -39,7 +39,7 @@
       >
         <div
           *ngFor="let item of filteredCharts; trackBy: trackByFn"
-          class="flex flex-row"
+          class="hover:border-blue2 hover:bg-blue2 flex flex-row bg-white hover:cursor-pointer"
           [ngStyle]="
             item.chartId !==
               filteredCharts[filteredCharts.length - 1].chartId && {
@@ -51,13 +51,17 @@
               item.chartId !== filteredCharts[filteredCharts.length - 1].chartId
           }"
         >
-          <div class="flex-grow flex-col">
+          <div class="flex-grow flex-col pt-1 text-base">
             <div
-              class="text-gray1 hover:border-blue2 hover:bg-blue2 group mr-5 flex w-full flex-row items-start space-x-5 rounded border border-white bg-white px-5 hover:cursor-pointer focus:outline-none"
+              class="text-gray1 group mr-5 flex w-full flex-row items-start space-x-5 rounded focus:outline-none"
               (click)="navigateToChart(item)"
             >
-              <div class="flex w-9 pt-1">
-                <button
+              <div class="flex w-12 pl-3">
+                <div class="invisible flex group-hover:visible">
+                  <m-chart-options [chart]="item"></m-chart-options>
+                </div>
+
+                <!-- <button
                   data-cy="chartOptionsMenuButton"
                   class="invisible flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none group-hover:visible"
                   #t1="tippy"
@@ -68,9 +72,9 @@
                   (click)="rowMenuOnClick($event)"
                 >
                   <m-dots-vertical-icon></m-dots-vertical-icon>
-                </button>
+                </button> -->
 
-                <ng-template #templateChartOptions>
+                <!-- <ng-template #templateChartOptions>
                   <div
                     class="border-gray4 w-64 rounded-md border-2 bg-white shadow-xl"
                   >
@@ -117,30 +121,17 @@
                       >
                     </div>
                   </div>
-                </ng-template>
+                </ng-template> -->
               </div>
 
-              <div class="flex w-1/3 flex-row py-3 text-base">
-                <div class="flex flex-row items-center">
+              <div class="flex w-1/3 truncate py-[6px]">
+                <span class="truncate">
                   {{ !!item.title ? (item.title | capitalize) : item.chartId }}
-                  <div class="relative mx-5 flex h-2 w-9 flex-shrink-0">
-                    <ngx-spinner
-                      [name]="item.chartId"
-                      color="rgba(54, 94, 224, 100)"
-                      bdColor="rgba(0, 0, 0, 0)"
-                      size="default"
-                      type="ball-clip-rotate"
-                      [fullScreen]="false"
-                      [disableAnimation]="true"
-                      [zIndex]="99998"
-                    >
-                    </ngx-spinner>
-                  </div>
-                </div>
+                </span>
               </div>
 
               <div
-                class="flex w-1/6 items-start truncate py-3 focus:outline-none"
+                class="flex w-1/6 items-start truncate py-[6px] focus:outline-none"
                 *ngIf="showModelId === false"
               >
                 <span class="truncate"> {{ item.chartId }} </span>
@@ -148,7 +139,7 @@
 
               <div
                 *ngIf="showModelId === true"
-                class="flex w-1/6 flex-row truncate py-3"
+                class="flex w-1/6 items-start truncate py-[6px] focus:outline-none"
                 [tp]="templateChartsModel"
                 [tpIsEnabled]="item.tiles[0].hasAccessToModel === false"
               >
@@ -170,7 +161,7 @@
               </div>
 
               <div class="flex flex-1 flex-row space-x-5 text-base">
-                <div class="flex flex-1 flex-wrap truncate py-3 text-base">
+                <div class="flex flex-1 flex-wrap truncate py-[6px] text-base">
                   <span
                     *ngFor="let role of item.accessRoles"
                     class="mr-2 truncate"
@@ -179,7 +170,7 @@
                   </span>
                 </div>
 
-                <div class="flex flex-1 flex-wrap truncate py-3 text-base">
+                <div class="flex flex-1 flex-wrap truncate py-[6px] text-base">
                   <span
                     *ngFor="let user of item.accessUsers"
                     class="mr-2 truncate"
@@ -189,7 +180,7 @@
                 </div>
 
                 <div
-                  class="flex flex-1 items-start truncate py-3 focus:outline-none"
+                  class="flex flex-1 items-start truncate py-[6px] focus:outline-none"
                 >
                   <span>
                     {{ item.author }}
@@ -198,9 +189,9 @@
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="h-12"></div>
+          <div class="h-11"></div>
+        </div>
       </div>
 
       <div
@@ -212,6 +203,6 @@
   </div>
 </div>
 
-<div *ngIf="filteredCharts$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
+<div *ngIf="filteredCharts$ | async"></div>

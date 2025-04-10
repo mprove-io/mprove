@@ -39,10 +39,7 @@
               (click)="navigateToReport(item.reportId)"
             >
               <div class="flex w-12 pl-3">
-                <div
-                  *ngIf="item.draft === false"
-                  class="invisible flex group-hover:visible"
-                >
+                <div class="invisible flex group-hover:visible">
                   <m-report-options [report]="item"></m-report-options>
                 </div>
               </div>
