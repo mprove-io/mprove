@@ -422,42 +422,6 @@ export class NavigateService {
     });
   }
 
-  reloadCharts() {
-    // TODO: check reloadCharts logic
-
-    let repoId =
-      this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
-
-    this.router.navigate([
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_PROJECT,
-      this.nav.projectId,
-      common.PATH_REPO,
-      repoId,
-      common.PATH_BRANCH,
-      this.nav.branchId,
-      common.PATH_ENV,
-      this.nav.envId
-    ]);
-
-    setTimeout(() =>
-      this.router.navigate([
-        common.PATH_ORG,
-        this.nav.orgId,
-        common.PATH_PROJECT,
-        this.nav.projectId,
-        common.PATH_REPO,
-        repoId,
-        common.PATH_BRANCH,
-        this.nav.branchId,
-        common.PATH_ENV,
-        this.nav.envId,
-        common.PATH_CHARTS
-      ])
-    );
-  }
-
   navigateToFileLine(item: {
     panel: common.PanelEnum;
     underscoreFileId: string;
