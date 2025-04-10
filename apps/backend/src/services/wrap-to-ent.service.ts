@@ -189,7 +189,12 @@ export class WrapToEntService {
     };
   }
 
-  wrapToEntityChart(chart: common.Chart): schemaPostgres.ChartEnt {
+  wrapToEntityChart(item: {
+    chart: common.Chart;
+    chartType: common.ChartTypeEnum;
+  }): schemaPostgres.ChartEnt {
+    let { chart, chartType } = item;
+
     return {
       chartFullId: this.hashService.makeChartFullId({
         structId: chart.structId,
@@ -200,6 +205,7 @@ export class WrapToEntService {
       draft: chart.draft,
       creatorId: chart.creatorId,
       title: chart.title,
+      chartType: chartType,
       modelId: chart.modelId,
       modelLabel: chart.modelLabel,
       filePath: chart.filePath,

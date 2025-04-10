@@ -235,7 +235,12 @@ export class BlockmlService {
                 // apis: apis.map(x => this.wrapService.wrapToEntityApi(x)),
                 structs: [struct],
                 charts: charts.map(x =>
-                  this.wrapToEntService.wrapToEntityChart(x)
+                  this.wrapToEntService.wrapToEntityChart({
+                    chart: x,
+                    chartType: mconfigs.find(
+                      mconfig => mconfig.mconfigId === x.tiles[0].mconfigId
+                    ).chart.type
+                  })
                 ),
                 models: models.map(x =>
                   this.wrapToEntService.wrapToEntityModel(x)

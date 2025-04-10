@@ -81,6 +81,7 @@ export const emptyChart: ChartState = {
   draft: false,
   creatorId: undefined,
   title: emptyTile.title,
+  chartType: common.ChartTypeEnum.Table,
   modelId: undefined,
   modelLabel: undefined,
   filePath: undefined,

@@ -410,10 +410,20 @@ export class SeedRecordsController {
           charts = [
             ...charts,
             ...devChartsApi.map(y =>
-              this.wrapToEntService.wrapToEntityChart(y)
+              this.wrapToEntService.wrapToEntityChart({
+                chart: y,
+                chartType: devMconfigsApi.find(
+                  mconfig => mconfig.mconfigId === y.tiles[0].mconfigId
+                ).chart.type
+              })
             ),
             ...prodChartsApi.map(y =>
-              this.wrapToEntService.wrapToEntityChart(y)
+              this.wrapToEntService.wrapToEntityChart({
+                chart: y,
+                chartType: prodMconfigsApi.find(
+                  mconfig => mconfig.mconfigId === y.tiles[0].mconfigId
+                ).chart.type
+              })
             )
           ];
 

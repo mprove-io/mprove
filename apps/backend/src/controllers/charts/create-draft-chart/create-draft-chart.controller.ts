@@ -252,7 +252,10 @@ export class CreateDraftChartController {
       serverTs: undefined
     };
 
-    let newChartEnt = this.wrapToEntService.wrapToEntityChart(newChart);
+    let newChartEnt = this.wrapToEntService.wrapToEntityChart({
+      chart: newChart,
+      chartType: newMconfigEnt.chart.type
+    });
 
     await retry(
       async () =>

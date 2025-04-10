@@ -265,10 +265,6 @@ export class SaveCreateChartController {
       });
     }
 
-    let chartEnt = common.isDefined(chart)
-      ? this.wrapToEntService.wrapToEntityChart(chart)
-      : undefined;
-
     let chartTile = common.isDefined(chart) ? chart.tiles[0] : undefined;
 
     let chartMconfig = common.isDefined(chart)
@@ -277,6 +273,13 @@ export class SaveCreateChartController {
 
     let chartQuery = common.isDefined(chart)
       ? queries.find(x => x.queryId === chartTile.queryId)
+      : undefined;
+
+    let chartEnt = common.isDefined(chart)
+      ? this.wrapToEntService.wrapToEntityChart({
+          chart: chart,
+          chartType: chartMconfig.chart.type
+        })
       : undefined;
 
     await retry(

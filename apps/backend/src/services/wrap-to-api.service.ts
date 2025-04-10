@@ -610,6 +610,7 @@ export class WrapToApiService {
       author: author,
       canEditOrDeleteChart: canEditOrDeleteChart,
       title: chart.title,
+      chartType: chart.chartType,
       modelId: chart.modelId,
       modelLabel: chart.modelLabel,
       filePath: chart.filePath,

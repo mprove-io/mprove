@@ -1292,6 +1292,12 @@ ${this.mconfig.storePart?.reqUrlPath}`
         : 0;
     });
 
+    this.filteredCharts.forEach(chart => {
+      chart.iconPath = this.chartTypesList.find(
+        x => x.value === chart.chartType
+      ).iconPath;
+    });
+
     this.filteredChartsQuery.update({
       filteredCharts: this.filteredCharts
     });

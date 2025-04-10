@@ -20,6 +20,7 @@ export const chartsTable = pgTable(
     structId: varchar('struct_id', { length: 32 }).notNull(),
     chartId: varchar('chart_id', { length: 32 }).notNull(), // name
     title: varchar('title').notNull(),
+    chartType: varchar('chart_type').$type<common.ChartTypeEnum>(),
     modelId: varchar('model_id', { length: 64 }).notNull(),
     modelLabel: varchar('model_label').notNull(),
     filePath: varchar('file_path'),
