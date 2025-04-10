@@ -17,9 +17,9 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
+import { ChartsQuery } from '~front/app/queries/charts.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -39,8 +39,7 @@ enum TileSaveAsEnum {
 
 export interface ChartSaveAsDialogData {
   apiService: ApiService;
-  mconfig: common.MconfigX;
-  query: common.Query;
+  chart: common.Chart;
   model: common.Model;
 }
 
@@ -69,6 +68,10 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   spinnerName = 'chartSaveAs';
 
+  chart: common.ChartX;
+
+  newChartId = common.makeId();
+
   titleForm: FormGroup = this.fb.group(
     {
       title: [undefined, [Validators.required, Validators.maxLength(255)]]
@@ -88,8 +91,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   chartSaveAs: ChartSaveAsEnum = ChartSaveAsEnum.NEW_CHART;
   tileSaveAs: TileSaveAsEnum = TileSaveAsEnum.NEW_TILE;
-
-  chartId = common.makeId();
 
   alias: string;
   alias$ = this.userQuery.alias$.pipe(
@@ -127,18 +128,20 @@ export class ChartSaveAsDialogComponent implements OnInit {
     public ref: DialogRef<ChartSaveAsDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
-    private uiQuery: UiQuery,
     private navigateService: NavigateService,
     private navQuery: NavQuery,
+    private chartsQuery: ChartsQuery,
     private structQuery: StructQuery,
     private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
+    this.chart = this.ref.data.chart as common.ChartX;
+
     setValueAndMark({
       control: this.titleForm.controls['title'],
-      value: this.ref.data.mconfig.chart.title
+      value: this.chart.tiles[0].mconfig.chart.title
     });
     setValueAndMark({
       control: this.rolesForm.controls['roles'],
@@ -332,11 +335,12 @@ export class ChartSaveAsDialogComponent implements OnInit {
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      chartId: this.chartId,
+      fromChartId: this.chart.chartId,
+      newChartId: this.newChartId,
       tileTitle: newTitle.trim(),
       accessRoles: roles,
       accessUsers: users,
-      mconfig: this.ref.data.mconfig
+      mconfig: this.chart.tiles[0].mconfig
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -349,16 +353,30 @@ export class ChartSaveAsDialogComponent implements OnInit {
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateChartResponse) => {
-          let uiState = this.uiQuery.getValue();
-
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            // TODO: navigateToChart
-            // this.navigateService.navigateToCharts({
-            //   extra: {
-            //     timezone: uiState.timezone.split('/').join('-'),
-            //     queryParams: { search: resp.payload.chart.chartId }
-            //   }
-            // });
+            let newChart = resp.payload.chart;
+
+            if (common.isDefined(newChart)) {
+              let charts = this.chartsQuery.getValue().charts;
+
+              let newCharts = [
+                newChart,
+                ...charts.filter(
+                  x =>
+                    x.chartId !== newChart.chartId &&
+                    !(x.draft === true && x.chartId === this.chart.chartId)
+                )
+              ];
+
+              this.chartsQuery.update({ charts: newCharts });
+
+              this.navigateService.navigateToChart({
+                modelId: newChart.modelId,
+                chartId: newChart.chartId
+              });
+            } else {
+              this.spinner.hide(this.spinnerName);
+            }
           }
         }),
         take(1)
@@ -374,12 +392,12 @@ export class ChartSaveAsDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     let newTile: common.TileX = {
-      mconfig: this.ref.data.mconfig,
-      modelId: this.ref.data.mconfig.modelId,
+      mconfig: this.chart.tiles[0].mconfig,
+      modelId: this.chart.tiles[0].mconfig.modelId,
       modelLabel: this.ref.data.model.label,
-      mconfigId: this.ref.data.mconfig.mconfigId,
+      mconfigId: this.chart.tiles[0].mconfig.mconfigId,
       listen: {},
-      queryId: this.ref.data.mconfig.queryId,
+      queryId: this.chart.tiles[0].mconfig.queryId,
       hasAccessToModel: true,
       title: newTitle.trim(),
       plateWidth: common.TILE_DEFAULT_PLATE_WIDTH,

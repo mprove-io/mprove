@@ -1046,9 +1046,8 @@ ${this.mconfig.storePart?.reqUrlPath}`
 
     this.myDialogService.showChartSaveAs({
       apiService: this.apiService,
-      mconfig: this.mconfig,
-      model: this.model,
-      query: this.query
+      chart: this.chart,
+      model: this.model
     });
   }
 

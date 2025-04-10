@@ -18,6 +18,7 @@ import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeChartFileText } from '~backend/functions/make-chart-file-text';
@@ -74,7 +75,8 @@ export class SaveCreateChartController {
       projectId,
       isRepoProd,
       branchId,
-      chartId,
+      fromChartId,
+      newChartId,
       tileTitle,
       accessRoles,
       accessUsers,
@@ -158,7 +160,7 @@ export class SaveCreateChartController {
       tileTitle: tileTitle,
       roles: accessRoles,
       users: accessUsers,
-      chartId: chartId
+      chartId: newChartId
     });
 
     let mdir = currentStruct.mproveDirValue;
@@ -178,7 +180,7 @@ export class SaveCreateChartController {
         ? `${projectId}/${common.MPROVE_USERS_FOLDER}/${user.alias}`
         : `${projectId}/${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}`;
 
-    let fileName = `${chartId}${common.FileExtensionEnum.Chart}`;
+    let fileName = `${newChartId}${common.FileExtensionEnum.Chart}`;
 
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
       info: {
@@ -247,7 +249,21 @@ export class SaveCreateChartController {
         overrideTimezone: undefined
       });
 
-    let chart = charts.find(x => x.chartId === chartId);
+    let chart = charts.find(x => x.chartId === newChartId);
+
+    if (common.isUndefined(chart)) {
+      let fileId = `${parentNodeId}/${fileName}`;
+      let fileIdAr = fileId.split('/');
+      fileIdAr.shift();
+      let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
+
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_CREATE_CHART_FAIL,
+        data: {
+          underscoreFileId: underscoreFileId
+        }
+      });
+    }
 
     let chartEnt = common.isDefined(chart)
       ? this.wrapToEntService.wrapToEntityChart(chart)
@@ -266,6 +282,15 @@ export class SaveCreateChartController {
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
+          await tx
+            .delete(chartsTable)
+            .where(
+              and(
+                eq(chartsTable.chartId, fromChartId),
+                eq(chartsTable.structId, bridge.structId)
+              )
+            );
+
           await this.db.packer.write({
             tx: tx,
             insert: {
@@ -284,37 +309,6 @@ export class SaveCreateChartController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     structs: [struct],
-    //     bridges: [...branchBridges]
-    //   }
-    // });
-
-    // let records = await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     vizs: [wrapper.wrapToEntityViz(viz)],
-    //     mconfigs: [wrapper.wrapToEntityMconfig(vizMconfig)],
-    //     queries: [wrapper.wrapToEntityQuery(vizQuery)]
-    //   }
-    // });
-
-    if (common.isUndefined(chart)) {
-      let fileId = `${parentNodeId}/${fileName}`;
-      let fileIdAr = fileId.split('/');
-      fileIdAr.shift();
-      let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
-
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_CREATE_CHART_FAIL,
-        data: {
-          underscoreFileId: underscoreFileId
-        }
-      });
-    }
-
     let modelEnts = (await this.db.drizzle
       .select({
         modelId: modelsTable.modelId,
@@ -326,11 +320,6 @@ export class SaveCreateChartController {
       .where(
         eq(modelsTable.structId, bridge.structId)
       )) as schemaPostgres.ModelEnt[];
-
-    // let models = await this.modelsRepository.find({
-    //   select: ['model_id', 'access_users', 'access_roles', 'hidden'],
-    //   where: { struct_id: bridge.struct_id }
-    // });
 
     let payload: apiToBackend.ToBackendSaveCreateChartResponsePayload = {
       chart: this.wrapToApiService.wrapToApiChart({

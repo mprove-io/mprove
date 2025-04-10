@@ -53,6 +53,10 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
   dashboard: common.DashboardX;
 
+  newDashboardId = common.makeId();
+
+  saveAs: DashboardSaveAsEnum = DashboardSaveAsEnum.NEW_DASHBOARD;
+
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.required, Validators.maxLength(255)]]
   });
@@ -64,10 +68,6 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   usersForm: FormGroup = this.fb.group({
     users: [undefined, [Validators.maxLength(255)]]
   });
-
-  saveAs: DashboardSaveAsEnum = DashboardSaveAsEnum.NEW_DASHBOARD;
-
-  newDashboardId = common.makeId();
 
   alias: string;
   alias$ = this.userQuery.alias$.pipe(

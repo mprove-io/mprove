@@ -22,7 +22,10 @@ export class ToBackendSaveCreateChartRequestPayload {
   envId: string;
 
   @IsString()
-  chartId: string;
+  fromChartId: string;
+
+  @IsString()
+  newChartId: string;
 
   @IsString()
   tileTitle: string;
