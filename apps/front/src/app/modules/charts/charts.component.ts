@@ -1041,16 +1041,6 @@ ${this.mconfig.storePart?.reqUrlPath}`
     });
   }
 
-  chartSaveAs(event: any) {
-    event.stopPropagation();
-
-    this.myDialogService.showChartSaveAs({
-      apiService: this.apiService,
-      chart: this.chart,
-      model: this.model
-    });
-  }
-
   showChart(event?: MouseEvent) {
     event.stopPropagation();
 
@@ -1233,7 +1223,20 @@ ${this.mconfig.storePart?.reqUrlPath}`
 
   deleteDraftChart(event: any, chart: common.ChartX) {
     event.stopPropagation();
-    // this.reportService.deleteDraftReports({ reportIds: [chart.reportId] });
+
+    this.chartService.deleteDraftCharts({
+      chartIds: [chart.chartId]
+    });
+  }
+
+  chartSaveAs(event: any) {
+    event.stopPropagation();
+
+    this.myDialogService.showChartSaveAs({
+      apiService: this.apiService,
+      chart: this.chart,
+      model: this.model
+    });
   }
 
   makeFilteredCharts() {
