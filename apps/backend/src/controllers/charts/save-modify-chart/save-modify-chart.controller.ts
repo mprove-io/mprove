@@ -27,9 +27,11 @@ import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { ChartsService } from '~backend/services/charts.service';
 import { EnvsService } from '~backend/services/envs.service';
+import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { QueriesService } from '~backend/services/queries.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
@@ -42,6 +44,7 @@ let retry = require('async-retry');
 export class SaveModifyChartController {
   constructor(
     private branchesService: BranchesService,
+    private mconfigsService: MconfigsService,
     private rabbitService: RabbitService,
     private structsService: StructsService,
     private membersService: MembersService,
@@ -53,6 +56,7 @@ export class SaveModifyChartController {
     private bridgesService: BridgesService,
     private wrapToEntService: WrapToEntService,
     private wrapToApiService: WrapToApiService,
+    private queriesService: QueriesService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -143,6 +147,23 @@ export class SaveModifyChartController {
       chartId: chartId
     });
 
+    if (common.isUndefined(mconfig)) {
+      let mconfigEnt = await this.mconfigsService.getMconfigCheckExists({
+        structId: bridge.structId,
+        mconfigId: existingChart.tiles[0].mconfigId
+      });
+
+      let model = await this.modelsService.getModelCheckExists({
+        structId: bridge.structId,
+        modelId: mconfigEnt.modelId
+      });
+
+      mconfig = this.wrapToApiService.wrapToApiMconfig({
+        mconfig: mconfigEnt,
+        modelFields: model.fields
+      });
+    }
+
     if (member.isAdmin === false && member.isEditor === false) {
       this.chartsService.checkChartPath({
         userAlias: user.alias,
@@ -213,14 +234,6 @@ export class SaveModifyChartController {
       )
     });
 
-    // let branchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: branch.project_id,
-    //     repo_id: branch.repo_id,
-    //     branch_id: branch.branch_id
-    //   }
-    // });
-
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {
         x.structId = common.EMPTY_STRUCT_ID;
@@ -243,6 +256,19 @@ export class SaveModifyChartController {
 
     let chart = charts.find(x => x.chartId === chartId);
 
+    if (common.isUndefined(chart)) {
+      let fileIdAr = existingChart.filePath.split('/');
+      fileIdAr.shift();
+      let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
+
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_MODIFY_CHART_FAIL,
+        data: {
+          underscoreFileId: underscoreFileId
+        }
+      });
+    }
+
     let chartEnt = common.isDefined(chart)
       ? this.wrapToEntService.wrapToEntityChart(chart)
       : undefined;
@@ -261,6 +287,7 @@ export class SaveModifyChartController {
       async () =>
         await this.db.drizzle.transaction(async tx => {
           if (common.isUndefined(chart)) {
+            // because file chart changed
             await tx
               .delete(chartsTable)
               .where(
@@ -289,44 +316,48 @@ export class SaveModifyChartController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     vizs: common.isDefined(viz)
-    //       ? [wrapper.wrapToEntityViz(viz)]
-    //       : undefined,
-    //     structs: [struct],
-    //     bridges: [...branchBridges]
-    //   }
-    // });
+    let modelEnt = await this.modelsService.getModelCheckExists({
+      structId: bridge.structId,
+      modelId: mconfig.modelId
+    });
 
-    // await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     mconfigs: [wrapper.wrapToEntityMconfig(vizMconfig)],
-    //     queries: [wrapper.wrapToEntityQuery(vizQuery)]
-    //   }
-    // });
+    let modelApi = this.wrapToApiService.wrapToApiModel({
+      model: modelEnt,
+      hasAccess: helper.checkAccess({
+        userAlias: user.alias,
+        member: member,
+        entity: modelEnt
+      })
+    });
 
-    if (common.isUndefined(chart)) {
-      // await this.vizsRepository.delete({
-      //   viz_id: chartId,
-      //   struct_id: bridge.struct_id
-      // });
+    let query = await this.queriesService.getQueryCheckExists({
+      queryId: chartMconfig.queryId,
+      projectId: projectId
+    });
 
-      let fileIdAr = existingChart.filePath.split('/');
-      fileIdAr.shift();
-      let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
-
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MODIFY_CHART_FAIL,
-        data: {
-          underscoreFileId: underscoreFileId
-        }
-      });
-    }
-
-    let payload = {};
+    let payload: apiToBackend.ToBackendSaveModifyChartResponsePayload = {
+      chart: this.wrapToApiService.wrapToApiChart({
+        chart: chartEnt,
+        mconfigs: [
+          this.wrapToApiService.wrapToApiMconfig({
+            mconfig: chartMconfig,
+            modelFields: modelApi.fields
+          })
+        ],
+        queries: [this.wrapToApiService.wrapToApiQuery(query)],
+        member: this.wrapToApiService.wrapToApiMember(member),
+        models: [modelApi],
+        isAddMconfigAndQuery: true
+      }),
+      chartPart: this.wrapToApiService.wrapToApiChart({
+        chart: chartEnt,
+        mconfigs: [],
+        queries: [],
+        member: this.wrapToApiService.wrapToApiMember(member),
+        models: [modelApi],
+        isAddMconfigAndQuery: false
+      })
+    };
 
     return payload;
   }

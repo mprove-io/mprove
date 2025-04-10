@@ -286,6 +286,7 @@ export class SaveCreateChartController {
             .delete(chartsTable)
             .where(
               and(
+                eq(chartsTable.draft, true),
                 eq(chartsTable.chartId, fromChartId),
                 eq(chartsTable.structId, bridge.structId)
               )

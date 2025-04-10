@@ -35,6 +35,7 @@ export class ToBackendSaveModifyChartRequestPayload {
   @IsString()
   accessUsers?: string;
 
+  @IsOptional()
   @ValidateNested()
   @Type(() => common.MconfigX)
   mconfig: common.MconfigX;
@@ -46,6 +47,18 @@ export class ToBackendSaveModifyChartRequest extends ToBackendRequest {
   payload: ToBackendSaveModifyChartRequestPayload;
 }
 
+export class ToBackendSaveModifyChartResponsePayload {
+  @ValidateNested()
+  @Type(() => common.ChartX)
+  chart: common.ChartX;
+
+  @ValidateNested()
+  @Type(() => common.ChartX)
+  chartPart: common.ChartX;
+}
+
 export class ToBackendSaveModifyChartResponse extends common.MyResponse {
-  payload: { [k in any]: never };
+  @ValidateNested()
+  @Type(() => ToBackendSaveModifyChartResponsePayload)
+  payload: ToBackendSaveModifyChartResponsePayload;
 }

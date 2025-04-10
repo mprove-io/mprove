@@ -17,6 +17,8 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
+import { ChartQuery } from '~front/app/queries/chart.query';
+import { ChartsQuery } from '~front/app/queries/charts.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -32,7 +34,6 @@ export interface EditChartInfoDialogData {
   isRepoProd: boolean;
   branchId: string;
   envId: string;
-  mconfig: common.MconfigX;
   chart: common.Chart;
 }
 
@@ -84,6 +85,8 @@ export class EditChartInfoDialogComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private userQuery: UserQuery,
+    private chartsQuery: ChartsQuery,
+    private chartQuery: ChartQuery,
     private spinner: NgxSpinnerService,
     private structQuery: StructQuery,
     private cd: ChangeDetectorRef,
@@ -93,7 +96,7 @@ export class EditChartInfoDialogComponent implements OnInit {
   ngOnInit() {
     setValueAndMark({
       control: this.titleForm.controls['title'],
-      value: this.ref.data.mconfig.chart.title
+      value: this.ref.data.chart.title
     });
     setValueAndMark({
       control: this.rolesForm.controls['roles'],
@@ -132,7 +135,7 @@ export class EditChartInfoDialogComponent implements OnInit {
         tileTitle: newTitle.trim(),
         accessRoles: roles,
         accessUsers: users,
-        mconfig: this.ref.data.mconfig
+        mconfig: undefined
       };
 
       let apiService: ApiService = this.ref.data.apiService;
@@ -141,12 +144,31 @@ export class EditChartInfoDialogComponent implements OnInit {
         .req({
           pathInfoName:
             apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyChart,
-          payload: payload
+          payload: payload,
+          showSpinner: true
         })
         .pipe(
           tap(async (resp: apiToBackend.ToBackendSaveModifyChartResponse) => {
             if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-              this.navigateService.reloadCharts();
+              let newChart = resp.payload.chart;
+              let newChartPart = resp.payload.chartPart;
+
+              if (common.isDefined(newChart)) {
+                let charts = this.chartsQuery.getValue().charts;
+
+                let newCharts = [
+                  newChartPart,
+                  ...charts.filter(x => x.chartId !== newChartPart.chartId)
+                ];
+
+                this.chartsQuery.update({ charts: newCharts });
+
+                let currentChart = this.chartQuery.getValue();
+
+                if (currentChart.chartId === newChart.chartId) {
+                  this.chartQuery.update(newChart);
+                }
+              }
             }
           }),
           take(1)
