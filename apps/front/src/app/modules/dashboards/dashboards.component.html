@@ -21,14 +21,6 @@
                     'text-gray-500': lastUrl !== pathDashboardsList
                   }"
                 ></m-view-list-icon>
-                <!-- <div
-                  class="ml-3 select-none items-center"
-                  [ngClass]="{
-                    'text-blue-500': lastUrl === pathDashboardsList
-                  }"
-                >
-                  List
-                </div> -->
               </div>
 
               <div class="flex flex-grow"></div>
@@ -43,11 +35,11 @@
                 <button
                   type="button"
                   data-cy="dashboardsAddDashboardButton"
-                  class="h-11 flex-shrink-0 select-none rounded px-5 py-2 text-base focus:outline-none"
+                  class="h-11 flex-shrink-0 select-none rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
                   [ngClass]="{
-                    'text-gray1 bg-green1 font-normal':
+                    'bg-blue3':
                       alias !== restrictedUserAlias && isExplorer === true,
-                    'cursor-default border-gray-300 font-medium text-gray-400':
+                    'cursor-default bg-gray-400':
                       alias === restrictedUserAlias || isExplorer === false
                   }"
                   (click)="addDashboard()"
@@ -76,7 +68,7 @@
             <div class="mt-6 flex w-full flex-grow rounded bg-white shadow">
               <div class="text-gray1 mt-6 flex w-full flex-col text-base">
                 <div class="flex flex-1 flex-col">
-                  <div class="flex h-11 flex-row items-center">
+                  <div class="mb-6 flex h-11 flex-row items-center">
                     <m-search-icon class="text-gray1 ml-6"></m-search-icon>
 
                     <input
@@ -123,39 +115,26 @@
                     </button>
                   </div>
 
-                  <div
-                    class="mb-5 mt-5 flex h-2 flex-grow flex-col overflow-y-auto"
-                  >
+                  <div class="ml-6 mr-9 flex flex-col divide-y divide-gray-300">
+                    <div class="flex flex-row"></div>
+                    <div class="flex flex-row"></div>
+                  </div>
+
+                  <div class="flex h-2 flex-grow flex-col overflow-y-auto">
                     <div
                       *ngFor="let d of filteredDashboards; let i = index"
                       (click)="navigateToDashboard(d.dashboardId)"
                     >
                       <div
-                        *ngIf="
-                          filteredDraftsLength > 0 && i === filteredDraftsLength
-                        "
-                        class="ml-[25px] mr-[45px] divide-y divide-gray-300"
+                        class="group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
+                        [ngClass]="{
+                          'bg-blue-100':
+                            d.dashboardId === dashboard?.dashboardId,
+                          'hover:bg-blue2':
+                            d.dashboardId !== dashboard?.dashboardId
+                        }"
                       >
-                        <div></div>
-                        <div></div>
-                      </div>
-                      <div
-                        class="hover:bg-blue2 group ml-6 mr-10 flex h-11 flex-row items-center rounded pl-4 pr-2 hover:cursor-pointer"
-                      >
-                        <div class="mr-3 flex h-2 items-center">
-                          <div
-                            *ngIf="d.dashboardId === dashboard?.dashboardId"
-                            data-cy="dashboardsSelectedSymbol"
-                            class="bg-blue3 h-7 w-1 rounded-full text-white focus:outline-none"
-                          ></div>
-
-                          <div
-                            *ngIf="d.dashboardId !== dashboard?.dashboardId"
-                            class="h-7 w-1"
-                          ></div>
-                        </div>
-
-                        <div class="text-gray1 truncate">
+                        <div class="text-gray1 ml-4 truncate">
                           {{ d.title | capitalize }}
                         </div>
 
@@ -175,9 +154,6 @@
                             class="flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center space-x-2 rounded hover:bg-blue-200"
                           >
                             <m-save-icon class="text-gray-500"></m-save-icon>
-                            <!-- <div class="flex justify-start text-gray-500"
-                              >Save As</div
-                            > -->
                           </div>
                         </button>
 
@@ -190,10 +166,6 @@
                           (click)="deleteDraftDashboard($event, d)"
                         >
                           <m-trash-icon></m-trash-icon>
-
-                          <!-- <div class="flex justify-start text-gray-500"
-                            >Draft</div
-                          > -->
                         </button>
 
                         <div
@@ -206,6 +178,11 @@
                         </div>
                       </div>
                     </div>
+                  </div>
+
+                  <div class="ml-6 mr-9 flex flex-col divide-y divide-gray-300">
+                    <div class="flex flex-row"></div>
+                    <div class="flex flex-row"></div>
                   </div>
 
                   <div class="mb-5 mr-5 mt-5 flex h-11 flex-row items-center">

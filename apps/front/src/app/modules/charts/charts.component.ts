@@ -96,7 +96,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
   isRunButtonPressed = false;
   isCancelButtonPressed = false;
 
-  schemaIsExpanded = true;
+  schemaIsExpanded = false;
 
   // modelTreeLevelsFlatTime = common.ModelTreeLevelsEnum.FlatTime;
   modelTreeLevelsFlat = common.ModelTreeLevelsEnum.Flat;
