@@ -354,7 +354,10 @@
 
                   <img class="ml-4 h-6 w-6" [src]="c.iconPath" />
 
-                  <div class="text-gray1 ml-3 truncate">
+                  <div
+                    class="text-gray1 ml-3 truncate pr-2"
+                    [ngClass]="{ italic: c.draft === true }"
+                  >
                     {{ c.title | capitalize }}
                   </div>
 

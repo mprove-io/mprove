@@ -134,7 +134,10 @@
                             d.dashboardId !== dashboard?.dashboardId
                         }"
                       >
-                        <div class="text-gray1 ml-4 truncate">
+                        <div
+                          class="text-gray1 ml-4 truncate pr-2"
+                          [ngClass]="{ italic: d.draft === true }"
+                        >
                           {{ d.title | capitalize }}
                         </div>
 

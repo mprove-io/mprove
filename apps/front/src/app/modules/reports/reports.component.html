@@ -392,7 +392,10 @@
                           'hover:bg-blue2': r.reportId !== report?.reportId
                         }"
                       >
-                        <div class="text-gray1 ml-4 truncate">
+                        <div
+                          class="text-gray1 ml-4 truncate pr-2"
+                          [ngClass]="{ italic: r.draft === true }"
+                        >
                           {{ r.title | capitalize }}
                         </div>
 
