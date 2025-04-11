@@ -320,128 +320,130 @@
         <div class="flex w-1/5 flex-shrink-0" *ngIf="isShowLeft === true">
           <div class="flex w-full flex-grow rounded bg-white shadow">
             <div class="text-gray1 mt-6 flex w-full flex-col text-base">
-              <div class="mb-6 flex h-11 flex-row items-center">
-                <m-search-icon class="text-gray1 ml-6"></m-search-icon>
+              <div
+                class="flex h-2 flex-col"
+                [ngClass]="{
+                  'h-[44%]': metricsIsExpanded === true,
+                  'flex-1': metricsIsExpanded === false
+                }"
+              >
+                <div class="mb-6 flex h-11 flex-row items-center">
+                  <m-search-icon class="text-gray1 ml-6"></m-search-icon>
 
-                <input
-                  spellcheck="false"
-                  autocomplete="off"
-                  data-cy="dashboardsSearchInput"
-                  class="form-input focus:border-blue3 ml-3 h-10 w-[225px] rounded border-gray-400"
-                  placeholder="Search Reports"
-                  [ngClass]="{
-                    'bg-purple-200': !!word
-                  }"
-                  [(ngModel)]="word"
-                  (ngModelChange)="searchWordChange()"
-                />
-
-                <div class="h-9 w-9">
-                  <m-delete-icon
-                    *ngIf="!!word"
-                    class="text-gray1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  <input
+                    spellcheck="false"
+                    autocomplete="off"
+                    data-cy="dashboardsSearchInput"
+                    class="form-input focus:border-blue3 ml-3 h-10 w-[225px] rounded border-gray-400"
+                    placeholder="Search Reports"
                     [ngClass]="{
-                      'cursor-pointer bg-purple-200 hover:bg-purple-300': !!word
+                      'bg-purple-200': !!word
                     }"
-                    (click)="resetSearch()"
-                  ></m-delete-icon>
+                    [(ngModel)]="word"
+                    (ngModelChange)="searchWordChange()"
+                  />
+
+                  <div class="h-9 w-9">
+                    <m-delete-icon
+                      *ngIf="!!word"
+                      class="text-gray1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                      [ngClass]="{
+                        'cursor-pointer bg-purple-200 hover:bg-purple-300':
+                          !!word
+                      }"
+                      (click)="resetSearch()"
+                    ></m-delete-icon>
+                  </div>
+
+                  <div class="flex flex-grow"></div>
+
+                  <button
+                    *ngIf="filteredDraftsLength > 0"
+                    class="ml-3 mr-10 flex flex-row items-center rounded border px-4 py-2 focus:outline-none"
+                    [ngClass]="{
+                      'border-gray-400 text-gray-500 hover:bg-gray-100':
+                        filteredDraftsLength > 0,
+                      'cursor-default border-gray-300 text-gray-400':
+                        filteredDraftsLength === 0
+                    }"
+                    [disabled]="filteredDraftsLength === 0"
+                    (click)="deleteDrafts()"
+                  >
+                    <m-trash-icon></m-trash-icon>
+                    <div class="ml-3">Drafts</div>
+                  </button>
                 </div>
 
-                <div class="flex flex-grow"></div>
+                <div class="ml-6 mr-9 flex flex-col divide-y divide-gray-300">
+                  <div class="flex flex-row"></div>
+                  <div class="flex flex-row"></div>
+                </div>
 
-                <button
-                  *ngIf="filteredDraftsLength > 0"
-                  class="ml-3 mr-10 flex flex-row items-center rounded border px-4 py-2 focus:outline-none"
-                  [ngClass]="{
-                    'border-gray-400 text-gray-500 hover:bg-gray-100':
-                      filteredDraftsLength > 0,
-                    'cursor-default border-gray-300 text-gray-400':
-                      filteredDraftsLength === 0
-                  }"
-                  [disabled]="filteredDraftsLength === 0"
-                  (click)="deleteDrafts()"
-                >
-                  <m-trash-icon></m-trash-icon>
-                  <div class="ml-3">Drafts</div>
-                </button>
-              </div>
-
-              <div class="ml-6 mr-9 flex flex-col divide-y divide-gray-300">
-                <div class="flex flex-row"></div>
-                <div class="flex flex-row"></div>
-              </div>
-
-              <div class="flex h-2 flex-1 flex-col">
-                <div class="flex h-2 flex-grow flex-col overflow-y-auto">
-                  <div
-                    *ngFor="let r of filteredReports; let i = index"
-                    (click)="navToReport(r)"
-                  >
+                <div class="flex h-2 flex-1 flex-col">
+                  <div class="flex h-2 flex-grow flex-col overflow-y-auto">
                     <div
-                      class="group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
-                      [ngClass]="{
-                        'bg-blue-100': r.reportId === report?.reportId,
-                        'hover:bg-blue2': r.reportId !== report?.reportId
-                      }"
+                      *ngFor="let r of filteredReports; let i = index"
+                      (click)="navToReport(r)"
                     >
-                      <div class="text-gray1 ml-4 truncate">
-                        {{ r.title | capitalize }}
-                      </div>
-
-                      <div class="flex flex-grow"></div>
-
-                      <button
-                        *ngIf="
-                          report.draft === true &&
-                          r.reportId === report.reportId
-                        "
-                        type="button"
-                        data-cy="reportSaveAsButton"
-                        class="ml-3 flex h-11 items-center justify-center rounded focus:outline-none"
-                        (click)="reportSaveAs($event)"
-                      >
-                        <div
-                          class="flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center space-x-2 rounded px-2 hover:bg-blue-200"
-                        >
-                          <m-save-icon class="text-gray-500"></m-save-icon>
-                        </div>
-                      </button>
-
-                      <button
-                        *ngIf="
-                          report.draft === true &&
-                          r.reportId === report.reportId
-                        "
-                        class="ml-3 flex h-9 flex-shrink-0 items-center justify-center space-x-2 rounded px-2 text-gray-500 hover:bg-blue-200 focus:outline-none"
-                        (click)="deleteDraftReport($event, r)"
-                      >
-                        <m-trash-icon></m-trash-icon>
-                      </button>
-
                       <div
-                        *ngIf="
-                          r.draft === false && r.reportId !== emptyReportId
-                        "
-                        class="invisible ml-2 flex group-hover:visible"
+                        class="group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
+                        [ngClass]="{
+                          'bg-blue-100': r.reportId === report?.reportId,
+                          'hover:bg-blue2': r.reportId !== report?.reportId
+                        }"
                       >
-                        <m-report-options [report]="r"></m-report-options>
+                        <div class="text-gray1 ml-4 truncate">
+                          {{ r.title | capitalize }}
+                        </div>
+
+                        <div class="flex flex-grow"></div>
+
+                        <button
+                          *ngIf="
+                            report.draft === true &&
+                            r.reportId === report.reportId
+                          "
+                          type="button"
+                          data-cy="reportSaveAsButton"
+                          class="ml-3 flex h-11 items-center justify-center rounded focus:outline-none"
+                          (click)="reportSaveAs($event)"
+                        >
+                          <div
+                            class="flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center space-x-2 rounded px-2 hover:bg-blue-200"
+                          >
+                            <m-save-icon class="text-gray-500"></m-save-icon>
+                          </div>
+                        </button>
+
+                        <button
+                          *ngIf="
+                            report.draft === true &&
+                            r.reportId === report.reportId
+                          "
+                          class="ml-3 flex h-9 flex-shrink-0 items-center justify-center space-x-2 rounded px-2 text-gray-500 hover:bg-blue-200 focus:outline-none"
+                          (click)="deleteDraftReport($event, r)"
+                        >
+                          <m-trash-icon></m-trash-icon>
+                        </button>
+
+                        <div
+                          *ngIf="
+                            r.draft === false && r.reportId !== emptyReportId
+                          "
+                          class="invisible ml-2 flex group-hover:visible"
+                        >
+                          <m-report-options [report]="r"></m-report-options>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div class="ml-6 mr-9 flex flex-col divide-y divide-gray-300">
-                <div class="flex flex-row"></div>
-                <div class="flex flex-row"></div>
-              </div>
+                <div class="ml-6 mr-9 flex flex-col divide-y divide-gray-300">
+                  <div class="flex flex-row"></div>
+                  <div class="flex flex-row"></div>
+                </div>
 
-              <div
-                class="flex flex-col"
-                [ngClass]="{
-                  'flex-1': metricsIsExpanded
-                }"
-              >
                 <div
                   class="mb-3 mt-3 flex h-11 w-full flex-shrink-0 flex-row items-center"
                 >
@@ -461,7 +463,14 @@
                     </div>
                   </div>
                 </div>
+              </div>
 
+              <div
+                class="flex flex-col"
+                [ngClass]="{
+                  'flex-1': metricsIsExpanded
+                }"
+              >
                 <div
                   class="flex flex-1 flex-col"
                   *ngIf="metricsIsExpanded === true"
