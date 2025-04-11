@@ -263,7 +263,7 @@
           class="flex h-full w-1/4 flex-shrink-0 flex-col rounded bg-white shadow"
         >
           <div class="flex h-2 h-[44%] flex-col">
-            <div class="mt-6 flex h-11 flex-row items-center">
+            <div class="mb-6 mt-6 flex h-11 flex-row items-center">
               <m-search-icon class="text-gray1 ml-6"></m-search-icon>
 
               <input
@@ -309,18 +309,23 @@
               </button>
             </div>
 
-            <div class="mb-5 mt-5 flex h-2 flex-grow flex-col overflow-y-auto">
+            <div class="ml-6 mr-9 flex flex-col divide-y divide-gray-300">
+              <div class="flex flex-row"></div>
+              <div class="flex flex-row"></div>
+            </div>
+
+            <div class="flex h-2 flex-grow flex-col overflow-y-auto">
               <div
                 *ngFor="let c of filteredCharts; let i = index"
                 (click)="navToChart(c)"
               >
-                <div
+                <!-- <div
                   *ngIf="filteredDraftsLength > 0 && i === filteredDraftsLength"
                   class="ml-[25px] mr-[45px] divide-y divide-gray-300"
                 >
                   <div></div>
                   <div></div>
-                </div>
+                </div> -->
                 <div
                   class="group mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
                   [ngClass]="{
@@ -517,7 +522,7 @@
           >
             <div class="flex h-full flex-col">
               <div
-                class="mb-5 mr-5 mt-6 flex h-11 flex-shrink-0 flex-row items-center"
+                class="flex h-[92px] flex-shrink-0 flex-row items-center bg-white pb-6 pr-5 pt-6"
               >
                 <m-panel-title
                   [title]="'Chart'"
@@ -687,8 +692,8 @@
                   >
                     <ng-select
                       #chartTypeSelect
-                      data-cy="chartTypeSelect"
-                      class="chart-type-select w-[200px] text-base focus:outline-none"
+                      data-cy="mainChartTypeSelect"
+                      class="main-chart-type-select w-[200px] text-base focus:outline-none"
                       [items]="chartTypesList"
                       [clearable]="false"
                       [searchable]="false"
@@ -869,7 +874,9 @@
 
           <div class="w-full flex-1 rounded bg-white shadow">
             <div class="flex h-full flex-col">
-              <div class="mr-5 flex h-20 flex-shrink-0 flex-row items-center">
+              <div
+                class="flex h-20 flex-shrink-0 flex-row items-center bg-white pr-5"
+              >
                 <div class="flex flex-1 flex-row items-center">
                   <m-panel-title
                     class="mb-1"
