@@ -74,6 +74,7 @@ export class GetDashboardsController {
       .select({
         dashboardId: dashboardsTable.dashboardId,
         draft: dashboardsTable.draft,
+        creatorId: dashboardsTable.creatorId,
         filePath: dashboardsTable.filePath,
         accessUsers: dashboardsTable.accessUsers,
         accessRoles: dashboardsTable.accessRoles,
@@ -94,22 +95,6 @@ export class GetDashboardsController {
           )
         )
       )) as schemaPostgres.DashboardEnt[];
-
-    // let dashboards = await this.dashboardsRepository.find({
-    //   select: [
-    //     'dashboard_id',
-    //     'file_path',
-    //     'access_users',
-    //     'access_roles',
-    //     'title',
-    //     'gr',
-    //     'hidden',
-    //     'fields',
-    //     'tiles',
-    //     'description'
-    //   ],
-    //   where: { struct_id: bridge.struct_id, temp: false }
-    // });
 
     let dashboardsGrantedAccess = dashboards.filter(x =>
       helper.checkAccess({
