@@ -559,10 +559,6 @@ export class WrapToApiService {
           ? user.ui?.projectModelLinks
           : constants.DEFAULT_UI.projectModelLinks,
 
-        projectChartLinks: common.isDefined(user.ui?.projectChartLinks)
-          ? user.ui?.projectChartLinks
-          : constants.DEFAULT_UI.projectChartLinks,
-
         projectDashboardLinks: common.isDefined(user.ui?.projectDashboardLinks)
           ? user.ui?.projectDashboardLinks
           : constants.DEFAULT_UI.projectDashboardLinks,
