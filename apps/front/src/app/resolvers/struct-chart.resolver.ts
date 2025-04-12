@@ -11,9 +11,9 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { ChartQuery } from '../queries/chart.query';
-import { ChartsQuery } from '../queries/charts.query';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
+import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
@@ -27,7 +27,7 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
     private navigateService: NavigateService,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
-    private chartsQuery: ChartsQuery,
+    private structQuery: StructQuery,
     private chartQuery: ChartQuery,
     private memberQuery: MemberQuery,
     private uiQuery: UiQuery,
@@ -41,14 +41,25 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
   ): Observable<boolean> {
     let timezoneParam: common.TimeSpecEnum = route.queryParams?.timezone;
 
+    let structState = this.structQuery.getValue();
     let uiState = this.uiQuery.getValue();
+
+    let timezone =
+      structState.allowTimezones === false
+        ? structState.defaultTimezone
+        : common.isDefined(timezoneParam)
+        ? timezoneParam.split('-').join('/')
+        : uiState.timezone;
+
+    if (uiState.timezone !== timezone) {
+      this.uiQuery.updatePart({ timezone: timezone });
+      this.uiService.setUserUi({ timezone: timezone });
+    }
 
     return this.resolveRoute({
       route: route,
       showSpinner: false,
-      timezone: common.isDefined(timezoneParam)
-        ? timezoneParam.split('-').join('/')
-        : uiState.timezone
+      timezone: timezone
     });
   }
 
@@ -112,22 +123,7 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
         map((resp: apiToBackend.ToBackendGetChartResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
-
-            // TODO: check logic (like dashboard)
-            // this.structQuery.update(resp.payload.struct);
-            // this.navQuery.updatePart({
-            //   needValidate: resp.payload.needValidate
-            // });
             this.chartQuery.update(resp.payload.chart);
-
-            let uiState = this.uiQuery.getValue();
-
-            if (uiState.timezone !== timezone) {
-              this.uiQuery.updatePart({
-                timezone: timezone
-              });
-              this.uiService.setUserUi({ timezone: timezone });
-            }
 
             return true;
           } else if (

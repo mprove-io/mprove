@@ -894,7 +894,7 @@
           <div class="w-full flex-1 rounded bg-white shadow">
             <div class="flex h-full flex-col">
               <div
-                class="flex h-20 flex-shrink-0 flex-row items-center bg-white pr-5"
+                class="flex h-20 flex-shrink-0 flex-row items-center bg-white"
               >
                 <div class="flex flex-1 flex-row items-center">
                   <m-panel-title
@@ -955,7 +955,7 @@
                   >
 
                   <div
-                    class="ml-5 flex w-2 flex-1"
+                    class="ml-5 mr-6 flex w-2 flex-1"
                     *ngIf="mconfig?.select.length > 0"
                   >
                     <form
@@ -1001,14 +1001,10 @@
                 </div>
 
                 <div class="flex flex-1 flex-row items-center">
-                  <m-panel-title
-                    *ngIf="mconfig?.select.length > 0"
-                    class="mb-1"
-                    [title]="'Info'"
-                    [isExpanded]="true"
-                    (toggleEvent)="toggleInfoPanel()"
-                    [showToggle]="false"
-                  ></m-panel-title>
+                  <div
+                    class="text-gray1 ml-6 flex select-none flex-row items-center pb-2 pt-2 text-xl font-semibold"
+                    >Info</div
+                  >
 
                   <form
                     [formGroup]="requestPartTypeForm"
@@ -1052,7 +1048,7 @@
                 </div>
               </div>
 
-              <div class="ml-6 mr-5 flex flex-col divide-y divide-gray-300">
+              <div class="mx-5 flex flex-col divide-y divide-gray-300">
                 <div class="flex flex-row"></div>
                 <div class="flex flex-row"></div>
               </div>
@@ -1066,7 +1062,7 @@
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="flex h-full w-full flex-row items-start justify-center space-x-5"
+                  class="flex h-full w-full flex-row items-start justify-center"
                 >
                   <div
                     *ngIf="resultsIsShow"

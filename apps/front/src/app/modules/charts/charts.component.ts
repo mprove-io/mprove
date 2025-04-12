@@ -29,7 +29,6 @@ import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DataSizeService } from '~front/app/services/data-size.service';
 import { QDataRow } from '~front/app/services/data.service';
-import { MconfigService } from '~front/app/services/mconfig.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { StructService } from '~front/app/services/struct.service';
@@ -311,16 +310,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
         );
       }
 
-      if (this.mconfig.timezone) {
-        this.timezoneForm.controls['timezone'].setValue(this.mconfig.timezone);
-        this.uiQuery.updatePart({ timezone: this.mconfig.timezone });
-        this.uiService.setUserUi({ timezone: this.mconfig.timezone });
-      }
-      // else {
-      //   let uiState = this.uiQuery.getValue();
-      //   this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
-      // }
-
       this.cd.detectChanges();
 
       // workaround to remove scrolls on filters list change
@@ -382,6 +371,12 @@ export class ChartsComponent implements OnInit, OnDestroy {
   runButtonTimerSubscription: Subscription;
   cancelButtonTimerSubscription: Subscription;
 
+  timezoneForm = this.fb.group({
+    timezone: [undefined]
+  });
+
+  timezones = common.getTimezones();
+
   struct$ = this.structQuery.select().pipe(
     tap(x => {
       if (x.allowTimezones === false) {
@@ -403,12 +398,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
   modelForm = this.fb.group({
     model: [undefined]
   });
-
-  timezoneForm = this.fb.group({
-    timezone: [undefined]
-  });
-
-  timezones = common.getTimezones();
 
   timeDiff: number;
 
@@ -544,7 +533,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
     private structService: StructService,
     private spinner: NgxSpinnerService,
     private timeService: TimeService,
-    private mconfigService: MconfigService,
     private chartService: ChartService,
     private dataSizeService: DataSizeService,
     private dataService: DataService,
@@ -560,22 +548,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.lastUrl = ar[ar.length - 1];
 
     let uiState = this.uiQuery.getValue();
-    let timezoneParam = this.route.snapshot.queryParamMap.get('timezone');
-    let structState = this.structQuery.getValue();
 
-    let timezone =
-      structState.allowTimezones === false
-        ? structState.defaultTimezone
-        : common.isDefined(timezoneParam)
-        ? timezoneParam.split('-').join('/')
-        : uiState.timezone;
-
-    if (uiState.timezone !== timezone) {
-      this.uiQuery.updatePart({ timezone: timezone });
-      this.uiService.setUserUi({ timezone: timezone });
-    }
-
-    this.timezoneForm.controls['timezone'].setValue(timezone);
+    this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
 
     this.searchWordChange();
 
@@ -698,8 +672,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
   }
 
   toggleDataPanel() {}
-
-  toggleInfoPanel() {}
 
   goToFile() {
     let fileIdAr = this.model.filePath.split('/');
