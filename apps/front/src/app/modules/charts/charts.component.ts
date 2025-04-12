@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
@@ -46,6 +47,7 @@ import { FilteredChartsQuery } from '~front/app/queries/filtered-charts.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { StructChartResolver } from '~front/app/resolvers/struct-chart.resolver';
 import { ChartService } from '~front/app/services/chart.service';
 import { DataService } from '~front/app/services/data.service';
 import { UiService } from '~front/app/services/ui.service';
@@ -539,6 +541,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
     private modelQuery: ModelQuery,
     private userQuery: UserQuery,
     private chartQuery: ChartQuery,
+    private structChartResolver: StructChartResolver,
+    private location: Location,
     private uiQuery: UiQuery,
     private uiService: UiService,
     private apiService: ApiService,
@@ -767,20 +771,34 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.uiQuery.updatePart({ timezone: timezone });
     this.uiService.setUserUi({ timezone: timezone });
 
-    if (common.isDefined(this.model?.modelId)) {
-      let newMconfig = this.structService.makeMconfig();
+    let uiState = this.uiQuery.getValue();
 
-      newMconfig.timezone = timezone;
+    if (common.isDefined(this.chart.chartId)) {
+      this.structChartResolver
+        .resolveRoute({
+          chartId: this.chart.chartId,
+          route: this.route.snapshot,
+          showSpinner: true,
+          timezone: uiState.timezone
+        })
+        .pipe(
+          tap(x => {
+            let uiStateB = this.uiQuery.getValue();
 
-      this.chartService.editChart({
-        mconfig: newMconfig,
-        isDraft: this.chart.draft,
-        chartId: this.chart.chartId
-      });
+            let url = this.router
+              .createUrlTree([], {
+                relativeTo: this.route,
+                queryParams: {
+                  timezone: uiStateB.timezone.split('/').join('-')
+                }
+              })
+              .toString();
 
-      // this.mconfigService.navCreateTempMconfigAndQuery({
-      //   newMconfig: newMconfig
-      // });
+            this.location.go(url);
+          }),
+          take(1)
+        )
+        .subscribe();
     }
   }
 

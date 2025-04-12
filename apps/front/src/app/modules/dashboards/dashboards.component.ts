@@ -364,11 +364,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     let uiState = this.uiQuery.getValue();
 
-    if (this.lastUrl === common.PATH_DASHBOARDS) {
-      this.navigateService.navigateToDashboards();
-    } else if (this.lastUrl === common.PATH_DASHBOARDS_LIST) {
-      this.navigateService.navigateToDashboardsList();
-    } else if (common.isDefined(this.dashboard.dashboardId)) {
+    if (common.isDefined(this.dashboard.dashboardId)) {
       this.structDashboardResolver
         .resolveRoute({
           dashboardId: this.dashboard.dashboardId,

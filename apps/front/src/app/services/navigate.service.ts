@@ -255,24 +255,12 @@ export class NavigateService {
       common.PATH_DASHBOARDS
     ];
 
-    let uiState = this.uiQuery.getValue();
-
-    let extra = {
-      queryParams: { timezone: uiState.timezone.split('/').join('-') }
-    };
-
-    if (common.isDefined(item?.extra)) {
-      extra = Object.assign({}, extra, item?.extra);
-    }
-
-    this.router.navigate(navTo, extra);
+    this.router.navigate(navTo);
   }
 
   navigateToDashboardsList() {
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
-
-    let uiState = this.uiQuery.getValue();
 
     let navTo = [
       common.PATH_ORG,
@@ -289,9 +277,7 @@ export class NavigateService {
       common.PATH_DASHBOARDS_LIST
     ];
 
-    this.router.navigate(navTo, {
-      queryParams: { timezone: uiState.timezone.split('/').join('-') }
-    });
+    this.router.navigate(navTo);
   }
 
   navigateToDashboard(item: { dashboardId: string }) {
