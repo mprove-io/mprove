@@ -14,6 +14,9 @@ export class ReportOptionsComponent {
   @Input()
   report: common.ReportX;
 
+  @Input()
+  isHoverWhite: boolean;
+
   constructor(
     private navigateService: NavigateService,
     private apiService: ApiService,

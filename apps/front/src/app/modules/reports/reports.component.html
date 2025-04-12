@@ -381,21 +381,32 @@
 
                 <div class="flex h-2 flex-1 flex-col">
                   <div class="flex h-2 flex-grow flex-col overflow-y-auto">
-                    <div
-                      *ngFor="let r of filteredReports; let i = index"
-                      (click)="navToReport(r)"
-                    >
+                    <div *ngFor="let r of filteredReports; let i = index">
+                      <div
+                        *ngIf="
+                          filteredDraftsLength > 0 && i === filteredDraftsLength
+                        "
+                        class="mb-4 ml-[25px] mr-[45px] mt-4 flex flex-row justify-center divide-y divide-gray-300"
+                      >
+                        <div
+                          class="flex w-[200px] flex-col divide-y divide-gray-300"
+                        >
+                          <div></div>
+                          <div></div>
+                        </div>
+                      </div>
+
                       <div
                         class="group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
+                        (click)="navToReport(r)"
                         [ngClass]="{
-                          'bg-blue-100': r.reportId === report?.reportId,
+                          'mt-2': i === 0,
+                          'mb-5': i === filteredReports.length - 1,
+                          'bg-sky-200': r.reportId === report?.reportId,
                           'hover:bg-blue2': r.reportId !== report?.reportId
                         }"
                       >
-                        <div
-                          class="text-gray1 ml-4 truncate pr-2"
-                          [ngClass]="{ italic: r.draft === true }"
-                        >
+                        <div class="text-gray1 ml-3 truncate">
                           {{ r.title | capitalize }}
                         </div>
 
@@ -412,7 +423,7 @@
                           (click)="reportSaveAs($event)"
                         >
                           <div
-                            class="flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center space-x-2 rounded px-2 hover:bg-blue-200"
+                            class="flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center space-x-2 rounded px-2 hover:bg-white"
                           >
                             <m-save-icon class="text-gray-500"></m-save-icon>
                           </div>
@@ -423,7 +434,7 @@
                             report.draft === true &&
                             r.reportId === report.reportId
                           "
-                          class="ml-3 flex h-9 flex-shrink-0 items-center justify-center space-x-2 rounded px-2 text-gray-500 hover:bg-blue-200 focus:outline-none"
+                          class="ml-3 flex h-9 flex-shrink-0 items-center justify-center space-x-2 rounded px-2 text-gray-500 hover:bg-white focus:outline-none"
                           (click)="deleteDraftReport($event, r)"
                         >
                           <m-trash-icon></m-trash-icon>
@@ -435,7 +446,10 @@
                           "
                           class="invisible ml-2 flex group-hover:visible"
                         >
-                          <m-report-options [report]="r"></m-report-options>
+                          <m-report-options
+                            [report]="r"
+                            [isHoverWhite]="r.reportId === report.reportId"
+                          ></m-report-options>
                         </div>
                       </div>
                     </div>

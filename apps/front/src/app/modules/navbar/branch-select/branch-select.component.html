@@ -24,18 +24,19 @@
   bindValue="extraId"
 >
   <ng-template ng-label-tmp let-item="item">
-    <div
+    <!-- <div
       class="ml-1 truncate rounded px-[8px] py-[1px]"
       [ngClass]="{
         'bg-green1': item.extraName.substring(0, 4) === 'dev-',
         'bg-blue5': item.extraName.substring(0, 10) === 'production'
       }"
       >{{ item.extraName }}</div
-    >
+    > -->
+    <div class="ml-1 truncate">{{ item.extraName }}</div>
   </ng-template>
 
   <ng-template ng-option-tmp let-item="item">
-    <div class="ml-1 truncate rounded px-[8px]">{{ item.extraName }}</div>
+    <div class="ml-1 truncate">{{ item.extraName }}</div>
   </ng-template>
 
   <ng-template ng-footer-tmp>

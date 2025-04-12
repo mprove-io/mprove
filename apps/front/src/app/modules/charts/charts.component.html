@@ -321,21 +321,24 @@
             </div>
 
             <div class="flex h-2 flex-grow flex-col overflow-y-auto">
-              <div
-                *ngFor="let c of filteredCharts; let i = index"
-                (click)="navToChart(c)"
-              >
-                <!-- <div
+              <div *ngFor="let c of filteredCharts; let i = index">
+                <div
                   *ngIf="filteredDraftsLength > 0 && i === filteredDraftsLength"
-                  class="ml-[25px] mr-[45px] divide-y divide-gray-300"
+                  class="mb-4 ml-[25px] mr-[45px] mt-4 flex flex-row justify-center divide-y divide-gray-300"
                 >
-                  <div></div>
-                  <div></div>
-                </div> -->
+                  <div class="flex w-[400px] flex-col divide-y divide-gray-300">
+                    <div></div>
+                    <div></div>
+                  </div>
+                </div>
+
                 <div
                   class="group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
+                  (click)="navToChart(c)"
                   [ngClass]="{
-                    'bg-blue-100': c.chartId === chart?.chartId,
+                    'mt-2': i === 0,
+                    'mb-5': i === filteredCharts.length - 1,
+                    'bg-sky-200': c.chartId === chart?.chartId,
                     'hover:bg-blue2': c.chartId !== chart?.chartId
                   }"
                 >
@@ -354,10 +357,7 @@
 
                   <img class="ml-4 h-6 w-6" [src]="c.iconPath" />
 
-                  <div
-                    class="text-gray1 ml-3 truncate pr-2"
-                    [ngClass]="{ italic: c.draft === true }"
-                  >
+                  <div class="text-gray1 ml-3 truncate">
                     {{ c.title | capitalize }}
                   </div>
 
@@ -371,7 +371,7 @@
                     (click)="chartSaveAs($event)"
                   >
                     <div
-                      class="flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center space-x-2 rounded px-2 hover:bg-blue-200"
+                      class="flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center space-x-2 rounded px-2 hover:bg-white"
                     >
                       <m-save-icon class="text-gray-500"></m-save-icon>
                     </div>
@@ -379,7 +379,7 @@
 
                   <button
                     *ngIf="chart.draft === true && c.chartId === chart.chartId"
-                    class="ml-3 flex h-9 flex-shrink-0 items-center justify-center space-x-2 rounded px-2 text-gray-500 hover:bg-blue-200 focus:outline-none"
+                    class="ml-3 flex h-9 flex-shrink-0 items-center justify-center space-x-2 rounded px-2 text-gray-500 hover:bg-white focus:outline-none"
                     (click)="deleteDraftChart($event, c)"
                   >
                     <m-trash-icon></m-trash-icon>
@@ -391,7 +391,7 @@
                   >
                     <m-chart-options
                       [chart]="c"
-                      [isHoverWhite]="false"
+                      [isHoverWhite]="c.chartId === chart.chartId"
                     ></m-chart-options>
                   </div>
                 </div>
@@ -1003,6 +1003,7 @@
                 <div class="flex flex-1 flex-row items-center">
                   <div
                     class="text-gray1 ml-6 flex select-none flex-row items-center pb-2 pt-2 text-xl font-semibold"
+                    *ngIf="mconfig?.select.length > 0"
                     >Info</div
                   >
 

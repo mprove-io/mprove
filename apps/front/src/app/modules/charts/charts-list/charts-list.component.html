@@ -38,7 +38,7 @@
         class="h-2 flex-1 overflow-y-auto"
       >
         <div
-          *ngFor="let item of filteredCharts; trackBy: trackByFn"
+          *ngFor="let item of filteredCharts; let i = index; trackBy: trackByFn"
           class="hover:border-blue2 hover:bg-blue2 flex flex-row bg-white hover:cursor-pointer"
           [ngStyle]="
             item.chartId !==
@@ -47,6 +47,8 @@
             }
           "
           [ngClass]="{
+            'mt-2': i === 0,
+            'mb-5': i === filteredCharts.length - 1,
             'border-gray-300':
               item.chartId !== filteredCharts[filteredCharts.length - 1].chartId
           }"

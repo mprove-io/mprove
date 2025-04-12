@@ -14,6 +14,9 @@ export class DashboardOptionsComponent {
   @Input()
   dashboard: common.DashboardX;
 
+  @Input()
+  isHoverWhite: boolean;
+
   // @Output()
   // runDryEvent = new EventEmitter();
 

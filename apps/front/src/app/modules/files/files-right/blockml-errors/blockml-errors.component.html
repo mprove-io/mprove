@@ -21,8 +21,8 @@
             data-cy="blockmlErrorsTreeItem"
             class="flex min-h-[44px] w-full select-none flex-row px-5"
             [ngClass]="{
-              ' cursor-pointer': node.data.isError === false,
-              'bg-blue-100':
+              'cursor-pointer': node.data.isError === false,
+              'bg-sky-200':
                 node.data.isError === false &&
                 !!fileNodeId &&
                 node.data.id === fileNodeId,

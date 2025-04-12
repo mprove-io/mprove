@@ -21,7 +21,11 @@
         class="h-2 flex-1 overflow-y-auto"
       >
         <div
-          *ngFor="let item of filteredDashboards; trackBy: trackByFn"
+          *ngFor="
+            let item of filteredDashboards;
+            let i = index;
+            trackBy: trackByFn
+          "
           class="hover:border-blue2 hover:bg-blue2 flex flex-row bg-white hover:cursor-pointer"
           [ngStyle]="
             item.dashboardId !==
@@ -30,6 +34,8 @@
             }
           "
           [ngClass]="{
+            'mt-2': i === 0,
+            'mb-5': i === filteredDashboards.length - 1,
             'border-gray-300':
               item.dashboardId !==
               filteredDashboards[filteredDashboards.length - 1].dashboardId
@@ -42,7 +48,10 @@
             >
               <div class="flex w-12 pl-3">
                 <div class="invisible flex group-hover:visible">
-                  <m-dashboard-options [dashboard]="item"></m-dashboard-options>
+                  <m-dashboard-options
+                    [dashboard]="item"
+                    [isHoverWhite]="false"
+                  ></m-dashboard-options>
                 </div>
               </div>
 
