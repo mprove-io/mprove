@@ -203,6 +203,16 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   timezones = common.getTimezones();
 
+  struct$ = this.structQuery.select().pipe(
+    tap(x => {
+      if (x.allowTimezones === false) {
+        this.timezoneForm.controls['timezone'].disable();
+      } else {
+        this.timezoneForm.controls['timezone'].enable();
+      }
+    })
+  );
+
   timeSpecForm = this.fb.group({
     timeSpec: [undefined]
   });
@@ -585,16 +595,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
   metricsRunButtonSpinnerName = 'metricsRunButtonSpinnerName';
 
   runButtonTimerSubscription: Subscription;
-
-  struct$ = this.structQuery.select().pipe(
-    tap(x => {
-      if (x.allowTimezones === false) {
-        this.timezoneForm.controls['timezone'].disable();
-      } else {
-        this.timezoneForm.controls['timezone'].enable();
-      }
-    })
-  );
 
   private timer: any;
 

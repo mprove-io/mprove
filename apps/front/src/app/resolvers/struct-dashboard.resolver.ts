@@ -43,8 +43,8 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
   ): Observable<boolean> {
     let timezoneParam: common.TimeSpecEnum = route.queryParams?.timezone;
 
-    let structState = this.structQuery.getValue();
     let uiState = this.uiQuery.getValue();
+    let structState = this.structQuery.getValue();
 
     let timezone =
       structState.allowTimezones === false

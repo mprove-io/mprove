@@ -17,14 +17,12 @@ import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
-import { NavigateService } from '../services/navigate.service';
 import { UiService } from '../services/ui.service';
 
 @Injectable({ providedIn: 'root' })
 export class StructChartResolver implements Resolve<Observable<boolean>> {
   constructor(
     private apiService: ApiService,
-    private navigateService: NavigateService,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private structQuery: StructQuery,
@@ -41,8 +39,8 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
   ): Observable<boolean> {
     let timezoneParam: common.TimeSpecEnum = route.queryParams?.timezone;
 
-    let structState = this.structQuery.getValue();
     let uiState = this.uiQuery.getValue();
+    let structState = this.structQuery.getValue();
 
     let timezone =
       structState.allowTimezones === false
