@@ -106,7 +106,10 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
-    this.navigateService.navigateToCharts();
+    this.navigateService.navigateToChart({
+      modelId: common.LAST_SELECTED_MODEL_ID,
+      chartId: common.EMPTY_CHART_ID
+    });
   }
 
   navigateDashboards() {

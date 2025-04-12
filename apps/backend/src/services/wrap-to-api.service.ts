@@ -555,6 +555,10 @@ export class WrapToApiService {
           ? user.ui?.showHours
           : constants.DEFAULT_UI.showHours,
 
+        projectModelLinks: common.isDefined(user.ui?.projectModelLinks)
+          ? user.ui?.projectModelLinks
+          : constants.DEFAULT_UI.projectModelLinks,
+
         projectChartLinks: common.isDefined(user.ui?.projectChartLinks)
           ? user.ui?.projectChartLinks
           : constants.DEFAULT_UI.projectChartLinks,

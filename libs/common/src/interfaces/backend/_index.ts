@@ -15,6 +15,7 @@ export * from './orgs-item';
 export * from './project';
 export * from './project-chart-link';
 export * from './project-dashboard-link';
+export * from './project-model-link';
 export * from './project-report-link';
 export * from './projects-item';
 export * from './query-estimate';

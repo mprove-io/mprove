@@ -5,18 +5,20 @@ import {
   Router,
   RouterStateSnapshot
 } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
 import { ModelQuery } from '../queries/model.query';
+import { ModelsQuery } from '../queries/models.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { StructQuery } from '../queries/struct.query';
+import { UiQuery } from '../queries/ui.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
-import { MyDialogService } from '../services/my-dialog.service';
+import { NavigateService } from '../services/navigate.service';
 
 @Injectable({ providedIn: 'root' })
 export class StructModelResolver implements Resolve<Observable<boolean>> {
@@ -25,9 +27,11 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private modelQuery: ModelQuery,
+    private modelsQuery: ModelsQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,
-    private myDialogService: MyDialogService,
+    private uiQuery: UiQuery,
+    private navigateService: NavigateService,
     private router: Router
   ) {}
 
@@ -59,6 +63,34 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
     });
 
     let parametersModelId = route.params[common.PARAMETER_MODEL_ID];
+
+    if (parametersModelId === common.LAST_SELECTED_MODEL_ID) {
+      let projectModelLinks = this.uiQuery.getValue().projectModelLinks;
+      let models = this.modelsQuery.getValue().models;
+
+      let pLink = projectModelLinks.find(
+        link => link.projectId === nav.projectId
+      );
+
+      if (common.isDefined(pLink)) {
+        let pModel = models.find(r => r.modelId === pLink.modelId);
+
+        if (common.isDefined(pModel)) {
+          this.navigateService.navigateToChart({
+            modelId: pModel.modelId,
+            chartId: common.EMPTY_CHART_ID
+          });
+        } else {
+          this.navigateService.navigateToCharts();
+        }
+
+        return of(false);
+      } else {
+        this.navigateService.navigateToCharts();
+
+        return of(false);
+      }
+    }
 
     let payload: apiToBackend.ToBackendGetModelRequestPayload = {
       projectId: nav.projectId,

@@ -5,6 +5,7 @@ import { IsTimezone } from '~common/functions/is-timezone';
 import { Fraction } from '../blockml/fraction';
 import { ProjectChartLink } from './project-chart-link';
 import { ProjectDashboardLink } from './project-dashboard-link';
+import { ProjectModelLink } from './project-model-link';
 import { ProjectReportLink } from './project-report-link';
 
 export class Ui {
@@ -31,6 +32,10 @@ export class Ui {
 
   @IsBoolean()
   showHours: boolean;
+
+  @ValidateNested()
+  @Type(() => ProjectModelLink)
+  projectModelLinks: ProjectModelLink[];
 
   @ValidateNested()
   @Type(() => ProjectChartLink)
