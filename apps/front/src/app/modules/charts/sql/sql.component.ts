@@ -21,11 +21,12 @@ export class SqlComponent {
 
   content: string;
 
-  query: common.Query;
-  query$ = this.chartQuery.query$.pipe(
+  chart: common.ChartX;
+  chart$ = this.chartQuery.select().pipe(
     tap(x => {
-      this.query = x;
-      this.content = x.sql;
+      this.chart = x;
+      this.content = x.tiles[0].query.sql;
+
       this.cd.detectChanges();
     })
   );

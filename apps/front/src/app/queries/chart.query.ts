@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { createStore, select, withProps } from '@ngneat/elf';
+import { createStore, withProps } from '@ngneat/elf';
 import { common } from '~front/barrels/common';
 import { BaseQuery } from './base.query';
 
@@ -97,9 +97,6 @@ export const emptyChart: ChartState = {
 
 @Injectable({ providedIn: 'root' })
 export class ChartQuery extends BaseQuery<ChartState> {
-  query$ = this.store.pipe(select(state => state.tiles[0].query));
-  mconfig$ = this.store.pipe(select(state => state.tiles[0].mconfig));
-
   constructor() {
     super(createStore({ name: 'chart' }, withProps<ChartState>(emptyChart)));
   }

@@ -69,17 +69,17 @@ export class ModelTreeComponent implements AfterViewInit {
 
   nodesExtra$ = combineLatest([
     this.modelQuery.select(),
-    this.chartQuery.mconfig$,
+    this.chartQuery.select(),
     this.uiQuery.modelTreeLevels$
   ]).pipe(
     tap(
-      ([model, mconfig, modelTreeLevels]: [
+      ([model, chart, modelTreeLevels]: [
         ModelState,
-        common.MconfigX,
+        common.ChartX,
         common.ModelTreeLevelsEnum
       ]) => {
         this.model = model;
-        this.mconfig = mconfig;
+        this.mconfig = chart.tiles[0].mconfig;
         this.modelTreeLevels = modelTreeLevels;
 
         this.makeNodesExtra();

@@ -203,6 +203,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   mconfig: common.MconfigX;
   query: common.Query;
+  qData: QDataRow[];
 
   chart: common.ChartX;
   chart$ = this.chartQuery.select().pipe(
@@ -344,39 +345,39 @@ export class ChartsComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
 
       // workaround to remove scrolls on filters list change
-      let shouldRefresh = false;
+      // let shouldRefresh = false;
 
-      if (
-        common.isDefined(oldMconfig) &&
-        oldMconfig.mconfigId !== common.EMPTY_MCONFIG_ID
-      ) {
-        if (
-          oldMconfig.extendedFilters.length !==
-          this.mconfig.extendedFilters.length
-        ) {
-          shouldRefresh = true;
-        } else {
-          oldMconfig.extendedFilters.forEach(oldExtendedFilter => {
-            let newExtendedFilter = this.mconfig.extendedFilters.find(
-              y => y.fieldId === oldExtendedFilter.fieldId
-            );
+      // if (
+      //   common.isDefined(oldMconfig) &&
+      //   oldMconfig.mconfigId !== common.EMPTY_MCONFIG_ID
+      // ) {
+      //   if (
+      //     oldMconfig.extendedFilters.length !==
+      //     this.mconfig.extendedFilters.length
+      //   ) {
+      //     shouldRefresh = true;
+      //   } else {
+      //     oldMconfig.extendedFilters.forEach(oldExtendedFilter => {
+      //       let newExtendedFilter = this.mconfig.extendedFilters.find(
+      //         y => y.fieldId === oldExtendedFilter.fieldId
+      //       );
 
-            if (common.isUndefined(newExtendedFilter)) {
-              shouldRefresh = true;
-            } else if (
-              oldExtendedFilter.fractions.length !==
-              newExtendedFilter.fractions.length
-            ) {
-              shouldRefresh = true;
-            }
-          });
-        }
-      }
-      if (shouldRefresh === true) {
-        setTimeout(() => {
-          this.refreshShow();
-        });
-      }
+      //       if (common.isUndefined(newExtendedFilter)) {
+      //         shouldRefresh = true;
+      //       } else if (
+      //         oldExtendedFilter.fractions.length !==
+      //         newExtendedFilter.fractions.length
+      //       ) {
+      //         shouldRefresh = true;
+      //       }
+      //     });
+      //   }
+      // }
+      // if (shouldRefresh === true) {
+      //   setTimeout(() => {
+      //     this.refreshShow();
+      //   });
+      // }
       //
     })
   );
@@ -435,8 +436,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
   dryId: string;
   dryQueryEstimate: common.QueryEstimate;
   dryDataSize: string;
-
-  qData: QDataRow[];
 
   isSelectValid = false;
   errorMessage = '';

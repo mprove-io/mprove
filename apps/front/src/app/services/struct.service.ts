@@ -31,9 +31,10 @@ export class StructService {
   );
 
   mconfig: common.MconfigX;
-  mconfig$ = this.chartQuery.mconfig$.pipe(
+
+  chart$ = this.chartQuery.select().pipe(
     tap(x => {
-      this.mconfig = x;
+      this.mconfig = x.tiles[0].mconfig;
     })
   );
 
@@ -47,7 +48,7 @@ export class StructService {
     this.user$.subscribe();
     this.struct$.subscribe();
     this.model$.subscribe();
-    this.mconfig$.subscribe();
+    this.chart$.subscribe();
   }
 
   makeMconfig(): common.MconfigX {
