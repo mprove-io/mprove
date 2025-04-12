@@ -113,28 +113,25 @@ export class ReportsComponent implements OnInit, OnDestroy {
       this.isShow = true;
 
       if (x.draft === false) {
+        let nav = this.navQuery.getValue();
         let links = this.uiQuery.getValue().projectReportLinks;
 
-        let nav = this.navQuery.getValue();
         let link: common.ProjectReportLink = links.find(
-          l => l.projectId === nav.projectId && l.draft === x.draft
+          l => l.projectId === nav.projectId
         );
 
         let newProjectReportLinks;
 
         if (common.isDefined(link)) {
-          let newLink = {
+          let newLink: common.ProjectReportLink = {
             projectId: nav.projectId,
-            draft: x.draft,
             reportId: x.reportId,
             lastNavTs: Date.now()
           };
 
           newProjectReportLinks = [
             newLink,
-            ...links.filter(
-              r => !(r.projectId === nav.projectId && r.draft === x.draft)
-            )
+            ...links.filter(r => !(r.projectId === nav.projectId))
           ];
         } else {
           let newLink = {

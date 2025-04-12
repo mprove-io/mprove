@@ -90,49 +90,16 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
       : route?.params[common.PARAMETER_DASHBOARD_ID];
 
     if (parametersDashboardId === common.LAST_SELECTED_DASHBOARD_ID) {
-      let projectDashboardLinks = this.uiQuery.getValue().projectDashboardLinks;
       let dashboards = this.dashboardsQuery.getValue().dashboards;
-
-      let draftLink = projectDashboardLinks.find(
-        link => link.draft === true && link.projectId === nav.projectId
-      );
+      let projectDashboardLinks = this.uiQuery.getValue().projectDashboardLinks;
 
       let pLink = projectDashboardLinks.find(
-        link => link.draft === false && link.projectId === nav.projectId
+        link => link.projectId === nav.projectId
       );
 
-      if (
-        common.isDefined(draftLink) &&
-        (common.isUndefined(pLink) || draftLink.lastNavTs > pLink.lastNavTs)
-      ) {
-        let draftDashboard = dashboards.find(
-          r => r.dashboardId === draftLink.dashboardId && r.draft === true
-        );
-
-        if (common.isDefined(draftDashboard)) {
-          this.navigateService.navigateToDashboard({
-            dashboardId: draftDashboard.dashboardId
-          });
-
-          return of(false);
-        } else if (common.isDefined(pLink)) {
-          let pDashboard = dashboards.find(
-            r => r.dashboardId === pLink.dashboardId && r.draft === false
-          );
-
-          if (common.isDefined(pDashboard)) {
-            this.navigateService.navigateToDashboard({
-              dashboardId: pDashboard.dashboardId
-            });
-          } else {
-            this.navigateService.navigateToDashboards();
-          }
-
-          return of(false);
-        }
-      } else if (common.isDefined(pLink)) {
+      if (common.isDefined(pLink)) {
         let pDashboard = dashboards.find(
-          r => r.dashboardId === pLink.dashboardId && r.draft === false
+          r => r.dashboardId === pLink.dashboardId
         );
 
         if (common.isDefined(pDashboard)) {

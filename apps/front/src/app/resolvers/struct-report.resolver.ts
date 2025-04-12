@@ -112,56 +112,18 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
     let parametersReportId = route.params[common.PARAMETER_REPORT_ID];
 
     if (parametersReportId === common.LAST_SELECTED_REPORT_ID) {
-      let projectReportLinks = this.uiQuery.getValue().projectReportLinks;
       let reports = this.reportsQuery.getValue().reports;
-
-      let draftLink = projectReportLinks.find(
-        link => link.draft === true && link.projectId === nav.projectId
-      );
+      let projectReportLinks = this.uiQuery.getValue().projectReportLinks;
 
       let pLink = projectReportLinks.find(
-        link => link.draft === false && link.projectId === nav.projectId
+        link => link.projectId === nav.projectId
       );
 
       if (
-        common.isDefined(draftLink) &&
-        (common.isUndefined(pLink) || draftLink.lastNavTs > pLink.lastNavTs)
-      ) {
-        let draftReport = reports.find(
-          r => r.reportId === draftLink.reportId && r.draft === true
-        );
-
-        if (common.isDefined(draftReport)) {
-          this.navigateService.navigateToReport({
-            reportId: draftReport.reportId
-          });
-
-          return of(false);
-        } else if (
-          common.isDefined(pLink) &&
-          pLink.reportId !== common.EMPTY_REPORT_ID
-        ) {
-          let pReport = reports.find(
-            r => r.reportId === pLink.reportId && r.draft === false
-          );
-
-          if (common.isDefined(pReport)) {
-            this.navigateService.navigateToReport({
-              reportId: pReport.reportId
-            });
-          } else {
-            this.navigateService.navigateToReports();
-          }
-
-          return of(false);
-        }
-      } else if (
         common.isDefined(pLink) &&
         pLink.reportId !== common.EMPTY_REPORT_ID
       ) {
-        let pReport = reports.find(
-          r => r.reportId === pLink.reportId && r.draft === false
-        );
+        let pReport = reports.find(r => r.reportId === pLink.reportId);
 
         if (common.isDefined(pReport)) {
           this.navigateService.navigateToReport({

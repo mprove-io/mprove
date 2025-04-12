@@ -105,33 +105,29 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       this.dashboard = x;
 
       if (x.draft === false) {
+        let nav = this.navQuery.getValue();
         let links = this.uiQuery.getValue().projectDashboardLinks;
 
-        let nav = this.navQuery.getValue();
         let link: common.ProjectDashboardLink = links.find(
-          l => l.projectId === nav.projectId && l.draft === x.draft
+          l => l.projectId === nav.projectId
         );
 
         let newProjectDashboardLinks;
 
         if (common.isDefined(link)) {
-          let newLink = {
+          let newLink: common.ProjectDashboardLink = {
             projectId: nav.projectId,
-            draft: x.draft,
             dashboardId: x.dashboardId,
             lastNavTs: Date.now()
           };
 
           newProjectDashboardLinks = [
             newLink,
-            ...links.filter(
-              r => !(r.projectId === nav.projectId && r.draft === x.draft)
-            )
+            ...links.filter(r => !(r.projectId === nav.projectId))
           ];
         } else {
-          let newLink = {
+          let newLink: common.ProjectDashboardLink = {
             projectId: nav.projectId,
-            draft: x.draft,
             dashboardId: x.dashboardId,
             lastNavTs: Date.now()
           };

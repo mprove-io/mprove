@@ -176,45 +176,47 @@ export class ChartsComponent implements OnInit, OnDestroy {
         this.makeFilteredCharts();
       }
 
-      let nav = this.navQuery.getValue();
+      if (common.isDefined(this.model.modelId)) {
+        let nav = this.navQuery.getValue();
 
-      let links = this.uiQuery.getValue().projectModelLinks;
+        let links = this.uiQuery.getValue().projectModelLinks;
 
-      let link: common.ProjectModelLink = links.find(
-        l => l.projectId === nav.projectId
-      );
+        let link: common.ProjectModelLink = links.find(
+          l => l.projectId === nav.projectId
+        );
 
-      let newProjectModelLinks;
+        let newProjectModelLinks;
 
-      if (common.isDefined(link)) {
-        let newLink = {
-          projectId: nav.projectId,
-          modelId: x.modelId,
-          lastNavTs: Date.now()
-        };
+        if (common.isDefined(link)) {
+          let newLink = {
+            projectId: nav.projectId,
+            modelId: x.modelId,
+            lastNavTs: Date.now()
+          };
 
-        newProjectModelLinks = [
-          newLink,
-          ...links.filter(r => !(r.projectId === nav.projectId))
-        ];
-      } else {
-        let newLink = {
-          projectId: nav.projectId,
-          modelId: x.modelId,
-          lastNavTs: Date.now()
-        };
+          newProjectModelLinks = [
+            newLink,
+            ...links.filter(r => !(r.projectId === nav.projectId))
+          ];
+        } else {
+          let newLink = {
+            projectId: nav.projectId,
+            modelId: x.modelId,
+            lastNavTs: Date.now()
+          };
 
-        newProjectModelLinks = [newLink, ...links];
+          newProjectModelLinks = [newLink, ...links];
+        }
+
+        let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
+
+        newProjectModelLinks = newProjectModelLinks.filter(
+          l => l.lastNavTs >= oneYearAgoTimestamp
+        );
+
+        this.uiQuery.updatePart({ projectModelLinks: newProjectModelLinks });
+        this.uiService.setUserUi({ projectModelLinks: newProjectModelLinks });
       }
-
-      let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
-
-      newProjectModelLinks = newProjectModelLinks.filter(
-        l => l.lastNavTs >= oneYearAgoTimestamp
-      );
-
-      this.uiQuery.updatePart({ projectModelLinks: newProjectModelLinks });
-      this.uiService.setUserUi({ projectModelLinks: newProjectModelLinks });
 
       this.cd.detectChanges();
     })
