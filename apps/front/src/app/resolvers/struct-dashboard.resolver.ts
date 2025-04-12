@@ -43,14 +43,25 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
   ): Observable<boolean> {
     let timezoneParam: common.TimeSpecEnum = route.queryParams?.timezone;
 
+    let structState = this.structQuery.getValue();
     let uiState = this.uiQuery.getValue();
+
+    let timezone =
+      structState.allowTimezones === false
+        ? structState.defaultTimezone
+        : common.isDefined(timezoneParam)
+        ? timezoneParam.split('-').join('/')
+        : uiState.timezone;
+
+    if (uiState.timezone !== timezone) {
+      this.uiQuery.updatePart({ timezone: timezone });
+      this.uiService.setUserUi({ timezone: timezone });
+    }
 
     return this.resolveRoute({
       route: route,
       showSpinner: false,
-      timezone: common.isDefined(timezoneParam)
-        ? timezoneParam.split('-').join('/')
-        : uiState.timezone
+      timezone: timezone
     });
   }
 
@@ -144,15 +155,6 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
               needValidate: resp.payload.needValidate
             });
             this.dashboardQuery.update(resp.payload.dashboard);
-
-            let uiState = this.uiQuery.getValue();
-
-            if (uiState.timezone !== timezone) {
-              this.uiQuery.updatePart({
-                timezone: timezone
-              });
-              this.uiService.setUserUi({ timezone: timezone });
-            }
 
             return true;
           } else if (

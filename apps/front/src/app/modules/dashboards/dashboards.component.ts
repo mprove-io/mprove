@@ -149,9 +149,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         });
       }
 
-      let uiState = this.uiQuery.getValue();
-      this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
-
       if (common.isDefined(this.dashboard?.dashboardId)) {
         this.title.setTitle(
           `${this.pageTitle} - ${
@@ -218,22 +215,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.lastUrl = ar[ar.length - 1];
 
     let uiState = this.uiQuery.getValue();
-    let timezoneParam = this.route.snapshot.queryParamMap.get('timezone');
-    let structState = this.structQuery.getValue();
 
-    let timezone =
-      structState.allowTimezones === false
-        ? structState.defaultTimezone
-        : common.isDefined(timezoneParam)
-        ? timezoneParam.split('-').join('/')
-        : uiState.timezone;
-
-    if (uiState.timezone !== timezone) {
-      this.uiQuery.updatePart({ timezone: timezone });
-      this.uiService.setUserUi({ timezone: timezone });
-    }
-
-    this.timezoneForm.controls['timezone'].setValue(timezone);
+    this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
 
     this.searchWordChange();
   }
