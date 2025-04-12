@@ -123,10 +123,9 @@ export class ChartsComponent implements OnInit, OnDestroy {
   lastUrl: string;
 
   modelTreeLevels = common.ModelTreeLevelsEnum.FlatTime;
-
-  uiQuery$ = this.uiQuery.select().pipe(
-    tap(ui => {
-      this.modelTreeLevels = ui.modelTreeLevels;
+  modelTreeLevels$ = this.uiQuery.modelTreeLevels$.pipe(
+    tap(x => {
+      this.modelTreeLevels = x;
       this.cd.detectChanges();
     })
   );
@@ -1323,7 +1322,7 @@ ${this.mconfig.storePart?.reqUrlPath}`
   }
 
   ngOnDestroy() {
-    // console.log('ngOnDestroyModel')
+    // console.log('charts ngOnDestroy');
     this.chartQuery.reset();
     this.modelQuery.reset();
 

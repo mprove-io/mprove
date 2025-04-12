@@ -91,13 +91,15 @@ export class UiQuery extends BaseQuery<UiState> {
 
   showHours$ = this.store.pipe(select(state => state.showHours));
 
-  projectChartLinks = this.store.pipe(select(state => state.projectChartLinks));
+  projectChartLinks$ = this.store.pipe(
+    select(state => state.projectChartLinks)
+  );
 
-  projectDashboardLinks = this.store.pipe(
+  projectDashboardLinks$ = this.store.pipe(
     select(state => state.projectDashboardLinks)
   );
 
-  projectReportLinks = this.store.pipe(
+  projectReportLinks$ = this.store.pipe(
     select(state => state.projectReportLinks)
   );
 
