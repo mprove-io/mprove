@@ -209,6 +209,74 @@ export class ChartsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.chart = x;
 
+      if (common.isDefined(this.chart?.chartId)) {
+        this.title.setTitle(
+          `${this.pageTitle} - ${this.chart?.title || this.chart?.chartId}`
+        );
+      }
+
+      this.dryQueryEstimate = undefined;
+
+      this.mconfig = x.tiles[0].mconfig;
+      this.query = x.tiles[0].query;
+
+      if (
+        common.isDefined(this.mconfig) &&
+        common.isDefined(this.mconfig.fields) &&
+        this.mconfig.mconfigId !== common.EMPTY_MCONFIG_ID
+      ) {
+        this.qData =
+          this.mconfig.queryId === this.query.queryId
+            ? this.dataService.makeQData({
+                query: this.query,
+                mconfigFields: this.mconfig.fields
+              })
+            : [];
+
+        let checkSelectResult = getSelectValid({
+          chart: this.mconfig.chart,
+          mconfigFields: this.mconfig.fields,
+          isStoreModel: this.mconfig.isStoreModel
+        });
+
+        this.isSelectValid = checkSelectResult.isSelectValid;
+        this.errorMessage = checkSelectResult.errorMessage;
+      }
+
+      if (
+        common.isDefined(this.query.queryId) &&
+        this.query.queryId !== common.EMPTY_QUERY_ID &&
+        this.query.status === common.QueryStatusEnum.New &&
+        this.isAutoRun === true
+      ) {
+        setTimeout(() => {
+          this.run();
+        }, 0);
+      }
+
+      if (this.mconfig.limit) {
+        this.limitForm.controls['limit'].setValue(this.mconfig.limit);
+      }
+
+      if (this.mconfig.chart) {
+        this.chartTypeForm.controls['chartType'].setValue(
+          this.mconfig.chart.type
+        );
+        this.chartTitleForm.controls['chartTitle'].setValue(
+          this.mconfig.chart.title
+        );
+      }
+
+      if (this.mconfig.timezone) {
+        this.timezoneForm.controls['timezone'].setValue(this.mconfig.timezone);
+        this.uiQuery.updatePart({ timezone: this.mconfig.timezone });
+        this.uiService.setUserUi({ timezone: this.mconfig.timezone });
+      }
+      // else {
+      //   let uiState = this.uiQuery.getValue();
+      //   this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
+      // }
+
       if (x.draft === false) {
         let links = this.uiQuery.getValue().projectChartLinks;
 
@@ -256,89 +324,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
         this.uiService.setUserUi({
           projectChartLinks: newProjectChartLinks
         });
-      }
-
-      let uiState = this.uiQuery.getValue();
-      this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
-
-      if (common.isDefined(this.chart?.chartId)) {
-        this.title.setTitle(
-          `${this.pageTitle} - ${this.chart?.title || this.chart?.chartId}`
-        );
-      }
-
-      //
-      //
-      //
-
-      this.dryQueryEstimate = undefined;
-
-      let oldMconfig = this.mconfig;
-
-      this.mconfig = x.tiles[0].mconfig;
-      this.query = x.tiles[0].query;
-
-      // console.log('this.mconfig.extendedFilters');
-      // console.log(this.mconfig.extendedFilters);
-
-      // console.log(this.mconfig);
-
-      // this.filtersIsExpanded =
-      //   this.mconfig.extendedFilters.length === 0
-      //     ? true
-      //     : this.filtersIsExpanded;
-
-      if (this.mconfig.timezone) {
-        this.timezoneForm.controls['timezone'].setValue(this.mconfig.timezone);
-        this.uiQuery.updatePart({ timezone: this.mconfig.timezone });
-        this.uiService.setUserUi({ timezone: this.mconfig.timezone });
-      }
-
-      if (this.mconfig.limit) {
-        this.limitForm.controls['limit'].setValue(this.mconfig.limit);
-      }
-
-      if (this.mconfig.chart) {
-        this.chartTypeForm.controls['chartType'].setValue(
-          this.mconfig.chart.type
-        );
-        this.chartTitleForm.controls['chartTitle'].setValue(
-          this.mconfig.chart.title
-        );
-      }
-
-      if (
-        common.isDefined(this.mconfig) &&
-        common.isDefined(this.mconfig.fields) &&
-        this.mconfig.mconfigId !== common.EMPTY_MCONFIG_ID
-      ) {
-        this.qData =
-          this.mconfig.queryId === this.query.queryId
-            ? this.dataService.makeQData({
-                query: this.query,
-                mconfigFields: this.mconfig.fields
-              })
-            : [];
-
-        let checkSelectResult = getSelectValid({
-          chart: this.mconfig.chart,
-          mconfigFields: this.mconfig.fields,
-          isStoreModel: this.mconfig.isStoreModel
-        });
-
-        this.isSelectValid = checkSelectResult.isSelectValid;
-        this.errorMessage = checkSelectResult.errorMessage;
-      }
-
-      if (
-        common.isDefined(this.query.queryId) &&
-        this.query.queryId !== common.EMPTY_QUERY_ID &&
-        this.query.status === common.QueryStatusEnum.New &&
-        this.isAutoRun === true
-      ) {
-        setTimeout(() => {
-          this.run();
-        }, 0);
       }
 
       this.cd.detectChanges();

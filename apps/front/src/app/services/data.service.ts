@@ -251,6 +251,9 @@ export class DataService {
       chartType
     } = item;
 
+    // console.log('makeSeriesData item');
+    // console.log(item);
+
     let xField = selectFields.find(f => f.id === xFieldId);
 
     if (!xField) {
