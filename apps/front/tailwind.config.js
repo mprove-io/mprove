@@ -5,12 +5,13 @@
 // old blue2 = '#E7F2FD';
 // old blue3 = '#365EE0';
 // '#0069a8'; // sky-700
+// '#dff2fe'; // sky-100
 
 var blue1 = '#F2F5FA'; // main background
-var blue2 = '#dff2fe'; // sky-100 selected objects
+var blue2 = '#cdecfe'; // sky-150 selected objects
 var blue3 = '#0084d1'; // sky-600 main buttons, main clickable text
 var blue4 = '#f0f9ff'; // sky-50 hover elements
-var blue5 = '#C3DCF3'; // table - selected dimensions
+var blue5 = '#e8f6ff'; // sky-75 model tree dimensions
 
 var gray1 = '#4D4F5C';
 var gray2 = '#00030B';
