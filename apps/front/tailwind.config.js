@@ -26,24 +26,6 @@ var purple2 = '#E1E7FB';
 
 var red1 = '#DE4343';
 
-let myColors = [
-  blue1,
-  blue2,
-  blue3,
-  blue4,
-  blue5,
-  gray1,
-  gray2,
-  gray3,
-  gray4,
-  gray5,
-  green1,
-  green2,
-  purple1,
-  purple2,
-  red1
-];
-
 const colors = require('tailwindcss/colors');
 
 const { createGlobPatternsForDependencies } = require('@nrwl/angular/tailwind');
