@@ -2,15 +2,15 @@
 // favicon '#0084d1'; // sky-600
 // ui-switch '#00a6f4'; // sky-500
 
+// old blue2 = '#E7F2FD';
 // old blue3 = '#365EE0';
 // '#0069a8'; // sky-700
 
 var blue1 = '#F2F5FA'; // main background
-var blue2 = '#E7F2FD';
-var blue3 = '#0084d1'; // sky-600
+var blue2 = '#dff2fe'; // sky-100 selected objects
+var blue3 = '#0084d1'; // sky-600 main buttons, ...
 var blue4 = '#465EDC';
-var blue5 = '#C3DCF3';
-var blue6 = '#C3DCF372';
+var blue5 = '#C3DCF3'; // table - selected dimensions
 
 var gray1 = '#4D4F5C';
 var gray2 = '#00030B';
@@ -67,7 +67,6 @@ module.exports = {
       green1,
       green2,
       blue5,
-      blue6,
       purple1,
       purple2
     }),

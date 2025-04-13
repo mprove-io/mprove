@@ -14,7 +14,7 @@
             data-cy="filesTreeItem"
             class="group flex w-full cursor-pointer select-none flex-row px-5 py-1"
             [ngClass]="{
-              'bg-sky-100': !!fileNodeId && node.data.id === fileNodeId,
+              'bg-blue2': !!fileNodeId && node.data.id === fileNodeId,
               'hover:bg-sky-50': !fileNodeId || node.data.id !== fileNodeId
             }"
             (click)="nodeOnClick(node)"
@@ -103,7 +103,7 @@
       *ngFor="let change of repo.changesToCommit"
       class="flex flex-row items-end rounded px-7 py-2 hover:cursor-pointer"
       [ngClass]="{
-        'bg-sky-100': fileId === change.fileId,
+        'bg-blue2': fileId === change.fileId,
         'hover:bg-sky-50': fileId !== change.fileId
       }"
       (click)="changeToCommitOnClick(change.fileId)"
@@ -132,7 +132,7 @@
       *ngFor="let change of repo.changesToPush"
       class="flex flex-row items-end rounded px-7 py-2 hover:cursor-pointer"
       [ngClass]="{
-        'bg-sky-100': fileId === change.fileId,
+        'bg-blue2': fileId === change.fileId,
         'hover:bg-sky-50': fileId !== change.fileId
       }"
       (click)="changeToPushOnClick(change.fileId)"

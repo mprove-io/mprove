@@ -142,8 +142,7 @@
                         [ngClass]="{
                           'mt-2': i === 0,
                           'mb-5': i === filteredDashboards.length - 1,
-                          'bg-sky-100':
-                            d.dashboardId === dashboard?.dashboardId,
+                          'bg-blue2': d.dashboardId === dashboard?.dashboardId,
                           'hover:bg-sky-50':
                             d.dashboardId !== dashboard?.dashboardId
                         }"
