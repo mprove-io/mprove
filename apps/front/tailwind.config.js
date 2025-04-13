@@ -6,6 +6,7 @@
 // old blue3 = '#365EE0';
 // '#0069a8'; // sky-700
 // '#dff2fe'; // sky-100
+// '#64BD63'; // ui-switch default green-color
 
 var blue1 = '#F2F5FA'; // main background
 var blue2 = '#cdecfe'; // sky-150 selected objects
