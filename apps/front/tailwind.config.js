@@ -1,6 +1,9 @@
 var blue1 = '#F2F5FA';
 var blue2 = '#E7F2FD';
-var blue3 = '#365EE0';
+// var blue3 = '#0069a8'; // sky-700
+var blue3 = '#0084d1'; // sky-600
+// var blue3 = '#00a6f4'; // sky-500
+// var blue3 = '#365EE0';
 var blue4 = '#465EDC';
 var blue5 = '#C3DCF3';
 var blue6 = '#C3DCF372';
