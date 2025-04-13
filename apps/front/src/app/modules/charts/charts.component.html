@@ -338,26 +338,59 @@
                   [ngClass]="{
                     'mt-4': i === 0,
                     'mb-5': i === filteredCharts.length - 1,
-                    'bg-blue2': c.chartId === chart?.chartId,
                     'hover:bg-blue4': c.chartId !== chart?.chartId
                   }"
                 >
-                  <!-- <div class="mr-3 flex h-2 items-center">
+                  <!-- <div class="ml-3 mr-3 flex h-2 items-center">
                     <div
                       *ngIf="c.chartId === chart?.chartId"
                       data-cy="chartsSelectedSymbol"
-                      class="bg-blue3 h-7 w-1 rounded-full text-white focus:outline-none"
+                      class="bg-blue3 h-8 w-2 rounded-full text-white focus:outline-none"
                     ></div>
 
                     <div
                       *ngIf="c.chartId !== chart?.chartId"
-                      class="h-7 w-1"
+                      class="h-8 w-2"
                     ></div>
                   </div> -->
 
-                  <img class="ml-4 h-6 w-6" [src]="c.iconPath" />
+                  <!-- <img class="ml-4 h-6 w-6" [src]="c.iconPath" /> -->
 
-                  <div class="text-gray1 ml-3 truncate">
+                  <div
+                    class="h-6 w-6 flex-shrink-0"
+                    [ngClass]="{
+                      'text-blue3': c.chartId === chart?.chartId,
+                      'text-gray1 ': c.chartId !== chart?.chartId
+                    }"
+                  >
+                    <m-chart-table-icon
+                      *ngIf="c.chartType === chartTypeEnumTable"
+                    ></m-chart-table-icon>
+
+                    <m-chart-line-icon
+                      *ngIf="c.chartType === chartTypeEnumLine"
+                    ></m-chart-line-icon>
+
+                    <m-chart-bar-icon
+                      *ngIf="c.chartType === chartTypeEnumBar"
+                    ></m-chart-bar-icon>
+
+                    <m-chart-scatter-icon
+                      *ngIf="c.chartType === chartTypeEnumScatter"
+                    ></m-chart-scatter-icon>
+
+                    <m-chart-pie-icon
+                      *ngIf="c.chartType === chartTypeEnumPie"
+                    ></m-chart-pie-icon>
+                  </div>
+
+                  <div
+                    class="ml-3 truncate"
+                    [ngClass]="{
+                      'text-blue3 font-semibold': c.chartId === chart?.chartId,
+                      'text-gray1': c.chartId !== chart?.chartId
+                    }"
+                  >
                     {{ c.title | capitalize }}
                   </div>
 
@@ -365,13 +398,12 @@
 
                   <button
                     *ngIf="chart.draft === true && c.chartId === chart.chartId"
-                    type="button"
-                    data-cy="chartSaveAsButton"
+                    data-cy="chartsSaveDraftButton"
                     class="ml-3 flex h-11 items-center justify-center rounded focus:outline-none"
                     (click)="chartSaveAs($event)"
                   >
                     <div
-                      class="flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center space-x-2 rounded px-2 hover:bg-white"
+                      class="hover:bg-blue6 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded px-2"
                     >
                       <m-save-icon class="text-gray-500"></m-save-icon>
                     </div>
@@ -379,7 +411,8 @@
 
                   <button
                     *ngIf="chart.draft === true && c.chartId === chart.chartId"
-                    class="ml-3 flex h-9 flex-shrink-0 items-center justify-center space-x-2 rounded px-2 text-gray-500 hover:bg-white focus:outline-none"
+                    data-cy="chartsDeleteDraftButton"
+                    class="hover:bg-blue6 ml-3 flex h-9 flex-shrink-0 items-center justify-center rounded px-2 text-gray-500 focus:outline-none"
                     (click)="deleteDraftChart($event, c)"
                   >
                     <m-trash-icon></m-trash-icon>
@@ -391,7 +424,7 @@
                   >
                     <m-chart-options
                       [chart]="c"
-                      [isHoverWhite]="c.chartId === chart.chartId"
+                      [isHoverWhite]="false"
                     ></m-chart-options>
                   </div>
                 </div>
@@ -585,7 +618,7 @@
                 >
                   <button
                     type="button"
-                    data-cy="modelSaveAsButton"
+                    data-cy="chartSaveAsButton"
                     class="w-28 flex-shrink-0 rounded border py-2 text-base font-medium focus:outline-none"
                     [ngClass]="{
                       'border-gray-400 text-gray-500 hover:bg-gray-100':

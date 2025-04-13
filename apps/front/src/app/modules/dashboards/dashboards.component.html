@@ -142,12 +142,19 @@
                         [ngClass]="{
                           'mt-4': i === 0,
                           'mb-5': i === filteredDashboards.length - 1,
-                          'bg-blue2': d.dashboardId === dashboard?.dashboardId,
                           'hover:bg-blue4':
                             d.dashboardId !== dashboard?.dashboardId
                         }"
                       >
-                        <div class="text-gray1 ml-4 truncate">
+                        <div
+                          class="ml-4 truncate"
+                          [ngClass]="{
+                            'text-blue3 font-semibold':
+                              d.dashboardId === dashboard?.dashboardId,
+                            'text-gray1':
+                              d.dashboardId !== dashboard?.dashboardId
+                          }"
+                        >
                           {{ d.title | capitalize }}
                         </div>
 
@@ -158,13 +165,12 @@
                             dashboard?.draft === true &&
                             d.dashboardId === dashboard?.dashboardId
                           "
-                          type="button"
-                          data-cy="dashboardSaveAsButton"
+                          data-cy="dashboardsSaveDraftButton"
                           class="ml-3 flex h-11 items-center justify-center rounded focus:outline-none"
                           (click)="dashboardSaveAs($event)"
                         >
                           <div
-                            class="flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center space-x-2 rounded hover:bg-white"
+                            class="hover:bg-blue6 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded px-2"
                           >
                             <m-save-icon class="text-gray-500"></m-save-icon>
                           </div>
@@ -175,7 +181,8 @@
                             dashboard?.draft === true &&
                             d.dashboardId === dashboard?.dashboardId
                           "
-                          class="ml-2 flex h-9 w-9 flex-shrink-0 items-center justify-center space-x-2 rounded text-gray-500 hover:bg-white focus:outline-none"
+                          data-cy="dashboardsDeleteDraftButton"
+                          class="hover:bg-blue6 ml-3 flex h-9 flex-shrink-0 items-center justify-center rounded px-2 text-gray-500 focus:outline-none"
                           (click)="deleteDraftDashboard($event, d)"
                         >
                           <m-trash-icon></m-trash-icon>
@@ -187,9 +194,7 @@
                         >
                           <m-dashboard-options
                             [dashboard]="d"
-                            [isHoverWhite]="
-                              d.dashboardId === dashboard?.dashboardId
-                            "
+                            [isHoverWhite]="false"
                           ></m-dashboard-options>
                         </div>
                       </div>

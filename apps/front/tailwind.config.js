@@ -12,6 +12,7 @@ var blue2 = '#cdecfe'; // sky-150 selected objects
 var blue3 = '#0084d1'; // sky-600 main buttons, main clickable text
 var blue4 = '#f0f9ff'; // sky-50 hover elements
 var blue5 = '#e8f6ff'; // sky-75 model tree dimensions
+var blue6 = '#b8e6fe'; // sky-200 dot options icon button
 
 var gray1 = '#4D4F5C';
 var gray2 = '#00030B';
@@ -66,6 +67,7 @@ module.exports = {
       blue3,
       blue4,
       blue5,
+      blue6,
       gray1,
       gray2,
       gray3,
@@ -84,6 +86,7 @@ module.exports = {
       blue3,
       blue4,
       blue5,
+      blue6,
       gray1,
       gray2,
       gray3,
@@ -102,6 +105,7 @@ module.exports = {
       blue3,
       blue4,
       blue5,
+      blue6,
       gray1,
       gray2,
       gray3,

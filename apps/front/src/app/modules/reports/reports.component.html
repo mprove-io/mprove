@@ -406,11 +406,17 @@
                         [ngClass]="{
                           'mt-4': i === 0,
                           'mb-5': i === filteredReports.length - 1,
-                          'bg-blue2': r.reportId === report?.reportId,
                           'hover:bg-blue4': r.reportId !== report?.reportId
                         }"
                       >
-                        <div class="text-gray1 ml-4 truncate">
+                        <div
+                          class="ml-4 truncate"
+                          [ngClass]="{
+                            'text-blue3 font-semibold':
+                              r.reportId === report.reportId,
+                            'text-gray1': r.reportId !== report.reportId
+                          }"
+                        >
                           {{ r.title | capitalize }}
                         </div>
 
@@ -421,13 +427,12 @@
                             report.draft === true &&
                             r.reportId === report.reportId
                           "
-                          type="button"
-                          data-cy="reportSaveAsButton"
+                          data-cy="reportsSaveDraftButton"
                           class="ml-3 flex h-11 items-center justify-center rounded focus:outline-none"
                           (click)="reportSaveAs($event)"
                         >
                           <div
-                            class="flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center space-x-2 rounded px-2 hover:bg-white"
+                            class="hover:bg-blue6 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded px-2"
                           >
                             <m-save-icon class="text-gray-500"></m-save-icon>
                           </div>
@@ -438,7 +443,8 @@
                             report.draft === true &&
                             r.reportId === report.reportId
                           "
-                          class="ml-3 flex h-9 flex-shrink-0 items-center justify-center space-x-2 rounded px-2 text-gray-500 hover:bg-white focus:outline-none"
+                          data-cy="reportsDeleteDraftButton"
+                          class="hover:bg-blue6 ml-3 flex h-9 flex-shrink-0 items-center justify-center rounded px-2 text-gray-500 focus:outline-none"
                           (click)="deleteDraftReport($event, r)"
                         >
                           <m-trash-icon></m-trash-icon>
@@ -452,7 +458,7 @@
                         >
                           <m-report-options
                             [report]="r"
-                            [isHoverWhite]="r.reportId === report.reportId"
+                            [isHoverWhite]="false"
                           ></m-report-options>
                         </div>
                       </div>
