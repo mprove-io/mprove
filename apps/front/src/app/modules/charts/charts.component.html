@@ -19,14 +19,15 @@
               <m-filter-icon
                 [ngClass]="{
                   'text-gray-400': isFilterByModel === false,
-                  'text-gray-500': isFilterByModel === true
+                  'text-purple-500': isFilterByModel === true
                 }"
               ></m-filter-icon>
 
               <div
-                class="ml-3 w-[54px] select-none items-center text-gray-500"
+                class="ml-3 w-[54px] select-none items-center text-lg"
                 [ngClass]="{
-                  'font-semibold': isFilterByModel === true
+                  'font-semibold text-purple-500': isFilterByModel === true,
+                  'text-gray-500': isFilterByModel === false
                 }"
               >
                 Model
@@ -39,14 +40,16 @@
             >
               <m-view-list-icon
                 [ngClass]="{
-                  'text-blue-500': lastUrl === pathChartsList,
-                  'text-gray-500': lastUrl !== pathChartsList
+                  'text-sky-500': lastUrl === pathChartsList,
+                  'text-gray-400': lastUrl !== pathChartsList
                 }"
               ></m-view-list-icon>
+
               <div
-                class="ml-3 select-none items-center"
+                class="ml-3 w-[62px] select-none items-center text-lg"
                 [ngClass]="{
-                  'text-blue-500': lastUrl === pathChartsList
+                  'font-semibold text-sky-500': lastUrl === pathChartsList,
+                  'text-gray-500': lastUrl !== pathChartsList
                 }"
               >
                 Charts
@@ -59,14 +62,16 @@
             >
               <m-view-list-icon
                 [ngClass]="{
-                  'text-blue-500': lastUrl === pathModelsList,
-                  'text-gray-500': lastUrl !== pathModelsList
+                  'text-sky-500': lastUrl === pathModelsList,
+                  'text-gray-400': lastUrl !== pathModelsList
                 }"
               ></m-view-list-icon>
+
               <div
-                class="ml-3 select-none items-center"
+                class="ml-3 w-[68px] select-none items-center text-lg"
                 [ngClass]="{
-                  'text-blue-500': lastUrl === pathModelsList
+                  'font-semibold text-sky-500': lastUrl === pathModelsList,
+                  'text-gray-500': lastUrl !== pathModelsList
                 }"
               >
                 Models
@@ -354,13 +359,26 @@
                     ></div>
                   </div> -->
 
-                  <!-- <img class="ml-4 h-6 w-6" [src]="c.iconPath" /> -->
+                  <img
+                    class="ml-4 h-6 w-6 flex-shrink-0"
+                    *ngIf="
+                      lastUrl === pathCharts ||
+                      lastUrl === pathChartsList ||
+                      lastUrl === pathModelsList
+                    "
+                    [src]="c.iconPath"
+                  />
 
                   <div
-                    class="h-6 w-6 flex-shrink-0"
+                    *ngIf="
+                      lastUrl !== pathCharts &&
+                      lastUrl !== pathChartsList &&
+                      lastUrl !== pathModelsList
+                    "
+                    class="ml-4 h-6 w-6 flex-shrink-0"
                     [ngClass]="{
                       'text-blue3': c.chartId === chart?.chartId,
-                      'text-gray-500 ': c.chartId !== chart?.chartId
+                      'text-gray-500': c.chartId !== chart?.chartId
                     }"
                   >
                     <m-chart-table-icon
