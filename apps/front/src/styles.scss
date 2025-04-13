@@ -202,7 +202,21 @@ ngneat-dialog {
 
 .ng-select.ng-select-disabled > .ng-select-container {
   // background-color: #F3F4F6;
-  background-color: #e5e7eb;
+  background-color: #e5ebeb;
+}
+
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+  background-color: #f0f9ff; // bg-sky-50
+}
+
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected {
+  background-color: #dff2fe; // bg-sky-100
+}
+
+.ng-dropdown-panel
+  .ng-dropdown-panel-items
+  .ng-option.ng-option-selected.ng-option-marked {
+  background-color: #dff2fe; // bg-sky-100
 }
 
 .ng-dropdown-panel,

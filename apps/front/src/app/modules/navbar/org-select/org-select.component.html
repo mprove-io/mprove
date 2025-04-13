@@ -35,7 +35,7 @@
         data-cy="orgSelectCreateOrgButton"
         class="w-full rounded py-3 text-base focus:outline-none"
         [ngClass]="{
-          'text-blue3 hover:bg-blue2': alias !== restrictedUserAlias,
+          'text-blue3 hover:bg-sky-50': alias !== restrictedUserAlias,
           'cursor-default bg-gray-400 text-white': alias === restrictedUserAlias
         }"
         (click)="createNewOrg()"

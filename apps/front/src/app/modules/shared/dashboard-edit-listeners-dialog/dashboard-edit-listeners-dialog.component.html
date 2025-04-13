@@ -139,7 +139,7 @@
 
             <button
               *ngIf="i === 0"
-              class="hover:bg-blue2 invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
+              class="invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded hover:bg-sky-50 focus:outline-none group-hover:visible"
               (click)="
                 addListener({
                   tile: tile,
@@ -153,7 +153,7 @@
 
             <button
               *ngIf="i > 0"
-              class="hover:bg-blue2 invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
+              class="invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded hover:bg-sky-50 focus:outline-none group-hover:visible"
               (click)="
                 removeListener({
                   event: $event,

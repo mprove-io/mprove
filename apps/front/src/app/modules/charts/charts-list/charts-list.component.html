@@ -39,7 +39,7 @@
       >
         <div
           *ngFor="let item of filteredCharts; let i = index; trackBy: trackByFn"
-          class="hover:border-blue2 hover:bg-blue2 flex flex-row bg-white hover:cursor-pointer"
+          class="hover:border-blue2 flex flex-row bg-white hover:cursor-pointer hover:bg-sky-50"
           [ngStyle]="
             item.chartId !==
               filteredCharts[filteredCharts.length - 1].chartId && {
@@ -65,68 +65,6 @@
                     [isHoverWhite]="false"
                   ></m-chart-options>
                 </div>
-
-                <!-- <button
-                  data-cy="chartOptionsMenuButton"
-                  class="invisible flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none group-hover:visible"
-                  #t1="tippy"
-                  [tp]="templateChartOptions"
-                  [tpHideOnEscape]="true"
-                  tpVariation="menu"
-                  className="my-menu"
-                  (click)="rowMenuOnClick($event)"
-                >
-                  <m-dots-vertical-icon></m-dots-vertical-icon>
-                </button> -->
-
-                <!-- <ng-template #templateChartOptions>
-                  <div
-                    class="border-gray4 w-64 rounded-md border-2 bg-white shadow-xl"
-                  >
-                    <div
-                      tp="Chart can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save chart as new to become an author."
-                      placement="left"
-                      [tpIsEnabled]="item.canEditOrDeleteChart === false"
-                    >
-                      <button
-                        data-cy="chartOptionsEditInfo"
-                        class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
-                        [ngClass]="{
-                          'cursor-default text-gray-400':
-                            item.canEditOrDeleteChart === false
-                        }"
-                        (click)="t1.hide(); editChartInfo($event, item)"
-                        [disabled]="item.canEditOrDeleteChart === false"
-                        >Edit Info</button
-                      >
-                    </div>
-
-                    <button
-                      data-cy="chartOptionsGoToFile"
-                      class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
-                      (click)="t1.hide(); goToChartFile($event, item)"
-                      >Go to file</button
-                    >
-
-                    <div
-                      tp="Chart can be deleted by author and project members with ProjectAdmin or FilesEditor role. Try to save chart as new to become an author."
-                      placement="left"
-                      [tpIsEnabled]="item.canEditOrDeleteChart === false"
-                    >
-                      <button
-                        data-cy="chartOptionsDelete"
-                        class="text-gray1 hover:bg-blue2 w-full px-4 py-2 text-left text-base focus:outline-none"
-                        [ngClass]="{
-                          'cursor-default text-gray-400':
-                            item.canEditOrDeleteChart === false
-                        }"
-                        (click)="t1.hide(); deleteChart($event, item)"
-                        [disabled]="item.canEditOrDeleteChart === false"
-                        >Delete</button
-                      >
-                    </div>
-                  </div>
-                </ng-template> -->
               </div>
 
               <div class="flex w-1/3 truncate py-[6px]">
