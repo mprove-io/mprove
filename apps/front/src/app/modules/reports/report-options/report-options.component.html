@@ -20,14 +20,14 @@
   <div class="border-gray4 w-64 rounded-md border-2 bg-white shadow-xl">
     <button
       data-cy="reportOptionsGoToFileButton"
-      class="text-gray1 w-full px-4 py-2 text-left text-base hover:bg-sky-50 focus:outline-none"
+      class="text-gray1 hover:bg-blue4 w-full px-4 py-2 text-left text-base focus:outline-none"
       (click)="t1.hide(); goToFile($event)"
       >Go to File</button
     >
 
     <button
       data-cy="reportOptionsDelete"
-      class="text-gray1 w-full px-4 py-2 text-left text-base hover:bg-sky-50 focus:outline-none"
+      class="text-gray1 hover:bg-blue4 w-full px-4 py-2 text-left text-base focus:outline-none"
       [ngClass]="{
         'cursor-default text-gray-400': report.canEditOrDeleteReport === false
       }"

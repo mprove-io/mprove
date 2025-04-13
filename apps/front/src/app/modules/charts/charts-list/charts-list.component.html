@@ -39,7 +39,7 @@
       >
         <div
           *ngFor="let item of filteredCharts; let i = index; trackBy: trackByFn"
-          class="flex flex-row bg-white hover:cursor-pointer hover:bg-sky-50"
+          class="hover:bg-blue4 flex flex-row bg-white hover:cursor-pointer"
           [ngStyle]="
             item.chartId !==
               filteredCharts[filteredCharts.length - 1].chartId && {

@@ -54,7 +54,7 @@
       >
         <div
           *ngFor="let item of filteredModels; trackBy: trackByFn"
-          class="flex flex-row bg-white hover:cursor-pointer hover:bg-sky-50"
+          class="hover:bg-blue4 flex flex-row bg-white hover:cursor-pointer"
           [ngStyle]="
             item.modelId !==
               filteredModels[filteredModels.length - 1].modelId && {
@@ -91,7 +91,7 @@
                   >
                     <button
                       data-cy="modelOptionsGoToFile"
-                      class="text-gray1 w-full px-4 py-2 text-left text-base hover:bg-sky-50 focus:outline-none"
+                      class="text-gray1 hover:bg-blue4 w-full px-4 py-2 text-left text-base focus:outline-none"
                       (click)="t1.hide(); goToFile($event, item)"
                       >Go to file</button
                     >

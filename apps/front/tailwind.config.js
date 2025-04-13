@@ -8,8 +8,8 @@
 
 var blue1 = '#F2F5FA'; // main background
 var blue2 = '#dff2fe'; // sky-100 selected objects
-var blue3 = '#0084d1'; // sky-600 main buttons, ...
-var blue4 = '#465EDC';
+var blue3 = '#0084d1'; // sky-600 main buttons, main clickable text
+var blue4 = '#f0f9ff'; // sky-50 hover elements
 var blue5 = '#C3DCF3'; // table - selected dimensions
 
 var gray1 = '#4D4F5C';
@@ -25,6 +25,24 @@ var purple1 = '#90A6EE';
 var purple2 = '#E1E7FB';
 
 var red1 = '#DE4343';
+
+let myColors = [
+  blue1,
+  blue2,
+  blue3,
+  blue4,
+  blue5,
+  gray1,
+  gray2,
+  gray3,
+  gray4,
+  gray5,
+  green1,
+  green2,
+  purple1,
+  purple2,
+  red1
+];
 
 const colors = require('tailwindcss/colors');
 
@@ -63,12 +81,18 @@ module.exports = {
       blue1,
       blue2,
       blue3,
-      red1,
+      blue4,
+      blue5,
+      gray1,
+      gray2,
+      gray3,
+      gray4,
+      gray5,
       green1,
       green2,
-      blue5,
       purple1,
-      purple2
+      purple2,
+      red1
     }),
     textColor: theme => ({
       ...theme('colors'),
@@ -76,18 +100,34 @@ module.exports = {
       blue2,
       blue3,
       blue4,
+      blue5,
       gray1,
       gray2,
       gray3,
-      red1,
-      gray5
+      gray4,
+      gray5,
+      green1,
+      green2,
+      purple1,
+      purple2,
+      red1
     }),
     borderColor: theme => ({
       ...theme('colors'),
+      blue1,
       blue2,
       blue3,
+      blue4,
+      blue5,
+      gray1,
+      gray2,
       gray3,
       gray4,
+      gray5,
+      green1,
+      green2,
+      purple1,
+      purple2,
       red1
     })
   },
