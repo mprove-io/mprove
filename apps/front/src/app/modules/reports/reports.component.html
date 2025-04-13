@@ -404,7 +404,7 @@
                         class="group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
                         (click)="navToReport(r)"
                         [ngClass]="{
-                          'mt-2': i === 0,
+                          'mt-4': i === 0,
                           'mb-5': i === filteredReports.length - 1,
                           'bg-blue2': r.reportId === report?.reportId,
                           'hover:bg-blue4': r.reportId !== report?.reportId

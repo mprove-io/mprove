@@ -53,7 +53,7 @@
         *ngIf="filteredModels?.length > 0"
       >
         <div
-          *ngFor="let item of filteredModels; trackBy: trackByFn"
+          *ngFor="let item of filteredModels; let i = index; trackBy: trackByFn"
           class="hover:bg-blue4 flex flex-row bg-white hover:cursor-pointer"
           [ngStyle]="
             item.modelId !==
@@ -62,6 +62,8 @@
             }
           "
           [ngClass]="{
+            'mt-2': i === 0,
+            'mb-5': i === filteredModels.length - 1,
             'border-gray-300':
               item.modelId !== filteredModels[filteredModels.length - 1].modelId
           }"

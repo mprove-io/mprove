@@ -336,7 +336,7 @@
                   class="group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
                   (click)="navToChart(c)"
                   [ngClass]="{
-                    'mt-2': i === 0,
+                    'mt-4': i === 0,
                     'mb-5': i === filteredCharts.length - 1,
                     'bg-blue2': c.chartId === chart?.chartId,
                     'hover:bg-blue4': c.chartId !== chart?.chartId
