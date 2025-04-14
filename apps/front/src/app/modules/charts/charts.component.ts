@@ -1124,6 +1124,10 @@ ${this.mconfig.storePart?.reqUrlPath}`
     this.schemaIsExpanded = !this.schemaIsExpanded;
   }
 
+  toggleInfoPanel() {
+    this.rightIsShow = !this.rightIsShow;
+  }
+
   setModelTreeLevels(modelTreeLevels: common.ModelTreeLevelsEnum) {
     this.uiQuery.updatePart({
       modelTreeLevels: modelTreeLevels

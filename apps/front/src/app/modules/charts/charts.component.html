@@ -1009,7 +1009,7 @@
                   >
 
                   <div
-                    class="ml-5 mr-6 flex w-2 flex-1"
+                    class="ml-5 mr-9 flex w-2 flex-1"
                     *ngIf="mconfig?.select.length > 0"
                   >
                     <form
@@ -1056,10 +1056,20 @@
 
                 <div class="flex flex-1 flex-row items-center">
                   <div
-                    class="text-gray1 ml-6 flex select-none flex-row items-center pb-2 pt-2 text-xl font-semibold"
-                    *ngIf="mconfig?.select.length > 0"
-                    >Info</div
+                    (click)="toggleInfoPanel()"
+                    class="text-gray1 flex h-11 cursor-pointer select-none flex-row items-center pl-2 pr-5 text-xl font-semibold"
                   >
+                    <div class="flex flex-row items-center space-x-2">
+                      <m-chevron-right-icon
+                        *ngIf="!rightIsShow"
+                      ></m-chevron-right-icon>
+                      <m-chevron-down-icon
+                        *ngIf="rightIsShow"
+                      ></m-chevron-down-icon>
+
+                      <div> Info </div>
+                    </div>
+                  </div>
 
                   <form
                     [formGroup]="requestPartTypeForm"
