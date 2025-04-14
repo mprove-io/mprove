@@ -14,7 +14,8 @@
             data-cy="filesTreeItem"
             class="group flex w-full cursor-pointer select-none flex-row px-5 py-1"
             [ngClass]="{
-              'bg-m150': !!fileNodeId && node.data.id === fileNodeId,
+              'text-m600 font-semibold':
+                !!fileNodeId && node.data.id === fileNodeId,
               'hover:bg-m50': !fileNodeId || node.data.id !== fileNodeId
             }"
             (click)="nodeOnClick(node)"
@@ -22,7 +23,7 @@
             <div
               class="relative flex w-full flex-row items-center"
               [ngClass]="{
-                'ml-10': !node.data.isFolder,
+                'ml-5': !node.data.isFolder,
                 'ml-3': node.data.isFolder
               }"
             >
@@ -42,18 +43,36 @@
                   ></m-chevron-down-icon>
 
                   <m-folder-closed-icon
-                    class="text-blue-400"
+                    class="text-m500"
                     *ngIf="!node.isExpanded || !node.hasChildren"
                   ></m-folder-closed-icon>
                   <m-folder-open-icon
-                    class="text-blue-500"
+                    class="text-m600"
                     *ngIf="node.isExpanded && node.hasChildren"
                   ></m-folder-open-icon>
                 </div>
 
                 <div
+                  *ngIf="
+                    !node.data.isFolder &&
+                    !!fileNodeId &&
+                    node.data.id === fileNodeId
+                  "
+                  data-cy="filesSelectedSymbol"
+                  class="bg-m600 h-9 w-[6px] text-white focus:outline-none"
+                ></div>
+
+                <div
+                  *ngIf="
+                    !node.data.isFolder &&
+                    (!fileNodeId || node.data.id !== fileNodeId)
+                  "
+                  class="h-9 w-[6px]"
+                ></div>
+
+                <div
                   *ngIf="!node.data.isFolder"
-                  class="w-7 flex-shrink-0 text-center font-bold"
+                  class="ml-3 w-7 flex-shrink-0 text-center font-bold"
                 >
                   <m-document-icon></m-document-icon>
                 </div>
@@ -101,19 +120,32 @@
   >
     <div
       *ngFor="let change of repo.changesToCommit"
-      class="flex flex-row items-end rounded px-7 py-2 hover:cursor-pointer"
+      class="flex flex-row items-center rounded px-7 py-2 hover:cursor-pointer"
       [ngClass]="{
-        'bg-m150': fileId === change.fileId,
         'hover:bg-m50': fileId !== change.fileId
       }"
       (click)="changeToCommitOnClick(change.fileId)"
     >
-      <div class="text-gray1 flex-shrink-0 text-base">
-        {{ change.fileName }}
-      </div>
+      <div class="flex flex-col">
+        <div
+          class="truncate text-base"
+          [ngClass]="{
+            'text-m600 font-semibold': fileId === change.fileId,
+            'text-gray1': fileId !== change.fileId
+          }"
+        >
+          {{ change.fileName }}
+        </div>
 
-      <div class="ml-3 truncate text-base text-gray-400">
-        {{ change.parentPath }}
+        <div
+          class="truncate text-base"
+          [ngClass]="{
+            'text-m500': fileId === change.fileId,
+            'text-gray-400': fileId !== change.fileId
+          }"
+        >
+          {{ change.parentPath }}
+        </div>
       </div>
 
       <div class="flex-grow"></div>
@@ -130,19 +162,32 @@
   >
     <div
       *ngFor="let change of repo.changesToPush"
-      class="flex flex-row items-end rounded px-7 py-2 hover:cursor-pointer"
+      class="flex flex-row items-center rounded px-7 py-2 hover:cursor-pointer"
       [ngClass]="{
-        'bg-m150': fileId === change.fileId,
         'hover:bg-m50': fileId !== change.fileId
       }"
       (click)="changeToPushOnClick(change.fileId)"
     >
-      <div class="text-gray1 flex-shrink-0 text-base">
-        {{ change.fileName }}
-      </div>
+      <div class="flex flex-col">
+        <div
+          class="truncate text-base"
+          [ngClass]="{
+            'text-m600 font-semibold': fileId === change.fileId,
+            'text-gray1': fileId !== change.fileId
+          }"
+        >
+          {{ change.fileName }}
+        </div>
 
-      <div class="ml-3 truncate text-base text-gray-400">
-        {{ change.parentPath }}
+        <div
+          class="truncate text-base"
+          [ngClass]="{
+            'text-m500': fileId === change.fileId,
+            'text-gray-400': fileId !== change.fileId
+          }"
+        >
+          {{ change.parentPath }}
+        </div>
       </div>
 
       <div class="flex-grow"></div>

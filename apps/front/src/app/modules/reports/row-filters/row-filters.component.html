@@ -14,7 +14,7 @@
         <button
           class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
           [ngClass]="{
-            'text-gray-500 hover:bg-blue-200': filter.field.required !== true,
+            'hover:bg-m200 text-gray-500': filter.field.required !== true,
             'cursor-default text-gray-400': filter.field.required === true
           }"
           [disabled]="filter.field.required === true"
@@ -93,7 +93,7 @@
               class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
               (click)="addFraction(filter)"
               [ngClass]="{
-                'text-gray-500 hover:bg-blue-200':
+                'hover:bg-m200 text-gray-500':
                   !filter.field.maxFractions ||
                   filter.field.maxFractions !== filter.fractions.length,
                 'cursor-default text-gray-400':
@@ -116,10 +116,10 @@
             "
           >
             <button
-              class="ml-3 flex h-9 w-9 items-center justify-center rounded hover:bg-blue-200 focus:outline-none"
+              class="hover:bg-m200 ml-3 flex h-9 w-9 items-center justify-center rounded focus:outline-none"
               (click)="deleteFraction(filter, fractionIndex)"
               [ngClass]="{
-                'text-gray-500 hover:bg-blue-200':
+                'hover:bg-m200 text-gray-500':
                   filter.field.required !== true ||
                   filter.fractions.length !== 1,
                 'cursor-default text-gray-400':

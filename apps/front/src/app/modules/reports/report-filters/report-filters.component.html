@@ -8,7 +8,7 @@
   >
     <div class="flex flex-row items-start justify-center">
       <button
-        class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
+        class="hover:bg-m200 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 focus:outline-none"
         (click)="deleteFilter(filter)"
       >
         <m-trash-icon></m-trash-icon>
@@ -59,7 +59,7 @@
           <button
             class="ml-3 flex h-9 w-9 items-center justify-center rounded focus:outline-none"
             [ngClass]="{
-              'text-gray-500 hover:bg-blue-200':
+              'hover:bg-m200 text-gray-500':
                 !filter.maxFractions ||
                 filter.maxFractions !== filter.fractions.length,
               'cursor-default text-gray-400':
@@ -77,7 +77,7 @@
         </div>
 
         <button
-          class="ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 hover:bg-blue-200 focus:outline-none"
+          class="hover:bg-m200 ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 focus:outline-none"
           (click)="deleteFraction(filter, filterIndex, fractionIndex)"
         >
           <m-trash-icon></m-trash-icon>
