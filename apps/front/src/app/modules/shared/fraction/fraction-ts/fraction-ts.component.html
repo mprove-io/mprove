@@ -55,11 +55,11 @@
     <button
       class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
       [ngClass]="{
-        'hover:bg-m200 cursor-pointer':
+        'cursor-pointer':
           timeStr === zeroHoursMinutes &&
           (fraction.type !== fractionTypeEnum.TsIsInRange ||
             timeToStr === zeroHoursMinutes),
-        'text-blue-500 ':
+        'text-m500':
           showHours === true &&
           timeStr === zeroHoursMinutes &&
           (fraction.type !== fractionTypeEnum.TsIsInRange ||

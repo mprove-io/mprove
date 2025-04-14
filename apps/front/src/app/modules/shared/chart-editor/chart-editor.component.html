@@ -327,9 +327,14 @@
     </form>
   </div>
 
-  <div *ngIf="isReport === false" class="mb-5 divide-y divide-gray-300 pt-2">
-    <div></div>
-    <div></div>
+  <div
+    class="mb-5 flex select-none flex-row justify-start font-semibold text-gray-500"
+    [ngClass]="{
+      'mt-7': isReport === false,
+      'ml-2 mt-5': isReport === true
+    }"
+  >
+    CHART OPTIONS
   </div>
 
   <div

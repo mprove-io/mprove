@@ -3,8 +3,7 @@
     class="flex truncate pl-5"
     [ngClass]="{
       'text-red1': isError === true,
-      'cursor-pointer hover:text-blue-500':
-        params.data.rowType === rowTypeMetric
+      'hover:text-m500 cursor-pointer': params.data.rowType === rowTypeMetric
     }"
     (click)="clickCellData($event)"
     >{{ formattedValue }}</div

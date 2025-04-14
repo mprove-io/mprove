@@ -714,7 +714,7 @@
                   <m-chart-table-icon
                     class="h-6 w-6 cursor-pointer"
                     [ngClass]="{
-                      'text-m600': mconfig.chart?.type === chartTypeEnumTable,
+                      'text-m500': mconfig.chart?.type === chartTypeEnumTable,
                       'text-gray-500':
                         mconfig.chart?.type !== chartTypeEnumTable
                     }"
@@ -724,7 +724,7 @@
                   <m-chart-line-icon
                     class="h-6 w-6 cursor-pointer"
                     [ngClass]="{
-                      'text-m600': mconfig.chart?.type === chartTypeEnumLine,
+                      'text-m500': mconfig.chart?.type === chartTypeEnumLine,
                       'text-gray-500': mconfig.chart?.type !== chartTypeEnumLine
                     }"
                     (click)="chartTypeChange(chartTypeEnumLine)"
@@ -733,7 +733,7 @@
                   <m-chart-bar-icon
                     class="h-6 w-6 cursor-pointer"
                     [ngClass]="{
-                      'text-m600': mconfig.chart?.type === chartTypeEnumBar,
+                      'text-m500': mconfig.chart?.type === chartTypeEnumBar,
                       'text-gray-500': mconfig.chart?.type !== chartTypeEnumBar
                     }"
                     (click)="chartTypeChange(chartTypeEnumBar)"
@@ -742,7 +742,7 @@
                   <m-chart-scatter-icon
                     class="h-6 w-6 cursor-pointer"
                     [ngClass]="{
-                      'text-m600': mconfig.chart?.type === chartTypeEnumScatter,
+                      'text-m500': mconfig.chart?.type === chartTypeEnumScatter,
                       'text-gray-500':
                         mconfig.chart?.type !== chartTypeEnumScatter
                     }"
@@ -752,7 +752,7 @@
                   <m-chart-pie-icon
                     class="h-6 w-6 cursor-pointer"
                     [ngClass]="{
-                      'text-m600': mconfig.chart?.type === chartTypeEnumPie,
+                      'text-m500': mconfig.chart?.type === chartTypeEnumPie,
                       'text-gray-500': mconfig.chart?.type !== chartTypeEnumPie
                     }"
                     (click)="chartTypeChange(chartTypeEnumPie)"

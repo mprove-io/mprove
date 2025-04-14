@@ -282,7 +282,7 @@
         (click)="goToModel(mconfig.modelId, canAccessModel)"
         class="text-base font-semibold focus:outline-none"
         [ngClass]="{
-          'cursor-pointer hover:text-blue-500': canAccessModel === true,
+          'hover:text-m500 cursor-pointer': canAccessModel === true,
           'cursor-default': canAccessModel === false
         }"
         >{{ mconfig?.modelLabel | capitalize }}</div

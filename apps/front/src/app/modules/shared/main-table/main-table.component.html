@@ -17,7 +17,7 @@
         >
           <div class="flex items-center justify-start">
             <div
-              class="flex h-8 w-4 select-none items-center justify-center text-blue-500"
+              class="text-m500 flex h-8 w-4 select-none items-center justify-center"
             >
               <div *ngIf="column.sortingNumber > -1">{{
                 column.sortingNumber + 1
@@ -26,7 +26,7 @@
 
             <button
               *ngIf="column.sorting?.desc === false"
-              class="hover:bg-m50 flex h-8 w-8 items-center justify-center rounded text-blue-500 focus:outline-none"
+              class="hover:bg-m50 text-m500 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
               (click)="sort(column.id, false)"
             >
               <m-asc-icon></m-asc-icon>
@@ -34,7 +34,7 @@
 
             <button
               *ngIf="column.sorting?.desc === true"
-              class="hover:bg-m50 flex h-8 w-8 items-center justify-center rounded text-blue-500 focus:outline-none"
+              class="hover:bg-m50 text-m500 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
               (click)="sort(column.id, true)"
             >
               <m-desc-icon></m-desc-icon>

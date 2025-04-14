@@ -968,6 +968,10 @@ ${this.mconfig.storePart?.reqUrlPath}`
   chartTypeChange(newChartTypeValue?: common.ChartTypeEnum) {
     (document.activeElement as HTMLElement).blur();
 
+    if (this.mconfig.chart.type === newChartTypeValue) {
+      return;
+    }
+
     if (common.isDefined(newChartTypeValue)) {
       this.chartTypeForm.controls['chartType'].setValue(newChartTypeValue);
     }
