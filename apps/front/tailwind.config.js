@@ -12,7 +12,7 @@ var m50 = '#f0f9ff'; // sky-50 hover elements
 var m75 = '#e8f6ff'; // sky-75 model tree dimensions
 var m150 = '#cdecfe'; // sky-150 selected objects
 var m200 = '#b8e6fe'; // sky-200 dot options icon button, avatar
-var m500 = '#00a6f4'; // clickable text
+var m500 = '#00a6f4'; // sky-500 clickable text
 var m600 = '#0084d1'; // sky-600 main buttons, main clickable text
 
 var gray1 = '#4D4F5C';
@@ -23,17 +23,17 @@ var gray5 = '#4F505C';
 
 var g1 = '#B6E1BC';
 var g2 = '#E9F6EB';
-var g700 = '#008236';
+var g700 = '#008236'; // green-700
 
-var p100 = '#f3e8ff';
-var p200 = '#e9d4ff';
-var p300 = '#dab2ff';
-var p500 = '#ad46ff';
+var p100 = '#f3e8ff'; // purple-100
+var p200 = '#e9d4ff'; // purple-200
+var p300 = '#dab2ff'; // purple-300
+var p500 = '#ad46ff'; // purple-500
 
 var r1 = '#DE4343';
-var r100 = '#ffe2e2';
-var r600 = '#e7000b';
-var r700 = '#c10007';
+var r100 = '#ffe2e2'; // red-100
+var r600 = '#e7000b'; // red-600
+var r700 = '#c10007'; // red-700
 
 const colors = require('tailwindcss/colors');
 
