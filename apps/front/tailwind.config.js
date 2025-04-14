@@ -1,11 +1,6 @@
 // logo '#0084d1'; // sky-600
-// favicon '#0084d1'; // sky-600
-// '#64BD63'; // ui-switch default green-color
-
-// old blue2 = '#E7F2FD';
-// old blue3 = '#365EE0';
-// old purple1 = '#90A6EE';
-// old purple2 = '#E1E7FB';
+// favicon '#0069a8'; // sky-700
+// ui-switch '#64BD63'; // default green
 
 var m1 = '#F2F5FA'; // main background
 var m50 = '#f0f9ff'; // sky-50 hover elements
@@ -24,6 +19,8 @@ var s200 = '#e5e7eb'; // gray-200
 var s300 = '#d1d5dc'; // gray-300
 var s400 = '#99a1af'; // gray-400
 var s500 = '#6a7282'; // gray-500
+
+var a500 = '#fe9a00'; // amber-500
 
 var g1 = '#B6E1BC';
 var g2 = '#E9F6EB';
@@ -89,6 +86,7 @@ module.exports = {
       s300,
       s400,
       s500,
+      a500,
       g1,
       g2,
       g700,
@@ -119,6 +117,7 @@ module.exports = {
       s300,
       s400,
       s500,
+      a500,
       g1,
       g2,
       g700,
@@ -149,6 +148,7 @@ module.exports = {
       s300,
       s400,
       s500,
+      a500,
       g1,
       g2,
       g700,
