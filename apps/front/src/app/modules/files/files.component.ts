@@ -120,6 +120,10 @@ export class FilesComponent implements OnInit {
   }
 
   setPanel(x: common.PanelEnum) {
+    if (this.needSave === true) {
+      return;
+    }
+
     let userId;
     this.userQuery.userId$
       .pipe(
@@ -146,6 +150,8 @@ export class FilesComponent implements OnInit {
 
     this.uiQuery.updatePart({ panel: x });
   }
+
+  addFile() {}
 
   commit() {
     this.myDialogService.showCommit({
