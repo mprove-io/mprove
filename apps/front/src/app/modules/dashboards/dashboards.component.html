@@ -146,8 +146,21 @@
                             d.dashboardId !== dashboard?.dashboardId
                         }"
                       >
+                        <div class="ml-3 mr-3 flex h-2 items-center">
+                          <div
+                            *ngIf="d.dashboardId === dashboard?.dashboardId"
+                            data-cy="dashboardsSelectedSymbol"
+                            class="bg-m600 h-9 w-[6px] text-white focus:outline-none"
+                          ></div>
+
+                          <div
+                            *ngIf="d.dashboardId !== dashboard?.dashboardId"
+                            class="h-9 w-[6px]"
+                          ></div>
+                        </div>
+
                         <div
-                          class="ml-4 truncate"
+                          class="ml-1 truncate"
                           [ngClass]="{
                             'text-m600 font-semibold':
                               d.dashboardId === dashboard?.dashboardId,
