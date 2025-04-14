@@ -1,4 +1,4 @@
-<div class="bg-blue1 flex h-full cursor-default flex-col">
+<div class="bg-m1 flex h-full cursor-default flex-col">
   <div class="flex h-2 flex-1 flex-row">
     <div class="mx-6 mb-6 mt-8 flex min-w-[2px] flex-grow flex-col">
       <div class="flex h-11 flex-row items-center justify-between">
@@ -29,7 +29,7 @@
               >
                 <m-view-list-icon
                   [ngClass]="{
-                    'text-sky-500': lastUrl === pathReportsList,
+                    'text-m500': lastUrl === pathReportsList,
                     'text-gray-400': lastUrl !== pathReportsList
                   }"
                 ></m-view-list-icon>
@@ -41,7 +41,7 @@
                 <button
                   type="button"
                   data-cy="metricsNewReportButton"
-                  class="bg-blue3 h-11 flex-shrink-0 select-none rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
+                  class="bg-m600 h-11 flex-shrink-0 select-none rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
                   (click)="newReport()"
                   >New Report</button
                 >
@@ -273,7 +273,7 @@
                 data-cy="metricsRunButton"
                 class="ml-5 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
                 [ngClass]="{
-                  'bg-blue3':
+                  'bg-m600':
                     notEmptySelectQueriesLength > 0 &&
                     (report?.rangeOpen < report?.rangeClose ||
                       report?.timeRangeFraction?.type !==
@@ -338,7 +338,7 @@
                     spellcheck="false"
                     autocomplete="off"
                     data-cy="dashboardsSearchInput"
-                    class="form-input focus:border-blue3 ml-3 h-10 w-[225px] rounded border-gray-400"
+                    class="form-input focus:border-m600 ml-3 h-10 w-[225px] rounded border-gray-400"
                     placeholder="Search Reports"
                     [ngClass]="{
                       'bg-purple-200': !!word
@@ -406,13 +406,13 @@
                         [ngClass]="{
                           'mt-4': i === 0,
                           'mb-5': i === filteredReports.length - 1,
-                          'hover:bg-blue4': r.reportId !== report?.reportId
+                          'hover:bg-m50': r.reportId !== report?.reportId
                         }"
                       >
                         <div
                           class="ml-4 truncate"
                           [ngClass]="{
-                            'text-blue3 font-semibold':
+                            'text-m600 font-semibold':
                               r.reportId === report.reportId,
                             'text-gray1': r.reportId !== report.reportId
                           }"
@@ -432,7 +432,7 @@
                           (click)="reportSaveAs($event)"
                         >
                           <div
-                            class="hover:bg-blue6 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded px-2"
+                            class="hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded px-2"
                           >
                             <m-save-icon class="text-gray-500"></m-save-icon>
                           </div>
@@ -444,7 +444,7 @@
                             r.reportId === report.reportId
                           "
                           data-cy="reportsDeleteDraftButton"
-                          class="hover:bg-blue6 ml-3 flex h-9 flex-shrink-0 items-center justify-center rounded px-2 text-gray-500 focus:outline-none"
+                          class="hover:bg-m200 ml-3 flex h-9 flex-shrink-0 items-center justify-center rounded px-2 text-gray-500 focus:outline-none"
                           (click)="deleteDraftReport($event, r)"
                         >
                           <m-trash-icon></m-trash-icon>

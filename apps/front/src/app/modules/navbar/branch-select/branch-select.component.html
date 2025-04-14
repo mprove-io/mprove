@@ -28,7 +28,7 @@
       class="ml-1 truncate rounded px-[8px] py-[1px]"
       [ngClass]="{
         'bg-green1': item.extraName.substring(0, 4) === 'dev-',
-        'bg-blue2': item.extraName.substring(0, 10) === 'production'
+        'bg-m150': item.extraName.substring(0, 10) === 'production'
       }"
       >{{ item.extraName }}</div
     > -->
@@ -74,7 +74,7 @@
         repo.repoStatus !== repoStatusNeedCommit
       "
       data-cy="branchSelectCreateBranchButton"
-      class="text-blue3 hover:bg-blue4 w-full rounded py-3 text-base focus:outline-none"
+      class="text-m600 hover:bg-m50 w-full rounded py-3 text-base focus:outline-none"
       (click)="createNewBranch(branchSelect, $event)"
       >New Branch</button
     >
@@ -91,7 +91,7 @@
       class="w-full rounded py-3 text-base focus:outline-none"
       [ngClass]="{
         'cursor-default text-gray-400': selectedBranchItem.isRepoProd === true,
-        'text-blue3 hover:bg-blue4': selectedBranchItem.isRepoProd === false
+        'text-m600 hover:bg-m50': selectedBranchItem.isRepoProd === false
       }"
       (click)="mergeBranch(branchSelect, $event)"
       [disabled]="selectedBranchItem.isRepoProd === true"
@@ -110,8 +110,7 @@
       [ngClass]="{
         'cursor-default text-gray-400':
           selectedBranchItem.branchId === defaultBranch,
-        'text-blue3 hover:bg-blue4':
-          selectedBranchItem.branchId !== defaultBranch
+        'text-m600 hover:bg-m50': selectedBranchItem.branchId !== defaultBranch
       }"
       (click)="deleteBranch(branchSelect, $event)"
       [disabled]="selectedBranchItem.branchId === defaultBranch"

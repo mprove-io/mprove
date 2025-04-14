@@ -14,7 +14,7 @@
       autocomplete="off"
       spellcheck="false"
       data-cy="createProjectDialogProjectNameInput"
-      class="form-input border-gray3 focus:border-blue3 mt-9 rounded"
+      class="form-input border-gray3 focus:border-m600 mt-9 rounded"
       [ngClass]="{
         'border-red-600':
           createProjectForm.controls['projectName'].invalid &&
@@ -37,9 +37,9 @@
       (click)="managedOnClick()"
     >
       <div
-        class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+        class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
         [ngClass]="{
-          'bg-blue3 ':
+          'bg-m600 ':
             projectRemoteRepoType === projectRemoteRepoTypeEnum.Managed
         }"
       >
@@ -57,9 +57,9 @@
       (click)="gitCloneOnClick()"
     >
       <div
-        class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+        class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
         [ngClass]="{
-          'bg-blue3 ':
+          'bg-m600 ':
             projectRemoteRepoType === projectRemoteRepoTypeEnum.GitClone
         }"
       >
@@ -81,7 +81,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="createProjectDialogGitUrlInput"
-        class="form-input border-gray3 focus:border-blue3 mt-9 w-full rounded"
+        class="form-input border-gray3 focus:border-m600 mt-9 w-full rounded"
         [ngClass]="{
           'border-red-600':
             createProjectForm.controls['projectGitUrl'].invalid &&
@@ -133,9 +133,9 @@
       >
         <div
           data-cy="createProjectDialogDeployKeyAddedCheckbox"
-          class="border-blue3 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 text-white focus:outline-none"
+          class="border-m600 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 text-white focus:outline-none"
           [ngClass]="{
-            'bg-blue3 ': isDeployKeyAdded === true
+            'bg-m600 ': isDeployKeyAdded === true
           }"
         >
           <m-check-icon *ngIf="isDeployKeyAdded === true"></m-check-icon>
@@ -153,10 +153,10 @@
     <div class="mt-8">
       <button
         data-cy="createProjectDialogCreateButton"
-        class="bg-blue3 w-28 select-none rounded py-3 font-medium text-white focus:outline-none"
+        class="bg-m600 w-28 select-none rounded py-3 font-medium text-white focus:outline-none"
         type="submit"
         [ngClass]="{
-          'bg-blue3 ':
+          'bg-m600 ':
             projectRemoteRepoType === projectRemoteRepoTypeEnum.Managed ||
             isDeployKeyAdded === true,
           'cursor-default bg-gray-400':
@@ -172,7 +172,7 @@
 
       <button
         data-cy="createProjectDialogCancelButton"
-        class="border-blue3 text-blue3 ml-3 w-28 select-none rounded border py-3 font-medium focus:outline-none"
+        class="border-m600 text-m600 ml-3 w-28 select-none rounded border py-3 font-medium focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button

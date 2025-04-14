@@ -1,4 +1,4 @@
-<div class="bg-blue1 flex h-full cursor-default flex-col">
+<div class="bg-m1 flex h-full cursor-default flex-col">
   <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
     <div class="flex h-11 flex-row items-center justify-between">
       <div
@@ -19,7 +19,7 @@
           class="mr-5 h-12 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
           type="submit"
           [ngClass]="{
-            'bg-blue3': isEditor === true,
+            'bg-m600': isEditor === true,
             'cursor-default bg-gray-400': isEditor === false
           }"
           (click)="addVariable()"

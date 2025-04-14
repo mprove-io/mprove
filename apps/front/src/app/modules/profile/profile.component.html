@@ -1,4 +1,4 @@
-<div class="bg-blue1 flex h-full cursor-default flex-col">
+<div class="bg-m1 flex h-full cursor-default flex-col">
   <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
     <div class="flex h-11 items-center">
       <div data-cy="profileTitle" class="text-gray1 text-2xl font-semibold">{{
@@ -57,7 +57,7 @@
             <div class="flex h-24 items-center">
               <div class="flex flex-row">
                 <button
-                  class="block h-20 w-20 rounded-full bg-sky-200 text-base tracking-wider focus:outline-none"
+                  class="bg-m200 block h-20 w-20 rounded-full text-base tracking-wider focus:outline-none"
                   [ngClass]="{
                     'cursor-default': !(navQuery.avatarBig$ | async)
                   }"

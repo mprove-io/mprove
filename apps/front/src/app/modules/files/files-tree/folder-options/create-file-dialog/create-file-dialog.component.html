@@ -17,7 +17,7 @@
       autocomplete="off"
       spellcheck="false"
       data-cy="createFileDialogFileNameInput"
-      class="form-input border-gray3 focus:border-blue3 mt-2 h-[36px] rounded"
+      class="form-input border-gray3 focus:border-m600 mt-2 h-[36px] rounded"
       [ngClass]="{
         'border-red-600':
           createFileForm.controls['fileName'].invalid &&
@@ -33,14 +33,14 @@
     <div class="mt-9">
       <button
         data-cy="createFileDialogCreateButton"
-        class="bg-blue3 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
+        class="bg-m600 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
         type="submit"
         >Create</button
       >
 
       <button
         data-cy="createFileDialogCancelButton"
-        class="border-blue3 text-blue3 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+        class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button

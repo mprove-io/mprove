@@ -108,7 +108,7 @@
         [ngClass]="{
           'cursor-default bg-gray-400':
             isRunButtonPressed === true || query?.status === queryStatusRunning,
-          'bg-blue3 cursor-pointer':
+          'bg-m600 cursor-pointer':
             isRunButtonPressed === false && query?.status !== queryStatusRunning
         }"
         (click)="run()"
@@ -151,7 +151,7 @@
           data-cy="chartDialogExploreButton"
           class="h-12 rounded px-6 text-base font-medium text-white focus:outline-none"
           [ngClass]="{
-            'bg-blue3 cursor-pointer':
+            'bg-m600 cursor-pointer':
               isExplorer === true && canAccessModel === true,
             'cursor-default bg-gray-400':
               isExplorer === false || canAccessModel === false

@@ -9,7 +9,7 @@
   [tpIsEnabled]="needSave === false"
 >
   <button
-    class="h-10 w-10 rounded-full bg-sky-200 text-base tracking-wider focus:outline-none"
+    class="bg-m200 h-10 w-10 rounded-full text-base tracking-wider focus:outline-none"
     [disabled]="needSave === true"
   >
     <m-avatar
@@ -25,7 +25,7 @@
       >
 
       <button
-        class="text-gray1 hover:bg-blue4 block w-full px-4 py-2 text-left text-base focus:outline-none"
+        class="text-gray1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
           'font-semibold': lastUrl === pathProfile
         }"
@@ -35,7 +35,7 @@
       >
 
       <button
-        class="text-gray1 hover:bg-blue4 block w-full px-4 py-2 text-left text-base focus:outline-none"
+        class="text-gray1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
         (click)="t1.hide(); logout()"
         >LogOut</button
       >
@@ -45,7 +45,7 @@
       >
 
       <a
-        class="text-gray1 hover:text-gray1 hover:bg-blue4 block px-4 py-2 text-base"
+        class="text-gray1 hover:text-gray1 hover:bg-m50 block px-4 py-2 text-base"
         target="_blank"
         href="https://docs.mprove.io"
         (click)="t1.hide()"

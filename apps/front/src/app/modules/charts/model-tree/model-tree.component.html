@@ -50,11 +50,11 @@
                     nodeClassMeasure,
                     nodeClassCalculation
                   ].indexOf(node.data.nodeClass) < 0),
-              'bg-blue5': node.data.nodeClass === nodeClassDimension,
+              'bg-m75': node.data.nodeClass === nodeClassDimension,
               'bg-purple-100': node.data.nodeClass === nodeClassMeasure,
               'bg-green2': node.data.nodeClass === nodeClassCalculation,
               'bg-gray-100': node.data.nodeClass === nodeClassFilter,
-              'hover:bg-blue2':
+              'hover:bg-m150':
                 node.data.nodeClass === nodeClassDimension &&
                 (node.data.isSelected === false ||
                   node.data.required === false),
@@ -113,7 +113,7 @@
                       node.data.nodeClass !== nodeClassFilter
                     "
                     data-cy="modelTreeSelectedSymbol"
-                    class="bg-blue3 h-2 w-2 rounded-full text-white focus:outline-none"
+                    class="bg-m600 h-2 w-2 rounded-full text-white focus:outline-none"
                   ></div>
 
                   <div
@@ -196,7 +196,7 @@
                   data-cy="filesTreeFilterButton"
                   class="group invisible ml-3 flex h-10 flex-shrink-0 items-center justify-center rounded focus:outline-none [.group-bar:hover_&]:visible"
                   [ngClass]="{
-                    'text-blue3': node.data.isFiltered === true,
+                    'text-m600': node.data.isFiltered === true,
                     'text-gray1': node.data.isFiltered === false
                   }"
                   [disabled]="
@@ -218,7 +218,7 @@
                     <!-- <div
                 class="invisible flex w-[76px] flex-shrink-0 justify-start text-sm [.group-bar:hover_&]:visible"
                 [ngClass]="{
-                  'text-blue3': node.data.isFiltered === true,
+                  'text-m600': node.data.isFiltered === true,
                     'text-gray-400': node.data.isFiltered === false
                     }"
                     >{{ node.data.fieldResult | result }}</div

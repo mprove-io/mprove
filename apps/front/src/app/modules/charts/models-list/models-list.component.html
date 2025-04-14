@@ -8,7 +8,7 @@
           autocomplete="off"
           spellcheck="false"
           data-cy="modelsSearchInput"
-          class="form-input focus:border-blue3 ml-3 h-10 w-[400px] rounded border-gray-400"
+          class="form-input focus:border-m600 ml-3 h-10 w-[400px] rounded border-gray-400"
           placeholder="Search Models by Label and File"
           [ngClass]="{
             'bg-purple-200': !!word
@@ -54,7 +54,7 @@
       >
         <div
           *ngFor="let item of filteredModels; let i = index; trackBy: trackByFn"
-          class="hover:bg-blue4 flex flex-row bg-white hover:cursor-pointer"
+          class="hover:bg-m50 flex flex-row bg-white hover:cursor-pointer"
           [ngStyle]="
             item.modelId !==
               filteredModels[filteredModels.length - 1].modelId && {
@@ -93,7 +93,7 @@
                   >
                     <button
                       data-cy="modelOptionsGoToFile"
-                      class="text-gray1 hover:bg-blue4 w-full px-4 py-2 text-left text-base focus:outline-none"
+                      class="text-gray1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
                       (click)="t1.hide(); goToFile($event, item)"
                       >Go to file</button
                     >

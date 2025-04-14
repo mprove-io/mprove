@@ -1,4 +1,4 @@
-<div class="bg-blue1 flex h-full cursor-default flex-col">
+<div class="bg-m1 flex h-full cursor-default flex-col">
   <div class="flex h-2 flex-1 flex-row overflow-y-hidden">
     <div class="mx-6 mb-6 mt-8 flex min-w-[2px] flex-grow flex-col">
       <div class="flex h-11 flex-row items-center justify-between">
@@ -40,7 +40,7 @@
             >
               <m-view-list-icon
                 [ngClass]="{
-                  'text-sky-500': lastUrl === pathChartsList,
+                  'text-m500': lastUrl === pathChartsList,
                   'text-gray-400': lastUrl !== pathChartsList
                 }"
               ></m-view-list-icon>
@@ -48,7 +48,7 @@
               <div
                 class="ml-3 w-[62px] select-none items-center text-lg"
                 [ngClass]="{
-                  'font-semibold text-sky-500': lastUrl === pathChartsList,
+                  'text-m500 font-semibold': lastUrl === pathChartsList,
                   'text-gray-500': lastUrl !== pathChartsList
                 }"
               >
@@ -62,7 +62,7 @@
             >
               <m-view-list-icon
                 [ngClass]="{
-                  'text-sky-500': lastUrl === pathModelsList,
+                  'text-m500': lastUrl === pathModelsList,
                   'text-gray-400': lastUrl !== pathModelsList
                 }"
               ></m-view-list-icon>
@@ -70,7 +70,7 @@
               <div
                 class="ml-3 w-[68px] select-none items-center text-lg"
                 [ngClass]="{
-                  'font-semibold text-sky-500': lastUrl === pathModelsList,
+                  'text-m500 font-semibold': lastUrl === pathModelsList,
                   'text-gray-500': lastUrl !== pathModelsList
                 }"
               >
@@ -94,7 +94,7 @@
                 data-cy="chartsAddChartButton"
                 class="h-11 flex-shrink-0 select-none rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
                 [ngClass]="{
-                  'bg-blue3':
+                  'bg-m600':
                     alias !== restrictedUserAlias &&
                     isExplorer === true &&
                     !!model?.modelId,
@@ -219,7 +219,7 @@
                   data-cy="modelRunButton"
                   class="flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
                   [ngClass]="{
-                    'bg-blue3': mconfig?.select.length > 0,
+                    'bg-m600': mconfig?.select.length > 0,
                     'cursor-default':
                       mconfig?.select.length === 0 ||
                       isRunButtonPressed === true,
@@ -281,7 +281,7 @@
                 spellcheck="false"
                 autocomplete="off"
                 data-cy="chartsSearchInput"
-                class="form-input focus:border-blue3 ml-3 h-10 w-[225px] rounded border-gray-400"
+                class="form-input focus:border-m600 ml-3 h-10 w-[225px] rounded border-gray-400"
                 placeholder="Search Charts"
                 [ngClass]="{
                   'bg-purple-200': !!word
@@ -343,14 +343,14 @@
                   [ngClass]="{
                     'mt-4': i === 0,
                     'mb-5': i === filteredCharts.length - 1,
-                    'hover:bg-blue4': c.chartId !== chart?.chartId
+                    'hover:bg-m50': c.chartId !== chart?.chartId
                   }"
                 >
                   <!-- <div class="ml-3 mr-3 flex h-2 items-center">
                     <div
                       *ngIf="c.chartId === chart?.chartId"
                       data-cy="chartsSelectedSymbol"
-                      class="bg-blue3 h-8 w-2 rounded-full text-white focus:outline-none"
+                      class="bg-m600 h-8 w-2 rounded-full text-white focus:outline-none"
                     ></div>
 
                     <div
@@ -362,6 +362,7 @@
                   <img
                     class="ml-4 h-6 w-6 flex-shrink-0"
                     *ngIf="
+                      chart?.chartId === emptyChartId ||
                       lastUrl === pathCharts ||
                       lastUrl === pathChartsList ||
                       lastUrl === pathModelsList
@@ -371,13 +372,14 @@
 
                   <div
                     *ngIf="
+                      chart?.chartId !== emptyChartId &&
                       lastUrl !== pathCharts &&
                       lastUrl !== pathChartsList &&
                       lastUrl !== pathModelsList
                     "
                     class="ml-4 h-6 w-6 flex-shrink-0"
                     [ngClass]="{
-                      'text-blue3': c.chartId === chart?.chartId,
+                      'text-m600': c.chartId === chart?.chartId,
                       'text-gray-500': c.chartId !== chart?.chartId
                     }"
                   >
@@ -405,7 +407,7 @@
                   <div
                     class="ml-3 truncate"
                     [ngClass]="{
-                      'text-blue3 font-semibold': c.chartId === chart?.chartId,
+                      'text-m600 font-semibold': c.chartId === chart?.chartId,
                       'text-gray1': c.chartId !== chart?.chartId
                     }"
                   >
@@ -421,7 +423,7 @@
                     (click)="chartSaveAs($event)"
                   >
                     <div
-                      class="hover:bg-blue6 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded px-2"
+                      class="hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded px-2"
                     >
                       <m-save-icon class="text-gray-500"></m-save-icon>
                     </div>
@@ -430,7 +432,7 @@
                   <button
                     *ngIf="chart.draft === true && c.chartId === chart.chartId"
                     data-cy="chartsDeleteDraftButton"
-                    class="hover:bg-blue6 ml-3 flex h-9 flex-shrink-0 items-center justify-center rounded px-2 text-gray-500 focus:outline-none"
+                    class="hover:bg-m200 ml-3 flex h-9 flex-shrink-0 items-center justify-center rounded px-2 text-gray-500 focus:outline-none"
                     (click)="deleteDraftChart($event, c)"
                   >
                     <m-trash-icon></m-trash-icon>
@@ -686,7 +688,7 @@
                     autocomplete="off"
                     spellcheck="false"
                     data-cy="modelChartTitleInput"
-                    class="form-input border-gray3 focus:border-blue3 h-10 w-full rounded"
+                    class="form-input border-gray3 focus:border-m600 h-10 w-full rounded"
                     [ngClass]="{
                       'border-red-600':
                         chartTitleForm.controls['chartTitle'].invalid &&
@@ -708,7 +710,7 @@
                   <m-chart-table-icon
                     class="h-6 w-6 cursor-pointer"
                     [ngClass]="{
-                      'text-blue3': mconfig.chart?.type === chartTypeEnumTable,
+                      'text-m600': mconfig.chart?.type === chartTypeEnumTable,
                       'text-gray-500':
                         mconfig.chart?.type !== chartTypeEnumTable
                     }"
@@ -718,7 +720,7 @@
                   <m-chart-line-icon
                     class="h-6 w-6 cursor-pointer"
                     [ngClass]="{
-                      'text-blue3': mconfig.chart?.type === chartTypeEnumLine,
+                      'text-m600': mconfig.chart?.type === chartTypeEnumLine,
                       'text-gray-500': mconfig.chart?.type !== chartTypeEnumLine
                     }"
                     (click)="chartTypeChange(chartTypeEnumLine)"
@@ -727,7 +729,7 @@
                   <m-chart-bar-icon
                     class="h-6 w-6 cursor-pointer"
                     [ngClass]="{
-                      'text-blue3': mconfig.chart?.type === chartTypeEnumBar,
+                      'text-m600': mconfig.chart?.type === chartTypeEnumBar,
                       'text-gray-500': mconfig.chart?.type !== chartTypeEnumBar
                     }"
                     (click)="chartTypeChange(chartTypeEnumBar)"
@@ -736,8 +738,7 @@
                   <m-chart-scatter-icon
                     class="h-6 w-6 cursor-pointer"
                     [ngClass]="{
-                      'text-blue3':
-                        mconfig.chart?.type === chartTypeEnumScatter,
+                      'text-m600': mconfig.chart?.type === chartTypeEnumScatter,
                       'text-gray-500':
                         mconfig.chart?.type !== chartTypeEnumScatter
                     }"
@@ -747,7 +748,7 @@
                   <m-chart-pie-icon
                     class="h-6 w-6 cursor-pointer"
                     [ngClass]="{
-                      'text-blue3': mconfig.chart?.type === chartTypeEnumPie,
+                      'text-m600': mconfig.chart?.type === chartTypeEnumPie,
                       'text-gray-500': mconfig.chart?.type !== chartTypeEnumPie
                     }"
                     (click)="chartTypeChange(chartTypeEnumPie)"
@@ -983,7 +984,7 @@
                       autocomplete="off"
                       spellcheck="false"
                       data-cy="modelLimitInput"
-                      class="form-input border-gray3 focus:border-blue3 h-[36px] w-32 rounded"
+                      class="form-input border-gray3 focus:border-m600 h-[36px] w-32 rounded"
                       [ngClass]="{
                         'border-red-600':
                           limitForm.controls['limit'].invalid &&

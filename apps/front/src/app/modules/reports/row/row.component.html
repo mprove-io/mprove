@@ -156,7 +156,7 @@
         <div [formGroup]="newFormulaForm" class="relative flex w-full">
           <textarea
             data-cy="newFormulaInput"
-            class="form-input border-gray3 focus:border-blue3 h-[95px] w-full resize-none rounded font-mono placeholder-gray-400"
+            class="form-input border-gray3 focus:border-m600 h-[95px] w-full resize-none rounded font-mono placeholder-gray-400"
             [ngClass]="{
               'border-red-600':
                 newFormulaForm.controls['formula'].invalid &&
@@ -184,7 +184,7 @@
           <input
             autocomplete="off"
             data-cy="newNameInput"
-            class="form-input border-gray3 focus:border-blue3 w-full min-w-[100px] resize-none rounded"
+            class="form-input border-gray3 focus:border-m600 w-full min-w-[100px] resize-none rounded"
             [ngClass]="{
               'border-red-600':
                 newNameForm.controls['name'].invalid &&
@@ -263,7 +263,7 @@
       >
         <button
           data-cy="rowApplyButton"
-          class="bg-blue3 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
+          class="bg-m600 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
           type="button"
           (click)="applyConvert()"
           >Apply</button
@@ -295,7 +295,7 @@
         <input
           autocomplete="off"
           data-cy="nameInput"
-          class="form-input border-gray3 focus:border-blue3 w-full min-w-[100px] resize-none rounded"
+          class="form-input border-gray3 focus:border-m600 w-full min-w-[100px] resize-none rounded"
           [ngClass]="{
             'border-red-600':
               nameForm.controls['name'].invalid &&
@@ -374,7 +374,7 @@
             <input
               autocomplete="off"
               data-cy="formatNumberInput"
-              class="form-input border-gray3 focus:border-blue3 w-[200px] resize-none rounded"
+              class="form-input border-gray3 focus:border-m600 w-[200px] resize-none rounded"
               [ngClass]="{
                 'border-red-600':
                   formatNumberForm.controls['formatNumber'].invalid &&
@@ -402,7 +402,7 @@
           <input
             autocomplete="off"
             data-cy="currencyPrefixInput"
-            class="form-input border-gray3 focus:border-blue3 w-full resize-none rounded"
+            class="form-input border-gray3 focus:border-m600 w-full resize-none rounded"
             [ngClass]="{
               'border-red-600':
                 currencyPrefixForm.controls['currencyPrefix'].invalid &&
@@ -429,7 +429,7 @@
           <input
             autocomplete="off"
             data-cy="currencySuffixInput"
-            class="form-input border-gray3 focus:border-blue3 w-full resize-none rounded"
+            class="form-input border-gray3 focus:border-m600 w-full resize-none rounded"
             [ngClass]="{
               'border-red-600':
                 currencySuffixForm.controls['currencySuffix'].invalid &&
@@ -465,7 +465,7 @@
     <div [formGroup]="formulaForm" class="relative flex max-w-[750px] flex-1">
       <textarea
         data-cy="formulaInput"
-        class="form-input border-gray3 focus:border-blue3 max-h-[150px] min-h-[95px] w-full min-w-[300px] resize-y rounded font-mono placeholder-gray-400"
+        class="form-input border-gray3 focus:border-m600 max-h-[150px] min-h-[95px] w-full min-w-[300px] resize-y rounded font-mono placeholder-gray-400"
         [ngClass]="{
           'border-red-600':
             formulaForm.controls['formula'].invalid &&
@@ -582,9 +582,9 @@
             >
               <button
                 data-cy="rowApplyAddParameterButton"
-                class="bg-blue3 ml-5 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
+                class="bg-m600 ml-5 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
                 [ngClass]="{
-                  'bg-blue3': isDisabledApplyAlreadyFiltered === false,
+                  'bg-m600': isDisabledApplyAlreadyFiltered === false,
                   'cursor-default bg-gray-400':
                     isDisabledApplyAlreadyFiltered === true
                 }"

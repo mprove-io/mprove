@@ -18,7 +18,7 @@
           autocomplete="off"
           spellcheck="false"
           data-cy="addConnectionDialogConnectionIdInput"
-          class="form-input border-gray3 focus:border-blue3 w-[400px] rounded"
+          class="form-input border-gray3 focus:border-m600 w-[400px] rounded"
           [ngClass]="{
             'border-red-600':
               addConnectionForm.controls['connectionId'].invalid &&
@@ -119,7 +119,7 @@
           <textarea
             rows="9"
             data-cy="addConnectionDialogServiceAccountCredentialsInput"
-            class="form-input border-gray3 focus:border-blue3 w-[400px] resize-none rounded font-mono"
+            class="form-input border-gray3 focus:border-m600 w-[400px] resize-none rounded font-mono"
             [ngClass]="{
               'border-red-600':
                 addConnectionForm.controls['serviceAccountCredentials']
@@ -154,7 +154,7 @@
             autocomplete="off"
             spellcheck="false"
             data-cy="addConnectionDialogBaseUrlGoogleApiInput"
-            class="form-input border-gray3 focus:border-blue3 w-[400px] rounded"
+            class="form-input border-gray3 focus:border-m600 w-[400px] rounded"
             [ngClass]="{
               'border-red-600':
                 addConnectionForm.controls['baseUrl'].invalid &&
@@ -173,7 +173,7 @@
             autocomplete="off"
             spellcheck="false"
             data-cy="addConnectionDialogBaseUrlApiInput"
-            class="form-input border-gray3 focus:border-blue3 w-[400px] rounded"
+            class="form-input border-gray3 focus:border-m600 w-[400px] rounded"
             [ngClass]="{
               'border-red-600':
                 addConnectionForm.controls['baseUrl'].invalid &&
@@ -200,7 +200,7 @@
         <button
           type="button"
           data-cy="addConnectionDialogAddScopeButton"
-          class="border-blue3 text-blue3 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium hover:bg-white focus:outline-none"
+          class="border-m600 text-m600 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium hover:bg-white focus:outline-none"
           (click)="addScope()"
           >Add Scope</button
         >
@@ -223,7 +223,7 @@
               <div class="ml-5 select-none">Scope</div>
 
               <input
-                class="form-input border-gray3 focus:border-blue3 ml-5 w-full rounded"
+                class="form-input border-gray3 focus:border-m600 ml-5 w-full rounded"
                 autocomplete="off"
                 spellcheck="false"
                 data-cy="addConnectionScope"
@@ -249,7 +249,7 @@
         <button
           type="button"
           data-cy="addConnectionDialogAddHeaderButton"
-          class="border-blue3 text-blue3 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium hover:bg-white focus:outline-none"
+          class="border-m600 text-m600 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium hover:bg-white focus:outline-none"
           (click)="addHeader()"
           >Add Header</button
         >
@@ -291,7 +291,7 @@
               <div class="ml-5 select-none">Key</div>
 
               <input
-                class="form-input border-gray3 focus:border-blue3 ml-5 w-[160px] rounded"
+                class="form-input border-gray3 focus:border-m600 ml-5 w-[160px] rounded"
                 autocomplete="off"
                 spellcheck="false"
                 data-cy="addConnectionHeaderKeyInput"
@@ -301,7 +301,7 @@
               <div class="ml-5 select-none">Value</div>
 
               <input
-                class="form-input border-gray3 focus:border-blue3 ml-5 w-full rounded"
+                class="form-input border-gray3 focus:border-m600 ml-5 w-full rounded"
                 autocomplete="off"
                 spellcheck="false"
                 data-cy="addConnectionHeaderKeyInput"
@@ -327,7 +327,7 @@
             autocomplete="off"
             spellcheck="false"
             data-cy="addConnectionDialogBigqueryQuerySizeLimitGbInput"
-            class="form-input border-gray3 focus:border-blue3 w-[400px] rounded"
+            class="form-input border-gray3 focus:border-m600 w-[400px] rounded"
             [ngClass]="{
               'border-red-600':
                 addConnectionForm.controls['bigqueryQuerySizeLimitGb']
@@ -377,7 +377,7 @@
             autocomplete="off"
             spellcheck="false"
             data-cy="addConnectionDialogHostInput"
-            class="form-input border-gray3 focus:border-blue3 w-[400px] rounded"
+            class="form-input border-gray3 focus:border-m600 w-[400px] rounded"
             [ngClass]="{
               'border-red-600':
                 addConnectionForm.controls['host'].invalid &&
@@ -399,7 +399,7 @@
             autocomplete="off"
             spellcheck="false"
             data-cy="addConnectionDialogPortInput"
-            class="form-input border-gray3 focus:border-blue3 w-[400px] rounded"
+            class="form-input border-gray3 focus:border-m600 w-[400px] rounded"
             [ngClass]="{
               'border-red-600':
                 addConnectionForm.controls['port'].invalid &&
@@ -422,7 +422,7 @@
             *ngIf="addConnectionForm.controls['type'].value !== typeClickHouse"
             spellcheck="false"
             data-cy="addConnectionDialogDatabaseInput"
-            class="form-input border-gray3 focus:border-blue3 w-[400px] rounded"
+            class="form-input border-gray3 focus:border-m600 w-[400px] rounded"
             [ngClass]="{
               'border-red-600':
                 addConnectionForm.controls['database'].invalid &&
@@ -447,7 +447,7 @@
             autocomplete="off"
             spellcheck="false"
             data-cy="addConnectionDialogAccountInput"
-            class="form-input border-gray3 focus:border-blue3 w-[400px] rounded"
+            class="form-input border-gray3 focus:border-m600 w-[400px] rounded"
             [ngClass]="{
               'border-red-600':
                 addConnectionForm.controls['account'].invalid &&
@@ -471,7 +471,7 @@
             autocomplete="off"
             spellcheck="false"
             data-cy="addConnectionDialogWarehouseInput"
-            class="form-input border-gray3 focus:border-blue3 w-[400px] rounded"
+            class="form-input border-gray3 focus:border-m600 w-[400px] rounded"
             [ngClass]="{
               'border-red-600':
                 addConnectionForm.controls['warehouse'].invalid &&
@@ -501,7 +501,7 @@
             autocomplete="off"
             spellcheck="false"
             data-cy="addConnectionDialogUserInput"
-            class="form-input border-gray3 focus:border-blue3 w-[400px] rounded"
+            class="form-input border-gray3 focus:border-m600 w-[400px] rounded"
             [ngClass]="{
               'border-red-600':
                 addConnectionForm.controls['username'].invalid &&
@@ -523,7 +523,7 @@
             autocomplete="off"
             spellcheck="false"
             data-cy="addConnectionDialogPasswordInput"
-            class="form-input border-gray3 focus:border-blue3 w-[400px] rounded"
+            class="form-input border-gray3 focus:border-m600 w-[400px] rounded"
             [ngClass]="{
               'border-red-600':
                 addConnectionForm.controls['password'].invalid &&
@@ -542,14 +542,14 @@
     <div class="mt-6">
       <button
         data-cy="addConnectionDialogAddButton"
-        class="bg-blue3 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
+        class="bg-m600 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
         type="submit"
         >Add</button
       >
 
       <button
         data-cy="addConnectionDialogCancelButton"
-        class="border-blue3 text-blue3 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+        class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button

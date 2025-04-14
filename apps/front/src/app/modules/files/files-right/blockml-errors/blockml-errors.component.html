@@ -22,11 +22,11 @@
             class="flex min-h-[44px] w-full select-none flex-row px-5"
             [ngClass]="{
               'cursor-pointer': node.data.isError === false,
-              'bg-blue2':
+              'bg-m150':
                 node.data.isError === false &&
                 !!fileNodeId &&
                 node.data.id === fileNodeId,
-              'hover:bg-blue4':
+              'hover:bg-m50':
                 node.data.isError === false &&
                 (!fileNodeId || node.data.id !== fileNodeId)
             }"
@@ -70,7 +70,7 @@
 
                   <div
                     *ngFor="let line of node.data.lines"
-                    class="hover:bg-blue4 flex py-2 pl-5 text-base hover:cursor-pointer"
+                    class="hover:bg-m50 flex py-2 pl-5 text-base hover:cursor-pointer"
                     (click)="goToFileLine(line)"
                   >
                     <div class="flex w-full flex-row">

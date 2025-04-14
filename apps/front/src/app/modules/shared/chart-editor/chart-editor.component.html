@@ -31,7 +31,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorPageSizeInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             pageSizeForm.controls['pageSize'].invalid &&
@@ -63,9 +63,9 @@
       >
         <button
           data-cy="chartEditorHideColumnsCheckbox"
-          class="border-blue3 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 text-white focus:outline-none"
+          class="border-m600 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 text-white focus:outline-none"
           [ngClass]="{
-            'bg-blue3 ': hideColumnsIsChecked(column.id)
+            'bg-m600 ': hideColumnsIsChecked(column.id)
           }"
           (click)="hideColumnsOnClick(column.id)"
         >
@@ -262,9 +262,9 @@
       >
         <button
           data-cy="chartEditorYFieldsCheckbox"
-          class="border-blue3 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 text-white focus:outline-none"
+          class="border-m600 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 text-white focus:outline-none"
           [ngClass]="{
-            'bg-blue3 ': yFieldsIsChecked(column.id)
+            'bg-m600 ': yFieldsIsChecked(column.id)
           }"
           (click)="yFieldsOnClick(column.id)"
         >
@@ -641,7 +641,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorUnitsInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-56 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-56 rounded"
         [ngClass]="{
           'border-red-600':
             unitsForm.controls['units'].invalid &&
@@ -675,7 +675,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorLegendTitleInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-56 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-56 rounded"
         [ngClass]="{
           'border-red-600':
             legendTitleForm.controls['legendTitle'].invalid &&
@@ -718,7 +718,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorXAxisLabelInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-56 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-56 rounded"
         [ngClass]="{
           'border-red-600':
             xAxisLabelForm.controls['xAxisLabel'].invalid &&
@@ -758,7 +758,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorYAxisLabelInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-56 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-56 rounded"
         [ngClass]="{
           'border-red-600':
             yAxisLabelForm.controls['yAxisLabel'].invalid &&
@@ -1110,7 +1110,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorAngleSpanInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             angleSpanForm.controls['angleSpan'].invalid &&
@@ -1140,7 +1140,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorStartAngleInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             startAngleForm.controls['startAngle'].invalid &&
@@ -1174,7 +1174,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorArcWidthInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             arcWidthForm.controls['arcWidth'].invalid &&
@@ -1210,7 +1210,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorMinInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             minForm.controls['min'].invalid && minForm.controls['min'].touched
@@ -1237,7 +1237,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorMaxInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             maxForm.controls['max'].invalid && maxForm.controls['max'].touched
@@ -1264,7 +1264,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorXScaleMaxInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             xScaleMaxForm.controls['xScaleMax'].invalid &&
@@ -1298,7 +1298,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorYScaleMinInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             yScaleMinForm.controls['yScaleMin'].invalid &&
@@ -1338,7 +1338,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorYScaleMaxInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             yScaleMaxForm.controls['yScaleMax'].invalid &&
@@ -1374,7 +1374,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorBarPaddingInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             barPaddingForm.controls['barPadding'].invalid &&
@@ -1404,7 +1404,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorBigSegmentsInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             bigSegmentsForm.controls['bigSegments'].invalid &&
@@ -1434,7 +1434,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorSmallSegmentsInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             smallSegmentsForm.controls['smallSegments'].invalid &&
@@ -1464,7 +1464,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorGroupPaddingInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             groupPaddingForm.controls['groupPadding'].invalid &&
@@ -1494,7 +1494,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorInnerPaddingInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             innerPaddingForm.controls['innerPadding'].invalid &&
@@ -1563,7 +1563,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorFormatNumberDataLabelInput"
-        class="form-input border-gray3 focus:border-blue3 mt-5 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 mt-5 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             formatNumberDataLabelForm.controls['formatNumberDataLabel']
@@ -1633,7 +1633,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorFormatNumberValueInput"
-        class="form-input border-gray3 focus:border-blue3 mt-5 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 mt-5 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             formatNumberValueForm.controls['formatNumberValue'].invalid &&
@@ -1702,7 +1702,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorFormatNumberAxisTickInput"
-        class="form-input border-gray3 focus:border-blue3 mt-5 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 mt-5 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             formatNumberAxisTickForm.controls['formatNumberAxisTick'].invalid &&
@@ -1773,7 +1773,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorFormatNumberXAxisTickInput"
-        class="form-input border-gray3 focus:border-blue3 mt-5 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 mt-5 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             formatNumberXAxisTickForm.controls['formatNumberXAxisTick']
@@ -1843,7 +1843,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartEditorFormatNumberYAxisTickInput"
-        class="form-input border-gray3 focus:border-blue3 mt-5 h-9 w-32 rounded"
+        class="form-input border-gray3 focus:border-m600 mt-5 h-9 w-32 rounded"
         [ngClass]="{
           'border-red-600':
             formatNumberYAxisTickForm.controls['formatNumberYAxisTick']

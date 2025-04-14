@@ -1,4 +1,4 @@
-<div class="bg-blue1 flex h-full cursor-default flex-col">
+<div class="bg-m1 flex h-full cursor-default flex-col">
   <div
     class="flex h-2 flex-1 flex-row items-center justify-center overflow-y-auto"
   >
@@ -17,7 +17,7 @@
         <input
           spellcheck="false"
           data-cy="completeRegistrationPasswordInput"
-          class="form-input border-gray3 focus:border-blue3 mt-9 rounded"
+          class="form-input border-gray3 focus:border-m600 mt-9 rounded"
           [ngClass]="{
             'border-red-600':
               setPasswordForm.controls['newPassword'].invalid &&
@@ -33,7 +33,7 @@
 
         <button
           data-cy="completeRegistrationSignUpButton"
-          class="bg-blue3 mt-1 rounded py-3 text-base font-medium text-white focus:outline-none"
+          class="bg-m600 mt-1 rounded py-3 text-base font-medium text-white focus:outline-none"
           type="submit"
           >SignUp</button
         >

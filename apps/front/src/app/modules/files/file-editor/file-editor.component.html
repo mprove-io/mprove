@@ -42,7 +42,7 @@
           class="rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
           [ngClass]="{
             'cursor-default bg-gray-400': !needSave,
-            'bg-blue3': needSave
+            'bg-m600': needSave
           }"
           (click)="save()"
           [disabled]="!needSave"
@@ -56,7 +56,7 @@
         class="rounded border px-5 py-2 text-base font-medium focus:outline-none"
         [ngClass]="{
           ' cursor-default border-gray-400 text-gray-400': !needSave,
-          'border-blue3 text-blue3 ': needSave
+          'border-m600 text-m600 ': needSave
         }"
         (click)="cancel()"
         [disabled]="!needSave"

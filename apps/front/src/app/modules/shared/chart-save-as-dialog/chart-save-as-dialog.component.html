@@ -11,9 +11,9 @@
     (click)="newChartOnClick()"
   >
     <div
-      class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+      class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
       [ngClass]="{
-        'bg-blue3 ': chartSaveAs === chartSaveAsEnum.NEW_CHART
+        'bg-m600 ': chartSaveAs === chartSaveAsEnum.NEW_CHART
       }"
     >
       <m-check-icon
@@ -30,9 +30,9 @@
     (click)="tileOfDashboardOnClick()"
   >
     <button
-      class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+      class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
       [ngClass]="{
-        'bg-blue3 ': chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD
+        'bg-m600 ': chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD
       }"
     >
       <m-check-icon
@@ -122,9 +122,9 @@
       (click)="newTileOnClick()"
     >
       <div
-        class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+        class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
         [ngClass]="{
-          'bg-blue3 ': tileSaveAs === tileSaveAsEnum.NEW_TILE
+          'bg-m600 ': tileSaveAs === tileSaveAsEnum.NEW_TILE
         }"
       >
         <m-check-icon
@@ -147,9 +147,9 @@
       (click)="replaceExistingTileOnClick()"
     >
       <button
-        class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+        class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
         [ngClass]="{
-          'bg-blue3 ': tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE
+          'bg-m600 ': tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE
         }"
       >
         <m-check-icon
@@ -228,7 +228,7 @@
       <textarea
         spellcheck="false"
         data-cy="chartSaveAsDialogTitleInput"
-        class="form-input border-gray3 focus:border-blue3 h-[120px] w-[600px] resize-none rounded"
+        class="form-input border-gray3 focus:border-m600 h-[120px] w-[600px] resize-none rounded"
         [ngClass]="{
           'border-red-600':
             titleForm.controls['title'].invalid &&
@@ -259,7 +259,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartSaveAsDialogRolesInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
             rolesForm.controls['roles'].invalid &&
@@ -290,7 +290,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartSaveAsDialogUsersInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
             usersForm.controls['users'].invalid &&
@@ -305,10 +305,10 @@
   <div class="mt-9">
     <button
       data-cy="chartSaveAsDialogSaveButton"
-      class="bg-blue3 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
+      class="bg-m600 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
       type="button"
       [ngClass]="{
-        'bg-blue3':
+        'bg-m600':
           chartSaveAs === chartSaveAsEnum.NEW_CHART ||
           (!!selectedDashboardId &&
             (tileSaveAs === tileSaveAsEnum.NEW_TILE || !!selectedTileTitle)),
@@ -330,7 +330,7 @@
 
     <button
       data-cy="chartSaveAsDialogCancelButton"
-      class="border-blue3 text-blue3 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+      class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
       type="button"
       (click)="cancel()"
       >Cancel</button

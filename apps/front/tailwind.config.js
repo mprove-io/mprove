@@ -8,12 +8,13 @@
 // '#dff2fe'; // sky-100
 // '#64BD63'; // ui-switch default green-color
 
-var blue1 = '#F2F5FA'; // main background
-var blue2 = '#cdecfe'; // sky-150 selected objects
-var blue3 = '#0084d1'; // sky-600 main buttons, main clickable text
-var blue4 = '#f0f9ff'; // sky-50 hover elements
-var blue5 = '#e8f6ff'; // sky-75 model tree dimensions
-var blue6 = '#b8e6fe'; // sky-200 dot options icon button
+var m1 = '#F2F5FA'; // main background
+var m50 = '#f0f9ff'; // sky-50 hover elements
+var m75 = '#e8f6ff'; // sky-75 model tree dimensions
+var m150 = '#cdecfe'; // sky-150 selected objects
+var m200 = '#b8e6fe'; // sky-200 dot options icon button, avatar
+var m500 = '#00a6f4'; // clickable text
+var m600 = '#0084d1'; // sky-600 main buttons, main clickable text
 
 var gray1 = '#4D4F5C';
 var gray2 = '#00030B';
@@ -63,12 +64,13 @@ module.exports = {
     },
     backgroundColor: theme => ({
       ...theme('colors'),
-      blue1,
-      blue2,
-      blue3,
-      blue4,
-      blue5,
-      blue6,
+      m1,
+      m150,
+      m500,
+      m600,
+      m50,
+      m75,
+      m200,
       gray1,
       gray2,
       gray3,
@@ -82,12 +84,13 @@ module.exports = {
     }),
     textColor: theme => ({
       ...theme('colors'),
-      blue1,
-      blue2,
-      blue3,
-      blue4,
-      blue5,
-      blue6,
+      m1,
+      m150,
+      m500,
+      m600,
+      m50,
+      m75,
+      m200,
       gray1,
       gray2,
       gray3,
@@ -101,12 +104,13 @@ module.exports = {
     }),
     borderColor: theme => ({
       ...theme('colors'),
-      blue1,
-      blue2,
-      blue3,
-      blue4,
-      blue5,
-      blue6,
+      m1,
+      m150,
+      m500,
+      m600,
+      m50,
+      m75,
+      m200,
       gray1,
       gray2,
       gray3,

@@ -26,7 +26,7 @@
       >
 
       <button
-        class="text-gray1 hover:bg-blue4 block w-full px-4 py-2 text-left text-base focus:outline-none"
+        class="text-gray1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
           'font-semibold': lastUrl === pathAccount
         }"
@@ -41,7 +41,7 @@
         [tpIsEnabled]="user.userId !== nav.orgOwnerId"
       >
         <button
-          class="text-gray1 hover:bg-blue4 block w-full px-4 py-2 text-left text-base focus:outline-none"
+          class="text-gray1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
           [ngClass]="{
             'font-semibold': lastUrl === pathUsers,
             'text-gray-400': user.userId !== nav.orgOwnerId,

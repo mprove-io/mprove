@@ -17,9 +17,9 @@
     (click)="newRepOnClick()"
   >
     <div
-      class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+      class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
       [ngClass]="{
-        'bg-blue3 ': saveAs === reportSaveAsEnum.NEW_REPORT
+        'bg-m600 ': saveAs === reportSaveAsEnum.NEW_REPORT
       }"
     >
       <m-check-icon
@@ -36,9 +36,9 @@
     (click)="existingRepOnClick()"
   >
     <button
-      class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+      class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
       [ngClass]="{
-        'bg-blue3 ': saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT
+        'bg-m600 ': saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT
       }"
     >
       <m-check-icon
@@ -150,7 +150,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="reportSaveAsDialogTitleInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
             titleForm.controls['title'].invalid &&
@@ -174,7 +174,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="reportSaveAsDialogRolesInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
             rolesForm.controls['roles'].invalid &&
@@ -198,7 +198,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="reportSaveAsDialogUsersInput"
-        class="form-input border-gray3 focus:border-blue3 h-9 w-96 rounded"
+        class="form-input border-gray3 focus:border-m600 h-9 w-96 rounded"
         [ngClass]="{
           'border-red-600':
             usersForm.controls['users'].invalid &&
@@ -213,11 +213,10 @@
   <div class="mt-9">
     <button
       data-cy="reportSaveAsDialogCreateButton"
-      class="bg-blue3 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
+      class="bg-m600 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
       type="button"
       [ngClass]="{
-        'bg-blue3':
-          saveAs === reportSaveAsEnum.NEW_REPORT || !!selectedReportId,
+        'bg-m600': saveAs === reportSaveAsEnum.NEW_REPORT || !!selectedReportId,
         'cursor-default bg-gray-400':
           saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
           selectedReportId === undefined
@@ -232,7 +231,7 @@
 
     <button
       data-cy="reportSaveAsDialogCancelButton"
-      class="border-blue3 text-blue3 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+      class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
       type="button"
       (click)="cancel()"
       >Cancel</button

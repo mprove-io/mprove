@@ -1,11 +1,11 @@
 <div class="flex flex-col bg-white p-9">
   <div
     data-cy="deleteOrgDialogTitle"
-    class="mt-5 flex-grow text-left text-2xl font-semibold text-gray2"
+    class="text-gray2 mt-5 flex-grow text-left text-2xl font-semibold"
     >Delete Organization</div
   >
 
-  <div class="mt-6 text-lg text-gray1"
+  <div class="text-gray1 mt-6 text-lg"
     >Are you sure you want to delete
     <span class="font-semibold">
       {{ ref.data.orgName }}
@@ -16,14 +16,14 @@
   <div class="mt-6">
     <button
       data-cy="deleteOrgDialogDeleteButton"
-      class="w-28 rounded border bg-red1 py-3 text-base font-medium text-white focus:outline-none"
+      class="bg-red1 w-28 rounded border py-3 text-base font-medium text-white focus:outline-none"
       (click)="delete()"
       >Delete</button
     >
 
     <button
       data-cy="deleteOrgDialogCancelButton"
-      class="ml-3 w-28 rounded border border-blue3 py-3 text-base font-medium text-blue3 focus:outline-none"
+      class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
       type="button"
       (click)="cancel()"
       >Cancel</button

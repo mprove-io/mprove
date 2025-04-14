@@ -1,4 +1,4 @@
-<div class="bg-blue1 flex h-full cursor-default flex-col">
+<div class="bg-m1 flex h-full cursor-default flex-col">
   <div class="flex h-2 flex-1 flex-row overflow-y-auto">
     <div class="mt-8 flex min-w-[2px] flex-grow flex-col" *ngIf="!!dashboard">
       <div class="flex h-11 flex-row items-center justify-between">
@@ -183,7 +183,7 @@
                 data-cy="dashboardRunButton"
                 class="ml-5 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
                 [ngClass]="{
-                  'bg-blue3': dashboard.tiles.length > 0,
+                  'bg-m600': dashboard.tiles.length > 0,
                   'cursor-default':
                     dashboard.tiles.length === 0 || isRunButtonPressed === true,
                   'bg-gray-400': dashboard.tiles.length === 0

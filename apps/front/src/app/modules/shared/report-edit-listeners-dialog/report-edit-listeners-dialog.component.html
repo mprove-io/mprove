@@ -169,7 +169,7 @@
 
             <button
               *ngIf="i === 0"
-              class="hover:bg-blue4 invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
+              class="hover:bg-m50 invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
               (click)="
                 addListener({
                   row: row,
@@ -183,7 +183,7 @@
 
             <button
               *ngIf="i > 0"
-              class="hover:bg-blue4 invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
+              class="hover:bg-m50 invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
               (click)="
                 removeListener({
                   event: $event,
@@ -205,7 +205,7 @@
   <div class="mt-9">
     <button
       data-cy="editListenDialogApplyButton"
-      class="bg-blue3 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
+      class="bg-m600 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
       type="button"
       (click)="apply()"
       >Apply</button
@@ -213,7 +213,7 @@
 
     <button
       data-cy="editListenDialogCancelButton"
-      class="border-blue3 text-blue3 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+      class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
       type="button"
       (click)="cancel()"
       >Cancel</button

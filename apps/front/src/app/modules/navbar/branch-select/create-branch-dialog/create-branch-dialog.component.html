@@ -20,9 +20,9 @@
       (click)="prodOnClick()"
     >
       <div
-        class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+        class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
         [ngClass]="{
-          'bg-blue3 ': isTargetProd === true
+          'bg-m600 ': isTargetProd === true
         }"
       >
         <m-check-icon *ngIf="isTargetProd === true"></m-check-icon>
@@ -37,9 +37,9 @@
       (click)="devOnClick()"
     >
       <div
-        class="border-blue3 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+        class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
         [ngClass]="{
-          'bg-blue3 ': isTargetProd === false
+          'bg-m600 ': isTargetProd === false
         }"
       >
         <m-check-icon *ngIf="isTargetProd === false"></m-check-icon>
@@ -56,7 +56,7 @@
       autocomplete="off"
       spellcheck="false"
       data-cy="createBranchDialogBranchIdInput"
-      class="form-input border-gray3 focus:border-blue3 mt-2 w-72 rounded"
+      class="form-input border-gray3 focus:border-m600 mt-2 w-72 rounded"
       [ngClass]="{
         'border-red-600':
           createBranchForm.controls['branchId'].invalid &&
@@ -101,14 +101,14 @@
     <div class="mt-9">
       <button
         data-cy="createBranchDialogCreateButton"
-        class="bg-blue3 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
+        class="bg-m600 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
         type="submit"
         >Create</button
       >
 
       <button
         data-cy="createBranchDialogCancelButton"
-        class="border-blue3 text-blue3 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+        class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
         type="button"
         (click)="cancel()"
         >Cancel</button
