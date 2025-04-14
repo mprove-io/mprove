@@ -328,13 +328,17 @@
             <div class="flex h-2 flex-grow flex-col overflow-y-auto">
               <div *ngFor="let c of filteredCharts; let i = index">
                 <div
-                  *ngIf="filteredDraftsLength > 0 && i === filteredDraftsLength"
-                  class="mb-4 ml-[25px] mr-[45px] mt-4 flex flex-row justify-center divide-y divide-gray-300"
+                  *ngIf="filteredDraftsLength > 0 && i === 0"
+                  class="mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold text-gray-500"
                 >
-                  <div class="flex w-[400px] flex-col divide-y divide-gray-300">
-                    <div></div>
-                    <div></div>
-                  </div>
+                  Drafts
+                </div>
+
+                <div
+                  *ngIf="i === filteredDraftsLength"
+                  class="mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold text-gray-500"
+                >
+                  Saved Charts
                 </div>
 
                 <div
@@ -346,7 +350,7 @@
                     'hover:bg-m50': c.chartId !== chart?.chartId
                   }"
                 >
-                  <div class="ml-3 mr-3 flex h-2 items-center">
+                  <div class="ml-4 mr-3 flex h-2 items-center">
                     <div
                       *ngIf="c.chartId === chart?.chartId"
                       data-cy="chartsSelectedSymbol"

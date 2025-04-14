@@ -123,22 +123,22 @@
                   <div class="flex h-2 flex-grow flex-col overflow-y-auto">
                     <div *ngFor="let d of filteredDashboards; let i = index">
                       <div
-                        *ngIf="
-                          filteredDraftsLength > 0 && i === filteredDraftsLength
-                        "
-                        class="mb-4 ml-[25px] mr-[45px] mt-4 flex flex-row justify-center divide-y divide-gray-300"
+                        *ngIf="filteredDraftsLength > 0 && i === 0"
+                        class="mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold text-gray-500"
                       >
-                        <div
-                          class="flex w-[300px] flex-col divide-y divide-gray-300"
-                        >
-                          <div></div>
-                          <div></div>
-                        </div>
+                        Drafts
+                      </div>
+
+                      <div
+                        *ngIf="i === filteredDraftsLength"
+                        class="mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold text-gray-500"
+                      >
+                        Saved Dashboards
                       </div>
 
                       <div
                         class="group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
-                        (click)="navigateToDashboard(d.dashboardId)"
+                        (click)="navToDashboard(d.dashboardId)"
                         [ngClass]="{
                           'mt-4': i === 0,
                           'mb-5': i === filteredDashboards.length - 1,
@@ -146,7 +146,7 @@
                             d.dashboardId !== dashboard?.dashboardId
                         }"
                       >
-                        <div class="ml-3 mr-3 flex h-2 items-center">
+                        <div class="ml-4 mr-3 flex h-2 items-center">
                           <div
                             *ngIf="d.dashboardId === dashboard?.dashboardId"
                             data-cy="dashboardsSelectedSymbol"

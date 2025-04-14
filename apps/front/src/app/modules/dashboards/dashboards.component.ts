@@ -303,7 +303,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  navigateToDashboard(dashboardId: string) {
+  navToDashboard(dashboardId: string) {
     this.navigateService.navigateToDashboard({
       dashboardId: dashboardId
     });
