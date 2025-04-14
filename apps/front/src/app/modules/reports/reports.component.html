@@ -227,7 +227,7 @@
             </div>
 
             <div
-              class="text-red1 ml-4 flex h-8 w-8 flex-shrink-0"
+              class="text-r1 ml-4 flex h-8 w-8 flex-shrink-0"
               tp="The left boundary value of the time range must be less than the right boundary value"
               *ngIf="
                 report?.rangeOpen >= report?.rangeClose &&
@@ -341,7 +341,7 @@
                     class="form-input focus:border-m600 ml-3 h-10 w-[225px] rounded border-gray-400"
                     placeholder="Search Reports"
                     [ngClass]="{
-                      'bg-purple-200': !!word
+                      'bg-p200': !!word
                     }"
                     [(ngModel)]="word"
                     (ngModelChange)="searchWordChange()"
@@ -352,8 +352,7 @@
                       *ngIf="!!word"
                       class="text-gray1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                       [ngClass]="{
-                        'cursor-pointer bg-purple-200 hover:bg-purple-300':
-                          !!word
+                        'bg-p200 hover:bg-p300 cursor-pointer': !!word
                       }"
                       (click)="resetSearch()"
                     ></m-delete-icon>
@@ -788,7 +787,7 @@
                     class="flex h-full w-2/5 flex-shrink-0 overflow-auto border-l"
                     [ngClass]="{
                       'border-gray-300': report.chart.isValid === true,
-                      'border-red-600': report.chart.isValid === false
+                      'border-r600': report.chart.isValid === false
                     }"
                   >
                     <m-chart-editor

@@ -19,14 +19,14 @@
               <m-filter-icon
                 [ngClass]="{
                   'text-gray-400': isFilterByModel === false,
-                  'text-purple-500': isFilterByModel === true
+                  'text-p500': isFilterByModel === true
                 }"
               ></m-filter-icon>
 
               <div
                 class="ml-3 w-[54px] select-none items-center text-lg"
                 [ngClass]="{
-                  'font-semibold text-purple-500': isFilterByModel === true,
+                  'text-p500 font-semibold': isFilterByModel === true,
                   'text-gray-500': isFilterByModel === false
                 }"
               >
@@ -138,7 +138,7 @@
           >
             <div
               *ngIf="!!mconfig && mconfig.warnSelect.length > 0"
-              class="ml-5 flex h-8 w-8 flex-shrink-0 text-purple-500"
+              class="text-p500 ml-5 flex h-8 w-8 flex-shrink-0"
               tp="Warning: The selected fields [{{
                 mconfig.warnSelect.join(', ')
               }}] may use unsafe aggregations and produce incorrect results"
@@ -182,7 +182,7 @@
                 type="button"
                 *ngIf="query?.status === queryStatusEnum.Running"
                 data-cy="modelCancelButton"
-                class="ml-5 flex h-12 w-24 items-center justify-center rounded bg-red-600 py-2 text-base font-medium text-white focus:outline-none"
+                class="bg-r600 ml-5 flex h-12 w-24 items-center justify-center rounded py-2 text-base font-medium text-white focus:outline-none"
                 [ngClass]="{
                   'cursor-default': isCancelButtonPressed === true
                 }"
@@ -284,7 +284,7 @@
                 class="form-input focus:border-m600 ml-3 h-10 w-[225px] rounded border-gray-400"
                 placeholder="Search Charts"
                 [ngClass]="{
-                  'bg-purple-200': !!word
+                  'bg-p200': !!word
                 }"
                 [(ngModel)]="word"
                 (ngModelChange)="searchWordChange()"
@@ -295,7 +295,7 @@
                   *ngIf="!!word"
                   class="text-gray1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                   [ngClass]="{
-                    'cursor-pointer bg-purple-200 hover:bg-purple-300': !!word
+                    'bg-p200 hover:bg-p300 cursor-pointer': !!word
                   }"
                   (click)="resetSearch()"
                 ></m-delete-icon>
@@ -694,7 +694,7 @@
                     data-cy="modelChartTitleInput"
                     class="form-input border-gray3 focus:border-m600 h-10 w-full rounded"
                     [ngClass]="{
-                      'border-red-600':
+                      'border-r600':
                         chartTitleForm.controls['chartTitle'].invalid &&
                         chartTitleForm.controls['chartTitle'].touched
                     }"
@@ -860,7 +860,7 @@
                     class="h-full w-1/3 flex-shrink-0 overflow-auto border-l"
                     [ngClass]="{
                       'border-gray-300': mconfig.chart.isValid === true,
-                      'border-red-600': mconfig.chart.isValid === false
+                      'border-r600': mconfig.chart.isValid === false
                     }"
                   >
                     <m-chart-editor
@@ -990,7 +990,7 @@
                       data-cy="modelLimitInput"
                       class="form-input border-gray3 focus:border-m600 h-[36px] w-32 rounded"
                       [ngClass]="{
-                        'border-red-600':
+                        'border-r600':
                           limitForm.controls['limit'].invalid &&
                           limitForm.controls['limit'].touched
                       }"

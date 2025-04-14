@@ -23,7 +23,7 @@
             data-cy="dashboardAddFilterDialogLabelInput"
             class="form-input border-gray3 focus:border-m600 h-9 w-96 rounded"
             [ngClass]="{
-              'border-red-600':
+              'border-r600':
                 labelForm.controls['label'].invalid &&
                 labelForm.controls['label'].touched
             }"
@@ -426,7 +426,7 @@
       >Cancel</button
     >
 
-    <div *ngIf="!!formsError" class="text-red1 ml-5 flex">
+    <div *ngIf="!!formsError" class="text-r1 ml-5 flex">
       {{ formsError }}
     </div>
   </form>

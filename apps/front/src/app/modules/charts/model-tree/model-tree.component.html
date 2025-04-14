@@ -51,18 +51,18 @@
                     nodeClassCalculation
                   ].indexOf(node.data.nodeClass) < 0),
               'bg-m75': node.data.nodeClass === nodeClassDimension,
-              'bg-purple-100': node.data.nodeClass === nodeClassMeasure,
-              'bg-green2': node.data.nodeClass === nodeClassCalculation,
+              'bg-p100': node.data.nodeClass === nodeClassMeasure,
+              'bg-g2': node.data.nodeClass === nodeClassCalculation,
               'bg-gray-100': node.data.nodeClass === nodeClassFilter,
               'hover:bg-m150':
                 node.data.nodeClass === nodeClassDimension &&
                 (node.data.isSelected === false ||
                   node.data.required === false),
-              'hover:bg-purple-200':
+              'hover:bg-p200':
                 node.data.nodeClass === nodeClassMeasure &&
                 (node.data.isSelected === false ||
                   node.data.required === false),
-              'hover:bg-green1':
+              'hover:bg-g1':
                 node.data.nodeClass === nodeClassCalculation &&
                 (node.data.isSelected === false ||
                   node.data.required === false),

@@ -24,7 +24,7 @@
 
   <div
     *ngIf="query?.status === queryStatusEnum.Error"
-    class="max-w-xl select-none truncate bg-red-100 px-3 py-2 text-red-700"
+    class="bg-r100 text-r700 max-w-xl select-none truncate px-3 py-2"
     tp="{{ query?.lastErrorMessage | capitalize }}"
     [tpIsEnabled]="query?.status === queryStatusEnum.Error"
     >{{ query?.lastErrorMessage | capitalize }}</div

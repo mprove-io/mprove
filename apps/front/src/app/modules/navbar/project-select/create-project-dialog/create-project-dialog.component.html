@@ -16,7 +16,7 @@
       data-cy="createProjectDialogProjectNameInput"
       class="form-input border-gray3 focus:border-m600 mt-9 rounded"
       [ngClass]="{
-        'border-red-600':
+        'border-r600':
           createProjectForm.controls['projectName'].invalid &&
           createProjectForm.controls['projectName'].touched
       }"
@@ -83,7 +83,7 @@
         data-cy="createProjectDialogGitUrlInput"
         class="form-input border-gray3 focus:border-m600 mt-9 w-full rounded"
         [ngClass]="{
-          'border-red-600':
+          'border-r600':
             createProjectForm.controls['projectGitUrl'].invalid &&
             createProjectForm.controls['projectGitUrl'].touched
         }"
@@ -105,7 +105,7 @@
       <div class="relative mt-5 h-[300px] w-full">
         <div
           *ngIf="publicKey"
-          class="text-base text-green-700"
+          class="text-g700 text-base"
           style="word-break: break-all"
           >{{ publicKey }}</div
         >

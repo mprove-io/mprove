@@ -78,7 +78,7 @@
                       class="form-input focus:border-m600 ml-3 h-10 w-[225px] rounded border-gray-400"
                       placeholder="Search Dashboards"
                       [ngClass]="{
-                        'bg-purple-200': !!word
+                        'bg-p200': !!word
                       }"
                       [(ngModel)]="word"
                       (ngModelChange)="searchWordChange()"
@@ -89,8 +89,7 @@
                         *ngIf="!!word"
                         class="text-gray1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                         [ngClass]="{
-                          'cursor-pointer bg-purple-200 hover:bg-purple-300':
-                            !!word
+                          'bg-p200 hover:bg-p300 cursor-pointer': !!word
                         }"
                         (click)="resetSearch()"
                       ></m-delete-icon>

@@ -1,12 +1,11 @@
 // logo '#0084d1'; // sky-600
 // favicon '#0084d1'; // sky-600
-// ui-switch '#00a6f4'; // sky-500
+// '#64BD63'; // ui-switch default green-color
 
 // old blue2 = '#E7F2FD';
 // old blue3 = '#365EE0';
-// '#0069a8'; // sky-700
-// '#dff2fe'; // sky-100
-// '#64BD63'; // ui-switch default green-color
+// old purple1 = '#90A6EE';
+// old purple2 = '#E1E7FB';
 
 var m1 = '#F2F5FA'; // main background
 var m50 = '#f0f9ff'; // sky-50 hover elements
@@ -22,13 +21,19 @@ var gray3 = '#D7DBEC';
 var gray4 = '#D7DBECA3';
 var gray5 = '#4F505C';
 
-var green1 = '#B6E1BC';
-var green2 = '#E9F6EB';
+var g1 = '#B6E1BC';
+var g2 = '#E9F6EB';
+var g700 = '#008236';
 
-var purple1 = '#90A6EE';
-var purple2 = '#E1E7FB';
+var p100 = '#f3e8ff';
+var p200 = '#e9d4ff';
+var p300 = '#dab2ff';
+var p500 = '#ad46ff';
 
-var red1 = '#DE4343';
+var r1 = '#DE4343';
+var r100 = '#ffe2e2';
+var r600 = '#e7000b';
+var r700 = '#c10007';
 
 const colors = require('tailwindcss/colors');
 
@@ -76,11 +81,17 @@ module.exports = {
       gray3,
       gray4,
       gray5,
-      green1,
-      green2,
-      purple1,
-      purple2,
-      red1
+      g1,
+      g2,
+      g700,
+      p100,
+      p200,
+      p300,
+      p500,
+      r1,
+      r100,
+      r600,
+      r700
     }),
     textColor: theme => ({
       ...theme('colors'),
@@ -96,11 +107,17 @@ module.exports = {
       gray3,
       gray4,
       gray5,
-      green1,
-      green2,
-      purple1,
-      purple2,
-      red1
+      g1,
+      g2,
+      g700,
+      p100,
+      p200,
+      p300,
+      p500,
+      r1,
+      r100,
+      r600,
+      r700
     }),
     borderColor: theme => ({
       ...theme('colors'),
@@ -116,11 +133,17 @@ module.exports = {
       gray3,
       gray4,
       gray5,
-      green1,
-      green2,
-      purple1,
-      purple2,
-      red1
+      g1,
+      g2,
+      g700,
+      p100,
+      p200,
+      p300,
+      p500,
+      r1,
+      r100,
+      r600,
+      r700
     })
   },
   plugins: [

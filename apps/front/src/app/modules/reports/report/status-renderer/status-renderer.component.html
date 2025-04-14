@@ -15,7 +15,7 @@
 
   <div
     *ngIf="params.data.mconfig?.select.length === 0"
-    class="text-red1 flex h-8 w-8 flex-shrink-0"
+    class="text-r1 flex h-8 w-8 flex-shrink-0"
     tp="No store field found for time_group with detail: {{ timeSpecDetail }}"
     placement="left"
   >
@@ -26,7 +26,7 @@
     *ngIf="
       isRunning === false && params.data.query?.status === queryStatusEnum.Error
     "
-    class="text-red1 flex h-8 w-8 flex-shrink-0"
+    class="text-r1 flex h-8 w-8 flex-shrink-0"
     tp="Query Error: {{ params.data.query?.lastErrorMessage }}"
     placement="left"
   >
@@ -38,7 +38,7 @@
     class="flex h-8 w-8 flex-shrink-0"
     [ngClass]="{
       'text-gray-400': topQueryError === someRowsHaveFormulaErrors,
-      'text-red1': topQueryError !== someRowsHaveFormulaErrors
+      'text-r1': topQueryError !== someRowsHaveFormulaErrors
     }"
     tp="{{ topQueryError }}"
     placement="left"
@@ -65,7 +65,7 @@
       !!params.data.mconfig &&
       params.data.mconfig.warnSelect.length > 0
     "
-    class="flex h-8 w-8 flex-shrink-0 text-purple-500"
+    class="text-p500 flex h-8 w-8 flex-shrink-0"
     tp="Warning: The selected fields [{{
       params.data.mconfig.warnSelect.join(', ')
     }}] may use unsafe aggregations and produce incorrect results"
