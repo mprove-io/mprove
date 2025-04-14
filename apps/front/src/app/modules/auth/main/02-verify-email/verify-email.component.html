@@ -7,21 +7,21 @@
         <m-email-ring></m-email-ring>
       </div>
 
-      <div class="text-gray2 mb-8 mt-5 text-center text-2xl font-semibold">{{
+      <div class="text-s2 mb-8 mt-5 text-center text-2xl font-semibold">{{
         pageTitle
       }}</div>
-      <div class="text-gray2 text-base"
+      <div class="text-s2 text-base"
         >We sent an email to {{ email$ | async }}</div
       >
-      <div class="text-gray2 text-base"
+      <div class="text-s2 text-base"
         >Please check your inbox and confirm your email</div
       >
-      <div class="text-gray2 mt-8 text-base">Didn't receive the email?</div>
+      <div class="text-s2 mt-8 text-base">Didn't receive the email?</div>
       <button
         class="mt-1 text-base focus:outline-none"
         [ngClass]="{
           'text-m600': isResendEnabled === true,
-          'text-gray1': isResendEnabled === false,
+          'text-s1': isResendEnabled === false,
           'cursor-default': isResendEnabled === false,
           'text-left': isResendEnabled === false,
           'font-semibold': isResendEnabled === false,

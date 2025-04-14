@@ -2,7 +2,7 @@
   <div
     *ngIf="isReport === true"
     (click)="emitChartToggleSeries({ dataRowId: seriesElement.dataRowId })"
-    class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg"
+    class="text-s1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg"
   >
     <div class="flex flex-row items-center">
       <m-chevron-right-icon *ngIf="isExpanded === false"></m-chevron-right-icon>
@@ -34,7 +34,7 @@
   <div
     *ngIf="isReport === false"
     (click)="emitChartToggleSeries({ dataField: seriesElement.dataField })"
-    class="text-gray1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg"
+    class="text-s1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg"
   >
     <div class="flex flex-row items-center">
       <m-chevron-right-icon *ngIf="isExpanded === false"></m-chevron-right-icon>
@@ -60,8 +60,7 @@
         -1
       "
     >
-      <div
-        class="text-gray1 flex h-9 w-[50px] select-none items-center text-base"
+      <div class="text-s1 flex h-9 w-[50px] select-none items-center text-base"
         >Type</div
       >
 
@@ -140,8 +139,7 @@
       "
       class="mb-5 ml-[32px] flex flex-row items-center"
     >
-      <div
-        class="text-gray1 flex h-9 w-[50px] select-none items-center text-base"
+      <div class="text-s1 flex h-9 w-[50px] select-none items-center text-base"
         >Y Axis</div
       >
 

@@ -9,7 +9,7 @@
             <div class="flex w-full flex-row items-center">
               <div
                 data-cy="metricsTitle"
-                class="text-gray1 flex select-none items-center self-center text-2xl font-semibold"
+                class="text-s1 flex select-none items-center self-center text-2xl font-semibold"
               >
                 {{ pageTitle }}
               </div>
@@ -166,7 +166,7 @@
             *ngIf="lastUrl !== pathReports && lastUrl !== pathReportsList"
             class="flex w-full flex-row items-center"
           >
-            <div class="text-gray1 ml-[44px] select-none text-xl font-semibold"
+            <div class="text-s1 ml-[44px] select-none text-xl font-semibold"
               >Detail</div
             >
 
@@ -200,7 +200,7 @@
               </ng-select>
             </form>
 
-            <div class="text-gray1 ml-6 select-none text-base">Time</div>
+            <div class="text-s1 ml-6 select-none text-base">Time</div>
 
             <div
               class="flex flex-row items-center justify-start"
@@ -263,7 +263,7 @@
                 ></ui-switch>
 
                 <div
-                  class="text-gray1 ml-5 flex h-9 flex-shrink-0 select-none items-center text-base"
+                  class="text-s1 ml-5 flex h-9 flex-shrink-0 select-none items-center text-base"
                   >Auto Run</div
                 >
               </div>
@@ -323,7 +323,7 @@
       <div class="mt-6 flex h-2 flex-1 flex-row">
         <div class="flex w-1/5 flex-shrink-0" *ngIf="isShowLeft === true">
           <div class="flex w-full flex-grow rounded bg-white shadow">
-            <div class="text-gray1 mt-6 flex w-full flex-col text-base">
+            <div class="text-s1 mt-6 flex w-full flex-col text-base">
               <div
                 class="flex h-2 flex-col"
                 [ngClass]="{
@@ -332,7 +332,7 @@
                 }"
               >
                 <div class="mb-6 flex h-11 flex-row items-center">
-                  <m-search-icon class="text-gray1 ml-6"></m-search-icon>
+                  <m-search-icon class="text-s1 ml-6"></m-search-icon>
 
                   <input
                     spellcheck="false"
@@ -350,7 +350,7 @@
                   <div class="h-9 w-9">
                     <m-delete-icon
                       *ngIf="!!word"
-                      class="text-gray1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                      class="text-s1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                       [ngClass]="{
                         'bg-p200 hover:bg-p300 cursor-pointer': !!word
                       }"
@@ -426,7 +426,7 @@
                           [ngClass]="{
                             'text-m600 font-semibold':
                               r.reportId === report.reportId,
-                            'text-gray1': r.reportId !== report.reportId
+                            'text-s1': r.reportId !== report.reportId
                           }"
                         >
                           {{ r.title | capitalize }}
@@ -488,7 +488,7 @@
                 >
                   <div
                     (click)="toggleMetricsPanel()"
-                    class="text-gray1 mr-10 flex h-11 cursor-pointer select-none flex-row items-center space-x-2 px-5 text-lg font-semibold"
+                    class="text-s1 mr-10 flex h-11 cursor-pointer select-none flex-row items-center space-x-2 px-5 text-lg font-semibold"
                   >
                     <div class="flex flex-row items-center space-x-2">
                       <m-chevron-right-icon
@@ -530,9 +530,7 @@
                 </div>
 
                 <div class="mb-5 mr-10 mt-5 flex h-11 flex-row items-center">
-                  <div class="text-gray1 ml-6 select-none text-base"
-                    >Timezone</div
-                  >
+                  <div class="text-s1 ml-6 select-none text-base">Timezone</div>
 
                   <div class="ml-5 flex max-w-[260px] flex-1">
                     <form
@@ -586,7 +584,7 @@
           class="ml-6 flex min-w-[2px] flex-grow flex-col"
         >
           <div
-            class="text-gray1 mb-[80px] flex h-full w-full select-none items-center justify-center text-xl"
+            class="text-s1 mb-[80px] flex h-full w-full select-none items-center justify-center text-xl"
           >
             Select Report
           </div>
@@ -620,7 +618,7 @@
           <div class="mr-5 mt-5 flex min-h-[68px] flex-shrink-0 flex-row">
             <div
               (click)="toggleFiltersPanel()"
-              class="text-gray1 mt-2 flex h-11 select-none flex-row items-start space-x-2 px-5 text-xl font-semibold"
+              class="text-s1 mt-2 flex h-11 select-none flex-row items-start space-x-2 px-5 text-xl font-semibold"
               [ngClass]="{
                 'cursor-pointer': report?.fields.length > 0,
                 'cursor-default': report?.fields.length === 0
@@ -725,7 +723,7 @@
                   >
                     <div
                       *ngIf="dataPoints.length === 0"
-                      class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+                      class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
                       >No rows with chart enabled</div
                     >
 
@@ -733,7 +731,7 @@
                       *ngIf="
                         dataPoints.length > 0 && selectedDataRowsLength === 0
                       "
-                      class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+                      class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
                       >No rows with charts enabled</div
                     >
 
@@ -757,7 +755,7 @@
                         selectedDataRowsLength > 0 &&
                         recordsWithValuesLength === 0
                       "
-                      class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+                      class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
                     >
                       <div *ngIf="newQueriesLength > 0"
                         >Run queries to get data</div

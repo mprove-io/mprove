@@ -1,11 +1,9 @@
 <div class="bg-m1 flex h-full cursor-default flex-col">
   <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
     <div class="flex h-11 items-center">
-      <div
-        data-cy="orgAccountTitle"
-        class="text-gray1 text-2xl font-semibold"
-        >{{ pageTitle }}</div
-      >
+      <div data-cy="orgAccountTitle" class="text-s1 text-2xl font-semibold">{{
+        pageTitle
+      }}</div>
     </div>
 
     <div class="mt-6 flex h-2 w-full flex-1 rounded bg-white shadow">
@@ -62,7 +60,7 @@
                   class="rounded border px-3 py-2 text-sm font-medium leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
                     'cursor-default text-gray-400': isOrgOwner === false,
-                    'border-gray3 text-gray1': isOrgOwner === true
+                    'border-s3 text-s1': isOrgOwner === true
                   }"
                   [disabled]="isOrgOwner === false"
                   (click)="editName()"
@@ -81,7 +79,7 @@
                   class="rounded border px-3 py-2 text-sm font-medium leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
                     'cursor-default text-gray-400': isOrgOwner === false,
-                    'border-gray3 text-gray1': isOrgOwner === true
+                    'border-s3 text-s1': isOrgOwner === true
                   }"
                   [disabled]="isOrgOwner === false"
                   (click)="editOwner()"

@@ -1,7 +1,7 @@
 <div class="flex flex-col bg-white p-9">
   <div
     data-cy="createBranchDialogTitle"
-    class="text-gray2 mt-5 flex-grow text-left text-2xl font-semibold"
+    class="text-s2 mt-5 flex-grow text-left text-2xl font-semibold"
     >Create Branch</div
   >
 
@@ -10,7 +10,7 @@
     [formGroup]="createBranchForm"
     (ngSubmit)="create()"
   >
-    <div class="text-gray2 mt-8 select-none text-left text-base font-semibold"
+    <div class="text-s2 mt-8 select-none text-left text-base font-semibold"
       >Repo</div
     >
 
@@ -48,7 +48,7 @@
       <div class="ml-5 select-none text-base">Dev-{{ user?.alias }}</div>
     </div>
 
-    <div class="text-gray2 mt-8 select-none text-left text-base font-semibold"
+    <div class="text-s2 mt-8 select-none text-left text-base font-semibold"
       >Branch name</div
     >
 
@@ -56,7 +56,7 @@
       autocomplete="off"
       spellcheck="false"
       data-cy="createBranchDialogBranchIdInput"
-      class="form-input border-gray3 focus:border-m600 mt-2 w-72 rounded"
+      class="form-input border-s3 focus:border-m600 mt-2 w-72 rounded"
       [ngClass]="{
         'border-r600':
           createBranchForm.controls['branchId'].invalid &&

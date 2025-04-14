@@ -6,7 +6,7 @@
           <div class="flex w-1/4 flex-row items-center">
             <div
               data-cy="modelTitle"
-              class="text-gray1 flex items-center self-center text-2xl font-semibold"
+              class="text-s1 flex items-center self-center text-2xl font-semibold"
             >
               {{ pageTitle }}
             </div>
@@ -149,7 +149,7 @@
 
             <div class="flex-grow"></div>
 
-            <div class="text-gray1 mr-9 flex flex-row items-center text-base">
+            <div class="text-s1 mr-9 flex flex-row items-center text-base">
               <!-- <div *ngIf="isRunningDry === true">Calculating ... </div> -->
               <!-- <div *ngIf="isRunning === true">Running ... </div> -->
               <!-- <div *ngIf="isCanceling === true">Canceling ... </div> -->
@@ -173,7 +173,7 @@
                 <ui-switch [checked]="isAutoRun" color="#64BD63"></ui-switch>
 
                 <div
-                  class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
+                  class="text-s1 ml-5 flex h-9 select-none items-center text-base"
                   >Auto Run</div
                 >
               </div>
@@ -275,7 +275,7 @@
             }"
           >
             <div class="mb-6 mt-6 flex h-11 flex-row items-center">
-              <m-search-icon class="text-gray1 ml-6"></m-search-icon>
+              <m-search-icon class="text-s1 ml-6"></m-search-icon>
 
               <input
                 spellcheck="false"
@@ -293,7 +293,7 @@
               <div class="ml-3 h-9 w-9 flex-shrink-0">
                 <m-delete-icon
                   *ngIf="!!word"
-                  class="text-gray1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  class="text-s1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                   [ngClass]="{
                     'bg-p200 hover:bg-p300 cursor-pointer': !!word
                   }"
@@ -412,7 +412,7 @@
                     class="ml-3 truncate"
                     [ngClass]="{
                       'text-m600 font-semibold': c.chartId === chart?.chartId,
-                      'text-gray1': c.chartId !== chart?.chartId
+                      'text-s1': c.chartId !== chart?.chartId
                     }"
                   >
                     {{ c.title | capitalize }}
@@ -461,7 +461,7 @@
             </div>
 
             <div
-              class="text-gray1 flex w-full flex-shrink-0 flex-row items-center py-5"
+              class="text-s1 flex w-full flex-shrink-0 flex-row items-center py-5"
             >
               <div
                 (click)="toggleSchemaPanel()"
@@ -567,7 +567,7 @@
               "
             >
               <div
-                class="text-gray1 mb-[80px] flex h-full w-full select-none items-center justify-center text-xl"
+                class="text-s1 mb-[80px] flex h-full w-full select-none items-center justify-center text-xl"
               >
                 Select Chart
               </div>
@@ -678,7 +678,7 @@
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="text-gray1 ml-10 select-none text-base"
+                  class="text-s1 ml-10 select-none text-base"
                   >Title</div
                 >
 
@@ -692,7 +692,7 @@
                     autocomplete="off"
                     spellcheck="false"
                     data-cy="modelChartTitleInput"
-                    class="form-input border-gray3 focus:border-m600 h-10 w-full rounded"
+                    class="form-input border-s3 focus:border-m600 h-10 w-full rounded"
                     [ngClass]="{
                       'border-r600':
                         chartTitleForm.controls['chartTitle'].invalid &&
@@ -824,7 +824,7 @@
               >
                 <div
                   *ngIf="mconfig?.select.length === 0"
-                  class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+                  class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
                   >Select Model Fields</div
                 >
 
@@ -879,7 +879,7 @@
             <div class="flex flex-col">
               <div class="mr-5 flex flex-shrink-0 flex-grow flex-row">
                 <!-- <div
-                  class="text-gray1 ml-6 mt-4 flex h-full min-h-[76px] w-full flex-shrink-0 select-none pt-4 text-xl"
+                  class="text-s1 ml-6 mt-4 flex h-full min-h-[76px] w-full flex-shrink-0 select-none pt-4 text-xl"
                   *ngIf="mconfig?.extendedFilters.length === 0"
                   >No parameters</div
                 > -->
@@ -889,7 +889,7 @@
                 >
                   <div
                     (click)="toggleFiltersPanel()"
-                    class="text-gray1 mt-1 flex h-11 select-none flex-row items-start space-x-2 px-5 py-3 text-xl font-semibold"
+                    class="text-s1 mt-1 flex h-11 select-none flex-row items-start space-x-2 px-5 py-3 text-xl font-semibold"
                     [ngClass]="{
                       'cursor-pointer': mconfig?.extendedFilters.length > 0,
                       'cursor-default': mconfig?.extendedFilters.length === 0
@@ -965,7 +965,7 @@
                     (click)="toggleFormat()"
                   >
                     <div
-                      class="text-gray1 flex h-9 select-none items-center text-base"
+                      class="text-s1 flex h-9 select-none items-center text-base"
                       >Format</div
                     >
 
@@ -973,7 +973,7 @@
                   </div>
 
                   <div
-                    class="text-gray1 ml-10 select-none text-base"
+                    class="text-s1 ml-10 select-none text-base"
                     *ngIf="mconfig?.select.length > 0"
                     >Limit</div
                   >
@@ -988,7 +988,7 @@
                       autocomplete="off"
                       spellcheck="false"
                       data-cy="modelLimitInput"
-                      class="form-input border-gray3 focus:border-m600 h-[36px] w-32 rounded"
+                      class="form-input border-s3 focus:border-m600 h-[36px] w-32 rounded"
                       [ngClass]="{
                         'border-r600':
                           limitForm.controls['limit'].invalid &&
@@ -1003,7 +1003,7 @@
                   </div>
 
                   <div
-                    class="text-gray1 ml-5 select-none text-base"
+                    class="text-s1 ml-5 select-none text-base"
                     *ngIf="mconfig?.select.length > 0"
                     >Timezone</div
                   >
@@ -1058,7 +1058,7 @@
                   <div
                     *ngIf="mconfig?.select.length > 0"
                     (click)="toggleInfoPanel()"
-                    class="text-gray1 flex h-11 cursor-pointer select-none flex-row items-center pl-2 pr-5 text-xl font-semibold"
+                    class="text-s1 flex h-11 cursor-pointer select-none flex-row items-center pl-2 pr-5 text-xl font-semibold"
                   >
                     <div class="flex flex-row items-center space-x-2">
                       <m-chevron-right-icon
@@ -1122,7 +1122,7 @@
               <div class="mx-5 mb-5 mt-5 flex h-2 flex-grow">
                 <div
                   *ngIf="mconfig?.select.length === 0"
-                  class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+                  class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
                   >Select Model Fields</div
                 >
 

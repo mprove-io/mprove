@@ -1,14 +1,14 @@
 <div class="flex flex-col">
   <div
     (click)="emitChartToggleYAxisElement()"
-    class="text-gray1 flex cursor-pointer select-none flex-row items-start text-lg font-semibold"
+    class="text-s1 flex cursor-pointer select-none flex-row items-start text-lg font-semibold"
   >
     <div class="flex flex-row items-start">
       <m-chevron-right-icon *ngIf="isExpanded === false"></m-chevron-right-icon>
       <m-chevron-down-icon *ngIf="isExpanded === true"></m-chevron-down-icon>
 
       <div class="ml-2 flex flex-row items-start">
-        <div class="text-gray1 mb-5"
+        <div class="text-s1 mb-5"
           >Y Axis {{ yAxisIndex === 0 ? 'Left' : 'Right' }}</div
         >
 
@@ -31,7 +31,7 @@
       (click)="toggleScale()"
     >
       <div
-        class="text-gray1 flex h-9 w-[50px] flex-shrink-0 select-none items-center text-base"
+        class="text-s1 flex h-9 w-[50px] flex-shrink-0 select-none items-center text-base"
         >Scale</div
       >
 

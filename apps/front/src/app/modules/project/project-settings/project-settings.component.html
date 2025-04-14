@@ -1,9 +1,7 @@
 <div class="bg-m1 flex h-full cursor-default flex-col">
   <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
     <div class="flex h-11 items-center">
-      <div
-        data-cy="projectSettingsTitle"
-        class="text-gray1 text-2xl font-semibold"
+      <div data-cy="projectSettingsTitle" class="text-s1 text-2xl font-semibold"
         >{{ pageTitle }}
       </div>
     </div>
@@ -84,7 +82,7 @@
                   class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
                     'cursor-default text-gray-400': isAdmin === false,
-                    'border-gray3 text-gray1': isAdmin === true
+                    'border-s3 text-s1': isAdmin === true
                   }"
                   [disabled]="isAdmin === false"
                   (click)="editName()"

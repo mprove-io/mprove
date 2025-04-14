@@ -19,14 +19,14 @@
 
   <ng-template #templateOrgOptions>
     <div
-      class="border-gray4 w-56 cursor-default rounded-md border-2 bg-white shadow-xl"
+      class="border-s4 w-56 cursor-default rounded-md border-2 bg-white shadow-xl"
     >
       <div class="mt-2 block px-4 py-2 text-base font-semibold text-gray-400"
         >{{ nav?.orgName | capitalize }} Org</div
       >
 
       <button
-        class="text-gray1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
+        class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
           'font-semibold': lastUrl === pathAccount
         }"
@@ -41,11 +41,11 @@
         [tpIsEnabled]="user.userId !== nav.orgOwnerId"
       >
         <button
-          class="text-gray1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
+          class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
           [ngClass]="{
             'font-semibold': lastUrl === pathUsers,
             'text-gray-400': user.userId !== nav.orgOwnerId,
-            'border-gray3': user.userId === nav.orgOwnerId
+            'border-s3': user.userId === nav.orgOwnerId
           }"
           [disabled]="lastUrl === pathUsers || user.userId !== nav.orgOwnerId"
           (click)="t1.hide(); navigateUsers()"

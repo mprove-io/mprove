@@ -1,7 +1,7 @@
 <div class="flex flex-col bg-white p-9">
   <div
     data-cy="editNameDialogTitle"
-    class="text-gray2 mt-5 flex-grow text-left text-2xl font-semibold"
+    class="text-s2 mt-5 flex-grow text-left text-2xl font-semibold"
     >Edit Name</div
   >
 
@@ -14,7 +14,7 @@
       autocomplete="off"
       spellcheck="false"
       data-cy="editNameDialogFirstNameInput"
-      class="form-input border-gray3 focus:border-m600 mt-9 rounded"
+      class="form-input border-s3 focus:border-m600 mt-9 rounded"
       [ngClass]="{
         'border-r600':
           editNameForm.controls['firstName'].invalid &&
@@ -29,7 +29,7 @@
       autocomplete="off"
       spellcheck="false"
       data-cy="editNameDialogLastNameInput"
-      class="form-input border-gray3 focus:border-m600 mt-1 rounded"
+      class="form-input border-s3 focus:border-m600 mt-1 rounded"
       [ngClass]="{
         'border-r600':
           editNameForm.controls['lastName'].invalid &&

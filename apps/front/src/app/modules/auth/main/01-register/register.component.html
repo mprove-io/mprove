@@ -9,14 +9,14 @@
     >
       <div
         data-cy="registerTitle"
-        class="text-gray2 text-center text-2xl font-semibold"
+        class="text-s2 text-center text-2xl font-semibold"
         >{{ pageTitle }}</div
       >
 
       <input
         spellcheck="false"
         data-cy="registerEmailInput"
-        class="form-input border-gray3 focus:border-m600 mt-9 rounded"
+        class="form-input border-s3 focus:border-m600 mt-9 rounded"
         [ngClass]="{
           'border-r600':
             registerForm.controls['email'].invalid &&
@@ -31,7 +31,7 @@
       <input
         spellcheck="false"
         data-cy="registerPasswordInput"
-        class="form-input border-gray3 focus:border-m600 mt-1 rounded"
+        class="form-input border-s3 focus:border-m600 mt-1 rounded"
         [ngClass]="{
           'border-r600':
             registerForm.controls['password'].invalid &&

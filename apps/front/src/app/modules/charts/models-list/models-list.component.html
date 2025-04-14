@@ -2,7 +2,7 @@
   <div class="flex flex-grow overflow-y-auto rounded bg-white shadow">
     <div class="ml-5 mr-5 mt-6 flex w-full flex-col">
       <div class="flex h-11 flex-row items-center">
-        <m-search-icon class="text-gray1 ml-8"></m-search-icon>
+        <m-search-icon class="text-s1 ml-8"></m-search-icon>
 
         <input
           autocomplete="off"
@@ -20,7 +20,7 @@
         <div class="h-9 w-9">
           <m-delete-icon
             *ngIf="!!word"
-            class="text-gray1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+            class="text-s1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
             [ngClass]="{
               'bg-p200 hover:bg-p300 cursor-pointer': !!word
             }"
@@ -33,7 +33,7 @@
 
       <div class="mt-10 flex flex-col divide-y divide-gray-500">
         <div
-          class="text-gray1 mb-3 mr-5 flex flex-row space-x-5 text-base font-semibold"
+          class="text-s1 mb-3 mr-5 flex flex-row space-x-5 text-base font-semibold"
         >
           <div class="flex w-12"></div>
           <div class="flex w-1/4">Model</div>
@@ -70,7 +70,7 @@
         >
           <div class="flex-grow flex-col pt-1 text-base">
             <div
-              class="text-gray1 group mr-5 flex w-full flex-row items-start space-x-5 rounded focus:outline-none"
+              class="text-s1 group mr-5 flex w-full flex-row items-start space-x-5 rounded focus:outline-none"
               (click)="navigateToModel(item)"
             >
               <div class="flex w-12 pl-3">
@@ -89,11 +89,11 @@
 
                 <ng-template #templateModelOptions>
                   <div
-                    class="border-gray4 w-64 rounded-md border-2 bg-white shadow-xl"
+                    class="border-s4 w-64 rounded-md border-2 bg-white shadow-xl"
                   >
                     <button
                       data-cy="modelOptionsGoToFile"
-                      class="text-gray1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+                      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
                       (click)="t1.hide(); goToFile($event, item)"
                       >Go to file</button
                     >
@@ -177,7 +177,7 @@
         class="h-2 flex-1 overflow-y-auto"
         *ngIf="filteredModels?.length === 0"
         ><div
-          class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+          class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
           >No models</div
         >
       </div>

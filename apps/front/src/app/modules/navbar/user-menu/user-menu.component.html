@@ -19,13 +19,13 @@
   </button>
 
   <ng-template #templateUserOptions>
-    <div class="border-gray4 w-56 rounded-md border-2 bg-white shadow-xl">
+    <div class="border-s4 w-56 rounded-md border-2 bg-white shadow-xl">
       <div class="mt-2 block px-4 py-2 text-sm font-bold text-gray-400"
         >User</div
       >
 
       <button
-        class="text-gray1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
+        class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
           'font-semibold': lastUrl === pathProfile
         }"
@@ -35,7 +35,7 @@
       >
 
       <button
-        class="text-gray1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
+        class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
         (click)="t1.hide(); logout()"
         >LogOut</button
       >
@@ -45,7 +45,7 @@
       >
 
       <a
-        class="text-gray1 hover:text-gray1 hover:bg-m50 block px-4 py-2 text-base"
+        class="text-s1 hover:text-s1 hover:bg-m50 block px-4 py-2 text-base"
         target="_blank"
         href="https://docs.mprove.io"
         (click)="t1.hide()"

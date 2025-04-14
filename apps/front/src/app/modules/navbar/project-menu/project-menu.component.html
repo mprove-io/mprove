@@ -19,7 +19,7 @@
 
   <ng-template #templateProjectOptions>
     <div
-      class="border-gray4 w-56 cursor-default rounded-md border-2 bg-white shadow-xl"
+      class="border-s4 w-56 cursor-default rounded-md border-2 bg-white shadow-xl"
     >
       <div class="mt-2 block px-4 py-2 text-base font-semibold text-gray-400"
         >{{ nav?.projectName | capitalize }} Project</div
@@ -31,11 +31,11 @@
         [tpIsEnabled]="nav.orgName === firstOrgName && isAdmin === false"
       >
         <button
-          class="text-gray1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
+          class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
           [ngClass]="{
             'font-semibold': lastUrl === pathTeam,
             'text-gray-400': nav.orgName === firstOrgName && isAdmin === false,
-            'border-gray3': !(nav.orgName === firstOrgName && isAdmin === false)
+            'border-s3': !(nav.orgName === firstOrgName && isAdmin === false)
           }"
           [disabled]="
             lastUrl === pathTeam ||
@@ -47,7 +47,7 @@
       </div>
 
       <button
-        class="text-gray1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
+        class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
           'font-semibold': lastUrl === pathSettings
         }"
@@ -62,11 +62,11 @@
         [tpIsEnabled]="isAdmin === false && isEditor === false"
       >
         <button
-          class="text-gray1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
+          class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
           [ngClass]="{
             'font-semibold': lastUrl === pathEnvironments,
             'text-gray-400': isAdmin === false && isEditor === false,
-            'border-gray3': isAdmin === true || isEditor === true
+            'border-s3': isAdmin === true || isEditor === true
           }"
           [disabled]="
             lastUrl === pathEnvironments ||
@@ -83,11 +83,11 @@
         [tpIsEnabled]="isAdmin === false && isEditor === false"
       >
         <button
-          class="text-gray1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
+          class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
           [ngClass]="{
             'font-semibold': lastUrl === pathConnections,
             'text-gray-400': isAdmin === false && isEditor === false,
-            'border-gray3': isAdmin === true || isEditor === true
+            'border-s3': isAdmin === true || isEditor === true
           }"
           [disabled]="
             lastUrl === pathConnections ||

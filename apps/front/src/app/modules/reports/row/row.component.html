@@ -37,9 +37,7 @@
 >
   <div class="flex flex-row items-start">
     <div class="flex h-11 flex-row items-center text-lg">
-      <div class="text-gray1 flex select-none items-center font-semibold"
-        >Row</div
-      >
+      <div class="text-s1 flex select-none items-center font-semibold">Row</div>
 
       <div class="ml-5 flex w-[26px] items-center">{{
         reportSelectedNode.data.rowId
@@ -88,7 +86,7 @@
     </div>
 
     <div class="ml-9 flex h-11 flex-row items-center space-x-5">
-      <div class="text-gray1 flex select-none items-center font-semibold"
+      <div class="text-s1 flex select-none items-center font-semibold"
         >Type</div
       >
 
@@ -113,7 +111,7 @@
           isToHeader === false && isToFormula === false && isToMetric === false
         "
       >
-        <div class="text-gray1 flex select-none items-center font-semibold"
+        <div class="text-s1 flex select-none items-center font-semibold"
           >Convert to</div
         >
 
@@ -149,14 +147,14 @@
         *ngIf="isToFormula === true"
         class="flex flex-1 flex-row items-start space-x-5"
       >
-        <div class="text-gray1 mt-3 flex select-none items-center font-semibold"
+        <div class="text-s1 mt-3 flex select-none items-center font-semibold"
           >Formula</div
         >
 
         <div [formGroup]="newFormulaForm" class="relative flex w-full">
           <textarea
             data-cy="newFormulaInput"
-            class="form-input border-gray3 focus:border-m600 h-[95px] w-full resize-none rounded font-mono placeholder-gray-400"
+            class="form-input border-s3 focus:border-m600 h-[95px] w-full resize-none rounded font-mono placeholder-gray-400"
             [ngClass]="{
               'border-r600':
                 newFormulaForm.controls['formula'].invalid &&
@@ -176,7 +174,7 @@
         *ngIf="isToHeader === true || isToFormula === true"
         class="flex h-11 max-w-[600px] flex-1 flex-row items-center space-x-5"
       >
-        <div class="text-gray1 flex select-none items-center font-semibold"
+        <div class="text-s1 flex select-none items-center font-semibold"
           >Name</div
         >
 
@@ -184,7 +182,7 @@
           <input
             autocomplete="off"
             data-cy="newNameInput"
-            class="form-input border-gray3 focus:border-m600 w-full min-w-[100px] resize-none rounded"
+            class="form-input border-s3 focus:border-m600 w-full min-w-[100px] resize-none rounded"
             [ngClass]="{
               'border-r600':
                 newNameForm.controls['name'].invalid &&
@@ -205,7 +203,7 @@
         class="flex h-11 min-w-[2px] max-w-[1000px] flex-grow flex-row items-center space-x-5"
       >
         <div
-          class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
+          class="text-s1 flex flex-shrink-0 select-none items-center font-semibold"
           >Metric</div
         >
 
@@ -287,7 +285,7 @@
       "
       class="ml-10 flex h-11 max-w-[600px] flex-1 flex-row items-center space-x-5"
     >
-      <div class="text-gray1 flex select-none items-center font-semibold"
+      <div class="text-s1 flex select-none items-center font-semibold"
         >Name</div
       >
 
@@ -295,7 +293,7 @@
         <input
           autocomplete="off"
           data-cy="nameInput"
-          class="form-input border-gray3 focus:border-m600 w-full min-w-[100px] resize-none rounded"
+          class="form-input border-s3 focus:border-m600 w-full min-w-[100px] resize-none rounded"
           [ngClass]="{
             'border-r600':
               nameForm.controls['name'].invalid &&
@@ -329,7 +327,7 @@
     <div class="flex h-11 flex-row items-start space-x-10">
       <div class="flex h-11 flex-row items-center space-x-5">
         <div
-          class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
+          class="text-s1 flex flex-shrink-0 select-none items-center font-semibold"
           >Format Number</div
         >
 
@@ -374,7 +372,7 @@
             <input
               autocomplete="off"
               data-cy="formatNumberInput"
-              class="form-input border-gray3 focus:border-m600 w-[200px] resize-none rounded"
+              class="form-input border-s3 focus:border-m600 w-[200px] resize-none rounded"
               [ngClass]="{
                 'border-r600':
                   formatNumberForm.controls['formatNumber'].invalid &&
@@ -394,7 +392,7 @@
 
       <div class="flex h-11 flex-row items-center space-x-5">
         <div
-          class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
+          class="text-s1 flex flex-shrink-0 select-none items-center font-semibold"
           >Currency Prefix</div
         >
 
@@ -402,7 +400,7 @@
           <input
             autocomplete="off"
             data-cy="currencyPrefixInput"
-            class="form-input border-gray3 focus:border-m600 w-full resize-none rounded"
+            class="form-input border-s3 focus:border-m600 w-full resize-none rounded"
             [ngClass]="{
               'border-r600':
                 currencyPrefixForm.controls['currencyPrefix'].invalid &&
@@ -421,7 +419,7 @@
 
       <div class="flex h-11 flex-row items-center space-x-5">
         <div
-          class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
+          class="text-s1 flex flex-shrink-0 select-none items-center font-semibold"
           >Currency Suffix</div
         >
 
@@ -429,7 +427,7 @@
           <input
             autocomplete="off"
             data-cy="currencySuffixInput"
-            class="form-input border-gray3 focus:border-m600 w-full resize-none rounded"
+            class="form-input border-s3 focus:border-m600 w-full resize-none rounded"
             [ngClass]="{
               'border-r600':
                 currencySuffixForm.controls['currencySuffix'].invalid &&
@@ -458,14 +456,14 @@
     class="flex flex-1 flex-row items-start space-x-5"
   >
     <div
-      class="text-gray1 mt-3 flex flex-shrink-0 select-none items-center font-semibold"
+      class="text-s1 mt-3 flex flex-shrink-0 select-none items-center font-semibold"
       >Formula SQL</div
     >
 
     <div [formGroup]="formulaForm" class="relative flex max-w-[750px] flex-1">
       <textarea
         data-cy="formulaInput"
-        class="form-input border-gray3 focus:border-m600 max-h-[150px] min-h-[95px] w-full min-w-[300px] resize-y rounded font-mono placeholder-gray-400"
+        class="form-input border-s3 focus:border-m600 max-h-[150px] min-h-[95px] w-full min-w-[300px] resize-y rounded font-mono placeholder-gray-400"
         [ngClass]="{
           'border-r600':
             formulaForm.controls['formula'].invalid &&
@@ -487,7 +485,7 @@
     *ngIf="reportSelectedNode.data.rowType === rowTypeMetric"
   >
     <div
-      class="text-gray1 flex h-11 select-none flex-row items-start space-x-2 font-semibold"
+      class="text-s1 flex h-11 select-none flex-row items-start space-x-2 font-semibold"
     >
       <div class="flex h-11 flex-row items-center space-x-2">
         <div class="truncate text-lg"> Parameters </div>
@@ -519,7 +517,7 @@
               class="flex h-11 max-w-[850px] flex-1 flex-row items-center space-x-5"
             >
               <div
-                class="text-gray1 flex flex-shrink-0 select-none items-center font-semibold"
+                class="text-s1 flex flex-shrink-0 select-none items-center font-semibold"
                 >Filter Metric by</div
               >
 

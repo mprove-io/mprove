@@ -19,17 +19,17 @@
 </div>
 
 <ng-template #templateFileOptions>
-  <div class="border-gray4 w-48 rounded-md border-2 bg-white shadow-xl">
+  <div class="border-s4 w-48 rounded-md border-2 bg-white shadow-xl">
     <button
       data-cy="fileOptionsDeleteFileButton"
-      class="text-gray1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
       (click)="t1.hide(); deleteFile(node, $event)"
       >Delete File</button
     >
 
     <button
       data-cy="fileOptionsRenameFileButton"
-      class="text-gray1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
       (click)="t1.hide(); renameFile(node, $event)"
       >Rename File</button
     >

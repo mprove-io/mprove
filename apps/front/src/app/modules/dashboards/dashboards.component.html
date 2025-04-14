@@ -7,7 +7,7 @@
             <div class="mt-8 flex h-11 flex-row items-center">
               <div
                 data-cy="dashboardsTitle"
-                class="text-gray1 flex select-none items-center self-center text-2xl font-semibold"
+                class="text-s1 flex select-none items-center self-center text-2xl font-semibold"
                 >{{ pageTitle }}
               </div>
 
@@ -66,10 +66,10 @@
             </div>
 
             <div class="mt-6 flex w-full flex-grow rounded bg-white shadow">
-              <div class="text-gray1 mt-6 flex w-full flex-col text-base">
+              <div class="text-s1 mt-6 flex w-full flex-col text-base">
                 <div class="flex flex-1 flex-col">
                   <div class="mb-6 flex h-11 flex-row items-center">
-                    <m-search-icon class="text-gray1 ml-6"></m-search-icon>
+                    <m-search-icon class="text-s1 ml-6"></m-search-icon>
 
                     <input
                       spellcheck="false"
@@ -87,7 +87,7 @@
                     <div class="h-9 w-9">
                       <m-delete-icon
                         *ngIf="!!word"
-                        class="text-gray1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                        class="text-s1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                         [ngClass]="{
                           'bg-p200 hover:bg-p300 cursor-pointer': !!word
                         }"
@@ -163,8 +163,7 @@
                           [ngClass]="{
                             'text-m600 font-semibold':
                               d.dashboardId === dashboard?.dashboardId,
-                            'text-gray1':
-                              d.dashboardId !== dashboard?.dashboardId
+                            'text-s1': d.dashboardId !== dashboard?.dashboardId
                           }"
                         >
                           {{ d.title | capitalize }}
@@ -219,7 +218,7 @@
                   </div>
 
                   <div class="mb-5 mr-5 mt-5 flex h-11 flex-row items-center">
-                    <div class="text-gray1 ml-6 select-none text-base"
+                    <div class="text-s1 ml-6 select-none text-base"
                       >Timezone</div
                     >
 
@@ -274,7 +273,7 @@
         <div class="flex h-full flex-1 flex-col">
           <div class="ml-6 flex h-full flex-grow">
             <div
-              class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+              class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
               *ngIf="lastUrl === pathDashboards"
             >
               Select Dashboard

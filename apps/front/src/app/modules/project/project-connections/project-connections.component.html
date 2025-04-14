@@ -3,7 +3,7 @@
     <div class="flex h-11 flex-row items-center justify-between">
       <div
         data-cy="projectConnectionsTitle"
-        class="text-gray1 flex text-2xl font-semibold"
+        class="text-s1 flex text-2xl font-semibold"
         >{{ pageTitle }}
       </div>
 
@@ -24,7 +24,7 @@
     </div>
 
     <div class="mb-4 mt-6 flex-grow overflow-auto rounded bg-white shadow">
-      <div class="text-gray1 mx-5 mt-8" *ngIf="connections?.length > 0">
+      <div class="text-s1 mx-5 mt-8" *ngIf="connections?.length > 0">
         <table class="min-w-full divide-y divide-gray-500">
           <thead>
             <tr class="h-12 text-sm">
@@ -168,7 +168,7 @@
                     class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
                     [ngClass]="{
                       'cursor-default text-gray-400': isAdmin === false,
-                      'border-gray3 text-gray1': isAdmin === true
+                      'border-s3 text-s1': isAdmin === true
                     }"
                     [disabled]="isAdmin === false"
                     >Edit</button
@@ -203,7 +203,7 @@
       </div>
 
       <div
-        class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+        class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
         *ngIf="connections?.length === 0"
         >No connections</div
       >

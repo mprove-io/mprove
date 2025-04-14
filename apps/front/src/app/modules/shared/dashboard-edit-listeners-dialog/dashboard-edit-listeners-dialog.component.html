@@ -1,13 +1,13 @@
 <div class="flex h-[87vh] w-[90vw] flex-col bg-white p-9">
   <div
     data-cy="editListenDialogTitle"
-    class="text-gray2 mt-5 cursor-default text-left text-2xl font-semibold"
+    class="text-s2 mt-5 cursor-default text-left text-2xl font-semibold"
     >Edit Listeners</div
   >
 
   <div
     data-cy="editListenDialogInfo"
-    class="text-gray1 mb-6 mt-2 cursor-default text-left text-xl"
+    class="text-s1 mb-6 mt-2 cursor-default text-left text-xl"
     >Map dashboard filters to tile's model fields</div
   >
 
@@ -31,9 +31,7 @@
     class="flex flex-grow flex-col divide-y divide-gray-500 overflow-auto"
     *ngIf="!!models"
   >
-    <div
-      class="text-gray1 mb-3 flex cursor-default flex-row space-x-5 text-base"
-    >
+    <div class="text-s1 mb-3 flex cursor-default flex-row space-x-5 text-base">
       <div class="flex w-[500px] flex-shrink-0 font-semibold"> Tile</div>
 
       <div
@@ -58,7 +56,7 @@
 
     <form [formGroup]="listenForm">
       <div
-        class="text-gray1 flex flex-row space-x-5 border-gray-300 py-4 text-base"
+        class="text-s1 flex flex-row space-x-5 border-gray-300 py-4 text-base"
         [ngStyle]="
           tile.title !== dashboard.tiles[dashboard.tiles.length - 1].title && {
             'border-bottom-width': '1px'

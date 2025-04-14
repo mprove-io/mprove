@@ -1,7 +1,7 @@
 <div class="flex flex-col bg-white p-9">
   <div
     data-cy="editOrgNameDialogTitle"
-    class="text-gray2 mt-5 flex-grow text-left text-2xl font-semibold"
+    class="text-s2 mt-5 flex-grow text-left text-2xl font-semibold"
     >Edit Organization Name</div
   >
 
@@ -15,7 +15,7 @@
       autocomplete="off"
       spellcheck="false"
       data-cy="editOrgNameDialogOrgNameInput"
-      class="form-input border-gray3 focus:border-m600 mt-9 rounded"
+      class="form-input border-s3 focus:border-m600 mt-9 rounded"
       [ngClass]="{
         'border-r600':
           editOrgNameForm.controls['orgName'].invalid &&

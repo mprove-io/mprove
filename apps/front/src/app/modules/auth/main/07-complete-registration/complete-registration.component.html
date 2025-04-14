@@ -3,12 +3,11 @@
     class="flex h-2 flex-1 flex-row items-center justify-center overflow-y-auto"
   >
     <div class="flex w-96 flex-col items-center">
-      <div
-        class="text-gray2 flex max-w-sm text-center text-2xl font-semibold"
-        >{{ pageTitle }}</div
-      >
+      <div class="text-s2 flex max-w-sm text-center text-2xl font-semibold">{{
+        pageTitle
+      }}</div>
 
-      <div class="text-gray2 mt-5 flex text-center text-xl">{{ email }}</div>
+      <div class="text-s2 mt-5 flex text-center text-xl">{{ email }}</div>
       <form
         class="flex w-96 flex-col"
         [formGroup]="setPasswordForm"
@@ -17,7 +16,7 @@
         <input
           spellcheck="false"
           data-cy="completeRegistrationPasswordInput"
-          class="form-input border-gray3 focus:border-m600 mt-9 rounded"
+          class="form-input border-s3 focus:border-m600 mt-9 rounded"
           [ngClass]="{
             'border-r600':
               setPasswordForm.controls['newPassword'].invalid &&

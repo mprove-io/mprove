@@ -2,7 +2,7 @@
   <div class="mb-5 flex flex-grow flex-col overflow-y-auto">
     <!-- <div
       *ngIf="nodesExtra?.length === 0"
-      class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+      class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
       >Select Model</div
     > -->
 
@@ -125,7 +125,7 @@
                   ></div>
                 </div>
 
-                <div class="text-gray1 ml-0 flex-grow truncate">
+                <div class="text-s1 ml-0 flex-grow truncate">
                   <span
                     class="truncate"
                     *ngIf="node.data.nodeClass === nodeClassInfo"
@@ -197,7 +197,7 @@
                   class="group invisible ml-3 flex h-10 flex-shrink-0 items-center justify-center rounded focus:outline-none [.group-bar:hover_&]:visible"
                   [ngClass]="{
                     'text-m600': node.data.isFiltered === true,
-                    'text-gray1': node.data.isFiltered === false
+                    'text-s1': node.data.isFiltered === false
                   }"
                   [disabled]="
                     node.data.required === true &&

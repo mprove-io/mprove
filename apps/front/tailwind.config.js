@@ -15,11 +15,10 @@ var m200 = '#b8e6fe'; // sky-200 dot options icon button, avatar
 var m500 = '#00a6f4'; // sky-500 clickable text
 var m600 = '#0084d1'; // sky-600 main buttons, main clickable text
 
-var gray1 = '#4D4F5C';
-var gray2 = '#00030B';
-var gray3 = '#D7DBEC';
-var gray4 = '#D7DBECA3';
-var gray5 = '#4F505C';
+var s1 = '#4D4F5C';
+var s2 = '#00030B';
+var s3 = '#D7DBEC';
+var s4 = '#D7DBECA3';
 
 var g1 = '#B6E1BC';
 var g2 = '#E9F6EB';
@@ -76,11 +75,10 @@ module.exports = {
       m50,
       m75,
       m200,
-      gray1,
-      gray2,
-      gray3,
-      gray4,
-      gray5,
+      s1,
+      s2,
+      s3,
+      s4,
       g1,
       g2,
       g700,
@@ -102,11 +100,10 @@ module.exports = {
       m50,
       m75,
       m200,
-      gray1,
-      gray2,
-      gray3,
-      gray4,
-      gray5,
+      s1,
+      s2,
+      s3,
+      s4,
       g1,
       g2,
       g700,
@@ -128,11 +125,10 @@ module.exports = {
       m50,
       m75,
       m200,
-      gray1,
-      gray2,
-      gray3,
-      gray4,
-      gray5,
+      s1,
+      s2,
+      s3,
+      s4,
       g1,
       g2,
       g700,

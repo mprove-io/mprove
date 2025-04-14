@@ -1,7 +1,7 @@
 <div class="ml-2 flex h-16 flex-row">
   <div
     *ngIf="!!fractionControl.label"
-    class="text-gray1 mr-5 flex h-9 flex-shrink-0 select-none items-center text-base"
+    class="text-s1 mr-5 flex h-9 flex-shrink-0 select-none items-center text-base"
     >{{ fractionControl.label }}</div
   >
 
@@ -55,7 +55,7 @@
             autocomplete="off"
             spellcheck="false"
             data-cy="fractionInputValueInput"
-            class="form-input border-gray3 focus:border-m600 h-[36px] w-[150px] rounded"
+            class="form-input border-s3 focus:border-m600 h-[36px] w-[150px] rounded"
             [ngClass]="{
               'border-r600':
                 fractionForm.controls['inputValue'].invalid &&

@@ -1,11 +1,11 @@
 <div class="flex flex-col bg-white p-9">
   <div
     data-cy="deleteBranchDialogTitle"
-    class="text-gray2 mt-5 flex-grow text-left text-2xl font-semibold"
+    class="text-s2 mt-5 flex-grow text-left text-2xl font-semibold"
     >Delete Branch</div
   >
 
-  <div class="text-gray1 mt-6 text-lg" *ngIf="ref.data.isRepoProd === false"
+  <div class="text-s1 mt-6 text-lg" *ngIf="ref.data.isRepoProd === false"
     >Are you sure you want to delete branch
     <span class="font-semibold">
       {{ ref.data.branchId }}
@@ -15,7 +15,7 @@
     repository ?</div
   >
 
-  <div class="text-gray1 mt-6 text-lg" *ngIf="ref.data.isRepoProd === true"
+  <div class="text-s1 mt-6 text-lg" *ngIf="ref.data.isRepoProd === true"
     >Are you sure you want to delete branch
     <span class="font-semibold">
       {{ ref.data.branchId }}

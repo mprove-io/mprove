@@ -1,7 +1,7 @@
 <div class="flex flex-col bg-white p-9">
   <div
     data-cy="renameFileDialogTitle"
-    class="text-gray2 mt-5 flex-grow text-left text-2xl font-semibold"
+    class="text-s2 mt-5 flex-grow text-left text-2xl font-semibold"
     >Rename File</div
   >
 
@@ -16,7 +16,7 @@
       autocomplete="off"
       spellcheck="false"
       data-cy="renameFileDialogFileNameInput"
-      class="form-input border-gray3 focus:border-m600 mt-2 h-[36px] rounded"
+      class="form-input border-s3 focus:border-m600 mt-2 h-[36px] rounded"
       [ngClass]="{
         'border-r600':
           renameFileForm.controls['fileName'].invalid &&

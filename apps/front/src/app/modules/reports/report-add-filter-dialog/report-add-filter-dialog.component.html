@@ -2,7 +2,7 @@
   <div class="flex min-h-[370px] flex-col justify-start">
     <div
       data-cy="reportAddFilterDialogTitle"
-      class="text-gray2 mt-5 text-left text-2xl font-semibold"
+      class="text-s2 mt-5 text-left text-2xl font-semibold"
       >Add Filter</div
     >
 
@@ -10,7 +10,7 @@
       <div class="flex flex-row items-start">
         <div class="flex flex-col">
           <div
-            class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+            class="text-s1 flex h-9 w-[200px] select-none items-center text-base"
             >Label</div
           >
         </div>
@@ -21,7 +21,7 @@
             autocomplete="off"
             spellcheck="false"
             data-cy="reportAddFilterDialogLabelInput"
-            class="form-input border-gray3 focus:border-m600 h-9 w-96 rounded"
+            class="form-input border-s3 focus:border-m600 h-9 w-96 rounded"
             [ngClass]="{
               'border-r600':
                 labelForm.controls['label'].invalid &&
@@ -37,7 +37,7 @@
     <div class="flex flex-row items-start">
       <div class="flex flex-col">
         <div
-          class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+          class="text-s1 flex h-9 w-[200px] select-none items-center text-base"
           >Model Type</div
         >
       </div>
@@ -79,7 +79,7 @@
     >
       <div class="flex flex-col">
         <div
-          class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+          class="text-s1 flex h-9 w-[200px] select-none items-center text-base"
           >Model</div
         >
       </div>
@@ -142,7 +142,7 @@
     >
       <div class="flex flex-col">
         <div
-          class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+          class="text-s1 flex h-9 w-[200px] select-none items-center text-base"
           >Add Controls from</div
         >
       </div>
@@ -187,7 +187,7 @@
     >
       <div class="flex flex-col">
         <div
-          class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+          class="text-s1 flex h-9 w-[200px] select-none items-center text-base"
           >Filter</div
         >
       </div>
@@ -252,7 +252,7 @@
       >
         <div class="flex flex-col">
           <div
-            class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+            class="text-s1 flex h-9 w-[200px] select-none items-center text-base"
             >Result</div
           >
         </div>
@@ -319,14 +319,14 @@
             *ngIf="
               fieldResultForm.get('fieldResult').value !== fieldResultString
             "
-            class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+            class="text-s1 flex h-9 w-[200px] select-none items-center text-base"
           ></div>
 
           <div
             *ngIf="
               fieldResultForm.get('fieldResult').value === fieldResultString
             "
-            class="text-gray1 flex h-9 w-[200px] select-none items-center text-base"
+            class="text-s1 flex h-9 w-[200px] select-none items-center text-base"
             >Suggest values from</div
           >
         </div>

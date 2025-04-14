@@ -1,9 +1,7 @@
 <div class="bg-m1 flex h-full cursor-default flex-col">
   <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
     <div class="flex h-11 flex-row items-center justify-between">
-      <div
-        data-cy="projectEvsTitle"
-        class="text-gray1 flex text-2xl font-semibold"
+      <div data-cy="projectEvsTitle" class="text-s1 flex text-2xl font-semibold"
         >Project -
         <span
           class="hover:text-m500 mx-[6px] cursor-pointer"
@@ -30,7 +28,7 @@
     </div>
 
     <div class="mb-4 mt-6 flex-grow overflow-auto rounded bg-white shadow">
-      <div class="text-gray1 mx-5 mt-8" *ngIf="evs?.length > 0">
+      <div class="text-s1 mx-5 mt-8" *ngIf="evs?.length > 0">
         <table class="min-w-full divide-y divide-gray-500">
           <thead>
             <tr class="h-12 text-sm">
@@ -64,7 +62,7 @@
                     class="ml-5 rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
                     [ngClass]="{
                       'cursor-default text-gray-400': isEditor === false,
-                      'border-gray3 text-gray1': isEditor === true
+                      'border-s3 text-s1': isEditor === true
                     }"
                     [disabled]="isEditor === false"
                     >Edit</button
@@ -99,7 +97,7 @@
       </div>
 
       <div
-        class="text-gray1 flex h-full w-full select-none items-center justify-center text-xl"
+        class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
         *ngIf="evs?.length === 0"
         >No variables</div
       >

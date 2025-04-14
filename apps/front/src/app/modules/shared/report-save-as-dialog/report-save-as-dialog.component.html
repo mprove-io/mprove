@@ -1,13 +1,13 @@
 <div class="flex flex-col bg-white p-9">
   <div
     data-cy="reportSaveAsDialogTitle"
-    class="text-gray2 mt-5 flex-grow text-left text-base font-semibold"
+    class="text-s2 mt-5 flex-grow text-left text-base font-semibold"
     >Draft {{ fromReportId }}</div
   >
 
   <div
     data-cy="reportSaveAsDialogTitle"
-    class="text-gray2 mb-9 mt-5 flex-grow text-left text-2xl font-semibold"
+    class="text-s2 mb-9 mt-5 flex-grow text-left text-2xl font-semibold"
     >Save As
   </div>
 
@@ -140,7 +140,7 @@
 
   <div class="mt-9 flex flex-row items-start">
     <div class="flex flex-col">
-      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
+      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
         >Title</div
       >
     </div>
@@ -150,7 +150,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="reportSaveAsDialogTitleInput"
-        class="form-input border-gray3 focus:border-m600 h-9 w-96 rounded"
+        class="form-input border-s3 focus:border-m600 h-9 w-96 rounded"
         [ngClass]="{
           'border-r600':
             titleForm.controls['title'].invalid &&
@@ -164,7 +164,7 @@
 
   <div class="flex flex-row items-start">
     <div class="flex flex-col">
-      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
+      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
         >Access Roles</div
       >
     </div>
@@ -174,7 +174,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="reportSaveAsDialogRolesInput"
-        class="form-input border-gray3 focus:border-m600 h-9 w-96 rounded"
+        class="form-input border-s3 focus:border-m600 h-9 w-96 rounded"
         [ngClass]="{
           'border-r600':
             rolesForm.controls['roles'].invalid &&
@@ -188,7 +188,7 @@
 
   <div class="flex flex-row items-start">
     <div class="flex flex-col">
-      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
+      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
         >Access Users</div
       >
     </div>
@@ -198,7 +198,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="reportSaveAsDialogUsersInput"
-        class="form-input border-gray3 focus:border-m600 h-9 w-96 rounded"
+        class="form-input border-s3 focus:border-m600 h-9 w-96 rounded"
         [ngClass]="{
           'border-r600':
             usersForm.controls['users'].invalid &&

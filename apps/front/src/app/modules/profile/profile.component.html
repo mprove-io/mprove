@@ -1,7 +1,7 @@
 <div class="bg-m1 flex h-full cursor-default flex-col">
   <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
     <div class="flex h-11 items-center">
-      <div data-cy="profileTitle" class="text-gray1 text-2xl font-semibold">{{
+      <div data-cy="profileTitle" class="text-s1 text-2xl font-semibold">{{
         pageTitle
       }}</div>
     </div>
@@ -31,7 +31,7 @@
           <div class="ml-2 flex flex-col">
             <div class="flex h-24 items-center"></div>
             <div class="flex h-16 items-center"></div>
-            <div class="text-gray1 flex h-16 items-center">
+            <div class="text-s1 flex h-16 items-center">
               <!-- <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6"
@@ -103,7 +103,7 @@
                   [ngClass]="{
                     'cursor-default text-gray-400':
                       alias === restrictedUserAlias,
-                    'border-gray3 text-gray1': alias !== restrictedUserAlias
+                    'border-s3 text-s1': alias !== restrictedUserAlias
                   }"
                   (click)="showApiKey()"
                   [disabled]="alias === restrictedUserAlias"
@@ -123,7 +123,7 @@
                   [ngClass]="{
                     'cursor-default text-gray-400':
                       alias === restrictedUserAlias,
-                    'border-gray3 text-gray1': alias !== restrictedUserAlias
+                    'border-s3 text-s1': alias !== restrictedUserAlias
                   }"
                   (click)="changePassword()"
                   [disabled]="alias === restrictedUserAlias"
@@ -165,7 +165,7 @@
                   [ngClass]="{
                     'cursor-default text-gray-400':
                       alias === restrictedUserAlias,
-                    'border-gray3 text-gray1': alias !== restrictedUserAlias
+                    'border-s3 text-s1': alias !== restrictedUserAlias
                   }"
                   (click)="editPhoto()"
                   [disabled]="alias === restrictedUserAlias"
@@ -185,7 +185,7 @@
                   [ngClass]="{
                     'cursor-default text-gray-400':
                       alias === restrictedUserAlias,
-                    'border-gray3 text-gray1': alias !== restrictedUserAlias
+                    'border-s3 text-s1': alias !== restrictedUserAlias
                   }"
                   (click)="editName()"
                   [disabled]="alias === restrictedUserAlias"

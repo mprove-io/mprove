@@ -18,10 +18,10 @@
 </div>
 
 <ng-template #templateRepoOptions>
-  <div class="border-gray4 w-64 rounded-md border-2 bg-white shadow-xl">
+  <div class="border-s4 w-64 rounded-md border-2 bg-white shadow-xl">
     <button
       data-cy="repoOptionsRevertRepoToLastCommitButton"
-      class="text-gray1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
       [ngClass]="{
         'cursor-default text-gray-400': needSave === true
       }"
@@ -32,7 +32,7 @@
 
     <button
       data-cy="repoOptionsRevertRepoToRemoteButton"
-      class="text-gray1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
       [ngClass]="{
         'cursor-default text-gray-400': needSave === true
       }"
@@ -43,7 +43,7 @@
 
     <button
       data-cy="repoOptionsPullFromRemoteButton"
-      class="text-gray1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
       [ngClass]="{
         'cursor-default text-gray-400':
           needSave === true || repo?.repoStatus === repoStatusNeedCommit
@@ -57,7 +57,7 @@
 
     <button
       data-cy="repoOptionsGitFetchButton"
-      class="text-gray1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
       [ngClass]="{
         'cursor-default text-gray-400': needSave === true
       }"
@@ -68,7 +68,7 @@
 
     <button
       data-cy="repoOptionsValidateButton"
-      class="text-gray1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
       [ngClass]="{
         'cursor-default text-gray-400': needSave === true
       }"

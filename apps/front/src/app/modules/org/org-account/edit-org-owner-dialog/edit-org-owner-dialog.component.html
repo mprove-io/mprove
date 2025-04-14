@@ -1,7 +1,7 @@
 <div class="flex flex-col bg-white p-9">
   <div
     data-cy="editOrgOwnerDialogTitle"
-    class="text-gray2 mt-5 flex-grow text-left text-2xl font-semibold"
+    class="text-s2 mt-5 flex-grow text-left text-2xl font-semibold"
     >Edit Organization Owner</div
   >
 
@@ -15,7 +15,7 @@
       spellcheck="false"
       data-cy="editOrgOwnerDialogEmailInput"
       type="email"
-      class="form-input border-gray3 focus:border-m600 mt-9 w-96 rounded"
+      class="form-input border-s3 focus:border-m600 mt-9 w-96 rounded"
       [ngClass]="{
         'border-r600':
           editOrgOwnerForm.controls['ownerEmail'].invalid &&
@@ -28,7 +28,7 @@
       [control]="editOrgOwnerForm.controls['ownerEmail']"
     ></m-validation>
 
-    <p class="text-gray1 text-base"
+    <p class="text-s1 text-base"
       >The new owner must be a registered Mprove user with a verified email
       address</p
     >

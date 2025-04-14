@@ -9,13 +9,13 @@
     >
       <div
         data-cy="loginTitle"
-        class="text-gray2 text-center text-2xl font-semibold"
+        class="text-s2 text-center text-2xl font-semibold"
         >{{ pageTitle }}</div
       >
       <input
         spellcheck="false"
         data-cy="loginEmailInput"
-        class="form-input border-gray3 focus:border-m600 mt-9 rounded"
+        class="form-input border-s3 focus:border-m600 mt-9 rounded"
         [ngClass]="{
           'border-r600':
             loginForm.controls['email'].invalid &&
@@ -30,7 +30,7 @@
       <input
         spellcheck="false"
         data-cy="loginPasswordInput"
-        class="form-input border-gray3 focus:border-m600 mt-1 rounded"
+        class="form-input border-s3 focus:border-m600 mt-1 rounded"
         [ngClass]="{
           'border-r600':
             loginForm.controls['password'].invalid &&

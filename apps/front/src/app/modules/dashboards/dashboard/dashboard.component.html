@@ -4,7 +4,7 @@
       <div class="flex h-11 flex-row items-center justify-between">
         <div class="flex w-full flex-row items-center">
           <div class="flex flex-row items-center">
-            <!-- <div class="text-gray1 ml-5 text-xl">{{
+            <!-- <div class="text-s1 ml-5 text-xl">{{
               (dashboard.title ? dashboard.title : dashboard.dashboardId)
                 | capitalize
             }}</div> -->
@@ -111,7 +111,7 @@
               <ui-switch [checked]="showBricks" color="#64BD63"></ui-switch>
 
               <div
-                class="text-gray1 ml-5 flex h-9 select-none items-center text-base"
+                class="text-s1 ml-5 flex h-9 select-none items-center text-base"
                 >Show Tile Parameters</div
               >
             </div>
@@ -134,7 +134,7 @@
 
             <!-- <div class="flex-grow"></div> -->
 
-            <div class="text-gray1 flex flex-row items-center text-base">
+            <div class="text-s1 flex flex-row items-center text-base">
               <ng-template #templateDashboardSaveAs>
                 <div *ngIf="isExplorer === false">Explorer role required</div>
 
@@ -226,7 +226,7 @@
           <div class="mr-5 flex min-h-[44px] flex-shrink-0 flex-grow flex-row">
             <div
               (click)="toggleFiltersPanel()"
-              class="text-gray1 mt-2 flex h-11 select-none flex-row items-start space-x-2 px-5 text-xl font-semibold"
+              class="text-s1 mt-2 flex h-11 select-none flex-row items-start space-x-2 px-5 text-xl font-semibold"
               [ngClass]="{
                 'cursor-pointer': dashboard.fields.length > 0,
                 'cursor-default': dashboard.fields.length === 0

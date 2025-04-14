@@ -1,15 +1,15 @@
 <div class="flex h-[500px] flex-col bg-white p-9">
   <div
     data-cy="addTileDialogTitle"
-    class="text-gray2 mt-5 text-left text-2xl font-semibold"
+    class="text-s2 mt-5 text-left text-2xl font-semibold"
     >Add Tile</div
   >
 
-  <div class="text-gray1 mt-9 text-lg"
+  <div class="text-s1 mt-9 text-lg"
     >Go to the Model page, build a chart and click "Save As"</div
   >
 
-  <div class="text-gray2 mb-3 mt-9 text-lg font-semibold">Models:</div>
+  <div class="text-s2 mb-3 mt-9 text-lg font-semibold">Models:</div>
 
   <div
     class="flex flex-1 flex-shrink-0 flex-row items-center justify-center"
@@ -32,7 +32,7 @@
 
   <div class="overflow-y-auto" *ngIf="!!models">
     <div
-      class="text-gray1 hover:bg-m50 rounded py-3 pl-5 text-base hover:cursor-pointer"
+      class="text-s1 hover:bg-m50 rounded py-3 pl-5 text-base hover:cursor-pointer"
       *ngFor="let model of models"
       (click)="navToModel(model.modelId)"
     >

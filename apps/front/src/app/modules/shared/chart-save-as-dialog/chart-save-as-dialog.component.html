@@ -1,7 +1,7 @@
 <div class="flex flex-col bg-white p-9">
   <div
     data-cy="chartSaveAsDialogTitle"
-    class="text-gray2 mb-9 mt-5 flex-grow text-left text-2xl font-semibold"
+    class="text-s2 mb-9 mt-5 flex-grow text-left text-2xl font-semibold"
     >Save As</div
   >
 
@@ -219,7 +219,7 @@
 
   <div class="mt-9 flex flex-row items-start">
     <div class="flex flex-col">
-      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
+      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
         >Title</div
       >
     </div>
@@ -228,7 +228,7 @@
       <textarea
         spellcheck="false"
         data-cy="chartSaveAsDialogTitleInput"
-        class="form-input border-gray3 focus:border-m600 h-[120px] w-[600px] resize-none rounded"
+        class="form-input border-s3 focus:border-m600 h-[120px] w-[600px] resize-none rounded"
         [ngClass]="{
           'border-r600':
             titleForm.controls['title'].invalid &&
@@ -245,7 +245,7 @@
       class="flex flex-col"
       *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
     >
-      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
+      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
         >Access Roles</div
       >
     </div>
@@ -259,7 +259,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartSaveAsDialogRolesInput"
-        class="form-input border-gray3 focus:border-m600 h-9 w-96 rounded"
+        class="form-input border-s3 focus:border-m600 h-9 w-96 rounded"
         [ngClass]="{
           'border-r600':
             rolesForm.controls['roles'].invalid &&
@@ -276,7 +276,7 @@
       class="flex flex-col"
       *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
     >
-      <div class="text-gray1 flex h-9 w-32 select-none items-center text-base"
+      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
         >Access Users</div
       >
     </div>
@@ -290,7 +290,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="chartSaveAsDialogUsersInput"
-        class="form-input border-gray3 focus:border-m600 h-9 w-96 rounded"
+        class="form-input border-s3 focus:border-m600 h-9 w-96 rounded"
         [ngClass]="{
           'border-r600':
             usersForm.controls['users'].invalid &&

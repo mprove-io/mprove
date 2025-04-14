@@ -17,10 +17,10 @@
 </button>
 
 <ng-template #templateChartOptions>
-  <div class="border-gray4 w-64 rounded-md border-2 bg-white shadow-xl">
+  <div class="border-s4 w-64 rounded-md border-2 bg-white shadow-xl">
     <button
       data-cy="chartOptionsGoToFile"
-      class="text-gray1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+      class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
       (click)="t1.hide(); goToFile($event)"
       >Go to file</button
     >
@@ -32,7 +32,7 @@
     >
       <button
         data-cy="chartOptionsEditInfo"
-        class="text-gray1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+        class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400': chart.canEditOrDeleteChart === false
         }"
@@ -49,7 +49,7 @@
     >
       <button
         data-cy="chartOptionsDelete"
-        class="text-gray1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+        class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
           'cursor-default text-gray-400': chart.canEditOrDeleteChart === false
         }"

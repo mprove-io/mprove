@@ -9,7 +9,7 @@
     <div class="flex w-1/4 flex-1 flex-row items-center justify-start"> </div>
 
     <div
-      class="text-gray1 mx-5 line-clamp-2 flex h-14 max-w-prose flex-shrink-0 flex-grow flex-row flex-wrap justify-center text-center font-semibold"
+      class="text-s1 mx-5 line-clamp-2 flex h-14 max-w-prose flex-shrink-0 flex-grow flex-row flex-wrap justify-center text-center font-semibold"
       >{{ title }}
     </div>
 
@@ -18,7 +18,7 @@
 
   <div
     *ngIf="isShowInit === false && showNav === true"
-    class="text-gray1 mb-10 flex w-full flex-row items-center justify-start"
+    class="text-s1 mb-10 flex w-full flex-row items-center justify-start"
   >
     <div
       *ngIf="!!ref.data.metricId"
@@ -28,7 +28,7 @@
         class="flex h-11 max-w-[850px] flex-1 flex-row items-center space-x-5"
       >
         <div
-          class="text-gray1 flex flex-shrink-0 select-none items-center text-lg font-semibold"
+          class="text-s1 flex flex-shrink-0 select-none items-center text-lg font-semibold"
           >Group by</div
         >
 
@@ -255,7 +255,7 @@
       class="flex h-11 cursor-pointer flex-row items-center"
       (click)="toggleFormat()"
     >
-      <div class="text-gray1 flex h-11 select-none items-center text-base"
+      <div class="text-s1 flex h-11 select-none items-center text-base"
         >Format
       </div>
 
