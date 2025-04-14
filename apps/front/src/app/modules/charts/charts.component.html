@@ -461,11 +461,11 @@
             </div>
 
             <div
-              class="mb-5 mt-5 flex h-11 w-full flex-shrink-0 flex-row items-center"
+              class="text-gray1 flex w-full flex-shrink-0 flex-row items-center py-5"
             >
               <div
                 (click)="toggleSchemaPanel()"
-                class="text-gray1 flex h-11 cursor-pointer select-none flex-row items-center space-x-2 px-5 text-lg font-semibold"
+                class="flex h-11 cursor-pointer select-none flex-row items-center space-x-2 px-5 text-lg font-semibold"
               >
                 <div class="flex flex-row items-center space-x-2">
                   <m-chevron-right-icon
@@ -490,7 +490,7 @@
               </button>
 
               <button
-                class="ml-2 w-[54px] cursor-pointer select-none py-3 text-lg"
+                class="ml-2 w-[54px] cursor-pointer select-none text-lg"
                 [ngClass]="{
                   'font-semibold': modelTreeLevels === modelTreeLevelsNested
                 }"
@@ -1056,6 +1056,7 @@
 
                 <div class="flex flex-1 flex-row items-center">
                   <div
+                    *ngIf="mconfig?.select.length > 0"
                     (click)="toggleInfoPanel()"
                     class="text-gray1 flex h-11 cursor-pointer select-none flex-row items-center pl-2 pr-5 text-xl font-semibold"
                   >
