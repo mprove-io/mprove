@@ -48,7 +48,7 @@
           *ngFor="let column of mconfigFields | hideColumns : hideColumns"
           class="truncate px-5"
           [ngClass]="{
-            'bg-gray-100': (i + 1) % 2 === 0,
+            'bg-s100': (i + 1) % 2 === 0,
             'text-right': column.result === fieldResultNumber
           }"
         >

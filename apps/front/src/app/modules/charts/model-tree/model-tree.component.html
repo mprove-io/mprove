@@ -53,7 +53,7 @@
               'bg-m75': node.data.nodeClass === nodeClassDimension,
               'bg-p100': node.data.nodeClass === nodeClassMeasure,
               'bg-g2': node.data.nodeClass === nodeClassCalculation,
-              'bg-gray-100': node.data.nodeClass === nodeClassFilter,
+              'bg-s100': node.data.nodeClass === nodeClassFilter,
               'hover:bg-m150':
                 node.data.nodeClass === nodeClassDimension &&
                 (node.data.isSelected === false ||
@@ -66,7 +66,7 @@
                 node.data.nodeClass === nodeClassCalculation &&
                 (node.data.isSelected === false ||
                   node.data.required === false),
-              'hover:bg-gray-200': node.data.nodeClass === nodeClassFilter,
+              'hover:bg-s200': node.data.nodeClass === nodeClassFilter,
               'px-5': !node.data.isField
             }"
             (click)="nodeOnClick(node)"
@@ -219,7 +219,7 @@
                 class="invisible flex w-[76px] flex-shrink-0 justify-start text-sm [.group-bar:hover_&]:visible"
                 [ngClass]="{
                   'text-m600': node.data.isFiltered === true,
-                    'text-gray-400': node.data.isFiltered === false
+                    'text-s400': node.data.isFiltered === false
                     }"
                     >{{ node.data.fieldResult | result }}</div
                     > -->

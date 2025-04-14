@@ -9,7 +9,7 @@
     class="mt-2 cursor-pointer"
     [ngClass]="{
       'text-m500': params.data.showChart === true,
-      'text-gray-400': params.data.showChart === false
+      'text-s400': params.data.showChart === false
     }"
     (click)="toggleShowChart($event)"
   ></m-chart-icon>
@@ -21,7 +21,7 @@
           params.data.rowType === rowTypeMetric) ||
         params.data.rowType === rowTypeFormula
       "
-      class="cursor-pointer text-gray-500"
+      class="cursor-pointer text-s500"
       (click)="showDialog($event)"
     ></m-chart-view-icon>
   </div> -->

@@ -9,17 +9,17 @@
 
     <div class="ml-10 flex flex-row items-center">
       <div *ngIf="!!nav && !!nav.projectId" class="flex flex-row items-center">
-        <div class="select-none font-semibold text-gray-400">Env</div>
+        <div class="text-s400 select-none font-semibold">Env</div>
         <m-env-select class="ml-5"></m-env-select>
 
-        <div class="ml-10 select-none font-semibold text-gray-400">Branch</div>
+        <div class="text-s400 ml-10 select-none font-semibold">Branch</div>
         <m-branch-select class="ml-5"></m-branch-select>
 
         <div class="flex w-[240px] flex-row justify-start">
           <button
             class="text-s1 ml-7 block flex h-10 flex-row items-center justify-start text-left text-base focus:outline-none"
             [ngClass]="{
-              'cursor-default text-gray-400':
+              'text-s400 cursor-default':
                 !nav || !nav.projectId || needSave === true,
               'font-semibold': isFilesRouteActive === true
             }"
@@ -62,7 +62,7 @@
       <button
         class="text-s1 ml-5 block flex h-10 w-[80px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{
-          'cursor-default text-gray-400':
+          'text-s400 cursor-default':
             !nav || !nav.projectId || needSave === true,
           'font-semibold': isChartsRouteActive === true
         }"
@@ -74,7 +74,7 @@
       <button
         class="text-s1 block flex h-10 w-[120px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{
-          'cursor-default text-gray-400':
+          'text-s400 cursor-default':
             !nav || !nav.projectId || needSave === true,
           'font-semibold': isDashboardsRouteActive === true
         }"
@@ -86,7 +86,7 @@
       <button
         class="text-s1 block flex h-10 w-[90px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{
-          'cursor-default text-gray-400':
+          'text-s400 cursor-default':
             !nav || !nav.projectId || needSave === true,
           'font-semibold': isReportsRouteActive === true
         }"
@@ -100,11 +100,11 @@
     <div class="flex flex-1"></div>
 
     <div class="flex flex-row items-center">
-      <div class="select-none font-semibold text-gray-400">Project</div>
+      <div class="text-s400 select-none font-semibold">Project</div>
       <m-project-menu></m-project-menu>
       <m-project-select class="ml-2"></m-project-select>
 
-      <div class="ml-10 select-none font-semibold text-gray-400">Org</div>
+      <div class="text-s400 ml-10 select-none font-semibold">Org</div>
       <m-org-menu></m-org-menu>
       <m-org-select class="ml-2"></m-org-select>
 

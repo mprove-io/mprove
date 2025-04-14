@@ -18,7 +18,7 @@
           type="submit"
           [ngClass]="{
             'bg-m600': isEditor === true,
-            'cursor-default bg-gray-400': isEditor === false
+            'bg-s400 cursor-default': isEditor === false
           }"
           (click)="addVariable()"
           [disabled]="isEditor === false"
@@ -29,7 +29,7 @@
 
     <div class="mb-4 mt-6 flex-grow overflow-auto rounded bg-white shadow">
       <div class="text-s1 mx-5 mt-8" *ngIf="evs?.length > 0">
-        <table class="min-w-full divide-y divide-gray-500">
+        <table class="divide-s500 min-w-full divide-y">
           <thead>
             <tr class="h-12 text-sm">
               <th class="text-left">Name</th>
@@ -40,7 +40,7 @@
             </tr>
           </thead>
 
-          <tbody class="divide-y divide-gray-300 text-base">
+          <tbody class="divide-s300 divide-y text-base">
             <tr *ngFor="let ev of evs; let i = index" class="h-16">
               <td class="w-[700px]">
                 <div class="w-[700px] truncate">{{ ev.evId }}</div>
@@ -61,7 +61,7 @@
                     (click)="editVariable(ev, i)"
                     class="ml-5 rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
                     [ngClass]="{
-                      'cursor-default text-gray-400': isEditor === false,
+                      'text-s400 cursor-default': isEditor === false,
                       'border-s3 text-s1': isEditor === true
                     }"
                     [disabled]="isEditor === false"
@@ -80,7 +80,7 @@
                     data-cy="projectEvsDeleteButton"
                     class="h-9 w-9 rounded focus:outline-none"
                     [ngClass]="{
-                      'cursor-default text-gray-400': isEditor === false
+                      'text-s400 cursor-default': isEditor === false
                     }"
                     [disabled]="isEditor === false"
                     (click)="deleteVariable(ev)"

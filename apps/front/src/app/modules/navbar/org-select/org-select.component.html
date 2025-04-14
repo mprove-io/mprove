@@ -36,7 +36,7 @@
         class="w-full rounded py-3 text-base focus:outline-none"
         [ngClass]="{
           'text-m600 hover:bg-m50': alias !== restrictedUserAlias,
-          'cursor-default bg-gray-400 text-white': alias === restrictedUserAlias
+          'bg-s400 cursor-default text-white': alias === restrictedUserAlias
         }"
         (click)="createNewOrg()"
         [disabled]="alias === restrictedUserAlias"

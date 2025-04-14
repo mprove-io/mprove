@@ -34,7 +34,7 @@
         data-cy="chartOptionsEditInfo"
         class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
-          'cursor-default text-gray-400': chart.canEditOrDeleteChart === false
+          'text-s400 cursor-default': chart.canEditOrDeleteChart === false
         }"
         (click)="t1.hide(); editChartInfo($event, chart)"
         [disabled]="chart.canEditOrDeleteChart === false"
@@ -51,7 +51,7 @@
         data-cy="chartOptionsDelete"
         class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
-          'cursor-default text-gray-400': chart.canEditOrDeleteChart === false
+          'text-s400 cursor-default': chart.canEditOrDeleteChart === false
         }"
         (click)="t1.hide(); deleteChart($event, chart)"
         [disabled]="chart.canEditOrDeleteChart === false"

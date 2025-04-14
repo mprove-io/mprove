@@ -195,7 +195,7 @@
     </div>
   </div>
 
-  <div class="mt-9 h-7 text-base text-gray-400">
+  <div class="text-s400 mt-9 h-7 text-base">
     <div *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
       >{{ struct?.mproveDirValue | mproveDir | capitalize }} /
       {{ usersFolder }} / {{ alias }} / {{ newChartId }}.chart</div
@@ -312,7 +312,7 @@
           chartSaveAs === chartSaveAsEnum.NEW_CHART ||
           (!!selectedDashboardId &&
             (tileSaveAs === tileSaveAsEnum.NEW_TILE || !!selectedTileTitle)),
-        'cursor-default bg-gray-400':
+        'bg-s400 cursor-default':
           chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD &&
           (selectedDashboardId === undefined ||
             (tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE &&

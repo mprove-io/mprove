@@ -52,7 +52,7 @@
           <button
             class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
             [ngClass]="{
-              'cursor-default text-gray-400':
+              'text-s400 cursor-default':
                 columnIndex === 0 ||
                 column.fieldClass !== mconfigFields[columnIndex - 1].fieldClass,
               'hover:bg-m50':
@@ -71,7 +71,7 @@
           <button
             class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
             [ngClass]="{
-              'cursor-default text-gray-400':
+              'text-s400 cursor-default':
                 columnIndex + 1 === mconfigFields.length ||
                 column.fieldClass !== mconfigFields[columnIndex + 1].fieldClass,
               'hover:bg-m50':
@@ -94,7 +94,7 @@
             <button
               class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
               [ngClass]="{
-                'cursor-default text-gray-400': column.required === true,
+                'text-s400 cursor-default': column.required === true,
                 'hover:bg-m50': column.required === false
               }"
               [disabled]="column.required === true"
@@ -137,7 +137,7 @@
         *ngFor="let column of mconfigFields"
         class="truncate px-5"
         [ngClass]="{
-          'bg-gray-100': (i + 1) % 2 === 0,
+          'bg-s100': (i + 1) % 2 === 0,
           'text-right': column.result === fieldResultNumber
         }"
       >

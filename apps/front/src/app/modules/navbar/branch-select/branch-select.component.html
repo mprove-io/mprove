@@ -40,13 +40,13 @@
   </ng-template>
 
   <ng-template ng-footer-tmp>
-    <div class="cursor-default p-3 text-gray-400" *ngIf="isEditor === false">
+    <div class="text-s400 cursor-default p-3" *ngIf="isEditor === false">
       FileEditor role is required to switch to Dev repo branches (Development
       mode)
     </div>
 
     <div
-      class="cursor-default p-3 text-gray-400"
+      class="text-s400 cursor-default p-3"
       *ngIf="isEditor === true && !!repo.repoId && repo.conflicts.length > 0"
     >
       Resolve conflicts to be able to switch, merge, delete or create Dev repo
@@ -54,7 +54,7 @@
     </div>
 
     <div
-      class="cursor-default p-3 text-gray-400"
+      class="text-s400 cursor-default p-3"
       *ngIf="
         isEditor === true &&
         !!repo.repoId &&
@@ -90,7 +90,7 @@
       data-cy="branchSelectMergeBranchButton"
       class="w-full rounded py-3 text-base focus:outline-none"
       [ngClass]="{
-        'cursor-default text-gray-400': selectedBranchItem.isRepoProd === true,
+        'text-s400 cursor-default': selectedBranchItem.isRepoProd === true,
         'text-m600 hover:bg-m50': selectedBranchItem.isRepoProd === false
       }"
       (click)="mergeBranch(branchSelect, $event)"
@@ -108,7 +108,7 @@
       data-cy="branchSelectDeleteBranchButton"
       class="w-full rounded py-3 text-base focus:outline-none"
       [ngClass]="{
-        'cursor-default text-gray-400':
+        'text-s400 cursor-default':
           selectedBranchItem.branchId === defaultBranch,
         'text-m600 hover:bg-m50': selectedBranchItem.branchId !== defaultBranch
       }"
@@ -118,7 +118,7 @@
     >
 
     <!-- <div
-      class="cursor-default p-3 text-gray-400"
+      class="cursor-default p-3 text-s400"
       *ngIf="
         isEditor === true &&
         (!repo.repoId ||

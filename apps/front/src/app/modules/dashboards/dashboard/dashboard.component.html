@@ -42,11 +42,11 @@
                 data-cy="dashboardAddTileButton"
                 class="flex-shrink-0 rounded border px-5 py-2 text-base font-medium focus:outline-none"
                 [ngClass]="{
-                  'border-gray-400 text-gray-500 hover:bg-white':
+                  'border-s400 text-s500 hover:bg-white':
                     isExplorer === true &&
                     dashboard.draft === false &&
                     dashboard.canEditOrDeleteDashboard === true,
-                  'cursor-default border-gray-300 text-gray-400':
+                  'border-s300 text-s400 cursor-default':
                     isExplorer === false ||
                     dashboard.draft === true ||
                     dashboard.canEditOrDeleteDashboard === false
@@ -79,9 +79,9 @@
                 class="flex h-11 flex-row items-center rounded border px-4 py-2 text-base font-medium focus:outline-none"
                 (click)="editListeners()"
                 [ngClass]="{
-                  'border-gray-400 text-gray-500 hover:bg-white':
+                  'border-s400 text-s500 hover:bg-white':
                     dashboard.tiles.length > 0 && dashboard.fields.length > 0,
-                  'cursor-default border-gray-300 text-gray-400':
+                  'border-s300 text-s400 cursor-default':
                     dashboard.tiles.length === 0 ||
                     dashboard.fields.length === 0
                 }"
@@ -90,11 +90,11 @@
                 "
               >
                 <m-link-icon
-                  class="text-gray-500"
+                  class="text-s500"
                   [ngClass]="{
-                    'text-gray-500':
+                    'text-s500':
                       dashboard.tiles.length > 0 && dashboard.fields.length > 0,
-                    'text-gray-400':
+                    'text-s400':
                       dashboard.tiles.length === 0 ||
                       dashboard.fields.length === 0
                   }"
@@ -162,10 +162,10 @@
                       dashboard.draft === true &&
                       isExplorer === true &&
                       alias !== restrictedUserAlias,
-                    'cursor-default bg-gray-400':
+                    'cursor-default bg-s400':
                       dashboard.draft === true &&
                       (isExplorer === false || alias === restrictedUserAlias),
-                    ' border-gray-400 text-gray-500 hover:bg-white':
+                    ' border-s400 text-s500 hover:bg-white':
                       dashboard.draft === false &&
                       isExplorer === true &&
                       alias !== restrictedUserAlias
@@ -186,7 +186,7 @@
                   'bg-m600': dashboard.tiles.length > 0,
                   'cursor-default':
                     dashboard.tiles.length === 0 || isRunButtonPressed === true,
-                  'bg-gray-400': dashboard.tiles.length === 0
+                  'bg-s400': dashboard.tiles.length === 0
                 }"
                 (click)="run()"
                 [disabled]="
@@ -216,7 +216,7 @@
         </div>
       </div>
 
-      <div class="mt-6 divide-y divide-gray-300">
+      <div class="divide-s300 mt-6 divide-y">
         <div></div>
         <div></div>
       </div>
@@ -255,7 +255,7 @@
               "
               type="button"
               data-cy="dashboardAddFilterButton"
-              class="ml-4 h-11 flex-shrink-0 select-none rounded border border-gray-400 px-4 py-2 text-base font-medium text-gray-500 hover:bg-white focus:outline-none"
+              class="border-s400 text-s500 ml-4 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium hover:bg-white focus:outline-none"
               (click)="addFilter()"
               >Add Filter</button
             >

@@ -8,7 +8,7 @@
           autocomplete="off"
           spellcheck="false"
           data-cy="modelsSearchInput"
-          class="form-input focus:border-m600 ml-3 h-10 w-[400px] rounded border-gray-400"
+          class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[400px] rounded"
           placeholder="Search Models by Label and File"
           [ngClass]="{
             'bg-p200': !!word
@@ -31,7 +31,7 @@
         <div class="flex-grow"></div>
       </div>
 
-      <div class="mt-10 flex flex-col divide-y divide-gray-500">
+      <div class="divide-s500 mt-10 flex flex-col divide-y">
         <div
           class="text-s1 mb-3 mr-5 flex flex-row space-x-5 text-base font-semibold"
         >
@@ -64,7 +64,7 @@
           [ngClass]="{
             'mt-2': i === 0,
             'mb-5': i === filteredModels.length - 1,
-            'border-gray-300':
+            'border-s300':
               item.modelId !== filteredModels[filteredModels.length - 1].modelId
           }"
         >
@@ -116,7 +116,7 @@
                 </span>
 
                 <m-lock-closed-icon
-                  class="mb-1 ml-2 mr-5 text-gray-400"
+                  class="text-s400 mb-1 ml-2 mr-5"
                   *ngIf="item.hasAccess === false"
                 ></m-lock-closed-icon>
               </div>

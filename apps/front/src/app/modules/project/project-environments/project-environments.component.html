@@ -14,7 +14,7 @@
           type="submit"
           [ngClass]="{
             'bg-m600': isAdmin === true,
-            'cursor-default bg-gray-400': isAdmin === false
+            'bg-s400 cursor-default': isAdmin === false
           }"
           (click)="addEnvironment()"
           [disabled]="isAdmin === false"
@@ -25,7 +25,7 @@
 
     <div class="mb-4 mt-6 flex-grow overflow-auto rounded bg-white shadow">
       <div class="text-s1 mx-5 mt-8">
-        <table class="min-w-full divide-y divide-gray-500">
+        <table class="divide-s500 min-w-full divide-y">
           <thead>
             <tr class="h-12 text-sm">
               <th class="text-left">Name</th>
@@ -37,7 +37,7 @@
             </tr>
           </thead>
 
-          <tbody class="divide-y divide-gray-300 text-base">
+          <tbody class="divide-s300 divide-y text-base">
             <tr
               *ngFor="
                 let environment of environments
@@ -95,7 +95,7 @@
                     (click)="navToVariables(environment)"
                     class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
                     [ngClass]="{
-                      'cursor-default text-gray-400': isEditor === false,
+                      'text-s400 cursor-default': isEditor === false,
                       'border-s3 text-s1': isEditor === true
                     }"
                     [disabled]="isEditor === false"
@@ -127,7 +127,7 @@
                     data-cy="projectEnvironmentsDeleteButton"
                     class="h-9 w-9 rounded focus:outline-none"
                     [ngClass]="{
-                      'cursor-default text-gray-400':
+                      'text-s400 cursor-default':
                         isAdmin === false || environment.envId === envProd
                     }"
                     [disabled]="

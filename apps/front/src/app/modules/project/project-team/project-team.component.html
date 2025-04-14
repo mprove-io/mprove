@@ -14,7 +14,7 @@
           type="submit"
           [ngClass]="{
             'bg-m600': isAdmin === true,
-            'cursor-default bg-gray-400': isAdmin === false
+            'bg-s400 cursor-default': isAdmin === false
           }"
           (click)="inviteMember()"
           [disabled]="isAdmin === false"
@@ -25,7 +25,7 @@
 
     <div class="mb-4 mt-6 flex-grow overflow-auto rounded bg-white shadow">
       <div class="text-s1 mx-5 mt-8">
-        <table class="min-w-full divide-y divide-gray-500">
+        <table class="divide-s500 min-w-full divide-y">
           <thead>
             <tr class="h-12 text-sm">
               <th></th>
@@ -41,7 +41,7 @@
             </tr>
           </thead>
 
-          <tbody class="divide-y divide-gray-300">
+          <tbody class="divide-s300 divide-y">
             <tr
               *ngFor="
                 let member of members
@@ -99,7 +99,7 @@
                       data-cy="projectTeamAddEnvButton"
                       class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
                       [ngClass]="{
-                        'cursor-default text-gray-400': isAdmin === false,
+                        'text-s400 cursor-default': isAdmin === false,
                         'text-m600 hover:bg-m50': isAdmin === true
                       }"
                       (click)="addEnv(member, i)"
@@ -122,7 +122,7 @@
                             data-cy="projectTeamRemoveEnvButton"
                             class="ml-2 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
                             [ngClass]="{
-                              'cursor-default text-gray-400': isAdmin === false,
+                              'text-s400 cursor-default': isAdmin === false,
                               'text-s1 hover:bg-m50': isAdmin === true
                             }"
                             (click)="removeEnv(member, i, n)"
@@ -149,7 +149,7 @@
                       data-cy="projectTeamAddRoleButton"
                       class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
                       [ngClass]="{
-                        'cursor-default text-gray-400': isAdmin === false,
+                        'text-s400 cursor-default': isAdmin === false,
                         'text-m600 hover:bg-m50': isAdmin === true
                       }"
                       (click)="addRole(member, i)"
@@ -172,7 +172,7 @@
                             data-cy="projectTeamRemoveRoleButton"
                             class="ml-2 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
                             [ngClass]="{
-                              'cursor-default text-gray-400': isAdmin === false,
+                              'text-s400 cursor-default': isAdmin === false,
                               'text-s1 hover:bg-m50': isAdmin === true
                             }"
                             (click)="removeRole(member, i, n)"
@@ -211,10 +211,10 @@
                       class="flex h-5 w-5 items-center justify-center rounded border-2 text-white focus:outline-none"
                       [ngClass]="{
                         'bg-m600 ': member.isAdmin === true && isAdmin === true,
-                        'cursor-default bg-gray-400':
+                        'bg-s400 cursor-default':
                           member.isAdmin === true && isAdmin === false,
                         'border-m600': isAdmin === true,
-                        'cursor-default border-gray-400':
+                        'border-s400 cursor-default':
                           member.memberId === userId || isAdmin === false
                       }"
                       (click)="isAdminChange($event, i)"
@@ -240,10 +240,10 @@
                       [ngClass]="{
                         'bg-m600 ':
                           member.isEditor === true && isAdmin === true,
-                        'cursor-default bg-gray-400':
+                        'bg-s400 cursor-default':
                           member.isEditor === true && isAdmin === false,
                         'border-m600': isAdmin === true,
-                        'cursor-default border-gray-400': isAdmin === false
+                        'border-s400 cursor-default': isAdmin === false
                       }"
                       (click)="isEditorChange($event, i)"
                       [disabled]="isAdmin === false"
@@ -266,10 +266,10 @@
                       [ngClass]="{
                         'bg-m600 ':
                           member.isExplorer === true && isAdmin === true,
-                        'cursor-default bg-gray-400':
+                        'bg-s400 cursor-default':
                           member.isExplorer === true && isAdmin === false,
                         'border-m600': isAdmin === true,
-                        'cursor-default border-gray-400': isAdmin === false
+                        'border-s400 cursor-default': isAdmin === false
                       }"
                       (click)="isExplorerChange($event, i)"
                       [disabled]="isAdmin === false"
@@ -311,7 +311,7 @@
                     <div
                       class="flex justify-center"
                       [ngClass]="{
-                        'text-gray-400 ':
+                        'text-s400 ':
                           member.memberId === userId || isAdmin === false
                       }"
                     >

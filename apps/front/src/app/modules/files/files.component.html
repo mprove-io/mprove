@@ -41,7 +41,7 @@
                   class="flex flex-shrink-0 rounded px-2 py-[1px] text-white"
                   [ngClass]="{
                     'bg-m600': repo?.changesToCommit?.length > 0,
-                    'bg-gray-400': !(repo?.changesToCommit?.length > 0)
+                    'bg-s400': !(repo?.changesToCommit?.length > 0)
                   }"
                   >{{ repo?.changesToCommit?.length }}</div
                 >
@@ -100,7 +100,7 @@
                   class="flex flex-shrink-0 rounded px-2 py-[1px] text-white"
                   [ngClass]="{
                     'bg-m600': repo?.changesToPush?.length > 0,
-                    'bg-gray-400': !(repo?.changesToPush?.length > 0)
+                    'bg-s400': !(repo?.changesToPush?.length > 0)
                   }"
                   >{{ repo?.changesToPush?.length }}</div
                 >
@@ -116,14 +116,14 @@
           <div
             tp="Production repo is a read-only version of a Remote repo. Switch to the Dev repo to enter development mode."
             *ngIf="nav?.isRepoProd === true"
-            class="mr-5 flex h-11 flex-row items-center text-lg font-semibold text-gray-500"
+            class="text-s500 mr-5 flex h-11 flex-row items-center text-lg font-semibold"
           >
             production - {{ nav.branchId }}
           </div>
 
           <div
             *ngIf="nav?.isRepoProd === false"
-            class="mr-5 flex h-11 flex-row items-center text-lg font-semibold text-gray-500"
+            class="text-s500 mr-5 flex h-11 flex-row items-center text-lg font-semibold"
           >
             dev-{{ user.alias }} - {{ nav.branchId }}
           </div>
@@ -167,7 +167,7 @@
               data-cy="filesCommitButton"
               class="ml-3 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
-                'cursor-default bg-gray-400':
+                'bg-s400 cursor-default':
                   repo.repoStatus !== repoStatusNeedCommit || needSave === true,
                 'bg-m600':
                   repo.repoStatus === repoStatusNeedCommit && needSave === false
@@ -194,7 +194,7 @@
               data-cy="filesPullFromRemoteButton"
               class="ml-3 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
-                'cursor-default bg-gray-400':
+                'bg-s400 cursor-default':
                   repo.repoStatus !== repoStatusNeedPull || needSave === true,
                 'bg-m600':
                   repo.repoStatus === repoStatusNeedPull && needSave === false
@@ -248,7 +248,7 @@
               data-cy="filesPushButton"
               class="ml-3 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
-                'cursor-default bg-gray-400':
+                'bg-s400 cursor-default':
                   repo.repoStatus !== repoStatusNeedPush || needSave === true,
                 'bg-m600':
                   repo.repoStatus === repoStatusNeedPush && needSave === false

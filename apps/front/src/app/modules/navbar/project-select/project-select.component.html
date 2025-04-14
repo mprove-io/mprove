@@ -49,7 +49,7 @@
         [ngClass]="{
           'text-m600 hover:bg-m50':
             user.userId === nav.orgOwnerId && nav.orgName !== firstOrgName,
-          'cursor-default text-gray-400':
+          'text-s400 cursor-default':
             user.userId !== nav.orgOwnerId || nav.orgName === firstOrgName
         }"
         (click)="createNewProject()"

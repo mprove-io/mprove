@@ -106,7 +106,7 @@
         data-cy="chartDialogRunButton"
         class="ml-5 flex h-12 w-24 flex-shrink-0 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
         [ngClass]="{
-          'cursor-default bg-gray-400':
+          'bg-s400 cursor-default':
             isRunButtonPressed === true || query?.status === queryStatusRunning,
           'bg-m600 cursor-pointer':
             isRunButtonPressed === false && query?.status !== queryStatusRunning
@@ -153,7 +153,7 @@
           [ngClass]="{
             'bg-m600 cursor-pointer':
               isExplorer === true && canAccessModel === true,
-            'cursor-default bg-gray-400':
+            'bg-s400 cursor-default':
               isExplorer === false || canAccessModel === false
           }"
           [disabled]="isExplorer === false || canAccessModel === false"
@@ -184,7 +184,7 @@
     <m-chart-view
       class="h-full overflow-auto rounded pt-5"
       [ngClass]="{
-        'aspect-[3/1] border border-gray-300':
+        'border-s300 aspect-[3/1] border':
           mconfig?.chart.type !== chartTypeEnumTable
       }"
       [mconfigFields]="mconfig?.fields"
@@ -266,7 +266,7 @@
       ></ui-switch>
     </div>
 
-    <div class="ml-10 text-base font-semibold text-gray-400">Model:</div>
+    <div class="text-s400 ml-10 text-base font-semibold">Model:</div>
 
     <ng-template #templateChartDialogModel>
       <div *ngIf="isExplorer === false">Explorer role required</div>
@@ -289,14 +289,14 @@
       >
 
       <m-lock-closed-icon
-        class="mb-1 ml-2 text-gray-400"
+        class="text-s400 mb-1 ml-2"
         *ngIf="canAccessModel === false"
       ></m-lock-closed-icon>
     </div>
 
-    <div class="ml-10 text-base font-semibold text-gray-400">Timezone:</div>
+    <div class="text-s400 ml-10 text-base font-semibold">Timezone:</div>
 
-    <div class="ml-2 text-base text-gray-400 focus:outline-none">{{
+    <div class="text-s400 ml-2 text-base focus:outline-none">{{
       mconfig?.timezone | capitalize
     }}</div>
   </div>

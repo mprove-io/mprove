@@ -19,6 +19,11 @@ var s1 = '#4D4F5C';
 var s2 = '#00030B';
 var s3 = '#D7DBEC';
 var s4 = '#D7DBECA3';
+var s100 = '#f3f4f6'; // gray-100
+var s200 = '#e5e7eb'; // gray-200
+var s300 = '#d1d5dc'; // gray-300
+var s400 = '#99a1af'; // gray-400
+var s500 = '#6a7282'; // gray-500
 
 var g1 = '#B6E1BC';
 var g2 = '#E9F6EB';
@@ -79,6 +84,11 @@ module.exports = {
       s2,
       s3,
       s4,
+      s100,
+      s200,
+      s300,
+      s400,
+      s500,
       g1,
       g2,
       g700,
@@ -104,6 +114,11 @@ module.exports = {
       s2,
       s3,
       s4,
+      s100,
+      s200,
+      s300,
+      s400,
+      s500,
       g1,
       g2,
       g700,
@@ -129,6 +144,11 @@ module.exports = {
       s2,
       s3,
       s4,
+      s100,
+      s200,
+      s300,
+      s400,
+      s500,
       g1,
       g2,
       g700,

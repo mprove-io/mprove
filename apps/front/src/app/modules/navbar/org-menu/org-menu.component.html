@@ -21,7 +21,7 @@
     <div
       class="border-s4 w-56 cursor-default rounded-md border-2 bg-white shadow-xl"
     >
-      <div class="mt-2 block px-4 py-2 text-base font-semibold text-gray-400"
+      <div class="text-s400 mt-2 block px-4 py-2 text-base font-semibold"
         >{{ nav?.orgName | capitalize }} Org</div
       >
 
@@ -44,7 +44,7 @@
           class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
           [ngClass]="{
             'font-semibold': lastUrl === pathUsers,
-            'text-gray-400': user.userId !== nav.orgOwnerId,
+            'text-s400': user.userId !== nav.orgOwnerId,
             'border-s3': user.userId === nav.orgOwnerId
           }"
           [disabled]="lastUrl === pathUsers || user.userId !== nav.orgOwnerId"

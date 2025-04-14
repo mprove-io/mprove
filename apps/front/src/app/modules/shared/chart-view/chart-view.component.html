@@ -1,7 +1,7 @@
 <div class="h-full w-full overflow-auto">
   <div
     *ngIf="isSelectValid === false"
-    class="flex h-full w-full select-none flex-row items-center justify-center text-lg font-semibold text-gray-500"
+    class="text-s500 flex h-full w-full select-none flex-row items-center justify-center text-lg font-semibold"
     ><div class="w-3/5 text-center">
       {{ errorMessage || 'this chart type is not supported' }}
     </div>
@@ -21,7 +21,7 @@
       (queryStatus === queryStatusEnum.New ||
         queryStatus === queryStatusEnum.Canceled)
     "
-    class="flex h-full select-none items-center justify-center text-lg font-semibold text-gray-500"
+    class="text-s500 flex h-full select-none items-center justify-center text-lg font-semibold"
     >Run query to get data</div
   >
 
@@ -32,7 +32,7 @@
       qData?.length === 0 &&
       queryStatus === queryStatusEnum.Running
     "
-    class="flex h-full select-none items-center justify-center text-lg font-semibold text-gray-500"
+    class="text-s500 flex h-full select-none items-center justify-center text-lg font-semibold"
     >Query is Running</div
   >
 
@@ -43,7 +43,7 @@
       qData?.length === 0 &&
       queryStatus === queryStatusEnum.Completed
     "
-    class="flex h-full select-none items-center justify-center text-lg font-semibold text-gray-500"
+    class="text-s500 flex h-full select-none items-center justify-center text-lg font-semibold"
     >Query returned zero rows</div
   >
 

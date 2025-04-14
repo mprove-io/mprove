@@ -69,7 +69,7 @@
         class="h-6 w-6 cursor-pointer"
         [ngClass]="{
           'text-m500': seriesElement?.type === seriesTypeEnum.Line,
-          'text-gray-500': seriesElement?.type !== seriesTypeEnum.Line
+          'text-s500': seriesElement?.type !== seriesTypeEnum.Line
         }"
         (click)="seriesTypeChange(seriesTypeEnum.Line)"
       ></m-chart-line-icon>
@@ -78,7 +78,7 @@
         class="h-6 w-6 cursor-pointer"
         [ngClass]="{
           'text-m500': seriesElement?.type === seriesTypeEnum.Bar,
-          'text-gray-500': seriesElement?.type !== seriesTypeEnum.Bar
+          'text-s500': seriesElement?.type !== seriesTypeEnum.Bar
         }"
         (click)="seriesTypeChange(seriesTypeEnum.Bar)"
       ></m-chart-bar-icon>

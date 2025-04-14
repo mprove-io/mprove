@@ -1,6 +1,6 @@
 <div class="flex h-full flex-col">
   <div class="flex flex-grow overflow-y-auto rounded bg-white shadow">
-    <div class="ml-5 mr-5 mt-14 flex w-full flex-col divide-y divide-gray-500">
+    <div class="divide-s500 ml-5 mr-5 mt-14 flex w-full flex-col divide-y">
       <div
         class="text-s1 mb-3 mr-5 flex h-6 flex-row space-x-5 text-base font-semibold"
       >
@@ -49,7 +49,7 @@
           [ngClass]="{
             'mt-2': i === 0,
             'mb-5': i === filteredCharts.length - 1,
-            'border-gray-300':
+            'border-s300':
               item.chartId !== filteredCharts[filteredCharts.length - 1].chartId
           }"
         >
@@ -100,7 +100,7 @@
                 </div>
 
                 <m-lock-closed-icon
-                  class="mb-1 ml-2 text-gray-400"
+                  class="text-s400 mb-1 ml-2"
                   *ngIf="item.tiles[0].hasAccessToModel === false"
                 ></m-lock-closed-icon>
               </div>

@@ -15,7 +15,7 @@
       type="button"
       [ngClass]="{
         'bg-m600': isAdmin === true,
-        'cursor-default bg-gray-400': isAdmin === false
+        'bg-s400 cursor-default': isAdmin === false
       }"
       (click)="validate()"
       [disabled]="isAdmin === false"

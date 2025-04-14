@@ -29,7 +29,7 @@
       data-cy="reportOptionsDelete"
       class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
       [ngClass]="{
-        'cursor-default text-gray-400': report.canEditOrDeleteReport === false
+        'text-s400 cursor-default': report.canEditOrDeleteReport === false
       }"
       (click)="t1.hide(); deleteReport($event)"
       [disabled]="report.canEditOrDeleteReport === false"

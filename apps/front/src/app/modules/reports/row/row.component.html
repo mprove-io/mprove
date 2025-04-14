@@ -13,7 +13,7 @@
   <button
     type="button"
     data-cy="deleteRowsButton"
-    class="ml-7 flex flex-row items-center rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
+    class="border-s400 text-s500 ml-7 flex flex-row items-center rounded border px-4 py-2 hover:bg-white focus:outline-none"
     (click)="deleteRows()"
   >
     <m-trash-icon></m-trash-icon>
@@ -23,7 +23,7 @@
   <button
     type="button"
     data-cy="clearRowsButton"
-    class="ml-5 flex flex-row items-center rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
+    class="border-s400 text-s500 ml-5 flex flex-row items-center rounded border px-4 py-2 hover:bg-white focus:outline-none"
     (click)="clearRows()"
   >
     <m-delete-icon></m-delete-icon>
@@ -47,7 +47,7 @@
         <button
           type="button"
           data-cy="deleteRowButton"
-          class="hover:bg-m200 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 focus:outline-none"
+          class="hover:bg-m200 text-s500 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
           (click)="deleteRows()"
         >
           <m-trash-icon></m-trash-icon>
@@ -56,7 +56,7 @@
         <button
           type="button"
           data-cy="clearRowButton"
-          class="hover:bg-m200 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 focus:outline-none"
+          class="hover:bg-m200 text-s500 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
           (click)="clearRows()"
         >
           <m-delete-icon></m-delete-icon>
@@ -73,10 +73,10 @@
         <button
           type="button"
           data-cy="rowFormatButton"
-          class="flex h-9 w-[50px] items-center justify-center rounded border px-2 text-sm text-gray-500 hover:bg-white focus:outline-none"
+          class="text-s500 flex h-9 w-[50px] items-center justify-center rounded border px-2 text-sm hover:bg-white focus:outline-none"
           [ngClass]="{
             'border-p500 border-2 bg-white': isShowFormatOptions === true,
-            'border-gray-400': isShowFormatOptions === false
+            'border-s400': isShowFormatOptions === false
           }"
           (click)="toggleShowFormatOptions()"
         >
@@ -118,7 +118,7 @@
         <button
           type="button"
           data-cy="rowToMetricButton"
-          class="ml-5 flex rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
+          class="border-s400 text-s500 ml-5 flex rounded border px-4 py-2 hover:bg-white focus:outline-none"
           (click)="toMetric()"
         >
           Metric
@@ -127,7 +127,7 @@
         <button
           type="button"
           data-cy="rowToFormulaButton"
-          class="ml-5 flex rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
+          class="border-s400 text-s500 ml-5 flex rounded border px-4 py-2 hover:bg-white focus:outline-none"
           (click)="toFormula()"
         >
           Formula
@@ -136,7 +136,7 @@
         <button
           type="button"
           data-cy="rowToHeaderButton"
-          class="ml-5 flex rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
+          class="border-s400 text-s500 ml-5 flex rounded border px-4 py-2 hover:bg-white focus:outline-none"
           (click)="toHeader()"
         >
           Header
@@ -154,7 +154,7 @@
         <div [formGroup]="newFormulaForm" class="relative flex w-full">
           <textarea
             data-cy="newFormulaInput"
-            class="form-input border-s3 focus:border-m600 h-[95px] w-full resize-none rounded font-mono placeholder-gray-400"
+            class="form-input border-s3 focus:border-m600 placeholder-s400 h-[95px] w-full resize-none rounded font-mono"
             [ngClass]="{
               'border-r600':
                 newFormulaForm.controls['formula'].invalid &&
@@ -270,7 +270,7 @@
         <button
           type="button"
           data-cy="rowCancelButton"
-          class="ml-5 select-none rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
+          class="border-s400 text-s500 ml-5 select-none rounded border px-4 py-2 hover:bg-white focus:outline-none"
           (click)="cancelConvert()"
         >
           Cancel
@@ -311,7 +311,7 @@
     </div>
   </div>
 
-  <div class="ml-[20px] mr-[20px] divide-y divide-gray-300">
+  <div class="divide-s300 ml-[20px] mr-[20px] divide-y">
     <div></div>
     <div></div>
   </div>
@@ -445,7 +445,7 @@
       </div>
     </div>
 
-    <div class="ml-[20px] mr-[20px] mt-7 divide-y divide-gray-300">
+    <div class="divide-s300 ml-[20px] mr-[20px] mt-7 divide-y">
       <div></div>
       <div></div>
     </div>
@@ -463,7 +463,7 @@
     <div [formGroup]="formulaForm" class="relative flex max-w-[750px] flex-1">
       <textarea
         data-cy="formulaInput"
-        class="form-input border-s3 focus:border-m600 max-h-[150px] min-h-[95px] w-full min-w-[300px] resize-y rounded font-mono placeholder-gray-400"
+        class="form-input border-s3 focus:border-m600 placeholder-s400 max-h-[150px] min-h-[95px] w-full min-w-[300px] resize-y rounded font-mono"
         [ngClass]="{
           'border-r600':
             formulaForm.controls['formula'].invalid &&
@@ -497,7 +497,7 @@
         <button
           type="button"
           data-cy="rowAddParameterButton"
-          class="ml-7 h-11 flex-shrink-0 select-none rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
+          class="border-s400 text-s500 ml-7 h-11 flex-shrink-0 select-none rounded border px-4 py-2 hover:bg-white focus:outline-none"
           (click)="addParameter()"
         >
           Add Filter
@@ -510,7 +510,7 @@
             class="flex flex-row"
             *ngIf="isAddParameter === true"
             [ngClass]="{
-              'mb-5 border-b border-gray-300 pb-5': parametersFilters.length > 0
+              'border-s300 mb-5 border-b pb-5': parametersFilters.length > 0
             }"
           >
             <div
@@ -583,7 +583,7 @@
                 class="bg-m600 ml-5 select-none rounded px-4 py-2 font-medium text-white focus:outline-none"
                 [ngClass]="{
                   'bg-m600': isDisabledApplyAlreadyFiltered === false,
-                  'cursor-default bg-gray-400':
+                  'bg-s400 cursor-default':
                     isDisabledApplyAlreadyFiltered === true
                 }"
                 type="button"
@@ -596,7 +596,7 @@
             <button
               type="button"
               data-cy="rowCancelAddParameterButton"
-              class="ml-5 select-none rounded border border-gray-400 px-4 py-2 text-gray-500 hover:bg-white focus:outline-none"
+              class="border-s400 text-s500 ml-5 select-none rounded border px-4 py-2 hover:bg-white focus:outline-none"
               (click)="cancelAddParameter()"
             >
               Cancel

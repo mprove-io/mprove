@@ -101,7 +101,7 @@
                   data-cy="profileShowApiKeyButton"
                   class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
                   [ngClass]="{
-                    'cursor-default text-gray-400':
+                    'cursor-default text-s400':
                       alias === restrictedUserAlias,
                     'border-s3 text-s1': alias !== restrictedUserAlias
                   }"
@@ -121,8 +121,7 @@
                   data-cy="profileChangePasswordButton"
                   class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
                   [ngClass]="{
-                    'cursor-default text-gray-400':
-                      alias === restrictedUserAlias,
+                    'text-s400 cursor-default': alias === restrictedUserAlias,
                     'border-s3 text-s1': alias !== restrictedUserAlias
                   }"
                   (click)="changePassword()"
@@ -141,8 +140,7 @@
                   data-cy="profileDeleteUserButton"
                   class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
                   [ngClass]="{
-                    'cursor-default text-gray-400':
-                      alias === restrictedUserAlias,
+                    'text-s400 cursor-default': alias === restrictedUserAlias,
                     'border-r1 text-r1': alias !== restrictedUserAlias
                   }"
                   (click)="deleteUser()"
@@ -163,8 +161,7 @@
                   data-cy="profileEditPhotoButton"
                   class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
-                    'cursor-default text-gray-400':
-                      alias === restrictedUserAlias,
+                    'text-s400 cursor-default': alias === restrictedUserAlias,
                     'border-s3 text-s1': alias !== restrictedUserAlias
                   }"
                   (click)="editPhoto()"
@@ -183,8 +180,7 @@
                   data-cy="profileEditNameButton"
                   class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
-                    'cursor-default text-gray-400':
-                      alias === restrictedUserAlias,
+                    'text-s400 cursor-default': alias === restrictedUserAlias,
                     'border-s3 text-s1': alias !== restrictedUserAlias
                   }"
                   (click)="editName()"

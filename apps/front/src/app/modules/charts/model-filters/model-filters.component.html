@@ -1,4 +1,4 @@
-<div class="flex flex-col divide-y divide-gray-300" *ngIf="!!mconfig">
+<div class="divide-s300 flex flex-col divide-y" *ngIf="!!mconfig">
   <div
     *ngFor="let filter of mconfig.extendedFilters; let filterIndex = index"
     class="flex flex-row items-start justify-start"
@@ -13,10 +13,10 @@
         [tpIsEnabled]="filter.field.required === true"
       >
         <button
-          class="hover:bg-m200 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 focus:outline-none"
+          class="hover:bg-m200 text-s500 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
           [ngClass]="{
-            'hover:bg-m200 text-gray-500': filter.field.required === false,
-            'cursor-default text-gray-400': filter.field.required === true
+            'hover:bg-m200 text-s500': filter.field.required === false,
+            'text-s400 cursor-default': filter.field.required === true
           }"
           [disabled]="filter.field.required === true"
           (click)="deleteFilter(filter)"
@@ -74,10 +74,10 @@
           <button
             class="ml-3 flex h-9 w-9 items-center justify-center rounded focus:outline-none"
             [ngClass]="{
-              'hover:bg-m200 text-gray-500':
+              'hover:bg-m200 text-s500':
                 !filter.field.maxFractions ||
                 filter.field.maxFractions !== filter.fractions.length,
-              'cursor-default text-gray-400':
+              'text-s400 cursor-default':
                 !!filter.field.maxFractions &&
                 filter.field.maxFractions === filter.fractions.length
             }"
@@ -98,11 +98,11 @@
           "
         >
           <button
-            class="hover:bg-m200 ml-3 flex h-9 w-9 items-center justify-center rounded text-gray-500 focus:outline-none"
+            class="hover:bg-m200 text-s500 ml-3 flex h-9 w-9 items-center justify-center rounded focus:outline-none"
             [ngClass]="{
-              'hover:bg-m200 text-gray-500':
+              'hover:bg-m200 text-s500':
                 filter.field.required === false || filter.fractions.length > 1,
-              'cursor-default text-gray-400':
+              'text-s400 cursor-default':
                 filter.field.required === true && filter.fractions.length === 1
             }"
             [disabled]="

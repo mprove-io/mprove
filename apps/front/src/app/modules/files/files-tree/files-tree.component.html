@@ -34,11 +34,11 @@
                 >
                   <div class="h-6 w-6" *ngIf="!node.hasChildren"></div>
                   <m-chevron-right-icon
-                    class="text-gray-500"
+                    class="text-s500"
                     *ngIf="!node.isExpanded && node.hasChildren"
                   ></m-chevron-right-icon>
                   <m-chevron-down-icon
-                    class="text-gray-500"
+                    class="text-s500"
                     *ngIf="node.isExpanded && node.hasChildren"
                   ></m-chevron-down-icon>
 
@@ -141,7 +141,7 @@
           class="truncate text-base"
           [ngClass]="{
             'text-m500': fileId === change.fileId,
-            'text-gray-400': fileId !== change.fileId
+            'text-s400': fileId !== change.fileId
           }"
         >
           {{ change.parentPath }}
@@ -150,7 +150,7 @@
 
       <div class="flex-grow"></div>
 
-      <div class="ml-3 flex-shrink-0 text-base text-gray-400">
+      <div class="text-s400 ml-3 flex-shrink-0 text-base">
         {{ change.status }}
       </div>
     </div>
@@ -183,7 +183,7 @@
           class="truncate text-base"
           [ngClass]="{
             'text-m500': fileId === change.fileId,
-            'text-gray-400': fileId !== change.fileId
+            'text-s400': fileId !== change.fileId
           }"
         >
           {{ change.parentPath }}
@@ -192,7 +192,7 @@
 
       <div class="flex-grow"></div>
 
-      <div class="ml-3 flex-shrink-0 text-base text-gray-400">
+      <div class="text-s400 ml-3 flex-shrink-0 text-base">
         {{ change.status }}
       </div>
     </div>

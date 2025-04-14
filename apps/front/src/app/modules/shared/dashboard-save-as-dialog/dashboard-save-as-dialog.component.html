@@ -123,7 +123,7 @@
     </div>
   </div>
 
-  <div class="mt-9 h-7 text-base text-gray-400">
+  <div class="text-s400 mt-9 h-7 text-base">
     <div *ngIf="saveAs === dashboardSaveAsEnum.NEW_DASHBOARD"
       >{{ struct?.mproveDirValue | mproveDir | capitalize }} /
       {{ usersFolder }} / {{ alias }} / {{ newDashboardId }}.dashboard</div
@@ -225,7 +225,7 @@
       [ngClass]="{
         'bg-m600':
           saveAs === dashboardSaveAsEnum.NEW_DASHBOARD || !!selectedDashboardId,
-        'cursor-default bg-gray-400':
+        'bg-s400 cursor-default':
           saveAs === dashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD &&
           selectedDashboardId === undefined
       }"

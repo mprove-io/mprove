@@ -18,7 +18,7 @@
                 <m-view-list-icon
                   [ngClass]="{
                     'text-m500': lastUrl === pathDashboardsList,
-                    'text-gray-400': lastUrl !== pathDashboardsList
+                    'text-s400': lastUrl !== pathDashboardsList
                   }"
                 ></m-view-list-icon>
               </div>
@@ -39,7 +39,7 @@
                   [ngClass]="{
                     'bg-m600':
                       alias !== restrictedUserAlias && isExplorer === true,
-                    'cursor-default bg-gray-400':
+                    'bg-s400 cursor-default':
                       alias === restrictedUserAlias || isExplorer === false
                   }"
                   (click)="addDashboard()"
@@ -75,7 +75,7 @@
                       spellcheck="false"
                       autocomplete="off"
                       data-cy="dashboardsSearchInput"
-                      class="form-input focus:border-m600 ml-3 h-10 w-[225px] rounded border-gray-400"
+                      class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] rounded"
                       placeholder="Search Dashboards"
                       [ngClass]="{
                         'bg-p200': !!word
@@ -101,9 +101,9 @@
                       *ngIf="filteredDraftsLength > 0"
                       class="ml-3 mr-10 flex flex-row items-center rounded border px-4 py-2 focus:outline-none"
                       [ngClass]="{
-                        'border-gray-400 text-gray-500 hover:bg-gray-100':
+                        'border-s400 text-s500 hover:bg-s100':
                           filteredDraftsLength > 0,
-                        'cursor-default border-gray-300 text-gray-400':
+                        'border-s300 text-s400 cursor-default':
                           filteredDraftsLength === 0
                       }"
                       [disabled]="filteredDraftsLength === 0"
@@ -114,7 +114,7 @@
                     </button>
                   </div>
 
-                  <div class="ml-6 mr-9 flex flex-col divide-y divide-gray-300">
+                  <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
                     <div class="flex flex-row"></div>
                     <div class="flex flex-row"></div>
                   </div>
@@ -123,14 +123,14 @@
                     <div *ngFor="let d of filteredDashboards; let i = index">
                       <div
                         *ngIf="filteredDraftsLength > 0 && i === 0"
-                        class="mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold text-gray-500"
+                        class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
                       >
                         Drafts
                       </div>
 
                       <div
                         *ngIf="i === filteredDraftsLength"
-                        class="mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold text-gray-500"
+                        class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
                       >
                         Saved Dashboards
                       </div>
@@ -183,7 +183,7 @@
                           <div
                             class="hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded px-2"
                           >
-                            <m-save-icon class="text-gray-500"></m-save-icon>
+                            <m-save-icon class="text-s500"></m-save-icon>
                           </div>
                         </button>
 
@@ -193,7 +193,7 @@
                             d.dashboardId === dashboard?.dashboardId
                           "
                           data-cy="dashboardsDeleteDraftButton"
-                          class="hover:bg-m200 ml-3 flex h-9 flex-shrink-0 items-center justify-center rounded px-2 text-gray-500 focus:outline-none"
+                          class="hover:bg-m200 text-s500 ml-3 flex h-9 flex-shrink-0 items-center justify-center rounded px-2 focus:outline-none"
                           (click)="deleteDraftDashboard($event, d)"
                         >
                           <m-trash-icon></m-trash-icon>
@@ -212,7 +212,7 @@
                     </div>
                   </div>
 
-                  <div class="ml-6 mr-9 flex flex-col divide-y divide-gray-300">
+                  <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
                     <div class="flex flex-row"></div>
                     <div class="flex flex-row"></div>
                   </div>

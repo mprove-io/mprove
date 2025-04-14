@@ -214,7 +214,7 @@
               class="mb-6 flex w-[700px] flex-row items-center"
             >
               <button
-                class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 focus:outline-none"
+                class="text-s500 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                 (click)="removeScope(i)"
               >
                 <m-trash-icon></m-trash-icon>
@@ -257,7 +257,7 @@
         <!-- <button
           type="button"
           data-cy="addConnectionDialogAddHeaderButton"
-          class="ml-5 h-11 flex-shrink-0 select-none rounded border border-gray-400 px-4 py-2 text-base font-medium text-gray-500 hover:bg-white focus:outline-none"
+          class="ml-5 h-11 flex-shrink-0 select-none rounded border border-s400 px-4 py-2 text-base font-medium text-s500 hover:bg-white focus:outline-none"
           (click)="showLog()"
           >Log</button
         > -->
@@ -267,7 +267,7 @@
         *ngIf="
           [typeGoogleApi].indexOf(addConnectionForm.controls['type'].value) > -1
         "
-        class="mb-6 w-[628px] text-gray-400"
+        class="text-s400 mb-6 w-[628px]"
         >For this connection type, the Authorization (Bearer token) and
         Content-Type (application/json) headers will be automatically added. The
         Authorization Bearer token will be obtained using the Service Account
@@ -282,7 +282,7 @@
               class="mb-6 flex w-[700px] flex-row items-center"
             >
               <button
-                class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded text-gray-500 focus:outline-none"
+                class="text-s500 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                 (click)="removeHeader(i)"
               >
                 <m-trash-icon></m-trash-icon>

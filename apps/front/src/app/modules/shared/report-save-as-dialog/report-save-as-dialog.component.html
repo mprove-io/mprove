@@ -117,7 +117,7 @@
     </div>
   </div>
 
-  <div class="mt-9 h-7 text-base text-gray-400">
+  <div class="text-s400 mt-9 h-7 text-base">
     <div *ngIf="saveAs === reportSaveAsEnum.NEW_REPORT"
       >{{ struct?.mproveDirValue | mproveDir | capitalize }} /
       {{ usersFolder }} / {{ alias }} / {{ newReportId }}.report</div
@@ -217,7 +217,7 @@
       type="button"
       [ngClass]="{
         'bg-m600': saveAs === reportSaveAsEnum.NEW_REPORT || !!selectedReportId,
-        'cursor-default bg-gray-400':
+        'bg-s400 cursor-default':
           saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT &&
           selectedReportId === undefined
       }"

@@ -21,7 +21,7 @@
     <div
       class="border-s4 w-56 cursor-default rounded-md border-2 bg-white shadow-xl"
     >
-      <div class="mt-2 block px-4 py-2 text-base font-semibold text-gray-400"
+      <div class="text-s400 mt-2 block px-4 py-2 text-base font-semibold"
         >{{ nav?.projectName | capitalize }} Project</div
       >
 
@@ -34,7 +34,7 @@
           class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
           [ngClass]="{
             'font-semibold': lastUrl === pathTeam,
-            'text-gray-400': nav.orgName === firstOrgName && isAdmin === false,
+            'text-s400': nav.orgName === firstOrgName && isAdmin === false,
             'border-s3': !(nav.orgName === firstOrgName && isAdmin === false)
           }"
           [disabled]="
@@ -65,7 +65,7 @@
           class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
           [ngClass]="{
             'font-semibold': lastUrl === pathEnvironments,
-            'text-gray-400': isAdmin === false && isEditor === false,
+            'text-s400': isAdmin === false && isEditor === false,
             'border-s3': isAdmin === true || isEditor === true
           }"
           [disabled]="
@@ -86,7 +86,7 @@
           class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
           [ngClass]="{
             'font-semibold': lastUrl === pathConnections,
-            'text-gray-400': isAdmin === false && isEditor === false,
+            'text-s400': isAdmin === false && isEditor === false,
             'border-s3': isAdmin === true || isEditor === true
           }"
           [disabled]="

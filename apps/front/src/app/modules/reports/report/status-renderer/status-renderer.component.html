@@ -37,7 +37,7 @@
     *ngIf="isRunning === false && !!topQueryError"
     class="flex h-8 w-8 flex-shrink-0"
     [ngClass]="{
-      'text-gray-400': topQueryError === someRowsHaveFormulaErrors,
+      'text-s400': topQueryError === someRowsHaveFormulaErrors,
       'text-r1': topQueryError !== someRowsHaveFormulaErrors
     }"
     tp="{{ topQueryError }}"

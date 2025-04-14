@@ -64,7 +64,7 @@
                 data-cy="projectSettingsDeleteProjectButton"
                 class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
                 [ngClass]="{
-                  'cursor-default text-gray-400': isAdmin === false,
+                  'text-s400 cursor-default': isAdmin === false,
                   'border-r1 text-r1': isAdmin === true
                 }"
                 (click)="deleteProject()"
@@ -81,7 +81,7 @@
                   data-cy="projectSettingsEditNameButton"
                   class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
-                    'cursor-default text-gray-400': isAdmin === false,
+                    'text-s400 cursor-default': isAdmin === false,
                     'border-s3 text-s1': isAdmin === true
                   }"
                   [disabled]="isAdmin === false"

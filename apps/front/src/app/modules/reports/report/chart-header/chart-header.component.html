@@ -2,11 +2,11 @@
   <m-insights-icon
     class="ml-[4px] flex flex-shrink-0"
     [ngClass]="{
-    'text-gray-500':
+    'text-s500':
     showMetricsChart === true && reportSelectedNodes.length === 0,
-    'text-gray-400':
+    'text-s400':
     showMetricsChart === false && reportSelectedNodes.length === 0,
-    'cursor-default text-gray-300': reportSelectedNodes.length > 0,
+    'text-s300 cursor-default': reportSelectedNodes.length > 0,
     'cursor-pointer': reportSelectedNodes.length === 0,
   }"
     (click)="toggleShowMetricsChart()"

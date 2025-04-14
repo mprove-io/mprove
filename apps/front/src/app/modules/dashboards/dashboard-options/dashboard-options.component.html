@@ -29,8 +29,7 @@
       data-cy="dashboardOptionsDelete"
       class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
       [ngClass]="{
-        'cursor-default text-gray-400':
-          dashboard.canEditOrDeleteDashboard === false
+        'text-s400 cursor-default': dashboard.canEditOrDeleteDashboard === false
       }"
       (click)="t1.hide(); deleteDashboard($event)"
       [disabled]="dashboard.canEditOrDeleteDashboard === false"
