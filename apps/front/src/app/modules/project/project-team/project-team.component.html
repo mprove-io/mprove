@@ -104,7 +104,7 @@
                       class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
                       [ngClass]="{
                         'text-s400 cursor-default': isAdmin === false,
-                        'text-m600 hover:bg-m50': isAdmin === true
+                        'text-m600 hover:bg-m200': isAdmin === true
                       }"
                       (click)="addEnv(member, i)"
                       [disabled]="isAdmin === false"
@@ -127,7 +127,7 @@
                             class="ml-2 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
                             [ngClass]="{
                               'text-s400 cursor-default': isAdmin === false,
-                              'text-s1 hover:bg-m50': isAdmin === true
+                              'text-s1 hover:bg-m200': isAdmin === true
                             }"
                             (click)="removeEnv(member, i, n)"
                             [disabled]="isAdmin === false"
@@ -154,7 +154,7 @@
                       class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
                       [ngClass]="{
                         'text-s400 cursor-default': isAdmin === false,
-                        'text-m600 hover:bg-m50': isAdmin === true
+                        'text-m600 hover:bg-m200': isAdmin === true
                       }"
                       (click)="addRole(member, i)"
                       [disabled]="isAdmin === false"
@@ -177,7 +177,7 @@
                             class="ml-2 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
                             [ngClass]="{
                               'text-s400 cursor-default': isAdmin === false,
-                              'text-s1 hover:bg-m50': isAdmin === true
+                              'text-s1 hover:bg-m200': isAdmin === true
                             }"
                             (click)="removeRole(member, i, n)"
                             [disabled]="isAdmin === false"
@@ -207,16 +207,20 @@
                     class="w-fit"
                     [tp]="templateChangeAdminStatus"
                     [tpIsEnabled]="
-                      member.memberId === userId || isAdmin === false
+                      isAdmin === false || member.memberId === userId
                     "
                   >
                     <button
                       data-cy="projectTeamIsAdminButton"
                       class="flex h-5 w-5 items-center justify-center rounded border-2 text-white focus:outline-none"
                       [ngClass]="{
-                        'bg-m600 ': member.isAdmin === true && isAdmin === true,
+                        'bg-m600':
+                          member.isAdmin === true &&
+                          isAdmin === true &&
+                          member.memberId !== userId,
                         'bg-s400 cursor-default':
-                          member.isAdmin === true && isAdmin === false,
+                          member.isAdmin === true &&
+                          (isAdmin === false || member.memberId === userId),
                         'border-m600': isAdmin === true,
                         'border-s400 cursor-default':
                           member.memberId === userId || isAdmin === false
@@ -306,7 +310,7 @@
                     [ngClass]="{
                       'cursor-default':
                         member.memberId === userId || isAdmin === false,
-                      'hover:bg-m50':
+                      'hover:bg-m200':
                         member.memberId !== userId && isAdmin !== false
                     }"
                     [disabled]="member.memberId === userId || isAdmin === false"
