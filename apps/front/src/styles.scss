@@ -341,3 +341,16 @@ ngneat-dialog {
 .ng-dropdown-panel.chart-type-select .scroll-host {
   max-height: 45vh;
 }
+
+// pagination
+li.pagination-previous.disabled.ng-star-inserted {
+  color: #99a1af;
+}
+
+li.current.ng-star-inserted {
+  background: #0084d1;
+}
+
+li.pagination-next.disabled.ng-star-inserted {
+  color: #99a1af;
+}
