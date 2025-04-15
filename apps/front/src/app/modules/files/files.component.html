@@ -1,6 +1,6 @@
 <div class="bg-m1 flex h-full cursor-default flex-col">
-  <div class="mx-6 mb-6 mt-8 flex h-full flex-row">
-    <div class="flex min-w-[2px] flex-grow flex-col">
+  <div class="flex h-2 flex-1 flex-row">
+    <div class="mx-6 mb-6 mt-8 flex min-w-[2px] flex-grow flex-col">
       <div class="flex h-11 flex-row items-center justify-between">
         <div class="flex h-11 w-1/4 flex-row items-center justify-start">
           <div
@@ -20,7 +20,8 @@
             <button
               class="flex w-[55px] items-center text-lg focus:outline-none"
               [ngClass]="{
-                'font-semibold': panel === panelTree
+                'text-m500 font-semibold': panel === panelTree,
+                'text-s500': panel !== panelTree
               }"
               [disabled]="needSave === true"
               >Repo</button
@@ -40,7 +41,8 @@
               <div
                 class="flex w-[110px] flex-shrink-0 text-lg"
                 [ngClass]="{
-                  'font-semibold': panel === panelChangesToCommit
+                  'text-m500 font-semibold': panel === panelChangesToCommit,
+                  'text-s500': panel !== panelChangesToCommit
                 }"
                 >To Commit</div
               >
@@ -48,8 +50,13 @@
               <div
                 class="ml-2 flex flex-shrink-0 rounded px-2 py-[1px] text-white"
                 [ngClass]="{
-                  'bg-m600': repo?.changesToCommit?.length > 0,
-                  'bg-s400': !(repo?.changesToCommit?.length > 0)
+                  'bg-m500': panel === panelChangesToCommit,
+                  'bg-m600':
+                    panel !== panelChangesToCommit &&
+                    repo?.changesToCommit?.length > 0,
+                  'bg-s400':
+                    panel !== panelChangesToCommit &&
+                    !(repo?.changesToCommit?.length > 0)
                 }"
                 >{{ repo?.changesToCommit?.length }}</div
               >
@@ -95,7 +102,8 @@
               <div
                 class="flex w-[80px] flex-shrink-0 flex-shrink-0 text-lg"
                 [ngClass]="{
-                  'font-semibold': panel === panelChangesToPush
+                  'text-m500 font-semibold': panel === panelChangesToPush,
+                  'text-s500': panel !== panelChangesToPush
                 }"
                 >To Push</div
               >
@@ -108,8 +116,13 @@
                 "
                 class="ml-2 flex flex-shrink-0 rounded px-2 py-[1px] text-white"
                 [ngClass]="{
-                  'bg-m600': repo?.changesToPush?.length > 0,
-                  'bg-s400': !(repo?.changesToPush?.length > 0)
+                  'bg-m500': panel === panelChangesToPush,
+                  'bg-m600':
+                    panel !== panelChangesToPush &&
+                    repo?.changesToPush?.length > 0,
+                  'bg-s400':
+                    panel !== panelChangesToPush &&
+                    !(repo?.changesToPush?.length > 0)
                 }"
                 >{{ repo?.changesToPush?.length }}</div
               >
@@ -142,7 +155,7 @@
         </div>
 
         <div
-          class="flex flex-grow flex-row items-center justify-end"
+          class="flex flex-1 flex-row items-center justify-end"
           *ngIf="!!repo"
         >
           <div
@@ -197,7 +210,7 @@
             <button
               type="button"
               data-cy="filesCommitButton"
-              class="ml-3 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
+              class="ml-3 h-11 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
                 'bg-s400 cursor-default':
                   repo.repoStatus !== repoStatusNeedCommit || needSave === true,
@@ -224,7 +237,7 @@
             <button
               type="button"
               data-cy="filesPullFromRemoteButton"
-              class="ml-3 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
+              class="ml-3 h-11 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
                 'bg-s400 cursor-default':
                   repo.repoStatus !== repoStatusNeedPull || needSave === true,
@@ -278,7 +291,7 @@
             <button
               type="button"
               data-cy="filesPushButton"
-              class="ml-3 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
+              class="ml-3 h-11 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
               [ngClass]="{
                 'bg-s400 cursor-default':
                   repo.repoStatus !== repoStatusNeedPush || needSave === true,
@@ -315,31 +328,33 @@
           </div>
         </div>
 
-        <div *ngIf="panel === panelTree" class="w-3/12"> </div>
+        <div class="flex flex-1"> </div>
       </div>
 
-      <div class="mt-6 flex flex-grow flex-row">
+      <div class="mt-6 flex h-2 flex-1 flex-row">
         <m-files-tree
           [panel]="panel"
-          class="flex w-3/12 flex-shrink-0"
+          class="flex w-1/4 flex-shrink-0"
         ></m-files-tree>
 
-        <div class="ml-6 flex w-full min-w-[2px] flex-grow">
-          <div class="w-full rounded bg-white shadow">
+        <div class="ml-6 flex flex-1 flex-col">
+          <div class="flex h-full flex-grow rounded bg-white shadow">
+            <div class="h-full w-full" *ngIf="lastUrl !== pathFiles">
+              <router-outlet></router-outlet>
+            </div>
+
             <div
+              class="flex h-full w-full items-center justify-center text-xl"
               *ngIf="lastUrl === pathFiles"
-              class="flex h-full items-center justify-center text-xl"
               >Select File</div
             >
-
-            <router-outlet *ngIf="lastUrl !== pathFiles"></router-outlet>
           </div>
-
-          <m-files-right
-            *ngIf="panel === panelTree"
-            class="flex w-4/12 flex-shrink-0"
-          ></m-files-right>
         </div>
+
+        <m-files-right
+          *ngIf="panel === panelTree"
+          class="flex flex-1"
+        ></m-files-right>
       </div>
     </div>
   </div>

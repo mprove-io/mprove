@@ -24,6 +24,7 @@ var a500 = '#fe9a00'; // amber-500
 
 var g1 = '#B6E1BC';
 var g2 = '#E9F6EB';
+var g3 = '#64BD63'; // ui-switch
 var g700 = '#008236'; // green-700
 
 var p100 = '#f3e8ff'; // purple-100
@@ -89,6 +90,7 @@ module.exports = {
       a500,
       g1,
       g2,
+      g3,
       g700,
       p100,
       p200,
@@ -120,6 +122,7 @@ module.exports = {
       a500,
       g1,
       g2,
+      g3,
       g700,
       p100,
       p200,
@@ -151,6 +154,7 @@ module.exports = {
       a500,
       g1,
       g2,
+      g3,
       g700,
       p100,
       p200,
