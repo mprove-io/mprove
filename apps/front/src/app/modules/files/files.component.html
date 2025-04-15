@@ -339,13 +339,16 @@
 
         <div class="ml-6 flex flex-1 flex-col">
           <div class="flex h-full flex-grow rounded bg-white shadow">
-            <div class="h-full w-full" *ngIf="lastUrl !== pathFiles">
+            <div
+              class="h-full w-full"
+              *ngIf="lastUrl !== pathFiles && !!file?.fileId"
+            >
               <router-outlet></router-outlet>
             </div>
 
             <div
               class="flex h-full w-full items-center justify-center text-xl"
-              *ngIf="lastUrl === pathFiles"
+              *ngIf="lastUrl === pathFiles || !file?.fileId"
               >Select File</div
             >
           </div>
@@ -364,6 +367,7 @@
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="file$ | async"></div>
 <div *ngIf="repo$ | async"></div>
+<div *ngIf="struct$ | async"></div>
 <div *ngIf="panel$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
 <div *ngIf="isEditor$ | async"></div>

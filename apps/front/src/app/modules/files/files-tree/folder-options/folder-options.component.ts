@@ -39,6 +39,7 @@ export class FolderOptionsComponent {
 
   newFolder(node: TreeNode, event: MouseEvent) {
     event.stopPropagation();
+
     this.myDialogService.showCreateFolder({
       apiService: this.apiService,
       projectId: this.nav.projectId,
@@ -50,6 +51,7 @@ export class FolderOptionsComponent {
 
   newFile(node: TreeNode, event: MouseEvent) {
     event.stopPropagation();
+
     this.myDialogService.showCreateFile({
       apiService: this.apiService,
       projectId: this.nav.projectId,
@@ -61,6 +63,7 @@ export class FolderOptionsComponent {
 
   deleteFolder(node: TreeNode, event: MouseEvent) {
     event.stopPropagation();
+
     this.myDialogService.showDeleteFolder({
       apiService: this.apiService,
       projectId: this.nav.projectId,
@@ -73,6 +76,7 @@ export class FolderOptionsComponent {
 
   renameFolder(node: TreeNode, event: MouseEvent) {
     event.stopPropagation();
+
     this.myDialogService.showRenameFolder({
       apiService: this.apiService,
       projectId: this.nav.projectId,

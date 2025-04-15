@@ -59,7 +59,7 @@ export class FileResolver implements Resolve<Observable<boolean>> {
     });
 
     return this.fileService
-      .getFile({ fileId: fileId, panel: panel })
+      .getFile({ fileId: fileId, panel: panel, skipCheck: true })
       .pipe(map(x => true));
   }
 }

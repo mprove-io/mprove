@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -8,6 +9,7 @@ import { RepoQuery, RepoState } from '../queries/repo.query';
 import { StructQuery } from '../queries/struct.query';
 import { UiQuery, UiState } from '../queries/ui.query';
 import { ApiService } from './api.service';
+import { NavigateService } from './navigate.service';
 
 @Injectable({ providedIn: 'root' })
 export class FileService {
@@ -38,6 +40,7 @@ export class FileService {
     private repoQuery: RepoQuery,
     private structQuery: StructQuery,
     private navQuery: NavQuery,
+    private navigateService: NavigateService,
     private apiService: ApiService
   ) {
     this.file$.subscribe();
@@ -45,8 +48,23 @@ export class FileService {
     this.nav$.subscribe();
   }
 
-  getFile(item: { fileId: string; panel: common.PanelEnum }) {
-    let { fileId, panel } = item;
+  getFile(item: {
+    fileId: string;
+    panel: common.PanelEnum;
+    skipCheck?: boolean;
+  }) {
+    let { fileId, panel, skipCheck } = item;
+
+    if (skipCheck !== true) {
+      let repo = this.repoQuery.getValue();
+      let fileIds = common.getFileIds({ nodes: repo.nodes });
+
+      if (fileIds.indexOf(fileId) < 0) {
+        return of(undefined).pipe(
+          tap(() => this.navigateService.navigateToFiles())
+        );
+      }
+    }
 
     let fileName: string;
 

@@ -177,7 +177,11 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   }
 
   setEditorOptionsLanguage() {
-    if (this.isLoadedMonaco === false || common.isUndefined(this.editor)) {
+    if (
+      this.isLoadedMonaco === false ||
+      common.isUndefined(this.editor) ||
+      common.isUndefined(this.file?.name)
+    ) {
       return;
     }
 

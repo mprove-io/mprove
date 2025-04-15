@@ -8,7 +8,7 @@ import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
-import { StructQuery } from '~front/app/queries/struct.query';
+import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery, UserState } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -55,6 +55,14 @@ export class FilesComponent implements OnInit {
   repo$ = this.repoQuery.select().pipe(
     tap(x => {
       this.repo = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  struct: StructState;
+  struct$ = this.structQuery.select().pipe(
+    tap(x => {
+      this.struct = x;
       this.cd.detectChanges();
     })
   );
@@ -151,7 +159,23 @@ export class FilesComponent implements OnInit {
     this.uiQuery.updatePart({ panel: x });
   }
 
-  addFile() {}
+  addFile() {
+    let part = this.struct.mproveDirValue;
+
+    part = part.startsWith('.') ? part.slice(1) : part;
+    part = part.startsWith('/') ? part.slice(1) : part;
+    part = part.endsWith('/') ? part.slice(0, -1) : part;
+
+    let parentNodeId = [this.struct.projectId, part].join('/');
+
+    this.myDialogService.showCreateFile({
+      apiService: this.apiService,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      envId: this.nav.envId,
+      parentNodeId: parentNodeId
+    });
+  }
 
   commit() {
     this.myDialogService.showCommit({
