@@ -1,5 +1,5 @@
 <div
-  class="ml-2 h-10 w-10"
+  class="flex h-10 cursor-pointer flex-row items-center"
   #t1="tippy"
   [tp]="templateProjectOptions"
   [tpHideOnEscape]="true"
@@ -8,11 +8,13 @@
   [tpOffset]="[0, 5]"
   [tpIsEnabled]="nav?.projectId !== undefined && needSave === false"
 >
+  <div class="text-s400 ml-2 select-none font-semibold">Project</div>
+
   <button
-    class="h-10 w-10 rounded-full focus:outline-none"
+    class="ml-2 h-10 rounded-full focus:outline-none"
     [disabled]="nav?.projectId === undefined || needSave === true"
   >
-    <div class="flex justify-center">
+    <div class="text-s500 flex justify-center">
       <m-settings-icon></m-settings-icon>
     </div>
   </button>
