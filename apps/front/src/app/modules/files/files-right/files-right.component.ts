@@ -38,10 +38,10 @@ export class FilesRightComponent {
     })
   );
 
-  isAdmin: boolean;
-  isAdmin$ = this.memberQuery.isAdmin$.pipe(
+  isEditor: boolean;
+  isEditor$ = this.memberQuery.isEditor$.pipe(
     tap(x => {
-      this.isAdmin = x;
+      this.isEditor = x;
       this.cd.detectChanges();
     })
   );

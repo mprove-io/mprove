@@ -27,6 +27,16 @@
         >{{ nav?.projectName | capitalize }} Project</div
       >
 
+      <button
+        class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
+        [ngClass]="{
+          'font-semibold': lastUrl === pathSettings
+        }"
+        [disabled]="lastUrl === pathSettings"
+        (click)="t1.hide(); navigateSettings()"
+        >Settings</button
+      >
+
       <div
         tp="Project is restricted for demo purposes. Only admin can access."
         placement="left"
@@ -48,15 +58,26 @@
         >
       </div>
 
-      <button
-        class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
-        [ngClass]="{
-          'font-semibold': lastUrl === pathSettings
-        }"
-        [disabled]="lastUrl === pathSettings"
-        (click)="t1.hide(); navigateSettings()"
-        >Settings</button
+      <div
+        tp="Admin or Editor role required"
+        placement="left"
+        [tpIsEnabled]="isAdmin === false && isEditor === false"
       >
+        <button
+          class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
+          [ngClass]="{
+            'font-semibold': lastUrl === pathConnections,
+            'text-s400': isAdmin === false && isEditor === false,
+            'border-s3': isAdmin === true || isEditor === true
+          }"
+          [disabled]="
+            lastUrl === pathConnections ||
+            (isAdmin === false && isEditor === false)
+          "
+          (click)="t1.hide(); navigateConnections()"
+          >Connections</button
+        >
+      </div>
 
       <div
         tp="Admin or Editor role required"
@@ -76,27 +97,6 @@
           "
           (click)="t1.hide(); navigateEnvironments()"
           >Environments</button
-        >
-      </div>
-
-      <div
-        tp="Admin or Editor role required"
-        placement="left"
-        [tpIsEnabled]="isAdmin === false && isEditor === false"
-      >
-        <button
-          class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
-          [ngClass]="{
-            'font-semibold': lastUrl === pathConnections,
-            'text-s400': isAdmin === false && isEditor === false,
-            'border-s3': isAdmin === true || isEditor === true
-          }"
-          [disabled]="
-            lastUrl === pathConnections ||
-            (isAdmin === false && isEditor === false)
-          "
-          (click)="t1.hide(); navigateConnections()"
-          >Connections</button
         >
       </div>
     </div>

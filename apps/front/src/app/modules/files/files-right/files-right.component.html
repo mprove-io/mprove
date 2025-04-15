@@ -11,15 +11,15 @@
 
     <button
       data-cy="filesRightValidateButton"
-      class="mt-5 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
+      class="mt-5 h-11 rounded px-5 py-2 text-base text-lg font-medium text-white focus:outline-none"
       type="button"
       [ngClass]="{
-        'bg-m600': isAdmin === true,
-        'bg-s400 cursor-default': isAdmin === false
+        'bg-m600': isEditor === true,
+        'bg-s400 cursor-default': isEditor === false
       }"
       (click)="validate()"
-      [disabled]="isAdmin === false"
-      >Validate</button
+      [disabled]="isEditor === false"
+      >Validate Files</button
     >
   </div>
 
@@ -55,4 +55,4 @@
 <div *ngIf="repo$ | async"></div>
 <div *ngIf="struct$ | async"></div>
 <div *ngIf="nav$ | async"></div>
-<div *ngIf="isAdmin$ | async"></div>
+<div *ngIf="isEditor$ | async"></div>
