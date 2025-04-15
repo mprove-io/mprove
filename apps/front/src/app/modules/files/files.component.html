@@ -355,7 +355,7 @@
         </div>
 
         <m-files-right
-          *ngIf="panel === panelTree"
+          *ngIf="panel === panelTree || !file?.fileId"
           class="flex w-1/3"
         ></m-files-right>
       </div>
