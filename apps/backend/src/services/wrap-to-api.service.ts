@@ -135,8 +135,9 @@ export class WrapToApiService {
     env: schemaPostgres.EnvEnt;
     envConnectionIds: string[];
     envMembers: schemaPostgres.MemberEnt[];
+    evs: common.Ev[];
   }): common.Env {
-    let { env, envConnectionIds, envMembers } = item;
+    let { env, envConnectionIds, envMembers, evs } = item;
 
     let envUsers: common.EnvUser[] = [];
 
@@ -158,7 +159,8 @@ export class WrapToApiService {
       projectId: env.projectId,
       envId: env.envId,
       envConnectionIds: envConnectionIds,
-      envUsers: envUsers
+      envUsers: envUsers,
+      evs: evs
     };
   }
 

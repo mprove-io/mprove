@@ -16,6 +16,7 @@ import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
+import { evsTable } from '~backend/drizzle/postgres/schema/evs';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -143,6 +144,15 @@ export class CreateEnvController {
 
     let envConnectionIds = connections.map(x => x.connectionId);
 
+    let evs = await this.db.drizzle.query.evsTable.findMany({
+      where: and(
+        eq(evsTable.projectId, projectId),
+        eq(evsTable.envId, newEnv.envId)
+      )
+    });
+
+    let evsApi = evs.map(x => this.wrapToApiService.wrapToApiEv(x));
+
     let payload: apiToBackend.ToBackendCreateEnvResponsePayload = {
       env: this.wrapToApiService.wrapToApiEnv({
         env: newEnv,
@@ -150,7 +160,8 @@ export class CreateEnvController {
         envMembers:
           newEnv.envId === common.PROJECT_ENV_PROD
             ? members
-            : members.filter(m => m.envs.indexOf(newEnv.envId) > -1)
+            : members.filter(m => m.envs.indexOf(newEnv.envId) > -1),
+        evs: evsApi
       })
     };
 

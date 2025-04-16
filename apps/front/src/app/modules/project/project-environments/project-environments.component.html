@@ -32,10 +32,12 @@
         <table class="divide-s500 min-w-full divide-y">
           <thead>
             <tr class="h-12 text-sm">
+              <th class="text-left"></th>
+              <th class="text-left"></th>
               <th class="text-left">Name</th>
               <th class="text-left">Connections</th>
               <th class="text-left">Users</th>
-              <th class="text-left"></th>
+              <th class="text-left">Variables</th>
               <th class="text-left"></th>
               <th></th>
             </tr>
@@ -56,38 +58,6 @@
               "
               class="h-16"
             >
-              <td class="w-64">{{ environment.envId }}</td>
-
-              <td class="w-64">
-                <div class="my-3 flex flex-col">
-                  <div
-                    *ngFor="let connectionId of environment.envConnectionIds"
-                  >
-                    <div class="flex flex-row items-center text-base">
-                      <div>{{ connectionId }} </div>
-                    </div>
-                  </div>
-                </div></td
-              >
-
-              <td class="w-64">
-                <div class="my-3 flex flex-col">
-                  <div *ngIf="environment.envId === envProd">
-                    <div class="flex flex-row items-center text-base">
-                      <div>All Users </div>
-                    </div>
-                  </div>
-
-                  <div *ngIf="environment.envId !== envProd">
-                    <div *ngFor="let envUser of environment.envUsers">
-                      <div class="flex flex-row items-center text-base">
-                        <div>{{ envUser.alias }} </div>
-                      </div>
-                    </div>
-                  </div>
-                </div></td
-              >
-
               <td class="w-32">
                 <div
                   class="w-fit"
@@ -145,6 +115,58 @@
                   </button>
                 </div>
               </td>
+
+              <td class="w-64">{{ environment.envId }}</td>
+
+              <td class="w-64">
+                <div class="my-3 flex flex-col">
+                  <div
+                    *ngFor="let connectionId of environment.envConnectionIds"
+                  >
+                    <div class="flex flex-row items-center text-base">
+                      <div>{{ connectionId }} </div>
+                    </div>
+                  </div>
+                </div></td
+              >
+
+              <td class="w-64">
+                <div class="my-3 flex flex-col">
+                  <div *ngIf="environment.envId === envProd">
+                    <div class="flex flex-row items-center text-base">
+                      <div>All Users </div>
+                    </div>
+                  </div>
+
+                  <div *ngIf="environment.envId !== envProd">
+                    <div *ngFor="let envUser of environment.envUsers">
+                      <div class="flex flex-row items-center text-base">
+                        <div>{{ envUser.alias }} </div>
+                      </div>
+                    </div>
+                  </div>
+                </div></td
+              >
+
+              <td class="w-[400px]">
+                <div class="my-3 flex flex-col">
+                  <div *ngFor="let ev of environment.evs">
+                    <div class="flex flex-row items-center text-base">
+                      <div>{{ ev.evId }} </div>
+                    </div>
+                  </div>
+                </div></td
+              >
+
+              <td class="w-64">
+                <div class="my-3 flex flex-col">
+                  <div *ngFor="let ev of environment.evs">
+                    <div class="flex flex-row items-center text-base">
+                      <div>{{ ev.val }} </div>
+                    </div>
+                  </div>
+                </div></td
+              >
             </tr>
           </tbody>
         </table>

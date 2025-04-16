@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
+import { Ev } from './ev';
 
 export class EnvUser {
   @IsString()
@@ -28,4 +29,8 @@ export class Env {
   @ValidateNested()
   @Type(() => EnvUser)
   envUsers: EnvUser[];
+
+  @ValidateNested()
+  @Type(() => Ev)
+  evs: Ev[];
 }
