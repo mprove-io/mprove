@@ -133,7 +133,11 @@
 
           <div
             [tp]="templateNewFile"
-            [tpIsEnabled]="needSave === true"
+            [tpIsEnabled]="
+              isEditor === false ||
+              nav?.isRepoProd === true ||
+              needSave === true
+            "
             class="ml-5 flex-shrink-0"
           >
             <button
@@ -141,17 +145,42 @@
               data-cy="filesAddFileButton"
               class="text-m0 h-11 flex-shrink-0 select-none rounded px-5 py-2 text-base font-medium focus:outline-none"
               [ngClass]="{
-                'bg-m600': needSave === false,
-                'bg-s400 cursor-default': needSave === true
+                'bg-m600':
+                  isEditor === true ||
+                  nav?.isRepoProd === false ||
+                  needSave === false,
+                'bg-s400 cursor-default':
+                  isEditor === false ||
+                  nav?.isRepoProd === true ||
+                  needSave === true
               }"
               (click)="addFile()"
-              [disabled]="needSave === true"
+              [disabled]="
+                isEditor === false ||
+                nav?.isRepoProd === true ||
+                needSave === true
+              "
               >New File</button
             >
           </div>
 
           <ng-template #templateNewFile>
-            <div *ngIf="needSave === true">Need to Save changes</div>
+            <div *ngIf="isEditor === false"
+              >Files can be edited by project members with FilesEditor role</div
+            >
+
+            <div *ngIf="isEditor === true && nav?.isRepoProd === true"
+              >Switch branch from production repo to dev repo to edit files</div
+            >
+
+            <div
+              *ngIf="
+                isEditor === true &&
+                nav?.isRepoProd === false &&
+                needSave === true
+              "
+              >Need to Save changes</div
+            >
           </ng-template>
         </div>
 
@@ -323,7 +352,11 @@
             >
           </div>
 
-          <div tp="Need to Save changes" [tpIsEnabled]="needSave === true">
+          <div
+            *ngIf="isEditor === true"
+            tp="Need to Save changes"
+            [tpIsEnabled]="needSave === true"
+          >
             <button
               tp="Click to Refresh repo status"
               type="button"
@@ -345,7 +378,7 @@
           </div>
         </div>
 
-        <div class="flex w-1/3"></div>
+        <div class="flex w-[30%]"></div>
       </div>
 
       <div class="mt-6 flex h-2 flex-1 flex-row">
@@ -373,7 +406,7 @@
 
         <m-files-right
           *ngIf="panel === panelTree || !file?.fileId"
-          class="flex w-1/3"
+          class="flex w-[30%]"
         ></m-files-right>
       </div>
     </div>
