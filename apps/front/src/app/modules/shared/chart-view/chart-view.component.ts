@@ -97,6 +97,8 @@ export class ChartViewComponent implements OnChanges {
     } as EChartsInitOpts;
 
     let eChartOptions: EChartsOption = {
+      // animation: false,
+      // transitionDuration: 0,
       useUTC: true,
       grid: {
         left: 100,
