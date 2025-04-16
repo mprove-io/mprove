@@ -122,7 +122,7 @@ export class GetCatalogFilesService {
       repoDir: repoDir,
       fetchOptions: fetchOptions,
       isFetch: false,
-      isCheckConflicts: false
+      isCheckConflicts: true
     });
 
     let payload: apiToDisk.ToDiskGetCatalogFilesResponsePayload = {
