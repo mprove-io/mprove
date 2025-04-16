@@ -47,7 +47,7 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
       isRepoProd: nav.isRepoProd,
       branchId: branchId,
       envId: envId,
-      isFetch: true
+      isFetch: false
     };
 
     return this.apiService
