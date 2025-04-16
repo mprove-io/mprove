@@ -124,6 +124,14 @@ export class ProjectEnvironmentsComponent implements OnInit {
     ]);
   }
 
+  addUser(env: common.Env, i: number) {}
+
+  addVariable(env: common.Env, i: number) {}
+
+  removeUser(env: common.Env, i: number, n: number) {}
+
+  removeVariable(env: common.Env, i: number, n: number) {}
+
   deleteEnvironment(environment: common.Env) {
     this.myDialogService.showDeleteEnvironment({
       apiService: this.apiService,
