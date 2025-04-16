@@ -1,4 +1,4 @@
-<div class="flex flex-col bg-white p-9">
+<div class="bg-m0 flex flex-col p-9">
   <div
     data-cy="chartSaveAsDialogTitle"
     class="text-s2 mb-9 mt-5 flex-grow text-left text-2xl font-semibold"
@@ -11,7 +11,7 @@
     (click)="newChartOnClick()"
   >
     <div
-      class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+      class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
       [ngClass]="{
         'bg-m600 ': chartSaveAs === chartSaveAsEnum.NEW_CHART
       }"
@@ -30,7 +30,7 @@
     (click)="tileOfDashboardOnClick()"
   >
     <button
-      class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+      class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
       [ngClass]="{
         'bg-m600 ': chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD
       }"
@@ -122,7 +122,7 @@
       (click)="newTileOnClick()"
     >
       <div
-        class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+        class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
         [ngClass]="{
           'bg-m600 ': tileSaveAs === tileSaveAsEnum.NEW_TILE
         }"
@@ -147,7 +147,7 @@
       (click)="replaceExistingTileOnClick()"
     >
       <button
-        class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+        class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
         [ngClass]="{
           'bg-m600 ': tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE
         }"
@@ -305,7 +305,7 @@
   <div class="mt-9">
     <button
       data-cy="chartSaveAsDialogSaveButton"
-      class="bg-m600 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
+      class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
       type="button"
       [ngClass]="{
         'bg-m600':

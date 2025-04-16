@@ -41,7 +41,7 @@
                 <button
                   type="button"
                   data-cy="metricsNewReportButton"
-                  class="bg-m600 h-11 flex-shrink-0 select-none rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
+                  class="bg-m600 text-m0 h-11 flex-shrink-0 select-none rounded px-5 py-2 text-base font-medium focus:outline-none"
                   (click)="newReport()"
                   >New Report</button
                 >
@@ -271,7 +271,7 @@
               <button
                 type="button"
                 data-cy="metricsRunButton"
-                class="ml-5 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
+                class="text-m0 ml-5 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium focus:outline-none"
                 [ngClass]="{
                   'bg-m600':
                     notEmptySelectQueriesLength > 0 &&
@@ -322,7 +322,7 @@
 
       <div class="mt-6 flex h-2 flex-1 flex-row">
         <div class="flex w-1/5 flex-shrink-0" *ngIf="isShowLeft === true">
-          <div class="flex w-full flex-grow rounded bg-white shadow">
+          <div class="bg-m0 flex w-full flex-grow rounded shadow">
             <div class="text-s1 mt-6 flex w-full flex-col text-base">
               <div
                 class="flex h-2 flex-col"
@@ -412,7 +412,7 @@
                           <div
                             *ngIf="r.reportId === report?.reportId"
                             data-cy="reportsSelectedSymbol"
-                            class="bg-m600 h-9 w-[6px] text-white focus:outline-none"
+                            class="bg-m600 text-m0 h-9 w-[6px] focus:outline-none"
                           ></div>
 
                           <div
@@ -470,7 +470,7 @@
                         >
                           <m-report-options
                             [report]="r"
-                            [isHoverWhite]="false"
+                            [isHoverM]="false"
                           ></m-report-options>
                         </div>
                       </div>
@@ -664,7 +664,7 @@
                 <button
                   type="button"
                   data-cy="metricsAddFilterButton"
-                  class="border-s400 text-s500 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium hover:bg-white focus:outline-none"
+                  class="border-s400 text-s500 hover:bg-m0 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
                   (click)="addFilter()"
                   >Add Filter</button
                 >
@@ -679,7 +679,7 @@
             </div>
           </div>
 
-          <div class="w-full flex-1 flex-shrink-0 rounded bg-white shadow">
+          <div class="bg-m0 w-full flex-1 flex-shrink-0 rounded shadow">
             <router-outlet></router-outlet>
           </div>
 
@@ -699,7 +699,7 @@
             </div>
 
             <div
-              class="relative h-2 w-full flex-grow flex-row rounded bg-white shadow"
+              class="bg-m0 relative h-2 w-full flex-grow flex-row rounded shadow"
               *ngIf="
                 isShow === true &&
                 showMetricsChart === true &&

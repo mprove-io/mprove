@@ -1,5 +1,5 @@
 <div class="flex h-full flex-col">
-  <div class="flex flex-grow overflow-y-auto rounded bg-white shadow">
+  <div class="bg-m0 flex flex-grow overflow-y-auto rounded shadow">
     <div class="ml-5 mr-5 mt-6 flex w-full flex-col">
       <div class="flex h-11 flex-row items-center">
         <m-search-icon class="text-s1 ml-8"></m-search-icon>
@@ -54,7 +54,7 @@
       >
         <div
           *ngFor="let item of filteredModels; let i = index; trackBy: trackByFn"
-          class="hover:bg-m50 flex flex-row bg-white hover:cursor-pointer"
+          class="hover:bg-m50 bg-m0 flex flex-row hover:cursor-pointer"
           [ngStyle]="
             item.modelId !==
               filteredModels[filteredModels.length - 1].modelId && {
@@ -89,7 +89,7 @@
 
                 <ng-template #templateModelOptions>
                   <div
-                    class="border-s4 w-64 rounded-md border-2 bg-white shadow-xl"
+                    class="border-s4 bg-m0 w-64 rounded-md border-2 shadow-xl"
                   >
                     <button
                       data-cy="modelOptionsGoToFile"

@@ -1,5 +1,5 @@
 <div class="flex h-full flex-col">
-  <div class="flex flex-grow overflow-y-auto rounded bg-white shadow">
+  <div class="bg-m0 flex flex-grow overflow-y-auto rounded shadow">
     <div class="divide-s500 ml-5 mr-5 mt-14 flex w-full flex-col divide-y">
       <div
         class="text-s1 mb-3 mr-5 flex h-6 flex-row space-x-5 text-base font-semibold"
@@ -39,7 +39,7 @@
       >
         <div
           *ngFor="let item of filteredCharts; let i = index; trackBy: trackByFn"
-          class="hover:bg-m50 flex flex-row bg-white hover:cursor-pointer"
+          class="hover:bg-m50 bg-m0 flex flex-row hover:cursor-pointer"
           [ngStyle]="
             item.chartId !==
               filteredCharts[filteredCharts.length - 1].chartId && {
@@ -62,7 +62,7 @@
                 <div class="invisible flex group-hover:visible">
                   <m-chart-options
                     [chart]="item"
-                    [isHoverWhite]="false"
+                    [isHoverM]="false"
                   ></m-chart-options>
                 </div>
               </div>

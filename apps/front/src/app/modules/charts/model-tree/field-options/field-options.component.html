@@ -1,6 +1,6 @@
 <button
   data-cy="fieldOptionsMenuButton"
-  class="ml-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded hover:bg-white focus:outline-none"
+  class="hover:bg-m0 ml-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
   #t1="tippy"
   [tp]="templateFieldOptions"
   [tpHideOnEscape]="true"
@@ -13,9 +13,7 @@
 </button>
 
 <ng-template #templateFieldOptions>
-  <div
-    class="border-s4 flex w-48 flex-col rounded-md border-2 bg-white shadow-xl"
-  >
+  <div class="border-s4 bg-m0 flex w-48 flex-col rounded-md border-2 shadow-xl">
     <button
       data-cy="fieldOptionsGoToFileLineButton"
       class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"

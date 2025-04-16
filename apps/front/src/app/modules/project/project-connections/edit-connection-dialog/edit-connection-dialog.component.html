@@ -1,4 +1,4 @@
-<div class="flex-grow flex-col overflow-y-auto bg-white p-9">
+<div class="bg-m0 flex-grow flex-col overflow-y-auto p-9">
   <div
     data-cy="editConnectionDialogTitle"
     class="text-s2 mt-5 flex-grow text-left text-2xl font-semibold"
@@ -128,7 +128,7 @@
         <button
           type="button"
           data-cy="editConnectionDialogAddScopeButton"
-          class="border-m600 text-m600 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium hover:bg-white focus:outline-none"
+          class="border-m600 text-m600 hover:bg-m0 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
           (click)="addScope()"
           >Add Scope</button
         >
@@ -177,7 +177,7 @@
         <button
           type="button"
           data-cy="editConnectionDialogAddHeaderButton"
-          class="border-m600 text-m600 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium hover:bg-white focus:outline-none"
+          class="border-m600 text-m600 hover:bg-m0 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
           (click)="addHeader()"
           >Add Header</button
         >
@@ -185,7 +185,7 @@
         <!-- <button
         type="button"
         data-cy="editConnectionDialogAddHeaderButton"
-        class="ml-5 h-11 flex-shrink-0 select-none rounded border border-s400 px-4 py-2 text-base font-medium text-s500 hover:bg-white focus:outline-none"
+        class="ml-5 h-11 flex-shrink-0 select-none rounded border border-s400 px-4 py-2 text-base font-medium text-s500 hover:bg-m0 focus:outline-none"
         (click)="showLog()"
         >Log</button
       > -->
@@ -471,7 +471,7 @@
     <div class="mt-6">
       <button
         data-cy="editConnectionDialogSaveButton"
-        class="bg-m600 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
+        class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
         type="submit"
         >Save</button
       >

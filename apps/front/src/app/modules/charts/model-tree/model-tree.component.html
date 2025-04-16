@@ -113,7 +113,7 @@
                       node.data.nodeClass !== nodeClassFilter
                     "
                     data-cy="modelTreeSelectedSymbol"
-                    class="bg-m600 h-2 w-2 rounded-full text-white focus:outline-none"
+                    class="bg-m600 text-m0 h-2 w-2 rounded-full focus:outline-none"
                   ></div>
 
                   <div
@@ -209,7 +209,7 @@
                   <div
                     class="flex h-8 w-9 flex-shrink-0 flex-row items-center justify-center space-x-2 rounded"
                     [ngClass]="{
-                      'group-hover:bg-white':
+                      'group-hover:bg-m0':
                         node.data.required === false ||
                         node.data.isFiltered === false ||
                         node.data.nodeClass !== nodeClassFilter

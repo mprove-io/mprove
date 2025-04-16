@@ -1,4 +1,4 @@
-<div class="flex w-full flex-grow overflow-y-auto rounded bg-white shadow">
+<div class="bg-m0 flex w-full flex-grow overflow-y-auto rounded shadow">
   <div class="mt-4 h-2 w-full" *ngIf="panel === panelTree">
     <tree-root
       #itemsTree
@@ -59,7 +59,7 @@
                     node.data.id === fileNodeId
                   "
                   data-cy="filesSelectedSymbol"
-                  class="bg-m600 h-9 w-[6px] text-white focus:outline-none"
+                  class="bg-m600 text-m0 h-9 w-[6px] focus:outline-none"
                 ></div>
 
                 <div

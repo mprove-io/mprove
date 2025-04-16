@@ -1,4 +1,4 @@
-<div class="flex flex-col bg-white p-9">
+<div class="bg-m0 flex flex-col p-9">
   <div
     data-cy="createBranchDialogTitle"
     class="text-s2 mt-5 flex-grow text-left text-2xl font-semibold"
@@ -20,7 +20,7 @@
       (click)="prodOnClick()"
     >
       <div
-        class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+        class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
         [ngClass]="{
           'bg-m600 ': isTargetProd === true
         }"
@@ -37,7 +37,7 @@
       (click)="devOnClick()"
     >
       <div
-        class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+        class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
         [ngClass]="{
           'bg-m600 ': isTargetProd === false
         }"
@@ -101,7 +101,7 @@
     <div class="mt-9">
       <button
         data-cy="createBranchDialogCreateButton"
-        class="bg-m600 w-28 rounded py-3 text-base font-medium text-white focus:outline-none"
+        class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
         type="submit"
         >Create</button
       >

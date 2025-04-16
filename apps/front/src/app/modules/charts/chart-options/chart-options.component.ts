@@ -14,7 +14,7 @@ export class ChartOptionsComponent {
   chart: common.ChartX;
 
   @Input()
-  isHoverWhite: boolean;
+  isHoverM: boolean;
 
   constructor(
     private myDialogService: MyDialogService,

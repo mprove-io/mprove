@@ -2,6 +2,7 @@
 // favicon '#0069a8'; // sky-700
 // ui-switch '#64BD63'; // default green
 
+var m0 = '#FFFFFF'; // white
 var m1 = '#F2F5FA'; // main background
 var m50 = '#f0f9ff'; // sky-50 hover elements
 var m75 = '#e8f6ff'; // sky-75 model tree dimensions
@@ -71,6 +72,7 @@ module.exports = {
     },
     backgroundColor: theme => ({
       ...theme('colors'),
+      m0,
       m1,
       m150,
       m500,
@@ -103,6 +105,7 @@ module.exports = {
     }),
     textColor: theme => ({
       ...theme('colors'),
+      m0,
       m1,
       m150,
       m500,
@@ -135,6 +138,7 @@ module.exports = {
     }),
     borderColor: theme => ({
       ...theme('colors'),
+      m0,
       m1,
       m150,
       m500,

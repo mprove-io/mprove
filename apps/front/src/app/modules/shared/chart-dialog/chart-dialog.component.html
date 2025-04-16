@@ -104,7 +104,7 @@
 
       <button
         data-cy="chartDialogRunButton"
-        class="ml-5 flex h-12 w-24 flex-shrink-0 items-center justify-center rounded text-base font-medium text-white focus:outline-none"
+        class="text-m0 ml-5 flex h-12 w-24 flex-shrink-0 items-center justify-center rounded text-base font-medium focus:outline-none"
         [ngClass]="{
           'bg-s400 cursor-default':
             isRunButtonPressed === true || query?.status === queryStatusRunning,
@@ -149,7 +149,7 @@
       >
         <button
           data-cy="chartDialogExploreButton"
-          class="h-12 rounded px-6 text-base font-medium text-white focus:outline-none"
+          class="text-m0 h-12 rounded px-6 text-base font-medium focus:outline-none"
           [ngClass]="{
             'bg-m600 cursor-pointer':
               isExplorer === true && canAccessModel === true,

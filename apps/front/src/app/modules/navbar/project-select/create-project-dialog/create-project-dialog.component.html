@@ -1,4 +1,4 @@
-<div class="flex flex-col bg-white p-9">
+<div class="bg-m0 flex flex-col p-9">
   <div
     data-cy="createProjectDialogTitle"
     class="text-s2 mt-5 select-none text-left text-2xl font-semibold"
@@ -37,7 +37,7 @@
       (click)="managedOnClick()"
     >
       <div
-        class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+        class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
         [ngClass]="{
           'bg-m600 ':
             projectRemoteRepoType === projectRemoteRepoTypeEnum.Managed
@@ -57,7 +57,7 @@
       (click)="gitCloneOnClick()"
     >
       <div
-        class="border-m600 flex h-6 w-6 items-center justify-center rounded-full border-2 text-white focus:outline-none"
+        class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
         [ngClass]="{
           'bg-m600 ':
             projectRemoteRepoType === projectRemoteRepoTypeEnum.GitClone
@@ -133,7 +133,7 @@
       >
         <div
           data-cy="createProjectDialogDeployKeyAddedCheckbox"
-          class="border-m600 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 text-white focus:outline-none"
+          class="border-m600 text-m0 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 focus:outline-none"
           [ngClass]="{
             'bg-m600 ': isDeployKeyAdded === true
           }"
@@ -153,7 +153,7 @@
     <div class="mt-8">
       <button
         data-cy="createProjectDialogCreateButton"
-        class="bg-m600 w-28 select-none rounded py-3 font-medium text-white focus:outline-none"
+        class="bg-m600 text-m0 w-28 select-none rounded py-3 font-medium focus:outline-none"
         type="submit"
         [ngClass]="{
           'bg-m600 ':

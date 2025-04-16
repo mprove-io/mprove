@@ -12,27 +12,27 @@
 </button>
 
 <ng-template #templateColor>
-  <div class="border-s4 w-56 rounded-md border-2 bg-white shadow-xl">
+  <div class="border-s4 bg-m0 w-56 rounded-md border-2 shadow-xl">
     <color-sketch
       [color]="rgbaColor"
       (onChangeComplete)="onChangeComplete($event)"
     ></color-sketch>
 
-    <div class="flex flex-row justify-between bg-white">
+    <div class="bg-m0 flex flex-row justify-between">
       <button
-        class="bg-m600 block rounded px-3 py-2 text-sm font-medium text-white focus:outline-none"
+        class="bg-m600 text-m0 block rounded px-3 py-2 text-sm font-medium focus:outline-none"
         (click)="t1.hide(); save()"
         >Save</button
       >
 
       <button
-        class="bg-m600 block rounded px-3 py-2 text-sm font-medium text-white focus:outline-none"
+        class="bg-m600 text-m0 block rounded px-3 py-2 text-sm font-medium focus:outline-none"
         (click)="t1.hide(); cancel()"
         >Cancel</button
       >
 
       <button
-        class="bg-m600 block rounded px-3 py-2 text-sm font-medium text-white focus:outline-none"
+        class="bg-m600 text-m0 block rounded px-3 py-2 text-sm font-medium focus:outline-none"
         (click)="t1.hide(); clear()"
         >Undef</button
       >

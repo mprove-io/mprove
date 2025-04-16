@@ -14,7 +14,7 @@
       <div tp="Editor role required" [tpIsEnabled]="isEditor === false">
         <button
           data-cy="projectEvsAddVariableButton"
-          class="mr-5 h-12 rounded px-5 py-2 text-base font-medium text-white focus:outline-none"
+          class="text-m0 mr-5 h-12 rounded px-5 py-2 text-base font-medium focus:outline-none"
           type="submit"
           [ngClass]="{
             'bg-m600': isEditor === true,
@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <div class="mb-4 mt-6 flex-grow overflow-auto rounded bg-white shadow">
+    <div class="bg-m0 mb-4 mt-6 flex-grow overflow-auto rounded shadow">
       <div class="text-s1 mx-5 mt-8" *ngIf="evs?.length > 0">
         <table class="divide-s500 min-w-full divide-y">
           <thead>

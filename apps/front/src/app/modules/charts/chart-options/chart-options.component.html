@@ -2,8 +2,8 @@
   data-cy="chartOptionsMenuButton"
   class="flex h-9 w-9 items-center justify-center rounded focus:outline-none"
   [ngClass]="{
-    'hover:bg-white': isHoverWhite === true,
-    'hover:bg-m200': isHoverWhite === false
+    'hover:bg-m0': isHoverM === true,
+    'hover:bg-m200': isHoverM === false
   }"
   #t1="tippy"
   [tp]="templateChartOptions"
@@ -17,7 +17,7 @@
 </button>
 
 <ng-template #templateChartOptions>
-  <div class="border-s4 w-64 rounded-md border-2 bg-white shadow-xl">
+  <div class="border-s4 bg-m0 w-64 rounded-md border-2 shadow-xl">
     <button
       data-cy="chartOptionsGoToFile"
       class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
