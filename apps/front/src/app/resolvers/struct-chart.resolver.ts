@@ -134,7 +134,7 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
               nav.orgId,
               common.PATH_PROJECT,
               nav.projectId,
-              common.PATH_SETTINGS
+              common.PATH_INFO
             ]);
 
             return false;

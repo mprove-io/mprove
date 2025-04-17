@@ -8,7 +8,7 @@
   [tpOffset]="[0, 5]"
   [tpIsEnabled]="nav?.projectId !== undefined && needSave === false"
 >
-  <div class="text-s400 ml-2 select-none font-semibold">Project</div>
+  <div class="text-s1 ml-2 select-none">Project</div>
 
   <button
     class="ml-2 h-10 rounded-full focus:outline-none"
@@ -30,11 +30,11 @@
       <button
         class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
-          'font-semibold': lastUrl === pathSettings
+          'font-semibold': lastUrl === pathInfo
         }"
-        [disabled]="lastUrl === pathSettings"
-        (click)="t1.hide(); navigateSettings()"
-        >Settings</button
+        [disabled]="lastUrl === pathInfo"
+        (click)="t1.hide(); navigateInfo()"
+        >Info</button
       >
 
       <div

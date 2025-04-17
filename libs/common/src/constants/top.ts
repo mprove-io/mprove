@@ -137,7 +137,7 @@ export const PATH_REPO = 'repo';
 export const PATH_BRANCH = 'branch';
 export const PATH_ENV = 'env';
 
-export const PATH_SETTINGS = 'settings';
+export const PATH_INFO = 'info';
 export const PATH_CONNECTIONS = 'connections';
 export const PATH_ENVIRONMENTS = 'environments';
 export const PATH_TEAM = 'team';

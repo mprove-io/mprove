@@ -29,7 +29,7 @@ import { OrgUsersComponent } from './modules/org/org-users/org-users.component';
 import { ProfileComponent } from './modules/profile/profile.component';
 import { ProjectConnectionsComponent } from './modules/project/project-connections/project-connections.component';
 import { ProjectEnvironmentsComponent } from './modules/project/project-environments/project-environments.component';
-import { ProjectSettingsComponent } from './modules/project/project-settings/project-settings.component';
+import { ProjectInfoComponent } from './modules/project/project-info/project-info.component';
 import { ProjectTeamComponent } from './modules/project/project-team/project-team.component';
 import { ReportComponent } from './modules/reports/report/report.component';
 import { ReportsListComponent } from './modules/reports/reports-list/reports-list.component';
@@ -47,7 +47,7 @@ import { NavBarResolver } from './resolvers/part/navbar.resolver';
 import { ProfileResolver } from './resolvers/part/profile.resolver';
 import { ProjectConnectionsResolver } from './resolvers/project-connections.resolver';
 import { ProjectEnvironmentsResolver } from './resolvers/project-environments.resolver';
-import { ProjectSettingsResolver } from './resolvers/project-settings.resolver';
+import { ProjectInfoResolver } from './resolvers/project-info.resolver';
 import { ProjectTeamResolver } from './resolvers/project-team.resolver';
 import { ProjectResolver } from './resolvers/project.resolver';
 import { RepoIdResolver } from './resolvers/repo-id.resolver';
@@ -166,9 +166,9 @@ export const appRoutes: Routes = [
             resolve: [ProjectResolver],
             children: [
               {
-                component: ProjectSettingsComponent,
-                path: common.PATH_SETTINGS,
-                resolve: [ProjectSettingsResolver]
+                component: ProjectInfoComponent,
+                path: common.PATH_INFO,
+                resolve: [ProjectInfoResolver]
               },
               {
                 component: ProjectConnectionsComponent,

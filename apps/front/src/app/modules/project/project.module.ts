@@ -7,12 +7,12 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { SharedModule } from '../shared/shared.module';
 import { ProjectConnectionsComponent } from './project-connections/project-connections.component';
 import { ProjectEnvironmentsComponent } from './project-environments/project-environments.component';
-import { ProjectSettingsComponent } from './project-settings/project-settings.component';
+import { ProjectInfoComponent } from './project-info/project-info.component';
 import { ProjectTeamComponent } from './project-team/project-team.component';
 
 @NgModule({
   declarations: [
-    ProjectSettingsComponent,
+    ProjectInfoComponent,
     ProjectTeamComponent,
     ProjectConnectionsComponent,
     ProjectEnvironmentsComponent

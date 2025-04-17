@@ -10,11 +10,11 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 @Component({
-  selector: 'm-project-settings',
-  templateUrl: './project-settings.component.html'
+  selector: 'm-project-info',
+  templateUrl: './project-info.component.html'
 })
-export class ProjectSettingsComponent implements OnInit {
-  pageTitle = constants.PROJECT_SETTINGS_PAGE_TITLE;
+export class ProjectInfoComponent implements OnInit {
+  pageTitle = constants.PROJECT_INFO_PAGE_TITLE;
 
   project: common.Project;
   project$ = this.projectQuery.select().pipe(

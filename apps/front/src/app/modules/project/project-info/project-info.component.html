@@ -2,7 +2,7 @@
   <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
     <div class="flex h-11 items-center">
       <div
-        data-cy="projectSettingsTitle"
+        data-cy="projectInfoTitle"
         class="text-s1 select-none text-2xl font-semibold"
         >{{ pageTitle }}
       </div>
@@ -32,27 +32,27 @@
 
           <div class="ml-6 flex flex-col">
             <div
-              data-cy="projectSettingsName"
+              data-cy="projectInfoName"
               class="flex h-16 max-w-xl items-center truncate text-base"
               >{{ project?.name | capitalize }}</div
             >
             <div
-              data-cy="projectSettingsRemoteType"
+              data-cy="projectInfoRemoteType"
               class="flex h-16 max-w-xl items-center truncate text-base"
               >{{ project?.remoteType | capitalize }}</div
             >
             <div
-              data-cy="projectSettingsRemoteType"
+              data-cy="projectInfoRemoteType"
               class="flex h-16 max-w-xl items-center truncate text-base"
               >{{ project?.defaultBranch }}</div
             >
             <div
-              data-cy="projectSettingsGitUrl"
+              data-cy="projectInfoGitUrl"
               class="flex h-16 max-w-xl items-center truncate text-base"
               >{{ project?.gitUrl }}</div
             >
             <div
-              data-cy="projectSettingsPublicKey"
+              data-cy="projectInfoPublicKey"
               class="flex min-h-[64px] max-w-xl items-center py-4 text-base"
               style="word-break: break-all"
               >{{ project?.publicKey }}</div
@@ -63,7 +63,7 @@
               [tpIsEnabled]="isAdmin === false"
             >
               <button
-                data-cy="projectSettingsDeleteProjectButton"
+                data-cy="projectInfoDeleteProjectButton"
                 class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
                 [ngClass]="{
                   'text-s400 cursor-default': isAdmin === false,
@@ -80,7 +80,7 @@
             <div class="flex h-16 items-center">
               <div tp="Admin role required" [tpIsEnabled]="isAdmin === false">
                 <button
-                  data-cy="projectSettingsEditNameButton"
+                  data-cy="projectInfoEditNameButton"
                   class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
                     'text-s400 cursor-default': isAdmin === false,

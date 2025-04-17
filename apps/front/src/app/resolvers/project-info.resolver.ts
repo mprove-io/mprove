@@ -16,7 +16,7 @@ import { ProjectQuery } from '../queries/project.query';
 import { ApiService } from '../services/api.service';
 
 @Injectable({ providedIn: 'root' })
-export class ProjectSettingsResolver implements Resolve<Observable<boolean>> {
+export class ProjectInfoResolver implements Resolve<Observable<boolean>> {
   constructor(
     private projectQuery: ProjectQuery,
     private navQuery: NavQuery,

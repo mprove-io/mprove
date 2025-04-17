@@ -123,11 +123,11 @@ import {
 import {
   DeleteProjectDialogComponent,
   DeleteProjectDialogData
-} from '../modules/project/project-settings/delete-project-dialog/delete-project-dialog.component';
+} from '../modules/project/project-info/delete-project-dialog/delete-project-dialog.component';
 import {
   EditProjectNameDialogComponent,
   EditProjectNameDialogData
-} from '../modules/project/project-settings/edit-project-name-dialog/edit-project-name-dialog.component';
+} from '../modules/project/project-info/edit-project-name-dialog/edit-project-name-dialog.component';
 import {
   AddEnvDialogComponent,
   AddEnvDialogData

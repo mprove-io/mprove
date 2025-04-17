@@ -17,7 +17,7 @@ export class ProjectMenuComponent implements OnInit {
 
   firstOrgName = common.FIRST_ORG_NAME;
 
-  pathSettings = common.PATH_SETTINGS;
+  pathInfo = common.PATH_INFO;
   pathConnections = common.PATH_CONNECTIONS;
   pathEnvironments = common.PATH_ENVIRONMENTS;
   pathTeam = common.PATH_TEAM;
@@ -81,13 +81,13 @@ export class ProjectMenuComponent implements OnInit {
     this.lastUrl = this.router.url.split('/')[5];
   }
 
-  navigateSettings() {
+  navigateInfo() {
     this.router.navigate([
       common.PATH_ORG,
       this.nav.orgId,
       common.PATH_PROJECT,
       this.nav.projectId,
-      common.PATH_SETTINGS
+      common.PATH_INFO
     ]);
   }
 

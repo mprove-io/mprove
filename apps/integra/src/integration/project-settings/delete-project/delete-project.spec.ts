@@ -58,9 +58,9 @@ describe('integra', () => {
     });
     cy.loginUser({ email: email, password: password });
     cy.visit(
-      `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_SETTINGS}`
+      `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_INFO}`
     );
-    cy.get('[data-cy=projectSettingsDeleteProjectButton]').click();
+    cy.get('[data-cy=projectInfoDeleteProjectButton]').click();
     cy.get('[data-cy=deleteProjectDialogDeleteButton]').click();
     cy.loading();
     cy.get('[data-cy=projectDeletedTitle]');
