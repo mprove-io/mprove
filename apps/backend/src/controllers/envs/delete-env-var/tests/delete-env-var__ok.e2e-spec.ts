@@ -6,7 +6,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-edit-ev__ev-does-not-exist';
+let testId = 'backend-delete-env-var__ok';
 
 let traceId = testId;
 
@@ -20,13 +20,15 @@ let orgName = testId;
 let projectId = common.makeId();
 let projectName = testId;
 
+let envId = 'env1';
+
 let evId = 'MPROVE_EV1';
 let val = '123';
 
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendEditEvResponse;
+  let resp: apiToBackend.ToBackendDeleteEnvVarResponse;
 
   try {
     prep = await prepareTest({
@@ -71,30 +73,42 @@ test('1', async t => {
             isEditor: true,
             isExplorer: true
           }
+        ],
+        envs: [
+          {
+            projectId: projectId,
+            envId: envId,
+            evs: [
+              {
+                evId: evId,
+                val: val
+              }
+            ]
+          }
         ]
       },
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendEditEvRequest = {
+    let req: apiToBackend.ToBackendDeleteEnvVarRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEv,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEv,
         traceId: traceId,
         idempotencyKey: common.makeId()
       },
       payload: {
         projectId: projectId,
-        envId: common.PROJECT_ENV_PROD,
-        evId: evId,
-        val: val
+        envId: envId,
+        evId: evId
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendEditEvResponse>({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      req: req
-    });
+    resp =
+      await helper.sendToBackend<apiToBackend.ToBackendDeleteEnvVarResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: req
+      });
 
     await prep.app.close();
   } catch (e) {
@@ -106,5 +120,6 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.info.error.message, common.ErEnum.BACKEND_EV_DOES_NOT_EXIST);
+  t.is(resp.info.error, undefined);
+  t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
 });

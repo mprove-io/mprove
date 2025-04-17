@@ -47,7 +47,7 @@ export class DeleteEvDialogComponent implements OnInit {
   delete() {
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendDeleteEvRequestPayload = {
+    let payload: apiToBackend.ToBackendDeleteEnvVarRequestPayload = {
       projectId: this.dataItem.env.projectId,
       envId: this.dataItem.env.envId,
       evId: this.dataItem.ev.evId
@@ -63,7 +63,7 @@ export class DeleteEvDialogComponent implements OnInit {
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteEvResponse) => {
+        tap((resp: apiToBackend.ToBackendDeleteEnvVarResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let environmentsState = this.environmentsQuery.getValue();
 

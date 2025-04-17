@@ -26,7 +26,7 @@ let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
-export class DeleteEvController {
+export class CreateEnvVarController {
   constructor(
     private projectsService: ProjectsService,
     private envsService: EnvsService,
@@ -36,14 +36,14 @@ export class DeleteEvController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEv)
-  async deleteEv(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnvVar)
+  async createEnvVar(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
-    let reqValid: apiToBackend.ToBackendDeleteEvRequest = request.body;
+    let reqValid: apiToBackend.ToBackendCreateEnvVarRequest = request.body;
 
-    let { projectId, envId, evId } = reqValid.payload;
+    let { projectId, envId, evId, val } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -69,7 +69,20 @@ export class DeleteEvController {
       member: member
     });
 
-    env.evs = env.evs.filter(x => x.evId !== evId);
+    let ev = env.evs.find(x => x.evId === evId);
+
+    if (common.isDefined(ev)) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_EV_ALREADY_EXISTS
+      });
+    }
+
+    let newEv: common.Ev = {
+      evId: evId,
+      val: val
+    };
+
+    env.evs.push(newEv);
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
@@ -84,19 +97,22 @@ export class DeleteEvController {
 
     await retry(
       async () =>
-        await this.db.drizzle.transaction(async tx => {
-          await this.db.packer.write({
-            tx: tx,
-            insertOrUpdate: {
-              bridges: [...branchBridges],
-              envs: [env]
-            }
-          });
-        }),
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                bridges: [...branchBridges],
+                envs: [env]
+              }
+            })
+        ),
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload = {};
+    let payload: apiToBackend.ToBackendCreateEnvVarResponsePayload = {
+      ev: newEv
+    };
 
     return payload;
   }

@@ -6,7 +6,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-edit-ev__ok';
+let testId = 'backend-create-env-var__ok';
 
 let traceId = testId;
 
@@ -20,15 +20,13 @@ let orgName = testId;
 let projectId = common.makeId();
 let projectName = testId;
 
-let envId = 'env1';
-
 let evId = 'MPROVE_EV1';
 let val = '123';
 
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendEditEvResponse;
+  let resp: apiToBackend.ToBackendCreateEnvVarResponse;
 
   try {
     prep = await prepareTest({
@@ -73,42 +71,31 @@ test('1', async t => {
             isEditor: true,
             isExplorer: true
           }
-        ],
-        envs: [
-          {
-            projectId: projectId,
-            envId: envId,
-            evs: [
-              {
-                evId: evId,
-                val: '1'
-              }
-            ]
-          }
         ]
       },
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendEditEvRequest = {
+    let req: apiToBackend.ToBackendCreateEnvVarRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEv,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnvVar,
         traceId: traceId,
         idempotencyKey: common.makeId()
       },
       payload: {
         projectId: projectId,
-        envId: envId,
+        envId: common.PROJECT_ENV_PROD,
         evId: evId,
         val: val
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendEditEvResponse>({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      req: req
-    });
+    resp =
+      await helper.sendToBackend<apiToBackend.ToBackendCreateEnvVarResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: req
+      });
 
     await prep.app.close();
   } catch (e) {

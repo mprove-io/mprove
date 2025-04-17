@@ -3,7 +3,7 @@ import { IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
-export class ToBackendEditEvRequestPayload {
+export class ToBackendEditEnvVarRequestPayload {
   @IsString()
   projectId: string;
 
@@ -17,20 +17,20 @@ export class ToBackendEditEvRequestPayload {
   val: string;
 }
 
-export class ToBackendEditEvRequest extends ToBackendRequest {
+export class ToBackendEditEnvVarRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendEditEvRequestPayload)
-  payload: ToBackendEditEvRequestPayload;
+  @Type(() => ToBackendEditEnvVarRequestPayload)
+  payload: ToBackendEditEnvVarRequestPayload;
 }
 
-export class ToBackendEditEvResponsePayload {
+export class ToBackendEditEnvVarResponsePayload {
   @ValidateNested()
   @Type(() => common.Ev)
   ev: common.Ev;
 }
 
-export class ToBackendEditEvResponse extends common.MyResponse {
+export class ToBackendEditEnvVarResponse extends common.MyResponse {
   @ValidateNested()
-  @Type(() => ToBackendEditEvResponsePayload)
-  payload: ToBackendEditEvResponsePayload;
+  @Type(() => ToBackendEditEnvVarResponsePayload)
+  payload: ToBackendEditEnvVarResponsePayload;
 }

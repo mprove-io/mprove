@@ -26,7 +26,7 @@ let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
-export class CreateEvController {
+export class DeleteEnvVarController {
   constructor(
     private projectsService: ProjectsService,
     private envsService: EnvsService,
@@ -36,14 +36,14 @@ export class CreateEvController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEv)
-  async createEv(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEv)
+  async deleteEnvVar(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
-    let reqValid: apiToBackend.ToBackendCreateEvRequest = request.body;
+    let reqValid: apiToBackend.ToBackendDeleteEnvVarRequest = request.body;
 
-    let { projectId, envId, evId, val } = reqValid.payload;
+    let { projectId, envId, evId } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -69,20 +69,7 @@ export class CreateEvController {
       member: member
     });
 
-    let ev = env.evs.find(x => x.evId === evId);
-
-    if (common.isDefined(ev)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_EV_ALREADY_EXISTS
-      });
-    }
-
-    let newEv: common.Ev = {
-      evId: evId,
-      val: val
-    };
-
-    env.evs.push(newEv);
+    env.evs = env.evs.filter(x => x.evId !== evId);
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
@@ -97,22 +84,19 @@ export class CreateEvController {
 
     await retry(
       async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insertOrUpdate: {
-                bridges: [...branchBridges],
-                envs: [env]
-              }
-            })
-        ),
+        await this.db.drizzle.transaction(async tx => {
+          await this.db.packer.write({
+            tx: tx,
+            insertOrUpdate: {
+              bridges: [...branchBridges],
+              envs: [env]
+            }
+          });
+        }),
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendCreateEvResponsePayload = {
-      ev: newEv
-    };
+    let payload = {};
 
     return payload;
   }

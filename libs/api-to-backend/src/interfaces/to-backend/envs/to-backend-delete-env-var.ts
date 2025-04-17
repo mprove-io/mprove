@@ -3,7 +3,7 @@ import { IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
-export class ToBackendDeleteEvRequestPayload {
+export class ToBackendDeleteEnvVarRequestPayload {
   @IsString()
   projectId: string;
 
@@ -14,12 +14,12 @@ export class ToBackendDeleteEvRequestPayload {
   evId: string;
 }
 
-export class ToBackendDeleteEvRequest extends ToBackendRequest {
+export class ToBackendDeleteEnvVarRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendDeleteEvRequestPayload)
-  payload: ToBackendDeleteEvRequestPayload;
+  @Type(() => ToBackendDeleteEnvVarRequestPayload)
+  payload: ToBackendDeleteEnvVarRequestPayload;
 }
 
-export class ToBackendDeleteEvResponse extends common.MyResponse {
+export class ToBackendDeleteEnvVarResponse extends common.MyResponse {
   payload: { [k in any]: never };
 }

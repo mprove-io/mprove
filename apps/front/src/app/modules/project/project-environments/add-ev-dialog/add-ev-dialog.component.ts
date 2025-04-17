@@ -76,7 +76,7 @@ export class AddEvDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendCreateEvRequestPayload = {
+    let payload: apiToBackend.ToBackendCreateEnvVarRequestPayload = {
       projectId: this.dataItem.projectId,
       envId: this.dataItem.envId,
       evId: this.addEvForm.value.evId,
@@ -88,12 +88,12 @@ export class AddEvDialogComponent implements OnInit {
     apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEv,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnvVar,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateEvResponse) => {
+        tap((resp: apiToBackend.ToBackendCreateEnvVarResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let environmentsState = this.environmentsQuery.getValue();
 

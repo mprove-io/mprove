@@ -27,7 +27,7 @@ let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
-export class EditEvController {
+export class EditEnvVarController {
   constructor(
     private projectsService: ProjectsService,
     private envsService: EnvsService,
@@ -38,12 +38,12 @@ export class EditEvController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEv)
-  async editEv(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEnvVar)
+  async editEnvVar(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
-    let reqValid: apiToBackend.ToBackendEditEvRequest = request.body;
+    let reqValid: apiToBackend.ToBackendEditEnvVarRequest = request.body;
 
     let { projectId, envId, evId, val: value } = reqValid.payload;
 
@@ -106,7 +106,7 @@ export class EditEvController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendEditEvResponsePayload = {
+    let payload: apiToBackend.ToBackendEditEnvVarResponsePayload = {
       ev: ev
     };
 

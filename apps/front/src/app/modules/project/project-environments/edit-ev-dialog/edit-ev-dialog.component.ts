@@ -70,7 +70,7 @@ export class EditEvDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendEditEvRequestPayload = {
+    let payload: apiToBackend.ToBackendEditEnvVarRequestPayload = {
       projectId: this.dataItem.env.projectId,
       envId: this.dataItem.env.envId,
       evId: this.dataItem.ev.evId,
@@ -81,12 +81,13 @@ export class EditEvDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEv,
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEnvVar,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendEditEvResponse) => {
+        tap((resp: apiToBackend.ToBackendEditEnvVarResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let environmentsState = this.environmentsQuery.getValue();
 
