@@ -50,7 +50,20 @@ export class ProjectEnvironmentsComponent implements OnInit {
   environments: common.Env[] = [];
   environments$ = this.environmentsQuery.environments$.pipe(
     tap(x => {
-      this.environments = x;
+      this.environments = x.sort((a, b) =>
+        b.envId === common.PROJECT_ENV_PROD &&
+        a.envId !== common.PROJECT_ENV_PROD
+          ? 1
+          : a.envId === common.PROJECT_ENV_PROD &&
+            b.envId !== common.PROJECT_ENV_PROD
+          ? -1
+          : a.envId > b.envId
+          ? 1
+          : b.envId > a.envId
+          ? -1
+          : 0
+      );
+
       this.cd.detectChanges();
     })
   );
