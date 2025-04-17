@@ -144,7 +144,7 @@
                 </div>
               </td>
 
-              <td class="w-64">
+              <td class="group w-64">
                 <div class="flex flex-row items-center">
                   <div
                     tp="Admin role required"
@@ -165,17 +165,19 @@
                       </div>
                     </button>
                   </div>
-                  <div class="my-3 ml-2 flex flex-col">
+
+                  <div class="my-3 ml-5 flex flex-col">
                     <div *ngFor="let role of member.roles; let n = index">
                       <div class="flex flex-row items-center text-base">
                         <div>{{ role }} </div>
                         <div
                           tp="Admin role required"
                           [tpIsEnabled]="isAdmin === false"
+                          class="invisible ml-3 group-hover:visible"
                         >
                           <button
                             data-cy="projectTeamRemoveRoleButton"
-                            class="ml-2 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+                            class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
                             [ngClass]="{
                               'text-s400 cursor-default': isAdmin === false,
                               'text-s1 hover:bg-m200': isAdmin === true

@@ -33,7 +33,6 @@
           <thead>
             <tr class="h-12 text-sm">
               <th class="text-left"></th>
-              <th class="text-left"></th>
               <th class="text-left">Name</th>
               <th class="text-left">Users</th>
               <th class="text-left">Connections</th>
@@ -58,26 +57,6 @@
               class="h-16"
             >
               <td class="w-32">
-                <div
-                  class="w-fit"
-                  tp="Editor role required"
-                  [tpIsEnabled]="isEditor === false"
-                >
-                  <button
-                    data-cy="projectEnvironmentsVariablesButton"
-                    (click)="navToVariables(environment)"
-                    class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
-                    [ngClass]="{
-                      'text-s400 cursor-default': isEditor === false,
-                      'border-s3 text-s1': isEditor === true
-                    }"
-                    [disabled]="isEditor === false"
-                    >Variables</button
-                  >
-                </div>
-              </td>
-
-              <td class="w-32">
                 <ng-template #templateDeleteEnv>
                   <div *ngIf="environment.envId === envProd"
                     >Env Prod can not be deleted</div
@@ -100,6 +79,8 @@
                     data-cy="projectEnvironmentsDeleteButton"
                     class="h-9 w-9 rounded focus:outline-none"
                     [ngClass]="{
+                      'text-s1 hover:bg-m200':
+                        isAdmin === true && environment.envId !== envProd,
                       'text-s400 cursor-default':
                         isAdmin === false || environment.envId === envProd
                     }"
@@ -117,7 +98,7 @@
 
               <td class="w-64">{{ environment.envId }}</td>
 
-              <td class="w-64">
+              <td class="group w-96">
                 <div class="my-3 flex flex-col">
                   <div *ngIf="environment.envId === envProd">
                     <div class="flex flex-row items-center text-base">
@@ -150,7 +131,7 @@
                         </button>
                       </div>
 
-                      <div class="ml-2 flex flex-col">
+                      <div class="ml-5 flex flex-col">
                         <div
                           *ngFor="
                             let envUser of environment.envUsers;
@@ -159,13 +140,15 @@
                         >
                           <div class="flex flex-row items-center text-base">
                             <div>{{ envUser.alias }} </div>
+
                             <div
                               tp="Admin role required"
+                              class="invisible ml-3 group-hover:visible"
                               [tpIsEnabled]="isAdmin === false"
                             >
                               <button
                                 data-cy="projectEnvironmentsRemoveUserButton"
-                                class="ml-2 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+                                class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
                                 [ngClass]="{
                                   'text-s400 cursor-default': isAdmin === false,
                                   'text-s1 hover:bg-m200': isAdmin === true
@@ -186,7 +169,7 @@
                 </div>
               </td>
 
-              <td class="w-64">
+              <td class="w-96">
                 <div class="my-3 flex flex-col">
                   <div
                     *ngFor="let connectionId of environment.envConnectionIds"
@@ -198,7 +181,7 @@
                 </div></td
               >
 
-              <td class="w-[400px]">
+              <td class="group">
                 <div class="my-3 flex flex-col">
                   <div class="flex flex-row items-center">
                     <div
@@ -221,7 +204,7 @@
                       </button>
                     </div>
 
-                    <div class="ml-2 flex flex-col">
+                    <div class="ml-5 flex flex-col">
                       <div *ngFor="let ev of environment.evs; let n = index">
                         <div class="flex flex-row items-center text-base">
                           <div>{{ ev.evId }} </div>
@@ -230,7 +213,7 @@
                           <div
                             tp="Admin role required"
                             [tpIsEnabled]="isAdmin === false"
-                            class="ml-5"
+                            class="invisible ml-5 group-hover:visible"
                           >
                             <button
                               data-cy="projectEnvironmentsEditVarButton"
@@ -251,10 +234,11 @@
                           <div
                             tp="Admin role required"
                             [tpIsEnabled]="isAdmin === false"
+                            class="invisible ml-2 group-hover:visible"
                           >
                             <button
                               data-cy="projectEnvironmentsRemoveVarButton"
-                              class="ml-2 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+                              class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
                               [ngClass]="{
                                 'text-s400 cursor-default': isAdmin === false,
                                 'text-s1 hover:bg-m200': isAdmin === true
