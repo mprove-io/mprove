@@ -113,8 +113,8 @@ import { ViewBlockmlDialogComponent } from './view-blockml-dialog/view-blockml-d
 let pipesArray = [
   GoFromFileExtPipe,
   CapitalizePipe,
-  MproveDirPipe,
   CapitalizeWordsPipe,
+  MproveDirPipe,
   HideColumnsPipe,
   ResultPipe,
   PrettyJsonPipe

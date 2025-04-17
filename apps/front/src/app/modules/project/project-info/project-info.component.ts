@@ -16,6 +16,9 @@ import { constants } from '~front/barrels/constants';
 export class ProjectInfoComponent implements OnInit {
   pageTitle = constants.PROJECT_INFO_PAGE_TITLE;
 
+  remoteTypeManaged = common.ProjectRemoteTypeEnum.Managed;
+  remoteTypeGitClone = common.ProjectRemoteTypeEnum.GitClone;
+
   project: common.Project;
   project$ = this.projectQuery.select().pipe(
     tap(x => {
@@ -32,6 +35,9 @@ export class ProjectInfoComponent implements OnInit {
     })
   );
 
+  isGitUrlVisible = false;
+  isPublicKeyVisible = false;
+
   constructor(
     private projectQuery: ProjectQuery,
     private memberQuery: MemberQuery,
@@ -44,6 +50,14 @@ export class ProjectInfoComponent implements OnInit {
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
+  }
+
+  toggleShowGitUrl() {
+    this.isGitUrlVisible = !this.isGitUrlVisible;
+  }
+
+  toggleShowPublicKey() {
+    this.isPublicKeyVisible = !this.isPublicKeyVisible;
   }
 
   deleteProject() {

@@ -98,7 +98,7 @@
 
               <td class="w-64">{{ environment.envId }}</td>
 
-              <td class="group w-96">
+              <td class="w-96">
                 <div class="my-3 flex flex-col">
                   <div *ngIf="environment.envId === envProd">
                     <div class="flex flex-row items-center text-base">
@@ -143,7 +143,7 @@
 
                             <div
                               tp="Admin role required"
-                              class="invisible ml-3 group-hover:visible"
+                              class="ml-3"
                               [tpIsEnabled]="isAdmin === false"
                             >
                               <button
@@ -181,7 +181,7 @@
                 </div></td
               >
 
-              <td class="group">
+              <td>
                 <div class="my-3 flex flex-col">
                   <div class="flex flex-row items-center">
                     <div
@@ -213,7 +213,7 @@
                           <div
                             tp="Admin role required"
                             [tpIsEnabled]="isAdmin === false"
-                            class="invisible ml-5 group-hover:visible"
+                            class="ml-5"
                           >
                             <button
                               data-cy="projectEnvironmentsEditVarButton"
@@ -234,7 +234,7 @@
                           <div
                             tp="Admin role required"
                             [tpIsEnabled]="isAdmin === false"
-                            class="invisible ml-2 group-hover:visible"
+                            class="ml-2"
                           >
                             <button
                               data-cy="projectEnvironmentsRemoveVarButton"

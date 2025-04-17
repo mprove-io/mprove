@@ -16,26 +16,50 @@
               >Project Name</div
             >
             <div class="flex h-16 items-center justify-end font-semibold"
-              >Remote Type</div
+              >Remote Repo Type</div
             >
             <div class="flex h-16 items-center justify-end font-semibold"
-              >Remote Default Branch</div
+              >Remote Repo Default Branch</div
             >
-            <div class="flex h-16 items-center justify-end font-semibold"
-              >Remote Git Url</div
+            <div
+              *ngIf="project?.remoteType === remoteTypeGitClone"
+              class="flex h-16 items-center justify-end font-semibold"
+              >Remote Repo Git Url</div
             >
-            <div class="flex h-16 items-center justify-end font-semibold"
-              >Remote Deploy Key</div
+            <div
+              class="flex h-16 items-center justify-end font-semibold"
+              *ngIf="project?.remoteType === remoteTypeGitClone"
+              >Remote Repo Deploy Public Key</div
             >
             <div class="flex items-center justify-end font-semibold"></div>
           </div>
 
           <div class="ml-6 flex flex-col">
-            <div
-              data-cy="projectInfoName"
-              class="flex h-16 max-w-xl items-center truncate text-base"
-              >{{ project?.name | capitalize }}</div
-            >
+            <div class="flex flex-row">
+              <div
+                data-cy="projectInfoName"
+                class="flex h-16 max-w-xl items-center truncate text-base"
+                >{{ project?.name | capitalize }}</div
+              >
+
+              <div
+                class="ml-10 flex items-center"
+                tp="Admin role required"
+                [tpIsEnabled]="isAdmin === false"
+              >
+                <button
+                  data-cy="projectInfoEditNameButton"
+                  class="flex rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                  [ngClass]="{
+                    'text-s400 cursor-default': isAdmin === false,
+                    'border-s3 text-s1': isAdmin === true
+                  }"
+                  [disabled]="isAdmin === false"
+                  (click)="editName()"
+                  >Edit</button
+                >
+              </div>
+            </div>
             <div
               data-cy="projectInfoRemoteType"
               class="flex h-16 max-w-xl items-center truncate text-base"
@@ -46,19 +70,73 @@
               class="flex h-16 max-w-xl items-center truncate text-base"
               >{{ project?.defaultBranch }}</div
             >
+
             <div
-              data-cy="projectInfoGitUrl"
-              class="flex h-16 max-w-xl items-center truncate text-base"
-              >{{ project?.gitUrl }}</div
+              class="flex h-16 flex-row items-center"
+              *ngIf="project?.remoteType === remoteTypeGitClone"
             >
+              <div
+                class="flex"
+                tp="Admin role required"
+                [tpIsEnabled]="isAdmin === false"
+              >
+                <button
+                  data-cy="projectInfoShowValueButton"
+                  class="w-[73px] rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                  [ngClass]="{
+                    'text-s400 cursor-default': isAdmin === false,
+                    'border-s3 text-s1': isAdmin === true
+                  }"
+                  [disabled]="isAdmin === false"
+                  (click)="toggleShowGitUrl()"
+                  >{{ isGitUrlVisible ? 'Hide' : 'Show' }}
+                </button>
+              </div>
+
+              <div
+                *ngIf="isGitUrlVisible === true"
+                data-cy="projectInfoGitUrl"
+                class="ml-5 flex max-w-xl items-center text-base"
+                style="word-break: break-all"
+              >
+                {{ project?.gitUrl }}
+              </div>
+            </div>
+
             <div
-              data-cy="projectInfoPublicKey"
-              class="flex min-h-[64px] max-w-xl items-center py-4 text-base"
-              style="word-break: break-all"
-              >{{ project?.publicKey }}</div
+              class="mt-[18px] flex flex-row items-start"
+              *ngIf="project?.remoteType === remoteTypeGitClone"
             >
+              <div
+                class="flex items-center"
+                tp="Admin role required"
+                [tpIsEnabled]="isAdmin === false"
+              >
+                <button
+                  data-cy="projectInfoShowValueButton"
+                  class="w-[73px] rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                  [ngClass]="{
+                    'text-s400 cursor-default': isAdmin === false,
+                    'border-s3 text-s1': isAdmin === true
+                  }"
+                  [disabled]="isAdmin === false"
+                  (click)="toggleShowPublicKey()"
+                  >{{ isPublicKeyVisible ? 'Hide' : 'Show' }}
+                </button>
+              </div>
+
+              <div
+                *ngIf="isPublicKeyVisible === true"
+                data-cy="projectInfoPublicKey"
+                class="ml-5 flex max-w-xl items-center text-base"
+                style="word-break: break-all"
+              >
+                {{ project?.publicKey }}
+              </div>
+            </div>
+
             <div
-              class="mb-5 mt-7 flex items-center"
+              class="mb-5 mt-[50px] flex items-center"
               tp="Admin role required"
               [tpIsEnabled]="isAdmin === false"
             >
@@ -74,25 +152,6 @@
                 >Delete Project</button
               >
             </div>
-          </div>
-
-          <div class="ml-6 flex flex-col">
-            <div class="flex h-16 items-center">
-              <div tp="Admin role required" [tpIsEnabled]="isAdmin === false">
-                <button
-                  data-cy="projectInfoEditNameButton"
-                  class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
-                  [ngClass]="{
-                    'text-s400 cursor-default': isAdmin === false,
-                    'border-s3 text-s1': isAdmin === true
-                  }"
-                  [disabled]="isAdmin === false"
-                  (click)="editName()"
-                  >Edit</button
-                ></div
-              >
-            </div>
-            <div class="flex items-center"></div>
           </div>
         </div>
       </div>
