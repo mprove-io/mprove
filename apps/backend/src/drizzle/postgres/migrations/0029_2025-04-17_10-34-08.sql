@@ -1,0 +1,1 @@
+ALTER TABLE "envs" ADD COLUMN "evs" json DEFAULT '[]'::json;

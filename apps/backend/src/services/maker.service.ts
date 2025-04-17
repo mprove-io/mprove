@@ -98,6 +98,7 @@ export class MakerService {
       }),
       projectId: projectId,
       envId: envId,
+      evs: [],
       serverTs: undefined
     };
 

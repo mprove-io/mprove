@@ -3,10 +3,12 @@ import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,
   index,
+  json,
   pgTable,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import { common } from '~backend/barrels/common';
 
 export const envsTable = pgTable(
   'envs',
@@ -14,6 +16,7 @@ export const envsTable = pgTable(
     envFullId: varchar('env_full_id', { length: 64 }).notNull().primaryKey(),
     projectId: varchar('project_id', { length: 32 }).notNull(),
     envId: varchar('env_id', { length: 32 }).notNull(), // name
+    evs: json('evs').$type<common.Ev[]>().default([]),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
