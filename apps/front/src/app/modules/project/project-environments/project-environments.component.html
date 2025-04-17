@@ -37,7 +37,7 @@
               <th class="text-left">Name</th>
               <th class="text-left">Users</th>
               <th class="text-left">Connections</th>
-              <th class="text-left">Variables</th>
+              <th class="text-left">Environment Variables</th>
               <th></th>
             </tr>
           </thead>
@@ -135,7 +135,7 @@
                         [tpIsEnabled]="isAdmin === false"
                       >
                         <button
-                          data-cy="projectTeamAddEnvButton"
+                          data-cy="projectEnvironmentsAddVarButton"
                           class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
                           [ngClass]="{
                             'text-s400 cursor-default': isAdmin === false,
@@ -200,10 +200,54 @@
 
               <td class="w-[400px]">
                 <div class="my-3 flex flex-col">
-                  <div *ngFor="let ev of environment.evs">
-                    <div class="flex flex-row items-center text-base">
-                      <div>{{ ev.evId }} </div>
-                      <div class="ml-5">{{ ev.val }} </div>
+                  <div class="flex flex-row items-center">
+                    <div
+                      tp="Admin role required"
+                      [tpIsEnabled]="isAdmin === false"
+                    >
+                      <button
+                        data-cy="projectEnvironmentsAddVarButton"
+                        class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+                        [ngClass]="{
+                          'text-s400 cursor-default': isAdmin === false,
+                          'text-m600 hover:bg-m200': isAdmin === true
+                        }"
+                        (click)="addVar(environment)"
+                        [disabled]="isAdmin === false"
+                      >
+                        <div>
+                          <m-add-icon></m-add-icon>
+                        </div>
+                      </button>
+                    </div>
+
+                    <div class="ml-2 flex flex-col">
+                      <div *ngFor="let ev of environment.evs; let n = index">
+                        <div class="flex flex-row items-center text-base">
+                          <div>{{ ev.evId }} </div>
+                          <div class="ml-5">{{ ev.val }} </div>
+
+                          <div
+                            tp="Admin role required"
+                            [tpIsEnabled]="isAdmin === false"
+                          >
+                            <button
+                              data-cy="projectEnvironmentsRemoveVarButton"
+                              class="ml-2 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+                              [ngClass]="{
+                                'text-s400 cursor-default': isAdmin === false,
+                                'text-s1 hover:bg-m200': isAdmin === true
+                              }"
+                              (click)="removeVar(ev)"
+                              [disabled]="isAdmin === false"
+                            >
+                              <div>
+                                <m-delete-icon></m-delete-icon>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
