@@ -47,7 +47,7 @@ export class DeleteEnvController {
       projectId: projectId
     });
 
-    await this.membersService.checkMemberIsAdmin({
+    await this.membersService.getMemberCheckIsAdmin({
       memberId: user.userId,
       projectId: projectId
     });

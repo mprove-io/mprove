@@ -34,11 +34,12 @@ export class GetProjectController {
       memberId: user.userId
     });
 
-    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
-
     let payload: apiToBackend.ToBackendGetProjectResponsePayload = {
-      project: this.wrapToApiService.wrapToApiProject(project),
-      userMember: apiMember
+      project: this.wrapToApiService.wrapToApiProject({
+        project: project,
+        isAdmin: userMember.isAdmin
+      }),
+      userMember: this.wrapToApiService.wrapToApiMember(userMember)
     };
 
     return payload;

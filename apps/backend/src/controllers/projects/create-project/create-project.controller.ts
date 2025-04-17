@@ -102,7 +102,10 @@ export class CreateProjectController {
     });
 
     let payload: apiToBackend.ToBackendCreateProjectResponsePayload = {
-      project: this.wrapToApiService.wrapToApiProject(newProject)
+      project: this.wrapToApiService.wrapToApiProject({
+        project: newProject,
+        isAdmin: true
+      })
     };
 
     return payload;

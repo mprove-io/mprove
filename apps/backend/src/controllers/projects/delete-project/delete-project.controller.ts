@@ -54,7 +54,7 @@ export class DeleteProjectController {
       projectId: projectId
     });
 
-    await this.membersService.checkMemberIsAdmin({
+    await this.membersService.getMemberCheckIsAdmin({
       projectId: projectId,
       memberId: user.userId
     });

@@ -30,7 +30,7 @@ export class MembersService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async checkMemberIsAdmin(item: { memberId: string; projectId: string }) {
+  async getMemberCheckIsAdmin(item: { memberId: string; projectId: string }) {
     let { projectId, memberId } = item;
 
     let member = await this.db.drizzle.query.membersTable.findFirst({
@@ -58,6 +58,8 @@ export class MembersService {
         message: common.ErEnum.BACKEND_MEMBER_IS_NOT_ADMIN
       });
     }
+
+    return member;
   }
 
   async getMemberCheckIsEditorOrAdmin(item: {

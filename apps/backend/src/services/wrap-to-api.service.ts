@@ -311,15 +311,20 @@ export class WrapToApiService {
     };
   }
 
-  wrapToApiProject(project: schemaPostgres.ProjectEnt): common.Project {
+  wrapToApiProject(item: {
+    project: schemaPostgres.ProjectEnt;
+    isAdmin: boolean;
+  }): common.Project {
+    let { project, isAdmin } = item;
+
     return {
       orgId: project.orgId,
       projectId: project.projectId,
       name: project.name,
       remoteType: project.remoteType,
       defaultBranch: project.defaultBranch,
-      gitUrl: project.gitUrl,
-      publicKey: project.publicKey,
+      gitUrl: isAdmin === true ? project.gitUrl : undefined,
+      publicKey: isAdmin === true ? project.publicKey : undefined,
       serverTs: Number(project.serverTs)
     };
   }

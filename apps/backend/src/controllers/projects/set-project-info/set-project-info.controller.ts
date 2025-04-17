@@ -46,7 +46,7 @@ export class SetProjectInfoController {
       projectId: projectId
     });
 
-    await this.membersService.checkMemberIsAdmin({
+    let userMember = await this.membersService.getMemberCheckIsAdmin({
       projectId: projectId,
       memberId: user.userId
     });
@@ -77,7 +77,10 @@ export class SetProjectInfoController {
     // });
 
     let payload: apiToBackend.ToBackendSetProjectInfoResponsePayload = {
-      project: this.wrapToApiService.wrapToApiProject(project)
+      project: this.wrapToApiService.wrapToApiProject({
+        project: project,
+        isAdmin: userMember.isAdmin
+      })
     };
 
     return payload;
