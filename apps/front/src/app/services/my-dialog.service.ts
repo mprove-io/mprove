@@ -105,21 +105,21 @@ import {
   AddEnvironmentDialogData
 } from '../modules/project/project-environments/add-environment-dialog/add-environment-dialog.component';
 import {
+  AddEvDialogComponent,
+  AddEvDialogData
+} from '../modules/project/project-environments/add-ev-dialog/add-ev-dialog.component';
+import {
   DeleteEnvironmentDialogComponent,
   DeleteEnvironmentDialogData
 } from '../modules/project/project-environments/delete-environment-dialog/delete-environment-dialog.component';
 import {
-  AddEvDialogComponent,
-  AddEvDialogData
-} from '../modules/project/project-evs/add-ev-dialog/add-ev-dialog.component';
-import {
   DeleteEvDialogComponent,
   DeleteEvDialogData
-} from '../modules/project/project-evs/delete-ev-dialog/delete-ev-dialog.component';
+} from '../modules/project/project-environments/delete-ev-dialog/delete-ev-dialog.component';
 import {
   EditEvDialogComponent,
   EditEvDialogData
-} from '../modules/project/project-evs/edit-ev-dialog/edit-ev-dialog.component';
+} from '../modules/project/project-environments/edit-ev-dialog/edit-ev-dialog.component';
 import {
   DeleteProjectDialogComponent,
   DeleteProjectDialogData
