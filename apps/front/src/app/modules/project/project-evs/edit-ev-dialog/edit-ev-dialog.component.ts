@@ -14,7 +14,7 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
-import { EvsQuery } from '~front/app/queries/evs.query';
+import { EnvironmentsQuery } from '~front/app/queries/environments.query';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -22,7 +22,6 @@ import { common } from '~front/barrels/common';
 export interface EditEvDialogData {
   apiService: ApiService;
   ev: common.Ev;
-  i: number;
 }
 
 @Component({
@@ -45,7 +44,7 @@ export class EditEvDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<EditEvDialogData>,
     private fb: FormBuilder,
-    private evsQuery: EvsQuery
+    private environmentsQuery: EnvironmentsQuery
   ) {}
 
   ngOnInit() {
@@ -88,10 +87,23 @@ export class EditEvDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendEditEvResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let evsState = this.evsQuery.getValue();
-            evsState.evs[this.dataItem.i] = resp.payload.ev;
-            this.evsQuery.update({
-              evs: [...evsState.evs]
+            let environmentsState = this.environmentsQuery.getValue();
+
+            let env = environmentsState.environments.find(
+              x => x.envId === this.dataItem.ev.envId
+            );
+
+            let ev = env.evs.find(x => x.evId === this.dataItem.ev.evId);
+
+            ev.val = resp.payload.ev.val;
+
+            env.evs = [...env.evs].sort((a, b) =>
+              a.evId > b.evId ? 1 : b.evId > a.evId ? -1 : 0
+            );
+
+            this.environmentsQuery.update({
+              environments: [...environmentsState.environments],
+              total: environmentsState.total
             });
           }
         }),

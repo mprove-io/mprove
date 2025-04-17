@@ -90,8 +90,7 @@ export class ProjectEvsComponent implements OnInit {
   editVariable(ev: common.Ev, i: number) {
     this.myDialogService.showEditEv({
       apiService: this.apiService,
-      ev: ev,
-      i: i
+      ev: ev
     });
   }
 }

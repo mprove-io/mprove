@@ -230,6 +230,27 @@
                           <div
                             tp="Admin role required"
                             [tpIsEnabled]="isAdmin === false"
+                            class="ml-5"
+                          >
+                            <button
+                              data-cy="projectEnvironmentsEditVarButton"
+                              class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+                              [ngClass]="{
+                                'text-s400 cursor-default': isAdmin === false,
+                                'text-s1 hover:bg-m200': isAdmin === true
+                              }"
+                              (click)="editVar(ev)"
+                              [disabled]="isAdmin === false"
+                            >
+                              <div>
+                                <m-edit-icon></m-edit-icon>
+                              </div>
+                            </button>
+                          </div>
+
+                          <div
+                            tp="Admin role required"
+                            [tpIsEnabled]="isAdmin === false"
                           >
                             <button
                               data-cy="projectEnvironmentsRemoveVarButton"

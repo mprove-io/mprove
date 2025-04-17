@@ -64,6 +64,7 @@ import { DesktopIconComponent } from './icons/desktop-icon/desktop-icon.componen
 import { DocumentIconComponent } from './icons/document-icon/document-icon.component';
 import { DotsVerticalIconComponent } from './icons/dots-vertical-icon/dots-vertical-icon.component';
 import { DragIconComponent } from './icons/drag-icon/drag-icon.component';
+import { EditIconComponent } from './icons/edit-icon/edit-icon.component';
 import { ExclamationIconComponent } from './icons/exclamation-icon/exclamation-icon.component';
 import { FilterIconComponent } from './icons/filter-icon/filter-icon.component';
 import { FolderClosedIconComponent } from './icons/folder-closed-icon/folder-closed-icon.component';
@@ -133,6 +134,7 @@ let sharedComponents = [
   //
   SettingsIconComponent,
   DeleteIconComponent,
+  EditIconComponent,
   TrashIconComponent,
   SaveIconComponent,
   CheckIconComponent,
