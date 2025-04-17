@@ -56,7 +56,6 @@ export class SeedRecordsController {
     let payloadProjects = reqValid.payload.projects;
     let payloadConnections = reqValid.payload.connections;
     let payloadEnvs = reqValid.payload.envs;
-    let payloadEvs = reqValid.payload.evs;
     let payloadQueries = reqValid.payload.queries;
     let payloadMconfigs = reqValid.payload.mconfigs;
 
@@ -66,7 +65,6 @@ export class SeedRecordsController {
     let orgs: schemaPostgres.OrgEnt[] = [];
     let projects: schemaPostgres.ProjectEnt[] = [];
     let envs: schemaPostgres.EnvEnt[] = [];
-    let evs: schemaPostgres.EvEnt[] = [];
     let members: schemaPostgres.MemberEnt[] = [];
     let connections: schemaPostgres.ConnectionEnt[] = [];
     let structs: schemaPostgres.StructEnt[] = [];
@@ -212,23 +210,11 @@ export class SeedRecordsController {
       payloadEnvs.forEach(x => {
         let newEnv = this.makerService.makeEnv({
           projectId: x.projectId,
-          envId: x.envId
+          envId: x.envId,
+          evs: x.evs
         });
 
         envs.push(newEnv);
-      });
-    }
-
-    if (common.isDefined(payloadEvs)) {
-      payloadEvs.forEach(x => {
-        let newEv = this.makerService.makeEv({
-          projectId: x.projectId,
-          envId: x.envId,
-          evId: x.evId,
-          val: x.val
-        });
-
-        evs.push(newEv);
       });
     }
 
@@ -264,7 +250,8 @@ export class SeedRecordsController {
 
           let prodEnv = this.makerService.makeEnv({
             projectId: newProject.projectId,
-            envId: common.PROJECT_ENV_PROD
+            envId: common.PROJECT_ENV_PROD,
+            evs: []
           });
 
           let toDiskSeedProjectRequest: apiToDisk.ToDiskSeedProjectRequest = {
@@ -333,10 +320,8 @@ export class SeedRecordsController {
             envId: prodEnv.envId,
             skipDb: true,
             connections: projectConnections,
-            evs: evs
-              .map(evEntity => this.wrapToApiService.wrapToApiEv(evEntity))
-              .filter(ev => ev.envId === prodEnv.envId),
-            overrideTimezone: undefined
+            overrideTimezone: undefined,
+            evs: prodEnv.evs
           });
 
           let {
@@ -358,10 +343,8 @@ export class SeedRecordsController {
             envId: prodEnv.envId,
             skipDb: true,
             connections: projectConnections,
-            evs: evs
-              .map(evEntity => this.wrapToApiService.wrapToApiEv(evEntity))
-              .filter(ev => ev.envId === prodEnv.envId),
-            overrideTimezone: undefined
+            overrideTimezone: undefined,
+            evs: prodEnv.evs
           });
 
           let devBranch = this.makerService.makeBranch({
@@ -541,7 +524,6 @@ export class SeedRecordsController {
                 orgs: orgs,
                 projects: projects,
                 envs: envs,
-                evs: evs,
                 members: members,
                 connections: connections,
                 branches: branches,

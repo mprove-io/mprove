@@ -15,7 +15,6 @@ import { DashboardsService } from './services/dashboards.service';
 import { DocService } from './services/doc.service';
 import { EmailService } from './services/email.service';
 import { EnvsService } from './services/envs.service';
-import { EvsService } from './services/evs.service';
 import { HashService } from './services/hash.service';
 import { MakerService } from './services/maker.service';
 import { MconfigsService } from './services/mconfigs.service';
@@ -70,7 +69,6 @@ export const appProviders = [
   ReportRowService,
   MembersService,
   EnvsService,
-  EvsService,
   DocService,
   BridgesService,
   {

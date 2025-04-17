@@ -88,8 +88,8 @@ export class MakerService {
     return branch;
   }
 
-  makeEnv(item: { projectId: string; envId: string }) {
-    let { projectId, envId } = item;
+  makeEnv(item: { projectId: string; envId: string; evs: common.Ev[] }) {
+    let { projectId, envId, evs } = item;
 
     let env: schemaPostgres.EnvEnt = {
       envFullId: this.hashService.makeEnvFullId({
@@ -98,35 +98,11 @@ export class MakerService {
       }),
       projectId: projectId,
       envId: envId,
-      evs: [],
+      evs: evs,
       serverTs: undefined
     };
 
     return env;
-  }
-
-  makeEv(item: {
-    projectId: string;
-    envId: string;
-    evId: string;
-    val: string;
-  }) {
-    let { projectId, envId, evId, val } = item;
-
-    let ev: schemaPostgres.EvEnt = {
-      evFullId: this.hashService.makeEvFullId({
-        projectId: projectId,
-        envId: envId,
-        evId: evId
-      }),
-      projectId: projectId,
-      envId: envId,
-      evId: evId,
-      val: val,
-      serverTs: undefined
-    };
-
-    return ev;
   }
 
   makeConnection(item: {

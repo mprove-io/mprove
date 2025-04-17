@@ -20,6 +20,8 @@ let orgName = testId;
 let projectId = common.makeId();
 let projectName = testId;
 
+let envId = 'env1';
+
 let evId = 'MPROVE_EV1';
 let val = '123';
 
@@ -72,12 +74,16 @@ test('1', async t => {
             isExplorer: true
           }
         ],
-        evs: [
+        envs: [
           {
             projectId: projectId,
-            envId: common.PROJECT_ENV_PROD,
-            evId: evId,
-            val: '1'
+            envId: envId,
+            evs: [
+              {
+                evId: evId,
+                val: '1'
+              }
+            ]
           }
         ]
       },
@@ -92,7 +98,7 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        envId: common.PROJECT_ENV_PROD,
+        envId: envId,
         evId: evId,
         val: val
       }

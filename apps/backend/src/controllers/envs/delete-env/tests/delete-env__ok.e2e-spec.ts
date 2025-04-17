@@ -74,7 +74,8 @@ test('1', async t => {
         envs: [
           {
             projectId: projectId,
-            envId: envId
+            envId: envId,
+            evs: []
           }
         ]
       },

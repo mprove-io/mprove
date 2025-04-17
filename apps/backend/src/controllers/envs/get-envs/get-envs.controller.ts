@@ -7,7 +7,6 @@ import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { envsTable } from '~backend/drizzle/postgres/schema/envs';
-import { evsTable } from '~backend/drizzle/postgres/schema/evs';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
@@ -78,15 +77,6 @@ export class GetEnvsController {
 
     let envIds = envs.map(x => x.envId);
 
-    let evs = await this.db.drizzle.query.evsTable.findMany({
-      where: and(
-        eq(evsTable.projectId, projectId),
-        inArray(evsTable.envId, envIds)
-      )
-    });
-
-    let evsApi = evs.map(x => this.wrapToApiService.wrapToApiEv(x));
-
     let members = await this.db.drizzle.query.membersTable.findMany({
       where: eq(membersTable.projectId, projectId)
     });
@@ -101,7 +91,6 @@ export class GetEnvsController {
           envConnectionIds: connections
             .filter(y => y.envId === x.envId)
             .map(connection => connection.connectionId),
-          evs: evsApi.filter(y => y.envId === x.envId),
           envMembers:
             x.envId === common.PROJECT_ENV_PROD
               ? members

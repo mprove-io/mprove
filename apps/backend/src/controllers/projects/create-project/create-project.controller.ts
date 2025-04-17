@@ -97,7 +97,8 @@ export class CreateProjectController {
       projectId: common.makeId(),
       gitUrl: gitUrl,
       privateKey: note?.privateKey,
-      publicKey: note?.publicKey
+      publicKey: note?.publicKey,
+      evs: []
     });
 
     let payload: apiToBackend.ToBackendCreateProjectResponsePayload = {

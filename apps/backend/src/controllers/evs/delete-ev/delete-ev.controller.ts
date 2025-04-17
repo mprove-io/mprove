@@ -16,7 +16,6 @@ import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
-import { evsTable } from '~backend/drizzle/postgres/schema/evs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/envs.service';
@@ -70,19 +69,14 @@ export class DeleteEvController {
       member: member
     });
 
+    env.evs = env.evs.filter(x => x.evId !== evId);
+
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
         eq(bridgesTable.projectId, projectId),
         eq(bridgesTable.envId, envId)
       )
     });
-
-    // let branchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: projectId,
-    //     env_id: envId
-    //   }
-    // });
 
     await forEachSeries(branchBridges, async x => {
       x.needValidate = true;
@@ -91,38 +85,16 @@ export class DeleteEvController {
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
-          await tx
-            .delete(evsTable)
-            .where(
-              and(
-                eq(evsTable.projectId, projectId),
-                eq(evsTable.envId, envId),
-                eq(evsTable.evId, evId)
-              )
-            );
-
           await this.db.packer.write({
             tx: tx,
             insertOrUpdate: {
-              bridges: [...branchBridges]
+              bridges: [...branchBridges],
+              envs: [env]
             }
           });
         }),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.evsRepository.delete({
-    //   project_id: projectId,
-    //   env_id: envId,
-    //   ev_id: evId
-    // });
-
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     bridges: [...branchBridges]
-    //   }
-    // });
 
     let payload = {};
 

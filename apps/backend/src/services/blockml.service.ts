@@ -34,7 +34,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { evsTable } from '~backend/drizzle/postgres/schema/evs';
+import { envsTable } from '~backend/drizzle/postgres/schema/envs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { processRowIds } from '~backend/functions/process-row-ids';
 import { RabbitService } from './rabbit.service';
@@ -87,28 +87,17 @@ export class BlockmlService {
           eq(connectionsTable.envId, envId)
         )
       });
-
-      // connectionsEntities = await this.connectionsRepository.find({
-      //   where: {
-      //     project_id: projectId,
-      //     env_id: envId
-      //   }
-      // });
     }
 
-    let evsEnts;
-
     if (common.isUndefined(evs)) {
-      evsEnts = await this.db.drizzle.query.evsTable.findMany({
-        where: and(eq(evsTable.projectId, projectId), eq(evsTable.envId, envId))
+      let env = await this.db.drizzle.query.envsTable.findFirst({
+        where: and(
+          eq(envsTable.projectId, projectId),
+          eq(envsTable.envId, envId)
+        )
       });
 
-      // evsEntities = await this.evsRepository.find({
-      //   where: {
-      //     project_id: projectId,
-      //     env_id: envId
-      //   }
-      // });
+      evs = env.evs;
     }
 
     let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest =
@@ -123,18 +112,7 @@ export class BlockmlService {
           orgId: orgId,
           projectId: projectId,
           envId: envId,
-          evs:
-            evs ||
-            evsEnts.map(
-              x =>
-                // wrapper.wrapToApiEv(x))
-                ({
-                  projectId: x.projectId,
-                  envId: x.envId,
-                  evId: x.evId,
-                  val: x.val
-                } as common.Ev)
-            ),
+          evs: evs,
           mproveDir: item.mproveDir,
           files: helper.diskFilesToBlockmlFiles(diskFiles),
           connections:

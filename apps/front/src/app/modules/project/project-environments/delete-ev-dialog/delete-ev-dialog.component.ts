@@ -14,6 +14,7 @@ import { common } from '~front/barrels/common';
 
 export interface DeleteEvDialogData {
   apiService: ApiService;
+  env: common.Env;
   ev: common.Ev;
 }
 
@@ -47,8 +48,8 @@ export class DeleteEvDialogComponent implements OnInit {
     this.ref.close();
 
     let payload: apiToBackend.ToBackendDeleteEvRequestPayload = {
-      projectId: this.dataItem.ev.projectId,
-      envId: this.dataItem.ev.envId,
+      projectId: this.dataItem.env.projectId,
+      envId: this.dataItem.env.envId,
       evId: this.dataItem.ev.evId
     };
 
@@ -67,15 +68,10 @@ export class DeleteEvDialogComponent implements OnInit {
             let environmentsState = this.environmentsQuery.getValue();
 
             let env = environmentsState.environments.find(
-              x => x.envId === this.dataItem.ev.envId
+              x => x.envId === this.dataItem.env.envId
             );
 
-            env.evs = env.evs.filter(
-              x =>
-                x.projectId !== this.dataItem.ev.projectId ||
-                x.envId !== this.dataItem.ev.envId ||
-                x.evId !== this.dataItem.ev.evId
-            );
+            env.evs = env.evs.filter(x => x.evId !== this.dataItem.ev.evId);
 
             this.environmentsQuery.update({
               environments: [...environmentsState.environments],

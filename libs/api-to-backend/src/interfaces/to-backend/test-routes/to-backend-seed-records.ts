@@ -191,20 +191,11 @@ export class ToBackendSeedRecordsRequestPayloadEnvsItem {
 
   @IsString()
   envId: string;
-}
 
-export class ToBackendSeedRecordsRequestPayloadEvsItem {
-  @IsString()
-  projectId: string;
-
-  @IsString()
-  envId: string;
-
-  @IsString()
-  evId: string;
-
-  @IsString()
-  val: string;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => common.Ev)
+  evs: common.Ev[];
 }
 
 export class ToBackendSeedRecordsRequestPayload {
@@ -237,11 +228,6 @@ export class ToBackendSeedRecordsRequestPayload {
   @ValidateNested()
   @Type(() => ToBackendSeedRecordsRequestPayloadEnvsItem)
   envs?: ToBackendSeedRecordsRequestPayloadEnvsItem[];
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => ToBackendSeedRecordsRequestPayloadEvsItem)
-  evs?: ToBackendSeedRecordsRequestPayloadEvsItem[];
 
   @IsOptional()
   @ValidateNested()

@@ -77,15 +77,13 @@ test('1', async t => {
         envs: [
           {
             projectId: projectId,
-            envId: envId
-          }
-        ],
-        evs: [
-          {
-            projectId: projectId,
             envId: envId,
-            evId: evId,
-            val: val
+            evs: [
+              {
+                evId: evId,
+                val: val
+              }
+            ]
           }
         ]
       },

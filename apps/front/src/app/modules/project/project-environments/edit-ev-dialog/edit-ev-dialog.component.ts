@@ -21,6 +21,7 @@ import { common } from '~front/barrels/common';
 
 export interface EditEvDialogData {
   apiService: ApiService;
+  env: common.Env;
   ev: common.Ev;
 }
 
@@ -70,8 +71,8 @@ export class EditEvDialogComponent implements OnInit {
     this.ref.close();
 
     let payload: apiToBackend.ToBackendEditEvRequestPayload = {
-      projectId: this.dataItem.ev.projectId,
-      envId: this.dataItem.ev.envId,
+      projectId: this.dataItem.env.projectId,
+      envId: this.dataItem.env.envId,
       evId: this.dataItem.ev.evId,
       val: this.editEvForm.value.val
     };
@@ -90,7 +91,7 @@ export class EditEvDialogComponent implements OnInit {
             let environmentsState = this.environmentsQuery.getValue();
 
             let env = environmentsState.environments.find(
-              x => x.envId === this.dataItem.ev.envId
+              x => x.envId === this.dataItem.env.envId
             );
 
             let ev = env.evs.find(x => x.evId === this.dataItem.ev.evId);

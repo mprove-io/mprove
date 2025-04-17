@@ -19,7 +19,6 @@ import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { envsTable } from '~backend/drizzle/postgres/schema/envs';
-import { evsTable } from '~backend/drizzle/postgres/schema/evs';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
@@ -108,10 +107,6 @@ export class DeleteOrgController {
             await tx
               .delete(envsTable)
               .where(inArray(envsTable.projectId, projectIds));
-
-            await tx
-              .delete(evsTable)
-              .where(inArray(evsTable.projectId, projectIds));
 
             await tx
               .delete(branchesTable)

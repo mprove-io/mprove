@@ -149,16 +149,18 @@ export class ProjectEnvironmentsComponent implements OnInit {
     });
   }
 
-  editVar(ev: common.Ev) {
+  editVar(env: common.Env, ev: common.Ev) {
     this.myDialogService.showEditEv({
       apiService: this.apiService,
+      env: env,
       ev: ev
     });
   }
 
-  removeVar(ev: common.Ev) {
+  removeVar(env: common.Env, ev: common.Ev) {
     this.myDialogService.showDeleteEv({
       apiService: this.apiService,
+      env: env,
       ev: ev
     });
   }

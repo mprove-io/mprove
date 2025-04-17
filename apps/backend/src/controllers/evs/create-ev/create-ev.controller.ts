@@ -19,11 +19,8 @@ import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/envs.service';
-import { EvsService } from '~backend/services/evs.service';
-import { MakerService } from '~backend/services/maker.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 let retry = require('async-retry');
 
@@ -33,12 +30,9 @@ export class CreateEvController {
   constructor(
     private projectsService: ProjectsService,
     private envsService: EnvsService,
-    private evsService: EvsService,
     private membersService: MembersService,
-    private makerService: MakerService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
-    private wrapToApiService: WrapToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -69,24 +63,26 @@ export class CreateEvController {
       });
     }
 
-    await this.envsService.getEnvCheckExistsAndAccess({
+    let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
       member: member
     });
 
-    await this.evsService.checkEvDoesNotExist({
-      projectId: projectId,
-      envId: envId,
-      evId: evId
-    });
+    let ev = env.evs.find(x => x.evId === evId);
 
-    let newEv = this.makerService.makeEv({
-      projectId: projectId,
-      envId: envId,
+    if (common.isDefined(ev)) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_EV_ALREADY_EXISTS
+      });
+    }
+
+    let newEv: common.Ev = {
       evId: evId,
       val: val
-    });
+    };
+
+    env.evs.push(newEv);
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
@@ -94,13 +90,6 @@ export class CreateEvController {
         eq(bridgesTable.envId, envId)
       )
     });
-
-    // let branchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: projectId,
-    //     env_id: envId
-    //   }
-    // });
 
     await forEachSeries(branchBridges, async x => {
       x.needValidate = true;
@@ -112,33 +101,17 @@ export class CreateEvController {
           async tx =>
             await this.db.packer.write({
               tx: tx,
-              insert: {
-                evs: [newEv]
-              },
               insertOrUpdate: {
-                bridges: [...branchBridges]
+                bridges: [...branchBridges],
+                envs: [env]
               }
             })
         ),
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     bridges: [...branchBridges]
-    //   }
-    // });
-
-    // await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     evs: [newEv]
-    //   }
-    // });
-
     let payload: apiToBackend.ToBackendCreateEvResponsePayload = {
-      ev: this.wrapToApiService.wrapToApiEv(newEv)
+      ev: newEv
     };
 
     return payload;

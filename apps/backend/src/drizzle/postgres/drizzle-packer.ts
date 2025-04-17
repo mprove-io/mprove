@@ -16,7 +16,6 @@ import { chartsTable } from './schema/charts';
 import { connectionsTable } from './schema/connections';
 import { dashboardsTable } from './schema/dashboards';
 import { envsTable } from './schema/envs';
-import { evsTable } from './schema/evs';
 import { kitsTable } from './schema/kits';
 import { mconfigsTable } from './schema/mconfigs';
 import { membersTable } from './schema/members';
@@ -123,10 +122,6 @@ export class DrizzlePacker {
         insertRecords.envs.length > 0
       ) {
         await tx.insert(envsTable).values(insertRecords.envs);
-      }
-
-      if (common.isDefined(insertRecords.evs) && insertRecords.evs.length > 0) {
-        await tx.insert(evsTable).values(insertRecords.evs);
       }
 
       if (
@@ -336,20 +331,6 @@ export class DrizzlePacker {
             .update(envsTable)
             .set(x)
             .where(eq(envsTable.envFullId, x.envFullId));
-        });
-      }
-
-      if (common.isDefined(updateRecords.evs) && updateRecords.evs.length > 0) {
-        updateRecords.evs = setUndefinedToNull({
-          ents: updateRecords.evs,
-          table: evsTable
-        });
-
-        await forEachSeries(updateRecords.evs, async x => {
-          await tx
-            .update(evsTable)
-            .set(x)
-            .where(eq(evsTable.evFullId, x.evFullId));
         });
       }
 
@@ -718,28 +699,6 @@ export class DrizzlePacker {
           .onConflictDoUpdate({
             target: envsTable.envFullId,
             set: drizzleSetAllColumnsFull({ table: envsTable })
-          });
-      }
-
-      if (
-        common.isDefined(insOrUpdRecords.evs) &&
-        insOrUpdRecords.evs.length > 0
-      ) {
-        insOrUpdRecords.evs = Array.from(
-          new Set(insOrUpdRecords.evs.map(x => x.evFullId))
-        ).map(id => insOrUpdRecords.evs.find(x => x.evFullId === id));
-
-        insOrUpdRecords.evs = setUndefinedToNull({
-          ents: insOrUpdRecords.evs,
-          table: evsTable
-        });
-
-        await tx
-          .insert(evsTable)
-          .values(insOrUpdRecords.evs)
-          .onConflictDoUpdate({
-            target: evsTable.evFullId,
-            set: drizzleSetAllColumnsFull({ table: evsTable })
           });
       }
 

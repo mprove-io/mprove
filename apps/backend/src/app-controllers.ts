@@ -69,7 +69,6 @@ export const appControllers = [
   controllers.CreateEvController,
   controllers.EditEvController,
   controllers.DeleteEvController,
-  controllers.GetEvsController,
 
   controllers.CancelQueriesController,
   controllers.GetQueriesController,

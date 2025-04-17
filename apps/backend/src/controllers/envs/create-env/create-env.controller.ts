@@ -16,7 +16,6 @@ import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { evsTable } from '~backend/drizzle/postgres/schema/evs';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -67,18 +66,13 @@ export class CreateEnvController {
 
     let newEnv = this.makerService.makeEnv({
       projectId: projectId,
-      envId: envId
+      envId: envId,
+      evs: []
     });
 
     let branches = await this.db.drizzle.query.branchesTable.findMany({
       where: eq(branchesTable.projectId, projectId)
     });
-
-    // let branches = await this.branchesRepository.find({
-    //   where: {
-    //     project_id: projectId
-    //   }
-    // });
 
     let newBridges: schemaPostgres.BridgeEnt[] = [];
 
@@ -110,14 +104,6 @@ export class CreateEnvController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     envs: [newEnv],
-    //     bridges: newBridges
-    //   }
-    // });
-
     let connections = await this.db.drizzle.query.connectionsTable.findMany({
       where: and(
         eq(connectionsTable.projectId, projectId),
@@ -125,33 +111,11 @@ export class CreateEnvController {
       )
     });
 
-    // let connections = await this.connectionsRepository.find({
-    //   where: {
-    //     project_id: projectId,
-    //     env_id: newEnv.env_id
-    //   }
-    // });
-
     let members = await this.db.drizzle.query.membersTable.findMany({
       where: eq(membersTable.projectId, projectId)
     });
 
-    // let members = await this.membersRepository.find({
-    //   where: {
-    //     project_id: projectId
-    //   }
-    // });
-
     let envConnectionIds = connections.map(x => x.connectionId);
-
-    let evs = await this.db.drizzle.query.evsTable.findMany({
-      where: and(
-        eq(evsTable.projectId, projectId),
-        eq(evsTable.envId, newEnv.envId)
-      )
-    });
-
-    let evsApi = evs.map(x => this.wrapToApiService.wrapToApiEv(x));
 
     let payload: apiToBackend.ToBackendCreateEnvResponsePayload = {
       env: this.wrapToApiService.wrapToApiEnv({
@@ -160,8 +124,7 @@ export class CreateEnvController {
         envMembers:
           newEnv.envId === common.PROJECT_ENV_PROD
             ? members
-            : members.filter(m => m.envs.indexOf(newEnv.envId) > -1),
-        evs: evsApi
+            : members.filter(m => m.envs.indexOf(newEnv.envId) > -1)
       })
     };
 

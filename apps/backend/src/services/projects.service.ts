@@ -61,6 +61,7 @@ export class ProjectsService {
     gitUrl?: string;
     privateKey?: string;
     publicKey?: string;
+    evs: common.Ev[];
   }) {
     let {
       orgId,
@@ -72,7 +73,8 @@ export class ProjectsService {
       remoteType,
       gitUrl,
       privateKey,
-      publicKey
+      publicKey,
+      evs
     } = item;
 
     let toDiskCreateProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
@@ -131,7 +133,8 @@ export class ProjectsService {
 
     let prodEnv = this.makerService.makeEnv({
       projectId: newProject.projectId,
-      envId: common.PROJECT_ENV_PROD
+      envId: common.PROJECT_ENV_PROD,
+      evs: evs
     });
 
     // let prodEnv = maker.makeEnv({
@@ -226,7 +229,8 @@ export class ProjectsService {
       diskFiles: diskResponse.payload.prodFiles,
       mproveDir: diskResponse.payload.mproveDir,
       envId: common.PROJECT_ENV_PROD,
-      overrideTimezone: undefined
+      overrideTimezone: undefined,
+      evs: evs
     });
 
     await this.blockmlService.rebuildStruct({
@@ -237,7 +241,8 @@ export class ProjectsService {
       diskFiles: diskResponse.payload.prodFiles,
       mproveDir: diskResponse.payload.mproveDir,
       envId: common.PROJECT_ENV_PROD,
-      overrideTimezone: undefined
+      overrideTimezone: undefined,
+      evs: evs
     });
 
     await retry(

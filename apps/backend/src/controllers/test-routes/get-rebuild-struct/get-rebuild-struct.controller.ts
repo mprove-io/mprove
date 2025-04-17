@@ -9,7 +9,7 @@ import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser, SkipJwtCheck } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { evsTable } from '~backend/drizzle/postgres/schema/evs';
+import { envsTable } from '~backend/drizzle/postgres/schema/envs';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -82,23 +82,9 @@ export class GetRebuildStructController {
       )
     });
 
-    // let connections = await this.connectionsRepository.find({
-    //   where: {
-    //     project_id: projectId,
-    //     env_id: envId
-    //   }
-    // });
-
-    let evs = await this.db.drizzle.query.evsTable.findMany({
-      where: and(eq(evsTable.projectId, projectId), eq(evsTable.envId, envId))
+    let env = await this.db.drizzle.query.envsTable.findFirst({
+      where: and(eq(envsTable.projectId, projectId), eq(envsTable.envId, envId))
     });
-
-    // let evs = await this.evsRepository.find({
-    //   where: {
-    //     project_id: projectId,
-    //     env_id: envId
-    //   }
-    // });
 
     // to blockml
 
@@ -111,7 +97,7 @@ export class GetRebuildStructController {
         structId: structId,
         orgId: orgId,
         envId: envId,
-        evs: evs.map(x => this.wrapToApiService.wrapToApiEv(x)),
+        evs: env.evs,
         projectId: projectId,
         mproveDir: getCatalogFilesResponse.payload.mproveDir,
         files: helper.diskFilesToBlockmlFiles(

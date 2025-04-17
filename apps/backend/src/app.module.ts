@@ -28,7 +28,6 @@ import { getConfig } from './config/get.config';
 import { DrizzleLogWriter } from './drizzle/drizzle-log-writer';
 import { DRIZZLE, Db, DrizzleModule } from './drizzle/drizzle.module';
 import { connectionsTable } from './drizzle/postgres/schema/connections';
-import { evsTable } from './drizzle/postgres/schema/evs';
 import { orgsTable } from './drizzle/postgres/schema/orgs';
 import { projectsTable } from './drizzle/postgres/schema/projects';
 import { usersTable } from './drizzle/postgres/schema/users';
@@ -508,35 +507,6 @@ export class AppModule implements OnModuleInit {
             }
           }
 
-          let evs: schemaPostgres.EvEnt[] = [];
-
-          let ev = await this.db.drizzle.query.evsTable.findFirst({
-            where: and(
-              eq(evsTable.projectId, firstProjectId),
-              eq(evsTable.envId, common.PROJECT_ENV_PROD),
-              eq(evsTable.evId, 'MPROVE_SNOWFLAKE_DATABASE')
-            )
-          });
-
-          // let ev = await this.evsRepository.findOne({
-          //   where: {
-          //     project_id: firstProjectId,
-          //     env_id: common.PROJECT_ENV_PROD,
-          //     ev_id: 'MPROVE_SNOWFLAKE_DATABASE'
-          //   }
-          // });
-
-          if (common.isUndefined(ev)) {
-            let ev1 = this.makerService.makeEv({
-              projectId: firstProjectId,
-              envId: common.PROJECT_ENV_PROD,
-              evId: 'MPROVE_SNOWFLAKE_DATABASE',
-              val: 's_db'
-            });
-
-            evs.push(ev1);
-          }
-
           await retry(
             async () =>
               await this.db.drizzle.transaction(
@@ -544,21 +514,12 @@ export class AppModule implements OnModuleInit {
                   await this.db.packer.write({
                     tx: tx,
                     insert: {
-                      connections: connections,
-                      evs: evs
+                      connections: connections
                     }
                   })
               ),
             getRetryOption(this.cs, this.logger)
           );
-
-          // await this.dbService.writeRecords({
-          //   modify: false,
-          //   records: {
-          //     connections: connections,
-          //     evs: evs
-          //   }
-          // });
 
           let firstProject =
             await this.db.drizzle.query.projectsTable.findFirst({
@@ -604,6 +565,11 @@ export class AppModule implements OnModuleInit {
                 .toString();
             }
 
+            let ev1: common.Ev = {
+              evId: 'MPROVE_SNOWFLAKE_DATABASE',
+              val: 's_db'
+            };
+
             firstProject = await this.projectsService.addProject({
               orgId: firstOrg.orgId,
               name: firstProjectName,
@@ -614,7 +580,8 @@ export class AppModule implements OnModuleInit {
               remoteType: firstProjectRemoteType,
               gitUrl: firstProjectRemoteGitUrl,
               privateKey: privateKey,
-              publicKey: publicKey
+              publicKey: publicKey,
+              evs: [ev1]
             });
           }
         }

@@ -7,7 +7,6 @@ export class DbRecords {
   connections?: schemaPostgres.ConnectionEnt[];
   dashboards?: schemaPostgres.DashboardEnt[];
   envs?: schemaPostgres.EnvEnt[];
-  evs?: schemaPostgres.EvEnt[];
   kits?: schemaPostgres.KitEnt[];
   mconfigs?: schemaPostgres.MconfigEnt[];
   members?: schemaPostgres.MemberEnt[];
