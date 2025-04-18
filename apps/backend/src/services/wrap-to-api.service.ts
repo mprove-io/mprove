@@ -225,7 +225,6 @@ export class WrapToApiService {
       isEditor: x.isEditor,
       isExplorer: x.isExplorer,
       roles: x.roles,
-      envs: x.envs,
       serverTs: x.serverTs
     };
   }

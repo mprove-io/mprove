@@ -199,8 +199,7 @@ export class ProjectTeamComponent implements OnInit {
       isAdmin: member.isAdmin,
       isEditor: member.isEditor,
       isExplorer: member.isExplorer,
-      roles: member.roles,
-      envs: member.envs
+      roles: member.roles
     };
 
     this.apiService
@@ -238,14 +237,6 @@ export class ProjectTeamComponent implements OnInit {
     });
   }
 
-  addEnv(member: common.Member, i: number) {
-    this.myDialogService.showAddEnv({
-      apiService: this.apiService,
-      member: member,
-      i: i
-    });
-  }
-
   removeRole(member: common.Member, i: number, n: number) {
     let newRoles = [...member.roles];
     newRoles.splice(n, 1);
@@ -256,8 +247,7 @@ export class ProjectTeamComponent implements OnInit {
       isAdmin: member.isAdmin,
       isEditor: member.isEditor,
       isExplorer: member.isExplorer,
-      roles: newRoles,
-      envs: member.envs
+      roles: newRoles
     };
 
     this.apiService
@@ -271,45 +261,6 @@ export class ProjectTeamComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendEditMemberResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let teamState = this.teamQuery.getValue();
-            teamState.members[i] = resp.payload.member;
-
-            this.teamQuery.update({
-              members: [...teamState.members],
-              total: teamState.total
-            });
-          }
-        }),
-        take(1)
-      )
-      .subscribe();
-  }
-
-  removeEnv(member: common.Member, i: number, n: number) {
-    let newEnvs = [...member.envs];
-    newEnvs.splice(n, 1);
-
-    let payload: apiToBackend.ToBackendEditMemberRequestPayload = {
-      projectId: member.projectId,
-      memberId: member.memberId,
-      isAdmin: member.isAdmin,
-      isEditor: member.isEditor,
-      isExplorer: member.isExplorer,
-      roles: member.roles,
-      envs: newEnvs
-    };
-
-    this.apiService
-      .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
-        payload: payload,
-        showSpinner: true
-      })
-      .pipe(
-        tap((resp: apiToBackend.ToBackendEditMemberResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let teamState = this.teamQuery.getValue();
-
             teamState.members[i] = resp.payload.member;
 
             this.teamQuery.update({

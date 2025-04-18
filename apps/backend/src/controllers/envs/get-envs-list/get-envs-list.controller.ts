@@ -1,5 +1,5 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { and, eq, inArray } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
@@ -39,30 +39,16 @@ export class GetEnvsListController {
       memberId: user.userId
     });
 
-    let envs: schemaPostgres.EnvEnt[] = [];
+    let envs = await this.db.drizzle.query.envsTable.findMany({
+      where: eq(envsTable.projectId, projectId)
+    });
 
     if (isFilter === true) {
-      envs = await this.db.drizzle.query.envsTable.findMany({
-        where: and(
-          eq(envsTable.projectId, projectId),
-          inArray(envsTable.envId, [...member.envs, common.PROJECT_ENV_PROD])
-        )
-      });
-
-      // envs = await this.envsRepository.find({
-      //   where: {
-      //     project_id: projectId,
-      //     env_id: In([...member.envs, common.PROJECT_ENV_PROD])
-      //   }
-      // });
-    } else {
-      envs = await this.db.drizzle.query.envsTable.findMany({
-        where: eq(envsTable.projectId, projectId)
-      });
-
-      // envs = await this.envsRepository.find({
-      //   where: { project_id: projectId }
-      // });
+      envs = envs.filter(
+        x =>
+          x.memberIds.indexOf(user.userId) > -1 ||
+          x.envId === common.PROJECT_ENV_PROD
+      );
     }
 
     let sortedEnvs = envs.sort((a, b) =>

@@ -35,8 +35,7 @@
               <th></th>
               <th class="text-left">Name</th>
               <th class="text-left">Email</th>
-              <th class="text-left">Alias</th>
-              <th class="text-left">Environments</th>
+              <!-- <th class="text-left">Alias</th> -->
               <th class="text-left">Access Roles</th>
               <th class="text-center">Project Admin</th>
               <th class="text-center">Files Editor</th>
@@ -91,58 +90,7 @@
                 {{ member.email }}
               </td>
 
-              <td class="w-64 text-base">{{ member.alias }}</td>
-
-              <td class="w-64">
-                <div class="flex flex-row items-center">
-                  <div
-                    tp="Admin role required"
-                    [tpIsEnabled]="isAdmin === false"
-                  >
-                    <button
-                      data-cy="projectTeamAddEnvButton"
-                      class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
-                      [ngClass]="{
-                        'text-s400 cursor-default': isAdmin === false,
-                        'text-m600 hover:bg-m200': isAdmin === true
-                      }"
-                      (click)="addEnv(member, i)"
-                      [disabled]="isAdmin === false"
-                    >
-                      <div>
-                        <m-add-icon></m-add-icon>
-                      </div>
-                    </button>
-                  </div>
-
-                  <div class="my-3 ml-2 flex flex-col">
-                    <div *ngFor="let env of member.envs; let n = index">
-                      <div class="flex flex-row items-center text-base">
-                        <div>{{ env }} </div>
-                        <div
-                          tp="Admin role required"
-                          [tpIsEnabled]="isAdmin === false"
-                        >
-                          <button
-                            data-cy="projectTeamRemoveEnvButton"
-                            class="ml-2 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
-                            [ngClass]="{
-                              'text-s400 cursor-default': isAdmin === false,
-                              'text-s1 hover:bg-m200': isAdmin === true
-                            }"
-                            (click)="removeEnv(member, i, n)"
-                            [disabled]="isAdmin === false"
-                          >
-                            <div>
-                              <m-delete-icon></m-delete-icon>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </td>
+              <!-- <td class="w-64 text-base">{{ member.alias }}</td> -->
 
               <td class="group w-64">
                 <div class="flex flex-row items-center">

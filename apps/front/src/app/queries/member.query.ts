@@ -15,7 +15,6 @@ let memberState: MemberState = {
   fullName: undefined,
   avatarSmall: undefined,
   roles: undefined,
-  envs: undefined,
   isAdmin: undefined,
   isEditor: undefined,
   isExplorer: undefined,

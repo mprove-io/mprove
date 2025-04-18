@@ -31,7 +31,6 @@ export class MakerService {
       firstName: user.firstName,
       lastName: user.lastName,
       roles: roles || [],
-      envs: envs || [],
       isAdmin: isAdmin,
       isEditor: isEditor,
       isExplorer: isExplorer,

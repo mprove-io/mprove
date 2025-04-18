@@ -42,7 +42,7 @@ export class EditMemberController {
   ) {
     let reqValid: apiToBackend.ToBackendEditMemberRequest = request.body;
 
-    let { projectId, memberId, isAdmin, isEditor, isExplorer, roles, envs } =
+    let { projectId, memberId, isAdmin, isEditor, isExplorer, roles } =
       reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
@@ -69,7 +69,6 @@ export class EditMemberController {
     member.isEditor = isEditor;
     member.isExplorer = isExplorer;
     member.roles = roles;
-    member.envs = envs;
 
     await retry(
       async () =>

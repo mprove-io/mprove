@@ -50,7 +50,7 @@ export class EnvsService {
     if (
       envId !== common.PROJECT_ENV_PROD &&
       member.isAdmin === false &&
-      member.envs.indexOf(envId) < 0
+      env.memberIds.indexOf(member.memberId) < 0
     ) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_MEMBER_DOES_NOT_HAVE_ACCESS_TO_ENV

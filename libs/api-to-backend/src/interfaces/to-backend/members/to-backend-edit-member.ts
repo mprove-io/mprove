@@ -21,9 +21,6 @@ export class ToBackendEditMemberRequestPayload {
 
   @IsString({ each: true })
   roles: string[];
-
-  @IsString({ each: true })
-  envs: string[];
 }
 
 export class ToBackendEditMemberRequest extends ToBackendRequest {

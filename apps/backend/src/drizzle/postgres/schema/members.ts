@@ -21,7 +21,6 @@ export const membersTable = pgTable(
     email: varchar('email').notNull(),
     alias: varchar('alias'),
     roles: json('roles').$type<string[]>().notNull(),
-    envs: json('envs').$type<string[]>().notNull(),
     firstName: varchar('first_name'),
     lastName: varchar('last_name'),
     isAdmin: boolean('is_admin').notNull(),

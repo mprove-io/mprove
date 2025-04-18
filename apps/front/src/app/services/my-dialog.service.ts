@@ -133,10 +133,6 @@ import {
   EditProjectNameDialogData
 } from '../modules/project/project-info/edit-project-name-dialog/edit-project-name-dialog.component';
 import {
-  AddEnvDialogComponent,
-  AddEnvDialogData
-} from '../modules/project/project-team/add-env-dialog/add-env-dialog.component';
-import {
   AddRoleDialogComponent,
   AddRoleDialogData
 } from '../modules/project/project-team/add-role-dialog/add-role-dialog.component';
@@ -533,14 +529,6 @@ export class MyDialogService {
 
   showAddRole(item: AddRoleDialogData): void {
     this.dialogService.open(AddRoleDialogComponent, {
-      enableClose: false,
-      closeButton: false,
-      data: item
-    });
-  }
-
-  showAddEnv(item: AddEnvDialogData): void {
-    this.dialogService.open(AddEnvDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item

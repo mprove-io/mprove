@@ -79,8 +79,7 @@ export class AddRoleDialogComponent implements OnInit {
       isAdmin: member.isAdmin,
       isEditor: member.isEditor,
       isExplorer: member.isExplorer,
-      roles: [...member.roles, this.addRoleForm.value.role],
-      envs: member.envs
+      roles: [...member.roles, this.addRoleForm.value.role]
     };
 
     let apiService: ApiService = this.ref.data.apiService;

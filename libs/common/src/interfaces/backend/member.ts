@@ -28,9 +28,6 @@ export class Member {
   @IsString({ each: true })
   roles: string[];
 
-  @IsString({ each: true })
-  envs: string[];
-
   @IsBoolean()
   isAdmin: boolean;
 
