@@ -7,43 +7,42 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { and, eq } from 'drizzle-orm';
-import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
-export class DeleteEnvVarController {
+export class CreateEnvUserController {
   constructor(
     private projectsService: ProjectsService,
     private envsService: EnvsService,
     private membersService: MembersService,
+    private wrapToApiService: WrapToApiService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnvVar)
-  async deleteEnvVar(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnvUser)
+  async createEnvUser(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
-    let reqValid: apiToBackend.ToBackendDeleteEnvVarRequest = request.body;
+    let reqValid: apiToBackend.ToBackendCreateEnvUserRequest = request.body;
 
-    let { projectId, envId, evId } = reqValid.payload;
+    let { projectId, envId, envUserId } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -69,34 +68,38 @@ export class DeleteEnvVarController {
       member: member
     });
 
-    env.evs = env.evs.filter(x => x.evId !== evId);
+    let isAlreadyExist = env.memberIds.indexOf(envUserId) > -1;
 
-    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
-      where: and(
-        eq(bridgesTable.projectId, projectId),
-        eq(bridgesTable.envId, envId)
-      )
+    if (isAlreadyExist === true) {
+      throw new common.ServerError({
+        message: common.ErEnum.BACKEND_ENV_USER_ALREADY_EXISTS
+      });
+    }
+
+    let teamMember = await this.membersService.getMemberCheckExists({
+      memberId: envUserId,
+      projectId: projectId
     });
 
-    await forEachSeries(branchBridges, async x => {
-      x.needValidate = true;
-    });
+    env.memberIds.push(envUserId);
 
     await retry(
       async () =>
-        await this.db.drizzle.transaction(async tx => {
-          await this.db.packer.write({
-            tx: tx,
-            insertOrUpdate: {
-              bridges: [...branchBridges],
-              envs: [env]
-            }
-          });
-        }),
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                envs: [env]
+              }
+            })
+        ),
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload = {};
+    let payload: apiToBackend.ToBackendCreateEnvUserResponsePayload = {
+      envUser: this.wrapToApiService.wrapToApiEnvUser(teamMember)
+    };
 
     return payload;
   }

@@ -79,18 +79,23 @@ export const nameToClass = {
     interfaces.ToBackendGetEnvsRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendCreateEnv]:
     interfaces.ToBackendCreateEnvRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteEnv]:
-    interfaces.ToBackendDeleteEnvRequest,
-  //
   [enums.ToBackendRequestInfoNameEnum.ToBackendCreateEnvVar]:
     interfaces.ToBackendCreateEnvVarRequest,
-  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteEv]:
-    interfaces.ToBackendDeleteEnvVarRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendCreateEnvUser]:
+    interfaces.ToBackendCreateEnvUserRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendEditEnvVar]:
     interfaces.ToBackendEditEnvVarRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteEnv]:
+    interfaces.ToBackendDeleteEnvRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteEnvVar]:
+    interfaces.ToBackendDeleteEnvVarRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteEnvUser]:
+    interfaces.ToBackendDeleteEnvUserRequest,
   //
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetMembers]:
     interfaces.ToBackendGetMembersRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendGetMembersList]:
+    interfaces.ToBackendGetMembersListRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendCreateMember]:
     interfaces.ToBackendCreateMemberRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendEditMember]:

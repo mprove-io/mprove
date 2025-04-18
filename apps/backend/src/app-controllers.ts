@@ -35,6 +35,7 @@ export const appControllers = [
   controllers.DeleteMemberController,
   controllers.EditMemberController,
   controllers.GetMembersController,
+  controllers.GetMembersListController,
 
   controllers.GetSuggestFieldsController,
 
@@ -62,13 +63,14 @@ export const appControllers = [
   controllers.SetProjectInfoController,
 
   controllers.CreateEnvController,
+  controllers.CreateEnvVarController,
+  controllers.CreateEnvUserController,
   controllers.DeleteEnvController,
+  controllers.DeleteEnvVarController,
+  controllers.DeleteEnvUserController,
+  controllers.EditEnvVarController,
   controllers.GetEnvsController,
   controllers.GetEnvsListController,
-
-  controllers.CreateEnvVarController,
-  controllers.EditEnvVarController,
-  controllers.DeleteEnvVarController,
 
   controllers.CancelQueriesController,
   controllers.GetQueriesController,

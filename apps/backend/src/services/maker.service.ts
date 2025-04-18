@@ -99,6 +99,7 @@ export class MakerService {
       projectId: projectId,
       envId: envId,
       evs: evs,
+      memberIds: [],
       serverTs: undefined
     };
 

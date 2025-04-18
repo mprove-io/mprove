@@ -58,7 +58,7 @@ export class DeleteEvDialogComponent implements OnInit {
     apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEv,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnvVar,
         payload: payload,
         showSpinner: true
       })

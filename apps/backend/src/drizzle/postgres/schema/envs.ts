@@ -16,6 +16,7 @@ export const envsTable = pgTable(
     envFullId: varchar('env_full_id', { length: 64 }).notNull().primaryKey(),
     projectId: varchar('project_id', { length: 32 }).notNull(),
     envId: varchar('env_id', { length: 32 }).notNull(), // name
+    memberIds: json('member_ids').$type<string[]>().default([]),
     evs: json('evs').$type<common.Ev[]>().default([]),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

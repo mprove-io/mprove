@@ -75,8 +75,6 @@ export class GetEnvsController {
       )
     });
 
-    let envIds = envs.map(x => x.envId);
-
     let members = await this.db.drizzle.query.membersTable.findMany({
       where: eq(membersTable.projectId, projectId)
     });
@@ -93,8 +91,8 @@ export class GetEnvsController {
             .map(connection => connection.connectionId),
           envMembers:
             x.envId === common.PROJECT_ENV_PROD
-              ? members
-              : members.filter(m => m.envs.indexOf(x.envId) > -1)
+              ? []
+              : members.filter(m => x.memberIds.indexOf(m.memberId) > -1)
         })
       ),
       total: envsResult.length > 0 ? envsResult[0].total : 0

@@ -1,20 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
+import { EnvUser } from './env-user';
 import { Ev } from './ev';
-
-export class EnvUser {
-  @IsString()
-  alias: string;
-
-  @IsString()
-  firstName: string;
-
-  @IsString()
-  lastName: string;
-
-  @IsString()
-  fullName: string;
-}
 
 export class Env {
   @IsString()

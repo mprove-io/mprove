@@ -92,7 +92,7 @@ test('1', async t => {
 
     let req: apiToBackend.ToBackendDeleteEnvVarRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEv,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnvVar,
         traceId: traceId,
         idempotencyKey: common.makeId()
       },

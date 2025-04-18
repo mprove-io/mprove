@@ -101,6 +101,10 @@ import {
   EditConnectionDialogData
 } from '../modules/project/project-connections/edit-connection-dialog/edit-connection-dialog.component';
 import {
+  AddEnvUserDialogComponent,
+  AddEnvUserDialogData
+} from '../modules/project/project-environments/add-env-user-dialog/add-env-user-dialog.component';
+import {
   AddEnvironmentDialogComponent,
   AddEnvironmentDialogData
 } from '../modules/project/project-environments/add-environment-dialog/add-environment-dialog.component';
@@ -571,6 +575,14 @@ export class MyDialogService {
 
   showAddEnvironment(item: AddEnvironmentDialogData): void {
     this.dialogService.open(AddEnvironmentDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item
+    });
+  }
+
+  showAddEnvUser(item: AddEnvUserDialogData): void {
+    this.dialogService.open(AddEnvUserDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item

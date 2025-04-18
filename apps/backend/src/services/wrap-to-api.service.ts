@@ -142,6 +142,7 @@ export class WrapToApiService {
 
     envMembers.forEach(x => {
       let envUser: common.EnvUser = {
+        userId: x.memberId,
         alias: x.alias,
         firstName: x.firstName,
         lastName: x.lastName,
@@ -226,6 +227,16 @@ export class WrapToApiService {
       roles: x.roles,
       envs: x.envs,
       serverTs: x.serverTs
+    };
+  }
+
+  wrapToApiEnvUser(x: schemaPostgres.MemberEnt): common.EnvUser {
+    return {
+      userId: x.memberId,
+      alias: x.alias,
+      firstName: x.firstName,
+      lastName: x.lastName,
+      fullName: makeFullName({ firstName: x.firstName, lastName: x.lastName })
     };
   }
 

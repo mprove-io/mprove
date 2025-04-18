@@ -7,7 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
@@ -112,7 +112,10 @@ export class CreateEnvController {
     });
 
     let members = await this.db.drizzle.query.membersTable.findMany({
-      where: eq(membersTable.projectId, projectId)
+      where: and(
+        eq(membersTable.projectId, projectId),
+        inArray(membersTable.memberId, newEnv.memberIds)
+      )
     });
 
     let envConnectionIds = connections.map(x => x.connectionId);
@@ -123,8 +126,8 @@ export class CreateEnvController {
         envConnectionIds: envConnectionIds,
         envMembers:
           newEnv.envId === common.PROJECT_ENV_PROD
-            ? members
-            : members.filter(m => m.envs.indexOf(newEnv.envId) > -1)
+            ? []
+            : members.filter(m => newEnv.memberIds.indexOf(m.memberId) > -1)
       })
     };
 

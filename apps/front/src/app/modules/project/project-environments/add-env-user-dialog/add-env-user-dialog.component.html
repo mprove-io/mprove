@@ -1,0 +1,60 @@
+<div class="bg-m0 flex flex-col p-9">
+  <div
+    data-cy="addEnvUserDialogTitle"
+    class="text-s2 mt-5 flex-grow text-left text-2xl font-semibold"
+    >Add User for {{ env.envId }}</div
+  >
+
+  <form
+    class="flex w-80 flex-col"
+    [formGroup]="addEnvUserForm"
+    (ngSubmit)="add()"
+  >
+    <ng-select
+      #addEnvUserDialogUserSelect
+      data-cy="addEnvUserDialogUserSelect"
+      class="mt-12 w-80 text-base"
+      (open)="openUserSelect()"
+      [loading]="membersListLoading"
+      [items]="membersList"
+      [clearable]="false"
+      [searchable]="false"
+      (keyup.esc)="
+        $event.stopImmediatePropagation(); addEnvUserDialogUserSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); addEnvUserDialogUserSelect.blur()
+      "
+      appendTo="body"
+      placeholder="Env"
+      bindLabel="alias"
+      bindValue="userId"
+      formControlName="envUserId"
+    >
+      <ng-template ng-label-tmp let-item="item">
+        <div class="ml-1 truncate">{{ item.alias }}</div>
+      </ng-template>
+
+      <ng-template ng-option-tmp let-item="item">
+        <div class="ml-1 truncate">{{ item.alias }}</div>
+      </ng-template>
+    </ng-select>
+
+    <div class="mt-12">
+      <button
+        data-cy="addEnvUserDialogAddButton"
+        class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
+        type="submit"
+        >Add</button
+      >
+
+      <button
+        data-cy="addEnvUserDialogCancelButton"
+        class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>

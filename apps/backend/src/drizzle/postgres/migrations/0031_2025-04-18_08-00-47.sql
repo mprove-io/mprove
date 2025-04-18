@@ -1,0 +1,1 @@
+ALTER TABLE "envs" ADD COLUMN "member_ids" json DEFAULT '[]'::json;

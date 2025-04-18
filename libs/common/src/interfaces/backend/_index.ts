@@ -3,6 +3,7 @@ export * from './connection';
 export * from './connection-header';
 export * from './dashboard-x';
 export * from './env';
+export * from './env-user';
 export * from './envs-item';
 export * from './ev';
 export * from './filter-x';

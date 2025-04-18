@@ -137,9 +137,50 @@ export class ProjectEnvironmentsComponent implements OnInit {
     ]);
   }
 
-  addUser(env: common.Env, i: number) {}
+  addUser(env: common.Env) {
+    this.myDialogService.showAddEnvUser({
+      apiService: this.apiService,
+      env: env
+    });
+  }
 
-  removeUser(env: common.Env, i: number, n: number) {}
+  removeUser(env: common.Env, envUser: common.EnvUser) {
+    let payload: apiToBackend.ToBackendDeleteEnvUserRequestPayload = {
+      projectId: env.projectId,
+      envId: env.envId,
+      envUserId: envUser.userId
+    };
+
+    this.apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnvUser,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendDeleteEnvUserResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let environmentsState = this.environmentsQuery.getValue();
+
+            let stateEnv = environmentsState.environments.find(
+              x => x.envId === env.envId
+            );
+
+            stateEnv.envUsers = stateEnv.envUsers.filter(
+              x => x.userId !== envUser.userId
+            );
+
+            this.environmentsQuery.update({
+              environments: [...environmentsState.environments],
+              total: environmentsState.total
+            });
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
 
   addVar(env: common.Env) {
     this.myDialogService.showAddEv({

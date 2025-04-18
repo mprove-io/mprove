@@ -7,15 +7,11 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { and, eq } from 'drizzle-orm';
-import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/envs.service';
@@ -26,7 +22,7 @@ let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
-export class DeleteEnvVarController {
+export class DeleteEnvUserController {
   constructor(
     private projectsService: ProjectsService,
     private envsService: EnvsService,
@@ -36,14 +32,14 @@ export class DeleteEnvVarController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnvVar)
-  async deleteEnvVar(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnvUser)
+  async deleteEnvUser(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
-    let reqValid: apiToBackend.ToBackendDeleteEnvVarRequest = request.body;
+    let reqValid: apiToBackend.ToBackendDeleteEnvUserRequest = request.body;
 
-    let { projectId, envId, evId } = reqValid.payload;
+    let { projectId, envId, envUserId } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -54,33 +50,13 @@ export class DeleteEnvVarController {
       projectId: projectId
     });
 
-    let firstProjectId =
-      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
-
-    if (member.isAdmin === false && projectId === firstProjectId) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
-      });
-    }
-
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
       member: member
     });
 
-    env.evs = env.evs.filter(x => x.evId !== evId);
-
-    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
-      where: and(
-        eq(bridgesTable.projectId, projectId),
-        eq(bridgesTable.envId, envId)
-      )
-    });
-
-    await forEachSeries(branchBridges, async x => {
-      x.needValidate = true;
-    });
+    env.memberIds = env.memberIds.filter(x => x !== envUserId);
 
     await retry(
       async () =>
@@ -88,7 +64,6 @@ export class DeleteEnvVarController {
           await this.db.packer.write({
             tx: tx,
             insertOrUpdate: {
-              bridges: [...branchBridges],
               envs: [env]
             }
           });

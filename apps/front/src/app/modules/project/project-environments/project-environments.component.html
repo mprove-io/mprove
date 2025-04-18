@@ -122,7 +122,7 @@
                             'text-s400 cursor-default': isAdmin === false,
                             'text-m600 hover:bg-m200': isAdmin === true
                           }"
-                          (click)="addUser(environment, i)"
+                          (click)="addUser(environment)"
                           [disabled]="isAdmin === false"
                         >
                           <div>
@@ -153,7 +153,7 @@
                                   'text-s400 cursor-default': isAdmin === false,
                                   'text-s1 hover:bg-m200': isAdmin === true
                                 }"
-                                (click)="removeUser(environment, i, n)"
+                                (click)="removeUser(environment, envUser)"
                                 [disabled]="isAdmin === false"
                               >
                                 <div>
