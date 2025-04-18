@@ -86,7 +86,7 @@
 
               <td class="w-80 text-base">{{ member.fullName }}</td>
 
-              <td data-cy="projectTeamMemberEmailData" class="w-80 text-base">
+              <td data-cy="projectTeamMemberEmailData" class="w-96 text-base">
                 {{ member.email }}
               </td>
 
@@ -144,7 +144,7 @@
                 </div>
               </td>
 
-              <td>
+              <td class="w-48">
                 <div class="flex justify-center">
                   <ng-template #templateChangeAdminStatus>
                     <div *ngIf="isAdmin === false">Admin role required</div>
@@ -187,7 +187,7 @@
                 </div>
               </td>
 
-              <td>
+              <td class="w-48">
                 <div class="flex justify-center">
                   <div
                     tp="Admin role required"
@@ -213,7 +213,7 @@
                 </div>
               </td>
 
-              <td>
+              <td class="w-48">
                 <div class="flex justify-center">
                   <div
                     tp="Admin role required"

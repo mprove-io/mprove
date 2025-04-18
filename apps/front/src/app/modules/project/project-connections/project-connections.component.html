@@ -68,11 +68,16 @@
 
               <td class="w-48">{{ connection.type }} </td>
 
-              <td class="w-48">
+              <td
+                class="w-48"
+                [ngClass]="{
+                  'text-s400': !!connection.baseUrl
+                }"
+              >
                 {{
                   !!connection.baseUrl
-                    ? 'true if Base URL starts with "https://"'
-                    : connection.isSSL
+                    ? 'True if URL starts with "https://"'
+                    : (connection.isSSL.toString() | capitalize)
                 }}
               </td>
 
