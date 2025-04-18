@@ -33,7 +33,7 @@
           <thead>
             <tr class="h-12 text-sm">
               <th class="text-left"></th>
-              <th class="text-left">Name</th>
+              <th class="text-left">Environment Name</th>
               <th class="text-left">Users</th>
               <th class="text-left">Connections</th>
               <th class="text-left">Environment Variables</th>
@@ -56,7 +56,7 @@
               "
               class="h-16"
             >
-              <td class="w-32">
+              <td class="w-[100px]">
                 <ng-template #templateDeleteEnv>
                   <div *ngIf="environment.envId === envProd"
                     >Env Prod can not be deleted</div
@@ -69,7 +69,7 @@
                 </ng-template>
 
                 <div
-                  class="ml-3 w-fit"
+                  class="w-fit"
                   [tp]="templateDeleteEnv"
                   [tpIsEnabled]="
                     isAdmin === false || environment.envId === envProd
@@ -77,7 +77,7 @@
                 >
                   <button
                     data-cy="projectEnvironmentsDeleteButton"
-                    class="h-9 w-9 rounded focus:outline-none"
+                    class="ml-5 h-9 w-9 rounded focus:outline-none"
                     [ngClass]="{
                       'text-s1 hover:bg-m200':
                         isAdmin === true && environment.envId !== envProd,
@@ -96,7 +96,7 @@
                 </div>
               </td>
 
-              <td class="w-64">{{ environment.envId }}</td>
+              <td class="w-[200px]">{{ environment.envId }}</td>
 
               <td class="w-96">
                 <div class="my-3 flex flex-col">

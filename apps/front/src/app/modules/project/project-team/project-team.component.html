@@ -33,13 +33,15 @@
           <thead>
             <tr class="h-12 text-sm">
               <th></th>
-              <th class="text-left">Name</th>
+              <th></th>
               <th class="text-left">Email</th>
               <!-- <th class="text-left">Alias</th> -->
-              <th class="text-left">Access Roles</th>
+              <th class="text-left">Name</th>
               <th class="text-center">Project Admin</th>
               <th class="text-center">Files Editor</th>
               <th class="text-center">Explorer</th>
+              <th></th>
+              <th class="text-left">Access Roles</th>
               <th></th>
             </tr>
           </thead>
@@ -59,10 +61,50 @@
               "
               class="h-16"
             >
-              <td class="w-24">
+              <td class="w-[100px]">
+                <ng-template #templateRemoveMember>
+                  <div *ngIf="isAdmin === false">Admin role required</div>
+
+                  <div *ngIf="isAdmin === true && member.memberId === userId"
+                    >Only another admin can remove you from project members</div
+                  >
+                </ng-template>
+
+                <div
+                  [tp]="templateRemoveMember"
+                  [tpIsEnabled]="
+                    member.memberId === userId || isAdmin === false
+                  "
+                >
+                  <button
+                    data-cy="projectTeamRemoveMemberButton"
+                    class="text-s1 ml-5 h-9 w-9 rounded focus:outline-none"
+                    [ngClass]="{
+                      'cursor-default':
+                        member.memberId === userId || isAdmin === false,
+                      'hover:bg-m200':
+                        member.memberId !== userId && isAdmin !== false
+                    }"
+                    [disabled]="member.memberId === userId || isAdmin === false"
+                    (click)="removeMember(member)"
+                  >
+                    <div
+                      class="flex justify-center"
+                      [ngClass]="{
+                        'text-s400 ':
+                          member.memberId === userId || isAdmin === false
+                      }"
+                    >
+                      <m-delete-icon></m-delete-icon>
+                    </div>
+                  </button>
+                </div>
+              </td>
+
+              <td class="w-[60px]">
                 <div class="flex">
                   <button
-                    class="bg-m200 ml-5 h-10 w-10 rounded-full text-base tracking-wider focus:outline-none"
+                    class="bg-m200 h-10 w-10 rounded-full text-base tracking-wider focus:outline-none"
                     [ngClass]="{
                       'cursor-default': !member.avatarSmall
                     }"
@@ -84,65 +126,13 @@
                 </div>
               </td>
 
-              <td class="w-80 text-base">{{ member.fullName }}</td>
-
               <td data-cy="projectTeamMemberEmailData" class="w-96 text-base">
                 {{ member.email }}
               </td>
 
               <!-- <td class="w-64 text-base">{{ member.alias }}</td> -->
 
-              <td class="group w-64">
-                <div class="flex flex-row items-center">
-                  <div
-                    tp="Admin role required"
-                    [tpIsEnabled]="isAdmin === false"
-                  >
-                    <button
-                      data-cy="projectTeamAddRoleButton"
-                      class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
-                      [ngClass]="{
-                        'text-s400 cursor-default': isAdmin === false,
-                        'text-m600 hover:bg-m200': isAdmin === true
-                      }"
-                      (click)="addRole(member, i)"
-                      [disabled]="isAdmin === false"
-                    >
-                      <div>
-                        <m-add-icon></m-add-icon>
-                      </div>
-                    </button>
-                  </div>
-
-                  <div class="my-3 ml-5 flex flex-col">
-                    <div *ngFor="let role of member.roles; let n = index">
-                      <div class="flex flex-row items-center text-base">
-                        <div>{{ role }} </div>
-                        <div
-                          tp="Admin role required"
-                          [tpIsEnabled]="isAdmin === false"
-                          class="invisible ml-3 group-hover:visible"
-                        >
-                          <button
-                            data-cy="projectTeamRemoveRoleButton"
-                            class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
-                            [ngClass]="{
-                              'text-s400 cursor-default': isAdmin === false,
-                              'text-s1 hover:bg-m200': isAdmin === true
-                            }"
-                            (click)="removeRole(member, i, n)"
-                            [disabled]="isAdmin === false"
-                          >
-                            <div>
-                              <m-delete-icon></m-delete-icon>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </td>
+              <td class="w-[300px] text-base">{{ member.fullName }}</td>
 
               <td class="w-48">
                 <div class="flex justify-center">
@@ -239,46 +229,61 @@
                 </div>
               </td>
 
-              <td>
-                <ng-template #templateRemoveMember>
-                  <div *ngIf="isAdmin === false">Admin role required</div>
+              <td class="w-24"></td>
 
-                  <div *ngIf="isAdmin === true && member.memberId === userId"
-                    >Only another admin can remove you from project members</div
+              <td class="w-64">
+                <div class="flex flex-row items-center">
+                  <div
+                    tp="Admin role required"
+                    [tpIsEnabled]="isAdmin === false"
                   >
-                </ng-template>
-
-                <div
-                  class="w-fit"
-                  [tp]="templateRemoveMember"
-                  [tpIsEnabled]="
-                    member.memberId === userId || isAdmin === false
-                  "
-                >
-                  <button
-                    data-cy="projectTeamRemoveMemberButton"
-                    class="text-s1 h-9 w-9 rounded focus:outline-none"
-                    [ngClass]="{
-                      'cursor-default':
-                        member.memberId === userId || isAdmin === false,
-                      'hover:bg-m200':
-                        member.memberId !== userId && isAdmin !== false
-                    }"
-                    [disabled]="member.memberId === userId || isAdmin === false"
-                    (click)="removeMember(member)"
-                  >
-                    <div
-                      class="flex justify-center"
+                    <button
+                      data-cy="projectTeamAddRoleButton"
+                      class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
                       [ngClass]="{
-                        'text-s400 ':
-                          member.memberId === userId || isAdmin === false
+                        'text-s400 cursor-default': isAdmin === false,
+                        'text-m600 hover:bg-m200': isAdmin === true
                       }"
+                      (click)="addRole(member, i)"
+                      [disabled]="isAdmin === false"
                     >
-                      <m-delete-icon></m-delete-icon>
+                      <div>
+                        <m-add-icon></m-add-icon>
+                      </div>
+                    </button>
+                  </div>
+
+                  <div class="my-3 ml-5 flex flex-col">
+                    <div *ngFor="let role of member.roles; let n = index">
+                      <div class="flex flex-row items-center text-base">
+                        <div>{{ role }} </div>
+                        <div
+                          tp="Admin role required"
+                          [tpIsEnabled]="isAdmin === false"
+                          class="ml-3"
+                        >
+                          <button
+                            data-cy="projectTeamRemoveRoleButton"
+                            class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+                            [ngClass]="{
+                              'text-s1 hover:bg-m200': isAdmin === true,
+                              'text-s300 cursor-default': isAdmin === false
+                            }"
+                            (click)="removeRole(member, i, n)"
+                            [disabled]="isAdmin === false"
+                          >
+                            <div>
+                              <m-delete-icon></m-delete-icon>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </button>
+                  </div>
                 </div>
               </td>
+
+              <td></td>
             </tr>
           </tbody>
         </table>

@@ -32,7 +32,9 @@
         <table class="divide-s500 min-w-full divide-y">
           <thead>
             <tr class="h-12 text-sm">
-              <th class="text-left">Name</th>
+              <th class="text-left"></th>
+              <th class="text-left"></th>
+              <th class="text-left">Connection Name</th>
               <th class="text-left">Environment</th>
               <th class="text-left">Type</th>
               <th class="text-left">SSL (https)</th>
@@ -41,8 +43,6 @@
               <th class="text-left">Database</th>
               <th class="text-left">User</th>
               <th class="text-left">Extra</th>
-              <th class="text-left"></th>
-              <th class="text-left"></th>
               <th></th>
             </tr>
           </thead>
@@ -62,6 +62,49 @@
               "
               class="h-16"
             >
+              <td class="w-[100px]">
+                <div
+                  class="w-fit"
+                  tp="Admin role required"
+                  [tpIsEnabled]="isAdmin === false"
+                >
+                  <button
+                    data-cy="projectConnectionsDeleteButton"
+                    class="ml-5 h-9 w-9 rounded focus:outline-none"
+                    [ngClass]="{
+                      'text-s1 hover:bg-m200': isAdmin === true,
+                      'text-s400 cursor-default': isAdmin === false
+                    }"
+                    [disabled]="isAdmin === false"
+                    (click)="deleteConnection(connection)"
+                  >
+                    <div class="flex justify-center">
+                      <m-trash-icon></m-trash-icon>
+                    </div>
+                  </button>
+                </div>
+              </td>
+
+              <td class="w-24">
+                <div
+                  class="w-fit"
+                  tp="Admin role required"
+                  [tpIsEnabled]="isAdmin === false"
+                >
+                  <button
+                    data-cy="projectConnectionsEditButton"
+                    (click)="editConnection(connection, i)"
+                    class="rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
+                    [ngClass]="{
+                      'border-s400 text-s500 hover:bg-s100': isAdmin === true,
+                      'border-s300 text-s400 cursor-default': isAdmin === false
+                    }"
+                    [disabled]="isAdmin === false"
+                    >Edit</button
+                  >
+                </div>
+              </td>
+
               <td class="w-48">{{ connection.connectionId }}</td>
 
               <td class="w-48">{{ connection.envId }}</td>
@@ -162,48 +205,6 @@
                       {{ header.value }}
                     </span>
                   </div>
-                </div>
-              </td>
-
-              <td class="w-32">
-                <div
-                  class="w-fit"
-                  tp="Admin role required"
-                  [tpIsEnabled]="isAdmin === false"
-                >
-                  <button
-                    data-cy="projectConnectionsEditButton"
-                    (click)="editConnection(connection, i)"
-                    class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
-                    [ngClass]="{
-                      'text-s400 cursor-default': isAdmin === false,
-                      'border-s3 text-s1': isAdmin === true
-                    }"
-                    [disabled]="isAdmin === false"
-                    >Edit</button
-                  >
-                </div>
-              </td>
-
-              <td class="w-32">
-                <div
-                  class="ml-3 w-fit"
-                  tp="Admin role required"
-                  [tpIsEnabled]="isAdmin === false"
-                >
-                  <button
-                    data-cy="projectConnectionsDeleteButton"
-                    class="h-9 w-9 rounded focus:outline-none"
-                    [ngClass]="{
-                      'text-s400 cursor-default': isAdmin === false
-                    }"
-                    [disabled]="isAdmin === false"
-                    (click)="deleteConnection(connection)"
-                  >
-                    <div class="flex justify-center">
-                      <m-trash-icon></m-trash-icon>
-                    </div>
-                  </button>
                 </div>
               </td>
             </tr>

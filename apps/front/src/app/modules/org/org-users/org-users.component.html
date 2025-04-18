@@ -23,13 +23,14 @@
           <thead>
             <tr class="h-12 text-sm">
               <th></th>
-              <th class="text-left">Name</th>
               <th class="text-left">Email</th>
               <th class="text-left">Alias</th>
+              <th class="text-left">Name</th>
               <th class="text-left">Project User</th>
               <th class="text-left">Project Admin</th>
               <th class="text-left">Files Editor</th>
               <th class="text-left">Explorer</th>
+              <th></th>
             </tr>
           </thead>
 
@@ -48,7 +49,7 @@
               "
               class="h-16"
             >
-              <td class="w-24">
+              <td class="w-[80px]">
                 <div class="flex">
                   <button
                     class="bg-m200 ml-5 h-10 w-10 rounded-full text-base tracking-wider focus:outline-none"
@@ -73,14 +74,15 @@
                 </div>
               </td>
 
-              <td class="w-64 text-base">{{ user.fullName }}</td>
-
-              <td data-cy="orgUsersUserEmailData" class="w-64 text-base">
+              <td data-cy="orgUsersUserEmailData" class="w-96 text-base">
                 {{ user.email }}
               </td>
 
-              <td class="w-48 text-base">{{ user.alias }}</td>
-              <td class="w-48">
+              <td class="w-[300px] text-base">{{ user.alias }}</td>
+
+              <td class="w-[300px] text-base">{{ user.fullName }}</td>
+
+              <td class="w-[300px]">
                 <div class="my-3 flex flex-col">
                   <div
                     *ngFor="let projectUserProject of user.projectUserProjects"
@@ -91,7 +93,7 @@
                   </div>
                 </div></td
               >
-              <td class="w-48">
+              <td class="w-[300px]">
                 <div class="my-3 flex flex-col">
                   <div *ngFor="let adminProject of user.adminProjects">
                     <div class="flex flex-row items-center text-base">
@@ -100,7 +102,7 @@
                   </div>
                 </div></td
               >
-              <td class="w-48">
+              <td class="w-[300px]">
                 <div class="my-3 flex flex-col">
                   <div *ngFor="let editorProject of user.editorProjects">
                     <div class="flex flex-row items-center text-base">
@@ -109,7 +111,7 @@
                   </div>
                 </div></td
               >
-              <td class="w-48">
+              <td class="w-[300px]">
                 <div class="my-3 flex flex-col">
                   <div *ngFor="let explorerProject of user.explorerProjects">
                     <div class="flex flex-row items-center text-base">
@@ -118,6 +120,8 @@
                   </div>
                 </div></td
               >
+
+              <td></td>
             </tr>
           </tbody>
         </table>
