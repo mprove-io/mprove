@@ -10,8 +10,8 @@ import {
   ViewChild
 } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { MetricsQuery, MetricsState } from '~front/app/queries/metrics.query';
 import { ReportQuery } from '~front/app/queries/report.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { ReportService } from '~front/app/services/report.service';
@@ -44,12 +44,12 @@ export class MetricsTreeComponent implements AfterViewInit {
 
   nodes: MetricNode[] = [];
 
-  metrics: MetricsState;
-  metrics$ = this.metricsQuery.select().pipe(
+  metrics: common.ModelMetric[];
+  metrics$ = this.structQuery.metrics$.pipe(
     tap(x => {
       let nodes: MetricNode[] = [];
 
-      x.metrics.forEach(metric => {
+      x.forEach(metric => {
         let metricNode: MetricNode = {
           id: metric.metricId,
           isTop: false,
@@ -117,7 +117,7 @@ export class MetricsTreeComponent implements AfterViewInit {
   @ViewChild('itemsTree') itemsTree: TreeComponent;
 
   constructor(
-    private metricsQuery: MetricsQuery,
+    private structQuery: StructQuery,
     private cd: ChangeDetectorRef,
     private reportQuery: ReportQuery,
     private uiQuery: UiQuery,

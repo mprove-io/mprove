@@ -9,13 +9,11 @@ import { IRowNode } from 'ag-grid-community';
 import { take, tap } from 'rxjs/operators';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { DataRow } from '~front/app/interfaces/data-row';
-import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DataService } from '~front/app/services/data.service';
-import { MconfigService } from '~front/app/services/mconfig.service';
 import { ReportService } from '~front/app/services/report.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -25,6 +23,7 @@ import { constants } from '~front/barrels/constants';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
+import { StructQuery } from '~front/app/queries/struct.query';
 
 export interface FilterX2 extends common.FilterX {
   listen: string;
@@ -157,7 +156,7 @@ export class RowComponent {
       ) {
         this.mconfig = this.reportSelectedNode.data.mconfig;
 
-        // let metric = this.metricsQuery
+        // let metric = this.structQuery
         //   .getValue()
         //   .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
 
@@ -246,7 +245,7 @@ export class RowComponent {
   newParameterModel: common.Model;
 
   metrics: common.ModelMetric[];
-  metrics$ = this.metricsQuery.select().pipe(
+  metrics$ = this.structQuery.select().pipe(
     tap(x => {
       this.metrics = x.metrics;
       this.cd.detectChanges();
@@ -261,14 +260,13 @@ export class RowComponent {
   constructor(
     private cd: ChangeDetectorRef,
     private uiQuery: UiQuery,
-    private metricsQuery: MetricsQuery,
+    private structQuery: StructQuery,
     private fb: FormBuilder,
     private reportService: ReportService,
     private reportQuery: ReportQuery,
     private apiService: ApiService,
     private dataService: DataService,
-    private navQuery: NavQuery,
-    private mconfigService: MconfigService
+    private navQuery: NavQuery
   ) {}
 
   formulaBlur() {
@@ -334,7 +332,7 @@ export class RowComponent {
         .map(filter => filter.fieldId)
         .indexOf(this.newParameterFieldId) > -1;
 
-    // let metric = this.metricsQuery
+    // let metric = this.structQuery
     //   .getValue()
     //   .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
 
@@ -580,7 +578,7 @@ export class RowComponent {
   openFilterMetricBy() {
     let nav = this.navQuery.getValue();
 
-    let metric = this.metricsQuery
+    let metric = this.structQuery
       .getValue()
       .metrics.find(y => y.metricId === this.reportSelectedNode.data.metricId);
 

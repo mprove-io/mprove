@@ -47,7 +47,6 @@ import { EChartsInitOpts, EChartsOption } from 'echarts';
 import { DataPoint } from '~front/app/interfaces/data-point';
 import { SeriesPart } from '~front/app/interfaces/series-part';
 import { FilteredReportsQuery } from '~front/app/queries/filtered-reports.query';
-import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { DataService } from '~front/app/services/data.service';
 
 export class TimeSpecItem {
@@ -612,7 +611,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
-    private metricsQuery: MetricsQuery,
     private reportsQuery: ReportsQuery,
     private filteredReportsQuery: FilteredReportsQuery,
     private reportQuery: ReportQuery,
@@ -1071,7 +1069,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     // console.log('reports ngOnDestroy');
     this.stopCheckRunning();
-    this.metricsQuery.reset();
     this.reportsQuery.reset();
     this.reportQuery.reset();
     this.uiQuery.updatePart({

@@ -5,8 +5,8 @@ import { tap } from 'rxjs';
 import { STORE_MODEL_PREFIX } from '~common/_index';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DataRow } from '~front/app/interfaces/data-row';
-import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { ReportQuery } from '~front/app/queries/report.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DataService } from '~front/app/services/data.service';
@@ -48,7 +48,7 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
 
   constructor(
     private cd: ChangeDetectorRef,
-    private metricsQuery: MetricsQuery,
+    private structQuery: StructQuery,
     private uiQuery: UiQuery,
     private reportQuery: ReportQuery,
     private dataService: DataService,
@@ -71,7 +71,7 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
   update(params: ICellRendererParams<DataRow>) {
     this.params = params;
     if (this.params.data.rowType === common.RowTypeEnum.Metric) {
-      this.metric = this.metricsQuery
+      this.metric = this.structQuery
         .getValue()
         .metrics.find(y => y.metricId === this.params.data.metricId);
 

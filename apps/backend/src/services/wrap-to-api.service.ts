@@ -460,6 +460,7 @@ export class WrapToApiService {
       currencySuffix: struct.currencySuffix,
       errors: struct.errors,
       views: struct.views,
+      metrics: struct.metrics,
       udfsDict: struct.udfsDict,
       serverTs: Number(struct.serverTs)
     };

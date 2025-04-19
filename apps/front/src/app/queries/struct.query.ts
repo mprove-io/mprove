@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { createStore, withProps } from '@ngneat/elf';
+import { createStore, select, withProps } from '@ngneat/elf';
 import { common } from '~front/barrels/common';
 import { BaseQuery } from './base.query';
 
@@ -16,6 +16,7 @@ let structState: StructState = {
   defaultTimezone: undefined,
   errors: [],
   views: [],
+  metrics: [],
   udfsDict: undefined,
   serverTs: undefined,
   formatNumber: undefined,
@@ -25,6 +26,8 @@ let structState: StructState = {
 
 @Injectable({ providedIn: 'root' })
 export class StructQuery extends BaseQuery<StructState> {
+  metrics$ = this.store.pipe(select(state => state.metrics));
+
   constructor() {
     super(createStore({ name: 'struct' }, withProps<StructState>(structState)));
   }

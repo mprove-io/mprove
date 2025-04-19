@@ -16,7 +16,6 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import { from, interval, of, Subscription } from 'rxjs';
 import { concatMap, delay, startWith, take, tap } from 'rxjs/operators';
 import { MemberQuery } from '~front/app/queries/member.query';
-import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DataService, QDataRow } from '~front/app/services/data.service';
@@ -26,6 +25,7 @@ import { common } from '~front/barrels/common';
 import { SharedModule } from '../shared.module';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { ChartService } from '~front/app/services/chart.service';
 import { constants } from '~front/barrels/constants';
 
@@ -120,7 +120,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private navigateService: NavigateService,
-    private metricsQuery: MetricsQuery
+    private structQuery: StructQuery
   ) {}
 
   ngOnDestroy() {
@@ -398,7 +398,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   openGroupMetricBy() {
     let nav = this.navQuery.getValue();
 
-    let metric = this.metricsQuery
+    let metric = this.structQuery
       .getValue()
       .metrics.find(y => y.metricId === this.ref.data.metricId);
 

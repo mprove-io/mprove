@@ -3,9 +3,9 @@ import { FormBuilder } from '@angular/forms';
 import { IRowNode } from 'ag-grid-community';
 import { STORE_MODEL_PREFIX } from '~common/_index';
 import { DataRow } from '~front/app/interfaces/data-row';
-import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { ReportQuery } from '~front/app/queries/report.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { ReportService } from '~front/app/services/report.service';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
@@ -32,7 +32,7 @@ export class RowFiltersComponent {
     private fb: FormBuilder,
     private reportQuery: ReportQuery,
     private reportService: ReportService,
-    private metricsQuery: MetricsQuery,
+    private structQuery: StructQuery,
     private modelsQuery: ModelsQuery,
     private cd: ChangeDetectorRef
   ) {}
@@ -58,7 +58,7 @@ export class RowFiltersComponent {
       ...fractions.slice(eventFractionUpdate.fractionIndex + 1)
     ];
 
-    // let metric = this.metricsQuery
+    // let metric = this.structQuery
     //   .getValue()
     //   .metrics.find(y => y.metricId === this.reportSelectedNode.data.metricId);
 
@@ -110,7 +110,7 @@ export class RowFiltersComponent {
 
     let newFraction: common.Fraction;
 
-    let metric = this.metricsQuery
+    let metric = this.structQuery
       .getValue()
       .metrics.find(y => y.metricId === this.reportSelectedNode.data.metricId);
 
@@ -284,7 +284,7 @@ export class RowFiltersComponent {
         ...fractions.slice(fractionIndex + 1)
       ];
 
-      // let metric = this.metricsQuery
+      // let metric = this.structQuery
       //   .getValue()
       //   .metrics.find(
       //     y => y.metricId === this.reportSelectedNode.data.metricId
@@ -354,7 +354,7 @@ export class RowFiltersComponent {
   }
 
   getModelContent() {
-    let metric = this.metricsQuery
+    let metric = this.structQuery
       .getValue()
       .metrics.find(y => y.metricId === this.reportSelectedNode.data.metricId);
 

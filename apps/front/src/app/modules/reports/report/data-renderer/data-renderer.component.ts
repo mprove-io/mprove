@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { DataRow } from '~front/app/interfaces/data-row';
-import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { ReportQuery } from '~front/app/queries/report.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { ChartService } from '~front/app/services/chart.service';
 import { DataService } from '~front/app/services/data.service';
 import { TimeService } from '~front/app/services/time.service';
@@ -72,7 +72,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
       let tsMs = rowDataRecord.key * 1000;
 
-      let metric = this.metricsQuery
+      let metric = this.structQuery
         .getValue()
         .metrics.find(y => y.metricId === this.params.data.metricId);
 
@@ -299,7 +299,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
   constructor(
     private dataService: DataService,
     private chartService: ChartService,
-    private metricsQuery: MetricsQuery,
+    private structQuery: StructQuery,
     private reportQuery: ReportQuery,
     private timeService: TimeService
   ) {}

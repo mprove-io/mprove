@@ -16,8 +16,8 @@ import { combineLatest, tap } from 'rxjs';
 import { debounce } from 'throttle-debounce';
 import { STORE_MODEL_PREFIX } from '~common/constants/top';
 import { DataRow } from '~front/app/interfaces/data-row';
-import { MetricsQuery } from '~front/app/queries/metrics.query';
 import { ReportQuery } from '~front/app/queries/report.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ReportService } from '~front/app/services/report.service';
 import { UiService } from '~front/app/services/ui.service';
@@ -245,8 +245,6 @@ export class ReportComponent {
 
         this.columnDefs = [...this.columns, ...this.timeColumns];
 
-        // let metrics = this.metricsQuery.getValue();
-
         this.data = this.report.rows.map((row: common.Row) => {
           let dataRow: DataRow = Object.assign({}, row, <DataRow>{
             showMetricsParameters: showMetricsParameters,
@@ -342,7 +340,7 @@ export class ReportComponent {
     private cd: ChangeDetectorRef,
     private reportQuery: ReportQuery,
     private reportService: ReportService,
-    private metricsQuery: MetricsQuery,
+    private structQuery: StructQuery,
     private uiQuery: UiQuery,
     private uiService: UiService
   ) {}
@@ -450,7 +448,7 @@ export class ReportComponent {
 
       let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
 
-      let metric = this.metricsQuery
+      let metric = this.structQuery
         .getValue()
         .metrics.find(y => y.metricId === params.data.metricId);
 

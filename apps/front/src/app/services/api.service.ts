@@ -15,7 +15,6 @@ import { enums } from '~front/barrels/enums';
 import { interfaces } from '~front/barrels/interfaces';
 import { environment } from '~front/environments/environment';
 import { MemberQuery } from '../queries/member.query';
-import { MetricsQuery } from '../queries/metrics.query';
 import { ModelQuery } from '../queries/model.query';
 import { ModelsQuery } from '../queries/models.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -38,7 +37,6 @@ export class ApiService {
     private modelQuery: ModelQuery,
     private myDialogService: MyDialogService,
     private navigateService: NavigateService,
-    private metricsQuery: MetricsQuery,
     private reportsQuery: ReportsQuery,
     private modelsQuery: ModelsQuery,
     private structQuery: StructQuery,
@@ -388,10 +386,6 @@ export class ApiService {
 
           this.navQuery.updatePart({
             needValidate: resp.payload.needValidate
-          });
-
-          this.metricsQuery.update({
-            metrics: resp.payload.metrics
           });
 
           this.reportsQuery.update({
