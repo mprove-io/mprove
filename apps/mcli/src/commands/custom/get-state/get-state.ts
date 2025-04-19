@@ -229,7 +229,7 @@ export class GetStateCommand extends CustomCommand {
     }
 
     if (this.getMetrics === true) {
-      log.metrics = getReportsResp.payload.metrics.map(x => {
+      log.metrics = getReportsResp.payload.struct.metrics.map(x => {
         let metric: any = {
           metricId: x.metricId,
           name: `${x.partNodeLabel} ${x.partFieldLabel} by ${x.timeNodeLabel} ${x.timeFieldLabel} - ${x.topLabel}`

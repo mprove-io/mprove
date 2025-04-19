@@ -36,9 +36,6 @@ export class ToBackendGetReportsResponsePayload {
   userMember: common.Member;
 
   @ValidateNested()
-  metrics: common.ModelMetric[];
-
-  @ValidateNested()
   reports: common.ReportX[];
 
   @ValidateNested()

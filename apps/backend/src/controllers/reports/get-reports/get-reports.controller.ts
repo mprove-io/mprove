@@ -132,7 +132,6 @@ export class GetReportsController {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: apiMember,
-      metrics: struct.metrics,
       reports: reports.map(x =>
         this.wrapToApiService.wrapToApiReport({
           report: x,
