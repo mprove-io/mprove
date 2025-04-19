@@ -21,6 +21,16 @@
                     'text-s400': lastUrl !== pathDashboardsList
                   }"
                 ></m-view-list-icon>
+
+                <div
+                  class="ml-3 w-[34px] select-none items-center text-lg"
+                  [ngClass]="{
+                    'text-m500 font-semibold': lastUrl === pathDashboardsList,
+                    'text-s500': lastUrl !== pathDashboardsList
+                  }"
+                >
+                  List
+                </div>
               </div>
 
               <div class="flex flex-grow"></div>
