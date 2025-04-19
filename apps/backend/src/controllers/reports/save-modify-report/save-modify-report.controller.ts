@@ -326,11 +326,12 @@ export class SaveModifyReportController {
       timezone: timezone
     });
 
-    let payload: apiToBackend.ToBackendGetReportResponsePayload = {
+    let payload: apiToBackend.ToBackendSaveModifyReportResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: userMemberApi,
-      report: repApi
+      report: repApi,
+      reportPart: repApi
     };
 
     return payload;

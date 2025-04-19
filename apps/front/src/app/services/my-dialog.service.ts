@@ -165,14 +165,6 @@ import {
   ChartSaveAsDialogData
 } from '../modules/shared/chart-save-as-dialog/chart-save-as-dialog.component';
 import {
-  DeleteChartDialogComponent,
-  DeleteChartDialogData
-} from '../modules/shared/chart/delete-chart-dialog/delete-chart-dialog.component';
-import {
-  EditChartInfoDialogComponent,
-  EditChartInfoDialogData
-} from '../modules/shared/chart/edit-chart-info-dialog/edit-chart-info-dialog.component';
-import {
   DashboardEditListenersDialogComponent,
   DashboardEditListenersDialogData
 } from '../modules/shared/dashboard-edit-listeners-dialog/dashboard-edit-listeners-dialog.component';
@@ -181,9 +173,21 @@ import {
   DashboardSaveAsDialogData
 } from '../modules/shared/dashboard-save-as-dialog/dashboard-save-as-dialog.component';
 import {
+  DeleteChartDialogComponent,
+  DeleteChartDialogData
+} from '../modules/shared/delete-chart-dialog/delete-chart-dialog.component';
+import {
   DeleteDashboardDialogComponent,
   DeleteDashboardDialogData
 } from '../modules/shared/delete-dashboard-dialog/delete-dashboard-dialog.component';
+import {
+  EditChartInfoDialogComponent,
+  EditChartInfoDialogData
+} from '../modules/shared/edit-chart-info-dialog/edit-chart-info-dialog.component';
+import {
+  EditReportInfoDialogComponent,
+  EditReportInfoDialogData
+} from '../modules/shared/edit-report-info-dialog/edit-report-info-dialog.component';
 import {
   PhotoDialogComponent,
   PhotoDialogData
@@ -413,6 +417,15 @@ export class MyDialogService {
 
   showEditChartInfo(item: EditChartInfoDialogData): void {
     this.dialogService.open(EditChartInfoDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 640
+    });
+  }
+
+  showEditReportInfo(item: EditReportInfoDialogData): void {
+    this.dialogService.open(EditReportInfoDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,

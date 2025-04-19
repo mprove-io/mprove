@@ -1,0 +1,81 @@
+<div class="bg-m0 flex flex-col p-9">
+  <div
+    data-cy="editReportInfoDialogTitle"
+    class="text-s2 mb-9 mt-5 flex-grow text-left text-2xl font-semibold"
+    >Edit Report</div
+  >
+
+  <div class="text-s400 text-base"
+    >{{ struct?.mproveDirValue | mproveDir | capitalize }} / {{ usersFolder }} /
+    {{ alias }} / {{ ref.data.report.reportId }}.report</div
+  >
+
+  <div class="mt-9 flex flex-row items-start">
+    <div class="flex flex-col">
+      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
+        >Title</div
+      >
+    </div>
+
+    <div [formGroup]="titleForm" class="ml-5 flex flex-col items-start">
+      <input
+        autocomplete="off"
+        spellcheck="false"
+        data-cy="editReportInfoDialogTitleInput"
+        class="form-input border-s3 focus:border-m600 h-9 w-96 rounded"
+        [ngClass]="{
+          'border-r600':
+            titleForm.controls['title'].invalid &&
+            titleForm.controls['title'].touched
+        }"
+        formControlName="title"
+      />
+      <m-validation [control]="titleForm.controls['title']"></m-validation>
+    </div>
+  </div>
+
+  <div class="flex flex-row items-start">
+    <div class="flex flex-col">
+      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
+        >Access Roles</div
+      >
+    </div>
+
+    <div [formGroup]="rolesForm" class="ml-5 flex flex-col items-start">
+      <input
+        autocomplete="off"
+        spellcheck="false"
+        data-cy="editReportInfoDialogRolesInput"
+        class="form-input border-s3 focus:border-m600 h-9 w-96 rounded"
+        [ngClass]="{
+          'border-r600':
+            rolesForm.controls['roles'].invalid &&
+            rolesForm.controls['roles'].touched
+        }"
+        formControlName="roles"
+      />
+      <m-validation [control]="rolesForm.controls['roles']"></m-validation>
+    </div>
+  </div>
+
+  <div class="mt-9">
+    <button
+      data-cy="editReportInfoDialogCreateButton"
+      class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
+      type="button"
+      (click)="save()"
+      >Save</button
+    >
+
+    <button
+      data-cy="editReportInfoDialogCancelButton"
+      class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+      type="button"
+      (click)="cancel()"
+      >Cancel</button
+    >
+  </div>
+</div>
+
+<div *ngIf="alias$ | async"></div>
+<div *ngIf="struct$ | async"></div>

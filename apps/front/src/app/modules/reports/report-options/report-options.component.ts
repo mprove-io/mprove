@@ -42,6 +42,21 @@ export class ReportOptionsComponent {
     });
   }
 
+  async editReportInfo(event: MouseEvent, item: common.ReportX) {
+    event.stopPropagation();
+
+    let nav = this.navQuery.getValue();
+
+    this.myDialogService.showEditReportInfo({
+      apiService: this.apiService,
+      projectId: nav.projectId,
+      branchId: nav.branchId,
+      envId: nav.envId,
+      isRepoProd: nav.isRepoProd,
+      report: item
+    });
+  }
+
   deleteReport(event: MouseEvent) {
     event.stopPropagation();
 

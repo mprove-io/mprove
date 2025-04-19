@@ -25,6 +25,23 @@
       >Go to File</button
     >
 
+    <div
+      tp="Report can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save report as new to become an author."
+      placement="left"
+      [tpIsEnabled]="report.canEditOrDeleteReport === false"
+    >
+      <button
+        data-cy="reportOptionsEditInfo"
+        class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+        [ngClass]="{
+          'text-s400 cursor-default': report.canEditOrDeleteReport === false
+        }"
+        (click)="t1.hide(); editReportInfo($event, report)"
+        [disabled]="report.canEditOrDeleteReport === false"
+        >Edit Info</button
+      >
+    </div>
+
     <button
       data-cy="reportOptionsDelete"
       class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
