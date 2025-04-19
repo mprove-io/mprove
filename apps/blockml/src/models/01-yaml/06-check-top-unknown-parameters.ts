@@ -72,7 +72,6 @@ export function checkTopUnknownParameters(
                 common.ParameterEnum.Connection.toString(),
                 common.ParameterEnum.Label.toString(),
                 common.ParameterEnum.Description.toString(),
-                common.ParameterEnum.AccessUsers.toString(),
                 common.ParameterEnum.AccessRoles.toString(),
                 common.ParameterEnum.Udfs.toString(),
                 common.ParameterEnum.Table.toString(),
@@ -111,7 +110,6 @@ export function checkTopUnknownParameters(
                 // common.ParameterEnum.Group.toString(),
                 // common.ParameterEnum.Hidden.toString(),
                 common.ParameterEnum.Description.toString(),
-                common.ParameterEnum.AccessUsers.toString(),
                 common.ParameterEnum.AccessRoles.toString(),
                 common.ParameterEnum.AlwaysJoin.toString(),
                 common.ParameterEnum.SqlAlwaysWhere.toString(),
@@ -150,7 +148,6 @@ export function checkTopUnknownParameters(
                 common.ParameterEnum.Connection.toString(),
                 common.ParameterEnum.Label.toString(),
                 common.ParameterEnum.Description.toString(),
-                common.ParameterEnum.AccessUsers.toString(),
                 common.ParameterEnum.AccessRoles.toString(),
                 common.ParameterEnum.Method.toString(),
                 common.ParameterEnum.Request.toString(),
@@ -192,7 +189,6 @@ export function checkTopUnknownParameters(
                 // common.ParameterEnum.Group.toString(),
                 // common.ParameterEnum.Hidden.toString(),
                 common.ParameterEnum.Description.toString(),
-                common.ParameterEnum.AccessUsers.toString(),
                 common.ParameterEnum.AccessRoles.toString(),
                 common.ParameterEnum.Parameters.toString(),
                 common.ParameterEnum.Tiles.toString()
@@ -224,7 +220,6 @@ export function checkTopUnknownParameters(
                 common.ParameterEnum.Chart.toString(),
                 // common.ParameterEnum.Group.toString(),
                 // common.ParameterEnum.Hidden.toString(),
-                common.ParameterEnum.AccessUsers.toString(),
                 common.ParameterEnum.AccessRoles.toString(),
                 common.ParameterEnum.Tiles.toString()
               ].indexOf(parameter) < 0
@@ -255,7 +250,6 @@ export function checkTopUnknownParameters(
                 common.ParameterEnum.Report.toString(),
                 common.ParameterEnum.Title.toString(),
                 common.ParameterEnum.Parameters.toString(),
-                common.ParameterEnum.AccessUsers.toString(),
                 common.ParameterEnum.AccessRoles.toString(),
                 common.ParameterEnum.Options.toString(),
                 common.ParameterEnum.Rows.toString()
@@ -329,7 +323,6 @@ export function checkTopUnknownParameters(
             common.ParameterEnum.Results.toString(),
             common.ParameterEnum.Rows.toString(),
             common.ParameterEnum.Joins.toString(),
-            common.ParameterEnum.AccessUsers.toString(),
             common.ParameterEnum.AccessRoles.toString()
           ].indexOf(parameter) < 0
         ) {
@@ -402,7 +395,6 @@ export function checkTopUnknownParameters(
             common.ParameterEnum.Results.toString(),
             common.ParameterEnum.Rows.toString(),
             common.ParameterEnum.Joins.toString(),
-            common.ParameterEnum.AccessUsers.toString(),
             common.ParameterEnum.AccessRoles.toString()
           ].indexOf(parameter) > -1
         ) {

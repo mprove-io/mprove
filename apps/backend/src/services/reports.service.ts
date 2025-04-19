@@ -88,7 +88,6 @@ export class ReportsService {
       creatorId: undefined,
       filePath: undefined,
       accessRoles: [],
-      accessUsers: [],
       title: reportId,
       fields: [],
       rows: [],

@@ -99,12 +99,6 @@ export const MODEL_SCHEMA: JSONSchema7 = {
         type: 'string'
       }
     },
-    access_users: {
-      type: 'array',
-      items: {
-        type: 'string'
-      }
-    },
     always_join: {
       type: 'string'
     },

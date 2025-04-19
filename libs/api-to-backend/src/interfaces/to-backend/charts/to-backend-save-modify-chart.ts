@@ -35,10 +35,6 @@ export class ToBackendSaveModifyChartRequestPayload {
   accessRoles?: string;
 
   @IsOptional()
-  @IsString()
-  accessUsers?: string;
-
-  @IsOptional()
   @ValidateNested()
   @Type(() => common.MconfigX)
   mconfig: common.MconfigX;

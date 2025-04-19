@@ -14,7 +14,6 @@ let modelState: ModelState = {
   isViewModel: undefined,
   isStoreModel: undefined,
   dateRangeIncludesRightSide: undefined,
-  accessUsers: [],
   accessRoles: [],
   label: undefined,
   gr: undefined,

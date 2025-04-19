@@ -149,7 +149,6 @@ export class EditDraftDashboardController {
       newDashboardId: newDashboardId,
       newTitle: newDashboardId,
       roles: fromDashboard.accessRoles.join(', '),
-      users: fromDashboard.accessUsers.join(', '),
       deleteFilterFieldId: deleteFilterFieldId,
       deleteFilterTileTitle: deleteFilterTileTitle,
       caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,

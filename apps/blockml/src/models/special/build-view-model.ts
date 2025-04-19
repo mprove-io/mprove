@@ -61,9 +61,6 @@ export function buildViewModel(
       description: view.description,
       description_line_num: 1,
 
-      access_users: view.access_users,
-      access_users_line_num: 1,
-
       access_roles: view.access_roles,
       access_roles_line_num: 1,
 

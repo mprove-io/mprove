@@ -210,7 +210,6 @@ export function wrapReports(item: {
       creatorId: undefined,
       filePath: x.filePath,
       fields: reportFields,
-      accessUsers: x.access_users || [],
       accessRoles: x.access_roles || [],
       title: x.title,
       timezone: undefined,

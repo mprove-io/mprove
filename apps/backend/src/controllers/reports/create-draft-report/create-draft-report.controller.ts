@@ -311,7 +311,6 @@ export class CreateDraftReportController {
       reportId: reportId,
       draft: true,
       accessRoles: [],
-      accessUsers: [],
       creatorId: user.userId,
       filePath: undefined,
       title: reportId,

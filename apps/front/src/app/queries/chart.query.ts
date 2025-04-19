@@ -85,7 +85,6 @@ export const emptyChart: ChartState = {
   modelId: undefined,
   modelLabel: undefined,
   filePath: undefined,
-  accessUsers: [],
   accessRoles: [],
   hidden: undefined,
   serverTs: undefined,

@@ -81,7 +81,6 @@ export class SaveCreateReportController {
       newReportId,
       fromReportId,
       accessRoles,
-      accessUsers,
       title,
       timeSpec,
       timeRangeFractionBrick,
@@ -170,7 +169,6 @@ export class SaveCreateReportController {
     let repFileText = makeReportFileText({
       reportId: newReportId,
       accessRoles: accessRoles,
-      accessUsers: accessUsers,
       title: title,
       rows: fromReport.rows,
       metrics: currentStruct.metrics,

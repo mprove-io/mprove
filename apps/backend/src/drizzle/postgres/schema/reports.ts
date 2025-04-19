@@ -21,7 +21,6 @@ export const reportsTable = pgTable(
     reportId: varchar('report_id', { length: 32 }).notNull(), // name
     projectId: varchar('project_id', { length: 32 }).notNull(),
     filePath: varchar('file_path'),
-    accessUsers: json('access_users').$type<string[]>().notNull(),
     accessRoles: json('access_roles').$type<string[]>().notNull(),
     title: varchar('title').notNull(),
     fields: json('fields').$type<common.ReportField[]>(),

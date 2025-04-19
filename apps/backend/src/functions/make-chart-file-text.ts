@@ -5,9 +5,8 @@ export function makeChartFileText(item: {
   chartId: string;
   tileTitle: string;
   roles: string;
-  users: string;
 }) {
-  let { mconfig, chartId, tileTitle, roles, users } = item;
+  let { mconfig, chartId, tileTitle, roles } = item;
 
   let filePartTile: common.FilePartTile = common.prepareTile({
     isForDashboard: false,
@@ -23,10 +22,6 @@ export function makeChartFileText(item: {
     access_roles:
       common.isDefined(roles) && roles.trim().length > 0
         ? roles.split(',').map(x => x.trim())
-        : undefined,
-    access_users:
-      common.isDefined(users) && users.trim().length > 0
-        ? users.split(',').map(x => x.trim())
         : undefined,
     tiles: [filePartTile]
   });

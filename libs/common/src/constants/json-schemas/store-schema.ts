@@ -28,12 +28,6 @@ export const STORE_SCHEMA: JSONSchema7 = {
     description: {
       type: 'string'
     },
-    access_users: {
-      type: 'array',
-      items: {
-        type: 'string'
-      }
-    },
     access_roles: {
       type: 'array',
       items: {

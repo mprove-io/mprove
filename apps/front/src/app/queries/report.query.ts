@@ -14,7 +14,6 @@ export const emptyReport: ReportState = {
   filePath: undefined,
   title: 'New Report',
   accessRoles: [],
-  accessUsers: [],
   fields: [],
   extendedFilters: [],
   timezone: undefined,

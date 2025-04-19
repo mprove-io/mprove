@@ -10,7 +10,6 @@ export function makeDashboardFileText(item: {
   newTitle: string;
   // group: string;
   roles: string;
-  users: string;
   deleteFilterFieldId: string;
   deleteFilterTileTitle: string;
   timezone: string;
@@ -21,7 +20,6 @@ export function makeDashboardFileText(item: {
     newDashboardId,
     newTitle,
     roles,
-    users,
     deleteFilterFieldId,
     deleteFilterTileTitle,
     timezone,
@@ -45,10 +43,6 @@ export function makeDashboardFileText(item: {
     access_roles:
       common.isDefined(roles) && roles.trim().length > 0
         ? roles.split(',').map(x => x.trim())
-        : undefined,
-    access_users:
-      common.isDefined(users) && users.trim().length > 0
-        ? users.split(',').map(x => x.trim())
         : undefined,
     parameters:
       common.isDefined(dashboard.fields) && dashboard.fields.length > 0

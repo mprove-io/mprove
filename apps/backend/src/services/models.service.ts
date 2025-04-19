@@ -45,7 +45,6 @@ export class ModelsService {
       // 'content'
       isViewModel: modelsTable.isViewModel,
       isStoreModel: modelsTable.isStoreModel,
-      accessUsers: modelsTable.accessUsers,
       accessRoles: modelsTable.accessRoles,
       label: modelsTable.label,
       gr: modelsTable.gr,

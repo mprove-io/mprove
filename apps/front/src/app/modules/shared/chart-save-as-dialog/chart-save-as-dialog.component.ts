@@ -85,10 +85,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
     roles: [undefined, [Validators.maxLength(255)]]
   });
 
-  usersForm: FormGroup = this.fb.group({
-    users: [undefined, [Validators.maxLength(255)]]
-  });
-
   chartSaveAs: ChartSaveAsEnum = ChartSaveAsEnum.NEW_CHART;
   tileSaveAs: TileSaveAsEnum = TileSaveAsEnum.NEW_TILE;
 
@@ -146,10 +142,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
     setValueAndMark({
       control: this.rolesForm.controls['roles'],
       value: this.ref.data.model.accessRoles?.join(', ')
-    });
-    setValueAndMark({
-      control: this.usersForm.controls['users'],
-      value: this.ref.data.model.accessUsers?.join(', ')
     });
 
     let nav: NavState;
@@ -241,17 +233,14 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
       if (
         this.chartSaveAs === ChartSaveAsEnum.NEW_CHART &&
-        this.rolesForm.controls['roles'].valid &&
-        this.usersForm.controls['users'].valid
+        this.rolesForm.controls['roles'].valid
       ) {
         this.ref.close();
         let roles = this.rolesForm.controls['roles'].value;
-        let users = this.usersForm.controls['users'].value;
 
         this.saveAsNewChart({
           newTitle: newTitle,
-          roles: roles,
-          users: users
+          roles: roles
         });
       } else if (this.chartSaveAs === ChartSaveAsEnum.TILE_OF_DASHBOARD) {
         this.ref.close();
@@ -325,10 +314,10 @@ export class ChartSaveAsDialogComponent implements OnInit {
     }
   }
 
-  saveAsNewChart(item: { newTitle: string; roles: string; users: string }) {
+  saveAsNewChart(item: { newTitle: string; roles: string }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { newTitle, roles, users } = item;
+    let { newTitle, roles } = item;
 
     let payload: apiToBackend.ToBackendSaveCreateChartRequestPayload = {
       projectId: this.nav.projectId,
@@ -339,7 +328,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
       newChartId: this.newChartId,
       tileTitle: newTitle.trim(),
       accessRoles: roles,
-      accessUsers: users,
       mconfig: this.chart.tiles[0].mconfig
     };
 

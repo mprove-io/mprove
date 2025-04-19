@@ -85,7 +85,6 @@ export class SaveModifyChartController {
       chartId,
       tileTitle,
       accessRoles,
-      accessUsers,
       mconfig
     } = reqValid.payload;
 
@@ -193,7 +192,6 @@ export class SaveModifyChartController {
       mconfig: mconfig,
       tileTitle: tileTitle,
       roles: accessRoles,
-      users: accessUsers,
       chartId: chartId
     });
 

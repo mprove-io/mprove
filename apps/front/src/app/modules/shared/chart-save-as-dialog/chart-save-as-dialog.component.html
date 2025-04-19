@@ -271,37 +271,6 @@
     </div>
   </div>
 
-  <div class="mt-5 flex h-9 flex-row items-start">
-    <div
-      class="flex flex-col"
-      *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
-    >
-      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
-        >Access Users</div
-      >
-    </div>
-
-    <div
-      [formGroup]="usersForm"
-      class="ml-5 flex flex-col items-start"
-      *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
-    >
-      <input
-        autocomplete="off"
-        spellcheck="false"
-        data-cy="chartSaveAsDialogUsersInput"
-        class="form-input border-s3 focus:border-m600 h-9 w-96 rounded"
-        [ngClass]="{
-          'border-r600':
-            usersForm.controls['users'].invalid &&
-            usersForm.controls['users'].touched
-        }"
-        formControlName="users"
-      />
-      <m-validation [control]="usersForm.controls['users']"></m-validation>
-    </div>
-  </div>
-
   <div class="mt-9">
     <button
       data-cy="chartSaveAsDialogSaveButton"

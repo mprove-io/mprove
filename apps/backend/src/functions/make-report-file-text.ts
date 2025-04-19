@@ -11,7 +11,6 @@ export function makeReportFileText(item: {
   reportId: string;
   title: string;
   accessRoles: string[];
-  accessUsers: string[];
   rows: common.Row[];
   metrics: common.ModelMetric[];
   models: schemaPostgres.ModelEnt[];
@@ -26,7 +25,6 @@ export function makeReportFileText(item: {
     title,
     rows,
     accessRoles,
-    accessUsers,
     metrics,
     models,
     struct,
@@ -190,8 +188,6 @@ export function makeReportFileText(item: {
         : undefined,
     access_roles:
       accessRoles.length > 0 ? accessRoles.map(x => x.trim()) : undefined,
-    access_users:
-      accessUsers.length > 0 ? accessUsers.map(x => x.trim()) : undefined,
     rows: rows.map(x => {
       // console.log('x');
       // console.log(x);

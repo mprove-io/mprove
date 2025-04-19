@@ -23,12 +23,6 @@ export const DASHBOARD_SCHEMA: JSONSchema7 = {
         type: 'string'
       }
     },
-    access_users: {
-      type: 'array',
-      items: {
-        type: 'string'
-      }
-    },
     parameters: {
       type: 'array',
       items: FILTER_SCHEMA

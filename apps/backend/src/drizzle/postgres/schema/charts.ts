@@ -24,7 +24,6 @@ export const chartsTable = pgTable(
     modelId: varchar('model_id', { length: 64 }).notNull(),
     modelLabel: varchar('model_label').notNull(),
     filePath: varchar('file_path'),
-    accessUsers: json('access_users').$type<string[]>().notNull(),
     accessRoles: json('access_roles').$type<string[]>().notNull(),
     gr: varchar('gr'),
     hidden: boolean('hidden').notNull(),

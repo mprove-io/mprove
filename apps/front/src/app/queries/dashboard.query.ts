@@ -12,7 +12,6 @@ let dashboardState: DashboardState = {
   creatorId: undefined,
   filePath: undefined,
   content: undefined,
-  accessUsers: [],
   accessRoles: [],
   title: undefined,
   gr: undefined,

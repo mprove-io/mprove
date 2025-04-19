@@ -81,7 +81,6 @@ export class SaveModifyDashboardController {
       selectedTileTitle,
       newTile,
       isReplaceTile,
-      accessUsers,
       accessRoles,
       dashboardTitle,
       tilesGrid
@@ -220,7 +219,6 @@ export class SaveModifyDashboardController {
         newDashboardId: fromDashboard.dashboardId,
         newTitle: fromDashboard.title,
         roles: fromDashboard.accessRoles.join(', '),
-        users: fromDashboard.accessUsers.join(', '),
         deleteFilterFieldId: undefined,
         deleteFilterTileTitle: undefined,
         caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
@@ -248,7 +246,6 @@ export class SaveModifyDashboardController {
         newDashboardId: toDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
-        users: accessUsers,
         deleteFilterFieldId: undefined,
         deleteFilterTileTitle: undefined,
         caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,

@@ -245,7 +245,6 @@ export class CreateDraftChartController {
       modelId: tile.modelId,
       modelLabel: tile.modelLabel,
       filePath: undefined,
-      accessUsers: [],
       accessRoles: [],
       hidden: false,
       tiles: [tile],

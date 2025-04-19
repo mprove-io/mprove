@@ -2,7 +2,6 @@ store: google_analytics
 connection: c7_google
 label: Google Analytics
 description: '...'
-access_users: []
 access_roles: []
 method: POST
 request: |

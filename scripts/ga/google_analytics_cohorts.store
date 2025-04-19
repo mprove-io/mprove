@@ -2,7 +2,6 @@ store: google_analytics_cohorts
 connection: c7_google
 label: Google Analytics Cohorts
 description: '...'
-access_users: []
 access_roles: []
 method: POST
 request: |

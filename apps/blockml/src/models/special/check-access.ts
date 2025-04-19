@@ -24,27 +24,6 @@ export function checkAccess<T extends types.accessType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    if (common.isDefined(x.access_users)) {
-      x.access_users.forEach(u => {
-        if (typeof u !== 'string' && !(<any>u instanceof String)) {
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.WRONG_ACCESS_USERS_ELEMENT,
-              message: 'found array element that is not a single value',
-              lines: [
-                {
-                  line: x.access_users_line_num,
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
-      });
-    }
-
     if (common.isDefined(x.access_roles)) {
       x.access_roles.forEach(u => {
         if (typeof u !== 'string' && !(<any>u instanceof String)) {

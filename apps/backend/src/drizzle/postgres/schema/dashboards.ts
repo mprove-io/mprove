@@ -21,7 +21,6 @@ export const dashboardsTable = pgTable(
     dashboardId: varchar('dashboard_id', { length: 32 }).notNull(), // name
     filePath: varchar('file_path'),
     content: json('content').notNull(),
-    accessUsers: json('access_users').$type<string[]>().notNull(),
     accessRoles: json('access_roles').$type<string[]>().notNull(),
     title: varchar('title'),
     gr: varchar('gr'),

@@ -132,7 +132,6 @@ test('1', async t => {
         fromReportId: resp1.payload.report.reportId,
         title: 'new title',
         accessRoles: [],
-        accessUsers: [],
         timezone: 'UTC',
         timeSpec: common.TimeSpecEnum.Months,
         timeRangeFractionBrick: 'last 5 months',

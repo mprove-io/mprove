@@ -338,7 +338,6 @@ export function wrapModels(item: {
           x.fileExt === common.FileExtensionEnum.Model
             ? (x as common.FileModel).isViewModel
             : false,
-        accessUsers: x.access_users || [],
         accessRoles: x.access_roles || [],
         label:
           x.fileExt === common.FileExtensionEnum.Store

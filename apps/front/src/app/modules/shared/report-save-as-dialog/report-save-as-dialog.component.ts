@@ -64,10 +64,6 @@ export class ReportSaveAsDialogComponent implements OnInit {
     roles: [undefined, [Validators.maxLength(255)]]
   });
 
-  usersForm: FormGroup = this.fb.group({
-    users: [undefined, [Validators.maxLength(255)]]
-  });
-
   saveAs: ReportSaveAsEnum = ReportSaveAsEnum.NEW_REPORT;
 
   newReportId: string;
@@ -133,11 +129,6 @@ export class ReportSaveAsDialogComponent implements OnInit {
       value: this.report.accessRoles?.join(', ')
     });
 
-    setValueAndMark({
-      control: this.usersForm.controls['users'],
-      value: this.report.accessUsers?.join(', ')
-    });
-
     this.reports = this.ref.data.reports.map(x => {
       (x as any).disabled = !x.canEditOrDeleteReport;
       return x;
@@ -153,26 +144,22 @@ export class ReportSaveAsDialogComponent implements OnInit {
   save() {
     if (
       this.titleForm.controls['title'].valid &&
-      this.rolesForm.controls['roles'].valid &&
-      this.usersForm.controls['users'].valid
+      this.rolesForm.controls['roles'].valid
     ) {
       this.ref.close();
 
       let newTitle = this.titleForm.controls['title'].value;
       let roles = this.rolesForm.controls['roles'].value;
-      let users = this.usersForm.controls['users'].value;
 
       if (this.saveAs === ReportSaveAsEnum.NEW_REPORT) {
         this.saveAsNewRep({
           newTitle: newTitle,
-          roles: roles,
-          users: users
+          roles: roles
         });
       } else if (this.saveAs === ReportSaveAsEnum.REPLACE_EXISTING_REPORT) {
         this.saveAsExistingRep({
           newTitle: newTitle,
-          roles: roles,
-          users: users
+          roles: roles
         });
       }
     }
@@ -186,8 +173,8 @@ export class ReportSaveAsDialogComponent implements OnInit {
     this.saveAs = ReportSaveAsEnum.REPLACE_EXISTING_REPORT;
   }
 
-  saveAsNewRep(item: { newTitle: string; roles: string; users: string }) {
-    let { newTitle, roles, users } = item;
+  saveAsNewRep(item: { newTitle: string; roles: string }) {
+    let { newTitle, roles } = item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -201,9 +188,6 @@ export class ReportSaveAsDialogComponent implements OnInit {
       title: newTitle,
       accessRoles: common.isDefinedAndNotEmpty(roles?.trim())
         ? roles.split(',')
-        : [],
-      accessUsers: common.isDefinedAndNotEmpty(users?.trim())
-        ? users.split(',')
         : [],
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
@@ -266,8 +250,8 @@ export class ReportSaveAsDialogComponent implements OnInit {
       .subscribe();
   }
 
-  saveAsExistingRep(item: { newTitle: string; roles: string; users: string }) {
-    let { newTitle, roles, users } = item;
+  saveAsExistingRep(item: { newTitle: string; roles: string }) {
+    let { newTitle, roles } = item;
 
     let uiState = this.uiQuery.getValue();
 
@@ -283,9 +267,6 @@ export class ReportSaveAsDialogComponent implements OnInit {
       title: newTitle,
       accessRoles: common.isDefinedAndNotEmpty(roles?.trim())
         ? roles.split(',').map(x => x.trim())
-        : [],
-      accessUsers: common.isDefinedAndNotEmpty(users?.trim())
-        ? users.split(',').map(x => x.trim())
         : [],
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,

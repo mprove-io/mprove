@@ -85,7 +85,6 @@ export class GetChartsController {
     let models = (await this.db.drizzle
       .select({
         modelId: modelsTable.modelId,
-        accessUsers: modelsTable.accessUsers,
         accessRoles: modelsTable.accessRoles,
         hidden: modelsTable.hidden,
         connectionId: modelsTable.connectionId

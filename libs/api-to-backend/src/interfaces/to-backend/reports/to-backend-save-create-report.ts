@@ -29,9 +29,6 @@ export class ToBackendSaveCreateReportRequestPayload {
   @IsString({ each: true })
   accessRoles: string[];
 
-  @IsString({ each: true })
-  accessUsers: string[];
-
   @IsTimezone()
   timezone: string;
 

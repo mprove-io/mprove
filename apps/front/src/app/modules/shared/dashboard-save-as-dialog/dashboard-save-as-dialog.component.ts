@@ -65,10 +65,6 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     roles: [undefined, [Validators.maxLength(255)]]
   });
 
-  usersForm: FormGroup = this.fb.group({
-    users: [undefined, [Validators.maxLength(255)]]
-  });
-
   alias: string;
   alias$ = this.userQuery.alias$.pipe(
     tap(x => {
@@ -122,10 +118,6 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     setValueAndMark({
       control: this.rolesForm.controls['roles'],
       value: this.dashboard.accessRoles?.join(', ')
-    });
-    setValueAndMark({
-      control: this.usersForm.controls['users'],
-      value: this.dashboard.accessUsers?.join(', ')
     });
 
     let nav: NavState;
@@ -183,32 +175,27 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   save() {
     this.titleForm.markAllAsTouched();
     this.rolesForm.markAllAsTouched();
-    this.usersForm.markAllAsTouched();
 
     if (
       this.titleForm.controls['title'].valid &&
-      this.rolesForm.controls['roles'].valid &&
-      this.usersForm.controls['users'].valid
+      this.rolesForm.controls['roles'].valid
     ) {
       this.ref.close();
 
       let newTitle = this.titleForm.controls['title'].value;
       let roles = this.rolesForm.controls['roles'].value;
-      let users = this.usersForm.controls['users'].value;
 
       if (this.saveAs === DashboardSaveAsEnum.NEW_DASHBOARD) {
         this.saveAsNewDashboard({
           newTitle: newTitle,
-          roles: roles,
-          users: users
+          roles: roles
         });
       } else if (
         this.saveAs === DashboardSaveAsEnum.REPLACE_EXISTING_DASHBOARD
       ) {
         this.saveAsExistingDashboard({
           newTitle: newTitle,
-          roles: roles,
-          users: users
+          roles: roles
         });
       }
     }
@@ -226,10 +213,10 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     this.makePathAndSetValues();
   }
 
-  saveAsNewDashboard(item: { newTitle: string; roles: string; users: string }) {
+  saveAsNewDashboard(item: { newTitle: string; roles: string }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { newTitle, roles, users } = item;
+    let { newTitle, roles } = item;
 
     let payload: apiToBackend.ToBackendSaveCreateDashboardRequestPayload = {
       projectId: this.nav.projectId,
@@ -239,7 +226,6 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       newDashboardId: this.newDashboardId,
       fromDashboardId: this.dashboard.dashboardId,
       accessRoles: roles,
-      accessUsers: users,
       dashboardTitle: newTitle,
       tilesGrid: this.dashboard.tiles.map(x => {
         let y = common.makeCopy(x);
@@ -292,14 +278,10 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       .subscribe();
   }
 
-  saveAsExistingDashboard(item: {
-    newTitle: string;
-    roles: string;
-    users: string;
-  }) {
+  saveAsExistingDashboard(item: { newTitle: string; roles: string }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { newTitle, roles, users } = item;
+    let { newTitle, roles } = item;
 
     let payload: apiToBackend.ToBackendSaveModifyDashboardRequestPayload = {
       projectId: this.nav.projectId,
@@ -309,7 +291,6 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       toDashboardId: this.selectedDashboardId,
       fromDashboardId: this.dashboard.dashboardId,
       accessRoles: roles,
-      accessUsers: users,
       dashboardTitle: newTitle,
       tilesGrid: this.dashboard.tiles.map(x => {
         let y = common.makeCopy(x);
@@ -389,9 +370,6 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       this.titleForm.controls['title'].setValue(selectedDashboard.title);
       this.rolesForm.controls['roles'].setValue(
         selectedDashboard.accessRoles.join(', ')
-      );
-      this.usersForm.controls['users'].setValue(
-        selectedDashboard.accessUsers.join(', ')
       );
     }
   }

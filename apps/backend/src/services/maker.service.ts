@@ -186,7 +186,6 @@ export class MakerService {
     projectId: string;
     creatorId: string;
     filePath: string;
-    accessUsers: string[];
     accessRoles: string[];
     title: string;
     fields: common.ReportField[];
@@ -201,7 +200,6 @@ export class MakerService {
       projectId,
       creatorId,
       filePath,
-      accessUsers,
       accessRoles,
       title,
       fields,
@@ -221,7 +219,6 @@ export class MakerService {
       projectId: projectId,
       creatorId: creatorId,
       filePath: filePath,
-      accessUsers: accessUsers,
       accessRoles: accessRoles,
       title: title,
       fields: fields,

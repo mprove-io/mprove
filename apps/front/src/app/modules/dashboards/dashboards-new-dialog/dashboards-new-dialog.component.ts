@@ -59,10 +59,6 @@ export class DashboardsNewDialogComponent implements OnInit {
     roles: [undefined, [Validators.maxLength(255)]]
   });
 
-  usersForm: FormGroup = this.fb.group({
-    users: [undefined, [Validators.maxLength(255)]]
-  });
-
   newDashboardId = common.makeId();
 
   alias: string;
@@ -116,27 +112,24 @@ export class DashboardsNewDialogComponent implements OnInit {
 
     if (
       this.titleForm.controls['title'].valid &&
-      this.rolesForm.controls['roles'].valid &&
-      this.usersForm.controls['users'].valid
+      this.rolesForm.controls['roles'].valid
     ) {
       this.ref.close();
 
       let newTitle = this.titleForm.controls['title'].value;
       let roles = this.rolesForm.controls['roles'].value;
-      let users = this.usersForm.controls['users'].value;
 
       this.createDashboard({
         newTitle: newTitle,
-        roles: roles,
-        users: users
+        roles: roles
       });
     }
   }
 
-  createDashboard(item: { newTitle: string; roles: string; users: string }) {
+  createDashboard(item: { newTitle: string; roles: string }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { newTitle, roles, users } = item;
+    let { newTitle, roles } = item;
 
     let payload: apiToBackend.ToBackendSaveCreateDashboardRequestPayload = {
       projectId: this.nav.projectId,
@@ -145,8 +138,7 @@ export class DashboardsNewDialogComponent implements OnInit {
       envId: this.nav.envId,
       newDashboardId: this.newDashboardId,
       dashboardTitle: newTitle,
-      accessRoles: roles,
-      accessUsers: users
+      accessRoles: roles
     };
 
     let apiService: ApiService = this.ref.data.apiService;

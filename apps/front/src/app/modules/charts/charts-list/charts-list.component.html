@@ -28,7 +28,6 @@
         </div>
         <div class="flex flex-1 flex-row space-x-5">
           <div class="flex flex-1">Access Roles</div>
-          <div class="flex flex-1">Access Users</div>
           <div class="flex flex-1">Author</div>
         </div>
       </div>
@@ -112,15 +111,6 @@
                     class="mr-2 truncate"
                   >
                     {{ role }}
-                  </span>
-                </div>
-
-                <div class="flex flex-1 flex-wrap truncate py-[6px] text-base">
-                  <span
-                    *ngFor="let user of item.accessUsers"
-                    class="mr-2 truncate"
-                  >
-                    {{ user }}
                   </span>
                 </div>
 

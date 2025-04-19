@@ -76,7 +76,6 @@ export class GetDashboardsController {
         draft: dashboardsTable.draft,
         creatorId: dashboardsTable.creatorId,
         filePath: dashboardsTable.filePath,
-        accessUsers: dashboardsTable.accessUsers,
         accessRoles: dashboardsTable.accessRoles,
         title: dashboardsTable.title,
         gr: dashboardsTable.gr,
@@ -107,7 +106,6 @@ export class GetDashboardsController {
     let models = (await this.db.drizzle
       .select({
         modelId: modelsTable.modelId,
-        accessUsers: modelsTable.accessUsers,
         accessRoles: modelsTable.accessRoles,
         hidden: modelsTable.hidden,
         connectionId: modelsTable.connectionId

@@ -42,14 +42,11 @@ export function checkAccess(item: {
     return true;
   }
 
-  if (entity.accessRoles.length === 0 && entity.accessUsers.length === 0) {
+  if (entity.accessRoles.length === 0) {
     return true;
   }
 
-  if (
-    entity.accessUsers.indexOf(userAlias) < 0 &&
-    !entity.accessRoles.some(x => member.roles.includes(x))
-  ) {
+  if (!entity.accessRoles.some(x => member.roles.includes(x))) {
     return false;
   }
 

@@ -60,10 +60,6 @@ export class EditChartInfoDialogComponent implements OnInit {
     roles: [undefined, [Validators.maxLength(255)]]
   });
 
-  usersForm: FormGroup = this.fb.group({
-    users: [undefined, [Validators.maxLength(255)]]
-  });
-
   alias: string;
   alias$ = this.userQuery.alias$.pipe(
     tap(x => {
@@ -102,10 +98,6 @@ export class EditChartInfoDialogComponent implements OnInit {
       control: this.rolesForm.controls['roles'],
       value: this.ref.data.chart.accessRoles?.join(', ')
     });
-    setValueAndMark({
-      control: this.usersForm.controls['users'],
-      value: this.ref.data.chart.accessUsers?.join(', ')
-    });
 
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();
@@ -115,8 +107,7 @@ export class EditChartInfoDialogComponent implements OnInit {
   save() {
     if (
       this.titleForm.controls['title'].valid &&
-      this.rolesForm.controls['roles'].valid &&
-      this.usersForm.controls['users'].valid
+      this.rolesForm.controls['roles'].valid
     ) {
       this.spinner.show(constants.APP_SPINNER_NAME);
 
@@ -124,7 +115,6 @@ export class EditChartInfoDialogComponent implements OnInit {
 
       let newTitle: string = this.titleForm.controls['title'].value;
       let roles: string = this.rolesForm.controls['roles'].value;
-      let users: string = this.usersForm.controls['users'].value;
 
       let payload: apiToBackend.ToBackendSaveModifyChartRequestPayload = {
         projectId: this.ref.data.projectId,
@@ -135,7 +125,6 @@ export class EditChartInfoDialogComponent implements OnInit {
         chartId: this.ref.data.chart.chartId,
         tileTitle: newTitle.trim(),
         accessRoles: roles,
-        accessUsers: users,
         mconfig: undefined
       };
 

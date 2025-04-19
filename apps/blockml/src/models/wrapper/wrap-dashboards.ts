@@ -209,7 +209,6 @@ export function wrapDashboards(item: {
       creatorId: undefined,
       filePath: x.filePath,
       content: x,
-      accessUsers: x.access_users || [],
       accessRoles: x.access_roles || [],
       title: x.title,
       description: x.description,

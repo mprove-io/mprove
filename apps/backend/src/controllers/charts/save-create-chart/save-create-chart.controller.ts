@@ -79,7 +79,6 @@ export class SaveCreateChartController {
       newChartId,
       tileTitle,
       accessRoles,
-      accessUsers,
       mconfig,
       envId
     } = reqValid.payload;
@@ -159,7 +158,6 @@ export class SaveCreateChartController {
       mconfig: mconfig,
       tileTitle: tileTitle,
       roles: accessRoles,
-      users: accessUsers,
       chartId: newChartId
     });
 
@@ -308,7 +306,6 @@ export class SaveCreateChartController {
     let modelEnts = (await this.db.drizzle
       .select({
         modelId: modelsTable.modelId,
-        accessUsers: modelsTable.accessUsers,
         accessRoles: modelsTable.accessRoles,
         hidden: modelsTable.hidden
       })

@@ -16,12 +16,6 @@ export const CHART_SCHEMA: JSONSchema7 = {
         type: 'string'
       }
     },
-    access_users: {
-      type: 'array',
-      items: {
-        type: 'string'
-      }
-    },
     tiles: {
       type: 'array',
       items: TILE_SCHEMA

@@ -34,9 +34,6 @@ export class Chart {
   filePath: string;
 
   @IsString({ each: true })
-  accessUsers: string[];
-
-  @IsString({ each: true })
   accessRoles: string[];
 
   @IsOptional()

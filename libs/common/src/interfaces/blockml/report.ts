@@ -40,9 +40,6 @@ export class Report {
   fields: ReportField[];
 
   @IsString({ each: true })
-  accessUsers: string[];
-
-  @IsString({ each: true })
   accessRoles: string[];
 
   @IsString()

@@ -19,9 +19,6 @@ export interface FileModel extends FileBasic {
   description?: string;
   description_line_num?: number;
 
-  access_users?: string[];
-  access_users_line_num?: number;
-
   access_roles?: string[];
   access_roles_line_num?: number;
 

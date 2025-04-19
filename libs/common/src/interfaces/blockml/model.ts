@@ -34,9 +34,6 @@ export class Model {
   dateRangeIncludesRightSide: boolean;
 
   @IsString({ each: true })
-  accessUsers: string[];
-
-  @IsString({ each: true })
   accessRoles: string[];
 
   @IsString()

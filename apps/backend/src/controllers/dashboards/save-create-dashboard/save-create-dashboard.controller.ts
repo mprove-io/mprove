@@ -77,7 +77,6 @@ export class SaveCreateDashboardController {
       newDashboardId,
       fromDashboardId,
       dashboardTitle,
-      accessUsers,
       accessRoles,
       tilesGrid
     } = reqValid.payload;
@@ -175,7 +174,6 @@ export class SaveCreateDashboardController {
         newDashboardId: newDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
-        users: accessUsers,
         deleteFilterFieldId: undefined,
         deleteFilterTileTitle: undefined,
         caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
@@ -189,7 +187,6 @@ export class SaveCreateDashboardController {
         creatorId: undefined,
         filePath: undefined,
         content: undefined,
-        accessUsers: undefined,
         accessRoles: undefined,
         title: undefined,
         hidden: undefined,
@@ -207,7 +204,6 @@ export class SaveCreateDashboardController {
         newDashboardId: newDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
-        users: accessUsers,
         deleteFilterFieldId: undefined,
         deleteFilterTileTitle: undefined,
         caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,

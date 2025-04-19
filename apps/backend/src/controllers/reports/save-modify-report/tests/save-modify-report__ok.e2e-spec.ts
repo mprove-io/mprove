@@ -132,7 +132,6 @@ test('1', async t => {
         modReportId: 'r1',
         title: 'new title',
         accessRoles: [],
-        accessUsers: [],
         timezone: 'UTC',
         timeSpec: common.TimeSpecEnum.Months,
         timeRangeFractionBrick: 'last 5 months',

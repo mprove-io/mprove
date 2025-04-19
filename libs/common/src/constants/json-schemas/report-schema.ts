@@ -19,12 +19,6 @@ export const REPORT_SCHEMA: JSONSchema7 = {
       type: 'array',
       items: FILTER_SCHEMA
     },
-    access_users: {
-      type: 'array',
-      items: {
-        type: 'string'
-      }
-    },
     access_roles: {
       type: 'array',
       items: {

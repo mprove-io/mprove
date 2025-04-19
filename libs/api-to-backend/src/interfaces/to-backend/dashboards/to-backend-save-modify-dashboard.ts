@@ -53,10 +53,6 @@ export class ToBackendSaveModifyDashboardRequestPayload {
   accessRoles?: string;
 
   @IsOptional()
-  @IsString()
-  accessUsers?: string;
-
-  @IsOptional()
   @ValidateNested()
   @Type(() => common.TileX)
   tilesGrid?: common.TileX[];

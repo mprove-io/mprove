@@ -55,7 +55,6 @@ export function wrapCharts(item: {
       modelId: x.tiles[0].model,
       modelLabel: isStore === true ? store.label : model.label,
       filePath: x.filePath,
-      accessUsers: x.access_users || [],
       accessRoles: x.access_roles || [],
       gr: x.group,
       hidden: common.toBooleanFromLowercaseString(x.hidden),
