@@ -18,7 +18,6 @@ import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
-import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
 import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -121,9 +120,25 @@ export class SaveModifyReportController {
       envId: envId
     });
 
+    let fromReport = await this.reportsService.getReport({
+      projectId: projectId,
+      reportId: fromReportId,
+      structId: bridge.structId,
+      checkExist: true,
+      checkAccess: true,
+      user: user,
+      userMember: userMember
+    });
+
+    let metricRows = fromReport.rows.filter(
+      row => row.rowType === common.RowTypeEnum.Metric
+    );
+
     let currentStruct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
-      projectId: projectId
+      projectId: projectId,
+      addMetrics: true
+      // addMetrics: metricRows.length > 0
     });
 
     let firstProjectId =
@@ -151,43 +166,10 @@ export class SaveModifyReportController {
       });
     }
 
-    let fromReport = await this.reportsService.getReport({
-      projectId: projectId,
-      reportId: fromReportId,
-      structId: bridge.structId,
-      checkExist: true,
-      checkAccess: true,
-      user: user,
-      userMember: userMember
-    });
-
-    let metricRows = fromReport.rows.filter(
-      row => row.rowType === common.RowTypeEnum.Metric
-    );
-
-    let metrics =
-      metricRows.length > 0
-        ? await this.db.drizzle.query.metricsTable.findMany({
-            where: and(
-              eq(metricsTable.structId, bridge.structId),
-              inArray(
-                metricsTable.metricId,
-                metricRows.map(row => row.metricId)
-              )
-            )
-          })
-        : // await this.metricsRepository.find({
-          //     where: {
-          //       struct_id: bridge.struct_id,
-          //       metric_id: In(metricRows.map(row => row.metricId))
-          //     }
-          //   })
-          [];
-
     let models: ModelEnt[] = [];
 
-    if (metrics.length > 0) {
-      let metricModelIds = metrics.map(x => x.modelId);
+    if (currentStruct.metrics.length > 0) {
+      let metricModelIds = currentStruct.metrics.map(x => x.modelId);
 
       models = await this.db.drizzle.query.modelsTable.findMany({
         where: and(
@@ -203,7 +185,7 @@ export class SaveModifyReportController {
       rows: fromReport.rows,
       accessRoles: accessRoles,
       accessUsers: accessUsers,
-      metrics: metrics,
+      metrics: currentStruct.metrics,
       models: models,
       struct: currentStruct,
       newReportFields: newReportFields,
@@ -377,6 +359,7 @@ export class SaveModifyReportController {
       user: user,
       envId: envId,
       struct: struct,
+      metrics: struct.metrics,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
       timezone: timezone

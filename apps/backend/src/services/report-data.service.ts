@@ -10,7 +10,6 @@ import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { kitsTable } from '~backend/drizzle/postgres/schema/kits';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
-import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -44,6 +43,7 @@ export class ReportDataService {
     timeSpec: common.TimeSpecEnum;
     timeRangeFractionBrick: string;
     struct: schemaPostgres.StructEnt;
+    metrics: common.ModelMetric[];
     report: schemaPostgres.ReportEnt;
     project: schemaPostgres.ProjectEnt;
     envId: string;
@@ -57,6 +57,7 @@ export class ReportDataService {
       timeSpec,
       timeRangeFractionBrick,
       struct,
+      metrics,
       report,
       timezone,
       project,
@@ -104,16 +105,9 @@ export class ReportDataService {
           : rangeEnd
     });
 
-    let metricIds = report.rows
-      .map(x => x.metricId)
-      .filter(x => common.isDefined(x));
-
-    let metrics = await this.db.drizzle.query.metricsTable.findMany({
-      where: and(
-        inArray(metricsTable.metricId, metricIds),
-        eq(metricsTable.structId, struct.structId)
-      )
-    });
+    // let metricIds = report.rows
+    //   .map(x => x.metricId)
+    //   .filter(x => common.isDefined(x));
 
     let modelIds = metrics
       .filter(m => common.isDefined(m.modelId))
@@ -150,7 +144,7 @@ export class ReportDataService {
           common.isDefined(row.parameters) && common.isDefined(row.metricId)
       )
       .forEach(row => {
-        let metric: schemaPostgres.MetricEnt = metrics.find(
+        let metric: common.ModelMetric = metrics.find(
           m => m.metricId === row.metricId
         );
 
@@ -277,7 +271,7 @@ export class ReportDataService {
           let newMconfigId = common.makeId();
           let newQueryId = common.makeId();
 
-          let metric: schemaPostgres.MetricEnt = metrics.find(
+          let metric: common.ModelMetric = metrics.find(
             m => m.metricId === x.metricId
           );
 
@@ -288,7 +282,7 @@ export class ReportDataService {
           if (model.isStoreModel === false) {
             let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
 
-            timeFieldIdSpec = `${metric.timefieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+            timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
           } else {
             let timeSpecDetail = common.getTimeSpecDetail({
               timeSpec: timeSpec,
@@ -297,7 +291,7 @@ export class ReportDataService {
 
             let storeField = (model.content as common.FileStore).fields.find(
               field =>
-                field.time_group === metric.timefieldId &&
+                field.time_group === metric.timeFieldId &&
                 field.detail === timeSpecDetail
             );
 

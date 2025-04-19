@@ -239,43 +239,6 @@ export class WrapToApiService {
     };
   }
 
-  wrapToApiMetric(item: {
-    metric: schemaPostgres.MetricEnt;
-    // hasAccess: boolean;
-  }): common.ModelMetric {
-    let {
-      metric
-      // , hasAccess
-    } = item;
-
-    return {
-      structId: metric.structId,
-      type: metric.type,
-      filePath: metric.filePath,
-      metricId: metric.metricId,
-      partId: metric.partId,
-      topNode: metric.topNode,
-      topLabel: metric.topLabel,
-      modelId: metric.modelId,
-      fieldId: metric.fieldId,
-      fieldClass: metric.fieldClass,
-      timeFieldId: metric.timefieldId,
-      connection: metric.connectionId,
-      label: metric.label,
-      partNodeLabel: metric.partNodeLabel,
-      partFieldLabel: metric.partFieldLabel,
-      partLabel: metric.partLabel,
-      timeNodeLabel: metric.timeNodeLabel,
-      timeFieldLabel: metric.timeFieldLabel,
-      timeLabel: metric.timeLabel,
-      description: metric.description,
-      formatNumber: metric.formatNumber,
-      currencyPrefix: metric.currencyPrefix,
-      currencySuffix: metric.currencySuffix,
-      serverTs: Number(metric.serverTs)
-    };
-  }
-
   wrapToApiModel(item: {
     model: schemaPostgres.ModelEnt;
     hasAccess: boolean;

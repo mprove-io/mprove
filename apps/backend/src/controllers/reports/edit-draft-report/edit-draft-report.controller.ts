@@ -5,7 +5,6 @@ import { common } from '~backend/barrels/common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
 import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -91,7 +90,14 @@ export class EditDraftReportController {
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
-      projectId: projectId
+      projectId: projectId,
+      addMetrics: true
+      // addMetrics:
+      //   common.isDefined(rowChange) &&
+      //   [
+      //     common.ChangeTypeEnum.AddMetric,
+      //     common.ChangeTypeEnum.ConvertToMetric
+      //   ].indexOf(changeType) > -1
     });
 
     let report = await this.reportsService.getReport({
@@ -104,27 +110,13 @@ export class EditDraftReportController {
       userMember: userMember
     });
 
-    let metrics =
-      common.isDefined(rowChange) &&
-      [
-        common.ChangeTypeEnum.AddMetric,
-        common.ChangeTypeEnum.ConvertToMetric
-      ].indexOf(changeType) > -1
-        ? await this.db.drizzle.query.metricsTable.findMany({
-            where: and(
-              eq(metricsTable.structId, bridge.structId),
-              eq(metricsTable.metricId, rowChange.metricId)
-            )
-          })
-        : [];
-
     let models: ModelEnt[] = [];
 
     if (
       changeType === common.ChangeTypeEnum.ConvertToMetric &&
       common.isDefined(rowChange?.metricId)
     ) {
-      let metric = metrics.find(x => x.metricId === rowChange.metricId);
+      let metric = struct.metrics.find(x => x.metricId === rowChange.metricId);
 
       let model = await this.db.drizzle.query.modelsTable.findFirst({
         where: and(
@@ -144,7 +136,7 @@ export class EditDraftReportController {
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
-      metrics: metrics,
+      metrics: struct.metrics,
       models: models,
       struct: struct,
       newReportFields: newReportFields,
@@ -176,6 +168,7 @@ export class EditDraftReportController {
       user: user,
       envId: envId,
       struct: struct,
+      metrics: struct.metrics,
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,

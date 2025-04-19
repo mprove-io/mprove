@@ -95,7 +95,8 @@ export class GetReportController {
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
-      projectId: projectId
+      projectId: projectId,
+      addMetrics: true
     });
 
     let report = await this.reportsService.getReport({
@@ -130,6 +131,7 @@ export class GetReportController {
       user: user,
       envId: envId,
       struct: struct,
+      metrics: struct.metrics,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
       timezone: timezone

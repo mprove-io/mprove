@@ -10,7 +10,6 @@ export class DbRecords {
   kits?: schemaPostgres.KitEnt[];
   mconfigs?: schemaPostgres.MconfigEnt[];
   members?: schemaPostgres.MemberEnt[];
-  metrics?: schemaPostgres.MetricEnt[];
   models?: schemaPostgres.ModelEnt[];
   notes?: schemaPostgres.NoteEnt[];
   orgs?: schemaPostgres.OrgEnt[];

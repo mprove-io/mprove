@@ -28,6 +28,7 @@ export const structsTable = pgTable(
     currencySuffix: varchar('currency_suffix'),
     errors: json('errors').$type<common.BmlError[]>().notNull(),
     views: json('views').$type<common.View[]>().notNull(),
+    metrics: json('metrics').$type<common.ModelMetric[]>().default([]),
     udfsDict: json('udfs_dict').$type<common.UdfsDict>().notNull(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

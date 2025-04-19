@@ -25,7 +25,6 @@ import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
 import { envsTable } from '~backend/drizzle/postgres/schema/envs';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
-import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
@@ -241,12 +240,6 @@ export class DeleteRecordsController {
               .where(inArray(modelsTable.structId, structIds));
 
             // await this.modelsRepository.delete({ struct_id: In(structIds) });
-
-            await tx
-              .delete(metricsTable)
-              .where(inArray(metricsTable.structId, structIds));
-
-            // await this.metricsRepository.delete({ struct_id: In(structIds) });
 
             await tx
               .delete(mconfigsTable)

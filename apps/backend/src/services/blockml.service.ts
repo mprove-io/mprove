@@ -171,6 +171,7 @@ export class BlockmlService {
       currencySuffix: currencySuffix,
       errors: errors,
       views: views,
+      metrics: metrics,
       udfsDict: udfsDict,
       serverTs: undefined
     };
@@ -222,9 +223,6 @@ export class BlockmlService {
                 ),
                 models: models.map(x =>
                   this.wrapToEntService.wrapToEntityModel(x)
-                ),
-                metrics: metrics.map(x =>
-                  this.wrapToEntService.wrapToEntityMetric(x)
                 ),
                 reports: reports.map(x =>
                   this.wrapToEntService.wrapToEntityReport(x)

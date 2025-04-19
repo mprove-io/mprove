@@ -6,7 +6,6 @@ import { helper } from '~backend/barrels/helper';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -69,14 +68,6 @@ export class GetReportsController {
       envId: envId
     });
 
-    let metrics = await this.db.drizzle.query.metricsTable.findMany({
-      where: eq(metricsTable.structId, bridge.structId)
-    });
-
-    // let metrics = await this.metricsRepository.find({
-    //   where: { struct_id: bridge.struct_id }
-    // });
-
     let draftReports = await this.db.drizzle.query.reportsTable.findMany({
       where: and(
         eq(reportsTable.draft, true),
@@ -135,10 +126,11 @@ export class GetReportsController {
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
-      projectId: projectId
+      projectId: projectId,
+      addMetrics: true
     });
 
-    let modelIds = metrics
+    let modelIds = struct.metrics
       .filter(m => common.isDefined(m.modelId))
       .map(x => x.modelId);
 
@@ -162,9 +154,7 @@ export class GetReportsController {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: apiMember,
-      metrics: metrics.map(x =>
-        this.wrapToApiService.wrapToApiMetric({ metric: x })
-      ),
+      metrics: struct.metrics,
       reports: reports.map(x =>
         this.wrapToApiService.wrapToApiReport({
           report: x,

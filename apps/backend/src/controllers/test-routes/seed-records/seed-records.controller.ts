@@ -73,7 +73,6 @@ export class SeedRecordsController {
     let charts: schemaPostgres.ChartEnt[] = [];
     let queries: schemaPostgres.QueryEnt[] = [];
     let models: schemaPostgres.ModelEnt[] = [];
-    let metrics: schemaPostgres.MetricEnt[] = [];
     let reports: schemaPostgres.ReportEnt[] = [];
     let mconfigs: schemaPostgres.MconfigEnt[] = [];
     let dashboards: schemaPostgres.DashboardEnt[] = [];
@@ -420,16 +419,6 @@ export class SeedRecordsController {
             )
           ];
 
-          metrics = [
-            ...metrics,
-            ...devMetricsApi.map(y =>
-              this.wrapToEntService.wrapToEntityMetric(y)
-            ),
-            ...prodMetricsApi.map(y =>
-              this.wrapToEntService.wrapToEntityMetric(y)
-            )
-          ];
-
           reports = [
             ...reports,
             ...devReportsApi.map(y =>
@@ -531,7 +520,6 @@ export class SeedRecordsController {
                 structs: structs,
                 charts: charts,
                 models: models,
-                metrics: metrics,
                 reports: reports,
                 mconfigs: mconfigs,
                 dashboards: dashboards

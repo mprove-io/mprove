@@ -19,7 +19,6 @@ import { envsTable } from './schema/envs';
 import { kitsTable } from './schema/kits';
 import { mconfigsTable } from './schema/mconfigs';
 import { membersTable } from './schema/members';
-import { metricsTable } from './schema/metrics';
 import { modelsTable } from './schema/models';
 import { notesTable } from './schema/notes';
 import { orgsTable } from './schema/orgs';
@@ -143,13 +142,6 @@ export class DrizzlePacker {
         insertRecords.members.length > 0
       ) {
         await tx.insert(membersTable).values(insertRecords.members);
-      }
-
-      if (
-        common.isDefined(insertRecords.metrics) &&
-        insertRecords.metrics.length > 0
-      ) {
-        await tx.insert(metricsTable).values(insertRecords.metrics);
       }
 
       if (
@@ -379,23 +371,6 @@ export class DrizzlePacker {
             .update(membersTable)
             .set(x)
             .where(eq(membersTable.memberFullId, x.memberFullId));
-        });
-      }
-
-      if (
-        common.isDefined(updateRecords.metrics) &&
-        updateRecords.metrics.length > 0
-      ) {
-        updateRecords.metrics = setUndefinedToNull({
-          ents: updateRecords.metrics,
-          table: metricsTable
-        });
-
-        await forEachSeries(updateRecords.metrics, async x => {
-          await tx
-            .update(metricsTable)
-            .set(x)
-            .where(eq(metricsTable.metricFullId, x.metricFullId));
         });
       }
 
@@ -765,28 +740,6 @@ export class DrizzlePacker {
           .onConflictDoUpdate({
             target: membersTable.memberFullId,
             set: drizzleSetAllColumnsFull({ table: membersTable })
-          });
-      }
-
-      if (
-        common.isDefined(insOrUpdRecords.metrics) &&
-        insOrUpdRecords.metrics.length > 0
-      ) {
-        insOrUpdRecords.metrics = Array.from(
-          new Set(insOrUpdRecords.metrics.map(x => x.metricFullId))
-        ).map(id => insOrUpdRecords.metrics.find(x => x.metricFullId === id));
-
-        insOrUpdRecords.metrics = setUndefinedToNull({
-          ents: insOrUpdRecords.metrics,
-          table: metricsTable
-        });
-
-        await tx
-          .insert(metricsTable)
-          .values(insOrUpdRecords.metrics)
-          .onConflictDoUpdate({
-            target: metricsTable.metricFullId,
-            set: drizzleSetAllColumnsFull({ table: metricsTable })
           });
       }
 

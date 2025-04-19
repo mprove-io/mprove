@@ -13,7 +13,7 @@ export function makeReportFileText(item: {
   accessRoles: string[];
   accessUsers: string[];
   rows: common.Row[];
-  metrics: schemaPostgres.MetricEnt[];
+  metrics: common.ModelMetric[];
   models: schemaPostgres.ModelEnt[];
   struct: schemaPostgres.StructEnt;
   newReportFields: common.ReportField[];

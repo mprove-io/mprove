@@ -69,39 +69,6 @@ export class WrapToEntService {
     };
   }
 
-  wrapToEntityMetric(metric: common.ModelMetric): schemaPostgres.MetricEnt {
-    return {
-      metricFullId: this.hashService.makeMetricFullId({
-        structId: metric.structId,
-        metricId: metric.metricId
-      }),
-      structId: metric.structId,
-      type: metric.type,
-      filePath: metric.filePath,
-      metricId: metric.metricId,
-      partId: metric.partId,
-      topNode: metric.topNode,
-      topLabel: metric.topLabel,
-      modelId: metric.modelId,
-      fieldId: metric.fieldId,
-      fieldClass: metric.fieldClass,
-      timefieldId: metric.timeFieldId,
-      connectionId: metric.connection,
-      label: metric.label,
-      partNodeLabel: metric.partNodeLabel,
-      partFieldLabel: metric.partFieldLabel,
-      partLabel: metric.partLabel,
-      timeNodeLabel: metric.timeNodeLabel,
-      timeFieldLabel: metric.timeFieldLabel,
-      timeLabel: metric.timeLabel,
-      description: metric.description,
-      formatNumber: metric.formatNumber,
-      currencyPrefix: metric.currencyPrefix,
-      currencySuffix: metric.currencySuffix,
-      serverTs: metric.serverTs
-    };
-  }
-
   wrapToEntityModel(model: common.Model): schemaPostgres.ModelEnt {
     return {
       modelFullId: this.hashService.makeModelFullId({

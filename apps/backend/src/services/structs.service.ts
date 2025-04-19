@@ -6,7 +6,6 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
-import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { structsTable } from '~backend/drizzle/postgres/schema/structs';
@@ -20,8 +19,9 @@ export class StructsService {
     structId: string;
     projectId: string;
     skipError?: boolean;
+    addMetrics?: boolean;
   }) {
-    let { structId, projectId, skipError } = item;
+    let { structId, projectId, skipError, addMetrics } = item;
 
     let emptyStruct: schemaPostgres.StructEnt = {
       structId: structId,
@@ -37,43 +37,55 @@ export class StructsService {
       currencySuffix: '',
       errors: [],
       views: [],
+      metrics: [],
       udfsDict: {},
       serverTs: undefined
     };
 
-    // let emptyStruct = maker.makeStruct({
-    //   projectId: projectId,
-    //   structId: structId,
-    //   mproveDirValue: './data',
-    //   weekStart: ProjectWeekStartEnum.Monday,
-    //   allowTimezones: BoolEnum.TRUE,
-    //   defaultTimezone: 'UTC',
-    //   formatNumber: ',.0f',
-    //   currencyPrefix: '$',
-    //   currencySuffix: '',
-    //   errors: [],
-    //   views: [],
-    //   udfsDict: {}
-    // });
-
-    let struct;
+    let struct: schemaPostgres.StructEnt;
 
     if (structId === common.EMPTY_STRUCT_ID) {
       struct = emptyStruct;
     } else {
-      struct = await this.db.drizzle.query.structsTable.findFirst({
-        where: and(
-          eq(structsTable.structId, structId),
-          eq(structsTable.projectId, projectId)
-        )
-      });
+      if (addMetrics === true) {
+        struct = await this.db.drizzle.query.structsTable.findFirst({
+          where: and(
+            eq(structsTable.structId, structId),
+            eq(structsTable.projectId, projectId)
+          )
+        });
+      } else {
+        let structs = (await this.db.drizzle
+          .select({
+            structId: structsTable.structId,
+            projectId: structsTable.projectId,
+            mproveDirValue: structsTable.mproveDirValue,
+            caseSensitiveStringFilters: structsTable.caseSensitiveStringFilters,
+            simplifySafeAggregates: structsTable.simplifySafeAggregates,
+            weekStart: structsTable.weekStart,
+            allowTimezones: structsTable.allowTimezones,
+            defaultTimezone: structsTable.defaultTimezone,
+            formatNumber: structsTable.formatNumber,
+            currencyPrefix: structsTable.currencyPrefix,
+            currencySuffix: structsTable.currencySuffix,
+            errors: structsTable.errors,
+            views: structsTable.views,
+            // metrics: structsTable.metrics,
+            udfsDict: structsTable.udfsDict,
+            serverTs: structsTable.serverTs
+          })
+          .from(structsTable)
+          .where(
+            and(
+              eq(structsTable.structId, structId),
+              eq(structsTable.projectId, projectId)
+            )
+          )) as schemaPostgres.StructEnt[];
 
-      // struct = await this.structsRepository.findOne({
-      //   where: {
-      //     struct_id: structId,
-      //     project_id: projectId
-      //   }
-      // });
+        struct = structs.length > 0 ? structs[0] : undefined;
+
+        struct.metrics = [];
+      }
 
       if (common.isUndefined(struct)) {
         if (skipError === true) {
@@ -122,10 +134,6 @@ WHERE c.branch_id IS NULL AND to_timestamp(s.server_ts/1000) < (NOW() - INTERVAL
       await this.db.drizzle
         .delete(modelsTable)
         .where(inArray(modelsTable.structId, orphanedStructIds));
-
-      await this.db.drizzle
-        .delete(metricsTable)
-        .where(inArray(metricsTable.structId, orphanedStructIds));
 
       await this.db.drizzle
         .delete(reportsTable)

@@ -16,7 +16,6 @@ import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { kitsTable } from '~backend/drizzle/postgres/schema/kits';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
-import { metricsTable } from '~backend/drizzle/postgres/schema/metrics';
 import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -111,7 +110,14 @@ export class CreateDraftReportController {
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
-      projectId: projectId
+      projectId: projectId,
+      addMetrics: true
+      // addMetrics:
+      //   common.isDefined(rowChange) &&
+      //   [
+      //     common.ChangeTypeEnum.AddMetric,
+      //     common.ChangeTypeEnum.ConvertToMetric
+      //   ].indexOf(changeType) > -1
     });
 
     let fromReport: schemaPostgres.ReportEnt =
@@ -289,27 +295,13 @@ export class CreateDraftReportController {
     //   }
     // });
 
-    let metrics =
-      common.isDefined(rowChange) &&
-      [
-        common.ChangeTypeEnum.AddMetric,
-        common.ChangeTypeEnum.ConvertToMetric
-      ].indexOf(changeType) > -1
-        ? await this.db.drizzle.query.metricsTable.findMany({
-            where: and(
-              eq(metricsTable.structId, bridge.structId),
-              eq(metricsTable.metricId, rowChange.metricId)
-            )
-          })
-        : [];
-
     let models: ModelEnt[] = [];
 
     if (
       changeType === common.ChangeTypeEnum.ConvertToMetric &&
       common.isDefined(rowChange?.metricId)
     ) {
-      let metric = metrics.find(x => x.metricId === rowChange.metricId);
+      let metric = struct.metrics.find(x => x.metricId === rowChange.metricId);
 
       let model = await this.db.drizzle.query.modelsTable.findFirst({
         where: and(
@@ -329,7 +321,7 @@ export class CreateDraftReportController {
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
-      metrics: metrics,
+      metrics: struct.metrics,
       models: models,
       struct: struct,
       newReportFields: newReportFields,
@@ -373,6 +365,7 @@ export class CreateDraftReportController {
       user: user,
       envId: envId,
       struct: struct,
+      metrics: struct.metrics,
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,

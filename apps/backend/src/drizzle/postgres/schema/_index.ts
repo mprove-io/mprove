@@ -8,7 +8,6 @@ export * from './envs';
 export * from './kits';
 export * from './mconfigs';
 export * from './members';
-export * from './metrics';
 export * from './models';
 export * from './notes';
 export * from './orgs';

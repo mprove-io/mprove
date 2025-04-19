@@ -13,7 +13,7 @@ export class ReportRowService {
   getProcessedRows(item: {
     rowChange: common.RowChange;
     rowIds: string[];
-    metrics: schemaPostgres.MetricEnt[];
+    metrics: common.ModelMetric[];
     models: schemaPostgres.ModelEnt[];
     rows: common.Row[];
     changeType: common.ChangeTypeEnum;
@@ -145,7 +145,7 @@ export class ReportRowService {
         row.rowId === editRow.rowId ? editRow : row
       );
     } else if (changeType === common.ChangeTypeEnum.ConvertToMetric) {
-      let metric: schemaPostgres.MetricEnt = metrics.find(
+      let metric: common.ModelMetric = metrics.find(
         m => m.metricId === rowChange.metricId
       );
 
@@ -284,7 +284,7 @@ export class ReportRowService {
         rowId = common.rowIdNumberToLetter(rowIdNumber);
       }
 
-      let metric: schemaPostgres.MetricEnt = metrics.find(
+      let metric: common.ModelMetric = metrics.find(
         m => m.metricId === rowChange.metricId
       );
 
