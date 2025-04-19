@@ -39,6 +39,7 @@ import { StoreFractionSubTypeComponent } from './fraction/store-fraction-sub-typ
 import { StoreFractionSwitchComponent } from './fraction/store-fraction-switch/store-fraction-switch.component';
 import { AddIconComponent } from './icons/add-icon/add-icon.component';
 import { AdjustmentsIconComponent } from './icons/adjustments-icon/adjustments-icon.component';
+import { AltListIconComponent } from './icons/alt-list-icon/alt-list-icon.component';
 import { ArrowDropDownIconComponent } from './icons/arrow-drop-down-icon/arrow-drop-down-icon.component';
 import { ArrowLeftIconComponent } from './icons/arrow-left-icon/arrow-left-icon.component';
 import { ArrowNarrowRightIconComponent } from './icons/arrow-narrow-right-icon/arrow-narrow-right-icon.component';
@@ -190,6 +191,7 @@ let sharedComponents = [
   DragIconComponent,
   ResizeIconComponent,
   ViewGridIconComponent,
+  AltListIconComponent,
   ViewListIconComponent,
   UserIconComponent,
   ChartIconComponent,
