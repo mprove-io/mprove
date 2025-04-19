@@ -45,6 +45,21 @@ export class DashboardOptionsComponent {
     });
   }
 
+  async editDashboardInfo(event: MouseEvent, item: common.DashboardX) {
+    event.stopPropagation();
+
+    let nav = this.navQuery.getValue();
+
+    this.myDialogService.showEditDashboardInfo({
+      apiService: this.apiService,
+      projectId: nav.projectId,
+      branchId: nav.branchId,
+      envId: nav.envId,
+      isRepoProd: nav.isRepoProd,
+      dashboard: item
+    });
+  }
+
   deleteDashboard(event: MouseEvent) {
     event.stopPropagation();
 

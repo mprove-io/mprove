@@ -390,7 +390,16 @@ export class SaveModifyDashboardController {
       newDashboard: newDashboard
     });
 
+    let newDashboardX = await this.dashboardsService.getDashboardXCheckAccess({
+      user: user,
+      member: userMember,
+      dashboard: this.wrapToEntService.wrapToEntityDashboard(newDashboard),
+      bridge: bridge,
+      projectId: projectId
+    });
+
     let payload: apiToBackend.ToBackendSaveModifyDashboardResponsePayload = {
+      dashboard: newDashboardX,
       newDashboardPart:
         newDashboardParts.length > 0 ? newDashboardParts[0] : undefined
     };

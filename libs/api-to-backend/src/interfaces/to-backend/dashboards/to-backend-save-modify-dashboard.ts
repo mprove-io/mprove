@@ -67,6 +67,10 @@ export class ToBackendSaveModifyDashboardRequest extends ToBackendRequest {
 export class ToBackendSaveModifyDashboardResponsePayload {
   @ValidateNested()
   @Type(() => common.DashboardX)
+  dashboard: common.DashboardX;
+
+  @ValidateNested()
+  @Type(() => common.DashboardX)
   newDashboardPart: common.DashboardX;
 }
 

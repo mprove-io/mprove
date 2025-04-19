@@ -185,6 +185,10 @@ import {
   EditChartInfoDialogData
 } from '../modules/shared/edit-chart-info-dialog/edit-chart-info-dialog.component';
 import {
+  EditDashboardInfoDialogComponent,
+  EditDashboardInfoDialogData
+} from '../modules/shared/edit-dashboard-info-dialog/edit-dashboard-info-dialog.component';
+import {
   EditReportInfoDialogComponent,
   EditReportInfoDialogData
 } from '../modules/shared/edit-report-info-dialog/edit-report-info-dialog.component';
@@ -426,6 +430,15 @@ export class MyDialogService {
 
   showEditReportInfo(item: EditReportInfoDialogData): void {
     this.dialogService.open(EditReportInfoDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 640
+    });
+  }
+
+  showEditDashboardInfo(item: EditDashboardInfoDialogData): void {
+    this.dialogService.open(EditDashboardInfoDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,

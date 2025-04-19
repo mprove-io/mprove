@@ -25,6 +25,24 @@
       >Go to File</button
     >
 
+    <div
+      tp="Dashboard can be edited by author and project members with ProjectAdmin or FilesEditor role. Try to save dashboard as new to become an author."
+      placement="left"
+      [tpIsEnabled]="dashboard.canEditOrDeleteDashboard === false"
+    >
+      <button
+        data-cy="dashboardOptionsEditInfo"
+        class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+        [ngClass]="{
+          'text-s400 cursor-default':
+            dashboard.canEditOrDeleteDashboard === false
+        }"
+        (click)="t1.hide(); editDashboardInfo($event, dashboard)"
+        [disabled]="dashboard.canEditOrDeleteDashboard === false"
+        >Edit Info</button
+      >
+    </div>
+
     <button
       data-cy="dashboardOptionsDelete"
       class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"

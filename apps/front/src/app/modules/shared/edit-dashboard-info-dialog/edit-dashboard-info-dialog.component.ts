@@ -1,0 +1,185 @@
+import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectorRef,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  HostListener,
+  OnInit
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
+import { DialogRef } from '@ngneat/dialog';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { take, tap } from 'rxjs/operators';
+import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
+import { DashboardQuery } from '~front/app/queries/dashboard.query';
+import { DashboardsQuery } from '~front/app/queries/dashboards.query';
+import { StructQuery, StructState } from '~front/app/queries/struct.query';
+import { UiQuery } from '~front/app/queries/ui.query';
+import { UserQuery } from '~front/app/queries/user.query';
+import { ApiService } from '~front/app/services/api.service';
+import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
+import { SharedModule } from '../shared.module';
+
+export interface EditDashboardInfoDialogData {
+  apiService: ApiService;
+  projectId: string;
+  isRepoProd: boolean;
+  branchId: string;
+  envId: string;
+  dashboard: common.DashboardX;
+}
+
+@Component({
+  selector: 'm-edit-dashboard-info-dialog',
+  templateUrl: './edit-dashboard-info-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
+})
+export class EditDashboardInfoDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
+  usersFolder = common.MPROVE_USERS_FOLDER;
+
+  titleForm: FormGroup = this.fb.group({
+    title: [undefined, [Validators.required, Validators.maxLength(255)]]
+  });
+
+  rolesForm: FormGroup = this.fb.group({
+    roles: [undefined, [Validators.maxLength(255)]]
+  });
+
+  alias: string;
+  alias$ = this.userQuery.alias$.pipe(
+    tap(x => {
+      this.alias = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  struct: StructState;
+  struct$ = this.structQuery.select().pipe(
+    tap(x => {
+      this.struct = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  constructor(
+    public ref: DialogRef<EditDashboardInfoDialogData>,
+    private fb: FormBuilder,
+    private userQuery: UserQuery,
+    private dashboardsQuery: DashboardsQuery,
+    private dashboardQuery: DashboardQuery,
+    private spinner: NgxSpinnerService,
+    private structQuery: StructQuery,
+    private uiQuery: UiQuery,
+    private cd: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    setValueAndMark({
+      control: this.titleForm.controls['title'],
+      value: this.ref.data.dashboard.title
+    });
+    setValueAndMark({
+      control: this.rolesForm.controls['roles'],
+      value: this.ref.data.dashboard.accessRoles?.join(', ')
+    });
+
+    setTimeout(() => {
+      (document.activeElement as HTMLElement).blur();
+    }, 0);
+  }
+
+  save() {
+    if (
+      this.titleForm.controls['title'].valid &&
+      this.rolesForm.controls['roles'].valid
+    ) {
+      this.spinner.show(constants.APP_SPINNER_NAME);
+
+      this.ref.close();
+
+      let uiState = this.uiQuery.getValue();
+
+      let newTitle: string = this.titleForm.controls['title'].value;
+      let roles: string = this.rolesForm.controls['roles'].value;
+
+      let payload: apiToBackend.ToBackendSaveModifyDashboardRequestPayload = {
+        projectId: this.ref.data.projectId,
+        isRepoProd: this.ref.data.isRepoProd,
+        branchId: this.ref.data.branchId,
+        envId: this.ref.data.envId,
+        fromDashboardId: this.ref.data.dashboard.dashboardId,
+        toDashboardId: this.ref.data.dashboard.dashboardId,
+        dashboardTitle: newTitle.trim(),
+        accessRoles: roles,
+        tilesGrid: this.ref.data.dashboard.tiles.map(x => {
+          let y = common.makeCopy(x);
+          delete y.mconfig;
+          delete y.query;
+          return y;
+        })
+      };
+
+      let apiService: ApiService = this.ref.data.apiService;
+
+      apiService
+        .req({
+          pathInfoName:
+            apiToBackend.ToBackendRequestInfoNameEnum
+              .ToBackendSaveModifyDashboard,
+          payload: payload,
+          showSpinner: true
+        })
+        .pipe(
+          tap(
+            async (resp: apiToBackend.ToBackendSaveModifyDashboardResponse) => {
+              if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+                let newDashboard = resp.payload.dashboard;
+                let newDashboardPart = resp.payload.newDashboardPart;
+
+                if (common.isDefined(newDashboard)) {
+                  let dashboards = this.dashboardsQuery.getValue().dashboards;
+
+                  let newDashboards = [
+                    newDashboardPart,
+                    ...dashboards.filter(
+                      x => x.dashboardId !== newDashboardPart.dashboardId
+                    )
+                  ];
+
+                  this.dashboardsQuery.update({ dashboards: newDashboards });
+
+                  let currentDashboard = this.dashboardQuery.getValue();
+
+                  if (
+                    currentDashboard.dashboardId === newDashboard.dashboardId
+                  ) {
+                    this.dashboardQuery.update(newDashboard);
+                  }
+                }
+              }
+            }
+          ),
+          take(1)
+        )
+        .subscribe();
+    }
+  }
+
+  cancel() {
+    this.ref.close();
+  }
+}
