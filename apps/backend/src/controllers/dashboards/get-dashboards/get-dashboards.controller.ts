@@ -117,17 +117,6 @@ export class GetDashboardsController {
         eq(modelsTable.structId, bridge.structId)
       )) as schemaPostgres.ModelEnt[];
 
-    // let models = await this.modelsRepository.find({
-    //   select: [
-    //     'model_id',
-    //     'access_users',
-    //     'access_roles',
-    //     'hidden',
-    //     'connection_id'
-    //   ],
-    //   where: { struct_id: bridge.struct_id }
-    // });
-
     let modelsY = await this.modelsService.getModelsY({
       bridge: bridge,
       filterByModelIds: undefined,

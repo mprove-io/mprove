@@ -122,14 +122,6 @@ export class CreateBranchController {
       )
     });
 
-    // let fromBranchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: fromBranch.project_id,
-    //     repo_id: fromBranch.repo_id,
-    //     branch_id: fromBranch.branch_id
-    //   }
-    // });
-
     let newBranchBridges: schemaPostgres.BridgeEnt[] = [];
 
     fromBranchBridges.forEach(x => {
@@ -182,14 +174,6 @@ export class CreateBranchController {
         ),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     branches: [newBranch],
-    //     bridges: [...newBranchBridges]
-    //   }
-    // });
 
     let payload = {};
 

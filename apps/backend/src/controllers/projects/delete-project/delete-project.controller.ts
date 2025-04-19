@@ -110,14 +110,6 @@ export class DeleteProjectController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.projectsRepository.delete({ project_id: projectId });
-    // await this.membersRepository.delete({ project_id: projectId });
-    // await this.connectionsRepository.delete({ project_id: projectId });
-    // await this.envsRepository.delete({ project_id: projectId });
-    // await this.evsRepository.delete({ project_id: projectId });
-    // await this.branchesRepository.delete({ project_id: projectId });
-    // await this.bridgesRepository.delete({ project_id: projectId });
-
     let payload = {};
 
     return payload;

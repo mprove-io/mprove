@@ -82,16 +82,6 @@ export class DeleteEnvController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.envsRepository.delete({
-    //   project_id: projectId,
-    //   env_id: envId
-    // });
-
-    // await this.bridgesRepository.delete({
-    //   project_id: projectId,
-    //   env_id: envId
-    // });
-
     let payload = {};
 
     return payload;

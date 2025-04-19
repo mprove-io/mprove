@@ -70,13 +70,6 @@ export class ResetUserPasswordController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     users: [user]
-    //   }
-    // });
-
     let hostUrl = this.cs.get<interfaces.Config['hostUrl']>('hostUrl');
 
     let urlUpdatePassword = `${hostUrl}/${common.PATH_UPDATE_PASSWORD}?token=${user.passwordResetToken}`;

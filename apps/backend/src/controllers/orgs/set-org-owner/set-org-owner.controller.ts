@@ -56,13 +56,6 @@ export class SetOrgOwnerController {
       )
     });
 
-    // let newOwner = await this.usersRepository.findOne({
-    //   where: {
-    //     email: ownerEmail,
-    //     is_email_verified: true
-    //   }
-    // });
-
     if (common.isUndefined(newOwner)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_NEW_OWNER_NOT_FOUND
@@ -85,13 +78,6 @@ export class SetOrgOwnerController {
         ),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     orgs: [org]
-    //   }
-    // });
 
     let payload: apiToBackend.ToBackendSetOrgOwnerResponsePayload = {
       org: this.wrapToApiService.wrapToApiOrg(org)

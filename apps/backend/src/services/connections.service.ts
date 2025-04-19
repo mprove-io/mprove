@@ -23,14 +23,6 @@ export class ConnectionsService {
       )
     });
 
-    // let connection = await this.connectionsRepository.findOne({
-    //   where: {
-    //     connection_id: connectionId,
-    //     env_id: envId,
-    //     project_id: projectId
-    //   }
-    // });
-
     if (common.isDefined(connection)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_CONNECTION_ALREADY_EXISTS
@@ -52,14 +44,6 @@ export class ConnectionsService {
         eq(connectionsTable.projectId, projectId)
       )
     });
-
-    // let connection = await this.connectionsRepository.findOne({
-    //   where: {
-    //     connection_id: connectionId,
-    //     env_id: envId,
-    //     project_id: projectId
-    //   }
-    // });
 
     if (common.isUndefined(connection)) {
       throw new common.ServerError({

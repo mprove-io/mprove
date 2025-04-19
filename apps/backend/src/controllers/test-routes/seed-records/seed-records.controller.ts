@@ -110,24 +110,6 @@ export class SeedRecordsController {
             serverTs: undefined
           };
 
-          // let newUser = maker.makeUser({
-          //   userId: x.userId,
-          //   email: x.email,
-          //   isEmailVerified: x.isEmailVerified,
-          //   emailVerificationToken: x.emailVerificationToken,
-          //   passwordResetToken: x.passwordResetToken,
-          //   hash: hash,
-          //   salt: salt,
-          //   alias: alias,
-          //   passwordResetExpiresTs: common.isDefined(x.passwordResetExpiresTs)
-          //     ? x.passwordResetExpiresTs
-          //     : common.isDefined(x.passwordResetToken)
-          //     ? helper.makeTsUsingOffsetFromNow(
-          //         constants.PASSWORD_EXPIRES_OFFSET
-          //       )
-          //     : undefined
-          // });
-
           users.push(newUser);
         }
       );
@@ -145,13 +127,6 @@ export class SeedRecordsController {
             ownerId: users.find(u => u.email === x.ownerEmail).userId,
             serverTs: undefined
           };
-
-          // let newOrg = maker.makeOrg({
-          //   orgId: x.orgId,
-          //   name: x.name,
-          //   ownerEmail: x.ownerEmail,
-          //   ownerId: users.find(u => u.email === x.ownerEmail).userId
-          // });
 
           let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
             info: {
@@ -235,17 +210,6 @@ export class SeedRecordsController {
             publicKey: x.publicKey,
             serverTs: undefined
           };
-
-          // let newProject = maker.makeProject({
-          //   orgId: x.orgId,
-          //   projectId: x.projectId || common.makeId(),
-          //   name: x.name,
-          //   defaultBranch: x.defaultBranch,
-          //   remoteType: x.remoteType,
-          //   gitUrl: x.gitUrl,
-          //   privateKey: x.privateKey,
-          //   publicKey: x.publicKey
-          // });
 
           let prodEnv = this.makerService.makeEnv({
             projectId: newProject.projectId,
@@ -531,30 +495,6 @@ export class SeedRecordsController {
         ),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     users: users,
-    //     orgs: orgs,
-    //     projects: projects,
-    //     envs: envs,
-    //     evs: evs,
-    //     members: members,
-    //     connections: connections,
-    //     branches: branches,
-    //     bridges: bridges,
-    //     structs: structs,
-    //     vizs: vizs,
-    //     queries: queries,
-    //     models: models,
-    //     metrics: metrics,
-    //     reps: reps,
-    //     apis: apis,
-    //     mconfigs: mconfigs,
-    //     dashboards: dashboards
-    //   }
-    // });
 
     let payload: apiToBackend.ToBackendSeedRecordsResponse['payload'] = {};
 

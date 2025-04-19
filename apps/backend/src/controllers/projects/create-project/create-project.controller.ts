@@ -54,13 +54,6 @@ export class CreateProjectController {
       where: and(eq(projectsTable.orgId, orgId), eq(projectsTable.name, name))
     });
 
-    // let project = await this.projectsRepository.findOne({
-    //   where: {
-    //     org_id: orgId,
-    //     name: name
-    //   }
-    // });
-
     if (common.isDefined(project)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_PROJECT_ALREADY_EXISTS
@@ -73,12 +66,6 @@ export class CreateProjectController {
       note = await this.db.drizzle.query.notesTable.findFirst({
         where: eq(notesTable.noteId, noteId)
       });
-
-      // note = await this.notesRepository.findOne({
-      //   where: {
-      //     note_id: noteId
-      //   }
-      // });
 
       if (common.isUndefined(note)) {
         throw new common.ServerError({

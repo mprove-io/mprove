@@ -32,10 +32,6 @@ export class IsProjectExistController {
       where: eq(projectsTable.name, name)
     });
 
-    // let project = await this.projectsRepository.findOne({
-    //   where: { name: name }
-    // });
-
     let payload: apiToBackend.ToBackendIsProjectExistResponsePayload = {
       isExist: common.isDefined(project)
     };

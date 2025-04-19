@@ -51,8 +51,6 @@ export class RegisterUserController {
       where: eq(usersTable.email, email)
     });
 
-    // let user = await this.userRepository.findOne({ where: { email: email } });
-
     if (common.isDefined(user)) {
       if (common.isDefined(user.hash)) {
         throw new common.ServerError({
@@ -121,13 +119,6 @@ export class RegisterUserController {
         ),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.dbService.writeRecords({
-    //   modify: common.isDefined(user),
-    //   records: {
-    //     users: [newUser]
-    //   }
-    // });
 
     await this.emailService.sendEmailVerification({
       email: email,

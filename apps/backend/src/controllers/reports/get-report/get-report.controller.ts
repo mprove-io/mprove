@@ -156,13 +156,6 @@ export class GetReportController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     users: [user]
-    //   }
-    // });
-
     // repApi.rows.forEach(row => {
     //   console.log('row.rowId');
     //   console.log(row.rowId);

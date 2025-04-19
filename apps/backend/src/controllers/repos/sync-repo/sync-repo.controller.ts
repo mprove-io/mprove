@@ -138,14 +138,6 @@ export class SyncRepoController {
       )
     });
 
-    // let branchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: branch.project_id,
-    //     repo_id: branch.repo_id,
-    //     branch_id: branch.branch_id
-    //   }
-    // });
-
     await forEachSeries(branchBridges, async x => {
       if (x.envId === envId) {
         let structId = common.makeId();
@@ -182,13 +174,6 @@ export class SyncRepoController {
         ),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     bridges: [...branchBridges]
-    //   }
-    // });
 
     let currentBridge = branchBridges.find(y => y.envId === envId);
 

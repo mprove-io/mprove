@@ -25,12 +25,6 @@ export class GetAvatarBigController {
       where: eq(avatarsTable.userId, avatarUserId)
     });
 
-    // let avatar = await this.avatarsRepository.findOne({
-    //   where: {
-    //     user_id: avatarUserId
-    //   }
-    // });
-
     let payload: apiToBackend.ToBackendGetAvatarBigResponsePayload = {
       avatarSmall: avatar?.avatarSmall,
       avatarBig: avatar?.avatarBig

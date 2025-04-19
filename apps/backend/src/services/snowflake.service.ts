@@ -108,14 +108,6 @@ export class SnowFlakeService {
           )
         });
 
-        // let q = await this.queriesRepository.findOne({
-        //   where: {
-        //     query_id: queryId,
-        //     query_job_id: queryJobId,
-        //     project_id: projectId
-        //   }
-        // });
-
         if (common.isDefined(q)) {
           q.status = common.QueryStatusEnum.Completed;
           q.queryJobId = undefined; // null;
@@ -138,13 +130,6 @@ export class SnowFlakeService {
               ),
             getRetryOption(this.cs, this.logger)
           );
-
-          // await this.dbService.writeRecords({
-          //   modify: true,
-          //   records: {
-          //     queries: [q]
-          //   }
-          // });
         }
         this.snowflakeConnectionDestroy(snowflakeConnection);
       })
@@ -156,14 +141,6 @@ export class SnowFlakeService {
             eq(queriesTable.projectId, projectId)
           )
         });
-
-        // let q = await this.queriesRepository.findOne({
-        //   where: {
-        //     query_id: queryId,
-        //     query_job_id: queryJobId,
-        //     project_id: projectId
-        //   }
-        // });
 
         if (common.isDefined(q)) {
           q.status = common.QueryStatusEnum.Error;
@@ -185,13 +162,6 @@ export class SnowFlakeService {
               ),
             getRetryOption(this.cs, this.logger)
           );
-
-          // await this.dbService.writeRecords({
-          //   modify: true,
-          //   records: {
-          //     queries: [q]
-          //   }
-          // });
         }
         this.snowflakeConnectionDestroy(snowflakeConnection);
       });

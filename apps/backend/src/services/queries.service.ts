@@ -69,35 +69,6 @@ export class QueriesService {
 
     let query = queries.length < 0 ? undefined : queries[0];
 
-    // let query = await this.queriesRepository.findOne({
-    //   select: [
-    //     'project_id',
-    //     'env_id',
-    //     'connection_id',
-    //     'connection_type',
-    //     'query_id',
-    //     'sql',
-    //     'status',
-    //     // 'data',
-    //     'last_run_by',
-    //     'last_run_ts',
-    //     'last_cancel_ts',
-    //     'last_complete_ts',
-    //     'last_complete_duration',
-    //     'last_error_message',
-    //     'last_error_ts',
-    //     'query_job_id',
-    //     'bigquery_query_job_id',
-    //     'bigquery_consecutive_errors_get_job',
-    //     'bigquery_consecutive_errors_get_results',
-    //     'server_ts'
-    //   ],
-    //   where: {
-    //     query_id: queryId,
-    //     project_id: projectId
-    //   }
-    // });
-
     if (common.isUndefined(query)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
@@ -116,13 +87,6 @@ export class QueriesService {
         eq(queriesTable.projectId, projectId)
       )
     });
-
-    // let query = await this.queriesRepository.findOne({
-    //   where: {
-    //     query_id: queryId,
-    //     project_id: projectId
-    //   }
-    // });
 
     if (common.isUndefined(query)) {
       throw new common.ServerError({
@@ -171,35 +135,6 @@ export class QueriesService {
           eq(queriesTable.projectId, projectId)
         )
       )) as schemaPostgres.QueryEnt[];
-
-    // let queries = await this.queriesRepository.find({
-    //   select: [
-    //     'project_id',
-    //     'env_id',
-    //     'connection_id',
-    //     'connection_type',
-    //     'query_id',
-    //     // 'sql',
-    //     'status',
-    //     // 'data',
-    //     'last_run_by',
-    //     'last_run_ts',
-    //     'last_cancel_ts',
-    //     'last_complete_ts',
-    //     'last_complete_duration',
-    //     'last_error_message',
-    //     'last_error_ts',
-    //     'query_job_id',
-    //     'bigquery_query_job_id',
-    //     'bigquery_consecutive_errors_get_job',
-    //     'bigquery_consecutive_errors_get_results',
-    //     'server_ts'
-    //   ],
-    //   where: {
-    //     query_id: In(queryIds),
-    //     project_id: projectId
-    //   }
-    // });
 
     let notFoundQueryIds: string[] = [];
 
@@ -256,8 +191,6 @@ WHERE m.mconfig_id is NULL
           ),
         getRetryOption(this.cs, this.logger)
       );
-
-      // await this.queriesRepository.delete({ query_id: In(orphanedQueryIds) });
     }
   }
 
@@ -269,13 +202,6 @@ WHERE m.mconfig_id is NULL
       )
     });
 
-    // let queries = await this.queriesRepository.find({
-    //   where: {
-    //     status: common.QueryStatusEnum.Running,
-    //     connection_type: common.ConnectionTypeEnum.BigQuery
-    //   }
-    // });
-
     await asyncPool(8, queries, async (query: schemaPostgres.QueryEnt) => {
       try {
         let connection = await this.db.drizzle.query.connectionsTable.findFirst(
@@ -286,13 +212,6 @@ WHERE m.mconfig_id is NULL
             )
           }
         );
-
-        // let connection = await this.connectionsRepository.findOne({
-        //   where: {
-        //     project_id: query.project_id,
-        //     connection_id: query.connection_id
-        //   }
-        // });
 
         if (common.isUndefined(connection)) {
           query.status = common.QueryStatusEnum.Error;
@@ -313,13 +232,6 @@ WHERE m.mconfig_id is NULL
               ),
             getRetryOption(this.cs, this.logger)
           );
-
-          // await this.dbService.writeRecords({
-          //   modify: true,
-          //   records: {
-          //     queries: [query]
-          //   }
-          // });
 
           return;
         }
@@ -358,13 +270,6 @@ WHERE m.mconfig_id is NULL
               getRetryOption(this.cs, this.logger)
             );
 
-            // await this.dbService.writeRecords({
-            //   modify: true,
-            //   records: {
-            //     queries: [query]
-            //   }
-            // });
-
             return;
           });
 
@@ -383,13 +288,6 @@ WHERE m.mconfig_id is NULL
             ),
           getRetryOption(this.cs, this.logger)
         );
-
-        // await this.dbService.writeRecords({
-        //   modify: true,
-        //   records: {
-        //     queries: [query]
-        //   }
-        // });
 
         let queryJob = (itemQueryJob as any)[0];
         let queryJobGetResponse: any = (itemQueryJob as any)[1];
@@ -420,13 +318,6 @@ WHERE m.mconfig_id is NULL
                 ),
               getRetryOption(this.cs, this.logger)
             );
-
-            // await this.dbService.writeRecords({
-            //   modify: true,
-            //   records: {
-            //     queries: [query]
-            //   }
-            // });
           } else {
             let queryResultsItem = await queryJob
               .getQueryResults()
@@ -454,13 +345,6 @@ WHERE m.mconfig_id is NULL
                     ),
                   getRetryOption(this.cs, this.logger)
                 );
-
-                // await this.dbService.writeRecords({
-                //   modify: true,
-                //   records: {
-                //     queries: [query]
-                //   }
-                // });
 
                 return;
               });
@@ -490,13 +374,6 @@ WHERE m.mconfig_id is NULL
                 ),
               getRetryOption(this.cs, this.logger)
             );
-
-            // await this.dbService.writeRecords({
-            //   modify: true,
-            //   records: {
-            //     queries: [query]
-            //   }
-            // });
           }
         }
       } catch (e) {

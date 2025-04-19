@@ -206,28 +206,12 @@ export class CreateDraftReportController {
       )
     });
 
-    // let copyQueries: schemaPostgres.QueryEntity[] =
-    //   await this.queriesRepository.find({
-    //     where: {
-    //       query_id: In(fromCopyQueryIds),
-    //       project_id: projectId
-    //     }
-    //   });
-
     let copyMconfigs = await this.db.drizzle.query.mconfigsTable.findMany({
       where: and(
         inArray(mconfigsTable.mconfigId, fromCopyMconfigIds),
         eq(mconfigsTable.structId, struct.structId)
       )
     });
-
-    // let copyMconfigs: schemaPostgres.MconfigEntity[] =
-    //   await this.mconfigsRepository.find({
-    //     where: {
-    //       mconfig_id: In(fromCopyMconfigIds),
-    //       struct_id: struct.struct_id
-    //     }
-    //   });
 
     let copyKits = await this.db.drizzle.query.kitsTable.findMany({
       where: and(
@@ -236,14 +220,6 @@ export class CreateDraftReportController {
         eq(kitsTable.reportId, fromReportId)
       )
     });
-
-    // let copyKits: schemaPostgres.KitEntity[] = await this.kitsRepository.find({
-    //   where: {
-    //     kit_id: In(fromCopyKitIds),
-    //     struct_id: struct.struct_id,
-    //     rep_id: fromRepId
-    //   }
-    // });
 
     copyQueries.forEach(x => {
       x.queryId = copyQueriesMap.find(
@@ -285,15 +261,6 @@ export class CreateDraftReportController {
         ),
       getRetryOption(this.cs, this.logger)
     );
-
-    // let records = await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     queries: copyQueries,
-    //     mconfigs: copyMconfigs,
-    //     kits: copyKits
-    //   }
-    // });
 
     let models: ModelEnt[] = [];
 

@@ -74,12 +74,6 @@ export class GetChartsController {
       where: eq(chartsTable.structId, bridge.structId)
     });
 
-    // let vizs = await this.vizsRepository.find({
-    //   where: {
-    //     struct_id: bridge.struct_id
-    //   }
-    // });
-
     let chartsGrantedAccess = charts.filter(x =>
       helper.checkAccess({
         userAlias: user.alias,
@@ -100,17 +94,6 @@ export class GetChartsController {
       .where(
         eq(modelsTable.structId, bridge.structId)
       )) as schemaPostgres.ModelEnt[];
-
-    // let models = await this.modelsRepository.find({
-    //   select: [
-    //     'model_id',
-    //     'access_users',
-    //     'access_roles',
-    //     'hidden',
-    //     'connection_id'
-    //   ],
-    //   where: { struct_id: bridge.struct_id }
-    // });
 
     let modelsY = await this.modelsService.getModelsY({
       bridge: bridge,

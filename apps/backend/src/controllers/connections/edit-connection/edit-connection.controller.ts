@@ -106,13 +106,6 @@ export class EditConnectionController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     connections: [connection]
-    //   }
-    // });
-
     let payload: apiToBackend.ToBackendEditConnectionResponsePayload = {
       connection: this.wrapToApiService.wrapToApiConnection(connection)
     };

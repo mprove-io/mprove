@@ -63,17 +63,6 @@ export class GetMembersController {
       .limit(perPage)
       .offset((pageNum - 1) * perPage);
 
-    // const [members, total] = await this.membersRepository.findAndCount({
-    //   where: {
-    //     project_id: projectId
-    //   },
-    //   order: {
-    //     email: 'ASC'
-    //   },
-    //   take: perPage,
-    //   skip: (pageNum - 1) * perPage
-    // });
-
     let members = membersResult.map(x => x.record);
 
     let memberIds = members.map(x => x.memberId);
@@ -88,13 +77,6 @@ export class GetMembersController {
             })
             .from(avatarsTable)
             .where(inArray(avatarsTable.userId, memberIds));
-
-    // await this.avatarsRepository.find({
-    //     select: ['user_id', 'avatar_small'],
-    //     where: {
-    //       user_id: In(memberIds)
-    //     }
-    //   });
 
     let apiMembers = members.map(x => this.wrapToApiService.wrapToApiMember(x));
 

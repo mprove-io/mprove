@@ -42,12 +42,6 @@ export class GetNavController {
       where: eq(membersTable.memberId, user.userId)
     });
 
-    // let members = await this.membersRepository.find({
-    //   where: {
-    //     member_id: user.user_id
-    //   }
-    // });
-
     let projectIds = members.map(x => x.projectId);
 
     let projects =
@@ -56,12 +50,6 @@ export class GetNavController {
         : await this.db.drizzle.query.projectsTable.findMany({
             where: inArray(projectsTable.projectId, projectIds)
           });
-
-    // await this.projectsRepository.find({
-    //     where: {
-    //       project_id: In(projectIds)
-    //     }
-    //   });
 
     let orgIds = projects.map(x => x.orgId);
 
@@ -72,21 +60,9 @@ export class GetNavController {
             where: inArray(orgsTable.orgId, orgIds)
           });
 
-    // await this.orgsRepository.find({
-    //     where: {
-    //       org_id: In(orgIds)
-    //     }
-    //   });
-
     let ownerOrgs = await this.db.drizzle.query.orgsTable.findMany({
       where: eq(orgsTable.ownerId, user.userId)
     });
-
-    // let ownerOrgs = await this.orgsRepository.find({
-    //   where: {
-    //     owner_id: user.user_id
-    //   }
-    // });
 
     let orgIdsWithDuplicates = [...orgs, ...ownerOrgs].map(x => x.orgId);
 
@@ -121,26 +97,11 @@ export class GetNavController {
           eq(bridgesTable.envId, common.PROJECT_ENV_PROD)
         )
       });
-
-      // bridge = await this.bridgesRepository.findOne({
-      //   where: {
-      //     project_id: resultProject.project_id,
-      //     repo_id: common.PROD_REPO_ID,
-      //     branch_id: resultProject.default_branch,
-      //     env_id: common.PROJECT_ENV_PROD
-      //   }
-      // });
     }
 
     let avatar = await this.db.drizzle.query.avatarsTable.findFirst({
       where: eq(avatarsTable.userId, user.userId)
     });
-
-    // let avatar = await this.avatarsRepository.findOne({
-    //   where: {
-    //     user_id: user.user_id
-    //   }
-    // });
 
     let apiMember;
     let apiStruct;

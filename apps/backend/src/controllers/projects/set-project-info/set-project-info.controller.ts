@@ -69,13 +69,6 @@ export class SetProjectInfoController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     projects: [project]
-    //   }
-    // });
-
     let payload: apiToBackend.ToBackendSetProjectInfoResponsePayload = {
       project: this.wrapToApiService.wrapToApiProject({
         project: project,

@@ -47,16 +47,6 @@ export class GetBranchesListController {
       orderBy: asc(branchesTable.branchId)
     });
 
-    // let branches = await this.branchesRepository.find({
-    //   where: {
-    //     project_id: projectId,
-    //     repo_id: In([common.PROD_REPO_ID, user.user_id])
-    //   },
-    //   order: {
-    //     branch_id: 'ASC'
-    //   }
-    // });
-
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendGetBranchesListResponsePayload = {

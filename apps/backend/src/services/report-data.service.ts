@@ -485,13 +485,6 @@ export class ReportDataService {
           eq(mconfigsTable.structId, struct.structId)
         )
       });
-
-      // mconfigs = await this.mconfigsRepository.find({
-      //   where: {
-      //     mconfig_id: In(mconfigIds),
-      //     struct_id: struct.struct_id
-      //   }
-      // });
     }
 
     let queries: schemaPostgres.QueryEnt[] = [];
@@ -502,13 +495,6 @@ export class ReportDataService {
           eq(queriesTable.projectId, project.projectId)
         )
       });
-
-      // queries = await this.queriesRepository.find({
-      //   where: {
-      //     query_id: In(queryIds),
-      //     project_id: project.project_id
-      //   }
-      // });
     }
 
     let kits: schemaPostgres.KitEnt[] = [];
@@ -519,13 +505,6 @@ export class ReportDataService {
           eq(kitsTable.structId, report.structId)
         )
       });
-
-      // kits = await this.kitsRepository.find({
-      //   where: {
-      //     kit_id: In(kitIds),
-      //     struct_id: rep.struct_id
-      //   }
-      // });
     }
 
     let queriesApi = queries.map(x => this.wrapToApiService.wrapToApiQuery(x));
@@ -714,14 +693,6 @@ export class ReportDataService {
           ),
         getRetryOption(this.cs, this.logger)
       );
-
-      // await this.dbService.writeRecords({
-      //   modify: false,
-      //   records: {
-      //     mconfigs: newMconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
-      //     queries: newQueries.map(x => wrapper.wrapToEntityQuery(x))
-      //   }
-      // });
     }
 
     if (
@@ -752,13 +723,6 @@ export class ReportDataService {
           ),
         getRetryOption(this.cs, this.logger)
       );
-
-      // await this.dbService.writeRecords({
-      //   modify: true,
-      //   records: {
-      //     reps: [rep]
-      //   }
-      // });
     }
 
     return reportApi;

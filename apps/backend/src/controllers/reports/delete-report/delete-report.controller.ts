@@ -151,14 +151,6 @@ export class DeleteReportController {
       )
     });
 
-    // let branchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: branch.projectId,
-    //     repo_id: branch.repoId,
-    //     branch_id: branch.branchId
-    //   }
-    // });
-
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {
         x.structId = common.EMPTY_STRUCT_ID;
@@ -200,19 +192,6 @@ export class DeleteReportController {
         }),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.repsRepository.delete({
-    //   rep_id: repId,
-    //   struct_id: bridge.struct_id
-    // });
-
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     structs: [struct],
-    //     bridges: [...branchBridges]
-    //   }
-    // });
 
     let payload = {};
 

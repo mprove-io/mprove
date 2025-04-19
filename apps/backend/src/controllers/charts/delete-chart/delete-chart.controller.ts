@@ -157,14 +157,6 @@ export class DeleteChartController {
       )
     });
 
-    // let branchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: branch.project_id,
-    //     repo_id: branch.repo_id,
-    //     branch_id: branch.branch_id
-    //   }
-    // });
-
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {
         x.structId = common.EMPTY_STRUCT_ID;
@@ -206,19 +198,6 @@ export class DeleteChartController {
         }),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.vizsRepository.delete({
-    //   viz_id: chartId,
-    //   struct_id: bridge.struct_id
-    // });
-
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     structs: [struct],
-    //     bridges: [...branchBridges]
-    //   }
-    // });
 
     let payload = {};
 

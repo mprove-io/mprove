@@ -40,10 +40,6 @@ export class GetOrgUsersController {
       where: eq(projectsTable.orgId, orgId)
     });
 
-    // let projects = await this.projectsRepository.find({
-    //   where: { org_id: orgId }
-    // });
-
     let projectIds = projects.map(x => x.projectId);
 
     let memberParts = await this.db.drizzle
@@ -52,13 +48,6 @@ export class GetOrgUsersController {
       })
       .from(membersTable)
       .where(inArray(membersTable.projectId, projectIds));
-
-    // let membersPart: MemberEntity[] = await this.dataSource
-    //   .getRepository(MemberEntity)
-    //   .createQueryBuilder('members')
-    //   .select('DISTINCT member_id')
-    //   .where({ project_id: In(projectIds) })
-    //   .getRawMany();
 
     let userIds = memberParts.map(x => x.memberId);
 
@@ -73,18 +62,6 @@ export class GetOrgUsersController {
       .limit(perPage)
       .offset((pageNum - 1) * perPage);
 
-    // let [users, total]: [UserEntity[], number] =
-    //   await this.usersRepository.findAndCount({
-    //     where: {
-    //       user_id: In(userIds)
-    //     },
-    //     order: {
-    //       email: 'ASC'
-    //     },
-    //     take: perPage,
-    //     skip: (pageNum - 1) * perPage
-    //   });
-
     let users = usersResult.map(x => x.record);
 
     let members =
@@ -96,13 +73,6 @@ export class GetOrgUsersController {
               inArray(membersTable.projectId, projectIds)
             )
           });
-
-    // await this.membersRepository.find({
-    //     where: {
-    //       member_id: In(userIds),
-    //       project_id: In(projectIds)
-    //     }
-    //   });
 
     let orgUsers: apiToBackend.OrgUsersItem[] = [];
 
@@ -116,13 +86,6 @@ export class GetOrgUsersController {
             })
             .from(avatarsTable)
             .where(inArray(avatarsTable.userId, userIds));
-
-    // await this.avatarsRepository.find({
-    //     select: ['user_id', 'avatar_small'],
-    //     where: {
-    //       user_id: In(userIds)
-    //     }
-    //   });
 
     users.forEach(x => {
       let userMembers = members.filter(m => m.memberId === x.userId);

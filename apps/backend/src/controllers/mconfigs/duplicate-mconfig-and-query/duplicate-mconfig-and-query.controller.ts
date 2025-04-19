@@ -132,13 +132,6 @@ export class DuplicateMconfigAndQueryController {
       )
     });
 
-    // let oldQuery = await this.queriesRepository.findOne({
-    //   where: {
-    //     query_id: oldMconfig.queryId,
-    //     project_id: projectId
-    //   }
-    // });
-
     let newMconfigId = common.makeId();
     let newQueryId = common.makeId();
 
@@ -168,14 +161,6 @@ export class DuplicateMconfigAndQueryController {
         ),
       getRetryOption(this.cs, this.logger)
     );
-
-    // let records = await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     mconfigs: [newMconfig],
-    //     queries: [newQuery]
-    //   }
-    // });
 
     let payload: apiToBackend.ToBackendDuplicateMconfigAndQueryResponsePayload =
       {

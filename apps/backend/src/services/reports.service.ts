@@ -42,13 +42,6 @@ export class ReportsService {
       )
     });
 
-    // let rep = await this.repsRepository.findOne({
-    //   where: {
-    //     struct_id: structId,
-    //     rep_id: repId
-    //   }
-    // });
-
     if (common.isUndefined(report)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_REPORT_DOES_NOT_EXIST
@@ -103,21 +96,6 @@ export class ReportsService {
       draft: false
     });
 
-    // let emptyRep: schemaPostgres.ReportEnt = {
-    //   projectId: projectId,
-    //   structId: undefined,
-    //   reportId: repId,
-    //   creatorId: undefined,
-    //   draft: false,
-    //   filePath: undefined,
-    //   title: repId,
-    //   accessRoles: [],
-    //   accessUsers: [],
-    //   rows: [],
-    //   draftCreatedTs: undefined,
-    //   serverTs: undefined
-    // };
-
     let report =
       reportId === common.EMPTY_REPORT_ID
         ? emptyRep
@@ -129,13 +107,6 @@ export class ReportsService {
             )
           });
 
-    // await this.repsRepository.findOne({
-    //     where: {
-    //       project_id: projectId,
-    //       struct_id: structId,
-    //       rep_id: repId
-    //     }
-    //   });
     if (checkExist === true && common.isUndefined(report)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_REPORT_NOT_FOUND

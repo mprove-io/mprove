@@ -36,12 +36,6 @@ export class GetOrgController {
         where: eq(membersTable.memberId, user.userId)
       });
 
-      // let userMembers = await this.membersRepository.find({
-      //   where: {
-      //     member_id: user.user_id
-      //   }
-      // });
-
       let projectIds = userMembers.map(m => m.projectId);
 
       let projects =
@@ -53,13 +47,6 @@ export class GetOrgController {
                 eq(projectsTable.orgId, orgId)
               )
             });
-
-      // await this.projectsRepository.find({
-      //     where: {
-      //       project_id: In(projectIds),
-      //       org_id: orgId
-      //     }
-      //   });
 
       let orgIds = projects.map(x => x.orgId);
 

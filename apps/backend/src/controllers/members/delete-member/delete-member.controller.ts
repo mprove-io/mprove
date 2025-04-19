@@ -125,21 +125,6 @@ export class DeleteMemberController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.membersRepository.delete({
-    //   project_id: projectId,
-    //   member_id: memberId
-    // });
-
-    // await this.branchesRepository.delete({
-    //   project_id: projectId,
-    //   repo_id: devRepoId
-    // });
-
-    // await this.bridgesRepository.delete({
-    //   project_id: projectId,
-    //   repo_id: devRepoId
-    // });
-
     let payload = {};
 
     return payload;

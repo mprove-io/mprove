@@ -35,12 +35,6 @@ export class ProjectsService {
       where: eq(projectsTable.projectId, projectId)
     });
 
-    // let project = await this.projectsRepository.findOne({
-    //   where: {
-    //     project_id: projectId
-    //   }
-    // });
-
     if (common.isUndefined(project)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_PROJECT_DOES_NOT_EXIST
@@ -120,27 +114,11 @@ export class ProjectsService {
       serverTs: undefined
     };
 
-    // let newProject = maker.makeProject({
-    //   orgId: orgId,
-    //   name: name,
-    //   projectId: projectId,
-    //   defaultBranch: diskResponse.payload.defaultBranch,
-    //   remoteType: remoteType,
-    //   gitUrl: gitUrl,
-    //   publicKey: publicKey,
-    //   privateKey: privateKey
-    // });
-
     let prodEnv = this.makerService.makeEnv({
       projectId: newProject.projectId,
       envId: common.PROJECT_ENV_PROD,
       evs: evs
     });
-
-    // let prodEnv = maker.makeEnv({
-    //   projectId: newProject.project_id,
-    //   envId: common.PROJECT_ENV_PROD
-    // });
 
     let newMember = this.makerService.makeMember({
       projectId: newProject.projectId,
@@ -149,14 +127,6 @@ export class ProjectsService {
       isEditor: true,
       isExplorer: true
     });
-
-    // let newMember = maker.makeMember({
-    //   projectId: newProject.project_id,
-    //   user: user,
-    //   isAdmin: true,
-    //   isEditor: true,
-    //   isExplorer: true
-    // });
 
     let devStructId = common.makeId();
     let prodStructId = common.makeId();
@@ -167,23 +137,11 @@ export class ProjectsService {
       branchId: newProject.defaultBranch
     });
 
-    // let prodBranch = maker.makeBranch({
-    //   projectId: newProject.project_id,
-    //   repoId: common.PROD_REPO_ID,
-    //   branchId: newProject.default_branch
-    // });
-
     let devBranch = this.makerService.makeBranch({
       projectId: newProject.projectId,
       repoId: user.userId,
       branchId: newProject.defaultBranch
     });
-
-    // let devBranch = maker.makeBranch({
-    //   projectId: newProject.project_id,
-    //   repoId: user.user_id,
-    //   branchId: newProject.default_branch
-    // });
 
     let prodBranchBridgeProdEnv = this.makerService.makeBridge({
       projectId: prodBranch.projectId,
@@ -194,15 +152,6 @@ export class ProjectsService {
       needValidate: false
     });
 
-    // let prodBranchBridgeProdEnv = maker.makeBridge({
-    //   projectId: prodBranch.project_id,
-    //   repoId: prodBranch.repo_id,
-    //   branchId: prodBranch.branch_id,
-    //   envId: prodEnv.env_id,
-    //   structId: prodStructId,
-    //   needValidate: false
-    // });
-
     let devBranchBridgeProdEnv = this.makerService.makeBridge({
       projectId: devBranch.projectId,
       repoId: devBranch.repoId,
@@ -211,15 +160,6 @@ export class ProjectsService {
       structId: devStructId,
       needValidate: false
     });
-
-    // let devBranchBridgeProdEnv = maker.makeBridge({
-    //   projectId: devBranch.project_id,
-    //   repoId: devBranch.repo_id,
-    //   branchId: devBranch.branch_id,
-    //   envId: prodEnv.env_id,
-    //   structId: devStructId,
-    //   needValidate: false
-    // });
 
     await this.blockmlService.rebuildStruct({
       traceId,
@@ -263,18 +203,6 @@ export class ProjectsService {
       getRetryOption(this.cs, this.logger)
     );
 
-    // let records = await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     projects: [newProject],
-    //     envs: [prodEnv],
-    //     members: [newMember],
-    //     branches: [prodBranch, devBranch],
-    //     bridges: [prodBranchBridgeProdEnv, devBranchBridgeProdEnv]
-    //   }
-    // });
-
     return newProject;
-    // return records.projects[0];
   }
 }

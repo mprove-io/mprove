@@ -16,13 +16,6 @@ export class EnvsService {
       where: and(eq(envsTable.envId, envId), eq(envsTable.projectId, projectId))
     });
 
-    // let env = await this.envsRepository.findOne({
-    //   where: {
-    //     env_id: envId,
-    //     project_id: projectId
-    //   }
-    // });
-
     if (common.isDefined(env)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_ENV_ALREADY_EXISTS

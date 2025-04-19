@@ -76,27 +76,12 @@ export class GetReportsController {
       )
     });
 
-    // let draftReps = await this.repsRepository.find({
-    //   where: {
-    //     draft: true,
-    //     creator_id: user.user_id,
-    //     struct_id: bridge.struct_id
-    //   }
-    // });
-
     let structReports = await this.db.drizzle.query.reportsTable.findMany({
       where: and(
         eq(reportsTable.draft, false),
         eq(reportsTable.structId, bridge.structId)
       )
     });
-
-    // let structReps = await this.repsRepository.find({
-    //   where: {
-    //     draft: false,
-    //     struct_id: bridge.struct_id
-    //   }
-    // });
 
     let reportsGrantedAccess = structReports.filter(x =>
       helper.checkAccess({
@@ -140,13 +125,6 @@ export class GetReportsController {
         eq(modelsTable.structId, struct.structId)
       )
     });
-
-    // let models = await this.modelsRepository.find({
-    //   where: {
-    //     model_id: In(modelIds),
-    //     struct_id: struct.structId
-    //   }
-    // });
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 

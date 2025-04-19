@@ -57,8 +57,6 @@ export class CreateOrgController {
       where: eq(orgsTable.name, name)
     });
 
-    // let org = await this.orgsRepository.findOne({ where: { name: name } });
-
     if (name.toLowerCase() === common.FIRST_ORG_NAME.toLowerCase()) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_RESTRICTED_ORGANIZATION_NAME

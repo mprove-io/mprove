@@ -75,10 +75,6 @@ export class CreateMemberController {
       where: eq(usersTable.email, email)
     });
 
-    // let invitedUser = await this.usersRepository.findOne({
-    //   where: { email: email }
-    // });
-
     let newUser: schemaPostgres.UserEnt;
 
     if (common.isUndefined(invitedUser)) {
@@ -159,14 +155,6 @@ export class CreateMemberController {
       )
     });
 
-    // let prodBranch = await this.branchesRepository.findOne({
-    //   where: {
-    //     project_id: projectId,
-    //     repo_id: common.PROD_REPO_ID,
-    //     branch_id: project.default_branch
-    //   }
-    // });
-
     let devBranch = this.makerService.makeBranch({
       projectId: projectId,
       repoId: newMember.memberId,
@@ -180,14 +168,6 @@ export class CreateMemberController {
         eq(bridgesTable.branchId, prodBranch.branchId)
       )
     });
-
-    // let prodBranchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: prodBranch.project_id,
-    //     repo_id: prodBranch.repo_id,
-    //     branch_id: prodBranch.branch_id
-    //   }
-    // });
 
     let devBranchBridges: schemaPostgres.BridgeEnt[] = [];
 
@@ -244,16 +224,6 @@ export class CreateMemberController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     members: [newMember],
-    //     users: common.isDefined(newUser) ? [newUser] : [],
-    //     branches: [devBranch],
-    //     bridges: [...devBranchBridges]
-    //   }
-    // });
-
     let avatars = await this.db.drizzle
       .select({
         userId: avatarsTable.userId,
@@ -263,13 +233,6 @@ export class CreateMemberController {
       .where(eq(avatarsTable.userId, newMember.memberId));
 
     let avatar = avatars.length > 0 ? avatars[0] : undefined;
-
-    // let avatar = await this.avatarsRepository.findOne({
-    //   select: ['user_id', 'avatar_small'],
-    //   where: {
-    //     user_id: newMember.member_id
-    //   }
-    // });
 
     let hostUrl = this.cs.get<interfaces.Config['hostUrl']>('hostUrl');
 

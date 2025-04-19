@@ -21,8 +21,6 @@ export class IsOrgExistController {
       where: eq(orgsTable.name, name)
     });
 
-    // let org = await this.orgsRepository.findOne({ where: { name: name } });
-
     let payload: apiToBackend.ToBackendIsOrgExistResponsePayload = {
       isExist: common.isDefined(org)
     };

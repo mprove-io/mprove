@@ -94,13 +94,6 @@ export class GenerateProjectRemoteKeyController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     notes: [note]
-    //   }
-    // });
-
     let payload: apiToBackend.ToBackendGenerateProjectRemoteKeyResponsePayload =
       {
         noteId: note.noteId,

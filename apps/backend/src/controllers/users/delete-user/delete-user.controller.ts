@@ -57,12 +57,6 @@ export class DeleteUserController {
       where: eq(orgsTable.ownerId, user.userId)
     });
 
-    // let ownerOrgs = await this.orgsRepository.find({
-    //   where: {
-    //     owner_id: user.user_id
-    //   }
-    // });
-
     if (ownerOrgs.length > 0) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_USER_IS_ORG_OWNER,
@@ -79,25 +73,12 @@ export class DeleteUserController {
       )
     });
 
-    // let userAdminMembers = await this.membersRepository.find({
-    //   where: {
-    //     member_id: user.user_id,
-    //     is_admin: true
-    //   }
-    // });
-
     let userAdminProjectIds = userAdminMembers.map(x => x.projectId);
 
     let admins =
       userAdminProjectIds.length === 0
         ? []
-        : // await this.membersRepository.find({
-          //     where: {
-          //       project_id: In(userAdminProjectIds),
-          //       is_admin: true
-          //     }
-          //   });
-          await this.db.drizzle.query.membersTable.findMany({
+        : await this.db.drizzle.query.membersTable.findMany({
             where: and(
               inArray(membersTable.projectId, userAdminProjectIds),
               eq(membersTable.isAdmin, true)
@@ -126,12 +107,6 @@ export class DeleteUserController {
       where: eq(membersTable.memberId, user.userId)
     });
 
-    // let userMembers = await this.membersRepository.find({
-    //   where: {
-    //     member_id: user.user_id
-    //   }
-    // });
-
     let projectIds = userMembers.map(x => x.projectId);
 
     let projects =
@@ -140,11 +115,6 @@ export class DeleteUserController {
         : await this.db.drizzle.query.projectsTable.findMany({
             where: inArray(projectsTable.projectId, projectIds)
           });
-    // await this.projectsRepository.find({
-    //     where: {
-    //       project_id: In(projectIds)
-    //     }
-    //   });
 
     await asyncPool(1, userMembers, async (m: schemaPostgres.MemberEnt) => {
       let project = projects.find(p => p.projectId === m.projectId);
@@ -186,10 +156,6 @@ export class DeleteUserController {
         }),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.usersRepository.delete({ user_id: user.user_id });
-    // await this.membersRepository.delete({ member_id: user.user_id });
-    // await this.branchesRepository.delete({ repo_id: user.alias });
 
     let payload = {};
 

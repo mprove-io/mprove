@@ -48,12 +48,6 @@ export class SetAvatarController {
       where: eq(avatarsTable.userId, user.userId)
     });
 
-    // avatar = await this.avatarsRepository.findOne({
-    //   where: {
-    //     user_id: user.user_id
-    //   }
-    // });
-
     if (common.isDefined(avatar)) {
       avatar.avatarSmall = avatarSmall;
       avatar.avatarBig = avatarBig;
@@ -85,13 +79,6 @@ export class SetAvatarController {
         ),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     avatars: [avatar]
-    //   }
-    // });
 
     let payload: apiToBackend.ToBackendSetAvatarResponsePayload = {
       avatarSmall: avatar.avatarSmall,

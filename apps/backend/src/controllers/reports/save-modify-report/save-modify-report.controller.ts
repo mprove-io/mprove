@@ -232,14 +232,6 @@ export class SaveModifyReportController {
       )
     });
 
-    // let branchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: branch.project_id,
-    //     repo_id: branch.repo_id,
-    //     branch_id: branch.branch_id
-    //   }
-    // });
-
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {
         x.structId = common.EMPTY_STRUCT_ID;
@@ -306,36 +298,7 @@ export class SaveModifyReportController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     structs: [struct],
-    //     bridges: [...branchBridges]
-    //   }
-    // });
-
-    // if (fromRep.draft === common.BoolEnum.TRUE) {
-    //   await this.repsRepository.delete({
-    //     project_id: projectId,
-    //     rep_id: fromRepId,
-    //     draft: true,
-    //     creator_id: user.user_id
-    //   });
-    // }
-
-    // let records = await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     reps: [wrapper.wrapToEntityReport(rep)]
-    //   }
-    // });
-
     if (common.isUndefined(report)) {
-      // await this.repsRepository.delete({
-      //   rep_id: modRepId,
-      //   struct_id: bridge.structId
-      // });
-
       let fileIdAr = existingModReport.filePath.split('/');
       fileIdAr.shift();
       let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);

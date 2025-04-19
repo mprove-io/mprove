@@ -49,17 +49,6 @@ export class GetConnectionsController {
       .limit(perPage)
       .offset((pageNum - 1) * perPage);
 
-    // const [connections, total] = await this.connectionsRepository.findAndCount({
-    //   where: {
-    //     project_id: projectId
-    //   },
-    //   order: {
-    //     connection_id: 'ASC'
-    //   },
-    //   take: perPage,
-    //   skip: (pageNum - 1) * perPage
-    // });
-
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendGetConnectionsResponsePayload = {

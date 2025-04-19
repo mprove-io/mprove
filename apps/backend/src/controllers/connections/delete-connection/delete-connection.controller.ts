@@ -62,13 +62,6 @@ export class DeleteConnectionController {
       )
     });
 
-    // let branchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: projectId,
-    //     env_id: envId
-    //   }
-    // });
-
     await forEachSeries(branchBridges, async x => {
       x.needValidate = true;
     });
@@ -95,19 +88,6 @@ export class DeleteConnectionController {
         }),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.connectionsRepository.delete({
-    //   project_id: projectId,
-    //   env_id: envId,
-    //   connection_id: connectionId
-    // });
-
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     bridges: [...branchBridges]
-    //   }
-    // });
 
     let payload = {};
 

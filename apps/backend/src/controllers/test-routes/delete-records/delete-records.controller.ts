@@ -72,12 +72,6 @@ export class DeleteRecordsController {
         )
       });
 
-      // let projects = await this.projectsRepository.find({
-      //   where: {
-      //     org_id: In(orgIds),
-      //     name: In(projectNames)
-      //   }
-      // });
       if (projects.length > 0) {
         projectIds = [...projectIds, ...projects.map(x => x.projectId)];
       }
@@ -87,10 +81,6 @@ export class DeleteRecordsController {
       let orgs = await this.db.drizzle.query.orgsTable.findMany({
         where: inArray(orgsTable.name, orgNames)
       });
-
-      // let orgs = await this.orgsRepository.find({
-      //   where: { name: In(orgNames) }
-      // });
 
       if (orgs.length > 0) {
         orgIds = [...orgIds, ...orgs.map(x => x.orgId)];
@@ -126,10 +116,6 @@ export class DeleteRecordsController {
           where: eq(usersTable.email, email)
         });
 
-        // let user = await this.usersRepository.findOne({
-        //   where: { email: email }
-        // });
-
         if (common.isDefined(user)) {
           userIds.push(user.userId);
         }
@@ -143,12 +129,6 @@ export class DeleteRecordsController {
             where: inArray(structsTable.projectId, projectIds)
           });
 
-    // await this.structsRepository.find({
-    //     where: {
-    //       project_id: In(projectIds)
-    //     }
-    //   });
-
     structIds = structs.map(struct => struct.structId);
 
     await retry(
@@ -158,80 +138,52 @@ export class DeleteRecordsController {
             await tx
               .delete(usersTable)
               .where(inArray(usersTable.userId, userIds));
-
-            // await this.usersRepository.delete({ user_id: In(userIds) });
           }
           if (orgIds.length > 0) {
             await tx.delete(orgsTable).where(inArray(orgsTable.orgId, orgIds));
-
-            // await this.orgsRepository.delete({ org_id: In(orgIds) });
           }
           if (projectIds.length > 0) {
             await tx
               .delete(projectsTable)
               .where(inArray(projectsTable.projectId, projectIds));
-
-            // await this.projectsRepository.delete({
-            //   project_id: In(projectIds)
-            // });
           }
           if (userIds.length > 0) {
             await tx
               .delete(membersTable)
               .where(inArray(membersTable.memberId, userIds));
-
-            // await this.membersRepository.delete({ member_id: In(userIds) });
           }
           if (projectIds.length > 0) {
             await tx
               .delete(connectionsTable)
               .where(inArray(connectionsTable.projectId, projectIds));
-
-            // await this.connectionsRepository.delete({
-            //   project_id: In(projectIds)
-            // });
           }
           if (structIds.length > 0) {
             await tx
               .delete(structsTable)
               .where(inArray(structsTable.structId, structIds));
-
-            // await this.structsRepository.delete({ struct_id: In(structIds) });
           }
           if (projectIds.length > 0) {
             await tx
               .delete(branchesTable)
               .where(inArray(branchesTable.projectId, projectIds));
 
-            // await this.branchesRepository.delete({
-            //   project_id: In(projectIds)
-            // });
-
             await tx
               .delete(bridgesTable)
               .where(inArray(bridgesTable.projectId, projectIds));
 
-            // await this.bridgesRepository.delete({ project_id: In(projectIds) });
-
             await tx
               .delete(envsTable)
               .where(inArray(envsTable.projectId, projectIds));
-
-            // await this.envsRepository.delete({ project_id: In(projectIds) });
           }
           if (structIds.length > 0) {
             await tx
               .delete(chartsTable)
               .where(inArray(chartsTable.structId, structIds));
-
-            // await this.vizsRepository.delete({ struct_id: In(structIds) });
           }
           if (projectIds.length > 0) {
             await tx
               .delete(queriesTable)
               .where(inArray(queriesTable.projectId, projectIds));
-
-            // await this.queriesRepository.delete({ project_id: In(projectIds) });
           }
 
           if (structIds.length > 0) {
@@ -239,29 +191,19 @@ export class DeleteRecordsController {
               .delete(modelsTable)
               .where(inArray(modelsTable.structId, structIds));
 
-            // await this.modelsRepository.delete({ struct_id: In(structIds) });
-
             await tx
               .delete(mconfigsTable)
               .where(inArray(mconfigsTable.structId, structIds));
 
-            // await this.mconfigsRepository.delete({ struct_id: In(structIds) });
-
             await tx
               .delete(dashboardsTable)
               .where(inArray(dashboardsTable.structId, structIds));
-
-            // await this.dashboardsRepository.delete({
-            //   struct_id: In(structIds)
-            // });
           }
 
           if (userIds.length > 0) {
             await tx
               .delete(avatarsTable)
               .where(inArray(avatarsTable.userId, userIds));
-
-            // await this.avatarsRepository.delete({ user_id: In(userIds) });
           }
         }),
       getRetryOption(this.cs, this.logger)

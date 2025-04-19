@@ -176,25 +176,6 @@ export class BlockmlService {
       serverTs: undefined
     };
 
-    // let struct = maker.makeStruct({
-    //   projectId: projectId,
-    //   structId: structId,
-    //   mproveDirValue: mproveDirValue,
-    //   weekStart: weekStart,
-    //   allowTimezones: common.booleanToEnum(allowTimezones),
-    //   defaultTimezone: defaultTimezone,
-    //   formatNumber: formatNumber,
-    //   currencyPrefix: currencyPrefix,
-    //   currencySuffix: currencySuffix,
-    //   errors: errors,
-    //   views: views,
-    //   udfsDict: udfsDict
-    // });
-
-    // console.log('reps');
-    // console.log(reps);
-    // reps = [];
-
     reports.forEach(report => {
       let newRows = processRowIds({
         rows: report.rows,
@@ -242,21 +223,6 @@ export class BlockmlService {
             })
         );
       }, getRetryOption(this.cs, this.logger));
-
-      // await this.dbService.writeRecords({
-      //   modify: false,
-      //   records: {
-      //     structs: [struct],
-      //     vizs: vizs.map(x => wrapper.wrapToEntityViz(x)),
-      //     queries: queries.map(x => wrapper.wrapToEntityQuery(x)),
-      //     models: models.map(x => wrapper.wrapToEntityModel(x)),
-      //     metrics: metrics.map(x => wrapper.wrapToEntityMetric(x)),
-      //     reps: reps.map(rep => wrapper.wrapToEntityRep(rep)),
-      //     apis: apis.map(x => wrapper.wrapToEntityApi(x)),
-      //     mconfigs: mconfigs.map(x => wrapper.wrapToEntityMconfig(x)),
-      //     dashboards: dashboards.map(x => wrapper.wrapToEntityDashboard(x))
-      //   }
-      // });
     }
 
     return {

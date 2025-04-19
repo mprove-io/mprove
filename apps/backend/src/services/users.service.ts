@@ -33,12 +33,6 @@ export class UsersService {
   async getUserCheckExists(item: { userId: string }) {
     let { userId } = item;
 
-    // await this.usersRepository.findOne({
-    //   where: {
-    //     user_id: userId
-    //   }
-    // });
-
     let user = await this.db.drizzle.query.usersTable.findFirst({
       where: eq(usersTable.userId, userId)
     });
@@ -54,12 +48,6 @@ export class UsersService {
 
   async getUserByEmailCheckExists(item: { email: string }) {
     let { email } = item;
-
-    // let user = await this.usersRepository.findOne({
-    //   where: {
-    //     email: email
-    //   }
-    // });
 
     let user = await this.db.drizzle.query.usersTable.findFirst({
       where: eq(usersTable.email, email)
@@ -124,21 +112,6 @@ export class UsersService {
       getRetryOption(this.cs, this.logger)
     );
 
-    // let user = maker.makeUser({
-    //   email: email,
-    //   isEmailVerified: true,
-    //   salt: salt,
-    //   hash: hash,
-    //   alias: alias
-    // });
-
-    // let records = await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     users: [user]
-    //   }
-    // });
-
     return user;
   }
 
@@ -159,10 +132,6 @@ export class UsersService {
     let restart = true;
 
     while (restart) {
-      // let aliasUser = await this.usersRepository.findOne({
-      //   where: { alias: alias }
-      // });
-
       let aliasUser = await this.db.drizzle.query.usersTable.findFirst({
         where: eq(usersTable.alias, alias)
       });

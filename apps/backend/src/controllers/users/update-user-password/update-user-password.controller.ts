@@ -45,12 +45,6 @@ export class UpdateUserPasswordController {
       where: eq(usersTable.passwordResetToken, passwordResetToken)
     });
 
-    // let user = await this.usersRepository.findOne({
-    //   where: {
-    //     password_reset_token: passwordResetToken
-    //   }
-    // });
-
     if (common.isUndefined(user)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN
@@ -83,13 +77,6 @@ export class UpdateUserPasswordController {
         ),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     users: [user]
-    //   }
-    // });
 
     let payload = {};
 

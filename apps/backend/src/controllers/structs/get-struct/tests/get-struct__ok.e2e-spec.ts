@@ -17,7 +17,6 @@ let password = '123456';
 let orgId = testId;
 let orgName = testId;
 
-// let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = testId;
 

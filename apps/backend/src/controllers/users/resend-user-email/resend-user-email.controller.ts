@@ -27,10 +27,6 @@ export class ResendUserEmailController {
       where: eq(usersTable.userId, userId)
     });
 
-    // let user = await this.userRepository.findOne({
-    //   where: { user_id: userId }
-    // });
-
     if (common.isUndefined(user)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_USER_DOES_NOT_EXIST

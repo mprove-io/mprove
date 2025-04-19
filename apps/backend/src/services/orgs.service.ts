@@ -30,8 +30,6 @@ export class OrgsService {
       where: eq(orgsTable.orgId, orgId)
     });
 
-    // let org = await this.orgsRepository.findOne({ where: { org_id: orgId } });
-
     if (common.isUndefined(org)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_ORG_DOES_NOT_EXIST
@@ -73,13 +71,6 @@ export class OrgsService {
       serverTs: undefined
     };
 
-    // let newOrg = maker.makeOrg({
-    //   name: name,
-    //   ownerId: ownerId,
-    //   ownerEmail: ownerEmail,
-    //   orgId: orgId
-    // });
-
     let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
@@ -111,14 +102,6 @@ export class OrgsService {
       );
     }, getRetryOption(this.cs, this.logger));
 
-    // let records = await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     orgs: [newOrg]
-    //   }
-    // });
-
     return newOrg;
-    // return records.orgs[0];
   }
 }

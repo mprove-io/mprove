@@ -30,13 +30,6 @@ export class DashboardsService {
       )
     });
 
-    // let dashboard = await this.dashboardsRepository.findOne({
-    //   where: {
-    //     struct_id: structId,
-    //     dashboard_id: dashboardId
-    //   }
-    // });
-
     if (common.isUndefined(dashboard)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST
@@ -83,12 +76,6 @@ export class DashboardsService {
             where: inArray(mconfigsTable.mconfigId, mconfigIds)
           });
 
-    // await this.mconfigsRepository.find({
-    //     where: {
-    //       mconfig_id: In(mconfigIds)
-    //     }
-    //   })
-
     let queryIds = dashboard.tiles.map(x => x.queryId);
     let queries =
       queryIds.length === 0
@@ -100,22 +87,9 @@ export class DashboardsService {
             )
           });
 
-    // await this.queriesRepository.find({
-    //     where: {
-    //       query_id: In(queryIds),
-    //       project_id: projectId
-    //     }
-    //   });
-
     let models = await this.db.drizzle.query.modelsTable.findMany({
       where: eq(modelsTable.structId, bridge.structId)
     });
-
-    // let models = await this.modelsRepository.find({
-    //   where: {
-    //     struct_id: bridge.struct_id
-    //   }
-    // });
 
     let apiModels = models.map(model =>
       this.wrapToApiService.wrapToApiModel({

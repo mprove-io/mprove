@@ -269,10 +269,6 @@ export class AppModule implements OnModuleInit {
             where: eq(usersTable.email, email)
           });
 
-          // firstUser = await this.usersRepository.findOne({
-          //   where: { email: email }
-          // });
-
           if (common.isUndefined(firstUser)) {
             firstUser = await this.usersService.addFirstUser({
               email: email,
@@ -307,12 +303,6 @@ export class AppModule implements OnModuleInit {
             where: eq(orgsTable.orgId, firstOrgId)
           });
 
-          // firstOrg = await this.orgsRepository.findOne({
-          //   where: {
-          //     org_id: firstOrgId
-          //   }
-          // });
-
           if (common.isUndefined(firstOrg)) {
             firstOrg = await this.orgsService.addOrg({
               ownerId: firstUser.userId,
@@ -333,13 +323,6 @@ export class AppModule implements OnModuleInit {
                   eq(connectionsTable.connectionId, 'c1_postgres')
                 )
               });
-
-            // let c1connection = await this.connectionsRepository.findOne({
-            //   where: {
-            //     project_id: firstProjectId,
-            //     connection_id: 'c1_postgres'
-            //   }
-            // });
 
             if (common.isUndefined(c1connection)) {
               let c1 = this.makerService.makeConnection({
@@ -377,13 +360,6 @@ export class AppModule implements OnModuleInit {
                 )
               });
 
-            // let c2connection = await this.connectionsRepository.findOne({
-            //   where: {
-            //     project_id: firstProjectId,
-            //     connection_id: 'c2_clickhouse'
-            //   }
-            // });
-
             if (common.isUndefined(c2connection)) {
               let c2 = this.makerService.makeConnection({
                 projectId: firstProjectId,
@@ -417,13 +393,6 @@ export class AppModule implements OnModuleInit {
                   eq(connectionsTable.connectionId, 'c3_bigquery')
                 )
               });
-
-            // let c3connection = await this.connectionsRepository.findOne({
-            //   where: {
-            //     project_id: firstProjectId,
-            //     connection_id: 'c3_bigquery'
-            //   }
-            // });
 
             if (common.isUndefined(c3connection)) {
               let firstProjectDwhBigqueryCredentialsPath = this.cs.get<
@@ -466,13 +435,6 @@ export class AppModule implements OnModuleInit {
                   eq(connectionsTable.connectionId, 'c4_snowflake')
                 )
               });
-
-            // let c4connection = await this.connectionsRepository.findOne({
-            //   where: {
-            //     project_id: firstProjectId,
-            //     connection_id: 'c4_snowflake'
-            //   }
-            // });
 
             if (common.isUndefined(c4connection)) {
               let c4 = this.makerService.makeConnection({
@@ -525,12 +487,6 @@ export class AppModule implements OnModuleInit {
             await this.db.drizzle.query.projectsTable.findFirst({
               where: eq(projectsTable.projectId, firstProjectId)
             });
-
-          // let firstProject = await this.projectsRepository.findOne({
-          //   where: {
-          //     project_id: firstProjectId
-          //   }
-          // });
 
           if (common.isUndefined(firstProject)) {
             let firstProjectRemoteType = this.cs.get<

@@ -55,12 +55,6 @@ export class SetUserNameController {
       where: eq(membersTable.memberId, user.userId)
     });
 
-    // let userMembers = await this.memberRepository.find({
-    //   where: {
-    //     member_id: user.user_id
-    //   }
-    // });
-
     userMembers.map(member => {
       member.firstName = firstName;
       member.lastName = lastName;
@@ -80,14 +74,6 @@ export class SetUserNameController {
         ),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     users: [user],
-    //     members: userMembers
-    //   }
-    // });
 
     let payload: apiToBackend.ToBackendSetUserNameResponsePayload = {
       user: this.wrapToApiService.wrapToApiUser(user)

@@ -99,14 +99,6 @@ export class DeleteDraftReportsController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.repsRepository.delete({
-    //   rep_id: In(repIds),
-    //   project_id: projectId,
-    //   draft: true,
-    //   creator_id: user.user_id,
-    //   struct_id: bridge.struct_id
-    // });
-
     let payload = {};
 
     return payload;

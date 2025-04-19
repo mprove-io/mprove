@@ -168,14 +168,6 @@ export class SaveModifyDashboardController {
       });
     }
 
-    // let toDashboard = await this.dashboardsService.getDashboardXCheckAccess({
-    //   user: user,
-    //   member: member,
-    //   dashboard: toDashboardEntity,
-    //   bridge: bridge,
-    //   projectId: projectId
-    // });
-
     let dashboardFileText: string;
 
     if (common.isDefined(newTile)) {
@@ -301,14 +293,6 @@ export class SaveModifyDashboardController {
         eq(bridgesTable.branchId, branch.branchId)
       )
     });
-
-    // let branchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: branch.project_id,
-    //     repo_id: branch.repo_id,
-    //     branch_id: branch.branch_id
-    //   }
-    // });
 
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {

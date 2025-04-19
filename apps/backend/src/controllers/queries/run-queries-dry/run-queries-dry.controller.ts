@@ -97,13 +97,6 @@ export class RunQueriesDryController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     queries: errorQueries
-    //   }
-    // });
-
     let payload: apiToBackend.ToBackendRunQueriesDryResponsePayload = {
       dryId: dryId,
       errorQueries: errorQueries.map(x =>

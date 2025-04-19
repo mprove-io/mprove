@@ -120,13 +120,6 @@ export class CreateConnectionController {
       )
     });
 
-    // let branchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: projectId,
-    //     env_id: envId
-    //   }
-    // });
-
     await forEachSeries(branchBridges, async x => {
       x.needValidate = true;
     });
@@ -147,20 +140,6 @@ export class CreateConnectionController {
         ),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     connections: [newConnection]
-    //   }
-    // });
-
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     bridges: [...branchBridges]
-    //   }
-    // });
 
     let payload: apiToBackend.ToBackendCreateConnectionResponsePayload = {
       connection: this.wrapToApiService.wrapToApiConnection(newConnection)

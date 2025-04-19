@@ -273,14 +273,6 @@ export class SaveCreateDashboardController {
       )
     });
 
-    // let branchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: branch.project_id,
-    //     repo_id: branch.repo_id,
-    //     branch_id: branch.branch_id
-    //   }
-    // });
-
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {
         x.structId = common.EMPTY_STRUCT_ID;

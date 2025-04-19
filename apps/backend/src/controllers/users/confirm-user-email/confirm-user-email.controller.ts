@@ -46,12 +46,6 @@ export class ConfirmUserEmailController {
       where: eq(usersTable.emailVerificationToken, token)
     });
 
-    // let user = await this.userRepository.findOne({
-    //   where: {
-    //     email_verification_token: token
-    //   }
-    // });
-
     if (common.isUndefined(user)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_USER_DOES_NOT_EXIST
@@ -87,13 +81,6 @@ export class ConfirmUserEmailController {
           ),
         getRetryOption(this.cs, this.logger)
       );
-
-      // await this.dbService.writeRecords({
-      //   modify: true,
-      //   records: {
-      //     users: [user]
-      //   }
-      // });
 
       payload = {
         token: this.jwtService.sign({ userId: user.userId }),

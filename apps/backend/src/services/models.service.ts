@@ -19,13 +19,6 @@ export class ModelsService {
       )
     });
 
-    // let model = await this.modelsRepository.findOne({
-    //   where: {
-    //     struct_id: structId,
-    //     model_id: modelId
-    //   }
-    // });
-
     if (common.isUndefined(model)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_MODEL_DOES_NOT_EXIST
@@ -65,14 +58,8 @@ export class ModelsService {
 
     let where = [eq(modelsTable.structId, bridge.structId)];
 
-    // let where = { struct_id: bridge.struct_id };
-
     if (common.isDefined(filterByModelIds) && filterByModelIds.length > 0) {
       where = [...where, inArray(modelsTable.modelId, filterByModelIds)];
-
-      // where = Object.assign(where, {
-      //   model_id: In(filterByModelIds)
-      // });
     }
 
     if (addFields === true) {
@@ -89,11 +76,6 @@ export class ModelsService {
       .select(selectObj)
       .from(modelsTable)
       .where(and(...where))) as schemaPostgres.ModelEnt[];
-
-    // let models = await this.modelsRepository.find({
-    //   select: selectAr,
-    //   where: where
-    // });
 
     return models;
   }

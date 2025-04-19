@@ -352,13 +352,6 @@ FROM main;`;
           ),
         getRetryOption(this.cs, this.logger)
       );
-
-      // await this.dbService.writeRecords({
-      //   modify: false,
-      //   records: {
-      //     kits: newKits
-      //   }
-      // });
     }
 
     return report;

@@ -40,13 +40,6 @@ export class MembersService {
       )
     });
 
-    // let member = await this.membersRepository.findOne({
-    //   where: {
-    //     member_id: memberId,
-    //     project_id: projectId
-    //   }
-    // });
-
     if (common.isUndefined(member)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
@@ -75,13 +68,6 @@ export class MembersService {
       )
     });
 
-    // let member = await this.membersRepository.findOne({
-    //   where: {
-    //     member_id: memberId,
-    //     project_id: projectId
-    //   }
-    // });
-
     if (common.isUndefined(member)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
@@ -106,13 +92,6 @@ export class MembersService {
         eq(membersTable.projectId, projectId)
       )
     });
-
-    // let member = await this.membersRepository.findOne({
-    //   where: {
-    //     member_id: memberId,
-    //     project_id: projectId
-    //   }
-    // });
 
     if (common.isUndefined(member)) {
       throw new common.ServerError({
@@ -139,13 +118,6 @@ export class MembersService {
       )
     });
 
-    // let member = await this.membersRepository.findOne({
-    //   where: {
-    //     member_id: memberId,
-    //     project_id: projectId
-    //   }
-    // });
-
     if (common.isUndefined(member)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
@@ -164,13 +136,6 @@ export class MembersService {
         eq(membersTable.projectId, projectId)
       )
     });
-
-    // let member = await this.membersRepository.findOne({
-    //   where: {
-    //     member_id: memberId,
-    //     project_id: projectId
-    //   }
-    // });
 
     if (common.isDefined(member)) {
       throw new common.ServerError({
@@ -193,12 +158,6 @@ export class MembersService {
         where: eq(projectsTable.projectId, firstProjectId)
       });
 
-      // let project = await this.projectsRepository.findOne({
-      //   where: {
-      //     project_id: firstProjectId
-      //   }
-      // });
-
       if (common.isDefined(project)) {
         let member = await this.db.drizzle.query.membersTable.findFirst({
           where: and(
@@ -206,13 +165,6 @@ export class MembersService {
             eq(membersTable.projectId, firstProjectId)
           )
         });
-
-        // let member = await this.membersRepository.findOne({
-        //   where: {
-        //     member_id: user.user_id,
-        //     project_id: firstProjectId
-        //   }
-        // });
 
         if (common.isUndefined(member)) {
           let newMember: schemaPostgres.MemberEnt =
@@ -223,14 +175,6 @@ export class MembersService {
               isEditor: true,
               isExplorer: true
             });
-
-          // let newMember = maker.makeMember({
-          //   projectId: firstProjectId,
-          //   user: user,
-          //   isAdmin: false,
-          //   isEditor: true,
-          //   isExplorer: true
-          // });
 
           let toDiskCreateDevRepoRequest: apiToDisk.ToDiskCreateDevRepoRequest =
             {
@@ -269,25 +213,11 @@ export class MembersService {
             )
           });
 
-          // let prodBranch = await this.branchesRepository.findOne({
-          //   where: {
-          //     project_id: firstProjectId,
-          //     repo_id: common.PROD_REPO_ID,
-          //     branch_id: project.default_branch
-          //   }
-          // });
-
           let devBranch = this.makerService.makeBranch({
             projectId: firstProjectId,
             repoId: newMember.memberId,
             branchId: project.defaultBranch
           });
-
-          // let devBranch = maker.makeBranch({
-          //   projectId: firstProjectId,
-          //   repoId: newMember.member_id,
-          //   branchId: project.default_branch
-          // });
 
           let prodBranchBridges =
             await this.db.drizzle.query.bridgesTable.findMany({
@@ -297,14 +227,6 @@ export class MembersService {
                 eq(bridgesTable.branchId, prodBranch.branchId)
               )
             });
-
-          // let prodBranchBridges = await this.bridgesRepository.find({
-          //   where: {
-          //     project_id: prodBranch.project_id,
-          //     repo_id: prodBranch.repo_id,
-          //     branch_id: prodBranch.branch_id
-          //   }
-          // });
 
           let devBranchBridges: schemaPostgres.BridgeEnt[] = [];
 
@@ -317,15 +239,6 @@ export class MembersService {
               structId: common.EMPTY_STRUCT_ID,
               needValidate: true
             });
-
-            // let devBranchBridge = maker.makeBridge({
-            //   projectId: devBranch.project_id,
-            //   repoId: devBranch.repo_id,
-            //   branchId: devBranch.branch_id,
-            //   envId: x.env_id,
-            //   structId: common.EMPTY_STRUCT_ID,
-            //   needValidate: true
-            // });
 
             devBranchBridges.push(devBranchBridge);
           });
@@ -368,15 +281,6 @@ export class MembersService {
               ),
             getRetryOption(this.cs, this.logger)
           );
-
-          // await this.dbService.writeRecords({
-          //   modify: true,
-          //   records: {
-          //     members: [newMember],
-          //     branches: [devBranch],
-          //     bridges: [...devBranchBridges]
-          //   }
-          // });
         }
       }
     }

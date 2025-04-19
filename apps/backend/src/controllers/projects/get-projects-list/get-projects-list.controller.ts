@@ -43,12 +43,6 @@ export class GetProjectsListController {
       where: eq(membersTable.memberId, user.userId)
     });
 
-    // let userMembers = await this.membersRepository.find({
-    //   where: {
-    //     member_id: user.user_id
-    //   }
-    // });
-
     let projectIds = userMembers.map(m => m.projectId);
 
     let projects =
@@ -60,13 +54,6 @@ export class GetProjectsListController {
               eq(projectsTable.orgId, orgId)
             )
           });
-
-    // await this.projectsRepository.find({
-    //   where: {
-    //     project_id: In(projectIds),
-    //     org_id: orgId
-    //   }
-    // });
 
     let sortedProjects = projects.sort((a, b) =>
       a.name > b.name ? 1 : b.name > a.name ? -1 : 0

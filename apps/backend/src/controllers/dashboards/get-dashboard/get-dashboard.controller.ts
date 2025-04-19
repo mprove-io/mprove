@@ -96,19 +96,6 @@ export class GetDashboardController {
       envId: envId
     });
 
-    // let dashboard = await this.dashboardsService.getDashboardCheckExists({
-    //   structId: bridge.structId,
-    //   dashboardId: dashboardId
-    // });
-
-    // let dashboardX = await this.dashboardsService.getDashboardXCheckAccess({
-    //   user: user,
-    //   member: userMember,
-    //   dashboard: dashboard,
-    //   bridge: bridge,
-    //   projectId: projectId
-    // });
-
     let currentStruct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
       projectId: projectId

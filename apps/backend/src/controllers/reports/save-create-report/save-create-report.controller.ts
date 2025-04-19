@@ -240,14 +240,6 @@ export class SaveCreateReportController {
       )
     });
 
-    // let branchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: branch.project_id,
-    //     repo_id: branch.repo_id,
-    //     branch_id: branch.branch_id
-    //   }
-    // });
-
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {
         x.structId = common.EMPTY_STRUCT_ID;
@@ -304,30 +296,6 @@ export class SaveCreateReportController {
         }),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     structs: [struct],
-    //     bridges: [...branchBridges]
-    //   }
-    // });
-
-    // if (fromRep.draft === true) {
-    //   await this.repsRepository.delete({
-    //     project_id: projectId,
-    //     rep_id: fromRepId,
-    //     draft: true,
-    //     creator_id: user.user_id
-    //   });
-    // }
-
-    // let records = await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     reps: [wrapper.wrapToEntityReport(rep)]
-    //   }
-    // });
 
     if (common.isUndefined(report)) {
       let fileId = `${parentNodeId}/${fileName}`;

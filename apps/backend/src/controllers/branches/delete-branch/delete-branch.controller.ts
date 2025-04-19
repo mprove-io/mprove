@@ -133,18 +133,6 @@ export class DeleteBranchController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.branchesRepository.delete({
-    //   project_id: projectId,
-    //   repo_id: repoId,
-    //   branch_id: branchId
-    // });
-
-    // await this.bridgesRepository.delete({
-    //   project_id: projectId,
-    //   repo_id: repoId,
-    //   branch_id: branchId
-    // });
-
     let payload = {};
 
     return payload;

@@ -67,10 +67,6 @@ export class SpecialRebuildStructsController {
         where: inArray(membersTable.memberId, userIds)
       });
 
-      // members = await this.membersRepository.find({
-      //   where: { member_id: In(userIds) }
-      // });
-
       projectIds = members.map(x => x.projectId);
     }
 
@@ -80,14 +76,8 @@ export class SpecialRebuildStructsController {
       projects = await this.db.drizzle.query.projectsTable.findMany({
         where: inArray(projectsTable.projectId, projectIds)
       });
-
-      // projects = await this.projectsRepository.find({
-      //   where: { project_id: In(projectIds) }
-      // });
     } else {
       projects = await this.db.drizzle.select().from(projectsTable);
-
-      // projects = await this.projectsRepository.find();
     }
 
     let bridges: schemaPostgres.BridgeEnt[];
@@ -96,14 +86,8 @@ export class SpecialRebuildStructsController {
       bridges = await this.db.drizzle.query.bridgesTable.findMany({
         where: inArray(bridgesTable.repoId, userIds)
       });
-
-      // bridges = await this.bridgesRepository.find({
-      //   where: { repo_id: In(userIds) }
-      // });
     } else {
       bridges = await this.db.drizzle.select().from(bridgesTable);
-
-      // bridges = await this.bridgesRepository.find();
     }
 
     let notFoundProjectIds: string[] = [];
@@ -200,13 +184,6 @@ export class SpecialRebuildStructsController {
           ),
         getRetryOption(this.cs, this.logger)
       );
-
-      // await this.dbService.writeRecords({
-      //   modify: true,
-      //   records: {
-      //     bridges: [bridge]
-      //   }
-      // });
 
       bridgeItem.structId = bridge.structId;
       bridgeItem.needValidate = bridge.needValidate;

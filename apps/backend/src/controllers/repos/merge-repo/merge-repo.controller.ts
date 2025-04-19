@@ -125,14 +125,6 @@ export class MergeRepoController {
       )
     });
 
-    // let branchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: branch.projectId,
-    //     repo_id: branch.repoId,
-    //     branch_id: branch.branchId
-    //   }
-    // });
-
     await forEachSeries(branchBridges, async x => {
       if (x.envId === envId) {
         let structId = common.makeId();
@@ -169,13 +161,6 @@ export class MergeRepoController {
         ),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     bridges: [...branchBridges]
-    //   }
-    // });
 
     let currentBridge = branchBridges.find(y => y.envId === envId);
 

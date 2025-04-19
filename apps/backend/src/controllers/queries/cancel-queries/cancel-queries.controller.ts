@@ -69,13 +69,6 @@ export class CancelQueriesController {
         )
       });
 
-    // let projectConnections = await this.connectionsRepository.find({
-    //   where: {
-    //     project_id: projectId,
-    //     connection_id: In(queries.map(q => q.connection_id))
-    //   }
-    // });
-
     await asyncPool(
       8,
       queries.filter(q => q.status === common.QueryStatusEnum.Running),
@@ -137,13 +130,6 @@ export class CancelQueriesController {
           ),
         getRetryOption(this.cs, this.logger)
       );
-
-      // await this.dbService.writeRecords({
-      //   modify: true,
-      //   records: {
-      //     queries: canceledQueries
-      //   }
-      // });
     }
 
     let payload: apiToBackend.ToBackendCancelQueriesResponsePayload = {

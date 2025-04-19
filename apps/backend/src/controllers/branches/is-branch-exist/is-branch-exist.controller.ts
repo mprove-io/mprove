@@ -47,14 +47,6 @@ export class IsBranchExistController {
       )
     });
 
-    // let branch = await this.branchesRepository.findOne({
-    //   where: {
-    //     project_id: projectId,
-    //     repo_id: repoId,
-    //     branch_id: branchId
-    //   }
-    // });
-
     let payload: apiToBackend.ToBackendIsBranchExistResponsePayload = {
       isExist: common.isDefined(branch)
     };

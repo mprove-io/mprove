@@ -18,13 +18,6 @@ export class ChartsService {
       )
     });
 
-    // let viz = await this.vizsRepository.findOne({
-    //   where: {
-    //     struct_id: structId,
-    //     viz_id: chartId
-    //   }
-    // });
-
     if (common.isUndefined(chart)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_CHART_DOES_NOT_EXIST

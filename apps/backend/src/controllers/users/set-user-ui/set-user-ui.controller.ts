@@ -60,13 +60,6 @@ export class SetUserUiController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     users: [user]
-    //   }
-    // });
-
     let payload: apiToBackend.ToBackendSetUserUiResponsePayload = {
       user: this.wrapToApiService.wrapToApiUser(user)
     };

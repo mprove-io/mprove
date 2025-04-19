@@ -80,10 +80,6 @@ export class DeleteOrgController {
       where: eq(projectsTable.orgId, orgId)
     });
 
-    // let projects = await this.projectsRepository.find({
-    //   where: { org_id: orgId }
-    // });
-
     let projectIds = projects.map(x => x.projectId);
 
     await retry(
@@ -119,18 +115,6 @@ export class DeleteOrgController {
         }),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.orgsRepository.delete({ org_id: orgId });
-
-    // if (projectIds.length > 0) {
-    //   await this.projectsRepository.delete({ project_id: In(projectIds) });
-    //   await this.membersRepository.delete({ project_id: In(projectIds) });
-    //   await this.connectionsRepository.delete({ project_id: In(projectIds) });
-    //   await this.envsRepository.delete({ project_id: In(projectIds) });
-    //   await this.evsRepository.delete({ project_id: In(projectIds) });
-    //   await this.branchesRepository.delete({ project_id: In(projectIds) });
-    //   await this.bridgesRepository.delete({ project_id: In(projectIds) });
-    // }
 
     let payload = {};
 

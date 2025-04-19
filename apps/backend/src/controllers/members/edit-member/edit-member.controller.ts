@@ -84,13 +84,6 @@ export class EditMemberController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     members: [member]
-    //   }
-    // });
-
     let avatars = await this.db.drizzle
       .select({
         userId: avatarsTable.userId,
@@ -100,13 +93,6 @@ export class EditMemberController {
       .where(eq(avatarsTable.userId, member.memberId));
 
     let avatar = avatars.length > 0 ? avatars[0] : undefined;
-
-    // let avatar = await this.avatarsRepository.findOne({
-    //   select: ['user_id', 'avatar_small'],
-    //   where: {
-    //     user_id: member.member_id
-    //   }
-    // });
 
     let apiMember = this.wrapToApiService.wrapToApiMember(member);
 

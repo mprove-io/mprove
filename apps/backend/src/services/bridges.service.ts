@@ -25,15 +25,6 @@ export class BridgesService {
       )
     });
 
-    // let bridge = await this.bridgesRepository.findOne({
-    //   where: {
-    //     project_id: projectId,
-    //     repo_id: repoId,
-    //     branch_id: branchId,
-    //     env_id: envId
-    //   }
-    // });
-
     if (common.isUndefined(bridge)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST

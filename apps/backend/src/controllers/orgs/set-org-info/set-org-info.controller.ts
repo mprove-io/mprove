@@ -71,13 +71,6 @@ export class SetOrgInfoController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     orgs: [org]
-    //   }
-    // });
-
     let payload: apiToBackend.ToBackendSetOrgInfoResponsePayload = {
       org: this.wrapToApiService.wrapToApiOrg(org)
     };

@@ -146,18 +146,6 @@ WHERE c.branch_id IS NULL AND to_timestamp(s.server_ts/1000) < (NOW() - INTERVAL
       await this.db.drizzle
         .delete(dashboardsTable)
         .where(inArray(dashboardsTable.structId, orphanedStructIds));
-
-      // await this.structsRepository.delete({ struct_id: In(orphanedStructIds) });
-      // await this.vizsRepository.delete({ struct_id: In(orphanedStructIds) });
-      // await this.modelsRepository.delete({ struct_id: In(orphanedStructIds) });
-      // await this.metricsRepository.delete({ struct_id: In(orphanedStructIds) });
-      // await this.repsRepository.delete({ struct_id: In(orphanedStructIds) });
-      // await this.mconfigsRepository.delete({
-      //   struct_id: In(orphanedStructIds)
-      // });
-      // await this.dashboardsRepository.delete({
-      //   struct_id: In(orphanedStructIds)
-      // });
     }
   }
 }

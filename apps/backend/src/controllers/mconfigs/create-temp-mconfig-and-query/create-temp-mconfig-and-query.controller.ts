@@ -228,23 +228,6 @@ export class CreateTempMconfigAndQueryController {
       )
     });
 
-    // let query = await this.queriesRepository.findOne({
-    //   where: {
-    //     query_id: newQuery.queryId,
-    //     project_id: newQuery.projectId
-    //   }
-    // });
-
-    // let records = await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     mconfigs: [wrapper.wrapToEntityMconfig(newMconfig)],
-    //     queries: common.isDefined(query)
-    //       ? []
-    //       : [wrapper.wrapToEntityQuery(newQuery)]
-    //   }
-    // });
-
     let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryResponsePayload =
       {
         mconfig: this.wrapToApiService.wrapToApiMconfig({

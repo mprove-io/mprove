@@ -132,14 +132,6 @@ export class PushRepoController {
       )
     });
 
-    // let branchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: branch.project_id,
-    //     repo_id: branch.repo_id,
-    //     branch_id: branch.branch_id
-    //   }
-    // });
-
     let prodBranch = await this.db.drizzle.query.branchesTable.findFirst({
       where: and(
         eq(branchesTable.projectId, projectId),
@@ -148,14 +140,6 @@ export class PushRepoController {
       )
     });
 
-    // let prodBranch = await this.branchesRepository.findOne({
-    //   where: {
-    //     project_id: projectId,
-    //     repo_id: common.PROD_REPO_ID,
-    //     branch_id: branchId
-    //   }
-    // });
-
     let prodBranchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
         eq(bridgesTable.projectId, branch.projectId),
@@ -163,14 +147,6 @@ export class PushRepoController {
         eq(bridgesTable.branchId, branch.branchId)
       )
     });
-
-    // let prodBranchBridges = await this.bridgesRepository.find({
-    //   where: {
-    //     project_id: branch.project_id,
-    //     repo_id: common.PROD_REPO_ID,
-    //     branch_id: branch.branch_id
-    //   }
-    // });
 
     if (common.isUndefined(prodBranch)) {
       prodBranch = this.makerService.makeBranch({
@@ -230,14 +206,6 @@ export class PushRepoController {
         ),
       getRetryOption(this.cs, this.logger)
     );
-
-    // await this.dbService.writeRecords({
-    //   modify: true,
-    //   records: {
-    //     branches: [prodBranch],
-    //     bridges: [...prodBranchBridges]
-    //   }
-    // });
 
     let currentBridge = branchBridges.find(y => y.envId === envId);
 

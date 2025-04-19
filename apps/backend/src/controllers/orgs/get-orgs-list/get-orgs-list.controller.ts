@@ -29,12 +29,6 @@ export class GetOrgsListController {
       where: eq(membersTable.memberId, user.userId)
     });
 
-    // let userMembers = await this.membersRepository.find({
-    //   where: {
-    //     member_id: user.user_id
-    //   }
-    // });
-
     let userProjectIds = userMembers.map(m => m.projectId);
 
     let userProjects =
@@ -43,12 +37,6 @@ export class GetOrgsListController {
         : await this.db.drizzle.query.projectsTable.findMany({
             where: inArray(projectsTable.projectId, userProjectIds)
           });
-
-    // await this.projectsRepository.find({
-    //     where: {
-    //       project_id: In(userProjectIds)
-    //     }
-    //   });
 
     let userOrgIds = userProjects.map(p => p.orgId);
 
@@ -59,21 +47,9 @@ export class GetOrgsListController {
             where: inArray(orgsTable.orgId, userOrgIds)
           });
 
-    // await this.orgsRepository.find({
-    //   where: {
-    //     org_id: In(userOrgIds)
-    //   }
-    // });
-
     let ownerOrgs = await this.db.drizzle.query.orgsTable.findMany({
       where: eq(orgsTable.ownerId, user.userId)
     });
-
-    // let ownerOrgs = await this.orgsRepository.find({
-    //   where: {
-    //     owner_id: user.user_id
-    //   }
-    // });
 
     let orgs = [...userOrgs];
 

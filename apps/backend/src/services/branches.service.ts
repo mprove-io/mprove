@@ -23,14 +23,6 @@ export class BranchesService {
       )
     });
 
-    // let branch = await this.branchesRepository.findOne({
-    //   where: {
-    //     project_id: projectId,
-    //     repo_id: repoId,
-    //     branch_id: branchId
-    //   }
-    // });
-
     if (common.isUndefined(branch)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
@@ -54,14 +46,6 @@ export class BranchesService {
         eq(branchesTable.branchId, branchId)
       )
     });
-
-    // let branch = await this.branchesRepository.findOne({
-    //   where: {
-    //     project_id: projectId,
-    //     repo_id: repoId,
-    //     branch_id: branchId
-    //   }
-    // });
 
     if (common.isDefined(branch)) {
       throw new common.ServerError({

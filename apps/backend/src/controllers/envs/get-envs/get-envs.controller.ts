@@ -52,17 +52,6 @@ export class GetEnvsController {
       .limit(perPage)
       .offset((pageNum - 1) * perPage);
 
-    // const [envs, total] = await this.envsRepository.findAndCount({
-    //   where: {
-    //     project_id: projectId
-    //   },
-    //   order: {
-    //     env_id: 'ASC'
-    //   },
-    //   take: perPage,
-    //   skip: (pageNum - 1) * perPage
-    // });
-
     let envs = envsResult.map(x => x.record);
 
     let connections = await this.db.drizzle.query.connectionsTable.findMany({

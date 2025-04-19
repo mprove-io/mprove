@@ -26,12 +26,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       where: eq(usersTable.userId, payload.userId)
     });
 
-    // let user = await this.userRepository.findOne({
-    //   where: {
-    //     user_id: payload.userId
-    //   }
-    // });
-
     if (common.isUndefined(user)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_USER_DOES_NOT_EXIST

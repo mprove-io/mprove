@@ -26,13 +26,6 @@ export class MconfigsService {
       )
     });
 
-    // let mconfig = await this.mconfigsRepository.findOne({
-    //   where: {
-    //     mconfig_id: mconfigId,
-    //     struct_id: structId
-    //   }
-    // });
-
     if (common.isUndefined(mconfig)) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST

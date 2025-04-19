@@ -148,13 +148,6 @@ export class CreateTempMconfigController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // let records = await this.dbService.writeRecords({
-    //   modify: false,
-    //   records: {
-    //     mconfigs: [mconfigEnt]
-    //   }
-    // });
-
     let payload: apiToBackend.ToBackendCreateTempMconfigResponsePayload = {
       mconfig: this.wrapToApiService.wrapToApiMconfig({
         mconfig: mconfigEnt,
