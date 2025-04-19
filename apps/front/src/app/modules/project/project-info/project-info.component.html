@@ -49,10 +49,10 @@
               >
                 <button
                   data-cy="projectInfoEditNameButton"
-                  class="flex rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                  class="rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
-                    'text-s400 cursor-default': isAdmin === false,
-                    'border-s3 text-s1': isAdmin === true
+                    'border-s400 text-s500 hover:bg-s100': isAdmin === true,
+                    'border-s300 text-s400 cursor-default': isAdmin === false
                   }"
                   [disabled]="isAdmin === false"
                   (click)="editName()"
@@ -82,10 +82,10 @@
               >
                 <button
                   data-cy="projectInfoShowValueButton"
-                  class="w-[73px] rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                  class="w-[73px] rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
-                    'text-s400 cursor-default': isAdmin === false,
-                    'border-s3 text-s1': isAdmin === true
+                    'border-s400 text-s500 hover:bg-s100': isAdmin === true,
+                    'border-s300 text-s400 cursor-default': isAdmin === false
                   }"
                   [disabled]="isAdmin === false"
                   (click)="toggleShowGitUrl()"
@@ -114,10 +114,10 @@
               >
                 <button
                   data-cy="projectInfoShowValueButton"
-                  class="w-[73px] rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                  class="w-[73px] rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
-                    'text-s400 cursor-default': isAdmin === false,
-                    'border-s3 text-s1': isAdmin === true
+                    'border-s400 text-s500 hover:bg-s100': isAdmin === true,
+                    'border-s300 text-s400 cursor-default': isAdmin === false
                   }"
                   [disabled]="isAdmin === false"
                   (click)="toggleShowPublicKey()"

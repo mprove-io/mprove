@@ -57,10 +57,10 @@
               >
                 <button
                   data-cy="orgAccountEditNameButton"
-                  class="rounded border px-3 py-2 text-sm font-medium leading-3 shadow-sm focus:outline-none"
+                  class="rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
-                    'text-s400 cursor-default': isOrgOwner === false,
-                    'border-s3 text-s1': isOrgOwner === true
+                    'border-s400 text-s500 hover:bg-s100': isOrgOwner === true,
+                    'border-s300 text-s400 cursor-default': isOrgOwner === false
                   }"
                   [disabled]="isOrgOwner === false"
                   (click)="editName()"
@@ -76,10 +76,10 @@
               >
                 <button
                   data-cy="orgAccountEditOwnerButton"
-                  class="rounded border px-3 py-2 text-sm font-medium leading-3 shadow-sm focus:outline-none"
+                  class="rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
                   [ngClass]="{
-                    'text-s400 cursor-default': isOrgOwner === false,
-                    'border-s3 text-s1': isOrgOwner === true
+                    'border-s400 text-s500 hover:bg-s100': isOrgOwner === true,
+                    'border-s300 text-s400 cursor-default': isOrgOwner === false
                   }"
                   [disabled]="isOrgOwner === false"
                   (click)="editOwner()"
