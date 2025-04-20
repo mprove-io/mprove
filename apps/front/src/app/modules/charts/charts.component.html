@@ -363,42 +363,21 @@
                     ></div>
                   </div>
 
-                  <img
-                    class="ml-1 h-6 w-6 flex-shrink-0"
-                    *ngIf="
-                      !chart ||
-                      chart.chartId === emptyChartId ||
-                      lastUrl === pathCharts ||
-                      lastUrl === pathChartsList ||
-                      lastUrl === pathModelsList
-                    "
-                    [src]="c.iconPath"
-                  />
-
                   <div
-                    *ngIf="
-                      !!chart &&
-                      chart.chartId !== emptyChartId &&
-                      lastUrl !== pathCharts &&
-                      lastUrl !== pathChartsList &&
-                      lastUrl !== pathModelsList
-                    "
                     class="ml-1 h-6 w-6 flex-shrink-0"
                     [ngClass]="{
                       'text-m600': !!chart && c.chartId === chart?.chartId,
                       'text-s500': !chart || c.chartId !== chart?.chartId
                     }"
                   >
+                    <!-- <img [src]="c.iconPath" /> -->
+
                     <m-chart-table-icon
                       *ngIf="c.chartType === chartTypeEnumTable"
                     ></m-chart-table-icon>
 
                     <m-chart-line-icon
                       *ngIf="c.chartType === chartTypeEnumLine"
-                      [ngClass]="{
-                        'text-m600': !!chart && c.chartId === chart?.chartId,
-                        'text-s500': !chart || c.chartId !== chart?.chartId
-                      }"
                     ></m-chart-line-icon>
 
                     <m-chart-bar-icon
