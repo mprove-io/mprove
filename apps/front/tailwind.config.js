@@ -1,6 +1,7 @@
 // logo '#0084d1'; // sky-600
 // favicon '#0069a8'; // sky-700
 // ui-switch '#64BD63'; // default green
+// ngx-spinner '#0084d1'; // m600
 
 var m0 = '#FFFFFF'; // white
 var m1 = '#F2F5FA'; // main background
