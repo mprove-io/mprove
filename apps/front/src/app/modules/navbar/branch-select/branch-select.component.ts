@@ -325,7 +325,7 @@ export class BranchSelectComponent {
       navArray.push(common.PATH_MODEL);
       navArray.push(common.LAST_SELECTED_MODEL_ID);
       navArray.push(common.PATH_CHART);
-      navArray.push(common.EMPTY_CHART_ID);
+      navArray.push(common.LAST_SELECTED_CHART_ID);
     } else if (urlParts[11] === common.PATH_DASHBOARDS) {
       navArray.push(common.PATH_DASHBOARDS);
       navArray.push(common.PATH_DASHBOARD);

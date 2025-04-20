@@ -252,6 +252,47 @@ export class ChartsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.chart = x;
 
+      if (x.draft === false) {
+        let nav = this.navQuery.getValue();
+        let links = this.uiQuery.getValue().projectChartLinks;
+
+        let link: common.ProjectChartLink = links.find(
+          l => l.projectId === nav.projectId
+        );
+
+        let newProjectChartLinks;
+
+        if (common.isDefined(link)) {
+          let newLink: common.ProjectChartLink = {
+            projectId: nav.projectId,
+            chartId: x.chartId,
+            lastNavTs: Date.now()
+          };
+
+          newProjectChartLinks = [
+            newLink,
+            ...links.filter(r => !(r.projectId === nav.projectId))
+          ];
+        } else {
+          let newLink: common.ProjectChartLink = {
+            projectId: nav.projectId,
+            chartId: x.chartId,
+            lastNavTs: Date.now()
+          };
+
+          newProjectChartLinks = [newLink, ...links];
+        }
+
+        let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
+
+        newProjectChartLinks = newProjectChartLinks.filter(
+          l => l.lastNavTs >= oneYearAgoTimestamp
+        );
+
+        this.uiQuery.updatePart({ projectChartLinks: newProjectChartLinks });
+        this.uiService.setUserUi({ projectChartLinks: newProjectChartLinks });
+      }
+
       if (common.isDefined(this.chart?.chartId)) {
         this.title.setTitle(
           `${this.pageTitle} - ${this.chart?.title || this.chart?.chartId}`

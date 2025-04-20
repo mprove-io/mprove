@@ -11,12 +11,14 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { ChartQuery } from '../queries/chart.query';
+import { ChartsQuery } from '../queries/charts.query';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
+import { NavigateService } from '../services/navigate.service';
 import { UiService } from '../services/ui.service';
 
 @Injectable({ providedIn: 'root' })
@@ -26,10 +28,12 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private structQuery: StructQuery,
+    private chartsQuery: ChartsQuery,
     private chartQuery: ChartQuery,
     private memberQuery: MemberQuery,
     private uiQuery: UiQuery,
     private uiService: UiService,
+    private navigateService: NavigateService,
     private router: Router
   ) {}
 
@@ -99,6 +103,34 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
     if (parametersChartId === common.EMPTY_CHART_ID) {
       this.chartQuery.reset();
       return of(true);
+    }
+
+    if (parametersChartId === common.LAST_SELECTED_CHART_ID) {
+      let charts = this.chartsQuery.getValue().charts;
+      let projectChartLinks = this.uiQuery.getValue().projectChartLinks;
+
+      let pLink = projectChartLinks.find(
+        link => link.projectId === nav.projectId
+      );
+
+      if (common.isDefined(pLink) && pLink.chartId !== common.EMPTY_CHART_ID) {
+        let pChart = charts.find(r => r.chartId === pLink.chartId);
+
+        if (common.isDefined(pChart)) {
+          this.navigateService.navigateToChart({
+            modelId: pChart.modelId,
+            chartId: pChart.chartId
+          });
+        } else {
+          this.navigateService.navigateToCharts();
+        }
+
+        return of(false);
+      } else {
+        this.navigateService.navigateToCharts();
+
+        return of(false);
+      }
     }
 
     let payload: apiToBackend.ToBackendGetChartRequestPayload = {

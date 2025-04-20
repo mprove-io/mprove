@@ -108,7 +108,7 @@ export class NavbarComponent implements OnInit {
 
     this.navigateService.navigateToChart({
       modelId: common.LAST_SELECTED_MODEL_ID,
-      chartId: common.EMPTY_CHART_ID
+      chartId: common.LAST_SELECTED_CHART_ID
     });
   }
 

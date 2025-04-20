@@ -78,7 +78,7 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
         if (common.isDefined(pModel)) {
           this.navigateService.navigateToChart({
             modelId: pModel.modelId,
-            chartId: common.EMPTY_CHART_ID
+            chartId: common.LAST_SELECTED_CHART_ID
           });
         } else {
           this.navigateService.navigateToCharts();

@@ -35,6 +35,7 @@ export class UiState {
   timeRangeFraction: common.Fraction;
   showHours: boolean;
   projectModelLinks: common.ProjectModelLink[];
+  projectChartLinks: common.ProjectChartLink[];
   projectDashboardLinks: common.ProjectDashboardLink[];
   projectReportLinks: common.ProjectReportLink[];
   metricsLoadedTs: number;
@@ -70,6 +71,7 @@ let uiState: UiState = {
   timeSpec: undefined,
   timeRangeFraction: undefined,
   showHours: undefined,
+  projectChartLinks: [],
   projectModelLinks: [],
   projectDashboardLinks: [],
   projectReportLinks: [],
@@ -93,6 +95,10 @@ export class UiQuery extends BaseQuery<UiState> {
 
   projectModelLinks$ = this.store.pipe(
     select(state => state.projectModelLinks)
+  );
+
+  projectChartLinks$ = this.store.pipe(
+    select(state => state.projectChartLinks)
   );
 
   projectDashboardLinks$ = this.store.pipe(

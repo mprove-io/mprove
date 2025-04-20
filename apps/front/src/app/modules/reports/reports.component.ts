@@ -133,9 +133,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
             ...links.filter(r => !(r.projectId === nav.projectId))
           ];
         } else {
-          let newLink = {
+          let newLink: common.ProjectReportLink = {
             projectId: nav.projectId,
-            draft: x.draft,
             reportId: x.reportId,
             lastNavTs: Date.now()
           };
