@@ -110,10 +110,10 @@
                     data-cy="modelTreeSelectedSymbol"
                     class="h-[10px] w-[10px] rounded-full focus:outline-none"
                     [ngClass]="{
-                      'bg-m600': node.data.nodeClass === nodeClassDimension,
-                      'bg-g700':
+                      'bg-m600':
                         node.data.nodeClass === nodeClassMeasure ||
-                        node.data.nodeClass === nodeClassCalculation
+                        node.data.nodeClass === nodeClassCalculation ||
+                        node.data.nodeClass === nodeClassDimension
                     }"
                   ></div>
 
@@ -131,11 +131,9 @@
                   [ngClass]="{
                     'text-m600':
                       node.data.isSelected === true &&
-                      node.data.nodeClass === nodeClassDimension,
-                    'text-g700':
-                      node.data.isSelected === true &&
                       (node.data.nodeClass === nodeClassMeasure ||
-                        node.data.nodeClass === nodeClassCalculation),
+                        node.data.nodeClass === nodeClassCalculation ||
+                        node.data.nodeClass === nodeClassDimension),
                     'text-s1': node.data.isSelected === false
                   }"
                 >

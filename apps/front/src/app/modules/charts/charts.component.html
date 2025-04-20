@@ -677,7 +677,7 @@
                     autocomplete="off"
                     spellcheck="false"
                     data-cy="modelChartTitleInput"
-                    class="form-input border-s3 focus:border-m600 h-10 w-full rounded"
+                    class="form-input border-s3 focus:border-m600 text-s500 h-10 w-full rounded font-semibold"
                     [ngClass]="{
                       'border-r600':
                         chartTitleForm.controls['chartTitle'].invalid &&
@@ -1126,7 +1126,7 @@
 
                   <div
                     *ngIf="rightIsShow"
-                    class="border-s300 h-full w-2 flex-1 border-l"
+                    class="border-s300 h-full w-2 flex-1"
                   >
                     <m-sql *ngIf="mconfig.isStoreModel === false"></m-sql>
 

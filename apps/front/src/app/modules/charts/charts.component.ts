@@ -396,7 +396,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   resultsIsShow = true;
   resultsIsShowTemp = false;
-  rightIsShow = true;
+
+  rightIsShow = false;
 
   dryTimeAgo$ = interval(1000).pipe(
     startWith(0),
