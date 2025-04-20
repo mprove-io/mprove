@@ -1,7 +1,8 @@
 // logo '#0084d1'; // sky-600
 // favicon '#0069a8'; // sky-700
 // ui-switch '#64BD63'; // default green
-// ngx-spinner '#0084d1'; // m600
+// ngx-spinner color '#0084d1'; // sky-600
+// ngx-spinner bdColor '#00000000'; // transparent
 
 var m0 = '#FFFFFF'; // white
 var m1 = '#F2F5FA'; // main background
@@ -51,21 +52,22 @@ module.exports = {
     ...createGlobPatternsForDependencies(__dirname)
   ],
   theme: {
-    namedGroups: ['foo', 'bar'],
+    namedGroups: ['bar'],
+    // namedGroups: ['foo', 'bar'],
     // groupLevel: 10,
     // groupScope: 'scope',
     extend: {
-      colors: {
-        green: colors.emerald,
-        yellow: colors.amber,
-        purple: colors.violet
-      },
-      scale: {
-        '-1': '-1'
-      },
-      boxShadow: {
-        m1: '0px 1px 4px rgba(21,34,50,0.078)'
-      },
+      // colors: {
+      //   green: colors.emerald,
+      //   yellow: colors.amber,
+      //   purple: colors.violet
+      // },
+      // scale: {
+      //   '-1': '-1'
+      // },
+      // boxShadow: {
+      //   custom1: '0px 1px 4px rgba(21,34,50,0.078)'
+      // },
       fontFamily: {
         ms: ['Montserrat', 'sans-serif'],
         mono: ['monospace']
