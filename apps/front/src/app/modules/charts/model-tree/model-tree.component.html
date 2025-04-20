@@ -100,10 +100,11 @@
                   *ngIf="node.data.isField === true"
                   class="mr-3 flex h-2 items-center"
                   [ngClass]="{
-                    'ml-4':
+                    'ml-[10px]':
                       !node.hasChildren &&
                       node.parent?.data.nodeClass !== nodeClassDimension,
-                    'ml-10': node.parent?.data.nodeClass === nodeClassDimension
+                    'ml-[34px]':
+                      node.parent?.data.nodeClass === nodeClassDimension
                   }"
                 >
                   <div
@@ -112,7 +113,7 @@
                       node.data.nodeClass !== nodeClassFilter
                     "
                     data-cy="modelTreeSelectedSymbol"
-                    class="bg-m600 text-m0 h-2 w-2 rounded-full focus:outline-none"
+                    class="bg-m600 text-m0 h-[10px] w-[10px] rounded-full focus:outline-none"
                   ></div>
 
                   <div
@@ -120,7 +121,7 @@
                       node.data.isSelected === false ||
                       node.data.nodeClass === nodeClassFilter
                     "
-                    class="h-2 w-2"
+                    class="h-[10px] w-[10px]"
                   ></div>
                 </div>
 

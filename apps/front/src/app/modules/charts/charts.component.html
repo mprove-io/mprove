@@ -455,7 +455,7 @@
               </div>
             </div>
 
-            <div class="divide-m600 ml-6 mr-9 flex flex-col divide-y-2">
+            <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y-2">
               <div class="flex flex-row"></div>
               <div class="flex flex-row"></div>
             </div>
@@ -465,9 +465,9 @@
             >
               <div
                 (click)="toggleSchemaPanel()"
-                class="flex h-11 cursor-pointer select-none flex-row items-center space-x-2 px-5 text-lg font-semibold"
+                class="flex h-11 cursor-pointer select-none flex-row items-center px-5 text-lg font-semibold"
               >
-                <div class="flex flex-row items-center space-x-2">
+                <div class="flex flex-row items-center">
                   <m-chevron-right-icon
                     *ngIf="!schemaIsExpanded"
                   ></m-chevron-right-icon>
@@ -475,7 +475,7 @@
                     *ngIf="schemaIsExpanded"
                   ></m-chevron-down-icon>
 
-                  <div> MODEL </div>
+                  <div class="ml-[12px]"> MODEL </div>
                 </div>
               </div>
 
@@ -535,7 +535,7 @@
           </div>
 
           <div class="flex flex-1 flex-col" *ngIf="schemaIsExpanded === true">
-            <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
+            <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y-2">
               <div class="flex flex-row"></div>
               <div class="flex flex-row"></div>
             </div>
