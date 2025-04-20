@@ -330,7 +330,8 @@ export class SaveCreateReportController {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: userMemberApi,
-      report: repApi
+      report: repApi,
+      reportPart: repApi
     };
 
     return payload;

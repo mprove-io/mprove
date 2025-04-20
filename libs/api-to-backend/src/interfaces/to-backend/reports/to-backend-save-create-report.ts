@@ -66,8 +66,12 @@ export class ToBackendSaveCreateReportResponsePayload {
   userMember: common.Member;
 
   @ValidateNested()
-  @Type(() => common.Report)
+  @Type(() => common.ReportX)
   report: common.ReportX;
+
+  @ValidateNested()
+  @Type(() => common.ReportX)
+  reportPart: common.ReportX;
 }
 
 export class ToBackendSaveCreateReportResponse extends common.MyResponse {
