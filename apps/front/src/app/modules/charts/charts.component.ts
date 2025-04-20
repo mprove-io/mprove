@@ -97,7 +97,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
   isRunButtonPressed = false;
   isCancelButtonPressed = false;
 
-  schemaIsExpanded = true;
+  modelIsExpanded = false;
 
   // modelTreeLevelsFlatTime = common.ModelTreeLevelsEnum.FlatTime;
   modelTreeLevelsFlat = common.ModelTreeLevelsEnum.Flat;
@@ -251,6 +251,9 @@ export class ChartsComponent implements OnInit, OnDestroy {
   chart$ = this.chartQuery.select().pipe(
     tap(x => {
       this.chart = x;
+
+      console.log('x');
+      console.log(x);
 
       if (x.draft === false) {
         let nav = this.navQuery.getValue();
@@ -1162,7 +1165,7 @@ ${this.mconfig.storePart?.reqUrlPath}`
   }
 
   toggleSchemaPanel() {
-    this.schemaIsExpanded = !this.schemaIsExpanded;
+    this.modelIsExpanded = !this.modelIsExpanded;
   }
 
   toggleInfoPanel() {

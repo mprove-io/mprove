@@ -40,6 +40,7 @@
             data-cy="modelTreeItem"
             class="flex w-full select-none flex-row pr-5"
             [ngClass]="{
+              'pl-6': !node.data.isField,
               'cursor-pointer':
                 node.data.nodeClass !== nodeClassInfo &&
                 node.data.nodeClass !== nodeClassFilter &&
@@ -52,21 +53,15 @@
                   ].indexOf(node.data.nodeClass) < 0),
               'bg-m0':
                 node.data.nodeClass === nodeClassMeasure ||
-                node.data.nodeClass === nodeClassCalculation,
-              'bg-m75': node.data.nodeClass === nodeClassDimension,
-              'bg-s100': node.data.nodeClass === nodeClassFilter,
-              'hover:bg-g1':
+                node.data.nodeClass === nodeClassCalculation ||
+                node.data.nodeClass === nodeClassDimension ||
+                node.data.nodeClass === nodeClassFilter,
+              'hover:bg-m50':
                 (node.data.nodeClass === nodeClassMeasure ||
-                  node.data.nodeClass === nodeClassCalculation) &&
-                (node.data.isSelected === false ||
-                  node.data.required === false),
-              'hover:bg-m150':
-                node.data.nodeClass === nodeClassDimension &&
-                (node.data.isSelected === false ||
-                  node.data.required === false),
-              'hover:bg-s200': node.data.nodeClass === nodeClassFilter,
-
-              'px-5': !node.data.isField
+                  node.data.nodeClass === nodeClassCalculation ||
+                  node.data.nodeClass === nodeClassDimension ||
+                  node.data.nodeClass === nodeClassFilter) &&
+                (node.data.isSelected === false || node.data.required === false)
             }"
             (click)="nodeOnClick(node)"
           >
@@ -113,7 +108,13 @@
                       node.data.nodeClass !== nodeClassFilter
                     "
                     data-cy="modelTreeSelectedSymbol"
-                    class="bg-m600 text-m0 h-[10px] w-[10px] rounded-full focus:outline-none"
+                    class="h-[10px] w-[10px] rounded-full focus:outline-none"
+                    [ngClass]="{
+                      'bg-m600': node.data.nodeClass === nodeClassDimension,
+                      'bg-g700':
+                        node.data.nodeClass === nodeClassMeasure ||
+                        node.data.nodeClass === nodeClassCalculation
+                    }"
                   ></div>
 
                   <div
@@ -125,11 +126,23 @@
                   ></div>
                 </div>
 
-                <div class="text-s1 ml-0 flex-grow truncate">
+                <div
+                  class="ml-0 flex-grow truncate"
+                  [ngClass]="{
+                    'text-m600':
+                      node.data.isSelected === true &&
+                      node.data.nodeClass === nodeClassDimension,
+                    'text-g700':
+                      node.data.isSelected === true &&
+                      (node.data.nodeClass === nodeClassMeasure ||
+                        node.data.nodeClass === nodeClassCalculation),
+                    'text-s1': node.data.isSelected === false
+                  }"
+                >
                   <span
                     class="truncate"
                     *ngIf="node.data.nodeClass === nodeClassInfo"
-                    class="ml-9 font-semibold"
+                    class="text-s500 font-semibold"
                   >
                     {{ node.data.label | uppercase }}
                   </span>
@@ -183,6 +196,7 @@
               <div class="flex flex-grow"></div>
 
               <div
+                class="ml-3 flex flex-row items-center"
                 tp="A required filter cannot be removed"
                 [tpIsEnabled]="
                   node.data.required === true &&
@@ -194,7 +208,7 @@
                   *ngIf="node.data.isField === true"
                   type="button"
                   data-cy="filesTreeFilterButton"
-                  class="group invisible ml-3 flex h-10 flex-shrink-0 items-center justify-center rounded focus:outline-none [.group-bar:hover_&]:visible"
+                  class="group invisible flex h-10 flex-shrink-0 items-center justify-center rounded focus:outline-none [.group-bar:hover_&]:visible"
                   [ngClass]="{
                     'text-m600': node.data.isFiltered === true,
                     'text-s1': node.data.isFiltered === false
@@ -207,23 +221,14 @@
                   (click)="filterField(node, $event)"
                 >
                   <div
-                    class="flex h-8 w-9 flex-shrink-0 flex-row items-center justify-center space-x-2 rounded"
+                    class="flex h-8 w-9 flex-shrink-0 flex-row items-center justify-center rounded"
                     [ngClass]="{
-                      'group-hover:bg-m0':
+                      'group-hover:bg-m200':
                         node.data.required === false ||
                         node.data.isFiltered === false ||
                         node.data.nodeClass !== nodeClassFilter
                     }"
                   >
-                    <!-- <div
-                class="invisible flex w-[76px] flex-shrink-0 justify-start text-sm [.group-bar:hover_&]:visible"
-                [ngClass]="{
-                  'text-m600': node.data.isFiltered === true,
-                    'text-s400': node.data.isFiltered === false
-                    }"
-                    >{{ node.data.fieldResult | result }}</div
-                    > -->
-
                     <m-filter-icon
                       [ngClass]="{
                         visible: node.data.isFiltered === true
@@ -235,7 +240,7 @@
 
               <div
                 *ngIf="node.data.isField === true"
-                class="invisible ml-2 flex [.group-bar:hover_&]:visible"
+                class="invisible ml-3 flex [.group-bar:hover_&]:visible"
               >
                 <m-field-options [node]="node"></m-field-options>
               </div>

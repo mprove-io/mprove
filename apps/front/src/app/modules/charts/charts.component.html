@@ -270,8 +270,8 @@
           <div
             class="flex h-2 flex-col"
             [ngClass]="{
-              'h-[44%]': schemaIsExpanded === true,
-              'flex-1': schemaIsExpanded === false
+              'h-[44%]': modelIsExpanded === true,
+              'flex-1': modelIsExpanded === false
             }"
           >
             <div class="mb-6 mt-6 flex h-11 flex-row items-center">
@@ -366,7 +366,8 @@
                   <img
                     class="ml-1 h-6 w-6 flex-shrink-0"
                     *ngIf="
-                      chart?.chartId === emptyChartId ||
+                      !chart ||
+                      chart.chartId === emptyChartId ||
                       lastUrl === pathCharts ||
                       lastUrl === pathChartsList ||
                       lastUrl === pathModelsList
@@ -376,15 +377,16 @@
 
                   <div
                     *ngIf="
-                      chart?.chartId !== emptyChartId &&
+                      !!chart &&
+                      chart.chartId !== emptyChartId &&
                       lastUrl !== pathCharts &&
                       lastUrl !== pathChartsList &&
                       lastUrl !== pathModelsList
                     "
                     class="ml-1 h-6 w-6 flex-shrink-0"
                     [ngClass]="{
-                      'text-m600': c.chartId === chart?.chartId,
-                      'text-s500': c.chartId !== chart?.chartId
+                      'text-m600': !!chart && c.chartId === chart?.chartId,
+                      'text-s500': !chart || c.chartId !== chart?.chartId
                     }"
                   >
                     <m-chart-table-icon
@@ -393,6 +395,10 @@
 
                     <m-chart-line-icon
                       *ngIf="c.chartType === chartTypeEnumLine"
+                      [ngClass]="{
+                        'text-m600': !!chart && c.chartId === chart?.chartId,
+                        'text-s500': !chart || c.chartId !== chart?.chartId
+                      }"
                     ></m-chart-line-icon>
 
                     <m-chart-bar-icon
@@ -455,13 +461,13 @@
               </div>
             </div>
 
-            <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y-2">
+            <!-- <div class="divide-s300 flex flex-col divide-y">
               <div class="flex flex-row"></div>
               <div class="flex flex-row"></div>
-            </div>
+            </div> -->
 
             <div
-              class="text-s1 flex w-full flex-shrink-0 flex-row items-center py-5"
+              class="text-s1 bg-s150 border-s300 flex w-full flex-shrink-0 flex-row items-center border py-5"
             >
               <div
                 (click)="toggleSchemaPanel()"
@@ -469,10 +475,10 @@
               >
                 <div class="flex flex-row items-center">
                   <m-chevron-right-icon
-                    *ngIf="!schemaIsExpanded"
+                    *ngIf="!modelIsExpanded"
                   ></m-chevron-right-icon>
                   <m-chevron-down-icon
-                    *ngIf="schemaIsExpanded"
+                    *ngIf="modelIsExpanded"
                   ></m-chevron-down-icon>
 
                   <div class="ml-[12px]"> MODEL </div>
@@ -534,11 +540,11 @@
             </div>
           </div>
 
-          <div class="flex flex-1 flex-col" *ngIf="schemaIsExpanded === true">
-            <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y-2">
+          <div class="flex flex-1 flex-col" *ngIf="modelIsExpanded === true">
+            <!-- <div class="divide-s300 flex flex-col divide-y">
               <div class="flex flex-row"></div>
               <div class="flex flex-row"></div>
-            </div>
+            </div> -->
 
             <m-model-tree
               class="flex flex-1"
@@ -820,11 +826,11 @@
                 class="mx-5 mb-5 mt-5 flex h-2 flex-grow"
                 *ngIf="chartIsExpanded"
               >
-                <div
+                <!-- <div
                   *ngIf="mconfig?.select.length === 0"
                   class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
                   >Select Model Fields</div
-                >
+                > -->
 
                 <div
                   *ngIf="mconfig?.select.length > 0"

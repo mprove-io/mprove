@@ -19,6 +19,7 @@ var s2 = '#00030B';
 var s3 = '#D7DBEC';
 var s4 = '#D7DBECA3';
 var s100 = '#f3f4f6'; // gray-100
+var s150 = '#eceef1'; // gray-150
 var s200 = '#e5e7eb'; // gray-200
 var s300 = '#d1d5dc'; // gray-300
 var s400 = '#99a1af'; // gray-400
@@ -87,6 +88,7 @@ module.exports = {
       s3,
       s4,
       s100,
+      s150,
       s200,
       s300,
       s400,
@@ -118,6 +120,7 @@ module.exports = {
       s3,
       s4,
       s100,
+      s150,
       s200,
       s300,
       s400,
@@ -149,6 +152,7 @@ module.exports = {
       s3,
       s4,
       s100,
+      s150,
       s200,
       s300,
       s400,
