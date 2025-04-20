@@ -3,6 +3,7 @@
 // ui-switch '#64BD63'; // default green
 // ngx-spinner color '#0084d1'; // sky-600
 // ngx-spinner bdColor '#00000000'; // transparent
+// styles.scss has colors
 
 var m0 = '#FFFFFF'; // white
 var m1 = '#F2F5FA'; // main background
@@ -25,12 +26,10 @@ var s500 = '#6a7282'; // gray-500
 
 var a500 = '#fe9a00'; // amber-500
 
-var g1 = '#B6E1BC';
-var g2 = '#E9F6EB';
-var g3 = '#64BD63'; // ui-switch
+var g1 = '#E9F6EB'; // model-tree hover measures and calculations
+var g2 = '#B6E1BC'; // column measures and calculations
 var g700 = '#008236'; // green-700
 
-var p100 = '#f3e8ff'; // purple-100
 var p200 = '#e9d4ff'; // purple-200
 var p300 = '#dab2ff'; // purple-300
 var p500 = '#ad46ff'; // purple-500
@@ -95,9 +94,7 @@ module.exports = {
       a500,
       g1,
       g2,
-      g3,
       g700,
-      p100,
       p200,
       p300,
       p500,
@@ -128,9 +125,7 @@ module.exports = {
       a500,
       g1,
       g2,
-      g3,
       g700,
-      p100,
       p200,
       p300,
       p500,
@@ -161,9 +156,7 @@ module.exports = {
       a500,
       g1,
       g2,
-      g3,
       g700,
-      p100,
       p200,
       p300,
       p500,

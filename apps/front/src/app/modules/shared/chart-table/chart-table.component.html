@@ -6,8 +6,9 @@
         class="border-m0 group border-4 p-0 align-top"
         [ngClass]="{
           'bg-m150': column.fieldClass === fieldClassDimension,
-          'bg-p300': column.fieldClass === fieldClassMeasure,
-          'bg-g1': column.fieldClass === fieldClassCalculation
+          'bg-g2':
+            column.fieldClass === fieldClassMeasure ||
+            column.fieldClass === fieldClassCalculation
         }"
         *ngFor="
           let column of mconfigFields | hideColumns : hideColumns;

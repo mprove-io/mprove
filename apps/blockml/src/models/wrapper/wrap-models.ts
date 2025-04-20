@@ -217,36 +217,6 @@ export function wrapModels(item: {
 
         let sortedChildren: common.ModelNode[] = [];
 
-        if (sortedDimensions.length > 0) {
-          sortedChildren.push({
-            id: `${node.id}.${common.ModelNodeIdSuffixEnum.Dimensions}`,
-            label: common.ModelNodeLabelEnum.Dimensions,
-            description: undefined,
-            hidden: false,
-            required: false,
-            isField: false,
-            children: [],
-            nodeClass: common.FieldClassEnum.Info
-          });
-
-          sortedChildren = sortedChildren.concat(sortedDimensions);
-        }
-
-        if (sortedFilters.length > 0) {
-          sortedChildren.push({
-            id: `${node.id}.${common.ModelNodeIdSuffixEnum.Filters}`,
-            label: common.ModelNodeLabelEnum.FilterOnlyFields,
-            description: undefined,
-            hidden: false,
-            required: false,
-            isField: false,
-            children: [],
-            nodeClass: common.FieldClassEnum.Info
-          });
-
-          sortedChildren = sortedChildren.concat(sortedFilters);
-        }
-
         if (sortedMeasures.length > 0) {
           sortedChildren.push({
             id: `${node.id}.${common.ModelNodeIdSuffixEnum.Measures}`,
@@ -275,6 +245,36 @@ export function wrapModels(item: {
           });
 
           sortedChildren = sortedChildren.concat(sortedCalculations);
+        }
+
+        if (sortedDimensions.length > 0) {
+          sortedChildren.push({
+            id: `${node.id}.${common.ModelNodeIdSuffixEnum.Dimensions}`,
+            label: common.ModelNodeLabelEnum.Dimensions,
+            description: undefined,
+            hidden: false,
+            required: false,
+            isField: false,
+            children: [],
+            nodeClass: common.FieldClassEnum.Info
+          });
+
+          sortedChildren = sortedChildren.concat(sortedDimensions);
+        }
+
+        if (sortedFilters.length > 0) {
+          sortedChildren.push({
+            id: `${node.id}.${common.ModelNodeIdSuffixEnum.Filters}`,
+            label: common.ModelNodeLabelEnum.FilterOnlyFields,
+            description: undefined,
+            hidden: false,
+            required: false,
+            isField: false,
+            children: [],
+            nodeClass: common.FieldClassEnum.Info
+          });
+
+          sortedChildren = sortedChildren.concat(sortedFilters);
         }
 
         node.children = sortedChildren;

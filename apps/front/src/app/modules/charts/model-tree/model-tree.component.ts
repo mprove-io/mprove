@@ -478,40 +478,6 @@ export class ModelTreeComponent implements AfterViewInit {
         });
       });
 
-      if (flatNodesDimensions.length > 0) {
-        flatNodes.push({
-          id: `${common.ModelNodeIdSuffixEnum.Dimensions}`,
-          label: common.ModelNodeLabelEnum.Dimensions,
-          description: undefined,
-          hidden: false,
-          required: false,
-          isField: false,
-          children: [],
-          nodeClass: common.FieldClassEnum.Info,
-          isSelected: false,
-          isFiltered: false
-        });
-
-        flatNodes = [...flatNodes, ...flatNodesDimensions];
-      }
-
-      if (flatNodesFilters.length > 0) {
-        flatNodes.push({
-          id: `${common.ModelNodeIdSuffixEnum.Filters}`,
-          label: common.ModelNodeLabelEnum.FilterOnlyFields,
-          description: undefined,
-          hidden: false,
-          required: false,
-          isField: false,
-          children: [],
-          nodeClass: common.FieldClassEnum.Info,
-          isSelected: false,
-          isFiltered: false
-        });
-
-        flatNodes = [...flatNodes, ...flatNodesFilters];
-      }
-
       if (flatNodesMeasures.length > 0) {
         flatNodes.push({
           id: `${common.ModelNodeIdSuffixEnum.Measures}`,
@@ -544,6 +510,40 @@ export class ModelTreeComponent implements AfterViewInit {
         });
 
         flatNodes = [...flatNodes, ...flatNodesCalculations];
+      }
+
+      if (flatNodesDimensions.length > 0) {
+        flatNodes.push({
+          id: `${common.ModelNodeIdSuffixEnum.Dimensions}`,
+          label: common.ModelNodeLabelEnum.Dimensions,
+          description: undefined,
+          hidden: false,
+          required: false,
+          isField: false,
+          children: [],
+          nodeClass: common.FieldClassEnum.Info,
+          isSelected: false,
+          isFiltered: false
+        });
+
+        flatNodes = [...flatNodes, ...flatNodesDimensions];
+      }
+
+      if (flatNodesFilters.length > 0) {
+        flatNodes.push({
+          id: `${common.ModelNodeIdSuffixEnum.Filters}`,
+          label: common.ModelNodeLabelEnum.FilterOnlyFields,
+          description: undefined,
+          hidden: false,
+          required: false,
+          isField: false,
+          children: [],
+          nodeClass: common.FieldClassEnum.Info,
+          isSelected: false,
+          isFiltered: false
+        });
+
+        flatNodes = [...flatNodes, ...flatNodesFilters];
       }
     }
 
