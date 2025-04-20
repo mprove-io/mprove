@@ -252,9 +252,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.chart = x;
 
-      console.log('x');
-      console.log(x);
-
       if (x.draft === false) {
         let nav = this.navQuery.getValue();
         let links = this.uiQuery.getValue().projectChartLinks;
