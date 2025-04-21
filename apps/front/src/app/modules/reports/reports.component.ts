@@ -70,6 +70,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.timeSpecSelectElement?.close();
   }
 
+  isInitialScrollCompleted = false;
+
   pageTitle = frontConstants.REPORTS_PAGE_TITLE;
 
   pathReports = common.PATH_REPORTS;
@@ -654,7 +656,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     // this.searchWordChange();
 
     setTimeout(() => {
-      this.scrollToSelectedReport();
+      this.scrollToSelectedReport({ isSmooth: false });
     });
 
     this.startCheckRunning();
@@ -902,7 +904,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.metricsIsExpanded = !this.metricsIsExpanded;
 
     this.cd.detectChanges();
-    this.scrollToSelectedReport();
+    this.scrollToSelectedReport({ isSmooth: true });
   }
 
   toggleFiltersPanel() {
@@ -1086,7 +1088,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
     return idxs != null && idxs.length > 0;
   }
 
-  scrollToSelectedReport() {
+  scrollToSelectedReport(item: { isSmooth: boolean }) {
+    let { isSmooth } = item;
+
     if (this.report) {
       let selectedElement =
         this.leftReportsContainer.nativeElement.querySelector(
@@ -1094,8 +1098,16 @@ export class ReportsComponent implements OnInit, OnDestroy {
         );
 
       if (selectedElement) {
-        selectedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        selectedElement.scrollIntoView({
+          behavior: isSmooth === true ? 'smooth' : 'auto',
+          block: 'center'
+        });
       }
+    }
+
+    if (this.isInitialScrollCompleted === false) {
+      this.isInitialScrollCompleted = true;
+      this.cd.detectChanges();
     }
   }
 

@@ -396,6 +396,10 @@
                   <div
                     #leftReportsContainer
                     class="flex h-2 flex-grow flex-col overflow-y-auto"
+                    [ngClass]="{
+                      visible: isInitialScrollCompleted === true,
+                      invisible: isInitialScrollCompleted === false
+                    }"
                   >
                     <div
                       *ngFor="let r of filteredReports; let i = index"

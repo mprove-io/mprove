@@ -82,6 +82,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.chartTypeSelectElement?.close();
   }
 
+  isInitialScrollCompleted = false;
+
   pageTitle = frontConstants.CHARTS_PAGE_TITLE;
 
   emptyChartId = common.EMPTY_CHART_ID;
@@ -602,7 +604,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     // this.searchWordChange();
 
     setTimeout(() => {
-      this.scrollToSelectedChart();
+      this.scrollToSelectedChart({ isSmooth: false });
     });
 
     let nav: NavState;
@@ -1176,7 +1178,7 @@ ${this.mconfig.storePart?.reqUrlPath}`
     this.modelIsExpanded = !this.modelIsExpanded;
 
     this.cd.detectChanges();
-    this.scrollToSelectedChart();
+    this.scrollToSelectedChart({ isSmooth: true });
   }
 
   toggleInfoPanel() {
@@ -1358,7 +1360,9 @@ ${this.mconfig.storePart?.reqUrlPath}`
     // this.scrollToSelectedChart();
   }
 
-  scrollToSelectedChart() {
+  scrollToSelectedChart(item: { isSmooth: boolean }) {
+    let { isSmooth } = item;
+
     if (this.chart) {
       let selectedElement =
         this.leftChartsContainer.nativeElement.querySelector(
@@ -1366,8 +1370,16 @@ ${this.mconfig.storePart?.reqUrlPath}`
         );
 
       if (selectedElement) {
-        selectedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        selectedElement.scrollIntoView({
+          behavior: isSmooth === true ? 'smooth' : 'auto',
+          block: 'center'
+        });
       }
+    }
+
+    if (this.isInitialScrollCompleted === false) {
+      this.isInitialScrollCompleted = true;
+      this.cd.detectChanges();
     }
   }
 

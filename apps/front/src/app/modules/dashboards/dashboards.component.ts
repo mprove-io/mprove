@@ -41,6 +41,8 @@ export class ModelXWithTotalDashboards extends common.ModelX {
 export class DashboardsComponent implements OnInit, OnDestroy {
   @ViewChild('leftDashboardsContainer') leftDashboardsContainer!: ElementRef;
 
+  isInitialScrollCompleted = false;
+
   restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
 
   pageTitle = constants.DASHBOARDS_PAGE_TITLE;
@@ -230,7 +232,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     // this.searchWordChange();
 
     setTimeout(() => {
-      this.scrollToSelectedDashboard();
+      this.scrollToSelectedDashboard({ isSmooth: false });
     });
   }
 
@@ -399,7 +401,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     return idxs != null && idxs.length > 0;
   }
 
-  scrollToSelectedDashboard() {
+  scrollToSelectedDashboard(item: { isSmooth: boolean }) {
+    let { isSmooth } = item;
+
     if (this.dashboard) {
       let selectedElement =
         this.leftDashboardsContainer.nativeElement.querySelector(
@@ -407,8 +411,16 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         );
 
       if (selectedElement) {
-        selectedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        selectedElement.scrollIntoView({
+          behavior: isSmooth === true ? 'smooth' : 'auto',
+          block: 'center'
+        });
       }
+    }
+
+    if (this.isInitialScrollCompleted === false) {
+      this.isInitialScrollCompleted = true;
+      this.cd.detectChanges();
     }
   }
 
