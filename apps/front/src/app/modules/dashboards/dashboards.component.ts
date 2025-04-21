@@ -1,5 +1,12 @@
 import { Location } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
@@ -32,6 +39,8 @@ export class ModelXWithTotalDashboards extends common.ModelX {
   templateUrl: './dashboards.component.html'
 })
 export class DashboardsComponent implements OnInit, OnDestroy {
+  @ViewChild('leftDashboardsContainer') leftDashboardsContainer!: ElementRef;
+
   restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
 
   pageTitle = constants.DASHBOARDS_PAGE_TITLE;
@@ -218,7 +227,11 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
 
-    this.searchWordChange();
+    // this.searchWordChange();
+
+    setTimeout(() => {
+      this.scrollToSelectedDashboard();
+    });
   }
 
   dashboardSaveAs(event: any) {
@@ -237,14 +250,18 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     this.timer = setTimeout(() => {
       this.makeFilteredDashboards();
+
       this.cd.detectChanges();
+      // this.scrollToSelectedDashboard();
     }, 600);
   }
 
   resetSearch() {
     this.word = undefined;
     this.makeFilteredDashboards();
+
     this.cd.detectChanges();
+    // this.scrollToSelectedDashboard();
   }
 
   makeFilteredDashboards() {
@@ -380,6 +397,19 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     let idxs = uf.filter(haystack, term);
 
     return idxs != null && idxs.length > 0;
+  }
+
+  scrollToSelectedDashboard() {
+    if (this.dashboard) {
+      let selectedElement =
+        this.leftDashboardsContainer.nativeElement.querySelector(
+          `[dashboardId="${this.dashboard.dashboardId}"]`
+        );
+
+      if (selectedElement) {
+        selectedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
   }
 
   ngOnDestroy() {

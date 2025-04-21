@@ -129,8 +129,14 @@
                     <div class="flex flex-row"></div>
                   </div>
 
-                  <div class="flex h-2 flex-grow flex-col overflow-y-auto">
-                    <div *ngFor="let d of filteredDashboards; let i = index">
+                  <div
+                    #leftDashboardsContainer
+                    class="flex h-2 flex-grow flex-col overflow-y-auto"
+                  >
+                    <div
+                      *ngFor="let d of filteredDashboards; let i = index"
+                      [attr.dashboardId]="d.dashboardId"
+                    >
                       <div
                         *ngIf="filteredDraftsLength > 0 && i === 0"
                         class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"

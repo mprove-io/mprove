@@ -651,6 +651,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.timeSpecForm.controls['timeSpec'].setValue(uiState.timeSpec);
     this.fractions = [uiState.timeRangeFraction];
 
+    // this.searchWordChange();
+
     setTimeout(() => {
       this.scrollToSelectedReport();
     });

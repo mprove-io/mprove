@@ -599,7 +599,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
     this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
 
-    this.searchWordChange();
+    // this.searchWordChange();
 
     setTimeout(() => {
       this.scrollToSelectedChart();
