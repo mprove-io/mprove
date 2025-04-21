@@ -88,9 +88,7 @@ test('1', async t => {
         idempotencyKey: common.makeId()
       },
       payload: {
-        projectId: projectId,
-        perPage: 10,
-        pageNum: 1
+        projectId: projectId
       }
     };
 

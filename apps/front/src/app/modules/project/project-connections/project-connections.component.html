@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <div class="bg-m0 mb-4 mt-6 flex-grow overflow-auto rounded shadow">
+    <div class="bg-m0 mt-6 flex-grow overflow-auto rounded shadow">
       <div class="text-s1 mx-5 mt-8" *ngIf="connections?.length > 0">
         <table class="divide-s500 min-w-full divide-y">
           <thead>
@@ -48,20 +48,7 @@
           </thead>
 
           <tbody class="divide-s300 divide-y text-base">
-            <tr
-              *ngFor="
-                let connection of connections
-                  | paginate
-                    : {
-                        id: 'connections',
-                        itemsPerPage: perPage,
-                        currentPage: currentPage,
-                        totalItems: total
-                      };
-                let i = index
-              "
-              class="h-16"
-            >
+            <tr *ngFor="let connection of connections" class="h-16">
               <td class="w-[100px]">
                 <div
                   class="w-fit"
@@ -93,7 +80,7 @@
                 >
                   <button
                     data-cy="projectConnectionsEditButton"
-                    (click)="editConnection(connection, i)"
+                    (click)="editConnection(connection)"
                     class="rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
                     [ngClass]="{
                       'border-s400 text-s500 hover:bg-s100': isAdmin === true,
@@ -218,17 +205,9 @@
         >No connections</div
       >
     </div>
-
-    <pagination-controls
-      *ngIf="connections?.length > 0"
-      class="mt-3 flex justify-center"
-      (pageChange)="getConnections($event)"
-      id="connections"
-    ></pagination-controls>
   </div>
 </div>
 
 <div *ngIf="projectId$ | async"></div>
 <div *ngIf="isAdmin$ | async"></div>
 <div *ngIf="connections$ | async"></div>
-<div *ngIf="total$ | async"></div>

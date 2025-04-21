@@ -9,7 +9,6 @@ import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { ConnectionsQuery } from '../queries/connections.query';
 import { MemberQuery } from '../queries/member.query';
@@ -56,9 +55,7 @@ export class ProjectConnectionsResolver
     });
 
     let payload: apiToBackend.ToBackendGetConnectionsRequestPayload = {
-      projectId: projectId,
-      pageNum: 1,
-      perPage: constants.CONNECTIONS_PER_PAGE
+      projectId: projectId
     };
 
     return this.apiService
@@ -72,10 +69,18 @@ export class ProjectConnectionsResolver
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
+            let newSortedConnections = resp.payload.connections.sort((a, b) =>
+              a.connectionId > b.connectionId
+                ? 1
+                : b.connectionId > a.connectionId
+                ? -1
+                : 0
+            );
+
             this.connectionsQuery.update({
-              connections: resp.payload.connections,
-              total: resp.payload.total
+              connections: newSortedConnections
             });
+
             return true;
           } else {
             return false;

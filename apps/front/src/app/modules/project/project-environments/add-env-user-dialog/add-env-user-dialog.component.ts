@@ -141,8 +141,7 @@ export class AddEnvUserDialogComponent implements OnInit {
             );
 
             this.environmentsQuery.update({
-              environments: [...environmentsState.environments],
-              total: environmentsState.total
+              environments: [...environmentsState.environments]
             });
           }
         }),

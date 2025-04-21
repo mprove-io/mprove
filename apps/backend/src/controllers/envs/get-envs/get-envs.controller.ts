@@ -1,12 +1,11 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { and, asc, eq, inArray, sql } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { envsTable } from '~backend/drizzle/postgres/schema/envs';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
@@ -30,7 +29,7 @@ export class GetEnvsController {
   ) {
     let reqValid: apiToBackend.ToBackendGetEnvsRequest = request.body;
 
-    let { projectId, perPage, pageNum } = reqValid.payload;
+    let { projectId } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -41,18 +40,9 @@ export class GetEnvsController {
       memberId: user.userId
     });
 
-    let envsResult = await this.db.drizzle
-      .select({
-        record: envsTable,
-        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
-      })
-      .from(envsTable)
-      .where(eq(envsTable.projectId, projectId))
-      .orderBy(asc(envsTable.envId))
-      .limit(perPage)
-      .offset((pageNum - 1) * perPage);
-
-    let envs = envsResult.map(x => x.record);
+    let envs = await this.db.drizzle.query.envsTable.findMany({
+      where: eq(connectionsTable.projectId, projectId)
+    });
 
     let connections = await this.db.drizzle.query.connectionsTable.findMany({
       where: and(
@@ -83,8 +73,7 @@ export class GetEnvsController {
               ? []
               : members.filter(m => x.memberIds.indexOf(m.memberId) > -1)
         })
-      ),
-      total: envsResult.length > 0 ? envsResult[0].total : 0
+      )
     };
 
     return payload;

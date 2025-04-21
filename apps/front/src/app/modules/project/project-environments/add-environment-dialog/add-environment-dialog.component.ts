@@ -92,8 +92,22 @@ export class AddEnvironmentDialogComponent implements OnInit {
             let environmentsState = this.environmentsQuery.getValue();
 
             this.environmentsQuery.update({
-              environments: [...environmentsState.environments, environment],
-              total: environmentsState.total
+              environments: [
+                ...environmentsState.environments,
+                environment
+              ].sort((a, b) =>
+                a.envId !== common.PROJECT_ENV_PROD &&
+                b.envId === common.PROJECT_ENV_PROD
+                  ? 1
+                  : a.envId === common.PROJECT_ENV_PROD &&
+                    b.envId !== common.PROJECT_ENV_PROD
+                  ? -1
+                  : a.envId > b.envId
+                  ? 1
+                  : b.envId > a.envId
+                  ? -1
+                  : 0
+              )
             });
           }
         }),

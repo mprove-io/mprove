@@ -66,19 +66,16 @@ export class DeleteEnvironmentDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteEnvResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            // this.dataItem.getEnvsPageFn(this.dataItem.pageNum);
-
-            let environmentsState = this.environmentsQuery.getValue();
+            let envs = this.environmentsQuery.getValue();
 
             this.environmentsQuery.update({
-              environments: environmentsState.environments.filter(
+              environments: envs.environments.filter(
                 x =>
                   !(
                     x.projectId === this.dataItem.projectId &&
                     x.envId === this.dataItem.envId
                   )
-              ),
-              total: environmentsState.total
+              )
             });
           }
         }),

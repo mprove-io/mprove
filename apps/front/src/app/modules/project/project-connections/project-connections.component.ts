@@ -1,13 +1,12 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { take, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { ConnectionsQuery } from '~front/app/queries/connections.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
@@ -21,9 +20,6 @@ export class ProjectConnectionsComponent implements OnInit {
   pageTitle = constants.PROJECT_CONNECTIONS_PAGE_TITLE;
 
   connectionTypeClickhouse = common.ConnectionTypeEnum.ClickHouse;
-
-  currentPage: any = 1;
-  perPage = constants.CONNECTIONS_PER_PAGE;
 
   projectId: string;
   projectId$ = this.navQuery.projectId$.pipe(
@@ -49,14 +45,6 @@ export class ProjectConnectionsComponent implements OnInit {
     })
   );
 
-  total: number;
-  total$ = this.connectionsQuery.total$.pipe(
-    tap(x => {
-      this.total = x;
-      this.cd.detectChanges();
-    })
-  );
-
   constructor(
     private connectionsQuery: ConnectionsQuery,
     private memberQuery: MemberQuery,
@@ -70,31 +58,6 @@ export class ProjectConnectionsComponent implements OnInit {
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
-  }
-
-  getConnections(pageNum: number) {
-    let payload: apiToBackend.ToBackendGetConnectionsRequestPayload = {
-      projectId: this.projectId,
-      pageNum: pageNum,
-      perPage: this.perPage
-    };
-
-    this.apiService
-      .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetConnections,
-        payload: payload
-      })
-      .pipe(
-        tap((resp: apiToBackend.ToBackendGetConnectionsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.connectionsQuery.update(resp.payload);
-            this.currentPage = pageNum;
-          }
-        }),
-        take(1)
-      )
-      .subscribe();
   }
 
   addConnection() {
@@ -113,11 +76,10 @@ export class ProjectConnectionsComponent implements OnInit {
     });
   }
 
-  editConnection(connection: common.Connection, i: number) {
+  editConnection(connection: common.Connection) {
     this.myDialogService.showEditConnection({
       apiService: this.apiService,
-      connection: connection,
-      i: i
+      connection: connection
     });
   }
 }

@@ -27,8 +27,6 @@ export const DEFAULT_TIME_RANGE_FRACTION: common.Fraction = {
 
 export const MEMBERS_PER_PAGE = 10;
 export const USERS_PER_PAGE = 10;
-export const CONNECTIONS_PER_PAGE = 10;
-export const ENVIRONMENTS_PER_PAGE = 10;
 
 export const MARKDOWN_LANGUAGE_ID = 'markdown';
 export const YAML_LANGUAGE_ID = 'yaml';

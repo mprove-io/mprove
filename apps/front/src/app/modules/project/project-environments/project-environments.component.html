@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <div class="bg-m0 mb-4 mt-6 flex-grow overflow-auto rounded shadow">
+    <div class="bg-m0 mt-6 flex-grow overflow-auto rounded shadow">
       <div class="text-s1 mx-5 mt-8">
         <table class="divide-s500 min-w-full divide-y">
           <thead>
@@ -42,20 +42,7 @@
           </thead>
 
           <tbody class="divide-s300 divide-y text-base">
-            <tr
-              *ngFor="
-                let environment of environments
-                  | paginate
-                    : {
-                        id: 'environments',
-                        itemsPerPage: perPage,
-                        currentPage: currentPage,
-                        totalItems: total
-                      };
-                let i = index
-              "
-              class="h-16"
-            >
+            <tr *ngFor="let environment of environments" class="h-16">
               <td class="w-[100px]">
                 <ng-template #templateDeleteEnv>
                   <div *ngIf="environment.envId === envProd"
@@ -132,12 +119,7 @@
                       </div>
 
                       <div class="ml-5 flex flex-col">
-                        <div
-                          *ngFor="
-                            let envUser of environment.envUsers;
-                            let n = index
-                          "
-                        >
+                        <div *ngFor="let envUser of environment.envUsers">
                           <div class="flex flex-row items-center text-base">
                             <div>{{ envUser.alias }} </div>
 
@@ -205,7 +187,7 @@
                     </div>
 
                     <div class="ml-5 flex flex-col">
-                      <div *ngFor="let ev of environment.evs; let n = index">
+                      <div *ngFor="let ev of environment.evs">
                         <div class="flex flex-row items-center text-base">
                           <div>{{ ev.evId }} </div>
                           <div class="ml-5">{{ ev.val }} </div>
@@ -262,13 +244,6 @@
         </table>
       </div>
     </div>
-
-    <pagination-controls
-      class="mt-3 flex justify-center"
-      (pageChange)="getEnvsPage($event)"
-      id="environments"
-    >
-    </pagination-controls>
   </div>
 </div>
 
@@ -276,4 +251,3 @@
 <div *ngIf="isAdmin$ | async"></div>
 <div *ngIf="isEditor$ | async"></div>
 <div *ngIf="environments$ | async"></div>
-<div *ngIf="total$ | async"></div>

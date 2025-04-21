@@ -9,7 +9,6 @@ import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { EnvironmentsQuery } from '../queries/environments.query';
 import { MemberQuery } from '../queries/member.query';
@@ -56,9 +55,7 @@ export class ProjectEnvironmentsResolver
     });
 
     let payload: apiToBackend.ToBackendGetEnvsRequestPayload = {
-      projectId: projectId,
-      pageNum: 1,
-      perPage: constants.ENVIRONMENTS_PER_PAGE
+      projectId: projectId
     };
 
     return this.apiService
@@ -72,10 +69,24 @@ export class ProjectEnvironmentsResolver
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
+            let newSortedEnvironments = resp.payload.envs.sort((a, b) =>
+              a.envId !== common.PROJECT_ENV_PROD &&
+              b.envId === common.PROJECT_ENV_PROD
+                ? 1
+                : a.envId === common.PROJECT_ENV_PROD &&
+                  b.envId !== common.PROJECT_ENV_PROD
+                ? -1
+                : a.envId > b.envId
+                ? 1
+                : b.envId > a.envId
+                ? -1
+                : 0
+            );
+
             this.environmentsQuery.update({
-              environments: resp.payload.envs,
-              total: resp.payload.total
+              environments: newSortedEnvironments
             });
+
             return true;
           } else {
             return false;

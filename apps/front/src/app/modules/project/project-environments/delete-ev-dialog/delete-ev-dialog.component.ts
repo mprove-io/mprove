@@ -74,8 +74,7 @@ export class DeleteEvDialogComponent implements OnInit {
             env.evs = env.evs.filter(x => x.evId !== this.dataItem.ev.evId);
 
             this.environmentsQuery.update({
-              environments: [...environmentsState.environments],
-              total: environmentsState.total
+              environments: [...environmentsState.environments]
             });
           }
         }),

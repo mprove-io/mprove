@@ -1,5 +1,5 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { asc, eq, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
@@ -27,7 +27,7 @@ export class GetConnectionsController {
   ) {
     let reqValid: apiToBackend.ToBackendGetConnectionsRequest = request.body;
 
-    let { projectId, perPage, pageNum } = reqValid.payload;
+    let { projectId } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -38,25 +38,28 @@ export class GetConnectionsController {
       projectId: projectId
     });
 
-    let connectionsResult = await this.db.drizzle
-      .select({
-        record: connectionsTable,
-        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
-      })
-      .from(connectionsTable)
-      .where(eq(connectionsTable.projectId, projectId))
-      .orderBy(asc(connectionsTable.connectionId))
-      .limit(perPage)
-      .offset((pageNum - 1) * perPage);
+    // let connectionsResult = await this.db.drizzle
+    //   .select({
+    //     record: connectionsTable,
+    //     total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
+    //   })
+    //   .from(connectionsTable)
+    //   .where(eq(connectionsTable.projectId, projectId))
+    //   .orderBy(asc(connectionsTable.connectionId))
+    //   .limit(perPage)
+    //   .offset((pageNum - 1) * perPage);
+
+    let connections = await this.db.drizzle.query.connectionsTable.findMany({
+      where: eq(connectionsTable.projectId, projectId)
+    });
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
     let payload: apiToBackend.ToBackendGetConnectionsResponsePayload = {
       userMember: apiMember,
-      connections: connectionsResult.map(x =>
-        this.wrapToApiService.wrapToApiConnection(x.record)
-      ),
-      total: connectionsResult.length > 0 ? connectionsResult[0].total : 0
+      connections: connections.map(x =>
+        this.wrapToApiService.wrapToApiConnection(x)
+      )
     };
 
     return payload;

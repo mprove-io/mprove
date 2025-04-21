@@ -26,7 +26,6 @@ import { common } from '~front/barrels/common';
 export interface EditConnectionDialogData {
   apiService: ApiService;
   connection: common.Connection;
-  i: number;
 }
 
 @Component({
@@ -346,14 +345,28 @@ export class EditConnectionDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendEditConnectionResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let connectionsState = this.connectionsQuery.getValue();
+            let newConnection = resp.payload.connection;
 
-            connectionsState.connections[this.dataItem.i] =
-              resp.payload.connection;
+            let connections = this.connectionsQuery.getValue().connections;
+
+            let newSortedConnections = [
+              newConnection,
+              ...connections.filter(
+                x =>
+                  x.projectId !== newConnection.projectId ||
+                  x.connectionId !== newConnection.connectionId ||
+                  x.envId !== newConnection.envId
+              )
+            ].sort((a, b) =>
+              a.connectionId > b.connectionId
+                ? 1
+                : b.connectionId > a.connectionId
+                ? -1
+                : 0
+            );
 
             this.connectionsQuery.update({
-              connections: [...connectionsState.connections],
-              total: connectionsState.total
+              connections: newSortedConnections
             });
           }
         }),

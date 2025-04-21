@@ -5,18 +5,15 @@ import { BaseQuery } from './base.query';
 
 export class ConnectionsState {
   connections: common.Connection[];
-  total: number;
 }
 
 let connectionsState: ConnectionsState = {
-  connections: [],
-  total: 0
+  connections: []
 };
 
 @Injectable({ providedIn: 'root' })
 export class ConnectionsQuery extends BaseQuery<ConnectionsState> {
   connections$ = this.store.pipe(select(state => state.connections));
-  total$ = this.store.pipe(select(state => state.total));
 
   constructor() {
     super(

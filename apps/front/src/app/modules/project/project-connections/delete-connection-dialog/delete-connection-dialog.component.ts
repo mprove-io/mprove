@@ -73,8 +73,7 @@ export class DeleteConnectionDialogComponent implements OnInit {
                   x.projectId !== this.dataItem.projectId ||
                   x.envId !== this.dataItem.envId ||
                   x.connectionId !== this.dataItem.connectionId
-              ),
-              total: connectionsState.total
+              )
             });
           }
         }),

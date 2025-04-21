@@ -5,17 +5,14 @@ import { BaseQuery } from './base.query';
 
 export class EnvironmentsState {
   environments: common.Env[];
-  total: number;
 }
 let environmentsState: EnvironmentsState = {
-  environments: [],
-  total: 0
+  environments: []
 };
 
 @Injectable({ providedIn: 'root' })
 export class EnvironmentsQuery extends BaseQuery<EnvironmentsState> {
   environments$ = this.store.pipe(select(state => state.environments));
-  total$ = this.store.pipe(select(state => state.total));
 
   constructor() {
     super(

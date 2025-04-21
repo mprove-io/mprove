@@ -456,10 +456,21 @@ export class AddConnectionDialogComponent implements OnInit {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let connection = resp.payload.connection;
 
-            let connectionsState = this.connectionsQuery.getValue();
+            let connections = this.connectionsQuery.getValue();
+
+            let newSortedConnections = [
+              ...connections.connections,
+              connection
+            ].sort((a, b) =>
+              a.connectionId > b.connectionId
+                ? 1
+                : b.connectionId > a.connectionId
+                ? -1
+                : 0
+            );
+
             this.connectionsQuery.update({
-              connections: [...connectionsState.connections, connection],
-              total: connectionsState.total
+              connections: newSortedConnections
             });
           }
         }),

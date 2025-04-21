@@ -20,9 +20,6 @@ export class ProjectEnvironmentsComponent implements OnInit {
 
   envProd = common.PROJECT_ENV_PROD;
 
-  currentPage: any = 1;
-  perPage = constants.ENVIRONMENTS_PER_PAGE;
-
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
     tap(x => {
@@ -68,14 +65,6 @@ export class ProjectEnvironmentsComponent implements OnInit {
     })
   );
 
-  total: number;
-  total$ = this.environmentsQuery.total$.pipe(
-    tap(x => {
-      this.total = x;
-      this.cd.detectChanges();
-    })
-  );
-
   constructor(
     private cd: ChangeDetectorRef,
     private environmentsQuery: EnvironmentsQuery,
@@ -89,34 +78,6 @@ export class ProjectEnvironmentsComponent implements OnInit {
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
-  }
-
-  getEnvsPage(pageNum: number) {
-    let payload: apiToBackend.ToBackendGetEnvsRequestPayload = {
-      projectId: this.nav.projectId,
-      pageNum: pageNum,
-      perPage: this.perPage
-    };
-
-    this.apiService
-      .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvs,
-        payload: payload
-      })
-      .pipe(
-        tap((resp: apiToBackend.ToBackendGetEnvsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.environmentsQuery.update({
-              environments: resp.payload.envs,
-              total: resp.payload.total
-            });
-            this.currentPage = pageNum;
-          }
-        }),
-        take(1)
-      )
-      .subscribe();
   }
 
   addEnvironment() {
@@ -172,8 +133,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
             );
 
             this.environmentsQuery.update({
-              environments: [...environmentsState.environments],
-              total: environmentsState.total
+              environments: [...environmentsState.environments]
             });
           }
         }),
