@@ -139,7 +139,7 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
         metricId: this.params.data.metricId,
         isToDuplicateQuery: true
       });
-    } else {
+    } else if (this.params.data.rowType === common.RowTypeEnum.Formula) {
       let chartFormulaData = this.uiQuery.getValue().chartFormulaData;
 
       this.myDialogService.showChartFormula({

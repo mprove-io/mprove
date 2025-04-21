@@ -5,13 +5,21 @@
     '': params.data.rowType === rowTypeHeader,
   }"
 >
-  <m-row-metric-label
-    [name]="params.value"
-    [isMetric]="false"
-    [isAddPrefixRowId]="false"
-    [isWrap]="false"
-    [rowId]="params.data.rowId"
-  ></m-row-metric-label>
+  <div
+    class="flex max-w-min truncate"
+    [ngClass]="{
+      'hover:text-m500 cursor-pointer': params.data.rowType === rowTypeFormula
+    }"
+    (click)="showDialog($event)"
+  >
+    <m-row-metric-label
+      [name]="params.value"
+      [isMetric]="false"
+      [isAddPrefixRowId]="false"
+      [isWrap]="false"
+      [rowId]="params.data.rowId"
+    ></m-row-metric-label>
+  </div>
 </div>
 
 <div *ngIf="params.data.rowType === rowTypeMetric" class="font-ms">

@@ -1325,6 +1325,10 @@ ${this.mconfig.storePart?.reqUrlPath}`
 
   addChart() {
     if (common.isDefined(this.model.modelId)) {
+      if (this.modelIsExpanded === false) {
+        this.modelIsExpanded = true;
+      }
+
       this.navigateService.navigateToChart({
         modelId: this.model.modelId,
         chartId: common.EMPTY_CHART_ID

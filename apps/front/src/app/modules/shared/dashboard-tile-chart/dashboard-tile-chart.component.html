@@ -73,13 +73,14 @@
       </div>
 
       <div
-        class="bg-m0 flex w-full flex-grow cursor-default overflow-auto rounded px-7 pb-10 pt-5"
+        class="bg-m0 flex w-full flex-grow cursor-default overflow-auto rounded px-7 pb-10"
         (click)="stopClick($event)"
       >
         <m-chart-view
           #chartView
           *ngIf="!!qData && isShow === true && !!mconfig?.mconfigId"
           [ngClass]="{
+            'pt-3': mconfig?.chart.type === chartTypeEnumTable,
             'max-w-max':
               mconfig?.chart.type === chartTypeEnumTable &&
               isSelectValid === true &&
