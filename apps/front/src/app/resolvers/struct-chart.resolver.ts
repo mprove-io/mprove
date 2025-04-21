@@ -107,14 +107,30 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
 
     if (parametersChartId === common.LAST_SELECTED_CHART_ID) {
       let charts = this.chartsQuery.getValue().charts;
+      let projectModelLinks = this.uiQuery.getValue().projectModelLinks;
       let projectChartLinks = this.uiQuery.getValue().projectChartLinks;
 
-      let pLink = projectChartLinks.find(
+      let pChartLink = projectChartLinks.find(
         link => link.projectId === nav.projectId
       );
 
-      if (common.isDefined(pLink) && pLink.chartId !== common.EMPTY_CHART_ID) {
-        let pChart = charts.find(r => r.chartId === pLink.chartId);
+      let pModelLink = projectModelLinks.find(
+        link => link.projectId === nav.projectId
+      );
+
+      if (
+        common.isDefined(pChartLink) &&
+        pChartLink.chartId === common.EMPTY_CHART_ID &&
+        common.isDefined(pModelLink)
+      ) {
+        this.navigateService.navigateToChart({
+          modelId: pModelLink.modelId,
+          chartId: common.EMPTY_CHART_ID
+        });
+
+        return of(false);
+      } else if (common.isDefined(pChartLink)) {
+        let pChart = charts.find(r => r.chartId === pChartLink.chartId);
 
         if (common.isDefined(pChart)) {
           this.navigateService.navigateToChart({

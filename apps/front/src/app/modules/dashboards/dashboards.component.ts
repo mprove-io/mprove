@@ -115,51 +115,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.dashboard = x;
 
-      if (x.draft === false) {
-        let nav = this.navQuery.getValue();
-        let links = this.uiQuery.getValue().projectDashboardLinks;
-
-        let link: common.ProjectDashboardLink = links.find(
-          l => l.projectId === nav.projectId
-        );
-
-        let newProjectDashboardLinks;
-
-        if (common.isDefined(link)) {
-          let newLink: common.ProjectDashboardLink = {
-            projectId: nav.projectId,
-            dashboardId: x.dashboardId,
-            lastNavTs: Date.now()
-          };
-
-          newProjectDashboardLinks = [
-            newLink,
-            ...links.filter(r => !(r.projectId === nav.projectId))
-          ];
-        } else {
-          let newLink: common.ProjectDashboardLink = {
-            projectId: nav.projectId,
-            dashboardId: x.dashboardId,
-            lastNavTs: Date.now()
-          };
-
-          newProjectDashboardLinks = [newLink, ...links];
-        }
-
-        let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
-
-        newProjectDashboardLinks = newProjectDashboardLinks.filter(
-          l => l.lastNavTs >= oneYearAgoTimestamp
-        );
-
-        this.uiQuery.updatePart({
-          projectDashboardLinks: newProjectDashboardLinks
-        });
-        this.uiService.setUserUi({
-          projectDashboardLinks: newProjectDashboardLinks
-        });
-      }
-
       if (common.isDefined(this.dashboard?.dashboardId)) {
         this.title.setTitle(
           `${this.pageTitle} - ${
@@ -169,6 +124,12 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       }
 
       this.cd.detectChanges();
+
+      if (x.draft === false) {
+        this.setProjectDashboardLink({
+          dashboardId: this.dashboard.dashboardId
+        });
+      }
     })
   );
 
@@ -316,7 +277,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     ).length;
   }
 
-  addDashboard() {
+  newDashboard() {
     this.myDialogService.showDashboardsNew({
       apiService: this.apiService
     });
@@ -399,6 +360,57 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     let idxs = uf.filter(haystack, term);
 
     return idxs != null && idxs.length > 0;
+  }
+
+  setProjectDashboardLink(item: { dashboardId: string }) {
+    let { dashboardId } = item;
+
+    if (common.isUndefined(dashboardId)) {
+      return;
+    }
+
+    let nav = this.navQuery.getValue();
+    let links = this.uiQuery.getValue().projectDashboardLinks;
+
+    let link: common.ProjectDashboardLink = links.find(
+      l => l.projectId === nav.projectId
+    );
+
+    let newProjectDashboardLinks;
+
+    if (common.isDefined(link)) {
+      let newLink: common.ProjectDashboardLink = {
+        projectId: nav.projectId,
+        dashboardId: dashboardId,
+        lastNavTs: Date.now()
+      };
+
+      newProjectDashboardLinks = [
+        newLink,
+        ...links.filter(r => !(r.projectId === nav.projectId))
+      ];
+    } else {
+      let newLink: common.ProjectDashboardLink = {
+        projectId: nav.projectId,
+        dashboardId: dashboardId,
+        lastNavTs: Date.now()
+      };
+
+      newProjectDashboardLinks = [newLink, ...links];
+    }
+
+    let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
+
+    newProjectDashboardLinks = newProjectDashboardLinks.filter(
+      l => l.lastNavTs >= oneYearAgoTimestamp
+    );
+
+    this.uiQuery.updatePart({
+      projectDashboardLinks: newProjectDashboardLinks
+    });
+    this.uiService.setUserUi({
+      projectDashboardLinks: newProjectDashboardLinks
+    });
   }
 
   scrollToSelectedDashboard(item: { isSmooth: boolean }) {

@@ -116,47 +116,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
       this.isShow = true;
 
-      if (x.draft === false) {
-        let nav = this.navQuery.getValue();
-        let links = this.uiQuery.getValue().projectReportLinks;
-
-        let link: common.ProjectReportLink = links.find(
-          l => l.projectId === nav.projectId
-        );
-
-        let newProjectReportLinks;
-
-        if (common.isDefined(link)) {
-          let newLink: common.ProjectReportLink = {
-            projectId: nav.projectId,
-            reportId: x.reportId,
-            lastNavTs: Date.now()
-          };
-
-          newProjectReportLinks = [
-            newLink,
-            ...links.filter(r => !(r.projectId === nav.projectId))
-          ];
-        } else {
-          let newLink: common.ProjectReportLink = {
-            projectId: nav.projectId,
-            reportId: x.reportId,
-            lastNavTs: Date.now()
-          };
-
-          newProjectReportLinks = [newLink, ...links];
-        }
-
-        let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
-
-        newProjectReportLinks = newProjectReportLinks.filter(
-          l => l.lastNavTs >= oneYearAgoTimestamp
-        );
-
-        this.uiQuery.updatePart({ projectReportLinks: newProjectReportLinks });
-        this.uiService.setUserUi({ projectReportLinks: newProjectReportLinks });
-      }
-
       this.notEmptySelectQueriesLength = this.report.rows.filter(
         row => common.isDefined(row.query) && row.mconfig.select.length > 0
       ).length;
@@ -180,6 +139,13 @@ export class ReportsComponent implements OnInit, OnDestroy {
       }
 
       this.cd.detectChanges();
+
+      if (
+        x.draft === false &&
+        this.report.reportId !== common.EMPTY_REPORT_ID
+      ) {
+        this.setProjectReportLink({ reportId: this.report.reportId });
+      }
     })
   );
 
@@ -1061,6 +1027,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   newReport() {
+    this.setProjectReportLink({ reportId: common.EMPTY_REPORT_ID });
+
     this.navigateService.navigateToReport({
       reportId: common.EMPTY_REPORT_ID
     });
@@ -1086,6 +1054,53 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let idxs = uf.filter(haystack, term);
 
     return idxs != null && idxs.length > 0;
+  }
+
+  setProjectReportLink(item: { reportId: string }) {
+    let { reportId } = item;
+
+    if (common.isUndefined(reportId)) {
+      return;
+    }
+
+    let nav = this.navQuery.getValue();
+    let links = this.uiQuery.getValue().projectReportLinks;
+
+    let link: common.ProjectReportLink = links.find(
+      l => l.projectId === nav.projectId
+    );
+
+    let newProjectReportLinks;
+
+    if (common.isDefined(link)) {
+      let newLink: common.ProjectReportLink = {
+        projectId: nav.projectId,
+        reportId: reportId,
+        lastNavTs: Date.now()
+      };
+
+      newProjectReportLinks = [
+        newLink,
+        ...links.filter(r => !(r.projectId === nav.projectId))
+      ];
+    } else {
+      let newLink: common.ProjectReportLink = {
+        projectId: nav.projectId,
+        reportId: reportId,
+        lastNavTs: Date.now()
+      };
+
+      newProjectReportLinks = [newLink, ...links];
+    }
+
+    let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
+
+    newProjectReportLinks = newProjectReportLinks.filter(
+      l => l.lastNavTs >= oneYearAgoTimestamp
+    );
+
+    this.uiQuery.updatePart({ projectReportLinks: newProjectReportLinks });
+    this.uiService.setUserUi({ projectReportLinks: newProjectReportLinks });
   }
 
   scrollToSelectedReport(item: { isSmooth: boolean }) {

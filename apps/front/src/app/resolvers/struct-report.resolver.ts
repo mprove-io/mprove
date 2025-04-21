@@ -121,8 +121,14 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
 
       if (
         common.isDefined(pLink) &&
-        pLink.reportId !== common.EMPTY_REPORT_ID
+        pLink.reportId === common.EMPTY_REPORT_ID
       ) {
+        this.navigateService.navigateToReport({
+          reportId: common.EMPTY_REPORT_ID
+        });
+
+        return of(false);
+      } else if (common.isDefined(pLink)) {
         let pReport = reports.find(r => r.reportId === pLink.reportId);
 
         if (common.isDefined(pReport)) {
