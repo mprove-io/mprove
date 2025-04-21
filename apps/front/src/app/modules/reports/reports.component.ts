@@ -411,26 +411,18 @@ export class ReportsComponent implements OnInit, OnDestroy {
                 .filter(yi => yi > 0).length > 0
                 ? 100
                 : 50,
-            top: 80,
-            bottom: 50
+            top: 95,
+            bottom: 35
           },
           textStyle: {
             fontFamily: 'sans-serif'
           },
           legend: {
             top: 20,
-            padding: [
-              0,
-              this.report.chart.series
-                .map(x => x.yAxisIndex)
-                .filter(yi => yi > 0).length > 0
-                ? 100
-                : 50,
-              0,
-              100
-            ],
+            padding: [0, 0, 0, 0],
             textStyle: {
-              fontSize: 14
+              fontSize: 15,
+              fontFamily: "'Montserrat', sans-serif"
             }
           },
           // tooltip: {

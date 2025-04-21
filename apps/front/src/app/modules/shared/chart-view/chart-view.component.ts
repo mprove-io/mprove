@@ -107,27 +107,23 @@ export class ChartViewComponent implements OnChanges {
           0
             ? 100
             : 50,
-        top: 80,
-        bottom: 50
+        top: 95,
+        bottom: 35
       },
       textStyle: {
         fontFamily: 'sans-serif'
       },
-      legend: {
-        top: 20,
-        padding: [
-          0,
-          this.chart.series.map(x => x.yAxisIndex).filter(yi => yi > 0).length >
-          0
-            ? 100
-            : 50,
-          0,
-          100
-        ],
-        textStyle: {
-          fontSize: 14
-        }
-      },
+      legend:
+        this.chart.type === common.ChartTypeEnum.Pie
+          ? { show: false }
+          : {
+              top: 20,
+              padding: [0, 0, 0, 0],
+              textStyle: {
+                fontSize: 15,
+                fontFamily: "'Montserrat', sans-serif"
+              }
+            },
       tooltip:
         this.chart.type === common.ChartTypeEnum.Line ||
         this.chart.type === common.ChartTypeEnum.Bar
