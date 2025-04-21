@@ -325,8 +325,14 @@
               <div class="flex flex-row"></div>
             </div>
 
-            <div class="flex h-2 flex-grow flex-col overflow-y-auto">
-              <div *ngFor="let c of filteredCharts; let i = index">
+            <div
+              #leftChartsContainer
+              class="flex h-2 flex-grow flex-col overflow-y-auto"
+            >
+              <div
+                *ngFor="let c of filteredCharts; let i = index"
+                [attr.chartId]="c.chartId"
+              >
                 <div
                   *ngIf="filteredDraftsLength > 0 && i === 0"
                   class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
@@ -449,7 +455,7 @@
               class="text-s1 bg-s150 border-s300 flex w-full flex-shrink-0 flex-row items-center border py-5"
             >
               <div
-                (click)="toggleSchemaPanel()"
+                (click)="toggleModel()"
                 class="flex h-11 cursor-pointer select-none flex-row items-center px-5 text-lg font-semibold"
               >
                 <div class="flex flex-row items-center">

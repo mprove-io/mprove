@@ -2,6 +2,7 @@ import { Location } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
+  ElementRef,
   HostListener,
   OnDestroy,
   OnInit,
@@ -79,6 +80,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.chartTypeSelectElement?.close();
   }
 
+  @ViewChild('leftChartsContainer') leftChartsContainer!: ElementRef;
+
   pageTitle = frontConstants.CHARTS_PAGE_TITLE;
 
   emptyChartId = common.EMPTY_CHART_ID;
@@ -152,7 +155,9 @@ export class ChartsComponent implements OnInit, OnDestroy {
       this.charts = x.charts;
 
       this.makeFilteredCharts();
+
       this.cd.detectChanges();
+      this.scrollToSelectedChart();
     })
   );
 
@@ -218,6 +223,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
       }
 
       this.cd.detectChanges();
+      this.scrollToSelectedChart();
     })
   );
 
@@ -1162,8 +1168,11 @@ ${this.mconfig.storePart?.reqUrlPath}`
     return idxs != null && idxs.length > 0;
   }
 
-  toggleSchemaPanel() {
+  toggleModel() {
     this.modelIsExpanded = !this.modelIsExpanded;
+
+    this.cd.detectChanges();
+    this.scrollToSelectedChart();
   }
 
   toggleInfoPanel() {
@@ -1207,22 +1216,21 @@ ${this.mconfig.storePart?.reqUrlPath}`
 
     this.timer = setTimeout(() => {
       this.makeFilteredCharts();
+
       this.cd.detectChanges();
+      this.scrollToSelectedChart();
     }, 600);
   }
 
   resetSearch() {
     this.word = undefined;
     this.makeFilteredCharts();
+
     this.cd.detectChanges();
+    this.scrollToSelectedChart();
   }
 
   navToChart(chart: common.ChartX) {
-    // this.navigateService.navigateMconfigQuery({
-    //   modelId: chart.modelId,
-    //   mconfigId: chart.tiles[0].mconfigId,
-    //   queryId: chart.tiles[0].queryId
-    // });
     this.navigateService.navigateToChart({
       modelId: chart.modelId,
       chartId: chart.chartId
@@ -1341,6 +1349,19 @@ ${this.mconfig.storePart?.reqUrlPath}`
   toggleFilterByModel() {
     this.isFilterByModel = !this.isFilterByModel;
     this.makeFilteredCharts();
+  }
+
+  scrollToSelectedChart() {
+    if (this.chart) {
+      const selectedElement =
+        this.leftChartsContainer.nativeElement.querySelector(
+          `[chartId="${this.chart.chartId}"]`
+        );
+
+      if (selectedElement) {
+        selectedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
   }
 
   ngOnDestroy() {
