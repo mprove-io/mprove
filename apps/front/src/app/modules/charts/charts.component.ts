@@ -182,6 +182,9 @@ export class ChartsComponent implements OnInit, OnDestroy {
         this.makeFilteredCharts();
       }
 
+      this.cd.detectChanges();
+      // this.scrollToSelectedChart();
+
       if (common.isDefined(this.model.modelId)) {
         let nav = this.navQuery.getValue();
 
@@ -223,9 +226,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
         this.uiQuery.updatePart({ projectModelLinks: newProjectModelLinks });
         this.uiService.setUserUi({ projectModelLinks: newProjectModelLinks });
       }
-
-      this.cd.detectChanges();
-      // this.scrollToSelectedChart();
     })
   );
 
@@ -318,7 +318,9 @@ export class ChartsComponent implements OnInit, OnDestroy {
         );
       }
 
-      if (x.draft === false) {
+      this.cd.detectChanges();
+
+      if (x.draft === false && x.chartId !== common.EMPTY_CHART_ID) {
         let nav = this.navQuery.getValue();
         let links = this.uiQuery.getValue().projectChartLinks;
 
@@ -358,8 +360,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
         this.uiQuery.updatePart({ projectChartLinks: newProjectChartLinks });
         this.uiService.setUserUi({ projectChartLinks: newProjectChartLinks });
       }
-
-      this.cd.detectChanges();
 
       // workaround to remove scrolls on filters list change
       // let shouldRefresh = false;
@@ -607,21 +607,12 @@ export class ChartsComponent implements OnInit, OnDestroy {
       this.scrollToSelectedChart({ isSmooth: false });
     });
 
-    let nav: NavState;
-    this.navQuery
-      .select()
-      .pipe(
-        tap(x => {
-          nav = x;
-        }),
-        take(1)
-      )
-      .subscribe();
-
     this.checkRunning$ = interval(3000)
       .pipe(
         concatMap(() => {
           if (this.query?.status === common.QueryStatusEnum.Running) {
+            let nav = this.navQuery.getValue();
+
             let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
               projectId: nav.projectId,
               isRepoProd: nav.isRepoProd,
