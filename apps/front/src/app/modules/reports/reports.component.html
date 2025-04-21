@@ -393,8 +393,14 @@
                 </div>
 
                 <div class="flex h-2 flex-1 flex-col">
-                  <div class="flex h-2 flex-grow flex-col overflow-y-auto">
-                    <div *ngFor="let r of filteredReports; let i = index">
+                  <div
+                    #leftReportsContainer
+                    class="flex h-2 flex-grow flex-col overflow-y-auto"
+                  >
+                    <div
+                      *ngFor="let r of filteredReports; let i = index"
+                      [attr.reportId]="r.reportId"
+                    >
                       <div
                         *ngIf="filteredDraftsLength > 0 && i === 0"
                         class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"

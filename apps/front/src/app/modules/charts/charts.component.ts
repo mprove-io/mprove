@@ -74,13 +74,13 @@ export class ChartsComponent implements OnInit, OnDestroy {
   @ViewChild('chartTypeSelect', { static: false })
   chartTypeSelectElement: NgSelectComponent;
 
+  @ViewChild('leftChartsContainer') leftChartsContainer!: ElementRef;
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.requestPartTypeSelectElement?.close();
     this.chartTypeSelectElement?.close();
   }
-
-  @ViewChild('leftChartsContainer') leftChartsContainer!: ElementRef;
 
   pageTitle = frontConstants.CHARTS_PAGE_TITLE;
 
@@ -157,7 +157,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
       this.makeFilteredCharts();
 
       this.cd.detectChanges();
-      this.scrollToSelectedChart();
+      // this.scrollToSelectedChart();
     })
   );
 
@@ -223,7 +223,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
       }
 
       this.cd.detectChanges();
-      this.scrollToSelectedChart();
+      // this.scrollToSelectedChart();
     })
   );
 
@@ -600,6 +600,10 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
 
     this.searchWordChange();
+
+    setTimeout(() => {
+      this.scrollToSelectedChart();
+    });
 
     let nav: NavState;
     this.navQuery
@@ -1168,7 +1172,7 @@ ${this.mconfig.storePart?.reqUrlPath}`
     return idxs != null && idxs.length > 0;
   }
 
-  toggleModel() {
+  toggleModelFieldsPanel() {
     this.modelIsExpanded = !this.modelIsExpanded;
 
     this.cd.detectChanges();
@@ -1218,7 +1222,7 @@ ${this.mconfig.storePart?.reqUrlPath}`
       this.makeFilteredCharts();
 
       this.cd.detectChanges();
-      this.scrollToSelectedChart();
+      // this.scrollToSelectedChart();
     }, 600);
   }
 
@@ -1227,7 +1231,7 @@ ${this.mconfig.storePart?.reqUrlPath}`
     this.makeFilteredCharts();
 
     this.cd.detectChanges();
-    this.scrollToSelectedChart();
+    // this.scrollToSelectedChart();
   }
 
   navToChart(chart: common.ChartX) {
@@ -1349,11 +1353,14 @@ ${this.mconfig.storePart?.reqUrlPath}`
   toggleFilterByModel() {
     this.isFilterByModel = !this.isFilterByModel;
     this.makeFilteredCharts();
+
+    this.cd.detectChanges();
+    // this.scrollToSelectedChart();
   }
 
   scrollToSelectedChart() {
     if (this.chart) {
-      const selectedElement =
+      let selectedElement =
         this.leftChartsContainer.nativeElement.querySelector(
           `[chartId="${this.chart.chartId}"]`
         );

@@ -2,6 +2,7 @@ import { Location } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
+  ElementRef,
   HostListener,
   OnDestroy,
   OnInit,
@@ -61,6 +62,8 @@ export class TimeSpecItem {
 export class ReportsComponent implements OnInit, OnDestroy {
   @ViewChild('timeSpecSelect', { static: false })
   timeSpecSelectElement: NgSelectComponent;
+
+  @ViewChild('leftReportsContainer') leftReportsContainer!: ElementRef;
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
@@ -191,7 +194,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
       this.reports = x.reports;
 
       this.makeFilteredReports();
+
       this.cd.detectChanges();
+      // this.scrollToSelectedReport();
     })
   );
 
@@ -646,6 +651,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.timeSpecForm.controls['timeSpec'].setValue(uiState.timeSpec);
     this.fractions = [uiState.timeRangeFraction];
 
+    setTimeout(() => {
+      this.scrollToSelectedReport();
+    });
+
     this.startCheckRunning();
   }
 
@@ -889,6 +898,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   toggleMetricsPanel() {
     this.metricsIsExpanded = !this.metricsIsExpanded;
+
+    this.cd.detectChanges();
+    this.scrollToSelectedReport();
   }
 
   toggleFiltersPanel() {
@@ -947,14 +959,18 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     this.timer = setTimeout(() => {
       this.makeFilteredReports();
+
       this.cd.detectChanges();
+      // this.scrollToSelectedReport();
     }, 600);
   }
 
   resetSearch() {
     this.word = undefined;
     this.makeFilteredReports();
+
     this.cd.detectChanges();
+    // this.scrollToSelectedReport();
   }
 
   makeFilteredReports() {
@@ -1066,6 +1082,19 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let idxs = uf.filter(haystack, term);
 
     return idxs != null && idxs.length > 0;
+  }
+
+  scrollToSelectedReport() {
+    if (this.report) {
+      let selectedElement =
+        this.leftReportsContainer.nativeElement.querySelector(
+          `[reportId="${this.report.reportId}"]`
+        );
+
+      if (selectedElement) {
+        selectedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
   }
 
   ngOnDestroy() {
