@@ -98,7 +98,7 @@
                     'ml-[10px]':
                       !node.hasChildren &&
                       node.parent?.data.nodeClass !== nodeClassDimension,
-                    'ml-[42px]':
+                    'ml-[44px]':
                       node.parent?.data.nodeClass === nodeClassDimension
                   }"
                 >
@@ -126,10 +126,10 @@
                   ></div>
                 </div>
 
-                <div class="flex flex-row items-center">
+                <div class="flex flex-row items-center justify-center">
                   <div
                     *ngIf="node.data.isField === true"
-                    class="ml-1 h-7 w-7 flex-shrink-0"
+                    class="ml-1 flex h-6 w-6 flex-shrink-0 items-center justify-center"
                     [ngClass]="{
                       'text-g1':
                         node.data.nodeClass === nodeClassMeasure ||
@@ -153,12 +153,21 @@
                     <m-type-date-icon
                       *ngIf="node.data.fieldResult === fieldResultTs"
                     ></m-type-date-icon>
+
+                    <m-type-enum-icon
+                      *ngIf="
+                        node.data.fieldResult === fieldResultDayOfWeek ||
+                        node.data.fieldResult === fieldResultDayOfWeekIndex ||
+                        node.data.fieldResult === fieldResultMonthName ||
+                        node.data.fieldResult === fieldResultQuarterOfYear
+                      "
+                    ></m-type-enum-icon>
                   </div>
 
                   <div
                     class="text-s1 flex-grow truncate"
                     [ngClass]="{
-                      'ml-2': node.data.isField === true
+                      'ml-3': node.data.isField === true
                     }"
                   >
                     <span
