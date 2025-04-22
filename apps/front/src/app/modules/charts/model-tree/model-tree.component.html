@@ -131,8 +131,11 @@
                     *ngIf="node.data.isField === true"
                     class="h-6 w-6 flex-shrink-0"
                     [ngClass]="{
-                      'text-m600': node.data.isSelected === true,
-                      'text-s500': node.data.isSelected === false
+                      'text-g1':
+                        node.data.nodeClass === nodeClassMeasure ||
+                        node.data.nodeClass === nodeClassCalculation,
+                      'text-m600': node.data.nodeClass === nodeClassDimension,
+                      'text-s500': node.data.nodeClass === nodeClassFilter
                     }"
                   >
                     <m-type-number-icon
@@ -145,15 +148,9 @@
                   </div>
 
                   <div
-                    class="flex-grow truncate"
+                    class="text-s1 flex-grow truncate"
                     [ngClass]="{
-                      'ml-3': node.data.isField === true,
-                      'text-m600':
-                        node.data.isSelected === true &&
-                        (node.data.nodeClass === nodeClassMeasure ||
-                          node.data.nodeClass === nodeClassCalculation ||
-                          node.data.nodeClass === nodeClassDimension),
-                      'text-s1': node.data.isSelected === false
+                      'ml-3': node.data.isField === true
                     }"
                   >
                     <span

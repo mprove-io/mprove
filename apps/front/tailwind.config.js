@@ -27,8 +27,8 @@ var s500 = '#6a7282'; // gray-500
 
 var a500 = '#fe9a00'; // amber-500
 
-var g1 = '#E9F6EB'; // model-tree hover measures and calculations
-var g2 = '#B6E1BC'; // column measures and calculations
+var g1 = '#64BD63'; // the same as ui-switch
+var g2 = '#B6E1BC'; // table measures and calculations
 var g700 = '#008236'; // green-700
 
 var p200 = '#e9d4ff'; // purple-200
