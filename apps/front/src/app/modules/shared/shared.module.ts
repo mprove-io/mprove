@@ -49,6 +49,7 @@ import { TypeEnumIconComponent } from './icons/2-type-icons/type-enum-icon/type-
 import { TypeNumberIconComponent } from './icons/2-type-icons/type-number-icon/type-number-icon.component';
 import { TypeOnOffIconComponent } from './icons/2-type-icons/type-on-off-icon/type-on-off-icon.component';
 import { TypeStringIconComponent } from './icons/2-type-icons/type-string-icon/type-string-icon.component';
+import { TypeUnkIconComponent } from './icons/2-type-icons/type-unk-icon/type-unk-icon.component';
 import { AddIconComponent } from './icons/add-icon/add-icon.component';
 import { AdjustmentsIconComponent } from './icons/adjustments-icon/adjustments-icon.component';
 import { AltListIconComponent } from './icons/alt-list-icon/alt-list-icon.component';
@@ -206,6 +207,7 @@ let sharedComponents = [
   InsightsIconComponent,
   TypeNumberIconComponent,
   TypeStringIconComponent,
+  TypeUnkIconComponent,
   TypeOnOffIconComponent,
   TypeDateIconComponent,
   TypeEnumIconComponent,

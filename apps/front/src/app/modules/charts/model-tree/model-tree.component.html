@@ -161,6 +161,19 @@
                       node.data.fieldResult === fieldResultQuarterOfYear
                     "
                   ></m-type-enum-icon>
+
+                  <m-type-unk-icon
+                    *ngIf="
+                      node.data.fieldResult !== fieldResultNumber &&
+                      node.data.fieldResult !== fieldResultString &&
+                      node.data.fieldResult !== fieldResultYesno &&
+                      node.data.fieldResult !== fieldResultTs &&
+                      node.data.fieldResult !== fieldResultDayOfWeek &&
+                      node.data.fieldResult !== fieldResultDayOfWeekIndex &&
+                      node.data.fieldResult !== fieldResultMonthName &&
+                      node.data.fieldResult !== fieldResultQuarterOfYear
+                    "
+                  ></m-type-unk-icon>
                 </div>
 
                 <div
