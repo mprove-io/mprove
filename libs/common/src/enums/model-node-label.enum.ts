@@ -4,4 +4,6 @@ export enum ModelNodeLabelEnum {
   Dimensions = 'Dimensions',
   Measures = 'Measures',
   Calculations = 'Calculations'
+  // ,
+  // MeasuresAndCalculations = 'Measures and Calculations',
 }

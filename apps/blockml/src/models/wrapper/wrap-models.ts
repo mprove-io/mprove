@@ -215,6 +215,12 @@ export function wrapModels(item: {
           return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
         });
 
+        // let sortedMeasuresAndCalculations = [...measures, ...calculations].sort((a, b) => {
+        //   let labelA = a.label.toUpperCase();
+        //   let labelB = b.label.toUpperCase();
+        //   return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+        // });
+
         let sortedChildren: common.ModelNode[] = [];
 
         if (sortedMeasures.length > 0) {
@@ -246,6 +252,21 @@ export function wrapModels(item: {
 
           sortedChildren = sortedChildren.concat(sortedCalculations);
         }
+
+        // if (sortedMeasuresAndCalculations.length > 0) {
+        //   sortedChildren.push({
+        //     id: `${node.id}.${common.ModelNodeIdSuffixEnum.MeasuresAndCalculations}`,
+        //     label: common.ModelNodeLabelEnum.MeasuresAndCalculations,
+        //     description: undefined,
+        //     hidden: false,
+        //     required: false,
+        //     isField: false,
+        //     children: [],
+        //     nodeClass: common.FieldClassEnum.Info
+        //   });
+
+        //   sortedChildren = sortedChildren.concat(sortedMeasuresAndCalculations);
+        // }
 
         if (sortedDimensions.length > 0) {
           sortedChildren.push({

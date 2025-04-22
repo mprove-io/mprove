@@ -430,6 +430,7 @@ export class ModelTreeComponent implements AfterViewInit {
     let flatNodesDimensions: ModelNodeExtra[] = [];
     let flatNodesMeasures: ModelNodeExtra[] = [];
     let flatNodesCalculations: ModelNodeExtra[] = [];
+    // let flatNodesMeasuresAndCalculations: ModelNodeExtra[] = [];
 
     if (
       this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime ||
@@ -457,10 +458,12 @@ export class ModelTreeComponent implements AfterViewInit {
                   leafNode.nodeClass === common.FieldClassEnum.Measure
                 ) {
                   flatNodesMeasures.push(leafNode);
+                  // flatNodesMeasuresAndCalculations.push(leafNode);
                 } else if (
                   leafNode.nodeClass === common.FieldClassEnum.Calculation
                 ) {
                   flatNodesCalculations.push(leafNode);
+                  // flatNodesMeasuresAndCalculations.push(leafNode);
                 }
               }
             });
@@ -477,10 +480,12 @@ export class ModelTreeComponent implements AfterViewInit {
               flatNodesDimensions.push(middleNode);
             } else if (middleNode.nodeClass === common.FieldClassEnum.Measure) {
               flatNodesMeasures.push(middleNode);
+              // flatNodesMeasuresAndCalculations.push(middleNode);
             } else if (
               middleNode.nodeClass === common.FieldClassEnum.Calculation
             ) {
               flatNodesCalculations.push(middleNode);
+              // flatNodesMeasuresAndCalculations.push(middleNode);
             }
           }
         });
@@ -519,6 +524,23 @@ export class ModelTreeComponent implements AfterViewInit {
 
         flatNodes = [...flatNodes, ...flatNodesCalculations];
       }
+
+      // if (flatNodesMeasuresAndCalculations.length > 0) {
+      //   flatNodes.push({
+      //     id: `${common.ModelNodeIdSuffixEnum.MeasuresAndCalculations}`,
+      //     label: common.ModelNodeLabelEnum.MeasuresAndCalculations,
+      //     description: undefined,
+      //     hidden: false,
+      //     required: false,
+      //     isField: false,
+      //     children: [],
+      //     nodeClass: common.FieldClassEnum.Info,
+      //     isSelected: false,
+      //     isFiltered: false
+      //   });
+
+      //   flatNodes = [...flatNodes, ...flatNodesMeasuresAndCalculations];
+      // }
 
       if (flatNodesDimensions.length > 0) {
         flatNodes.push({

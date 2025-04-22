@@ -3,4 +3,6 @@ export enum ModelNodeIdSuffixEnum {
   Dimensions = 'dimensions',
   Measures = 'measures',
   Calculations = 'calculations'
+  // ,
+  // MeasuresAndCalculations = 'measuresAndCalculations'
 }
