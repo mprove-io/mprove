@@ -98,7 +98,7 @@
                     'ml-[10px]':
                       !node.hasChildren &&
                       node.parent?.data.nodeClass !== nodeClassDimension,
-                    'ml-[34px]':
+                    'ml-[42px]':
                       node.parent?.data.nodeClass === nodeClassDimension
                   }"
                 >
@@ -145,6 +145,14 @@
                     <m-type-string-icon
                       *ngIf="node.data.fieldResult === fieldResultString"
                     ></m-type-string-icon>
+
+                    <m-type-on-off-icon
+                      *ngIf="node.data.fieldResult === fieldResultYesno"
+                    ></m-type-on-off-icon>
+
+                    <m-type-date-icon
+                      *ngIf="node.data.fieldResult === fieldResultTs"
+                    ></m-type-date-icon>
                   </div>
 
                   <div

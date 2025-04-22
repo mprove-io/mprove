@@ -44,7 +44,9 @@ import { ChartPieIconComponent } from './icons/1-chart-icons/chart-pie-icon/char
 import { ChartScatterIconComponent } from './icons/1-chart-icons/chart-scatter-icon/chart-scatter-icon.component';
 import { ChartTableIconComponent } from './icons/1-chart-icons/chart-table-icon/chart-table-icon.component';
 import { ChartViewIconComponent } from './icons/1-chart-icons/chart-view-icon/chart-view-icon.component';
+import { TypeDateIconComponent } from './icons/2-type-icons/type-date-icon/type-date-icon.component';
 import { TypeNumberIconComponent } from './icons/2-type-icons/type-number-icon/type-number-icon.component';
+import { TypeOnOffIconComponent } from './icons/2-type-icons/type-on-off-icon/type-on-off-icon.component';
 import { TypeStringIconComponent } from './icons/2-type-icons/type-string-icon/type-string-icon.component';
 import { AddIconComponent } from './icons/add-icon/add-icon.component';
 import { AdjustmentsIconComponent } from './icons/adjustments-icon/adjustments-icon.component';
@@ -203,6 +205,8 @@ let sharedComponents = [
   InsightsIconComponent,
   TypeNumberIconComponent,
   TypeStringIconComponent,
+  TypeOnOffIconComponent,
+  TypeDateIconComponent,
   ChartTableIconComponent,
   ChartLineIconComponent,
   ChartBarIconComponent,
