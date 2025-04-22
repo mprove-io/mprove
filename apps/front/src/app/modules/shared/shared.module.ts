@@ -37,6 +37,15 @@ import { StoreFractionInputComponent } from './fraction/store-fraction-input/sto
 import { StoreFractionSelectorComponent } from './fraction/store-fraction-selector/store-fraction-selector.component';
 import { StoreFractionSubTypeComponent } from './fraction/store-fraction-sub-type/store-fraction-sub-type.component';
 import { StoreFractionSwitchComponent } from './fraction/store-fraction-switch/store-fraction-switch.component';
+import { ChartBarIconComponent } from './icons/1-chart-icons/chart-bar-icon/chart-bar-icon.component';
+import { ChartIconComponent } from './icons/1-chart-icons/chart-icon/chart-icon.component';
+import { ChartLineIconComponent } from './icons/1-chart-icons/chart-line-icon/chart-line-icon.component';
+import { ChartPieIconComponent } from './icons/1-chart-icons/chart-pie-icon/chart-pie-icon.component';
+import { ChartScatterIconComponent } from './icons/1-chart-icons/chart-scatter-icon/chart-scatter-icon.component';
+import { ChartTableIconComponent } from './icons/1-chart-icons/chart-table-icon/chart-table-icon.component';
+import { ChartViewIconComponent } from './icons/1-chart-icons/chart-view-icon/chart-view-icon.component';
+import { TypeNumberIconComponent } from './icons/2-type-icons/type-number-icon/type-number-icon.component';
+import { TypeStringIconComponent } from './icons/2-type-icons/type-string-icon/type-string-icon.component';
 import { AddIconComponent } from './icons/add-icon/add-icon.component';
 import { AdjustmentsIconComponent } from './icons/adjustments-icon/adjustments-icon.component';
 import { AltListIconComponent } from './icons/alt-list-icon/alt-list-icon.component';
@@ -45,13 +54,6 @@ import { ArrowLeftIconComponent } from './icons/arrow-left-icon/arrow-left-icon.
 import { ArrowNarrowRightIconComponent } from './icons/arrow-narrow-right-icon/arrow-narrow-right-icon.component';
 import { ArrowRightIconComponent } from './icons/arrow-right-icon/arrow-right-icon.component';
 import { AscIconComponent } from './icons/asc-icon/asc-icon.component';
-import { ChartBarIconComponent } from './icons/chart-bar-icon/chart-bar-icon.component';
-import { ChartIconComponent } from './icons/chart-icon/chart-icon.component';
-import { ChartLineIconComponent } from './icons/chart-line-icon/chart-line-icon.component';
-import { ChartPieIconComponent } from './icons/chart-pie-icon/chart-pie-icon.component';
-import { ChartScatterIconComponent } from './icons/chart-scatter-icon/chart-scatter-icon.component';
-import { ChartTableIconComponent } from './icons/chart-table-icon/chart-table-icon.component';
-import { ChartViewIconComponent } from './icons/chart-view-icon/chart-view-icon.component';
 import { CheckIconComponent } from './icons/check-icon/check-icon.component';
 import { ChevronDownIconComponent } from './icons/chevron-down-icon/chevron-down-icon.component';
 import { ChevronLeftIconComponent } from './icons/chevron-left-icon/chevron-left-icon.component';
@@ -199,6 +201,8 @@ let sharedComponents = [
   AdjustmentsIconComponent,
   TableCellsIconComponent,
   InsightsIconComponent,
+  TypeNumberIconComponent,
+  TypeStringIconComponent,
   ChartTableIconComponent,
   ChartLineIconComponent,
   ChartBarIconComponent,

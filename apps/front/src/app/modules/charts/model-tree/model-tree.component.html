@@ -126,68 +126,88 @@
                   ></div>
                 </div>
 
-                <div
-                  class="ml-0 flex-grow truncate"
-                  [ngClass]="{
-                    'text-m600':
-                      node.data.isSelected === true &&
-                      (node.data.nodeClass === nodeClassMeasure ||
-                        node.data.nodeClass === nodeClassCalculation ||
-                        node.data.nodeClass === nodeClassDimension),
-                    'text-s1': node.data.isSelected === false
-                  }"
-                >
-                  <span
-                    class="truncate"
-                    *ngIf="node.data.nodeClass === nodeClassInfo"
-                    class="text-s500 font-semibold"
-                  >
-                    {{ node.data.label | uppercase }}
-                  </span>
-
-                  <span
-                    class="truncate text-base"
-                    *ngIf="node.data.nodeClass !== nodeClassInfo"
+                <div class="ml-0 flex flex-row">
+                  <div
+                    *ngIf="node.data.isField === true"
+                    class="h-6 w-6 flex-shrink-0"
                     [ngClass]="{
-                      'ml-3':
-                        node.hasChildren &&
-                        node.data.nodeClass !== nodeClassDimension &&
-                        (modelTreeLevels === modelTreeLevelsFlatTime ||
-                          modelTreeLevels === modelTreeLevelsFlat),
-                      'ml-2':
-                        node.hasChildren &&
-                        node.data.nodeClass === nodeClassDimension
+                      'text-m600': node.data.isSelected === true,
+                      'text-s500': node.data.isSelected === false
                     }"
                   >
-                    {{ node.data.joinLabel | capitalize }}
-                  </span>
+                    <m-type-number-icon
+                      *ngIf="node.data.fieldResult === fieldResultNumber"
+                    ></m-type-number-icon>
 
-                  <span
-                    class="truncate text-base font-semibold"
-                    *ngIf="node.data.nodeClass !== nodeClassInfo"
-                  >
-                    {{ node.data.timeLabel | capitalize }}
-                  </span>
+                    <m-type-string-icon
+                      *ngIf="node.data.fieldResult === fieldResultString"
+                    ></m-type-string-icon>
+                  </div>
 
-                  <span
-                    class="truncate text-base font-semibold"
-                    *ngIf="node.data.nodeClass !== nodeClassInfo"
+                  <div
+                    class="flex-grow truncate"
                     [ngClass]="{
-                      'font-semibold':
-                        node.data.children.length === 0 ||
-                        node.data.nodeClass === nodeClassDimension,
-                      'ml-3':
-                        node.hasChildren &&
-                        node.data.nodeClass !== nodeClassDimension,
-                      'ml-2':
-                        node.hasChildren &&
-                        node.data.nodeClass === nodeClassDimension &&
-                        modelTreeLevels !== modelTreeLevelsFlat &&
-                        modelTreeLevels !== modelTreeLevelsNested
+                      'ml-3': node.data.isField === true,
+                      'text-m600':
+                        node.data.isSelected === true &&
+                        (node.data.nodeClass === nodeClassMeasure ||
+                          node.data.nodeClass === nodeClassCalculation ||
+                          node.data.nodeClass === nodeClassDimension),
+                      'text-s1': node.data.isSelected === false
                     }"
                   >
-                    {{ node.data.label | capitalize }}
-                  </span>
+                    <span
+                      class="truncate"
+                      *ngIf="node.data.nodeClass === nodeClassInfo"
+                      class="text-s500 font-semibold"
+                    >
+                      {{ node.data.label | uppercase }}
+                    </span>
+
+                    <span
+                      class="truncate text-base"
+                      *ngIf="node.data.nodeClass !== nodeClassInfo"
+                      [ngClass]="{
+                        'ml-3':
+                          node.hasChildren &&
+                          node.data.nodeClass !== nodeClassDimension &&
+                          (modelTreeLevels === modelTreeLevelsFlatTime ||
+                            modelTreeLevels === modelTreeLevelsFlat),
+                        'ml-2':
+                          node.hasChildren &&
+                          node.data.nodeClass === nodeClassDimension
+                      }"
+                    >
+                      {{ node.data.joinLabel | capitalize }}
+                    </span>
+
+                    <span
+                      class="truncate text-base font-semibold"
+                      *ngIf="node.data.nodeClass !== nodeClassInfo"
+                    >
+                      {{ node.data.timeLabel | capitalize }}
+                    </span>
+
+                    <span
+                      class="truncate text-base font-semibold"
+                      *ngIf="node.data.nodeClass !== nodeClassInfo"
+                      [ngClass]="{
+                        'font-semibold':
+                          node.data.children.length === 0 ||
+                          node.data.nodeClass === nodeClassDimension,
+                        'ml-3':
+                          node.hasChildren &&
+                          node.data.nodeClass !== nodeClassDimension,
+                        'ml-2':
+                          node.hasChildren &&
+                          node.data.nodeClass === nodeClassDimension &&
+                          modelTreeLevels !== modelTreeLevelsFlat &&
+                          modelTreeLevels !== modelTreeLevelsNested
+                      }"
+                    >
+                      {{ node.data.label | capitalize }}
+                    </span>
+                  </div>
                 </div>
               </div>
 

@@ -44,7 +44,15 @@ export class ModelTreeComponent implements AfterViewInit {
   nodeClassMeasure = common.FieldClassEnum.Measure;
   nodeClassCalculation = common.FieldClassEnum.Calculation;
   nodeClassFilter = common.FieldClassEnum.Filter;
+
+  fieldResultNumber = common.FieldResultEnum.Number;
+  fieldResultString = common.FieldResultEnum.String;
+  fieldResultYesno = common.FieldResultEnum.Yesno;
   fieldResultTs = common.FieldResultEnum.Ts;
+  fieldResultDayOfWeek = common.FieldResultEnum.DayOfWeek;
+  fieldResultDayOfWeekIndex = common.FieldResultEnum.DayOfWeekIndex;
+  fieldResultMonthName = common.FieldResultEnum.MonthName;
+  fieldResultQuarterOfYear = common.FieldResultEnum.QuarterOfYear;
 
   modelTreeLevelsFlatTime = common.ModelTreeLevelsEnum.FlatTime;
   modelTreeLevelsFlat = common.ModelTreeLevelsEnum.Flat;
