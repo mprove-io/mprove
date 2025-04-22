@@ -20,8 +20,9 @@ export class UiService {
     showMetricsChartSettings?: boolean;
     modelTreeLevels?: common.ModelTreeLevelsEnum;
     showHours?: boolean;
-    projectChartLinks?: common.ProjectChartLink[];
+    projectFileLinks?: common.ProjectFileLink[];
     projectModelLinks?: common.ProjectModelLink[];
+    projectChartLinks?: common.ProjectChartLink[];
     projectDashboardLinks?: common.ProjectDashboardLink[];
     projectReportLinks?: common.ProjectReportLink[];
     timezone?: string;
@@ -37,6 +38,7 @@ export class UiService {
       showMetricsChartSettings,
       modelTreeLevels,
       showHours,
+      projectFileLinks,
       projectModelLinks,
       projectChartLinks,
       projectDashboardLinks,
@@ -80,6 +82,9 @@ export class UiService {
       timeSpec: uiState.timeSpec,
       timeRangeFraction: uiState.timeRangeFraction,
       showHours: common.isDefined(showHours) ? showHours : uiState.showHours,
+      projectFileLinks: common.isDefined(projectFileLinks)
+        ? projectFileLinks
+        : uiState.projectFileLinks,
       projectModelLinks: common.isDefined(projectModelLinks)
         ? projectModelLinks
         : uiState.projectModelLinks,

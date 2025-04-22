@@ -99,6 +99,11 @@ export class NavbarComponent implements OnInit {
     this.navigateService.navigateToFiles();
 
     this.uiQuery.updatePart({ panel: common.PanelEnum.Tree });
+
+    this.navigateService.navigateToFileLine({
+      panel: common.PanelEnum.Tree,
+      underscoreFileId: common.LAST_SELECTED_FILE_ID
+    });
   }
 
   navigateCharts() {

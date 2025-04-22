@@ -320,7 +320,11 @@ export class BranchSelectComponent {
       this.nav.envId
     ];
 
-    if (urlParts[11] === common.PATH_CHARTS) {
+    if (urlParts[11] === common.PATH_FILES) {
+      navArray.push(common.PATH_FILES);
+      navArray.push(common.PATH_FILE);
+      navArray.push(common.LAST_SELECTED_FILE_ID);
+    } else if (urlParts[11] === common.PATH_CHARTS) {
       navArray.push(common.PATH_CHARTS);
       navArray.push(common.PATH_MODEL);
       navArray.push(common.LAST_SELECTED_MODEL_ID);

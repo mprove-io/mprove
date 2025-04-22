@@ -5,9 +5,11 @@ import {
   Router,
   RouterStateSnapshot
 } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
+import { RepoQuery } from '~front/app/queries/repo.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { common } from '~front/barrels/common';
 import { checkNavOrgProjectRepoBranchEnv } from '../../functions/check-nav-org-project-repo-branch-env';
 import { NavQuery, NavState } from '../../queries/nav.query';
@@ -18,9 +20,11 @@ import { FileService } from '../../services/file.service';
 export class FileResolver implements Resolve<Observable<boolean>> {
   constructor(
     private fileService: FileService,
+    private navigateService: NavigateService,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private uiQuery: UiQuery,
+    private repoQuery: RepoQuery,
     private router: Router
   ) {}
 
@@ -51,15 +55,44 @@ export class FileResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let fileId: string = route.params[common.PARAMETER_FILE_ID];
     let panel: common.PanelEnum = route.queryParams?.panel;
+    this.uiQuery.updatePart({ panel: panel || common.PanelEnum.Tree });
 
-    this.uiQuery.updatePart({
-      panel: panel || common.PanelEnum.Tree
-    });
+    let parametersFileId: string = route.params[common.PARAMETER_FILE_ID];
+
+    if (parametersFileId === common.LAST_SELECTED_FILE_ID) {
+      let repo = this.repoQuery.getValue();
+
+      let fileIds = common.getFileIds({ nodes: repo.nodes });
+
+      let projectFileLinks = this.uiQuery.getValue().projectFileLinks;
+
+      let pLink = projectFileLinks.find(
+        link => link.projectId === nav.projectId
+      );
+
+      if (common.isDefined(pLink)) {
+        let pFileId = fileIds.find(fileId => fileId === pLink.fileId);
+
+        if (common.isDefined(pFileId)) {
+          this.navigateService.navigateToFileLine({
+            panel: common.PanelEnum.Tree,
+            underscoreFileId: pFileId
+          });
+        } else {
+          this.navigateService.navigateToFiles();
+        }
+
+        return of(false);
+      } else {
+        this.navigateService.navigateToFiles();
+
+        return of(false);
+      }
+    }
 
     return this.fileService
-      .getFile({ fileId: fileId, panel: panel, skipCheck: true })
+      .getFile({ fileId: parametersFileId, panel: panel, skipCheck: true })
       .pipe(map(x => true));
   }
 }

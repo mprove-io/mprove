@@ -14,7 +14,7 @@ import { UserQuery, UserState } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { UiService } from '~front/app/services/ui.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -47,7 +47,12 @@ export class FilesComponent implements OnInit {
   file$ = this.fileQuery.select().pipe(
     tap(x => {
       this.file = x;
+
       this.cd.detectChanges();
+
+      this.setProjectFileLink({
+        fileId: this.file.fileId
+      });
     })
   );
 
@@ -112,7 +117,7 @@ export class FilesComponent implements OnInit {
     private repoQuery: RepoQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
-    private navigateService: NavigateService,
+    private uiService: UiService,
     private fileService: FileService,
     private title: Title,
     private memberQuery: MemberQuery,
@@ -319,5 +324,52 @@ export class FilesComponent implements OnInit {
         take(1)
       )
       .subscribe();
+  }
+
+  setProjectFileLink(item: { fileId: string }) {
+    let { fileId } = item;
+
+    if (common.isUndefined(fileId)) {
+      return;
+    }
+
+    let nav = this.navQuery.getValue();
+    let links = this.uiQuery.getValue().projectFileLinks;
+
+    let link: common.ProjectFileLink = links.find(
+      l => l.projectId === nav.projectId
+    );
+
+    let newProjectFileLinks;
+
+    if (common.isDefined(link)) {
+      let newLink: common.ProjectFileLink = {
+        projectId: nav.projectId,
+        fileId: fileId,
+        lastNavTs: Date.now()
+      };
+
+      newProjectFileLinks = [
+        newLink,
+        ...links.filter(r => !(r.projectId === nav.projectId))
+      ];
+    } else {
+      let newLink: common.ProjectFileLink = {
+        projectId: nav.projectId,
+        fileId: fileId,
+        lastNavTs: Date.now()
+      };
+
+      newProjectFileLinks = [newLink, ...links];
+    }
+
+    let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
+
+    newProjectFileLinks = newProjectFileLinks.filter(
+      l => l.lastNavTs >= oneYearAgoTimestamp
+    );
+
+    this.uiQuery.updatePart({ projectFileLinks: newProjectFileLinks });
+    this.uiService.setUserUi({ projectFileLinks: newProjectFileLinks });
   }
 }

@@ -128,6 +128,7 @@ export const EMPTY_MCONFIG_ID = 'new';
 export const EMPTY_QUERY_ID = 'new';
 export const EMPTY_REPORT_ID = 'new';
 
+export const LAST_SELECTED_FILE_ID = 'last-selected';
 export const LAST_SELECTED_MODEL_ID = 'last-selected';
 export const LAST_SELECTED_CHART_ID = 'last-selected';
 export const LAST_SELECTED_DASHBOARD_ID = 'last-selected';
