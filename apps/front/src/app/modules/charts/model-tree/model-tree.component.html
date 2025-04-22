@@ -126,101 +126,99 @@
                   ></div>
                 </div>
 
-                <div class="flex flex-row items-center justify-center">
-                  <div
-                    *ngIf="node.data.isField === true"
-                    class="ml-1 flex h-6 w-6 flex-shrink-0 items-center justify-center"
+                <div
+                  *ngIf="node.data.isField === true"
+                  class="ml-1 flex h-6 w-6 flex-shrink-0 items-center justify-center"
+                  [ngClass]="{
+                    'text-g1':
+                      node.data.nodeClass === nodeClassMeasure ||
+                      node.data.nodeClass === nodeClassCalculation,
+                    'text-m600': node.data.nodeClass === nodeClassDimension,
+                    'text-s500': node.data.nodeClass === nodeClassFilter
+                  }"
+                >
+                  <m-type-number-icon
+                    *ngIf="node.data.fieldResult === fieldResultNumber"
+                  ></m-type-number-icon>
+
+                  <m-type-string-icon
+                    *ngIf="node.data.fieldResult === fieldResultString"
+                  ></m-type-string-icon>
+
+                  <m-type-on-off-icon
+                    *ngIf="node.data.fieldResult === fieldResultYesno"
+                  ></m-type-on-off-icon>
+
+                  <m-type-date-icon
+                    *ngIf="node.data.fieldResult === fieldResultTs"
+                  ></m-type-date-icon>
+
+                  <m-type-enum-icon
+                    *ngIf="
+                      node.data.fieldResult === fieldResultDayOfWeek ||
+                      node.data.fieldResult === fieldResultDayOfWeekIndex ||
+                      node.data.fieldResult === fieldResultMonthName ||
+                      node.data.fieldResult === fieldResultQuarterOfYear
+                    "
+                  ></m-type-enum-icon>
+                </div>
+
+                <div
+                  class="text-s1 flex-grow truncate"
+                  [ngClass]="{
+                    'ml-3': node.data.isField === true
+                  }"
+                >
+                  <span
+                    class="truncate"
+                    *ngIf="node.data.nodeClass === nodeClassInfo"
+                    class="text-s500 font-semibold"
+                  >
+                    {{ node.data.label | uppercase }}
+                  </span>
+
+                  <span
+                    class="truncate text-base"
+                    *ngIf="node.data.nodeClass !== nodeClassInfo"
                     [ngClass]="{
-                      'text-g1':
-                        node.data.nodeClass === nodeClassMeasure ||
-                        node.data.nodeClass === nodeClassCalculation,
-                      'text-m600': node.data.nodeClass === nodeClassDimension,
-                      'text-s500': node.data.nodeClass === nodeClassFilter
+                      'ml-3':
+                        (node.hasChildren &&
+                          node.data.nodeClass !== nodeClassDimension &&
+                          (modelTreeLevels === modelTreeLevelsFlatTime ||
+                            modelTreeLevels === modelTreeLevelsFlat)) ||
+                        (node.hasChildren &&
+                          node.data.nodeClass === nodeClassDimension)
                     }"
                   >
-                    <m-type-number-icon
-                      *ngIf="node.data.fieldResult === fieldResultNumber"
-                    ></m-type-number-icon>
+                    {{ node.data.joinLabel | capitalize }}
+                  </span>
 
-                    <m-type-string-icon
-                      *ngIf="node.data.fieldResult === fieldResultString"
-                    ></m-type-string-icon>
+                  <span
+                    class="truncate text-base font-semibold"
+                    *ngIf="node.data.nodeClass !== nodeClassInfo"
+                  >
+                    {{ node.data.timeLabel | capitalize }}
+                  </span>
 
-                    <m-type-on-off-icon
-                      *ngIf="node.data.fieldResult === fieldResultYesno"
-                    ></m-type-on-off-icon>
-
-                    <m-type-date-icon
-                      *ngIf="node.data.fieldResult === fieldResultTs"
-                    ></m-type-date-icon>
-
-                    <m-type-enum-icon
-                      *ngIf="
-                        node.data.fieldResult === fieldResultDayOfWeek ||
-                        node.data.fieldResult === fieldResultDayOfWeekIndex ||
-                        node.data.fieldResult === fieldResultMonthName ||
-                        node.data.fieldResult === fieldResultQuarterOfYear
-                      "
-                    ></m-type-enum-icon>
-                  </div>
-
-                  <div
-                    class="text-s1 flex-grow truncate"
+                  <span
+                    class="truncate text-base font-semibold"
+                    *ngIf="node.data.nodeClass !== nodeClassInfo"
                     [ngClass]="{
-                      'ml-3': node.data.isField === true
+                      'font-semibold':
+                        node.data.children.length === 0 ||
+                        node.data.nodeClass === nodeClassDimension,
+                      'ml-3':
+                        node.hasChildren &&
+                        node.data.nodeClass !== nodeClassDimension,
+                      'ml-2':
+                        node.hasChildren &&
+                        node.data.nodeClass === nodeClassDimension &&
+                        modelTreeLevels !== modelTreeLevelsFlat &&
+                        modelTreeLevels !== modelTreeLevelsNested
                     }"
                   >
-                    <span
-                      class="truncate"
-                      *ngIf="node.data.nodeClass === nodeClassInfo"
-                      class="text-s500 font-semibold"
-                    >
-                      {{ node.data.label | uppercase }}
-                    </span>
-
-                    <span
-                      class="truncate text-base"
-                      *ngIf="node.data.nodeClass !== nodeClassInfo"
-                      [ngClass]="{
-                        'ml-3':
-                          (node.hasChildren &&
-                            node.data.nodeClass !== nodeClassDimension &&
-                            (modelTreeLevels === modelTreeLevelsFlatTime ||
-                              modelTreeLevels === modelTreeLevelsFlat)) ||
-                          (node.hasChildren &&
-                            node.data.nodeClass === nodeClassDimension)
-                      }"
-                    >
-                      {{ node.data.joinLabel | capitalize }}
-                    </span>
-
-                    <span
-                      class="truncate text-base font-semibold"
-                      *ngIf="node.data.nodeClass !== nodeClassInfo"
-                    >
-                      {{ node.data.timeLabel | capitalize }}
-                    </span>
-
-                    <span
-                      class="truncate text-base font-semibold"
-                      *ngIf="node.data.nodeClass !== nodeClassInfo"
-                      [ngClass]="{
-                        'font-semibold':
-                          node.data.children.length === 0 ||
-                          node.data.nodeClass === nodeClassDimension,
-                        'ml-3':
-                          node.hasChildren &&
-                          node.data.nodeClass !== nodeClassDimension,
-                        'ml-2':
-                          node.hasChildren &&
-                          node.data.nodeClass === nodeClassDimension &&
-                          modelTreeLevels !== modelTreeLevelsFlat &&
-                          modelTreeLevels !== modelTreeLevelsNested
-                      }"
-                    >
-                      {{ node.data.label | capitalize }}
-                    </span>
-                  </div>
+                    {{ node.data.label | capitalize }}
+                  </span>
                 </div>
               </div>
 
