@@ -136,6 +136,23 @@
                     'text-m600': node.data.nodeClass === nodeClassDimension,
                     'text-s500': node.data.nodeClass === nodeClassFilter
                   }"
+                  tp="{{
+                    node.data.fieldResult === fieldResultDayOfWeek ||
+                    node.data.fieldResult === fieldResultDayOfWeekIndex ||
+                    node.data.fieldResult === fieldResultMonthName ||
+                    node.data.fieldResult === fieldResultQuarterOfYear
+                      ? 'Enum: ' + node.data.fieldResult
+                      : node.data.fieldResult !== fieldResultNumber &&
+                        node.data.fieldResult !== fieldResultString &&
+                        node.data.fieldResult !== fieldResultYesno &&
+                        node.data.fieldResult !== fieldResultTs &&
+                        node.data.fieldResult !== fieldResultDayOfWeek &&
+                        node.data.fieldResult !== fieldResultDayOfWeekIndex &&
+                        node.data.fieldResult !== fieldResultMonthName &&
+                        node.data.fieldResult !== fieldResultQuarterOfYear
+                      ? 'Custom: ' + node.data.fieldResult
+                      : node.data.fieldResult
+                  }}"
                 >
                   <m-type-number-icon
                     *ngIf="node.data.fieldResult === fieldResultNumber"
