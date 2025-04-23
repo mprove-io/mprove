@@ -912,26 +912,158 @@
                     </div>
                   </div>
 
-                  <div
-                    class="flex flex-row items-start"
-                    *ngIf="
-                      !filtersIsExpanded && mconfig?.extendedFilters.length > 0
-                    "
-                  >
-                    <m-bricks
-                      class="mb-5 ml-3 mr-5 mt-3 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
-                      [extendedFilters]="mconfig.extendedFilters"
-                      [isKeepBackgroundColor]="false"
-                    ></m-bricks>
-                  </div>
+                  <div class="flex w-full flex-col">
+                    <div class="flex w-full flex-row">
+                      <button
+                        *ngIf="
+                          filtersIsExpanded === true ||
+                          mconfig?.extendedFilters.length === 0
+                        "
+                        type="button"
+                        data-cy="chartsAddParameterButton"
+                        class="border-s400 text-s500 hover:bg-m0 ml-2 mt-2 h-11 flex-shrink-0 select-none rounded border px-4 py-2 focus:outline-none"
+                        (click)="addParameter()"
+                      >
+                        Add Filter
+                      </button>
 
-                  <div
-                    class="ml-3 max-h-[260px] w-2 flex-1 overflow-auto"
-                    *ngIf="filtersIsExpanded"
-                  >
-                    <m-model-filters
-                      [modelContent]="model.content"
-                    ></m-model-filters>
+                      <div class="min-h-[68px]"></div>
+
+                      <div
+                        class="w-2 flex-1"
+                        [ngClass]="{
+                          'ml-7 ':
+                            filtersIsExpanded === true ||
+                            isAddParameter === true
+                        }"
+                      >
+                        <div
+                          class="mt-2 flex flex-row"
+                          *ngIf="isAddParameter === true"
+                          [ngClass]="{
+                            'border-s300 mb-5 border-b pb-5':
+                              mconfig?.extendedFilters.length > 0
+                          }"
+                        >
+                          <div
+                            class="flex h-11 max-w-[850px] flex-1 flex-row items-center space-x-5"
+                          >
+                            <div
+                              class="text-s1 flex flex-shrink-0 select-none items-center font-semibold"
+                              >Filter by</div
+                            >
+
+                            <ng-select
+                              #filterBySelect
+                              data-cy="filterBySelect"
+                              class="filter-metric-by-select w-full min-w-[2px] text-base"
+                              [items]="filterByFieldsList"
+                              [searchable]="true"
+                              [searchFn]="filterBySearchFn"
+                              [clearable]="false"
+                              [(ngModel)]="newParameterFieldId"
+                              (change)="filterByChange()"
+                              (keyup.esc)="
+                                $event.stopImmediatePropagation();
+                                filterBySelect.blur()
+                              "
+                              (keyup.enter)="
+                                $event.stopImmediatePropagation();
+                                filterBySelect.blur()
+                              "
+                              [dropdownPosition]="'top'"
+                              appendTo="body"
+                              placeholder="Field"
+                              bindLabel="partLabel"
+                              bindValue="id"
+                            >
+                              <ng-template ng-label-tmp let-item="item">
+                                <m-field-label
+                                  [column]="item"
+                                  class="ml-1 flex"
+                                ></m-field-label>
+                              </ng-template>
+
+                              <ng-template
+                                ng-option-tmp
+                                let-item="item"
+                                let-index="index"
+                                let-search="searchTerm"
+                              >
+                                <m-field-label
+                                  [column]="item"
+                                  class="ml-1 flex"
+                                ></m-field-label>
+                              </ng-template>
+                            </ng-select>
+                          </div>
+
+                          <ng-template #templateApplyAddFilter>
+                            <div *ngIf="isDisabledApplyAlreadyFiltered === true"
+                              >This field is already filtered. Click on + to add
+                              new filter conditions.</div
+                            >
+                          </ng-template>
+
+                          <div
+                            class="flex"
+                            [tpIsEnabled]="
+                              isDisabledApplyAlreadyFiltered === true
+                            "
+                            [tp]="templateApplyAddFilter"
+                          >
+                            <button
+                              data-cy="chartsApplyAddParameterButton"
+                              class="bg-m600 text-m0 ml-5 select-none rounded px-4 py-2 font-medium focus:outline-none"
+                              [ngClass]="{
+                                'bg-m600':
+                                  isDisabledApplyAlreadyFiltered === false,
+                                'bg-s400 cursor-default':
+                                  isDisabledApplyAlreadyFiltered === true
+                              }"
+                              type="button"
+                              (click)="applyAddParameter()"
+                              [disabled]="
+                                isDisabledApplyAlreadyFiltered === true
+                              "
+                              >Apply</button
+                            >
+                          </div>
+
+                          <button
+                            type="button"
+                            data-cy="chartsCancelAddParameterButton"
+                            class="border-s400 text-s500 hover:bg-m0 ml-5 select-none rounded border px-4 py-2 focus:outline-none"
+                            (click)="cancelAddParameter()"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+
+                        <div
+                          class="flex flex-row items-start"
+                          *ngIf="
+                            !filtersIsExpanded &&
+                            mconfig?.extendedFilters.length > 0
+                          "
+                        >
+                          <m-bricks
+                            class="mb-5 ml-3 mr-5 mt-3 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
+                            [extendedFilters]="mconfig.extendedFilters"
+                            [isKeepBackgroundColor]="false"
+                          ></m-bricks>
+                        </div>
+
+                        <div
+                          class="max-h-[260px] w-full overflow-auto"
+                          *ngIf="filtersIsExpanded"
+                        >
+                          <m-model-filters
+                            [modelContent]="model.content"
+                          ></m-model-filters>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

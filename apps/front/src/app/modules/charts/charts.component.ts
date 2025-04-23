@@ -171,10 +171,27 @@ export class ChartsComponent implements OnInit, OnDestroy {
     })
   );
 
+  isAddParameter = false;
+  filterByFieldsList: common.ModelFieldY[] = [];
+  isDisabledApplyAlreadyFiltered = false;
+  newParameterFieldId: string;
+
   model: ModelState;
   model$ = this.modelQuery.select().pipe(
     tap(x => {
       this.model = x;
+
+      this.filterByFieldsList = this.model.fields
+        .map(y =>
+          Object.assign({}, y, {
+            partLabel: common.isDefined(y.groupLabel)
+              ? `${y.topLabel} ${y.groupLabel} ${y.label}`
+              : `${y.topLabel} ${y.label}`
+          } as common.ModelFieldY)
+        )
+        .sort((a, b) =>
+          a.partLabel > b.partLabel ? 1 : b.partLabel > a.partLabel ? -1 : 0
+        );
 
       this.modelForm.controls['model'].setValue(this.model.modelId);
 
@@ -1089,6 +1106,44 @@ ${this.mconfig.storePart?.reqUrlPath}`
     let idxs = uf.filter(haystack, term);
 
     return idxs != null && idxs.length > 0;
+  }
+
+  addParameter() {
+    this.isAddParameter = true;
+  }
+
+  filterBySearchFn(term: string, modelFieldY: common.ModelFieldY) {
+    let haystack = [
+      common.isDefinedAndNotEmpty(modelFieldY.groupLabel)
+        ? `${modelFieldY.topLabel} ${modelFieldY.groupLabel} - ${modelFieldY.label}`
+        : `${modelFieldY.topLabel} ${modelFieldY.label}`
+    ];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
+  }
+
+  filterByChange() {
+    (document.activeElement as HTMLElement).blur();
+
+    this.isDisabledApplyAlreadyFiltered =
+      this.mconfig.extendedFilters
+        .map(ef => ef.fieldId)
+        .indexOf(this.newParameterFieldId) > -1;
+  }
+
+  applyAddParameter() {
+    if (common.isUndefined(this.newParameterFieldId)) {
+      return;
+    }
+  }
+
+  cancelAddParameter() {
+    this.isAddParameter = false;
+    this.newParameterFieldId = undefined;
   }
 
   toggleModelFieldsPanel() {
