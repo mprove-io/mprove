@@ -43,7 +43,7 @@
 
             <button
               *ngIf="!column.sorting"
-              class="hover:bg-m200 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+              class="hover:bg-m200 text-s500 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
               (click)="sort(column.id, true)"
             >
               <m-desc-icon></m-desc-icon>
@@ -53,16 +53,31 @@
           <button
             class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
             [ngClass]="{
-              'text-s400 cursor-default':
+              'text-s300 cursor-default':
                 columnIndex === 0 ||
-                column.fieldClass !== mconfigFields[columnIndex - 1].fieldClass,
-              'hover:bg-m200':
+                ([fieldClassMeasure, fieldClassCalculation].indexOf(
+                  column.fieldClass
+                ) > -1 &&
+                  [fieldClassMeasure, fieldClassCalculation].indexOf(
+                    mconfigFields[columnIndex - 1].fieldClass
+                  ) < 0),
+              'hover:bg-m200 text-s500':
                 columnIndex !== 0 &&
-                column.fieldClass === mconfigFields[columnIndex - 1].fieldClass
+                ([fieldClassMeasure, fieldClassCalculation].indexOf(
+                  column.fieldClass
+                ) < 0 ||
+                  [fieldClassMeasure, fieldClassCalculation].indexOf(
+                    mconfigFields[columnIndex - 1].fieldClass
+                  ) > -1)
             }"
             [disabled]="
               columnIndex === 0 ||
-              column.fieldClass !== mconfigFields[columnIndex - 1].fieldClass
+              ([fieldClassMeasure, fieldClassCalculation].indexOf(
+                column.fieldClass
+              ) > -1 &&
+                [fieldClassMeasure, fieldClassCalculation].indexOf(
+                  mconfigFields[columnIndex - 1].fieldClass
+                ) < 0)
             "
             (click)="moveLeft(column.id)"
           >
@@ -72,17 +87,23 @@
           <button
             class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
             [ngClass]="{
-              'text-s400 cursor-default':
+              'text-s300 cursor-default':
                 columnIndex + 1 === mconfigFields.length ||
-                column.fieldClass !== mconfigFields[columnIndex + 1].fieldClass,
-              'hover:bg-m200':
+                (column.fieldClass === fieldClassDimension &&
+                  mconfigFields[columnIndex + 1].fieldClass !==
+                    fieldClassDimension),
+              'hover:bg-m200 text-s500':
                 columnIndex + 1 !== mconfigFields.length &&
-                column.fieldClass === mconfigFields[columnIndex + 1].fieldClass
+                (column.fieldClass !== fieldClassDimension ||
+                  mconfigFields[columnIndex + 1].fieldClass ===
+                    fieldClassDimension)
             }"
             (click)="moveRight(column.id)"
             [disabled]="
               columnIndex + 1 === mconfigFields.length ||
-              column.fieldClass !== mconfigFields[columnIndex + 1].fieldClass
+              (column.fieldClass === fieldClassDimension &&
+                mconfigFields[columnIndex + 1].fieldClass !==
+                  fieldClassDimension)
             "
           >
             <m-arrow-right-icon></m-arrow-right-icon>
@@ -95,13 +116,13 @@
             <button
               class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
               [ngClass]="{
-                'text-s400 cursor-default': column.required === true,
-                'hover:bg-m200': column.required === false
+                'text-s300 cursor-default': column.required === true,
+                'hover:bg-m200 text-s500': column.required === false
               }"
               [disabled]="column.required === true"
               (click)="remove(column.id)"
             >
-              <m-delete-icon></m-delete-icon>
+              <m-trash-icon></m-trash-icon>
             </button>
           </div>
         </div>
