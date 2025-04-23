@@ -27,7 +27,7 @@
 
             <button
               *ngIf="column.sorting?.desc === false"
-              class="hover:bg-m50 text-m500 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+              class="hover:bg-m200 text-m500 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
               (click)="sort(column.id, false)"
             >
               <m-asc-icon></m-asc-icon>
@@ -35,7 +35,7 @@
 
             <button
               *ngIf="column.sorting?.desc === true"
-              class="hover:bg-m50 text-m500 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+              class="hover:bg-m200 text-m500 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
               (click)="sort(column.id, true)"
             >
               <m-desc-icon></m-desc-icon>
@@ -43,7 +43,7 @@
 
             <button
               *ngIf="!column.sorting"
-              class="hover:bg-m50 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+              class="hover:bg-m200 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
               (click)="sort(column.id, true)"
             >
               <m-desc-icon></m-desc-icon>
@@ -56,7 +56,7 @@
               'text-s400 cursor-default':
                 columnIndex === 0 ||
                 column.fieldClass !== mconfigFields[columnIndex - 1].fieldClass,
-              'hover:bg-m50':
+              'hover:bg-m200':
                 columnIndex !== 0 &&
                 column.fieldClass === mconfigFields[columnIndex - 1].fieldClass
             }"
@@ -75,7 +75,7 @@
               'text-s400 cursor-default':
                 columnIndex + 1 === mconfigFields.length ||
                 column.fieldClass !== mconfigFields[columnIndex + 1].fieldClass,
-              'hover:bg-m50':
+              'hover:bg-m200':
                 columnIndex + 1 !== mconfigFields.length &&
                 column.fieldClass === mconfigFields[columnIndex + 1].fieldClass
             }"
@@ -96,7 +96,7 @@
               class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
               [ngClass]="{
                 'text-s400 cursor-default': column.required === true,
-                'hover:bg-m50': column.required === false
+                'hover:bg-m200': column.required === false
               }"
               [disabled]="column.required === true"
               (click)="remove(column.id)"
