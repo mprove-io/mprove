@@ -9,8 +9,9 @@ export function makeMconfigFields(item: {
   let { modelFields, select, sortings, chart } = item;
 
   let selectDimensions: common.MconfigField[] = [];
-  let selectMeasures: common.MconfigField[] = [];
-  let selectCalculations: common.MconfigField[] = [];
+  let selectMeasuresAndCalculations: common.MconfigField[] = []; // for columns moveLeft moveRight
+  // let selectMeasures: common.MconfigField[] = [];
+  // let selectCalculations: common.MconfigField[] = [];
 
   select.forEach((fieldId: string) => {
     let field = modelFields.find(f => f.id === fieldId);
@@ -23,16 +24,19 @@ export function makeMconfigFields(item: {
     if (field.fieldClass === common.FieldClassEnum.Dimension) {
       selectDimensions.push(f);
     } else if (field.fieldClass === common.FieldClassEnum.Measure) {
-      selectMeasures.push(f);
+      selectMeasuresAndCalculations.push(f);
+      // selectMeasures.push(f);
     } else if (field.fieldClass === common.FieldClassEnum.Calculation) {
-      selectCalculations.push(f);
+      selectMeasuresAndCalculations.push(f);
+      // selectCalculations.push(f);
     }
   });
 
   let selectFields: common.MconfigField[] = [
     ...selectDimensions,
-    ...selectMeasures,
-    ...selectCalculations
+    ...selectMeasuresAndCalculations
+    // ...selectMeasures,
+    // ...selectCalculations
   ];
 
   return selectFields;
