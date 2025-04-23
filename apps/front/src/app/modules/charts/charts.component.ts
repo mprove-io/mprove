@@ -243,9 +243,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
         );
       }
 
-      this.isAddParameter = false;
-      this.newParameterFieldId = undefined;
       this.dryQueryEstimate = undefined;
+      this.cancelAddParameter();
 
       this.mconfig = x.tiles[0].mconfig;
       this.query = x.tiles[0].query;
@@ -650,6 +649,10 @@ export class ChartsComponent implements OnInit, OnDestroy {
     if (this.mconfig.extendedFilters.length > 0) {
       this.filtersIsExpanded = !this.filtersIsExpanded;
       this.refreshShow();
+    }
+
+    if (this.filtersIsExpanded === false) {
+      this.cancelAddParameter();
     }
   }
 
