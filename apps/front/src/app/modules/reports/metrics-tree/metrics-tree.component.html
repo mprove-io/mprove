@@ -20,7 +20,7 @@
           data-cy="metricsTreeItem"
           class="flex w-full cursor-pointer select-none flex-row rounded pr-5"
           [ngClass]="{
-            'hover:bg-m50 pl-2': node.data.isField === true,
+            'hover:bg-m50 pl-11': node.data.isField === true,
             'px-5': node.data.isField === false
           }"
           (click)="nodeOnClick(node)"
