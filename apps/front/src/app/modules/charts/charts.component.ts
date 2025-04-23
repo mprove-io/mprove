@@ -301,49 +301,12 @@ export class ChartsComponent implements OnInit, OnDestroy {
       if (x.draft === false && this.chart.chartId !== common.EMPTY_CHART_ID) {
         this.setProjectChartLink({ chartId: this.chart.chartId });
       }
-
-      // workaround to remove scrolls on filters list change
-      // let shouldRefresh = false;
-
-      // if (
-      //   common.isDefined(oldMconfig) &&
-      //   oldMconfig.mconfigId !== common.EMPTY_MCONFIG_ID
-      // ) {
-      //   if (
-      //     oldMconfig.extendedFilters.length !==
-      //     this.mconfig.extendedFilters.length
-      //   ) {
-      //     shouldRefresh = true;
-      //   } else {
-      //     oldMconfig.extendedFilters.forEach(oldExtendedFilter => {
-      //       let newExtendedFilter = this.mconfig.extendedFilters.find(
-      //         y => y.fieldId === oldExtendedFilter.fieldId
-      //       );
-
-      //       if (common.isUndefined(newExtendedFilter)) {
-      //         shouldRefresh = true;
-      //       } else if (
-      //         oldExtendedFilter.fractions.length !==
-      //         newExtendedFilter.fractions.length
-      //       ) {
-      //         shouldRefresh = true;
-      //       }
-      //     });
-      //   }
-      // }
-      // if (shouldRefresh === true) {
-      //   setTimeout(() => {
-      //     this.refreshShow();
-      //   });
-      // }
-      //
     })
   );
 
   isAutoRun = false;
   isFormat = true;
 
-  resultsIsShow = true;
   resultsIsShowTemp = false;
 
   rightIsShow = false;
@@ -604,15 +567,13 @@ export class ChartsComponent implements OnInit, OnDestroy {
   }
 
   toggleResults() {
-    if (this.resultsIsShow === false || this.rightIsShow === true) {
-      this.resultsIsShow = true;
+    if (this.rightIsShow === true) {
       this.rightIsShow = false;
     }
   }
 
   toggleSplit() {
-    if (this.resultsIsShow === false || this.rightIsShow === false) {
-      this.resultsIsShow = true;
+    if (this.rightIsShow === false) {
       this.resultsIsShowTemp = true;
       this.rightIsShow = false;
       setTimeout(() => {
@@ -623,32 +584,20 @@ export class ChartsComponent implements OnInit, OnDestroy {
   }
 
   toggleRight() {
-    if (this.resultsIsShow === true || this.rightIsShow === false) {
-      this.resultsIsShow = false;
+    if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-  }
-
-  refreshShow() {
-    // this.isShow = false;
-    // setTimeout(() => {
-    //   this.isShow = true;
-    // });
   }
 
   expandFiltersPanel() {
     if (this.filtersIsExpanded === false) {
       this.filtersIsExpanded = true;
-      if (this.mconfig.extendedFilters.length !== 0) {
-        this.refreshShow();
-      }
     }
   }
 
   toggleFiltersPanel() {
     if (this.mconfig.extendedFilters.length > 0) {
       this.filtersIsExpanded = !this.filtersIsExpanded;
-      this.refreshShow();
     }
 
     if (this.filtersIsExpanded === false) {
@@ -658,7 +607,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   toggleChartPanel() {
     this.chartIsExpanded = !this.chartIsExpanded;
-    this.refreshShow();
   }
 
   toggleDataPanel() {}

@@ -1252,10 +1252,7 @@
                 <div
                   class="flex h-full w-full flex-row items-start justify-center"
                 >
-                  <div
-                    *ngIf="resultsIsShow"
-                    class="h-full w-2 flex-1 overflow-auto"
-                  >
+                  <div class="h-full w-2 flex-1 overflow-auto">
                     <div class="flex flex-row items-start">
                       <m-main-table
                         *ngIf="mconfig?.select.length > 0"
@@ -1271,7 +1268,7 @@
                         data-cy="chartsAddColumnButton"
                         [ngClass]="{
                           'ml-8': mconfig?.select.length === 0,
-                          'ml-4': mconfig?.select.length > 0
+                          'ml-3': mconfig?.select.length > 0
                         }"
                         class="border-s400 text-s500 hover:bg-s100 mt-[60px] flex flex-shrink-0 select-none rounded border px-4 py-2 focus:outline-none"
                         (click)="addColumn()"
@@ -1279,7 +1276,7 @@
                         Add Column
                       </button>
 
-                      <div class="flex h-2 w-[16px] flex-shrink-0"></div>
+                      <div class="flex h-2 w-3 flex-shrink-0"></div>
                     </div>
                   </div>
 
