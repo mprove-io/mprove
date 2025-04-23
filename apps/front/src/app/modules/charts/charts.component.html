@@ -916,8 +916,9 @@
                     <div class="flex w-full flex-row">
                       <button
                         *ngIf="
-                          filtersIsExpanded === true ||
-                          mconfig?.extendedFilters.length === 0
+                          mconfig?.select.length > 0 &&
+                          (filtersIsExpanded === true ||
+                            mconfig?.extendedFilters.length === 0)
                         "
                         type="button"
                         data-cy="chartsAddParameterButton"
@@ -1270,10 +1271,10 @@
                           'ml-8': mconfig?.select.length === 0,
                           'ml-3': mconfig?.select.length > 0
                         }"
-                        class="border-s400 text-s500 hover:bg-s100 mt-[60px] flex flex-shrink-0 select-none rounded border px-4 py-2 focus:outline-none"
+                        class="border-s400 text-s500 hover:bg-s100 mt-[64px] flex flex-shrink-0 select-none rounded border px-1 py-1 focus:outline-none"
                         (click)="addColumn()"
                       >
-                        Add Column
+                        <m-add-icon></m-add-icon>
                       </button>
 
                       <div class="flex h-2 w-3 flex-shrink-0"></div>
