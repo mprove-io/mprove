@@ -2,7 +2,7 @@
   <thead>
     <tr>
       <th
-        style="min-width: 200px; max-width: 350px"
+        style="min-width: 240px; max-width: 350px"
         class="border-m0 group border-4 p-0 align-top"
         [ngClass]="{
           'bg-m150': column.fieldClass === fieldClassDimension,
@@ -14,7 +14,7 @@
       >
         <div
           *ngIf="isEdit === true"
-          class="bg-m0 flex h-12 items-start justify-start space-x-3 pr-5 pt-2"
+          class="bg-m0 flex h-12 items-start justify-start space-x-3 pr-4 pt-2"
         >
           <div class="flex items-center justify-start">
             <div
@@ -108,6 +108,23 @@
           >
             <m-arrow-right-icon></m-arrow-right-icon>
           </button>
+
+          <div
+            tp="A required field cannot be replaced"
+            [tpIsEnabled]="column.required === true"
+          >
+            <button
+              class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+              [ngClass]="{
+                'text-s300 cursor-default': column.required === true,
+                'hover:bg-m200 text-s500': column.required === false
+              }"
+              [disabled]="column.required === true"
+              (click)="replace(column.id)"
+            >
+              <m-edit-icon></m-edit-icon>
+            </button>
+          </div>
 
           <div
             tp="A required field cannot be deselected"

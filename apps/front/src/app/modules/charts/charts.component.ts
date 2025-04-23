@@ -1117,6 +1117,8 @@ ${this.mconfig.storePart?.reqUrlPath}`
     this.isAddParameter = true;
   }
 
+  addColumn() {}
+
   filterBySearchFn(term: string, modelFieldY: common.ModelFieldY) {
     let haystack = [
       common.isDefinedAndNotEmpty(modelFieldY.groupLabel)

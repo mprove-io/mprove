@@ -120,6 +120,8 @@ export class MainTableComponent {
     // });
   }
 
+  replace(columnId: string) {}
+
   remove(columnId: string) {
     let index = this.mconfig.select.indexOf(columnId);
 
