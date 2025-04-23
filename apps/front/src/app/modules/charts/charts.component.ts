@@ -243,6 +243,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
         );
       }
 
+      this.isAddParameter = false;
+      this.newParameterFieldId = undefined;
       this.dryQueryEstimate = undefined;
 
       this.mconfig = x.tiles[0].mconfig;
@@ -1139,6 +1141,138 @@ ${this.mconfig.storePart?.reqUrlPath}`
     if (common.isUndefined(this.newParameterFieldId)) {
       return;
     }
+
+    this.filtersIsExpanded = true;
+
+    let newMconfig = this.structService.makeMconfig();
+
+    let newFraction: common.Fraction;
+
+    let field = this.model.fields.find(x => x.id === this.newParameterFieldId);
+
+    if (newMconfig.isStoreModel === true) {
+      let storeFilter =
+        field.fieldClass === common.FieldClassEnum.Filter
+          ? (this.model.content as common.FileStore).fields.find(
+              f => f.name === field.id
+            )
+          : undefined;
+
+      let storeResultFraction =
+        field.fieldClass === common.FieldClassEnum.Filter
+          ? undefined
+          : (this.model.content as common.FileStore).results.find(
+              r => r.result === field.result
+            ).fraction_types[0];
+
+      let logicGroup = common.isUndefined(storeResultFraction)
+        ? undefined
+        : common.FractionLogicEnum.Or;
+
+      let storeFractionSubTypeOptions = common.isUndefined(storeResultFraction)
+        ? []
+        : (this.model.content as common.FileStore).results
+            .find(r => r.result === field.result)
+            .fraction_types.map(ft => {
+              let options = [];
+
+              let optionOr: common.FractionSubTypeOption = {
+                logicGroup: common.FractionLogicEnum.Or,
+                typeValue: ft.type,
+                value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                label: ft.label
+              };
+              options.push(optionOr);
+
+              let optionAndNot: common.FractionSubTypeOption = {
+                logicGroup: common.FractionLogicEnum.AndNot,
+                value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                typeValue: ft.type,
+                label: ft.label
+              };
+              options.push(optionAndNot);
+
+              return options;
+            })
+            .flat()
+            .sort((a, b) => {
+              if (a.logicGroup === b.logicGroup) return 0;
+              return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
+            });
+
+      newFraction = {
+        meta: storeResultFraction?.meta,
+        operator: common.isUndefined(logicGroup)
+          ? undefined
+          : logicGroup === common.FractionLogicEnum.Or
+          ? common.FractionOperatorEnum.Or
+          : common.FractionOperatorEnum.And,
+        logicGroup: logicGroup,
+        brick: undefined,
+        type: common.FractionTypeEnum.StoreFraction,
+        storeResult: field.result,
+        storeFractionSubTypeOptions: storeFractionSubTypeOptions,
+        storeFractionSubType: storeResultFraction?.type,
+        storeFractionSubTypeLabel: common.isDefined(storeResultFraction?.type)
+          ? storeFractionSubTypeOptions.find(
+              k => k.typeValue === storeResultFraction?.type
+            ).label
+          : storeResultFraction?.type,
+        storeFractionLogicGroupWithSubType:
+          common.isDefined(logicGroup) &&
+          common.isDefined(storeResultFraction?.type)
+            ? `${logicGroup}${common.TRIPLE_UNDERSCORE}${storeResultFraction.type}`
+            : undefined,
+        controls: common.isUndefined(storeResultFraction)
+          ? storeFilter.fraction_controls.map(control => {
+              let newControl: common.FractionControl = {
+                options: control.options,
+                value: control.value,
+                label: control.label,
+                required: control.required,
+                name: control.name,
+                controlClass: control.controlClass,
+                isMetricsDate: control.isMetricsDate
+              };
+              return newControl;
+            })
+          : (this.model.content as common.FileStore).results
+              .find(r => r.result === field.result)
+              .fraction_types[0].controls.map(control => {
+                let newControl: common.FractionControl = {
+                  options: control.options,
+                  value: control.value,
+                  label: control.label,
+                  required: control.required,
+                  name: control.name,
+                  controlClass: control.controlClass,
+                  isMetricsDate: control.isMetricsDate
+                };
+                return newControl;
+              })
+      };
+    } else {
+      newFraction = {
+        brick: 'any',
+        operator: common.FractionOperatorEnum.Or,
+        type: common.getFractionTypeForAny(field.result)
+      };
+    }
+
+    let newFilter: common.Filter = {
+      fieldId: field.id,
+      fractions: [newFraction]
+    };
+
+    newMconfig.filters = [...newMconfig.filters, newFilter].sort((a, b) =>
+      a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+    );
+
+    this.chartService.editChart({
+      mconfig: newMconfig,
+      isDraft: this.chart.draft,
+      chartId: this.chart.chartId
+    });
   }
 
   cancelAddParameter() {
