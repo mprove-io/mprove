@@ -11,15 +11,16 @@
       <div
         class="group-bar flex w-full flex-row"
         [ngClass]="{
-          'h-[60px] pl-2': node.data.isField === false,
-          'h-11 pl-8 pr-5': node.data.isField === true
+          'mt-3': index === 0 && node.hasChildren === true,
+          'h-[60px]': node.data.isField === false,
+          'h-11 pl-3 pr-5': node.data.isField === true
         }"
       >
         <div
           data-cy="metricsTreeItem"
           class="flex w-full cursor-pointer select-none flex-row rounded pr-5"
           [ngClass]="{
-            'hover:bg-m50': node.data.isField === true,
+            'hover:bg-m50 pl-2': node.data.isField === true,
             'px-5': node.data.isField === false
           }"
           (click)="nodeOnClick(node)"
@@ -43,21 +44,11 @@
 
               <div
                 *ngIf="node.data.isField === true"
-                class="mr-3 flex h-2 items-center"
-                [ngClass]="{
-                  'ml-4': node.hasChildren === false
-                }"
+                class="text-g1 flex h-6 w-6 flex-shrink-0 items-center justify-center"
               >
-                <div
-                  *ngIf="node.data.isSelected === true"
-                  data-cy="filesTreeSelectedSymbol"
-                  class="bg-m600 text-m0 h-2 w-2 rounded-full focus:outline-none"
-                ></div>
-
-                <div
-                  *ngIf="node.data.isSelected === false"
-                  class="h-2 w-2"
-                ></div>
+                <m-type-number-icon
+                  *ngIf="node.data.fieldResult === fieldResultNumber"
+                ></m-type-number-icon>
               </div>
 
               <div class="text-s1 ml-0 flex-grow truncate">

@@ -11,6 +11,10 @@ export class ModelMetric {
   @IsEnum(enums.FieldClassEnum)
   fieldClass?: enums.FieldClassEnum;
 
+  @IsOptional()
+  @IsEnum(enums.FieldResultEnum)
+  fieldResult?: enums.FieldResultEnum;
+
   @IsString()
   timeFieldId?: string;
 

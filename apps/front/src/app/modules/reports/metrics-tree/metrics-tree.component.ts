@@ -25,6 +25,7 @@ export class MetricNode {
   partFieldLabel: string;
   timeLabel: string;
   isField: boolean;
+  fieldResult: common.FieldResultEnum;
   isSelected: boolean;
   metric: common.ModelMetric;
   children: MetricNode[];
@@ -42,6 +43,8 @@ export class MetricsTreeComponent implements AfterViewInit {
   nodeClassFilter = common.FieldClassEnum.Filter;
   fieldResultTs = common.FieldResultEnum.Ts;
 
+  fieldResultNumber = common.FieldResultEnum.Number;
+
   nodes: MetricNode[] = [];
 
   metrics: common.ModelMetric[];
@@ -58,6 +61,7 @@ export class MetricsTreeComponent implements AfterViewInit {
           partFieldLabel: metric.partFieldLabel,
           timeLabel: metric.timeLabel,
           isField: true,
+          fieldResult: metric.fieldResult,
           isSelected: false,
           metric: metric,
           children: []
@@ -81,6 +85,7 @@ export class MetricsTreeComponent implements AfterViewInit {
             partFieldLabel: metric.partFieldLabel,
             timeLabel: metric.timeLabel,
             isField: false,
+            fieldResult: undefined,
             isSelected: false,
             metric: undefined,
             children: [metricNode]
