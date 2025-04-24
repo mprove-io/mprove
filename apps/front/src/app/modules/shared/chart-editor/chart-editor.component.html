@@ -1,5 +1,12 @@
 <div class="mx-5 mt-2 pb-10" *ngIf="!!chart">
   <div
+    *ngIf="isReport === false"
+    class="text-s500 mb-5 flex select-none flex-row justify-start font-semibold"
+  >
+    CHART FIELDS
+  </div>
+
+  <div
     *ngIf="isReport === false && uiChartTypes.format.indexOf(chart.type) > -1"
     class="mb-5 flex max-w-min cursor-pointer flex-row items-center"
     (click)="toggleFormat()"
