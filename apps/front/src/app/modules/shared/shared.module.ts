@@ -22,6 +22,7 @@ import { DashboardEditListenersDialogComponent } from './dashboard-edit-listener
 import { DashboardSaveAsDialogComponent } from './dashboard-save-as-dialog/dashboard-save-as-dialog.component';
 import { DashboardTileChartComponent } from './dashboard-tile-chart/dashboard-tile-chart.component';
 import { FieldLabelComponent } from './field-label/field-label.component';
+import { FieldResultComponent } from './field-result/field-result.component';
 import { FormatNumberComponent } from './format-number/format-number.component';
 import { FractionDayOfWeekIndexComponent } from './fraction/fraction-day-of-week-index/fraction-day-of-week-index.component';
 import { FractionDayOfWeekComponent } from './fraction/fraction-day-of-week/fraction-day-of-week.component';
@@ -44,12 +45,13 @@ import { ChartPieIconComponent } from './icons/1-chart-icons/chart-pie-icon/char
 import { ChartScatterIconComponent } from './icons/1-chart-icons/chart-scatter-icon/chart-scatter-icon.component';
 import { ChartTableIconComponent } from './icons/1-chart-icons/chart-table-icon/chart-table-icon.component';
 import { ChartViewIconComponent } from './icons/1-chart-icons/chart-view-icon/chart-view-icon.component';
+import { TypeCustomIconComponent } from './icons/2-type-icons/type-custom-icon/type-custom-icon.component';
 import { TypeDateIconComponent } from './icons/2-type-icons/type-date-icon/type-date-icon.component';
 import { TypeEnumIconComponent } from './icons/2-type-icons/type-enum-icon/type-enum-icon.component';
+import { TypeFilterIconComponent } from './icons/2-type-icons/type-filter-icon/type-filter-icon.component';
 import { TypeNumberIconComponent } from './icons/2-type-icons/type-number-icon/type-number-icon.component';
 import { TypeOnOffIconComponent } from './icons/2-type-icons/type-on-off-icon/type-on-off-icon.component';
 import { TypeStringIconComponent } from './icons/2-type-icons/type-string-icon/type-string-icon.component';
-import { TypeUnkIconComponent } from './icons/2-type-icons/type-unk-icon/type-unk-icon.component';
 import { AddIconComponent } from './icons/add-icon/add-icon.component';
 import { AdjustmentsIconComponent } from './icons/adjustments-icon/adjustments-icon.component';
 import { AltListIconComponent } from './icons/alt-list-icon/alt-list-icon.component';
@@ -181,6 +183,7 @@ let sharedComponents = [
   ChartBoxComponent,
   DashboardTileChartComponent,
   FieldLabelComponent,
+  FieldResultComponent,
   MetricFieldLabelComponent,
   SuggestFieldLabelComponent,
   FormatNumberComponent,
@@ -207,7 +210,8 @@ let sharedComponents = [
   InsightsIconComponent,
   TypeNumberIconComponent,
   TypeStringIconComponent,
-  TypeUnkIconComponent,
+  TypeCustomIconComponent,
+  TypeFilterIconComponent,
   TypeOnOffIconComponent,
   TypeDateIconComponent,
   TypeEnumIconComponent,

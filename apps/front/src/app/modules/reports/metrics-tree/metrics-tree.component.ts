@@ -36,14 +36,7 @@ export class MetricNode {
   templateUrl: './metrics-tree.component.html'
 })
 export class MetricsTreeComponent implements AfterViewInit {
-  nodeClassInfo = common.FieldClassEnum.Info;
-  nodeClassDimension = common.FieldClassEnum.Dimension;
   nodeClassMeasure = common.FieldClassEnum.Measure;
-  nodeClassCalculation = common.FieldClassEnum.Calculation;
-  nodeClassFilter = common.FieldClassEnum.Filter;
-  fieldResultTs = common.FieldResultEnum.Ts;
-
-  fieldResultNumber = common.FieldResultEnum.Number;
 
   nodes: MetricNode[] = [];
 
@@ -149,7 +142,7 @@ export class MetricsTreeComponent implements AfterViewInit {
   }
 
   nodeOnClick(node: TreeNode) {
-    if (node.data.nodeClass === this.nodeClassFilter) {
+    if (node.data.nodeClass === common.FieldClassEnum.Filter) {
       return;
     }
     node.toggleActivated();

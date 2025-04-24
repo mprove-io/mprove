@@ -1,11 +1,5 @@
 <div class="flex w-full flex-col">
   <div class="flex flex-grow flex-col overflow-y-auto">
-    <!-- <div
-      *ngIf="nodesExtra?.length === 0"
-      class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
-      >Select Model</div
-    > -->
-
     <tree-root
       *ngIf="nodesExtra?.length > 0"
       class="mt-3 h-2 w-full"
@@ -129,68 +123,11 @@
                 <div
                   *ngIf="node.data.isField === true"
                   class="ml-1 flex h-6 w-6 flex-shrink-0 items-center justify-center"
-                  [ngClass]="{
-                    'text-g1':
-                      node.data.nodeClass === nodeClassMeasure ||
-                      node.data.nodeClass === nodeClassCalculation,
-                    'text-m600': node.data.nodeClass === nodeClassDimension,
-                    'text-s500': node.data.nodeClass === nodeClassFilter
-                  }"
-                  tp="{{
-                    node.data.fieldResult === fieldResultDayOfWeek ||
-                    node.data.fieldResult === fieldResultDayOfWeekIndex ||
-                    node.data.fieldResult === fieldResultMonthName ||
-                    node.data.fieldResult === fieldResultQuarterOfYear
-                      ? 'Enum: ' + node.data.fieldResult
-                      : node.data.fieldResult !== fieldResultNumber &&
-                        node.data.fieldResult !== fieldResultString &&
-                        node.data.fieldResult !== fieldResultYesno &&
-                        node.data.fieldResult !== fieldResultTs &&
-                        node.data.fieldResult !== fieldResultDayOfWeek &&
-                        node.data.fieldResult !== fieldResultDayOfWeekIndex &&
-                        node.data.fieldResult !== fieldResultMonthName &&
-                        node.data.fieldResult !== fieldResultQuarterOfYear
-                      ? 'Custom: ' + node.data.fieldResult
-                      : node.data.fieldResult
-                  }}"
                 >
-                  <m-type-number-icon
-                    *ngIf="node.data.fieldResult === fieldResultNumber"
-                  ></m-type-number-icon>
-
-                  <m-type-string-icon
-                    *ngIf="node.data.fieldResult === fieldResultString"
-                  ></m-type-string-icon>
-
-                  <m-type-on-off-icon
-                    *ngIf="node.data.fieldResult === fieldResultYesno"
-                  ></m-type-on-off-icon>
-
-                  <m-type-date-icon
-                    *ngIf="node.data.fieldResult === fieldResultTs"
-                  ></m-type-date-icon>
-
-                  <m-type-enum-icon
-                    *ngIf="
-                      node.data.fieldResult === fieldResultDayOfWeek ||
-                      node.data.fieldResult === fieldResultDayOfWeekIndex ||
-                      node.data.fieldResult === fieldResultMonthName ||
-                      node.data.fieldResult === fieldResultQuarterOfYear
-                    "
-                  ></m-type-enum-icon>
-
-                  <m-type-unk-icon
-                    *ngIf="
-                      node.data.fieldResult !== fieldResultNumber &&
-                      node.data.fieldResult !== fieldResultString &&
-                      node.data.fieldResult !== fieldResultYesno &&
-                      node.data.fieldResult !== fieldResultTs &&
-                      node.data.fieldResult !== fieldResultDayOfWeek &&
-                      node.data.fieldResult !== fieldResultDayOfWeekIndex &&
-                      node.data.fieldResult !== fieldResultMonthName &&
-                      node.data.fieldResult !== fieldResultQuarterOfYear
-                    "
-                  ></m-type-unk-icon>
+                  <m-field-result
+                    [fieldClass]="node.data.nodeClass"
+                    [result]="node.data.fieldResult"
+                  ></m-field-result>
                 </div>
 
                 <div

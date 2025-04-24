@@ -1,0 +1,62 @@
+<div
+  class="flex flex-shrink-0 items-center justify-center"
+  [ngClass]="{
+    'text-g1':
+      fieldClass === fieldClassMeasure || fieldClass === fieldClassCalculation,
+    'text-m600': fieldClass === fieldClassDimension,
+    'text-s500': fieldClass === fieldClassFilter
+  }"
+  tp="{{
+    result === fieldResultDayOfWeek ||
+    result === fieldResultDayOfWeekIndex ||
+    result === fieldResultMonthName ||
+    result === fieldResultQuarterOfYear
+      ? 'Enum: ' + result
+      : !!result &&
+        result !== fieldResultNumber &&
+        result !== fieldResultString &&
+        result !== fieldResultYesno &&
+        result !== fieldResultTs &&
+        result !== fieldResultDayOfWeek &&
+        result !== fieldResultDayOfWeekIndex &&
+        result !== fieldResultMonthName &&
+        result !== fieldResultQuarterOfYear
+      ? 'Custom: ' + result
+      : !!result
+      ? result
+      : 'Filter'
+  }}"
+>
+  <m-type-number-icon *ngIf="result === fieldResultNumber"></m-type-number-icon>
+
+  <m-type-string-icon *ngIf="result === fieldResultString"></m-type-string-icon>
+
+  <m-type-on-off-icon *ngIf="result === fieldResultYesno"></m-type-on-off-icon>
+
+  <m-type-date-icon *ngIf="result === fieldResultTs"></m-type-date-icon>
+
+  <m-type-enum-icon
+    *ngIf="
+      result === fieldResultDayOfWeek ||
+      result === fieldResultDayOfWeekIndex ||
+      result === fieldResultMonthName ||
+      result === fieldResultQuarterOfYear
+    "
+  ></m-type-enum-icon>
+
+  <m-type-custom-icon
+    *ngIf="
+      !!result &&
+      result !== fieldResultNumber &&
+      result !== fieldResultString &&
+      result !== fieldResultYesno &&
+      result !== fieldResultTs &&
+      result !== fieldResultDayOfWeek &&
+      result !== fieldResultDayOfWeekIndex &&
+      result !== fieldResultMonthName &&
+      result !== fieldResultQuarterOfYear
+    "
+  ></m-type-custom-icon>
+
+  <m-type-filter-icon *ngIf="!result"></m-type-filter-icon>
+</div>

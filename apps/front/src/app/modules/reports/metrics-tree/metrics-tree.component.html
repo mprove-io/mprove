@@ -46,9 +46,10 @@
                 *ngIf="node.data.isField === true"
                 class="text-g1 flex h-6 w-6 flex-shrink-0 items-center justify-center"
               >
-                <m-type-number-icon
-                  *ngIf="node.data.fieldResult === fieldResultNumber"
-                ></m-type-number-icon>
+                <m-field-result
+                  [fieldClass]="nodeClassMeasure"
+                  [result]="node.data.fieldResult"
+                ></m-field-result>
               </div>
 
               <div class="text-s1 ml-0 flex-grow truncate">
