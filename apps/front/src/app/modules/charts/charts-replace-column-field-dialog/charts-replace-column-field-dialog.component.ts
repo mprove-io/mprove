@@ -96,10 +96,11 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
       return;
     }
 
+    let newField = this.fields.find(y => y.id === this.newColumnFieldId);
+
     let newMconfig = this.structService.makeMconfig();
 
     let index = newMconfig.select.indexOf(this.currentField.id);
-
     newMconfig.select.splice(index, 1, this.newColumnFieldId);
 
     newMconfig.sortings.forEach(sorting => {
@@ -123,6 +124,69 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
       mconfig: newMconfig,
       fields: this.fields
     });
+
+    if (newMconfig.chart.xField === this.currentField.id) {
+      newMconfig.chart.xField = this.newColumnFieldId;
+    }
+
+    if (newMconfig.chart.multiField === this.currentField.id) {
+      newMconfig.chart.multiField = this.newColumnFieldId;
+    }
+
+    if (newMconfig.chart.sizeField === this.currentField.id) {
+      newMconfig.chart.sizeField =
+        newField.result === common.FieldResultEnum.Number
+          ? this.newColumnFieldId
+          : undefined;
+    }
+
+    if (common.isDefined(newMconfig.chart.yFields)) {
+      let yFieldsIndex = newMconfig.chart.yFields.indexOf(this.currentField.id);
+
+      if (yFieldsIndex > -1) {
+        if (newField.result === common.FieldResultEnum.Number) {
+          newMconfig.chart.yFields.splice(
+            yFieldsIndex,
+            1,
+            this.newColumnFieldId
+          );
+        } else {
+          newMconfig.chart.yFields = newMconfig.chart.yFields.filter(
+            yFieldId => yFieldId !== this.currentField.id
+          );
+        }
+      }
+    }
+
+    if (common.isDefined(newMconfig.chart.hideColumns)) {
+      let hideColumnsIndex = newMconfig.chart.hideColumns.indexOf(
+        this.currentField.id
+      );
+
+      if (hideColumnsIndex > -1) {
+        newMconfig.chart.hideColumns.splice(
+          hideColumnsIndex,
+          1,
+          this.newColumnFieldId
+        );
+      }
+    }
+
+    if (common.isDefined(newMconfig.chart.series)) {
+      let se = newMconfig.chart.series.find(
+        x => x.dataField === this.currentField.id
+      );
+
+      if (common.isDefined(se)) {
+        if (newField.result === common.FieldResultEnum.Number) {
+          se.dataField = this.newColumnFieldId;
+        } else {
+          newMconfig.chart.series = newMconfig.chart.series.filter(
+            s => s.dataField !== this.currentField.id
+          );
+        }
+      }
+    }
 
     newMconfig = common.setChartFields({
       mconfig: newMconfig,
