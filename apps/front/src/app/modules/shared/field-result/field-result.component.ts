@@ -26,5 +26,8 @@ export class FieldResultComponent {
   @Input()
   result: common.FieldResultEnum;
 
+  @Input()
+  size: number;
+
   constructor() {}
 }

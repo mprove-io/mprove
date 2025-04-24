@@ -1,4 +1,8 @@
 <div
-  class="flex h-[23px] w-[22px] items-center justify-center rounded border border-2 font-semibold"
+  class="flex items-center justify-center font-semibold"
+  [ngClass]="{
+    'h-4 w-4': size === 2,
+    'h-5 w-5 text-lg': size === 3
+  }"
   >A</div
 >

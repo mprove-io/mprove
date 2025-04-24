@@ -1,6 +1,40 @@
 <div
   class="flex flex-shrink-0 items-center justify-center"
   [ngClass]="{
+    'mt-[2px]':
+      size === 2 &&
+      (!result ||
+        result === fieldResultString ||
+        result === fieldResultDayOfWeek ||
+        result === fieldResultDayOfWeekIndex ||
+        result === fieldResultMonthName ||
+        result === fieldResultQuarterOfYear ||
+        (!!result &&
+          result !== fieldResultNumber &&
+          result !== fieldResultString &&
+          result !== fieldResultYesno &&
+          result !== fieldResultTs &&
+          result !== fieldResultDayOfWeek &&
+          result !== fieldResultDayOfWeekIndex &&
+          result !== fieldResultMonthName &&
+          result !== fieldResultQuarterOfYear)),
+    'mb-[2px]':
+      size === 3 &&
+      (!result ||
+        result === fieldResultString ||
+        result === fieldResultDayOfWeek ||
+        result === fieldResultDayOfWeekIndex ||
+        result === fieldResultMonthName ||
+        result === fieldResultQuarterOfYear ||
+        (!!result &&
+          result !== fieldResultNumber &&
+          result !== fieldResultString &&
+          result !== fieldResultYesno &&
+          result !== fieldResultTs &&
+          result !== fieldResultDayOfWeek &&
+          result !== fieldResultDayOfWeekIndex &&
+          result !== fieldResultMonthName &&
+          result !== fieldResultQuarterOfYear)),
     'text-g1':
       fieldClass === fieldClassMeasure || fieldClass === fieldClassCalculation,
     'text-m600': fieldClass === fieldClassDimension,
@@ -27,13 +61,25 @@
       : 'Filter'
   }}"
 >
-  <m-type-number-icon *ngIf="result === fieldResultNumber"></m-type-number-icon>
+  <m-type-number-icon
+    *ngIf="result === fieldResultNumber"
+    [size]="size"
+  ></m-type-number-icon>
 
-  <m-type-string-icon *ngIf="result === fieldResultString"></m-type-string-icon>
+  <m-type-string-icon
+    *ngIf="result === fieldResultString"
+    [size]="size"
+  ></m-type-string-icon>
 
-  <m-type-on-off-icon *ngIf="result === fieldResultYesno"></m-type-on-off-icon>
+  <m-type-on-off-icon
+    *ngIf="result === fieldResultYesno"
+    [size]="size"
+  ></m-type-on-off-icon>
 
-  <m-type-date-icon *ngIf="result === fieldResultTs"></m-type-date-icon>
+  <m-type-date-icon
+    *ngIf="result === fieldResultTs"
+    [size]="size"
+  ></m-type-date-icon>
 
   <m-type-enum-icon
     *ngIf="
@@ -42,6 +88,7 @@
       result === fieldResultMonthName ||
       result === fieldResultQuarterOfYear
     "
+    [size]="size"
   ></m-type-enum-icon>
 
   <m-type-custom-icon
@@ -56,7 +103,8 @@
       result !== fieldResultMonthName &&
       result !== fieldResultQuarterOfYear
     "
+    [size]="size"
   ></m-type-custom-icon>
 
-  <m-type-filter-icon *ngIf="!result"></m-type-filter-icon>
+  <m-type-filter-icon *ngIf="!result" [size]="size"></m-type-filter-icon>
 </div>

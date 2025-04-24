@@ -1,8 +1,11 @@
 <svg
   xmlns="http://www.w3.org/2000/svg"
   viewBox="160 -800 640 640"
-  class="h-5 w-5"
   fill="currentColor"
+  [ngClass]="{
+    'h-4 w-4': size === 2,
+    'h-5 w-5': size === 3
+  }"
 >
   <path
     d="M320-160v-160H160v-80h160v-160H160v-80h160v-160h80v160h160v-160h80v160h160v80H640v160h160v80H640v160h-80v-160H400v160h-80Zm80-240h160v-160H400v160Z"

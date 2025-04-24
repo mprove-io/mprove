@@ -189,8 +189,25 @@ export class ChartsComponent implements OnInit, OnDestroy {
               : `${y.topLabel} ${y.label}`
           } as common.ModelFieldY)
         )
+        .filter(y => y.hidden === false)
         .sort((a, b) =>
-          a.partLabel > b.partLabel ? 1 : b.partLabel > a.partLabel ? -1 : 0
+          a.fieldClass !== common.FieldClassEnum.Dimension &&
+          b.fieldClass === common.FieldClassEnum.Dimension
+            ? 1
+            : a.fieldClass === common.FieldClassEnum.Dimension &&
+              b.fieldClass !== common.FieldClassEnum.Dimension
+            ? -1
+            : a.fieldClass !== common.FieldClassEnum.Filter &&
+              b.fieldClass === common.FieldClassEnum.Filter
+            ? 1
+            : a.fieldClass === common.FieldClassEnum.Filter &&
+              b.fieldClass !== common.FieldClassEnum.Filter
+            ? -1
+            : a.partLabel > b.partLabel
+            ? 1
+            : b.partLabel > a.partLabel
+            ? -1
+            : 0
         );
 
       this.modelForm.controls['model'].setValue(this.model.modelId);

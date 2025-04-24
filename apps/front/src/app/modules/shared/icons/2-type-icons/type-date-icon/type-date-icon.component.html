@@ -1,7 +1,10 @@
 <svg
   xmlns="http://www.w3.org/2000/svg"
   viewBox="0 0 24 24"
-  class="h-6 w-6"
+  [ngClass]="{
+    'h-5 w-5': size === 2,
+    'h-6 w-6': size === 3
+  }"
   fill="currentColor"
 >
   <path
