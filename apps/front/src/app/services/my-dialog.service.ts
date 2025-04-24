@@ -4,6 +4,10 @@ import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
 import {
+  ChartsAddColumnFieldDialogComponent,
+  ChartsAddColumnFieldDialogData
+} from '../modules/charts/charts-add-column-field-dialog/charts-add-column-field-dialog.component';
+import {
   DashboardAddFilterDialogComponent,
   DashboardAddFilterDialogData
 } from '../modules/dashboards/dashboard-add-filter-dialog/dashboard-add-filter-dialog.component';
@@ -323,6 +327,15 @@ export class MyDialogService {
       data: item,
       width: '66vw',
       height: item.showNav === true ? '87vh' : '77vh'
+    });
+  }
+
+  showAddColumnField(item: ChartsAddColumnFieldDialogData): void {
+    this.dialogService.open(ChartsAddColumnFieldDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 900
     });
   }
 

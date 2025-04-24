@@ -75,7 +75,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   dimensionsPlusEmpty: common.ModelFieldY[] = [];
   fieldsListLoading = false;
   model: common.Model;
-  isAlreadyFiltered = false;
 
   chartDialogRunButtonSpinnerName = 'chartDialogRunButtonSpinnerName';
 

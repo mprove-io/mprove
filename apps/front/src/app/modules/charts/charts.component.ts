@@ -1065,7 +1065,13 @@ ${this.mconfig.storePart?.reqUrlPath}`
     this.isAddParameter = true;
   }
 
-  addColumn() {}
+  addColumn() {
+    this.myDialogService.showAddColumnField({
+      apiService: this.apiService,
+      chart: this.chart,
+      fields: this.model.fields
+    });
+  }
 
   filterBySearchFn(term: string, modelFieldY: common.ModelFieldY) {
     let haystack = [
