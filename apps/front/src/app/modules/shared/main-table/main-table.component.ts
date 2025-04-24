@@ -2,9 +2,11 @@ import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { ModelQuery } from '~front/app/queries/model.query';
+import { ApiService } from '~front/app/services/api.service';
 import { ChartService } from '~front/app/services/chart.service';
 import { QDataRow } from '~front/app/services/data.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { StructService } from '~front/app/services/struct.service';
 import { common } from '~front/barrels/common';
 
@@ -21,6 +23,9 @@ export class MainTableComponent {
 
   @Input()
   isFormat = true;
+
+  @Input()
+  modelFields: common.ModelField[];
 
   @Input()
   mconfigFields: common.MconfigField[];
@@ -44,6 +49,8 @@ export class MainTableComponent {
   constructor(
     private modelQuery: ModelQuery,
     private chartQuery: ChartQuery,
+    private apiService: ApiService,
+    private myDialogService: MyDialogService,
     private mconfigService: MconfigService,
     private chartService: ChartService,
     private structService: StructService,
@@ -120,7 +127,14 @@ export class MainTableComponent {
     // });
   }
 
-  replace(columnId: string) {}
+  replaceColumn(column: common.MconfigField) {
+    this.myDialogService.showReplaceColumnField({
+      apiService: this.apiService,
+      chart: this.chart,
+      fields: this.modelFields,
+      currentField: column
+    });
+  }
 
   remove(columnId: string) {
     let index = this.mconfig.select.indexOf(columnId);

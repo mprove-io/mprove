@@ -120,7 +120,7 @@
                 'hover:bg-m200 text-s500': column.required === false
               }"
               [disabled]="column.required === true"
-              (click)="replace(column.id)"
+              (click)="replaceColumn(column)"
             >
               <m-edit-icon></m-edit-icon>
             </button>

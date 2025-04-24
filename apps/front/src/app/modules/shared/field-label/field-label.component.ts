@@ -7,7 +7,7 @@ import { common } from '~front/barrels/common';
 })
 export class FieldLabelComponent {
   @Input()
-  column: common.MconfigField;
+  column: common.ModelField;
 
   constructor() {}
 }

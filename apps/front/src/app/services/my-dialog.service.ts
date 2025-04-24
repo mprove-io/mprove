@@ -8,6 +8,10 @@ import {
   ChartsAddColumnFieldDialogData
 } from '../modules/charts/charts-add-column-field-dialog/charts-add-column-field-dialog.component';
 import {
+  ChartsReplaceColumnFieldDialogComponent,
+  ChartsReplaceColumnFieldDialogData
+} from '../modules/charts/charts-replace-column-field-dialog/charts-replace-column-field-dialog.component';
+import {
   DashboardAddFilterDialogComponent,
   DashboardAddFilterDialogData
 } from '../modules/dashboards/dashboard-add-filter-dialog/dashboard-add-filter-dialog.component';
@@ -332,6 +336,15 @@ export class MyDialogService {
 
   showAddColumnField(item: ChartsAddColumnFieldDialogData): void {
     this.dialogService.open(ChartsAddColumnFieldDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 900
+    });
+  }
+
+  showReplaceColumnField(item: ChartsReplaceColumnFieldDialogData): void {
+    this.dialogService.open(ChartsReplaceColumnFieldDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,
