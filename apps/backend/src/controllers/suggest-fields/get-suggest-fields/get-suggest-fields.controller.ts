@@ -92,20 +92,23 @@ export class GetSuggestFieldsController {
       x.fields
         .filter(
           y =>
+            y.hidden === false &&
             y.fieldClass === common.FieldClassEnum.Dimension &&
             y.result === common.FieldResultEnum.String
         )
-        .sort((a, b) =>
-          a.topLabel > b.topLabel ? 1 : b.topLabel > a.topLabel ? -1 : 0
-        )
         .forEach(field => {
+          let partFieldLabel = common.isDefined(field.groupLabel)
+            ? `${field.groupLabel} ${field.label}`
+            : field.label;
+
           let suggestField: common.SuggestField = {
             modelFieldRef: `${x.modelId}.${field.id}`,
             topLabel: x.label,
-            partNodeLabel: `${field.topLabel}`,
-            partFieldLabel: common.isDefined(field.groupLabel)
-              ? `${field.groupLabel} ${field.label}`
-              : field.label
+            partNodeLabel: field.topLabel,
+            partFieldLabel: partFieldLabel,
+            partLabel: `${x.label} ${field.topLabel} ${partFieldLabel}`,
+            fieldClass: field.fieldClass,
+            result: field.result
           };
 
           suggestFields.push(suggestField);
@@ -113,6 +116,26 @@ export class GetSuggestFieldsController {
 
       return suggestFields;
     });
+
+    suggestFields = suggestFields.sort((a, b) =>
+      a.fieldClass !== common.FieldClassEnum.Dimension &&
+      b.fieldClass === common.FieldClassEnum.Dimension
+        ? 1
+        : a.fieldClass === common.FieldClassEnum.Dimension &&
+          b.fieldClass !== common.FieldClassEnum.Dimension
+        ? -1
+        : a.fieldClass !== common.FieldClassEnum.Filter &&
+          b.fieldClass === common.FieldClassEnum.Filter
+        ? 1
+        : a.fieldClass === common.FieldClassEnum.Filter &&
+          b.fieldClass !== common.FieldClassEnum.Filter
+        ? -1
+        : a.partLabel > b.partLabel
+        ? 1
+        : b.partLabel > a.partLabel
+        ? -1
+        : 0
+    );
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 

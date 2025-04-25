@@ -300,11 +300,29 @@
             formControlName="fieldResult"
           >
             <ng-template ng-label-tmp let-item="item">
-              <div class="ml-1 truncate">{{ item }}</div>
+              <div class="ml-1 flex flex-row items-center">
+                <m-field-result
+                  class="h-5 w-5"
+                  [size]="2"
+                  [fieldClass]="item.fieldClass"
+                  [result]="item"
+                ></m-field-result>
+
+                <div class="ml-3 truncate">{{ item }}</div>
+              </div>
             </ng-template>
 
             <ng-template ng-option-tmp let-item="item">
-              <div class="ml-1 truncate">{{ item }}</div>
+              <div class="ml-1 flex flex-row items-center">
+                <m-field-result
+                  class="h-5 w-5"
+                  [size]="2"
+                  [fieldClass]="item.fieldClass"
+                  [result]="item"
+                ></m-field-result>
+
+                <div class="ml-3 truncate">{{ item }}</div>
+              </div>
             </ng-template>
           </ng-select>
         </form>
@@ -379,12 +397,23 @@
             formControlName="suggestField"
           >
             <ng-template ng-label-tmp let-item="item">
-              <m-suggest-field-label
-                [suggestField]="item"
-                [isShowTop]="true"
-                [isShowTime]="true"
-                class="ml-1 flex"
-              ></m-suggest-field-label>
+              <div class="ml-1 flex flex-row items-center">
+                <m-field-result
+                  class="h-5 w-5"
+                  [size]="2"
+                  [fieldClass]="item.fieldClass"
+                  [result]="item.result"
+                  [isEmpty]="!item.modelFieldRef"
+                ></m-field-result>
+
+                <m-suggest-field-label
+                  *ngIf="!!item.modelFieldRef"
+                  [suggestField]="item"
+                  [isShowTop]="true"
+                  [isShowTime]="true"
+                  class="ml-3 flex"
+                ></m-suggest-field-label>
+              </div>
             </ng-template>
 
             <ng-template
@@ -393,12 +422,22 @@
               let-index="index"
               let-search="searchTerm"
             >
-              <m-suggest-field-label
-                [suggestField]="item"
-                [isShowTop]="true"
-                [isShowTime]="true"
-                class="ml-1 flex"
-              ></m-suggest-field-label>
+              <div class="ml-1 flex flex-row items-center">
+                <m-field-result
+                  class="h-5 w-5"
+                  [size]="2"
+                  [fieldClass]="item.fieldClass"
+                  [result]="item.result"
+                  [isEmpty]="!item.modelFieldRef"
+                ></m-field-result>
+
+                <m-suggest-field-label
+                  [suggestField]="item"
+                  [isShowTop]="true"
+                  [isShowTime]="true"
+                  class="ml-3 flex"
+                ></m-suggest-field-label>
+              </div>
             </ng-template>
           </ng-select>
         </form>

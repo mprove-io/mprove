@@ -39,7 +39,7 @@
     'text-g1':
       fieldClass === fieldClassMeasure || fieldClass === fieldClassCalculation,
     'text-m600': fieldClass === fieldClassDimension,
-    'text-s500': fieldClass === fieldClassFilter
+    'text-s500': !fieldClass || fieldClass === fieldClassFilter
   }"
   tp="{{
     result === fieldResultDayOfWeek ||

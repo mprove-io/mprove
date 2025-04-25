@@ -168,7 +168,10 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     modelFieldRef: undefined,
     topLabel: 'Empty',
     partNodeLabel: undefined,
-    partFieldLabel: undefined
+    partFieldLabel: undefined,
+    partLabel: undefined,
+    fieldClass: undefined,
+    result: undefined
   }) as common.SuggestField;
 
   labelForm: FormGroup<{
