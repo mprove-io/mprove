@@ -89,7 +89,7 @@
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
+      <div class="text-s1 flex h-9 w-[100px] select-none items-center text-base"
         >xField</div
       >
     </div>
@@ -115,10 +115,19 @@
         formControlName="xField"
       >
         <ng-template ng-label-tmp let-item="item">
-          <m-field-label
-            [column]="item"
-            class="ml-1 flex text-sm"
-          ></m-field-label>
+          <div class="ml-1 flex flex-row items-center">
+            <m-field-result
+              class="h-5 w-5"
+              [size]="2"
+              [fieldClass]="item.fieldClass"
+              [result]="item.result"
+            ></m-field-result>
+
+            <m-field-label
+              [column]="item"
+              class="ml-3 flex text-sm"
+            ></m-field-label>
+          </div>
         </ng-template>
 
         <ng-template
@@ -127,10 +136,19 @@
           let-index="index"
           let-search="searchTerm"
         >
-          <m-field-label
-            [column]="item"
-            class="ml-1 flex text-sm"
-          ></m-field-label>
+          <div class="ml-1 flex flex-row items-center">
+            <m-field-result
+              class="h-5 w-5"
+              [size]="2"
+              [fieldClass]="item.fieldClass"
+              [result]="item.result"
+            ></m-field-result>
+
+            <m-field-label
+              [column]="item"
+              class="ml-3 flex text-sm"
+            ></m-field-label>
+          </div>
         </ng-template>
       </ng-select>
     </form>
@@ -143,7 +161,7 @@
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
+      <div class="text-s1 flex h-9 w-[100px] select-none items-center text-base"
         >multiField</div
       >
     </div>
@@ -178,10 +196,20 @@
         formControlName="multiField"
       >
         <ng-template ng-label-tmp let-item="item">
-          <m-field-label
-            [column]="item"
-            class="ml-1 flex text-sm"
-          ></m-field-label>
+          <div class="ml-1 flex flex-row items-center">
+            <m-field-result
+              class="h-5 w-5"
+              [size]="2"
+              [fieldClass]="item.fieldClass"
+              [result]="item.result"
+              [isEmpty]="!item.id"
+            ></m-field-result>
+
+            <m-field-label
+              [column]="item"
+              class="ml-3 flex text-sm"
+            ></m-field-label>
+          </div>
         </ng-template>
         <ng-template
           ng-option-tmp
@@ -189,10 +217,20 @@
           let-index="index"
           let-search="searchTerm"
         >
-          <m-field-label
-            [column]="item"
-            class="ml-1 flex text-sm"
-          ></m-field-label>
+          <div class="ml-1 flex flex-row items-center">
+            <m-field-result
+              class="h-5 w-5"
+              [size]="2"
+              [fieldClass]="item.fieldClass"
+              [result]="item.result"
+              [isEmpty]="!item.id"
+            ></m-field-result>
+
+            <m-field-label
+              [column]="item"
+              class="ml-3 flex text-sm"
+            ></m-field-label>
+          </div>
         </ng-template>
       </ng-select>
     </form>
@@ -202,7 +240,7 @@
         (chart.type !== chartTypeEnum.Scatter && dimensions.length < 2) ||
         (chart.type === chartTypeEnum.Scatter && dimensions.length < 1)
       "
-      class="text-s1 ml-5 flex h-9 select-none items-center text-base"
+      class="text-s1 ml-8 flex h-9 select-none items-center text-base"
       ><m-minus-sm-icon></m-minus-sm-icon
     ></div>
   </div>
@@ -212,7 +250,7 @@
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
+      <div class="text-s1 flex h-9 w-[100px] select-none items-center text-base"
         >yField</div
       >
     </div>
@@ -234,10 +272,19 @@
         formControlName="yField"
       >
         <ng-template ng-label-tmp let-item="item">
-          <m-field-label
-            [column]="item"
-            class="ml-1 flex text-sm"
-          ></m-field-label>
+          <div class="ml-1 flex flex-row items-center">
+            <m-field-result
+              class="h-5 w-5"
+              [size]="2"
+              [fieldClass]="item.fieldClass"
+              [result]="item.result"
+            ></m-field-result>
+
+            <m-field-label
+              [column]="item"
+              class="ml-3 flex text-sm"
+            ></m-field-label>
+          </div>
         </ng-template>
         <ng-template
           ng-option-tmp
@@ -245,10 +292,19 @@
           let-index="index"
           let-search="searchTerm"
         >
-          <m-field-label
-            [column]="item"
-            class="ml-1 flex text-sm"
-          ></m-field-label>
+          <div class="ml-1 flex flex-row items-center">
+            <m-field-result
+              class="h-5 w-5"
+              [size]="2"
+              [fieldClass]="item.fieldClass"
+              [result]="item.result"
+            ></m-field-result>
+
+            <m-field-label
+              [column]="item"
+              class="ml-3 flex text-sm"
+            ></m-field-label>
+          </div>
         </ng-template>
       </ng-select>
     </form>
@@ -258,7 +314,7 @@
     *ngIf="isReport === false && uiChartTypes.yFields.indexOf(chart.type) > -1"
     class="mb-5 flex flex-row items-start"
   >
-    <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
+    <div class="text-s1 flex h-9 w-[100px] select-none items-center text-base"
       >yFields</div
     >
 
@@ -267,18 +323,30 @@
         *ngFor="let column of numbersYFields"
         class="flex flex-row items-center"
       >
-        <button
-          data-cy="chartEditorYFieldsCheckbox"
-          class="border-m600 text-m0 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 focus:outline-none"
-          [ngClass]="{
-            'bg-m600 ': yFieldsIsChecked(column.id)
-          }"
-          (click)="yFieldsOnClick(column.id)"
-        >
-          <m-check-icon *ngIf="yFieldsIsChecked(column.id)"></m-check-icon>
-        </button>
+        <div class="ml-3 flex flex-row items-center">
+          <button
+            data-cy="chartEditorYFieldsCheckbox"
+            class="border-m600 text-m0 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 focus:outline-none"
+            [ngClass]="{
+              'bg-m600 ': yFieldsIsChecked(column.id)
+            }"
+            (click)="yFieldsOnClick(column.id)"
+          >
+            <m-check-icon *ngIf="yFieldsIsChecked(column.id)"></m-check-icon>
+          </button>
 
-        <m-field-label [column]="column" class="ml-3 text-sm"></m-field-label>
+          <m-field-result
+            class="ml-3 mt-1 h-5 w-5"
+            [size]="2"
+            [fieldClass]="column.fieldClass"
+            [result]="column.result"
+          ></m-field-result>
+
+          <m-field-label
+            [column]="column"
+            class="ml-3 flex text-sm"
+          ></m-field-label>
+        </div>
       </div>
     </div>
   </div>
@@ -290,7 +358,7 @@
     class="mb-5 flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
+      <div class="text-s1 flex h-9 w-[100px] select-none items-center text-base"
         >sizeField</div
       >
     </div>
@@ -314,10 +382,20 @@
         formControlName="sizeField"
       >
         <ng-template ng-label-tmp let-item="item">
-          <m-field-label
-            [column]="item"
-            class="ml-1 flex text-sm"
-          ></m-field-label>
+          <div class="ml-1 flex flex-row items-center">
+            <m-field-result
+              class="h-5 w-5"
+              [size]="2"
+              [fieldClass]="item.fieldClass"
+              [result]="item.result"
+              [isEmpty]="!item.id"
+            ></m-field-result>
+
+            <m-field-label
+              [column]="item"
+              class="ml-3 flex text-sm"
+            ></m-field-label>
+          </div>
         </ng-template>
         <ng-template
           ng-option-tmp
@@ -325,10 +403,20 @@
           let-index="index"
           let-search="searchTerm"
         >
-          <m-field-label
-            [column]="item"
-            class="ml-1 flex text-sm"
-          ></m-field-label>
+          <div class="ml-1 flex flex-row items-center">
+            <m-field-result
+              class="h-5 w-5"
+              [size]="2"
+              [fieldClass]="item.fieldClass"
+              [result]="item.result"
+              [isEmpty]="!item.id"
+            ></m-field-result>
+
+            <m-field-label
+              [column]="item"
+              class="ml-3 flex text-sm"
+            ></m-field-label>
+          </div>
         </ng-template>
       </ng-select>
     </form>

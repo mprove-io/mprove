@@ -29,5 +29,8 @@ export class FieldResultComponent {
   @Input()
   size: number;
 
+  @Input()
+  isEmpty: boolean;
+
   constructor() {}
 }

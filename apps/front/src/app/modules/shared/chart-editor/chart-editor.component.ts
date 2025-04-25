@@ -65,6 +65,8 @@ export class ChartEditorComponent implements OnChanges {
   chartTypeEnum = common.ChartTypeEnum;
   fieldResultEnum = common.FieldResultEnum;
 
+  empty = constants.EMPTY_MCONFIG_FIELD.topLabel;
+
   uiChartTypes = common.UI_CHART_TYPES;
 
   formatNumberExamples: any[] = constants.FORMAT_NUMBER_EXAMPLES.map(x => {
