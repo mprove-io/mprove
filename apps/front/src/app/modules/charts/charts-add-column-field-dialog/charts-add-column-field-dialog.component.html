@@ -8,7 +8,7 @@
 
     <div class="flex flex-col">
       <div
-        class="mt-6 flex min-w-[2px] max-w-[1000px] flex-grow select-none flex-row items-start items-center"
+        class="mt-9 flex min-w-[2px] max-w-[1000px] flex-grow select-none flex-row items-start items-center"
       >
         <form
           [formGroup]="addFieldForm"
@@ -17,8 +17,8 @@
           <ng-select
             #columnFieldSelect
             data-cy="columnFieldSelect"
-            class="w-full min-w-[2px] text-base"
-            [items]="fields"
+            class="charts-add-column-select w-full min-w-[2px] text-base"
+            [items]="matchFields"
             [clearable]="false"
             [searchable]="true"
             [searchFn]="searchFn"
@@ -37,7 +37,19 @@
             bindValue="id"
           >
             <ng-template ng-label-tmp let-item="item">
-              <m-field-label [column]="item" class="ml-1 flex"></m-field-label>
+              <div class="ml-1 flex flex-row items-center">
+                <m-field-result
+                  class="h-5 w-5"
+                  [size]="2"
+                  [fieldClass]="item.fieldClass"
+                  [result]="item.result"
+                ></m-field-result>
+
+                <m-field-label
+                  [column]="item"
+                  class="ml-3 flex"
+                ></m-field-label>
+              </div>
             </ng-template>
 
             <ng-template
@@ -46,7 +58,19 @@
               let-index="index"
               let-search="searchTerm"
             >
-              <m-field-label [column]="item" class="ml-1 flex"></m-field-label>
+              <div class="ml-1 flex flex-row items-center">
+                <m-field-result
+                  class="h-5 w-5"
+                  [size]="2"
+                  [fieldClass]="item.fieldClass"
+                  [result]="item.result"
+                ></m-field-result>
+
+                <m-field-label
+                  [column]="item"
+                  class="ml-3 flex"
+                ></m-field-label>
+              </div>
             </ng-template>
           </ng-select>
         </form>

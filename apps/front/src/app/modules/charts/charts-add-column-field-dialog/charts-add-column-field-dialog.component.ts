@@ -22,7 +22,7 @@ import { StructService } from '~front/app/services/struct.service';
 export interface ChartsAddColumnFieldDialogData {
   apiService: ApiService;
   chart: common.ChartX;
-  fields: common.ModelField[];
+  fields: common.ModelFieldY[];
 }
 
 @Component({
@@ -46,7 +46,8 @@ export class ChartsAddColumnFieldDialogComponent implements OnInit {
   }
 
   chart: common.ChartX;
-  fields: common.ModelField[];
+  fields: common.ModelFieldY[];
+  matchFields: common.ModelField[];
 
   addFieldForm: FormGroup;
 
@@ -66,10 +67,23 @@ export class ChartsAddColumnFieldDialogComponent implements OnInit {
       selectField: [undefined]
     });
 
-    this.fields = this.ref.data.fields.filter(
-      x => x.fieldClass !== common.FieldClassEnum.Filter
-    );
     this.chart = this.ref.data.chart;
+
+    this.fields = this.ref.data.fields;
+
+    this.matchFields = this.fields
+      .filter(
+        x => x.hidden === false && x.fieldClass !== common.FieldClassEnum.Filter
+      )
+      .sort((a, b) =>
+        a.fieldClass !== common.FieldClassEnum.Dimension &&
+        b.fieldClass === common.FieldClassEnum.Dimension
+          ? -1
+          : a.fieldClass === common.FieldClassEnum.Dimension &&
+            b.fieldClass !== common.FieldClassEnum.Dimension
+          ? 1
+          : 0
+      );
   }
 
   selectFieldChange() {

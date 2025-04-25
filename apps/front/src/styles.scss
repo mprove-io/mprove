@@ -291,6 +291,42 @@ ngneat-dialog {
   }
 }
 
+.ng-select.charts-add-parameter-select .ng-select-container {
+  height: 44px;
+
+  .ng-value-container {
+    margin-top: 2px;
+  }
+
+  .ng-value-container .ng-input > input {
+    margin-top: 3px;
+  }
+}
+
+.ng-select.charts-add-column-select .ng-select-container {
+  height: 44px;
+
+  .ng-value-container {
+    margin-top: 2px;
+  }
+
+  .ng-value-container .ng-input > input {
+    margin-top: 3px;
+  }
+}
+
+.ng-select.charts-replace-column-select .ng-select-container {
+  height: 44px;
+
+  .ng-value-container {
+    margin-top: 2px;
+  }
+
+  .ng-value-container .ng-input > input {
+    margin-top: 3px;
+  }
+}
+
 .ng-select.format-number-select .ng-select-container {
   height: 42px;
 
@@ -333,6 +369,14 @@ ngneat-dialog {
 
 .ng-dropdown-panel.group-metric-by-select .scroll-host {
   max-height: 45vh;
+}
+
+.ng-dropdown-panel.charts-replace-column-select .scroll-host {
+  max-height: 35vh;
+}
+
+.ng-dropdown-panel.charts-add-column-select .scroll-host {
+  max-height: 35vh;
 }
 
 .ng-dropdown-panel.main-chart-type-select .scroll-host {

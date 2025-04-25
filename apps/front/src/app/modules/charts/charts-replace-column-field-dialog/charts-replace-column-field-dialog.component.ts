@@ -49,7 +49,7 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
   chart: common.ChartX;
   currentField: common.ModelField;
   fields: common.ModelField[];
-  matchFields: common.ModelField[];
+  matchFields: common.ModelFieldY[];
 
   addFieldForm: FormGroup;
 
@@ -73,13 +73,25 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
 
     this.fields = this.ref.data.fields;
 
-    this.matchFields = this.fields.filter(x =>
-      x.fieldClass !== common.FieldClassEnum.Filter &&
-      this.currentField.fieldClass === common.FieldClassEnum.Dimension
-        ? x.fieldClass === common.FieldClassEnum.Dimension
-        : x.fieldClass === common.FieldClassEnum.Measure ||
-          x.fieldClass === common.FieldClassEnum.Calculation
-    );
+    this.matchFields = this.fields
+      .filter(x =>
+        x.hidden === false &&
+        x.fieldClass !== common.FieldClassEnum.Filter &&
+        this.currentField.fieldClass === common.FieldClassEnum.Dimension
+          ? x.fieldClass === common.FieldClassEnum.Dimension
+          : x.fieldClass === common.FieldClassEnum.Measure ||
+            x.fieldClass === common.FieldClassEnum.Calculation
+      )
+      .map(y =>
+        Object.assign({}, y, {
+          partLabel: common.isDefined(y.groupLabel)
+            ? `${y.topLabel} ${y.groupLabel} ${y.label}`
+            : `${y.topLabel} ${y.label}`
+        } as common.ModelFieldY)
+      )
+      .sort((a, b) =>
+        a.partLabel > b.partLabel ? 1 : b.partLabel > a.partLabel ? -1 : 0
+      );
 
     this.chart = this.ref.data.chart;
   }
@@ -96,7 +108,7 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
       return;
     }
 
-    let newField = this.fields.find(y => y.id === this.newColumnFieldId);
+    let newField = this.matchFields.find(y => y.id === this.newColumnFieldId);
 
     let newMconfig = this.structService.makeMconfig();
 

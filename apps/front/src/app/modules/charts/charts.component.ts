@@ -172,7 +172,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
   );
 
   isAddParameter = false;
-  filterByFieldsList: common.ModelFieldY[] = [];
+  sortedFieldsList: common.ModelFieldY[] = [];
+  sortedNotHiddenFieldsList: common.ModelFieldY[] = [];
   isDisabledApplyAlreadyFiltered = false;
   newParameterFieldId: string;
 
@@ -181,7 +182,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.model = x;
 
-      this.filterByFieldsList = this.model.fields
+      this.sortedFieldsList = this.model.fields
         .map(y =>
           Object.assign({}, y, {
             partLabel: common.isDefined(y.groupLabel)
@@ -209,6 +210,10 @@ export class ChartsComponent implements OnInit, OnDestroy {
             ? -1
             : 0
         );
+
+      this.sortedNotHiddenFieldsList = this.sortedFieldsList.filter(
+        y => y.hidden === false
+      );
 
       this.modelForm.controls['model'].setValue(this.model.modelId);
 
@@ -1086,7 +1091,7 @@ ${this.mconfig.storePart?.reqUrlPath}`
     this.myDialogService.showAddColumnField({
       apiService: this.apiService,
       chart: this.chart,
-      fields: this.model.fields
+      fields: this.sortedFieldsList
     });
   }
 
