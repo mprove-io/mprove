@@ -200,7 +200,7 @@ export class FilesTreeComponent implements OnDestroy {
 
             x.fileId.split(common.TRIPLE_UNDERSCORE).forEach(part => {
               levelPath = levelPath ? `${levelPath}/${part}` : part;
-              this.itemsTree.treeModel.getNodeById(levelPath).expand();
+              this.itemsTree.treeModel.getNodeById(levelPath)?.expand();
             });
             this.cd.detectChanges();
           }

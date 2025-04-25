@@ -613,7 +613,11 @@ export class RowComponent {
         tap((resp: apiToBackend.ToBackendGetModelResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.fieldsList = resp.payload.model.fields
-              .filter(x => restrictedFilterFieldIds.indexOf(x.id) < 0)
+              .filter(
+                x =>
+                  x.hidden === false &&
+                  restrictedFilterFieldIds.indexOf(x.id) < 0
+              )
               .map(x =>
                 Object.assign({}, x, {
                   partLabel: common.isDefined(x.groupLabel)
@@ -622,7 +626,19 @@ export class RowComponent {
                 } as common.ModelFieldY)
               )
               .sort((a, b) =>
-                a.partLabel > b.partLabel
+                a.fieldClass !== common.FieldClassEnum.Dimension &&
+                b.fieldClass === common.FieldClassEnum.Dimension
+                  ? 1
+                  : a.fieldClass === common.FieldClassEnum.Dimension &&
+                    b.fieldClass !== common.FieldClassEnum.Dimension
+                  ? -1
+                  : a.fieldClass !== common.FieldClassEnum.Filter &&
+                    b.fieldClass === common.FieldClassEnum.Filter
+                  ? 1
+                  : a.fieldClass === common.FieldClassEnum.Filter &&
+                    b.fieldClass !== common.FieldClassEnum.Filter
+                  ? -1
+                  : a.partLabel > b.partLabel
                   ? 1
                   : b.partLabel > a.partLabel
                   ? -1

@@ -190,7 +190,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
               : `${y.topLabel} ${y.label}`
           } as common.ModelFieldY)
         )
-        .filter(y => y.hidden === false)
         .sort((a, b) =>
           a.fieldClass !== common.FieldClassEnum.Dimension &&
           b.fieldClass === common.FieldClassEnum.Dimension
