@@ -98,6 +98,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   isCompleted = false;
   firstCompletedQuery: common.Query;
 
+  isAutoRun = true;
+  isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
+    tap(x => {
+      this.isAutoRun = x;
+      this.cd.detectChanges();
+    })
+  );
+
   dashboard: common.DashboardX;
   dashboard$ = this.dashboardQuery.select().pipe(
     filter(x => common.isDefined(x.dashboardId)),
@@ -134,6 +142,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             tile: tile
           }
       );
+
+      let newQueries = this.dashboard.tiles.filter(
+        tile =>
+          common.isDefined(tile.query) &&
+          tile.query.status === common.QueryStatusEnum.New
+      );
+
+      let isAutoRun = this.uiQuery.select().value.isAutoRun;
+
+      if (isAutoRun === true && newQueries.length > 0) {
+        setTimeout(() => {
+          this.run();
+        }, 0);
+      }
 
       this.cd.detectChanges();
     })
@@ -222,6 +244,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           this.cd.detectChanges();
         });
     }
+  }
+
+  toggleAutoRun() {
+    let newIsAutoRunValue = !this.isAutoRun;
+
+    this.isAutoRun = newIsAutoRunValue;
+
+    this.uiQuery.updatePart({ isAutoRun: newIsAutoRunValue });
+    this.uiService.setUserUi({ isAutoRun: newIsAutoRunValue });
   }
 
   toggleFiltersPanel() {
