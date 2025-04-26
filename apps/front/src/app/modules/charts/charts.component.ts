@@ -258,6 +258,21 @@ export class ChartsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.chart = x;
 
+      let urlSegments = this.router.url.split('?')[0].split('/');
+
+      let isPathChartSelected =
+        urlSegments.length >= 14
+          ? urlSegments[14] === common.PATH_CHART
+          : false;
+
+      if (
+        this.modelIsExpanded === false &&
+        isPathChartSelected === true &&
+        this.chart.chartId === common.EMPTY_CHART_ID
+      ) {
+        this.modelIsExpanded = true;
+      }
+
       if (common.isDefined(this.chart?.chartId)) {
         this.title.setTitle(
           `${this.pageTitle} - ${this.chart?.title || this.chart?.chartId}`
