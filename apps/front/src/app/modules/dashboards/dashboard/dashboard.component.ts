@@ -96,7 +96,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   isShow = true;
 
   isCompleted = false;
-  firstCompletedQuery: common.Query;
+  lastCompletedQuery: common.Query;
 
   isAutoRun = true;
   isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
@@ -297,6 +297,22 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   checkQueries() {
+    let newQueriesLength = [
+      ...this.dashboard.tiles.filter(
+        r =>
+          common.isDefined(r.query) &&
+          r.query.status === common.QueryStatusEnum.New
+      )
+    ].map(r => r.query).length;
+
+    let runningQueriesLength = [
+      ...this.dashboard.tiles.filter(
+        r =>
+          common.isDefined(r.query) &&
+          r.query.status === common.QueryStatusEnum.Running
+      )
+    ].map(r => r.query).length;
+
     let completedQueries = [
       ...this.dashboard.tiles.filter(
         r =>
@@ -313,12 +329,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           : 0
       );
 
-    if (completedQueries.length === this.dashboard.tiles.length) {
+    if (
+      newQueriesLength === 0 &&
+      runningQueriesLength === 0 &&
+      completedQueries.length > 0
+    ) {
       this.isCompleted = true;
-      this.firstCompletedQuery = completedQueries[0];
+      this.lastCompletedQuery = completedQueries[completedQueries.length - 1];
     } else {
       this.isCompleted = false;
-      this.firstCompletedQuery = undefined;
+      this.lastCompletedQuery = undefined;
     }
   }
 
