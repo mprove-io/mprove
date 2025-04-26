@@ -91,7 +91,8 @@
               class="w-96 text-base"
               [items]="tile.modelFields[dashboardField.id]"
               [clearable]="false"
-              [searchable]="false"
+              [searchable]="true"
+              [searchFn]="fieldSearchFn"
               formControlName="{{ tileIndex }}-----{{
                 dashboardField.id
               }}-----{{ i }}"

@@ -121,7 +121,8 @@
               class="w-96 text-base"
               [items]="row.modelFields[reportField.id]"
               [clearable]="false"
-              [searchable]="false"
+              [searchable]="true"
+              [searchFn]="fieldSearchFn"
               formControlName="{{ rowIndex }}-----{{ reportField.id }}-----{{
                 i
               }}"

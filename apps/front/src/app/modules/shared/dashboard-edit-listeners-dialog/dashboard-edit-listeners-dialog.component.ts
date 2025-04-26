@@ -6,6 +6,7 @@ import {
   ViewChildren
 } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -300,6 +301,20 @@ export class DashboardEditListenersDialogComponent implements OnInit {
       deleteFilterTileTitle: undefined,
       timezone: this.uiQuery.getValue().timezone
     });
+  }
+
+  fieldSearchFn(term: string, modelField: common.ModelField) {
+    let haystack = [
+      common.isDefinedAndNotEmpty(modelField.groupLabel)
+        ? `${modelField.topLabel} ${modelField.groupLabel} - ${modelField.label}`
+        : `${modelField.topLabel} ${modelField.label}`
+    ];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
   }
 
   cancel() {
