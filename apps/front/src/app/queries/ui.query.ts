@@ -34,6 +34,7 @@ export class UiState {
   timeSpec: common.TimeSpecEnum;
   timeRangeFraction: common.Fraction;
   showHours: boolean;
+  isAutoRun: boolean;
   projectFileLinks: common.ProjectFileLink[];
   projectModelLinks: common.ProjectModelLink[];
   projectChartLinks: common.ProjectChartLink[];
@@ -71,7 +72,8 @@ let uiState: UiState = {
   timezone: undefined,
   timeSpec: undefined,
   timeRangeFraction: undefined,
-  showHours: undefined,
+  showHours: false,
+  isAutoRun: true,
   projectFileLinks: [],
   projectModelLinks: [],
   projectChartLinks: [],
@@ -94,6 +96,8 @@ export class UiQuery extends BaseQuery<UiState> {
   panel$ = this.store.pipe(select(state => state.panel));
 
   showHours$ = this.store.pipe(select(state => state.showHours));
+
+  isAutoRun$ = this.store.pipe(select(state => state.isAutoRun));
 
   projectFileLinks$ = this.store.pipe(select(state => state.projectFileLinks));
 

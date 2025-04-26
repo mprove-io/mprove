@@ -136,6 +136,14 @@ export class ChartsComponent implements OnInit, OnDestroy {
     })
   );
 
+  isAutoRun = true;
+  isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
+    tap(x => {
+      this.isAutoRun = x;
+      this.cd.detectChanges();
+    })
+  );
+
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
     tap(x => {
@@ -340,7 +348,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
     })
   );
 
-  isAutoRun = true;
   isFormat = true;
 
   resultsIsShowTemp = false;
@@ -595,7 +602,12 @@ export class ChartsComponent implements OnInit, OnDestroy {
   }
 
   toggleAutoRun() {
-    this.isAutoRun = !this.isAutoRun;
+    let newIsAutoRunValue = !this.isAutoRun;
+
+    this.isAutoRun = newIsAutoRunValue;
+
+    this.uiQuery.updatePart({ isAutoRun: newIsAutoRunValue });
+    this.uiService.setUserUi({ isAutoRun: newIsAutoRunValue });
   }
 
   toggleFormat() {

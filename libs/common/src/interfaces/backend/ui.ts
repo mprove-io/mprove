@@ -34,6 +34,9 @@ export class Ui {
   @IsBoolean()
   showHours: boolean;
 
+  @IsBoolean()
+  isAutoRun: boolean;
+
   @ValidateNested()
   @Type(() => ProjectFileLink)
   projectFileLinks: ProjectFileLink[];

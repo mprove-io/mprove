@@ -167,10 +167,14 @@
               ></m-query-status>
 
               <div
-                class="ml-5 flex cursor-pointer flex-row items-center"
+                class="ml-7 flex cursor-pointer flex-row items-center"
                 (click)="toggleAutoRun()"
               >
-                <ui-switch [checked]="isAutoRun" color="#64BD63"></ui-switch>
+                <ui-switch
+                  class="mt-1"
+                  [checked]="isAutoRun"
+                  color="#64BD63"
+                ></ui-switch>
 
                 <div
                   class="text-s1 ml-5 flex h-9 select-none items-center text-base"
@@ -1354,6 +1358,7 @@
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="modelTreeLevels$ | async"></div>
+<div *ngIf="isAutoRun$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
 <div *ngIf="charts$ | async"></div>
 <div *ngIf="models$ | async"></div>

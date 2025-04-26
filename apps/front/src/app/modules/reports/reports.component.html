@@ -263,11 +263,11 @@
 
             <div class="flex flex-shrink-0 flex-row">
               <div
-                class="flex cursor-pointer flex-row items-center"
+                class="ml-7 flex cursor-pointer flex-row items-center"
                 (click)="toggleAutoRun()"
               >
                 <ui-switch
-                  class="ml-7 mt-1"
+                  class="mt-1"
                   [checked]="isAutoRun"
                   color="#64BD63"
                 ></ui-switch>
@@ -834,6 +834,7 @@
 </div>
 
 <div *ngIf="routerEvents$ | async"></div>
+<div *ngIf="isAutoRun$ | async"></div>
 <div *ngIf="report$ | async"></div>
 <div *ngIf="reports$ | async"></div>
 <div *ngIf="reportChartData$ | async"></div>

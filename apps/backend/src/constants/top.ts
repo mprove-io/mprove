@@ -31,6 +31,7 @@ export const DEFAULT_UI: common.Ui = {
   showMetricsChart: true,
   showMetricsChartSettings: true,
   showHours: false,
+  isAutoRun: true,
   projectFileLinks: [],
   projectModelLinks: [],
   projectChartLinks: [],

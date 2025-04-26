@@ -94,6 +94,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
   timeSpecTimestamps = common.TimeSpecEnum.Timestamps;
 
   isAutoRun = true;
+  isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
+    tap(x => {
+      this.isAutoRun = x;
+      this.cd.detectChanges();
+    })
+  );
 
   isShow = true;
 
@@ -991,7 +997,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   toggleAutoRun() {
-    this.isAutoRun = !this.isAutoRun;
+    let newIsAutoRunValue = !this.isAutoRun;
+
+    this.isAutoRun = newIsAutoRunValue;
+
+    this.uiQuery.updatePart({ isAutoRun: newIsAutoRunValue });
+    this.uiService.setUserUi({ isAutoRun: newIsAutoRunValue });
   }
 
   toggleShowLeft() {
