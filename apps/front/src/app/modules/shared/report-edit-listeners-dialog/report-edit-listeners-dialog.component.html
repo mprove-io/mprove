@@ -146,10 +146,21 @@
               bindValue="id"
             >
               <ng-template ng-label-tmp let-item="item">
-                <m-field-label
-                  [column]="item"
-                  class="ml-1 flex text-sm"
-                ></m-field-label>
+                <div class="ml-1 flex flex-row items-center">
+                  <m-field-result
+                    class="h-5 w-5"
+                    [size]="2"
+                    [fieldClass]="item.fieldClass"
+                    [result]="item.result"
+                    [isEmpty]="!item.id"
+                  ></m-field-result>
+
+                  <m-field-label
+                    *ngIf="!!item.id"
+                    [column]="item"
+                    class="ml-3 flex"
+                  ></m-field-label>
+                </div>
               </ng-template>
 
               <ng-template
@@ -158,10 +169,20 @@
                 let-index="index"
                 let-search="searchTerm"
               >
-                <m-field-label
-                  [column]="item"
-                  class="ml-1 flex text-sm"
-                ></m-field-label>
+                <div class="ml-1 flex flex-row items-center">
+                  <m-field-result
+                    class="h-5 w-5"
+                    [size]="2"
+                    [fieldClass]="item.fieldClass"
+                    [result]="item.result"
+                    [isEmpty]="!item.id"
+                  ></m-field-result>
+
+                  <m-field-label
+                    [column]="item"
+                    class="ml-3 flex"
+                  ></m-field-label>
+                </div>
               </ng-template>
             </ng-select>
 

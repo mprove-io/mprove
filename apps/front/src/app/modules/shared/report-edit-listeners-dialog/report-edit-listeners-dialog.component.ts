@@ -17,6 +17,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { ReportService } from '~front/app/services/report.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { constants } from '~front/barrels/constants';
 
 export class RowX2 extends common.Row {
   modelFields?: { [a: string]: common.ModelField[] };
@@ -143,12 +144,17 @@ export class ReportEditListenersDialogComponent implements OnInit {
 
               let modelFields: { [a: string]: common.ModelField[] } = {};
 
+              let emptyField = <ModelField>{
+                id: undefined,
+                topLabel: constants.EMPTY_MCONFIG_FIELD.topLabel
+              };
+
               (this.report as ReportX2).fields.forEach(reportField => {
                 modelFields[reportField.id] =
                   common.isDefined(reportField.storeResult) &&
                   reportField.storeModel === model.modelId
                     ? [
-                        <ModelField>{ id: undefined },
+                        emptyField,
                         ...model.fields.filter(
                           y =>
                             y.result === reportField.storeResult &&
@@ -158,7 +164,7 @@ export class ReportEditListenersDialogComponent implements OnInit {
                     : common.isDefined(reportField.storeFilter) &&
                       reportField.storeModel === model.modelId
                     ? [
-                        <ModelField>{ id: undefined },
+                        emptyField,
                         ...model.fields.filter(y =>
                           y.fieldClass === common.FieldClassEnum.Filter
                             ? y.id === reportField.storeFilter
@@ -168,12 +174,12 @@ export class ReportEditListenersDialogComponent implements OnInit {
                     : model.isStoreModel === false &&
                       common.isUndefined(reportField.storeModel)
                     ? [
-                        <ModelField>{ id: undefined },
+                        emptyField,
                         ...model.fields.filter(
                           y => y.result === reportField.result
                         )
                       ]
-                    : [<ModelField>{ id: undefined }];
+                    : [emptyField];
 
                 if (common.isUndefined(swap[reportField.id])) {
                   swap[reportField.id] = [undefined];

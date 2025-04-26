@@ -206,6 +206,7 @@
             ></m-field-result>
 
             <m-field-label
+              *ngIf="!!item.id"
               [column]="item"
               class="ml-3 flex text-sm"
             ></m-field-label>
@@ -392,6 +393,7 @@
             ></m-field-result>
 
             <m-field-label
+              *ngIf="!!item.id"
               [column]="item"
               class="ml-3 flex text-sm"
             ></m-field-label>
