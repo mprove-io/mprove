@@ -93,7 +93,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   timeSpecMinutes = common.TimeSpecEnum.Minutes;
   timeSpecTimestamps = common.TimeSpecEnum.Timestamps;
 
-  isAutoRun = false;
+  isAutoRun = true;
 
   isShow = true;
 

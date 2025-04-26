@@ -340,7 +340,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     })
   );
 
-  isAutoRun = false;
+  isAutoRun = true;
   isFormat = true;
 
   resultsIsShowTemp = false;
