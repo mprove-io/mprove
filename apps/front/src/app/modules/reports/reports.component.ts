@@ -55,6 +55,11 @@ export class TimeSpecItem {
   value: common.TimeSpecEnum;
 }
 
+export class RefreshItem {
+  label: string;
+  value: common.RefreshEnum;
+}
+
 @Component({
   selector: 'm-reports',
   templateUrl: './reports.component.html'
@@ -226,6 +231,29 @@ export class ReportsComponent implements OnInit, OnDestroy {
     {
       label: 'Timestamps',
       value: common.TimeSpecEnum.Timestamps
+    }
+  ];
+
+  refreshForm = this.fb.group({
+    refresh: [undefined]
+  });
+
+  refreshList: RefreshItem[] = [
+    {
+      label: '1-time',
+      value: common.RefreshEnum.OneTime
+    },
+    {
+      label: '5s',
+      value: common.RefreshEnum.FiveSeconds
+    },
+    {
+      label: '30s',
+      value: common.RefreshEnum.ThirtySeconds
+    },
+    {
+      label: '1m',
+      value: common.RefreshEnum.OneMinute
     }
   ];
 
@@ -783,6 +811,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
     }
   }
 
+  refreshChange() {
+    console.log('refreshChange');
+  }
+
   timeSpecChange(timeSpecValue?: common.TimeSpecEnum) {
     if (timeSpecValue === this.timeSpecForm.controls['timeSpec'].value) {
       return;
@@ -1003,6 +1035,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     this.uiQuery.updatePart({ isAutoRun: newIsAutoRunValue });
     this.uiService.setUserUi({ isAutoRun: newIsAutoRunValue });
+
+    this.cd.detectChanges();
   }
 
   toggleShowLeft() {

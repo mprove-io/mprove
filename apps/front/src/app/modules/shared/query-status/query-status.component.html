@@ -1,68 +1,79 @@
 <div class="flex flex-row items-center text-base">
   <div
-    class="ml-5 flex flex-row items-center"
-    *ngIf="query?.status === queryStatusEnum.Completed"
+    [tp]="t1"
+    [tpIsEnabled]="isTpEnabled"
+    *ngIf="
+      query?.status === queryStatusEnum.Completed &&
+      showDataRowsLength === true &&
+      showLastCompleteDuration === true
+    "
+    class="line-clamp-1 select-none"
   >
-    <div
-      [tp]="t1"
-      [tpIsEnabled]="isTpEnabled"
-      *ngIf="showDataRowsLength === true && showLastCompleteDuration === true"
-      class="line-clamp-1 select-none"
-    >
-      <ng-template #t1>
-        <span
-          >{{ completedWord }} - {{ completedTimeAgo }} -
-          {{ query.lastCompleteDuration }}s - {{ query.data.length }} rows</span
-        >
-      </ng-template>
+    <ng-template #t1>
+      <div
+        >{{ completedWord }} - {{ completedTimeAgo }} -
+        {{ query.lastCompleteDuration }}s - {{ query.data.length }} rows</div
+      >
+    </ng-template>
 
-      <ng-container *ngTemplateOutlet="t1"></ng-container>
-    </div>
+    <ng-container *ngTemplateOutlet="t1"></ng-container>
+  </div>
 
-    <div
-      [tp]="t2"
-      [tpIsEnabled]="isTpEnabled"
-      *ngIf="showDataRowsLength === true && showLastCompleteDuration === false"
-      class="line-clamp-1 select-none"
-    >
-      <ng-template #t2>
-        <span
-          >{{ completedWord }} - {{ completedTimeAgo }} -
-          {{ query.data.length }} rows</span
-        >
-      </ng-template>
+  <div
+    [tp]="t2"
+    [tpIsEnabled]="isTpEnabled"
+    *ngIf="
+      query?.status === queryStatusEnum.Completed &&
+      showDataRowsLength === true &&
+      showLastCompleteDuration === false
+    "
+    class="line-clamp-1 select-none"
+  >
+    <ng-template #t2>
+      <div
+        >{{ completedWord }} - {{ completedTimeAgo }} -
+        {{ query.data.length }} rows</div
+      >
+    </ng-template>
 
-      <ng-container *ngTemplateOutlet="t2"></ng-container>
-    </div>
+    <ng-container *ngTemplateOutlet="t2"></ng-container>
+  </div>
 
-    <div
-      [tp]="t3"
-      [tpIsEnabled]="isTpEnabled"
-      *ngIf="showDataRowsLength === false && showLastCompleteDuration === true"
-      class="line-clamp-1 select-none"
-    >
-      <ng-template #t3>
-        <span
-          >{{ completedWord }} - {{ completedTimeAgo }} -
-          {{ query.lastCompleteDuration }}s</span
-        >
-      </ng-template>
+  <div
+    [tp]="t3"
+    [tpIsEnabled]="isTpEnabled"
+    *ngIf="
+      query?.status === queryStatusEnum.Completed &&
+      showDataRowsLength === false &&
+      showLastCompleteDuration === true
+    "
+    class="line-clamp-1 select-none"
+  >
+    <ng-template #t3>
+      <div
+        >{{ completedWord }} - {{ completedTimeAgo }} -
+        {{ query.lastCompleteDuration }}s</div
+      >
+    </ng-template>
 
-      <ng-container *ngTemplateOutlet="t3"></ng-container>
-    </div>
+    <ng-container *ngTemplateOutlet="t3"></ng-container>
+  </div>
 
-    <div
-      [tp]="t4"
-      [tpIsEnabled]="isTpEnabled"
-      *ngIf="showDataRowsLength === false && showLastCompleteDuration === false"
-      class="line-clamp-1 select-none"
-    >
-      <ng-template #t4>
-        <span>{{ completedWord }} - {{ completedTimeAgo }}</span>
-      </ng-template>
+  <div
+    [tp]="t4"
+    [tpIsEnabled]="isTpEnabled"
+    *ngIf="
+      query?.status === queryStatusEnum.Completed &&
+      showDataRowsLength === false &&
+      showLastCompleteDuration === false
+    "
+    class="line-clamp-1 select-none"
+  >
+    <ng-template #t4>
+      <div>{{ completedWord }} - {{ completedTimeAgo }}</div>
+    </ng-template>
 
-      <ng-container *ngTemplateOutlet="t4"></ng-container>
-    </div>
+    <ng-container *ngTemplateOutlet="t4"></ng-container>
   </div>
 
   <div
@@ -117,7 +128,7 @@
       class="ml-5 line-clamp-1 select-none"
     >
       <ng-template #t7>
-        <span>Error - {{ errorTimeAgo }}</span>
+        <div>Error - {{ errorTimeAgo }}</div>
       </ng-template>
 
       <ng-container *ngTemplateOutlet="t7"></ng-container>
@@ -131,7 +142,7 @@
     class="line-clamp-1 select-none"
   >
     <ng-template #t8>
-      <span>Canceled - {{ canceledTimeAgo }}</span>
+      <div>Canceled - {{ canceledTimeAgo }}</div>
     </ng-template>
 
     <ng-container *ngTemplateOutlet="t8"></ng-container>

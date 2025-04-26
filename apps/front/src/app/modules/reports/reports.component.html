@@ -15,7 +15,7 @@
               </div>
 
               <m-left-panel-icon
-                class="lex-shrink-0 ml-5 cursor-pointer"
+                class="ml-5 flex-shrink-0 cursor-pointer"
                 [ngClass]="{
                   'text-s500': isShowLeft === true,
                   'text-s400': isShowLeft === false
@@ -184,7 +184,7 @@
               <ng-select
                 #timeSpecSelect
                 data-cy="timeSpecSelect"
-                class="popup-55 w-[160px]"
+                class="popup-55 w-[130px]"
                 [items]="timeSpecList"
                 [clearable]="false"
                 [searchable]="false"
@@ -247,22 +247,19 @@
               <m-exclamation-icon></m-exclamation-icon>
             </div>
 
-            <div class="flex-grow"></div>
+            <div class="flex flex-grow"></div>
 
-            <div
+            <m-query-status
               *ngIf="!!lastCompletedQuery"
-              class="flex flex-row items-center justify-end"
-            >
-              <m-query-status
-                [query]="lastCompletedQuery"
-                [showDataRowsLength]="false"
-                [showLastCompleteDuration]="false"
-                [completedWord]="'Completed'"
-                [isTpEnabled]="true"
-              ></m-query-status>
-            </div>
+              class="ml-5 min-w-[2px]"
+              [query]="lastCompletedQuery"
+              [showDataRowsLength]="false"
+              [showLastCompleteDuration]="false"
+              [completedWord]="'Completed'"
+              [isTpEnabled]="true"
+            ></m-query-status>
 
-            <div class="flex flex-shrink-0 flex-row">
+            <div class="flex flex-shrink-0 flex-row items-center">
               <div
                 class="ml-7 flex cursor-pointer flex-row items-center"
                 (click)="toggleAutoRun()"
@@ -279,10 +276,41 @@
                 >
               </div>
 
+              <form class="ml-5" [formGroup]="refreshForm">
+                <ng-select
+                  #refreshSelect
+                  data-cy="refreshSelect"
+                  class="popup-55 w-[100px]"
+                  [items]="refreshList"
+                  [clearable]="false"
+                  [searchable]="false"
+                  [disabled]="isAutoRun === false"
+                  (change)="refreshChange()"
+                  (keyup.esc)="
+                    $event.stopImmediatePropagation(); refreshSelect.blur()
+                  "
+                  (keyup.enter)="
+                    $event.stopImmediatePropagation(); refreshSelect.blur()
+                  "
+                  appendTo="body"
+                  bindLabel="label"
+                  bindValue="value"
+                  formControlName="refresh"
+                >
+                  <ng-template ng-label-tmp let-item="item">
+                    <div class="ml-1 truncate">{{ item.label }}</div>
+                  </ng-template>
+
+                  <ng-template ng-option-tmp let-item="item">
+                    <div class="ml-1 truncate">{{ item.label }}</div>
+                  </ng-template>
+                </ng-select>
+              </form>
+
               <button
                 type="button"
                 data-cy="metricsRunButton"
-                class="text-m0 ml-5 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium focus:outline-none"
+                class="text-m0 ml-6 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium focus:outline-none"
                 [ngClass]="{
                   'bg-m600':
                     notEmptySelectQueriesLength > 0 &&
