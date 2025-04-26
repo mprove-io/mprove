@@ -41,6 +41,9 @@ export class QueryStatusComponent implements OnChanges {
     })
   );
 
+  @Input()
+  isTpEnabled: boolean;
+
   completedTimeAgo: string;
   canceledTimeAgo: string;
   errorTimeAgo: string;
