@@ -111,6 +111,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
   seriesParts: SeriesPart[] = [];
   dataPoints: DataPoint[] = [];
 
+  refreshProgress = 0;
+  refreshSubscription: Subscription;
+  refreshId: string;
+
   isAutoRun = true;
   isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
     tap(x => {
@@ -133,6 +137,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
       ).length;
 
       this.isAutoRun = this.uiQuery.getValue().isAutoRun;
+      if (this.isAutoRun === true && this.report.reportId !== this.refreshId) {
+        this.refreshForm.controls.refresh.setValue(0);
+        this.refreshChange();
+      }
       this.checkAutoRun();
 
       this.cd.detectChanges();
@@ -1017,9 +1025,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
     if (
       this.isAutoRun === true &&
       newQueries.length > 0 &&
-      (this.report?.rangeOpen < this.report?.rangeClose ||
-        this.report?.timeRangeFraction.type !==
-          common.FractionTypeEnum.TsIsInRange)
+      (this.report?.timeRangeFraction.type !==
+        common.FractionTypeEnum.TsIsInRange ||
+        this.report?.rangeOpen < this.report?.rangeClose)
     ) {
       setTimeout(() => {
         // console.log('checkAutoRun run');
@@ -1037,9 +1045,11 @@ export class ReportsComponent implements OnInit, OnDestroy {
       if (this.refreshForm.controls.refresh.enabled) {
         this.refreshForm.controls.refresh.disable();
       }
+
+      this.refreshChange();
     } else if (this.isAutoRun === true) {
       if (common.isUndefined(this.refreshForm.controls.refresh.value)) {
-        this.refreshForm.controls.refresh.setValue(common.RefreshEnum.OneTime);
+        this.refreshForm.controls.refresh.setValue(0);
       }
 
       if (this.refreshForm.controls.refresh.disabled) {
@@ -1049,7 +1059,45 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   refreshChange() {
-    console.log('refreshChange');
+    let refreshValueSeconds: number =
+      this.refreshForm.controls['refresh'].value;
+
+    this.refreshProgress = 0;
+
+    if (this.refreshSubscription) {
+      this.refreshSubscription.unsubscribe();
+    }
+
+    this.refreshId = this.report.reportId;
+
+    if (common.isUndefined(refreshValueSeconds) || refreshValueSeconds === 0) {
+      return;
+    }
+
+    let intervalMs = refreshValueSeconds * 1000;
+
+    let part = refreshValueSeconds >= 5 * 60 ? 1000 : 50;
+
+    this.refreshSubscription = interval(part).subscribe(() => {
+      this.refreshProgress = Math.min(
+        this.refreshProgress + (part / intervalMs) * 100,
+        100
+      );
+
+      if (this.refreshProgress >= 100) {
+        this.refreshProgress = 0;
+
+        if (
+          // this.isRunButtonPressed === false &&
+          this.notEmptySelectQueriesLength > 0 &&
+          (this.report?.timeRangeFraction.type !==
+            common.FractionTypeEnum.TsIsInRange ||
+            this.report?.rangeOpen < this.report?.rangeClose)
+        ) {
+          this.run();
+        }
+      }
+    });
   }
 
   toggleShowLeft() {
@@ -1186,9 +1234,13 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     // console.log('reports ngOnDestroy');
+    this.refreshSubscription?.unsubscribe();
+
     this.stopCheckRunning();
+
     this.reportsQuery.reset();
     this.reportQuery.reset();
+
     this.uiQuery.updatePart({
       reportSelectedNodes: [],
       gridApi: null,

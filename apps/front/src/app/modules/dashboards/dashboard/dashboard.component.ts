@@ -13,7 +13,7 @@ import { FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Subscription, from, fromEvent, merge, of } from 'rxjs';
+import { Subscription, from, fromEvent, interval, merge, of } from 'rxjs';
 import {
   concatMap,
   debounceTime,
@@ -102,6 +102,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   isCompleted = false;
   lastCompletedQuery: common.Query;
 
+  refreshProgress = 0;
+  refreshSubscription: Subscription;
+  refreshId: string;
+
   isAutoRun = true;
   isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
     tap(x => {
@@ -150,6 +154,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       );
 
       this.isAutoRun = this.uiQuery.getValue().isAutoRun;
+      if (
+        this.isAutoRun === true &&
+        this.dashboard.dashboardId !== this.refreshId
+      ) {
+        this.refreshForm.controls.refresh.setValue(0);
+        this.refreshChange();
+      }
       this.checkAutoRun();
 
       this.cd.detectChanges();
@@ -283,9 +294,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.refreshForm.controls.refresh.enabled) {
         this.refreshForm.controls.refresh.disable();
       }
+
+      this.refreshChange();
     } else if (this.isAutoRun === true) {
       if (common.isUndefined(this.refreshForm.controls.refresh.value)) {
-        this.refreshForm.controls.refresh.setValue(common.RefreshEnum.OneTime);
+        this.refreshForm.controls.refresh.setValue(0);
       }
 
       if (this.refreshForm.controls.refresh.disabled) {
@@ -295,7 +308,39 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   refreshChange() {
-    console.log('refreshChange');
+    let refreshValueSeconds: number =
+      this.refreshForm.controls['refresh'].value;
+
+    this.refreshProgress = 0;
+
+    if (this.refreshSubscription) {
+      this.refreshSubscription.unsubscribe();
+    }
+
+    this.refreshId = this.dashboard.dashboardId;
+
+    if (common.isUndefined(refreshValueSeconds) || refreshValueSeconds === 0) {
+      return;
+    }
+
+    let intervalMs = refreshValueSeconds * 1000;
+
+    let part = refreshValueSeconds >= 5 * 60 ? 1000 : 50;
+
+    this.refreshSubscription = interval(part).subscribe(() => {
+      this.refreshProgress = Math.min(
+        this.refreshProgress + (part / intervalMs) * 100,
+        100
+      );
+
+      if (this.refreshProgress >= 100) {
+        this.refreshProgress = 0;
+
+        // if (this.isRunButtonPressed === false) {
+        this.run();
+        // }
+      }
+    });
   }
 
   toggleFiltersPanel() {
@@ -593,6 +638,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.refreshSubscription?.unsubscribe();
     this.runButtonTimerSubscription?.unsubscribe();
     this.resizeSubscription?.unsubscribe();
     this.scrollSubscription?.unsubscribe();

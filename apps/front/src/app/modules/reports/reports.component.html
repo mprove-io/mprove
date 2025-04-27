@@ -240,8 +240,8 @@
               class="text-r1 ml-4 flex h-8 w-8 flex-shrink-0"
               tp="The left boundary value of the time range must be less than the right boundary value"
               *ngIf="
-                report?.rangeOpen >= report?.rangeClose &&
-                report?.timeRangeFraction?.type === fractionTypeIsInRange
+                report?.timeRangeFraction?.type === fractionTypeIsInRange &&
+                report?.rangeOpen >= report?.rangeClose
               "
             >
               <m-exclamation-icon></m-exclamation-icon>
@@ -277,10 +277,15 @@
               </div>
 
               <div
-                class="ml-5"
+                class="ml-5 flex flex-col items-stretch"
                 tp="Enable Auto Run to use selector"
                 [tpIsEnabled]="isAutoRun === false"
               >
+                <div
+                  *ngIf="refreshForm.controls['refresh'].value !== 0"
+                  class="h-[6px] w-full"
+                ></div>
+
                 <form [formGroup]="refreshForm">
                   <ng-select
                     #refreshSelect
@@ -310,6 +315,17 @@
                     </ng-template>
                   </ng-select>
                 </form>
+
+                <div
+                  *ngIf="refreshForm.controls['refresh'].value !== 0"
+                  class="bg-s200 h-[6px] w-full overflow-hidden rounded-full"
+                >
+                  <div
+                    class="bg-g1 h-full transition-all duration-[50ms] ease-linear"
+                    [style.width.%]="refreshProgress"
+                  >
+                  </div>
+                </div>
               </div>
 
               <button
@@ -330,15 +346,16 @@
                         fractionTypeIsInRange),
                   'bg-s400':
                     notEmptySelectQueriesLength === 0 ||
-                    (report?.rangeOpen >= report?.rangeClose &&
-                      report?.timeRangeFraction?.type === fractionTypeIsInRange)
+                    (report?.timeRangeFraction?.type ===
+                      fractionTypeIsInRange &&
+                      report?.rangeOpen >= report?.rangeClose)
                 }"
                 (click)="run()"
                 [disabled]="
                   notEmptySelectQueriesLength === 0 ||
                   isRunButtonPressed === true ||
-                  (report?.rangeOpen >= report?.rangeClose &&
-                    report?.timeRangeFraction?.type === fractionTypeIsInRange)
+                  (report?.timeRangeFraction?.type === fractionTypeIsInRange &&
+                    report?.rangeOpen >= report?.rangeClose)
                 "
               >
                 <div *ngIf="isRunButtonPressed === false">Run</div>

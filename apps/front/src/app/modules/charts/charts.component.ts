@@ -257,6 +257,10 @@ export class ChartsComponent implements OnInit, OnDestroy {
   query: common.Query;
   qData: QDataRow[];
 
+  refreshProgress = 0;
+  refreshSubscription: Subscription;
+  refreshId: string;
+
   isAutoRun = true;
   isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
     tap(x => {
@@ -323,6 +327,10 @@ export class ChartsComponent implements OnInit, OnDestroy {
       }
 
       this.isAutoRun = this.uiQuery.getValue().isAutoRun;
+      if (this.isAutoRun === true && this.chart.chartId !== this.refreshId) {
+        this.refreshForm.controls.refresh.setValue(0);
+        this.refreshChange();
+      }
       this.checkAutoRun();
 
       if (this.mconfig.limit) {
@@ -640,9 +648,11 @@ export class ChartsComponent implements OnInit, OnDestroy {
       if (this.refreshForm.controls.refresh.enabled) {
         this.refreshForm.controls.refresh.disable();
       }
+
+      this.refreshChange();
     } else if (this.isAutoRun === true) {
       if (common.isUndefined(this.refreshForm.controls.refresh.value)) {
-        this.refreshForm.controls.refresh.setValue(common.RefreshEnum.OneTime);
+        this.refreshForm.controls.refresh.setValue(0);
       }
 
       if (this.refreshForm.controls.refresh.disabled) {
@@ -652,7 +662,43 @@ export class ChartsComponent implements OnInit, OnDestroy {
   }
 
   refreshChange() {
-    console.log('refreshChange');
+    let refreshValueSeconds: number =
+      this.refreshForm.controls['refresh'].value;
+
+    this.refreshProgress = 0;
+
+    if (this.refreshSubscription) {
+      this.refreshSubscription.unsubscribe();
+    }
+
+    this.refreshId = this.chart.chartId;
+
+    if (common.isUndefined(refreshValueSeconds) || refreshValueSeconds === 0) {
+      return;
+    }
+
+    let intervalMs = refreshValueSeconds * 1000;
+
+    let part = refreshValueSeconds >= 5 * 60 ? 1000 : 50;
+
+    this.refreshSubscription = interval(part).subscribe(() => {
+      this.refreshProgress = Math.min(
+        this.refreshProgress + (part / intervalMs) * 100,
+        100
+      );
+
+      if (this.refreshProgress >= 100) {
+        this.refreshProgress = 0;
+
+        if (
+          // this.isRunButtonPressed === false &&
+          this.mconfig?.select.length > 0 &&
+          this.query?.status !== common.QueryStatusEnum.Running
+        ) {
+          this.run();
+        }
+      }
+    });
   }
 
   toggleFormat() {
@@ -1643,6 +1689,7 @@ ${this.mconfig.storePart?.reqUrlPath}`
     this.chartQuery.reset();
     this.modelQuery.reset();
 
+    this.refreshSubscription?.unsubscribe();
     this.runButtonTimerSubscription?.unsubscribe();
     this.cancelButtonTimerSubscription?.unsubscribe();
 

@@ -203,18 +203,74 @@ export const COMMON_I18N: DatePickerI18n = {
 export const REFRESH_LIST: RefreshItem[] = [
   {
     label: '1-time',
-    value: common.RefreshEnum.OneTime
+    value: 0
   },
+  // {
+  //   label: '1s',
+  //   value: 1
+  // },
   {
     label: '5s',
-    value: common.RefreshEnum.FiveSeconds
+    value: 5
+  },
+  {
+    label: '10s',
+    value: 10
+  },
+  {
+    label: '15s',
+    value: 15
   },
   {
     label: '30s',
-    value: common.RefreshEnum.ThirtySeconds
+    value: 30
   },
   {
     label: '1m',
-    value: common.RefreshEnum.OneMinute
+    value: 1 * 60
+  },
+  {
+    label: '5m',
+    value: 5 * 60
+  },
+  {
+    label: '10m',
+    value: 10 * 60
+  },
+  {
+    label: '15m',
+    value: 15 * 60
+  },
+  {
+    label: '30m',
+    value: 30 * 60
+  },
+  {
+    label: '1h',
+    value: 1 * 60 * 60
+  },
+  {
+    label: '2h',
+    value: 2 * 60 * 60
+  },
+  {
+    label: '4h',
+    value: 4 * 60 * 60
+  },
+  {
+    label: '6h',
+    value: 6 * 60 * 60
+  },
+  {
+    label: '8h',
+    value: 8 * 60 * 60
+  },
+  {
+    label: '12h',
+    value: 12 * 60 * 60
+  },
+  {
+    label: '24h',
+    value: 24 * 60 * 60
   }
 ];

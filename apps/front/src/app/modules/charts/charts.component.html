@@ -183,10 +183,15 @@
               </div>
 
               <div
-                class="ml-5"
+                class="ml-5 flex flex-col items-stretch"
                 tp="Enable Auto Run to use selector"
                 [tpIsEnabled]="isAutoRun === false"
               >
+                <div
+                  *ngIf="refreshForm.controls['refresh'].value !== 0"
+                  class="h-[6px] w-full"
+                ></div>
+
                 <form [formGroup]="refreshForm">
                   <ng-select
                     #refreshSelect
@@ -216,6 +221,17 @@
                     </ng-template>
                   </ng-select>
                 </form>
+
+                <div
+                  *ngIf="refreshForm.controls['refresh'].value !== 0"
+                  class="bg-s200 h-[6px] w-full overflow-hidden rounded-full"
+                >
+                  <div
+                    class="bg-g1 h-full transition-all duration-[50ms] ease-linear"
+                    [style.width.%]="refreshProgress"
+                  >
+                  </div>
+                </div>
               </div>
 
               <div
