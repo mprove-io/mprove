@@ -182,40 +182,46 @@
                 >
               </div>
 
-              <button
-                type="button"
-                *ngIf="query?.status === queryStatusEnum.Running"
-                data-cy="modelCancelButton"
-                class="bg-r600 text-m0 ml-5 flex h-12 w-24 items-center justify-center rounded py-2 text-base font-medium focus:outline-none"
-                [ngClass]="{
-                  'cursor-default': isCancelButtonPressed === true
-                }"
-                (click)="cancel()"
-                [disabled]="isCancelButtonPressed === true"
+              <div
+                class="ml-5"
+                tp="Enable Auto Run to use selector"
+                [tpIsEnabled]="isAutoRun === false"
               >
-                <div *ngIf="isCancelButtonPressed === false">Cancel</div>
-                <div
-                  *ngIf="isCancelButtonPressed === true"
-                  class="relative flex h-9 w-9 flex-shrink-0"
-                >
-                  <ngx-spinner
-                    [name]="modelCancelButtonSpinnerName"
-                    color="#FFFFFF"
-                    bdColor="#00000000"
-                    size="default"
-                    type="ball-clip-rotate"
-                    [fullScreen]="false"
-                    [disableAnimation]="true"
-                    [zIndex]="99998"
+                <form [formGroup]="refreshForm">
+                  <ng-select
+                    #refreshSelect
+                    data-cy="refreshSelect"
+                    class="popup-55 w-[100px]"
+                    [items]="refreshList"
+                    [clearable]="false"
+                    [searchable]="false"
+                    (change)="refreshChange()"
+                    (keyup.esc)="
+                      $event.stopImmediatePropagation(); refreshSelect.blur()
+                    "
+                    (keyup.enter)="
+                      $event.stopImmediatePropagation(); refreshSelect.blur()
+                    "
+                    appendTo="body"
+                    bindLabel="label"
+                    bindValue="value"
+                    formControlName="refresh"
                   >
-                  </ngx-spinner>
-                </div>
-              </button>
+                    <ng-template ng-label-tmp let-item="item">
+                      <div class="ml-1 truncate">{{ item.label }}</div>
+                    </ng-template>
+
+                    <ng-template ng-option-tmp let-item="item">
+                      <div class="ml-1 truncate">{{ item.label }}</div>
+                    </ng-template>
+                  </ng-select>
+                </form>
+              </div>
 
               <div
                 *ngIf="query?.status !== queryStatusEnum.Running"
                 tp="Select Model Fields"
-                class="ml-5"
+                class="ml-6"
                 [tpIsEnabled]="mconfig?.select.length === 0"
               >
                 <button
@@ -253,6 +259,36 @@
                   </div>
                 </button>
               </div>
+
+              <button
+                type="button"
+                *ngIf="query?.status === queryStatusEnum.Running"
+                data-cy="modelCancelButton"
+                class="bg-r600 text-m0 ml-6 flex h-12 w-24 items-center justify-center rounded py-2 text-base font-medium focus:outline-none"
+                [ngClass]="{
+                  'cursor-default': isCancelButtonPressed === true
+                }"
+                (click)="cancel()"
+                [disabled]="isCancelButtonPressed === true"
+              >
+                <div *ngIf="isCancelButtonPressed === false">Cancel</div>
+                <div
+                  *ngIf="isCancelButtonPressed === true"
+                  class="relative flex h-9 w-9 flex-shrink-0"
+                >
+                  <ngx-spinner
+                    [name]="modelCancelButtonSpinnerName"
+                    color="#FFFFFF"
+                    bdColor="#00000000"
+                    size="default"
+                    type="ball-clip-rotate"
+                    [fullScreen]="false"
+                    [disableAnimation]="true"
+                    [zIndex]="99998"
+                  >
+                  </ngx-spinner>
+                </div>
+              </button>
 
               <!-- <div class="relative ml-5">
               <m-query-options

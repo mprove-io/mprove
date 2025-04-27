@@ -1,5 +1,6 @@
 import { DatePickerDate, DatePickerI18n } from '@vaadin/date-picker';
 import { common } from '~front/barrels/common';
+import { RefreshItem } from '../interfaces/refresh-item';
 
 export const SPECIAL_ERROR = 'SPECIAL_ERROR';
 export const PASSWORD_RESET_EMAIL = 'PASSWORD_RESET_EMAIL';
@@ -198,3 +199,22 @@ export const COMMON_I18N: DatePickerI18n = {
   parseDate: null,
   formatTitle: (monthName: any, fullYear: any) => monthName + '  ' + fullYear
 };
+
+export const REFRESH_LIST: RefreshItem[] = [
+  {
+    label: '1-time',
+    value: common.RefreshEnum.OneTime
+  },
+  {
+    label: '5s',
+    value: common.RefreshEnum.FiveSeconds
+  },
+  {
+    label: '30s',
+    value: common.RefreshEnum.ThirtySeconds
+  },
+  {
+    label: '1m',
+    value: common.RefreshEnum.OneMinute
+  }
+];

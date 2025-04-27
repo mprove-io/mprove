@@ -37,10 +37,14 @@ import { TimeService } from '~front/app/services/time.service';
 import { ValidationService } from '~front/app/services/validation.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { constants as frontConstants } from '~front/barrels/constants';
+import {
+  constants,
+  constants as frontConstants
+} from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
+import { RefreshItem } from '~front/app/interfaces/refresh-item';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { ChartsQuery } from '~front/app/queries/charts.query';
 import { FilteredChartsQuery } from '~front/app/queries/filtered-charts.query';
@@ -132,14 +136,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
   modelTreeLevels$ = this.uiQuery.modelTreeLevels$.pipe(
     tap(x => {
       this.modelTreeLevels = x;
-      this.cd.detectChanges();
-    })
-  );
-
-  isAutoRun = true;
-  isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
-    tap(x => {
-      this.isAutoRun = x;
       this.cd.detectChanges();
     })
   );
@@ -261,6 +257,16 @@ export class ChartsComponent implements OnInit, OnDestroy {
   query: common.Query;
   qData: QDataRow[];
 
+  isAutoRun = true;
+  isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
+    tap(x => {
+      this.isAutoRun = x;
+      this.checkRefreshSelector();
+
+      this.cd.detectChanges();
+    })
+  );
+
   chart: common.ChartX;
   chart$ = this.chartQuery.select().pipe(
     tap(x => {
@@ -316,16 +322,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
         this.errorMessage = checkSelectResult.errorMessage;
       }
 
-      if (
-        common.isDefined(this.query.queryId) &&
-        this.query.queryId !== common.EMPTY_QUERY_ID &&
-        this.query.status === common.QueryStatusEnum.New &&
-        this.isAutoRun === true
-      ) {
-        setTimeout(() => {
-          this.run();
-        }, 0);
-      }
+      this.isAutoRun = this.uiQuery.getValue().isAutoRun;
+      this.checkAutoRun();
 
       if (this.mconfig.limit) {
         this.limitForm.controls['limit'].setValue(this.mconfig.limit);
@@ -347,6 +345,12 @@ export class ChartsComponent implements OnInit, OnDestroy {
       }
     })
   );
+
+  refreshForm = this.fb.group({
+    refresh: [undefined]
+  });
+
+  refreshList: RefreshItem[] = constants.REFRESH_LIST;
 
   isFormat = true;
 
@@ -605,9 +609,50 @@ export class ChartsComponent implements OnInit, OnDestroy {
     let newIsAutoRunValue = !this.isAutoRun;
 
     this.isAutoRun = newIsAutoRunValue;
+    this.checkAutoRun();
 
     this.uiQuery.updatePart({ isAutoRun: newIsAutoRunValue });
     this.uiService.setUserUi({ isAutoRun: newIsAutoRunValue });
+  }
+
+  checkAutoRun() {
+    // console.log('checkAutoRun');
+
+    if (
+      common.isDefined(this.query.queryId) &&
+      this.query.queryId !== common.EMPTY_QUERY_ID &&
+      this.query.status === common.QueryStatusEnum.New &&
+      this.isAutoRun === true
+    ) {
+      setTimeout(() => {
+        // console.log('checkAutoRun run');
+        this.run();
+      }, 0);
+    }
+  }
+
+  checkRefreshSelector() {
+    if (this.isAutoRun === false) {
+      if (common.isDefined(this.refreshForm.controls.refresh.value)) {
+        this.refreshForm.controls.refresh.setValue(undefined);
+      }
+
+      if (this.refreshForm.controls.refresh.enabled) {
+        this.refreshForm.controls.refresh.disable();
+      }
+    } else if (this.isAutoRun === true) {
+      if (common.isUndefined(this.refreshForm.controls.refresh.value)) {
+        this.refreshForm.controls.refresh.setValue(common.RefreshEnum.OneTime);
+      }
+
+      if (this.refreshForm.controls.refresh.disabled) {
+        this.refreshForm.controls.refresh.enable();
+      }
+    }
+  }
+
+  refreshChange() {
+    console.log('refreshChange');
   }
 
   toggleFormat() {

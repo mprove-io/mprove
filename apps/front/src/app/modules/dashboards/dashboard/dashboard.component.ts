@@ -34,9 +34,13 @@ import { DashboardService } from '~front/app/services/dashboard.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { common } from '~front/barrels/common';
-import { constants as frontConstants } from '~front/barrels/constants';
+import {
+  constants,
+  constants as frontConstants
+} from '~front/barrels/constants';
 
 import { ActivatedRoute, Router } from '@angular/router';
+import { RefreshItem } from '~front/app/interfaces/refresh-item';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { StructDashboardResolver } from '~front/app/resolvers/struct-dashboard.resolver';
 import { UiService } from '~front/app/services/ui.service';
@@ -102,6 +106,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
     tap(x => {
       this.isAutoRun = x;
+      this.checkRefreshSelector();
+
       this.cd.detectChanges();
     })
   );
@@ -143,23 +149,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           }
       );
 
-      let newQueries = this.dashboard.tiles.filter(
-        tile =>
-          common.isDefined(tile.query) &&
-          tile.query.status === common.QueryStatusEnum.New
-      );
-
-      let isAutoRun = this.uiQuery.select().value.isAutoRun;
-
-      if (isAutoRun === true && newQueries.length > 0) {
-        setTimeout(() => {
-          this.run();
-        }, 0);
-      }
+      this.isAutoRun = this.uiQuery.getValue().isAutoRun;
+      this.checkAutoRun();
 
       this.cd.detectChanges();
     })
   );
+
+  refreshForm = this.fb.group({
+    refresh: [undefined]
+  });
+
+  refreshList: RefreshItem[] = constants.REFRESH_LIST;
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -250,9 +251,51 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     let newIsAutoRunValue = !this.isAutoRun;
 
     this.isAutoRun = newIsAutoRunValue;
+    this.checkAutoRun();
 
     this.uiQuery.updatePart({ isAutoRun: newIsAutoRunValue });
     this.uiService.setUserUi({ isAutoRun: newIsAutoRunValue });
+  }
+
+  checkAutoRun() {
+    // console.log('checkAutoRun');
+
+    let newQueries = this.dashboard.tiles.filter(
+      tile =>
+        common.isDefined(tile.query) &&
+        tile.query.status === common.QueryStatusEnum.New
+    );
+
+    if (this.isAutoRun === true && newQueries.length > 0) {
+      setTimeout(() => {
+        // console.log('checkAutoRun run');
+        this.run();
+      }, 0);
+    }
+  }
+
+  checkRefreshSelector() {
+    if (this.isAutoRun === false) {
+      if (common.isDefined(this.refreshForm.controls.refresh.value)) {
+        this.refreshForm.controls.refresh.setValue(undefined);
+      }
+
+      if (this.refreshForm.controls.refresh.enabled) {
+        this.refreshForm.controls.refresh.disable();
+      }
+    } else if (this.isAutoRun === true) {
+      if (common.isUndefined(this.refreshForm.controls.refresh.value)) {
+        this.refreshForm.controls.refresh.setValue(common.RefreshEnum.OneTime);
+      }
+
+      if (this.refreshForm.controls.refresh.disabled) {
+        this.refreshForm.controls.refresh.enable();
+      }
+    }
+  }
+
+  refreshChange() {
+    console.log('refreshChange');
   }
 
   toggleFiltersPanel() {

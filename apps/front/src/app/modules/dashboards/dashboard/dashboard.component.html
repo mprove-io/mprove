@@ -134,7 +134,7 @@
 
             <!-- <div class="flex-grow"></div> -->
 
-            <div class="flex flex-shrink-0 flex-row">
+            <div class="flex flex-shrink-0 flex-row items-center">
               <!-- <ng-template #templateDashboardSaveAs>
                 <div *ngIf="isExplorer === false">Explorer role required</div>
 
@@ -194,10 +194,46 @@
                 >
               </div>
 
+              <div
+                class="ml-5"
+                tp="Enable Auto Run to use selector"
+                [tpIsEnabled]="isAutoRun === false"
+              >
+                <form [formGroup]="refreshForm">
+                  <ng-select
+                    #refreshSelect
+                    data-cy="refreshSelect"
+                    class="popup-55 w-[100px]"
+                    [items]="refreshList"
+                    [clearable]="false"
+                    [searchable]="false"
+                    (change)="refreshChange()"
+                    (keyup.esc)="
+                      $event.stopImmediatePropagation(); refreshSelect.blur()
+                    "
+                    (keyup.enter)="
+                      $event.stopImmediatePropagation(); refreshSelect.blur()
+                    "
+                    appendTo="body"
+                    bindLabel="label"
+                    bindValue="value"
+                    formControlName="refresh"
+                  >
+                    <ng-template ng-label-tmp let-item="item">
+                      <div class="ml-1 truncate">{{ item.label }}</div>
+                    </ng-template>
+
+                    <ng-template ng-option-tmp let-item="item">
+                      <div class="ml-1 truncate">{{ item.label }}</div>
+                    </ng-template>
+                  </ng-select>
+                </form>
+              </div>
+
               <button
                 type="button"
                 data-cy="dashboardRunButton"
-                class="text-m0 ml-5 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium focus:outline-none"
+                class="text-m0 ml-6 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium focus:outline-none"
                 [ngClass]="{
                   'bg-m600': dashboard.tiles.length > 0,
                   'cursor-default':

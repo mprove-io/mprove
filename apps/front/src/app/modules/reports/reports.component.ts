@@ -40,12 +40,16 @@ import { ReportService } from '~front/app/services/report.service';
 import { UiService } from '~front/app/services/ui.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { constants as frontConstants } from '~front/barrels/constants';
+import {
+  constants,
+  constants as frontConstants
+} from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { EChartsInitOpts, EChartsOption } from 'echarts';
 import { DataPoint } from '~front/app/interfaces/data-point';
+import { RefreshItem } from '~front/app/interfaces/refresh-item';
 import { SeriesPart } from '~front/app/interfaces/series-part';
 import { FilteredReportsQuery } from '~front/app/queries/filtered-reports.query';
 import { DataService } from '~front/app/services/data.service';
@@ -53,11 +57,6 @@ import { DataService } from '~front/app/services/data.service';
 export class TimeSpecItem {
   label: string;
   value: common.TimeSpecEnum;
-}
-
-export class RefreshItem {
-  label: string;
-  value: common.RefreshEnum;
 }
 
 @Component({
@@ -98,14 +97,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
   timeSpecMinutes = common.TimeSpecEnum.Minutes;
   timeSpecTimestamps = common.TimeSpecEnum.Timestamps;
 
-  isAutoRun = true;
-  isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
-    tap(x => {
-      this.isAutoRun = x;
-      this.cd.detectChanges();
-    })
-  );
-
   isShow = true;
 
   isShowLeft = true;
@@ -120,6 +111,16 @@ export class ReportsComponent implements OnInit, OnDestroy {
   seriesParts: SeriesPart[] = [];
   dataPoints: DataPoint[] = [];
 
+  isAutoRun = true;
+  isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
+    tap(x => {
+      this.isAutoRun = x;
+      this.checkRefreshSelector();
+
+      this.cd.detectChanges();
+    })
+  );
+
   report: common.ReportX;
   report$ = this.reportQuery.select().pipe(
     tap(x => {
@@ -131,23 +132,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
         row => common.isDefined(row.query) && row.mconfig.select.length > 0
       ).length;
 
-      let newQueries = this.report.rows.filter(
-        row =>
-          common.isDefined(row.query) &&
-          row.query.status === common.QueryStatusEnum.New
-      );
-
-      if (
-        this.isAutoRun === true &&
-        newQueries.length > 0 &&
-        (this.report?.rangeOpen < this.report?.rangeClose ||
-          this.report?.timeRangeFraction.type !==
-            common.FractionTypeEnum.TsIsInRange)
-      ) {
-        setTimeout(() => {
-          this.run();
-        }, 0);
-      }
+      this.isAutoRun = this.uiQuery.getValue().isAutoRun;
+      this.checkAutoRun();
 
       this.cd.detectChanges();
 
@@ -159,6 +145,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
       }
     })
   );
+
+  refreshForm = this.fb.group({
+    refresh: [undefined]
+  });
+
+  refreshList: RefreshItem[] = constants.REFRESH_LIST;
 
   word: string;
 
@@ -231,29 +223,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
     {
       label: 'Timestamps',
       value: common.TimeSpecEnum.Timestamps
-    }
-  ];
-
-  refreshForm = this.fb.group({
-    refresh: [undefined]
-  });
-
-  refreshList: RefreshItem[] = [
-    {
-      label: '1-time',
-      value: common.RefreshEnum.OneTime
-    },
-    {
-      label: '5s',
-      value: common.RefreshEnum.FiveSeconds
-    },
-    {
-      label: '30s',
-      value: common.RefreshEnum.ThirtySeconds
-    },
-    {
-      label: '1m',
-      value: common.RefreshEnum.OneMinute
     }
   ];
 
@@ -811,10 +780,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
     }
   }
 
-  refreshChange() {
-    console.log('refreshChange');
-  }
-
   timeSpecChange(timeSpecValue?: common.TimeSpecEnum) {
     if (timeSpecValue === this.timeSpecForm.controls['timeSpec'].value) {
       return;
@@ -1032,11 +997,59 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let newIsAutoRunValue = !this.isAutoRun;
 
     this.isAutoRun = newIsAutoRunValue;
+    this.checkAutoRun();
 
     this.uiQuery.updatePart({ isAutoRun: newIsAutoRunValue });
     this.uiService.setUserUi({ isAutoRun: newIsAutoRunValue });
 
     this.cd.detectChanges();
+  }
+
+  checkAutoRun() {
+    // console.log('checkAutoRun');
+
+    let newQueries = this.report.rows.filter(
+      row =>
+        common.isDefined(row.query) &&
+        row.query.status === common.QueryStatusEnum.New
+    );
+
+    if (
+      this.isAutoRun === true &&
+      newQueries.length > 0 &&
+      (this.report?.rangeOpen < this.report?.rangeClose ||
+        this.report?.timeRangeFraction.type !==
+          common.FractionTypeEnum.TsIsInRange)
+    ) {
+      setTimeout(() => {
+        // console.log('checkAutoRun run');
+        this.run();
+      }, 0);
+    }
+  }
+
+  checkRefreshSelector() {
+    if (this.isAutoRun === false) {
+      if (common.isDefined(this.refreshForm.controls.refresh.value)) {
+        this.refreshForm.controls.refresh.setValue(undefined);
+      }
+
+      if (this.refreshForm.controls.refresh.enabled) {
+        this.refreshForm.controls.refresh.disable();
+      }
+    } else if (this.isAutoRun === true) {
+      if (common.isUndefined(this.refreshForm.controls.refresh.value)) {
+        this.refreshForm.controls.refresh.setValue(common.RefreshEnum.OneTime);
+      }
+
+      if (this.refreshForm.controls.refresh.disabled) {
+        this.refreshForm.controls.refresh.enable();
+      }
+    }
+  }
+
+  refreshChange() {
+    console.log('refreshChange');
   }
 
   toggleShowLeft() {

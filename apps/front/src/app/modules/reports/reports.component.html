@@ -276,36 +276,41 @@
                 >
               </div>
 
-              <form class="ml-5" [formGroup]="refreshForm">
-                <ng-select
-                  #refreshSelect
-                  data-cy="refreshSelect"
-                  class="popup-55 w-[100px]"
-                  [items]="refreshList"
-                  [clearable]="false"
-                  [searchable]="false"
-                  [disabled]="isAutoRun === false"
-                  (change)="refreshChange()"
-                  (keyup.esc)="
-                    $event.stopImmediatePropagation(); refreshSelect.blur()
-                  "
-                  (keyup.enter)="
-                    $event.stopImmediatePropagation(); refreshSelect.blur()
-                  "
-                  appendTo="body"
-                  bindLabel="label"
-                  bindValue="value"
-                  formControlName="refresh"
-                >
-                  <ng-template ng-label-tmp let-item="item">
-                    <div class="ml-1 truncate">{{ item.label }}</div>
-                  </ng-template>
+              <div
+                class="ml-5"
+                tp="Enable Auto Run to use selector"
+                [tpIsEnabled]="isAutoRun === false"
+              >
+                <form [formGroup]="refreshForm">
+                  <ng-select
+                    #refreshSelect
+                    data-cy="refreshSelect"
+                    class="popup-55 w-[100px]"
+                    [items]="refreshList"
+                    [clearable]="false"
+                    [searchable]="false"
+                    (change)="refreshChange()"
+                    (keyup.esc)="
+                      $event.stopImmediatePropagation(); refreshSelect.blur()
+                    "
+                    (keyup.enter)="
+                      $event.stopImmediatePropagation(); refreshSelect.blur()
+                    "
+                    appendTo="body"
+                    bindLabel="label"
+                    bindValue="value"
+                    formControlName="refresh"
+                  >
+                    <ng-template ng-label-tmp let-item="item">
+                      <div class="ml-1 truncate">{{ item.label }}</div>
+                    </ng-template>
 
-                  <ng-template ng-option-tmp let-item="item">
-                    <div class="ml-1 truncate">{{ item.label }}</div>
-                  </ng-template>
-                </ng-select>
-              </form>
+                    <ng-template ng-option-tmp let-item="item">
+                      <div class="ml-1 truncate">{{ item.label }}</div>
+                    </ng-template>
+                  </ng-select>
+                </form>
+              </div>
 
               <button
                 type="button"
