@@ -184,9 +184,12 @@
 
             <div
               class="ml-10 flex cursor-pointer flex-row items-center"
-              (click)="toggleShowTileFilters()"
+              (click)="toggleShowTileParameters()"
             >
-              <ui-switch [checked]="showBricks" color="#64BD63"></ui-switch>
+              <ui-switch
+                [checked]="showTileParameters"
+                color="#64BD63"
+              ></ui-switch>
 
               <div
                 class="text-s1 ml-5 flex h-9 select-none items-center text-base"

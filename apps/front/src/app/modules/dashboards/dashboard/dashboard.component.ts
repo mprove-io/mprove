@@ -66,7 +66,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   filtersIsExpanded = false;
 
-  showBricks = false;
+  showTileParameters = false;
 
   dashboard: common.DashboardX;
   dashboard$ = this.dashboardQuery.select().pipe(

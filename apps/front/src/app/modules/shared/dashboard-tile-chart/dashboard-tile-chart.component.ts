@@ -62,7 +62,7 @@ export class DashboardTileChartComponent
   query: common.Query;
 
   @Input()
-  showBricks: boolean;
+  showTileParameters: boolean;
 
   @Output() dashTileDeleted =
     new EventEmitter<interfaces.EventDashTileDeleted>();

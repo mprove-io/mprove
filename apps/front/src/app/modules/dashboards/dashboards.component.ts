@@ -56,10 +56,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   pathDashboardsList = common.PATH_DASHBOARDS_LIST;
   pathDashboards = common.PATH_DASHBOARDS;
 
-  showBricks = false;
-  showTiles = false;
-
-  isShow = true;
+  showTileParameters = false;
 
   timezoneForm = this.fb.group({
     timezone: [undefined]
@@ -489,8 +486,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleShowTileFilters() {
-    this.showBricks = !this.showBricks;
+  toggleShowTileParameters() {
+    this.showTileParameters = !this.showTileParameters;
   }
 
   toggleAutoRun() {
