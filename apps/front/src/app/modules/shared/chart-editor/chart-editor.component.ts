@@ -63,6 +63,7 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   chartTypeEnum = common.ChartTypeEnum;
+  chartTypeEnumTable = common.ChartTypeEnum.Table;
   fieldResultEnum = common.FieldResultEnum;
 
   empty = constants.EMPTY_MCONFIG_FIELD.topLabel;
@@ -146,6 +147,7 @@ export class ChartEditorComponent implements OnChanges {
     ]
   });
 
+  chartOptionsIsExpanded = false;
   xAxisIsExpanded = false;
   yAxisIsExpanded = true;
   seriesExpanded: string[] = [];
@@ -583,7 +585,11 @@ export class ChartEditorComponent implements OnChanges {
     this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
   }
 
-  toggleXAxisPanel() {
+  toggleChartOptions() {
+    this.chartOptionsIsExpanded = !this.chartOptionsIsExpanded;
+  }
+
+  toggleXAxis() {
     this.xAxisIsExpanded = !this.xAxisIsExpanded;
   }
 
@@ -597,7 +603,7 @@ export class ChartEditorComponent implements OnChanges {
     this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
   }
 
-  toggleYAxisPanel() {
+  toggleYAxis() {
     this.yAxisIsExpanded = !this.yAxisIsExpanded;
   }
 

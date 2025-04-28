@@ -1,14 +1,22 @@
-<div class="mx-5 mt-2 pb-10" *ngIf="!!chart">
-  <div
+<div
+  class="mr-5 mt-2"
+  *ngIf="!!chart"
+  [ngClass]="{
+    'pb-10': chartOptionsIsExpanded === true || isReport === true,
+    'ml-5': isReport === true,
+    'ml-3': isReport === false
+  }"
+>
+  <!-- <div
     *ngIf="isReport === false"
     class="text-s500 mb-5 flex select-none flex-row justify-start font-semibold"
   >
     CHART FIELDS
-  </div>
+  </div> -->
 
   <div
     *ngIf="isReport === false && uiChartTypes.format.indexOf(chart.type) > -1"
-    class="mb-5 flex max-w-min cursor-pointer flex-row items-center"
+    class="mb-5 ml-2 flex max-w-min cursor-pointer flex-row items-center"
     (click)="toggleFormat()"
   >
     <div
@@ -25,7 +33,7 @@
 
   <div
     *ngIf="isReport === false && uiChartTypes.pageSize.indexOf(chart.type) > -1"
-    class="flex flex-row items-start"
+    class="ml-2 flex flex-row items-start"
   >
     <div class="flex flex-col">
       <div class="text-s1 flex h-9 select-none items-center text-base"
@@ -57,7 +65,7 @@
     *ngIf="
       isReport === false && uiChartTypes.hideColumns.indexOf(chart.type) > -1
     "
-    class="mb-5 flex flex-row items-start"
+    class="mb-5 ml-2 flex flex-row items-start"
   >
     <div class="text-s1 flex h-9 select-none items-center text-base"
       >Hide Columns</div
@@ -86,11 +94,12 @@
 
   <div
     *ngIf="isReport === false && uiChartTypes.xField.indexOf(chart.type) > -1"
-    class="mb-5 flex flex-row items-start"
+    class="mb-5 ml-2 flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="text-s1 flex h-9 w-[100px] select-none items-center text-base"
-        >xField</div
+      <div
+        class="text-s500 flex h-9 w-[100px] select-none items-center text-base font-semibold"
+        >X Field</div
       >
     </div>
 
@@ -156,13 +165,87 @@
 
   <div
     *ngIf="
-      isReport === false && uiChartTypes.multiField.indexOf(chart.type) > -1
+      isReport === false && uiChartTypes.sizeField.indexOf(chart.type) > -1
     "
-    class="mb-5 flex flex-row items-start"
+    class="mb-5 ml-2 flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="text-s1 flex h-9 w-[100px] select-none items-center text-base"
-        >multiField</div
+      <div
+        class="text-s500 flex h-9 w-[100px] select-none items-center text-base font-semibold"
+        >Size Field</div
+      >
+    </div>
+
+    <form [formGroup]="sizeFieldForm" class="ml-5 min-w-[2px] flex-grow">
+      <ng-select
+        #sizeFieldSelect
+        data-cy="sizeFieldSelect"
+        class="text-base"
+        [items]="numbersDimensionsMeasuresCalculationsPlusEmpty"
+        [clearable]="false"
+        [searchable]="false"
+        (change)="sizeFieldChange()"
+        (keyup.esc)="$event.stopImmediatePropagation(); sizeFieldSelect.blur()"
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); sizeFieldSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="id"
+        formControlName="sizeField"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 flex flex-row items-center">
+            <m-field-result
+              class="h-5 w-5"
+              [size]="2"
+              [fieldClass]="item.fieldClass"
+              [result]="item.result"
+              [isEmpty]="!item.id"
+            ></m-field-result>
+
+            <m-field-label
+              *ngIf="!!item.id"
+              [column]="item"
+              class="ml-3 flex text-sm"
+            ></m-field-label>
+          </div>
+        </ng-template>
+        <ng-template
+          ng-option-tmp
+          let-item="item"
+          let-index="index"
+          let-search="searchTerm"
+        >
+          <div class="ml-1 flex flex-row items-center">
+            <m-field-result
+              class="h-5 w-5"
+              [size]="2"
+              [fieldClass]="item.fieldClass"
+              [result]="item.result"
+              [isEmpty]="!item.id"
+            ></m-field-result>
+
+            <m-field-label
+              [column]="item"
+              class="ml-3 flex text-sm"
+            ></m-field-label>
+          </div>
+        </ng-template>
+      </ng-select>
+    </form>
+  </div>
+
+  <div
+    *ngIf="
+      isReport === false && uiChartTypes.multiField.indexOf(chart.type) > -1
+    "
+    class="mb-5 ml-2 flex flex-row items-start"
+  >
+    <div class="flex flex-col">
+      <div
+        class="text-s500 flex h-9 w-[100px] select-none items-center text-base font-semibold"
+        >Multi Field</div
       >
     </div>
 
@@ -248,11 +331,12 @@
 
   <div
     *ngIf="isReport === false && uiChartTypes.yField.indexOf(chart.type) > -1"
-    class="mb-5 flex flex-row items-start"
+    class="mb-5 ml-2 flex flex-row items-start"
   >
     <div class="flex flex-col">
-      <div class="text-s1 flex h-9 w-[100px] select-none items-center text-base"
-        >yField</div
+      <div
+        class="text-s500 flex h-9 w-[100px] select-none items-center text-base font-semibold"
+        >Y Field</div
       >
     </div>
 
@@ -313,10 +397,11 @@
 
   <div
     *ngIf="isReport === false && uiChartTypes.yFields.indexOf(chart.type) > -1"
-    class="mb-5 flex flex-row items-start"
+    class="mb-5 ml-2 flex flex-row items-start"
   >
-    <div class="text-s1 flex h-9 w-[100px] select-none items-center text-base"
-      >yFields</div
+    <div
+      class="text-s500 flex h-9 w-[100px] select-none items-center text-base font-semibold"
+      >Y Fields</div
     >
 
     <div class="ml-5 mt-2 flex flex-col items-start space-y-4">
@@ -353,90 +438,37 @@
   </div>
 
   <div
+    *ngIf="isReport === false && chart?.type !== chartTypeEnumTable"
+    class="text-s500 mt-7 flex h-12 cursor-pointer select-none flex-row items-start justify-start pr-5 font-semibold"
+    (click)="toggleChartOptions()"
+  >
+    <m-chevron-right-icon
+      *ngIf="chartOptionsIsExpanded === false"
+    ></m-chevron-right-icon>
+    <m-chevron-down-icon
+      *ngIf="chartOptionsIsExpanded === true"
+    ></m-chevron-down-icon>
+
+    <div class="ml-2"> CHART OPTIONS </div>
+  </div>
+
+  <div
+    *ngIf="isReport === true"
+    class="text-s500 mt-5 flex h-12 cursor-pointer select-none flex-row items-start justify-start pl-2 pr-5 font-semibold"
+    (click)="toggleChartOptions()"
+  >
+    <div> CHART OPTIONS </div>
+  </div>
+
+  <div
     *ngIf="
-      isReport === false && uiChartTypes.sizeField.indexOf(chart.type) > -1
+      (chartOptionsIsExpanded === true || isReport === true) &&
+      uiChartTypes.seriesGroup.indexOf(chart.type) > -1
     "
-    class="mb-5 flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="text-s1 flex h-9 w-[100px] select-none items-center text-base"
-        >sizeField</div
-      >
-    </div>
-
-    <form [formGroup]="sizeFieldForm" class="ml-5 min-w-[2px] flex-grow">
-      <ng-select
-        #sizeFieldSelect
-        data-cy="sizeFieldSelect"
-        class="text-base"
-        [items]="numbersDimensionsMeasuresCalculationsPlusEmpty"
-        [clearable]="false"
-        [searchable]="false"
-        (change)="sizeFieldChange()"
-        (keyup.esc)="$event.stopImmediatePropagation(); sizeFieldSelect.blur()"
-        (keyup.enter)="
-          $event.stopImmediatePropagation(); sizeFieldSelect.blur()
-        "
-        appendTo="body"
-        bindLabel="label"
-        bindValue="id"
-        formControlName="sizeField"
-      >
-        <ng-template ng-label-tmp let-item="item">
-          <div class="ml-1 flex flex-row items-center">
-            <m-field-result
-              class="h-5 w-5"
-              [size]="2"
-              [fieldClass]="item.fieldClass"
-              [result]="item.result"
-              [isEmpty]="!item.id"
-            ></m-field-result>
-
-            <m-field-label
-              *ngIf="!!item.id"
-              [column]="item"
-              class="ml-3 flex text-sm"
-            ></m-field-label>
-          </div>
-        </ng-template>
-        <ng-template
-          ng-option-tmp
-          let-item="item"
-          let-index="index"
-          let-search="searchTerm"
-        >
-          <div class="ml-1 flex flex-row items-center">
-            <m-field-result
-              class="h-5 w-5"
-              [size]="2"
-              [fieldClass]="item.fieldClass"
-              [result]="item.result"
-              [isEmpty]="!item.id"
-            ></m-field-result>
-
-            <m-field-label
-              [column]="item"
-              class="ml-3 flex text-sm"
-            ></m-field-label>
-          </div>
-        </ng-template>
-      </ng-select>
-    </form>
-  </div>
-
-  <div
-    class="text-s500 mb-5 flex select-none flex-row justify-start font-semibold"
-    [ngClass]="{
-      'mt-7': isReport === false,
-      'ml-2 mt-5': isReport === true
-    }"
-  >
-    CHART OPTIONS
-  </div>
-
-  <div
-    *ngIf="uiChartTypes.seriesGroup.indexOf(chart.type) > -1"
     class="flex flex-col"
+    [ngClass]="{
+      'pl-5': isReport === false
+    }"
   >
     <div
       *ngFor="let seriesElement of chartSeriesWithField; let i = index"
@@ -458,11 +490,17 @@
   </div>
 
   <div
-    *ngIf="uiChartTypes.xAxisGroup.indexOf(chart.type) > -1"
+    *ngIf="
+      (chartOptionsIsExpanded === true || isReport === true) &&
+      uiChartTypes.xAxisGroup.indexOf(chart.type) > -1
+    "
     class="flex flex-col"
+    [ngClass]="{
+      'pl-5': isReport === false
+    }"
   >
     <div
-      (click)="toggleXAxisPanel()"
+      (click)="toggleXAxis()"
       class="text-s1 mb-5 flex w-[100px] cursor-pointer select-none flex-row items-start text-lg font-semibold"
     >
       <div class="flex flex-row items-center">
@@ -494,12 +532,18 @@
   </div>
 
   <div
-    *ngIf="uiChartTypes.yAxisGroup.indexOf(chart.type) > -1"
+    *ngIf="
+      (chartOptionsIsExpanded === true || isReport === true) &&
+      uiChartTypes.yAxisGroup.indexOf(chart.type) > -1
+    "
     class="flex flex-col"
+    [ngClass]="{
+      'pl-5': isReport === false
+    }"
   >
     <!-- <div class="flex flex-row">
       <div
-        (click)="toggleYAxisPanel()"
+        (click)="toggleYAxis()"
         class="text-s1 mb-5 flex cursor-pointer select-none flex-row items-start text-lg font-semibold"
       >
         <div class="flex flex-row items-center">
