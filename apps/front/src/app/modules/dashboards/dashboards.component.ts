@@ -57,6 +57,11 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   pathDashboards = common.PATH_DASHBOARDS;
 
   showTileParameters = false;
+  showTileParameters$ = this.uiQuery.showTileParameters$.pipe(
+    tap(x => {
+      this.showTileParameters = x;
+    })
+  );
 
   timezoneForm = this.fb.group({
     timezone: [undefined]
@@ -226,6 +231,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
 
     // this.searchWordChange();
+
+    this.uiQuery.updatePart({
+      showTileParameters: false
+    });
 
     setTimeout(() => {
       this.scrollToSelectedDashboard({ isSmooth: false });
@@ -488,6 +497,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   toggleShowTileParameters() {
     this.showTileParameters = !this.showTileParameters;
+
+    this.uiQuery.updatePart({
+      showTileParameters: this.showTileParameters
+    });
   }
 
   toggleAutoRun() {

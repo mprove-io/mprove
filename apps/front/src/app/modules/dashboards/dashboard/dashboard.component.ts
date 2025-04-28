@@ -67,6 +67,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   filtersIsExpanded = false;
 
   showTileParameters = false;
+  showTileParameters$ = this.uiQuery.showTileParameters$.pipe(
+    tap(x => {
+      this.showTileParameters = x;
+    })
+  );
 
   dashboard: common.DashboardX;
   dashboard$ = this.dashboardQuery.select().pipe(
