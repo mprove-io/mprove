@@ -3,10 +3,12 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
   Output,
   QueryList,
+  SimpleChanges,
   ViewChildren
 } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -14,6 +16,7 @@ import { Subscription, interval, of } from 'rxjs';
 import { concatMap, take, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DeleteFilterFnItem } from '~front/app/interfaces/delete-filter-fn-item';
+import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -28,7 +31,9 @@ import { ChartViewComponent } from '../chart-view/chart-view.component';
   selector: 'm-dashboard-tile-chart',
   templateUrl: './dashboard-tile-chart.component.html'
 })
-export class DashboardTileChartComponent implements OnInit, OnDestroy {
+export class DashboardTileChartComponent
+  implements OnInit, OnChanges, OnDestroy
+{
   chartTypeEnumTable = common.ChartTypeEnum.Table;
   queryStatusEnum = common.QueryStatusEnum;
   queryStatusRunning = common.QueryStatusEnum.Running;
@@ -65,8 +70,6 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
   @Output() dashTileDeleted =
     new EventEmitter<interfaces.EventDashTileDeleted>();
 
-  @Output() queryUpdated = new EventEmitter<common.Query>();
-
   qData: QDataRow[];
 
   checkRunning$: Subscription;
@@ -92,6 +95,7 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private navQuery: NavQuery,
     private memberQuery: MemberQuery,
+    private dashboardQuery: DashboardQuery,
     private dataService: DataService,
     private cd: ChangeDetectorRef,
     private myDialogService: MyDialogService,
@@ -171,6 +175,16 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      common.isDefined(changes.query) &&
+      changes.query.currentValue.status === common.QueryStatusEnum.Running &&
+      changes.query.previousValue.status !== common.QueryStatusEnum.Running
+    ) {
+      this.showSpinner();
+    }
+  }
+
   updateChartView() {
     this.chartViewComponents.forEach(x => {
       x.chartViewUpdateChart();
@@ -217,8 +231,6 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
   updateQuery(query: common.Query) {
     this.query = query;
 
-    this.queryUpdated.emit(this.query);
-
     if (this.query.status !== common.QueryStatusEnum.Running) {
       this.spinner.hide(this.tile.title);
     }
@@ -230,6 +242,20 @@ export class DashboardTileChartComponent implements OnInit, OnDestroy {
             mconfigFields: this.mconfig.fields
           })
         : [];
+
+    let newDashboard = Object.assign({}, this.dashboard, {
+      tiles: this.dashboard.tiles.map(x => {
+        if (x.queryId === this.query.queryId) {
+          let newTile = Object.assign({}, x);
+          newTile.query = this.query;
+          return newTile;
+        } else {
+          return x;
+        }
+      })
+    });
+
+    this.dashboardQuery.update(newDashboard);
 
     this.cd.detectChanges();
   }

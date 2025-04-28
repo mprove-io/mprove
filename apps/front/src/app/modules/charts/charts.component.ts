@@ -671,7 +671,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
       this.refreshSubscription.unsubscribe();
     }
 
-    this.refreshId = this.chart.chartId;
+    this.refreshId = this.chart?.chartId;
 
     if (common.isUndefined(refreshValueSeconds) || refreshValueSeconds === 0) {
       return;

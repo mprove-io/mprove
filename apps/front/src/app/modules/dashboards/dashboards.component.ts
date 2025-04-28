@@ -11,7 +11,10 @@ import { FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import uFuzzy from '@leeoniya/ufuzzy';
-import { filter, take, tap } from 'rxjs/operators';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { Subscription, from, interval, of } from 'rxjs';
+import { concatMap, delay, filter, startWith, take, tap } from 'rxjs/operators';
+import { RefreshItem } from '~front/app/interfaces/refresh-item';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { FilteredDashboardsQuery } from '~front/app/queries/filtered-dashboards.query';
@@ -27,6 +30,7 @@ import { DashboardService } from '~front/app/services/dashboard.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { UiService } from '~front/app/services/ui.service';
+import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
@@ -46,6 +50,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
 
   pageTitle = constants.DASHBOARDS_PAGE_TITLE;
+
+  dashboardsRunButtonSpinnerName = 'dashboardsRunButtonSpinnerName';
 
   pathDashboardsList = common.PATH_DASHBOARDS_LIST;
   pathDashboards = common.PATH_DASHBOARDS;
@@ -110,18 +116,49 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     })
   );
 
+  isRunButtonPressed = false;
+
+  isCompleted = false;
+  lastCompletedQuery: common.Query;
+
+  refreshProgress = 0;
+  refreshSubscription: Subscription;
+  refreshId: string;
+
+  isAutoRun = true;
+  isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
+    tap(x => {
+      this.isAutoRun = x;
+      this.checkRefreshSelector();
+
+      this.cd.detectChanges();
+    })
+  );
+
   dashboard: common.DashboardX;
   dashboard$ = this.dashboardQuery.select().pipe(
     tap(x => {
       this.dashboard = x;
 
-      if (common.isDefined(this.dashboard?.dashboardId)) {
-        this.title.setTitle(
-          `${this.pageTitle} - ${
-            this.dashboard?.title || this.dashboard?.dashboardId
-          }`
-        );
+      this.checkQueries();
+
+      // if (common.isDefined(this.dashboard?.dashboardId)) {
+      //   this.title.setTitle(
+      //     `${this.pageTitle} - ${
+      //       this.dashboard?.title || this.dashboard?.dashboardId
+      //     }`
+      //   );
+      // }
+
+      this.isAutoRun = this.uiQuery.getValue().isAutoRun;
+      if (
+        this.isAutoRun === true &&
+        this.dashboard.dashboardId !== this.refreshId
+      ) {
+        this.refreshForm.controls.refresh.setValue(0);
+        this.refreshChange();
       }
+      this.checkAutoRun();
 
       this.cd.detectChanges();
 
@@ -154,6 +191,14 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     })
   );
 
+  refreshForm = this.fb.group({
+    refresh: [undefined]
+  });
+
+  refreshList: RefreshItem[] = constants.REFRESH_LIST;
+
+  runButtonTimerSubscription: Subscription;
+
   private timer: any;
 
   constructor(
@@ -167,6 +212,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private structDashboardResolver: StructDashboardResolver,
     private structQuery: StructQuery,
     private apiService: ApiService,
+    private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private dashboardsQuery: DashboardsQuery,
@@ -451,10 +497,247 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
+  toggleAutoRun() {
+    let newIsAutoRunValue = !this.isAutoRun;
+
+    this.isAutoRun = newIsAutoRunValue;
+    this.checkAutoRun();
+
+    this.uiQuery.updatePart({ isAutoRun: newIsAutoRunValue });
+    this.uiService.setUserUi({ isAutoRun: newIsAutoRunValue });
+  }
+
+  checkAutoRun() {
+    // console.log('checkAutoRun');
+
+    let newQueries = this.dashboard.tiles.filter(
+      tile =>
+        common.isDefined(tile.query) &&
+        tile.query.status === common.QueryStatusEnum.New
+    );
+
+    if (this.isAutoRun === true && newQueries.length > 0) {
+      setTimeout(() => {
+        // console.log('checkAutoRun run');
+        this.run();
+      }, 0);
+    }
+  }
+
+  checkRefreshSelector() {
+    if (this.isAutoRun === false) {
+      if (common.isDefined(this.refreshForm.controls.refresh.value)) {
+        this.refreshForm.controls.refresh.setValue(undefined);
+      }
+
+      if (this.refreshForm.controls.refresh.enabled) {
+        this.refreshForm.controls.refresh.disable();
+      }
+
+      this.refreshChange();
+    } else if (this.isAutoRun === true) {
+      if (common.isUndefined(this.refreshForm.controls.refresh.value)) {
+        this.refreshForm.controls.refresh.setValue(0);
+      }
+
+      if (this.refreshForm.controls.refresh.disabled) {
+        this.refreshForm.controls.refresh.enable();
+      }
+    }
+  }
+
+  refreshChange() {
+    let refreshValueSeconds: number =
+      this.refreshForm.controls['refresh'].value;
+
+    this.refreshProgress = 0;
+
+    if (this.refreshSubscription) {
+      this.refreshSubscription.unsubscribe();
+    }
+
+    this.refreshId = this.dashboard?.dashboardId;
+
+    if (common.isUndefined(refreshValueSeconds) || refreshValueSeconds === 0) {
+      return;
+    }
+
+    let intervalMs = refreshValueSeconds * 1000;
+
+    let part = refreshValueSeconds >= 5 * 60 ? 1000 : 50;
+
+    this.refreshSubscription = interval(part).subscribe(() => {
+      this.refreshProgress = Math.min(
+        this.refreshProgress + (part / intervalMs) * 100,
+        100
+      );
+
+      if (this.refreshProgress >= 100) {
+        this.refreshProgress = 0;
+
+        // if (this.isRunButtonPressed === false) {
+        this.run();
+        // }
+      }
+    });
+  }
+
+  run() {
+    this.startRunButtonTimer();
+
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
+    let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
+      projectId: nav.projectId,
+      queryIds: this.dashboard.tiles.map(tile => tile.queryId)
+    };
+
+    this.apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let { runningQueries } = resp.payload;
+
+            let newDashboard = Object.assign({}, this.dashboard, {
+              tiles: this.dashboard.tiles.map(x => {
+                let newTile = Object.assign({}, x);
+                let query = runningQueries.find(q => q.queryId === x.queryId);
+                newTile.query = query;
+                return newTile;
+              })
+            });
+
+            this.dashboardQuery.update(newDashboard);
+
+            // this.dashboard.tiles = this.dashboard.tiles.map(x => {
+            //   let newTile = Object.assign({}, x);
+            //   let query = runningQueries.find(q => q.queryId === x.queryId);
+            //   newTile.query = query;
+            //   return newTile;
+            // });
+
+            // this.chartRepComponents.forEach(x => {
+            //   x.showSpinner();
+            // });
+
+            // this.dashboard = Object.assign({}, this.dashboard);
+
+            // this.layout = this.dashboard.tiles.map(
+            //   tile =>
+            //     <LayoutItem>{
+            //       id: tile.title,
+            //       x: common.isDefined(tile.plateX)
+            //         ? tile.plateX
+            //         : common.TILE_DEFAULT_PLATE_X,
+            //       y: common.isDefined(tile.plateY)
+            //         ? tile.plateY
+            //         : common.TILE_DEFAULT_PLATE_Y,
+            //       w: common.isDefined(tile.plateWidth)
+            //         ? tile.plateWidth
+            //         : common.TILE_DEFAULT_PLATE_WIDTH,
+            //       h: common.isDefined(tile.plateHeight)
+            //         ? tile.plateHeight
+            //         : common.TILE_DEFAULT_PLATE_HEIGHT,
+            //       tile: tile
+            //     }
+            // );
+
+            this.checkQueries();
+            this.cd.detectChanges();
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  startRunButtonTimer() {
+    this.isRunButtonPressed = true;
+    this.spinner.show(this.dashboardsRunButtonSpinnerName);
+    this.cd.detectChanges();
+
+    this.runButtonTimerSubscription = from([0])
+      .pipe(
+        concatMap(v => of(v).pipe(delay(2000))),
+        startWith(1),
+        tap(x => {
+          if (x === 0) {
+            this.spinner.hide(this.dashboardsRunButtonSpinnerName);
+            this.isRunButtonPressed = false;
+            this.cd.detectChanges();
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  checkQueries() {
+    let newQueriesLength = [
+      ...this.dashboard.tiles.filter(
+        r =>
+          common.isDefined(r.query) &&
+          r.query.status === common.QueryStatusEnum.New
+      )
+    ].map(r => r.query).length;
+
+    let runningQueriesLength = [
+      ...this.dashboard.tiles.filter(
+        r =>
+          common.isDefined(r.query) &&
+          r.query.status === common.QueryStatusEnum.Running
+      )
+    ].map(r => r.query).length;
+
+    let completedQueries = [
+      ...this.dashboard.tiles.filter(
+        r =>
+          common.isDefined(r.query) &&
+          r.query.status === common.QueryStatusEnum.Completed
+      )
+    ]
+      .map(r => r.query)
+      .sort((a, b) =>
+        a.lastCompleteTs > b.lastCompleteTs
+          ? 1
+          : b.lastCompleteTs > a.lastCompleteTs
+          ? -1
+          : 0
+      );
+
+    if (
+      newQueriesLength === 0 &&
+      runningQueriesLength === 0 &&
+      completedQueries.length > 0
+    ) {
+      this.isCompleted = true;
+      this.lastCompletedQuery = completedQueries[completedQueries.length - 1];
+    } else {
+      this.isCompleted = false;
+      this.lastCompletedQuery = undefined;
+    }
+  }
+
   ngOnDestroy() {
     // console.log('ngOnDestroyDashboards')
     if (this.timer) {
       clearTimeout(this.timer);
     }
+
+    this.refreshSubscription?.unsubscribe();
+    this.runButtonTimerSubscription?.unsubscribe();
   }
 }

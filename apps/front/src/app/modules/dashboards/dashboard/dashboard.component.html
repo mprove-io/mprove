@@ -150,7 +150,7 @@
                 [tpIsEnabled]="isAutoRun === false"
               >
                 <div
-                  *ngIf="refreshForm.controls['refresh'].value !== 0"
+                  *ngIf="isAutoRun === true && refreshForm.controls['refresh'].value !== 0"
                   class="h-[6px] w-full"
                 ></div>
 
@@ -185,7 +185,7 @@
                 </form>
 
                 <div
-                  *ngIf="refreshForm.controls['refresh'].value !== 0"
+                  *ngIf="isAutoRun === true && refreshForm.controls['refresh'].value !== 0"
                   class="bg-s200 h-[6px] w-full overflow-hidden rounded-full"
                 >
                   <div
@@ -355,7 +355,6 @@
                   [query]="item.tile.query"
                   [showBricks]="showBricks"
                   (dashTileDeleted)="tileDeleted($event)"
-                  (queryUpdated)="tileQueryUpdated($event, item.tile.title)"
                 ></m-dashboard-tile-chart>
               </div>
               <m-resize-icon
@@ -371,7 +370,6 @@
 </div>
 
 <div *ngIf="dashboard$ | async"></div>
-<div *ngIf="isAutoRun$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
 <div *ngIf="alias$ | async"></div>

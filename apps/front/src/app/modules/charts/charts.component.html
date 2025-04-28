@@ -188,7 +188,10 @@
                 [tpIsEnabled]="isAutoRun === false"
               >
                 <div
-                  *ngIf="refreshForm.controls['refresh'].value !== 0"
+                  *ngIf="
+                    isAutoRun === true &&
+                    refreshForm.controls['refresh'].value !== 0
+                  "
                   class="h-[6px] w-full"
                 ></div>
 
@@ -223,7 +226,10 @@
                 </form>
 
                 <div
-                  *ngIf="refreshForm.controls['refresh'].value !== 0"
+                  *ngIf="
+                    isAutoRun === true &&
+                    refreshForm.controls['refresh'].value !== 0
+                  "
                   class="bg-s200 h-[6px] w-full overflow-hidden rounded-full"
                 >
                   <div

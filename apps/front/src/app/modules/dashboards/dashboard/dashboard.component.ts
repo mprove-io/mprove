@@ -13,16 +13,8 @@ import { FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Subscription, from, fromEvent, interval, merge, of } from 'rxjs';
-import {
-  concatMap,
-  debounceTime,
-  delay,
-  filter,
-  startWith,
-  take,
-  tap
-} from 'rxjs/operators';
+import { Subscription, fromEvent, merge } from 'rxjs';
+import { debounceTime, filter, tap } from 'rxjs/operators';
 import { DeleteFilterFnItem } from '~front/app/interfaces/delete-filter-fn-item';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -34,17 +26,12 @@ import { DashboardService } from '~front/app/services/dashboard.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { common } from '~front/barrels/common';
-import {
-  constants,
-  constants as frontConstants
-} from '~front/barrels/constants';
+import { constants as frontConstants } from '~front/barrels/constants';
 
 import { ActivatedRoute, Router } from '@angular/router';
-import { RefreshItem } from '~front/app/interfaces/refresh-item';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { StructDashboardResolver } from '~front/app/resolvers/struct-dashboard.resolver';
 import { UiService } from '~front/app/services/ui.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
 import { interfaces } from '~front/barrels/interfaces';
 import { DashboardTileChartComponent } from '../../shared/dashboard-tile-chart/dashboard-tile-chart.component';
 
@@ -67,17 +54,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   pageTitle = frontConstants.DASHBOARD_PAGE_TITLE;
 
-  dashboardRunButtonSpinnerName = 'dashboardRunButtonSpinnerName';
-
-  // @ViewChild(KtdGridComponent, {static: true}) grid: KtdGridComponent;
-
   @ViewChild('scrollable') scrollable: any;
 
   @ViewChildren('chartRep')
   chartRepComponents: QueryList<DashboardTileChartComponent>;
-
-  // @ViewChildren('chartRep', { read: ElementRef })
-  // myItemElementRefs: QueryList<ElementRef>;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -91,41 +71,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   scrollSpeed = 8;
 
-  isRunButtonPressed = false;
-
   filtersIsExpanded = false;
 
   showBricks = false;
 
   isShow = true;
 
-  isCompleted = false;
-  lastCompletedQuery: common.Query;
-
-  refreshProgress = 0;
-  refreshSubscription: Subscription;
-  refreshId: string;
-
-  isAutoRun = true;
-  isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
-    tap(x => {
-      this.isAutoRun = x;
-      this.checkRefreshSelector();
-
-      this.cd.detectChanges();
-    })
-  );
-
   dashboard: common.DashboardX;
   dashboard$ = this.dashboardQuery.select().pipe(
     filter(x => common.isDefined(x.dashboardId)),
     tap(x => {
       this.dashboard = x;
-
-      // console.log('this.dashboard.extendedFilters');
-      // console.log(this.dashboard.extendedFilters);
-
-      this.checkQueries();
 
       this.title.setTitle(
         `${this.pageTitle} - ${
@@ -153,25 +109,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           }
       );
 
-      this.isAutoRun = this.uiQuery.getValue().isAutoRun;
-      if (
-        this.isAutoRun === true &&
-        this.dashboard.dashboardId !== this.refreshId
-      ) {
-        this.refreshForm.controls.refresh.setValue(0);
-        this.refreshChange();
-      }
-      this.checkAutoRun();
-
       this.cd.detectChanges();
     })
   );
-
-  refreshForm = this.fb.group({
-    refresh: [undefined]
-  });
-
-  refreshList: RefreshItem[] = constants.REFRESH_LIST;
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -196,8 +136,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   );
 
   deleteFilterFnBindThis = this.deleteFilterFn.bind(this);
-
-  runButtonTimerSubscription: Subscription;
 
   private resizeSubscription: Subscription;
   private scrollSubscription: Subscription;
@@ -258,91 +196,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  toggleAutoRun() {
-    let newIsAutoRunValue = !this.isAutoRun;
-
-    this.isAutoRun = newIsAutoRunValue;
-    this.checkAutoRun();
-
-    this.uiQuery.updatePart({ isAutoRun: newIsAutoRunValue });
-    this.uiService.setUserUi({ isAutoRun: newIsAutoRunValue });
-  }
-
-  checkAutoRun() {
-    // console.log('checkAutoRun');
-
-    let newQueries = this.dashboard.tiles.filter(
-      tile =>
-        common.isDefined(tile.query) &&
-        tile.query.status === common.QueryStatusEnum.New
-    );
-
-    if (this.isAutoRun === true && newQueries.length > 0) {
-      setTimeout(() => {
-        // console.log('checkAutoRun run');
-        this.run();
-      }, 0);
-    }
-  }
-
-  checkRefreshSelector() {
-    if (this.isAutoRun === false) {
-      if (common.isDefined(this.refreshForm.controls.refresh.value)) {
-        this.refreshForm.controls.refresh.setValue(undefined);
-      }
-
-      if (this.refreshForm.controls.refresh.enabled) {
-        this.refreshForm.controls.refresh.disable();
-      }
-
-      this.refreshChange();
-    } else if (this.isAutoRun === true) {
-      if (common.isUndefined(this.refreshForm.controls.refresh.value)) {
-        this.refreshForm.controls.refresh.setValue(0);
-      }
-
-      if (this.refreshForm.controls.refresh.disabled) {
-        this.refreshForm.controls.refresh.enable();
-      }
-    }
-  }
-
-  refreshChange() {
-    let refreshValueSeconds: number =
-      this.refreshForm.controls['refresh'].value;
-
-    this.refreshProgress = 0;
-
-    if (this.refreshSubscription) {
-      this.refreshSubscription.unsubscribe();
-    }
-
-    this.refreshId = this.dashboard.dashboardId;
-
-    if (common.isUndefined(refreshValueSeconds) || refreshValueSeconds === 0) {
-      return;
-    }
-
-    let intervalMs = refreshValueSeconds * 1000;
-
-    let part = refreshValueSeconds >= 5 * 60 ? 1000 : 50;
-
-    this.refreshSubscription = interval(part).subscribe(() => {
-      this.refreshProgress = Math.min(
-        this.refreshProgress + (part / intervalMs) * 100,
-        100
-      );
-
-      if (this.refreshProgress >= 100) {
-        this.refreshProgress = 0;
-
-        // if (this.isRunButtonPressed === false) {
-        this.run();
-        // }
-      }
-    });
-  }
-
   toggleFiltersPanel() {
     this.filtersIsExpanded = !this.filtersIsExpanded;
   }
@@ -374,61 +227,51 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.refreshShow();
   }
 
-  tileQueryUpdated(query: common.Query, tileTitle: string) {
-    let tile = this.dashboard.tiles.find(x => x.title === tileTitle);
-    if (common.isDefined(tile) && tile.query.queryId === query.queryId) {
-      tile.query = query;
-    }
+  // checkQueries() {
+  //   let newQueriesLength = [
+  //     ...this.dashboard.tiles.filter(
+  //       r =>
+  //         common.isDefined(r.query) &&
+  //         r.query.status === common.QueryStatusEnum.New
+  //     )
+  //   ].map(r => r.query).length;
 
-    this.checkQueries();
-    this.cd.detectChanges();
-  }
+  //   let runningQueriesLength = [
+  //     ...this.dashboard.tiles.filter(
+  //       r =>
+  //         common.isDefined(r.query) &&
+  //         r.query.status === common.QueryStatusEnum.Running
+  //     )
+  //   ].map(r => r.query).length;
 
-  checkQueries() {
-    let newQueriesLength = [
-      ...this.dashboard.tiles.filter(
-        r =>
-          common.isDefined(r.query) &&
-          r.query.status === common.QueryStatusEnum.New
-      )
-    ].map(r => r.query).length;
+  //   let completedQueries = [
+  //     ...this.dashboard.tiles.filter(
+  //       r =>
+  //         common.isDefined(r.query) &&
+  //         r.query.status === common.QueryStatusEnum.Completed
+  //     )
+  //   ]
+  //     .map(r => r.query)
+  //     .sort((a, b) =>
+  //       a.lastCompleteTs > b.lastCompleteTs
+  //         ? 1
+  //         : b.lastCompleteTs > a.lastCompleteTs
+  //         ? -1
+  //         : 0
+  //     );
 
-    let runningQueriesLength = [
-      ...this.dashboard.tiles.filter(
-        r =>
-          common.isDefined(r.query) &&
-          r.query.status === common.QueryStatusEnum.Running
-      )
-    ].map(r => r.query).length;
-
-    let completedQueries = [
-      ...this.dashboard.tiles.filter(
-        r =>
-          common.isDefined(r.query) &&
-          r.query.status === common.QueryStatusEnum.Completed
-      )
-    ]
-      .map(r => r.query)
-      .sort((a, b) =>
-        a.lastCompleteTs > b.lastCompleteTs
-          ? 1
-          : b.lastCompleteTs > a.lastCompleteTs
-          ? -1
-          : 0
-      );
-
-    if (
-      newQueriesLength === 0 &&
-      runningQueriesLength === 0 &&
-      completedQueries.length > 0
-    ) {
-      this.isCompleted = true;
-      this.lastCompletedQuery = completedQueries[completedQueries.length - 1];
-    } else {
-      this.isCompleted = false;
-      this.lastCompletedQuery = undefined;
-    }
-  }
+  //   if (
+  //     newQueriesLength === 0 &&
+  //     runningQueriesLength === 0 &&
+  //     completedQueries.length > 0
+  //   ) {
+  //     this.isCompleted = true;
+  //     this.lastCompletedQuery = completedQueries[completedQueries.length - 1];
+  //   } else {
+  //     this.isCompleted = false;
+  //     this.lastCompletedQuery = undefined;
+  //   }
+  // }
 
   onDragStarted(event: any) {
     // console.log('onDragStarted');
@@ -498,99 +341,92 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  run() {
-    this.startRunButtonTimer();
+  // run() {
+  //   this.startRunButtonTimer();
 
-    let nav: NavState;
-    this.navQuery
-      .select()
-      .pipe(
-        tap(x => {
-          nav = x;
-        }),
-        take(1)
-      )
-      .subscribe();
+  //   let nav: NavState;
+  //   this.navQuery
+  //     .select()
+  //     .pipe(
+  //       tap(x => {
+  //         nav = x;
+  //       }),
+  //       take(1)
+  //     )
+  //     .subscribe();
 
-    let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
-      projectId: nav.projectId,
-      queryIds: this.dashboard.tiles.map(tile => tile.queryId)
-    };
+  //   let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
+  //     projectId: nav.projectId,
+  //     queryIds: this.dashboard.tiles.map(tile => tile.queryId)
+  //   };
 
-    this.apiService
-      .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
-        payload: payload
-      })
-      .pipe(
-        tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let { runningQueries } = resp.payload;
+  //   this.apiService
+  //     .req({
+  //       pathInfoName:
+  //         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+  //       payload: payload
+  //     })
+  //     .pipe(
+  //       tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
+  //         if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+  //           let { runningQueries } = resp.payload;
 
-            this.dashboard.tiles = this.dashboard.tiles.map(x => {
-              let newTile = Object.assign({}, x);
-              let query = runningQueries.find(q => q.queryId === x.queryId);
-              newTile.query = query;
-              return newTile;
-            });
+  //           this.dashboard.tiles = this.dashboard.tiles.map(x => {
+  //             let newTile = Object.assign({}, x);
+  //             let query = runningQueries.find(q => q.queryId === x.queryId);
+  //             newTile.query = query;
+  //             return newTile;
+  //           });
 
-            this.chartRepComponents.forEach(x => {
-              x.showSpinner();
-            });
+  //           this.chartRepComponents.forEach(x => {
+  //             x.showSpinner();
+  //           });
 
-            this.dashboard = Object.assign({}, this.dashboard);
+  //           this.dashboard = Object.assign({}, this.dashboard);
 
-            this.layout = this.dashboard.tiles.map(
-              tile =>
-                <LayoutItem>{
-                  id: tile.title,
-                  x: common.isDefined(tile.plateX)
-                    ? tile.plateX
-                    : common.TILE_DEFAULT_PLATE_X,
-                  y: common.isDefined(tile.plateY)
-                    ? tile.plateY
-                    : common.TILE_DEFAULT_PLATE_Y,
-                  w: common.isDefined(tile.plateWidth)
-                    ? tile.plateWidth
-                    : common.TILE_DEFAULT_PLATE_WIDTH,
-                  h: common.isDefined(tile.plateHeight)
-                    ? tile.plateHeight
-                    : common.TILE_DEFAULT_PLATE_HEIGHT,
-                  tile: tile
-                }
-            );
+  //           this.layout = this.dashboard.tiles.map(
+  //             tile =>
+  //               <LayoutItem>{
+  //                 id: tile.title,
+  //                 x: common.isDefined(tile.plateX)
+  //                   ? tile.plateX
+  //                   : common.TILE_DEFAULT_PLATE_X,
+  //                 y: common.isDefined(tile.plateY)
+  //                   ? tile.plateY
+  //                   : common.TILE_DEFAULT_PLATE_Y,
+  //                 w: common.isDefined(tile.plateWidth)
+  //                   ? tile.plateWidth
+  //                   : common.TILE_DEFAULT_PLATE_WIDTH,
+  //                 h: common.isDefined(tile.plateHeight)
+  //                   ? tile.plateHeight
+  //                   : common.TILE_DEFAULT_PLATE_HEIGHT,
+  //                 tile: tile
+  //               }
+  //           );
 
-            this.checkQueries();
-            this.cd.detectChanges();
-          }
-        }),
-        take(1)
-      )
-      .subscribe();
-  }
+  //           this.checkQueries();
+  //           this.cd.detectChanges();
+  //         }
+  //       }),
+  //       take(1)
+  //     )
+  //     .subscribe();
+  // }
 
-  editListeners() {
-    this.myDialogService.showDashboardEditListeners({
-      dashboardService: this.dashboardService,
-      apiService: this.apiService,
-      dashboard: this.dashboard
-    });
-  }
+  // editListeners() {
+  //   this.myDialogService.showDashboardEditListeners({
+  //     dashboardService: this.dashboardService,
+  //     apiService: this.apiService,
+  //     dashboard: this.dashboard
+  //   });
+  // }
 
-  saveAs() {
-    this.myDialogService.showDashboardSaveAs({
-      apiService: this.apiService,
-      dashboard: this.dashboard
-    });
-  }
-
-  addTile() {
-    this.myDialogService.showDashboardAddTile({
-      apiService: this.apiService,
-      dashboard: this.dashboard
-    });
-  }
+  // addTile() {
+  //   this.myDialogService.showDashboardAddTile({
+  //     apiService: this.apiService,
+  //     dashboard: this.dashboard
+  //   });
+  // }
 
   addFilter() {
     this.filtersIsExpanded = true;
@@ -602,25 +438,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  startRunButtonTimer() {
-    this.isRunButtonPressed = true;
-    this.spinner.show(this.dashboardRunButtonSpinnerName);
-    this.cd.detectChanges();
+  // startRunButtonTimer() {
+  //   this.isRunButtonPressed = true;
+  //   this.spinner.show(this.dashboardRunButtonSpinnerName);
+  //   this.cd.detectChanges();
 
-    this.runButtonTimerSubscription = from([0])
-      .pipe(
-        concatMap(v => of(v).pipe(delay(2000))),
-        startWith(1),
-        tap(x => {
-          if (x === 0) {
-            this.spinner.hide(this.dashboardRunButtonSpinnerName);
-            this.isRunButtonPressed = false;
-            this.cd.detectChanges();
-          }
-        })
-      )
-      .subscribe();
-  }
+  //   this.runButtonTimerSubscription = from([0])
+  //     .pipe(
+  //       concatMap(v => of(v).pipe(delay(2000))),
+  //       startWith(1),
+  //       tap(x => {
+  //         if (x === 0) {
+  //           this.spinner.hide(this.dashboardRunButtonSpinnerName);
+  //           this.isRunButtonPressed = false;
+  //           this.cd.detectChanges();
+  //         }
+  //       })
+  //     )
+  //     .subscribe();
+  // }
 
   deleteFilterFn(item: DeleteFilterFnItem) {
     let { filterFieldId, tileTitle } = item;
@@ -638,8 +474,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.refreshSubscription?.unsubscribe();
-    this.runButtonTimerSubscription?.unsubscribe();
+    // this.refreshSubscription?.unsubscribe();
+    // this.runButtonTimerSubscription?.unsubscribe();
     this.resizeSubscription?.unsubscribe();
     this.scrollSubscription?.unsubscribe();
     //

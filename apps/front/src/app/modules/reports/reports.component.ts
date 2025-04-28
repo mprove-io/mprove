@@ -1068,7 +1068,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       this.refreshSubscription.unsubscribe();
     }
 
-    this.refreshId = this.report.reportId;
+    this.refreshId = this.report?.reportId;
 
     if (common.isUndefined(refreshValueSeconds) || refreshValueSeconds === 0) {
       return;
