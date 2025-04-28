@@ -14,12 +14,9 @@
               </div>
 
               <m-left-panel-icon
-                class="ml-5 flex-shrink-0 cursor-pointer"
-                [ngClass]="{
-                  'text-s500': showDashboardsLeftPanel === true,
-                  'text-s400': showDashboardsLeftPanel === false
-                }"
+                class="text-s500 ml-5 flex-shrink-0 cursor-pointer"
                 (click)="toggleShowLeft()"
+                [isFilled]="showDashboardsLeftPanel === true"
               ></m-left-panel-icon>
 
               <div

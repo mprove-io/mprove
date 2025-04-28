@@ -10,6 +10,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { ModelQuery } from '~front/app/queries/model.query';
 
 @Component({
   selector: 'm-models-list',
@@ -46,6 +47,13 @@ export class ModelsListComponent implements OnInit, OnDestroy {
     })
   );
 
+  modelId: string;
+  model$ = this.modelQuery.select().pipe(
+    tap(x => {
+      this.modelId = x.modelId;
+    })
+  );
+
   word: string;
 
   private timer: any;
@@ -56,6 +64,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private modelsQuery: ModelsQuery,
     private memberQuery: MemberQuery,
+    private modelQuery: ModelQuery,
     private navigateService: NavigateService,
     private location: Location,
     private title: Title

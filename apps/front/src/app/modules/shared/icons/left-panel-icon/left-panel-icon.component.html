@@ -1,11 +1,54 @@
 <svg
+  width="24"
+  height="20"
+  viewBox="0 0 24 20"
+  fill="none"
   xmlns="http://www.w3.org/2000/svg"
-  height="24px"
-  viewBox="0 -960 960 960"
-  width="24px"
-  fill="currentColor"
+  *ngIf="isFilled === true"
 >
-  <path
-    d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm240-80h400v-480H400v480Zm-80 0v-480H160v480h160Zm-160 0v-480 480Zm160 0h80-80Zm0-480h80-80Z"
+  <rect
+    x="1"
+    y="1"
+    width="22"
+    height="18"
+    rx="4"
+    stroke="currentColor"
+    stroke-width="2"
+  />
+  <rect x="1" y="1" width="7.66667" height="18" rx="4" fill="currentColor" />
+  <line
+    x1="8.66667"
+    y1="1"
+    x2="8.66667"
+    y2="19"
+    stroke="currentColor"
+    stroke-width="2"
+  />
+</svg>
+
+<svg
+  width="24"
+  height="20"
+  viewBox="0 0 24 20"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  *ngIf="isFilled === false"
+>
+  <rect
+    x="1"
+    y="1"
+    width="22"
+    height="18"
+    rx="4"
+    stroke="currentColor"
+    stroke-width="2"
+  />
+  <line
+    x1="8.66667"
+    y1="1"
+    x2="8.66667"
+    y2="19"
+    stroke="currentColor"
+    stroke-width="2"
   />
 </svg>

@@ -184,6 +184,17 @@ export class ChartsComponent implements OnInit, OnDestroy {
   model: ModelState;
   model$ = this.modelQuery.select().pipe(
     tap(x => {
+      // if ( // TODO: expand model fields when user clicks model on model-list
+      //   common.isDefined(this.model?.modelId) &&
+      //   common.isDefined(x.modelId) &&
+      //   this.model.modelId !== x.modelId &&
+      //   this.lastUrl === this.pathModelsList &&
+      //   this.modelIsExpanded === false &&
+      //   this.isFilterByModel === false
+      // ) {
+      //   this.modelIsExpanded = true;
+      // }
+
       this.model = x;
 
       this.sortedFieldsList = this.model.fields
@@ -278,15 +289,15 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
       let urlSegments = this.router.url.split('?')[0].split('/');
 
-      let isPathChartSelected =
-        urlSegments.length >= 14
-          ? urlSegments[14] === common.PATH_CHART
+      let isPathEmptyChartSelected =
+        urlSegments.length >= 15
+          ? urlSegments[15] === common.EMPTY_CHART_ID
           : false;
 
       if (
-        this.modelIsExpanded === false &&
-        isPathChartSelected === true &&
-        this.chart.chartId === common.EMPTY_CHART_ID
+        isPathEmptyChartSelected === true &&
+        this.chart.chartId === common.EMPTY_CHART_ID &&
+        this.modelIsExpanded === false
       ) {
         this.modelIsExpanded = true;
       }

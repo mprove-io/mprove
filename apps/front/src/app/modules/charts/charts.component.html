@@ -13,29 +13,6 @@
 
             <div
               class="ml-10 flex flex-shrink-0 cursor-pointer flex-row items-center"
-              (click)="toggleFilterByModel()"
-              tp="Filter Charts by selected Model"
-            >
-              <m-filter-icon
-                [ngClass]="{
-                  'text-s400': isFilterByModel === false,
-                  'text-p500': isFilterByModel === true
-                }"
-              ></m-filter-icon>
-
-              <div
-                class="ml-3 w-[54px] select-none items-center text-lg"
-                [ngClass]="{
-                  'text-p500 font-semibold': isFilterByModel === true,
-                  'text-s500': isFilterByModel === false
-                }"
-              >
-                Model
-              </div>
-            </div>
-
-            <div
-              class="ml-7 flex flex-shrink-0 cursor-pointer flex-row items-center"
               (click)="navToChartsList()"
             >
               <m-view-list-icon
@@ -60,12 +37,12 @@
               class="ml-7 flex flex-shrink-0 cursor-pointer flex-row items-center"
               (click)="navToModelsList()"
             >
-              <m-alt-list-icon
+              <m-models-icon
                 [ngClass]="{
                   'text-m500': lastUrl === pathModelsList,
                   'text-s400': lastUrl !== pathModelsList
                 }"
-              ></m-alt-list-icon>
+              ></m-models-icon>
 
               <div
                 class="ml-3 w-[68px] select-none items-center text-lg"
@@ -352,15 +329,37 @@
                 (ngModelChange)="searchWordChange()"
               />
 
-              <div class="ml-3 h-9 w-9 flex-shrink-0">
+              <div class="ml-3 h-9 w-9 flex-shrink-0" *ngIf="!!word">
                 <m-delete-icon
-                  *ngIf="!!word"
                   class="text-s1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                   [ngClass]="{
                     'bg-p200 hover:bg-p300 cursor-pointer': !!word
                   }"
                   (click)="resetSearch()"
                 ></m-delete-icon>
+              </div>
+
+              <div
+                class="ml-5 flex flex-shrink-0 cursor-pointer flex-row items-center"
+                (click)="toggleFilterByModel()"
+                tp="Filter Charts by selected Model"
+              >
+                <m-filter-icon
+                  [ngClass]="{
+                    'text-s400': isFilterByModel === false,
+                    'text-p500': isFilterByModel === true
+                  }"
+                ></m-filter-icon>
+
+                <div
+                  class="ml-3 w-[54px] select-none items-center text-lg"
+                  [ngClass]="{
+                    'text-p500 font-semibold': isFilterByModel === true,
+                    'text-s500': isFilterByModel === false
+                  }"
+                >
+                  Model
+                </div>
               </div>
 
               <div class="flex flex-grow"></div>

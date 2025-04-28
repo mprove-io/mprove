@@ -54,7 +54,6 @@ import { TypeOnOffIconComponent } from './icons/2-type-icons/type-on-off-icon/ty
 import { TypeStringIconComponent } from './icons/2-type-icons/type-string-icon/type-string-icon.component';
 import { AddIconComponent } from './icons/add-icon/add-icon.component';
 import { AdjustmentsIconComponent } from './icons/adjustments-icon/adjustments-icon.component';
-import { AltListIconComponent } from './icons/alt-list-icon/alt-list-icon.component';
 import { ArrowDropDownIconComponent } from './icons/arrow-drop-down-icon/arrow-drop-down-icon.component';
 import { ArrowLeftIconComponent } from './icons/arrow-left-icon/arrow-left-icon.component';
 import { ArrowNarrowRightIconComponent } from './icons/arrow-narrow-right-icon/arrow-narrow-right-icon.component';
@@ -86,6 +85,7 @@ import { LinkIconComponent } from './icons/link-icon/link-icon.component';
 import { LinkOffIconComponent } from './icons/link-off-icon/link-off-icon.component';
 import { LockClosedIconComponent } from './icons/lock-closed-icon/lock-closed-icon.component';
 import { MinusSmIconComponent } from './icons/minus-sm-icon/minus-sm-icon.component';
+import { ModelsIconComponent } from './icons/models-icon/models-icon.component';
 import { RefreshIconComponent } from './icons/refresh-icon/refresh-icon.component';
 import { ResizeIconComponent } from './icons/resize-icon/resize-icon.component';
 import { SaveIconComponent } from './icons/save-icon/save-icon.component';
@@ -200,7 +200,7 @@ let sharedComponents = [
   DragIconComponent,
   ResizeIconComponent,
   ViewGridIconComponent,
-  AltListIconComponent,
+  ModelsIconComponent,
   ViewListIconComponent,
   UserIconComponent,
   ChartIconComponent,
