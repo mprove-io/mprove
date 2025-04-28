@@ -1,14 +1,9 @@
 <div class="bg-m1 flex h-full cursor-default flex-col">
   <div class="flex h-2 flex-1 flex-row overflow-y-auto">
-    <div class="mt-8 flex min-w-[2px] flex-grow flex-col" *ngIf="!!dashboard">
-      <div class="flex h-11 flex-row items-center justify-between">
+    <div class="flex min-w-[2px] flex-grow flex-col" *ngIf="!!dashboard">
+      <!-- <div class="flex h-11 flex-row items-center justify-between">
         <div class="flex w-full flex-row items-center">
           <div class="flex flex-row items-center">
-            <!-- <div class="text-s1 ml-5 text-xl">{{
-              (dashboard.title ? dashboard.title : dashboard.dashboardId)
-                | capitalize
-            }}</div> -->
-
             <ng-template #templateAddTile>
               <div *ngIf="isExplorer === false">Explorer role required</div>
 
@@ -132,52 +127,7 @@
               ></m-query-status>
             </div>
 
-            <!-- <div class="flex-grow"></div> -->
-
             <div class="flex flex-shrink-0 flex-row items-center">
-              <!-- <ng-template #templateDashboardSaveAs>
-                <div *ngIf="isExplorer === false">Explorer role required</div>
-
-                <div
-                  *ngIf="isExplorer === true && alias === restrictedUserAlias"
-                  >User is restricted. Sign Up at https://mprove.io to get full
-                  access.</div
-                >
-              </ng-template> -->
-
-              <!-- <div
-                class="ml-5 flex h-12 flex-shrink-0"
-                [tp]="templateDashboardSaveAs"
-                [tpIsEnabled]="
-                  isExplorer === false || alias === restrictedUserAlias
-                "
-              >
-                <button
-                  type="button"
-                  data-cy="dashboardSaveAsButton"
-                  class="h-12 rounded border px-6 text-base font-medium focus:outline-none"
-                  [ngClass]="{
-                    'text-m0': dashboard.draft === true,
-                    'bg-m500':
-                      dashboard.draft === true &&
-                      isExplorer === true &&
-                      alias !== restrictedUserAlias,
-                    'cursor-default bg-s400':
-                      dashboard.draft === true &&
-                      (isExplorer === false || alias === restrictedUserAlias),
-                    ' border-s400 text-s500 hover:bg-m0':
-                      dashboard.draft === false &&
-                      isExplorer === true &&
-                      alias !== restrictedUserAlias
-                  }"
-                  (click)="saveAs()"
-                  [disabled]="
-                    isExplorer === false || alias === restrictedUserAlias
-                  "
-                  >Save As</button
-                >
-              </div> -->
-
               <div
                 class="ml-7 flex cursor-pointer flex-row items-center"
                 (click)="toggleAutoRun()"
@@ -282,9 +232,9 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
-      <div class="divide-s300 mt-6 divide-y">
+      <div class="divide-s300 divide-y">
         <div></div>
         <div></div>
       </div>
@@ -317,37 +267,45 @@
               </div>
             </div>
 
-            <button
-              *ngIf="
-                filtersIsExpanded === true || dashboard?.fields.length === 0
-              "
-              type="button"
-              data-cy="dashboardAddFilterButton"
-              class="border-s400 text-s500 hover:bg-m0 ml-4 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
-              (click)="addFilter()"
-              >Add Filter</button
-            >
+            <div class="ml-3 flex max-h-[270px] w-full flex-col overflow-auto">
+              <div
+                class="mr-5 mt-1 flex flex-row items-start"
+                *ngIf="!filtersIsExpanded && dashboard.fields.length > 0"
+              >
+                <m-bricks
+                  class="mb-5 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
+                  [extendedFilters]="dashboard.extendedFilters"
+                  [isKeepBackgroundColor]="false"
+                ></m-bricks>
+              </div>
 
-            <div class="min-h-[68px]"></div>
+              <div
+                class="flex w-full flex-row"
+                *ngIf="
+                  filtersIsExpanded === true || dashboard?.fields.length === 0
+                "
+              >
+                <button
+                  type="button"
+                  data-cy="dashboardAddFilterButton"
+                  class="border-s400 text-s500 hover:bg-m0 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
+                  (click)="addFilter()"
+                  >Add Filter</button
+                >
 
-            <div
-              class="ml-7 mr-5 mt-1 flex flex-row items-start"
-              *ngIf="!filtersIsExpanded && dashboard.fields.length > 0"
-            >
-              <m-bricks
-                class="mb-5 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
-                [extendedFilters]="dashboard.extendedFilters"
-                [isKeepBackgroundColor]="false"
-              ></m-bricks>
-            </div>
+                <div class="min-h-[68px]"></div>
 
-            <div
-              class="ml-7 mt-1 max-h-96 w-2 flex-1 overflow-auto"
-              *ngIf="filtersIsExpanded && dashboard.fields.length > 0"
-            >
-              <m-dashboard-filters
-                [dashboard]="dashboard"
-              ></m-dashboard-filters>
+                <div
+                  class="ml-7 mt-1 max-h-96 w-2 flex-1 overflow-auto"
+                  *ngIf="
+                    filtersIsExpanded === true && dashboard.fields.length > 0
+                  "
+                >
+                  <m-dashboard-filters
+                    [dashboard]="dashboard"
+                  ></m-dashboard-filters>
+                </div>
+              </div>
             </div>
           </div>
         </div>

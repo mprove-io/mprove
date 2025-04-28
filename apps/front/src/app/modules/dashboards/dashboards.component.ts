@@ -436,6 +436,21 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     }
   }
 
+  addTile() {
+    this.myDialogService.showDashboardAddTile({
+      apiService: this.apiService,
+      dashboard: this.dashboard
+    });
+  }
+
+  editListeners() {
+    this.myDialogService.showDashboardEditListeners({
+      dashboardService: this.dashboardService,
+      apiService: this.apiService,
+      dashboard: this.dashboard
+    });
+  }
+
   ngOnDestroy() {
     // console.log('ngOnDestroyDashboards')
     if (this.timer) {

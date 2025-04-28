@@ -9,7 +9,7 @@
             <div class="flex w-full flex-row items-center">
               <div
                 data-cy="metricsTitle"
-                class="text-s1 flex select-none select-none items-center self-center text-2xl font-semibold"
+                class="text-s1 flex select-none items-center self-center text-2xl font-semibold"
               >
                 {{ pageTitle }}
               </div>
@@ -686,7 +686,7 @@
             <div></div>
           </div>
 
-          <div class="mr-5 mt-5 flex min-h-[68px] flex-shrink-0 flex-row">
+          <div class="mr-5 mt-6 flex min-h-[68px] flex-shrink-0 flex-row">
             <div
               (click)="toggleFiltersPanel()"
               class="text-s1 mt-2 flex h-11 select-none flex-row items-start space-x-2 px-5 text-xl font-semibold"
@@ -702,6 +702,8 @@
                 <m-chevron-down-icon
                   *ngIf="filtersIsExpanded && report?.fields.length > 0"
                 ></m-chevron-down-icon>
+
+                <div class="h-6 w-6" *ngIf="report?.fields.length === 0"></div>
 
                 <div> Parameters </div>
               </div>
@@ -742,7 +744,9 @@
 
                 <div
                   class="ml-7 mt-1 w-2 flex-1"
-                  *ngIf="filtersIsExpanded && report?.fields.length > 0"
+                  *ngIf="
+                    filtersIsExpanded === true && report?.fields.length > 0
+                  "
                 >
                   <m-report-filters [report]="report"></m-report-filters>
                 </div>
