@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -9,17 +8,14 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription, fromEvent, merge } from 'rxjs';
 import { debounceTime, filter, tap } from 'rxjs/operators';
 import { DeleteFilterFnItem } from '~front/app/interfaces/delete-filter-fn-item';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { StructQuery } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DashboardService } from '~front/app/services/dashboard.service';
@@ -28,10 +24,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 
-import { ActivatedRoute, Router } from '@angular/router';
 import { UiQuery } from '~front/app/queries/ui.query';
-import { StructDashboardResolver } from '~front/app/resolvers/struct-dashboard.resolver';
-import { UiService } from '~front/app/services/ui.service';
 import { interfaces } from '~front/barrels/interfaces';
 import { DashboardTileChartComponent } from '../../shared/dashboard-tile-chart/dashboard-tile-chart.component';
 
@@ -74,8 +67,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   filtersIsExpanded = false;
 
   showBricks = false;
-
-  isShow = true;
 
   dashboard: common.DashboardX;
   dashboard$ = this.dashboardQuery.select().pipe(
@@ -143,22 +134,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private dashboardQuery: DashboardQuery,
     private userQuery: UserQuery,
-    private router: Router,
-    private route: ActivatedRoute,
     private title: Title,
-    private fb: FormBuilder,
-    private structQuery: StructQuery,
     private memberQuery: MemberQuery,
     private navigateService: NavigateService,
     private myDialogService: MyDialogService,
     private dashboardService: DashboardService,
-    private spinner: NgxSpinnerService,
     private apiService: ApiService,
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
-    private uiService: UiService,
-    private structDashboardResolver: StructDashboardResolver,
-    private location: Location,
     private cd: ChangeDetectorRef // @Inject(DOCUMENT) private _document: HTMLDocument,
   ) {}
 
@@ -177,10 +160,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.layout = [...this.layout];
     });
-
-    // setTimeout(() => {
-    //   this.refreshShow();
-    // });
   }
 
   ngAfterViewInit() {
@@ -200,10 +179,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filtersIsExpanded = !this.filtersIsExpanded;
   }
 
-  trackByFn(index: number, item: any) {
-    return item.tile.mconfigId;
-  }
-
   goToFile() {
     let fileIdAr = this.dashboard.filePath.split('/');
     fileIdAr.shift();
@@ -213,65 +188,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
     });
   }
-
-  refreshShow() {
-    // setTimeout(() => {
-    //   this.chartRepComponents.forEach(x => {
-    //     x.updateChartView();
-    //   });
-    // }, 0);
-  }
-
-  toggleShowTileFilters() {
-    this.showBricks = !this.showBricks;
-    this.refreshShow();
-  }
-
-  // checkQueries() {
-  //   let newQueriesLength = [
-  //     ...this.dashboard.tiles.filter(
-  //       r =>
-  //         common.isDefined(r.query) &&
-  //         r.query.status === common.QueryStatusEnum.New
-  //     )
-  //   ].map(r => r.query).length;
-
-  //   let runningQueriesLength = [
-  //     ...this.dashboard.tiles.filter(
-  //       r =>
-  //         common.isDefined(r.query) &&
-  //         r.query.status === common.QueryStatusEnum.Running
-  //     )
-  //   ].map(r => r.query).length;
-
-  //   let completedQueries = [
-  //     ...this.dashboard.tiles.filter(
-  //       r =>
-  //         common.isDefined(r.query) &&
-  //         r.query.status === common.QueryStatusEnum.Completed
-  //     )
-  //   ]
-  //     .map(r => r.query)
-  //     .sort((a, b) =>
-  //       a.lastCompleteTs > b.lastCompleteTs
-  //         ? 1
-  //         : b.lastCompleteTs > a.lastCompleteTs
-  //         ? -1
-  //         : 0
-  //     );
-
-  //   if (
-  //     newQueriesLength === 0 &&
-  //     runningQueriesLength === 0 &&
-  //     completedQueries.length > 0
-  //   ) {
-  //     this.isCompleted = true;
-  //     this.lastCompletedQuery = completedQueries[completedQueries.length - 1];
-  //   } else {
-  //     this.isCompleted = false;
-  //     this.lastCompletedQuery = undefined;
-  //   }
-  // }
 
   onDragStarted(event: any) {
     // console.log('onDragStarted');
@@ -302,8 +218,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.dashboardQuery.update(newDashboard);
-
-    this.refreshShow();
 
     this.dashboardService.editDashboard({
       isDraft: this.dashboard.draft,
@@ -341,93 +255,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // run() {
-  //   this.startRunButtonTimer();
-
-  //   let nav: NavState;
-  //   this.navQuery
-  //     .select()
-  //     .pipe(
-  //       tap(x => {
-  //         nav = x;
-  //       }),
-  //       take(1)
-  //     )
-  //     .subscribe();
-
-  //   let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
-  //     projectId: nav.projectId,
-  //     queryIds: this.dashboard.tiles.map(tile => tile.queryId)
-  //   };
-
-  //   this.apiService
-  //     .req({
-  //       pathInfoName:
-  //         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
-  //       payload: payload
-  //     })
-  //     .pipe(
-  //       tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
-  //         if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-  //           let { runningQueries } = resp.payload;
-
-  //           this.dashboard.tiles = this.dashboard.tiles.map(x => {
-  //             let newTile = Object.assign({}, x);
-  //             let query = runningQueries.find(q => q.queryId === x.queryId);
-  //             newTile.query = query;
-  //             return newTile;
-  //           });
-
-  //           this.chartRepComponents.forEach(x => {
-  //             x.showSpinner();
-  //           });
-
-  //           this.dashboard = Object.assign({}, this.dashboard);
-
-  //           this.layout = this.dashboard.tiles.map(
-  //             tile =>
-  //               <LayoutItem>{
-  //                 id: tile.title,
-  //                 x: common.isDefined(tile.plateX)
-  //                   ? tile.plateX
-  //                   : common.TILE_DEFAULT_PLATE_X,
-  //                 y: common.isDefined(tile.plateY)
-  //                   ? tile.plateY
-  //                   : common.TILE_DEFAULT_PLATE_Y,
-  //                 w: common.isDefined(tile.plateWidth)
-  //                   ? tile.plateWidth
-  //                   : common.TILE_DEFAULT_PLATE_WIDTH,
-  //                 h: common.isDefined(tile.plateHeight)
-  //                   ? tile.plateHeight
-  //                   : common.TILE_DEFAULT_PLATE_HEIGHT,
-  //                 tile: tile
-  //               }
-  //           );
-
-  //           this.checkQueries();
-  //           this.cd.detectChanges();
-  //         }
-  //       }),
-  //       take(1)
-  //     )
-  //     .subscribe();
-  // }
-
-  // editListeners() {
-  //   this.myDialogService.showDashboardEditListeners({
-  //     dashboardService: this.dashboardService,
-  //     apiService: this.apiService,
-  //     dashboard: this.dashboard
-  //   });
-  // }
-
-  // addTile() {
-  //   this.myDialogService.showDashboardAddTile({
-  //     apiService: this.apiService,
-  //     dashboard: this.dashboard
-  //   });
-  // }
-
   addFilter() {
     this.filtersIsExpanded = true;
 
@@ -437,26 +264,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       apiService: this.apiService
     });
   }
-
-  // startRunButtonTimer() {
-  //   this.isRunButtonPressed = true;
-  //   this.spinner.show(this.dashboardRunButtonSpinnerName);
-  //   this.cd.detectChanges();
-
-  //   this.runButtonTimerSubscription = from([0])
-  //     .pipe(
-  //       concatMap(v => of(v).pipe(delay(2000))),
-  //       startWith(1),
-  //       tap(x => {
-  //         if (x === 0) {
-  //           this.spinner.hide(this.dashboardRunButtonSpinnerName);
-  //           this.isRunButtonPressed = false;
-  //           this.cd.detectChanges();
-  //         }
-  //       })
-  //     )
-  //     .subscribe();
-  // }
 
   deleteFilterFn(item: DeleteFilterFnItem) {
     let { filterFieldId, tileTitle } = item;
@@ -473,9 +280,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  trackByFn(index: number, item: any) {
+    return item.tile.mconfigId;
+  }
+
   ngOnDestroy() {
-    // this.refreshSubscription?.unsubscribe();
-    // this.runButtonTimerSubscription?.unsubscribe();
     this.resizeSubscription?.unsubscribe();
     this.scrollSubscription?.unsubscribe();
     //

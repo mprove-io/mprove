@@ -78,7 +78,7 @@
       >
         <m-chart-view
           #chartView
-          *ngIf="!!qData && isShow === true && !!mconfig?.mconfigId"
+          *ngIf="!!qData && !!mconfig?.mconfigId"
           [ngClass]="{
             'pt-3': mconfig?.chart.type === chartTypeEnumTable,
             'max-w-max':

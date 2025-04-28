@@ -142,14 +142,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
       this.checkQueries();
 
-      // if (common.isDefined(this.dashboard?.dashboardId)) {
-      //   this.title.setTitle(
-      //     `${this.pageTitle} - ${
-      //       this.dashboard?.title || this.dashboard?.dashboardId
-      //     }`
-      //   );
-      // }
-
       this.isAutoRun = this.uiQuery.getValue().isAutoRun;
       if (
         this.isAutoRun === true &&
@@ -497,6 +489,10 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
+  toggleShowTileFilters() {
+    this.showBricks = !this.showBricks;
+  }
+
   toggleAutoRun() {
     let newIsAutoRunValue = !this.isAutoRun;
 
@@ -623,40 +619,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
             this.dashboardQuery.update(newDashboard);
 
-            // this.dashboard.tiles = this.dashboard.tiles.map(x => {
-            //   let newTile = Object.assign({}, x);
-            //   let query = runningQueries.find(q => q.queryId === x.queryId);
-            //   newTile.query = query;
-            //   return newTile;
-            // });
-
-            // this.chartRepComponents.forEach(x => {
-            //   x.showSpinner();
-            // });
-
-            // this.dashboard = Object.assign({}, this.dashboard);
-
-            // this.layout = this.dashboard.tiles.map(
-            //   tile =>
-            //     <LayoutItem>{
-            //       id: tile.title,
-            //       x: common.isDefined(tile.plateX)
-            //         ? tile.plateX
-            //         : common.TILE_DEFAULT_PLATE_X,
-            //       y: common.isDefined(tile.plateY)
-            //         ? tile.plateY
-            //         : common.TILE_DEFAULT_PLATE_Y,
-            //       w: common.isDefined(tile.plateWidth)
-            //         ? tile.plateWidth
-            //         : common.TILE_DEFAULT_PLATE_WIDTH,
-            //       h: common.isDefined(tile.plateHeight)
-            //         ? tile.plateHeight
-            //         : common.TILE_DEFAULT_PLATE_HEIGHT,
-            //       tile: tile
-            //     }
-            // );
-
             this.checkQueries();
+
             this.cd.detectChanges();
           }
         }),

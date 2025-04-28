@@ -64,9 +64,6 @@ export class DashboardTileChartComponent
   @Input()
   showBricks: boolean;
 
-  @Input()
-  isShow: boolean;
-
   @Output() dashTileDeleted =
     new EventEmitter<interfaces.EventDashTileDeleted>();
 
