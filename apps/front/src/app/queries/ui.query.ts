@@ -34,6 +34,7 @@ export class UiState {
   timeSpec: common.TimeSpecEnum;
   timeRangeFraction: common.Fraction;
   showTileParameters: boolean;
+  showDashboardsLeftPanel: boolean;
   showHours: boolean;
   isAutoRun: boolean;
   projectFileLinks: common.ProjectFileLink[];
@@ -75,6 +76,7 @@ let uiState: UiState = {
   timeRangeFraction: undefined,
   showHours: false,
   showTileParameters: false,
+  showDashboardsLeftPanel: true,
   isAutoRun: true,
   projectFileLinks: [],
   projectModelLinks: [],
@@ -99,6 +101,10 @@ export class UiQuery extends BaseQuery<UiState> {
 
   showTileParameters$ = this.store.pipe(
     select(state => state.showTileParameters)
+  );
+
+  showDashboardsLeftPanel$ = this.store.pipe(
+    select(state => state.showDashboardsLeftPanel)
   );
 
   showHours$ = this.store.pipe(select(state => state.showHours));

@@ -81,11 +81,14 @@
       <div class="flex min-w-[2px] flex-grow flex-col">
         <div
           #scrollable
-          class="mt-1 flex h-2 flex-grow flex-row overflow-auto pl-6 pt-6"
+          class="mt-1 flex h-2 flex-grow flex-row overflow-auto pt-6"
+          [ngClass]="{
+            'pl-5': showDashboardsLeftPanel === true
+          }"
         >
           <ktd-grid
-            class="w-[75.5vw]"
-            *ngIf="dashboard.tiles"
+            class="w-full"
+            *ngIf="isShow === true && dashboard.tiles"
             [compactType]="compactType"
             [preventCollision]="preventCollision"
             [cols]="cols"
@@ -135,6 +138,7 @@
   </div>
 </div>
 
+<div *ngIf="showDashboardsLeftPanel$ | async"></div>
 <div *ngIf="showTileParameters$ | async"></div>
 <div *ngIf="dashboard$ | async"></div>
 <div *ngIf="nav$ | async"></div>

@@ -1212,7 +1212,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   scrollToSelectedReport(item: { isSmooth: boolean }) {
     let { isSmooth } = item;
 
-    if (this.report) {
+    if (this.report && this.isShowLeft === true) {
       let selectedElement =
         this.leftReportsContainer.nativeElement.querySelector(
           `[reportId="${this.report.reportId}"]`

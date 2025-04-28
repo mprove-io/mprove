@@ -56,6 +56,13 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   pathDashboardsList = common.PATH_DASHBOARDS_LIST;
   pathDashboards = common.PATH_DASHBOARDS;
 
+  showDashboardsLeftPanel = true;
+  showDashboardsLeftPanel$ = this.uiQuery.showDashboardsLeftPanel$.pipe(
+    tap(x => {
+      this.showDashboardsLeftPanel = x;
+    })
+  );
+
   showTileParameters = false;
   showTileParameters$ = this.uiQuery.showTileParameters$.pipe(
     tap(x => {
@@ -233,6 +240,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     // this.searchWordChange();
 
     this.uiQuery.updatePart({
+      showDashboardsLeftPanel: true,
       showTileParameters: false
     });
 
@@ -460,7 +468,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   scrollToSelectedDashboard(item: { isSmooth: boolean }) {
     let { isSmooth } = item;
 
-    if (this.dashboard) {
+    if (this.dashboard && this.showDashboardsLeftPanel === true) {
       let selectedElement =
         this.leftDashboardsContainer.nativeElement.querySelector(
           `[dashboardId="${this.dashboard.dashboardId}"]`
@@ -492,6 +500,14 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       dashboardService: this.dashboardService,
       apiService: this.apiService,
       dashboard: this.dashboard
+    });
+  }
+
+  toggleShowLeft() {
+    this.showDashboardsLeftPanel = !this.showDashboardsLeftPanel;
+
+    this.uiQuery.updatePart({
+      showDashboardsLeftPanel: this.showDashboardsLeftPanel
     });
   }
 

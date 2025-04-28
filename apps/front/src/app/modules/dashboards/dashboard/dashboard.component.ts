@@ -66,6 +66,24 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   filtersIsExpanded = false;
 
+  isShow = true;
+
+  showDashboardsLeftPanel = true;
+  showDashboardsLeftPanel$ = this.uiQuery.showDashboardsLeftPanel$.pipe(
+    tap(x => {
+      if (this.showDashboardsLeftPanel !== x) {
+        this.showDashboardsLeftPanel = x;
+
+        this.isShow = false;
+
+        setTimeout(() => {
+          this.isShow = true;
+          this.preventHorizontalScrollWorkaround();
+        });
+      }
+    })
+  );
+
   showTileParameters = false;
   showTileParameters$ = this.uiQuery.showTileParameters$.pipe(
     tap(x => {

@@ -13,6 +13,15 @@
                 >{{ pageTitle }}
               </div>
 
+              <m-left-panel-icon
+                class="ml-5 flex-shrink-0 cursor-pointer"
+                [ngClass]="{
+                  'text-s500': showDashboardsLeftPanel === true,
+                  'text-s400': showDashboardsLeftPanel === false
+                }"
+                (click)="toggleShowLeft()"
+              ></m-left-panel-icon>
+
               <div
                 class="ml-5 flex flex-shrink-0 cursor-pointer flex-row items-center"
                 (click)="navToDashboardsList()"
@@ -371,7 +380,10 @@
       </div>
 
       <div class="mt-6 flex h-2 flex-1 flex-row">
-        <div class="mb-6 flex w-1/5 flex-shrink-0">
+        <div
+          class="mb-6 flex w-1/5 flex-shrink-0"
+          *ngIf="showDashboardsLeftPanel === true"
+        >
           <div class="flex w-full flex-col">
             <div class="bg-m0 flex w-full flex-grow rounded shadow">
               <div class="text-s1 mt-6 flex w-full flex-col text-base">
@@ -589,7 +601,12 @@
         </div>
 
         <div class="flex h-full flex-1 flex-col">
-          <div class="ml-6 flex h-full flex-grow">
+          <div
+            class="flex h-full flex-grow"
+            [ngClass]="{
+              'ml-6': showDashboardsLeftPanel === true
+            }"
+          >
             <div
               class="text-s1 mb-[80px] flex h-full w-full select-none items-center justify-center text-xl"
               *ngIf="lastUrl === pathDashboards"
@@ -597,29 +614,30 @@
               Select Dashboard
             </div>
 
-            <div class="h-full w-full" *ngIf="lastUrl !== pathDashboards">
+            <div *ngIf="lastUrl !== pathDashboards" class="h-full w-full">
               <router-outlet></router-outlet>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div *ngIf="isAutoRun$ | async"></div>
-  <div *ngIf="routerEvents$ | async"></div>
-  <div *ngIf="showTileParameters$ | async"></div>
-  <div *ngIf="dashboards$ | async"></div>
-  <div *ngIf="dashboard$ | async"></div>
-  <div *ngIf="nav$ | async"></div>
-  <div *ngIf="member$ | async"></div>
-  <div *ngIf="struct$ | async"></div>
-  <div *ngIf="isExplorer$ | async"></div>
-  <div *ngIf="alias$ | async"></div>
+      <div *ngIf="isAutoRun$ | async"></div>
+      <div *ngIf="routerEvents$ | async"></div>
+      <div *ngIf="showDashboardsLeftPanel$ | async"></div>
+      <div *ngIf="showTileParameters$ | async"></div>
+      <div *ngIf="dashboards$ | async"></div>
+      <div *ngIf="dashboard$ | async"></div>
+      <div *ngIf="nav$ | async"></div>
+      <div *ngIf="member$ | async"></div>
+      <div *ngIf="struct$ | async"></div>
+      <div *ngIf="isExplorer$ | async"></div>
+      <div *ngIf="alias$ | async"></div>
 
-  <!-- [ngClass]="{
+      <!-- [ngClass]="{
   'h-1/2': screenAspectRatio >= 1.5,
   'h-2/5': screenAspectRatio >= 1.2 && screenAspectRatio < 1.5,
   'h-1/3': screenAspectRatio < 1.2
 }" -->
-</div>
+    </div>
+  </div></div
+>
