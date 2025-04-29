@@ -223,10 +223,10 @@ export const FILTER_RESULT_VALUES = [
 
 export const CHART_TYPE_VALUES = [
   enums.ChartTypeEnum.Table,
-  //
   enums.ChartTypeEnum.Line,
   enums.ChartTypeEnum.Bar,
   enums.ChartTypeEnum.Scatter,
+  enums.ChartTypeEnum.Single,
   enums.ChartTypeEnum.Pie
 ];
 

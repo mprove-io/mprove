@@ -125,6 +125,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
   requestPartTypeEnumReqUrlPath = common.RequestPartTypeEnum.ReqUrlPath;
 
   chartTypeEnumTable = common.ChartTypeEnum.Table;
+  chartTypeEnumSingle = common.ChartTypeEnum.Single;
   chartTypeEnumLine = common.ChartTypeEnum.Line;
   chartTypeEnumBar = common.ChartTypeEnum.Bar;
   chartTypeEnumScatter = common.ChartTypeEnum.Scatter;
@@ -496,6 +497,11 @@ export class ChartsComponent implements OnInit, OnDestroy {
       label: 'Scatter',
       value: common.ChartTypeEnum.Scatter,
       iconPath: 'assets/charts/scatter.svg'
+    },
+    {
+      label: 'Single',
+      value: common.ChartTypeEnum.Single,
+      iconPath: 'assets/charts/single.svg'
     },
     {
       label: 'Pie',

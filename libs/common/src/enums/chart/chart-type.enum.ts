@@ -3,5 +3,6 @@ export enum ChartTypeEnum {
   Line = 'line',
   Bar = 'bar',
   Scatter = 'scatter',
-  Pie = 'pie'
+  Pie = 'pie',
+  Single = 'single'
 }

@@ -45,7 +45,7 @@
               ></m-models-icon>
 
               <div
-                class="ml-3 w-[68px] select-none items-center text-lg"
+                class="ml-[10px] w-[68px] select-none items-center text-lg"
                 [ngClass]="{
                   'text-m500 font-semibold': lastUrl === pathModelsList,
                   'text-s500': lastUrl !== pathModelsList
@@ -459,13 +459,17 @@
                       *ngIf="c.chartType === chartTypeEnumScatter"
                     ></m-chart-scatter-icon>
 
+                    <m-chart-single-icon
+                      *ngIf="c.chartType === chartTypeEnumSingle"
+                    ></m-chart-single-icon>
+
                     <m-chart-pie-icon
                       *ngIf="c.chartType === chartTypeEnumPie"
                     ></m-chart-pie-icon>
                   </div>
 
                   <div
-                    class="ml-3 truncate"
+                    class="ml-3 mt-[2px] truncate"
                     [ngClass]="{
                       'text-m600 font-semibold': c.chartId === chart?.chartId,
                       'text-s1': c.chartId !== chart?.chartId
@@ -765,7 +769,7 @@
 
                 <div
                   *ngIf="mconfig?.select.length > 0"
-                  class="flex w-1/3 flex-shrink-0 flex-row items-center justify-end space-x-5 pr-5"
+                  class="flex w-1/3 flex-shrink-0 flex-row items-center justify-end space-x-5 pr-4"
                 >
                   <m-chart-table-icon
                     class="h-6 w-6 cursor-pointer"
@@ -803,6 +807,15 @@
                     (click)="chartTypeChange(chartTypeEnumScatter)"
                   ></m-chart-scatter-icon>
 
+                  <m-chart-single-icon
+                    class="h-6 w-6 cursor-pointer"
+                    [ngClass]="{
+                      'text-m500': mconfig.chart?.type === chartTypeEnumSingle,
+                      'text-s500': mconfig.chart?.type !== chartTypeEnumSingle
+                    }"
+                    (click)="chartTypeChange(chartTypeEnumSingle)"
+                  ></m-chart-single-icon>
+
                   <m-chart-pie-icon
                     class="h-6 w-6 cursor-pointer"
                     [ngClass]="{
@@ -820,7 +833,7 @@
                     <ng-select
                       #chartTypeSelect
                       data-cy="mainChartTypeSelect"
-                      class="main-chart-type-select w-[200px] text-base focus:outline-none"
+                      class="main-chart-type-select w-[220px] text-base focus:outline-none"
                       [items]="chartTypesList"
                       [clearable]="false"
                       [searchable]="false"
@@ -840,12 +853,13 @@
                     >
                       <ng-template ng-label-tmp let-item="item">
                         <div
-                          class="ml-1 flex flex-row items-center justify-start space-x-2"
+                          class="ml-1 flex flex-row items-center justify-start space-x-3"
                         >
-                          <img class="h-6 w-6" [src]="item.iconPath" />
+                          <img class="mb-[2px] h-6 w-6" [src]="item.iconPath" />
                           <div> {{ item.label }} </div>
                         </div>
                       </ng-template>
+
                       <ng-template
                         ng-option-tmp
                         let-item="item"
@@ -853,9 +867,9 @@
                         let-search="searchTerm"
                       >
                         <div
-                          class="ml-1 flex flex-row items-center justify-start space-x-2"
+                          class="ml-1 flex flex-row items-center justify-start space-x-3"
                         >
-                          <img class="h-6 w-6" [src]="item.iconPath" />
+                          <img class="mb-[2px] h-6 w-6" [src]="item.iconPath" />
                           <div> {{ item.label }} </div>
                         </div>
                       </ng-template>
@@ -1172,7 +1186,10 @@
                       >Format</div
                     >
 
-                    <ui-switch class="ml-5" [checked]="isFormat"></ui-switch>
+                    <ui-switch
+                      class="ml-5 mt-1"
+                      [checked]="isFormat"
+                    ></ui-switch>
                   </div>
 
                   <div

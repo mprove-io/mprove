@@ -51,6 +51,15 @@ export function getSelectValid(item: {
 
   if (chart.type === common.ChartTypeEnum.Table) {
     //
+  } else if (chart.type === common.ChartTypeEnum.Single) {
+    if (selectedDimensions.length > 0) {
+      isSelectValid = false;
+      errorMessage = 'Dimensions cannot be selected for this chart type';
+    } else if (selectedMeasuresAndCalculations.length === 0) {
+      isSelectValid = false;
+      errorMessage =
+        'Measure or Calculation field must be selected for this chart type';
+    }
   } else if (chart.type === common.ChartTypeEnum.Pie) {
     if (selectedDimensions.length === 0) {
       isSelectValid = false;

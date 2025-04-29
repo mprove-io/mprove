@@ -64,6 +64,8 @@ export class ChartEditorComponent implements OnChanges {
 
   chartTypeEnum = common.ChartTypeEnum;
   chartTypeEnumTable = common.ChartTypeEnum.Table;
+  chartTypeEnumSingle = common.ChartTypeEnum.Single;
+
   fieldResultEnum = common.FieldResultEnum;
 
   empty = constants.EMPTY_MCONFIG_FIELD.topLabel;

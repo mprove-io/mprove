@@ -89,4 +89,18 @@
     [hideColumns]="chart.hideColumns"
     [pageSize]="chart.pageSize"
   ></m-chart-table>
+
+  <m-chart-single
+    *ngIf="
+      queryStatus !== queryStatusEnum.Error &&
+      isSelectValid === true &&
+      chart.type === chartTypeEnum.Single &&
+      chart.isValid === true &&
+      qData?.length > 0
+    "
+    [isFormat]="chart.format === false ? false : true"
+    [qData]="qData"
+    [mconfigFields]="mconfigFields"
+    [yFieldColumn]="yFieldColumn"
+  ></m-chart-single>
 </div>

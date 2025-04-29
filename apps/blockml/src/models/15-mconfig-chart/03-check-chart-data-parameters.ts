@@ -60,7 +60,8 @@ export function checkChartDataParameters<T extends types.dzType>(
           common.ChartTypeEnum.Bar,
           common.ChartTypeEnum.Line,
           common.ChartTypeEnum.Scatter,
-          common.ChartTypeEnum.Pie
+          common.ChartTypeEnum.Pie,
+          common.ChartTypeEnum.Single
         ].indexOf(tile.type) > -1 &&
         (common.isUndefined(tile.data) ||
           common.isUndefined(tile.data.y_fields))
@@ -84,7 +85,9 @@ export function checkChartDataParameters<T extends types.dzType>(
       }
 
       if (
-        [common.ChartTypeEnum.Pie].indexOf(tile.type) > -1 &&
+        [common.ChartTypeEnum.Pie, common.ChartTypeEnum.Single].indexOf(
+          tile.type
+        ) > -1 &&
         tile.data.y_fields.length > 1
       ) {
         item.errors.push(

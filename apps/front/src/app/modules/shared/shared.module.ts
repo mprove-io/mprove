@@ -15,6 +15,7 @@ import { ChartEditorSeriesElementComponent } from './chart-editor-series-element
 import { ChartEditorYAxisElementComponent } from './chart-editor-y-axis-element/chart-editor-y-axis-element.component';
 import { ChartEditorComponent } from './chart-editor/chart-editor.component';
 import { ChartSaveAsDialogComponent } from './chart-save-as-dialog/chart-save-as-dialog.component';
+import { ChartSingleComponent } from './chart-single/chart-single.component';
 import { ChartTableComponent } from './chart-table/chart-table.component';
 import { ChartViewComponent } from './chart-view/chart-view.component';
 import { ColorMenuComponent } from './color-menu/color-menu.component';
@@ -43,6 +44,7 @@ import { ChartIconComponent } from './icons/1-chart-icons/chart-icon/chart-icon.
 import { ChartLineIconComponent } from './icons/1-chart-icons/chart-line-icon/chart-line-icon.component';
 import { ChartPieIconComponent } from './icons/1-chart-icons/chart-pie-icon/chart-pie-icon.component';
 import { ChartScatterIconComponent } from './icons/1-chart-icons/chart-scatter-icon/chart-scatter-icon.component';
+import { ChartSingleIconComponent } from './icons/1-chart-icons/chart-single-icon/chart-single-icon.component';
 import { ChartTableIconComponent } from './icons/1-chart-icons/chart-table-icon/chart-table-icon.component';
 import { ChartViewIconComponent } from './icons/1-chart-icons/chart-view-icon/chart-view-icon.component';
 import { TypeCustomIconComponent } from './icons/2-type-icons/type-custom-icon/type-custom-icon.component';
@@ -179,6 +181,7 @@ let sharedComponents = [
   FractionDayOfWeekIndexComponent,
   FractionTsComponent,
   ChartTableComponent,
+  ChartSingleComponent,
   ChartViewComponent,
   ChartBoxComponent,
   DashboardTileChartComponent,
@@ -220,6 +223,7 @@ let sharedComponents = [
   ChartBarIconComponent,
   ChartScatterIconComponent,
   ChartPieIconComponent,
+  ChartSingleIconComponent,
   LeftPanelIconComponent,
   LinkIconComponent,
   LinkOffIconComponent,

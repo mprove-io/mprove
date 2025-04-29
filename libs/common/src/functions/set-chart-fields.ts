@@ -86,7 +86,11 @@ export function setChartFields<T extends Mconfig>(item: {
         ? mconfig.chart.yFields
         : selectedMCsResultIsNumber;
 
-    if (yFields.length > 0 && newChartType === enums.ChartTypeEnum.Pie) {
+    if (
+      yFields.length > 0 &&
+      (newChartType === enums.ChartTypeEnum.Pie ||
+        newChartType === enums.ChartTypeEnum.Single)
+    ) {
       yFields = [yFields[0]];
     }
 

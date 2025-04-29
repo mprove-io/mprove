@@ -56,6 +56,8 @@ export class ChartViewComponent implements OnChanges {
   @Input()
   mconfigFields: common.MconfigField[];
 
+  yFieldColumn: common.MconfigField;
+
   @Input()
   isStoreModel: boolean;
 
@@ -145,9 +147,11 @@ export class ChartViewComponent implements OnChanges {
     });
 
     this.isSelectValid =
-      [common.ChartTypeEnum.Table, ...this.eChartsTypes].indexOf(
-        this.chart.type
-      ) > -1
+      [
+        common.ChartTypeEnum.Table,
+        common.ChartTypeEnum.Single,
+        ...this.eChartsTypes
+      ].indexOf(this.chart.type) > -1
         ? checkSelectResult.isSelectValid
         : false;
 
@@ -167,6 +171,15 @@ export class ChartViewComponent implements OnChanges {
       // let sizeField = common.isDefined(this.chart.sizeField)
       //   ? this.mconfigFields.find(v => v.id === this.chart.sizeField)
       //   : undefined;
+
+      if (
+        this.chart.type === common.ChartTypeEnum.Single &&
+        this.chart.yFields.length > 0
+      ) {
+        this.yFieldColumn = this.mconfigFields.find(
+          y => y.id === this.chart.yFields[0]
+        );
+      }
 
       // echarts - data
 

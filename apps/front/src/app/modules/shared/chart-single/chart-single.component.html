@@ -1,0 +1,19 @@
+<div class="flex h-full w-full flex-row items-center justify-center">
+  <div
+    *ngIf="qData.length > 0 && !!yFieldColumn"
+    class="text-s500 text-3xl font-semibold"
+  >
+    {{ qData[0][yFieldColumn.sqlName].valueFmt }}
+  </div>
+
+  <!-- <div
+    *ngIf="qData.length > 0 && !!yFieldColumn"
+    class="text-s500 text-3xl font-semibold"
+  >
+    {{
+      isFormat === true
+        ? qData[0][yFieldColumn.sqlName].valueFmt
+        : qData[0][yFieldColumn.sqlName].value
+    }}
+  </div> -->
+</div>
