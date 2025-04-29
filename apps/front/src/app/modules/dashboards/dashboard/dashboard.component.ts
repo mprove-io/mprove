@@ -25,7 +25,6 @@ import { common } from '~front/barrels/common';
 import { constants as frontConstants } from '~front/barrels/constants';
 
 import { UiQuery } from '~front/app/queries/ui.query';
-import { interfaces } from '~front/barrels/interfaces';
 import { DashboardTileChartComponent } from '../../shared/dashboard-tile-chart/dashboard-tile-chart.component';
 
 class LayoutItem {
@@ -254,9 +253,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  tileDeleted(eventDashTileDeleted: interfaces.EventDashTileDeleted) {
-    let tileIndex = eventDashTileDeleted.tileIndex;
-
+  deleteTile(tileIndex: number) {
     let newTiles = [
       ...this.dashboard.tiles.slice(0, tileIndex),
       ...this.dashboard.tiles.slice(tileIndex + 1)

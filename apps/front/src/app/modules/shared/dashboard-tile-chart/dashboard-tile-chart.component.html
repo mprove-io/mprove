@@ -2,20 +2,12 @@
   <div class="mx-5 h-full">
     <div class="flex h-full w-full flex-col">
       <div
-        class="text-s1 mx-5 mb-5 mt-8 flex flex-shrink-0 flex-row items-start justify-center text-lg"
+        class="text-s1 mb-5 mt-8 flex flex-shrink-0 flex-row items-start justify-center text-lg"
       >
-        <div class="mr-5 w-9"></div>
+        <div class="h-9 w-9 flex-shrink-0"></div>
 
         <div
-          *ngIf="!!mconfig && mconfig.warnSelect.length > 0"
-          class="mr-3 mt-1 flex h-8 w-8 flex-shrink-0"
-        >
-        </div>
-
-        <div class="relative flex h-9 w-9 flex-shrink-0"></div>
-
-        <div
-          class="text-s1 hover:text-m500 flex max-h-[60px] flex-grow cursor-pointer flex-col items-center justify-start"
+          class="text-s1 hover:text-m500 ml-3 flex max-h-[60px] flex-grow cursor-pointer flex-col items-center justify-start"
           (click)="showChart()"
         >
           <div
@@ -25,7 +17,7 @@
           </div>
         </div>
 
-        <div class="relative flex h-9 w-9 flex-shrink-0">
+        <div class="relative ml-3 flex h-9 w-9 flex-shrink-0">
           <ngx-spinner
             [name]="tile?.title"
             color="#0084d1"
@@ -38,24 +30,6 @@
           >
           </ngx-spinner>
         </div>
-
-        <div
-          *ngIf="!!mconfig && mconfig.warnSelect.length > 0"
-          class="text-p500 ml-3 mt-1 flex h-8 w-8 flex-shrink-0"
-          tp="Warning: The selected fields [{{
-            mconfig.warnSelect.join(', ')
-          }}] may use unsafe aggregations and produce incorrect results"
-          placement="left"
-        >
-          <m-exclamation-icon></m-exclamation-icon>
-        </div>
-
-        <button
-          class="hover:bg-m200 text-s500 invisible ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
-          (click)="deleteTile($event)"
-        >
-          <m-trash-icon></m-trash-icon>
-        </button>
       </div>
 
       <div
@@ -73,7 +47,10 @@
       </div>
 
       <div
-        class="bg-m0 flex w-full flex-grow cursor-default overflow-auto rounded px-7 pb-10"
+        class="bg-m0 flex w-full flex-grow cursor-default overflow-auto rounded pb-10"
+        [ngClass]="{
+          'px-7': mconfig?.chart.type !== chartTypeEnumSingle
+        }"
         (click)="stopClick($event)"
       >
         <m-chart-view

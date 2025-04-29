@@ -1,4 +1,46 @@
 :host {
+  ::ng-deep .ktd-grid-item-placeholder {
+    background-color: #ffa726;
+  }
+
+  ktd-grid-item {
+    .drag-handle {
+      position: absolute;
+      transform: rotate(45deg);
+      left: 27px;
+      top: 39px;
+      cursor: grab;
+    }
+
+    &.ktd-grid-item-dragging {
+      .drag-handle {
+        cursor: grabbing;
+      }
+    }
+
+    .delete-handle {
+      position: absolute;
+      left: 22px;
+      bottom: 32px;
+      width: 36px;
+      height: 36px;
+    }
+
+    .warn-handle {
+      position: absolute;
+      left: 50%;
+      bottom: 32px;
+      transform: translateX(-50%) translateX(-10px);
+    }
+
+    .resize-handle {
+      position: absolute;
+      right: 20px;
+      bottom: 24px;
+      cursor: se-resize;
+    }
+  }
+
   // display: block;
   // width: 100%;
   // padding: 24px;
@@ -28,48 +70,4 @@
   // ktd-grid {
   //     transition: height 500ms ease;
   // }
-
-  ktd-grid-item {
-    .drag-handle {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      width: 64px;
-      height: 64px;
-      // background-color: #ffa726;
-      transform: rotate(45deg);
-      color: #4b5563;
-      cursor: grab;
-    }
-
-    // .handle-2 {
-    //     border: 1px solid #121212;
-    //     border-radius: 2px;
-    //     color: #121212;
-    //     cursor: move;
-    // }
-
-    &.ktd-grid-item-dragging {
-      .drag-handle {
-        cursor: grabbing;
-      }
-    }
-
-    .resize-handle {
-      position: absolute;
-      right: 18px;
-      bottom: 24px;
-      width: 48px;
-      height: 48px;
-      // background-color: #ffa726;
-      cursor: se-resize;
-      color: #4b5563;
-      transform: rotate(90deg);
-    }
-  }
-
-  // customize placeholder
-  ::ng-deep .ktd-grid-item-placeholder {
-    background-color: #ffa726;
-  }
 }

@@ -104,14 +104,16 @@
             <ktd-grid-item
               class="group"
               [transition]="null"
-              *ngFor="let item of layout; trackBy: trackByFn"
+              *ngFor="let item of layout; let i = index; trackBy: trackByFn"
               [id]="item.id"
             >
               <div
                 ktdGridDragHandle
-                class="drag-handle invisible flex items-center justify-center group-hover:visible"
-                ><m-drag-icon></m-drag-icon
-              ></div>
+                class="drag-handle text-s500 invisible flex h-6 w-6 flex-shrink-0 items-center justify-center group-hover:visible"
+              >
+                <m-drag-icon></m-drag-icon>
+              </div>
+
               <div class="h-full w-full pb-6 pr-5">
                 <m-dashboard-tile-chart
                   #chartRep
@@ -123,13 +125,37 @@
                   [mconfig]="item.tile.mconfig"
                   [query]="item.tile.query"
                   [showTileParameters]="showTileParameters"
-                  (dashTileDeleted)="tileDeleted($event)"
                 ></m-dashboard-tile-chart>
               </div>
-              <m-resize-icon
+
+              <button
+                class="delete-handle hover:bg-m200 text-s500 invisible flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
+                (click)="deleteTile(i)"
+              >
+                <m-trash-icon></m-trash-icon>
+              </button>
+
+              <div
+                *ngIf="
+                  !!item.tile.mconfig && item.tile.mconfig.warnSelect.length > 0
+                "
+                class="warn-handle text-p500 flex h-8 w-8 flex-shrink-0 items-center justify-center"
+                tp="Warning: The selected fields [{{
+                  item.tile.mconfig.warnSelect.join(', ')
+                }}] may use unsafe aggregations and produce incorrect results"
+                placement="left"
+              >
+                <m-exclamation-icon></m-exclamation-icon>
+              </div>
+
+              <div
                 ktdGridResizeHandle
-                class="resize-handle invisible flex items-center justify-center group-hover:visible"
-              ></m-resize-icon>
+                class="resize-handle invisible flex h-11 w-12 flex-shrink-0 flex-row items-start justify-start group-hover:visible"
+              >
+                <m-resize-icon
+                  class="rotate-resize-icon text-s500 ml-[6px] mt-[6px] flex h-6 w-6"
+                ></m-resize-icon>
+              </div>
             </ktd-grid-item>
           </ktd-grid>
         </div>

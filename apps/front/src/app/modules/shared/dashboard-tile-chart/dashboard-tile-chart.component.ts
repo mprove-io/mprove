@@ -1,12 +1,10 @@
 import {
   ChangeDetectorRef,
   Component,
-  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
-  Output,
   QueryList,
   SimpleChanges,
   ViewChildren
@@ -24,7 +22,6 @@ import { DataService, QDataRow } from '~front/app/services/data.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 import { ChartViewComponent } from '../chart-view/chart-view.component';
 
 @Component({
@@ -35,6 +32,8 @@ export class DashboardTileChartComponent
   implements OnInit, OnChanges, OnDestroy
 {
   chartTypeEnumTable = common.ChartTypeEnum.Table;
+  chartTypeEnumSingle = common.ChartTypeEnum.Single;
+
   queryStatusEnum = common.QueryStatusEnum;
   queryStatusRunning = common.QueryStatusEnum.Running;
 
@@ -63,9 +62,6 @@ export class DashboardTileChartComponent
 
   @Input()
   showTileParameters: boolean;
-
-  @Output() dashTileDeleted =
-    new EventEmitter<interfaces.EventDashTileDeleted>();
 
   qData: QDataRow[];
 
@@ -190,18 +186,6 @@ export class DashboardTileChartComponent
 
   showSpinner() {
     this.spinner.show(this.tile.title);
-  }
-
-  deleteTile(event: MouseEvent) {
-    event.stopPropagation();
-
-    let eventDashTileDeleted: interfaces.EventDashTileDeleted = {
-      tileIndex: this.dashboard.tiles.findIndex(
-        x => x.mconfigId === this.mconfig.mconfigId
-      )
-    };
-
-    this.dashTileDeleted.emit(eventDashTileDeleted);
   }
 
   showChart() {
