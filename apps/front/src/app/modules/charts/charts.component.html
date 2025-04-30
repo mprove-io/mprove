@@ -309,8 +309,8 @@
           <div
             class="flex h-2 flex-col"
             [ngClass]="{
-              'h-[45%]': modelIsExpanded === true,
-              'flex-1': modelIsExpanded === false
+              'h-[45%]': showModel === true,
+              'flex-1': showModel === false
             }"
           >
             <div class="mb-6 mt-6 flex h-11 flex-row items-center">
@@ -524,16 +524,14 @@
               class="text-s1 bg-s150 border-s300 flex w-full flex-shrink-0 flex-row items-center border py-5"
             >
               <div
-                (click)="toggleModelFieldsPanel()"
+                (click)="toggleShowModel()"
                 class="flex h-11 cursor-pointer select-none flex-row items-center pl-[22px] pr-3 text-lg font-semibold"
               >
                 <div class="flex flex-row items-center">
                   <m-chevron-right-icon
-                    *ngIf="!modelIsExpanded"
+                    *ngIf="!showModel"
                   ></m-chevron-right-icon>
-                  <m-chevron-down-icon
-                    *ngIf="modelIsExpanded"
-                  ></m-chevron-down-icon>
+                  <m-chevron-down-icon *ngIf="showModel"></m-chevron-down-icon>
 
                   <div class="ml-[12px]"> MODEL </div>
                 </div>
@@ -594,7 +592,7 @@
             </div>
           </div>
 
-          <div class="flex flex-1 flex-col" *ngIf="modelIsExpanded === true">
+          <div class="flex flex-1 flex-col" *ngIf="showModel === true">
             <!-- <div class="divide-s300 flex flex-col divide-y">
               <div class="flex flex-row"></div>
               <div class="flex flex-row"></div>
@@ -1432,6 +1430,7 @@
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="modelTreeLevels$ | async"></div>
+<div *ngIf="showModel$ | async"></div>
 <div *ngIf="isAutoRun$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
 <div *ngIf="charts$ | async"></div>

@@ -106,8 +106,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
   isRunButtonPressed = false;
   isCancelButtonPressed = false;
 
-  modelIsExpanded = false;
-
   // modelTreeLevelsFlatTime = common.ModelTreeLevelsEnum.FlatTime;
   modelTreeLevelsFlat = common.ModelTreeLevelsEnum.Flat;
   // modelTreeLevelsNestedFlatTime = common.ModelTreeLevelsEnum.NestedFlatTime;
@@ -185,17 +183,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
   model: ModelState;
   model$ = this.modelQuery.select().pipe(
     tap(x => {
-      // if ( // TODO: expand model fields when user clicks model on model-list
-      //   common.isDefined(this.model?.modelId) &&
-      //   common.isDefined(x.modelId) &&
-      //   this.model.modelId !== x.modelId &&
-      //   this.lastUrl === this.pathModelsList &&
-      //   this.modelIsExpanded === false &&
-      //   this.isFilterByModel === false
-      // ) {
-      //   this.modelIsExpanded = true;
-      // }
-
       this.model = x;
 
       this.sortedFieldsList = this.model.fields
@@ -273,6 +260,15 @@ export class ChartsComponent implements OnInit, OnDestroy {
   refreshSubscription: Subscription;
   refreshId: string;
 
+  showModel = false;
+  showModel$ = this.uiQuery.showModel$.pipe(
+    tap(x => {
+      this.showModel = x;
+
+      this.cd.detectChanges();
+    })
+  );
+
   isAutoRun = true;
   isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
     tap(x => {
@@ -287,21 +283,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
   chart$ = this.chartQuery.select().pipe(
     tap(x => {
       this.chart = x;
-
-      let urlSegments = this.router.url.split('?')[0].split('/');
-
-      let isPathEmptyChartSelected =
-        urlSegments.length >= 15
-          ? urlSegments[15] === common.EMPTY_CHART_ID
-          : false;
-
-      if (
-        isPathEmptyChartSelected === true &&
-        this.chart.chartId === common.EMPTY_CHART_ID &&
-        this.modelIsExpanded === false
-      ) {
-        this.modelIsExpanded = true;
-      }
 
       if (common.isDefined(this.chart?.chartId)) {
         this.title.setTitle(
@@ -356,6 +337,21 @@ export class ChartsComponent implements OnInit, OnDestroy {
         this.chartTitleForm.controls['chartTitle'].setValue(
           this.mconfig.chart.title
         );
+      }
+
+      let urlSegments = this.router.url.split('?')[0].split('/');
+
+      let isPathEmptyChartSelected =
+        urlSegments.length >= 15
+          ? urlSegments[15] === common.EMPTY_CHART_ID
+          : false;
+
+      if (
+        isPathEmptyChartSelected === true &&
+        this.chart.chartId === common.EMPTY_CHART_ID &&
+        this.showModel === false
+      ) {
+        this.toggleShowModel();
       }
 
       this.cd.detectChanges();
@@ -628,6 +624,17 @@ export class ChartsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  toggleShowModel() {
+    let newShowModelValue = !this.showModel;
+
+    this.showModel = newShowModelValue;
+
+    this.scrollToSelectedChart({ isSmooth: true });
+
+    this.uiQuery.updatePart({ showModel: newShowModelValue });
+    // this.uiService.setUserUi({ showModel: newShowModelValue });
   }
 
   toggleAutoRun() {
@@ -1395,13 +1402,6 @@ ${this.mconfig.storePart?.reqUrlPath}`
     this.newParameterFieldId = undefined;
   }
 
-  toggleModelFieldsPanel() {
-    this.modelIsExpanded = !this.modelIsExpanded;
-
-    this.cd.detectChanges();
-    this.scrollToSelectedChart({ isSmooth: true });
-  }
-
   toggleInfoPanel() {
     this.rightIsShow = !this.rightIsShow;
   }
@@ -1560,8 +1560,8 @@ ${this.mconfig.storePart?.reqUrlPath}`
 
   newChart() {
     if (common.isDefined(this.model.modelId)) {
-      if (this.modelIsExpanded === false) {
-        this.modelIsExpanded = true;
+      if (this.showModel === false) {
+        this.toggleShowModel();
       }
 
       this.setProjectChartLink({ chartId: common.EMPTY_CHART_ID });

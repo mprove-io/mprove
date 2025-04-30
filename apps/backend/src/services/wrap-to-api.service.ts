@@ -527,6 +527,10 @@ export class WrapToApiService {
           ? user.ui?.isAutoRun
           : constants.DEFAULT_UI.isAutoRun,
 
+        showModel: common.isDefined(user.ui?.showModel)
+          ? user.ui?.showModel
+          : constants.DEFAULT_UI.showModel,
+
         projectFileLinks: common.isDefined(user.ui?.projectFileLinks)
           ? user.ui?.projectFileLinks
           : constants.DEFAULT_UI.projectFileLinks,

@@ -37,6 +37,7 @@ export class UiState {
   showDashboardsLeftPanel: boolean;
   showHours: boolean;
   isAutoRun: boolean;
+  showModel: boolean;
   projectFileLinks: common.ProjectFileLink[];
   projectModelLinks: common.ProjectModelLink[];
   projectChartLinks: common.ProjectChartLink[];
@@ -78,6 +79,7 @@ let uiState: UiState = {
   showTileParameters: false,
   showDashboardsLeftPanel: true,
   isAutoRun: true,
+  showModel: false,
   projectFileLinks: [],
   projectModelLinks: [],
   projectChartLinks: [],
@@ -110,6 +112,8 @@ export class UiQuery extends BaseQuery<UiState> {
   showHours$ = this.store.pipe(select(state => state.showHours));
 
   isAutoRun$ = this.store.pipe(select(state => state.isAutoRun));
+
+  showModel$ = this.store.pipe(select(state => state.showModel));
 
   projectFileLinks$ = this.store.pipe(select(state => state.projectFileLinks));
 

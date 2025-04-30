@@ -37,6 +37,9 @@ export class Ui {
   @IsBoolean()
   isAutoRun: boolean;
 
+  @IsBoolean()
+  showModel: boolean;
+
   @ValidateNested()
   @Type(() => ProjectFileLink)
   projectFileLinks: ProjectFileLink[];

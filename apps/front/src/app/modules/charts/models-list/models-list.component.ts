@@ -11,6 +11,7 @@ import { constants } from '~front/barrels/constants';
 
 import uFuzzy from '@leeoniya/ufuzzy';
 import { ModelQuery } from '~front/app/queries/model.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 
 @Component({
   selector: 'm-models-list',
@@ -62,6 +63,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
+    private uiQuery: UiQuery,
     private modelsQuery: ModelsQuery,
     private memberQuery: MemberQuery,
     private modelQuery: ModelQuery,
@@ -182,6 +184,10 @@ export class ModelsListComponent implements OnInit, OnDestroy {
     this.navigateService.navigateToModelsList({
       modelId: item.modelId
     });
+
+    if (this.uiQuery.getValue().showModel === false) {
+      this.uiQuery.updatePart({ showModel: true });
+    }
   }
 
   ngOnDestroy() {
