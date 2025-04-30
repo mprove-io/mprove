@@ -850,7 +850,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.structRepResolver
       .resolveRoute({
         route: this.route.children[0].snapshot,
-        showSpinner: false,
+        showSpinner: true,
         timezone: uiState.timezone,
         timeSpec: uiState.timeSpec,
         timeRangeFractionBrick: uiState.timeRangeFraction.brick
