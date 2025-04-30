@@ -9,8 +9,6 @@ import { IHeaderParams } from 'ag-grid-community';
 export class MiniChartHeaderComponent implements IHeaderAngularComp {
   params: IHeaderParams;
 
-  showMiniCharts = false;
-
   constructor() {}
 
   agInit(params: IHeaderParams) {
@@ -20,9 +18,5 @@ export class MiniChartHeaderComponent implements IHeaderAngularComp {
   refresh(params: IHeaderParams) {
     this.params = params;
     return true;
-  }
-
-  toggleShowMiniCharts() {
-    this.showMiniCharts = !this.showMiniCharts;
   }
 }

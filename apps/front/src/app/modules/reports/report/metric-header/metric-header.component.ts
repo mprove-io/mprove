@@ -30,8 +30,6 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
   showMetricsModelName = false;
   showMetricsTimeFieldName = false;
 
-  showMiniCharts = false;
-
   uiQuery$ = this.uiQuery.select().pipe(
     tap(x => {
       this.showMetricsModelName = x.showMetricsModelName;
@@ -98,10 +96,6 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
 
     this.uiQuery.updatePart({ showMetricsParameters: showMetricsParameters });
     this.uiService.setUserUi({ showMetricsParameters: showMetricsParameters });
-  }
-
-  toggleShowMiniCharts() {
-    this.showMiniCharts = !this.showMiniCharts;
   }
 
   editListeners() {

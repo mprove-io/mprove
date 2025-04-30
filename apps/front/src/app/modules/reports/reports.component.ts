@@ -100,6 +100,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   isShow = true;
 
   isShowLeft = true;
+  showMiniCharts = true;
 
   emptyReportId = common.EMPTY_REPORT_ID;
 
@@ -1103,6 +1104,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   toggleShowLeft() {
     this.isShowLeft = !this.isShowLeft;
+  }
+
+  toggleShowMiniCharts() {
+    this.showMiniCharts = !this.showMiniCharts;
   }
 
   refreshShow() {
