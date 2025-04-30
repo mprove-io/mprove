@@ -130,12 +130,14 @@ export class ChartViewComponent implements OnChanges {
         this.chart.type === common.ChartTypeEnum.Line ||
         this.chart.type === common.ChartTypeEnum.Bar
           ? {
+              confine: true,
               trigger: 'axis',
               order: 'valueDesc',
               valueFormatter: (value: any) =>
                 `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
             }
           : {
+              confine: true,
               trigger: 'item'
             }
     } as EChartsOption;

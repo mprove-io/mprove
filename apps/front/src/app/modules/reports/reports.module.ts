@@ -18,6 +18,8 @@ import { ChartRendererComponent } from './report/chart-renderer/chart-renderer.c
 import { DataRendererComponent } from './report/data-renderer/data-renderer.component';
 import { MetricHeaderComponent } from './report/metric-header/metric-header.component';
 import { MetricRendererComponent } from './report/metric-renderer/metric-renderer.component';
+import { MiniChartHeaderComponent } from './report/mini-chart-header/mini-chart-header.component';
+import { MiniChartRendererComponent } from './report/mini-chart-renderer/mini-chart-renderer.component';
 import { ReportComponent } from './report/report.component';
 import { RowIdHeaderComponent } from './report/row-id-header/row-id-header.component';
 import { RowIdRendererComponent } from './report/row-id-renderer/row-id-renderer.component';
@@ -44,6 +46,8 @@ import { RowComponent } from './row/row.component';
     MetricHeaderComponent,
     ChartHeaderComponent,
     ChartRendererComponent,
+    MiniChartHeaderComponent,
+    MiniChartRendererComponent,
     RowIdHeaderComponent,
     RowIdRendererComponent,
     RowFiltersComponent

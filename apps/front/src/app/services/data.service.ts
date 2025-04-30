@@ -846,6 +846,7 @@ export class DataService {
   }
 
   metricsRowToSeries(item: {
+    isMiniChart?: boolean;
     row: DataRow;
     chartSeriesElement: common.MconfigChartSeries;
     dataPoints: DataPoint[];
@@ -853,6 +854,7 @@ export class DataService {
     showMetricsTimeFieldName: boolean;
   }) {
     let {
+      isMiniChart,
       row,
       chartSeriesElement,
       dataPoints,
@@ -866,59 +868,86 @@ export class DataService {
       showMetricsTimeFieldName: showMetricsTimeFieldName
     });
 
-    let seriesOption: SeriesOption = {
-      type: common.isDefined(chartSeriesElement?.type)
-        ? (chartSeriesElement.type as any)
-        : 'line',
-      yAxisIndex: chartSeriesElement?.yAxisIndex,
-      symbol: 'circle',
-      symbolSize: 8,
-      cursor: 'default',
-      // legendHoverLink: true,
-      lineStyle: {
-        width: 3
-      },
-      // areaStyle: {},
-      emphasis: {
-        disabled: true
-      },
-      name: rowName,
-      data: dataPoints.map(dataPoint => ({
-        name: rowName,
-        value: [dataPoint.columnId * 1000, dataPoint[rowName]]
-      })),
-      tooltip: {
-        // position: 'top',
-        borderWidth: 2,
-        textStyle: {
-          fontSize: 16
+    let seriesOption: SeriesOption;
+
+    if (isMiniChart === true) {
+      // console.log('row');
+      // console.log(row);
+
+      seriesOption = {
+        type: 'bar',
+        barWidth: '95%',
+        itemStyle: {
+          color: '#0084d1'
         },
-        // valueFormatter: ...
-        formatter: (p: any) => {
-          // console.log(p);
+        //
+        yAxisIndex: chartSeriesElement?.yAxisIndex,
+        cursor: 'default',
+        emphasis: {
+          disabled: true
+        },
+        name: rowName,
+        data: dataPoints.map(dataPoint => ({
+          name: rowName,
+          value: [dataPoint.columnId * 1000, dataPoint[rowName]]
+        }))
+      };
+    } else {
+      seriesOption = {
+        type: common.isDefined(chartSeriesElement?.type)
+          ? (chartSeriesElement.type as any)
+          : 'line',
+        symbol: 'circle',
+        symbolSize: 8,
+        lineStyle: {
+          width: 3
+        },
+        //
+        yAxisIndex: chartSeriesElement?.yAxisIndex,
+        cursor: 'default',
+        // legendHoverLink: true,
+        // areaStyle: {},
+        emphasis: {
+          disabled: true
+        },
+        name: rowName,
+        data: dataPoints.map(dataPoint => ({
+          name: rowName,
+          value: [dataPoint.columnId * 1000, dataPoint[rowName]]
+        })),
+        tooltip: {
+          // position: 'top',
+          borderWidth: 2,
+          textStyle: {
+            fontSize: 16
+          },
+          // valueFormatter: ...
+          formatter: (p: any) => {
+            // console.log(p);
 
-          let timeSpec = this.uiQuery.getValue().timeSpec;
+            let timeSpec = this.uiQuery.getValue().timeSpec;
 
-          let columnLabel = common.formatTsUnix({
-            timeSpec: timeSpec,
-            unixTimeZoned: p.data.value[0] / 1000
-          });
+            let columnLabel = common.formatTsUnix({
+              timeSpec: timeSpec,
+              unixTimeZoned: p.data.value[0] / 1000
+            });
 
-          let formattedValue = common.isDefined(p.data.value[1])
-            ? this.formatValue({
-                value: Number(p.data.value[1]),
-                formatNumber: row.formatNumber,
-                fieldResult: common.FieldResultEnum.Number,
-                currencyPrefix: row.currencyPrefix,
-                currencySuffix: row.currencySuffix
-              })
-            : 'null';
+            let formattedValue = common.isDefined(p.data.value[1])
+              ? this.formatValue({
+                  value: Number(p.data.value[1]),
+                  formatNumber: row.formatNumber,
+                  fieldResult: common.FieldResultEnum.Number,
+                  currencyPrefix: row.currencyPrefix,
+                  currencySuffix: row.currencySuffix
+                })
+              : 'null';
 
-          return `${p.name}<br/><strong>${formattedValue}</strong><br/>${columnLabel}`;
+            return `${p.name}<br/><strong>${formattedValue}</strong><br/>${columnLabel}`;
+          }
+          // textStyle: {}
         }
-        // textStyle: {}
-      }
-    };
+      };
+    }
 
     return seriesOption;
   }

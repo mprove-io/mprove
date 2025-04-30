@@ -27,6 +27,8 @@ import { ChartRendererComponent } from './chart-renderer/chart-renderer.componen
 import { DataRendererComponent } from './data-renderer/data-renderer.component';
 import { MetricHeaderComponent } from './metric-header/metric-header.component';
 import { MetricRendererComponent } from './metric-renderer/metric-renderer.component';
+import { MiniChartHeaderComponent } from './mini-chart-header/mini-chart-header.component';
+import { MiniChartRendererComponent } from './mini-chart-renderer/mini-chart-renderer.component';
 import { RowIdHeaderComponent } from './row-id-header/row-id-header.component';
 import { RowIdRendererComponent } from './row-id-renderer/row-id-renderer.component';
 import { StatusHeaderComponent } from './status-header/status-header.component';
@@ -125,6 +127,14 @@ export class ReportComponent {
       width: 70,
       headerComponent: ChartHeaderComponent,
       cellRenderer: ChartRendererComponent
+    },
+    {
+      field: 'mini-chart' as any,
+      pinned: 'right',
+      resizable: false,
+      width: 180,
+      headerComponent: MiniChartHeaderComponent,
+      cellRenderer: MiniChartRendererComponent
     },
     {
       field: 'status' as any,

@@ -414,6 +414,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
           //   // , valueFormatter: (value: any) => `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
           // },
           tooltip: {
+            confine: true,
             trigger: 'axis',
             order: 'valueDesc',
             valueFormatter: (value: any) =>
