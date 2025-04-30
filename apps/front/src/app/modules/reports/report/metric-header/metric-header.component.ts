@@ -100,7 +100,9 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
     this.uiService.setUserUi({ showMetricsParameters: showMetricsParameters });
   }
 
-  toggleShowMiniCharts() {}
+  toggleShowMiniCharts() {
+    this.showMiniCharts = !this.showMiniCharts;
+  }
 
   editListeners() {
     this.myDialogService.showReportEditListeners({

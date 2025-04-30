@@ -5,24 +5,12 @@
     params.data.rowType !== rowTypeHeader
   "
 >
-  <m-insights-icon
-    class="mt-2 cursor-pointer"
+  <m-mini-charts-icon
+    class="mt-1 flex h-8 w-8 cursor-pointer"
     [ngClass]="{
       'text-m500': params.data.showChart === true,
       'text-s400': params.data.showChart === false
     }"
     (click)="toggleShowChart($event)"
-  ></m-insights-icon>
-
-  <!-- <div class="ml-5 mt-1 w-6">
-    <m-chart-view-icon
-      *ngIf="
-        (params.data.mconfig?.select.length > 0 &&
-          params.data.rowType === rowTypeMetric) ||
-        params.data.rowType === rowTypeFormula
-      "
-      class="cursor-pointer text-s500"
-      (click)="showDialog($event)"
-    ></m-chart-view-icon>
-  </div> -->
+  ></m-mini-charts-icon>
 </div>

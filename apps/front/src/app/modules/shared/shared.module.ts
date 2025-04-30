@@ -61,6 +61,7 @@ import { ArrowLeftIconComponent } from './icons/arrow-left-icon/arrow-left-icon.
 import { ArrowNarrowRightIconComponent } from './icons/arrow-narrow-right-icon/arrow-narrow-right-icon.component';
 import { ArrowRightIconComponent } from './icons/arrow-right-icon/arrow-right-icon.component';
 import { AscIconComponent } from './icons/asc-icon/asc-icon.component';
+import { BottomPanelIconComponent } from './icons/bottom-panel-icon/bottom-panel-icon.component';
 import { CheckIconComponent } from './icons/check-icon/check-icon.component';
 import { ChevronDownIconComponent } from './icons/chevron-down-icon/chevron-down-icon.component';
 import { ChevronLeftIconComponent } from './icons/chevron-left-icon/chevron-left-icon.component';
@@ -81,11 +82,11 @@ import { FolderClosedIconComponent } from './icons/folder-closed-icon/folder-clo
 import { FolderOpenIconComponent } from './icons/folder-open-icon/folder-open-icon.component';
 import { FormulaIconComponent } from './icons/formula-icon/formula-icon.component';
 import { FullScreenIconComponent } from './icons/full-screen-icon/full-screen-icon.component';
-import { InsightsIconComponent } from './icons/insights-icon/insights-icon.component';
 import { LeftPanelIconComponent } from './icons/left-panel-icon/left-panel-icon.component';
 import { LinkIconComponent } from './icons/link-icon/link-icon.component';
 import { LinkOffIconComponent } from './icons/link-off-icon/link-off-icon.component';
 import { LockClosedIconComponent } from './icons/lock-closed-icon/lock-closed-icon.component';
+import { MiniChartsIconComponent } from './icons/mini-charts-icon/mini-charts-icon.component';
 import { MinusSmIconComponent } from './icons/minus-sm-icon/minus-sm-icon.component';
 import { ModelsIconComponent } from './icons/models-icon/models-icon.component';
 import { RefreshIconComponent } from './icons/refresh-icon/refresh-icon.component';
@@ -210,7 +211,7 @@ let sharedComponents = [
   WrenchIconComponent,
   AdjustmentsIconComponent,
   TableCellsIconComponent,
-  InsightsIconComponent,
+  MiniChartsIconComponent,
   TypeNumberIconComponent,
   TypeStringIconComponent,
   TypeCustomIconComponent,
@@ -225,6 +226,7 @@ let sharedComponents = [
   ChartPieIconComponent,
   ChartSingleIconComponent,
   LeftPanelIconComponent,
+  BottomPanelIconComponent,
   LinkIconComponent,
   LinkOffIconComponent,
   FormulaIconComponent,
