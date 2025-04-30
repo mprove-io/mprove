@@ -34,10 +34,10 @@
 
       <div
         *ngIf="showTileParameters === true && mconfig?.filters.length > 0"
-        class="flex flex-row items-start overflow-auto"
+        class="mx-7 mb-5 flex max-w-max flex-row items-start overflow-auto"
       >
         <m-bricks
-          class="mx-7 mb-5 flex max-h-[135px] max-w-max flex-shrink-0 overflow-auto"
+          class="flex max-h-[135px] max-w-max flex-shrink-0 flex-row"
           [extendedFilters]="mconfig.extendedFilters"
           [listen]="tile.listen"
           [tileTitle]="tile.title"
