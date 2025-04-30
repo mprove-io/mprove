@@ -257,10 +257,7 @@ export class ReportComponent {
 
         this.data = this.report.rows.map((row: common.Row) => {
           let dataRow: DataRow = Object.assign({}, row, <DataRow>{
-            showMetricsParameters: showMetricsParameters,
-            strParameters: common.isDefined(row.parameters)
-              ? JSON.stringify(row.parameters)
-              : ''
+            showMetricsParameters: showMetricsParameters
           });
 
           // console.log(row.rowId);

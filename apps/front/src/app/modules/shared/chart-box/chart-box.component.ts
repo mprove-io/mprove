@@ -33,9 +33,6 @@ export class ChartBoxComponent implements OnChanges {
   // }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log('onChanges');
-    // console.log(changes);
-
     // console.log('chart-box onChanges');
     // console.log(changes);
 
@@ -56,6 +53,13 @@ export class ChartBoxComponent implements OnChanges {
       ) === false
     ) {
       // console.log('set localInitOpts');
+
+      // console.log('changes.eChartInitOpts.currentValue');
+      // console.log(changes.eChartInitOpts.currentValue);
+
+      // console.log('changes.eChartInitOpts.previousValue');
+      // console.log(changes.eChartInitOpts.previousValue);
+
       this.localInitOpts = changes.eChartInitOpts.currentValue;
     }
 
@@ -67,6 +71,13 @@ export class ChartBoxComponent implements OnChanges {
       ) === false
     ) {
       // console.log('set localOptions');
+
+      // console.log('changes.eChartOptions.currentValue');
+      // console.log(changes.eChartOptions.currentValue);
+
+      // console.log('changes.eChartOptions.previousValue');
+      // console.log(changes.eChartOptions.previousValue);
+
       this.localOptions = changes.eChartOptions.currentValue;
     }
 

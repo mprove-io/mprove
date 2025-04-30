@@ -5,14 +5,14 @@
     params.data.rowType !== rowTypeHeader
   "
 >
-  <m-chart-icon
+  <m-insights-icon
     class="mt-2 cursor-pointer"
     [ngClass]="{
       'text-m500': params.data.showChart === true,
       'text-s400': params.data.showChart === false
     }"
     (click)="toggleShowChart($event)"
-  ></m-chart-icon>
+  ></m-insights-icon>
 
   <!-- <div class="ml-5 mt-1 w-6">
     <m-chart-view-icon
