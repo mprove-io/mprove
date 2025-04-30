@@ -38,7 +38,7 @@ export const DEFAULT_UI: common.Ui = {
   projectChartLinks: [],
   projectDashboardLinks: [],
   projectReportLinks: [],
-  metricsColumnNameWidth: 570,
+  metricsColumnNameWidth: 530,
   metricsTimeColumnsNarrowWidth: 165,
   metricsTimeColumnsWideWidth: 220,
   modelTreeLevels: common.ModelTreeLevelsEnum.Flat

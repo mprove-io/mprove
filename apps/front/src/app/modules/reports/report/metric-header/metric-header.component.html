@@ -14,7 +14,7 @@
     <button
       type="button"
       data-cy="reportEditListenButton"
-      class="flex flex-row items-center rounded border px-4 py-[6px] text-base font-medium focus:outline-none"
+      class="flex flex-row items-center rounded border px-4 py-[5px] text-base font-medium focus:outline-none"
       (click)="editListeners()"
       [ngClass]="{
         'border-s400 text-s500 hover:bg-m0':
@@ -72,14 +72,14 @@
     >
   </div>
 
-  <m-chart-icon
-    class="ml-5 cursor-pointer"
+  <!-- <m-chart-icon
+    class="mb-1 ml-5 cursor-pointer"
     [ngClass]="{
       'text-s500': showMiniCharts === true,
       'text-s400': showMiniCharts === false
     }"
     (click)="toggleShowMiniCharts()"
-  ></m-chart-icon>
+  ></m-chart-icon> -->
 </div>
 
 <div *ngIf="reportSelectedNodes$ | async"></div>
