@@ -876,9 +876,10 @@ export class DataService {
 
       seriesOption = {
         type: 'bar',
-        barWidth: '95%',
+        barWidth: '90%',
         itemStyle: {
-          color: '#0084d1'
+          color: '#0084d1',
+          borderRadius: [2, 2, 0, 0]
         },
         //
         yAxisIndex: chartSeriesElement?.yAxisIndex,

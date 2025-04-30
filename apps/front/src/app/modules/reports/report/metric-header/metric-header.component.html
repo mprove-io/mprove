@@ -1,6 +1,41 @@
 <div class="custom-header flex flex-row items-center">
   <div class="font-semibold">Metric</div>
 
+  <ng-template #templateEditListeners>
+    <div *ngIf="report?.rows.length === 0">No rows</div>
+    <div *ngIf="report?.fields.length === 0">No parameters</div>
+  </ng-template>
+
+  <div
+    [tp]="templateEditListeners"
+    [tpIsEnabled]="report?.fields.length === 0 || report?.fields.length === 0"
+    class="ml-5 flex-shrink-0"
+  >
+    <button
+      type="button"
+      data-cy="reportEditListenButton"
+      class="flex flex-row items-center rounded border px-4 py-[6px] text-base font-medium focus:outline-none"
+      (click)="editListeners()"
+      [ngClass]="{
+        'border-s400 text-s500 hover:bg-m0':
+          report?.rows.length > 0 && report?.fields.length > 0,
+        'border-s300  text-s400 cursor-default':
+          report?.rows.length === 0 || report?.fields.length === 0
+      }"
+      [disabled]="report?.rows.length === 0 || report?.fields.length === 0"
+    >
+      <m-link-icon
+        class="text-s500"
+        [ngClass]="{
+          'text-s500': report?.rows.length > 0 && report?.fields.length > 0,
+          'text-s400': report?.rows.length === 0 || report?.fields.length === 0
+        }"
+      ></m-link-icon>
+
+      <div class="ml-3"> Listeners </div>
+    </button>
+  </div>
+
   <div class="ml-5 flex w-[101px] flex-row items-center">
     <button
       class="text-s500 flex h-9 cursor-pointer select-none items-center"
@@ -35,41 +70,6 @@
       (click)="toggleShowMetricsModelName()"
       >Model</button
     >
-  </div>
-
-  <ng-template #templateEditListeners>
-    <div *ngIf="report?.rows.length === 0">No rows</div>
-    <div *ngIf="report?.fields.length === 0">No parameters</div>
-  </ng-template>
-
-  <div
-    [tp]="templateEditListeners"
-    [tpIsEnabled]="report?.fields.length === 0 || report?.fields.length === 0"
-    class="ml-[50px] flex-shrink-0"
-  >
-    <button
-      type="button"
-      data-cy="reportEditListenButton"
-      class="flex flex-row items-center rounded border px-4 py-[6px] text-base font-medium focus:outline-none"
-      (click)="editListeners()"
-      [ngClass]="{
-        'border-s400 text-s500 hover:bg-m0':
-          report?.rows.length > 0 && report?.fields.length > 0,
-        'border-s300  text-s400 cursor-default':
-          report?.rows.length === 0 || report?.fields.length === 0
-      }"
-      [disabled]="report?.rows.length === 0 || report?.fields.length === 0"
-    >
-      <m-link-icon
-        class="text-s500"
-        [ngClass]="{
-          'text-s500': report?.rows.length > 0 && report?.fields.length > 0,
-          'text-s400': report?.rows.length === 0 || report?.fields.length === 0
-        }"
-      ></m-link-icon>
-
-      <div class="ml-3"> Listeners </div>
-    </button>
   </div>
 </div>
 
