@@ -8,6 +8,7 @@ import { ColorSketchModule } from 'ngx-color/sketch';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
+import { MiniChartRendererComponent } from '../reports/report/mini-chart-renderer/mini-chart-renderer.component';
 import { AvatarComponent } from './avatar/avatar.component';
 import { BricksComponent } from './bricks/bricks.component';
 import { ChartBoxComponent } from './chart-box/chart-box.component';
@@ -186,6 +187,7 @@ let sharedComponents = [
   ChartViewComponent,
   ChartBoxComponent,
   DashboardTileChartComponent,
+  MiniChartRendererComponent,
   FieldLabelComponent,
   FieldResultComponent,
   MetricFieldLabelComponent,

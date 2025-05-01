@@ -3,6 +3,7 @@ import { AgGridAngular } from 'ag-grid-angular';
 import {
   ColDef,
   ColumnResizedEvent,
+  GetRowIdParams,
   GridApi,
   GridReadyEvent,
   IRowNode,
@@ -196,13 +197,13 @@ export class ReportComponent {
   ]).pipe(
     tap(
       ([
-        rep,
+        report,
         timeColumnsNarrowWidth,
         timeColumnsWideWidth,
-        showMetricsParameters,
+        showMetricsParameters, // used in check update data
         showMiniCharts
       ]: [common.ReportX, number, number, boolean, boolean]) => {
-        this.report = rep;
+        this.report = report;
 
         // console.log('---');
         // console.log('this.report.fields');
@@ -251,10 +252,6 @@ export class ReportComponent {
           .map(row => row.query.status)
           .filter(status => status === common.QueryStatusEnum.Running).length;
 
-        // let statusColumn = this.columns.find(
-        //   c => c.field === ('status' as any)
-        // );
-
         this.statusColumn.type =
           runningQueriesLength > 0 ? 'running' : undefined;
 
@@ -268,57 +265,91 @@ export class ReportComponent {
               ]
             : [...this.columns, ...this.timeColumns, this.statusColumn];
 
-        this.data = this.report.rows.map((row: common.Row) => {
-          let dataRow: DataRow = Object.assign({}, row, <DataRow>{
-            showMetricsParameters: showMetricsParameters
-          });
-
-          // console.log(row.rowId);
-          // console.log(row.records);
-
-          row.records.forEach(record => {
-            let column = this.report.columns.find(
-              c => c.columnId === record.key
-            );
-
-            record.columnLabel = column?.label;
-
-            if (common.isDefined(record.columnLabel)) {
-              (dataRow as any)[record.key * 1000] = record.value;
-            }
-          });
-
-          return dataRow;
-        });
-
-        let sNodes = this.uiQuery.getValue().reportSelectedNodes;
-
-        this.updateRepChartData(sNodes);
-
-        // console.log('rep$ combined - tap');
-
-        // if (
-        //   common.isDefined(this.prevRepId) &&
-        //   this.rep.repId === this.prevRepId
-        //   ) {
-        // console.log('rep$ combined - prev repId is the same');
-        if (common.isDefined(this.agGridApi)) {
-          this.uiQuery.getValue().reportSelectedNodes.forEach(node => {
-            let rowNode = this.agGridApi.getRowNode(node.id);
-            if (common.isDefined(rowNode)) {
-              // console.log('rep$ combined - set select node');
-              rowNode.setSelected(true);
-            }
-          });
-        }
-        // }
-
-        // this.prevRepId = this.rep.repId;
-
-        this.cd.detectChanges();
+        this.checkUpdateData();
       }
     )
   );
+
+  checkUpdateData() {
+    let showMetricsParameters = this.uiQuery.getValue().showMetricsParameters;
+
+    let newData = this.report.rows.map((row: common.Row) => {
+      let dataRow: DataRow = Object.assign({}, row, <DataRow>{
+        showMetricsParameters: showMetricsParameters
+      });
+
+      row.records.forEach(record => {
+        let column = this.report.columns.find(c => c.columnId === record.key);
+
+        record.columnLabel = column?.label;
+
+        if (common.isDefined(record.columnLabel)) {
+          (dataRow as any)[record.key * 1000] = record.value;
+        }
+      });
+
+      return dataRow;
+    });
+
+    if (common.isDefined(this.agGridApi)) {
+      // console.log('this.agGridApi isDefined');
+      this.agGridApi.setGridOption('rowData', newData);
+
+      // if (common.isUndefined(this.data)) {
+      //   console.log('data is undefined');
+      //   console.log('called setGridOption');
+      //   this.agGridApi.setGridOption('rowData', newData);
+      // } else {
+      //   console.log('data is defined');
+
+      //   if (newData.length !== this.data.length) {
+      //     console.log('newData.length !== this.data.length');
+      //     console.log('called setGridOption');
+      //     this.agGridApi.setGridOption('rowData', newData);
+      //     // this.agGridApi.applyTransaction({
+      //     //   add: result.add
+      //     // });
+      //     // this.agGridApi.applyTransaction({
+      //     //   remove: result.remove
+      //     // });
+      //   } else {
+      //     let result = this.getChangedRows({
+      //       currentData: this.data,
+      //       newData: newData
+      //     });
+
+      //     console.log('called refreshCells');
+
+      //     let resultUpdateNodes = result.update.map(x =>
+      //       this.agGridApi.getRowNode(x.rowId)
+      //     );
+
+      //     console.log('resultUpdateNodes');
+      //     console.log(resultUpdateNodes);
+
+      //     this.agGridApi.refreshCells({
+      //       rowNodes: resultUpdateNodes
+      //     });
+      //   }
+      // }
+
+      this.data = newData;
+
+      this.uiQuery.getValue().reportSelectedNodes.forEach(node => {
+        let rowNode = this.agGridApi.getRowNode(node.id);
+        if (common.isDefined(rowNode)) {
+          rowNode.setSelected(true);
+        }
+      });
+
+      let sNodes = this.uiQuery.getValue().reportSelectedNodes;
+      this.updateRepChartData(sNodes);
+    } else {
+      // console.log('this.agGridApi undefined');
+    }
+
+    this.cd.detectChanges();
+  }
 
   // queryParams$ = this.route.queryParams.pipe(
   //   tap(queryParams => {
@@ -364,6 +395,44 @@ export class ReportComponent {
     private uiQuery: UiQuery,
     private uiService: UiService
   ) {}
+
+  // getChangedRows(item: { currentData: DataRow[]; newData: DataRow[] }) {
+  //   let { currentData, newData } = item;
+
+  //   let newRows: DataRow[] = [];
+  //   let changedRows: DataRow[] = [];
+  //   let removeRows: DataRow[] = [];
+
+  //   newData.forEach(newRow => {
+  //     let currentRow = currentData.find(row => row.rowId === newRow.rowId);
+
+  //     if (!currentRow) {
+  //       newRows.push(newRow);
+  //     } else if (JSON.stringify(currentRow) !== JSON.stringify(newRow)) {
+  //       changedRows.push(newRow);
+  //     }
+  //   });
+
+  //   currentData.forEach(currentRow => {
+  //     let index = newData.findIndex(row => row.rowId === currentRow.rowId);
+
+  //     if (index < 0) {
+  //       removeRows.push(currentRow);
+  //     }
+  //   });
+
+  //   let result: { update: DataRow[]; add: DataRow[]; remove: DataRow[] } = {
+  //     update: changedRows,
+  //     add: newRows,
+  //     remove: removeRows
+  //   };
+
+  //   return result;
+  // }
+
+  getRowId(params: GetRowIdParams<DataRow>) {
+    return params.data.rowId;
+  }
 
   onRowClicked(event: RowClickedEvent<DataRow>) {
     this.lastRowClickedTs = Date.now();
@@ -422,6 +491,10 @@ export class ReportComponent {
 
     this.uiQuery.updatePart({ gridApi: this.agGridApi });
     this.agGridApi.deselectAll();
+
+    if (common.isDefined(this.report)) {
+      this.checkUpdateData();
+    }
 
     this.cd.detectChanges();
   }

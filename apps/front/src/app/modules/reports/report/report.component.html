@@ -2,11 +2,11 @@
   <ag-grid-angular
     style="width: 100%; height: 100%"
     class="ag-theme-alpine mb-5 mt-5"
-    [rowData]="data"
     [rowClass]="rowCssClasses"
     [headerHeight]="60"
     [overlayNoRowsTemplate]="overlayNoRowsTemplate"
     [columnDefs]="columnDefs"
+    [getRowId]="getRowId"
     [defaultColDef]="defaultColDef"
     [columnTypes]="columnTypes"
     [rowDragManaged]="true"

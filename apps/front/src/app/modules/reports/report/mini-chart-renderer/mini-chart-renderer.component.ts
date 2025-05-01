@@ -12,21 +12,28 @@ import { common } from '~front/barrels/common';
   templateUrl: './mini-chart-renderer.component.html'
 })
 export class MiniChartRendererComponent implements ICellRendererAngularComp {
-  params: ICellRendererParams<DataRow>;
-
   rowTypeMetric = common.RowTypeEnum.Metric;
   rowTypeFormula = common.RowTypeEnum.Formula;
-  rowTypeHeader = common.RowTypeEnum.Header;
-  rowTypeEmpty = common.RowTypeEnum.Empty;
 
-  eChartInitOpts: any;
-  eChartOptions: EChartsOption;
+  params: ICellRendererParams<DataRow>;
+
+  localInitOpts: any;
+  localOptions: EChartsOption;
 
   constructor(private uiQuery: UiQuery, private dataService: DataService) {}
 
   agInit(params: ICellRendererParams<DataRow>) {
     this.params = params;
+    this.updateChartData();
+  }
 
+  refresh(params: ICellRendererParams<DataRow>) {
+    this.params = params;
+    this.updateChartData();
+    return true;
+  }
+
+  updateChartData() {
     if (
       [common.RowTypeEnum.Metric, common.RowTypeEnum.Formula].indexOf(
         this.params.data.rowType
@@ -34,8 +41,9 @@ export class MiniChartRendererComponent implements ICellRendererAngularComp {
     ) {
       let chartFormulaData = this.uiQuery.getValue().chartFormulaData;
 
-      this.eChartInitOpts = chartFormulaData.eChartInitOpts;
-      this.eChartOptions = Object.assign({}, chartFormulaData.eChartOptions, {
+      this.localInitOpts = chartFormulaData.eChartInitOpts;
+
+      this.localOptions = Object.assign({}, chartFormulaData.eChartOptions, {
         tooltip: { show: false },
         legend: { show: false },
         xAxis: Object.assign({}, chartFormulaData.eChartOptions.xAxis, {
@@ -47,8 +55,8 @@ export class MiniChartRendererComponent implements ICellRendererAngularComp {
         grid: {
           left: 0,
           right: 0,
-          top: 10,
-          bottom: 10
+          top: 7,
+          bottom: 7
         },
         series: this.dataService.metricsRowToSeries({
           row: this.params.data,
@@ -63,8 +71,9 @@ export class MiniChartRendererComponent implements ICellRendererAngularComp {
     }
   }
 
-  refresh(params: ICellRendererParams<DataRow>) {
-    this.params = params;
-    return true;
+  onChartInit(ec: any) {
+    ec.getZr().on('mousemove', function (params: any) {
+      ec.getZr().setCursorStyle('default');
+    });
   }
 }

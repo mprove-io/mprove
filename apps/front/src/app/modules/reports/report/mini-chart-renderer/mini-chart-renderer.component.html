@@ -1,14 +1,13 @@
 <div
-  class="h-[40px] w-full"
-  *ngIf="
-    params.data.rowType !== rowTypeEmpty &&
-    params.data.rowType !== rowTypeHeader
-  "
+  class="flex h-[40px] w-full flex-row"
+  *ngIf="[rowTypeMetric, rowTypeFormula].indexOf(params.data.rowType) > -1"
 >
-  <m-chart-box
-    *ngIf="!!eChartInitOpts && !!eChartOptions"
-    [eChartInitOpts]="eChartInitOpts"
-    [eChartOptions]="eChartOptions"
+  <div
+    echarts
+    [initOpts]="localInitOpts"
+    [options]="localOptions"
+    (chartInit)="onChartInit($event)"
+    class="my-echarts overflow-hidden"
     style="width: 100%; height: 100%"
-  ></m-chart-box>
+  ></div>
 </div>

@@ -882,6 +882,10 @@ export class DataService {
           borderRadius: [0, 0, 0, 0]
           // borderRadius: [2, 2, 0, 0]
         },
+        showBackground: true,
+        backgroundStyle: {
+          color: '#cdecfe'
+        },
         //
         yAxisIndex: chartSeriesElement?.yAxisIndex,
         cursor: 'default',
