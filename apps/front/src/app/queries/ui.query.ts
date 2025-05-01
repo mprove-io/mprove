@@ -35,6 +35,7 @@ export class UiState {
   timeRangeFraction: common.Fraction;
   showTileParameters: boolean;
   showDashboardsLeftPanel: boolean;
+  showMiniCharts: boolean;
   showHours: boolean;
   isAutoRun: boolean;
   showModel: boolean;
@@ -75,6 +76,7 @@ let uiState: UiState = {
   timezone: undefined,
   timeSpec: undefined,
   timeRangeFraction: undefined,
+  showMiniCharts: true,
   showHours: false,
   showTileParameters: false,
   showDashboardsLeftPanel: true,
@@ -108,6 +110,8 @@ export class UiQuery extends BaseQuery<UiState> {
   showDashboardsLeftPanel$ = this.store.pipe(
     select(state => state.showDashboardsLeftPanel)
   );
+
+  showMiniCharts$ = this.store.pipe(select(state => state.showMiniCharts));
 
   showHours$ = this.store.pipe(select(state => state.showHours));
 

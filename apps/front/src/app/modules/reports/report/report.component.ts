@@ -127,30 +127,32 @@ export class ReportComponent {
       width: 70,
       headerComponent: ChartHeaderComponent,
       cellRenderer: ChartRendererComponent
-    },
-    {
-      field: 'mini-chart' as any,
-      pinned: 'right',
-      resizable: false,
-      width: 180,
-      headerComponent: MiniChartHeaderComponent,
-      cellRenderer: MiniChartRendererComponent
-    },
-    {
-      field: 'status' as any,
-      pinned: 'right',
-      resizable: false,
-      width: 84,
-      headerComponent: StatusHeaderComponent,
-      cellRenderer: StatusRendererComponent
     }
   ];
+
+  miniChartColumn: ColDef<DataRow> = {
+    field: 'mini-chart' as any,
+    pinned: 'right',
+    resizable: false,
+    width: 180,
+    headerComponent: MiniChartHeaderComponent,
+    cellRenderer: MiniChartRendererComponent
+  };
+
+  statusColumn: ColDef<DataRow> = {
+    field: 'status' as any,
+    pinned: 'right',
+    resizable: false,
+    width: 84,
+    headerComponent: StatusHeaderComponent,
+    cellRenderer: StatusRendererComponent
+  };
 
   columnTypes = {
     running: {}
   };
 
-  columnDefs: ColDef<DataRow>[] = [...this.columns];
+  columnDefs: ColDef<DataRow>[] = [...this.columns, this.statusColumn];
   timeColumns: ColDef<DataRow>[] = [];
 
   defaultColDef: ColDef<DataRow> = {
@@ -189,15 +191,17 @@ export class ReportComponent {
     this.reportQuery.select(),
     this.uiQuery.timeColumnsNarrowWidth$,
     this.uiQuery.timeColumnsWideWidth$,
-    this.uiQuery.showMetricsParameters$
+    this.uiQuery.showMetricsParameters$,
+    this.uiQuery.showMiniCharts$
   ]).pipe(
     tap(
       ([
         rep,
         timeColumnsNarrowWidth,
         timeColumnsWideWidth,
-        showMetricsParameters
-      ]: [common.ReportX, number, number, boolean]) => {
+        showMetricsParameters,
+        showMiniCharts
+      ]: [common.ReportX, number, number, boolean, boolean]) => {
         this.report = rep;
 
         // console.log('---');
@@ -247,13 +251,22 @@ export class ReportComponent {
           .map(row => row.query.status)
           .filter(status => status === common.QueryStatusEnum.Running).length;
 
-        let statusColumn = this.columns.find(
-          c => c.field === ('status' as any)
-        );
+        // let statusColumn = this.columns.find(
+        //   c => c.field === ('status' as any)
+        // );
 
-        statusColumn.type = runningQueriesLength > 0 ? 'running' : undefined;
+        this.statusColumn.type =
+          runningQueriesLength > 0 ? 'running' : undefined;
 
-        this.columnDefs = [...this.columns, ...this.timeColumns];
+        this.columnDefs =
+          showMiniCharts === true
+            ? [
+                ...this.columns,
+                ...this.timeColumns,
+                this.miniChartColumn,
+                this.statusColumn
+              ]
+            : [...this.columns, ...this.timeColumns, this.statusColumn];
 
         this.data = this.report.rows.map((row: common.Row) => {
           let dataRow: DataRow = Object.assign({}, row, <DataRow>{

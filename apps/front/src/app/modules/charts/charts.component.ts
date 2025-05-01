@@ -1683,11 +1683,11 @@ ${this.mconfig.storePart?.reqUrlPath}`
 
     if (this.chart) {
       let selectedElement =
-        this.leftChartsContainer.nativeElement.querySelector(
+        this.leftChartsContainer?.nativeElement.querySelector(
           `[chartId="${this.chart.chartId}"]`
         );
 
-      if (selectedElement) {
+      if (common.isDefined(selectedElement)) {
         selectedElement.scrollIntoView({
           behavior: isSmooth === true ? 'smooth' : 'auto',
           block: 'center'
@@ -1705,6 +1705,10 @@ ${this.mconfig.storePart?.reqUrlPath}`
     // console.log('charts ngOnDestroy');
     this.chartQuery.reset();
     this.modelQuery.reset();
+
+    if (this.uiQuery.getValue().showModel === true) {
+      this.uiQuery.updatePart({ showModel: false });
+    }
 
     this.refreshSubscription?.unsubscribe();
     this.runButtonTimerSubscription?.unsubscribe();

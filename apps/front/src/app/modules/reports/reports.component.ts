@@ -100,7 +100,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
   isShow = true;
 
   isShowLeft = true;
-  showMiniCharts = true;
 
   emptyReportId = common.EMPTY_REPORT_ID;
 
@@ -115,6 +114,13 @@ export class ReportsComponent implements OnInit, OnDestroy {
   refreshProgress = 0;
   refreshSubscription: Subscription;
   refreshId: string;
+
+  showMiniCharts = true;
+  showMiniCharts$ = this.uiQuery.showMiniCharts$.pipe(
+    tap(x => {
+      this.showMiniCharts = x;
+    })
+  );
 
   isAutoRun = true;
   isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
@@ -251,12 +257,17 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.uiQuery.repChartData$,
     this.uiQuery.showMetricsModelName$,
     this.uiQuery.showMetricsTimeFieldName$
+    // ,
+    // this.uiQuery.showMiniCharts$
   ]).pipe(
     tap(
-      ([repChartData, showMetricsModelName, showMetricsTimeFieldName]: [
+      ([repChartData, showMetricsModelName, showMetricsTimeFieldName]: // ,
+      // showMiniCharts
+      [
         RepChartData,
         boolean,
         boolean
+        // , boolean
       ]) => {
         // console.log(repChartData);
 
@@ -1107,7 +1118,14 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   toggleShowMiniCharts() {
-    this.showMiniCharts = !this.showMiniCharts;
+    let newShowMiniChartsValue = !this.showMiniCharts;
+
+    this.showMiniCharts = newShowMiniChartsValue;
+
+    this.uiQuery.updatePart({ showMiniCharts: newShowMiniChartsValue });
+    this.uiService.setUserUi({ showMiniCharts: newShowMiniChartsValue });
+
+    this.cd.detectChanges();
   }
 
   refreshShow() {

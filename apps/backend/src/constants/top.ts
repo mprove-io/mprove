@@ -30,6 +30,7 @@ export const DEFAULT_UI: common.Ui = {
   showMetricsParameters: true,
   showMetricsChart: true,
   showMetricsChartSettings: true,
+  showMiniCharts: false,
   showHours: false,
   isAutoRun: true,
   showModel: false,

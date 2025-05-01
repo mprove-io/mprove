@@ -519,6 +519,10 @@ export class WrapToApiService {
           ? user.ui?.showMetricsChartSettings
           : constants.DEFAULT_UI.showMetricsChartSettings,
 
+        showMiniCharts: common.isDefined(user.ui?.showMiniCharts)
+          ? user.ui?.showMiniCharts
+          : constants.DEFAULT_UI.showMiniCharts,
+
         showHours: common.isDefined(user.ui?.showHours)
           ? user.ui?.showHours
           : constants.DEFAULT_UI.showHours,

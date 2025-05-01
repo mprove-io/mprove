@@ -32,6 +32,9 @@ export class Ui {
   showMetricsChartSettings: boolean;
 
   @IsBoolean()
+  showMiniCharts: boolean;
+
+  @IsBoolean()
   showHours: boolean;
 
   @IsBoolean()

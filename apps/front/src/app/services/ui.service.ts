@@ -19,6 +19,7 @@ export class UiService {
     showMetricsChart?: boolean;
     showMetricsChartSettings?: boolean;
     modelTreeLevels?: common.ModelTreeLevelsEnum;
+    showMiniCharts?: boolean;
     showHours?: boolean;
     isAutoRun?: boolean;
     showModel?: boolean;
@@ -39,6 +40,7 @@ export class UiService {
       showMetricsChart,
       showMetricsChartSettings,
       modelTreeLevels,
+      showMiniCharts,
       showHours,
       isAutoRun,
       showModel,
@@ -85,6 +87,9 @@ export class UiService {
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
       timeRangeFraction: uiState.timeRangeFraction,
+      showMiniCharts: common.isDefined(showMiniCharts)
+        ? showMiniCharts
+        : uiState.showMiniCharts,
       showHours: common.isDefined(showHours) ? showHours : uiState.showHours,
       isAutoRun: common.isDefined(isAutoRun) ? isAutoRun : uiState.isAutoRun,
       showModel: common.isDefined(showModel) ? showModel : uiState.showModel,
