@@ -56,9 +56,9 @@ import { ChartService } from '~front/app/services/chart.service';
 import { DataService } from '~front/app/services/data.service';
 import { UiService } from '~front/app/services/ui.service';
 
-export class RequestPartTypeItem {
+export class InfoStorePartItem {
   label: string;
-  value: common.RequestPartTypeEnum;
+  value: common.InfoStorePartEnum;
 }
 
 export class ChartTypeItem {
@@ -72,8 +72,8 @@ export class ChartTypeItem {
   templateUrl: './charts.component.html'
 })
 export class ChartsComponent implements OnInit, OnDestroy {
-  @ViewChild('requestPartTypeSelect', { static: false })
-  requestPartTypeSelectElement: NgSelectComponent;
+  @ViewChild('infoStorePartSelect', { static: false })
+  infoStorePartSelectElement: NgSelectComponent;
 
   @ViewChild('chartTypeSelect', { static: false })
   chartTypeSelectElement: NgSelectComponent;
@@ -82,7 +82,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.requestPartTypeSelectElement?.close();
+    this.infoStorePartSelectElement?.close();
     this.chartTypeSelectElement?.close();
   }
 
@@ -114,13 +114,13 @@ export class ChartsComponent implements OnInit, OnDestroy {
   queryStatusEnum = common.QueryStatusEnum;
   connectionTypeEnum = common.ConnectionTypeEnum;
   chartTypeEnum = common.ChartTypeEnum;
-  requestPartTypeEnum = common.RequestPartTypeEnum;
+  infoStorePart = common.InfoStorePartEnum;
 
-  requestPartTypeEnumReqTemplate = common.RequestPartTypeEnum.ReqTemplate;
-  requestPartTypeEnumReqFunction = common.RequestPartTypeEnum.ReqFunction;
-  requestPartTypeEnumReqJsonParts = common.RequestPartTypeEnum.ReqJsonParts;
-  requestPartTypeEnumReqBody = common.RequestPartTypeEnum.ReqBody;
-  requestPartTypeEnumReqUrlPath = common.RequestPartTypeEnum.ReqUrlPath;
+  infoStorePartReqTemplate = common.InfoStorePartEnum.ReqTemplate;
+  infoStorePartReqFunction = common.InfoStorePartEnum.ReqFunction;
+  infoStorePartReqJsonParts = common.InfoStorePartEnum.ReqJsonParts;
+  infoStorePartReqBody = common.InfoStorePartEnum.ReqBody;
+  infoStorePartReqUrlPath = common.InfoStorePartEnum.ReqUrlPath;
 
   chartTypeEnumTable = common.ChartTypeEnum.Table;
   chartTypeEnumSingle = common.ChartTypeEnum.Single;
@@ -437,30 +437,34 @@ export class ChartsComponent implements OnInit, OnDestroy {
     ]
   });
 
-  requestPartTypeForm: FormGroup = this.fb.group({
-    requestPartType: [common.RequestPartTypeEnum.ReqJsonParts]
+  infoStoreForm: FormGroup = this.fb.group({
+    infoStorePart: [common.InfoStorePartEnum.ReqJsonParts]
   });
 
-  requestPartTypeList: RequestPartTypeItem[] = [
+  infoMainForm: FormGroup = this.fb.group({
+    infoStorePart: [common.InfoStorePartEnum.ReqJsonParts]
+  });
+
+  infoStorePartList: InfoStorePartItem[] = [
     {
       label: 'Request Template',
-      value: common.RequestPartTypeEnum.ReqTemplate
+      value: common.InfoStorePartEnum.ReqTemplate
     },
     {
       label: 'Request Function',
-      value: common.RequestPartTypeEnum.ReqFunction
+      value: common.InfoStorePartEnum.ReqFunction
     },
     {
       label: 'Request JSON Parts',
-      value: common.RequestPartTypeEnum.ReqJsonParts
+      value: common.InfoStorePartEnum.ReqJsonParts
     },
     {
       label: 'Request Body',
-      value: common.RequestPartTypeEnum.ReqBody
+      value: common.InfoStorePartEnum.ReqBody
     },
     {
       label: 'Request Url Path',
-      value: common.RequestPartTypeEnum.ReqUrlPath
+      value: common.InfoStorePartEnum.ReqUrlPath
     }
   ];
 
@@ -1037,32 +1041,32 @@ export class ChartsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  requestPartTypeChange(requestPartTypeItem: RequestPartTypeItem) {
+  infoStorePartChange(infoStorePartItem: InfoStorePartItem) {
     (document.activeElement as HTMLElement).blur();
 
-    let value = requestPartTypeItem.value;
+    let value = infoStorePartItem.value;
 
     if (
       [
-        common.RequestPartTypeEnum.ReqTemplate,
-        common.RequestPartTypeEnum.ReqFunction,
-        common.RequestPartTypeEnum.ReqUrlPath
+        common.InfoStorePartEnum.ReqTemplate,
+        common.InfoStorePartEnum.ReqFunction,
+        common.InfoStorePartEnum.ReqUrlPath
       ].indexOf(value) > -1
     ) {
       this.jsContent =
-        value === common.RequestPartTypeEnum.ReqTemplate
+        value === common.InfoStorePartEnum.ReqTemplate
           ? `// function to make request urlPath and body (before interpolation)
 ${this.mconfig.storePart?.reqTemplate}`
-          : value === common.RequestPartTypeEnum.ReqFunction
+          : value === common.InfoStorePartEnum.ReqFunction
           ? `// function to make request urlPath and body (after interpolation)
 ${this.mconfig.storePart?.reqFunction}`
-          : value === common.RequestPartTypeEnum.ReqJsonParts
+          : value === common.InfoStorePartEnum.ReqJsonParts
           ? `// request urlPath and body
 ${this.mconfig.storePart?.reqJsonParts}`
-          : value === common.RequestPartTypeEnum.ReqBody
+          : value === common.InfoStorePartEnum.ReqBody
           ? `// request body
 ${this.mconfig.storePart?.reqBody}`
-          : value === common.RequestPartTypeEnum.ReqUrlPath
+          : value === common.InfoStorePartEnum.ReqUrlPath
           ? `// request url path
 ${this.mconfig.storePart?.reqUrlPath}`
           : undefined;

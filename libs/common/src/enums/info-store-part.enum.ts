@@ -1,4 +1,4 @@
-export enum RequestPartTypeEnum {
+export enum InfoStorePartEnum {
   ReqTemplate = 'ReqTemplate',
   ReqFunction = 'ReqFunction',
   ReqJsonParts = 'ReqJsonParts',

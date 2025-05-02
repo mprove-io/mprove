@@ -1292,7 +1292,7 @@
                   </div>
 
                   <form
-                    [formGroup]="requestPartTypeForm"
+                    [formGroup]="infoStoreForm"
                     *ngIf="
                       mconfig?.isStoreModel === true &&
                       mconfig?.select.length > 0 &&
@@ -1301,25 +1301,25 @@
                     class="ml-5"
                   >
                     <ng-select
-                      #requestPartTypeSelect
-                      data-cy="requestPartTypeSelect"
+                      #infoStorePartSelect
+                      data-cy="infoStorePartSelect"
                       class="w-[250px] flex-shrink-0 text-base focus:outline-none"
-                      [items]="requestPartTypeList"
+                      [items]="infoStorePartList"
                       [clearable]="false"
                       [searchable]="false"
-                      (change)="requestPartTypeChange($event)"
+                      (change)="infoStorePartChange($event)"
                       (keyup.esc)="
                         $event.stopImmediatePropagation();
-                        requestPartTypeSelect.blur()
+                        infoStorePartSelect.blur()
                       "
                       (keyup.enter)="
                         $event.stopImmediatePropagation();
-                        requestPartTypeSelect.blur()
+                        infoStorePartSelect.blur()
                       "
                       appendTo="body"
                       bindLabel="label"
                       bindValue="value"
-                      formControlName="requestPartType"
+                      formControlName="infoStorePart"
                     >
                       <ng-template ng-label-tmp let-item="item">
                         <div>{{ item.label }}</div>
@@ -1387,11 +1387,11 @@
                       *ngIf="
                         mconfig.isStoreModel === true &&
                         [
-                          requestPartTypeEnumReqTemplate,
-                          requestPartTypeEnumReqFunction,
-                          requestPartTypeEnumReqUrlPath
+                          infoStorePartReqTemplate,
+                          infoStorePartReqFunction,
+                          infoStorePartReqUrlPath
                         ].indexOf(
-                          requestPartTypeForm.controls['requestPartType'].value
+                          infoStoreForm.controls['infoStorePart'].value
                         ) > -1
                       "
                       [jsContent]="jsContent"
@@ -1401,18 +1401,18 @@
                       *ngIf="
                         mconfig.isStoreModel === true &&
                         [
-                          requestPartTypeEnumReqJsonParts,
-                          requestPartTypeEnumReqBody
+                          infoStorePartReqJsonParts,
+                          infoStorePartReqBody
                         ].indexOf(
-                          requestPartTypeForm.controls['requestPartType'].value
+                          infoStoreForm.controls['infoStorePart'].value
                         ) > -1
                       "
                       [jsonContent]="
-                        requestPartTypeForm.controls['requestPartType']
-                          .value === requestPartTypeEnumReqJsonParts
+                        infoStoreForm.controls['infoStorePart'].value ===
+                        infoStorePartReqJsonParts
                           ? mconfig.storePart?.reqJsonParts
-                          : requestPartTypeForm.controls['requestPartType']
-                              .value === requestPartTypeEnumReqBody
+                          : infoStoreForm.controls['infoStorePart'].value ===
+                            infoStorePartReqBody
                           ? mconfig.storePart?.reqBody
                           : undefined
                       "
