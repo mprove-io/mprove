@@ -133,6 +133,11 @@ export class CreateDraftDashboardController {
       yTile.plateHeight = freshTile.plateHeight;
 
       yTile.listen = freshTile.listen;
+      yTile.mconfig.filters = yTile.mconfig.filters.filter(
+        k =>
+          common.isUndefined(freshTile.deletedFilterFieldIds) ||
+          freshTile.deletedFilterFieldIds.indexOf(k.fieldId) < 0
+      );
 
       yTiles.push(yTile);
     });

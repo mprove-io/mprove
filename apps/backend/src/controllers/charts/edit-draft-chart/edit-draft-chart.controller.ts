@@ -205,6 +205,7 @@ export class EditDraftChartController {
       mconfigId: newMconfig.mconfigId,
       queryId: newQuery.queryId,
       listen: undefined,
+      deletedFilterFieldIds: undefined,
       title: undefined,
       plateWidth: undefined,
       plateHeight: undefined,

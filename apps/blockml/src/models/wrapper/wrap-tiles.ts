@@ -261,6 +261,7 @@ export function wrapTiles(item: {
       mconfigId: mconfigId,
       queryId: queryId,
       listen: tile.listen,
+      deletedFilterFieldIds: undefined,
       title: mconfigChart.title,
       plateWidth: common.isDefined(tile.plate?.plate_width)
         ? Number(tile.plate.plate_width)

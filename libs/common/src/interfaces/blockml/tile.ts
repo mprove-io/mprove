@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class Tile {
   @IsString()
@@ -14,6 +14,10 @@ export class Tile {
   queryId: string;
 
   listen: { [a: string]: string };
+
+  @IsOptional()
+  @IsString({ each: true })
+  deletedFilterFieldIds: string[];
 
   @IsString()
   title: string;

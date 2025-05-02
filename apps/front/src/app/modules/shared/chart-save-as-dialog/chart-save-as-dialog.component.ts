@@ -385,6 +385,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       modelLabel: this.ref.data.model.label,
       mconfigId: this.chart.tiles[0].mconfig.mconfigId,
       listen: {},
+      deletedFilterFieldIds: undefined,
       queryId: this.chart.tiles[0].mconfig.queryId,
       hasAccessToModel: true,
       title: newTitle.trim(),

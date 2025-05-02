@@ -229,6 +229,7 @@ export class CreateDraftChartController {
       mconfigId: newMconfig.mconfigId,
       queryId: newMconfig.queryId,
       listen: undefined,
+      deletedFilterFieldIds: undefined,
       title: undefined,
       plateWidth: undefined,
       plateHeight: undefined,

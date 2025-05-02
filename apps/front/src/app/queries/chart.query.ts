@@ -64,6 +64,7 @@ let emptyTile: common.TileX = {
   mconfigId: emptyMconfig.mconfigId,
   queryId: emptyQuery.queryId,
   listen: undefined,
+  deletedFilterFieldIds: undefined,
   title: 'New Chart',
   plateWidth: undefined,
   plateHeight: undefined,

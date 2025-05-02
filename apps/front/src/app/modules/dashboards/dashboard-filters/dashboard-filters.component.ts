@@ -258,8 +258,11 @@ export class DashboardFiltersComponent {
     );
 
     this.dashboard.tiles.forEach(tile => {
+      tile.deletedFilterFieldIds = [];
+
       Object.keys(tile.listen).forEach(key => {
         if (tile.listen[key] === dashboardField.id) {
+          tile.deletedFilterFieldIds.push(key);
           delete tile.listen[key];
         }
       });
