@@ -495,7 +495,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
   });
 
   chartTitleForm: FormGroup = this.fb.group({
-    chartTitle: [undefined, [Validators.required, Validators.maxLength(255)]]
+    chartTitle: [undefined, [Validators.required]]
   });
 
   chartTypesList: ChartTypeItem[] = [
