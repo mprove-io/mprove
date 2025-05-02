@@ -288,14 +288,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteFilterFn(item: DeleteFilterFnItem) {
     let { filterFieldId, tileTitle } = item;
 
+    let tile = this.dashboard.tiles.find(t => t.title === tileTitle);
+    tile.deletedFilterFieldIds = [filterFieldId];
+
+    if (common.isDefined(tile.listen[filterFieldId])) {
+      delete tile.listen[filterFieldId];
+    }
+
     this.dashboardService.editDashboard({
       isDraft: this.dashboard.draft,
       tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: this.dashboard.fields,
-      deleteFilterFieldId: filterFieldId,
-      deleteFilterTileTitle: tileTitle,
+      deleteFilterFieldId: undefined,
+      deleteFilterTileTitle: undefined,
       timezone: this.uiQuery.getValue().timezone
     });
   }
