@@ -294,6 +294,7 @@ export class ReportComponent {
     if (common.isDefined(this.agGridApi)) {
       // console.log('this.agGridApi isDefined');
       this.agGridApi.setGridOption('rowData', newData);
+      this.agGridApi.resetRowHeights();
 
       // if (common.isUndefined(this.data)) {
       //   console.log('data is undefined');
