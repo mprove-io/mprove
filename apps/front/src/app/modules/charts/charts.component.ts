@@ -61,6 +61,11 @@ export class InfoStorePartItem {
   value: common.InfoStorePartEnum;
 }
 
+export class InfoMainPartItem {
+  label: string;
+  value: common.InfoMainPartEnum;
+}
+
 export class ChartTypeItem {
   label: string;
   value: common.ChartTypeEnum;
@@ -72,17 +77,21 @@ export class ChartTypeItem {
   templateUrl: './charts.component.html'
 })
 export class ChartsComponent implements OnInit, OnDestroy {
+  @ViewChild('chartTypeSelect', { static: false })
+  chartTypeSelectElement: NgSelectComponent;
+
   @ViewChild('infoStorePartSelect', { static: false })
   infoStorePartSelectElement: NgSelectComponent;
 
-  @ViewChild('chartTypeSelect', { static: false })
-  chartTypeSelectElement: NgSelectComponent;
+  @ViewChild('infoMainPartSelect', { static: false })
+  infoMainPartSelectElement: NgSelectComponent;
 
   @ViewChild('leftChartsContainer') leftChartsContainer!: ElementRef;
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.infoStorePartSelectElement?.close();
+    this.infoMainPartSelectElement?.close();
     this.chartTypeSelectElement?.close();
   }
 
@@ -114,7 +123,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
   queryStatusEnum = common.QueryStatusEnum;
   connectionTypeEnum = common.ConnectionTypeEnum;
   chartTypeEnum = common.ChartTypeEnum;
-  infoStorePart = common.InfoStorePartEnum;
+
+  infoMainPartEnum = common.InfoMainPartEnum;
 
   infoStorePartReqTemplate = common.InfoStorePartEnum.ReqTemplate;
   infoStorePartReqFunction = common.InfoStorePartEnum.ReqFunction;
@@ -442,8 +452,19 @@ export class ChartsComponent implements OnInit, OnDestroy {
   });
 
   infoMainForm: FormGroup = this.fb.group({
-    infoStorePart: [common.InfoStorePartEnum.ReqJsonParts]
+    infoMainPart: [common.InfoMainPartEnum.Sql]
   });
+
+  infoMainPartList: InfoMainPartItem[] = [
+    {
+      label: 'SQL',
+      value: common.InfoMainPartEnum.Sql
+    },
+    {
+      label: 'YAML',
+      value: common.InfoMainPartEnum.Yaml
+    }
+  ];
 
   infoStorePartList: InfoStorePartItem[] = [
     {
@@ -455,17 +476,18 @@ export class ChartsComponent implements OnInit, OnDestroy {
       value: common.InfoStorePartEnum.ReqFunction
     },
     {
-      label: 'Request JSON Parts',
+      label: 'Request Body and Path',
       value: common.InfoStorePartEnum.ReqJsonParts
-    },
-    {
-      label: 'Request Body',
-      value: common.InfoStorePartEnum.ReqBody
-    },
-    {
-      label: 'Request Url Path',
-      value: common.InfoStorePartEnum.ReqUrlPath
     }
+    // ,
+    // {
+    //   label: 'Request Body',
+    //   value: common.InfoStorePartEnum.ReqBody
+    // },
+    // {
+    //   label: 'Request Url Path',
+    //   value: common.InfoStorePartEnum.ReqUrlPath
+    // }
   ];
 
   chartTypeForm: FormGroup = this.fb.group({
@@ -1071,6 +1093,10 @@ ${this.mconfig.storePart?.reqBody}`
 ${this.mconfig.storePart?.reqUrlPath}`
           : undefined;
     }
+  }
+
+  infoMainPartChange(infoMainPartItem: InfoMainPartItem) {
+    (document.activeElement as HTMLElement).blur();
   }
 
   chartTypeChange(newChartTypeValue?: common.ChartTypeEnum) {

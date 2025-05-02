@@ -24,6 +24,7 @@ import { ModelsListComponent } from './models-list/models-list.component';
 import { PanelTitleComponent } from './panel-title/panel-title.component';
 import { QueryOptionsComponent } from './query-options/query-options.component';
 import { SqlComponent } from './sql/sql.component';
+import { YamlComponent } from './yaml/yaml.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { SqlComponent } from './sql/sql.component';
     ChartComponent,
     PanelTitleComponent,
     SqlComponent,
+    YamlComponent,
     JsViewerComponent,
     JsonViewerComponent,
     FieldOptionsComponent,

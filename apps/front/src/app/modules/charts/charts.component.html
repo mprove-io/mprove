@@ -1287,9 +1287,55 @@
                         *ngIf="rightIsShow"
                       ></m-chevron-down-icon>
 
-                      <div> Info </div>
+                      <div>
+                        {{
+                          mconfig?.isStoreModel === true
+                            ? 'Store Query'
+                            : 'Sql Query'
+                        }}
+                      </div>
                     </div>
                   </div>
+
+                  <form
+                    [formGroup]="infoMainForm"
+                    *ngIf="
+                      mconfig?.isStoreModel === false &&
+                      mconfig?.select.length > 0 &&
+                      rightIsShow === true
+                    "
+                    class="ml-5"
+                  >
+                    <ng-select
+                      #infoMainPartSelect
+                      data-cy="infoMainPartSelect"
+                      class="w-[250px] flex-shrink-0 text-base focus:outline-none"
+                      [items]="infoMainPartList"
+                      [clearable]="false"
+                      [searchable]="false"
+                      (change)="infoMainPartChange($event)"
+                      (keyup.esc)="
+                        $event.stopImmediatePropagation();
+                        infoMainPartSelect.blur()
+                      "
+                      (keyup.enter)="
+                        $event.stopImmediatePropagation();
+                        infoMainPartSelect.blur()
+                      "
+                      appendTo="body"
+                      bindLabel="label"
+                      bindValue="value"
+                      formControlName="infoMainPart"
+                    >
+                      <ng-template ng-label-tmp let-item="item">
+                        <div>{{ item.label }}</div>
+                      </ng-template>
+
+                      <ng-template ng-option-tmp let-item="item">
+                        <div>{{ item.label }}</div>
+                      </ng-template>
+                    </ng-select>
+                  </form>
 
                   <form
                     [formGroup]="infoStoreForm"
@@ -1381,7 +1427,21 @@
                     *ngIf="mconfig?.select.length > 0 && rightIsShow === true"
                     class="border-s300 h-full w-2 flex-1"
                   >
-                    <m-sql *ngIf="mconfig.isStoreModel === false"></m-sql>
+                    <m-sql
+                      *ngIf="
+                        mconfig.isStoreModel === false &&
+                        infoMainForm.controls['infoMainPart'].value ===
+                          infoMainPartEnum.Sql
+                      "
+                    ></m-sql>
+
+                    <m-yaml
+                      *ngIf="
+                        mconfig.isStoreModel === false &&
+                        infoMainForm.controls['infoMainPart'].value ===
+                          infoMainPartEnum.Yaml
+                      "
+                    ></m-yaml>
 
                     <m-js-viewer
                       *ngIf="

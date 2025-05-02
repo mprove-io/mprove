@@ -212,10 +212,6 @@ import {
   ReportSaveAsDialogComponent,
   ReportSaveAsDialogData
 } from '../modules/shared/report-save-as-dialog/report-save-as-dialog.component';
-import {
-  ViewBlockmlDialogComponent,
-  ViewBlockmlDialogData
-} from '../modules/shared/view-blockml-dialog/view-blockml-dialog.component';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
 
 export interface ErrorDialogData {
@@ -312,15 +308,6 @@ export class MyDialogService {
       enableClose: false,
       closeButton: false,
       data: item
-    });
-  }
-
-  showViewBlockml(item: ViewBlockmlDialogData): void {
-    this.dialogService.open(ViewBlockmlDialogComponent, {
-      enableClose: false,
-      closeButton: true,
-      data: item,
-      width: 1024
     });
   }
 

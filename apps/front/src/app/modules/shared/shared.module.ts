@@ -121,7 +121,6 @@ import { EmailRingComponent } from './rings/email-ring/email-ring.component';
 import { RowMetricLabelComponent } from './row-metric-label/row-metric-label.component';
 import { SuggestFieldLabelComponent } from './suggest-field-label/suggest-field-label.component';
 import { ValidationComponent } from './validation/validation.component';
-import { ViewBlockmlDialogComponent } from './view-blockml-dialog/view-blockml-dialog.component';
 
 let pipesArray = [
   GoFromFileExtPipe,
@@ -233,7 +232,6 @@ let sharedComponents = [
   LinkOffIconComponent,
   FormulaIconComponent,
   ClockIconComponent,
-  ViewBlockmlDialogComponent,
   ReportSaveAsDialogComponent,
   ChartSaveAsDialogComponent,
   DashboardSaveAsDialogComponent,
