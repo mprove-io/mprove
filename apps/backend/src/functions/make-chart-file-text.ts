@@ -10,9 +10,7 @@ export function makeChartFileText(item: {
 
   let filePartTile: common.FilePartTile = common.prepareTile({
     isForDashboard: false,
-    mconfig: mconfig,
-    deleteFilterFieldId: undefined,
-    deleteFilterTileTitle: undefined
+    mconfig: mconfig
   });
 
   filePartTile.title = tileTitle;

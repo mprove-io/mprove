@@ -297,8 +297,6 @@ export class DashboardEditListenersDialogComponent implements OnInit {
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: this.dashboard.fields,
-      deleteFilterFieldId: undefined,
-      deleteFilterTileTitle: undefined,
       timezone: this.uiQuery.getValue().timezone
     });
   }

@@ -130,8 +130,6 @@ export class GetDashboardController {
       newDashboardId: newDashboardId,
       newTitle: fromDashboard.title,
       roles: fromDashboard.accessRoles.join(', '),
-      deleteFilterFieldId: undefined,
-      deleteFilterTileTitle: undefined,
       caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
       timezone: common.UTC
     });

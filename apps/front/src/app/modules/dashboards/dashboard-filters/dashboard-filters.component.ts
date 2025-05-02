@@ -51,8 +51,6 @@ export class DashboardFiltersComponent {
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields,
-      deleteFilterFieldId: undefined,
-      deleteFilterTileTitle: undefined,
       timezone: this.uiQuery.getValue().timezone
     });
   }
@@ -195,8 +193,6 @@ export class DashboardFiltersComponent {
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields,
-      deleteFilterFieldId: undefined,
-      deleteFilterTileTitle: undefined,
       timezone: this.uiQuery.getValue().timezone
     });
   }
@@ -246,8 +242,6 @@ export class DashboardFiltersComponent {
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields,
-      deleteFilterFieldId: undefined,
-      deleteFilterTileTitle: undefined,
       timezone: this.uiQuery.getValue().timezone
     });
   }
@@ -274,8 +268,6 @@ export class DashboardFiltersComponent {
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: newDashboardFields,
-      deleteFilterFieldId: undefined,
-      deleteFilterTileTitle: undefined,
       timezone: this.uiQuery.getValue().timezone
     });
   }

@@ -36,8 +36,6 @@ export class DashboardService {
     oldDashboardId: string;
     newDashboardId: string;
     newDashboardFields: common.DashboardField[];
-    deleteFilterFieldId: string;
-    deleteFilterTileTitle: string;
     timezone: string;
   }) {
     let {
@@ -46,8 +44,6 @@ export class DashboardService {
       oldDashboardId,
       newDashboardId,
       newDashboardFields,
-      deleteFilterFieldId,
-      deleteFilterTileTitle,
       timezone
     } = item;
 
@@ -57,8 +53,6 @@ export class DashboardService {
         oldDashboardId: oldDashboardId,
         newDashboardId: newDashboardId,
         newDashboardFields: newDashboardFields,
-        deleteFilterFieldId: deleteFilterFieldId,
-        deleteFilterTileTitle: deleteFilterTileTitle,
         timezone: timezone
       });
     } else {
@@ -67,8 +61,6 @@ export class DashboardService {
         oldDashboardId: oldDashboardId,
         newDashboardId: newDashboardId,
         newDashboardFields: newDashboardFields,
-        deleteFilterFieldId: deleteFilterFieldId,
-        deleteFilterTileTitle: deleteFilterTileTitle,
         timezone: timezone
       });
     }
@@ -79,8 +71,6 @@ export class DashboardService {
     oldDashboardId: string;
     newDashboardId: string;
     newDashboardFields: common.DashboardField[];
-    deleteFilterFieldId: string;
-    deleteFilterTileTitle: string;
     timezone: string;
   }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
@@ -90,8 +80,6 @@ export class DashboardService {
       oldDashboardId,
       newDashboardId,
       newDashboardFields,
-      deleteFilterFieldId,
-      deleteFilterTileTitle,
       timezone
     } = item;
 
@@ -113,8 +101,6 @@ export class DashboardService {
       newDashboardId: newDashboardId,
       newDashboardFields: newDashboardFields,
       tiles: newTiles,
-      deleteFilterFieldId: deleteFilterFieldId,
-      deleteFilterTileTitle: deleteFilterTileTitle,
       timezone: timezone
     };
 
@@ -150,8 +136,6 @@ export class DashboardService {
     oldDashboardId: string;
     newDashboardId: string;
     newDashboardFields: common.DashboardField[];
-    deleteFilterFieldId: string;
-    deleteFilterTileTitle: string;
     timezone: string;
   }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
@@ -161,8 +145,6 @@ export class DashboardService {
       oldDashboardId,
       newDashboardId,
       newDashboardFields,
-      deleteFilterFieldId,
-      deleteFilterTileTitle,
       timezone
     } = item;
 
@@ -184,8 +166,6 @@ export class DashboardService {
       newDashboardId: newDashboardId,
       newDashboardFields: newDashboardFields,
       tiles: newTiles,
-      deleteFilterFieldId: deleteFilterFieldId,
-      deleteFilterTileTitle: deleteFilterTileTitle,
       timezone: timezone
     };
 

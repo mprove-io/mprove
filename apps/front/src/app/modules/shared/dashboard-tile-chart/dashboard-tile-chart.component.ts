@@ -40,10 +40,10 @@ export class DashboardTileChartComponent
   @ViewChildren('chartView') chartViewComponents: QueryList<ChartViewComponent>;
 
   @Input()
-  tile: common.TileX;
+  deleteFilterFn: (item: DeleteFilterFnItem) => void;
 
   @Input()
-  deleteFilterFn: (item: DeleteFilterFnItem) => void;
+  tile: common.TileX;
 
   @Input()
   title: string;

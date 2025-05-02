@@ -69,8 +69,6 @@ export class EditDraftDashboardController {
       oldDashboardId,
       newDashboardFields,
       tiles,
-      deleteFilterFieldId,
-      deleteFilterTileTitle,
       timezone
     } = reqValid.payload;
 
@@ -154,8 +152,6 @@ export class EditDraftDashboardController {
       newDashboardId: newDashboardId,
       newTitle: newDashboardId,
       roles: fromDashboard.accessRoles.join(', '),
-      deleteFilterFieldId: deleteFilterFieldId,
-      deleteFilterTileTitle: deleteFilterTileTitle,
       caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
       timezone: common.UTC
     });

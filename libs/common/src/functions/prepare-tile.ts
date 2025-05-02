@@ -1,4 +1,4 @@
-import { FilePartTile, FileTileParameter, isUndefined } from '~common/_index';
+import { FilePartTile, FileTileParameter } from '~common/_index';
 import { constants } from '~common/barrels/constants';
 import { enums } from '~common/barrels/enums';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
@@ -12,16 +12,8 @@ export function prepareTile(item: {
   tile?: TileX;
   mconfig: MconfigX;
   isForDashboard: boolean;
-  deleteFilterFieldId: string;
-  deleteFilterTileTitle: string;
 }): FilePartTile {
-  let {
-    tile,
-    mconfig,
-    isForDashboard,
-    deleteFilterFieldId,
-    deleteFilterTileTitle
-  } = item;
+  let { tile, mconfig, isForDashboard } = item;
 
   let chart = mconfig.chart;
 
@@ -29,70 +21,62 @@ export function prepareTile(item: {
 
   if (isDefined(mconfig.filters) && mconfig.filters.length > 0) {
     mconfig.filters.forEach(x => {
-      if (
-        isUndefined(deleteFilterTileTitle) ||
-        tile.title !== deleteFilterTileTitle ||
-        x.fieldId !== deleteFilterFieldId
-      ) {
-        let parameter: FileTileParameter = {
-          apply_to: x.fieldId
-        };
+      let parameter: FileTileParameter = {
+        apply_to: x.fieldId
+      };
 
-        if (mconfig.isStoreModel === false) {
-          parameter.conditions = x.fractions.map(fraction => fraction.brick);
-        } else {
-          parameter.fractions = x.fractions.map(mconfigFraction => {
-            let fileFraction: FileFraction = {};
+      if (mconfig.isStoreModel === false) {
+        parameter.conditions = x.fractions.map(fraction => fraction.brick);
+      } else {
+        parameter.fractions = x.fractions.map(mconfigFraction => {
+          let fileFraction: FileFraction = {};
 
-            if (isDefined(mconfigFraction.logicGroup)) {
-              fileFraction.logic = mconfigFraction.logicGroup;
-            }
+          if (isDefined(mconfigFraction.logicGroup)) {
+            fileFraction.logic = mconfigFraction.logicGroup;
+          }
 
-            if (isDefined(mconfigFraction.storeFractionSubType)) {
-              fileFraction.type = mconfigFraction.storeFractionSubType;
-            }
+          if (isDefined(mconfigFraction.storeFractionSubType)) {
+            fileFraction.type = mconfigFraction.storeFractionSubType;
+          }
 
-            fileFraction.controls = mconfigFraction.controls.map(
-              mconfigControl => {
-                let newFileControl: FileFractionControl = {};
+          fileFraction.controls = mconfigFraction.controls.map(
+            mconfigControl => {
+              let newFileControl: FileFractionControl = {};
 
-                if (
-                  mconfigControl.controlClass === enums.ControlClassEnum.Input
-                ) {
-                  newFileControl.input = mconfigControl.name;
-                } else if (
-                  mconfigControl.controlClass ===
-                  enums.ControlClassEnum.ListInput
-                ) {
-                  newFileControl.list_input = mconfigControl.name;
-                } else if (
-                  mconfigControl.controlClass === enums.ControlClassEnum.Switch
-                ) {
-                  newFileControl.switch = mconfigControl.name;
-                } else if (
-                  mconfigControl.controlClass ===
-                  enums.ControlClassEnum.DatePicker
-                ) {
-                  newFileControl.date_picker = mconfigControl.name;
-                } else if (
-                  mconfigControl.controlClass ===
-                  enums.ControlClassEnum.Selector
-                ) {
-                  newFileControl.selector = mconfigControl.name;
-                }
-
-                newFileControl.value = mconfigControl.value;
-
-                return newFileControl;
+              if (
+                mconfigControl.controlClass === enums.ControlClassEnum.Input
+              ) {
+                newFileControl.input = mconfigControl.name;
+              } else if (
+                mconfigControl.controlClass === enums.ControlClassEnum.ListInput
+              ) {
+                newFileControl.list_input = mconfigControl.name;
+              } else if (
+                mconfigControl.controlClass === enums.ControlClassEnum.Switch
+              ) {
+                newFileControl.switch = mconfigControl.name;
+              } else if (
+                mconfigControl.controlClass ===
+                enums.ControlClassEnum.DatePicker
+              ) {
+                newFileControl.date_picker = mconfigControl.name;
+              } else if (
+                mconfigControl.controlClass === enums.ControlClassEnum.Selector
+              ) {
+                newFileControl.selector = mconfigControl.name;
               }
-            );
 
-            return fileFraction;
-          });
-        }
+              newFileControl.value = mconfigControl.value;
 
-        parameters.push(parameter);
+              return newFileControl;
+            }
+          );
+
+          return fileFraction;
+        });
       }
+
+      parameters.push(parameter);
     });
   }
 
@@ -103,26 +87,20 @@ export function prepareTile(item: {
     Object.keys(tile.listen).length > 0
   ) {
     Object.keys(tile.listen).forEach(x => {
-      if (
-        isUndefined(deleteFilterTileTitle) ||
-        tile.title !== deleteFilterTileTitle ||
-        x !== deleteFilterFieldId
-      ) {
-        let dashboardFieldName = tile.listen[x];
+      let dashboardFieldName = tile.listen[x];
 
-        let parameter = parameters.find(p => p.apply_to === x);
+      let parameter = parameters.find(p => p.apply_to === x);
 
-        if (isDefined(parameter)) {
-          parameter.listen = dashboardFieldName;
-          parameter.conditions = undefined;
-          parameter.fractions = undefined;
-        } else {
-          parameter = {
-            apply_to: x,
-            listen: dashboardFieldName
-          };
-          parameters.push(parameter);
-        }
+      if (isDefined(parameter)) {
+        parameter.listen = dashboardFieldName;
+        parameter.conditions = undefined;
+        parameter.fractions = undefined;
+      } else {
+        parameter = {
+          apply_to: x,
+          listen: dashboardFieldName
+        };
+        parameters.push(parameter);
       }
     });
   }

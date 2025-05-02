@@ -247,8 +247,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: this.dashboard.fields,
-      deleteFilterFieldId: undefined,
-      deleteFilterTileTitle: undefined,
       timezone: this.uiQuery.getValue().timezone
     });
   }
@@ -269,8 +267,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: this.dashboard.fields,
-      deleteFilterFieldId: undefined,
-      deleteFilterTileTitle: undefined,
       timezone: this.uiQuery.getValue().timezone
     });
   }
@@ -301,8 +297,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: common.makeId(),
       newDashboardFields: this.dashboard.fields,
-      deleteFilterFieldId: undefined,
-      deleteFilterTileTitle: undefined,
       timezone: this.uiQuery.getValue().timezone
     });
   }

@@ -127,8 +127,6 @@ test('1', async t => {
         newDashboardId: common.makeId(),
         newDashboardFields: resp1.payload.dashboard.fields,
         tiles: resp1.payload.dashboard.tiles,
-        deleteFilterFieldId: undefined,
-        deleteFilterTileTitle: undefined,
         timezone: 'UTC'
       }
     };

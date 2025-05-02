@@ -219,8 +219,6 @@ export class SaveModifyDashboardController {
         newDashboardId: fromDashboard.dashboardId,
         newTitle: fromDashboard.title,
         roles: fromDashboard.accessRoles.join(', '),
-        deleteFilterFieldId: undefined,
-        deleteFilterTileTitle: undefined,
         caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
         timezone: common.UTC
       });
@@ -236,6 +234,13 @@ export class SaveModifyDashboardController {
         yTile.plateWidth = freshTile.plateWidth;
         yTile.plateHeight = freshTile.plateHeight;
 
+        yTile.listen = freshTile.listen;
+        yTile.mconfig.filters = yTile.mconfig.filters.filter(
+          k =>
+            common.isUndefined(freshTile.deletedFilterFieldIds) ||
+            freshTile.deletedFilterFieldIds.indexOf(k.fieldId) < 0
+        );
+
         yTiles.push(yTile);
       });
 
@@ -246,8 +251,6 @@ export class SaveModifyDashboardController {
         newDashboardId: toDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
-        deleteFilterFieldId: undefined,
-        deleteFilterTileTitle: undefined,
         caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
         timezone: common.UTC
       });

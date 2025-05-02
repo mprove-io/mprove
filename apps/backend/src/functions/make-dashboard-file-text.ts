@@ -10,8 +10,6 @@ export function makeDashboardFileText(item: {
   newTitle: string;
   // group: string;
   roles: string;
-  deleteFilterFieldId: string;
-  deleteFilterTileTitle: string;
   timezone: string;
   caseSensitiveStringFilters: boolean;
 }) {
@@ -20,8 +18,6 @@ export function makeDashboardFileText(item: {
     newDashboardId,
     newTitle,
     roles,
-    deleteFilterFieldId,
-    deleteFilterTileTitle,
     timezone,
     caseSensitiveStringFilters
   } = item;
@@ -195,22 +191,10 @@ export function makeDashboardFileText(item: {
         ? dashboard.tiles.map(x => {
             let newMconfig = common.makeCopy(x.mconfig);
 
-            // if (common.isDefined(x.listen)) {
-            //   Object.keys(x.listen).forEach(y => {
-            //     let dashboardFieldName = x.listen[y];
-
-            //     if (fields.findIndex(f => f.filter === dashboardFieldName) < 0) {
-            //       delete x.listen[y];
-            //     }
-            //   });
-            // }
-
             let filePartTile: common.FilePartTile = common.prepareTile({
               tile: x,
               isForDashboard: true,
-              mconfig: newMconfig,
-              deleteFilterFieldId: deleteFilterFieldId,
-              deleteFilterTileTitle: deleteFilterTileTitle
+              mconfig: newMconfig
             });
 
             return filePartTile;

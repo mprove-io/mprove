@@ -38,6 +38,10 @@ export class BricksComponent {
   constructor(private modelsQuery: ModelsQuery) {}
 
   deleteFilter(filter: common.FilterX) {
+    this.extendedFilters = this.extendedFilters.filter(
+      x => x.fieldId !== filter.fieldId
+    );
+
     this.deleteFilterFn({
       filterFieldId: filter.fieldId,
       tileTitle: this.tileTitle

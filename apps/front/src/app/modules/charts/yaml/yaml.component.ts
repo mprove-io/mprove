@@ -28,9 +28,7 @@ export class YamlComponent implements OnInit {
 
       let filePartTile: common.FilePartTile = common.prepareTile({
         isForDashboard: false,
-        mconfig: x.tiles[0].mconfig,
-        deleteFilterFieldId: undefined,
-        deleteFilterTileTitle: undefined
+        mconfig: x.tiles[0].mconfig
       });
 
       this.content = common.toYaml({ tiles: [filePartTile] });
