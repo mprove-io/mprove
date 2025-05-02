@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
-import { EChartsOption } from 'echarts';
+import { EChartsInitOpts, EChartsOption } from 'echarts';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { DataService } from '~front/app/services/data.service';
@@ -39,35 +39,44 @@ export class MiniChartRendererComponent implements ICellRendererAngularComp {
         this.params.data.rowType
       ) > -1
     ) {
-      let chartFormulaData = this.uiQuery.getValue().chartFormulaData;
+      let chartPointsData = this.uiQuery.getValue().chartPointsData;
 
-      this.localInitOpts = chartFormulaData.eChartInitOpts;
+      this.localInitOpts = {
+        renderer: 'svg'
+        // renderer: 'canvas'
+      } as EChartsInitOpts;
 
-      this.localOptions = Object.assign({}, chartFormulaData.eChartOptions, {
-        tooltip: { show: false },
-        legend: { show: false },
-        xAxis: Object.assign({}, chartFormulaData.eChartOptions.xAxis, {
-          axisTick: { show: false },
-          axisLine: { show: false },
-          axisLabel: { show: false }
-        }),
-        yAxis: { show: false },
+      this.localOptions = {
+        animation: false,
+        useUTC: true,
         grid: {
           left: 0,
           right: 0,
           top: 7,
           bottom: 7
         },
+        textStyle: {
+          fontFamily: 'sans-serif'
+        },
+        legend: { show: false },
+        tooltip: { show: false },
+        xAxis: {
+          type: 'time',
+          axisTick: { show: false },
+          axisLine: { show: false },
+          axisLabel: { show: false }
+        },
+        yAxis: { show: false },
         series: this.dataService.metricsRowToSeries({
-          row: this.params.data,
-          chartSeriesElement: undefined,
           isMiniChart: true,
+          row: this.params.data,
+          dataPoints: chartPointsData.dataPoints,
+          chartSeriesElement: undefined,
           showMetricsModelName: this.uiQuery.getValue().showMetricsModelName,
           showMetricsTimeFieldName:
-            this.uiQuery.getValue().showMetricsTimeFieldName,
-          dataPoints: chartFormulaData.dataPoints
+            this.uiQuery.getValue().showMetricsTimeFieldName
         })
-      });
+      };
     }
   }
 

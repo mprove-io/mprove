@@ -1,6 +1,6 @@
 import { EChartsOption } from 'echarts';
 
-export interface ChartFormulaData {
+export interface ChartPointsData {
   eChartInitOpts: any;
   eChartOptions: EChartsOption;
   dataPoints: any;

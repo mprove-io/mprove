@@ -398,6 +398,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
             : this.report.chart.yAxis;
 
         this.eChartOptions = (<EChartsOption>{
+          animation: false,
           useUTC: true,
           grid: {
             left: 100,
@@ -482,11 +483,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
                     .find(row => row.rowId === chartSeriesElement.dataRowId);
 
                   let seriesElement = this.dataService.metricsRowToSeries({
+                    isMiniChart: false,
                     row: seriesRow,
+                    dataPoints: dataPoints,
                     chartSeriesElement: chartSeriesElement,
                     showMetricsModelName: showMetricsModelName,
-                    showMetricsTimeFieldName: showMetricsTimeFieldName,
-                    dataPoints: dataPoints
+                    showMetricsTimeFieldName: showMetricsTimeFieldName
                   });
 
                   let seriesPart: SeriesPart = {
@@ -515,7 +517,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
         this.dataPoints = dataPoints;
 
         this.uiQuery.updatePart({
-          chartFormulaData: {
+          chartPointsData: {
             dataPoints: dataPoints,
             eChartInitOpts: this.eChartInitOpts,
             eChartOptions: this.eChartOptions,
@@ -914,6 +916,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   navToReport(report: common.ReportX) {
     if (this.reportSelectedNodes.length > 0) {
       this.isShow = false;
+      this.uiQuery.getValue().gridApi.deselectAll();
     }
 
     this.navigateService.navigateToReport({
@@ -1145,7 +1148,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
         reportSelectedNodes: [],
         gridApi: null,
         gridData: [],
-        chartFormulaData: null,
+        chartPointsData: null,
         repChartData: {
           rows: [],
           columns: []
@@ -1269,7 +1272,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       reportSelectedNodes: [],
       gridApi: null,
       gridData: [],
-      chartFormulaData: null,
+      chartPointsData: null,
       repChartData: {
         rows: [],
         columns: []

@@ -848,8 +848,8 @@ export class DataService {
   metricsRowToSeries(item: {
     isMiniChart?: boolean;
     row: DataRow;
-    chartSeriesElement: common.MconfigChartSeries;
     dataPoints: DataPoint[];
+    chartSeriesElement: common.MconfigChartSeries;
     showMetricsModelName: boolean;
     showMetricsTimeFieldName: boolean;
   }) {

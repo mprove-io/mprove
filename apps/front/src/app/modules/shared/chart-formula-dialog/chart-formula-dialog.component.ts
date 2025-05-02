@@ -9,7 +9,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { EChartsOption } from 'echarts';
 import { UiSwitchModule } from 'ngx-ui-switch';
-import { ChartFormulaData } from '~front/app/interfaces/chart-formula-data';
+import { ChartPointsData } from '~front/app/interfaces/chart-formula-data';
 import { DataPoint } from '~front/app/interfaces/data-point';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -19,7 +19,7 @@ import { SharedModule } from '../shared.module';
 
 export interface ChartFormulaDialogData {
   row: DataRow;
-  chartFormulaData: ChartFormulaData;
+  chartPointsData: ChartPointsData;
 }
 
 @Component({
@@ -60,28 +60,30 @@ export class ChartFormulaDialogComponent implements OnInit {
 
     let row = this.ref.data.row;
 
-    this.dataPoints = this.ref.data.chartFormulaData.dataPoints;
-    this.eChartInitOpts = this.ref.data.chartFormulaData.eChartInitOpts;
+    this.dataPoints = this.ref.data.chartPointsData.dataPoints;
+    this.eChartInitOpts = this.ref.data.chartPointsData.eChartInitOpts;
 
     this.eChartOptions = Object.assign(
       {},
-      this.ref.data.chartFormulaData.eChartOptions,
+      this.ref.data.chartPointsData.eChartOptions,
       {
+        animation: false,
         series: this.dataService.metricsRowToSeries({
+          isMiniChart: false,
           row: row,
+          dataPoints: this.dataPoints,
           chartSeriesElement: undefined,
           showMetricsModelName: this.uiQuery.getValue().showMetricsModelName,
           showMetricsTimeFieldName:
-            this.uiQuery.getValue().showMetricsTimeFieldName,
-          dataPoints: this.dataPoints
+            this.uiQuery.getValue().showMetricsTimeFieldName
         })
       }
     );
     this.title = (this.eChartOptions.series as any).name;
 
-    this.newQueriesLength = this.ref.data.chartFormulaData.newQueriesLength;
+    this.newQueriesLength = this.ref.data.chartPointsData.newQueriesLength;
     this.runningQueriesLength =
-      this.ref.data.chartFormulaData.runningQueriesLength;
+      this.ref.data.chartPointsData.runningQueriesLength;
 
     let recordsWithValuesLength = 0;
 

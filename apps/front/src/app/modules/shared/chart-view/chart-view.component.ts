@@ -54,6 +54,9 @@ export class ChartViewComponent implements OnChanges {
   chartInstanceId: string;
 
   @Input()
+  isAnimation: boolean;
+
+  @Input()
   mconfigFields: common.MconfigField[];
 
   yFieldColumn: common.MconfigField;
@@ -99,7 +102,7 @@ export class ChartViewComponent implements OnChanges {
     } as EChartsInitOpts;
 
     let eChartOptions: EChartsOption = {
-      // animation: false,
+      animation: this.isAnimation,
       // transitionDuration: 0,
       useUTC: true,
       grid: {

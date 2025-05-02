@@ -140,11 +140,11 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
         isToDuplicateQuery: true
       });
     } else if (this.params.data.rowType === common.RowTypeEnum.Formula) {
-      let chartFormulaData = this.uiQuery.getValue().chartFormulaData;
+      let chartPointsData = this.uiQuery.getValue().chartPointsData;
 
       this.myDialogService.showChartFormula({
         row: this.params.data,
-        chartFormulaData: chartFormulaData
+        chartPointsData: chartPointsData
       });
     }
   }
