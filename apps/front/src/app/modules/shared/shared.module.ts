@@ -47,7 +47,7 @@ import { ChartPieIconComponent } from './icons/1-chart-icons/chart-pie-icon/char
 import { ChartScatterIconComponent } from './icons/1-chart-icons/chart-scatter-icon/chart-scatter-icon.component';
 import { ChartSingleIconComponent } from './icons/1-chart-icons/chart-single-icon/chart-single-icon.component';
 import { ChartTableIconComponent } from './icons/1-chart-icons/chart-table-icon/chart-table-icon.component';
-import { ChartViewIconComponent } from './icons/1-chart-icons/chart-view-icon/chart-view-icon.component';
+import { ChartZoomIconComponent } from './icons/1-chart-icons/chart-zoom-icon/chart-zoom-icon.component';
 import { TypeCustomIconComponent } from './icons/2-type-icons/type-custom-icon/type-custom-icon.component';
 import { TypeDateIconComponent } from './icons/2-type-icons/type-date-icon/type-date-icon.component';
 import { TypeEnumIconComponent } from './icons/2-type-icons/type-enum-icon/type-enum-icon.component';
@@ -197,7 +197,7 @@ let sharedComponents = [
   MinusSmIconComponent,
   QueryStatusComponent,
   FullScreenIconComponent,
-  ChartViewIconComponent,
+  ChartZoomIconComponent,
   DesktopIconComponent,
   SearchIconComponent,
   RefreshIconComponent,

@@ -5,7 +5,7 @@ import equal from 'fast-deep-equal';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { common } from '~front/barrels/common';
-import { ChartPointsData } from '../interfaces/chart-formula-data';
+import { ChartPointsData } from '../interfaces/chart-points-data';
 import { BaseQuery } from './base.query';
 
 export interface RepChartData {
@@ -57,8 +57,6 @@ let uiState: UiState = {
     columns: []
   },
   chartPointsData: {
-    eChartInitOpts: undefined,
-    eChartOptions: undefined,
     dataPoints: undefined,
     newQueriesLength: undefined,
     runningQueriesLength: undefined

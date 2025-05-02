@@ -1,5 +1,5 @@
 export * from './branch-item';
-export * from './chart-formula-data';
+export * from './chart-points-data';
 export * from './data-point';
 export * from './delete-filter-fn-item';
 export * from './error-data';

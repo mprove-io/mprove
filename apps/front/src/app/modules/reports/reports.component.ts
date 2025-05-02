@@ -519,8 +519,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
         this.uiQuery.updatePart({
           chartPointsData: {
             dataPoints: dataPoints,
-            eChartInitOpts: this.eChartInitOpts,
-            eChartOptions: this.eChartOptions,
             newQueriesLength: newQueriesLength,
             runningQueriesLength: runningQueriesLength
           }
