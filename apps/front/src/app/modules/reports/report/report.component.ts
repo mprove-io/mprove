@@ -554,23 +554,25 @@ export class ReportComponent {
             filter => filter.fieldId !== timeFieldIdSpec
           );
 
-      extendedFilters.forEach(x => {
-        if (common.isDefined(x.fractions)) {
-          x.fractions.forEach(y => {
-            if (common.isDefined(y.controls)) {
-              y.controls?.forEach(c => {
+      if (extendedFilters.length > 0) {
+        extendedFilters.forEach(x => {
+          if (common.isDefined(x.fractions)) {
+            x.fractions.forEach(y => {
+              if (common.isDefined(y.controls)) {
+                y.controls?.forEach(c => {
+                  rowHeight = rowHeight + 25;
+                });
+              } else {
                 rowHeight = rowHeight + 25;
-              });
-            } else {
-              rowHeight = rowHeight + 25;
-            }
-          });
-        }
+              }
+            });
+          }
 
-        rowHeight = rowHeight + 8;
-      });
+          rowHeight = rowHeight + 8;
+        });
 
-      rowHeight = rowHeight + 9;
+        rowHeight = rowHeight + 9;
+      }
     }
 
     params.data.finalRowHeight = rowHeight;
