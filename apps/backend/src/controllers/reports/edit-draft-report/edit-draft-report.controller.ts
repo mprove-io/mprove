@@ -110,6 +110,18 @@ export class EditDraftReportController {
       userMember: userMember
     });
 
+    if (common.isDefined(newReportFields)) {
+      report.rows
+        .filter(row => common.isDefined(row.parameters))
+        .forEach(row => {
+          row.parameters = row.parameters.filter(
+            parameter =>
+              !parameter.listen ||
+              newReportFields.map(y => y.id).indexOf(parameter.listen) > -1
+          );
+        });
+    }
+
     let models: ModelEnt[] = [];
 
     if (

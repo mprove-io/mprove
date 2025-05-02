@@ -131,6 +131,18 @@ export class CreateDraftReportController {
         userMember: userMember
       });
 
+    if (common.isDefined(newReportFields)) {
+      fromReport.rows
+        .filter(row => common.isDefined(row.parameters))
+        .forEach(row => {
+          row.parameters = row.parameters.filter(
+            parameter =>
+              !parameter.listen ||
+              newReportFields.map(y => y.id).indexOf(parameter.listen) > -1
+          );
+        });
+    }
+
     let reportId = common.makeId();
 
     let copyMconfigsMap: { fromMconfigId: string; toMconfigId: string }[] = [];
