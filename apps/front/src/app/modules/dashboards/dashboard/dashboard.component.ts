@@ -90,6 +90,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   );
 
+  prevDashboardId: string;
+
   dashboard: common.DashboardX;
   dashboard$ = this.dashboardQuery.select().pipe(
     filter(x => common.isDefined(x.dashboardId)),
@@ -121,6 +123,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             tile: tile
           }
       );
+
+      if (this.prevDashboardId !== this.dashboard.dashboardId) {
+        this.preventHorizontalScrollWorkaround();
+        this.prevDashboardId = this.dashboard.dashboardId;
+      }
 
       this.cd.detectChanges();
     })
