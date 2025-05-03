@@ -570,6 +570,7 @@ export class RebuildStructService {
       {
         entities: dashboards,
         models: models,
+        stores: stores,
         structId: item.structId,
         errors: errors,
         caller: common.CallerEnum.BuildDashboardTileCharts
@@ -581,6 +582,7 @@ export class RebuildStructService {
       {
         entities: charts,
         models: models,
+        stores: stores,
         structId: item.structId,
         errors: errors,
         caller: common.CallerEnum.BuildChartTileCharts
@@ -600,6 +602,7 @@ export class RebuildStructService {
       {
         entities: reports,
         models: models,
+        stores: stores,
         structId: item.structId,
         errors: errors,
         caller: common.CallerEnum.BuildReportCharts

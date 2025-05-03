@@ -4,6 +4,7 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
+import { STORE_MODEL_PREFIX } from '~common/_index';
 
 let func = common.FuncEnum.CheckChartDataParameters;
 
@@ -11,6 +12,7 @@ export function checkChartDataParameters<T extends types.dzType>(
   item: {
     entities: T[];
     models: common.FileModel[];
+    stores: common.FileStore[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -26,7 +28,24 @@ export function checkChartDataParameters<T extends types.dzType>(
     let errorsOnStart = item.errors.length;
 
     x.tiles.forEach(tile => {
-      let model = item.models.find(m => m.name === tile.model);
+      let isStore = tile.model.startsWith(STORE_MODEL_PREFIX);
+      let model: common.FileModel;
+      let store: common.FileStore;
+
+      if (isStore === true) {
+        store = item.stores.find(
+          m => `${STORE_MODEL_PREFIX}_${m.name}` === tile.model
+        );
+      } else {
+        model = item.models.find(m => m.name === tile.model);
+      }
+
+      // if (common.isUndefined(model)) {
+      //   console.log('tile.model');
+      //   console.log(tile.model);
+      //   console.log('models');
+      //   console.log(models.map(y => y.model));
+      // }
 
       if (
         [
@@ -131,10 +150,13 @@ export function checkChartDataParameters<T extends types.dzType>(
           );
           return;
         } else {
-          let field = getField({
-            model: model,
-            fieldId: tile.data.x_field
-          });
+          let field =
+            isStore === true
+              ? store.fields.find(sField => sField.name === tile.data.x_field)
+              : getModelField({
+                  model: model,
+                  fieldId: tile.data.x_field
+                });
 
           if (
             field.fieldClass !== common.FieldClassEnum.Dimension &&
@@ -177,10 +199,15 @@ export function checkChartDataParameters<T extends types.dzType>(
           );
           return;
         } else {
-          let field = getField({
-            model: model,
-            fieldId: tile.data.size_field
-          });
+          let field =
+            isStore === true
+              ? store.fields.find(
+                  sField => sField.name === tile.data.size_field
+                )
+              : getModelField({
+                  model: model,
+                  fieldId: tile.data.size_field
+                });
 
           if (field.result !== common.FieldResultEnum.Number) {
             item.errors.push(
@@ -220,10 +247,15 @@ export function checkChartDataParameters<T extends types.dzType>(
           );
           return;
         } else {
-          let field = getField({
-            model: model,
-            fieldId: tile.data.multi_field
-          });
+          let field =
+            isStore === true
+              ? store.fields.find(
+                  sField => sField.name === tile.data.multi_field
+                )
+              : getModelField({
+                  model: model,
+                  fieldId: tile.data.multi_field
+                });
 
           if (field.fieldClass !== common.FieldClassEnum.Dimension) {
             item.errors.push(
@@ -281,10 +313,13 @@ export function checkChartDataParameters<T extends types.dzType>(
             );
             return;
           } else {
-            let field = getField({
-              model: model,
-              fieldId: element
-            });
+            let field =
+              isStore === true
+                ? store.fields.find(sField => sField.name === element)
+                : getModelField({
+                    model: model,
+                    fieldId: element
+                  });
 
             if (
               field.fieldClass !== common.FieldClassEnum.Measure &&
@@ -378,7 +413,7 @@ export function checkChartDataParameters<T extends types.dzType>(
   return newEntities;
 }
 
-function getField(item: { model: common.FileModel; fieldId: string }) {
+function getModelField(item: { model: common.FileModel; fieldId: string }) {
   let { model, fieldId } = item;
 
   let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
@@ -386,6 +421,7 @@ function getField(item: { model: common.FileModel; fieldId: string }) {
 
   let asName = r[1];
   let fieldName = r[2];
+
   let field =
     asName === common.MF
       ? model.fields.find(mField => mField.name === fieldName)

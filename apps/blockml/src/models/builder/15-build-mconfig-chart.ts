@@ -9,6 +9,7 @@ export function buildMconfigChart<T extends types.dcrType>(
   item: {
     entities: T[];
     models: common.FileModel[];
+    stores: common.FileStore[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -45,6 +46,7 @@ export function buildMconfigChart<T extends types.dcrType>(
       {
         entities: entities,
         models: item.models,
+        stores: item.stores,
         structId: item.structId,
         errors: item.errors,
         caller: item.caller
