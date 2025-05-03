@@ -96,8 +96,9 @@ export class NavbarComponent implements OnInit {
   }
 
   navigateFiles() {
-    this.navigateService.navigateToFiles();
-
+    if (this.isFilesRouteActive === true) {
+      return;
+    }
     this.uiQuery.updatePart({ panel: common.PanelEnum.Tree });
 
     this.navigateService.navigateToFileLine({

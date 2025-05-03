@@ -10,14 +10,16 @@ import {
   OnDestroy,
   ViewChild
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
+import { finalize, take, tap } from 'rxjs/operators';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ProjectQuery } from '~front/app/queries/project.query';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -136,6 +138,8 @@ export class FilesTreeComponent implements OnDestroy {
     private navQuery: NavQuery,
     private structQuery: StructQuery,
     private uiQuery: UiQuery,
+    private userQuery: UserQuery,
+    private router: Router,
     private fileQuery: FileQuery,
     private apiService: ApiService,
     private navigateService: NavigateService
@@ -270,6 +274,8 @@ export class FilesTreeComponent implements OnDestroy {
       toNodeId: toNodeId
     };
 
+    let isMoveSuccess = false;
+
     this.apiService
       .req({
         pathInfoName:
@@ -280,16 +286,58 @@ export class FilesTreeComponent implements OnDestroy {
       .pipe(
         tap((resp: apiToBackend.ToBackendMoveCatalogNodeResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            isMoveSuccess = true;
+
             this.repoQuery.update(resp.payload.repo);
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({
               needValidate: resp.payload.needValidate
             });
-
-            this.cd.reattach();
           }
         }),
-        take(1)
+        take(1),
+        finalize(() => {
+          this.cd.reattach();
+
+          if (isMoveSuccess === false) {
+            let repoId =
+              this.nav.isRepoProd === true
+                ? common.PROD_REPO_ID
+                : this.userQuery.getValue().userId;
+
+            let arStart = [
+              common.PATH_ORG,
+              this.nav.orgId,
+              common.PATH_PROJECT,
+              this.nav.projectId,
+              common.PATH_REPO,
+              repoId,
+              common.PATH_BRANCH,
+              this.nav.branchId,
+              common.PATH_ENV,
+              this.nav.envId,
+              common.PATH_FILES
+            ];
+
+            let arStartStr = arStart.join('/');
+
+            let arNext = [
+              ...arStart,
+              common.PATH_FILE,
+              common.LAST_SELECTED_FILE_ID
+            ];
+
+            this.router
+              .navigateByUrl(arStartStr, { skipLocationChange: true })
+              .then(() => {
+                this.router.navigate(arNext, {
+                  queryParams: {
+                    panel: common.PanelEnum.Tree
+                  }
+                });
+              });
+          }
+        })
       )
       .subscribe();
   }
