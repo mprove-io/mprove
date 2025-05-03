@@ -264,17 +264,41 @@ export class FilesTreeComponent implements OnDestroy {
 
     this.itemsTree.treeModel.getNodeById(parentId).expand();
 
+    let fromNodeId = event.node.id;
     let toNodeId = parentId + '/' + event.node.name;
 
     let payload: apiToBackend.ToBackendMoveCatalogNodeRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      fromNodeId: event.node.id,
+      fromNodeId: fromNodeId,
       toNodeId: toNodeId
     };
 
     let isMoveSuccess = false;
+    let newFileId: string;
+
+    if (common.isDefined(this.fileId)) {
+      let selectedPath = this.fileId.split('___').join('/');
+      let fromPath = fromNodeId.split('/').slice(1).join('/');
+      let toPath = toNodeId.split('/').slice(1).join('/');
+
+      if (
+        selectedPath.startsWith(fromPath + '/') ||
+        selectedPath === fromPath
+      ) {
+        let relativePath =
+          selectedPath === fromPath
+            ? ''
+            : selectedPath.slice(fromPath.length + 1);
+
+        let newPath = common.isDefinedAndNotEmpty(relativePath)
+          ? `${toPath}/${relativePath}`
+          : toPath;
+
+        newFileId = newPath.split('/').join('___');
+      }
+    }
 
     this.apiService
       .req({
@@ -293,6 +317,13 @@ export class FilesTreeComponent implements OnDestroy {
             this.navQuery.updatePart({
               needValidate: resp.payload.needValidate
             });
+
+            if (common.isDefined(newFileId)) {
+              this.navigateService.navigateToFileLine({
+                panel: common.PanelEnum.Tree,
+                underscoreFileId: newFileId
+              });
+            }
           }
         }),
         take(1),
