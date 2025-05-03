@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildYaml;
 let func = common.FuncEnum.CheckProjectConfig;
-let testId = 'e__mprove-dir-folder-name-has-a-dot';
+let testId = 'e__mprove-dir-folder-name-has-dot-after-slash';
 
 test('1', async t => {
   let errors: BmError[];
@@ -60,6 +60,6 @@ test('1', async t => {
 
   t.is(errors.length, 1);
 
-  t.is(errors[0].title, common.ErTitleEnum.MPROVE_DIR_FOLDER_NAME_HAS_A_DOT);
-  t.is(errors[0].lines[0].line, 0);
+  t.is(errors[0].title, common.ErTitleEnum.MPROVE_DIR_HAS_DOT_AFTER_SLASH);
+  t.is(errors[0].lines[0].line, 1);
 });

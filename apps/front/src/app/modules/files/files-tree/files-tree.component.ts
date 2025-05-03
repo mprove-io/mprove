@@ -150,10 +150,7 @@ export class FilesTreeComponent implements OnDestroy {
 
     if (
       common.isUndefined(mproveDirValue) ||
-      [
-        common.MPROVE_CONFIG_DIR_DOT,
-        common.MPROVE_CONFIG_DIR_DOT_SLASH
-      ].indexOf(mproveDirValue) > -1
+      mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
     ) {
       this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
     } else {

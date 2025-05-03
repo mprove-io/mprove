@@ -199,10 +199,7 @@ export class EditDraftDashboardController {
     }
 
     let relativePath =
-      [
-        common.MPROVE_CONFIG_DIR_DOT,
-        common.MPROVE_CONFIG_DIR_DOT_SLASH
-      ].indexOf(currentStruct.mproveDirValue) > -1
+      currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
         ? `${common.MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`
         : `${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`;
 

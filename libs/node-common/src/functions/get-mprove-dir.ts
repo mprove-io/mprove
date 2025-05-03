@@ -39,12 +39,7 @@ export async function getMproveDir(item: { dir: string; configPath: string }) {
       return undefined;
     }
 
-    if (
-      [
-        common.MPROVE_CONFIG_DIR_DOT,
-        common.MPROVE_CONFIG_DIR_DOT_SLASH
-      ].indexOf(parsedYaml.mprove_dir) > -1
-    ) {
+    if (parsedYaml.mprove_dir === common.MPROVE_CONFIG_DIR_DOT_SLASH) {
       return item.dir;
     }
 

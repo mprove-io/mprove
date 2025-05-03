@@ -4,7 +4,6 @@ import { enums } from '~common/barrels/enums';
 export const MPROVE_CONFIG_FILENAME = 'mprove.yml';
 export const MPROVE_CONFIG_NAME = 'mprove';
 
-export const MPROVE_CONFIG_DIR_DOT = '.';
 export const MPROVE_CONFIG_DIR_DOT_SLASH = './';
 
 export const MPROVE_CACHE_DIR = '.mprove';

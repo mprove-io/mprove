@@ -222,8 +222,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
     if (
       this.file.fileId === common.MPROVE_CONFIG_FILENAME ||
-      ((this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT ||
-        this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH ||
+      ((this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH ||
         (common.isDefined(mdir) &&
           this.file.fileNodeId.split(mdir)[0] === `${this.nav.projectId}/`)) &&
         constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >=

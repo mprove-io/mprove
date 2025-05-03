@@ -61,44 +61,58 @@ export function checkProjectConfig(
           ]
         })
       );
-    } else if (common.isUndefined(item.mproveDir)) {
+    } else {
       let mdir = conf[common.ParameterEnum.MproveDir].toString();
 
-      if (
+      if (mdir.length <= 2 && mdir !== common.MPROVE_CONFIG_DIR_DOT_SLASH) {
+        item.errors.push(
+          new BmError({
+            title: common.ErTitleEnum.MPROVE_DIR_MUST_START_WITH_DOT_SLASH,
+            message: `${common.ParameterEnum.MproveDir} must start with "./"`,
+            lines: [
+              {
+                line: conf.mprove_dir_line_num,
+                name: conf.fileName,
+                path: conf.filePath
+              }
+            ]
+          })
+        );
+      } else if (
         mdir.length > 2 &&
         mdir.substring(0, 2) === common.MPROVE_CONFIG_DIR_DOT_SLASH
       ) {
         mdir = mdir.substring(2);
-      }
 
-      if (mdir.match(common.MyRegex.CONTAINS_DOT())) {
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.MPROVE_DIR_FOLDER_NAME_HAS_A_DOT,
-            message: `relative path "${mdir}" must not have a dot in folder names`,
-            lines: [
-              {
-                line: 0,
-                name: conf.fileName,
-                path: conf.filePath
-              }
-            ]
-          })
-        );
-      } else {
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.MPROVE_DIR_PATH_DOES_NOT_EXIST,
-            message: `relative path "${mdir}" does not exist or is not a directory`,
-            lines: [
-              {
-                line: 0,
-                name: conf.fileName,
-                path: conf.filePath
-              }
-            ]
-          })
-        );
+        if (mdir.match(common.MyRegex.CONTAINS_DOT())) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.MPROVE_DIR_HAS_DOT_AFTER_SLASH,
+              message: `${common.ParameterEnum.MproveDir} must not have "." after "/"`,
+              lines: [
+                {
+                  line: conf.mprove_dir_line_num,
+                  name: conf.fileName,
+                  path: conf.filePath
+                }
+              ]
+            })
+          );
+        } else if (common.isUndefined(item.mproveDir)) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.MPROVE_DIR_PATH_DOES_NOT_EXIST,
+              message: `path "${mdir}" does not exist or is not a directory`,
+              lines: [
+                {
+                  line: conf.mprove_dir_line_num,
+                  name: conf.fileName,
+                  path: conf.filePath
+                }
+              ]
+            })
+          );
+        }
       }
     }
 
