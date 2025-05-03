@@ -86,24 +86,30 @@ export class ReportDataService {
       caseSensitiveStringFilters: struct.caseSensitiveStringFilters
     });
 
-    let metricsStartDateYYYYMMDD = getYYYYMMDDFromEpochUtcByTimezone({
-      timezone: timezone,
-      secondsEpochUTC: rangeStart
-      // secondsEpochUTC: columns[0].columnId
-    });
+    let metricsStartDateYYYYMMDD = common.isUndefined(rangeStart)
+      ? undefined
+      : getYYYYMMDDFromEpochUtcByTimezone({
+          timezone: timezone,
+          secondsEpochUTC: rangeStart
+          // secondsEpochUTC: columns[0].columnId
+        });
 
-    let metricsEndDateExcludedYYYYMMDD = getYYYYMMDDFromEpochUtcByTimezone({
-      timezone: timezone,
-      secondsEpochUTC: rangeEnd
-    });
+    let metricsEndDateExcludedYYYYMMDD = common.isUndefined(rangeEnd)
+      ? undefined
+      : getYYYYMMDDFromEpochUtcByTimezone({
+          timezone: timezone,
+          secondsEpochUTC: rangeEnd
+        });
 
-    let metricsEndDateIncludedYYYYMMDD = getYYYYMMDDFromEpochUtcByTimezone({
-      timezone: timezone,
-      secondsEpochUTC:
-        rangeEnd - rangeStart >= 24 * 60 * 60
-          ? rangeEnd - 24 * 60 * 60
-          : rangeEnd
-    });
+    let metricsEndDateIncludedYYYYMMDD = common.isUndefined(rangeEnd)
+      ? undefined
+      : getYYYYMMDDFromEpochUtcByTimezone({
+          timezone: timezone,
+          secondsEpochUTC:
+            rangeEnd - rangeStart >= 24 * 60 * 60
+              ? rangeEnd - 24 * 60 * 60
+              : rangeEnd
+        });
 
     // let metricIds = report.rows
     //   .map(x => x.metricId)
