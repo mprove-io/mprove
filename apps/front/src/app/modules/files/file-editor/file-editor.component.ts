@@ -83,6 +83,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   startText: string;
   specialText: string;
 
+  isSelectedFileValid = true;
+
   file: FileState;
   file$ = this.fileQuery.select().pipe(
     tap(x => {
@@ -94,6 +96,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
       this.startText = x.content;
 
       this.setEditorOptionsLanguage();
+      this.checkSelectedFile();
 
       this.cd.detectChanges();
     })
@@ -114,6 +117,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
       this.struct = x;
       // console.log(this.struct.mproveDirValue);
       this.refreshMarkers();
+      this.checkSelectedFile();
+
       this.cd.detectChanges();
     })
   );
@@ -162,6 +167,21 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
     this.setEditorOptionsLanguage();
     this.refreshMarkers();
+  }
+
+  checkSelectedFile() {
+    let errorFileIds = this.structQuery
+      .getValue()
+      .errors.map(e =>
+        e.lines
+          .map(l => l.fileId.split('/').slice(1).join(common.TRIPLE_UNDERSCORE))
+          .flat()
+      )
+      .flat();
+
+    this.isSelectedFileValid = common.isUndefined(this.file.fileId)
+      ? true
+      : errorFileIds.indexOf(this.file.fileId) < 0;
   }
 
   async onEditorChange(editor: editorType.IStandaloneCodeEditor) {

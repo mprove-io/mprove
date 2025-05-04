@@ -7,27 +7,37 @@
         file?.name
       }}</div>
 
-      <button
-        class="text-m600 flex flex-shrink-0 flex-row items-center focus:outline-none"
-        (click)="goTo()"
-        *ngIf="
-          showGoTo === true &&
-          ((file?.name | goFromFileExt) === 'chart' ||
-            (file?.name | goFromFileExt) === 'dashboard' ||
-            (member?.isExplorer === true &&
-              ((file?.name | goFromFileExt) === 'view' ||
-                (file?.name | goFromFileExt) === 'store')) ||
-            (member?.isExplorer === true &&
-              (file?.name | goFromFileExt) === 'model') ||
-            (file?.name | goFromFileExt) === 'report')
-        "
+      <div
+        tp="Selected file has error"
+        [tpIsEnabled]="isSelectedFileValid === false"
       >
-        <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
-
-        <div class="ml-2 text-lg">
-          {{ file?.name | goFromFileExt | capitalize }}</div
+        <button
+          class="flex flex-shrink-0 flex-row items-center focus:outline-none"
+          [ngClass]="{
+            'text-s400': isSelectedFileValid === false,
+            'text-m600 ': isSelectedFileValid === true
+          }"
+          *ngIf="
+            showGoTo === true &&
+            ((file?.name | goFromFileExt) === 'chart' ||
+              (file?.name | goFromFileExt) === 'dashboard' ||
+              (member?.isExplorer === true &&
+                ((file?.name | goFromFileExt) === 'view' ||
+                  (file?.name | goFromFileExt) === 'store')) ||
+              (member?.isExplorer === true &&
+                (file?.name | goFromFileExt) === 'model') ||
+              (file?.name | goFromFileExt) === 'report')
+          "
+          (click)="goTo()"
+          [disabled]="isSelectedFileValid === false"
         >
-      </button>
+          <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
+
+          <div class="ml-2 text-lg">
+            {{ file?.name | goFromFileExt | capitalize }}</div
+          >
+        </button>
+      </div>
     </div>
 
     <div *ngIf="nav?.isRepoProd === false" class="flex flex-shrink-0 space-x-3">
