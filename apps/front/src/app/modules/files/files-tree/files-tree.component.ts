@@ -279,7 +279,7 @@ export class FilesTreeComponent implements OnDestroy {
     let newFileId: string;
 
     if (common.isDefined(this.fileId)) {
-      let selectedPath = this.fileId.split('___').join('/');
+      let selectedPath = this.fileId.split(common.TRIPLE_UNDERSCORE).join('/');
       let fromPath = fromNodeId.split('/').slice(1).join('/');
       let toPath = toNodeId.split('/').slice(1).join('/');
 
@@ -296,7 +296,7 @@ export class FilesTreeComponent implements OnDestroy {
           ? `${toPath}/${relativePath}`
           : toPath;
 
-        newFileId = newPath.split('/').join('___');
+        newFileId = newPath.split('/').join(common.TRIPLE_UNDERSCORE);
       }
     }
 

@@ -16,6 +16,7 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
+import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -55,6 +56,7 @@ export class RenameFolderDialogComponent implements OnInit {
     public ref: DialogRef<RenameFolderDialogData>,
     private fb: FormBuilder,
     private navigateService: NavigateService,
+    private fileQuery: FileQuery,
     private repoQuery: RepoQuery,
     private navQuery: NavQuery,
     private structQuery: StructQuery
@@ -88,6 +90,39 @@ export class RenameFolderDialogComponent implements OnInit {
 
     let newName = this.renameFolderForm.value.folderName.toLowerCase();
 
+    let selectedFileId = this.fileQuery.getValue().fileId;
+
+    let isNavigateNewFile = false;
+    let newFileId: string;
+
+    if (common.isDefined(selectedFileId)) {
+      let selectedPath = selectedFileId
+        .split(common.TRIPLE_UNDERSCORE)
+        .join('/');
+
+      let fromPath = this.ref.data.nodeId.split('/').slice(1).join('/');
+
+      let fromPathAr = fromPath.split('/');
+      fromPathAr.splice(fromPathAr.length - 1);
+
+      let toPath = [...fromPathAr, newName].join('/');
+
+      if (selectedPath.startsWith(fromPath + '/')) {
+        isNavigateNewFile = true;
+
+        let relativePath = selectedPath
+          .split('/')
+          .slice(fromPath.split('/').length)
+          .join('/');
+
+        let newPath = common.isDefinedAndNotEmpty(relativePath)
+          ? `${toPath}/${relativePath}`
+          : toPath;
+
+        newFileId = newPath.split('/').join(common.TRIPLE_UNDERSCORE);
+      }
+    }
+
     let payload: apiToBackend.ToBackendRenameCatalogNodeRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.branchId,
@@ -103,7 +138,7 @@ export class RenameFolderDialogComponent implements OnInit {
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode,
         payload: payload,
-        showSpinner: true
+        showSpinner: isNavigateNewFile === false
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendRenameCatalogNodeResponse) => {
@@ -114,7 +149,12 @@ export class RenameFolderDialogComponent implements OnInit {
               needValidate: resp.payload.needValidate
             });
 
-            this.navigateService.navigateToFiles();
+            if (isNavigateNewFile === true) {
+              this.navigateService.navigateToFileLine({
+                panel: common.PanelEnum.Tree,
+                underscoreFileId: newFileId
+              });
+            }
           }
         }),
         take(1)

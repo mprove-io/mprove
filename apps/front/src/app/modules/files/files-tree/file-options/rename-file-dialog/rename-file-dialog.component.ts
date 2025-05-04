@@ -18,6 +18,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
+import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -59,6 +60,7 @@ export class RenameFileDialogComponent implements OnInit {
     private fb: FormBuilder,
     private repoQuery: RepoQuery,
     private navQuery: NavQuery,
+    private fileQuery: FileQuery,
     private navigateService: NavigateService,
     private structQuery: StructQuery,
     private spinner: NgxSpinnerService,
@@ -100,6 +102,24 @@ export class RenameFileDialogComponent implements OnInit {
 
     let newName = this.renameFileForm.value.fileName;
 
+    let selectedFileId = this.fileQuery.getValue().fileId;
+
+    let isNavigateNewFile = false;
+
+    if (common.isDefined(selectedFileId)) {
+      let selectedPath = selectedFileId
+        .split(common.TRIPLE_UNDERSCORE)
+        .join('/');
+      let fromPath = this.ref.data.nodeId.split('/').slice(1).join('/');
+
+      if (
+        selectedPath.startsWith(fromPath + '/') ||
+        selectedPath === fromPath
+      ) {
+        isNavigateNewFile = true;
+      }
+    }
+
     let payload: apiToBackend.ToBackendRenameCatalogNodeRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.branchId,
@@ -114,7 +134,8 @@ export class RenameFileDialogComponent implements OnInit {
       .req({
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode,
-        payload: payload
+        payload: payload,
+        showSpinner: isNavigateNewFile === false
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendRenameCatalogNodeResponse) => {
@@ -125,16 +146,18 @@ export class RenameFileDialogComponent implements OnInit {
               needValidate: resp.payload.needValidate
             });
 
-            let fIdAr = this.ref.data.nodeId.split('/');
-            fIdAr.shift();
-            fIdAr.pop();
-            fIdAr.push(newName);
-            let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
+            if (isNavigateNewFile === true) {
+              let fIdAr = this.ref.data.nodeId.split('/');
+              fIdAr.shift();
+              fIdAr.pop();
+              fIdAr.push(newName);
+              let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
 
-            this.navigateService.navigateToFileLine({
-              panel: common.PanelEnum.Tree,
-              underscoreFileId: fileId
-            });
+              this.navigateService.navigateToFileLine({
+                panel: common.PanelEnum.Tree,
+                underscoreFileId: fileId
+              });
+            }
           }
         }),
         take(1)
