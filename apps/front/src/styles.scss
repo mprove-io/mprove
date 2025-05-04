@@ -386,8 +386,13 @@ ngneat-dialog {
 .ng-dropdown-panel.main-chart-type-select .scroll-host {
   max-height: 45vh;
 }
+
 .ng-dropdown-panel.chart-type-select .scroll-host {
   max-height: 45vh;
+}
+
+.ng-dropdown-panel.model-select .scroll-host {
+  max-height: 35vh;
 }
 
 // pagination

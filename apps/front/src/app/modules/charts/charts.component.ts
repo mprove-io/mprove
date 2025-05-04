@@ -86,6 +86,9 @@ export class ChartsComponent implements OnInit, OnDestroy {
   @ViewChild('infoMainPartSelect', { static: false })
   infoMainPartSelectElement: NgSelectComponent;
 
+  @ViewChild('chartsModelSelect', { static: false })
+  chartsModelSelectElement: NgSelectComponent;
+
   @ViewChild('leftChartsContainer') leftChartsContainer!: ElementRef;
 
   @HostListener('window:keyup.esc')
@@ -244,6 +247,14 @@ export class ChartsComponent implements OnInit, OnDestroy {
   nav$ = this.navQuery.select().pipe(
     tap(x => {
       this.nav = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  isEditor: boolean;
+  isEditor$ = this.memberQuery.isEditor$.pipe(
+    tap(x => {
+      this.isEditor = x;
       this.cd.detectChanges();
     })
   );
@@ -1617,7 +1628,25 @@ ${this.mconfig.storePart?.reqUrlPath}`
     }
   }
 
-  addModel() {}
+  createNewModel() {
+    let struct = this.structQuery.getValue();
+
+    let part = struct.mproveDirValue;
+
+    part = part.startsWith('.') ? part.slice(1) : part;
+    part = part.startsWith('/') ? part.slice(1) : part;
+    part = part.endsWith('/') ? part.slice(0, -1) : part;
+
+    let parentNodeId = [struct.projectId, part].join('/');
+
+    this.myDialogService.showCreateFile({
+      apiService: this.apiService,
+      projectId: this.nav.projectId,
+      branchId: this.nav.branchId,
+      envId: this.nav.envId,
+      parentNodeId: parentNodeId
+    });
+  }
 
   toggleFilterByModel() {
     this.isFilterByModel = !this.isFilterByModel;
