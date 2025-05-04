@@ -89,7 +89,6 @@ import { LinkOffIconComponent } from './icons/link-off-icon/link-off-icon.compon
 import { LockClosedIconComponent } from './icons/lock-closed-icon/lock-closed-icon.component';
 import { MiniChartsIconComponent } from './icons/mini-charts-icon/mini-charts-icon.component';
 import { MinusSmIconComponent } from './icons/minus-sm-icon/minus-sm-icon.component';
-import { ModelsIconComponent } from './icons/models-icon/models-icon.component';
 import { RefreshIconComponent } from './icons/refresh-icon/refresh-icon.component';
 import { ResizeIconComponent } from './icons/resize-icon/resize-icon.component';
 import { SaveIconComponent } from './icons/save-icon/save-icon.component';
@@ -97,6 +96,7 @@ import { SearchIconComponent } from './icons/search-icon/search-icon.component';
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
 import { TableCellsIconComponent } from './icons/table-cells-icon/table-cells-icon.component';
 import { TrashIconComponent } from './icons/trash-icon/trash-icon.component';
+import { TreeIconComponent } from './icons/tree-icon/tree-icon.component';
 import { UserIconComponent } from './icons/user-icon/user-icon.component';
 import { ViewGridIconComponent } from './icons/view-grid-icon/view-grid-icon.component';
 import { ViewListIconComponent } from './icons/view-list-icon/view-list-icon.component';
@@ -205,7 +205,7 @@ let sharedComponents = [
   DragIconComponent,
   ResizeIconComponent,
   ViewGridIconComponent,
-  ModelsIconComponent,
+  TreeIconComponent,
   ViewListIconComponent,
   UserIconComponent,
   ChartIconComponent,

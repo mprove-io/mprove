@@ -538,23 +538,15 @@
               </div>
 
               <button
-                class="ml-2 w-[54px] cursor-pointer select-none items-center text-lg"
+                class="ml-2 h-6 w-6 flex-shrink-0 cursor-pointer select-none items-center text-lg"
                 [ngClass]="{
-                  'font-semibold': modelTreeLevels === modelTreeLevelsFlat
+                  'text-s400': modelTreeLevels === modelTreeLevelsFlat,
+                  'text-s500': modelTreeLevels === modelTreeLevelsNested
                 }"
-                (click)="setModelTreeLevels(modelTreeLevelsFlat)"
+                (click)="toggleModelTreeLevels()"
               >
-                Flat
+                <m-tree-icon></m-tree-icon>
               </button>
-
-              <button
-                class="ml-2 w-[54px] cursor-pointer select-none text-lg"
-                [ngClass]="{
-                  'font-semibold': modelTreeLevels === modelTreeLevelsNested
-                }"
-                (click)="setModelTreeLevels(modelTreeLevelsNested)"
-                >Tree</button
-              >
 
               <div class="ml-5 mr-9 flex w-2 flex-1">
                 <form class="w-full" [formGroup]="modelForm">

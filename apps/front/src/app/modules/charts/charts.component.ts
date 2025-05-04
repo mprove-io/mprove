@@ -1450,14 +1450,14 @@ ${this.mconfig.storePart?.reqUrlPath}`
     this.rightIsShow = !this.rightIsShow;
   }
 
-  setModelTreeLevels(modelTreeLevels: common.ModelTreeLevelsEnum) {
-    this.uiQuery.updatePart({
-      modelTreeLevels: modelTreeLevels
-    });
+  toggleModelTreeLevels() {
+    let newValue =
+      this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat
+        ? common.ModelTreeLevelsEnum.Nested
+        : common.ModelTreeLevelsEnum.Flat;
 
-    this.uiService.setUserUi({
-      modelTreeLevels: modelTreeLevels
-    });
+    this.uiQuery.updatePart({ modelTreeLevels: newValue });
+    this.uiService.setUserUi({ modelTreeLevels: newValue });
   }
 
   navToChartsList() {
