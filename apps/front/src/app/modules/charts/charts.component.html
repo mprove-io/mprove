@@ -1289,7 +1289,9 @@
 
                       <div>
                         {{
-                          mconfig?.isStoreModel === true ? 'Request' : 'Query'
+                          mconfig?.isStoreModel === true
+                            ? 'Store Query'
+                            : 'Query'
                         }}
                       </div>
                     </div>
@@ -1307,7 +1309,7 @@
                     <ng-select
                       #infoMainPartSelect
                       data-cy="infoMainPartSelect"
-                      class="w-[230px] flex-shrink-0 text-base focus:outline-none"
+                      class="w-[250px] flex-shrink-0 text-base focus:outline-none"
                       [items]="infoMainPartList"
                       [clearable]="false"
                       [searchable]="false"

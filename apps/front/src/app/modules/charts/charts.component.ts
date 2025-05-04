@@ -478,15 +478,15 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   infoStorePartList: InfoStorePartItem[] = [
     {
-      label: 'Template',
+      label: 'Request Body Template',
       value: common.InfoStorePartEnum.ReqTemplate
     },
     {
-      label: 'Function',
+      label: 'Request Body Function',
       value: common.InfoStorePartEnum.ReqFunction
     },
     {
-      label: 'Body and URL Path',
+      label: 'Request Body and Path',
       value: common.InfoStorePartEnum.ReqJsonParts
     }
     // ,
