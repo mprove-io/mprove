@@ -85,7 +85,7 @@ export const PATH_ENV_VARIABLES = 'env-variables';
 
 export const PATH_FILES = 'files';
 export const PATH_FILE = 'file';
-export const PATH_CHARTS = 'charts';
+export const PATH_CHARTS = 'models-and-charts';
 export const PATH_CHART = 'chart';
 export const PATH_CHARTS_LIST = 'charts-list';
 export const PATH_MODELS_LIST = 'models-list';

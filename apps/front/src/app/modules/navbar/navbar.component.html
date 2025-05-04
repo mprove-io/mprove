@@ -60,7 +60,7 @@
       class="flex flex-row items-center space-x-5"
     >
       <button
-        class="text-s1 ml-5 block flex h-10 w-[80px] items-center justify-center text-left text-base focus:outline-none"
+        class="text-s1 ml-5 block flex h-10 w-[180px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{
           'text-s400 cursor-default':
             !nav || !nav.projectId || needSave === true,
@@ -68,7 +68,7 @@
         }"
         (click)="navigateCharts()"
         [disabled]="!nav || !nav.projectId || needSave === true"
-        >Charts</button
+        >Models and Charts</button
       >
 
       <button

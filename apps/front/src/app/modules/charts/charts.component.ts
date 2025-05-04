@@ -289,10 +289,20 @@ export class ChartsComponent implements OnInit, OnDestroy {
     })
   );
 
+  prevChartId: string;
+
   chart: common.ChartX;
   chart$ = this.chartQuery.select().pipe(
     tap(x => {
       this.chart = x;
+
+      if (
+        this.prevChartId !== this.chart.chartId &&
+        this.isInitialScrollCompleted === true
+      ) {
+        this.scrollToSelectedChart({ isSmooth: true });
+        this.prevChartId = this.chart.chartId;
+      }
 
       if (common.isDefined(this.chart?.chartId)) {
         this.title.setTitle(
@@ -657,10 +667,14 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
     this.showModel = newShowModelValue;
 
-    this.scrollToSelectedChart({ isSmooth: true });
-
     this.uiQuery.updatePart({ showModel: newShowModelValue });
     // this.uiService.setUserUi({ showModel: newShowModelValue });
+
+    this.cd.detectChanges();
+
+    setTimeout(() => {
+      this.scrollToSelectedChart({ isSmooth: true });
+    });
   }
 
   toggleAutoRun() {
