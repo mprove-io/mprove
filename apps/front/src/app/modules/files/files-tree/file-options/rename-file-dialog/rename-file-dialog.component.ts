@@ -135,7 +135,7 @@ export class RenameFileDialogComponent implements OnInit {
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode,
         payload: payload,
-        showSpinner: isNavigateNewFile === false
+        showSpinner: true
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendRenameCatalogNodeResponse) => {
