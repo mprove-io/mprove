@@ -495,46 +495,6 @@ export class WrapToApiService {
           ? user.ui?.metricsTimeColumnsWideWidth
           : constants.DEFAULT_UI.metricsTimeColumnsWideWidth,
 
-        showMetricsModelName: common.isDefined(user.ui?.showMetricsModelName)
-          ? user.ui?.showMetricsModelName
-          : constants.DEFAULT_UI.showMetricsModelName,
-
-        showMetricsTimeFieldName: common.isDefined(
-          user.ui?.showMetricsTimeFieldName
-        )
-          ? user.ui?.showMetricsTimeFieldName
-          : constants.DEFAULT_UI.showMetricsTimeFieldName,
-
-        showMetricsParameters: common.isDefined(user.ui?.showMetricsParameters)
-          ? user.ui?.showMetricsParameters
-          : constants.DEFAULT_UI.showMetricsParameters,
-
-        showMetricsChart: common.isDefined(user.ui?.showMetricsChart)
-          ? user.ui?.showMetricsChart
-          : constants.DEFAULT_UI.showMetricsChart,
-
-        showMetricsChartSettings: common.isDefined(
-          user.ui?.showMetricsChartSettings
-        )
-          ? user.ui?.showMetricsChartSettings
-          : constants.DEFAULT_UI.showMetricsChartSettings,
-
-        showMiniCharts: common.isDefined(user.ui?.showMiniCharts)
-          ? user.ui?.showMiniCharts
-          : constants.DEFAULT_UI.showMiniCharts,
-
-        showHours: common.isDefined(user.ui?.showHours)
-          ? user.ui?.showHours
-          : constants.DEFAULT_UI.showHours,
-
-        isAutoRun: common.isDefined(user.ui?.isAutoRun)
-          ? user.ui?.isAutoRun
-          : constants.DEFAULT_UI.isAutoRun,
-
-        showModel: common.isDefined(user.ui?.showModel)
-          ? user.ui?.showModel
-          : constants.DEFAULT_UI.showModel,
-
         projectFileLinks: common.isDefined(user.ui?.projectFileLinks)
           ? user.ui?.projectFileLinks
           : constants.DEFAULT_UI.projectFileLinks,

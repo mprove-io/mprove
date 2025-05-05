@@ -14,6 +14,10 @@ export const DEFAULT_QUERY_SIZE_LIMIT = 1;
 export const UNK_ST_ID = 'unk';
 
 export const DEFAULT_UI: common.Ui = {
+  metricsColumnNameWidth: 530,
+  metricsTimeColumnsNarrowWidth: 165,
+  metricsTimeColumnsWideWidth: 220,
+  modelTreeLevels: common.ModelTreeLevelsEnum.Flat,
   timezone: common.UTC,
   timeSpec: common.TimeSpecEnum.Days,
   timeRangeFraction: {
@@ -25,22 +29,9 @@ export const DEFAULT_UI: common.Ui = {
     tsLastValue: 5,
     type: common.FractionTypeEnum.TsIsInLast
   },
-  showMetricsModelName: false,
-  showMetricsTimeFieldName: false,
-  showMetricsParameters: true,
-  showMetricsChart: true,
-  showMetricsChartSettings: true,
-  showMiniCharts: false,
-  showHours: false,
-  isAutoRun: true,
-  showModel: false,
   projectFileLinks: [],
   projectModelLinks: [],
   projectChartLinks: [],
   projectDashboardLinks: [],
-  projectReportLinks: [],
-  metricsColumnNameWidth: 530,
-  metricsTimeColumnsNarrowWidth: 165,
-  metricsTimeColumnsWideWidth: 220,
-  modelTreeLevels: common.ModelTreeLevelsEnum.Flat
+  projectReportLinks: []
 };

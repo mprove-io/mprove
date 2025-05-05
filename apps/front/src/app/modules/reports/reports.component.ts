@@ -533,7 +533,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
   showMetricsModelName = false;
   showMetricsTimeFieldName = false;
   showMetricsChart = false;
-  showMetricsChartSettings = false;
 
   reportSelectedNodes: any[] = [];
   reportSelectedNode: IRowNode<DataRow>;
@@ -553,7 +552,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
       this.showMetricsModelName = x.showMetricsModelName;
       this.showMetricsTimeFieldName = x.showMetricsTimeFieldName;
       this.showMetricsChart = x.showMetricsChart;
-      this.showMetricsChartSettings = x.showMetricsChartSettings;
       this.reportSelectedNodes = x.reportSelectedNodes;
 
       this.reportSelectedNode =
@@ -1022,7 +1020,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.checkAutoRun();
 
     this.uiQuery.updatePart({ isAutoRun: newIsAutoRunValue });
-    this.uiService.setUserUi({ isAutoRun: newIsAutoRunValue });
 
     this.cd.detectChanges();
   }
@@ -1124,7 +1121,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.showMiniCharts = newShowMiniChartsValue;
 
     this.uiQuery.updatePart({ showMiniCharts: newShowMiniChartsValue });
-    this.uiService.setUserUi({ showMiniCharts: newShowMiniChartsValue });
 
     this.cd.detectChanges();
   }
@@ -1162,18 +1158,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     this.navigateService.navigateToReport({
       reportId: common.EMPTY_REPORT_ID
-    });
-  }
-
-  toggleShowMetricsChartSettings() {
-    let showMetricsChartSettings = !this.showMetricsChartSettings;
-
-    this.uiQuery.updatePart({
-      showMetricsChartSettings: showMetricsChartSettings
-    });
-
-    this.uiService.setUserUi({
-      showMetricsChartSettings: showMetricsChartSettings
     });
   }
 

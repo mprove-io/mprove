@@ -668,13 +668,8 @@ export class ModelTreeComponent implements AfterViewInit {
   }
 
   setModelTreeLevels(modelTreeLevels: common.ModelTreeLevelsEnum) {
-    this.uiQuery.updatePart({
-      modelTreeLevels: modelTreeLevels
-    });
-
-    this.uiService.setUserUi({
-      modelTreeLevels: modelTreeLevels
-    });
+    this.uiQuery.updatePart({ modelTreeLevels: modelTreeLevels });
+    this.uiService.setUserUi({ modelTreeLevels: modelTreeLevels });
   }
 
   // ngOnDestroy() {

@@ -10,46 +10,28 @@ export class UiService {
   constructor(private apiService: ApiService, private uiQuery: UiQuery) {}
 
   async setUserUi(item: {
+    timezone?: string;
     metricsColumnNameWidth?: number;
     metricsTimeColumnsNarrowWidth?: number;
     metricsTimeColumnsWideWidth?: number;
-    showMetricsModelName?: boolean;
-    showMetricsTimeFieldName?: boolean;
-    showMetricsParameters?: boolean;
-    showMetricsChart?: boolean;
-    showMetricsChartSettings?: boolean;
     modelTreeLevels?: common.ModelTreeLevelsEnum;
-    showMiniCharts?: boolean;
-    showHours?: boolean;
-    isAutoRun?: boolean;
-    showModel?: boolean;
     projectFileLinks?: common.ProjectFileLink[];
     projectModelLinks?: common.ProjectModelLink[];
     projectChartLinks?: common.ProjectChartLink[];
     projectDashboardLinks?: common.ProjectDashboardLink[];
     projectReportLinks?: common.ProjectReportLink[];
-    timezone?: string;
   }) {
     let {
+      timezone,
       metricsColumnNameWidth,
       metricsTimeColumnsNarrowWidth,
       metricsTimeColumnsWideWidth,
-      showMetricsModelName,
-      showMetricsTimeFieldName,
-      showMetricsParameters,
-      showMetricsChart,
-      showMetricsChartSettings,
       modelTreeLevels,
-      showMiniCharts,
-      showHours,
-      isAutoRun,
-      showModel,
       projectFileLinks,
       projectModelLinks,
       projectChartLinks,
       projectDashboardLinks,
-      projectReportLinks,
-      timezone
+      projectReportLinks
     } = item;
 
     let uiState = this.uiQuery.getValue();
@@ -66,33 +48,12 @@ export class UiService {
       metricsTimeColumnsWideWidth: common.isDefined(metricsTimeColumnsWideWidth)
         ? metricsTimeColumnsWideWidth
         : uiState.metricsTimeColumnsWideWidth,
-      showMetricsModelName: common.isDefined(showMetricsModelName)
-        ? showMetricsModelName
-        : uiState.showMetricsModelName,
-      showMetricsTimeFieldName: common.isDefined(showMetricsTimeFieldName)
-        ? showMetricsTimeFieldName
-        : uiState.showMetricsTimeFieldName,
-      showMetricsParameters: common.isDefined(showMetricsParameters)
-        ? showMetricsParameters
-        : uiState.showMetricsParameters,
-      showMetricsChart: common.isDefined(showMetricsChart)
-        ? showMetricsChart
-        : uiState.showMetricsChart,
-      showMetricsChartSettings: common.isDefined(showMetricsChartSettings)
-        ? showMetricsChartSettings
-        : uiState.showMetricsChartSettings,
       modelTreeLevels: common.isDefined(modelTreeLevels)
         ? modelTreeLevels
         : uiState.modelTreeLevels,
-      timezone: uiState.timezone,
+      timezone: common.isDefined(timezone) ? timezone : uiState.timezone,
       timeSpec: uiState.timeSpec,
       timeRangeFraction: uiState.timeRangeFraction,
-      showMiniCharts: common.isDefined(showMiniCharts)
-        ? showMiniCharts
-        : uiState.showMiniCharts,
-      showHours: common.isDefined(showHours) ? showHours : uiState.showHours,
-      isAutoRun: common.isDefined(isAutoRun) ? isAutoRun : uiState.isAutoRun,
-      showModel: common.isDefined(showModel) ? showModel : uiState.showModel,
       projectFileLinks: common.isDefined(projectFileLinks)
         ? projectFileLinks
         : uiState.projectFileLinks,

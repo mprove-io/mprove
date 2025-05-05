@@ -183,6 +183,16 @@ export class ChartsComponent implements OnInit, OnDestroy {
   models$ = this.modelsQuery.select().pipe(
     tap(ml => {
       this.models = ml.models;
+
+      let selectedModel = this.modelQuery.getValue();
+
+      if (
+        common.isDefined(selectedModel.modelId) &&
+        this.models.map(x => x.modelId).indexOf(selectedModel.modelId) < 0
+      ) {
+        this.modelQuery.reset();
+      }
+
       this.cd.detectChanges();
     })
   );
@@ -679,7 +689,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.showModel = newShowModelValue;
 
     this.uiQuery.updatePart({ showModel: newShowModelValue });
-    // this.uiService.setUserUi({ showModel: newShowModelValue });
 
     this.cd.detectChanges();
 
@@ -695,7 +704,6 @@ export class ChartsComponent implements OnInit, OnDestroy {
     this.checkAutoRun();
 
     this.uiQuery.updatePart({ isAutoRun: newIsAutoRunValue });
-    this.uiService.setUserUi({ isAutoRun: newIsAutoRunValue });
   }
 
   checkAutoRun() {
@@ -873,13 +881,23 @@ export class ChartsComponent implements OnInit, OnDestroy {
       this.navigateService.navigateToModelsList({
         modelId: modelId
       });
-    } else if (common.isDefined(modelId)) {
-      this.navigateService.navigateToChart({
-        modelId: modelId,
-        chartId: common.EMPTY_CHART_ID
-      });
     } else {
-      this.navigateService.navigateToCharts();
+      if (
+        (this.lastUrl === this.pathCharts ||
+          this.chart.chartId === common.EMPTY_CHART_ID) &&
+        this.showModel === false
+      ) {
+        this.toggleShowModel();
+      }
+
+      if (common.isDefined(modelId)) {
+        this.navigateService.navigateToChart({
+          modelId: modelId,
+          chartId: common.EMPTY_CHART_ID
+        });
+      } else {
+        this.navigateService.navigateToCharts();
+      }
     }
   }
 
@@ -1778,10 +1796,6 @@ ${this.mconfig.storePart?.reqUrlPath}`
     // console.log('charts ngOnDestroy');
     this.chartQuery.reset();
     this.modelQuery.reset();
-
-    if (this.uiQuery.getValue().showModel === true) {
-      this.uiQuery.updatePart({ showModel: false });
-    }
 
     this.refreshSubscription?.unsubscribe();
     this.runButtonTimerSubscription?.unsubscribe();

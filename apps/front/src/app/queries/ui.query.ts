@@ -14,44 +14,42 @@ export interface RepChartData {
 }
 
 export class UiState {
-  panel: common.PanelEnum;
-  needSave: boolean;
-  gridData: DataRow[];
   gridApi: GridApi<DataRow>;
+  gridData: DataRow[];
   repChartData: RepChartData;
   chartPointsData: ChartPointsData;
   reportSelectedNodes: IRowNode<DataRow>[];
+  metricsLoadedTs: number;
+  showModel: boolean;
+  panel: common.PanelEnum;
+  needSave: boolean;
+  showTileParameters: boolean;
+  showDashboardsLeftPanel: boolean;
+  showMetricsChart: boolean;
+  showMiniCharts: boolean;
+  isAutoRun: boolean;
+  showHours: boolean;
+  showMetricsParameters: boolean;
+  showMetricsModelName: boolean;
+  showMetricsTimeFieldName: boolean;
+  //
   metricsColumnNameWidth: number;
   metricsTimeColumnsNarrowWidth: number;
   metricsTimeColumnsWideWidth: number;
-  showMetricsModelName: boolean;
-  showMetricsTimeFieldName: boolean;
-  showMetricsParameters: boolean;
-  showMetricsChart: boolean;
-  showMetricsChartSettings: boolean;
   modelTreeLevels: common.ModelTreeLevelsEnum;
   timezone: string;
   timeSpec: common.TimeSpecEnum;
   timeRangeFraction: common.Fraction;
-  showTileParameters: boolean;
-  showDashboardsLeftPanel: boolean;
-  showMiniCharts: boolean;
-  showHours: boolean;
-  isAutoRun: boolean;
-  showModel: boolean;
   projectFileLinks: common.ProjectFileLink[];
   projectModelLinks: common.ProjectModelLink[];
   projectChartLinks: common.ProjectChartLink[];
   projectDashboardLinks: common.ProjectDashboardLink[];
   projectReportLinks: common.ProjectReportLink[];
-  metricsLoadedTs: number;
 }
 
 let uiState: UiState = {
-  needSave: false,
-  panel: common.PanelEnum.Tree,
-  gridData: [],
   gridApi: undefined,
+  gridData: [],
   repChartData: {
     rows: [],
     columns: []
@@ -62,30 +60,32 @@ let uiState: UiState = {
     runningQueriesLength: undefined
   },
   reportSelectedNodes: [],
+  metricsLoadedTs: 0,
+  showModel: false,
+  panel: common.PanelEnum.Tree,
+  needSave: false,
+  showTileParameters: false,
+  showDashboardsLeftPanel: true,
+  showMetricsChart: true,
+  showMiniCharts: true,
+  isAutoRun: true,
+  showHours: false,
+  showMetricsParameters: false,
+  showMetricsModelName: false,
+  showMetricsTimeFieldName: false,
+  //
   metricsColumnNameWidth: undefined,
   metricsTimeColumnsNarrowWidth: undefined,
   metricsTimeColumnsWideWidth: undefined,
-  showMetricsModelName: undefined,
-  showMetricsTimeFieldName: undefined,
-  showMetricsParameters: undefined,
-  showMetricsChart: undefined,
-  showMetricsChartSettings: undefined,
   modelTreeLevels: undefined,
   timezone: undefined,
   timeSpec: undefined,
   timeRangeFraction: undefined,
-  showMiniCharts: true,
-  showHours: false,
-  showTileParameters: false,
-  showDashboardsLeftPanel: true,
-  isAutoRun: true,
-  showModel: false,
   projectFileLinks: [],
   projectModelLinks: [],
   projectChartLinks: [],
   projectDashboardLinks: [],
-  projectReportLinks: [],
-  metricsLoadedTs: 0
+  projectReportLinks: []
 };
 
 @Injectable({ providedIn: 'root' })
@@ -159,10 +159,6 @@ export class UiQuery extends BaseQuery<UiState> {
   repChartData$ = this.store.pipe(select(state => state.repChartData));
 
   showMetricsChart$ = this.store.pipe(select(state => state.showMetricsChart));
-
-  showMetricsChartSettings$ = this.store.pipe(
-    select(state => state.showMetricsChartSettings)
-  );
 
   modelTreeLevels$ = this.store.pipe(select(state => state.modelTreeLevels));
 

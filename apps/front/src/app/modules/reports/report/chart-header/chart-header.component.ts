@@ -50,14 +50,6 @@ export class ChartHeaderComponent implements IHeaderAngularComp {
       return;
     }
 
-    let showMetricsChart = !this.showMetricsChart;
-
-    this.uiQuery.updatePart({
-      showMetricsChart: showMetricsChart
-    });
-
-    this.uiService.setUserUi({
-      showMetricsChart: showMetricsChart
-    });
+    this.uiQuery.updatePart({ showMetricsChart: !this.showMetricsChart });
   }
 }

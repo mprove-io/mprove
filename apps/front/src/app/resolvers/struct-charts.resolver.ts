@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  Resolve,
+  Router,
+  RouterStateSnapshot
+} from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -26,7 +31,10 @@ export class StructChartsResolver implements Resolve<Observable<boolean>> {
     private router: Router
   ) {}
 
-  resolve(route: ActivatedRouteSnapshot): Observable<boolean> {
+  resolve(
+    route: ActivatedRouteSnapshot,
+    routerStateSnapshot: RouterStateSnapshot
+  ): Observable<boolean> {
     let nav: NavState;
     this.navQuery
       .select()
@@ -49,6 +57,8 @@ export class StructChartsResolver implements Resolve<Observable<boolean>> {
       nav: nav,
       userId: userId
     });
+
+    // let urlParts = routerStateSnapshot.url.split('/');
 
     let payload: apiToBackend.ToBackendGetChartsRequestPayload = {
       projectId: nav.projectId,

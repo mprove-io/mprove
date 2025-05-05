@@ -800,12 +800,8 @@
                   <div
                     class="flex h-full flex-col pb-2"
                     [ngClass]="{
-                      'w-2/3':
-                        showMetricsChartSettings === true &&
-                        report.chart.series.length > 0,
-                      'w-full':
-                        showMetricsChartSettings === false ||
-                        report.chart.series.length === 0
+                      'w-2/3': report.chart.series.length > 0,
+                      'w-full': report.chart.series.length === 0
                     }"
                   >
                     <div
@@ -865,10 +861,7 @@
                   </div>
 
                   <div
-                    *ngIf="
-                      showMetricsChartSettings === true &&
-                      report.chart.series.length > 0
-                    "
+                    *ngIf="report.chart.series.length > 0"
                     class="flex h-full w-2/5 flex-shrink-0 overflow-auto border-l"
                     [ngClass]="{
                       'border-s300': report.chart.isValid === true,
@@ -882,14 +875,6 @@
                       [seriesParts]="seriesParts"
                     ></m-chart-editor>
                   </div>
-
-                  <!-- <div
-                    *ngIf="report.chart.series.length > 0"
-                    class="hover:bg-m200 absolute right-10 top-5 flex h-9 w-9 flex-shrink-0 cursor-pointer items-center justify-center rounded focus:outline-none"
-                    (click)="toggleShowMetricsChartSettings()"
-                  >
-                    <m-wrench-icon></m-wrench-icon>
-                  </div> -->
                 </div>
               </div>
             </div>

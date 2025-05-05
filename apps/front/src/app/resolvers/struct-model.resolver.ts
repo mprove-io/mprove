@@ -64,6 +64,8 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
 
     let parametersModelId = route.params[common.PARAMETER_MODEL_ID];
 
+    let urlParts = routerStateSnapshot.url.split('/');
+
     if (parametersModelId === common.LAST_SELECTED_MODEL_ID) {
       let projectModelLinks = this.uiQuery.getValue().projectModelLinks;
       let models = this.modelsQuery.getValue().models;
@@ -75,7 +77,15 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
       if (common.isDefined(pLink)) {
         let pModel = models.find(r => r.modelId === pLink.modelId);
 
-        if (common.isDefined(pModel)) {
+        if (urlParts[14] === common.PATH_CHARTS_LIST) {
+          this.navigateService.navigateToChartsList({
+            modelId: pModel?.modelId
+          });
+        } else if (urlParts[14] === common.PATH_MODELS_LIST) {
+          this.navigateService.navigateToModelsList({
+            modelId: pModel?.modelId
+          });
+        } else if (common.isDefined(pModel)) {
           this.navigateService.navigateToChart({
             modelId: pModel.modelId,
             chartId: common.LAST_SELECTED_CHART_ID

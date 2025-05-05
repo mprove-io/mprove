@@ -526,7 +526,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.checkAutoRun();
 
     this.uiQuery.updatePart({ isAutoRun: newIsAutoRunValue });
-    this.uiService.setUserUi({ isAutoRun: newIsAutoRunValue });
   }
 
   checkAutoRun() {

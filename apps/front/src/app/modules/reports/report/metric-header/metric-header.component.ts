@@ -68,34 +68,21 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
   }
 
   toggleShowMetricsModelName() {
-    let showMetricsModelName = !this.showMetricsModelName;
-
     this.uiQuery.updatePart({
-      showMetricsModelName: showMetricsModelName
-    });
-
-    this.uiService.setUserUi({
-      showMetricsModelName: showMetricsModelName
+      showMetricsModelName: !this.showMetricsModelName
     });
   }
 
   toggleShowMetricsTimeFieldName() {
-    let showMetricsTimeFieldName = !this.showMetricsTimeFieldName;
-
     this.uiQuery.updatePart({
-      showMetricsTimeFieldName: showMetricsTimeFieldName
-    });
-
-    this.uiService.setUserUi({
-      showMetricsTimeFieldName: showMetricsTimeFieldName
+      showMetricsTimeFieldName: !this.showMetricsTimeFieldName
     });
   }
 
   toggleShowMetricsParameters() {
-    let showMetricsParameters = !this.showMetricsParameters;
-
-    this.uiQuery.updatePart({ showMetricsParameters: showMetricsParameters });
-    this.uiService.setUserUi({ showMetricsParameters: showMetricsParameters });
+    this.uiQuery.updatePart({
+      showMetricsParameters: !this.showMetricsParameters
+    });
   }
 
   editListeners() {

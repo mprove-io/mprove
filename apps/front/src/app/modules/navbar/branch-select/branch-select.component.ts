@@ -7,9 +7,9 @@ import {
 import { NavigationEnd, Router } from '@angular/router';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { filter, take, tap } from 'rxjs/operators';
+import { checkNavCharts } from '~front/app/functions/check-nav-charts';
 import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';
-import { makeQueryParams } from '~front/app/functions/make-query-params';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -304,68 +304,30 @@ export class BranchSelectComponent {
     let repoId =
       newSelectedBranchItem.isRepoProd === true ? common.PROD_REPO_ID : userId;
 
-    // console.log(this.router.url);
     let urlParts = this.router.url.split('/');
 
-    let navArray = [
-      common.PATH_ORG,
-      this.selectedOrgId,
-      common.PATH_PROJECT,
-      this.selectedProjectId,
-      common.PATH_REPO,
-      repoId,
-      common.PATH_BRANCH,
-      newSelectedBranchItem.branchId,
-      common.PATH_ENV,
-      this.nav.envId
-    ];
-
-    if (urlParts[11] === common.PATH_FILES) {
-      navArray.push(common.PATH_FILES);
-      navArray.push(common.PATH_FILE);
-      navArray.push(common.LAST_SELECTED_FILE_ID);
-    } else if (urlParts[11] === common.PATH_CHARTS) {
-      navArray.push(common.PATH_CHARTS);
-      navArray.push(common.PATH_MODEL);
-      navArray.push(common.LAST_SELECTED_MODEL_ID);
-      navArray.push(common.PATH_CHART);
-      navArray.push(common.LAST_SELECTED_CHART_ID);
-    } else if (urlParts[11] === common.PATH_DASHBOARDS) {
-      navArray.push(common.PATH_DASHBOARDS);
-      navArray.push(common.PATH_DASHBOARD);
-      navArray.push(common.LAST_SELECTED_DASHBOARD_ID);
-    } else if (urlParts[11] === common.PATH_REPORTS) {
-      navArray.push(common.PATH_REPORTS);
-      navArray.push(common.PATH_REPORT);
-      navArray.push(common.LAST_SELECTED_REPORT_ID);
-    } else {
-      navArray.push(common.PATH_FILES);
-    }
+    let navArray = checkNavCharts({
+      urlParts: urlParts,
+      navArray: [
+        common.PATH_ORG,
+        this.selectedOrgId,
+        common.PATH_PROJECT,
+        this.selectedProjectId,
+        common.PATH_REPO,
+        repoId,
+        common.PATH_BRANCH,
+        newSelectedBranchItem.branchId,
+        common.PATH_ENV,
+        this.nav.envId
+      ]
+    });
 
     if (urlParts[11] === common.PATH_REPORTS) {
       let uiState = this.uiQuery.getValue();
       uiState.gridApi?.deselectAll();
-
-      this.router.navigate(navArray, {
-        queryParams: makeQueryParams({
-          timezone: uiState.timezone,
-          timeSpec: uiState.timeSpec,
-          timeRangeFraction: uiState.timeRangeFraction
-        })
-      });
-    } else if (urlParts[11] === common.PATH_DASHBOARDS) {
-      let uiState = this.uiQuery.getValue();
-
-      this.router.navigate(navArray, {
-        queryParams: makeQueryParams({
-          timezone: uiState.timezone,
-          timeSpec: undefined,
-          timeRangeFraction: undefined
-        })
-      });
-    } else {
-      this.router.navigate(navArray);
     }
+
+    this.router.navigate(navArray);
   }
 
   makeBranchItem(item: {

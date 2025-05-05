@@ -1604,9 +1604,6 @@ export class FractionTsComponent implements OnInit {
   }
 
   toggleShowHours() {
-    let showHours = !this.showHours;
-
-    this.uiQuery.updatePart({ showHours: showHours });
-    this.uiService.setUserUi({ showHours: showHours });
+    this.uiQuery.updatePart({ showHours: !this.showHours });
   }
 }

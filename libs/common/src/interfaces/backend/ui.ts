@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsEnum, IsInt, ValidateNested } from 'class-validator';
+import { IsEnum, IsInt, ValidateNested } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 import { IsTimezone } from '~common/functions/is-timezone';
 import { Fraction } from '../blockml/fraction';
@@ -19,29 +19,18 @@ export class Ui {
   @IsInt()
   metricsTimeColumnsWideWidth: number;
 
-  @IsBoolean()
-  showMetricsModelName: boolean;
+  @IsEnum(enums.ModelTreeLevelsEnum)
+  modelTreeLevels: enums.ModelTreeLevelsEnum;
 
-  @IsBoolean()
-  showMetricsTimeFieldName: boolean;
+  @IsTimezone()
+  timezone: string;
 
-  @IsBoolean()
-  showMetricsChart: boolean;
+  @IsEnum(enums.TimeSpecEnum)
+  timeSpec: enums.TimeSpecEnum;
 
-  @IsBoolean()
-  showMetricsChartSettings: boolean;
-
-  @IsBoolean()
-  showMiniCharts: boolean;
-
-  @IsBoolean()
-  showHours: boolean;
-
-  @IsBoolean()
-  isAutoRun: boolean;
-
-  @IsBoolean()
-  showModel: boolean;
+  @ValidateNested()
+  @Type(() => Fraction)
+  timeRangeFraction: Fraction;
 
   @ValidateNested()
   @Type(() => ProjectFileLink)
@@ -62,20 +51,4 @@ export class Ui {
   @ValidateNested()
   @Type(() => ProjectReportLink)
   projectReportLinks: ProjectReportLink[];
-
-  @IsBoolean()
-  showMetricsParameters: boolean;
-
-  @IsEnum(enums.ModelTreeLevelsEnum)
-  modelTreeLevels: enums.ModelTreeLevelsEnum;
-
-  @IsTimezone()
-  timezone: string;
-
-  @IsEnum(enums.TimeSpecEnum)
-  timeSpec: enums.TimeSpecEnum;
-
-  @ValidateNested()
-  @Type(() => Fraction)
-  timeRangeFraction: Fraction;
 }
