@@ -13,10 +13,7 @@ export const DEFAULT_QUERY_SIZE_LIMIT = 1;
 
 export const UNK_ST_ID = 'unk';
 
-export const DEFAULT_UI: common.Ui = {
-  metricsColumnNameWidth: 530,
-  metricsTimeColumnsNarrowWidth: 165,
-  metricsTimeColumnsWideWidth: 220,
+export const DEFAULT_SRV_UI: common.Ui = {
   modelTreeLevels: common.ModelTreeLevelsEnum.Flat,
   timezone: common.UTC,
   timeSpec: common.TimeSpecEnum.Days,

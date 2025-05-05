@@ -94,7 +94,7 @@ export class UsersService {
       alias: alias,
       firstName: undefined, // null
       lastName: undefined, // null
-      ui: constants.DEFAULT_UI,
+      ui: constants.DEFAULT_SRV_UI,
       serverTs: undefined
     };
 

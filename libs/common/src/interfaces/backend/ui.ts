@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsInt, ValidateNested } from 'class-validator';
+import { IsEnum, ValidateNested } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 import { IsTimezone } from '~common/functions/is-timezone';
 import { Fraction } from '../blockml/fraction';
@@ -10,15 +10,6 @@ import { ProjectModelLink } from './project-model-link';
 import { ProjectReportLink } from './project-report-link';
 
 export class Ui {
-  @IsInt()
-  metricsColumnNameWidth: number;
-
-  @IsInt()
-  metricsTimeColumnsNarrowWidth: number;
-
-  @IsInt()
-  metricsTimeColumnsWideWidth: number;
-
   @IsEnum(enums.ModelTreeLevelsEnum)
   modelTreeLevels: enums.ModelTreeLevelsEnum;
 

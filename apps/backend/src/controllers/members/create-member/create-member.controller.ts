@@ -93,7 +93,7 @@ export class CreateMemberController {
         alias: alias,
         firstName: undefined,
         lastName: undefined,
-        ui: constants.DEFAULT_UI,
+        ui: constants.DEFAULT_SRV_UI,
         serverTs: undefined
       };
 

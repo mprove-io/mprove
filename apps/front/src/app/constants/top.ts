@@ -14,6 +14,10 @@ export const LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME = 'changedOwnerOrgName';
 export const LOCAL_STORAGE_DELETED_PROJECT_NAME = 'deletedProjectName';
 export const LOCAL_STORAGE_NEW_ORG_OWNER = 'newOrgOwner';
 
+export const DEFAULT_METRICS_COLUMN_NAME_WIDTH = 530;
+export const DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH = 155;
+export const DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH = 220;
+
 export const DEFAULT_TIME_SPEC = common.TimeSpecEnum.Days;
 
 export const DEFAULT_TIME_RANGE_FRACTION: common.Fraction = {

@@ -11,9 +11,6 @@ export class UiService {
 
   async setUserUi(item: {
     timezone?: string;
-    metricsColumnNameWidth?: number;
-    metricsTimeColumnsNarrowWidth?: number;
-    metricsTimeColumnsWideWidth?: number;
     modelTreeLevels?: common.ModelTreeLevelsEnum;
     projectFileLinks?: common.ProjectFileLink[];
     projectModelLinks?: common.ProjectModelLink[];
@@ -23,9 +20,6 @@ export class UiService {
   }) {
     let {
       timezone,
-      metricsColumnNameWidth,
-      metricsTimeColumnsNarrowWidth,
-      metricsTimeColumnsWideWidth,
       modelTreeLevels,
       projectFileLinks,
       projectModelLinks,
@@ -37,17 +31,6 @@ export class UiService {
     let uiState = this.uiQuery.getValue();
 
     let ui: common.Ui = {
-      metricsColumnNameWidth: common.isDefined(metricsColumnNameWidth)
-        ? metricsColumnNameWidth
-        : uiState.metricsColumnNameWidth,
-      metricsTimeColumnsNarrowWidth: common.isDefined(
-        metricsTimeColumnsNarrowWidth
-      )
-        ? metricsTimeColumnsNarrowWidth
-        : uiState.metricsTimeColumnsNarrowWidth,
-      metricsTimeColumnsWideWidth: common.isDefined(metricsTimeColumnsWideWidth)
-        ? metricsTimeColumnsWideWidth
-        : uiState.metricsTimeColumnsWideWidth,
       modelTreeLevels: common.isDefined(modelTreeLevels)
         ? modelTreeLevels
         : uiState.modelTreeLevels,

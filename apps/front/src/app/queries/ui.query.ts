@@ -5,6 +5,11 @@ import equal from 'fast-deep-equal';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { common } from '~front/barrels/common';
+import {
+  DEFAULT_METRICS_COLUMN_NAME_WIDTH,
+  DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
+  DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH
+} from '../constants/top';
 import { ChartPointsData } from '../interfaces/chart-points-data';
 import { BaseQuery } from './base.query';
 
@@ -32,10 +37,10 @@ export class UiState {
   showMetricsParameters: boolean;
   showMetricsModelName: boolean;
   showMetricsTimeFieldName: boolean;
-  //
   metricsColumnNameWidth: number;
   metricsTimeColumnsNarrowWidth: number;
   metricsTimeColumnsWideWidth: number;
+  //
   modelTreeLevels: common.ModelTreeLevelsEnum;
   timezone: string;
   timeSpec: common.TimeSpecEnum;
@@ -73,10 +78,10 @@ let uiState: UiState = {
   showMetricsParameters: false,
   showMetricsModelName: false,
   showMetricsTimeFieldName: false,
+  metricsColumnNameWidth: DEFAULT_METRICS_COLUMN_NAME_WIDTH,
+  metricsTimeColumnsNarrowWidth: DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
+  metricsTimeColumnsWideWidth: DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH,
   //
-  metricsColumnNameWidth: undefined,
-  metricsTimeColumnsNarrowWidth: undefined,
-  metricsTimeColumnsWideWidth: undefined,
   modelTreeLevels: undefined,
   timezone: undefined,
   timeSpec: undefined,

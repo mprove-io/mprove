@@ -472,52 +472,35 @@ export class WrapToApiService {
       lastName: user.lastName,
       isEmailVerified: user.isEmailVerified,
       ui: {
-        timezone: user.ui?.timezone || constants.DEFAULT_UI.timezone,
-        timeSpec: user.ui?.timeSpec || constants.DEFAULT_UI.timeSpec,
+        timezone: user.ui?.timezone || constants.DEFAULT_SRV_UI.timezone,
+        timeSpec: user.ui?.timeSpec || constants.DEFAULT_SRV_UI.timeSpec,
         timeRangeFraction:
-          user.ui?.timeRangeFraction || constants.DEFAULT_UI.timeRangeFraction,
-
-        metricsColumnNameWidth: common.isDefined(
-          user.ui?.metricsColumnNameWidth
-        )
-          ? user.ui?.metricsColumnNameWidth
-          : constants.DEFAULT_UI.metricsColumnNameWidth,
-
-        metricsTimeColumnsNarrowWidth: common.isDefined(
-          user.ui?.metricsTimeColumnsNarrowWidth
-        )
-          ? user.ui?.metricsTimeColumnsNarrowWidth
-          : constants.DEFAULT_UI.metricsTimeColumnsNarrowWidth,
-
-        metricsTimeColumnsWideWidth: common.isDefined(
-          user.ui?.metricsTimeColumnsWideWidth
-        )
-          ? user.ui?.metricsTimeColumnsWideWidth
-          : constants.DEFAULT_UI.metricsTimeColumnsWideWidth,
+          user.ui?.timeRangeFraction ||
+          constants.DEFAULT_SRV_UI.timeRangeFraction,
 
         projectFileLinks: common.isDefined(user.ui?.projectFileLinks)
           ? user.ui?.projectFileLinks
-          : constants.DEFAULT_UI.projectFileLinks,
+          : constants.DEFAULT_SRV_UI.projectFileLinks,
 
         projectModelLinks: common.isDefined(user.ui?.projectModelLinks)
           ? user.ui?.projectModelLinks
-          : constants.DEFAULT_UI.projectModelLinks,
+          : constants.DEFAULT_SRV_UI.projectModelLinks,
 
         projectChartLinks: common.isDefined(user.ui?.projectChartLinks)
           ? user.ui?.projectChartLinks
-          : constants.DEFAULT_UI.projectChartLinks,
+          : constants.DEFAULT_SRV_UI.projectChartLinks,
 
         projectDashboardLinks: common.isDefined(user.ui?.projectDashboardLinks)
           ? user.ui?.projectDashboardLinks
-          : constants.DEFAULT_UI.projectDashboardLinks,
+          : constants.DEFAULT_SRV_UI.projectDashboardLinks,
 
         projectReportLinks: common.isDefined(user.ui?.projectReportLinks)
           ? user.ui?.projectReportLinks
-          : constants.DEFAULT_UI.projectReportLinks,
+          : constants.DEFAULT_SRV_UI.projectReportLinks,
 
         modelTreeLevels: common.isDefined(user.ui?.modelTreeLevels)
           ? user.ui?.modelTreeLevels
-          : constants.DEFAULT_UI.modelTreeLevels
+          : constants.DEFAULT_SRV_UI.modelTreeLevels
       },
       serverTs: Number(user.serverTs)
     };

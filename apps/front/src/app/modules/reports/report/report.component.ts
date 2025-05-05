@@ -16,6 +16,11 @@ import {
 import { combineLatest, tap } from 'rxjs';
 import { debounce } from 'throttle-debounce';
 import { STORE_MODEL_PREFIX } from '~common/constants/top';
+import {
+  DEFAULT_METRICS_COLUMN_NAME_WIDTH,
+  DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
+  DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH
+} from '~front/app/constants/top';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -87,12 +92,6 @@ export class ReportComponent {
         });
 
         uiState = this.uiQuery.getValue();
-
-        this.uiService.setUserUi({
-          metricsColumnNameWidth: uiState.metricsColumnNameWidth,
-          metricsTimeColumnsNarrowWidth: uiState.metricsTimeColumnsNarrowWidth,
-          metricsTimeColumnsWideWidth: uiState.metricsTimeColumnsWideWidth
-        });
       }
     },
     { atBegin: false }
@@ -117,7 +116,7 @@ export class ReportComponent {
     {
       field: 'name',
       pinned: 'left',
-      minWidth: 530, // metricsColumnNameWidth
+      minWidth: DEFAULT_METRICS_COLUMN_NAME_WIDTH,
       headerComponent: MetricHeaderComponent,
       cellRenderer: MetricRendererComponent
     },
@@ -230,8 +229,14 @@ export class ReportComponent {
                 common.TimeSpecEnum.Minutes,
                 common.TimeSpecEnum.Hours
               ].indexOf(uiState.timeSpec) > -1
-                ? Math.max(220, timeColumnsWideWidth)
-                : Math.max(155, timeColumnsNarrowWidth),
+                ? Math.max(
+                    DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH,
+                    timeColumnsWideWidth
+                  )
+                : Math.max(
+                    DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
+                    timeColumnsNarrowWidth
+                  ),
             minWidth:
               [
                 common.TimeSpecEnum.Timestamps,
