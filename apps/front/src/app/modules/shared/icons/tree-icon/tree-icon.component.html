@@ -1,12 +1,25 @@
 <svg
+  *ngIf="isFlat === false"
   xmlns="http://www.w3.org/2000/svg"
-  width="24"
-  height="24"
-  viewBox="0 0 48 48"
-  fill="currentColor"
+  height="24px"
+  viewBox="6 7 12 10"
+  width="24px"
 >
-  <rect width="48" height="48" fill="none"></rect>
   <path
-    d="M26,30H42a2,2,0,0,0,2-2V20a2,2,0,0,0-2-2H26a2,2,0,0,0-2,2v2H16V14h6a2,2,0,0,0,2-2V4a2,2,0,0,0-2-2H6A2,2,0,0,0,4,4v8a2,2,0,0,0,2,2h6V40a2,2,0,0,0,2,2H24v2a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V36a2,2,0,0,0-2-2H26a2,2,0,0,0-2,2v2H16V26h8v2A2,2,0,0,0,26,30Z"
-  ></path>
+    d="M18,17h-6v-2h6v2z M15,13H9v-2h6V13z M12,9H6v-2h6v2z"
+    fill="currentColor"
+  />
+</svg>
+
+<svg
+  *ngIf="isFlat === true"
+  xmlns="http://www.w3.org/2000/svg"
+  height="24px"
+  viewBox="6 7 12 10"
+  width="24px"
+>
+  <path
+    d="M15,9H9v-2h6v2z M15,13H9v-2h6v2z M15,17H9v-2h6v2z"
+    fill="currentColor"
+  />
 </svg>
