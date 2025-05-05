@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
 import { tap } from 'rxjs/operators';
 import { ChartQuery } from '~front/app/queries/chart.query';
@@ -10,6 +10,9 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './yaml.component.html'
 })
 export class YamlComponent implements OnInit {
+  @Input()
+  queryPart: common.QueryPartEnum;
+
   editorOptions: MonacoEditorOptions = {
     readOnly: true,
     renderValidationDecorations: 'off',

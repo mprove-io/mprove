@@ -56,14 +56,9 @@ import { ChartService } from '~front/app/services/chart.service';
 import { DataService } from '~front/app/services/data.service';
 import { UiService } from '~front/app/services/ui.service';
 
-export class InfoStorePartItem {
+export class QueryPartItem {
   label: string;
-  value: common.InfoStorePartEnum;
-}
-
-export class InfoMainPartItem {
-  label: string;
-  value: common.InfoMainPartEnum;
+  value: common.QueryPartEnum;
 }
 
 export class ChartTypeItem {
@@ -80,11 +75,8 @@ export class ChartsComponent implements OnInit, OnDestroy {
   @ViewChild('chartTypeSelect', { static: false })
   chartTypeSelectElement: NgSelectComponent;
 
-  @ViewChild('infoStorePartSelect', { static: false })
-  infoStorePartSelectElement: NgSelectComponent;
-
-  @ViewChild('infoMainPartSelect', { static: false })
-  infoMainPartSelectElement: NgSelectComponent;
+  @ViewChild('queryPartSelect', { static: false })
+  queryPartSelectElement: NgSelectComponent;
 
   @ViewChild('chartsModelSelect', { static: false })
   chartsModelSelectElement: NgSelectComponent;
@@ -93,8 +85,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    this.infoStorePartSelectElement?.close();
-    this.infoMainPartSelectElement?.close();
+    this.queryPartSelectElement?.close();
     this.chartTypeSelectElement?.close();
   }
 
@@ -118,22 +109,14 @@ export class ChartsComponent implements OnInit, OnDestroy {
   isRunButtonPressed = false;
   isCancelButtonPressed = false;
 
-  // modelTreeLevelsFlatTime = common.ModelTreeLevelsEnum.FlatTime;
   modelTreeLevelsFlat = common.ModelTreeLevelsEnum.Flat;
-  // modelTreeLevelsNestedFlatTime = common.ModelTreeLevelsEnum.NestedFlatTime;
   modelTreeLevelsNested = common.ModelTreeLevelsEnum.Nested;
 
   queryStatusEnum = common.QueryStatusEnum;
   connectionTypeEnum = common.ConnectionTypeEnum;
   chartTypeEnum = common.ChartTypeEnum;
 
-  infoMainPartEnum = common.InfoMainPartEnum;
-
-  infoStorePartReqTemplate = common.InfoStorePartEnum.ReqTemplate;
-  infoStorePartReqFunction = common.InfoStorePartEnum.ReqFunction;
-  infoStorePartReqJsonParts = common.InfoStorePartEnum.ReqJsonParts;
-  infoStorePartReqBody = common.InfoStorePartEnum.ReqBody;
-  infoStorePartReqUrlPath = common.InfoStorePartEnum.ReqUrlPath;
+  queryPartEnum = common.QueryPartEnum;
 
   chartTypeEnumTable = common.ChartTypeEnum.Table;
   chartTypeEnumSingle = common.ChartTypeEnum.Single;
@@ -207,6 +190,28 @@ export class ChartsComponent implements OnInit, OnDestroy {
   model$ = this.modelQuery.select().pipe(
     tap(x => {
       this.model = x;
+
+      if (common.isDefined(this.model.modelId)) {
+        let queryPart =
+          this.model.isStoreModel === true &&
+          this.storeQueryPartList
+            .map(y => y.value)
+            .indexOf(this.queryPartForm.controls['queryPart'].value) < 0
+            ? common.QueryPartEnum.StoreReqJsonParts
+            : this.model.isStoreModel === false &&
+              this.mainQueryPartList
+                .map(y => y.value)
+                .indexOf(this.queryPartForm.controls['queryPart'].value) < 0
+            ? common.QueryPartEnum.MainSql
+            : undefined;
+
+        if (
+          common.isDefined(queryPart) &&
+          queryPart !== this.queryPartForm.controls['queryPart'].value
+        ) {
+          this.queryPartForm.controls['queryPart'].setValue(queryPart);
+        }
+      }
 
       this.sortedFieldsList = this.model.fields
         .map(y =>
@@ -478,47 +483,34 @@ export class ChartsComponent implements OnInit, OnDestroy {
     ]
   });
 
-  infoStoreForm: FormGroup = this.fb.group({
-    infoStorePart: [common.InfoStorePartEnum.ReqJsonParts]
+  queryPartForm: FormGroup = this.fb.group({
+    queryPart: undefined
   });
 
-  infoMainForm: FormGroup = this.fb.group({
-    infoMainPart: [common.InfoMainPartEnum.Sql]
-  });
-
-  infoMainPartList: InfoMainPartItem[] = [
+  mainQueryPartList: QueryPartItem[] = [
     {
       label: 'SQL',
-      value: common.InfoMainPartEnum.Sql
+      value: common.QueryPartEnum.MainSql
     },
     {
-      label: 'YAML',
-      value: common.InfoMainPartEnum.Yaml
+      label: 'Tile - YAML',
+      value: common.QueryPartEnum.ChartTileYaml
     }
   ];
 
-  infoStorePartList: InfoStorePartItem[] = [
+  storeQueryPartList: QueryPartItem[] = [
     {
-      label: 'Request Body Template',
-      value: common.InfoStorePartEnum.ReqTemplate
+      label: 'Request Template',
+      value: common.QueryPartEnum.StoreReqTemplate
     },
     {
-      label: 'Request Body Function',
-      value: common.InfoStorePartEnum.ReqFunction
+      label: 'Request Function',
+      value: common.QueryPartEnum.StoreReqFunction
     },
     {
-      label: 'Request Body and Path',
-      value: common.InfoStorePartEnum.ReqJsonParts
+      label: 'Request Path and Body',
+      value: common.QueryPartEnum.StoreReqJsonParts
     }
-    // ,
-    // {
-    //   label: 'Request Body',
-    //   value: common.InfoStorePartEnum.ReqBody
-    // },
-    // {
-    //   label: 'Request Url Path',
-    //   value: common.InfoStorePartEnum.ReqUrlPath
-    // }
   ];
 
   chartTypeForm: FormGroup = this.fb.group({
@@ -1106,40 +1098,26 @@ export class ChartsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  infoStorePartChange(infoStorePartItem: InfoStorePartItem) {
+  queryPartChange(queryPartItem: QueryPartItem) {
     (document.activeElement as HTMLElement).blur();
 
-    let value = infoStorePartItem.value;
+    let value = queryPartItem.value;
 
     if (
       [
-        common.InfoStorePartEnum.ReqTemplate,
-        common.InfoStorePartEnum.ReqFunction,
-        common.InfoStorePartEnum.ReqUrlPath
+        common.QueryPartEnum.StoreReqTemplate,
+        common.QueryPartEnum.StoreReqFunction
       ].indexOf(value) > -1
     ) {
       this.jsContent =
-        value === common.InfoStorePartEnum.ReqTemplate
-          ? `// function to make request urlPath and body (before interpolation)
+        value === common.QueryPartEnum.StoreReqTemplate
+          ? `// template to make request urlPath and body
 ${this.mconfig.storePart?.reqTemplate}`
-          : value === common.InfoStorePartEnum.ReqFunction
-          ? `// function to make request urlPath and body (after interpolation)
+          : value === common.QueryPartEnum.StoreReqFunction
+          ? `// function to make request urlPath and body
 ${this.mconfig.storePart?.reqFunction}`
-          : value === common.InfoStorePartEnum.ReqJsonParts
-          ? `// request urlPath and body
-${this.mconfig.storePart?.reqJsonParts}`
-          : value === common.InfoStorePartEnum.ReqBody
-          ? `// request body
-${this.mconfig.storePart?.reqBody}`
-          : value === common.InfoStorePartEnum.ReqUrlPath
-          ? `// request url path
-${this.mconfig.storePart?.reqUrlPath}`
           : undefined;
     }
-  }
-
-  infoMainPartChange(infoMainPartItem: InfoMainPartItem) {
-    (document.activeElement as HTMLElement).blur();
   }
 
   chartTypeChange(newChartTypeValue?: common.ChartTypeEnum) {

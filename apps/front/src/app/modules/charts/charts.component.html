@@ -1322,81 +1322,41 @@
                         {{
                           mconfig?.isStoreModel === true
                             ? 'Store Query'
-                            : 'Query'
+                            : 'Main Query'
                         }}
                       </div>
                     </div>
                   </div>
 
                   <form
-                    [formGroup]="infoMainForm"
-                    *ngIf="
-                      mconfig?.isStoreModel === false &&
-                      mconfig?.select.length > 0 &&
-                      rightIsShow === true
-                    "
+                    [formGroup]="queryPartForm"
+                    *ngIf="rightIsShow === true && mconfig?.select.length > 0"
                     class="ml-5"
                   >
                     <ng-select
-                      #infoMainPartSelect
-                      data-cy="infoMainPartSelect"
+                      #queryPartSelect
+                      data-cy="queryPartSelect"
                       class="w-[250px] flex-shrink-0 text-base focus:outline-none"
-                      [items]="infoMainPartList"
+                      [items]="
+                        mconfig?.isStoreModel === true
+                          ? storeQueryPartList
+                          : mainQueryPartList
+                      "
                       [clearable]="false"
                       [searchable]="false"
-                      (change)="infoMainPartChange($event)"
+                      (change)="queryPartChange($event)"
                       (keyup.esc)="
                         $event.stopImmediatePropagation();
-                        infoMainPartSelect.blur()
+                        queryPartSelect.blur()
                       "
                       (keyup.enter)="
                         $event.stopImmediatePropagation();
-                        infoMainPartSelect.blur()
+                        queryPartSelect.blur()
                       "
                       appendTo="body"
                       bindLabel="label"
                       bindValue="value"
-                      formControlName="infoMainPart"
-                    >
-                      <ng-template ng-label-tmp let-item="item">
-                        <div>{{ item.label }}</div>
-                      </ng-template>
-
-                      <ng-template ng-option-tmp let-item="item">
-                        <div>{{ item.label }}</div>
-                      </ng-template>
-                    </ng-select>
-                  </form>
-
-                  <form
-                    [formGroup]="infoStoreForm"
-                    *ngIf="
-                      mconfig?.isStoreModel === true &&
-                      mconfig?.select.length > 0 &&
-                      rightIsShow === true
-                    "
-                    class="ml-5"
-                  >
-                    <ng-select
-                      #infoStorePartSelect
-                      data-cy="infoStorePartSelect"
-                      class="w-[250px] flex-shrink-0 text-base focus:outline-none"
-                      [items]="infoStorePartList"
-                      [clearable]="false"
-                      [searchable]="false"
-                      (change)="infoStorePartChange($event)"
-                      (keyup.esc)="
-                        $event.stopImmediatePropagation();
-                        infoStorePartSelect.blur()
-                      "
-                      (keyup.enter)="
-                        $event.stopImmediatePropagation();
-                        infoStorePartSelect.blur()
-                      "
-                      appendTo="body"
-                      bindLabel="label"
-                      bindValue="value"
-                      formControlName="infoStorePart"
+                      formControlName="queryPart"
                     >
                       <ng-template ng-label-tmp let-item="item">
                         <div>{{ item.label }}</div>
@@ -1461,29 +1421,28 @@
                     <m-sql
                       *ngIf="
                         mconfig.isStoreModel === false &&
-                        infoMainForm.controls['infoMainPart'].value ===
-                          infoMainPartEnum.Sql
+                        queryPartForm.controls['queryPart'].value ===
+                          queryPartEnum.MainSql
                       "
                     ></m-sql>
 
                     <m-yaml
                       *ngIf="
                         mconfig.isStoreModel === false &&
-                        infoMainForm.controls['infoMainPart'].value ===
-                          infoMainPartEnum.Yaml
+                        queryPartForm.controls['queryPart'].value ===
+                          queryPartEnum.ChartTileYaml
                       "
+                      [queryPart]="queryPartForm.controls['queryPart'].value"
                     ></m-yaml>
 
                     <m-js-viewer
                       *ngIf="
                         mconfig.isStoreModel === true &&
                         [
-                          infoStorePartReqTemplate,
-                          infoStorePartReqFunction,
-                          infoStorePartReqUrlPath
-                        ].indexOf(
-                          infoStoreForm.controls['infoStorePart'].value
-                        ) > -1
+                          queryPartEnum.StoreReqTemplate,
+                          queryPartEnum.StoreReqFunction
+                        ].indexOf(queryPartForm.controls['queryPart'].value) >
+                          -1
                       "
                       [jsContent]="jsContent"
                     ></m-js-viewer>
@@ -1491,20 +1450,14 @@
                     <m-json-viewer
                       *ngIf="
                         mconfig.isStoreModel === true &&
-                        [
-                          infoStorePartReqJsonParts,
-                          infoStorePartReqBody
-                        ].indexOf(
-                          infoStoreForm.controls['infoStorePart'].value
+                        [queryPartEnum.StoreReqJsonParts].indexOf(
+                          queryPartForm.controls['queryPart'].value
                         ) > -1
                       "
                       [jsonContent]="
-                        infoStoreForm.controls['infoStorePart'].value ===
-                        infoStorePartReqJsonParts
+                        queryPartForm.controls['queryPart'].value ===
+                        queryPartEnum.StoreReqJsonParts
                           ? mconfig.storePart?.reqJsonParts
-                          : infoStoreForm.controls['infoStorePart'].value ===
-                            infoStorePartReqBody
-                          ? mconfig.storePart?.reqBody
                           : undefined
                       "
                     ></m-json-viewer>
