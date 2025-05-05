@@ -489,12 +489,16 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   mainQueryPartList: QueryPartItem[] = [
     {
-      label: 'SQL',
-      value: common.QueryPartEnum.MainSql
+      label: 'Model',
+      value: common.QueryPartEnum.ModelYaml
     },
     {
-      label: 'Tile - YAML',
-      value: common.QueryPartEnum.ChartTileYaml
+      label: 'Tile',
+      value: common.QueryPartEnum.TileYaml
+    },
+    {
+      label: 'SQL',
+      value: common.QueryPartEnum.MainSql
     }
   ];
 

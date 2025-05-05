@@ -1418,6 +1418,18 @@
                     *ngIf="mconfig?.select.length > 0 && rightIsShow === true"
                     class="border-s300 h-full w-2 flex-1"
                   >
+                    <m-yaml
+                      *ngIf="
+                        mconfig.isStoreModel === false &&
+                        [
+                          queryPartEnum.ModelYaml,
+                          queryPartEnum.TileYaml
+                        ].indexOf(queryPartForm.controls['queryPart'].value) >
+                          -1
+                      "
+                      [queryPart]="queryPartForm.controls['queryPart'].value"
+                    ></m-yaml>
+
                     <m-sql
                       *ngIf="
                         mconfig.isStoreModel === false &&
@@ -1425,15 +1437,6 @@
                           queryPartEnum.MainSql
                       "
                     ></m-sql>
-
-                    <m-yaml
-                      *ngIf="
-                        mconfig.isStoreModel === false &&
-                        queryPartForm.controls['queryPart'].value ===
-                          queryPartEnum.ChartTileYaml
-                      "
-                      [queryPart]="queryPartForm.controls['queryPart'].value"
-                    ></m-yaml>
 
                     <m-js-viewer
                       *ngIf="

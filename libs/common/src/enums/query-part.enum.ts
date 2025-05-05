@@ -1,6 +1,7 @@
 export enum QueryPartEnum {
+  ModelYaml = 'ModelYaml',
+  TileYaml = 'TileYaml',
   MainSql = 'MainSql',
-  ChartTileYaml = 'ChartTileYaml',
   //
   StoreReqTemplate = 'StoreReqTemplate',
   StoreReqFunction = 'StoreReqFunction',

@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges
+} from '@angular/core';
 import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
 import { tap } from 'rxjs/operators';
 import { ChartQuery } from '~front/app/queries/chart.query';
@@ -9,7 +16,7 @@ import { constants } from '~front/barrels/constants';
   selector: 'm-yaml',
   templateUrl: './yaml.component.html'
 })
-export class YamlComponent implements OnInit {
+export class YamlComponent implements OnInit, OnChanges {
   @Input()
   queryPart: common.QueryPartEnum;
 
@@ -29,14 +36,7 @@ export class YamlComponent implements OnInit {
     tap(x => {
       this.chart = x;
 
-      let filePartTile: common.FilePartTile = common.prepareTile({
-        isForDashboard: false,
-        mconfig: x.tiles[0].mconfig
-      });
-
-      this.content = common.toYaml({ tiles: [filePartTile] });
-
-      this.cd.detectChanges();
+      this.checkContent();
     })
   );
 
@@ -57,5 +57,32 @@ export class YamlComponent implements OnInit {
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();
     }, 0);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      common.isDefined(changes.queryPart) &&
+      changes.queryPart.currentValue !== changes.queryPart.previousValue
+    ) {
+      this.queryPart = changes.queryPart.currentValue;
+      this.checkContent();
+    }
+  }
+
+  checkContent() {
+    if (common.isDefined(this.chart)) {
+      if (this.queryPart === common.QueryPartEnum.TileYaml) {
+        let filePartTile: common.FilePartTile = common.prepareTile({
+          isForDashboard: false,
+          mconfig: this.chart.tiles[0].mconfig
+        });
+
+        this.content = common.toYaml({ tiles: [filePartTile] });
+        this.cd.detectChanges();
+      } else if (this.queryPart === common.QueryPartEnum.ModelYaml) {
+        this.content = 'model content';
+        this.cd.detectChanges();
+      }
+    }
   }
 }
