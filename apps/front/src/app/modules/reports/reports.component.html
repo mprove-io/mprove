@@ -561,7 +561,13 @@
                   </div>
                 </div>
 
-                <div class="divide-s400 ml-6 mr-9 flex flex-col divide-y-2">
+                <div
+                  class="ml-6 mr-9 flex flex-col"
+                  [ngClass]="{
+                    'divide-s400 divide-y-2': metricsIsExpanded === true,
+                    'divide-s300 divide-y': metricsIsExpanded === false
+                  }"
+                >
                   <div class="flex flex-row"></div>
                   <div class="flex flex-row"></div>
                 </div>
@@ -597,7 +603,7 @@
                   class="flex flex-1 flex-col"
                   *ngIf="metricsIsExpanded === true"
                 >
-                  <div class="divide-s400 ml-6 mr-9 flex flex-col divide-y">
+                  <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
                     <div class="flex flex-row"></div>
                     <div class="flex flex-row"></div>
                   </div>
@@ -607,7 +613,7 @@
                   ></m-metrics-tree>
                 </div>
 
-                <div class="divide-s400 ml-6 mr-9 flex flex-col divide-y">
+                <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
                   <div class="flex flex-row"></div>
                   <div class="flex flex-row"></div>
                 </div>
