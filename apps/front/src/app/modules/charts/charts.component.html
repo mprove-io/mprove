@@ -344,13 +344,92 @@
           class="bg-m0 flex h-full w-1/4 flex-shrink-0 flex-col rounded shadow"
         >
           <div
+            class="text-s1 flex h-[92px] w-full flex-shrink-0 flex-row items-center pb-6 pt-6"
+          >
+            <div
+              (click)="toggleShowModel()"
+              class="flex h-11 cursor-pointer select-none flex-row items-center pl-[22px] pr-3 text-lg font-semibold"
+            >
+              <div class="flex flex-row items-center">
+                <m-chevron-right-icon
+                  *ngIf="showModel === false"
+                ></m-chevron-right-icon>
+                <m-chevron-down-icon
+                  *ngIf="showModel === true"
+                ></m-chevron-down-icon>
+
+                <div class="ml-[12px]"> MODEL </div>
+              </div>
+            </div>
+
+            <div class="ml-5 mr-9 flex w-2 flex-1 items-center">
+              <form class="w-full" [formGroup]="modelForm">
+                <ng-select
+                  #chartsModelSelect
+                  data-cy="chartsModelSelect"
+                  class="model-select w-full text-base"
+                  [items]="models"
+                  [clearable]="false"
+                  [searchable]="true"
+                  (change)="modelChange()"
+                  (keyup.esc)="
+                    $event.stopImmediatePropagation(); chartsModelSelect.blur()
+                  "
+                  (keyup.enter)="
+                    $event.stopImmediatePropagation(); chartsModelSelect.blur()
+                  "
+                  appendTo="body"
+                  bindLabel="label"
+                  bindValue="modelId"
+                  formControlName="model"
+                >
+                  <ng-template ng-label-tmp let-item="item">
+                    <div class="truncate">{{ item.label }}</div>
+                  </ng-template>
+
+                  <ng-template ng-option-tmp let-item="item">
+                    <div class="truncate">{{ item.label }}</div>
+                  </ng-template>
+                </ng-select>
+              </form>
+
+              <button
+                *ngIf="showModel === true"
+                class="text-s400 ml-5 h-6 w-6 flex-shrink-0 cursor-pointer select-none items-center text-lg"
+                (click)="toggleModelTreeLevels()"
+              >
+                <m-tree-icon
+                  [isFlat]="modelTreeLevels === modelTreeLevelsFlat"
+                ></m-tree-icon>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-1 flex-col" *ngIf="showModel === true">
+            <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
+              <div class="flex flex-row"></div>
+              <div class="flex flex-row"></div>
+            </div>
+
+            <m-model-tree
+              class="flex flex-1"
+              (expandFilters)="expandFiltersPanel()"
+            ></m-model-tree>
+          </div>
+
+          <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
+            <div class="flex flex-row"></div>
+            <div class="flex flex-row"></div>
+          </div>
+
+          <div
             class="flex h-2 flex-col"
             [ngClass]="{
               'h-[45%]': showModel === true,
               'flex-1': showModel === false
             }"
           >
-            <div class="mb-6 mt-6 flex h-11 flex-row items-center">
+            <div class="mb-5 mt-5 flex h-11 flex-row items-center">
               <m-search-icon class="text-s1 ml-6"></m-search-icon>
 
               <input
@@ -553,93 +632,9 @@
               </div>
             </div>
 
-            <div
-              class="ml-6 mr-9 flex flex-col"
-              [ngClass]="{
-                'divide-s400 divide-y-2': showModel === true,
-                'divide-s300 divide-y': showModel === false
-              }"
-            >
-              <div class="flex flex-row"></div>
-              <div class="flex flex-row"></div>
-            </div>
-
             <!-- <div
               class="text-s1 bg-s150 border-s300 flex w-full flex-shrink-0 flex-row items-center border py-5"
             ></div> -->
-
-            <div
-              class="text-s1 flex w-full flex-shrink-0 flex-row items-center py-5"
-            >
-              <div
-                (click)="toggleShowModel()"
-                class="flex h-11 cursor-pointer select-none flex-row items-center pl-[22px] pr-3 text-lg font-semibold"
-              >
-                <div class="flex flex-row items-center">
-                  <m-chevron-right-icon
-                    *ngIf="!showModel"
-                  ></m-chevron-right-icon>
-                  <m-chevron-down-icon *ngIf="showModel"></m-chevron-down-icon>
-
-                  <div class="ml-[12px]"> MODEL </div>
-                </div>
-              </div>
-
-              <button
-                class="text-s400 ml-2 h-6 w-6 flex-shrink-0 cursor-pointer select-none items-center text-lg"
-                (click)="toggleModelTreeLevels()"
-              >
-                <m-tree-icon
-                  [isFlat]="modelTreeLevels === modelTreeLevelsFlat"
-                ></m-tree-icon>
-              </button>
-
-              <div class="ml-5 mr-9 flex w-2 flex-1">
-                <form class="w-full" [formGroup]="modelForm">
-                  <ng-select
-                    #chartsModelSelect
-                    data-cy="chartsModelSelect"
-                    class="model-select w-full text-base"
-                    [items]="models"
-                    [clearable]="false"
-                    [searchable]="true"
-                    (change)="modelChange()"
-                    (keyup.esc)="
-                      $event.stopImmediatePropagation();
-                      chartsModelSelect.blur()
-                    "
-                    (keyup.enter)="
-                      $event.stopImmediatePropagation();
-                      chartsModelSelect.blur()
-                    "
-                    appendTo="body"
-                    bindLabel="label"
-                    bindValue="modelId"
-                    formControlName="model"
-                  >
-                    <ng-template ng-label-tmp let-item="item">
-                      <div class="truncate">{{ item.label }}</div>
-                    </ng-template>
-
-                    <ng-template ng-option-tmp let-item="item">
-                      <div class="truncate">{{ item.label }}</div>
-                    </ng-template>
-                  </ng-select>
-                </form>
-              </div>
-            </div>
-          </div>
-
-          <div class="flex flex-1 flex-col" *ngIf="showModel === true">
-            <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
-              <div class="flex flex-row"></div>
-              <div class="flex flex-row"></div>
-            </div>
-
-            <m-model-tree
-              class="flex flex-1"
-              (expandFilters)="expandFiltersPanel()"
-            ></m-model-tree>
           </div>
         </div>
 
@@ -1203,7 +1198,9 @@
 
           <div class="bg-m0 w-full flex-1 rounded shadow">
             <div class="flex h-full flex-col">
-              <div class="bg-m0 flex h-20 flex-shrink-0 flex-row items-center">
+              <div
+                class="bg-m0 flex h-[84px] flex-shrink-0 flex-row items-center"
+              >
                 <div class="flex flex-1 flex-row items-center">
                   <m-panel-title
                     class="mb-1"
