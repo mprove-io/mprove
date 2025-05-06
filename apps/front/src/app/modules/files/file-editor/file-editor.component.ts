@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { JSONSchema7 } from 'json-schema';
 import type { editor as editorType } from 'monaco-editor';
@@ -19,6 +20,8 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+
+import uFuzzy from '@leeoniya/ufuzzy';
 
 @Component({
   selector: 'm-file-editor',
@@ -89,6 +92,9 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   file$ = this.fileQuery.select().pipe(
     tap(x => {
       this.file = x;
+
+      this.mainFileForm.controls['mainFile'].setValue(this.file.fileId);
+
       // console.log(this.file.fileNodeId);
       // console.log(this.file.fileId);
       this.originalContent = x.originalContent;
@@ -102,10 +108,15 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     })
   );
 
+  mainFileItems: common.FileItem[];
+
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
     tap(x => {
       this.repo = x;
+
+      this.mainFileItems = common.getFileItems({ nodes: this.repo.nodes });
+
       this.refreshMarkers();
       this.cd.detectChanges();
     })
@@ -145,6 +156,10 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     })
   );
 
+  mainFileForm = this.fb.group({
+    mainFile: [undefined]
+  });
+
   constructor(
     private fileQuery: FileQuery,
     private structQuery: StructQuery,
@@ -153,6 +168,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     private repoQuery: RepoQuery,
     private memberQuery: MemberQuery,
     private spinner: NgxSpinnerService,
+    private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private apiService: ApiService,
     private confirmService: ConfirmService,
@@ -625,6 +641,27 @@ export class FileEditorComponent implements OnInit, OnDestroy {
         )
         .subscribe();
     }
+  }
+
+  mainFileChange() {
+    (document.activeElement as HTMLElement).blur();
+
+    let mainFileNodeId = this.mainFileForm.controls['mainFile'].value;
+
+    this.navigateService.navigateToFileLine({
+      panel: common.PanelEnum.Tree,
+      underscoreFileId: mainFileNodeId
+    });
+  }
+
+  mainFileSearchFn(term: string, fileItem: { value: string; label: string }) {
+    let haystack = [`${fileItem.label}`];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
   }
 
   canDeactivate(): Promise<boolean> | boolean {

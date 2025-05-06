@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyDirective } from '@ngneat/helipopper';
 import { MonacoEditorModule } from 'ng-monaco-editor';
 import { SharedModule } from '../shared/shared.module';
@@ -36,7 +37,8 @@ import { RepoOptionsComponent } from './repo-options/repo-options.component';
     RouterModule,
     TreeModule,
     TippyDirective,
-    MonacoEditorModule
+    MonacoEditorModule,
+    NgSelectModule
   ]
 })
 export class FilesModule {}

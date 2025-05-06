@@ -1,69 +1,116 @@
-<div class="flex h-full flex-col">
-  <div
-    class="flex h-20 flex-shrink-0 flex-row items-center justify-between px-5"
-  >
-    <div class="flex min-w-[2px] flex-row items-center space-x-5">
-      <div class="text-s1 min-w-[2px] flex-grow truncate text-lg">{{
-        file?.name
-      }}</div>
+<div class="flex h-full w-full flex-col">
+  <div class="flex h-20 w-full flex-shrink-0 flex-row items-center">
+    <!-- <div
+      class="text-s1 ml-5 flex flex-shrink-0 select-none items-center text-lg font-semibold"
+      >File</div
+    > -->
 
-      <div
-        tp="Selected file has error"
-        [tpIsEnabled]="isSelectedFileValid === false"
-      >
-        <button
-          class="flex flex-shrink-0 flex-row items-center focus:outline-none"
-          [ngClass]="{
-            'text-s400': isSelectedFileValid === false,
-            'text-m600 ': isSelectedFileValid === true
-          }"
-          *ngIf="
-            showGoTo === true &&
-            ((file?.name | goFromFileExt) === 'chart' ||
-              (file?.name | goFromFileExt) === 'dashboard' ||
-              (member?.isExplorer === true &&
-                ((file?.name | goFromFileExt) === 'view' ||
-                  (file?.name | goFromFileExt) === 'store')) ||
-              (member?.isExplorer === true &&
-                (file?.name | goFromFileExt) === 'model') ||
-              (file?.name | goFromFileExt) === 'report')
+    <div class="ml-[72px] min-w-[2px] max-w-[500px] flex-grow">
+      <form [formGroup]="mainFileForm" class="w-full">
+        <ng-select
+          #mainFileSelect
+          data-cy="fileEditorMainFileSelect"
+          class="main-file-select w-full text-base"
+          [items]="mainFileItems"
+          [searchable]="true"
+          [clearable]="false"
+          [searchFn]="mainFileSearchFn"
+          (change)="mainFileChange()"
+          (keyup.esc)="$event.stopImmediatePropagation(); mainFileSelect.blur()"
+          (keyup.enter)="
+            $event.stopImmediatePropagation(); mainFileSelect.blur()
           "
-          (click)="goTo()"
-          [disabled]="isSelectedFileValid === false"
+          [dropdownPosition]="'bottom'"
+          appendTo="body"
+          bindLabel="fileNodeId"
+          bindValue="fileId"
+          formControlName="mainFile"
         >
-          <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
+          <ng-template ng-label-tmp let-item="item">
+            <div class="truncate">{{ item.fileNodeId }}</div>
+          </ng-template>
 
-          <div class="ml-2 text-lg">
-            {{ file?.name | goFromFileExt | capitalize }}</div
-          >
-        </button>
-      </div>
+          <ng-template ng-option-tmp let-item="item">
+            <div class="truncate">{{ item.fileNodeId }}</div>
+          </ng-template>
+        </ng-select>
+      </form>
     </div>
 
-    <div *ngIf="nav?.isRepoProd === false" class="flex flex-shrink-0 space-x-3">
-      <ng-template #templateSave>
-        <div *ngIf="needSave === false">No changes to Save</div>
-      </ng-template>
+    <div
+      tp="Selected file has error"
+      [tpIsEnabled]="isSelectedFileValid === false"
+    >
+      <button
+        class="ml-5 flex flex-shrink-0 flex-row items-center focus:outline-none"
+        [ngClass]="{
+          'text-s400': isSelectedFileValid === false,
+          'text-m600 ': isSelectedFileValid === true
+        }"
+        *ngIf="
+          showGoTo === true &&
+          ((file?.name | goFromFileExt) === 'chart' ||
+            (file?.name | goFromFileExt) === 'dashboard' ||
+            (member?.isExplorer === true &&
+              ((file?.name | goFromFileExt) === 'view' ||
+                (file?.name | goFromFileExt) === 'store')) ||
+            (member?.isExplorer === true &&
+              (file?.name | goFromFileExt) === 'model') ||
+            (file?.name | goFromFileExt) === 'report')
+        "
+        (click)="goTo()"
+        [disabled]="isSelectedFileValid === false"
+      >
+        <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
 
-      <div [tp]="templateSave" [tpIsEnabled]="needSave === false">
-        <button
-          type="button"
-          data-cy="fileEditorSaveButton"
-          class="text-m0 h-11 rounded px-5 py-2 text-base font-medium focus:outline-none"
-          [ngClass]="{
-            'bg-s400 cursor-default': !needSave,
-            'bg-m600': needSave
-          }"
-          (click)="save()"
-          [disabled]="!needSave"
-          >Save and Validate</button
+        <div class="ml-2 text-lg">
+          {{ file?.name | goFromFileExt | capitalize }}</div
         >
-      </div>
+      </button>
+    </div>
 
+    <div class="flex flex-1"></div>
+
+    <ng-template #templateSave>
+      <div *ngIf="needSave === false">No changes to Save</div>
+    </ng-template>
+
+    <div
+      class="ml-5 flex flex-shrink-0"
+      *ngIf="nav?.isRepoProd === false"
+      [tp]="templateSave"
+      [tpIsEnabled]="needSave === false"
+    >
       <button
         type="button"
+        data-cy="fileEditorSaveButton"
+        class="text-m0 h-11 rounded px-5 py-2 text-base font-medium focus:outline-none"
+        [ngClass]="{
+          'bg-s400 cursor-default': !needSave,
+          'bg-m600': needSave
+        }"
+        (click)="save()"
+        [disabled]="!needSave"
+        >Save and Validate</button
+      >
+    </div>
+
+    <ng-template #templateCancel>
+      <div *ngIf="needSave === false">No changes to cancel</div>
+    </ng-template>
+
+    <div
+      class="ml-3 mr-6 flex flex-shrink-0"
+      *ngIf="nav?.isRepoProd === false"
+      [tp]="templateCancel"
+      [tpIsEnabled]="needSave === false"
+    >
+      <button
+        class=""
+        *ngIf="nav?.isRepoProd === false"
+        type="button"
         data-cy="fileEditorCancelButton"
-        class="h-11 rounded border px-5 py-2 text-base font-medium focus:outline-none"
+        class="flex h-11 flex-shrink-0 rounded border px-5 py-2 text-base font-medium focus:outline-none"
         [ngClass]="{
           ' border-s400 text-s400 cursor-default': !needSave,
           'border-m600 text-m600 ': needSave
