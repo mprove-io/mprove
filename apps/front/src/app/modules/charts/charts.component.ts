@@ -489,39 +489,35 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   mainQueryPartList: QueryPartItem[] = [
     {
+      label: 'SQL',
+      value: common.QueryPartEnum.MainSql
+    },
+    {
       label: 'Model',
       value: common.QueryPartEnum.ModelYaml
     },
     {
       label: 'Tile',
       value: common.QueryPartEnum.TileYaml
-    },
-    {
-      label: 'SQL',
-      value: common.QueryPartEnum.MainSql
     }
   ];
 
   storeQueryPartList: QueryPartItem[] = [
     {
+      label: 'Request Path and Body',
+      value: common.QueryPartEnum.StoreReqJsonParts
+    },
+    {
+      label: 'Request Function',
+      value: common.QueryPartEnum.StoreReqFunction
+    },
+    {
       label: 'Model',
       value: common.QueryPartEnum.ModelYaml
     },
     {
       label: 'Tile',
       value: common.QueryPartEnum.TileYaml
-    },
-    {
-      label: 'Request Path and Body',
-      value: common.QueryPartEnum.StoreReqJsonParts
-    },
-    {
-      label: 'Request Template',
-      value: common.QueryPartEnum.StoreReqTemplate
-    },
-    {
-      label: 'Request Function',
-      value: common.QueryPartEnum.StoreReqFunction
     }
   ];
 
@@ -1117,18 +1113,18 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
     if (
       [
-        common.QueryPartEnum.StoreReqTemplate,
+        // common.QueryPartEnum.StoreReqTemplate,
         common.QueryPartEnum.StoreReqFunction
       ].indexOf(value) > -1
     ) {
       this.jsContent =
-        value === common.QueryPartEnum.StoreReqTemplate
-          ? `// template to make request urlPath and body
-${this.mconfig.storePart?.reqTemplate}`
-          : value === common.QueryPartEnum.StoreReqFunction
-          ? `// function to make request urlPath and body
+        value === common.QueryPartEnum.StoreReqFunction
+          ? `// Function to make Request urlPath and body
 ${this.mconfig.storePart?.reqFunction}`
-          : undefined;
+          : //           : value === common.QueryPartEnum.StoreReqTemplate
+            //           ? `// template to make request urlPath and body
+            // ${this.mconfig.storePart?.reqTemplate}`
+            undefined;
     }
   }
 

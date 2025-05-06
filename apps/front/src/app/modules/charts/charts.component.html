@@ -552,7 +552,13 @@
               </div>
             </div>
 
-            <div class="divide-s400 ml-6 mr-9 flex flex-col divide-y-2">
+            <div
+              class="ml-6 mr-9 flex flex-col"
+              [ngClass]="{
+                'divide-s400 divide-y-2': showModel === true,
+                'divide-s300 divide-y': showModel === false
+              }"
+            >
               <div class="flex flex-row"></div>
               <div class="flex flex-row"></div>
             </div>
@@ -624,7 +630,7 @@
           </div>
 
           <div class="flex flex-1 flex-col" *ngIf="showModel === true">
-            <div class="divide-s400 ml-6 mr-9 flex flex-col divide-y">
+            <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
               <div class="flex flex-row"></div>
               <div class="flex flex-row"></div>
             </div>
