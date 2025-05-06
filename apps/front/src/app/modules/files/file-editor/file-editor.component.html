@@ -22,16 +22,16 @@
           "
           [dropdownPosition]="'bottom'"
           appendTo="body"
-          bindLabel="fileNodeId"
+          bindLabel="label"
           bindValue="fileId"
           formControlName="mainFile"
         >
           <ng-template ng-label-tmp let-item="item">
-            <div class="truncate">{{ item.fileNodeId }}</div>
+            <div class="truncate">{{ item.label }}</div>
           </ng-template>
 
           <ng-template ng-option-tmp let-item="item">
-            <div class="truncate">{{ item.fileNodeId }}</div>
+            <div class="truncate">{{ item.label }}</div>
           </ng-template>
         </ng-select>
       </form>

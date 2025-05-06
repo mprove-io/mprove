@@ -20,13 +20,14 @@ function traverse(item: { fileItems: FileItem[]; node: DiskCatalogNode }) {
     let fileName = ar[ar.length - 1];
 
     let fileItem: FileItem = {
-      fileNodeId: node.id,
       fileId: node.fileId,
-      label: fileName
+      label:
+        fileName + ' - ' + node.id.split('/').slice(1).slice(0, -1).join('/')
     };
 
     fileItems.push(fileItem);
   }
+
   if (node.children) {
     node.children.forEach(x => traverse({ fileItems: fileItems, node: x }));
   }
