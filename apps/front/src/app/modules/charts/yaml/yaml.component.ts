@@ -27,6 +27,8 @@ export class YamlComponent implements OnInit, OnChanges {
   @Input()
   modelFilePath: string;
 
+  prevModelFilePath: string;
+
   editorOptions: MonacoEditorOptions = {
     readOnly: true,
     renderValidationDecorations: 'off',
@@ -85,6 +87,8 @@ export class YamlComponent implements OnInit, OnChanges {
   checkContent() {
     if (common.isDefined(this.chart)) {
       if (this.queryPart === common.QueryPartEnum.TileYaml) {
+        this.prevModelFilePath = undefined;
+
         let filePartTile: common.FilePartTile = common.prepareTile({
           isForDashboard: false,
           mconfig: this.chart.tiles[0].mconfig
@@ -92,7 +96,12 @@ export class YamlComponent implements OnInit, OnChanges {
 
         this.content = common.toYaml({ tiles: [filePartTile] });
         this.cd.detectChanges();
-      } else if (this.queryPart === common.QueryPartEnum.ModelYaml) {
+      } else if (
+        this.queryPart === common.QueryPartEnum.ModelYaml &&
+        this.prevModelFilePath !== this.modelFilePath
+      ) {
+        this.prevModelFilePath = this.modelFilePath;
+
         let nav = this.navQuery.getValue();
 
         let getFilePayload: apiToBackend.ToBackendGetFileRequestPayload = {
@@ -106,6 +115,7 @@ export class YamlComponent implements OnInit, OnChanges {
 
         this.isShowSpinner = true;
         this.cd.detectChanges();
+
         this.spinner.show(this.spinnerName);
 
         this.apiService
