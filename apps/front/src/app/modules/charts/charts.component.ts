@@ -504,16 +504,24 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   storeQueryPartList: QueryPartItem[] = [
     {
+      label: 'Model',
+      value: common.QueryPartEnum.ModelYaml
+    },
+    {
+      label: 'Tile',
+      value: common.QueryPartEnum.TileYaml
+    },
+    {
+      label: 'Request Path and Body',
+      value: common.QueryPartEnum.StoreReqJsonParts
+    },
+    {
       label: 'Request Template',
       value: common.QueryPartEnum.StoreReqTemplate
     },
     {
       label: 'Request Function',
       value: common.QueryPartEnum.StoreReqFunction
-    },
-    {
-      label: 'Request Path and Body',
-      value: common.QueryPartEnum.StoreReqJsonParts
     }
   ];
 

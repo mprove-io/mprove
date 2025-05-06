@@ -1420,14 +1420,14 @@
                   >
                     <m-yaml
                       *ngIf="
-                        mconfig.isStoreModel === false &&
                         [
                           queryPartEnum.ModelYaml,
                           queryPartEnum.TileYaml
                         ].indexOf(queryPartForm.controls['queryPart'].value) >
-                          -1
+                        -1
                       "
                       [queryPart]="queryPartForm.controls['queryPart'].value"
+                      [modelFilePath]="model.filePath"
                     ></m-yaml>
 
                     <m-sql
