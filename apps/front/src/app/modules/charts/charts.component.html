@@ -377,26 +377,27 @@
               </div>
 
               <div
+                *ngIf="!!model?.modelId"
                 class="ml-5 flex flex-shrink-0 cursor-pointer flex-row items-center"
                 (click)="toggleFilterByModel()"
                 tp="Filter Charts by selected Model"
               >
                 <m-filter-icon
                   [ngClass]="{
-                    'text-s400': isFilterByModel === false,
-                    'text-p500': isFilterByModel === true
+                    'text-s500': isFilterByModel === true,
+                    'text-s300': isFilterByModel === false
                   }"
                 ></m-filter-icon>
 
-                <div
+                <!-- <div
                   class="ml-3 w-[54px] select-none items-center text-lg"
                   [ngClass]="{
-                    'text-p500 font-semibold': isFilterByModel === true,
-                    'text-s500': isFilterByModel === false
+                    'text-s500 font-semibold': isFilterByModel === true,
+                    'text-s400': isFilterByModel === false
                   }"
                 >
                   Model
-                </div>
+                </div> -->
               </div>
 
               <div class="flex flex-grow"></div>
@@ -1373,6 +1374,50 @@
                       </ng-template>
                     </ng-select>
                   </form>
+
+                  <ng-template #templateEditModel>
+                    <div *ngIf="isEditor === false"
+                      >Models can be edited by project members with FilesEditor
+                      role</div
+                    >
+
+                    <div *ngIf="isEditor === true && nav?.isRepoProd === true"
+                      >Switch branch from Production repo to Dev repo to edit
+                      File</div
+                    >
+                  </ng-template>
+
+                  <div
+                    class="ml-5"
+                    *ngIf="
+                      rightIsShow === true &&
+                      mconfig?.select.length > 0 &&
+                      queryPartForm.controls['queryPart'].value ===
+                        queryPartEnum.ModelYaml
+                    "
+                    [tp]="templateEditModel"
+                    [tpIsEnabled]="
+                      isEditor === false || nav?.isRepoProd === true
+                    "
+                  >
+                    <button
+                      class="flex flex-shrink-0 flex-row items-center focus:outline-none"
+                      [ngClass]="{
+                        'text-s400':
+                          isEditor === false || nav?.isRepoProd === true,
+                        'text-m600 ':
+                          isEditor === true && nav?.isRepoProd === false
+                      }"
+                      (click)="goToEditFile()"
+                      [disabled]="
+                        isEditor === false || nav?.isRepoProd === true
+                      "
+                    >
+                      <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
+
+                      <div class="ml-2 text-lg"> Edit File</div>
+                    </button>
+                  </div>
                 </div>
               </div>
 

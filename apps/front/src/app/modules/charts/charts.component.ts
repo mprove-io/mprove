@@ -104,7 +104,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
   modelRunButtonSpinnerName = 'modelRunButtonSpinnerName';
   modelCancelButtonSpinnerName = 'modelCancelButtonSpinnerName';
 
-  isFilterByModel = false;
+  isFilterByModel = true;
 
   isRunButtonPressed = false;
   isCancelButtonPressed = false;
@@ -247,9 +247,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
       this.modelForm.controls['model'].setValue(this.model.modelId);
 
-      if (this.isFilterByModel === true) {
-        this.makeFilteredCharts();
-      }
+      this.makeFilteredCharts();
 
       this.cd.detectChanges();
       // this.scrollToSelectedChart();
@@ -512,7 +510,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
       value: common.QueryPartEnum.StoreReqFunction
     },
     {
-      label: 'Model',
+      label: 'Store Model',
       value: common.QueryPartEnum.ModelYaml
     },
     {
@@ -833,7 +831,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   toggleDataPanel() {}
 
-  goToFile() {
+  goToEditFile() {
     let fileIdAr = this.model.filePath.split('/');
     fileIdAr.shift();
 
@@ -1553,7 +1551,7 @@ ${this.mconfig.storePart?.reqFunction}`
     let idxs;
 
     let draftCharts: common.ChartX[] =
-      this.isFilterByModel === false
+      common.isUndefined(this.model?.modelId) || this.isFilterByModel === false
         ? this.charts.filter(x => x.draft === true)
         : common.isDefined(this.model?.modelId)
         ? this.charts.filter(
@@ -1562,7 +1560,7 @@ ${this.mconfig.storePart?.reqFunction}`
         : [];
 
     let nonDraftCharts =
-      this.isFilterByModel === false
+      common.isUndefined(this.model?.modelId) || this.isFilterByModel === false
         ? this.charts.filter(x => x.draft === false)
         : common.isDefined(this.model?.modelId)
         ? this.charts.filter(
