@@ -56,10 +56,7 @@
           <div *ngIf="!!word">
             <div
               *ngFor="let fileItem of filteredFileItems"
-              class="flex flex-row items-center rounded px-7 py-2 hover:cursor-pointer"
-              [ngClass]="{
-                'hover:bg-m50': fileId !== fileItem.fileId
-              }"
+              class="hover:bg-m50 flex flex-row items-center rounded px-7 py-2 hover:cursor-pointer"
               (click)="fileItemOnClick(fileItem.fileId)"
             >
               <div class="flex flex-col">
@@ -110,11 +107,10 @@
               >
                 <div
                   data-cy="filesTreeItem"
-                  class="group ml-2 mr-1 flex w-full cursor-pointer select-none flex-row py-1 pl-1 pr-2"
+                  class="hover:bg-m50 group ml-2 mr-1 flex w-full cursor-pointer select-none flex-row py-1 pl-1 pr-2"
                   [ngClass]="{
                     'text-m600 font-semibold':
-                      !!fileNodeId && node.data.id === fileNodeId,
-                    'hover:bg-m50': !fileNodeId || node.data.id !== fileNodeId
+                      !!fileNodeId && node.data.id === fileNodeId
                   }"
                   (click)="nodeOnClick(node)"
                 >
@@ -233,10 +229,7 @@
   >
     <div
       *ngFor="let change of repo.changesToCommit"
-      class="flex flex-row items-center rounded px-7 py-2 hover:cursor-pointer"
-      [ngClass]="{
-        'hover:bg-m50': fileId !== change.fileId
-      }"
+      class="hover:bg-m50 flex flex-row items-center rounded px-7 py-2 hover:cursor-pointer"
       (click)="changeToCommitOnClick(change.fileId)"
     >
       <div class="flex flex-col">
@@ -275,10 +268,7 @@
   >
     <div
       *ngFor="let change of repo.changesToPush"
-      class="flex flex-row items-center rounded px-7 py-2 hover:cursor-pointer"
-      [ngClass]="{
-        'hover:bg-m50': fileId !== change.fileId
-      }"
+      class="hover:bg-m50 flex flex-row items-center rounded px-7 py-2 hover:cursor-pointer"
       (click)="changeToPushOnClick(change.fileId)"
     >
       <div class="flex flex-col">

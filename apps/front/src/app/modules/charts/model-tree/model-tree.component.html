@@ -32,30 +32,16 @@
         >
           <div
             data-cy="modelTreeItem"
-            class="flex w-full select-none flex-row pr-5"
+            class="bg-m0 flex w-full select-none flex-row pr-5"
             [ngClass]="{
               'pl-6': !node.data.isField,
-              'cursor-pointer':
-                node.data.nodeClass !== nodeClassInfo &&
-                node.data.nodeClass !== nodeClassFilter &&
-                (node.data.required === false ||
-                  node.data.isSelected === false ||
-                  [
-                    nodeClassDimension,
-                    nodeClassMeasure,
-                    nodeClassCalculation
-                  ].indexOf(node.data.nodeClass) < 0),
-              'bg-m0':
-                node.data.nodeClass === nodeClassMeasure ||
-                node.data.nodeClass === nodeClassCalculation ||
-                node.data.nodeClass === nodeClassDimension ||
-                node.data.nodeClass === nodeClassFilter,
-              'hover:bg-m50':
-                (node.data.nodeClass === nodeClassMeasure ||
-                  node.data.nodeClass === nodeClassCalculation ||
-                  node.data.nodeClass === nodeClassDimension ||
-                  node.data.nodeClass === nodeClassFilter) &&
-                (node.data.isSelected === false || node.data.required === false)
+              'hover:bg-m50 cursor-pointer':
+                node.data.required === false &&
+                [
+                  nodeClassDimension,
+                  nodeClassMeasure,
+                  nodeClassCalculation
+                ].indexOf(node.data.nodeClass) > -1
             }"
             (click)="nodeOnClick(node)"
           >

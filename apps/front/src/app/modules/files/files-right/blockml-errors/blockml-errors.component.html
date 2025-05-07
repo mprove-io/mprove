@@ -26,9 +26,7 @@
                 node.data.isError === false &&
                 !!fileNodeId &&
                 node.data.id === fileNodeId,
-              'hover:bg-m50':
-                node.data.isError === false &&
-                (!fileNodeId || node.data.id !== fileNodeId)
+              'hover:bg-m50': node.data.isError === false
             }"
             (click)="nodeOnClick(node)"
           >
