@@ -14,6 +14,7 @@ import { UserQuery, UserState } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { UiService } from '~front/app/services/ui.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -119,6 +120,7 @@ export class FilesComponent implements OnInit {
     private myDialogService: MyDialogService,
     private uiService: UiService,
     private fileService: FileService,
+    private navigateService: NavigateService,
     private title: Title,
     private memberQuery: MemberQuery,
     private structQuery: StructQuery,
@@ -137,29 +139,7 @@ export class FilesComponent implements OnInit {
       return;
     }
 
-    let userId;
-    this.userQuery.userId$
-      .pipe(
-        tap(y => (userId = y)),
-        take(1)
-      )
-      .subscribe();
-
-    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
-
-    this.router.navigate([
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_PROJECT,
-      this.nav.projectId,
-      common.PATH_REPO,
-      repoId,
-      common.PATH_BRANCH,
-      this.nav.branchId,
-      common.PATH_ENV,
-      this.nav.envId,
-      common.PATH_FILES
-    ]);
+    this.navigateService.navigateToFiles();
 
     this.uiQuery.updatePart({ panel: x });
   }
