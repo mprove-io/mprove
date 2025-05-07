@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyDirective } from '@ngneat/helipopper';
 import { MonacoEditorModule } from 'ng-monaco-editor';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { SharedModule } from '../shared/shared.module';
 import { FileEditorComponent } from './file-editor/file-editor.component';
 import { BlockmlErrorsComponent } from './files-right/blockml-errors/blockml-errors.component';
@@ -38,7 +39,8 @@ import { RepoOptionsComponent } from './repo-options/repo-options.component';
     TreeModule,
     TippyDirective,
     MonacoEditorModule,
-    NgSelectModule
+    NgSelectModule,
+    NgxSpinnerModule
   ]
 })
 export class FilesModule {}

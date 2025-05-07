@@ -189,13 +189,23 @@
                     <div class="flex-grow"></div>
 
                     <div
-                      class="h-9 w-9 flex-shrink-0"
+                      *ngIf="node.data.isFolder === false"
+                      class="text-s1 hover:bg-m200 invisible flex h-8 w-8 flex-shrink-0 group-hover:visible"
+                      (click)="rightOnClick($event, node)"
+                    >
+                      <m-left-panel-icon
+                        class="text-s1 bg-s1"
+                      ></m-left-panel-icon>
+                    </div>
+
+                    <div
+                      class="ml-3 h-9 w-9 flex-shrink-0"
                       *ngIf="nav.isRepoProd === true"
                     ></div>
 
                     <div
                       *ngIf="nav.isRepoProd === false"
-                      class="text-s1 invisible flex flex-shrink-0 group-hover:visible"
+                      class="text-s1 invisible ml-3 flex flex-shrink-0 group-hover:visible"
                     >
                       <m-folder-options
                         *ngIf="node.data.isFolder"

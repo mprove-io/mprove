@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
 import { GridApi, IRowNode } from 'ag-grid-community';
-import equal from 'fast-deep-equal';
-import { distinctUntilChanged, map } from 'rxjs/operators';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { common } from '~front/barrels/common';
 import {
@@ -40,6 +38,7 @@ export class UiState {
   metricsColumnNameWidth: number;
   metricsTimeColumnsNarrowWidth: number;
   metricsTimeColumnsWideWidth: number;
+  secondFileNodeId: string;
   //
   modelTreeLevels: common.ModelTreeLevelsEnum;
   timezone: string;
@@ -81,6 +80,7 @@ let uiState: UiState = {
   metricsColumnNameWidth: DEFAULT_METRICS_COLUMN_NAME_WIDTH,
   metricsTimeColumnsNarrowWidth: DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
   metricsTimeColumnsWideWidth: DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH,
+  secondFileNodeId: undefined,
   //
   modelTreeLevels: undefined,
   timezone: undefined,
@@ -156,16 +156,13 @@ export class UiQuery extends BaseQuery<UiState> {
     select(state => state.reportSelectedNodes)
   );
 
-  reportSelectedRowIdsDistinct$ = this.store.pipe(
-    map(x => x.reportSelectedNodes.map(node => node.data.rowId)),
-    distinctUntilChanged((prev, curr) => equal(prev, curr))
-  );
-
   repChartData$ = this.store.pipe(select(state => state.repChartData));
 
   showMetricsChart$ = this.store.pipe(select(state => state.showMetricsChart));
 
   modelTreeLevels$ = this.store.pipe(select(state => state.modelTreeLevels));
+
+  secondFileNodeId$ = this.store.pipe(select(state => state.secondFileNodeId));
 
   constructor() {
     super(createStore({ name: 'ui' }, withProps<UiState>(uiState)));

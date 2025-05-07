@@ -8,9 +8,11 @@ import {
 } from '@angular/core';
 import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { take, tap } from 'rxjs/operators';
+import { finalize, take, tap } from 'rxjs/operators';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -60,6 +62,8 @@ export class YamlComponent implements OnInit, OnChanges {
     private chartQuery: ChartQuery,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
+    private structQuery: StructQuery,
+    private repoQuery: RepoQuery,
     private apiService: ApiService,
     private monacoService: MonacoProviderService
   ) {}
@@ -131,14 +135,29 @@ export class YamlComponent implements OnInit, OnChanges {
           .pipe(
             tap((resp: apiToBackend.ToBackendGetFileResponse) => {
               if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+                let repoState = this.repoQuery.getValue();
+                let newRepoState: RepoState = Object.assign(resp.payload.repo, <
+                  RepoState
+                >{
+                  conflicts: repoState.conflicts, // getFile does not check for conflicts
+                  repoStatus: repoState.repoStatus // getFile does not use git fetch
+                });
+                this.repoQuery.update(newRepoState);
+                this.structQuery.update(resp.payload.struct);
+                this.navQuery.updatePart({
+                  needValidate: resp.payload.needValidate
+                });
+
                 this.content = resp.payload.content;
 
-                this.spinner.hide(this.spinnerName);
-                this.isShowSpinner = false;
                 this.cd.detectChanges();
               }
             }),
-            take(1)
+            take(1),
+            finalize(() => {
+              this.spinner.hide(this.spinnerName);
+              this.isShowSpinner = false;
+            })
           )
           .subscribe();
       }

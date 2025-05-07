@@ -264,6 +264,12 @@ export class FilesTreeComponent implements OnDestroy {
     }
   }
 
+  rightOnClick(event: any, node: TreeNode) {
+    event.stopPropagation();
+
+    this.uiQuery.updatePart({ secondFileNodeId: node.id });
+  }
+
   onMoveNode(event: any) {
     this.cd.detach();
 

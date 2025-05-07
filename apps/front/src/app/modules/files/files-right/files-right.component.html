@@ -43,12 +43,69 @@
       repo &&
       repo.conflicts.length === 0 &&
       struct &&
-      struct.errors.length === 0
+      struct.errors.length === 0 &&
+      !secondFileNodeId
     "
     class="flex h-full flex-col items-center justify-center"
   >
     <m-completed-ring></m-completed-ring>
     <div class="mt-4 text-xl"> Mprove Files are valid </div>
+  </div>
+
+  <div
+    class="flex h-full w-full flex-col"
+    *ngIf="
+      nav?.needValidate === false &&
+      repo &&
+      repo.conflicts.length === 0 &&
+      struct &&
+      struct.errors.length === 0 &&
+      !!secondFileNodeId
+    "
+  >
+    <div class="mb-6 mt-6 flex h-11 w-full flex-shrink-0 flex-row items-center">
+      <div
+        class="text-s1 ml-[72px] min-w-[2px] max-w-max flex-grow truncate text-lg"
+        >{{ secondFileName }}
+      </div>
+    </div>
+
+    <div class="divide-s300 ml-6 mr-6 flex flex-col divide-y">
+      <div class="flex flex-row"></div>
+      <div class="flex flex-row"></div>
+    </div>
+
+    <div
+      *ngIf="isShowSpinner === true"
+      class="flex h-full w-full items-center justify-center"
+    >
+      <div class="relative flex h-9 w-9 flex-shrink-0">
+        <ngx-spinner
+          [name]="spinnerName"
+          color="#0084d1"
+          bdColor="#00000000"
+          size="default"
+          type="ball-clip-rotate"
+          [fullScreen]="false"
+          [disableAnimation]="true"
+          [zIndex]="99998"
+        >
+        </ngx-spinner>
+      </div>
+    </div>
+
+    <div class="h-full rounded">
+      <ng-monaco-editor
+        [ngClass]="{
+          invisible: isShowSpinner === true
+        }"
+        data-cy="rightFileMonacoEditor"
+        [options]="editorOptions"
+        [(ngModel)]="secondFileContent"
+        (editorChange)="onEditorChange($event)"
+        (ngModelChange)="onTextChanged()"
+      ></ng-monaco-editor>
+    </div>
   </div>
 </div>
 
@@ -56,3 +113,4 @@
 <div *ngIf="struct$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="isEditor$ | async"></div>
+<div *ngIf="secondFileNodeId$ | async"></div>
