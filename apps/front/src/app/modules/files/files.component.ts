@@ -139,7 +139,36 @@ export class FilesComponent implements OnInit {
       return;
     }
 
-    this.navigateService.navigateToFiles();
+    if (x === this.panel) {
+      return;
+    }
+
+    if (x === common.PanelEnum.Tree) {
+      let fileIds = common.getFileIds({ nodes: this.repo.nodes });
+
+      let projectFileLinks = this.uiQuery.getValue().projectFileLinks;
+
+      let pLink = projectFileLinks.find(
+        link => link.projectId === this.nav.projectId
+      );
+
+      if (common.isUndefined(pLink)) {
+        this.navigateService.navigateToFiles();
+      } else {
+        let pFileId = fileIds.find(fileId => fileId === pLink.fileId);
+
+        if (common.isDefined(pFileId)) {
+          this.navigateService.navigateToFileLine({
+            panel: common.PanelEnum.Tree,
+            underscoreFileId: pFileId
+          });
+        } else {
+          this.navigateService.navigateToFiles();
+        }
+      }
+    } else {
+      this.navigateService.navigateToFiles();
+    }
 
     this.uiQuery.updatePart({ panel: x });
   }
