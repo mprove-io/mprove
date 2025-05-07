@@ -1,4 +1,5 @@
 export class FileItem {
+  fileName: string;
   fileId: string;
-  label: string;
+  parentPath: string;
 }

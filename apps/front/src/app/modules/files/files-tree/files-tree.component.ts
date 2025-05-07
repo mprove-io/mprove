@@ -25,6 +25,8 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
+import uFuzzy from '@leeoniya/ufuzzy';
+
 @Component({
   selector: 'm-files-tree',
   templateUrl: './files-tree.component.html',
@@ -138,6 +140,8 @@ export class FilesTreeComponent implements OnDestroy {
 
   private timer: any;
 
+  filteredFileItems: common.FileItem[] = [];
+
   constructor(
     private repoQuery: RepoQuery,
     private projectQuery: ProjectQuery,
@@ -235,6 +239,13 @@ export class FilesTreeComponent implements OnDestroy {
   changeToPushOnClick(fileId: string) {
     this.navigateService.navigateToFileLine({
       panel: common.PanelEnum.ChangesToPush,
+      underscoreFileId: fileId
+    });
+  }
+
+  fileItemOnClick(fileId: string) {
+    this.navigateService.navigateToFileLine({
+      panel: common.PanelEnum.Tree,
       underscoreFileId: fileId
     });
   }
@@ -380,7 +391,32 @@ export class FilesTreeComponent implements OnDestroy {
       .subscribe();
   }
 
-  makeFilteredFiles() {}
+  makeFilteredFileItems() {
+    let filteredFileItems = common.getFileItems({ nodes: this.repo.nodes });
+
+    let idxs;
+
+    if (common.isDefinedAndNotEmpty(this.word)) {
+      let haystack = filteredFileItems.map(
+        x => `${x.parentPath}/${x.fileName}`
+      );
+      let opts = {};
+      let uf = new uFuzzy(opts);
+      idxs = uf.filter(haystack, this.word);
+    }
+
+    filteredFileItems =
+      idxs != null && idxs.length > 0
+        ? idxs.map(idx => filteredFileItems[idx])
+        : [];
+
+    this.filteredFileItems = filteredFileItems.sort((a, b) => {
+      let aPath = `${a.parentPath}/${a.fileName}`;
+      let bPath = `${b.parentPath}/${b.fileName}`;
+
+      return aPath > bPath ? 1 : bPath > aPath ? -1 : 0;
+    });
+  }
 
   searchWordChange() {
     if (this.timer) {
@@ -388,7 +424,7 @@ export class FilesTreeComponent implements OnDestroy {
     }
 
     this.timer = setTimeout(() => {
-      this.makeFilteredFiles();
+      this.makeFilteredFileItems();
 
       this.cd.detectChanges();
     }, 600);
@@ -396,7 +432,7 @@ export class FilesTreeComponent implements OnDestroy {
 
   resetSearch() {
     this.word = undefined;
-    this.makeFilteredFiles();
+    this.makeFilteredFileItems();
 
     this.cd.detectChanges();
   }

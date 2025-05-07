@@ -17,12 +17,10 @@ function traverse(item: { fileItems: FileItem[]; node: DiskCatalogNode }) {
   if (!node.isFolder && node.fileId) {
     let ar = node.id.split('/');
 
-    let fileName = ar[ar.length - 1];
-
     let fileItem: FileItem = {
+      fileName: ar[ar.length - 1],
       fileId: node.fileId,
-      label:
-        fileName + ' - ' + node.id.split('/').slice(1).slice(0, -1).join('/')
+      parentPath: node.id.split('/').slice(1).slice(0, -1).join('/')
     };
 
     fileItems.push(fileItem);
