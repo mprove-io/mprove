@@ -13,7 +13,10 @@ export class JsViewerComponent {
     theme: constants.TEXTMATE_THEME,
     language: constants.JAVASCRIPT_LANGUAGE_ID,
     fontSize: 16,
-    fixedOverflowWidgets: true
+    fixedOverflowWidgets: true,
+    padding: {
+      top: 12
+    }
   };
 
   @Input() jsContent: string;

@@ -21,8 +21,6 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-import uFuzzy from '@leeoniya/ufuzzy';
-
 @Component({
   selector: 'm-file-editor',
   templateUrl: './file-editor.component.html',
@@ -53,7 +51,10 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     fixedOverflowWidgets: true,
     theme: constants.TEXTMATE_THEME,
     fontSize: 16,
-    tabSize: 2
+    tabSize: 2,
+    padding: {
+      top: 12
+    }
     // automaticLayout: true,
     // folding: true,
     // wordWrap: 'on',
@@ -93,10 +94,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     tap(x => {
       this.file = x;
 
-      this.mainFileForm.controls['mainFile'].setValue(this.file.fileId);
+      // this.mainFileForm.controls['mainFile'].setValue(this.file.fileId);
 
-      // console.log(this.file.fileNodeId);
-      // console.log(this.file.fileId);
       this.originalContent = x.originalContent;
       this.content = x.content;
       this.startText = x.content;
@@ -108,14 +107,14 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     })
   );
 
-  mainFileItems: common.FileItem[];
+  // mainFileItems: common.FileItem[];
 
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
     tap(x => {
       this.repo = x;
 
-      this.mainFileItems = common.getFileItems({ nodes: this.repo.nodes });
+      // this.mainFileItems = common.getFileItems({ nodes: this.repo.nodes });
 
       this.refreshMarkers();
       this.cd.detectChanges();
@@ -156,9 +155,9 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     })
   );
 
-  mainFileForm = this.fb.group({
-    mainFile: [undefined]
-  });
+  // mainFileForm = this.fb.group({
+  //   mainFile: [undefined]
+  // });
 
   constructor(
     private fileQuery: FileQuery,
@@ -643,26 +642,26 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  mainFileChange() {
-    (document.activeElement as HTMLElement).blur();
+  // mainFileChange() {
+  //   (document.activeElement as HTMLElement).blur();
 
-    let mainFileNodeId = this.mainFileForm.controls['mainFile'].value;
+  //   let mainFileNodeId = this.mainFileForm.controls['mainFile'].value;
 
-    this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
-      underscoreFileId: mainFileNodeId
-    });
-  }
+  //   this.navigateService.navigateToFileLine({
+  //     panel: common.PanelEnum.Tree,
+  //     underscoreFileId: mainFileNodeId
+  //   });
+  // }
 
-  mainFileSearchFn(term: string, fileItem: { value: string; label: string }) {
-    let haystack = [`${fileItem.label}`];
+  // mainFileSearchFn(term: string, fileItem: { value: string; label: string }) {
+  //   let haystack = [`${fileItem.label}`];
 
-    let opts = {};
-    let uf = new uFuzzy(opts);
-    let idxs = uf.filter(haystack, term);
+  //   let opts = {};
+  //   let uf = new uFuzzy(opts);
+  //   let idxs = uf.filter(haystack, term);
 
-    return idxs != null && idxs.length > 0;
-  }
+  //   return idxs != null && idxs.length > 0;
+  // }
 
   canDeactivate(): Promise<boolean> | boolean {
     if (this.needSave === false) {

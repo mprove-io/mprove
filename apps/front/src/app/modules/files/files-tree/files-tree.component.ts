@@ -40,11 +40,14 @@ export class FilesTreeComponent implements OnDestroy {
 
   repoStatusNeedPush = common.RepoStatusEnum.NeedPush;
 
+  topNodes: common.DiskCatalogNode[] = [];
+
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
     tap(x => {
       this.repo = x;
-      // console.log(x);
+      this.topNodes = [...this.repo.nodes[0].children];
+
       this.cd.detectChanges();
     })
   );
@@ -130,6 +133,10 @@ export class FilesTreeComponent implements OnDestroy {
   );
 
   @ViewChild('itemsTree') itemsTree: TreeComponent;
+
+  word: string;
+
+  private timer: any;
 
   constructor(
     private repoQuery: RepoQuery,
@@ -371,6 +378,27 @@ export class FilesTreeComponent implements OnDestroy {
         })
       )
       .subscribe();
+  }
+
+  makeFilteredFiles() {}
+
+  searchWordChange() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+
+    this.timer = setTimeout(() => {
+      this.makeFilteredFiles();
+
+      this.cd.detectChanges();
+    }, 600);
+  }
+
+  resetSearch() {
+    this.word = undefined;
+    this.makeFilteredFiles();
+
+    this.cd.detectChanges();
   }
 
   ngOnDestroy() {

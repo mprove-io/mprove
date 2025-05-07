@@ -16,7 +16,10 @@ export class SqlComponent {
     theme: constants.TEXTMATE_THEME,
     language: constants.SQL_LANGUAGE_ID,
     fontSize: 16,
-    fixedOverflowWidgets: true
+    fixedOverflowWidgets: true,
+    padding: {
+      top: 12
+    }
   };
 
   content: string;

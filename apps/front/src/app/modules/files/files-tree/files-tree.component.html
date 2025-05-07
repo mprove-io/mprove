@@ -1,117 +1,178 @@
-<div class="bg-m0 flex w-full flex-grow overflow-y-auto rounded shadow">
-  <div class="mt-4 h-2 w-full" *ngIf="panel === panelTree">
-    <tree-root
-      #itemsTree
-      [nodes]="repo?.nodes"
-      [options]="treeOptions"
-      (initialized)="treeOnInitialized()"
-      (updateData)="treeOnUpdateData()"
-      (moveNode)="onMoveNode($event)"
-    >
-      <ng-template #treeNodeTemplate let-node="node" let-index="index">
-        <div class="flex h-11 w-[95%] flex-row">
-          <div
-            data-cy="filesTreeItem"
-            class="group flex w-full cursor-pointer select-none flex-row px-5 py-1"
+<!-- <div
+  [ngClass]="{
+    'overflow-y-auto': panel !== panelTree
+  }"
+></div> -->
+
+<div
+  class="bg-m0 flex w-full flex-grow rounded shadow"
+  [ngClass]="{
+    'overflow-y-auto': panel !== panelTree
+  }"
+>
+  <div
+    class="text-s1 mt-6 flex w-full flex-col text-base"
+    *ngIf="panel === panelTree"
+  >
+    <div class="flex flex-1 flex-col">
+      <div class="mb-6 flex h-11 flex-row items-center">
+        <m-search-icon class="text-s1 ml-6"></m-search-icon>
+
+        <input
+          spellcheck="false"
+          autocomplete="off"
+          data-cy="dashboardsSearchInput"
+          class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] rounded"
+          placeholder="Search Files"
+          [ngClass]="{
+            'bg-p200': !!word
+          }"
+          [(ngModel)]="word"
+          (ngModelChange)="searchWordChange()"
+        />
+
+        <div class="h-9 w-9">
+          <m-delete-icon
+            *ngIf="!!word"
+            class="text-s1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
             [ngClass]="{
-              'text-m600 font-semibold':
-                !!fileNodeId && node.data.id === fileNodeId,
-              'hover:bg-m50': !fileNodeId || node.data.id !== fileNodeId
+              'bg-p200 hover:bg-p300 cursor-pointer': !!word
             }"
-            (click)="nodeOnClick(node)"
-          >
-            <div
-              class="relative flex w-full flex-row items-center"
-              [ngClass]="{
-                'ml-5': !node.data.isFolder,
-                'ml-3': node.data.isFolder
-              }"
-            >
-              <div class="flex min-w-[2px] items-center">
-                <div
-                  *ngIf="node.data.isFolder"
-                  class="flex flex-shrink-0 flex-row space-x-1"
-                >
-                  <div class="h-6 w-6" *ngIf="!node.hasChildren"></div>
-                  <m-chevron-right-icon
-                    class="text-s500"
-                    *ngIf="!node.isExpanded && node.hasChildren"
-                  ></m-chevron-right-icon>
-                  <m-chevron-down-icon
-                    class="text-s500"
-                    *ngIf="node.isExpanded && node.hasChildren"
-                  ></m-chevron-down-icon>
-
-                  <m-folder-closed-icon
-                    class="text-m500"
-                    *ngIf="!node.isExpanded || !node.hasChildren"
-                  ></m-folder-closed-icon>
-                  <m-folder-open-icon
-                    class="text-m600"
-                    *ngIf="node.isExpanded && node.hasChildren"
-                  ></m-folder-open-icon>
-                </div>
-
-                <div
-                  *ngIf="
-                    !node.data.isFolder &&
-                    !!fileNodeId &&
-                    node.data.id === fileNodeId
-                  "
-                  data-cy="filesSelectedSymbol"
-                  class="bg-m600 text-m0 h-9 w-[6px] focus:outline-none"
-                ></div>
-
-                <div
-                  *ngIf="
-                    !node.data.isFolder &&
-                    (!fileNodeId || node.data.id !== fileNodeId)
-                  "
-                  class="h-9 w-[6px]"
-                ></div>
-
-                <div
-                  *ngIf="!node.data.isFolder"
-                  class="ml-3 w-7 flex-shrink-0 text-center font-bold"
-                >
-                  <m-document-icon></m-document-icon>
-                </div>
-
-                <div class="ml-2 min-w-[2px] truncate text-base">
-                  {{
-                    node.parent === null || node.parent.data.virtual
-                      ? (projectName$ | async | capitalize)
-                      : node?.data.name
-                  }}
-                </div>
-              </div>
-
-              <div class="flex-grow"></div>
-
-              <div
-                class="h-9 w-9 flex-shrink-0"
-                *ngIf="nav.isRepoProd === true"
-              ></div>
-
-              <div
-                *ngIf="nav.isRepoProd === false"
-                class="text-s1 invisible flex flex-shrink-0 group-hover:visible"
-              >
-                <m-folder-options
-                  *ngIf="node.data.isFolder"
-                  [node]="node"
-                ></m-folder-options>
-
-                <m-file-options
-                  *ngIf="!node.data.isFolder"
-                  [node]="node"
-                ></m-file-options>
-              </div>
-            </div>
-          </div>
+            (click)="resetSearch()"
+          ></m-delete-icon>
         </div>
-      </ng-template>
-    </tree-root>
+      </div>
+
+      <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
+        <div class="flex flex-row"></div>
+        <div class="flex flex-row"></div>
+      </div>
+
+      <div
+        class="flex flex h-2 w-full grow flex-col overflow-y-auto"
+        *ngIf="panel === panelTree"
+      >
+        <div class="mt-2 h-full w-full">
+          <tree-root
+            #itemsTree
+            [nodes]="repo?.nodes"
+            [options]="treeOptions"
+            (initialized)="treeOnInitialized()"
+            (updateData)="treeOnUpdateData()"
+            (moveNode)="onMoveNode($event)"
+          >
+            <ng-template #treeNodeTemplate let-node="node" let-index="index">
+              <div
+                class="flex h-11 w-[95%] flex-row"
+                *ngIf="node.parent !== null && !node.parent.data.virtual"
+              >
+                <div
+                  data-cy="filesTreeItem"
+                  class="group ml-2 mr-1 flex w-full cursor-pointer select-none flex-row py-1 pl-1 pr-2"
+                  [ngClass]="{
+                    'text-m600 font-semibold':
+                      !!fileNodeId && node.data.id === fileNodeId,
+                    'hover:bg-m50': !fileNodeId || node.data.id !== fileNodeId
+                  }"
+                  (click)="nodeOnClick(node)"
+                >
+                  <div
+                    class="relative flex w-full flex-row items-center"
+                    [ngClass]="{
+                      'ml-5': !node.data.isFolder,
+                      'ml-3':
+                        node.data.isFolder === true &&
+                        !!node.data.parent?.data?.parent
+                    }"
+                  >
+                    <div class="flex min-w-[2px] items-center">
+                      <div
+                        *ngIf="node.data.isFolder"
+                        class="flex flex-shrink-0 flex-row space-x-1"
+                      >
+                        <div class="h-6 w-6" *ngIf="!node.hasChildren"></div>
+                        <m-chevron-right-icon
+                          class="text-s500"
+                          *ngIf="!node.isExpanded && node.hasChildren"
+                        ></m-chevron-right-icon>
+                        <m-chevron-down-icon
+                          class="text-s500"
+                          *ngIf="node.isExpanded && node.hasChildren"
+                        ></m-chevron-down-icon>
+
+                        <m-folder-closed-icon
+                          class="text-m500"
+                          *ngIf="!node.isExpanded || !node.hasChildren"
+                        ></m-folder-closed-icon>
+                        <m-folder-open-icon
+                          class="text-m600"
+                          *ngIf="node.isExpanded && node.hasChildren"
+                        ></m-folder-open-icon>
+                      </div>
+
+                      <div
+                        *ngIf="
+                          !node.data.isFolder &&
+                          !!fileNodeId &&
+                          node.data.id === fileNodeId
+                        "
+                        data-cy="filesSelectedSymbol"
+                        class="bg-m600 text-m0 h-9 w-[6px] focus:outline-none"
+                      ></div>
+
+                      <div
+                        *ngIf="
+                          !node.data.isFolder &&
+                          (!fileNodeId || node.data.id !== fileNodeId)
+                        "
+                        class="h-9 w-[6px]"
+                      ></div>
+
+                      <div
+                        *ngIf="!node.data.isFolder"
+                        class="ml-3 w-7 flex-shrink-0 text-center font-bold"
+                      >
+                        <m-document-icon></m-document-icon>
+                      </div>
+
+                      <div class="ml-2 min-w-[2px] truncate text-base">
+                        {{
+                          node.parent === null || node.parent.data.virtual
+                            ? (projectName$ | async | capitalize)
+                            : node?.data.name
+                        }}
+                      </div>
+                    </div>
+
+                    <div class="flex-grow"></div>
+
+                    <div
+                      class="h-9 w-9 flex-shrink-0"
+                      *ngIf="nav.isRepoProd === true"
+                    ></div>
+
+                    <div
+                      *ngIf="nav.isRepoProd === false"
+                      class="text-s1 invisible flex flex-shrink-0 group-hover:visible"
+                    >
+                      <m-folder-options
+                        *ngIf="node.data.isFolder"
+                        [node]="node"
+                      ></m-folder-options>
+
+                      <m-file-options
+                        *ngIf="!node.data.isFolder"
+                        [node]="node"
+                      ></m-file-options>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </tree-root>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div

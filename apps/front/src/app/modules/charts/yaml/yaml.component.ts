@@ -35,7 +35,10 @@ export class YamlComponent implements OnInit, OnChanges {
     theme: constants.BLOCKML_THEME,
     language: constants.YAML_LANGUAGE_ID,
     fontSize: 16,
-    fixedOverflowWidgets: true
+    fixedOverflowWidgets: true,
+    padding: {
+      top: 12
+    }
   };
 
   content: string;

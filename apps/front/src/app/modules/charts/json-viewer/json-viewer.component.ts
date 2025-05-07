@@ -19,7 +19,10 @@ export class JsonViewerComponent implements OnChanges {
     theme: constants.TEXTMATE_THEME,
     language: constants.JSON_LANGUAGE_ID,
     fontSize: 16,
-    fixedOverflowWidgets: true
+    fixedOverflowWidgets: true,
+    padding: {
+      top: 12
+    }
   };
 
   @Input() jsonContent: string;
