@@ -1,0 +1,85 @@
+<div class="bg-m0 flex flex-col p-9">
+  <div
+    data-cy="newFileDialogTitle"
+    class="text-s2 mt-5 flex-grow text-left text-2xl font-semibold"
+    >New File
+  </div>
+
+  <div class="mt-9 flex h-9 flex-col">
+    <div
+      data-cy="filesNewFolderCheckbox"
+      class="flex h-9 cursor-pointer flex-row items-center"
+      (click)="fileOnClick()"
+    >
+      <div
+        class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
+        [ngClass]="{
+          'bg-m600': isFolder === false
+        }"
+      >
+        <m-check-icon></m-check-icon>
+      </div>
+
+      <div class="ml-5 text-base">File</div>
+    </div>
+  </div>
+
+  <div class="mt-3 flex h-9 flex-col">
+    <div
+      data-cy="filesNewFileCheckbox"
+      class="flex h-9 cursor-pointer flex-row items-center"
+      (click)="folderOnClick()"
+    >
+      <div
+        class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
+        [ngClass]="{
+          'bg-m600 ': isFolder === true
+        }"
+      >
+        <m-check-icon></m-check-icon>
+      </div>
+
+      <div class="ml-5 text-base">Folder</div>
+    </div>
+  </div>
+
+  <form class="flex flex-col" [formGroup]="newForm" (ngSubmit)="create()">
+    <div class="mt-9 flex flex-row items-start justify-start">
+      <div class="mt-[6px] text-base">Name</div>
+
+      <div class="ml-5 flex flex-col">
+        <input
+          #name
+          autocomplete="off"
+          spellcheck="false"
+          data-cy="newFileDialogNameInput"
+          class="form-input border-s3 focus:border-m600 h-[36px] w-[450px] rounded"
+          [ngClass]="{
+            'border-r600':
+              newForm.controls['name'].invalid &&
+              newForm.controls['name'].touched
+          }"
+          formControlName="name"
+        />
+        <m-validation [control]="newForm.controls['name']"></m-validation>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <button
+        data-cy="newFileDialogCreateButton"
+        class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
+        type="submit"
+        >Create</button
+      >
+
+      <button
+        data-cy="newFileDialogCancelButton"
+        class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>

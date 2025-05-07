@@ -164,21 +164,12 @@ export class FilesComponent implements OnInit {
     this.uiQuery.updatePart({ panel: x });
   }
 
-  addFile() {
-    let part = this.struct.mproveDirValue;
-
-    part = part.startsWith('.') ? part.slice(1) : part;
-    part = part.startsWith('/') ? part.slice(1) : part;
-    part = part.endsWith('/') ? part.slice(0, -1) : part;
-
-    let parentNodeId = [this.struct.projectId, part].join('/');
-
-    this.myDialogService.showCreateFile({
+  newFile() {
+    this.myDialogService.showNewFile({
       apiService: this.apiService,
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
-      envId: this.nav.envId,
-      parentNodeId: parentNodeId
+      envId: this.nav.envId
     });
   }
 

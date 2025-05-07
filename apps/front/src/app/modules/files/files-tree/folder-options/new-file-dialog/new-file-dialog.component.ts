@@ -1,0 +1,198 @@
+import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectorRef,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
+import { DialogRef } from '@ngneat/dialog';
+import { take, tap } from 'rxjs/operators';
+import { SharedModule } from '~front/app/modules/shared/shared.module';
+import { NavQuery } from '~front/app/queries/nav.query';
+import { RepoQuery } from '~front/app/queries/repo.query';
+import { StructQuery } from '~front/app/queries/struct.query';
+import { ApiService } from '~front/app/services/api.service';
+import { NavigateService } from '~front/app/services/navigate.service';
+import { ValidationService } from '~front/app/services/validation.service';
+import { apiToBackend } from '~front/barrels/api-to-backend';
+import { common } from '~front/barrels/common';
+
+export interface NewFileDialogData {
+  apiService: ApiService;
+  projectId: string;
+  branchId: string;
+  envId: string;
+}
+
+@Component({
+  selector: 'm-new-file-dialog',
+  templateUrl: './new-file-dialog.component.html',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule]
+})
+export class NewFileDialogComponent implements OnInit {
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.ref.close();
+  }
+
+  @ViewChild('name') nameElement: ElementRef;
+
+  newForm: FormGroup;
+
+  isFolder = false;
+
+  constructor(
+    public ref: DialogRef<NewFileDialogData>,
+    private fb: FormBuilder,
+    private repoQuery: RepoQuery,
+    private structQuery: StructQuery,
+    private navigateService: NavigateService,
+    private navQuery: NavQuery,
+    private cd: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    let name: string;
+
+    this.newForm = this.fb.group({
+      name: [
+        name,
+        [
+          Validators.required,
+          ValidationService.lowerCaseValidator,
+          Validators.maxLength(255)
+        ]
+      ]
+    });
+
+    // setTimeout(() => {
+    //   this.nameElement.nativeElement.focus();
+    // }, 0);
+  }
+
+  folderOnClick() {
+    this.isFolder = true;
+    this.cd.detectChanges();
+  }
+
+  fileOnClick() {
+    this.isFolder = false;
+    this.cd.detectChanges();
+  }
+
+  create() {
+    this.newForm.markAllAsTouched();
+
+    if (!this.newForm.valid) {
+      return;
+    }
+
+    this.ref.close();
+
+    let name = this.newForm.value.name;
+
+    name = name.toLowerCase();
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    let struct = this.structQuery.getValue();
+
+    // let part = struct.mproveDirValue;
+
+    // part = part.startsWith('.') ? part.slice(1) : part;
+    // part = part.startsWith('/') ? part.slice(1) : part;
+    // part = part.endsWith('/') ? part.slice(0, -1) : part;
+
+    // let parentNodeId =
+    //   this.isFolder === true
+    //     ? struct.projectId
+    //     : [struct.projectId, part].join('/');
+
+    let parentNodeId = struct.projectId;
+
+    if (this.isFolder === true) {
+      let payload: apiToBackend.ToBackendCreateFolderRequestPayload = {
+        projectId: this.ref.data.projectId,
+        branchId: this.ref.data.branchId,
+        envId: this.ref.data.envId,
+        parentNodeId: parentNodeId,
+        folderName: name
+      };
+
+      apiService
+        .req({
+          pathInfoName:
+            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
+          payload: payload,
+          showSpinner: true
+        })
+        .pipe(
+          tap((resp: apiToBackend.ToBackendCreateFolderResponse) => {
+            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+              this.repoQuery.update(resp.payload.repo);
+              this.structQuery.update(resp.payload.struct);
+              this.navQuery.updatePart({
+                needValidate: resp.payload.needValidate
+              });
+            }
+          }),
+          take(1)
+        )
+        .subscribe();
+    } else {
+      let payload: apiToBackend.ToBackendCreateFileRequestPayload = {
+        projectId: this.ref.data.projectId,
+        branchId: this.ref.data.branchId,
+        envId: this.ref.data.envId,
+        parentNodeId: parentNodeId,
+        fileName: name
+      };
+
+      apiService
+        .req({
+          pathInfoName:
+            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile,
+          payload: payload,
+          showSpinner: true
+        })
+        .pipe(
+          tap((resp: apiToBackend.ToBackendCreateFileResponse) => {
+            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+              this.repoQuery.update(resp.payload.repo);
+              this.structQuery.update(resp.payload.struct);
+              this.navQuery.updatePart({
+                needValidate: resp.payload.needValidate
+              });
+
+              let fId = parentNodeId + '/' + name;
+              let fIdAr = fId.split('/');
+              fIdAr.shift();
+              let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
+
+              this.navigateService.navigateToFileLine({
+                panel: common.PanelEnum.Tree,
+                underscoreFileId: fileId
+              });
+            }
+          }),
+          take(1)
+        )
+        .subscribe();
+    }
+  }
+
+  cancel() {
+    this.ref.close();
+  }
+}

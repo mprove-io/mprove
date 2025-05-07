@@ -48,6 +48,10 @@ import {
   DeleteFolderDialogData
 } from '../modules/files/files-tree/folder-options/delete-folder-dialog/delete-folder-dialog.component';
 import {
+  NewFileDialogComponent,
+  NewFileDialogData
+} from '../modules/files/files-tree/folder-options/new-file-dialog/new-file-dialog.component';
+import {
   RenameFolderDialogComponent,
   RenameFolderDialogData
 } from '../modules/files/files-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
@@ -651,8 +655,8 @@ export class MyDialogService {
     });
   }
 
-  showCreateFolder(item: CreateFolderDialogData): void {
-    this.dialogService.open(CreateFolderDialogComponent, {
+  showNewFile(item: NewFileDialogData): void {
+    this.dialogService.open(NewFileDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,
@@ -662,6 +666,15 @@ export class MyDialogService {
 
   showCreateFile(item: CreateFileDialogData): void {
     this.dialogService.open(CreateFileDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 700
+    });
+  }
+
+  showCreateFolder(item: CreateFolderDialogData): void {
+    this.dialogService.open(CreateFolderDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,
