@@ -1,7 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { JSONSchema7 } from 'json-schema';
 import type { editor as editorType } from 'monaco-editor';
-import { setDiagnosticsOptions } from 'monaco-yaml';
 import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, take, tap } from 'rxjs/operators';
@@ -207,51 +205,51 @@ export class FilesRightComponent implements OnInit {
         constants.BLOCKML_LANGUAGE_DATA
       );
 
-      let schema: JSONSchema7 =
-        dotExt === common.FileExtensionEnum.View
-          ? common.VIEW_SCHEMA
-          : dotExt === common.FileExtensionEnum.Store
-          ? common.STORE_SCHEMA
-          : dotExt === common.FileExtensionEnum.Model
-          ? common.MODEL_SCHEMA
-          : dotExt === common.FileExtensionEnum.Report
-          ? common.REPORT_SCHEMA
-          : dotExt === common.FileExtensionEnum.Dashboard
-          ? common.DASHBOARD_SCHEMA
-          : dotExt === common.FileExtensionEnum.Chart
-          ? common.CHART_SCHEMA
-          : dotExt === common.FileExtensionEnum.Udf
-          ? common.UDF_SCHEMA
-          : this.secondFileNodeId.split('/')[
-              this.secondFileNodeId.split('/').length - 1
-            ] === common.MPROVE_CONFIG_FILENAME
-          ? common.CONFIG_SCHEMA
-          : undefined;
+      // let schema: JSONSchema7 =
+      //   dotExt === common.FileExtensionEnum.View
+      //     ? common.VIEW_SCHEMA
+      //     : dotExt === common.FileExtensionEnum.Store
+      //     ? common.STORE_SCHEMA
+      //     : dotExt === common.FileExtensionEnum.Model
+      //     ? common.MODEL_SCHEMA
+      //     : dotExt === common.FileExtensionEnum.Report
+      //     ? common.REPORT_SCHEMA
+      //     : dotExt === common.FileExtensionEnum.Dashboard
+      //     ? common.DASHBOARD_SCHEMA
+      //     : dotExt === common.FileExtensionEnum.Chart
+      //     ? common.CHART_SCHEMA
+      //     : dotExt === common.FileExtensionEnum.Udf
+      //     ? common.UDF_SCHEMA
+      //     : this.secondFileNodeId.split('/')[
+      //         this.secondFileNodeId.split('/').length - 1
+      //       ] === common.MPROVE_CONFIG_FILENAME
+      //     ? common.CONFIG_SCHEMA
+      //     : undefined;
 
-      setDiagnosticsOptions({
-        validate: true,
-        completion: true,
-        format: true,
-        enableSchemaRequest: true,
-        schemas: common.isDefined(schema)
-          ? [
-              {
-                uri: schema.$id,
-                fileMatch: ['*'],
-                schema: schema
-              }
-            ]
-          : []
-      });
+      // setDiagnosticsOptions({
+      //   validate: true,
+      //   completion: true,
+      //   format: true,
+      //   enableSchemaRequest: true,
+      //   schemas: common.isDefined(schema)
+      //     ? [
+      //         {
+      //           uri: schema.$id,
+      //           fileMatch: ['*'],
+      //           schema: schema
+      //         }
+      //       ]
+      //     : []
+      // });
 
       this.monaco.editor.setModelLanguage(this.editor.getModel(), languageId);
 
       let patch: editorType.IStandaloneEditorConstructionOptions = {
         theme: constants.BLOCKML_THEME,
-        renderValidationDecorations: 'on',
+        renderValidationDecorations: 'off',
         readOnly: true,
         snippetSuggestions: 'none',
-        suggestOnTriggerCharacters: true,
+        suggestOnTriggerCharacters: false,
         wordBasedSuggestions: false
         // wordBasedSuggestionsOnlySameLanguage: true,
         // quickSuggestions: false,
@@ -283,12 +281,12 @@ export class FilesRightComponent implements OnInit {
           constants.YAML_LANGUAGE_DATA
         );
 
-        setDiagnosticsOptions({
-          validate: false,
-          completion: false,
-          format: true,
-          schemas: []
-        });
+        // setDiagnosticsOptions({
+        //   validate: false,
+        //   completion: false,
+        //   format: true,
+        //   schemas: []
+        // });
       }
 
       this.monaco.editor.setModelLanguage(this.editor.getModel(), languageId);

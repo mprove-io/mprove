@@ -186,12 +186,15 @@
 
                     <div
                       *ngIf="node.data.isFolder === false"
-                      class="text-s1 hover:bg-m200 invisible flex h-8 w-8 flex-shrink-0 group-hover:visible"
+                      class="invisible flex h-8 w-8 flex-shrink-0 group-hover:visible"
                       (click)="rightOnClick($event, node)"
                     >
-                      <m-left-panel-icon
-                        class="text-s1 bg-s1"
-                      ></m-left-panel-icon>
+                      <div class="hover:bg-m200 h-8 w-8 flex-shrink-0">
+                        R
+                        <!-- <m-left-panel-icon
+                          class="text-s500 flex-shrink-0"
+                        ></m-left-panel-icon> -->
+                      </div>
                     </div>
 
                     <div
