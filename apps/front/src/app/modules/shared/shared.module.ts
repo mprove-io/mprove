@@ -70,6 +70,7 @@ import { ChevronRightIconComponent } from './icons/chevron-right-icon/chevron-ri
 import { ChevronUpIconComponent } from './icons/chevron-up-icon/chevron-up-icon.component';
 import { ClockIconComponent } from './icons/clock-icon/clock-icon.component';
 import { CurrencyDollarIconComponent } from './icons/currency-dollar-icon/currency-dollar-icon.component';
+import { DeleteBigIconComponent } from './icons/delete-big-icon/delete-big-icon.component';
 import { DeleteIconComponent } from './icons/delete-icon/delete-icon.component';
 import { DescIconComponent } from './icons/desc-icon/desc-icon.component';
 import { DesktopIconComponent } from './icons/desktop-icon/desktop-icon.component';
@@ -147,6 +148,7 @@ let sharedComponents = [
   //
   SettingsIconComponent,
   DeleteIconComponent,
+  DeleteBigIconComponent,
   EditIconComponent,
   TrashIconComponent,
   SaveIconComponent,

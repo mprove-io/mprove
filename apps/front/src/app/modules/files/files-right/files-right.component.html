@@ -100,6 +100,17 @@
           >
         </button>
       </div>
+
+      <div class="flex flex-1"></div>
+
+      <button
+        type="button"
+        data-cy="filesRightCloseButton"
+        class="border-s400 text-s500 hover:bg-s100 ml-5 mr-6 flex flex-shrink-0 select-none rounded border px-1 py-1 focus:outline-none"
+        (click)="closeSecondFile()"
+      >
+        <m-delete-big-icon></m-delete-big-icon>
+      </button>
     </div>
 
     <div class="divide-s300 ml-6 mr-6 flex flex-col divide-y">

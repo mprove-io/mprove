@@ -468,6 +468,10 @@ export class FilesRightComponent implements OnInit {
     }
   }
 
+  closeSecondFile() {
+    this.uiQuery.updatePart({ secondFileNodeId: undefined });
+  }
+
   checkContent() {
     if (common.isDefined(this.secondFileNodeId)) {
       // this.prevSecondFileNodeId = this.secondFileNodeId;
