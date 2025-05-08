@@ -68,6 +68,38 @@
         class="text-s1 ml-[36px] min-w-[2px] max-w-max flex-grow truncate text-lg"
         >{{ secondFileName }}
       </div>
+
+      <div
+        tp="Selected file has error"
+        [tpIsEnabled]="isSecondFileValid === false"
+      >
+        <button
+          class="ml-5 flex flex-shrink-0 flex-row items-center focus:outline-none"
+          [ngClass]="{
+            'text-s400': isSecondFileValid === false,
+            'text-m600 ': isSecondFileValid === true
+          }"
+          *ngIf="
+            showGoTo === true &&
+            ((secondFileName | goFromFileExt) === 'chart' ||
+              (secondFileName | goFromFileExt) === 'dashboard' ||
+              (isExplorer === true &&
+                ((secondFileName | goFromFileExt) === 'view' ||
+                  (secondFileName | goFromFileExt) === 'store')) ||
+              (isExplorer === true &&
+                (secondFileName | goFromFileExt) === 'model') ||
+              (secondFileName | goFromFileExt) === 'report')
+          "
+          (click)="goTo()"
+          [disabled]="isSecondFileValid === false"
+        >
+          <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
+
+          <div class="ml-2 text-lg">
+            {{ secondFileName | goFromFileExt | capitalize }}</div
+          >
+        </button>
+      </div>
     </div>
 
     <div class="divide-s300 ml-6 mr-6 flex flex-col divide-y">
@@ -97,7 +129,7 @@
     <div class="h-full rounded">
       <ng-monaco-editor
         [ngClass]="{
-          invisible: isShowSpinner === true
+          hidden: isShowSpinner === true
         }"
         data-cy="rightFileMonacoEditor"
         [options]="editorOptions"
@@ -113,4 +145,5 @@
 <div *ngIf="struct$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="isEditor$ | async"></div>
+<div *ngIf="isExplorer$ | async"></div>
 <div *ngIf="secondFileNodeId$ | async"></div>

@@ -2,13 +2,14 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import type { editor as editorType } from 'monaco-editor';
 import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { finalize, take, tap } from 'rxjs/operators';
+import { finalize, map, take, tap } from 'rxjs/operators';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
+import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -30,6 +31,8 @@ export class FilesRightComponent implements OnInit {
   struct$ = this.structQuery.select().pipe(
     tap(x => {
       this.struct = x;
+
+      this.checkSecondFile();
       this.cd.detectChanges();
     })
   );
@@ -66,8 +69,20 @@ export class FilesRightComponent implements OnInit {
     })
   );
 
+  isExplorer = false;
+  isExplorer$ = this.memberQuery.isExplorer$.pipe(
+    tap(x => {
+      this.isExplorer = x;
+      this.cd.detectChanges();
+    })
+  );
+
   spinnerName = 'filesRightGetFile';
   isShowSpinner = false;
+
+  showGoTo = false;
+
+  isSecondFileValid = true;
 
   // prevSecondFileNodeId: string;
 
@@ -82,6 +97,7 @@ export class FilesRightComponent implements OnInit {
         let ar = this.secondFileNodeId.split('/');
         this.secondFileName = ar[ar.length - 1];
 
+        this.checkSecondFile();
         this.checkContent();
       } else {
         this.secondFileName = undefined;
@@ -126,6 +142,7 @@ export class FilesRightComponent implements OnInit {
     private memberQuery: MemberQuery,
     private navQuery: NavQuery,
     private spinner: NgxSpinnerService,
+    private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
     private apiService: ApiService,
     private monacoService: MonacoProviderService
@@ -196,7 +213,7 @@ export class FilesRightComponent implements OnInit {
         constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >=
           0)
     ) {
-      // this.showGoTo = true;
+      this.showGoTo = true;
 
       let languageId = constants.YAML_LANGUAGE_ID;
 
@@ -267,7 +284,7 @@ export class FilesRightComponent implements OnInit {
 
       // this.refreshMarkers();
     } else {
-      // this.showGoTo = false;
+      this.showGoTo = false;
 
       let languageId =
         this.monaco.languages
@@ -325,6 +342,30 @@ export class FilesRightComponent implements OnInit {
 
   onTextChanged() {}
 
+  checkSecondFile() {
+    let errorFileIds = this.structQuery
+      .getValue()
+      .errors.map(e =>
+        e.lines
+          .map(l => l.fileId.split('/').slice(1).join(common.TRIPLE_UNDERSCORE))
+          .flat()
+      )
+      .flat();
+
+    if (common.isDefined(this.secondFileNodeId)) {
+      let fileIdAr = this.secondFileNodeId.split('/');
+      fileIdAr.shift();
+
+      let secondFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
+
+      this.isSecondFileValid = common.isUndefined(secondFileId)
+        ? true
+        : errorFileIds.indexOf(secondFileId) < 0;
+    } else {
+      this.isSecondFileValid = true;
+    }
+  }
+
   validate() {
     let payload: apiToBackend.ToBackendValidateFilesRequestPayload = {
       projectId: this.nav.projectId,
@@ -353,6 +394,78 @@ export class FilesRightComponent implements OnInit {
         take(1)
       )
       .subscribe();
+  }
+
+  goTo() {
+    let uiState = this.uiQuery.getValue();
+
+    let ar = this.secondFileName.split('.');
+    let ext = ar.pop();
+    let id = ar.join('.');
+    let dotExt = `.${ext}`;
+
+    if (dotExt === common.FileExtensionEnum.View) {
+      this.navigateService.navigateToChart({
+        modelId: `${common.VIEW_MODEL_PREFIX}_${id}`,
+        chartId: common.EMPTY_CHART_ID
+      });
+    } else if (dotExt === common.FileExtensionEnum.Store) {
+      this.navigateService.navigateToChart({
+        modelId: `${common.STORE_MODEL_PREFIX}_${id}`,
+        chartId: common.EMPTY_CHART_ID
+      });
+    } else if (dotExt === common.FileExtensionEnum.Model) {
+      this.navigateService.navigateToChart({
+        modelId: id,
+        chartId: common.EMPTY_CHART_ID
+      });
+    } else if (dotExt === common.FileExtensionEnum.Report) {
+      this.navigateService.navigateToReport({ reportId: id });
+    } else if (dotExt === common.FileExtensionEnum.Dashboard) {
+      this.navigateService.navigateToDashboard({
+        dashboardId: id
+      });
+    } else if (dotExt === common.FileExtensionEnum.Chart) {
+      let nav = this.navQuery.getValue();
+
+      let payload: apiToBackend.ToBackendGetChartRequestPayload = {
+        projectId: nav.projectId,
+        isRepoProd: nav.isRepoProd,
+        branchId: nav.branchId,
+        envId: nav.envId,
+        chartId: id,
+        timezone: uiState.timezone
+      };
+
+      this.spinner.show(constants.APP_SPINNER_NAME);
+
+      this.apiService
+        .req({
+          pathInfoName:
+            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
+          payload: payload
+        })
+        .pipe(
+          map((resp: apiToBackend.ToBackendGetChartResponse) => {
+            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+              this.memberQuery.update(resp.payload.userMember);
+
+              if (common.isDefined(resp.payload.chart)) {
+                this.navigateService.navigateToChart({
+                  modelId: resp.payload.chart.modelId,
+                  chartId: id
+                });
+              } else {
+                this.spinner.hide(constants.APP_SPINNER_NAME);
+              }
+            } else {
+              this.spinner.hide(constants.APP_SPINNER_NAME);
+            }
+          }),
+          take(1)
+        )
+        .subscribe();
+    }
   }
 
   checkContent() {
