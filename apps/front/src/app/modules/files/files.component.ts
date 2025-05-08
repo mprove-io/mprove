@@ -51,9 +51,7 @@ export class FilesComponent implements OnInit {
 
       this.cd.detectChanges();
 
-      this.setProjectFileLink({
-        fileId: this.file.fileId
-      });
+      this.setProjectFileLink();
     })
   );
 
@@ -110,7 +108,11 @@ export class FilesComponent implements OnInit {
 
   secondFileNodeId: string;
   secondFileNodeId$ = this.uiQuery.secondFileNodeId$.pipe(
-    tap(x => (this.secondFileNodeId = x))
+    tap(x => {
+      this.secondFileNodeId = x;
+
+      this.setProjectFileLink();
+    })
   );
 
   constructor(
@@ -331,37 +333,40 @@ export class FilesComponent implements OnInit {
       .subscribe();
   }
 
-  setProjectFileLink(item: { fileId: string }) {
-    let { fileId } = item;
+  setProjectFileLink() {
+    let fileId = this.fileQuery.getValue().fileId;
 
     if (common.isUndefined(fileId)) {
       return;
     }
 
-    let nav = this.navQuery.getValue();
+    let secondFileNodeId = this.uiQuery.getValue().secondFileNodeId;
+    let projectId = this.navQuery.getValue().projectId;
     let links = this.uiQuery.getValue().projectFileLinks;
 
     let link: common.ProjectFileLink = links.find(
-      l => l.projectId === nav.projectId
+      l => l.projectId === projectId
     );
 
     let newProjectFileLinks;
 
     if (common.isDefined(link)) {
       let newLink: common.ProjectFileLink = {
-        projectId: nav.projectId,
+        projectId: projectId,
         fileId: fileId,
+        secondFileNodeId: secondFileNodeId,
         lastNavTs: Date.now()
       };
 
       newProjectFileLinks = [
         newLink,
-        ...links.filter(r => !(r.projectId === nav.projectId))
+        ...links.filter(r => !(r.projectId === projectId))
       ];
     } else {
       let newLink: common.ProjectFileLink = {
-        projectId: nav.projectId,
+        projectId: projectId,
         fileId: fileId,
+        secondFileNodeId: secondFileNodeId,
         lastNavTs: Date.now()
       };
 

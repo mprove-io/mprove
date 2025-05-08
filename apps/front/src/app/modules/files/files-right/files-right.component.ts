@@ -478,55 +478,64 @@ export class FilesRightComponent implements OnInit {
 
       let nav = this.navQuery.getValue();
 
-      let getFilePayload: apiToBackend.ToBackendGetFileRequestPayload = {
-        projectId: nav.projectId,
-        isRepoProd: nav.isRepoProd,
-        branchId: nav.branchId,
-        envId: nav.envId,
-        fileNodeId: this.secondFileNodeId,
-        panel: common.PanelEnum.Tree
-      };
+      let fileItems = common.getFileItems({ nodes: this.repo.nodes });
 
-      this.isShowSpinner = true;
-      this.spinner.show(this.spinnerName);
+      if (fileItems.map(x => x.fileNodeId).indexOf(this.secondFileNodeId) < 0) {
+        setTimeout(
+          () => this.uiQuery.updatePart({ secondFileNodeId: undefined }),
+          0
+        );
+      } else {
+        let getFilePayload: apiToBackend.ToBackendGetFileRequestPayload = {
+          projectId: nav.projectId,
+          isRepoProd: nav.isRepoProd,
+          branchId: nav.branchId,
+          envId: nav.envId,
+          fileNodeId: this.secondFileNodeId,
+          panel: common.PanelEnum.Tree
+        };
 
-      this.cd.detectChanges();
+        this.isShowSpinner = true;
+        this.spinner.show(this.spinnerName);
 
-      this.apiService
-        .req({
-          pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile,
-          payload: getFilePayload,
-          showSpinner: false
-        })
-        .pipe(
-          tap((resp: apiToBackend.ToBackendGetFileResponse) => {
-            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-              let repoState = this.repoQuery.getValue();
-              let newRepoState: RepoState = Object.assign(resp.payload.repo, <
-                RepoState
-              >{
-                conflicts: repoState.conflicts, // getFile does not check for conflicts
-                repoStatus: repoState.repoStatus // getFile does not use git fetch
-              });
-              this.repoQuery.update(newRepoState);
-              this.structQuery.update(resp.payload.struct);
-              this.navQuery.updatePart({
-                needValidate: resp.payload.needValidate
-              });
+        this.cd.detectChanges();
 
-              this.secondFileContent = resp.payload.content;
-
-              this.cd.detectChanges();
-            }
-          }),
-          take(1),
-          finalize(() => {
-            this.spinner.hide(this.spinnerName);
-            this.isShowSpinner = false;
+        this.apiService
+          .req({
+            pathInfoName:
+              apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile,
+            payload: getFilePayload,
+            showSpinner: false
           })
-        )
-        .subscribe();
+          .pipe(
+            tap((resp: apiToBackend.ToBackendGetFileResponse) => {
+              if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+                let repoState = this.repoQuery.getValue();
+                let newRepoState: RepoState = Object.assign(resp.payload.repo, <
+                  RepoState
+                >{
+                  conflicts: repoState.conflicts, // getFile does not check for conflicts
+                  repoStatus: repoState.repoStatus // getFile does not use git fetch
+                });
+                this.repoQuery.update(newRepoState);
+                this.structQuery.update(resp.payload.struct);
+                this.navQuery.updatePart({
+                  needValidate: resp.payload.needValidate
+                });
+
+                this.secondFileContent = resp.payload.content;
+
+                this.cd.detectChanges();
+              }
+            }),
+            take(1),
+            finalize(() => {
+              this.spinner.hide(this.spinnerName);
+              this.isShowSpinner = false;
+            })
+          )
+          .subscribe();
+      }
     }
   }
 }
