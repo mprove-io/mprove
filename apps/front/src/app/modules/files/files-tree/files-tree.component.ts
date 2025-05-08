@@ -91,6 +91,11 @@ export class FilesTreeComponent implements OnDestroy {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
+  secondFileNodeId: string;
+  secondFileNodeId$ = this.uiQuery.secondFileNodeId$.pipe(
+    tap(x => (this.secondFileNodeId = x))
+  );
+
   fileNodeId: string;
   fileId: string;
 
@@ -264,10 +269,14 @@ export class FilesTreeComponent implements OnDestroy {
     }
   }
 
-  rightOnClick(event: any, node: TreeNode) {
+  rightOnClick(event: any, fileNodeId: string) {
     event.stopPropagation();
 
-    this.uiQuery.updatePart({ secondFileNodeId: node.id });
+    if (this.secondFileNodeId === fileNodeId) {
+      this.uiQuery.updatePart({ secondFileNodeId: undefined });
+    } else {
+      this.uiQuery.updatePart({ secondFileNodeId: fileNodeId });
+    }
   }
 
   onMoveNode(event: any) {

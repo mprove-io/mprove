@@ -20,6 +20,7 @@ function traverse(item: { fileItems: FileItem[]; node: DiskCatalogNode }) {
     let fileItem: FileItem = {
       fileName: ar[ar.length - 1],
       fileId: node.fileId,
+      fileNodeId: node.id,
       parentPath: node.id.split('/').slice(1).slice(0, -1).join('/')
     };
 

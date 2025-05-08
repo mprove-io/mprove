@@ -406,7 +406,11 @@
 
         <m-files-right
           *ngIf="panel === panelTree"
-          class="flex w-[30%]"
+          class="flex"
+          [ngClass]="{
+            'w-[37%]': !!secondFileNodeId,
+            'w-[30%]': !secondFileNodeId
+          }"
         ></m-files-right>
       </div>
     </div>
@@ -415,6 +419,7 @@
 
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="nav$ | async"></div>
+<div *ngIf="secondFileNodeId$ | async"></div>
 <div *ngIf="file$ | async"></div>
 <div *ngIf="repo$ | async"></div>
 <div *ngIf="struct$ | async"></div>

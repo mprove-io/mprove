@@ -108,6 +108,11 @@ export class FilesComponent implements OnInit {
     })
   );
 
+  secondFileNodeId: string;
+  secondFileNodeId$ = this.uiQuery.secondFileNodeId$.pipe(
+    tap(x => (this.secondFileNodeId = x))
+  );
+
   constructor(
     private router: Router,
     private cd: ChangeDetectorRef,
