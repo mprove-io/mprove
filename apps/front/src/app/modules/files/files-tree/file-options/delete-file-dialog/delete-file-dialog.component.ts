@@ -8,6 +8,7 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -43,6 +44,7 @@ export class DeleteFileDialogComponent implements OnInit {
     private repoQuery: RepoQuery,
     private navigateService: NavigateService,
     private spinner: NgxSpinnerService,
+    private fileQuery: FileQuery,
     private navQuery: NavQuery,
     private structQuery: StructQuery
   ) {}
@@ -55,6 +57,24 @@ export class DeleteFileDialogComponent implements OnInit {
 
   delete() {
     this.ref.close();
+
+    let selectedFileId = this.fileQuery.getValue().fileId;
+
+    let isNavigateNewFile = false;
+
+    if (common.isDefined(selectedFileId)) {
+      let selectedPath = selectedFileId
+        .split(common.TRIPLE_UNDERSCORE)
+        .join('/');
+      let fromPath = this.ref.data.fileNodeId.split('/').slice(1).join('/');
+
+      if (
+        selectedPath.startsWith(fromPath + '/') ||
+        selectedPath === fromPath
+      ) {
+        isNavigateNewFile = true;
+      }
+    }
 
     let payload: apiToBackend.ToBackendDeleteFileRequestPayload = {
       projectId: this.ref.data.projectId,
@@ -81,7 +101,9 @@ export class DeleteFileDialogComponent implements OnInit {
               needValidate: resp.payload.needValidate
             });
 
-            this.navigateService.navigateToFiles();
+            if (isNavigateNewFile === true) {
+              this.navigateService.navigateToFiles();
+            }
           }
         }),
         take(1)
