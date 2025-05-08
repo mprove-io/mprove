@@ -91,6 +91,7 @@ import { MiniChartsIconComponent } from './icons/mini-charts-icon/mini-charts-ic
 import { MinusSmIconComponent } from './icons/minus-sm-icon/minus-sm-icon.component';
 import { RefreshIconComponent } from './icons/refresh-icon/refresh-icon.component';
 import { ResizeIconComponent } from './icons/resize-icon/resize-icon.component';
+import { RightPanelIconComponent } from './icons/right-panel-icon/right-panel-icon.component';
 import { SaveIconComponent } from './icons/save-icon/save-icon.component';
 import { SearchIconComponent } from './icons/search-icon/search-icon.component';
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
@@ -227,6 +228,7 @@ let sharedComponents = [
   ChartPieIconComponent,
   ChartSingleIconComponent,
   LeftPanelIconComponent,
+  RightPanelIconComponent,
   BottomPanelIconComponent,
   LinkIconComponent,
   LinkOffIconComponent,
