@@ -22,6 +22,7 @@ import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { ValidationService } from '~front/app/services/validation.service';
@@ -61,6 +62,7 @@ export class RenameFileDialogComponent implements OnInit {
     private repoQuery: RepoQuery,
     private navQuery: NavQuery,
     private fileQuery: FileQuery,
+    private uiQuery: UiQuery,
     private navigateService: NavigateService,
     private structQuery: StructQuery,
     private spinner: NgxSpinnerService,
@@ -102,9 +104,8 @@ export class RenameFileDialogComponent implements OnInit {
 
     let newName = this.renameFileForm.value.fileName;
 
-    let selectedFileId = this.fileQuery.getValue().fileId;
-
     let isNavigateNewFile = false;
+    let selectedFileId = this.fileQuery.getValue().fileId;
 
     if (common.isDefined(selectedFileId)) {
       let selectedPath = selectedFileId
@@ -112,11 +113,17 @@ export class RenameFileDialogComponent implements OnInit {
         .join('/');
       let fromPath = this.ref.data.nodeId.split('/').slice(1).join('/');
 
-      if (
-        selectedPath.startsWith(fromPath + '/') ||
-        selectedPath === fromPath
-      ) {
+      if (selectedPath === fromPath) {
         isNavigateNewFile = true;
+      }
+    }
+
+    let isRenameSecondFile = false;
+    let secondFileNodeId = this.uiQuery.getValue().secondFileNodeId;
+
+    if (common.isDefined(secondFileNodeId)) {
+      if (secondFileNodeId === this.ref.data.nodeId) {
+        isRenameSecondFile = true;
       }
     }
 
@@ -145,6 +152,16 @@ export class RenameFileDialogComponent implements OnInit {
             this.navQuery.updatePart({
               needValidate: resp.payload.needValidate
             });
+
+            if (isRenameSecondFile === true) {
+              let sfIdAr = this.ref.data.nodeId.split('/');
+              sfIdAr.pop();
+              sfIdAr.push(newName);
+              let newSecondFileNodeId = sfIdAr.join('/');
+              this.uiQuery.updatePart({
+                secondFileNodeId: newSecondFileNodeId
+              });
+            }
 
             if (isNavigateNewFile === true) {
               let fIdAr = this.ref.data.nodeId.split('/');
