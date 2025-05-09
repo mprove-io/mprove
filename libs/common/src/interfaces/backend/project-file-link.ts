@@ -4,6 +4,7 @@ export class ProjectFileLink {
   @IsString()
   projectId: string;
 
+  @IsOptional()
   @IsString()
   fileId: string;
 

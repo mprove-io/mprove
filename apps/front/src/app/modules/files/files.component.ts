@@ -51,7 +51,7 @@ export class FilesComponent implements OnInit {
 
       this.cd.detectChanges();
 
-      this.setProjectFileLink();
+      this.uiService.setProjectFileLink();
     })
   );
 
@@ -110,8 +110,6 @@ export class FilesComponent implements OnInit {
   secondFileNodeId$ = this.uiQuery.secondFileNodeId$.pipe(
     tap(x => {
       this.secondFileNodeId = x;
-
-      this.setProjectFileLink();
     })
   );
 
@@ -331,55 +329,5 @@ export class FilesComponent implements OnInit {
         take(1)
       )
       .subscribe();
-  }
-
-  setProjectFileLink() {
-    let fileId = this.fileQuery.getValue().fileId;
-
-    if (common.isUndefined(fileId)) {
-      return;
-    }
-
-    let secondFileNodeId = this.uiQuery.getValue().secondFileNodeId;
-    let projectId = this.navQuery.getValue().projectId;
-    let links = this.uiQuery.getValue().projectFileLinks;
-
-    let link: common.ProjectFileLink = links.find(
-      l => l.projectId === projectId
-    );
-
-    let newProjectFileLinks;
-
-    if (common.isDefined(link)) {
-      let newLink: common.ProjectFileLink = {
-        projectId: projectId,
-        fileId: fileId,
-        secondFileNodeId: secondFileNodeId,
-        lastNavTs: Date.now()
-      };
-
-      newProjectFileLinks = [
-        newLink,
-        ...links.filter(r => !(r.projectId === projectId))
-      ];
-    } else {
-      let newLink: common.ProjectFileLink = {
-        projectId: projectId,
-        fileId: fileId,
-        secondFileNodeId: secondFileNodeId,
-        lastNavTs: Date.now()
-      };
-
-      newProjectFileLinks = [newLink, ...links];
-    }
-
-    let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
-
-    newProjectFileLinks = newProjectFileLinks.filter(
-      l => l.lastNavTs >= oneYearAgoTimestamp
-    );
-
-    this.uiQuery.updatePart({ projectFileLinks: newProjectFileLinks });
-    this.uiService.setUserUi({ projectFileLinks: newProjectFileLinks });
   }
 }

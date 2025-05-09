@@ -10,6 +10,7 @@ import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { UiService } from '~front/app/services/ui.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -101,6 +102,7 @@ export class FilesRightComponent implements OnInit {
         this.checkContent();
       } else {
         this.secondFileName = undefined;
+        this.uiService.setProjectFileLink();
       }
 
       this.cd.detectChanges();
@@ -143,6 +145,7 @@ export class FilesRightComponent implements OnInit {
     private navQuery: NavQuery,
     private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
+    private uiService: UiService,
     private cd: ChangeDetectorRef,
     private apiService: ApiService,
     private monacoService: MonacoProviderService
@@ -524,6 +527,8 @@ export class FilesRightComponent implements OnInit {
                 });
 
                 this.secondFileContent = resp.payload.content;
+
+                this.uiService.setProjectFileLink();
 
                 this.cd.detectChanges();
               }

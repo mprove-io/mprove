@@ -2,12 +2,19 @@ import { Injectable } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
+import { FileQuery } from '../queries/file.query';
+import { NavQuery } from '../queries/nav.query';
 import { UiQuery } from '../queries/ui.query';
 import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
 export class UiService {
-  constructor(private apiService: ApiService, private uiQuery: UiQuery) {}
+  constructor(
+    private apiService: ApiService,
+    private uiQuery: UiQuery,
+    private fileQuery: FileQuery,
+    private navQuery: NavQuery
+  ) {}
 
   async setUserUi(item: {
     timezone?: string;
@@ -72,5 +79,51 @@ export class UiService {
         take(1)
       )
       .subscribe();
+  }
+
+  setProjectFileLink() {
+    let fileId = this.fileQuery.getValue().fileId;
+    let secondFileNodeId = this.uiQuery.getValue().secondFileNodeId;
+
+    let projectId = this.navQuery.getValue().projectId;
+    let links = this.uiQuery.getValue().projectFileLinks;
+
+    let link: common.ProjectFileLink = links.find(
+      l => l.projectId === projectId
+    );
+
+    let newProjectFileLinks: common.ProjectFileLink[];
+
+    if (common.isDefined(link)) {
+      let newLink: common.ProjectFileLink = {
+        projectId: projectId,
+        fileId: common.isDefined(fileId) ? fileId : link.fileId,
+        secondFileNodeId: secondFileNodeId,
+        lastNavTs: Date.now()
+      };
+
+      newProjectFileLinks = [
+        newLink,
+        ...links.filter(r => !(r.projectId === projectId))
+      ];
+    } else {
+      let newLink: common.ProjectFileLink = {
+        projectId: projectId,
+        fileId: fileId,
+        secondFileNodeId: secondFileNodeId,
+        lastNavTs: Date.now()
+      };
+
+      newProjectFileLinks = [newLink, ...links];
+    }
+
+    let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
+
+    newProjectFileLinks = newProjectFileLinks.filter(
+      l => l.lastNavTs >= oneYearAgoTimestamp
+    );
+
+    this.uiQuery.updatePart({ projectFileLinks: newProjectFileLinks });
+    this.setUserUi({ projectFileLinks: newProjectFileLinks });
   }
 }
