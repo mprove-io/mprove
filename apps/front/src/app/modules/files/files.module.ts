@@ -1,3 +1,4 @@
+import { CodeEditor } from '@acrodata/code-editor';
 import { TreeModule } from '@ali-hm/angular-tree-component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
@@ -38,6 +39,7 @@ import { RepoOptionsComponent } from './repo-options/repo-options.component';
     RouterModule,
     TreeModule,
     TippyDirective,
+    CodeEditor,
     MonacoEditorModule,
     NgSelectModule,
     NgxSpinnerModule

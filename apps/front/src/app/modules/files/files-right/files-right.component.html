@@ -137,18 +137,16 @@
       </div>
     </div>
 
-    <div class="h-full rounded">
-      <ng-monaco-editor
+    <div class="h-full overflow-y-auto rounded">
+      <code-editor
+        *ngIf="isShowSpinner === false"
         style="height: 100%"
-        [ngClass]="{
-          hidden: isShowSpinner === true
-        }"
-        data-cy="rightFileMonacoEditor"
-        [options]="editorOptions"
         [(ngModel)]="secondFileContent"
-        (editorChange)="onEditorChange($event)"
-        (ngModelChange)="onTextChanged()"
-      ></ng-monaco-editor>
+        [readonly]="true"
+        [language]="lang"
+        [languages]="languages"
+        [theme]="theme"
+      ></code-editor>
     </div>
   </div>
 </div>

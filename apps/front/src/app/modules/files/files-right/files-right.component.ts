@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import type { editor as editorType } from 'monaco-editor';
-import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
+import { EditorView } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, map, take, tap } from 'rxjs/operators';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -15,11 +15,27 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
+let { languages } = require('@codemirror/language-data');
+
 @Component({
   selector: 'm-files-right',
   templateUrl: './files-right.component.html'
 })
 export class FilesRightComponent implements OnInit {
+  languages = languages;
+
+  theme = EditorView.theme({
+    '.cm-content': {
+      fontSize: '16px',
+      paddingTop: '12px'
+    },
+    '.cm-line': {
+      lineHeight: '24px'
+    }
+  });
+
+  lang: string;
+
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
     tap(x => {
@@ -85,8 +101,6 @@ export class FilesRightComponent implements OnInit {
 
   isSecondFileValid = true;
 
-  // prevSecondFileNodeId: string;
-
   secondFileName: string;
 
   secondFileNodeId: string;
@@ -111,32 +125,6 @@ export class FilesRightComponent implements OnInit {
 
   secondFileContent: string;
 
-  editorOptions: MonacoEditorOptions = {
-    // autoIndent: 'keep',
-    renderValidationDecorations: 'off',
-    fixedOverflowWidgets: true,
-    theme: constants.TEXTMATE_THEME,
-    fontSize: 16,
-    tabSize: 2,
-    padding: {
-      top: 12
-    }
-    // automaticLayout: true,
-    // folding: true,
-    // wordWrap: 'on',
-    // minimap: { enabled: false },
-    // lineNumbers: 'on',
-    // scrollbar: {
-    //   alwaysConsumeMouseWheel: false
-    // }
-  };
-
-  isLoadedMonaco = false;
-
-  editor: editorType.IStandaloneCodeEditor = null;
-
-  monaco: typeof import('monaco-editor');
-
   constructor(
     private uiQuery: UiQuery,
     private structQuery: StructQuery,
@@ -147,29 +135,17 @@ export class FilesRightComponent implements OnInit {
     private navigateService: NavigateService,
     private uiService: UiService,
     private cd: ChangeDetectorRef,
-    private apiService: ApiService,
-    private monacoService: MonacoProviderService
+    private apiService: ApiService
   ) {}
 
-  async ngOnInit() {
-    this.monaco = await this.monacoService.initMonaco();
-    this.isLoadedMonaco = true;
-
+  ngOnInit() {
     this.setEditorOptionsLanguage();
 
     this.cd.detectChanges();
-
-    // setTimeout(() => {
-    //   (document.activeElement as HTMLElement).blur();
-    // }, 0);
   }
 
   setEditorOptionsLanguage() {
-    if (
-      this.isLoadedMonaco === false ||
-      common.isUndefined(this.editor) ||
-      common.isUndefined(this.secondFileNodeId)
-    ) {
+    if (common.isUndefined(this.secondFileNodeId)) {
       return;
     }
 
@@ -197,16 +173,33 @@ export class FilesRightComponent implements OnInit {
       }
     }
 
-    // this.fileQuery
-    //   .select()
-    //   .pipe(take(1))
-    //   .subscribe(x => {
-    //     this.file = x;
-    //   });
-
     let ar = this.secondFileName.split('.');
     let ext = ar.pop();
     let dotExt = `.${ext}`;
+
+    // this.languages.forEach((x: any) => {
+    //   console.log(x.name);
+    //   console.log('extensions');
+    //   console.log(x.extensions);
+    // });
+
+    if (
+      constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0
+    ) {
+      this.lang = 'YAML';
+    } else {
+      let language = this.languages.find(
+        (x: any) => x.extensions.indexOf(ext) > -1
+      );
+
+      this.lang = language?.name;
+    }
+
+    // console.log('ext');
+    // console.log(ext);
+
+    // console.log('lang');
+    // console.log(this.lang);
 
     if (
       this.secondFileName === common.MPROVE_CONFIG_FILENAME ||
@@ -219,153 +212,8 @@ export class FilesRightComponent implements OnInit {
       this.showGoTo = true;
 
       let languageId = constants.YAML_LANGUAGE_ID;
-
-      this.monaco.languages.setMonarchTokensProvider(
-        languageId,
-        constants.BLOCKML_LANGUAGE_DATA
-      );
-
-      // let schema: JSONSchema7 =
-      //   dotExt === common.FileExtensionEnum.View
-      //     ? common.VIEW_SCHEMA
-      //     : dotExt === common.FileExtensionEnum.Store
-      //     ? common.STORE_SCHEMA
-      //     : dotExt === common.FileExtensionEnum.Model
-      //     ? common.MODEL_SCHEMA
-      //     : dotExt === common.FileExtensionEnum.Report
-      //     ? common.REPORT_SCHEMA
-      //     : dotExt === common.FileExtensionEnum.Dashboard
-      //     ? common.DASHBOARD_SCHEMA
-      //     : dotExt === common.FileExtensionEnum.Chart
-      //     ? common.CHART_SCHEMA
-      //     : dotExt === common.FileExtensionEnum.Udf
-      //     ? common.UDF_SCHEMA
-      //     : this.secondFileNodeId.split('/')[
-      //         this.secondFileNodeId.split('/').length - 1
-      //       ] === common.MPROVE_CONFIG_FILENAME
-      //     ? common.CONFIG_SCHEMA
-      //     : undefined;
-
-      // setDiagnosticsOptions({
-      //   validate: true,
-      //   completion: true,
-      //   format: true,
-      //   enableSchemaRequest: true,
-      //   schemas: common.isDefined(schema)
-      //     ? [
-      //         {
-      //           uri: schema.$id,
-      //           fileMatch: ['*'],
-      //           schema: schema
-      //         }
-      //       ]
-      //     : []
-      // });
-
-      this.monaco.editor.setModelLanguage(this.editor.getModel(), languageId);
-
-      let patch: editorType.IStandaloneEditorConstructionOptions = {
-        theme: constants.BLOCKML_THEME,
-        renderValidationDecorations: 'off',
-        readOnly: true,
-        snippetSuggestions: 'none',
-        suggestOnTriggerCharacters: false,
-        wordBasedSuggestions: false
-        // wordBasedSuggestionsOnlySameLanguage: true,
-        // quickSuggestions: false,
-        // suggestFontSize:  undefined,
-        // suggestLineHeight: undefined,
-        // suggestSelection: undefined,
-        // quickSuggestionsDelay: undefined,
-        // acceptSuggestionOnCommitCharacter: undefined,
-        // acceptSuggestionOnEnter: undefined,
-        // inlineSuggest: undefined,
-        // suggest: undefined,
-      };
-
-      this.editorOptions = Object.assign({}, this.editorOptions, patch);
-
-      // this.refreshMarkers();
     } else {
       this.showGoTo = false;
-
-      let languageId =
-        this.monaco.languages
-          .getLanguages()
-          .find(x => x.extensions?.indexOf(dotExt) > -1)?.id ||
-        constants.MARKDOWN_LANGUAGE_ID;
-
-      if (languageId === constants.YAML_LANGUAGE_ID) {
-        this.monaco.languages.setMonarchTokensProvider(
-          languageId,
-          constants.YAML_LANGUAGE_DATA
-        );
-
-        // setDiagnosticsOptions({
-        //   validate: false,
-        //   completion: false,
-        //   format: true,
-        //   schemas: []
-        // });
-      }
-
-      this.monaco.editor.setModelLanguage(this.editor.getModel(), languageId);
-
-      let patch: editorType.IStandaloneEditorConstructionOptions = {
-        theme: constants.TEXTMATE_THEME,
-        renderValidationDecorations: 'off',
-        readOnly: true,
-        snippetSuggestions: 'none',
-        suggestOnTriggerCharacters: false,
-        wordBasedSuggestions: false,
-        quickSuggestions: false
-      };
-
-      this.editorOptions = Object.assign({}, this.editorOptions, patch);
-
-      // this.removeMarkers();
-    }
-    // // workaround for diff editor
-    // this.monaco.editor.setTheme(this.editorOptions.theme);
-    // // workaround for diff editor
-    // this.editor.updateOptions(this.editorOptions);
-  }
-
-  async onEditorChange(editor: editorType.IStandaloneCodeEditor) {
-    this.editor = editor;
-
-    if (this.isLoadedMonaco === false) {
-      return;
-    }
-
-    this.setEditorOptionsLanguage();
-    // this.refreshMarkers();
-    this.cd.detectChanges();
-  }
-
-  onTextChanged() {}
-
-  checkSecondFile() {
-    let errorFileIds = this.structQuery
-      .getValue()
-      .errors.map(e =>
-        e.lines
-          .map(l => l.fileId.split('/').slice(1).join(common.TRIPLE_UNDERSCORE))
-          .flat()
-      )
-      .flat();
-
-    if (common.isDefined(this.secondFileNodeId)) {
-      let fileIdAr = this.secondFileNodeId.split('/');
-      fileIdAr.shift();
-
-      let secondFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
-
-      this.isSecondFileValid = common.isUndefined(secondFileId)
-        ? true
-        : errorFileIds.indexOf(secondFileId) < 0;
-    } else {
-      this.isSecondFileValid = true;
     }
   }
 
@@ -475,10 +323,32 @@ export class FilesRightComponent implements OnInit {
     this.uiQuery.updatePart({ secondFileNodeId: undefined });
   }
 
+  checkSecondFile() {
+    let errorFileIds = this.structQuery
+      .getValue()
+      .errors.map(e =>
+        e.lines
+          .map(l => l.fileId.split('/').slice(1).join(common.TRIPLE_UNDERSCORE))
+          .flat()
+      )
+      .flat();
+
+    if (common.isDefined(this.secondFileNodeId)) {
+      let fileIdAr = this.secondFileNodeId.split('/');
+      fileIdAr.shift();
+
+      let secondFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
+
+      this.isSecondFileValid = common.isUndefined(secondFileId)
+        ? true
+        : errorFileIds.indexOf(secondFileId) < 0;
+    } else {
+      this.isSecondFileValid = true;
+    }
+  }
+
   checkContent() {
     if (common.isDefined(this.secondFileNodeId)) {
-      // this.prevSecondFileNodeId = this.secondFileNodeId;
-
       let nav = this.navQuery.getValue();
 
       let fileItems = common.getFileItems({ nodes: this.repo.nodes });
@@ -527,6 +397,8 @@ export class FilesRightComponent implements OnInit {
                 });
 
                 this.secondFileContent = resp.payload.content;
+
+                this.setEditorOptionsLanguage();
 
                 this.uiService.setProjectFileLink();
 
