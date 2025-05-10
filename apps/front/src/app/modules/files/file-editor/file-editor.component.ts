@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import * as languageData from '@codemirror/language-data';
@@ -8,6 +15,7 @@ import { EditorState, Extension } from '@codemirror/state';
 // import { MarkerSeverity } from 'monaco-editor';
 // import { setDiagnosticsOptions } from 'monaco-yaml';
 // import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
+import { CodeEditor } from '@acrodata/code-editor';
 import { Diagnostic, linter } from '@codemirror/lint';
 import { Compartment } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
@@ -32,11 +40,15 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './file-editor.component.html',
   styleUrls: ['file-editor.component.scss']
 })
-export class FileEditorComponent implements OnInit, OnDestroy {
+export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   panelTree = common.PanelEnum.Tree;
 
-  theme: Extension = VS_LIGHT_THEME;
+  @ViewChild('codeEditor', { static: false })
+  codeEditorRef: CodeEditor;
 
+  theme: Extension = VS_LIGHT_THEME;
+  indentWithTab = true;
+  indentUnit = '  ';
   languages = languageData.languages;
   lang: string;
 
@@ -45,12 +57,10 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   extensions: Extension[] = [];
 
   baseExtensions: Extension[] = [VS_LIGHT_THEME];
-
   baseOriginalExtensions: Extension[] = [
     ...this.baseExtensions,
     EditorState.readOnly.of(true)
   ];
-
   baseModifiedExtensions: Extension[] = [
     ...this.baseExtensions,
     EditorState.readOnly.of(false)
@@ -62,7 +72,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   originalLanguageConf = new Compartment();
   modifiedLanguageConf = new Compartment();
 
-  line = 1;
+  line: number;
 
   // isLoadedMonaco = false;
 
@@ -175,14 +185,14 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   routeLine$ = this.route.queryParams.pipe(
     tap(params => {
       this.line = Number(params['line'] ? params['line'] : 1);
-      this.moveToLine(this.line);
+      this.moveToLine();
     })
   );
 
   fileId$ = this.fileQuery.fileId$.pipe(
     filter(v => !!v),
     tap((fileId: string) => {
-      this.moveToLine(this.line);
+      this.moveToLine();
     })
   );
 
@@ -216,6 +226,10 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
     await this.setEditorOptionsLanguage();
     // this.refreshMarkers();
+  }
+
+  ngAfterViewInit() {
+    this.moveToLine();
   }
 
   checkSelectedFile() {
@@ -307,8 +321,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
     let loadedLanguage = await language.load();
 
-    console.log('loadedLanguage');
-    console.log(loadedLanguage);
+    // console.log('loadedLanguage');
+    // console.log(loadedLanguage);
 
     this.originalExtensions = [
       ...this.baseOriginalExtensions,
@@ -674,13 +688,45 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     this.uiQuery.updatePart({ needSave: false });
   }
 
-  async moveToLine(line: number) {
-    // setTimeout(() => {
-    //   if (this.editor) {
-    //     this.editor.revealLineInCenter(line);
-    //     this.editor.setPosition({ column: 1, lineNumber: line });
-    //   }
-    // }, 50);
+  moveToLine() {
+    setTimeout(() => {
+      if (
+        common.isDefinedAndNotEmpty(this.content) &&
+        common.isDefined(this.line)
+      ) {
+        let lineNumber = this.line;
+        let editorView = this.codeEditorRef?.view;
+
+        if (common.isUndefined(editorView)) {
+          console.warn('this.codeEditorRef?.view not defined');
+          return;
+        }
+
+        const lines = this.content.split('\n');
+
+        if (lineNumber < 1 || lineNumber > lines.length) {
+          console.warn(
+            `Invalid line number: ${lineNumber}. Must be between 1 and ${lines.length}.`
+          );
+          return;
+        }
+
+        try {
+          const line = editorView.state.doc.line(lineNumber);
+
+          editorView.dispatch({
+            effects: EditorView.scrollIntoView(line.from, { y: 'center' })
+          });
+        } catch (error) {
+          console.warn(`Failed to scroll to line ${lineNumber}:`, error);
+        }
+
+        // if (this.editor) {
+        //   this.editor.revealLineInCenter(line);
+        //   this.editor.setPosition({ column: 1, lineNumber: line });
+        // }
+      }
+    }, 0);
   }
 
   goTo() {

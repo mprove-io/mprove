@@ -98,12 +98,15 @@
   <div class="h-full overflow-y-auto rounded">
     <code-editor
       *ngIf="panel === panelTree"
+      #codeEditor
       style="height: 100%"
       [(ngModel)]="content"
       [readonly]="nav?.isRepoProd === true || file?.isExist === false"
       [language]="lang"
       [languages]="languages"
       [theme]="theme"
+      [indentWithTab]="indentWithTab"
+      [indentUnit]="indentUnit"
       [extensions]="extensions"
       (ngModelChange)="onTextChanged({ isDiffEditor: false })"
     ></code-editor>
