@@ -117,7 +117,12 @@
     ></ng-monaco-editor> -->
 
     <diff-editor
-      *ngIf="panel !== panelTree"
+      *ngIf="
+        showDiff === true &&
+        panel !== panelTree &&
+        !!originalExtensions &&
+        !!modifiedExtensions
+      "
       style="height: 100%"
       [(ngModel)]="diffContent"
       [originalExtensions]="originalExtensions"

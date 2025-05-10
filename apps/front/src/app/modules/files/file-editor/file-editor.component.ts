@@ -8,6 +8,7 @@ import { EditorState, Extension } from '@codemirror/state';
 // import { MarkerSeverity } from 'monaco-editor';
 // import { setDiagnosticsOptions } from 'monaco-yaml';
 // import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
+import { Compartment } from '@codemirror/state';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, map, take, tap } from 'rxjs/operators';
 import { VS_LIGHT_THEME } from '~front/app/constants/code-themes/vs-light-theme';
@@ -37,9 +38,23 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   languages = languageData.languages;
   lang: string;
 
-  originalExtensions: Extension[] = [EditorState.readOnly.of(true)];
+  baseExtensions: Extension[] = [VS_LIGHT_THEME];
 
-  modifiedExtensions: Extension[] = [EditorState.readOnly.of(false)];
+  baseOriginalExtensions: Extension[] = [
+    ...this.baseExtensions,
+    EditorState.readOnly.of(true)
+  ];
+
+  baseModifiedExtensions: Extension[] = [
+    ...this.baseExtensions,
+    EditorState.readOnly.of(false)
+  ];
+
+  originalExtensions: Extension[];
+  modifiedExtensions: Extension[];
+
+  originalLanguageConf = new Compartment();
+  modifiedLanguageConf = new Compartment();
 
   line = 1;
 
@@ -96,6 +111,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   originalContent: string;
   content: string;
 
+  showDiff = false;
+
   diffContent: { original: string; modified: string } = {
     original: '',
     modified: ''
@@ -108,7 +125,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
   file: FileState;
   file$ = this.fileQuery.select().pipe(
-    tap(x => {
+    tap(async x => {
       this.file = x;
 
       this.originalContent = x.originalContent;
@@ -120,7 +137,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
         modified: this.content
       };
 
-      this.setEditorOptionsLanguage();
+      await this.setEditorOptionsLanguage();
       this.checkSelectedFile();
 
       this.cd.detectChanges();
@@ -191,7 +208,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     // this.monaco = await this.monacoService.initMonaco();
     // this.isLoadedMonaco = true;
 
-    this.setEditorOptionsLanguage();
+    await this.setEditorOptionsLanguage();
     this.refreshMarkers();
   }
 
@@ -222,7 +239,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   //   this.cd.detectChanges();
   // }
 
-  setEditorOptionsLanguage() {
+  async setEditorOptionsLanguage() {
     if (
       // this.isLoadedMonaco === false ||
       // common.isUndefined(this.editor) ||
@@ -230,6 +247,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     ) {
       return;
     }
+
+    this.showDiff = false;
 
     this.navQuery
       .select()
@@ -266,17 +285,33 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     let ext = ar.pop();
     let dotExt = `.${ext}`;
 
+    let language: any;
     if (
       constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0
     ) {
       this.lang = 'YAML';
+      language = this.languages.find((x: any) => x.name === this.lang);
     } else {
-      let language = this.languages.find(
+      language = this.languages.find(
         (x: any) => x.extensions.indexOf(ext) > -1
       );
 
       this.lang = language?.name;
     }
+
+    let loadedLanguage = await language.load();
+
+    console.log('loadedLanguage');
+    console.log(loadedLanguage);
+
+    this.originalExtensions = [
+      ...this.baseOriginalExtensions,
+      this.originalLanguageConf.of(loadedLanguage)
+    ];
+    this.modifiedExtensions = [
+      ...this.baseModifiedExtensions,
+      this.modifiedLanguageConf.of(loadedLanguage)
+    ];
 
     if (
       this.file.fileId === common.MPROVE_CONFIG_FILENAME ||
@@ -428,6 +463,12 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     // this.monaco.editor.setTheme(this.editorOptions.theme);
     // // workaround for diff editor
     // this.editor.updateOptions(this.editorOptions);
+    this.cd.detectChanges();
+
+    setTimeout(() => {
+      this.showDiff = true;
+      this.cd.detectChanges();
+    }, 0);
   }
 
   removeMarkers() {
