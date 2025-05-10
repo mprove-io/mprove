@@ -408,8 +408,18 @@
           *ngIf="panel === panelTree"
           class="flex"
           [ngClass]="{
-            'w-[37%]': !!secondFileNodeId,
-            'w-[30%]': !secondFileNodeId
+            'w-[37%]':
+              nav?.needValidate === false &&
+              !!repo &&
+              repo.conflicts.length === 0 &&
+              !!struct &&
+              struct.errors.length === 0 &&
+              !!secondFileNodeId,
+            'w-[30%]':
+              nav?.needValidate === true ||
+              repo?.conflicts?.length !== 0 ||
+              struct?.errors?.length !== 0 ||
+              !secondFileNodeId
           }"
         ></m-files-right>
       </div>

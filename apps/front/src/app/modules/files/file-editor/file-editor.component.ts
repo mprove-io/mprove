@@ -8,7 +8,9 @@ import { EditorState, Extension } from '@codemirror/state';
 // import { MarkerSeverity } from 'monaco-editor';
 // import { setDiagnosticsOptions } from 'monaco-yaml';
 // import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
+import { Diagnostic, linter } from '@codemirror/lint';
 import { Compartment } from '@codemirror/state';
+import { EditorView } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, map, take, tap } from 'rxjs/operators';
 import { VS_LIGHT_THEME } from '~front/app/constants/code-themes/vs-light-theme';
@@ -37,6 +39,10 @@ export class FileEditorComponent implements OnInit, OnDestroy {
 
   languages = languageData.languages;
   lang: string;
+
+  diagnostics: Diagnostic[] = [];
+
+  extensions: Extension[] = [];
 
   baseExtensions: Extension[] = [VS_LIGHT_THEME];
 
@@ -209,7 +215,7 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     // this.isLoadedMonaco = true;
 
     await this.setEditorOptionsLanguage();
-    this.refreshMarkers();
+    // this.refreshMarkers();
   }
 
   checkSelectedFile() {
@@ -472,6 +478,13 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   }
 
   removeMarkers() {
+    if (this.panel !== common.PanelEnum.Tree) {
+      return;
+    }
+
+    this.diagnostics = [];
+    this.createLinter();
+
     // if (this.isLoadedMonaco === false || common.isUndefined(this.editor)) {
     //   return;
     // }
@@ -484,6 +497,10 @@ export class FileEditorComponent implements OnInit, OnDestroy {
   }
 
   refreshMarkers() {
+    if (this.panel !== common.PanelEnum.Tree) {
+      return;
+    }
+
     // if (this.isLoadedMonaco === false || common.isUndefined(this.editor)) {
     //   return;
     // }
@@ -509,30 +526,37 @@ export class FileEditorComponent implements OnInit, OnDestroy {
         this.file = x;
       });
 
+    let tempDoc = this.getEditorDocument();
+
     if (this.repo.conflicts.length > 0) {
-      let conflictMarkers: any[] = [];
+      let conflictMarkers: Diagnostic[] = [];
+
       this.repo.conflicts
         .filter(x => x.fileId === this.file.fileId)
         .map(x => x.lineNumber)
         .forEach(cLineNumber => {
           if (cLineNumber !== 0) {
+            let line = tempDoc.line(cLineNumber);
+
             conflictMarkers.push({
-              startLineNumber: cLineNumber,
-              endLineNumber: cLineNumber,
-              startColumn: 1,
-              endColumn: 99,
-              message: `conflict`
-              // severity: MarkerSeverity.Error
+              from: line.from,
+              to: line.to,
+              message: `conflict`,
+              severity: 'error'
             });
           }
         });
+
+      this.diagnostics = conflictMarkers;
+
       // this.monaco.editor.setModelMarkers(
       //   this.editor.getModel(),
       //   'Conflicts',
       //   conflictMarkers
       // );
     } else {
-      let errorMarkers: any[] = [];
+      let errorMarkers: Diagnostic[] = [];
+
       this.struct.errors.forEach(error =>
         error.lines
           .filter(x => {
@@ -543,23 +567,37 @@ export class FileEditorComponent implements OnInit, OnDestroy {
           })
           .map(eLine => {
             if (eLine.lineNumber !== 0) {
+              let line = tempDoc.line(eLine.lineNumber);
+
               errorMarkers.push({
-                startLineNumber: eLine.lineNumber,
-                endLineNumber: eLine.lineNumber,
-                startColumn: 1,
-                endColumn: 99,
-                message: `${error.title}: ${error.message}`
-                // severity: MarkerSeverity.Error
+                from: line.from,
+                to: line.to,
+                message: `${error.title}: ${error.message}`,
+                severity: 'error'
               });
             }
           })
       );
+
+      this.diagnostics = errorMarkers;
+
       // this.monaco.editor.setModelMarkers(
       //   this.editor.getModel(),
       //   'MproveYAML',
       //   errorMarkers
       // );
     }
+
+    this.createLinter();
+  }
+
+  private getEditorDocument() {
+    const state = EditorState.create({ doc: this.content });
+    return state.doc;
+  }
+
+  createLinter() {
+    this.extensions = [linter((view: EditorView) => this.diagnostics)];
   }
 
   onTextChanged(item: { isDiffEditor: boolean }) {
@@ -567,10 +605,10 @@ export class FileEditorComponent implements OnInit, OnDestroy {
       this.content = this.diffContent.modified;
     }
 
-    this.removeMarkers();
-
     if (this.content === this.startText) {
       this.refreshMarkers();
+    } else {
+      this.removeMarkers();
     }
 
     if (!this.needSave && this.content !== this.startText) {
@@ -578,6 +616,8 @@ export class FileEditorComponent implements OnInit, OnDestroy {
     } else if (this.needSave && this.content === this.startText) {
       this.uiQuery.updatePart({ needSave: false });
     }
+
+    this.cd.detectChanges();
   }
 
   save() {
