@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   httpUrl:
-    window.location.hostname === 'localhost'
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === 'localhost:3003'
       ? `${window.location.protocol}//${window.location.hostname}:3000`
       : ''
 };
