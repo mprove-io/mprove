@@ -16,7 +16,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-let { languages } = require('@codemirror/language-data');
+import * as languageData from '@codemirror/language-data';
 
 @Component({
   selector: 'm-files-right',
@@ -25,7 +25,7 @@ let { languages } = require('@codemirror/language-data');
 export class FilesRightComponent implements OnInit {
   theme: Extension = VS_LIGHT_THEME;
 
-  languages = languages;
+  languages = languageData.languages;
   lang: string;
 
   repo: RepoState;
@@ -202,8 +202,6 @@ export class FilesRightComponent implements OnInit {
           0)
     ) {
       this.showGoTo = true;
-
-      let languageId = constants.YAML_LANGUAGE_ID;
     } else {
       this.showGoTo = false;
     }

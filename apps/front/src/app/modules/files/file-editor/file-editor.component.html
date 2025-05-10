@@ -5,43 +5,6 @@
       >{{ file?.name }}</div
     >
 
-    <!-- <div
-      class="text-s1 ml-5 flex flex-shrink-0 select-none items-center text-lg font-semibold"
-      >File</div
-    > -->
-
-    <!-- <div class="ml-[36px] min-w-[2px] max-w-[500px] flex-grow">
-      <form [formGroup]="mainFileForm" class="w-full">
-        <ng-select
-          #mainFileSelect
-          data-cy="fileEditorMainFileSelect"
-          class="main-file-select w-full text-base"
-          [items]="mainFileItems"
-          [searchable]="true"
-          [clearable]="false"
-          [searchFn]="mainFileSearchFn"
-          (change)="mainFileChange()"
-          (keyup.esc)="$event.stopImmediatePropagation(); mainFileSelect.blur()"
-          (keyup.enter)="
-            $event.stopImmediatePropagation(); mainFileSelect.blur()
-          "
-          [dropdownPosition]="'bottom'"
-          appendTo="body"
-          bindLabel="label"
-          bindValue="fileId"
-          formControlName="mainFile"
-        >
-          <ng-template ng-label-tmp let-item="item">
-            <div class="truncate">{{ item.label }}</div>
-          </ng-template>
-
-          <ng-template ng-option-tmp let-item="item">
-            <div class="truncate">{{ item.label }}</div>
-          </ng-template>
-        </ng-select>
-      </form>
-    </div> -->
-
     <div
       tp="Selected file has error"
       [tpIsEnabled]="isSelectedFileValid === false"
@@ -132,17 +95,38 @@
     <div class="flex flex-row"></div>
   </div>
 
-  <div class="h-full rounded">
-    <ng-monaco-editor
+  <div class="h-full overflow-y-auto rounded">
+    <code-editor
+      *ngIf="panel === panelTree"
+      style="height: 100%"
+      [(ngModel)]="content"
+      [readonly]="nav?.isRepoProd === true || file?.isExist === false"
+      [language]="lang"
+      [languages]="languages"
+      [theme]="theme"
+      (ngModelChange)="onTextChanged({ isDiffEditor: false })"
+    ></code-editor>
+
+    <!-- <ng-monaco-editor
       *ngIf="panel === panelTree"
       data-cy="fileEditorMonacoEditor"
       [options]="editorOptions"
       [(ngModel)]="content"
       (editorChange)="onEditorChange($event)"
       (ngModelChange)="onTextChanged()"
-    ></ng-monaco-editor>
+    ></ng-monaco-editor> -->
 
-    <ng-monaco-diff-editor
+    <diff-editor
+      *ngIf="panel !== panelTree"
+      style="height: 100%"
+      [(ngModel)]="diffContent"
+      [originalExtensions]="originalExtensions"
+      [modifiedExtensions]="modifiedExtensions"
+      [disabled]="nav?.isRepoProd === true || file?.isExist === false"
+      (modifiedValueChange)="onTextChanged({ isDiffEditor: true })"
+    ></diff-editor>
+
+    <!-- <ng-monaco-diff-editor
       *ngIf="panel !== panelTree"
       data-cy="fileEditorMonacoDiffEditor"
       [options]="diffEditorOptions"
@@ -150,7 +134,7 @@
       [(ngModel)]="content"
       (editorChange)="onEditorChange($event)"
       (ngModelChange)="onTextChanged()"
-    ></ng-monaco-diff-editor>
+    ></ng-monaco-diff-editor> -->
   </div>
 </div>
 
