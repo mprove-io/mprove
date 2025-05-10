@@ -137,9 +137,8 @@
       </div>
     </div>
 
-    <div class="h-full overflow-y-auto rounded">
+    <div class="h-full overflow-y-auto rounded" *ngIf="isShowSpinner === false">
       <code-editor
-        *ngIf="isShowSpinner === false"
         style="height: 100%"
         [(ngModel)]="secondFileContent"
         [readonly]="true"
