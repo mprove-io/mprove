@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Extension } from '@codemirror/state';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, map, take, tap } from 'rxjs/operators';
-import { LIGHT_THEME_EXTENDED } from '~front/app/constants/light-theme-extended';
+import { VS_LIGHT_THEME } from '~front/app/constants/code-themes/vs-light-theme';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
@@ -23,7 +23,7 @@ let { languages } = require('@codemirror/language-data');
   templateUrl: './files-right.component.html'
 })
 export class FilesRightComponent implements OnInit {
-  theme: Extension = LIGHT_THEME_EXTENDED;
+  theme: Extension = VS_LIGHT_THEME;
 
   languages = languages;
   lang: string;
