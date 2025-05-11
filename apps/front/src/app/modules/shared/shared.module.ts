@@ -3,7 +3,6 @@ import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyDirective } from '@ngneat/helipopper';
-import { MonacoEditorModule } from 'ng-monaco-editor';
 import { ColorSketchModule } from 'ngx-color/sketch';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -258,7 +257,6 @@ let sharedComponents = [
     NgxSpinnerModule,
     TippyDirective,
     UiSwitchModule,
-    MonacoEditorModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     })

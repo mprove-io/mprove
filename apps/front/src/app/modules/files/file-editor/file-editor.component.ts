@@ -10,11 +10,7 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import * as languageData from '@codemirror/language-data';
 import { EditorState, Extension } from '@codemirror/state';
-// import { JSONSchema7 } from 'json-schema';
-// import type { editor as editorType } from 'monaco-editor';
-// import { MarkerSeverity } from 'monaco-editor';
-// import { setDiagnosticsOptions } from 'monaco-yaml';
-// import { MonacoEditorOptions, MonacoProviderService } from 'ng-monaco-editor';
+
 import { CodeEditor } from '@acrodata/code-editor';
 import { Diagnostic, linter } from '@codemirror/lint';
 import { Compartment } from '@codemirror/state';
@@ -37,8 +33,7 @@ import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-file-editor',
-  templateUrl: './file-editor.component.html',
-  styleUrls: ['file-editor.component.scss']
+  templateUrl: './file-editor.component.html'
 })
 export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   panelTree = common.PanelEnum.Tree;
@@ -73,40 +68,6 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   modifiedLanguageConf = new Compartment();
 
   line: number;
-
-  // isLoadedMonaco = false;
-
-  // editor: editorType.IStandaloneCodeEditor = null;
-
-  // monaco: typeof import('monaco-editor');
-
-  // diffEditorOptions: editorType.IDiffEditorOptions = {
-  //   renderValidationDecorations: 'on',
-  //   ignoreTrimWhitespace: false,
-  //   fixedOverflowWidgets: true,
-  //   fontSize: 16,
-  //   renderSideBySide: true
-  // };
-
-  // editorOptions: MonacoEditorOptions = {
-  //   // autoIndent: 'keep',
-  //   renderValidationDecorations: 'off',
-  //   fixedOverflowWidgets: true,
-  //   theme: constants.TEXTMATE_THEME,
-  //   fontSize: 16,
-  //   tabSize: 2,
-  //   padding: {
-  //     top: 12
-  //   }
-  //   // automaticLayout: true,
-  //   // folding: true,
-  //   // wordWrap: 'on',
-  //   // minimap: { enabled: false },
-  //   // lineNumbers: 'on',
-  //   // scrollbar: {
-  //   //   alwaysConsumeMouseWheel: false
-  //   // }
-  // };
 
   showGoTo = false;
 
@@ -217,15 +178,11 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     private apiService: ApiService,
     private confirmService: ConfirmService,
     private navigateService: NavigateService,
-    private route: ActivatedRoute // , // private monacoService: MonacoProviderService
+    private route: ActivatedRoute
   ) {}
 
   async ngOnInit() {
-    // this.monaco = await this.monacoService.initMonaco();
-    // this.isLoadedMonaco = true;
-
     await this.setEditorOptionsLanguage();
-    // this.refreshMarkers();
   }
 
   ngAfterViewInit() {
@@ -247,24 +204,8 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       : errorFileIds.indexOf(this.file.fileId) < 0;
   }
 
-  // async onEditorChange(editor: editorType.IStandaloneCodeEditor) {
-  //   this.editor = editor;
-
-  //   if (this.isLoadedMonaco === false) {
-  //     return;
-  //   }
-
-  //   this.setEditorOptionsLanguage();
-  //   this.refreshMarkers();
-  //   this.cd.detectChanges();
-  // }
-
   async setEditorOptionsLanguage() {
-    if (
-      // this.isLoadedMonaco === false ||
-      // common.isUndefined(this.editor) ||
-      common.isUndefined(this.file?.name)
-    ) {
+    if (common.isUndefined(this.file?.name)) {
       return;
     }
 
@@ -343,13 +284,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     ) {
       this.showGoTo = true;
 
-      // let languageId = constants.YAML_LANGUAGE_ID;
-
-      // // this.monaco.languages.register({ id: languageId });
-      // this.monaco.languages.setMonarchTokensProvider(
-      //   languageId,
-      //   constants.BLOCKML_LANGUAGE_DATA
-      // );
+      // import { JSONSchema7 } from 'json-schema';
 
       // let schema: JSONSchema7 =
       //   dotExt === common.FileExtensionEnum.View
@@ -370,6 +305,8 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       //     ? common.CONFIG_SCHEMA
       //     : undefined;
 
+      // import { setDiagnosticsOptions } from 'monaco-yaml';
+
       // setDiagnosticsOptions({
       //   validate: true,
       //   completion: true,
@@ -386,103 +323,12 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       //     : []
       // });
 
-      // this.monaco.editor.setModelLanguage(this.editor.getModel(), languageId);
-
-      // let patch: editorType.IStandaloneEditorConstructionOptions = {
-      //   theme: constants.BLOCKML_THEME,
-      //   renderValidationDecorations: 'on',
-      //   readOnly: this.nav.isRepoProd === true || this.file.isExist === false,
-      //   snippetSuggestions: 'none',
-      //   suggestOnTriggerCharacters: true,
-      //   wordBasedSuggestions: false
-      //   // wordBasedSuggestionsOnlySameLanguage: true,
-      //   // quickSuggestions: false,
-      //   // suggestFontSize:  undefined,
-      //   // suggestLineHeight: undefined,
-      //   // suggestSelection: undefined,
-      //   // quickSuggestionsDelay: undefined,
-      //   // acceptSuggestionOnCommitCharacter: undefined,
-      //   // acceptSuggestionOnEnter: undefined,
-      //   // inlineSuggest: undefined,
-      //   // suggest: undefined,
-      // };
-      // this.editorOptions = Object.assign({}, this.editorOptions, patch);
-
-      // let pc: monacoLanguages.CompletionItemProvider = {
-      //   triggerCharacters: [' ', ':'],
-
-      //   async provideCompletionItems(model, position) {
-      //     let mySuggestions: monacoLanguages.CompletionItem[] = [
-      //       {
-      //         label: '"label10"',
-      //         kind: 1,
-      //         // kind: monaco.languages.CompletionItemKind.Function,
-      //         documentation: '...',
-      //         insertText: '"abc": "*"',
-      //         range: {
-      //           startLineNumber: 1,
-      //           endLineNumber: 2,
-      //           startColumn: 1,
-      //           endColumn: 10
-      //         }
-      //       }
-      //     ];
-
-      //     return {
-      //       // incomplete: info.isIncomplete,
-      //       // suggestions: items
-      //       suggestions: mySuggestions
-      //     };
-      //   }
-      // };
-
-      // this.monaco.languages.registerCompletionItemProvider(languageId, pc);
-
       this.refreshMarkers();
     } else {
       this.showGoTo = false;
 
-      // let languageId =
-      //   this.monaco.languages
-      //     .getLanguages()
-      //     .find(x => x.extensions?.indexOf(dotExt) > -1)?.id ||
-      //   constants.MARKDOWN_LANGUAGE_ID;
-
-      // if (languageId === constants.YAML_LANGUAGE_ID) {
-      //   // this.monaco.languages.register({ id: languageId });
-      //   this.monaco.languages.setMonarchTokensProvider(
-      //     languageId,
-      //     constants.YAML_LANGUAGE_DATA
-      //   );
-
-      //   setDiagnosticsOptions({
-      //     validate: false,
-      //     completion: false,
-      //     format: true,
-      //     schemas: []
-      //   });
-      // }
-
-      // this.monaco.editor.setModelLanguage(this.editor.getModel(), languageId);
-
-      // let patch: editorType.IStandaloneEditorConstructionOptions = {
-      //   theme: constants.TEXTMATE_THEME,
-      //   renderValidationDecorations: 'off',
-      //   readOnly: this.nav.isRepoProd === true || this.file.isExist === false,
-      //   snippetSuggestions: 'none',
-      //   suggestOnTriggerCharacters: false,
-      //   wordBasedSuggestions: false,
-      //   quickSuggestions: false
-      // };
-
-      // this.editorOptions = Object.assign({}, this.editorOptions, patch);
-
       this.removeMarkers();
     }
-    // // workaround for diff editor
-    // this.monaco.editor.setTheme(this.editorOptions.theme);
-    // // workaround for diff editor
-    // this.editor.updateOptions(this.editorOptions);
     this.cd.detectChanges();
 
     setTimeout(() => {
@@ -498,26 +344,12 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.diagnostics = [];
     this.createLinter();
-
-    // if (this.isLoadedMonaco === false || common.isUndefined(this.editor)) {
-    //   return;
-    // }
-    // this.monaco.editor.setModelMarkers(this.editor.getModel(), 'Conflicts', []);
-    // this.monaco.editor.setModelMarkers(
-    //   this.editor.getModel(),
-    //   'MproveYAML',
-    //   []
-    // );
   }
 
   refreshMarkers() {
     if (this.panel !== common.PanelEnum.Tree) {
       return;
     }
-
-    // if (this.isLoadedMonaco === false || common.isUndefined(this.editor)) {
-    //   return;
-    // }
 
     this.repoQuery
       .select()
@@ -562,12 +394,6 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         });
 
       this.diagnostics = conflictMarkers;
-
-      // this.monaco.editor.setModelMarkers(
-      //   this.editor.getModel(),
-      //   'Conflicts',
-      //   conflictMarkers
-      // );
     } else {
       let errorMarkers: Diagnostic[] = [];
 
@@ -594,12 +420,6 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       );
 
       this.diagnostics = errorMarkers;
-
-      // this.monaco.editor.setModelMarkers(
-      //   this.editor.getModel(),
-      //   'MproveYAML',
-      //   errorMarkers
-      // );
     }
 
     this.createLinter();

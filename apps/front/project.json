@@ -17,7 +17,6 @@
           "class-transformer-validator",
           "class-transformer",
           "clone-deep",
-          "monaco-editor",
           "mobx",
           "google-libphonenumber"
         ],
@@ -30,7 +29,6 @@
         "assets": ["apps/front/src/favicon.svg", "apps/front/src/assets"],
         "styles": [
           "apps/front/src/styles.scss",
-          "./node_modules/monaco-editor/min/vs/editor/editor.main.css",
           "./node_modules/ngx-ui-switch/ui-switch.component.scss",
           "./node_modules/ngx-spinner/animations/ball-clip-rotate.css",
           "./node_modules/ngx-spinner/animations/ball-pulse.css",

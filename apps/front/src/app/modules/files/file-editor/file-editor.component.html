@@ -99,6 +99,7 @@
     <code-editor
       *ngIf="panel === panelTree"
       #codeEditor
+      data-cy="fileEditorCodeEditor"
       style="height: 100%"
       [(ngModel)]="content"
       [readonly]="nav?.isRepoProd === true || file?.isExist === false"
@@ -110,15 +111,6 @@
       [extensions]="extensions"
       (ngModelChange)="onTextChanged({ isDiffEditor: false })"
     ></code-editor>
-
-    <!-- <ng-monaco-editor
-      *ngIf="panel === panelTree"
-      data-cy="fileEditorMonacoEditor"
-      [options]="editorOptions"
-      [(ngModel)]="content"
-      (editorChange)="onEditorChange($event)"
-      (ngModelChange)="onTextChanged()"
-    ></ng-monaco-editor> -->
 
     <diff-editor
       *ngIf="
@@ -134,16 +126,6 @@
       [disabled]="nav?.isRepoProd === true || file?.isExist === false"
       (modifiedValueChange)="onTextChanged({ isDiffEditor: true })"
     ></diff-editor>
-
-    <!-- <ng-monaco-diff-editor
-      *ngIf="panel !== panelTree"
-      data-cy="fileEditorMonacoDiffEditor"
-      [options]="diffEditorOptions"
-      [originalValue]="originalContent"
-      [(ngModel)]="content"
-      (editorChange)="onEditorChange($event)"
-      (ngModelChange)="onTextChanged()"
-    ></ng-monaco-diff-editor> -->
   </div>
 </div>
 

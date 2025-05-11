@@ -7,7 +7,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyDirective } from '@ngneat/helipopper';
-import { MonacoEditorModule } from 'ng-monaco-editor';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
@@ -50,7 +49,6 @@ import { QueryOptionsComponent } from './query-options/query-options.component';
     UiSwitchModule,
     NgxSpinnerModule,
     TippyDirective,
-    MonacoEditorModule,
     ScrollingModule,
     CodeEditor
   ]

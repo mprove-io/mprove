@@ -15,7 +15,6 @@ import { provideRouter } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { enableElfProdMode } from '@ngneat/elf';
 import { provideTippyConfig } from '@ngneat/helipopper';
-import { MonacoEditorModule, MonacoProviderService } from 'ng-monaco-editor';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
@@ -33,7 +32,6 @@ import { ProjectModule } from './app/modules/project/project.module';
 import { ReportsModule } from './app/modules/reports/reports.module';
 import { SharedModule } from './app/modules/shared/shared.module';
 import { SpecialModule } from './app/modules/special/special.module';
-import { CustomMonacoProviderService } from './app/services/custom-monaco-provider.service';
 import { ErrorHandlerService } from './app/services/error-handler.service';
 import { environment } from './environments/environment';
 
@@ -58,9 +56,6 @@ bootstrapApplication(AppComponent, {
       ChartsModule,
       NgxSpinnerModule,
       BrowserAnimationsModule,
-      MonacoEditorModule.forRoot({
-        dynamicImport: () => import('monaco-editor')
-      }),
       SharedModule,
       SpecialModule,
       ReactiveFormsModule,
@@ -115,10 +110,6 @@ bootstrapApplication(AppComponent, {
     }),
     NgxImageCompressService,
     Title,
-    {
-      provide: MonacoProviderService,
-      useClass: CustomMonacoProviderService
-    },
     {
       provide: ErrorHandler,
       useClass: ErrorHandlerService

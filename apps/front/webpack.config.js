@@ -1,6 +1,6 @@
 const { merge } = require('webpack-merge');
 
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+// const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 module.exports = (config, context) => {
@@ -11,18 +11,18 @@ module.exports = (config, context) => {
   });
 
   config.module.rules.push(
-    {
-      test: /node_modules[/\\]monaco-editor[/\\]esm[/\\].+\.css$/i,
-      use: [
-        'style-loader',
-        {
-          loader: 'css-loader',
-          options: {
-            url: false
-          }
-        }
-      ]
-    },
+    // {
+    //   test: /node_modules[/\\]monaco-editor[/\\]esm[/\\].+\.css$/i,
+    //   use: [
+    //     'style-loader',
+    //     {
+    //       loader: 'css-loader',
+    //       options: {
+    //         url: false
+    //       }
+    //     }
+    //   ]
+    // },
     {
       test: /\.ttf$/,
       use: ['file-loader']
@@ -32,19 +32,19 @@ module.exports = (config, context) => {
   return merge({
     ...config,
     plugins: [
-      ...config.plugins,
-      new MonacoWebpackPlugin({
-        customLanguages: [
-          {
-            label: 'yaml',
-            entry: 'monaco-yaml',
-            worker: {
-              id: 'monaco-yaml/yamlWorker',
-              entry: 'monaco-yaml/yaml.worker'
-            }
-          }
-        ]
-      })
+      ...config.plugins
+      // new MonacoWebpackPlugin({
+      //   customLanguages: [
+      //     {
+      //       label: 'yaml',
+      //       entry: 'monaco-yaml',
+      //       worker: {
+      //         id: 'monaco-yaml/yamlWorker',
+      //         entry: 'monaco-yaml/yaml.worker'
+      //       }
+      //     }
+      //   ]
+      // })
     ]
   });
 };

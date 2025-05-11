@@ -73,11 +73,11 @@ describe('integra', () => {
     cy.get('[data-cy=filesCommitButton]').should('be.disabled');
     cy.get('[data-cy=filesPushButton]').should('be.disabled');
 
-    cy.get('[data-cy=fileEditorMonacoEditor]').click();
+    cy.get('[data-cy=fileEditorCodeEditor]').click();
 
     cy.get('.view-line').contains(text).should('not.exist');
 
-    cy.get('[data-cy=fileEditorMonacoEditor]').click();
+    cy.get('[data-cy=fileEditorCodeEditor]').click();
     cy.focused().clear({ force: true }).type(text);
 
     cy.get('[data-cy=fileEditorSaveButton]').should('be.enabled');

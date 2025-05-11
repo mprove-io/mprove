@@ -6,7 +6,6 @@ import { RouterModule } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyDirective } from '@ngneat/helipopper';
 import { AgGridModule } from 'ag-grid-angular';
-import { MonacoEditorModule } from 'ng-monaco-editor';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
@@ -61,7 +60,6 @@ import { RowComponent } from './row/row.component';
     UiSwitchModule,
     NgxSpinnerModule,
     TippyDirective,
-    MonacoEditorModule,
     AgGridModule
   ]
 })

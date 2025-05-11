@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import type { editor as editorType } from 'monaco-editor';
 
-export const BLOCKML_THEME_DATA: editorType.IStandaloneThemeData = {
+// export const BLOCKML_THEME_DATA: editor.IStandaloneThemeData = {
+export const BLOCKML_THEME_DATA: any = {
   base: 'vs',
   inherit: true,
   rules: [
