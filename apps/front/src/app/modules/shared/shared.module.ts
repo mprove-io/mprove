@@ -98,6 +98,8 @@ import { SettingsIconComponent } from './icons/settings-icon/settings-icon.compo
 import { TableCellsIconComponent } from './icons/table-cells-icon/table-cells-icon.component';
 import { TrashIconComponent } from './icons/trash-icon/trash-icon.component';
 import { TreeIconComponent } from './icons/tree-icon/tree-icon.component';
+import { UnfoldLessIconComponent } from './icons/unfold-less-icon/unfold-less-icon.component';
+import { UnfoldMoreIconComponent } from './icons/unfold-more-icon/unfold-more-icon.component';
 import { UserIconComponent } from './icons/user-icon/user-icon.component';
 import { ViewGridIconComponent } from './icons/view-grid-icon/view-grid-icon.component';
 import { ViewListIconComponent } from './icons/view-list-icon/view-list-icon.component';
@@ -230,6 +232,8 @@ let sharedComponents = [
   ChartSingleIconComponent,
   LeftPanelIconComponent,
   RightPanelIconComponent,
+  UnfoldMoreIconComponent,
+  UnfoldLessIconComponent,
   BottomPanelIconComponent,
   LinkIconComponent,
   LinkOffIconComponent,

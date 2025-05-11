@@ -457,7 +457,7 @@
 
               <div
                 *ngIf="!!model?.modelId"
-                class="ml-5 flex flex-shrink-0 cursor-pointer flex-row items-center"
+                class="hover:bg-m200 ml-5 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
                 (click)="toggleFilterByModel()"
                 tp="Filter Charts by selected Model"
               >
@@ -760,7 +760,7 @@
                 <button
                   *ngIf="mconfig?.select.length > 0"
                   data-cy="modelShowChartButton"
-                  class="text-s500 ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  class="text-s500 hover:bg-m200 ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                   (click)="showChart($event)"
                 >
                   <m-chart-zoom-icon></m-chart-zoom-icon>
@@ -1414,6 +1414,21 @@
                       <div class="ml-2 text-lg"> Edit File</div>
                     </button>
                   </div>
+
+                  <div class="flex flex-1"></div>
+
+                  <button
+                    (click)="toggleChartPanel()"
+                    class="text-s1 focus-none hover:bg-m200 ml-5 mr-9 flex h-9 w-9 items-center justify-center rounded"
+                  >
+                    <m-unfold-more-icon
+                      *ngIf="chartIsExpanded === true"
+                    ></m-unfold-more-icon>
+
+                    <m-unfold-less-icon
+                      *ngIf="chartIsExpanded === false"
+                    ></m-unfold-less-icon>
+                  </button>
                 </div>
               </div>
 
