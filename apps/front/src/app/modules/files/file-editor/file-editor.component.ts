@@ -33,7 +33,8 @@ import { constants } from '~front/barrels/constants';
 
 @Component({
   selector: 'm-file-editor',
-  templateUrl: './file-editor.component.html'
+  templateUrl: './file-editor.component.html',
+  styleUrls: ['./file-editor.component.scss']
 })
 export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   panelTree = common.PanelEnum.Tree;

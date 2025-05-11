@@ -1,5 +1,8 @@
 <div class="flex h-full w-full flex-col">
-  <div *ngIf="isShowSpinner === false" class="h-full overflow-y-auto rounded">
+  <div
+    *ngIf="isShowSpinner === false"
+    class="ml-5 h-full overflow-y-auto rounded"
+  >
     <code-editor
       style="height: 100%"
       [(ngModel)]="content"

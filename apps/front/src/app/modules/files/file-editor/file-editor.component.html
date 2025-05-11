@@ -97,6 +97,7 @@
 
   <div class="h-full overflow-y-auto rounded">
     <code-editor
+      class="ml-6 mr-6 outline-none"
       *ngIf="panel === panelTree"
       #codeEditor
       data-cy="fileEditorCodeEditor"
@@ -113,6 +114,7 @@
     ></code-editor>
 
     <diff-editor
+      class="ml-6 mr-6"
       *ngIf="
         showDiff === true &&
         panel !== panelTree &&
