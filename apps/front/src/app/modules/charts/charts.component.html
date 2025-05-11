@@ -457,15 +457,13 @@
 
               <div
                 *ngIf="!!model?.modelId"
-                class="hover:bg-m200 ml-5 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
+                class="hover:bg-m200 text-s500 ml-5 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
                 (click)="toggleFilterByModel()"
                 tp="Filter Charts by selected Model"
               >
                 <m-filter-icon
-                  [ngClass]="{
-                    'text-s500': isFilterByModel === true,
-                    'text-s300': isFilterByModel === false
-                  }"
+                  class="flex h-6 w-6 flex-shrink-0"
+                  [isFilled]="isFilterByModel === true"
                 ></m-filter-icon>
 
                 <!-- <div
