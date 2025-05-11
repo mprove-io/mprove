@@ -83,19 +83,19 @@
 
               <div class="flex-grow"></div>
 
-              <div
-                class="hover:bg-m200 ml-5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded"
-                [ngClass]="{
-                  'invisible group-hover:visible':
-                    secondFileNodeId !== fileItem.fileNodeId
-                }"
-                (click)="rightOnClick($event, fileItem.fileNodeId)"
-              >
-                <m-right-panel-icon
-                  class="text-s500"
-                  [isFilled]="secondFileNodeId === fileItem.fileNodeId"
-                ></m-right-panel-icon>
-              </div>
+              <m-files-right-panel-toggle
+                class="ml-5"
+                [fileNodeId]="fileItem.fileNodeId"
+                [secondFileNodeId]="secondFileNodeId"
+                [needValidate]="nav?.needValidate === true"
+                [repoConflictsIsEmpty]="repo?.conflicts?.length === 0"
+                [structErrorsIsEmpty]="struct?.errors?.length === 0"
+                [isDisabled]="
+                  nav?.needValidate === true ||
+                  repo?.conflicts?.length > 0 ||
+                  struct?.errors?.length > 0
+                "
+              ></m-files-right-panel-toggle>
             </div>
           </div>
 
@@ -194,20 +194,20 @@
 
                     <div class="flex-grow"></div>
 
-                    <div
+                    <m-files-right-panel-toggle
                       *ngIf="node.data.isFolder === false"
-                      class="hover:bg-m200 ml-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded"
-                      [ngClass]="{
-                        'invisible group-hover:visible':
-                          secondFileNodeId !== node.data.id
-                      }"
-                      (click)="rightOnClick($event, node.data.id)"
-                    >
-                      <m-right-panel-icon
-                        class="text-s500"
-                        [isFilled]="secondFileNodeId === node.data.id"
-                      ></m-right-panel-icon>
-                    </div>
+                      class="ml-3"
+                      [fileNodeId]="node.data.id"
+                      [secondFileNodeId]="secondFileNodeId"
+                      [needValidate]="nav?.needValidate === true"
+                      [repoConflictsIsEmpty]="repo?.conflicts?.length === 0"
+                      [structErrorsIsEmpty]="struct?.errors?.length === 0"
+                      [isDisabled]="
+                        nav?.needValidate === true ||
+                        repo?.conflicts?.length > 0 ||
+                        struct?.errors?.length > 0
+                      "
+                    ></m-files-right-panel-toggle>
 
                     <div
                       class="ml-3 h-9 w-9 flex-shrink-0"

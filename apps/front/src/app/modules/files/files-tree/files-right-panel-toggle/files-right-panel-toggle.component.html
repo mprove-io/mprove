@@ -1,0 +1,40 @@
+<div
+  [tp]="templateRightPanel"
+  [tpIsEnabled]="isDisabled === true"
+  class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded"
+  [ngClass]="{
+    'invisible group-hover:visible': secondFileNodeId !== fileNodeId,
+    'hover:bg-m200 cursor-pointer': isDisabled === false,
+    'cursor-default': isDisabled === true
+  }"
+>
+  <button
+    class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded"
+    (click)="rightOnClick($event, fileNodeId)"
+    [disabled]="isDisabled === true"
+  >
+    <m-right-panel-icon
+      class="text-s500"
+      [isFilled]="secondFileNodeId === fileNodeId"
+    ></m-right-panel-icon>
+  </button>
+</div>
+
+<ng-template #templateRightPanel>
+  <div *ngIf="needValidate === true"
+    >Need to validate files to enable right panel</div
+  >
+
+  <div *ngIf="needValidate === false && repoConflictsIsEmpty === false"
+    >Need to resolve conflicts to enable right panel</div
+  >
+
+  <div
+    *ngIf="
+      needValidate === false &&
+      repoConflictsIsEmpty === true &&
+      structErrorsIsEmpty === false
+    "
+    >Need to resolve errors to enable right panel</div
+  >
+</ng-template>
