@@ -1,3 +1,4 @@
+import { CodeEditor } from '@acrodata/code-editor';
 import { TreeModule } from '@ali-hm/angular-tree-component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CommonModule } from '@angular/common';
@@ -22,6 +23,7 @@ import { ModelTreeComponent } from './model-tree/model-tree.component';
 import { ModelComponent } from './model/model.component';
 import { ModelsListComponent } from './models-list/models-list.component';
 import { PanelTitleComponent } from './panel-title/panel-title.component';
+import { QueryInfoViewerComponent } from './query-info-viewer/query-info-viewer.component';
 import { QueryOptionsComponent } from './query-options/query-options.component';
 import { SqlComponent } from './sql/sql.component';
 import { YamlComponent } from './yaml/yaml.component';
@@ -36,6 +38,7 @@ import { YamlComponent } from './yaml/yaml.component';
     ChartComponent,
     PanelTitleComponent,
     SqlComponent,
+    QueryInfoViewerComponent,
     YamlComponent,
     JsViewerComponent,
     JsonViewerComponent,
@@ -56,7 +59,8 @@ import { YamlComponent } from './yaml/yaml.component';
     NgxSpinnerModule,
     TippyDirective,
     MonacoEditorModule,
-    ScrollingModule
+    ScrollingModule,
+    CodeEditor
   ]
 })
 export class ChartsModule {}

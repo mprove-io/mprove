@@ -1,0 +1,33 @@
+<div class="flex h-full w-full flex-col">
+  <div *ngIf="isShowSpinner === false" class="h-full overflow-y-auto rounded">
+    <code-editor
+      style="height: 100%"
+      [(ngModel)]="content"
+      [readonly]="true"
+      [language]="lang"
+      [languages]="languages"
+      [theme]="theme"
+    ></code-editor>
+  </div>
+
+  <div
+    *ngIf="isShowSpinner === true"
+    class="flex h-full w-full items-center justify-center"
+  >
+    <div class="relative flex h-9 w-9 flex-shrink-0">
+      <ngx-spinner
+        [name]="spinnerName"
+        color="#0084d1"
+        bdColor="#00000000"
+        size="default"
+        type="ball-clip-rotate"
+        [fullScreen]="false"
+        [disableAnimation]="true"
+        [zIndex]="99998"
+      >
+      </ngx-spinner>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="chart$ | async"></div>
