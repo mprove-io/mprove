@@ -306,7 +306,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       //     ? common.CONFIG_SCHEMA
       //     : undefined;
 
-      // import { setDiagnosticsOptions } from 'monaco-yaml';
+      // import { setDiagnosticsOptions } from 'monaco-yaml'
 
       // setDiagnosticsOptions({
       //   validate: true,
