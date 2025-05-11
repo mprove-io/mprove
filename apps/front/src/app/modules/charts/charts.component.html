@@ -1471,53 +1471,6 @@
                       [jsContent]="jsContent"
                       [jsonContent]="mconfig.storePart?.reqJsonParts"
                     ></m-query-info-viewer>
-
-                    <!-- <m-yaml
-                      *ngIf="
-                        [
-                          queryPartEnum.ModelYaml,
-                          queryPartEnum.TileYaml
-                        ].indexOf(queryPartForm.controls['queryPart'].value) >
-                        -1
-                      "
-                      [queryPart]="queryPartForm.controls['queryPart'].value"
-                      [modelFilePath]="model.filePath"
-                    ></m-yaml> -->
-
-                    <!-- <m-sql
-                      *ngIf="
-                        mconfig.isStoreModel === false &&
-                        queryPartForm.controls['queryPart'].value ===
-                          queryPartEnum.MainSql
-                      "
-                    ></m-sql> -->
-
-                    <!-- <m-js-viewer
-                      *ngIf="
-                        mconfig.isStoreModel === true &&
-                        [
-                          queryPartEnum.StoreReqTemplate,
-                          queryPartEnum.StoreReqFunction
-                        ].indexOf(queryPartForm.controls['queryPart'].value) >
-                          -1
-                      "
-                      [jsContent]="jsContent"
-                    ></m-js-viewer> -->
-
-                    <!-- <m-json-viewer
-                      *ngIf="
-                        mconfig.isStoreModel === true &&
-                        [queryPartEnum.StoreReqJsonParts].indexOf(
-                          queryPartForm.controls['queryPart'].value
-                        ) > -1
-                      "
-                      [jsonContent]="
-                        queryPartForm.controls['queryPart'].value ===
-                        queryPartEnum.StoreReqJsonParts
-                          ? mconfig.storePart?.reqJsonParts
-                          : undefined
-                      "
-                    ></m-json-viewer> -->
                   </div>
                 </div>
               </div>

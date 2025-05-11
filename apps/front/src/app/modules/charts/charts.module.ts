@@ -15,8 +15,6 @@ import { ChartOptionsComponent } from './chart-options/chart-options.component';
 import { ChartComponent } from './chart/chart.component';
 import { ChartsListComponent } from './charts-list/charts-list.component';
 import { ChartsComponent } from './charts.component';
-import { JsViewerComponent } from './js-viewer/js-viewer.component';
-import { JsonViewerComponent } from './json-viewer/json-viewer.component';
 import { ModelFiltersComponent } from './model-filters/model-filters.component';
 import { FieldOptionsComponent } from './model-tree/field-options/field-options.component';
 import { ModelTreeComponent } from './model-tree/model-tree.component';
@@ -25,8 +23,6 @@ import { ModelsListComponent } from './models-list/models-list.component';
 import { PanelTitleComponent } from './panel-title/panel-title.component';
 import { QueryInfoViewerComponent } from './query-info-viewer/query-info-viewer.component';
 import { QueryOptionsComponent } from './query-options/query-options.component';
-import { SqlComponent } from './sql/sql.component';
-import { YamlComponent } from './yaml/yaml.component';
 
 @NgModule({
   declarations: [
@@ -37,11 +33,7 @@ import { YamlComponent } from './yaml/yaml.component';
     ModelTreeComponent,
     ChartComponent,
     PanelTitleComponent,
-    SqlComponent,
     QueryInfoViewerComponent,
-    YamlComponent,
-    JsViewerComponent,
-    JsonViewerComponent,
     FieldOptionsComponent,
     ModelFiltersComponent,
     QueryOptionsComponent,
