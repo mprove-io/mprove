@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
+import { Extension } from '@codemirror/state';
+import { EditorView } from '@codemirror/view';
 import { tags as t } from '@lezer/highlight';
+import { indentationMarkers } from '@replit/codemirror-indentation-markers';
 import { createTheme, CreateThemeOptions } from './theme-parts';
 
 // https://github.com/uiwjs/react-codemirror/blob/master/themes/vscode/src/light.ts
@@ -100,3 +103,41 @@ export function vscodeLightInit(options?: Partial<CreateThemeOptions>) {
 }
 
 export const VS_LIGHT_THEME = vscodeLightInit();
+
+export const VS_LIGHT_THEME_EXTRA: Extension = [
+  VS_LIGHT_THEME,
+  indentationMarkers({
+    highlightActiveBlock: false,
+    hideFirstIndent: true,
+    markerType: 'codeOnly',
+    thickness: 1,
+    colors: {
+      // light: 'LightBlue',
+      light: '#d1d5dc',
+      dark: 'DarkBlue',
+      activeLight: 'LightGreen',
+      activeDark: 'DarkGreen'
+    }
+  }),
+  EditorView.theme({
+    // '&': {
+    // backgroundColor: '#f0f0f0',
+    // fontSize: '20px'
+    // },
+    '.cm-content': {
+      paddingTop: '12px',
+      paddingBottom: '12px'
+      // fontFamily: "'Menlo', 'Monaco', 'Courier New', monospace",
+      // fontSize: '16px',
+      // padding: '12px',
+      // caretColor: '#000000'
+    }
+    // '.cm-line': {
+    // lineHeight: '1.6'
+    // padding: '0 2px'
+    // },
+    // '.cm-activeLine': {
+    //   backgroundColor: '#00000012'
+    // }
+  })
+];

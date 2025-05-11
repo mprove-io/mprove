@@ -9,7 +9,7 @@ import {
 import { Extension } from '@codemirror/state';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, take, tap } from 'rxjs/operators';
-import { VS_LIGHT_THEME } from '~front/app/constants/code-themes/vs-light-theme';
+import { VS_LIGHT_THEME_EXTRA } from '~front/app/constants/code-themes/vs-light-theme';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -39,7 +39,7 @@ export class QueryInfoViewerComponent implements OnChanges {
 
   prevModelFilePath: string;
 
-  theme: Extension = VS_LIGHT_THEME;
+  theme: Extension = VS_LIGHT_THEME_EXTRA;
 
   languages = languageData.languages;
   lang: string;

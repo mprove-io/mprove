@@ -17,7 +17,7 @@ import { Compartment } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, map, take, tap } from 'rxjs/operators';
-import { VS_LIGHT_THEME } from '~front/app/constants/code-themes/vs-light-theme';
+import { VS_LIGHT_THEME_EXTRA } from '~front/app/constants/code-themes/vs-light-theme';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -42,7 +42,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('codeEditor', { static: false })
   codeEditorRef: CodeEditor;
 
-  theme: Extension = VS_LIGHT_THEME;
+  theme: Extension = VS_LIGHT_THEME_EXTRA;
   indentWithTab = true;
   indentUnit = '  ';
   languages = languageData.languages;
@@ -52,7 +52,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   extensions: Extension[] = [];
 
-  baseExtensions: Extension[] = [VS_LIGHT_THEME];
+  baseExtensions: Extension[] = [VS_LIGHT_THEME_EXTRA];
   baseOriginalExtensions: Extension[] = [
     ...this.baseExtensions,
     EditorState.readOnly.of(true)
