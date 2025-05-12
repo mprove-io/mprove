@@ -68,3 +68,5 @@ apps/integra/cypress
 .devspace/
 
 .angular
+
+.nx
