@@ -1,19 +1,10 @@
 {
   "name": "Node",
-
   "build": {
     "dockerfile": "Dockerfile"
   },
   "features": {
     "docker-in-docker": "20.10",
-    "kubectl-helm-minikube": {
-      "version": "1.24.7",
-      "helm": "3.10.0",
-      "minikube": "latest"
-    },
-    //   "git": "os-provided",
-    //   "git-lfs": "latest",
-    //   "github-cli": "latest",
     "sshd": "latest"
   },
   "containerEnv": {
