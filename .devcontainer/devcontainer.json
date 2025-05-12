@@ -36,7 +36,6 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "dbaeumer.vscode-eslint",
         "IronGeek.vscode-env",
         "teclado.vscode-nginx-format",
         "eamodio.gitlens",
@@ -51,26 +50,26 @@
         "k--kato.intellij-idea-keybindings",
         "wayou.vscode-todo-highlight",
         "PKief.material-icon-theme",
-        "rvest.vs-code-prettier-eslint@5.1.0",
+        "biomejs.biome",
         "ms-kubernetes-tools.vscode-kubernetes-tools"
       ],
       "settings": {
         "workbench.settings.useSplitJSON": false,
         "typescript.tsdk": "node_modules/typescript/lib",
         "[typescript]": {
-          "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+          "editor.defaultFormatter": "biomejs.biome"
         },
         "[javascript]": {
-          "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+          "editor.defaultFormatter": "biomejs.biome"
         },
         "[html]": {
-          "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+          "editor.defaultFormatter": "biomejs.biome"
         },
         "[json]": {
-          "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+          "editor.defaultFormatter": "biomejs.biome"
         },
         "[jsonc]": {
-          "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+          "editor.defaultFormatter": "biomejs.biome"
         },
         "search.exclude": {
           "**/node_modules": true,
@@ -99,7 +98,7 @@
         "workbench.panel.defaultLocation": "bottom",
         "typescript.referencesCodeLens.enabled": true,
         "editor.detectIndentation": false,
-        "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+        "editor.defaultFormatter": "biomejs.biome",
         "window.zoomLevel": 3.25,
         "redhat.telemetry.enabled": false,
         "editor.bracketPairColorization.enabled": false,
