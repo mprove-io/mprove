@@ -1,1 +1,0 @@
-werf dismiss --dev
