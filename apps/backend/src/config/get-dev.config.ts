@@ -127,14 +127,6 @@ export function getDevConfig(envFilePath: any) {
     emailTransport: <enums.EmailTransportEnum>(
       (process.env.BACKEND_EMAIL_TRANSPORT || envFile.BACKEND_EMAIL_TRANSPORT)
     ),
-    //
-    mailgunActiveApiKey:
-      process.env.BACKEND_MAILGUN_ACTIVE_API_KEY ||
-      envFile.BACKEND_MAILGUN_ACTIVE_API_KEY,
-
-    mailgunDomain:
-      process.env.BACKEND_MAILGUN_DOMAIN || envFile.BACKEND_MAILGUN_DOMAIN,
-    //
 
     smtpHost: process.env.BACKEND_SMTP_HOST || envFile.BACKEND_SMTP_HOST,
 

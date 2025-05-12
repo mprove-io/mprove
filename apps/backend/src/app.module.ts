@@ -13,7 +13,6 @@ import {
 } from 'drizzle-orm/node-postgres';
 import { migrate as migratePg } from 'drizzle-orm/node-postgres/migrator';
 import * as fse from 'fs-extra';
-import * as mg from 'nodemailer-mailgun-transport';
 import { Client, ClientConfig } from 'pg';
 import { appControllers } from './app-controllers';
 import { AppFilter } from './app-filter';
@@ -104,32 +103,19 @@ let mailerModule = MailerModule.forRootAsync({
     let emailTransport =
       cs.get<interfaces.Config['emailTransport']>('emailTransport');
 
-    if (emailTransport === enums.EmailTransportEnum.MAILGUN) {
-      transport = mg({
-        auth: {
-          api_key: cs.get<interfaces.Config['mailgunActiveApiKey']>(
-            'mailgunActiveApiKey'
-          ),
-          domain: cs.get<interfaces.Config['mailgunDomain']>('mailgunDomain')
-        }
-      });
-    } else {
-      transport = {
-        host: cs.get<interfaces.Config['smtpHost']>('smtpHost'),
-        port: cs.get<interfaces.Config['smtpPort']>('smtpPort'),
-        secure:
-          cs.get<interfaces.Config['smtpSecure']>('smtpSecure') ===
-          common.BoolEnum.TRUE
-            ? true
-            : false,
-        auth: {
-          user: cs.get<interfaces.Config['smtpAuthUser']>('smtpAuthUser'),
-          pass: cs.get<interfaces.Config['smtpAuthPassword']>(
-            'smtpAuthPassword'
-          )
-        }
-      };
-    }
+    transport = {
+      host: cs.get<interfaces.Config['smtpHost']>('smtpHost'),
+      port: cs.get<interfaces.Config['smtpPort']>('smtpPort'),
+      secure:
+        cs.get<interfaces.Config['smtpSecure']>('smtpSecure') ===
+        common.BoolEnum.TRUE
+          ? true
+          : false,
+      auth: {
+        user: cs.get<interfaces.Config['smtpAuthUser']>('smtpAuthUser'),
+        pass: cs.get<interfaces.Config['smtpAuthPassword']>('smtpAuthPassword')
+      }
+    };
 
     let fromName =
       cs.get<interfaces.Config['sendEmailFromName']>('sendEmailFromName');

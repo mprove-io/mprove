@@ -97,13 +97,6 @@ export class Config {
 
   //
   @IsString()
-  mailgunActiveApiKey?: string;
-
-  @IsString()
-  mailgunDomain?: string;
-
-  //
-  @IsString()
   smtpHost?: string;
 
   @IsInt()

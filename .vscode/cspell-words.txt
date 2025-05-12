@@ -90,7 +90,6 @@ kubectl
 kubernetes
 lpad
 lusca
-mailgun
 maxlength
 mconfig
 mconfigs
