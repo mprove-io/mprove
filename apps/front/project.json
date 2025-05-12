@@ -5,12 +5,8 @@
   "sourceRoot": "apps/front/src",
   "targets": {
     "build": {
-      "executor": "@angular-builders/custom-webpack:browser",
-      "outputs": ["{options.outputPath}"],
+      "executor": "@angular-devkit/build-angular:browser",
       "options": {
-        "customWebpackConfig": {
-          "path": "apps/front/webpack.config.js"
-        },
         "allowedCommonJsDependencies": [
           "fast-deep-equal",
           "validator",
@@ -75,16 +71,16 @@
       }
     },
     "serve": {
-      "executor": "@angular-builders/custom-webpack:dev-server",
+      "executor": "@angular-devkit/build-angular:dev-server",
       "options": {
-        "browserTarget": "front:build"
+        "buildTarget": "front:build"
       },
       "configurations": {
         "production": {
-          "browserTarget": "front:build:production"
+          "buildTarget": "front:build:production"
         },
         "development": {
-          "browserTarget": "front:build:development"
+          "buildTarget": "front:build:development"
         }
       },
       "defaultConfiguration": "development"

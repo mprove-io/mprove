@@ -42,7 +42,7 @@ var r700 = '#c10007'; // red-700
 
 const colors = require('tailwindcss/colors');
 
-const { createGlobPatternsForDependencies } = require('@nrwl/angular/tailwind');
+const { createGlobPatternsForDependencies } = require('@nx/angular/tailwind');
 const { join } = require('path');
 
 module.exports = {
