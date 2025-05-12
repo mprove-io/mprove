@@ -1,5 +1,5 @@
 # https://github.com/devcontainers/images/tree/main/src/javascript-node/history
-# previous node version 18.20.4
+# previous node version 20.18.1
 # node -v (20.18.1) https://github.com/devcontainers/images/blob/main/src/javascript-node/history/1.1.8.md#variant-20-bullseye
 ARG VARIANT=1.1.8-20-bullseye
 FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:${VARIANT}
