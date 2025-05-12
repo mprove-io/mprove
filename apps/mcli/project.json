@@ -14,7 +14,6 @@
         "main": "apps/mcli/src/main.ts",
         "tsConfig": "apps/mcli/tsconfig.app.json",
         "assets": ["apps/mcli/src/assets"],
-        "isolatedConfig": true,
         "webpackConfig": "apps/mcli/webpack.config.js",
         "sourceMap": true
       },
@@ -45,11 +44,10 @@
       "options": {
         "commands": [
           "rimraf \"./dist/tests/mcli\"",
-          "tsc --project apps/mcli/tsconfig.test.json",
+          "tsc --project apps/mcli/tsconfig.test.json --outDir dist/tests/mcli",
           "yarn pjc-to-tests"
         ],
-        "parallel": false,
-        "outputPath": "dist/tests/mcli"
+        "parallel": false
       }
     },
     "test": {

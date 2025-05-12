@@ -15,7 +15,6 @@
         "main": "apps/disk/src/main.ts",
         "tsConfig": "apps/disk/tsconfig.app.json",
         "assets": ["apps/disk/src/assets"],
-        "isolatedConfig": true,
         "webpackConfig": "apps/disk/webpack.config.js",
         "sourceMap": true
       },
@@ -68,10 +67,9 @@
       "options": {
         "commands": [
           "rimraf \"./dist/tests/disk\"",
-          "tsc --project apps/disk/tsconfig.test.json"
+          "tsc --project apps/disk/tsconfig.test.json --outDir dist/tests/disk"
         ],
-        "parallel": false,
-        "outputPath": "dist/tests/disk"
+        "parallel": false
       }
     },
     "test": {

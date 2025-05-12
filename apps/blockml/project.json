@@ -15,7 +15,6 @@
         "main": "apps/blockml/src/main.ts",
         "tsConfig": "apps/blockml/tsconfig.app.json",
         "assets": ["apps/blockml/src/assets"],
-        "isolatedConfig": true,
         "webpackConfig": "apps/blockml/webpack.config.js",
         "sourceMap": true
       },
@@ -75,10 +74,9 @@
       "options": {
         "commands": [
           "rimraf \"./dist/tests/blockml\"",
-          "tsc --project apps/blockml/tsconfig.test.json"
+          "tsc --project apps/blockml/tsconfig.test.json --outDir dist/tests/blockml"
         ],
-        "parallel": false,
-        "outputPath": "dist/tests/blockml"
+        "parallel": false
       }
     },
     "test": {

@@ -14,10 +14,9 @@
       "options": {
         "commands": [
           "rimraf \"./dist/tests/node-common\"",
-          "tsc --project libs/node-common/tsconfig.test.json"
+          "tsc --project libs/node-common/tsconfig.test.json --outDir dist/tests/node-common"
         ],
-        "parallel": false,
-        "outputPath": "dist/tests/node-common"
+        "parallel": false
       }
     },
     "fm": {

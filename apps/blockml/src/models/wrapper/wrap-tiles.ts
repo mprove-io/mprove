@@ -99,8 +99,7 @@ export function wrapTiles(item: {
       Object.keys(tile.filtersFractions).forEach(fieldId => {
         filters.push({
           fieldId: fieldId,
-          fractions:
-            (isStore === true ? [] : tile.filtersFractions[fieldId]) || []
+          fractions: tile.filtersFractions[fieldId] || []
         });
       });
     } else {

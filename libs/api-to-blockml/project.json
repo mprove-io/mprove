@@ -14,10 +14,9 @@
       "options": {
         "commands": [
           "rimraf \"./dist/tests/api-to-blockml\"",
-          "tsc --project libs/api-to-blockml/tsconfig.test.json"
+          "tsc --project libs/api-to-blockml/tsconfig.test.json --outDir dist/tests/api-to-blockml"
         ],
-        "parallel": false,
-        "outputPath": "dist/tests/api-to-blockml"
+        "parallel": false
       }
     },
     "fm": {

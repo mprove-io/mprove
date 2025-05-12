@@ -14,10 +14,9 @@
       "options": {
         "commands": [
           "rimraf \"./dist/tests/api-to-backend\"",
-          "tsc --project libs/api-to-backend/tsconfig.test.json"
+          "tsc --project libs/api-to-backend/tsconfig.test.json --outDir dist/tests/api-to-backend"
         ],
-        "parallel": false,
-        "outputPath": "dist/tests/api-to-backend"
+        "parallel": false
       }
     },
     "fm": {

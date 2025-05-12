@@ -14,10 +14,9 @@
       "options": {
         "commands": [
           "rimraf \"./dist/tests/api-to-disk\"",
-          "tsc --project libs/api-to-disk/tsconfig.test.json"
+          "tsc --project libs/api-to-disk/tsconfig.test.json --outDir dist/tests/api-to-disk"
         ],
-        "parallel": false,
-        "outputPath": "dist/tests/api-to-disk"
+        "parallel": false
       }
     },
     "fm": {

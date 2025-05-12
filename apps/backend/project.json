@@ -15,7 +15,6 @@
         "main": "apps/backend/src/main.ts",
         "tsConfig": "apps/backend/tsconfig.app.json",
         "assets": ["apps/backend/src/assets"],
-        "isolatedConfig": true,
         "webpackConfig": "apps/backend/webpack.config.js",
         "sourceMap": true
       },
@@ -62,10 +61,9 @@
       "options": {
         "commands": [
           "rimraf \"./dist/tests/backend\"",
-          "tsc --project apps/backend/tsconfig.test.json"
+          "tsc --project apps/backend/tsconfig.test.json --outDir dist/tests/backend"
         ],
-        "parallel": false,
-        "outputPath": "dist/tests/backend"
+        "parallel": false
       }
     },
     "e2e": {
