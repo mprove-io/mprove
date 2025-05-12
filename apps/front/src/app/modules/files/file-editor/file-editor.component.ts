@@ -285,45 +285,6 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     ) {
       this.showGoTo = true;
 
-      // import { JSONSchema7 } from 'json-schema';
-
-      // let schema: JSONSchema7 =
-      //   dotExt === common.FileExtensionEnum.View
-      //     ? common.VIEW_SCHEMA
-      //     : dotExt === common.FileExtensionEnum.Store
-      //     ? common.STORE_SCHEMA
-      //     : dotExt === common.FileExtensionEnum.Model
-      //     ? common.MODEL_SCHEMA
-      //     : dotExt === common.FileExtensionEnum.Report
-      //     ? common.REPORT_SCHEMA
-      //     : dotExt === common.FileExtensionEnum.Dashboard
-      //     ? common.DASHBOARD_SCHEMA
-      //     : dotExt === common.FileExtensionEnum.Chart
-      //     ? common.CHART_SCHEMA
-      //     : dotExt === common.FileExtensionEnum.Udf
-      //     ? common.UDF_SCHEMA
-      //     : this.file.fileId === common.MPROVE_CONFIG_FILENAME
-      //     ? common.CONFIG_SCHEMA
-      //     : undefined;
-
-      // import { setDiagnosticsOptions } from 'monaco-yaml'
-
-      // setDiagnosticsOptions({
-      //   validate: true,
-      //   completion: true,
-      //   format: true,
-      //   enableSchemaRequest: true,
-      //   schemas: common.isDefined(schema)
-      //     ? [
-      //         {
-      //           uri: schema.$id,
-      //           fileMatch: ['*'],
-      //           schema: schema
-      //         }
-      //       ]
-      //     : []
-      // });
-
       this.refreshMarkers();
     } else {
       this.showGoTo = false;
