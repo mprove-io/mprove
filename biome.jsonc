@@ -1,41 +1,37 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.0.0-beta.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
-  "files": { "ignoreUnknown": false },
+  "files": { "ignoreUnknown": false, "ignore": [] },
   "formatter": {
     "enabled": true,
+    "useEditorconfig": true,
     "formatWithErrors": false,
     "indentStyle": "space",
     "indentWidth": 2,
     "lineEnding": "lf",
     "lineWidth": 80,
     "attributePosition": "auto",
-    "bracketSameLine": false,
     "bracketSpacing": true,
-    "expand": "auto",
-    "useEditorconfig": true,
-    "includes": [
-      "**",
-      "!**/dist/",
-      "!**/node_modules/",
-      "!.helm/secret/",
-      "!**/package.docker.json",
-      "!**/coverage/"
+    "ignore": [
+      "**/dist/",
+      "**/node_modules/",
+      "**/package.docker.json",
+      "**/coverage/"
     ]
   },
+  "organizeImports": { "enabled": true },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": false,
       "complexity": {
         "noBannedTypes": "error",
-        "noUselessThisAlias": "error",
         "noUselessTypeConstraint": "error"
       },
       "correctness": {
         "noPrecisionLoss": "error",
         "noUnusedVariables": "warn",
-        "useArrayLiterals": "error"
+        "useArrayLiterals": "off"
       },
       "style": {
         "noInferrableTypes": "error",
@@ -46,22 +42,17 @@
       },
       "suspicious": {
         "noEmptyBlockStatements": "error",
-        "noEmptyInterface": "error",
         "noExplicitAny": "warn",
         "noExtraNonNullAssertion": "error",
         "noMisleadingInstantiator": "error",
-        "useAdjacentOverloadSignatures": "error",
         "useNamespaceKeyword": "error"
       }
     },
-    "includes": [
-      "**",
-      "**",
-      "!./dist/**",
-      "!./nogit/**",
-      "!./_nogit/**",
-      "!apps/integra/cypress",
-      "!apps/backend/src/migrations"
+    "ignore": [
+      "./dist/**",
+      "./nogit/**",
+      "./_nogit/**",
+      "apps/integra/cypress"
     ]
   },
   "javascript": {
@@ -77,13 +68,11 @@
       "bracketSpacing": true
     }
   },
-  "html": {
-    "formatter": { "enabled": true, "selfCloseVoidElements": "always" }
-  },
   "overrides": [
-    { "linter": { "rules": {} } },
-    { "linter": { "rules": {} } },
+    { "include": ["*.html"], "linter": { "rules": {} } },
+    { "include": ["*.js"], "linter": { "rules": {} } },
     {
+      "include": ["*.ts"],
       "linter": {
         "rules": {
           "complexity": {
@@ -99,6 +88,7 @@
           "style": {
             "noNamespace": "error",
             "noNonNullAssertion": "error",
+            "noVar": "error",
             "useConsistentBuiltinInstantiation": "error",
             "useConst": "off",
             "useShorthandFunctionType": "error"
@@ -117,155 +107,24 @@
       }
     },
     {
+      "include": ["*.ts", "*.tsx", "*.mts", "*.cts"],
       "linter": {
         "rules": {
           "correctness": {
             "noConstAssign": "off",
             "noGlobalObjectCalls": "off",
             "noInvalidConstructorSuper": "off",
+            "noNewSymbol": "off",
             "noSetterReturn": "off",
             "noUndeclaredVariables": "off",
             "noUnreachable": "off",
             "noUnreachableSuper": "off"
           },
-          "style": { "noArguments": "error", "useConst": "error" },
-          "suspicious": {
-            "noDuplicateClassMembers": "off",
-            "noDuplicateObjectKeys": "off",
-            "noDuplicateParameters": "off",
-            "noFunctionAssign": "off",
-            "noImportAssign": "off",
-            "noRedeclare": "off",
-            "noUnsafeNegation": "off",
-            "useGetterReturn": "off",
-            "useValidTypeof": "off"
-          }
-        }
-      }
-    },
-    {
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noConstAssign": "off",
-            "noGlobalObjectCalls": "off",
-            "noInvalidConstructorSuper": "off",
-            "noSetterReturn": "off",
-            "noUndeclaredVariables": "off",
-            "noUnreachable": "off",
-            "noUnreachableSuper": "off"
-          },
-          "style": { "noArguments": "error", "useConst": "error" },
-          "suspicious": {
-            "noDuplicateClassMembers": "off",
-            "noDuplicateObjectKeys": "off",
-            "noDuplicateParameters": "off",
-            "noFunctionAssign": "off",
-            "noImportAssign": "off",
-            "noRedeclare": "off",
-            "noUnsafeNegation": "off",
-            "useGetterReturn": "off",
-            "useValidTypeof": "off"
-          }
-        }
-      }
-    },
-    { "linter": { "rules": {} } },
-    { "linter": { "rules": {} } },
-    {
-      "linter": {
-        "rules": {
-          "complexity": {
-            "noUselessUndefinedInitialization": "error",
-            "useLiteralKeys": "off"
-          },
-          "correctness": {
-            "noInvalidConstructorSuper": "error",
-            "noUnusedLabels": "error",
-            "noUnusedVariables": "off"
-          },
-          "security": { "noGlobalEval": "error" },
           "style": {
-            "noNamespace": "error",
-            "noNonNullAssertion": "error",
-            "useConsistentBuiltinInstantiation": "error",
-            "useConst": "off",
-            "useNamingConvention": {
-              "level": "error",
-              "options": {
-                "strictCase": false,
-                "conventions": [
-                  {
-                    "selector": { "kind": "class" },
-                    "formats": ["PascalCase"]
-                  },
-                  {
-                    "selector": { "kind": "interface" },
-                    "formats": ["PascalCase"]
-                  },
-                  { "selector": { "kind": "enum" }, "formats": ["PascalCase"] },
-                  {
-                    "selector": { "kind": "enumMember" },
-                    "match": "([^_]*)",
-                    "formats": ["PascalCase", "CONSTANT_CASE"]
-                  },
-                  {
-                    "selector": { "kind": "classMethod" },
-                    "formats": ["camelCase"]
-                  },
-                  {
-                    "selector": { "kind": "objectLiteralMethod" },
-                    "formats": ["camelCase"]
-                  },
-                  {
-                    "selector": { "kind": "typeMethod" },
-                    "formats": ["camelCase"]
-                  },
-                  {
-                    "selector": { "kind": "classProperty" },
-                    "formats": ["camelCase", "snake_case"]
-                  },
-                  {
-                    "selector": { "kind": "typeProperty" },
-                    "formats": ["camelCase", "snake_case"]
-                  },
-                  {
-                    "selector": { "kind": "objectLiteralProperty" },
-                    "formats": ["camelCase", "snake_case"]
-                  }
-                ]
-              }
-            },
-            "useShorthandFunctionType": "error",
-            "useThrowOnlyError": "error"
+            "noArguments": "error",
+            "noVar": "error",
+            "useConst": "error"
           },
-          "suspicious": {
-            "noConsole": "off",
-            "noDebugger": "error",
-            "noDoubleEquals": "error",
-            "noEmptyBlockStatements": "off",
-            "noEmptyInterface": "error",
-            "noExplicitAny": "off",
-            "noFallthroughSwitchClause": "error",
-            "noMisleadingInstantiator": "error",
-            "useNamespaceKeyword": "error"
-          }
-        }
-      }
-    },
-    {
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noConstAssign": "off",
-            "noGlobalObjectCalls": "off",
-            "noInvalidConstructorSuper": "off",
-            "noSetterReturn": "off",
-            "noUndeclaredVariables": "off",
-            "noUnreachable": "off",
-            "noUnreachableSuper": "off"
-          },
-          "style": { "noArguments": "error", "useConst": "error" },
           "suspicious": {
             "noDuplicateClassMembers": "off",
             "noDuplicateObjectKeys": "off",
@@ -281,144 +140,24 @@
       }
     },
     {
+      "include": ["*.ts", "*.tsx", "*.mts", "*.cts"],
       "linter": {
         "rules": {
           "correctness": {
             "noConstAssign": "off",
             "noGlobalObjectCalls": "off",
             "noInvalidConstructorSuper": "off",
+            "noNewSymbol": "off",
             "noSetterReturn": "off",
             "noUndeclaredVariables": "off",
             "noUnreachable": "off",
             "noUnreachableSuper": "off"
           },
-          "style": { "noArguments": "error", "useConst": "error" },
-          "suspicious": {
-            "noDuplicateClassMembers": "off",
-            "noDuplicateObjectKeys": "off",
-            "noDuplicateParameters": "off",
-            "noFunctionAssign": "off",
-            "noImportAssign": "off",
-            "noRedeclare": "off",
-            "noUnsafeNegation": "off",
-            "useGetterReturn": "off",
-            "useValidTypeof": "off"
-          }
-        }
-      }
-    },
-    { "includes": ["*.html"], "linter": { "rules": {} } },
-    {
-      "includes": ["*.js"],
-      "linter": {
-        "rules": { "complexity": { "noUselessEscapeInRegex": "off" } }
-      }
-    },
-    {
-      "includes": ["*.ts"],
-      "linter": {
-        "rules": {
-          "complexity": {
-            "noUselessEscapeInRegex": "off",
-            "noUselessUndefinedInitialization": "error",
-            "useLiteralKeys": "off"
-          },
-          "correctness": {
-            "noInvalidConstructorSuper": "error",
-            "noUnusedLabels": "error",
-            "noUnusedVariables": "off"
-          },
-          "security": { "noGlobalEval": "error" },
           "style": {
-            "noNamespace": "error",
-            "noNonNullAssertion": "error",
-            "noRestrictedImports": "error",
-            "useConsistentBuiltinInstantiation": "error",
-            "useConsistentMemberAccessibility": {
-              "level": "error",
-              "options": { "accessibility": "noPublic" }
-            },
-            "useConst": "off",
-            "useNamingConvention": {
-              "level": "error",
-              "options": {
-                "strictCase": false,
-                "requireAscii": false,
-                "conventions": [
-                  {
-                    "selector": { "kind": "class" },
-                    "formats": ["PascalCase"]
-                  },
-                  {
-                    "selector": { "kind": "interface" },
-                    "formats": ["PascalCase"]
-                  },
-                  { "selector": { "kind": "enum" }, "formats": ["PascalCase"] },
-                  {
-                    "selector": { "kind": "enumMember" },
-                    "match": "([^_]*)",
-                    "formats": ["PascalCase", "CONSTANT_CASE"]
-                  },
-                  {
-                    "selector": { "kind": "classMethod" },
-                    "formats": ["camelCase"]
-                  },
-                  {
-                    "selector": { "kind": "objectLiteralMethod" },
-                    "formats": ["camelCase"]
-                  },
-                  {
-                    "selector": { "kind": "typeMethod" },
-                    "formats": ["camelCase"]
-                  },
-                  {
-                    "selector": { "kind": "classProperty" },
-                    "formats": ["camelCase", "snake_case"]
-                  },
-                  {
-                    "selector": { "kind": "typeProperty" },
-                    "formats": ["camelCase", "snake_case"]
-                  },
-                  {
-                    "selector": { "kind": "objectLiteralProperty" },
-                    "formats": ["camelCase", "snake_case"]
-                  }
-                ]
-              }
-            },
-            "useShorthandFunctionType": "error",
-            "useThrowOnlyError": "error"
-          },
-          "suspicious": {
-            "noConsole": "off",
-            "noDebugger": "error",
-            "noDoubleEquals": "error",
-            "noEmptyBlockStatements": "off",
-            "noEmptyInterface": "error",
-            "noExplicitAny": "off",
-            "noFallthroughSwitchClause": "error",
-            "noMisleadingInstantiator": "error",
+            "noArguments": "error",
             "noVar": "error",
-            "useGuardForIn": "error",
-            "useNamespaceKeyword": "error"
-          }
-        }
-      }
-    },
-    {
-      "includes": ["*.ts", "*.tsx", "*.mts", "*.cts"],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noConstAssign": "off",
-            "noGlobalObjectCalls": "off",
-            "noInvalidConstructorSuper": "off",
-            "noSetterReturn": "off",
-            "noUndeclaredVariables": "off",
-            "noUnreachable": "off",
-            "noUnreachableSuper": "off"
+            "useConst": "error"
           },
-          "style": { "noArguments": "error", "useConst": "error" },
           "suspicious": {
             "noDuplicateClassMembers": "off",
             "noDuplicateObjectKeys": "off",
@@ -427,36 +166,6 @@
             "noImportAssign": "off",
             "noRedeclare": "off",
             "noUnsafeNegation": "off",
-            "noVar": "error",
-            "useGetterReturn": "off",
-            "useValidTypeof": "off"
-          }
-        }
-      }
-    },
-    {
-      "includes": ["*.ts", "*.tsx", "*.mts", "*.cts"],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noConstAssign": "off",
-            "noGlobalObjectCalls": "off",
-            "noInvalidConstructorSuper": "off",
-            "noSetterReturn": "off",
-            "noUndeclaredVariables": "off",
-            "noUnreachable": "off",
-            "noUnreachableSuper": "off"
-          },
-          "style": { "noArguments": "error", "useConst": "error" },
-          "suspicious": {
-            "noDuplicateClassMembers": "off",
-            "noDuplicateObjectKeys": "off",
-            "noDuplicateParameters": "off",
-            "noFunctionAssign": "off",
-            "noImportAssign": "off",
-            "noRedeclare": "off",
-            "noUnsafeNegation": "off",
-            "noVar": "error",
             "useGetterReturn": "off",
             "useValidTypeof": "off"
           }
