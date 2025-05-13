@@ -3,12 +3,6 @@
   "sourceRoot": "libs/node-common/src",
   "projectType": "library",
   "targets": {
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/node-common/**/*.ts"]
-      }
-    },
     "build-tests": {
       "executor": "nx:run-commands",
       "options": {

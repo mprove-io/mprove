@@ -16,12 +16,6 @@
           "baseUrl": "http://front"
         }
       }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/integra/**/*.{js,ts}"]
-      }
     }
   }
 }

@@ -3,11 +3,14 @@ _nogit/
 .devcontainer/
 .github/
 .nx/
-# .vscode/
+.vscode/
 dist/
 node_modules/
 secrets/
 tmp/
+
 package.docker.json
+apps/backend/src/drizzle/postgres/migrations/
+apps/integra/cypress
 
 coverage/

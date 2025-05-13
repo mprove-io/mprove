@@ -26,13 +26,6 @@
         }
       }
     },
-    "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/mcli/**/*.ts"]
-      }
-    },
     "build-tests": {
       "dependsOn": [
         {

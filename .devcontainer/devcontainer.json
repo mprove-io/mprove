@@ -36,26 +36,16 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "IronGeek.vscode-env",
-        "teclado.vscode-nginx-format",
-        "eamodio.gitlens",
-        "redhat.vscode-yaml",
-        "william-voyek.vscode-nginx",
         "kraftwer1.darcula-extra",
-        "yzhang.markdown-all-in-one",
-        "Zignd.html-css-class-completion",
-        "streetsidesoftware.code-spell-checker",
-        "ghaschel.vscode-angular-html",
-        "ms-vscode-remote.remote-containers",
         "k--kato.intellij-idea-keybindings",
-        "wayou.vscode-todo-highlight",
         "PKief.material-icon-theme",
+        "esbenp.prettier-vscode",
         "biomejs.biome",
-        "ms-kubernetes-tools.vscode-kubernetes-tools",
-        "pflannery.vscode-versionlens",
+        "ghaschel.vscode-angular-html",
         "bradlc.vscode-tailwindcss",
-        "dorzey.vscode-sqlfluff",
-        "esbenp.prettier-vscode"
+        "wayou.vscode-todo-highlight",
+        "IronGeek.vscode-env",
+        "ms-vscode-remote.remote-containers"
       ],
       "settings": {
         "workbench.settings.useSplitJSON": false,

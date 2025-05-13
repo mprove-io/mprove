@@ -3,12 +3,6 @@
   "sourceRoot": "libs/api-to-backend/src",
   "projectType": "library",
   "targets": {
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/api-to-backend/**/*.ts"]
-      }
-    },
     "build-tests": {
       "executor": "nx:run-commands",
       "options": {

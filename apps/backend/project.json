@@ -49,13 +49,6 @@
         }
       }
     },
-    "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/backend/**/*.ts"]
-      }
-    },
     "build-tests": {
       "executor": "nx:run-commands",
       "options": {
