@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { LIGHT_THEME } from './light-theme';

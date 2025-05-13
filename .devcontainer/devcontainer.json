@@ -113,7 +113,6 @@
         "editor.bracketPairColorization.enabled": false,
         "workbench.editor.splitInGroupLayout": "horizontal",
         "editor.tabSize": 2,
-        "eslint.validate": ["javascript", "typescript"],
         "explorer.confirmDelete": false,
         "workbench.settings.editor": "json",
         "editor.codeLens": false,

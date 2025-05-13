@@ -3,7 +3,6 @@ import { common } from '~integra/barrels/common';
 import { constants } from '~integra/barrels/constants';
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface Chainable<Subject> {
       deletePack(pack: apiToBackend.ToBackendDeleteRecordsRequestPayload): void;

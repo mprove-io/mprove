@@ -1,6 +1,5 @@
 import { constants } from '~common/barrels/constants';
 
-/* eslint-disable @typescript-eslint/naming-convention */
 const cloneRegexp = require('clone-regexp');
 
 export class MyRegex {

@@ -1,4 +1,3 @@
-/* eslint-disable id-blacklist */
 export enum FieldResultEnum {
   String = 'string', // dimension, dimension_time, measure, calculation, filter
   Number = 'number', // dimension, dimension_time, measure, calculation, filter

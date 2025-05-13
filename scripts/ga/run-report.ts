@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 async function runReportGetAccessToken() {
   const { JWT } = require('google-auth-library');
   const key = require('../../secrets/ga/g2.json');

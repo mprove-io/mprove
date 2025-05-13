@@ -61,9 +61,7 @@ export class ApiService {
     ];
 
     let headers: HttpHeaders = new HttpHeaders({
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       'Content-Type': 'application/json',
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       Authorization:
         bypassAuth.indexOf(pathInfoName) < 0
           ? `Bearer ${localStorage.getItem(constants.LOCAL_STORAGE_TOKEN)}`

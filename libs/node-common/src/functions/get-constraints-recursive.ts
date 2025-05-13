@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import { ValidationError } from 'class-validator';
 import { common } from '~node-common/barrels/common';
 

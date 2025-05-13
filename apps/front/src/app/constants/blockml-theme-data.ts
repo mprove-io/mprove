@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-
 // export const BLOCKML_THEME_DATA: editor.IStandaloneThemeData = {
 export const BLOCKML_THEME_DATA: any = {
   base: 'vs',

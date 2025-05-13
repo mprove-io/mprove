@@ -10,7 +10,6 @@ const pool = new Pool({
 const db = drizzle(pool);
 
 async function checkDatabase() {
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     try {
       await db.execute('SELECT 1');

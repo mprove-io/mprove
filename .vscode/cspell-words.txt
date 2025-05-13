@@ -51,7 +51,6 @@ eleventy
 entity
 envrc
 eqeqeq
-eslintignore
 extensionpack
 FANWAVE
 filt

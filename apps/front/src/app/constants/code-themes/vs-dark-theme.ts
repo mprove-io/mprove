@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { tags as t } from '@lezer/highlight';
 import { CreateThemeOptions, createTheme } from './theme-parts';
 

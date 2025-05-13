@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-
 // export const YAML_LANGUAGE_DATA: languagesType.IMonarchLanguage = {
 export const YAML_LANGUAGE_DATA: any = {
   tokenPostfix: '.yaml',

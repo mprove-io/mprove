@@ -2,7 +2,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { common } from '~front/barrels/common';
 
 @Pipe({ name: 'goFromFileExt' })
-// eslint-disable-next-line @angular-eslint/use-pipe-transform-interface
 export class GoFromFileExtPipe implements PipeTransform {
   transform(value: string) {
     if (common.isUndefined(value)) {

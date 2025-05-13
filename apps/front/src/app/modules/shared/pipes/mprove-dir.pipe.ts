@@ -2,7 +2,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { common } from '~front/barrels/common';
 
 @Pipe({ name: 'mproveDir' })
-// eslint-disable-next-line @angular-eslint/use-pipe-transform-interface
 export class MproveDirPipe implements PipeTransform {
   transform(mdir: string) {
     if (common.isUndefined(mdir)) {

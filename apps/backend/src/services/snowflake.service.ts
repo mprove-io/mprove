@@ -70,7 +70,6 @@ export class SnowFlakeService {
       }
     });
 
-    // // eslint-disable-next-line @typescript-eslint/no-this-alias
     // let self = this;
 
     // snowflakeConnection.execute({

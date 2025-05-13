@@ -1,4 +1,3 @@
-/* eslint-disable id-blacklist */
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,

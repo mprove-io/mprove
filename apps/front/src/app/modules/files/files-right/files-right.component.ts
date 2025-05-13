@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Extension } from '@codemirror/state';
 import { NgxSpinnerService } from 'ngx-spinner';

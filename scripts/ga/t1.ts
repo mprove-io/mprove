@@ -1,5 +1,3 @@
-// /* eslint-disable @typescript-eslint/naming-convention */
-
 interface PreparedRow {
   year: string;
   yearMonth: string;

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-
 // export const BLOCKML_LANGUAGE_DATA: languagesType.IMonarchLanguage = {
 export const BLOCKML_LANGUAGE_DATA: any = {
   tokenPostfix: '.yaml',
