@@ -176,10 +176,10 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
           nodeId === `${item.projectId}/${constants.MPROVE_CONFIG_FILENAME}`
             ? true
             : common.isDefined(item.mproveDir)
-            ? item.mproveDir === item.repoDir
-              ? true
-              : nodeId.split(mproveDirRelative)[0] === `${item.projectId}/`
-            : false;
+              ? item.mproveDir === item.repoDir
+                ? true
+                : nodeId.split(mproveDirRelative)[0] === `${item.projectId}/`
+              : false;
 
         if (item.readFiles === true && isPass === true) {
           let path = JSON.stringify(nodeId.split('/'));

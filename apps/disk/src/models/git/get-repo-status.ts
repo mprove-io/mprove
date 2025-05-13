@@ -100,24 +100,24 @@ export async function getRepoStatus(item: {
               status: x.isAdded()
                 ? common.FileStatusEnum.New
                 : x.isDeleted()
-                ? common.FileStatusEnum.Deleted
-                : x.isModified()
-                ? common.FileStatusEnum.Modified
-                : x.isTypeChange()
-                ? common.FileStatusEnum.TypeChange
-                : x.isRenamed()
-                ? common.FileStatusEnum.Renamed
-                : x.isIgnored()
-                ? common.FileStatusEnum.Ignored
-                : x.isUnmodified()
-                ? common.FileStatusEnum.Unmodified
-                : x.isCopied()
-                ? common.FileStatusEnum.Copied
-                : x.isUntracked()
-                ? common.FileStatusEnum.Untracked
-                : x.isUnreadable()
-                ? common.FileStatusEnum.Unreadable
-                : undefined
+                  ? common.FileStatusEnum.Deleted
+                  : x.isModified()
+                    ? common.FileStatusEnum.Modified
+                    : x.isTypeChange()
+                      ? common.FileStatusEnum.TypeChange
+                      : x.isRenamed()
+                        ? common.FileStatusEnum.Renamed
+                        : x.isIgnored()
+                          ? common.FileStatusEnum.Ignored
+                          : x.isUnmodified()
+                            ? common.FileStatusEnum.Unmodified
+                            : x.isCopied()
+                              ? common.FileStatusEnum.Copied
+                              : x.isUntracked()
+                                ? common.FileStatusEnum.Untracked
+                                : x.isUnreadable()
+                                  ? common.FileStatusEnum.Unreadable
+                                  : undefined
             };
           });
         }

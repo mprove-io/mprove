@@ -14,8 +14,8 @@ export function getConfig() {
     devConfig.diskEnv === enums.DiskEnvEnum.PROD
       ? getProdConfig(devConfig)
       : devConfig.diskEnv === enums.DiskEnvEnum.TEST
-      ? getTestConfig(devConfig)
-      : devConfig;
+        ? getTestConfig(devConfig)
+        : devConfig;
 
   let validatedConfig = nodeCommon.transformValidSync({
     classType: interfaces.Config,

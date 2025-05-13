@@ -55,7 +55,10 @@ import { logToConsoleDisk } from './functions/log-to-console-disk';
   providers: [Logger, ...appServices]
 })
 export class AppModule implements OnModuleInit {
-  constructor(private logger: Logger, private cs: ConfigService) {}
+  constructor(
+    private logger: Logger,
+    private cs: ConfigService
+  ) {}
 
   async onModuleInit() {
     logToConsoleDisk({
