@@ -173,8 +173,8 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
       fractionType === common.FractionTypeEnum.DayOfWeekIndexIsEqualTo
         ? value
         : fractionType === common.FractionTypeEnum.DayOfWeekIndexIsNotEqualTo
-        ? `not ${value}`
-        : '';
+          ? `not ${value}`
+          : '';
 
     return newBrick;
   }

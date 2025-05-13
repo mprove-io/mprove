@@ -48,8 +48,8 @@ export class DataRendererComponent implements ICellRendererAngularComp {
             currencySuffix: params.data.currencySuffix
           })
         : this.isError === true
-        ? rowDataRecord.error
-        : undefined;
+          ? rowDataRecord.error
+          : undefined;
   }
 
   clickCellData(event: MouseEvent) {

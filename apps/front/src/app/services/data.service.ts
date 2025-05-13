@@ -49,7 +49,10 @@ export interface SeriesDataElement {
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
-  constructor(private structQuery: StructQuery, private uiQuery: UiQuery) {}
+  constructor(
+    private structQuery: StructQuery,
+    private uiQuery: UiQuery
+  ) {}
 
   private isNumberString(v: unknown): boolean {
     if (typeof v === 'number') {
@@ -174,24 +177,24 @@ export class DataService {
             isStore === false
               ? undefined
               : field.detail === common.DetailUnitEnum.Timestamps
-              ? common.TimeSpecEnum.Timestamps
-              : field.detail === common.DetailUnitEnum.Minutes
-              ? common.TimeSpecEnum.Minutes
-              : field.detail === common.DetailUnitEnum.Hours
-              ? common.TimeSpecEnum.Hours
-              : field.detail === common.DetailUnitEnum.Days
-              ? common.TimeSpecEnum.Days
-              : field.detail === common.DetailUnitEnum.WeeksSunday
-              ? common.TimeSpecEnum.Weeks
-              : field.detail === common.DetailUnitEnum.WeeksMonday
-              ? common.TimeSpecEnum.Weeks
-              : field.detail === common.DetailUnitEnum.Months
-              ? common.TimeSpecEnum.Months
-              : field.detail === common.DetailUnitEnum.Quarters
-              ? common.TimeSpecEnum.Quarters
-              : field.detail === common.DetailUnitEnum.Years
-              ? common.TimeSpecEnum.Years
-              : undefined;
+                ? common.TimeSpecEnum.Timestamps
+                : field.detail === common.DetailUnitEnum.Minutes
+                  ? common.TimeSpecEnum.Minutes
+                  : field.detail === common.DetailUnitEnum.Hours
+                    ? common.TimeSpecEnum.Hours
+                    : field.detail === common.DetailUnitEnum.Days
+                      ? common.TimeSpecEnum.Days
+                      : field.detail === common.DetailUnitEnum.WeeksSunday
+                        ? common.TimeSpecEnum.Weeks
+                        : field.detail === common.DetailUnitEnum.WeeksMonday
+                          ? common.TimeSpecEnum.Weeks
+                          : field.detail === common.DetailUnitEnum.Months
+                            ? common.TimeSpecEnum.Months
+                            : field.detail === common.DetailUnitEnum.Quarters
+                              ? common.TimeSpecEnum.Quarters
+                              : field.detail === common.DetailUnitEnum.Years
+                                ? common.TimeSpecEnum.Years
+                                : undefined;
 
           let cell: QCell = {
             id: key.toLowerCase(),
@@ -199,25 +202,25 @@ export class DataService {
               isStore === true && common.isDefined(storeTimeSpec)
                 ? ((Number(value) * 1000) as unknown as string)
                 : common.isDefined(value)
-                ? value
-                : 'NULL',
+                  ? value
+                  : 'NULL',
             valueFmt: common.isUndefined(value)
               ? 'NULL'
               : common.isDefined(tsValue)
-              ? common.formatTsUnix({
-                  timeSpec:
-                    isStore === true
-                      ? storeTimeSpec
-                      : this.getTimeSpecByFieldSqlName(sqlName),
-                  unixTimeZoned: isStore === true ? tsValue : tsValue / 1000
-                })
-              : this.formatValue({
-                  value: value,
-                  formatNumber: field?.formatNumber,
-                  fieldResult: field?.result,
-                  currencyPrefix: field?.currencyPrefix,
-                  currencySuffix: field?.currencySuffix
-                })
+                ? common.formatTsUnix({
+                    timeSpec:
+                      isStore === true
+                        ? storeTimeSpec
+                        : this.getTimeSpecByFieldSqlName(sqlName),
+                    unixTimeZoned: isStore === true ? tsValue : tsValue / 1000
+                  })
+                : this.formatValue({
+                    value: value,
+                    formatNumber: field?.formatNumber,
+                    fieldResult: field?.result,
+                    currencyPrefix: field?.currencyPrefix,
+                    currencySuffix: field?.currencySuffix
+                  })
           };
 
           r[sqlName] = cell;
@@ -385,8 +388,8 @@ export class DataService {
               xValue: common.isUndefined(xV)
                 ? 'NULL'
                 : xField.result === common.FieldResultEnum.Number
-                ? this.convertToNumberOrNull(xV)
-                : xV,
+                  ? this.convertToNumberOrNull(xV)
+                  : xV,
               xValueFmt: row[xSqlName].valueFmt,
               yValue: this.convertToNumberOrNull(row[ySqlName].value),
               yValueFmt: row[ySqlName].valueFmt,
@@ -478,33 +481,33 @@ export class DataService {
                   ? Number(a.xValue) > Number(b.xValue)
                     ? 1
                     : Number(b.xValue) > Number(a.xValue)
-                    ? -1
-                    : 0
+                      ? -1
+                      : 0
                   : xField?.result === common.FieldResultEnum.DayOfWeek
-                  ? sortedDaysOfWeek.indexOf(a.xValue as string) >
-                    sortedDaysOfWeek.indexOf(b.xValue as string)
-                    ? 1
-                    : sortedDaysOfWeek.indexOf(b.xValue as string) >
-                      sortedDaysOfWeek.indexOf(a.xValue as string)
-                    ? -1
-                    : 0
-                  : xField?.result === common.FieldResultEnum.MonthName
-                  ? sortedMonthNames.indexOf(a.xValue as string) >
-                    sortedMonthNames.indexOf(b.xValue as string)
-                    ? 1
-                    : sortedMonthNames.indexOf(b.xValue as string) >
-                      sortedMonthNames.indexOf(a.xValue as string)
-                    ? -1
-                    : 0
-                  : xField?.result === common.FieldResultEnum.QuarterOfYear
-                  ? sortedQuartersOfYear.indexOf(a.xValue as string) >
-                    sortedQuartersOfYear.indexOf(b.xValue as string)
-                    ? 1
-                    : sortedQuartersOfYear.indexOf(b.xValue as string) >
-                      sortedQuartersOfYear.indexOf(a.xValue as string)
-                    ? -1
-                    : 0
-                  : 0
+                    ? sortedDaysOfWeek.indexOf(a.xValue as string) >
+                      sortedDaysOfWeek.indexOf(b.xValue as string)
+                      ? 1
+                      : sortedDaysOfWeek.indexOf(b.xValue as string) >
+                          sortedDaysOfWeek.indexOf(a.xValue as string)
+                        ? -1
+                        : 0
+                    : xField?.result === common.FieldResultEnum.MonthName
+                      ? sortedMonthNames.indexOf(a.xValue as string) >
+                        sortedMonthNames.indexOf(b.xValue as string)
+                        ? 1
+                        : sortedMonthNames.indexOf(b.xValue as string) >
+                            sortedMonthNames.indexOf(a.xValue as string)
+                          ? -1
+                          : 0
+                      : xField?.result === common.FieldResultEnum.QuarterOfYear
+                        ? sortedQuartersOfYear.indexOf(a.xValue as string) >
+                          sortedQuartersOfYear.indexOf(b.xValue as string)
+                          ? 1
+                          : sortedQuartersOfYear.indexOf(b.xValue as string) >
+                              sortedQuartersOfYear.indexOf(a.xValue as string)
+                            ? -1
+                            : 0
+                        : 0
               )
             : ySeriesElement.points
       } as SeriesDataElement)
@@ -574,30 +577,30 @@ export class DataService {
     return fieldSqlName.match(/(?:___year)$/g)
       ? common.TimeSpecEnum.Years
       : fieldSqlName.match(/(?:___quarter)$/g)
-      ? common.TimeSpecEnum.Quarters
-      : fieldSqlName.match(/(?:___month)$/g)
-      ? common.TimeSpecEnum.Months
-      : fieldSqlName.match(/(?:___week)$/g)
-      ? common.TimeSpecEnum.Weeks
-      : fieldSqlName.match(/(?:___date)$/g)
-      ? common.TimeSpecEnum.Days
-      : fieldSqlName.match(/(?:___hour)$/g)
-      ? common.TimeSpecEnum.Hours
-      : fieldSqlName.match(/(?:___hour2)$/g)
-      ? common.TimeSpecEnum.Hours
-      : fieldSqlName.match(/(?:___hour3)$/g)
-      ? common.TimeSpecEnum.Hours
-      : fieldSqlName.match(/(?:___hour4)$/g)
-      ? common.TimeSpecEnum.Hours
-      : fieldSqlName.match(/(?:___hour6)$/g)
-      ? common.TimeSpecEnum.Hours
-      : fieldSqlName.match(/(?:___hour8)$/g)
-      ? common.TimeSpecEnum.Hours
-      : fieldSqlName.match(/(?:___hour12)$/g)
-      ? common.TimeSpecEnum.Hours
-      : fieldSqlName.match(/(?:___ts)$/g)
-      ? common.TimeSpecEnum.Timestamps
-      : common.TimeSpecEnum.Minutes;
+        ? common.TimeSpecEnum.Quarters
+        : fieldSqlName.match(/(?:___month)$/g)
+          ? common.TimeSpecEnum.Months
+          : fieldSqlName.match(/(?:___week)$/g)
+            ? common.TimeSpecEnum.Weeks
+            : fieldSqlName.match(/(?:___date)$/g)
+              ? common.TimeSpecEnum.Days
+              : fieldSqlName.match(/(?:___hour)$/g)
+                ? common.TimeSpecEnum.Hours
+                : fieldSqlName.match(/(?:___hour2)$/g)
+                  ? common.TimeSpecEnum.Hours
+                  : fieldSqlName.match(/(?:___hour3)$/g)
+                    ? common.TimeSpecEnum.Hours
+                    : fieldSqlName.match(/(?:___hour4)$/g)
+                      ? common.TimeSpecEnum.Hours
+                      : fieldSqlName.match(/(?:___hour6)$/g)
+                        ? common.TimeSpecEnum.Hours
+                        : fieldSqlName.match(/(?:___hour8)$/g)
+                          ? common.TimeSpecEnum.Hours
+                          : fieldSqlName.match(/(?:___hour12)$/g)
+                            ? common.TimeSpecEnum.Hours
+                            : fieldSqlName.match(/(?:___ts)$/g)
+                              ? common.TimeSpecEnum.Timestamps
+                              : common.TimeSpecEnum.Minutes;
   }
 
   private getDateFromDate(rValue: string) {

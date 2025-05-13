@@ -14,7 +14,10 @@ import { ApiService } from '../services/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class OrgResolver implements Resolve<Observable<boolean>> {
-  constructor(private navQuery: NavQuery, private apiService: ApiService) {}
+  constructor(
+    private navQuery: NavQuery,
+    private apiService: ApiService
+  ) {}
 
   resolve(
     route: ActivatedRouteSnapshot,

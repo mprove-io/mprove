@@ -1585,9 +1585,9 @@ export class FractionTsComponent implements OnInit {
         common.FractionTsLastCompleteOptionEnum.Incomplete
           ? `last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit}`
           : this.fraction.tsLastCompleteOption ===
-            common.FractionTsLastCompleteOptionEnum.Complete
-          ? `last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit} complete`
-          : `last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit} complete plus current`,
+              common.FractionTsLastCompleteOptionEnum.Complete
+            ? `last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit} complete`
+            : `last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit} complete plus current`,
       operator: common.FractionOperatorEnum.Or,
       type: common.FractionTypeEnum.TsIsInLast,
       tsLastValue: this.fraction.tsLastValue,

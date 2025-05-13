@@ -630,19 +630,19 @@ export class RowComponent {
                 b.fieldClass === common.FieldClassEnum.Dimension
                   ? 1
                   : a.fieldClass === common.FieldClassEnum.Dimension &&
-                    b.fieldClass !== common.FieldClassEnum.Dimension
-                  ? -1
-                  : a.fieldClass !== common.FieldClassEnum.Filter &&
-                    b.fieldClass === common.FieldClassEnum.Filter
-                  ? 1
-                  : a.fieldClass === common.FieldClassEnum.Filter &&
-                    b.fieldClass !== common.FieldClassEnum.Filter
-                  ? -1
-                  : a.partLabel > b.partLabel
-                  ? 1
-                  : b.partLabel > a.partLabel
-                  ? -1
-                  : 0
+                      b.fieldClass !== common.FieldClassEnum.Dimension
+                    ? -1
+                    : a.fieldClass !== common.FieldClassEnum.Filter &&
+                        b.fieldClass === common.FieldClassEnum.Filter
+                      ? 1
+                      : a.fieldClass === common.FieldClassEnum.Filter &&
+                          b.fieldClass !== common.FieldClassEnum.Filter
+                        ? -1
+                        : a.partLabel > b.partLabel
+                          ? 1
+                          : b.partLabel > a.partLabel
+                            ? -1
+                            : 0
               );
 
             // console.log(this.fieldsList[0]);
@@ -732,8 +732,8 @@ export class RowComponent {
         operator: common.isUndefined(logicGroup)
           ? undefined
           : logicGroup === common.FractionLogicEnum.Or
-          ? common.FractionOperatorEnum.Or
-          : common.FractionOperatorEnum.And,
+            ? common.FractionOperatorEnum.Or
+            : common.FractionOperatorEnum.And,
         logicGroup: logicGroup,
         brick: undefined,
         type: common.FractionTypeEnum.StoreFraction,

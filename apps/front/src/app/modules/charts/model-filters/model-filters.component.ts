@@ -141,8 +141,8 @@ export class ModelFiltersComponent {
         operator: common.isUndefined(logicGroup)
           ? undefined
           : logicGroup === common.FractionLogicEnum.Or
-          ? common.FractionOperatorEnum.Or
-          : common.FractionOperatorEnum.And,
+            ? common.FractionOperatorEnum.Or
+            : common.FractionOperatorEnum.And,
         logicGroup: logicGroup,
         brick: undefined,
         type: common.FractionTypeEnum.StoreFraction,

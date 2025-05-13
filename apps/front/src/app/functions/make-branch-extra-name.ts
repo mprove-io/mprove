@@ -9,6 +9,6 @@ export function makeBranchExtraName(item: {
     common.isUndefined(item.branchId)
     ? undefined
     : item.isRepoProd === true
-    ? `production - ${item.branchId}`
-    : `dev-${item.alias} - ${item.branchId}`;
+      ? `production - ${item.branchId}`
+      : `dev-${item.alias} - ${item.branchId}`;
 }

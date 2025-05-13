@@ -190,8 +190,8 @@ export class FractionNumberComponent implements OnInit {
       fractionType === common.FractionTypeEnum.NumberIsEqualTo
         ? value
         : fractionType === common.FractionTypeEnum.NumberIsNotEqualTo
-        ? `not ${value}`
-        : '';
+          ? `not ${value}`
+          : '';
 
     return newBrick;
   }
@@ -201,12 +201,12 @@ export class FractionNumberComponent implements OnInit {
       fractionType === common.FractionTypeEnum.NumberIsGreaterThan
         ? `> ${value}`
         : fractionType === common.FractionTypeEnum.NumberIsGreaterThanOrEqualTo
-        ? `>= ${value}`
-        : fractionType === common.FractionTypeEnum.NumberIsLessThan
-        ? `< ${value}`
-        : fractionType === common.FractionTypeEnum.NumberIsLessThanOrEqualTo
-        ? `<= ${value}`
-        : '';
+          ? `>= ${value}`
+          : fractionType === common.FractionTypeEnum.NumberIsLessThan
+            ? `< ${value}`
+            : fractionType === common.FractionTypeEnum.NumberIsLessThanOrEqualTo
+              ? `<= ${value}`
+              : '';
 
     return newBrick;
   }
@@ -221,19 +221,19 @@ export class FractionNumberComponent implements OnInit {
       option === common.FractionNumberBetweenOptionEnum.Inclusive
         ? `[${n1}, ${n2}]`
         : option === common.FractionNumberBetweenOptionEnum.LeftInclusive
-        ? `[${n1}, ${n2})`
-        : option === common.FractionNumberBetweenOptionEnum.RightInclusive
-        ? `(${n1}, ${n2}]`
-        : option === common.FractionNumberBetweenOptionEnum.Exclusive
-        ? `(${n1}, ${n2})`
-        : '';
+          ? `[${n1}, ${n2})`
+          : option === common.FractionNumberBetweenOptionEnum.RightInclusive
+            ? `(${n1}, ${n2}]`
+            : option === common.FractionNumberBetweenOptionEnum.Exclusive
+              ? `(${n1}, ${n2})`
+              : '';
 
     let newBrick =
       fractionType === common.FractionTypeEnum.NumberIsBetween
         ? content
         : fractionType === common.FractionTypeEnum.NumberIsNotBetween
-        ? `not ${content}`
-        : '';
+          ? `not ${content}`
+          : '';
 
     return newBrick;
   }

@@ -73,22 +73,22 @@ export class ReportComponent {
             ['name', 'parameters'].indexOf(paramsColumn.colId) > -1
               ? uiState.metricsTimeColumnsNarrowWidth
               : [
-                  common.TimeSpecEnum.Timestamps,
-                  common.TimeSpecEnum.Minutes,
-                  common.TimeSpecEnum.Hours
-                ].indexOf(uiState.timeSpec) > -1
-              ? uiState.metricsTimeColumnsNarrowWidth
-              : paramsColumn.getActualWidth(),
+                    common.TimeSpecEnum.Timestamps,
+                    common.TimeSpecEnum.Minutes,
+                    common.TimeSpecEnum.Hours
+                  ].indexOf(uiState.timeSpec) > -1
+                ? uiState.metricsTimeColumnsNarrowWidth
+                : paramsColumn.getActualWidth(),
           metricsTimeColumnsWideWidth:
             ['name', 'parameters'].indexOf(paramsColumn.colId) > -1
               ? uiState.metricsTimeColumnsWideWidth
               : [
-                  common.TimeSpecEnum.Timestamps,
-                  common.TimeSpecEnum.Minutes,
-                  common.TimeSpecEnum.Hours
-                ].indexOf(uiState.timeSpec) > -1
-              ? paramsColumn.getActualWidth()
-              : uiState.metricsTimeColumnsWideWidth
+                    common.TimeSpecEnum.Timestamps,
+                    common.TimeSpecEnum.Minutes,
+                    common.TimeSpecEnum.Hours
+                  ].indexOf(uiState.timeSpec) > -1
+                ? paramsColumn.getActualWidth()
+                : uiState.metricsTimeColumnsWideWidth
         });
 
         uiState = this.uiQuery.getValue();

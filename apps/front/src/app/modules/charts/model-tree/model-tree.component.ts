@@ -326,8 +326,8 @@ export class ModelTreeComponent implements AfterViewInit {
           operator: common.isUndefined(logicGroup)
             ? undefined
             : logicGroup === common.FractionLogicEnum.Or
-            ? common.FractionOperatorEnum.Or
-            : common.FractionOperatorEnum.And,
+              ? common.FractionOperatorEnum.Or
+              : common.FractionOperatorEnum.And,
           logicGroup: logicGroup,
           brick: undefined,
           type: common.FractionTypeEnum.StoreFraction,
@@ -616,8 +616,8 @@ export class ModelTreeComponent implements AfterViewInit {
       this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat
         ? flatNodes
         : this.modelTreeLevels === common.ModelTreeLevelsEnum.NestedFlatTime
-        ? nestedFlatTimeNodes
-        : nestedNodes;
+          ? nestedFlatTimeNodes
+          : nestedNodes;
   }
 
   updateNodeExtra(node: ModelNode): ModelNodeExtra {
@@ -660,8 +660,8 @@ export class ModelTreeComponent implements AfterViewInit {
             node.parent.data.hidden ||
             node.data.hidden
           : node.parent
-          ? node.parent.data.hidden || node.data.hidden
-          : node.data.hidden;
+            ? node.parent.data.hidden || node.data.hidden
+            : node.data.hidden;
 
       node.setIsHidden(isHidden);
     });

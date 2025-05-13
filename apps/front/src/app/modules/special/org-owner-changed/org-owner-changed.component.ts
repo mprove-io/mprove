@@ -14,7 +14,10 @@ export class OrgOwnerChangedComponent implements OnInit {
   orgName: string;
   newOrgOwner: string;
 
-  constructor(private authService: AuthService, private title: Title) {}
+  constructor(
+    private authService: AuthService,
+    private title: Title
+  ) {}
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);

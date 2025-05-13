@@ -73,8 +73,8 @@ export class ProjectConnectionsResolver
               a.connectionId > b.connectionId
                 ? 1
                 : b.connectionId > a.connectionId
-                ? -1
-                : 0
+                  ? -1
+                  : 0
             );
 
             this.connectionsQuery.update({

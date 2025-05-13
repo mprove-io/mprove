@@ -140,8 +140,8 @@ export class ApiService {
         res.status !== 201
           ? enums.ErEnum.FRONT_RESPONSE_CODE_IS_NOT_201
           : res.body?.info?.status !== common.ResponseInfoStatusEnum.Ok
-          ? enums.ErEnum.FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK
-          : undefined
+            ? enums.ErEnum.FRONT_RESPONSE_INFO_STATUS_IS_NOT_OK
+            : undefined
     };
 
     let infoErrorMessage = res?.body?.info?.error?.message;
@@ -345,8 +345,8 @@ export class ApiService {
         e instanceof HttpErrorResponse
           ? enums.ErEnum.FRONT_INSTANCE_OF_HTTP_ERROR_RESPONSE
           : e instanceof TimeoutError
-          ? enums.ErEnum.FRONT_INSTANCE_OF_TIMEOUT_ERROR
-          : enums.ErEnum.FRONT_API_UNKNOWN_ERROR
+            ? enums.ErEnum.FRONT_INSTANCE_OF_TIMEOUT_ERROR
+            : enums.ErEnum.FRONT_API_UNKNOWN_ERROR
     };
 
     this.myDialogService.showError({ errorData, isThrow: false });

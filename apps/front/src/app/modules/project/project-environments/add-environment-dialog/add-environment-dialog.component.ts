@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
-  Component,
   CUSTOM_ELEMENTS_SCHEMA,
+  Component,
   ElementRef,
   HostListener,
   OnInit,
@@ -100,13 +100,13 @@ export class AddEnvironmentDialogComponent implements OnInit {
                 b.envId === common.PROJECT_ENV_PROD
                   ? 1
                   : a.envId === common.PROJECT_ENV_PROD &&
-                    b.envId !== common.PROJECT_ENV_PROD
-                  ? -1
-                  : a.envId > b.envId
-                  ? 1
-                  : b.envId > a.envId
-                  ? -1
-                  : 0
+                      b.envId !== common.PROJECT_ENV_PROD
+                    ? -1
+                    : a.envId > b.envId
+                      ? 1
+                      : b.envId > a.envId
+                        ? -1
+                        : 0
               )
             });
           }

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
-  Component,
   CUSTOM_ELEMENTS_SCHEMA,
+  Component,
   HostListener,
   OnInit,
   ViewChild
@@ -465,8 +465,8 @@ export class AddConnectionDialogComponent implements OnInit {
               a.connectionId > b.connectionId
                 ? 1
                 : b.connectionId > a.connectionId
-                ? -1
-                : 0
+                  ? -1
+                  : 0
             );
 
             this.connectionsQuery.update({

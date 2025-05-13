@@ -1,14 +1,14 @@
 import { HttpClientModule } from '@angular/common/http';
 import {
-  enableProdMode,
   ErrorHandler,
+  enableProdMode,
   importProvidersFrom
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
-  bootstrapApplication,
   BrowserModule,
-  Title
+  Title,
+  bootstrapApplication
 } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';

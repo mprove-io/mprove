@@ -19,10 +19,10 @@ export function makeInitials(item: {
     lastName.length > 0
       ? lastName[0]
       : common.isDefined(firstName) && firstName.length > 1
-      ? firstName[1]
-      : alias.length > 1
-      ? alias[1]
-      : '_';
+        ? firstName[1]
+        : alias.length > 1
+          ? alias[1]
+          : '_';
 
   return (
     common.capitalizeFirstLetter(firstLetter) +

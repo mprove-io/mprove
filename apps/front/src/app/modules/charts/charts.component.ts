@@ -199,11 +199,11 @@ export class ChartsComponent implements OnInit, OnDestroy {
             .indexOf(this.queryPartForm.controls['queryPart'].value) < 0
             ? common.QueryPartEnum.StoreReqJsonParts
             : this.model.isStoreModel === false &&
-              this.mainQueryPartList
-                .map(y => y.value)
-                .indexOf(this.queryPartForm.controls['queryPart'].value) < 0
-            ? common.QueryPartEnum.MainSql
-            : undefined;
+                this.mainQueryPartList
+                  .map(y => y.value)
+                  .indexOf(this.queryPartForm.controls['queryPart'].value) < 0
+              ? common.QueryPartEnum.MainSql
+              : undefined;
 
         if (
           common.isDefined(queryPart) &&
@@ -226,19 +226,19 @@ export class ChartsComponent implements OnInit, OnDestroy {
           b.fieldClass === common.FieldClassEnum.Dimension
             ? 1
             : a.fieldClass === common.FieldClassEnum.Dimension &&
-              b.fieldClass !== common.FieldClassEnum.Dimension
-            ? -1
-            : a.fieldClass !== common.FieldClassEnum.Filter &&
-              b.fieldClass === common.FieldClassEnum.Filter
-            ? 1
-            : a.fieldClass === common.FieldClassEnum.Filter &&
-              b.fieldClass !== common.FieldClassEnum.Filter
-            ? -1
-            : a.partLabel > b.partLabel
-            ? 1
-            : b.partLabel > a.partLabel
-            ? -1
-            : 0
+                b.fieldClass !== common.FieldClassEnum.Dimension
+              ? -1
+              : a.fieldClass !== common.FieldClassEnum.Filter &&
+                  b.fieldClass === common.FieldClassEnum.Filter
+                ? 1
+                : a.fieldClass === common.FieldClassEnum.Filter &&
+                    b.fieldClass !== common.FieldClassEnum.Filter
+                  ? -1
+                  : a.partLabel > b.partLabel
+                    ? 1
+                    : b.partLabel > a.partLabel
+                      ? -1
+                      : 0
         );
 
       this.sortedNotHiddenFieldsList = this.sortedFieldsList.filter(
@@ -1384,8 +1384,8 @@ ${this.mconfig.storePart?.reqFunction}`
         operator: common.isUndefined(logicGroup)
           ? undefined
           : logicGroup === common.FractionLogicEnum.Or
-          ? common.FractionOperatorEnum.Or
-          : common.FractionOperatorEnum.And,
+            ? common.FractionOperatorEnum.Or
+            : common.FractionOperatorEnum.And,
         logicGroup: logicGroup,
         brick: undefined,
         type: common.FractionTypeEnum.StoreFraction,
@@ -1554,19 +1554,19 @@ ${this.mconfig.storePart?.reqFunction}`
       common.isUndefined(this.model?.modelId) || this.isFilterByModel === false
         ? this.charts.filter(x => x.draft === true)
         : common.isDefined(this.model?.modelId)
-        ? this.charts.filter(
-            x => x.draft === true && x.modelId === this.model.modelId
-          )
-        : [];
+          ? this.charts.filter(
+              x => x.draft === true && x.modelId === this.model.modelId
+            )
+          : [];
 
     let nonDraftCharts =
       common.isUndefined(this.model?.modelId) || this.isFilterByModel === false
         ? this.charts.filter(x => x.draft === false)
         : common.isDefined(this.model?.modelId)
-        ? this.charts.filter(
-            x => x.draft === false && x.modelId === this.model.modelId
-          )
-        : [];
+          ? this.charts.filter(
+              x => x.draft === false && x.modelId === this.model.modelId
+            )
+          : [];
 
     if (common.isDefinedAndNotEmpty(this.word)) {
       let haystack = nonDraftCharts.map(x =>
@@ -1592,12 +1592,12 @@ ${this.mconfig.storePart?.reqFunction}`
       return b.draft === true && a.draft !== true
         ? 1
         : a.draft === true && b.draft !== true
-        ? -1
-        : aTitle > bTitle
-        ? 1
-        : bTitle > aTitle
-        ? -1
-        : 0;
+          ? -1
+          : aTitle > bTitle
+            ? 1
+            : bTitle > aTitle
+              ? -1
+              : 0;
     });
 
     this.filteredCharts.forEach(chart => {

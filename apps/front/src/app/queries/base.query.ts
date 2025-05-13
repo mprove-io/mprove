@@ -1,4 +1,4 @@
-import { setProps, Store } from '@ngneat/elf';
+import { Store, setProps } from '@ngneat/elf';
 
 export class BaseQuery<T> {
   store;

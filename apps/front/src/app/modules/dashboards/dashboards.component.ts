@@ -312,12 +312,12 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       return b.draft === true && a.draft !== true
         ? 1
         : a.draft === true && b.draft !== true
-        ? -1
-        : aTitle > bTitle
-        ? 1
-        : bTitle > aTitle
-        ? -1
-        : 0;
+          ? -1
+          : aTitle > bTitle
+            ? 1
+            : bTitle > aTitle
+              ? -1
+              : 0;
     });
 
     this.filteredDashboardsQuery.update({
@@ -703,8 +703,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         a.lastCompleteTs > b.lastCompleteTs
           ? 1
           : b.lastCompleteTs > a.lastCompleteTs
-          ? -1
-          : 0
+            ? -1
+            : 0
       );
 
     if (

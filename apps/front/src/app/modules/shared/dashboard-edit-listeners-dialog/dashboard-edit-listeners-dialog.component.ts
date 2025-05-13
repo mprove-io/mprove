@@ -156,24 +156,24 @@ export class DashboardEditListenersDialogComponent implements OnInit {
                         )
                       ]
                     : common.isDefined(dashField.storeFilter) &&
-                      dashField.storeModel === model.modelId
-                    ? [
-                        emptyField,
-                        ...model.fields.filter(y =>
-                          y.fieldClass === common.FieldClassEnum.Filter
-                            ? y.id === dashField.storeFilter
-                            : false
-                        )
-                      ]
-                    : model.isStoreModel === false &&
-                      common.isUndefined(dashField.storeModel)
-                    ? [
-                        emptyField,
-                        ...model.fields.filter(
-                          y => y.result === dashField.result
-                        )
-                      ]
-                    : [emptyField];
+                        dashField.storeModel === model.modelId
+                      ? [
+                          emptyField,
+                          ...model.fields.filter(y =>
+                            y.fieldClass === common.FieldClassEnum.Filter
+                              ? y.id === dashField.storeFilter
+                              : false
+                          )
+                        ]
+                      : model.isStoreModel === false &&
+                          common.isUndefined(dashField.storeModel)
+                        ? [
+                            emptyField,
+                            ...model.fields.filter(
+                              y => y.result === dashField.result
+                            )
+                          ]
+                        : [emptyField];
 
                 if (common.isUndefined(swap[dashField.id])) {
                   swap[dashField.id] = [undefined];

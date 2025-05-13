@@ -50,8 +50,8 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
       structState.allowTimezones === false
         ? structState.defaultTimezone
         : common.isDefined(timezoneParam)
-        ? timezoneParam.split('-').join('/')
-        : uiState.timezone;
+          ? timezoneParam.split('-').join('/')
+          : uiState.timezone;
 
     if (uiState.timezone !== timezone) {
       this.uiQuery.updatePart({ timezone: timezone });

@@ -106,12 +106,12 @@ export class ModelsListComponent implements OnInit, OnDestroy {
       return a.isViewModel === true && b.isViewModel === false
         ? 1
         : a.isViewModel === false && b.isViewModel === true
-        ? -1
-        : aLabel > bLabel
-        ? 1
-        : bLabel > aLabel
-        ? -1
-        : 0;
+          ? -1
+          : aLabel > bLabel
+            ? 1
+            : bLabel > aLabel
+              ? -1
+              : 0;
     });
   }
 

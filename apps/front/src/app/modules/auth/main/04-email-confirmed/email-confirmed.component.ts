@@ -11,7 +11,10 @@ import { constants } from '~front/barrels/constants';
 export class EmailConfirmedComponent implements OnInit {
   pageTitle = constants.EMAIL_IS_CONFIRMED_PAGE_TITLE;
 
-  constructor(private router: Router, private title: Title) {}
+  constructor(
+    private router: Router,
+    private title: Title
+  ) {}
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);

@@ -4,7 +4,7 @@ import { Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { tags as t } from '@lezer/highlight';
 import { indentationMarkers } from '@replit/codemirror-indentation-markers';
-import { createTheme, CreateThemeOptions } from './theme-parts';
+import { CreateThemeOptions, createTheme } from './theme-parts';
 
 // https://github.com/uiwjs/react-codemirror/blob/master/themes/vscode/src/light.ts
 

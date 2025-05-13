@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
-  Component,
   CUSTOM_ELEMENTS_SCHEMA,
+  Component,
   HostListener,
   OnInit,
   ViewChild

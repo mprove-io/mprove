@@ -6,7 +6,10 @@ import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dial
 
 @Injectable()
 export class ErrorHandlerService extends ErrorHandler {
-  constructor(readonly ngZone: NgZone, private injector: Injector) {
+  constructor(
+    readonly ngZone: NgZone,
+    private injector: Injector
+  ) {
     super();
   }
 

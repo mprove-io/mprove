@@ -163,24 +163,24 @@ export class ReportEditListenersDialogComponent implements OnInit {
                         )
                       ]
                     : common.isDefined(reportField.storeFilter) &&
-                      reportField.storeModel === model.modelId
-                    ? [
-                        emptyField,
-                        ...model.fields.filter(y =>
-                          y.fieldClass === common.FieldClassEnum.Filter
-                            ? y.id === reportField.storeFilter
-                            : false
-                        )
-                      ]
-                    : model.isStoreModel === false &&
-                      common.isUndefined(reportField.storeModel)
-                    ? [
-                        emptyField,
-                        ...model.fields.filter(
-                          y => y.result === reportField.result
-                        )
-                      ]
-                    : [emptyField];
+                        reportField.storeModel === model.modelId
+                      ? [
+                          emptyField,
+                          ...model.fields.filter(y =>
+                            y.fieldClass === common.FieldClassEnum.Filter
+                              ? y.id === reportField.storeFilter
+                              : false
+                          )
+                        ]
+                      : model.isStoreModel === false &&
+                          common.isUndefined(reportField.storeModel)
+                        ? [
+                            emptyField,
+                            ...model.fields.filter(
+                              y => y.result === reportField.result
+                            )
+                          ]
+                        : [emptyField];
 
                 if (common.isUndefined(swap[reportField.id])) {
                   swap[reportField.id] = [undefined];

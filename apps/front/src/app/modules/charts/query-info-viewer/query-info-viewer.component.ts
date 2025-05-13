@@ -87,14 +87,14 @@ export class QueryInfoViewerComponent implements OnChanges {
       this.queryPart === common.QueryPartEnum.MainSql
         ? 'SQL'
         : this.queryPart === common.QueryPartEnum.StoreReqFunction ||
-          this.queryPart === common.QueryPartEnum.StoreReqTemplate
-        ? 'JavaScript'
-        : this.queryPart === common.QueryPartEnum.StoreReqJsonParts
-        ? 'JSON'
-        : this.queryPart === common.QueryPartEnum.TileYaml ||
-          this.queryPart === common.QueryPartEnum.ModelYaml
-        ? 'YAML'
-        : undefined;
+            this.queryPart === common.QueryPartEnum.StoreReqTemplate
+          ? 'JavaScript'
+          : this.queryPart === common.QueryPartEnum.StoreReqJsonParts
+            ? 'JSON'
+            : this.queryPart === common.QueryPartEnum.TileYaml ||
+                this.queryPart === common.QueryPartEnum.ModelYaml
+              ? 'YAML'
+              : undefined;
   }
 
   checkContent() {

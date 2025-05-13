@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
-  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnDestroy,
   OnInit
@@ -13,7 +13,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
-import { from, interval, of, Subscription } from 'rxjs';
+import { Subscription, from, interval, of } from 'rxjs';
 import { concatMap, delay, startWith, take, tap } from 'rxjs/operators';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -457,8 +457,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
                   a.partLabel > b.partLabel
                     ? 1
                     : b.partLabel > a.partLabel
-                    ? -1
-                    : 0
+                      ? -1
+                      : 0
                 )
             ];
 

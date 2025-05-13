@@ -6,8 +6,8 @@ import { EditorView } from '@codemirror/view';
 
 import {
   HighlightStyle,
-  syntaxHighlighting,
-  type TagStyle
+  type TagStyle,
+  syntaxHighlighting
 } from '@codemirror/language';
 
 export interface StyleSpec {

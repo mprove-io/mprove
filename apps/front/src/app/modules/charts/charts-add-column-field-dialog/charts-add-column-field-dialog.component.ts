@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
-  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
@@ -80,9 +80,9 @@ export class ChartsAddColumnFieldDialogComponent implements OnInit {
         b.fieldClass === common.FieldClassEnum.Dimension
           ? -1
           : a.fieldClass === common.FieldClassEnum.Dimension &&
-            b.fieldClass !== common.FieldClassEnum.Dimension
-          ? 1
-          : 0
+              b.fieldClass !== common.FieldClassEnum.Dimension
+            ? 1
+            : 0
       );
   }
 

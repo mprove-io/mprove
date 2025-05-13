@@ -1,6 +1,6 @@
 import {
-  Component,
   CUSTOM_ELEMENTS_SCHEMA,
+  Component,
   HostListener,
   OnInit
 } from '@angular/core';

@@ -24,5 +24,8 @@ export class AvatarComponent {
     })
   );
 
-  constructor(private userQuery: UserQuery, private cd: ChangeDetectorRef) {}
+  constructor(
+    private userQuery: UserQuery,
+    private cd: ChangeDetectorRef
+  ) {}
 }

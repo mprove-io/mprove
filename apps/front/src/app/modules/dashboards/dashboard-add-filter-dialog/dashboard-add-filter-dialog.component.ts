@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import {
+  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
-  CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   HostListener,
   OnInit,
@@ -654,8 +654,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
         operator: common.isUndefined(logicGroup)
           ? undefined
           : logicGroup === common.FractionLogicEnum.Or
-          ? common.FractionOperatorEnum.Or
-          : common.FractionOperatorEnum.And,
+            ? common.FractionOperatorEnum.Or
+            : common.FractionOperatorEnum.And,
         logicGroup: logicGroup,
         brick: undefined,
         type: common.FractionTypeEnum.StoreFraction,

@@ -430,20 +430,22 @@ export class FractionStringComponent implements OnInit, OnDestroy {
       fractionType === common.FractionTypeEnum.StringIsEqualTo
         ? `-${value}-`
         : fractionType === common.FractionTypeEnum.StringContains
-        ? `%${value}%`
-        : fractionType === common.FractionTypeEnum.StringStartsWith
-        ? `${value}%`
-        : fractionType === common.FractionTypeEnum.StringEndsWith
-        ? `%${value}`
-        : fractionType === common.FractionTypeEnum.StringIsNotEqualTo
-        ? `not -${value}-`
-        : fractionType === common.FractionTypeEnum.StringDoesNotContain
-        ? `not %${value}%`
-        : fractionType === common.FractionTypeEnum.StringDoesNotStartWith
-        ? `${value}% not`
-        : fractionType === common.FractionTypeEnum.StringDoesNotEndWith
-        ? `not %${value}`
-        : '';
+          ? `%${value}%`
+          : fractionType === common.FractionTypeEnum.StringStartsWith
+            ? `${value}%`
+            : fractionType === common.FractionTypeEnum.StringEndsWith
+              ? `%${value}`
+              : fractionType === common.FractionTypeEnum.StringIsNotEqualTo
+                ? `not -${value}-`
+                : fractionType === common.FractionTypeEnum.StringDoesNotContain
+                  ? `not %${value}%`
+                  : fractionType ===
+                      common.FractionTypeEnum.StringDoesNotStartWith
+                    ? `${value}% not`
+                    : fractionType ===
+                        common.FractionTypeEnum.StringDoesNotEndWith
+                      ? `not %${value}`
+                      : '';
 
     return newBrick;
   }

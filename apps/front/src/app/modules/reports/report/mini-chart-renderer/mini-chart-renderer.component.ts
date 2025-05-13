@@ -20,7 +20,10 @@ export class MiniChartRendererComponent implements ICellRendererAngularComp {
   localInitOpts: any;
   localOptions: EChartsOption;
 
-  constructor(private uiQuery: UiQuery, private dataService: DataService) {}
+  constructor(
+    private uiQuery: UiQuery,
+    private dataService: DataService
+  ) {}
 
   agInit(params: ICellRendererParams<DataRow>) {
     this.params = params;

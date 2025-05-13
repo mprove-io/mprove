@@ -316,8 +316,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
             a.lastCompleteTs > b.lastCompleteTs
               ? 1
               : b.lastCompleteTs > a.lastCompleteTs
-              ? -1
-              : 0
+                ? -1
+                : 0
           );
 
         if (
@@ -829,9 +829,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
           common.FractionTsLastCompleteOptionEnum.Incomplete
             ? `last ${newFraction.tsLastValue} ${newFraction.tsLastUnit}`
             : newFraction.tsLastCompleteOption ===
-              common.FractionTsLastCompleteOptionEnum.Complete
-            ? `last ${newFraction.tsLastValue} ${newFraction.tsLastUnit} complete`
-            : `last ${newFraction.tsLastValue} ${newFraction.tsLastUnit} complete plus current`,
+                common.FractionTsLastCompleteOptionEnum.Complete
+              ? `last ${newFraction.tsLastValue} ${newFraction.tsLastUnit} complete`
+              : `last ${newFraction.tsLastValue} ${newFraction.tsLastUnit} complete plus current`,
         operator: common.FractionOperatorEnum.Or,
         type: common.FractionTypeEnum.TsIsInLast,
         tsLastValue: newFraction.tsLastValue,
@@ -996,12 +996,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
       return b.draft === true && a.draft !== true
         ? 1
         : a.draft === true && b.draft !== true
-        ? -1
-        : aTitle > bTitle
-        ? 1
-        : bTitle > aTitle
-        ? -1
-        : 0;
+          ? -1
+          : aTitle > bTitle
+            ? 1
+            : bTitle > aTitle
+              ? -1
+              : 0;
     });
 
     this.filteredReportsQuery.update({

@@ -7,6 +7,6 @@ export function getFullName(x: common.Member | common.User) {
   return common.isDefined(firstName) && common.isDefined(lastName)
     ? `${firstName} ${lastName}`
     : common.isDefined(firstName)
-    ? firstName
-    : '';
+      ? firstName
+      : '';
 }

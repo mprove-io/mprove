@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { interval as observableInterval, Subscription } from 'rxjs';
+import { Subscription, interval as observableInterval } from 'rxjs';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
@@ -10,7 +10,10 @@ import { constants } from '~front/barrels/constants';
 export class AuthService {
   private checkAuthSubscription: Subscription;
 
-  constructor(private router: Router, private location: Location) {}
+  constructor(
+    private router: Router,
+    private location: Location
+  ) {}
 
   authenticated() {
     let jwtHelperService = new JwtHelperService();

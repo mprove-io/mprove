@@ -13,7 +13,10 @@ export class ProjectDeletedComponent implements OnInit {
 
   projectName: string;
 
-  constructor(private authService: AuthService, private title: Title) {}
+  constructor(
+    private authService: AuthService,
+    private title: Title
+  ) {}
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);

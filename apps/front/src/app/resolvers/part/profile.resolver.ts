@@ -13,7 +13,10 @@ import { ApiService } from '../../services/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileResolver implements Resolve<Observable<boolean>> {
-  constructor(private userQuery: UserQuery, private apiService: ApiService) {}
+  constructor(
+    private userQuery: UserQuery,
+    private apiService: ApiService
+  ) {}
 
   resolve(
     route: ActivatedRouteSnapshot,

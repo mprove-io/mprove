@@ -223,30 +223,30 @@ export class ChartViewComponent implements OnChanges {
                 unixTimeZoned: value / 1000
               })
           : xField.sqlName.match(/(?:___quarter)$/g)
-          ? (value: any) =>
-              common.formatTsUnix({
-                timeSpec: common.TimeSpecEnum.Quarters,
-                unixTimeZoned: value / 1000
-              })
-          : xField.sqlName.match(/(?:___month)$/g)
-          ? (value: any) =>
-              common.formatTsUnix({
-                timeSpec: common.TimeSpecEnum.Months,
-                unixTimeZoned: value / 1000
-              })
-          : xField.sqlName.match(/(?:___week)$/g)
-          ? (value: any) =>
-              common.formatTsUnix({
-                timeSpec: common.TimeSpecEnum.Weeks,
-                unixTimeZoned: value / 1000
-              })
-          : xField.sqlName.match(/(?:___date)$/g)
-          ? (value: any) =>
-              common.formatTsUnix({
-                timeSpec: common.TimeSpecEnum.Days,
-                unixTimeZoned: value / 1000
-              })
-          : undefined;
+            ? (value: any) =>
+                common.formatTsUnix({
+                  timeSpec: common.TimeSpecEnum.Quarters,
+                  unixTimeZoned: value / 1000
+                })
+            : xField.sqlName.match(/(?:___month)$/g)
+              ? (value: any) =>
+                  common.formatTsUnix({
+                    timeSpec: common.TimeSpecEnum.Months,
+                    unixTimeZoned: value / 1000
+                  })
+              : xField.sqlName.match(/(?:___week)$/g)
+                ? (value: any) =>
+                    common.formatTsUnix({
+                      timeSpec: common.TimeSpecEnum.Weeks,
+                      unixTimeZoned: value / 1000
+                    })
+                : xField.sqlName.match(/(?:___date)$/g)
+                  ? (value: any) =>
+                      common.formatTsUnix({
+                        timeSpec: common.TimeSpecEnum.Days,
+                        unixTimeZoned: value / 1000
+                      })
+                  : undefined;
 
         eChartOptions.xAxis = common.isDefined(xField.detail)
           ? {
@@ -258,22 +258,26 @@ export class ChartViewComponent implements OnChanges {
                     xField.detail === common.DetailUnitEnum.Timestamps
                       ? common.TimeSpecEnum.Timestamps
                       : xField.detail === common.DetailUnitEnum.Minutes
-                      ? common.TimeSpecEnum.Minutes
-                      : xField.detail === common.DetailUnitEnum.Hours
-                      ? common.TimeSpecEnum.Hours
-                      : xField.detail === common.DetailUnitEnum.Days
-                      ? common.TimeSpecEnum.Days
-                      : xField.detail === common.DetailUnitEnum.WeeksSunday
-                      ? common.TimeSpecEnum.Weeks
-                      : xField.detail === common.DetailUnitEnum.WeeksMonday
-                      ? common.TimeSpecEnum.Weeks
-                      : xField.detail === common.DetailUnitEnum.Months
-                      ? common.TimeSpecEnum.Months
-                      : xField.detail === common.DetailUnitEnum.Quarters
-                      ? common.TimeSpecEnum.Quarters
-                      : xField.detail === common.DetailUnitEnum.Years
-                      ? common.TimeSpecEnum.Years
-                      : undefined;
+                        ? common.TimeSpecEnum.Minutes
+                        : xField.detail === common.DetailUnitEnum.Hours
+                          ? common.TimeSpecEnum.Hours
+                          : xField.detail === common.DetailUnitEnum.Days
+                            ? common.TimeSpecEnum.Days
+                            : xField.detail ===
+                                common.DetailUnitEnum.WeeksSunday
+                              ? common.TimeSpecEnum.Weeks
+                              : xField.detail ===
+                                  common.DetailUnitEnum.WeeksMonday
+                                ? common.TimeSpecEnum.Weeks
+                                : xField.detail === common.DetailUnitEnum.Months
+                                  ? common.TimeSpecEnum.Months
+                                  : xField.detail ===
+                                      common.DetailUnitEnum.Quarters
+                                    ? common.TimeSpecEnum.Quarters
+                                    : xField.detail ===
+                                        common.DetailUnitEnum.Years
+                                      ? common.TimeSpecEnum.Years
+                                      : undefined;
 
                   return common.formatTsUnix({
                     timeSpec: storeTimeSpec,
@@ -283,27 +287,27 @@ export class ChartViewComponent implements OnChanges {
               }
             }
           : xField.result === common.FieldResultEnum.Ts
-          ? {
-              type: 'time',
-              axisLabel: {
-                fontSize: 13,
-                formatter: tsFormatter
+            ? {
+                type: 'time',
+                axisLabel: {
+                  fontSize: 13,
+                  formatter: tsFormatter
+                }
               }
-            }
-          : xField.result === common.FieldResultEnum.Number
-          ? {
-              type: 'value',
-              scale: this.chart.xAxis.scale,
-              axisLabel: {
-                fontSize: 13
-              }
-            }
-          : {
-              type: 'category',
-              axisLabel: {
-                fontSize: 13
-              }
-            };
+            : xField.result === common.FieldResultEnum.Number
+              ? {
+                  type: 'value',
+                  scale: this.chart.xAxis.scale,
+                  axisLabel: {
+                    fontSize: 13
+                  }
+                }
+              : {
+                  type: 'category',
+                  axisLabel: {
+                    fontSize: 13
+                  }
+                };
 
         let yAxis =
           this.chart.series.map(x => x.yAxisIndex).filter(yi => yi > 0)
@@ -464,12 +468,12 @@ export class ChartViewComponent implements OnChanges {
                 chartSeriesElement.type === common.ChartTypeEnum.Line
                   ? lineSeriesOption
                   : chartSeriesElement.type === common.ChartTypeEnum.Bar
-                  ? barSeriesOption
-                  : chartSeriesElement.type === common.ChartTypeEnum.Scatter
-                  ? scatterSeriesOption
-                  : chartSeriesElement.type === common.ChartTypeEnum.Pie
-                  ? pieSeriesOption
-                  : baseSeriesOption;
+                    ? barSeriesOption
+                    : chartSeriesElement.type === common.ChartTypeEnum.Scatter
+                      ? scatterSeriesOption
+                      : chartSeriesElement.type === common.ChartTypeEnum.Pie
+                        ? pieSeriesOption
+                        : baseSeriesOption;
 
               seriesOption.cursor = 'default';
 

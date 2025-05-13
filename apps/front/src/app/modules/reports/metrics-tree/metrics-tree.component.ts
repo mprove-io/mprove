@@ -207,8 +207,8 @@ export class MetricsTreeComponent implements AfterViewInit {
             node.parent.data.hidden ||
             node.data.hidden
           : node.parent
-          ? node.parent.data.hidden || node.data.hidden
-          : node.data.hidden;
+            ? node.parent.data.hidden || node.data.hidden
+            : node.data.hidden;
 
       node.setIsHidden(isHidden);
     });
