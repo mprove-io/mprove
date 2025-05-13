@@ -14,7 +14,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { enableElfProdMode } from '@ngneat/elf';
-import { provideTippyConfig } from '@ngneat/helipopper';
+import { provideTippyConfig } from '@ngneat/helipopper/config';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';

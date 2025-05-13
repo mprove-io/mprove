@@ -13,7 +13,7 @@ export async function getLastCommitFileContent(item: {
 
   let entry: nodegit.TreeEntry = await tree
     .getEntry(item.filePathRelative)
-    .catch(e => {
+    .catch((e): any => {
       if (e?.message?.includes(common.NODEGIT_PATH_NOT_EXIST_IN_TREE)) {
         return undefined;
       } else {

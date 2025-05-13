@@ -4,6 +4,7 @@
   "files": {
     "ignoreUnknown": false,
     "ignore": [
+      "_nogit/cypress",
       "**/node_modules/",
       "apps/integra/cypress",
       "./dist/**",
