@@ -27,28 +27,28 @@ export function makeTimestampOpenFromDateParts(item: {
     rgOpen = minute
       ? parseISO(`${year}-${month}-${day}T${hour}:${minute}:00`)
       : hour
-      ? parseISO(`${year}-${month}-${day}T${hour}:00:00`)
-      : day
-      ? parseISO(`${year}-${month}-${day}`)
-      : month
-      ? parseISO(`${year}-${month}-01`)
-      : year
-      ? parseISO(`${year}-01-01`)
-      : undefined;
+        ? parseISO(`${year}-${month}-${day}T${hour}:00:00`)
+        : day
+          ? parseISO(`${year}-${month}-${day}`)
+          : month
+            ? parseISO(`${year}-${month}-01`)
+            : year
+              ? parseISO(`${year}-01-01`)
+              : undefined;
   } else {
     switch (connection.type) {
       case common.ConnectionTypeEnum.BigQuery: {
         sqlOpen = minute
           ? `TIMESTAMP('${year}-${month}-${day} ${hour}:${minute}:00')`
           : hour
-          ? `TIMESTAMP('${year}-${month}-${day} ${hour}:00:00')`
-          : day
-          ? `TIMESTAMP('${year}-${month}-${day}')`
-          : month
-          ? `TIMESTAMP('${year}-${month}-01')`
-          : year
-          ? `TIMESTAMP('${year}-01-01')`
-          : undefined;
+            ? `TIMESTAMP('${year}-${month}-${day} ${hour}:00:00')`
+            : day
+              ? `TIMESTAMP('${year}-${month}-${day}')`
+              : month
+                ? `TIMESTAMP('${year}-${month}-01')`
+                : year
+                  ? `TIMESTAMP('${year}-01-01')`
+                  : undefined;
         break;
       }
 
@@ -56,14 +56,14 @@ export function makeTimestampOpenFromDateParts(item: {
         sqlOpen = minute
           ? `'${year}-${month}-${day} ${hour}:${minute}:00'::TIMESTAMP`
           : hour
-          ? `'${year}-${month}-${day} ${hour}:00:00'::TIMESTAMP`
-          : day
-          ? `'${year}-${month}-${day}'::TIMESTAMP`
-          : month
-          ? `'${year}-${month}-01'::TIMESTAMP`
-          : year
-          ? `'${year}-01-01'::TIMESTAMP`
-          : undefined;
+            ? `'${year}-${month}-${day} ${hour}:00:00'::TIMESTAMP`
+            : day
+              ? `'${year}-${month}-${day}'::TIMESTAMP`
+              : month
+                ? `'${year}-${month}-01'::TIMESTAMP`
+                : year
+                  ? `'${year}-01-01'::TIMESTAMP`
+                  : undefined;
         break;
       }
 
@@ -71,14 +71,14 @@ export function makeTimestampOpenFromDateParts(item: {
         sqlOpen = minute
           ? `parseDateTimeBestEffort('${year}-${month}-${day} ${hour}:${minute}:00', '${timezone}')`
           : hour
-          ? `parseDateTimeBestEffort('${year}-${month}-${day} ${hour}:00:00', '${timezone}')`
-          : day
-          ? `parseDateTimeBestEffort('${year}-${month}-${day}', '${timezone}')`
-          : month
-          ? `parseDateTimeBestEffort('${year}-${month}-01', '${timezone}')`
-          : year
-          ? `parseDateTimeBestEffort('${year}-01-01', '${timezone}')`
-          : undefined;
+            ? `parseDateTimeBestEffort('${year}-${month}-${day} ${hour}:00:00', '${timezone}')`
+            : day
+              ? `parseDateTimeBestEffort('${year}-${month}-${day}', '${timezone}')`
+              : month
+                ? `parseDateTimeBestEffort('${year}-${month}-01', '${timezone}')`
+                : year
+                  ? `parseDateTimeBestEffort('${year}-01-01', '${timezone}')`
+                  : undefined;
         break;
       }
 
@@ -86,14 +86,14 @@ export function makeTimestampOpenFromDateParts(item: {
         sqlOpen = minute
           ? `TO_TIMESTAMP('${year}-${month}-${day} ${hour}:${minute}:00')`
           : hour
-          ? `TO_TIMESTAMP('${year}-${month}-${day} ${hour}:00:00')`
-          : day
-          ? `TO_TIMESTAMP('${year}-${month}-${day}')`
-          : month
-          ? `TO_TIMESTAMP('${year}-${month}-01')`
-          : year
-          ? `TO_TIMESTAMP('${year}-01-01')`
-          : undefined;
+            ? `TO_TIMESTAMP('${year}-${month}-${day} ${hour}:00:00')`
+            : day
+              ? `TO_TIMESTAMP('${year}-${month}-${day}')`
+              : month
+                ? `TO_TIMESTAMP('${year}-${month}-01')`
+                : year
+                  ? `TO_TIMESTAMP('${year}-01-01')`
+                  : undefined;
         break;
       }
     }

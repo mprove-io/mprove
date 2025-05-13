@@ -113,20 +113,20 @@ export function makeWith(item: {
           join.type === common.JoinTypeEnum.Inner
             ? 'INNER JOIN'
             : join.type === common.JoinTypeEnum.Cross
-            ? 'CROSS JOIN'
-            : join.type === common.JoinTypeEnum.Full
-            ? 'FULL JOIN'
-            : join.type === common.JoinTypeEnum.FullOuter
-            ? 'FULL OUTER JOIN'
-            : join.type === common.JoinTypeEnum.Left
-            ? 'LEFT JOIN'
-            : join.type === common.JoinTypeEnum.LeftOuter
-            ? 'LEFT OUTER JOIN'
-            : join.type === common.JoinTypeEnum.Right
-            ? 'RIGHT JOIN'
-            : join.type === common.JoinTypeEnum.RightOuter
-            ? 'RIGHT OUTER JOIN'
-            : constants.UNKNOWN_JOIN_TYPE;
+              ? 'CROSS JOIN'
+              : join.type === common.JoinTypeEnum.Full
+                ? 'FULL JOIN'
+                : join.type === common.JoinTypeEnum.FullOuter
+                  ? 'FULL OUTER JOIN'
+                  : join.type === common.JoinTypeEnum.Left
+                    ? 'LEFT JOIN'
+                    : join.type === common.JoinTypeEnum.LeftOuter
+                      ? 'LEFT OUTER JOIN'
+                      : join.type === common.JoinTypeEnum.Right
+                        ? 'RIGHT JOIN'
+                        : join.type === common.JoinTypeEnum.RightOuter
+                          ? 'RIGHT OUTER JOIN'
+                          : constants.UNKNOWN_JOIN_TYPE;
 
         let sqlOnFinal = common.MyRegex.removeBracketsOnDoubles(join.sqlOnReal);
 

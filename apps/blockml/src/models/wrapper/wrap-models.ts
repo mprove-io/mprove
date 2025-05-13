@@ -316,12 +316,12 @@ export function wrapModels(item: {
               return timeframeIndexA < timeframeIndexB
                 ? -1
                 : timeframeIndexA > timeframeIndexB
-                ? 1
-                : labelA < labelB
-                ? -1
-                : labelA > labelB
-                ? 1
-                : 0;
+                  ? 1
+                  : labelA < labelB
+                    ? -1
+                    : labelA > labelB
+                      ? 1
+                      : 0;
             });
           }
         });

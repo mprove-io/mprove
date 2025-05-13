@@ -37,28 +37,28 @@ export function makeTimestampCloseBetween(item: {
     rgClose = minute
       ? add(rangeOpen, { minutes: 1 })
       : hour
-      ? add(rangeOpen, { hours: 1 })
-      : day
-      ? add(rangeOpen, { days: 1 })
-      : month
-      ? add(rangeOpen, { months: 1 })
-      : year
-      ? add(rangeOpen, { years: 1 })
-      : undefined;
+        ? add(rangeOpen, { hours: 1 })
+        : day
+          ? add(rangeOpen, { days: 1 })
+          : month
+            ? add(rangeOpen, { months: 1 })
+            : year
+              ? add(rangeOpen, { years: 1 })
+              : undefined;
   } else {
     switch (connection.type) {
       case common.ConnectionTypeEnum.BigQuery: {
         sqlClose = minute
           ? `TIMESTAMP_ADD(${open}, INTERVAL 1 MINUTE)`
           : hour
-          ? `TIMESTAMP_ADD(${open}, INTERVAL 1 HOUR)`
-          : day
-          ? `CAST(DATE_ADD(CAST(${open} AS DATE), INTERVAL 1 DAY) AS TIMESTAMP)`
-          : month
-          ? `CAST(DATE_ADD(CAST(${open} AS DATE), INTERVAL 1 MONTH) AS TIMESTAMP)`
-          : year
-          ? `CAST(DATE_ADD(CAST(${open} AS DATE), INTERVAL 1 YEAR) AS TIMESTAMP)`
-          : undefined;
+            ? `TIMESTAMP_ADD(${open}, INTERVAL 1 HOUR)`
+            : day
+              ? `CAST(DATE_ADD(CAST(${open} AS DATE), INTERVAL 1 DAY) AS TIMESTAMP)`
+              : month
+                ? `CAST(DATE_ADD(CAST(${open} AS DATE), INTERVAL 1 MONTH) AS TIMESTAMP)`
+                : year
+                  ? `CAST(DATE_ADD(CAST(${open} AS DATE), INTERVAL 1 YEAR) AS TIMESTAMP)`
+                  : undefined;
         break;
       }
 
@@ -66,14 +66,14 @@ export function makeTimestampCloseBetween(item: {
         sqlClose = minute
           ? `${open} + INTERVAL '1 minute'`
           : hour
-          ? `${open} + INTERVAL '1 hour'`
-          : day
-          ? `${open} + INTERVAL '1 day'`
-          : month
-          ? `${open} + INTERVAL '1 month'`
-          : year
-          ? `${open} + INTERVAL '1 year'`
-          : undefined;
+            ? `${open} + INTERVAL '1 hour'`
+            : day
+              ? `${open} + INTERVAL '1 day'`
+              : month
+                ? `${open} + INTERVAL '1 month'`
+                : year
+                  ? `${open} + INTERVAL '1 year'`
+                  : undefined;
         break;
       }
 
@@ -81,14 +81,14 @@ export function makeTimestampCloseBetween(item: {
         sqlClose = minute
           ? `addMinutes(${open}, 1)`
           : hour
-          ? `addHours(${open}, 1)`
-          : day
-          ? `addDays(${open}, 1)`
-          : month
-          ? `addMonths(${open}, 1)`
-          : year
-          ? `addYears(${open}, 1)`
-          : undefined;
+            ? `addHours(${open}, 1)`
+            : day
+              ? `addDays(${open}, 1)`
+              : month
+                ? `addMonths(${open}, 1)`
+                : year
+                  ? `addYears(${open}, 1)`
+                  : undefined;
         break;
       }
 
@@ -96,14 +96,14 @@ export function makeTimestampCloseBetween(item: {
         sqlClose = minute
           ? `${open} + INTERVAL '1 minute'`
           : hour
-          ? `${open} + INTERVAL '1 hour'`
-          : day
-          ? `${open} + INTERVAL '1 day'`
-          : month
-          ? `${open} + INTERVAL '1 month'`
-          : year
-          ? `${open} + INTERVAL '1 year'`
-          : undefined;
+            ? `${open} + INTERVAL '1 hour'`
+            : day
+              ? `${open} + INTERVAL '1 day'`
+              : month
+                ? `${open} + INTERVAL '1 month'`
+                : year
+                  ? `${open} + INTERVAL '1 year'`
+                  : undefined;
         break;
       }
     }

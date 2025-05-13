@@ -805,35 +805,35 @@ export function processFilter(item: {
               unit === common.FractionUnitEnum.Minutes
                 ? currentMinuteTs
                 : unit === common.FractionUnitEnum.Hours
-                ? currentHourTs
-                : unit === common.FractionUnitEnum.Days
-                ? currentDateTs
-                : unit === common.FractionUnitEnum.Weeks
-                ? currentWeekStartTs
-                : unit === common.FractionUnitEnum.Months
-                ? currentMonthTs
-                : unit === common.FractionUnitEnum.Quarters
-                ? currentQuarterTs
-                : unit === common.FractionUnitEnum.Years
-                ? currentYearTs
-                : undefined;
+                  ? currentHourTs
+                  : unit === common.FractionUnitEnum.Days
+                    ? currentDateTs
+                    : unit === common.FractionUnitEnum.Weeks
+                      ? currentWeekStartTs
+                      : unit === common.FractionUnitEnum.Months
+                        ? currentMonthTs
+                        : unit === common.FractionUnitEnum.Quarters
+                          ? currentQuarterTs
+                          : unit === common.FractionUnitEnum.Years
+                            ? currentYearTs
+                            : undefined;
 
             rangeClose =
               unit === common.FractionUnitEnum.Minutes
                 ? fromUnixTime(Number(currentMinuteTs))
                 : unit === common.FractionUnitEnum.Hours
-                ? fromUnixTime(Number(currentHourTs))
-                : unit === common.FractionUnitEnum.Days
-                ? fromUnixTime(Number(currentDateTs))
-                : unit === common.FractionUnitEnum.Weeks
-                ? fromUnixTime(Number(currentWeekStartTs))
-                : unit === common.FractionUnitEnum.Months
-                ? fromUnixTime(Number(currentMonthTs))
-                : unit === common.FractionUnitEnum.Quarters
-                ? fromUnixTime(Number(currentQuarterTs))
-                : unit === common.FractionUnitEnum.Years
-                ? fromUnixTime(Number(currentYearTs))
-                : undefined;
+                  ? fromUnixTime(Number(currentHourTs))
+                  : unit === common.FractionUnitEnum.Days
+                    ? fromUnixTime(Number(currentDateTs))
+                    : unit === common.FractionUnitEnum.Weeks
+                      ? fromUnixTime(Number(currentWeekStartTs))
+                      : unit === common.FractionUnitEnum.Months
+                        ? fromUnixTime(Number(currentMonthTs))
+                        : unit === common.FractionUnitEnum.Quarters
+                          ? fromUnixTime(Number(currentQuarterTs))
+                          : unit === common.FractionUnitEnum.Years
+                            ? fromUnixTime(Number(currentYearTs))
+                            : undefined;
           } else if (way.match(/^last$/)) {
             close = currentTs;
             rangeClose = fromUnixTime(Number(currentTs));
@@ -881,8 +881,8 @@ export function processFilter(item: {
             complete && plusCurrent
               ? common.FractionTsLastCompleteOptionEnum.CompletePlusCurrent
               : complete
-              ? common.FractionTsLastCompleteOptionEnum.Complete
-              : common.FractionTsLastCompleteOptionEnum.Incomplete;
+                ? common.FractionTsLastCompleteOptionEnum.Complete
+                : common.FractionTsLastCompleteOptionEnum.Incomplete;
 
           fractions.push({
             brick: brick,
@@ -921,8 +921,8 @@ export function processFilter(item: {
             tsRelativeWhenOption: when.match(/^ago$/)
               ? common.FractionTsRelativeWhenOptionEnum.Ago
               : when.match(/^in\s+future$/)
-              ? common.FractionTsRelativeWhenOptionEnum.InFuture
-              : undefined,
+                ? common.FractionTsRelativeWhenOptionEnum.InFuture
+                : undefined,
             tsForOption: forUnit
               ? common.FractionTsForOptionEnum.For
               : common.FractionTsForOptionEnum.ForInfinity,
@@ -958,8 +958,8 @@ export function processFilter(item: {
             tsRelativeWhenOption: when.match(/^ago$/)
               ? common.FractionTsRelativeWhenOptionEnum.Ago
               : when.match(/^in\s+future$/)
-              ? common.FractionTsRelativeWhenOptionEnum.InFuture
-              : undefined,
+                ? common.FractionTsRelativeWhenOptionEnum.InFuture
+                : undefined,
             tsForOption: forUnit
               ? common.FractionTsForOptionEnum.For
               : common.FractionTsForOptionEnum.ForInfinity,

@@ -165,8 +165,8 @@ export function wrapTiles(item: {
                 storeField.fieldClass === common.FieldClassEnum.Filter
                   ? undefined
                   : y.logic === common.FractionLogicEnum.Or
-                  ? common.FractionOperatorEnum.Or
-                  : common.FractionOperatorEnum.And,
+                    ? common.FractionOperatorEnum.Or
+                    : common.FractionOperatorEnum.And,
               logicGroup:
                 storeField.fieldClass === common.FieldClassEnum.Filter
                   ? undefined

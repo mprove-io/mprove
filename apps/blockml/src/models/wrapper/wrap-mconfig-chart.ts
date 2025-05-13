@@ -51,8 +51,8 @@ export function wrapMconfigChart(item: {
     isReport === false && common.isDefined(data?.y_fields)
       ? data?.y_fields
       : isReport === true && common.isDefined(rowIdsWithShowChart)
-      ? rowIdsWithShowChart
-      : [];
+        ? rowIdsWithShowChart
+        : [];
 
   series = seriesIds.map(seriesId => {
     let seriesPart = options?.series?.find(s =>

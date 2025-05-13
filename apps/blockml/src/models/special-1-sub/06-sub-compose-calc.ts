@@ -38,10 +38,10 @@ export function subComposeCalc(item: {
       field.fieldClass === common.FieldClassEnum.Dimension
         ? `${fieldName},`
         : field.fieldClass === common.FieldClassEnum.Measure
-        ? `${fieldName},`
-        : field.fieldClass === common.FieldClassEnum.Calculation
-        ? `${processedFields[fieldName]} as ${fieldName},`
-        : '';
+          ? `${fieldName},`
+          : field.fieldClass === common.FieldClassEnum.Calculation
+            ? `${processedFields[fieldName]} as ${fieldName},`
+            : '';
 
     sub.push(`    ${selectString}`);
   });

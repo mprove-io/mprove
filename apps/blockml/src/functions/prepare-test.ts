@@ -85,8 +85,8 @@ export async function prepareTest(
     copyLogsToModels === common.BoolEnum.FALSE
       ? null
       : common.isDefined(connection)
-      ? `${constants.SRC_PATH}/models/${pack}/tests/${f}/logs/${testId}/${connection.type}`
-      : `${constants.SRC_PATH}/models/${pack}/tests/${f}/logs/${testId}`;
+        ? `${constants.SRC_PATH}/models/${pack}/tests/${f}/logs/${testId}/${connection.type}`
+        : `${constants.SRC_PATH}/models/${pack}/tests/${f}/logs/${testId}`;
 
   return {
     structService: structService,

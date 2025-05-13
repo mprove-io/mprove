@@ -114,8 +114,8 @@ export function wrapDashboards(item: {
                 operator: common.isDefined(field.store_filter)
                   ? undefined
                   : y.logic === common.FractionLogicEnum.Or
-                  ? common.FractionOperatorEnum.Or
-                  : common.FractionOperatorEnum.And,
+                    ? common.FractionOperatorEnum.Or
+                    : common.FractionOperatorEnum.And,
                 logicGroup: common.isDefined(field.store_filter)
                   ? undefined
                   : y.logic,

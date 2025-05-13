@@ -66,10 +66,10 @@ export function composeCalc(item: {
       field.fieldClass === common.FieldClassEnum.Dimension
         ? `  ${asName}_${fieldName},`
         : field.fieldClass === common.FieldClassEnum.Measure
-        ? `  ${asName}_${fieldName},`
-        : field.fieldClass === common.FieldClassEnum.Calculation
-        ? `  ${processedFields[element]} as ${asName}_${fieldName},`
-        : constants.UNKNOWN_FIELD_CLASS;
+          ? `  ${asName}_${fieldName},`
+          : field.fieldClass === common.FieldClassEnum.Calculation
+            ? `  ${processedFields[element]} as ${asName}_${fieldName},`
+            : constants.UNKNOWN_FIELD_CLASS;
 
     sql.push(selectString);
   });

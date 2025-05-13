@@ -74,75 +74,75 @@ export class GetTimeRangeService {
       common.isDefined(rangeOpen) && common.isDefined(rangeClose)
         ? Math.min(rangeOpen, rangeClose)
         : common.isUndefined(rangeOpen)
-        ? undefined
-        : [
-            common.FractionTypeEnum.TsIsBeforeDate,
-            common.FractionTypeEnum.TsIsBeforeRelative
-          ].indexOf(timeRangeFraction.type) > -1 &&
-          timeSpec !== common.TimeSpecEnum.Timestamps
-        ? getUnixTime(
-            sub(
-              fromUnixTime(rangeOpen),
-              timeSpec === common.TimeSpecEnum.Years
-                ? { years: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Quarters
-                ? { months: timeColumnsLimit * 3 }
-                : timeSpec === common.TimeSpecEnum.Months
-                ? { months: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Weeks
-                ? { days: timeColumnsLimit * 7 }
-                : timeSpec === common.TimeSpecEnum.Days
-                ? { days: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Hours
-                ? { hours: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Minutes
-                ? { minutes: timeColumnsLimit }
-                : {}
-            )
-          )
-        : [
-            common.FractionTypeEnum.TsIsAfterDate,
-            common.FractionTypeEnum.TsIsAfterRelative
-          ].indexOf(timeRangeFraction.type) > -1
-        ? rangeOpen
-        : undefined;
+          ? undefined
+          : [
+                common.FractionTypeEnum.TsIsBeforeDate,
+                common.FractionTypeEnum.TsIsBeforeRelative
+              ].indexOf(timeRangeFraction.type) > -1 &&
+              timeSpec !== common.TimeSpecEnum.Timestamps
+            ? getUnixTime(
+                sub(
+                  fromUnixTime(rangeOpen),
+                  timeSpec === common.TimeSpecEnum.Years
+                    ? { years: timeColumnsLimit }
+                    : timeSpec === common.TimeSpecEnum.Quarters
+                      ? { months: timeColumnsLimit * 3 }
+                      : timeSpec === common.TimeSpecEnum.Months
+                        ? { months: timeColumnsLimit }
+                        : timeSpec === common.TimeSpecEnum.Weeks
+                          ? { days: timeColumnsLimit * 7 }
+                          : timeSpec === common.TimeSpecEnum.Days
+                            ? { days: timeColumnsLimit }
+                            : timeSpec === common.TimeSpecEnum.Hours
+                              ? { hours: timeColumnsLimit }
+                              : timeSpec === common.TimeSpecEnum.Minutes
+                                ? { minutes: timeColumnsLimit }
+                                : {}
+                )
+              )
+            : [
+                  common.FractionTypeEnum.TsIsAfterDate,
+                  common.FractionTypeEnum.TsIsAfterRelative
+                ].indexOf(timeRangeFraction.type) > -1
+              ? rangeOpen
+              : undefined;
 
     let end =
       common.isDefined(rangeOpen) && common.isDefined(rangeClose)
         ? Math.max(rangeOpen, rangeClose)
         : common.isUndefined(rangeOpen)
-        ? undefined
-        : [
-            common.FractionTypeEnum.TsIsBeforeDate,
-            common.FractionTypeEnum.TsIsBeforeRelative
-          ].indexOf(timeRangeFraction.type) > -1
-        ? rangeOpen
-        : [
-            common.FractionTypeEnum.TsIsAfterDate,
-            common.FractionTypeEnum.TsIsAfterRelative
-          ].indexOf(timeRangeFraction.type) > -1 &&
-          timeSpec !== common.TimeSpecEnum.Timestamps
-        ? getUnixTime(
-            add(
-              fromUnixTime(rangeOpen),
-              timeSpec === common.TimeSpecEnum.Years
-                ? { years: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Quarters
-                ? { months: timeColumnsLimit * 3 }
-                : timeSpec === common.TimeSpecEnum.Months
-                ? { months: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Weeks
-                ? { days: timeColumnsLimit * 7 }
-                : timeSpec === common.TimeSpecEnum.Days
-                ? { days: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Hours
-                ? { hours: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Minutes
-                ? { minutes: timeColumnsLimit }
-                : {}
-            )
-          )
-        : undefined;
+          ? undefined
+          : [
+                common.FractionTypeEnum.TsIsBeforeDate,
+                common.FractionTypeEnum.TsIsBeforeRelative
+              ].indexOf(timeRangeFraction.type) > -1
+            ? rangeOpen
+            : [
+                  common.FractionTypeEnum.TsIsAfterDate,
+                  common.FractionTypeEnum.TsIsAfterRelative
+                ].indexOf(timeRangeFraction.type) > -1 &&
+                timeSpec !== common.TimeSpecEnum.Timestamps
+              ? getUnixTime(
+                  add(
+                    fromUnixTime(rangeOpen),
+                    timeSpec === common.TimeSpecEnum.Years
+                      ? { years: timeColumnsLimit }
+                      : timeSpec === common.TimeSpecEnum.Quarters
+                        ? { months: timeColumnsLimit * 3 }
+                        : timeSpec === common.TimeSpecEnum.Months
+                          ? { months: timeColumnsLimit }
+                          : timeSpec === common.TimeSpecEnum.Weeks
+                            ? { days: timeColumnsLimit * 7 }
+                            : timeSpec === common.TimeSpecEnum.Days
+                              ? { days: timeColumnsLimit }
+                              : timeSpec === common.TimeSpecEnum.Hours
+                                ? { hours: timeColumnsLimit }
+                                : timeSpec === common.TimeSpecEnum.Minutes
+                                  ? { minutes: timeColumnsLimit }
+                                  : {}
+                  )
+                )
+              : undefined;
 
     let payload: apiToBlockml.ToBlockmlGetTimeRangeResponsePayload = {
       isValid: p.valid === 1,

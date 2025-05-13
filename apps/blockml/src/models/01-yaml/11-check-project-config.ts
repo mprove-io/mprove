@@ -143,12 +143,12 @@ export function checkProjectConfig(
               parameter === common.ParameterEnum.AllowTimezones.toString()
                 ? common.ErTitleEnum.WRONG_ALLOW_TIMEZONES
                 : parameter ===
-                  common.ParameterEnum.CaseSensitiveStringFilters.toString()
-                ? common.ErTitleEnum.WRONG_CASE_SENSITIVE_STRING_FILTERS
-                : parameter ===
-                  common.ParameterEnum.SimplifySafeAggregates.toString()
-                ? common.ErTitleEnum.WRONG_SIMPLIFY_SAFE_AGGREGATES
-                : common.ErTitleEnum.WRONG_PROJECT_CONFIG_PARAMETER,
+                    common.ParameterEnum.CaseSensitiveStringFilters.toString()
+                  ? common.ErTitleEnum.WRONG_CASE_SENSITIVE_STRING_FILTERS
+                  : parameter ===
+                      common.ParameterEnum.SimplifySafeAggregates.toString()
+                    ? common.ErTitleEnum.WRONG_SIMPLIFY_SAFE_AGGREGATES
+                    : common.ErTitleEnum.WRONG_PROJECT_CONFIG_PARAMETER,
 
             message: `parameter "${parameter}:" must be "true" or "false" if specified`,
             lines: [

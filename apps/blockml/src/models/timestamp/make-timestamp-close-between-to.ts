@@ -35,28 +35,28 @@ export function makeTimestampCloseBetweenTo(item: {
     rgClose = toMinute
       ? parseISO(`${toYear}-${toMonth}-${toDay}T${toHour}:${toMinute}:00`)
       : toHour
-      ? parseISO(`${toYear}-${toMonth}-${toDay}T${toHour}:00:00`)
-      : toDay
-      ? parseISO(`${toYear}-${toMonth}-${toDay}`)
-      : toMonth
-      ? parseISO(`${toYear}-${toMonth}-01`)
-      : toYear
-      ? parseISO(`${toYear}-01-01`)
-      : undefined;
+        ? parseISO(`${toYear}-${toMonth}-${toDay}T${toHour}:00:00`)
+        : toDay
+          ? parseISO(`${toYear}-${toMonth}-${toDay}`)
+          : toMonth
+            ? parseISO(`${toYear}-${toMonth}-01`)
+            : toYear
+              ? parseISO(`${toYear}-01-01`)
+              : undefined;
   } else {
     switch (connection.type) {
       case common.ConnectionTypeEnum.BigQuery: {
         sqlClose = toMinute
           ? `TIMESTAMP('${toYear}-${toMonth}-${toDay} ${toHour}:${toMinute}:00')`
           : toHour
-          ? `TIMESTAMP('${toYear}-${toMonth}-${toDay} ${toHour}:00:00')`
-          : toDay
-          ? `TIMESTAMP('${toYear}-${toMonth}-${toDay}')`
-          : toMonth
-          ? `TIMESTAMP('${toYear}-${toMonth}-01')`
-          : toYear
-          ? `TIMESTAMP('${toYear}-01-01')`
-          : undefined;
+            ? `TIMESTAMP('${toYear}-${toMonth}-${toDay} ${toHour}:00:00')`
+            : toDay
+              ? `TIMESTAMP('${toYear}-${toMonth}-${toDay}')`
+              : toMonth
+                ? `TIMESTAMP('${toYear}-${toMonth}-01')`
+                : toYear
+                  ? `TIMESTAMP('${toYear}-01-01')`
+                  : undefined;
         break;
       }
 
@@ -64,14 +64,14 @@ export function makeTimestampCloseBetweenTo(item: {
         sqlClose = toMinute
           ? `'${toYear}-${toMonth}-${toDay} ${toHour}:${toMinute}:00'::TIMESTAMP`
           : toHour
-          ? `'${toYear}-${toMonth}-${toDay} ${toHour}:00:00'::TIMESTAMP`
-          : toDay
-          ? `'${toYear}-${toMonth}-${toDay}'::TIMESTAMP`
-          : toMonth
-          ? `'${toYear}-${toMonth}-01'::TIMESTAMP`
-          : toYear
-          ? `'${toYear}-01-01'::TIMESTAMP`
-          : undefined;
+            ? `'${toYear}-${toMonth}-${toDay} ${toHour}:00:00'::TIMESTAMP`
+            : toDay
+              ? `'${toYear}-${toMonth}-${toDay}'::TIMESTAMP`
+              : toMonth
+                ? `'${toYear}-${toMonth}-01'::TIMESTAMP`
+                : toYear
+                  ? `'${toYear}-01-01'::TIMESTAMP`
+                  : undefined;
         break;
       }
 
@@ -79,14 +79,14 @@ export function makeTimestampCloseBetweenTo(item: {
         sqlClose = toMinute
           ? `parseDateTimeBestEffort('${toYear}-${toMonth}-${toDay} ${toHour}:${toMinute}:00', '${timezone}')`
           : toHour
-          ? `parseDateTimeBestEffort('${toYear}-${toMonth}-${toDay} ${toHour}:00:00', '${timezone}')`
-          : toDay
-          ? `parseDateTimeBestEffort('${toYear}-${toMonth}-${toDay}', '${timezone}')`
-          : toMonth
-          ? `parseDateTimeBestEffort('${toYear}-${toMonth}-01', '${timezone}')`
-          : toYear
-          ? `parseDateTimeBestEffort('${toYear}-01-01', '${timezone}')`
-          : undefined;
+            ? `parseDateTimeBestEffort('${toYear}-${toMonth}-${toDay} ${toHour}:00:00', '${timezone}')`
+            : toDay
+              ? `parseDateTimeBestEffort('${toYear}-${toMonth}-${toDay}', '${timezone}')`
+              : toMonth
+                ? `parseDateTimeBestEffort('${toYear}-${toMonth}-01', '${timezone}')`
+                : toYear
+                  ? `parseDateTimeBestEffort('${toYear}-01-01', '${timezone}')`
+                  : undefined;
         break;
       }
 
@@ -94,14 +94,14 @@ export function makeTimestampCloseBetweenTo(item: {
         sqlClose = toMinute
           ? `TO_TIMESTAMP('${toYear}-${toMonth}-${toDay} ${toHour}:${toMinute}:00')`
           : toHour
-          ? `TO_TIMESTAMP('${toYear}-${toMonth}-${toDay} ${toHour}:00:00')`
-          : toDay
-          ? `TO_TIMESTAMP('${toYear}-${toMonth}-${toDay}')`
-          : toMonth
-          ? `TO_TIMESTAMP('${toYear}-${toMonth}-01')`
-          : toYear
-          ? `TO_TIMESTAMP('${toYear}-01-01')`
-          : undefined;
+            ? `TO_TIMESTAMP('${toYear}-${toMonth}-${toDay} ${toHour}:00:00')`
+            : toDay
+              ? `TO_TIMESTAMP('${toYear}-${toMonth}-${toDay}')`
+              : toMonth
+                ? `TO_TIMESTAMP('${toYear}-${toMonth}-01')`
+                : toYear
+                  ? `TO_TIMESTAMP('${toYear}-01-01')`
+                  : undefined;
         break;
       }
     }

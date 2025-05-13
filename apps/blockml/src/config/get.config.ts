@@ -14,8 +14,8 @@ export function getConfig() {
     devConfig.blockmlEnv === enums.BlockmlEnvEnum.PROD
       ? getProdConfig(devConfig)
       : devConfig.blockmlEnv === enums.BlockmlEnvEnum.TEST
-      ? getTestConfig(devConfig)
-      : devConfig;
+        ? getTestConfig(devConfig)
+        : devConfig;
 
   let validatedConfig = nodeCommon.transformValidSync({
     classType: interfaces.Config,

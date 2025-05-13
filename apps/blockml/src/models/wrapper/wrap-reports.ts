@@ -110,8 +110,8 @@ export function wrapReports(item: {
                 operator: common.isDefined(field.store_filter)
                   ? undefined
                   : y.logic === common.FractionLogicEnum.Or
-                  ? common.FractionOperatorEnum.Or
-                  : common.FractionOperatorEnum.And,
+                    ? common.FractionOperatorEnum.Or
+                    : common.FractionOperatorEnum.And,
                 logicGroup: common.isDefined(field.store_filter)
                   ? undefined
                   : y.logic,
@@ -297,157 +297,161 @@ export function wrapReports(item: {
                     common.isDefined(parameter.listen)
                       ? undefined
                       : model.isStoreModel === false
-                      ? parameter.apiFractions
-                      : parameter.fractions.map(y => {
-                          let storeResultCurrentTypeFraction: common.FileStoreFractionType;
+                        ? parameter.apiFractions
+                        : parameter.fractions.map(y => {
+                            let storeResultCurrentTypeFraction: common.FileStoreFractionType;
 
-                          if (
-                            storeField.fieldClass !==
-                            common.FieldClassEnum.Filter
-                          ) {
-                            storeResultCurrentTypeFraction = store.results
-                              .find(r => r.result === storeField.result)
-                              .fraction_types.find(ft => ft.type === y.type);
-                          }
+                            if (
+                              storeField.fieldClass !==
+                              common.FieldClassEnum.Filter
+                            ) {
+                              storeResultCurrentTypeFraction = store.results
+                                .find(r => r.result === storeField.result)
+                                .fraction_types.find(ft => ft.type === y.type);
+                            }
 
-                          let storeFractionSubType =
-                            storeField.fieldClass ===
-                            common.FieldClassEnum.Filter
-                              ? undefined
-                              : y.type;
-
-                          let storeFractionSubTypeOptions =
-                            storeField.fieldClass ===
-                            common.FieldClassEnum.Filter
-                              ? undefined
-                              : store.results
-                                  .find(r => r.result === storeField.result)
-                                  .fraction_types.map(ft => {
-                                    let options = [];
-
-                                    let optionOr: FractionSubTypeOption = {
-                                      logicGroup: common.FractionLogicEnum.Or,
-                                      typeValue: ft.type,
-                                      value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
-                                      label: ft.label
-                                    };
-                                    options.push(optionOr);
-
-                                    let optionAndNot: FractionSubTypeOption = {
-                                      logicGroup:
-                                        common.FractionLogicEnum.AndNot,
-                                      value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
-                                      typeValue: ft.type,
-                                      label: ft.label
-                                    };
-                                    options.push(optionAndNot);
-
-                                    return options;
-                                  })
-                                  .flat()
-                                  .sort((a, b) => {
-                                    if (a.logicGroup === b.logicGroup) return 0;
-                                    return a.logicGroup ===
-                                      common.FractionLogicEnum.Or
-                                      ? -1
-                                      : 1;
-                                  });
-
-                          let fraction: common.Fraction = {
-                            meta:
+                            let storeFractionSubType =
                               storeField.fieldClass ===
                               common.FieldClassEnum.Filter
                                 ? undefined
-                                : storeResultCurrentTypeFraction?.meta,
-                            operator:
-                              storeField.fieldClass ===
-                              common.FieldClassEnum.Filter
-                                ? undefined
-                                : y.logic === common.FractionLogicEnum.Or
-                                ? common.FractionOperatorEnum.Or
-                                : common.FractionOperatorEnum.And,
-                            logicGroup:
-                              storeField.fieldClass ===
-                              common.FieldClassEnum.Filter
-                                ? undefined
-                                : y.logic,
-                            brick: undefined,
-                            type: common.FractionTypeEnum.StoreFraction,
-                            storeFractionSubTypeOptions:
-                              storeFractionSubTypeOptions,
-                            storeFractionSubType: storeFractionSubType,
-                            storeFractionSubTypeLabel: common.isDefined(
-                              storeFractionSubType
-                            )
-                              ? storeFractionSubTypeOptions.find(
-                                  k => k.typeValue === storeFractionSubType
-                                ).label
-                              : storeFractionSubType,
-                            storeFractionLogicGroupWithSubType:
-                              storeField.fieldClass ===
-                              common.FieldClassEnum.Filter
-                                ? undefined
-                                : `${y.logic}${common.TRIPLE_UNDERSCORE}${y.type}`,
-                            controls: y.controls.map(
-                              (control: FileFractionControl) => {
-                                if (common.isDefined(control.input)) {
-                                  control.name = control.input;
-                                  control.controlClass =
-                                    common.ControlClassEnum.Input;
-                                } else if (
-                                  common.isDefined(control.list_input)
-                                ) {
-                                  control.name = control.list_input;
-                                  control.controlClass =
-                                    common.ControlClassEnum.ListInput;
-                                } else if (common.isDefined(control.switch)) {
-                                  control.name = control.switch;
-                                  control.controlClass =
-                                    common.ControlClassEnum.Switch;
-                                } else if (
-                                  common.isDefined(control.date_picker)
-                                ) {
-                                  control.name = control.date_picker;
-                                  control.controlClass =
-                                    common.ControlClassEnum.DatePicker;
-                                } else if (common.isDefined(control.selector)) {
-                                  control.name = control.selector;
-                                  control.controlClass =
-                                    common.ControlClassEnum.Selector;
-                                }
+                                : y.type;
 
-                                let storeControl =
-                                  storeField.fieldClass ===
-                                  common.FieldClassEnum.Filter
-                                    ? storeField.fraction_controls.find(
-                                        fc => fc.name === control.name
-                                      )
-                                    : storeResultCurrentTypeFraction.controls.find(
-                                        fc => fc.name === control.name
-                                      );
+                            let storeFractionSubTypeOptions =
+                              storeField.fieldClass ===
+                              common.FieldClassEnum.Filter
+                                ? undefined
+                                : store.results
+                                    .find(r => r.result === storeField.result)
+                                    .fraction_types.map(ft => {
+                                      let options = [];
 
-                                let newControl: common.FractionControl = {
-                                  options: storeControl?.options,
-                                  value:
-                                    control.controlClass ===
-                                      common.ControlClassEnum.Switch &&
-                                    typeof control.value === 'string'
-                                      ? toBooleanFromLowercaseString(
-                                          control.value
+                                      let optionOr: FractionSubTypeOption = {
+                                        logicGroup: common.FractionLogicEnum.Or,
+                                        typeValue: ft.type,
+                                        value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                                        label: ft.label
+                                      };
+                                      options.push(optionOr);
+
+                                      let optionAndNot: FractionSubTypeOption =
+                                        {
+                                          logicGroup:
+                                            common.FractionLogicEnum.AndNot,
+                                          value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                                          typeValue: ft.type,
+                                          label: ft.label
+                                        };
+                                      options.push(optionAndNot);
+
+                                      return options;
+                                    })
+                                    .flat()
+                                    .sort((a, b) => {
+                                      if (a.logicGroup === b.logicGroup)
+                                        return 0;
+                                      return a.logicGroup ===
+                                        common.FractionLogicEnum.Or
+                                        ? -1
+                                        : 1;
+                                    });
+
+                            let fraction: common.Fraction = {
+                              meta:
+                                storeField.fieldClass ===
+                                common.FieldClassEnum.Filter
+                                  ? undefined
+                                  : storeResultCurrentTypeFraction?.meta,
+                              operator:
+                                storeField.fieldClass ===
+                                common.FieldClassEnum.Filter
+                                  ? undefined
+                                  : y.logic === common.FractionLogicEnum.Or
+                                    ? common.FractionOperatorEnum.Or
+                                    : common.FractionOperatorEnum.And,
+                              logicGroup:
+                                storeField.fieldClass ===
+                                common.FieldClassEnum.Filter
+                                  ? undefined
+                                  : y.logic,
+                              brick: undefined,
+                              type: common.FractionTypeEnum.StoreFraction,
+                              storeFractionSubTypeOptions:
+                                storeFractionSubTypeOptions,
+                              storeFractionSubType: storeFractionSubType,
+                              storeFractionSubTypeLabel: common.isDefined(
+                                storeFractionSubType
+                              )
+                                ? storeFractionSubTypeOptions.find(
+                                    k => k.typeValue === storeFractionSubType
+                                  ).label
+                                : storeFractionSubType,
+                              storeFractionLogicGroupWithSubType:
+                                storeField.fieldClass ===
+                                common.FieldClassEnum.Filter
+                                  ? undefined
+                                  : `${y.logic}${common.TRIPLE_UNDERSCORE}${y.type}`,
+                              controls: y.controls.map(
+                                (control: FileFractionControl) => {
+                                  if (common.isDefined(control.input)) {
+                                    control.name = control.input;
+                                    control.controlClass =
+                                      common.ControlClassEnum.Input;
+                                  } else if (
+                                    common.isDefined(control.list_input)
+                                  ) {
+                                    control.name = control.list_input;
+                                    control.controlClass =
+                                      common.ControlClassEnum.ListInput;
+                                  } else if (common.isDefined(control.switch)) {
+                                    control.name = control.switch;
+                                    control.controlClass =
+                                      common.ControlClassEnum.Switch;
+                                  } else if (
+                                    common.isDefined(control.date_picker)
+                                  ) {
+                                    control.name = control.date_picker;
+                                    control.controlClass =
+                                      common.ControlClassEnum.DatePicker;
+                                  } else if (
+                                    common.isDefined(control.selector)
+                                  ) {
+                                    control.name = control.selector;
+                                    control.controlClass =
+                                      common.ControlClassEnum.Selector;
+                                  }
+
+                                  let storeControl =
+                                    storeField.fieldClass ===
+                                    common.FieldClassEnum.Filter
+                                      ? storeField.fraction_controls.find(
+                                          fc => fc.name === control.name
                                         )
-                                      : control.value,
-                                  label: storeControl.label,
-                                  required: storeControl.required,
-                                  name: control.name,
-                                  controlClass: control.controlClass,
-                                  isMetricsDate: storeControl.isMetricsDate
-                                };
-                                return newControl;
-                              }
-                            )
-                          };
-                          return fraction;
-                        }),
+                                      : storeResultCurrentTypeFraction.controls.find(
+                                          fc => fc.name === control.name
+                                        );
+
+                                  let newControl: common.FractionControl = {
+                                    options: storeControl?.options,
+                                    value:
+                                      control.controlClass ===
+                                        common.ControlClassEnum.Switch &&
+                                      typeof control.value === 'string'
+                                        ? toBooleanFromLowercaseString(
+                                            control.value
+                                          )
+                                        : control.value,
+                                    label: storeControl.label,
+                                    required: storeControl.required,
+                                    name: control.name,
+                                    controlClass: control.controlClass,
+                                    isMetricsDate: storeControl.isMetricsDate
+                                  };
+                                  return newControl;
+                                }
+                              )
+                            };
+                            return fraction;
+                          }),
                   listen: parameter.listen
                 };
 
@@ -460,18 +464,18 @@ export function wrapReports(item: {
           formatNumber: common.isDefined(row.format_number)
             ? row.format_number
             : row.type === common.RowTypeEnum.Metric
-            ? metric.formatNumber
-            : formatNumber,
+              ? metric.formatNumber
+              : formatNumber,
           currencyPrefix: common.isDefined(row.currency_prefix)
             ? row.currency_prefix
             : row.type === common.RowTypeEnum.Metric
-            ? metric.currencyPrefix
-            : currencyPrefix,
+              ? metric.currencyPrefix
+              : currencyPrefix,
           currencySuffix: common.isDefined(row.currency_suffix)
             ? row.currency_suffix
             : row.type === common.RowTypeEnum.Metric
-            ? metric.currencySuffix
-            : currencySuffix
+              ? metric.currencySuffix
+              : currencySuffix
         };
         return rowApi;
       }),
