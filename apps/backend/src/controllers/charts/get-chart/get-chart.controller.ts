@@ -154,12 +154,14 @@ export class GetChartController {
         let newQueryId = common.makeId();
 
         /* prettier-ignore */
-        let sMconfig = Object.assign({}, chartMconfig, <schemaPostgres.MconfigEnt>{
-            mconfigId: newMconfigId,
-            queryId: newQueryId,
-            timezone: timezone,
-            temp: true
-          });
+        let sMconfig = Object.assign({}, chartMconfig, <
+          schemaPostgres.MconfigEnt
+        >{
+          mconfigId: newMconfigId,
+          queryId: newQueryId,
+          timezone: timezone,
+          temp: true
+        });
 
         let mqe = await this.mconfigsService.prepMconfigQuery({
           struct: struct,
@@ -179,7 +181,9 @@ export class GetChartController {
         let newQueryId = common.makeId();
 
         /* prettier-ignore */
-        let sendMconfig = Object.assign({}, chartMconfig, <schemaPostgres.MconfigEnt>{
+        let sendMconfig = Object.assign({}, chartMconfig, <
+          schemaPostgres.MconfigEnt
+        >{
           mconfigId: newMconfigId,
           queryId: newQueryId,
           timezone: timezone,

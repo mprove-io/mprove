@@ -357,11 +357,11 @@ export class ReportDataService {
               model.isStoreModel === true && common.isUndefined(timeFieldIdSpec)
                 ? undefined
                 : [
-                    common.FractionTypeEnum.TsIsAfterDate,
-                    common.FractionTypeEnum.TsIsAfterRelative
-                  ].indexOf(timeRangeFraction.type) > -1
-                ? `${timeFieldIdSpec}`
-                : `${timeFieldIdSpec} desc`,
+                      common.FractionTypeEnum.TsIsAfterDate,
+                      common.FractionTypeEnum.TsIsAfterRelative
+                    ].indexOf(timeRangeFraction.type) > -1
+                  ? `${timeFieldIdSpec}`
+                  : `${timeFieldIdSpec} desc`,
             timezone: timezone,
             limit: timeColumnsLimit,
             filters: filters,
@@ -673,8 +673,8 @@ export class ReportDataService {
               return record;
             })
           : common.isDefined(rq.kitId)
-          ? (kits.find(k => k.kitId === rq.kitId)?.data as any[]) || []
-          : [];
+            ? (kits.find(k => k.kitId === rq.kitId)?.data as any[]) || []
+            : [];
       });
     }
 

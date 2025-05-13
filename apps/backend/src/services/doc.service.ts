@@ -158,8 +158,8 @@ export class DocService {
                 targetRow.rowType === common.RowTypeEnum.Formula
                   ? targetRow.formula
                   : targetRow.rowType === common.RowTypeEnum.Metric
-                  ? `main.${targetRow.rowId}`
-                  : reference;
+                    ? `main.${targetRow.rowId}`
+                    : reference;
 
               newFormula =
                 targetRow.rowType === common.RowTypeEnum.Metric
@@ -413,20 +413,20 @@ FROM main;`;
                 timeSpec === common.TimeSpecEnum.Years
                   ? format(tsDate, 'yyyy')
                   : timeSpec === common.TimeSpecEnum.Quarters
-                  ? format(tsDate, 'yyyy-MM')
-                  : timeSpec === common.TimeSpecEnum.Months
-                  ? format(tsDate, 'yyyy-MM')
-                  : timeSpec === common.TimeSpecEnum.Weeks
-                  ? format(tsDate, 'yyyy-MM-dd')
-                  : timeSpec === common.TimeSpecEnum.Days
-                  ? format(tsDate, 'yyyy-MM-dd')
-                  : timeSpec === common.TimeSpecEnum.Hours
-                  ? format(tsDate, 'yyyy-MM-dd HH')
-                  : timeSpec === common.TimeSpecEnum.Minutes
-                  ? format(tsDate, 'yyyy-MM-dd HH:mm')
-                  : // : timeSpec === common.TimeSpecEnum.Timestamps
-                    // ? format(tsDate, 'yyyy-MM-dd HH:mm:ss.SSS')
-                    undefined;
+                    ? format(tsDate, 'yyyy-MM')
+                    : timeSpec === common.TimeSpecEnum.Months
+                      ? format(tsDate, 'yyyy-MM')
+                      : timeSpec === common.TimeSpecEnum.Weeks
+                        ? format(tsDate, 'yyyy-MM-dd')
+                        : timeSpec === common.TimeSpecEnum.Days
+                          ? format(tsDate, 'yyyy-MM-dd')
+                          : timeSpec === common.TimeSpecEnum.Hours
+                            ? format(tsDate, 'yyyy-MM-dd HH')
+                            : timeSpec === common.TimeSpecEnum.Minutes
+                              ? format(tsDate, 'yyyy-MM-dd HH:mm')
+                              : // : timeSpec === common.TimeSpecEnum.Timestamps
+                                // ? format(tsDate, 'yyyy-MM-dd HH:mm:ss.SSS')
+                                undefined;
 
               dataRow = row.query?.data?.find(
                 (r: any) => r[timeFieldId]?.toString() === timeValue
@@ -439,8 +439,8 @@ FROM main;`;
               )
                 ? undefined
                 : isNaN(dataRow[fieldId]) === false
-                ? Number(dataRow[fieldId])
-                : dataRow[fieldId];
+                  ? Number(dataRow[fieldId])
+                  : dataRow[fieldId];
             }
           });
 
@@ -483,8 +483,8 @@ FROM main;`;
             let dataValue = common.isUndefined(dataRow[fieldId])
               ? undefined
               : isNaN(dataRow[fieldId]) === false
-              ? Number(dataRow[fieldId])
-              : dataRow[fieldId];
+                ? Number(dataRow[fieldId])
+                : dataRow[fieldId];
 
             let reportDataColumn = reportDataColumns.find(
               x => x.fields.timestamp === columnId
@@ -529,8 +529,8 @@ FROM main;`;
         a.fields.timestamp > b.fields.timestamp
           ? 1
           : b.fields.timestamp > a.fields.timestamp
-          ? -1
-          : 0
+            ? -1
+            : 0
       );
 
       reportDataColumns = reportDataColumns.map((x, i) => {

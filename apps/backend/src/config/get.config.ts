@@ -14,8 +14,8 @@ export function getConfig() {
     devConfig.backendEnv === enums.BackendEnvEnum.PROD
       ? getProdConfig(devConfig)
       : devConfig.backendEnv === enums.BackendEnvEnum.TEST
-      ? getTestConfig(devConfig)
-      : devConfig;
+        ? getTestConfig(devConfig)
+        : devConfig;
 
   let validatedConfig = nodeCommon.transformValidSync({
     classType: interfaces.Config,

@@ -122,19 +122,19 @@ export class GetSuggestFieldsController {
       b.fieldClass === common.FieldClassEnum.Dimension
         ? 1
         : a.fieldClass === common.FieldClassEnum.Dimension &&
-          b.fieldClass !== common.FieldClassEnum.Dimension
-        ? -1
-        : a.fieldClass !== common.FieldClassEnum.Filter &&
-          b.fieldClass === common.FieldClassEnum.Filter
-        ? 1
-        : a.fieldClass === common.FieldClassEnum.Filter &&
-          b.fieldClass !== common.FieldClassEnum.Filter
-        ? -1
-        : a.partLabel > b.partLabel
-        ? 1
-        : b.partLabel > a.partLabel
-        ? -1
-        : 0
+            b.fieldClass !== common.FieldClassEnum.Dimension
+          ? -1
+          : a.fieldClass !== common.FieldClassEnum.Filter &&
+              b.fieldClass === common.FieldClassEnum.Filter
+            ? 1
+            : a.fieldClass === common.FieldClassEnum.Filter &&
+                b.fieldClass !== common.FieldClassEnum.Filter
+              ? -1
+              : a.partLabel > b.partLabel
+                ? 1
+                : b.partLabel > a.partLabel
+                  ? -1
+                  : 0
     );
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);

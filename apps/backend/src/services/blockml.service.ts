@@ -186,43 +186,46 @@ export class BlockmlService {
     });
 
     if (common.isUndefined(skipDb) || skipDb === false) {
-      await retry(async () => {
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insert: {
-                // apis: apis.map(x => this.wrapService.wrapToEntityApi(x)),
-                structs: [struct],
-                charts: charts.map(x =>
-                  this.wrapToEntService.wrapToEntityChart({
-                    chart: x,
-                    chartType: mconfigs.find(
-                      mconfig => mconfig.mconfigId === x.tiles[0].mconfigId
-                    ).chart.type
-                  })
-                ),
-                models: models.map(x =>
-                  this.wrapToEntService.wrapToEntityModel(x)
-                ),
-                reports: reports.map(x =>
-                  this.wrapToEntService.wrapToEntityReport(x)
-                ),
-                mconfigs: mconfigs.map(x =>
-                  this.wrapToEntService.wrapToEntityMconfig(x)
-                ),
-                dashboards: dashboards.map(x =>
-                  this.wrapToEntService.wrapToEntityDashboard(x)
-                )
-              },
-              insertOrDoNothing: {
-                queries: queries.map(x =>
-                  this.wrapToEntService.wrapToEntityQuery(x)
-                )
-              }
-            })
-        );
-      }, getRetryOption(this.cs, this.logger));
+      await retry(
+        async () => {
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insert: {
+                  // apis: apis.map(x => this.wrapService.wrapToEntityApi(x)),
+                  structs: [struct],
+                  charts: charts.map(x =>
+                    this.wrapToEntService.wrapToEntityChart({
+                      chart: x,
+                      chartType: mconfigs.find(
+                        mconfig => mconfig.mconfigId === x.tiles[0].mconfigId
+                      ).chart.type
+                    })
+                  ),
+                  models: models.map(x =>
+                    this.wrapToEntService.wrapToEntityModel(x)
+                  ),
+                  reports: reports.map(x =>
+                    this.wrapToEntService.wrapToEntityReport(x)
+                  ),
+                  mconfigs: mconfigs.map(x =>
+                    this.wrapToEntService.wrapToEntityMconfig(x)
+                  ),
+                  dashboards: dashboards.map(x =>
+                    this.wrapToEntService.wrapToEntityDashboard(x)
+                  )
+                },
+                insertOrDoNothing: {
+                  queries: queries.map(x =>
+                    this.wrapToEntService.wrapToEntityQuery(x)
+                  )
+                }
+              })
+          );
+        },
+        getRetryOption(this.cs, this.logger)
+      );
     }
 
     return {
@@ -307,20 +310,20 @@ export class BlockmlService {
       timeSpec === common.TimeSpecEnum.Timestamps
         ? 0
         : timeSpec === common.TimeSpecEnum.Years
-        ? differenceInYears(endDate, startDate)
-        : timeSpec === common.TimeSpecEnum.Quarters
-        ? differenceInQuarters(endDate, startDate)
-        : timeSpec === common.TimeSpecEnum.Months
-        ? differenceInMonths(endDate, startDate)
-        : timeSpec === common.TimeSpecEnum.Weeks
-        ? differenceInWeeks(endDate, startDate)
-        : timeSpec === common.TimeSpecEnum.Days
-        ? differenceInDays(endDate, startDate)
-        : timeSpec === common.TimeSpecEnum.Hours
-        ? differenceInHours(endDate, startDate)
-        : timeSpec === common.TimeSpecEnum.Minutes
-        ? differenceInMinutes(endDate, startDate)
-        : undefined;
+          ? differenceInYears(endDate, startDate)
+          : timeSpec === common.TimeSpecEnum.Quarters
+            ? differenceInQuarters(endDate, startDate)
+            : timeSpec === common.TimeSpecEnum.Months
+              ? differenceInMonths(endDate, startDate)
+              : timeSpec === common.TimeSpecEnum.Weeks
+                ? differenceInWeeks(endDate, startDate)
+                : timeSpec === common.TimeSpecEnum.Days
+                  ? differenceInDays(endDate, startDate)
+                  : timeSpec === common.TimeSpecEnum.Hours
+                    ? differenceInHours(endDate, startDate)
+                    : timeSpec === common.TimeSpecEnum.Minutes
+                      ? differenceInMinutes(endDate, startDate)
+                      : undefined;
 
     let isTimeColumnsLimitExceeded = false;
 
@@ -338,18 +341,18 @@ export class BlockmlService {
           timeSpec === common.TimeSpecEnum.Years
             ? { years: timeColumnsLimit }
             : timeSpec === common.TimeSpecEnum.Quarters
-            ? { months: timeColumnsLimit * 3 }
-            : timeSpec === common.TimeSpecEnum.Months
-            ? { months: timeColumnsLimit }
-            : timeSpec === common.TimeSpecEnum.Weeks
-            ? { days: timeColumnsLimit * 7 }
-            : timeSpec === common.TimeSpecEnum.Days
-            ? { days: timeColumnsLimit }
-            : timeSpec === common.TimeSpecEnum.Hours
-            ? { hours: timeColumnsLimit }
-            : timeSpec === common.TimeSpecEnum.Minutes
-            ? { minutes: timeColumnsLimit }
-            : {}
+              ? { months: timeColumnsLimit * 3 }
+              : timeSpec === common.TimeSpecEnum.Months
+                ? { months: timeColumnsLimit }
+                : timeSpec === common.TimeSpecEnum.Weeks
+                  ? { days: timeColumnsLimit * 7 }
+                  : timeSpec === common.TimeSpecEnum.Days
+                    ? { days: timeColumnsLimit }
+                    : timeSpec === common.TimeSpecEnum.Hours
+                      ? { hours: timeColumnsLimit }
+                      : timeSpec === common.TimeSpecEnum.Minutes
+                        ? { minutes: timeColumnsLimit }
+                        : {}
         );
       } else {
         endDate = add(
@@ -357,18 +360,18 @@ export class BlockmlService {
           timeSpec === common.TimeSpecEnum.Years
             ? { years: timeColumnsLimit }
             : timeSpec === common.TimeSpecEnum.Quarters
-            ? { months: timeColumnsLimit * 3 }
-            : timeSpec === common.TimeSpecEnum.Months
-            ? { months: timeColumnsLimit }
-            : timeSpec === common.TimeSpecEnum.Weeks
-            ? { days: timeColumnsLimit * 7 }
-            : timeSpec === common.TimeSpecEnum.Days
-            ? { days: timeColumnsLimit }
-            : timeSpec === common.TimeSpecEnum.Hours
-            ? { hours: timeColumnsLimit }
-            : timeSpec === common.TimeSpecEnum.Minutes
-            ? { minutes: timeColumnsLimit }
-            : {}
+              ? { months: timeColumnsLimit * 3 }
+              : timeSpec === common.TimeSpecEnum.Months
+                ? { months: timeColumnsLimit }
+                : timeSpec === common.TimeSpecEnum.Weeks
+                  ? { days: timeColumnsLimit * 7 }
+                  : timeSpec === common.TimeSpecEnum.Days
+                    ? { days: timeColumnsLimit }
+                    : timeSpec === common.TimeSpecEnum.Hours
+                      ? { hours: timeColumnsLimit }
+                      : timeSpec === common.TimeSpecEnum.Minutes
+                        ? { minutes: timeColumnsLimit }
+                        : {}
         );
       }
     }
@@ -380,79 +383,82 @@ export class BlockmlService {
         ? timeSpec === common.TimeSpecEnum.Timestamps
           ? [startDate]
           : timeSpec === common.TimeSpecEnum.Years
-          ? [startOfYear(startDate)]
-          : timeSpec === common.TimeSpecEnum.Quarters
-          ? [startOfQuarter(startDate)]
-          : timeSpec === common.TimeSpecEnum.Months
-          ? [startOfMonth(startDate)]
-          : timeSpec === common.TimeSpecEnum.Weeks
-          ? [
-              startOfWeek(startDate, {
-                weekStartsOn:
-                  projectWeekStart === common.ProjectWeekStartEnum.Sunday
-                    ? 0
-                    : 1
-              })
-            ]
-          : timeSpec === common.TimeSpecEnum.Days
-          ? [startOfDay(startDate)]
-          : timeSpec === common.TimeSpecEnum.Hours
-          ? [startOfHour(startDate)]
-          : timeSpec === common.TimeSpecEnum.Minutes
-          ? [startOfMinute(startDate)]
-          : undefined
+            ? [startOfYear(startDate)]
+            : timeSpec === common.TimeSpecEnum.Quarters
+              ? [startOfQuarter(startDate)]
+              : timeSpec === common.TimeSpecEnum.Months
+                ? [startOfMonth(startDate)]
+                : timeSpec === common.TimeSpecEnum.Weeks
+                  ? [
+                      startOfWeek(startDate, {
+                        weekStartsOn:
+                          projectWeekStart ===
+                          common.ProjectWeekStartEnum.Sunday
+                            ? 0
+                            : 1
+                      })
+                    ]
+                  : timeSpec === common.TimeSpecEnum.Days
+                    ? [startOfDay(startDate)]
+                    : timeSpec === common.TimeSpecEnum.Hours
+                      ? [startOfHour(startDate)]
+                      : timeSpec === common.TimeSpecEnum.Minutes
+                        ? [startOfMinute(startDate)]
+                        : undefined
         : timeSpec === common.TimeSpecEnum.Years
-        ? eachYearOfInterval({
-            start: startDate,
-            end: endDate
-          })
-        : timeSpec === common.TimeSpecEnum.Quarters
-        ? eachQuarterOfInterval({
-            start: startDate,
-            end: endDate
-          })
-        : timeSpec === common.TimeSpecEnum.Months
-        ? eachMonthOfInterval({
-            start: startDate,
-            end: endDate
-          })
-        : timeSpec === common.TimeSpecEnum.Weeks
-        ? eachWeekOfInterval(
-            {
+          ? eachYearOfInterval({
               start: startDate,
               end: endDate
-            },
-            {
-              weekStartsOn:
-                projectWeekStart === common.ProjectWeekStartEnum.Sunday ? 0 : 1
-            }
-          )
-        : timeSpec === common.TimeSpecEnum.Days
-        ? eachDayOfInterval({
-            start: startDate,
-            end: endDate
-          })
-        : timeSpec === common.TimeSpecEnum.Hours
-        ? eachHourOfInterval({
-            start: startDate,
-            end: endDate
-          })
-        : timeSpec === common.TimeSpecEnum.Minutes
-        ? eachMinuteOfInterval({
-            start: startDate,
-            end: endDate
-          })
-        : timeSpec === common.TimeSpecEnum.Timestamps &&
-          common.isDefined(startDate) &&
-          common.isDefined(endDate)
-        ? [startDate, endDate]
-        : timeSpec === common.TimeSpecEnum.Timestamps &&
-          common.isDefined(startDate)
-        ? [startDate]
-        : timeSpec === common.TimeSpecEnum.Timestamps &&
-          common.isDefined(endDate)
-        ? [endDate]
-        : undefined;
+            })
+          : timeSpec === common.TimeSpecEnum.Quarters
+            ? eachQuarterOfInterval({
+                start: startDate,
+                end: endDate
+              })
+            : timeSpec === common.TimeSpecEnum.Months
+              ? eachMonthOfInterval({
+                  start: startDate,
+                  end: endDate
+                })
+              : timeSpec === common.TimeSpecEnum.Weeks
+                ? eachWeekOfInterval(
+                    {
+                      start: startDate,
+                      end: endDate
+                    },
+                    {
+                      weekStartsOn:
+                        projectWeekStart === common.ProjectWeekStartEnum.Sunday
+                          ? 0
+                          : 1
+                    }
+                  )
+                : timeSpec === common.TimeSpecEnum.Days
+                  ? eachDayOfInterval({
+                      start: startDate,
+                      end: endDate
+                    })
+                  : timeSpec === common.TimeSpecEnum.Hours
+                    ? eachHourOfInterval({
+                        start: startDate,
+                        end: endDate
+                      })
+                    : timeSpec === common.TimeSpecEnum.Minutes
+                      ? eachMinuteOfInterval({
+                          start: startDate,
+                          end: endDate
+                        })
+                      : timeSpec === common.TimeSpecEnum.Timestamps &&
+                          common.isDefined(startDate) &&
+                          common.isDefined(endDate)
+                        ? [startDate, endDate]
+                        : timeSpec === common.TimeSpecEnum.Timestamps &&
+                            common.isDefined(startDate)
+                          ? [startDate]
+                          : timeSpec === common.TimeSpecEnum.Timestamps &&
+                              common.isDefined(endDate)
+                            ? [endDate]
+                            : undefined;
 
     if (
       timeSpec !== common.TimeSpecEnum.Timestamps &&

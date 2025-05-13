@@ -485,8 +485,8 @@ ${inputSub}
         queryStart.apiMethod === common.StoreMethodEnum.Post
           ? await axios.post(url, body, { headers: headers })
           : queryStart.apiMethod === common.StoreMethodEnum.Get
-          ? await axios.get(url, body, { headers: headers })
-          : { message: 'method must be POST or GET' };
+            ? await axios.get(url, body, { headers: headers })
+            : { message: 'method must be POST or GET' };
 
       // console.log(Date.now() - tsStart);
       // console.log('store runquery end');

@@ -121,24 +121,24 @@ export class GetQueryController {
           entity: chart
         })
       : common.isDefined(dashboard)
-      ? helper.checkAccess({
-          userAlias: user.alias,
-          member: member,
-          entity: dashboard
-        })
-      : helper.checkAccess({
-          userAlias: user.alias,
-          member: member,
-          entity: model
-        });
+        ? helper.checkAccess({
+            userAlias: user.alias,
+            member: member,
+            entity: dashboard
+          })
+        : helper.checkAccess({
+            userAlias: user.alias,
+            member: member,
+            entity: model
+          });
 
     if (isAccessGranted === false) {
       throw new common.ServerError({
         message: common.isDefined(chart)
           ? common.ErEnum.BACKEND_FORBIDDEN_CHART
           : common.isDefined(dashboard)
-          ? common.ErEnum.BACKEND_FORBIDDEN_DASHBOARD
-          : common.ErEnum.BACKEND_FORBIDDEN_MODEL
+            ? common.ErEnum.BACKEND_FORBIDDEN_DASHBOARD
+            : common.ErEnum.BACKEND_FORBIDDEN_MODEL
       });
     }
 

@@ -180,35 +180,35 @@ export class AppInterceptor implements NestInterceptor {
           )
         )
       : common.isDefined(idemp.resp)
-      ? of(idemp.resp).pipe(
-          map(x => {
-            (x as common.MyResponse).info.duration =
-              Date.now() - request.start_ts; // update
+        ? of(idemp.resp).pipe(
+            map(x => {
+              (x as common.MyResponse).info.duration =
+                Date.now() - request.start_ts; // update
 
-            return x as unknown as common.MyResponse;
-          }),
-          tap(x =>
-            logResponseBackend({
-              response: x,
-              logLevel: common.LogLevelEnum.Info,
-              cs: this.cs,
-              logger: this.logger
-            })
+              return x as unknown as common.MyResponse;
+            }),
+            tap(x =>
+              logResponseBackend({
+                response: x,
+                logLevel: common.LogLevelEnum.Info,
+                cs: this.cs,
+                logger: this.logger
+              })
+            )
           )
-        )
-      : of(respX).pipe(
-          map(x => {
-            x.info.duration = Date.now() - request.start_ts; // update
-            return x;
-          }),
-          tap(x =>
-            logResponseBackend({
-              response: x,
-              logLevel: common.LogLevelEnum.Info,
-              cs: this.cs,
-              logger: this.logger
-            })
-          )
-        );
+        : of(respX).pipe(
+            map(x => {
+              x.info.duration = Date.now() - request.start_ts; // update
+              return x;
+            }),
+            tap(x =>
+              logResponseBackend({
+                response: x,
+                logLevel: common.LogLevelEnum.Info,
+                cs: this.cs,
+                logger: this.logger
+              })
+            )
+          );
   }
 }

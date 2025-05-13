@@ -29,7 +29,7 @@ export class RabbitService {
       });
     }
 
-    return (response as unknown) as T;
+    return response as unknown as T;
   }
 
   async sendToBlockml<T>(item: {
@@ -56,6 +56,6 @@ export class RabbitService {
       });
     }
 
-    return (response as unknown) as T;
+    return response as unknown as T;
   }
 }

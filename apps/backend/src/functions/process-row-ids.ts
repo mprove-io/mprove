@@ -55,9 +55,9 @@ export function processRowIds(item: {
             targetRow.rowType === common.RowTypeEnum.Metric)
             ? targets[reference]
             : common.isDefined(replaceWithUndef) &&
-              replaceWithUndef.indexOf(reference) > -1
-            ? common.UNDEF
-            : reference;
+                replaceWithUndef.indexOf(reference) > -1
+              ? common.UNDEF
+              : reference;
 
         newFormula = common.MyRegex.replaceRowIds(
           newFormula,
@@ -88,9 +88,9 @@ export function processRowIds(item: {
     common.rowIdLetterToNumber(a.rowId) > common.rowIdLetterToNumber(b.rowId)
       ? 1
       : common.rowIdLetterToNumber(b.rowId) >
-        common.rowIdLetterToNumber(a.rowId)
-      ? -1
-      : 0
+          common.rowIdLetterToNumber(a.rowId)
+        ? -1
+        : 0
   );
 
   newRows.forEach(row => {

@@ -91,17 +91,20 @@ export class ClickHouseService {
               (Number(q.lastCompleteTs) - Number(q.lastRunTs)) / 1000
             );
 
-            await retry(async () => {
-              await this.db.drizzle.transaction(
-                async tx =>
-                  await this.db.packer.write({
-                    tx: tx,
-                    insertOrUpdate: {
-                      queries: [q]
-                    }
-                  })
-              );
-            }, getRetryOption(this.cs, this.logger));
+            await retry(
+              async () => {
+                await this.db.drizzle.transaction(
+                  async tx =>
+                    await this.db.packer.write({
+                      tx: tx,
+                      insertOrUpdate: {
+                        queries: [q]
+                      }
+                    })
+                );
+              },
+              getRetryOption(this.cs, this.logger)
+            );
 
             resolve();
           }
@@ -124,17 +127,20 @@ export class ClickHouseService {
               : JSON.stringify(e, Object.getOwnPropertyNames(e));
             q.lastErrorTs = makeTsNumber();
 
-            await retry(async () => {
-              await this.db.drizzle.transaction(
-                async tx =>
-                  await this.db.packer.write({
-                    tx: tx,
-                    insertOrUpdate: {
-                      queries: [q]
-                    }
-                  })
-              );
-            }, getRetryOption(this.cs, this.logger));
+            await retry(
+              async () => {
+                await this.db.drizzle.transaction(
+                  async tx =>
+                    await this.db.packer.write({
+                      tx: tx,
+                      insertOrUpdate: {
+                        queries: [q]
+                      }
+                    })
+                );
+              },
+              getRetryOption(this.cs, this.logger)
+            );
 
             resolve();
           }

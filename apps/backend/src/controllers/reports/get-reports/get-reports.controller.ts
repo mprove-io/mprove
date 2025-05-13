@@ -97,8 +97,8 @@ export class GetReportsController {
           a.draftCreatedTs > b.draftCreatedTs
             ? 1
             : b.draftCreatedTs > a.draftCreatedTs
-            ? -1
-            : 0
+              ? -1
+              : 0
         )
         .reverse(),
       ...reportsGrantedAccess.sort((a, b) => {

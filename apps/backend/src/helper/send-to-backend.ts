@@ -35,5 +35,5 @@ export async function sendToBackend<T>(item: {
     });
   }
 
-  return (response.body as unknown) as T;
+  return response.body as unknown as T;
 }

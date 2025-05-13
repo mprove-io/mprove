@@ -6,8 +6,8 @@ export function makeFullName(item: { firstName: string; lastName: string }) {
         ' ' +
         common.capitalizeFirstLetter(item.lastName)
     : common.isDefined(item.firstName)
-    ? common.capitalizeFirstLetter(item.firstName)
-    : common.isDefined(item.lastName)
-    ? common.capitalizeFirstLetter(item.lastName)
-    : undefined;
+      ? common.capitalizeFirstLetter(item.firstName)
+      : common.isDefined(item.lastName)
+        ? common.capitalizeFirstLetter(item.lastName)
+        : undefined;
 }

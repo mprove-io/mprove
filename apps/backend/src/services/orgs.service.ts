@@ -90,17 +90,20 @@ export class OrgsService {
       checkIsOk: true
     });
 
-    await retry(async () => {
-      await this.db.drizzle.transaction(
-        async tx =>
-          await this.db.packer.write({
-            tx: tx,
-            insert: {
-              orgs: [newOrg]
-            }
-          })
-      );
-    }, getRetryOption(this.cs, this.logger));
+    await retry(
+      async () => {
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                orgs: [newOrg]
+              }
+            })
+        );
+      },
+      getRetryOption(this.cs, this.logger)
+    );
 
     return newOrg;
   }
