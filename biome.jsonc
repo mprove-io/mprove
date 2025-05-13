@@ -4,13 +4,9 @@
   "files": {
     "ignoreUnknown": false,
     "ignore": [
-      "./nogit/**",
-      "./_nogit/**",
       "**/node_modules/",
       "apps/integra/cypress",
       "./dist/**",
-      // "**/*.txt",
-      // "**/*.json",
       "**/package.docker.json"
     ],
     "include": ["**/*.css", "**/*.ts", "**/*.js", "**/*.jsonc"]

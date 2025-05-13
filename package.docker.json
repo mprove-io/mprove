@@ -113,7 +113,6 @@
     "typanion": "3.14.0",
     "typescript": "5.5.4",
     "walk": "2.3.15",
-    "webpack-merge": "6.0.1",
     "winston": "3.14.2",
     "zone.js": "0.14.3"
   },
@@ -136,7 +135,6 @@
     "@nx/web": "20.8.1",
     "@nx/webpack": "20.8.1",
     "@nx/workspace": "20.8.1",
-    "@philidem/rewrite-relative-paths": "1.2.3",
     "@schematics/angular": "18.2.13",
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@tailwindcss/forms": "0.4.1",
@@ -175,7 +173,6 @@
     "lodash-es": "4.17.21",
     "madge": "4.0.0",
     "nx": "20.8.1",
-    "postcss": "8.4.41",
     "prettier": "2.8.1",
     "prettier-plugin-tailwindcss": "0.2.1",
     "shx": "0.3.4",
