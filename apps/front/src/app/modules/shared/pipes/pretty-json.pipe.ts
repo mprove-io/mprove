@@ -21,7 +21,7 @@ export class PrettyJsonPipe implements PipeTransform {
   applyColors(obj: any, showNumebrLine: boolean = false, padding: number = 4) {
     let line = 1;
 
-    if (typeof obj != 'string') {
+    if (typeof obj !== 'string') {
       obj = JSON.stringify(obj, undefined, 3);
     }
 

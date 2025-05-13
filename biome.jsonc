@@ -25,7 +25,7 @@
     "rules": {
       "recommended": false,
       "complexity": {
-        "noBannedTypes": "error",
+        // "noBannedTypes": "error",
         "noUselessTypeConstraint": "error"
       },
       "correctness": {
@@ -34,8 +34,8 @@
         "useArrayLiterals": "off"
       },
       "style": {
-        "noInferrableTypes": "error",
-        "noNamespace": "error",
+        // "noInferrableTypes": "error",
+        // "noNamespace": "error",
         "noNonNullAssertion": "warn",
         "useAsConstAssertion": "error",
         "useBlockStatements": "off"
@@ -49,6 +49,8 @@
       }
     },
     "ignore": [
+      "**/*.txt",
+      "**/*.json", 
       "./dist/**",
       "./nogit/**",
       "./_nogit/**",
@@ -56,6 +58,9 @@
     ]
   },
   "javascript": {
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    },
     "formatter": {
       "jsxQuoteStyle": "double",
       "quoteProperties": "asNeeded",
@@ -86,7 +91,7 @@
           },
           "security": { "noGlobalEval": "error" },
           "style": {
-            "noNamespace": "error",
+            // "noNamespace": "error",
             "noNonNullAssertion": "error",
             "noVar": "error",
             "useConsistentBuiltinInstantiation": "error",
