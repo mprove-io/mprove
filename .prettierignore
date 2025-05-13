@@ -1,5 +1,13 @@
+_nogit/
+.angular/
+.devcontainer/
+.github/
+.nx/
+# .vscode/
 dist/
 node_modules/
+secrets/
+tmp/
 package.docker.json
 
 coverage/

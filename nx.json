@@ -59,18 +59,5 @@
     ],
     "sharedGlobals": []
   },
-  "generators": {
-    "@nrwl/angular:application": {
-      "style": "scss",
-      "linter": "eslint",
-      "e2eTestRunner": "cypress"
-    },
-    "@nrwl/angular:library": {
-      "style": "scss",
-      "linter": "eslint"
-    },
-    "@nrwl/angular:component": {
-      "style": "scss"
-    }
-  }
+  "generators": {}
 }

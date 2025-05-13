@@ -178,7 +178,6 @@
     "nx": "20.8.1",
     "postcss": "8.4.41",
     "prettier": "2.8.1",
-    "prettier-plugin-organize-imports": "3.2.1",
     "prettier-plugin-tailwindcss": "0.2.1",
     "shx": "0.3.4",
     "tailwindcss": "3.3.3",

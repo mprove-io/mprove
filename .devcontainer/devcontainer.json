@@ -51,7 +51,11 @@
         "wayou.vscode-todo-highlight",
         "PKief.material-icon-theme",
         "biomejs.biome",
-        "ms-kubernetes-tools.vscode-kubernetes-tools"
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "pflannery.vscode-versionlens",
+        "bradlc.vscode-tailwindcss",
+        "dorzey.vscode-sqlfluff",
+        "esbenp.prettier-vscode"
       ],
       "settings": {
         "workbench.settings.useSplitJSON": false,
@@ -62,14 +66,14 @@
         "[javascript]": {
           "editor.defaultFormatter": "biomejs.biome"
         },
-        "[json]": {
+        "[css]": {
           "editor.defaultFormatter": "biomejs.biome"
         },
         "[jsonc]": {
           "editor.defaultFormatter": "biomejs.biome"
         },
-        "[css]": {
-          "editor.defaultFormatter": "biomejs.biome"
+        "[json]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
         },
         "[scss]": {
           "editor.defaultFormatter": "esbenp.prettier-vscode"
