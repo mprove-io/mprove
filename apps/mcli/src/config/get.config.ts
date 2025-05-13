@@ -8,8 +8,8 @@ export function getConfig(envPath?: string) {
   let envFilePath = common.isDefined(envPath)
     ? envPath
     : common.isDefined(process.env.ENV_FILE_PATH)
-    ? process.env.ENV_FILE_PATH
-    : '.env';
+      ? process.env.ENV_FILE_PATH
+      : '.env';
 
   let envFile: any = {};
 

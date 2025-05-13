@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import {
   ClassType,
-  transformAndValidateSync,
-  TransformValidationOptions
+  TransformValidationOptions,
+  transformAndValidateSync
 } from 'class-transformer-validator';
 import { common } from '~mcli/barrels/common';
 import { nodeCommon } from '~mcli/barrels/node-common';
