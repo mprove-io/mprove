@@ -4,15 +4,16 @@
   "files": {
     "ignoreUnknown": false,
     "ignore": [
-      "**/*.json",
-      "**/*.txt",
       "./nogit/**",
       "./_nogit/**",
       "**/node_modules/",
       "apps/integra/cypress",
       "./dist/**",
+      // "**/*.txt",
+      // "**/*.json",
       "**/package.docker.json"
-    ]
+    ],
+    "include": ["**/*.css", "**/*.ts", "**/*.js", "**/*.jsonc"]
   },
   "formatter": {
     "enabled": true,
@@ -72,8 +73,7 @@
     }
   },
   "overrides": [
-    { "include": ["*.html"], "linter": { "rules": {} } },
-    { "include": ["*.js"], "linter": { "rules": {} } },
+    // { "include": ["*.js"], "linter": { "rules": {} } },
     {
       "include": ["*.ts"],
       "linter": {
@@ -85,16 +85,24 @@
           "correctness": {
             "noInvalidConstructorSuper": "error",
             "noUnusedLabels": "error",
-            "noUnusedVariables": "off"
+            "noUnusedVariables": "off",
+            "noConstAssign": "off",
+            "noGlobalObjectCalls": "off",
+            "noNewSymbol": "off",
+            "noSetterReturn": "off",
+            "noUndeclaredVariables": "off",
+            "noUnreachable": "off",
+            "noUnreachableSuper": "off"
           },
           "security": { "noGlobalEval": "error" },
           "style": {
-            // "noNamespace": "error",
+            "noNamespace": "off",
             "noNonNullAssertion": "error",
             "noVar": "error",
             "useConsistentBuiltinInstantiation": "error",
             "useConst": "off",
-            "useShorthandFunctionType": "error"
+            "useShorthandFunctionType": "error",
+            "noArguments": "error"
           },
           "suspicious": {
             "noConsole": "off",
@@ -104,64 +112,7 @@
             "noExplicitAny": "off",
             "noFallthroughSwitchClause": "error",
             "noMisleadingInstantiator": "error",
-            "useNamespaceKeyword": "error"
-          }
-        }
-      }
-    },
-    {
-      "include": ["*.ts", "*.tsx", "*.mts", "*.cts"],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noConstAssign": "off",
-            "noGlobalObjectCalls": "off",
-            "noInvalidConstructorSuper": "off",
-            "noNewSymbol": "off",
-            "noSetterReturn": "off",
-            "noUndeclaredVariables": "off",
-            "noUnreachable": "off",
-            "noUnreachableSuper": "off"
-          },
-          "style": {
-            "noArguments": "error",
-            "noVar": "error",
-            "useConst": "off"
-          },
-          "suspicious": {
-            "noDuplicateClassMembers": "off",
-            "noDuplicateObjectKeys": "off",
-            "noDuplicateParameters": "off",
-            "noFunctionAssign": "off",
-            "noImportAssign": "off",
-            "noRedeclare": "off",
-            "noUnsafeNegation": "off",
-            "useGetterReturn": "off",
-            "useValidTypeof": "off"
-          }
-        }
-      }
-    },
-    {
-      "include": ["*.ts", "*.tsx", "*.mts", "*.cts"],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noConstAssign": "off",
-            "noGlobalObjectCalls": "off",
-            "noInvalidConstructorSuper": "off",
-            "noNewSymbol": "off",
-            "noSetterReturn": "off",
-            "noUndeclaredVariables": "off",
-            "noUnreachable": "off",
-            "noUnreachableSuper": "off"
-          },
-          "style": {
-            "noArguments": "error",
-            "noVar": "error",
-            "useConst": "off"
-          },
-          "suspicious": {
+            "useNamespaceKeyword": "error",
             "noDuplicateClassMembers": "off",
             "noDuplicateObjectKeys": "off",
             "noDuplicateParameters": "off",
@@ -175,5 +126,39 @@
         }
       }
     }
+    // ,
+    // {
+    //   "include": ["*.ts", "*.tsx", "*.mts", "*.cts"],
+    //   "linter": {
+    //     "rules": {
+    //       "correctness": {
+    //         "noConstAssign": "off",
+    //         "noGlobalObjectCalls": "off",
+    //         "noInvalidConstructorSuper": "off",
+    //         "noNewSymbol": "off",
+    //         "noSetterReturn": "off",
+    //         "noUndeclaredVariables": "off",
+    //         "noUnreachable": "off",
+    //         "noUnreachableSuper": "off"
+    //       },
+    //       "style": {
+    //         "noArguments": "error",
+    //         "noVar": "error",
+    //         "useConst": "off"
+    //       },
+    //       "suspicious": {
+    //         "noDuplicateClassMembers": "off",
+    //         "noDuplicateObjectKeys": "off",
+    //         "noDuplicateParameters": "off",
+    //         "noFunctionAssign": "off",
+    //         "noImportAssign": "off",
+    //         "noRedeclare": "off",
+    //         "noUnsafeNegation": "off",
+    //         "useGetterReturn": "off",
+    //         "useValidTypeof": "off"
+    //       }
+    //     }
+    //   }
+    // }
   ]
 }

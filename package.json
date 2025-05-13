@@ -281,7 +281,7 @@
   },
   "lint-staged": {
     "linters": {
-      "./**/*.{css,ts,js,json,jsonc}": ["biome check --write", "git add"],
+      "./**/*.{css,ts,js,jsonc}": ["biome check --write", "git add"],
       "./**/*.{scss,html,md}": [
         "prettier --write --config .prettierrc.js",
         "git add"
