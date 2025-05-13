@@ -1,6 +1,6 @@
-import { Logger } from '@nestjs/common';
 // import { hostname } from 'os';
 import * as util from 'util';
+import { Logger } from '@nestjs/common';
 import { enums } from '~common/barrels/enums';
 import { common } from '~node-common/barrels/common';
 import { wrapError } from './wrap-error';

@@ -22,18 +22,18 @@ export function formatTsUnix(item: {
   return timeSpec === enums.TimeSpecEnum.Years
     ? date.format('YYYY') // format(date, 'yyyy')
     : timeSpec === enums.TimeSpecEnum.Quarters
-    ? 'Q' + date.format('Q YYYY') // format(date, 'QQQ yyyy')
-    : timeSpec === enums.TimeSpecEnum.Months
-    ? date.format('MMM YYYY') // format(date, 'MMM yyyy')
-    : timeSpec === enums.TimeSpecEnum.Weeks
-    ? date.format('DD MMM YYYY') // format(date, 'dd MMM yyyy')
-    : timeSpec === enums.TimeSpecEnum.Days
-    ? date.format('DD MMM YYYY') // format(date, 'dd MMM yyyy')
-    : timeSpec === enums.TimeSpecEnum.Hours
-    ? date.format('HH:mm DD MMM YYYY') // format(date, 'HH:mm dd MMM yyyy')
-    : timeSpec === enums.TimeSpecEnum.Minutes
-    ? date.format('HH:mm DD MMM YYYY') // format(date, 'HH:mm dd MMM yyyy')
-    : timeSpec === enums.TimeSpecEnum.Timestamps // not *_ts
-    ? date.format('HH:mm:ss.SSS DD MMM YYYY') //
-    : `${unixTimeZoned}`;
+      ? 'Q' + date.format('Q YYYY') // format(date, 'QQQ yyyy')
+      : timeSpec === enums.TimeSpecEnum.Months
+        ? date.format('MMM YYYY') // format(date, 'MMM yyyy')
+        : timeSpec === enums.TimeSpecEnum.Weeks
+          ? date.format('DD MMM YYYY') // format(date, 'dd MMM yyyy')
+          : timeSpec === enums.TimeSpecEnum.Days
+            ? date.format('DD MMM YYYY') // format(date, 'dd MMM yyyy')
+            : timeSpec === enums.TimeSpecEnum.Hours
+              ? date.format('HH:mm DD MMM YYYY') // format(date, 'HH:mm dd MMM yyyy')
+              : timeSpec === enums.TimeSpecEnum.Minutes
+                ? date.format('HH:mm DD MMM YYYY') // format(date, 'HH:mm dd MMM yyyy')
+                : timeSpec === enums.TimeSpecEnum.Timestamps // not *_ts
+                  ? date.format('HH:mm:ss.SSS DD MMM YYYY') //
+                  : `${unixTimeZoned}`;
 }

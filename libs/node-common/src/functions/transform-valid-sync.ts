@@ -2,12 +2,12 @@
 import { Logger } from '@nestjs/common';
 import {
   ClassType,
-  transformAndValidateSync,
-  TransformValidationOptions
+  TransformValidationOptions,
+  transformAndValidateSync
 } from 'class-transformer-validator';
+import { BoolEnum } from '~common/_index';
 import { enums } from '~common/barrels/enums';
 import { ServerError } from '~common/models/server-error';
-import { BoolEnum } from '~common/_index';
 import { common } from '~node-common/barrels/common';
 import { getConstraintsRecursive } from './get-constraints-recursive';
 import { logToConsole } from './log-to-console';

@@ -23,18 +23,18 @@ export async function getSyncFiles(item: {
       x.isNew()
         ? common.FileStatusEnum.New
         : x.isDeleted()
-        ? common.FileStatusEnum.Deleted
-        : x.isModified()
-        ? common.FileStatusEnum.Modified
-        : x.isConflicted()
-        ? common.FileStatusEnum.Conflicted
-        : x.isTypechange()
-        ? common.FileStatusEnum.TypeChange
-        : x.isRenamed()
-        ? common.FileStatusEnum.Renamed
-        : x.isIgnored()
-        ? common.FileStatusEnum.Ignored
-        : undefined;
+          ? common.FileStatusEnum.Deleted
+          : x.isModified()
+            ? common.FileStatusEnum.Modified
+            : x.isConflicted()
+              ? common.FileStatusEnum.Conflicted
+              : x.isTypechange()
+                ? common.FileStatusEnum.TypeChange
+                : x.isRenamed()
+                  ? common.FileStatusEnum.Renamed
+                  : x.isIgnored()
+                    ? common.FileStatusEnum.Ignored
+                    : undefined;
 
     let content: string;
     let stat: fse.Stats;

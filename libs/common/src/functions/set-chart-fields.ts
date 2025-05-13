@@ -69,10 +69,10 @@ export function setChartFields<T extends Mconfig>(item: {
       mconfig.select.indexOf(mconfig.chart.xField) > -1
         ? mconfig.chart.xField
         : selectedDimensionsResultIsNumberOrTs.length > 0
-        ? selectedDimensionsResultIsNumberOrTs[0]
-        : selectedDimensionsResultIsNotNumberOrTs.length > 0
-        ? selectedDimensionsResultIsNotNumberOrTs[0]
-        : undefined;
+          ? selectedDimensionsResultIsNumberOrTs[0]
+          : selectedDimensionsResultIsNotNumberOrTs.length > 0
+            ? selectedDimensionsResultIsNotNumberOrTs[0]
+            : undefined;
 
     let sizeField =
       isDefined(mconfig.chart.sizeField) &&
@@ -100,8 +100,8 @@ export function setChartFields<T extends Mconfig>(item: {
       mconfig.chart.multiField !== xField
         ? mconfig.chart.multiField
         : selectedDimensions.length === 2
-        ? selectedDimensions.filter(x => x !== xField)[0]
-        : undefined;
+          ? selectedDimensions.filter(x => x !== xField)[0]
+          : undefined;
 
     mconfig.chart = Object.assign({}, mconfig.chart, <MconfigChart>{
       xField: xField,

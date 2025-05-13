@@ -7,20 +7,20 @@ export function getTimeSpecWord(item: { timeSpec: enums.TimeSpecEnum }) {
     timeSpec === enums.TimeSpecEnum.Years
       ? enums.TimeframeEnum.Year
       : timeSpec === enums.TimeSpecEnum.Quarters
-      ? enums.TimeframeEnum.Quarter
-      : timeSpec === enums.TimeSpecEnum.Months
-      ? enums.TimeframeEnum.Month
-      : timeSpec === enums.TimeSpecEnum.Weeks
-      ? enums.TimeframeEnum.Week
-      : timeSpec === enums.TimeSpecEnum.Days
-      ? enums.TimeframeEnum.Date
-      : timeSpec === enums.TimeSpecEnum.Hours
-      ? enums.TimeframeEnum.Hour
-      : timeSpec === enums.TimeSpecEnum.Minutes
-      ? enums.TimeframeEnum.Minute
-      : timeSpec === enums.TimeSpecEnum.Timestamps
-      ? enums.TimeframeEnum.Ts
-      : undefined;
+        ? enums.TimeframeEnum.Quarter
+        : timeSpec === enums.TimeSpecEnum.Months
+          ? enums.TimeframeEnum.Month
+          : timeSpec === enums.TimeSpecEnum.Weeks
+            ? enums.TimeframeEnum.Week
+            : timeSpec === enums.TimeSpecEnum.Days
+              ? enums.TimeframeEnum.Date
+              : timeSpec === enums.TimeSpecEnum.Hours
+                ? enums.TimeframeEnum.Hour
+                : timeSpec === enums.TimeSpecEnum.Minutes
+                  ? enums.TimeframeEnum.Minute
+                  : timeSpec === enums.TimeSpecEnum.Timestamps
+                    ? enums.TimeframeEnum.Ts
+                    : undefined;
 
   return timeSpecWord;
 }

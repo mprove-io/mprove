@@ -1,5 +1,5 @@
+import { Mconfig, ModelField, isDefined } from '~common/_index';
 import { enums } from '~common/barrels/enums';
-import { isDefined, Mconfig, ModelField } from '~common/_index';
 
 export function setChartTitleOnSelectChange<T extends Mconfig>(item: {
   mconfig: T;

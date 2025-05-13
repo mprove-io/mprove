@@ -1,6 +1,6 @@
 import {
-  utilities as nestWinstonModuleUtilities,
-  WinstonModuleOptions
+  WinstonModuleOptions,
+  utilities as nestWinstonModuleUtilities
 } from 'nest-winston';
 import { format, transports } from 'winston';
 
