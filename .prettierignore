@@ -1,6 +1,5 @@
 dist/
 node_modules/
-.helm/secret/
 package.docker.json
 
 coverage/

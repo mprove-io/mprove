@@ -123,7 +123,7 @@
           "style": {
             "noArguments": "error",
             "noVar": "error",
-            "useConst": "error"
+            "useConst": "off"
           },
           "suspicious": {
             "noDuplicateClassMembers": "off",
@@ -156,7 +156,7 @@
           "style": {
             "noArguments": "error",
             "noVar": "error",
-            "useConst": "error"
+            "useConst": "off"
           },
           "suspicious": {
             "noDuplicateClassMembers": "off",
