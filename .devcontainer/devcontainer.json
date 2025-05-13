@@ -104,7 +104,7 @@
         "workbench.panel.defaultLocation": "bottom",
         "typescript.referencesCodeLens.enabled": true,
         "editor.detectIndentation": false,
-        "editor.defaultFormatter": "biomejs.biome",
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
         "window.zoomLevel": 3.25,
         "redhat.telemetry.enabled": false,
         "editor.bracketPairColorization.enabled": false,
