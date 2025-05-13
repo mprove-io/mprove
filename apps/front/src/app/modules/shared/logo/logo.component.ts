@@ -3,6 +3,7 @@ import { AuthService } from '~front/app/services/auth.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 
 @Component({
+  standalone: false,
   selector: 'm-logo',
   templateUrl: 'logo.component.html'
 })

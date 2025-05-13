@@ -7,6 +7,7 @@ import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 
 @Component({
+  standalone: false,
   selector: 'm-folder-options',
   templateUrl: './folder-options.component.html'
 })

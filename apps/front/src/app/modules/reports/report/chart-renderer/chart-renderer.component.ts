@@ -8,6 +8,7 @@ import { ReportService } from '~front/app/services/report.service';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-chart-renderer',
   templateUrl: './chart-renderer.component.html'
 })

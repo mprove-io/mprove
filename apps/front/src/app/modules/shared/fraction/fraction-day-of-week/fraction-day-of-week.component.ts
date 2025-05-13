@@ -17,6 +17,7 @@ import {
 } from '../fraction.component';
 
 @Component({
+  standalone: false,
   selector: 'm-fraction-day-of-week',
   templateUrl: 'fraction-day-of-week.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush

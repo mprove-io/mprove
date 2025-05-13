@@ -8,6 +8,7 @@ import { UserQuery, UserState } from '~front/app/queries/user.query';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-org-menu',
   templateUrl: './org-menu.component.html'
 })

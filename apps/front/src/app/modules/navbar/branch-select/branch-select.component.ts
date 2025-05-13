@@ -25,6 +25,7 @@ import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
+  standalone: false,
   selector: 'm-branch-select',
   templateUrl: './branch-select.component.html'
 })

@@ -7,6 +7,7 @@ import { UiQuery } from '~front/app/queries/ui.query';
 import { UiService } from '~front/app/services/ui.service';
 
 @Component({
+  standalone: false,
   selector: 'm-chart-header',
   templateUrl: './chart-header.component.html'
 })

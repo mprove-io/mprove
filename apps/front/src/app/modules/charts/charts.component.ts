@@ -68,6 +68,7 @@ export class ChartTypeItem {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-charts',
   templateUrl: './charts.component.html'
 })
@@ -1579,7 +1580,7 @@ ${this.mconfig.storePart?.reqFunction}`
 
     this.chartsFilteredByWord = common.isDefinedAndNotEmpty(this.word)
       ? idxs != null && idxs.length > 0
-        ? idxs.map(idx => nonDraftCharts[idx])
+        ? idxs.map((idx: number): common.ChartX => nonDraftCharts[idx])
         : []
       : nonDraftCharts;
 

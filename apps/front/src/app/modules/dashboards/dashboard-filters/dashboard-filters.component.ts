@@ -6,6 +6,7 @@ import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
+  standalone: false,
   selector: 'm-dashboard-filters',
   templateUrl: './dashboard-filters.component.html'
 })

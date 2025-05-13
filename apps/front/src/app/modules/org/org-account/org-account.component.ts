@@ -9,6 +9,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 @Component({
+  standalone: false,
   selector: 'm-org-account',
   templateUrl: './org-account.component.html'
 })

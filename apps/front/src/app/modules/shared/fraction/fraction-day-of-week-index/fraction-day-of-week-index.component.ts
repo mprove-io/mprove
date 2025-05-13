@@ -16,6 +16,7 @@ import { interfaces } from '~front/barrels/interfaces';
 import { FractionTypeItem } from '../fraction.component';
 
 @Component({
+  standalone: false,
   selector: 'm-fraction-day-of-week-index',
   templateUrl: 'fraction-day-of-week-index.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush

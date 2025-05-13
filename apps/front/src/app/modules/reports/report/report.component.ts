@@ -41,6 +41,7 @@ import { StatusHeaderComponent } from './status-header/status-header.component';
 import { StatusRendererComponent } from './status-renderer/status-renderer.component';
 
 @Component({
+  standalone: false,
   selector: 'm-report',
   styleUrls: ['report.component.scss'],
   templateUrl: './report.component.html'

@@ -14,10 +14,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { enableElfProdMode } from '@ngneat/elf';
-import { provideTippyConfig } from '@ngneat/helipopper/config';
+import {
+  provideTippyConfig,
+  provideTippyLoader
+} from '@ngneat/helipopper/config';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
+import tippy from 'tippy.js';
 import { appRoutes } from './app/app-routes';
 import { AppComponent } from './app/app.component';
 import { AuthModule } from './app/modules/auth/auth.module';
@@ -67,6 +71,8 @@ bootstrapApplication(AppComponent, {
     ),
     provideRouter(appRoutes),
     // provideHotToastConfig(),
+    // provideTippyLoader(() => import('tippy.js')),
+    provideTippyLoader(() => tippy),
     provideTippyConfig({
       defaultVariation: 'tooltip',
       variations: {

@@ -7,6 +7,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-report-options',
   templateUrl: './report-options.component.html'
 })

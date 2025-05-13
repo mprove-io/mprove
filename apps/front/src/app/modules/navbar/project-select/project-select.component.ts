@@ -17,6 +17,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-project-select',
   templateUrl: './project-select.component.html'
 })

@@ -28,6 +28,7 @@ import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
+  standalone: false,
   selector: 'm-store-fraction-input',
   templateUrl: 'store-fraction-input.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush

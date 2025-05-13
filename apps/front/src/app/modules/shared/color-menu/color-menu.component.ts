@@ -13,6 +13,7 @@ export class ColorChange {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-color-menu',
   templateUrl: './color-menu.component.html'
 })

@@ -17,6 +17,7 @@ class MemberExtended extends common.Member {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-project-team',
   templateUrl: './project-team.component.html'
 })

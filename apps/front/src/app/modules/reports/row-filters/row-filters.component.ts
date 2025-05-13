@@ -12,6 +12,7 @@ import { interfaces } from '~front/barrels/interfaces';
 import { FilterX2 } from '../row/row.component';
 
 @Component({
+  standalone: false,
   selector: 'm-row-filters',
   templateUrl: './row-filters.component.html'
 })

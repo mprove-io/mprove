@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { common } from '~front/barrels/common';
 
-@Pipe({ name: 'mproveDir' })
+@Pipe({ standalone: false, name: 'mproveDir' })
 export class MproveDirPipe implements PipeTransform {
   transform(mdir: string) {
     if (common.isUndefined(mdir)) {

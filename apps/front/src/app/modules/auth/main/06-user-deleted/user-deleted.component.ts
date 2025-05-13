@@ -8,6 +8,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 @Component({
+  standalone: false,
   selector: 'm-user-deleted',
   templateUrl: './user-deleted.component.html'
 })

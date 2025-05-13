@@ -44,6 +44,7 @@ export interface ChartSaveAsDialogData {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-chart-save-as-dialog',
   templateUrl: './chart-save-as-dialog.component.html'
 })

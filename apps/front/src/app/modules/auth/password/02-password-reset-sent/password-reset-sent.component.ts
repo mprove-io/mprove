@@ -6,6 +6,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 @Component({
+  standalone: false,
   selector: 'm-password-reset-sent',
   templateUrl: './password-reset-sent.component.html'
 })

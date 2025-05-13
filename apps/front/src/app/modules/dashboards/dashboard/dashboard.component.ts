@@ -37,6 +37,7 @@ class LayoutItem {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']

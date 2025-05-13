@@ -3,6 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { constants } from '~front/barrels/constants';
 
 @Component({
+  standalone: false,
   selector: 'm-not-found',
   templateUrl: './not-found.component.html'
 })

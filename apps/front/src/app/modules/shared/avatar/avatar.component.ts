@@ -4,6 +4,7 @@ import { UserQuery } from '~front/app/queries/user.query';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-avatar',
   templateUrl: './avatar.component.html'
 })

@@ -33,6 +33,7 @@ export class ModelNodeExtra extends common.ModelNode {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-model-tree',
   templateUrl: './model-tree.component.html',
   styleUrls: ['model-tree.component.scss']

@@ -13,6 +13,7 @@ import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
+  standalone: false,
   selector: 'm-store-fraction-selector',
   templateUrl: 'store-fraction-selector.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush

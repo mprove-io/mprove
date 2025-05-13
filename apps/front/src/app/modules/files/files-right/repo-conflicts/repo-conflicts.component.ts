@@ -8,6 +8,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-repo-conflicts',
   templateUrl: './repo-conflicts.component.html'
 })

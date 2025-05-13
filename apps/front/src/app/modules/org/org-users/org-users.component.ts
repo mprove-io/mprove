@@ -16,6 +16,7 @@ class OrgUserItemExtended extends apiToBackend.OrgUsersItem {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-org-users',
   templateUrl: './org-users.component.html'
 })

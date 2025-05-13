@@ -30,6 +30,7 @@ export interface FilterX2 extends common.FilterX {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-row',
   templateUrl: './row.component.html'
 })

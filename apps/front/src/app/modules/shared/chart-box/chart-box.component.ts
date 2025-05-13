@@ -4,6 +4,7 @@ import equal from 'fast-deep-equal';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-chart-box',
   templateUrl: './chart-box.component.html'
 })

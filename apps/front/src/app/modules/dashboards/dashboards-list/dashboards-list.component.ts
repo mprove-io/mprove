@@ -8,6 +8,7 @@ import { tap } from 'rxjs/operators';
 import { FilteredDashboardsQuery } from '~front/app/queries/filtered-dashboards.query';
 
 @Component({
+  standalone: false,
   selector: 'm-dashboards-list',
   templateUrl: './dashboards-list.component.html'
 })

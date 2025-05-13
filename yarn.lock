@@ -3843,10 +3843,10 @@
   dependencies:
     tslib "^2.3.1"
 
-"@leeoniya/ufuzzy@1.0.16":
-  version "1.0.16"
-  resolved "https://registry.yarnpkg.com/@leeoniya/ufuzzy/-/ufuzzy-1.0.16.tgz#2957710d023c580ae942b6a5da875abcd3d3906a"
-  integrity sha512-HdCTRhJ/TOIraA8aXR6XBaknR2wXv1ycb4E9laBjkAXyuEZ2ln5umf6IlMqnafVjj+pgLcbPduArCbtzQzr68Q==
+"@leeoniya/ufuzzy@1.0.18":
+  version "1.0.18"
+  resolved "https://registry.yarnpkg.com/@leeoniya/ufuzzy/-/ufuzzy-1.0.18.tgz#98e38c1308208bd47524aa2c53da0fe33dbbdab8"
+  integrity sha512-5D54A86/VaPvJVf7UWJgy+UyhDtstUxq0iQd8UOZ2TG3NjV2oSoa9m4qW3VsotDD6dH2SNHDQwSPq+IAuudnag==
 
 "@leichtgewicht/ip-codec@^2.0.1":
   version "2.0.5"

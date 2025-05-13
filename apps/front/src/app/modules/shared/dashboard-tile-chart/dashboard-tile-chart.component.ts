@@ -25,6 +25,7 @@ import { common } from '~front/barrels/common';
 import { ChartViewComponent } from '../chart-view/chart-view.component';
 
 @Component({
+  standalone: false,
   selector: 'm-dashboard-tile-chart',
   templateUrl: './dashboard-tile-chart.component.html'
 })

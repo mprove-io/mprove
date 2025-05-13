@@ -13,6 +13,7 @@ import { TimeService } from '~front/app/services/time.service';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-query-status',
   templateUrl: './query-status.component.html'
 })

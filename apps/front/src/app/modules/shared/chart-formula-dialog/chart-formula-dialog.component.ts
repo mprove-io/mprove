@@ -27,7 +27,7 @@ export interface ChartFormulaDialogData {
   templateUrl: './chart-formula-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, UiSwitchModule, TippyDirective, SharedModule]
+  imports: [CommonModule, UiSwitchModule, SharedModule]
 })
 export class ChartFormulaDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

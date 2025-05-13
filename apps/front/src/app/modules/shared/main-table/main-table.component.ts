@@ -11,6 +11,7 @@ import { StructService } from '~front/app/services/struct.service';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-main-table',
   templateUrl: './main-table.component.html'
 })

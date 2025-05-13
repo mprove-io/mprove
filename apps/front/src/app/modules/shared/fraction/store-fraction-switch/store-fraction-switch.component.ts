@@ -10,6 +10,7 @@ import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
+  standalone: false,
   selector: 'm-store-fraction-switch',
   templateUrl: 'store-fraction-switch.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush

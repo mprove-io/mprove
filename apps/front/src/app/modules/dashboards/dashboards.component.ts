@@ -39,6 +39,7 @@ export class ModelXWithTotalDashboards extends common.ModelX {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-dashboards',
   templateUrl: './dashboards.component.html'
 })
@@ -296,7 +297,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     this.dashboardsFilteredByWord = common.isDefinedAndNotEmpty(this.word)
       ? idxs != null && idxs.length > 0
-        ? idxs.map(idx => nonDraftDashboards[idx])
+        ? idxs.map((idx: number): common.DashboardX => nonDraftDashboards[idx])
         : []
       : nonDraftDashboards;
 

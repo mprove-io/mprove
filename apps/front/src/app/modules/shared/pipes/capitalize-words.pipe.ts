@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { common } from '~front/barrels/common';
 
-@Pipe({ name: 'capitalizeWords' })
+@Pipe({ standalone: false, name: 'capitalizeWords' })
 export class CapitalizeWordsPipe implements PipeTransform {
   transform(value: string) {
     if (common.isDefined(value)) {

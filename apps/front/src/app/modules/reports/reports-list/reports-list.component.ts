@@ -10,6 +10,7 @@ import { tap } from 'rxjs/operators';
 import { FilteredReportsQuery } from '~front/app/queries/filtered-reports.query';
 
 @Component({
+  standalone: false,
   selector: 'm-reports-list',
   templateUrl: './reports-list.component.html'
 })

@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'm-type-string-icon',
   templateUrl: 'type-string-icon.component.html'
 })

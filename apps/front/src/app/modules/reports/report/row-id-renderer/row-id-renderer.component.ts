@@ -9,6 +9,7 @@ import { ReportService } from '~front/app/services/report.service';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-row-id-renderer',
   templateUrl: './row-id-renderer.component.html'
 })

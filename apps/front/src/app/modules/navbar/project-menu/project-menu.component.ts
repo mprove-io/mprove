@@ -9,6 +9,7 @@ import { UserQuery } from '~front/app/queries/user.query';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-project-menu',
   templateUrl: './project-menu.component.html'
 })

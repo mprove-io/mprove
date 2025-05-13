@@ -12,6 +12,7 @@ import { UiService } from '~front/app/services/ui.service';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-metric-header',
   templateUrl: './metric-header.component.html'
 })

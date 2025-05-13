@@ -14,6 +14,7 @@ import { ModelQuery } from '~front/app/queries/model.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 
 @Component({
+  standalone: false,
   selector: 'm-models-list',
   templateUrl: './models-list.component.html'
 })
@@ -93,7 +94,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
 
     this.modelsFilteredByWord = common.isDefinedAndNotEmpty(this.word)
       ? idxs != null && idxs.length > 0
-        ? idxs.map(idx => modelsA[idx])
+        ? idxs.map((idx: number): common.ModelX => modelsA[idx])
         : []
       : modelsA;
 

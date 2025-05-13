@@ -16,6 +16,7 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-env-select',
   templateUrl: './env-select.component.html'
 })

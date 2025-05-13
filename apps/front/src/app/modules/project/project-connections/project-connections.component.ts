@@ -11,6 +11,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 @Component({
+  standalone: false,
   selector: 'm-project-connections',
   templateUrl: './project-connections.component.html'
 })

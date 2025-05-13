@@ -9,6 +9,7 @@ import { AuthService } from '~front/app/services/auth.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 
 @Component({
+  standalone: false,
   selector: 'm-file-options',
   templateUrl: './file-options.component.html'
 })

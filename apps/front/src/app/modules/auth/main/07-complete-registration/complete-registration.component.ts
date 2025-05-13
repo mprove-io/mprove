@@ -13,6 +13,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 @Component({
+  standalone: false,
   selector: 'm-complete-registration',
   templateUrl: './complete-registration.component.html'
 })

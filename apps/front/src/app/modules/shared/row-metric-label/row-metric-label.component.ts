@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'm-row-metric-label',
   templateUrl: './row-metric-label.component.html'
 })

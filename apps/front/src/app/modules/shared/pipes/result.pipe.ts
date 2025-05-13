@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { common } from '~front/barrels/common';
 
-@Pipe({ name: 'result' })
+@Pipe({ standalone: false, name: 'result' })
 export class ResultPipe implements PipeTransform {
   transform(value: string) {
     if (common.isUndefined(value)) {

@@ -3,6 +3,7 @@ import { QDataRow } from '~front/app/services/data.service';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-chart-single',
   templateUrl: './chart-single.component.html'
 })

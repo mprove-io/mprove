@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-metric-field-label',
   templateUrl: './metric-field-label.component.html'
 })

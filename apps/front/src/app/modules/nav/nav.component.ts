@@ -4,6 +4,7 @@ import { filter, tap } from 'rxjs/operators';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-nav',
   templateUrl: './nav.component.html'
 })

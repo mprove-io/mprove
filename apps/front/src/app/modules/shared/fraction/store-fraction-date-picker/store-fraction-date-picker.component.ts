@@ -14,6 +14,7 @@ import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
+  standalone: false,
   selector: 'm-store-fraction-date-picker',
   templateUrl: 'store-fraction-date-picker.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush

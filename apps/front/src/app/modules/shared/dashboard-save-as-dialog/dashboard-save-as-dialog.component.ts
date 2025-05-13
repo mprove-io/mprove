@@ -32,6 +32,7 @@ export interface DashboardSaveAsDialogData {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-dashboard-save-as-dialog',
   templateUrl: './dashboard-save-as-dialog.component.html'
 })

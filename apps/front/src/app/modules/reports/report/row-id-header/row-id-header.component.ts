@@ -8,6 +8,7 @@ import { UiService } from '~front/app/services/ui.service';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-row-id-header',
   templateUrl: './row-id-header.component.html'
 })

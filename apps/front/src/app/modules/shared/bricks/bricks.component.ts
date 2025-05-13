@@ -4,6 +4,7 @@ import { ModelsQuery } from '~front/app/queries/models.query';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-bricks',
   templateUrl: './bricks.component.html'
 })

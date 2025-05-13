@@ -36,6 +36,7 @@ export interface DashboardEditListenersDialogData {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-dashboard-edit-listeners-dialog',
   templateUrl: './dashboard-edit-listeners-dialog.component.html'
 })

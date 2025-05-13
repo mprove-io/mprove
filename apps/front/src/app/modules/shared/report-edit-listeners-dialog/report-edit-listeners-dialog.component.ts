@@ -36,6 +36,7 @@ export interface ReportEditListenersDialogData {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-report-edit-listeners-dialog',
   templateUrl: './report-edit-listeners-dialog.component.html'
 })

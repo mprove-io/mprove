@@ -8,6 +8,7 @@ import { StructQuery } from '~front/app/queries/struct.query';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-status-renderer',
   templateUrl: './status-renderer.component.html'
 })

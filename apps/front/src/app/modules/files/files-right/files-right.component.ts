@@ -18,6 +18,7 @@ import { constants } from '~front/barrels/constants';
 import * as languageData from '@codemirror/language-data';
 
 @Component({
+  standalone: false,
   selector: 'm-files-right',
   templateUrl: './files-right.component.html'
 })

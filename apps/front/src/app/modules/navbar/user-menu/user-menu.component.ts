@@ -8,6 +8,7 @@ import { AuthService } from '~front/app/services/auth.service';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-user-menu',
   templateUrl: './user-menu.component.html'
 })

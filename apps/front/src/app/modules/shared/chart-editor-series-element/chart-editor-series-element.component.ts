@@ -16,6 +16,7 @@ import { ChartTypeItem } from '../../charts/charts.component';
 import { ChartSeriesWithField } from '../chart-editor/chart-editor.component';
 
 @Component({
+  standalone: false,
   selector: 'm-chart-editor-series-element',
   templateUrl: './chart-editor-series-element.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush

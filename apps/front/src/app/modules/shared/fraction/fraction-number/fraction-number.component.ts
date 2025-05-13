@@ -19,6 +19,7 @@ import {
 } from '../fraction.component';
 
 @Component({
+  standalone: false,
   selector: 'm-fraction-number',
   templateUrl: 'fraction-number.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush

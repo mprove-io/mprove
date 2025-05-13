@@ -35,6 +35,7 @@ export class BmlErrorsNode {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-blockml-errors',
   templateUrl: './blockml-errors.component.html',
   styleUrls: ['blockml-errors.component.scss']

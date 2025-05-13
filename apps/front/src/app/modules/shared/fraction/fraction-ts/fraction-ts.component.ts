@@ -41,6 +41,7 @@ import {
 } from '../fraction.component';
 
 @Component({
+  standalone: false,
   selector: 'm-fraction-ts',
   templateUrl: 'fraction-ts.component.html',
   styleUrls: ['fraction-ts.component.scss'],

@@ -8,6 +8,7 @@ import { DataService } from '~front/app/services/data.service';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-mini-chart-renderer',
   templateUrl: './mini-chart-renderer.component.html'
 })

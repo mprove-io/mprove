@@ -6,6 +6,7 @@ import { DataRow } from '~front/app/interfaces/data-row';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-status-header',
   templateUrl: './status-header.component.html'
 })

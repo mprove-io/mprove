@@ -38,6 +38,7 @@ export class ChartSeriesWithField extends common.MconfigChartSeries {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-chart-editor',
   templateUrl: './chart-editor.component.html'
 })

@@ -69,6 +69,7 @@ export class FractionTsLastCompleteOptionItem {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-fraction',
   templateUrl: './fraction.component.html'
 })

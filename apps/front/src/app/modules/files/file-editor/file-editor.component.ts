@@ -32,6 +32,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 @Component({
+  standalone: false,
   selector: 'm-file-editor',
   templateUrl: './file-editor.component.html',
   styleUrls: ['./file-editor.component.scss']

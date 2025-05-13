@@ -60,6 +60,7 @@ export class TimeSpecItem {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-reports',
   templateUrl: './reports.component.html'
 })
@@ -983,7 +984,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     this.reportsFilteredByWord = common.isDefinedAndNotEmpty(this.word)
       ? idxs != null && idxs.length > 0
-        ? idxs.map(idx => nonDraftReports[idx])
+        ? idxs.map((idx: number): common.ReportX => nonDraftReports[idx])
         : []
       : nonDraftReports;
 

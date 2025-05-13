@@ -28,6 +28,7 @@ import { common } from '~front/barrels/common';
 import uFuzzy from '@leeoniya/ufuzzy';
 
 @Component({
+  standalone: false,
   selector: 'm-files-tree',
   templateUrl: './files-tree.component.html',
   styleUrls: ['files-tree.component.scss']
@@ -412,7 +413,7 @@ export class FilesTreeComponent implements OnDestroy {
 
     filteredFileItems =
       idxs != null && idxs.length > 0
-        ? idxs.map(idx => filteredFileItems[idx])
+        ? idxs.map((idx: number): common.FileItem => filteredFileItems[idx])
         : [];
 
     this.filteredFileItems = filteredFileItems.sort((a, b) => {

@@ -14,6 +14,7 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { common } from '~front/barrels/common';
 
 @Component({
+  standalone: false,
   selector: 'm-metric-renderer',
   templateUrl: './metric-renderer.component.html'
 })

@@ -17,6 +17,7 @@ import {
 } from '../fraction.component';
 
 @Component({
+  standalone: false,
   selector: 'm-fraction-quarter-of-year',
   templateUrl: 'fraction-quarter-of-year.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush

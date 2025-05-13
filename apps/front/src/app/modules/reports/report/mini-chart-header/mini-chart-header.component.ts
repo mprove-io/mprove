@@ -3,6 +3,7 @@ import { IHeaderAngularComp } from 'ag-grid-angular';
 import { IHeaderParams } from 'ag-grid-community';
 
 @Component({
+  standalone: false,
   selector: 'm-mini-chart-header',
   templateUrl: './mini-chart-header.component.html'
 })

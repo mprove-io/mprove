@@ -12,6 +12,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 @Component({
+  standalone: false,
   selector: 'm-update-password',
   templateUrl: './update-password.component.html'
 })

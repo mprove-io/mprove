@@ -17,6 +17,7 @@ import {
 } from '../fraction.component';
 
 @Component({
+  standalone: false,
   selector: 'm-fraction-yesno',
   templateUrl: 'fraction-yesno.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush

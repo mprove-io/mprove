@@ -20,6 +20,7 @@ import * as languageData from '@codemirror/language-data';
 import { ChartQuery } from '~front/app/queries/chart.query';
 
 @Component({
+  standalone: false,
   selector: 'm-query-info-viewer',
   templateUrl: './query-info-viewer.component.html'
 })

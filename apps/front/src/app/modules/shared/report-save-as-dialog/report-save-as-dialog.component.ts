@@ -35,6 +35,7 @@ export interface ReportSaveAsDialogData {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-report-save-as-dialog',
   templateUrl: './report-save-as-dialog.component.html'
 })

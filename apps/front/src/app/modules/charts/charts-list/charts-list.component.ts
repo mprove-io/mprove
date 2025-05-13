@@ -11,6 +11,7 @@ import { constants } from '~front/barrels/constants';
 import { FilteredChartsQuery } from '~front/app/queries/filtered-charts.query';
 
 @Component({
+  standalone: false,
   selector: 'm-charts-list',
   templateUrl: './charts-list.component.html'
 })

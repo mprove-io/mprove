@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { UiQuery } from '~front/app/queries/ui.query';
 
 @Component({
+  standalone: false,
   selector: 'm-files-right-panel-toggle',
   templateUrl: 'files-right-panel-toggle.component.html'
 })

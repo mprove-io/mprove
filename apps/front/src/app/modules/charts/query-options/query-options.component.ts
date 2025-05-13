@@ -10,6 +10,7 @@ import { ModelQuery, ModelState } from '~front/app/queries/model.query';
 import { NavigateService } from '~front/app/services/navigate.service';
 
 @Component({
+  standalone: false,
   selector: 'm-query-options',
   templateUrl: './query-options.component.html'
 })

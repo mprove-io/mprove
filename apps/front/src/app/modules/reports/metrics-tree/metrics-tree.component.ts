@@ -32,6 +32,7 @@ export class MetricNode {
 }
 
 @Component({
+  standalone: false,
   selector: 'm-metrics-tree',
   templateUrl: './metrics-tree.component.html'
 })

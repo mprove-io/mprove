@@ -29,6 +29,7 @@ import { interfaces } from '~front/barrels/interfaces';
 import { FractionTypeItem } from '../fraction.component';
 
 @Component({
+  standalone: false,
   selector: 'm-fraction-string',
   templateUrl: 'fraction-string.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush

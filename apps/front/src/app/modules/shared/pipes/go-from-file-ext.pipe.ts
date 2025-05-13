@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { common } from '~front/barrels/common';
 
-@Pipe({ name: 'goFromFileExt' })
+@Pipe({ standalone: false, name: 'goFromFileExt' })
 export class GoFromFileExtPipe implements PipeTransform {
   transform(value: string) {
     if (common.isUndefined(value)) {
