@@ -1,7 +1,19 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
-  "files": { "ignoreUnknown": false, "ignore": [] },
+  "files": {
+    "ignoreUnknown": false,
+    "ignore": [
+      "**/*.json",
+      "**/*.txt",
+      "./nogit/**",
+      "./_nogit/**",
+      "**/node_modules/",
+      "apps/integra/cypress",
+      "./dist/**",
+      "**/package.docker.json"
+    ]
+  },
   "formatter": {
     "enabled": true,
     "useEditorconfig": false,
@@ -11,13 +23,7 @@
     "lineEnding": "lf",
     "lineWidth": 80,
     "attributePosition": "auto",
-    "bracketSpacing": true,
-    "ignore": [
-      "**/dist/",
-      "**/node_modules/",
-      "**/package.docker.json",
-      "**/coverage/"
-    ]
+    "bracketSpacing": true
   },
   "organizeImports": { "enabled": true },
   "linter": {
@@ -47,15 +53,7 @@
         "noMisleadingInstantiator": "error",
         "useNamespaceKeyword": "error"
       }
-    },
-    "ignore": [
-      "**/*.txt",
-      "**/*.json", 
-      "./dist/**",
-      "./nogit/**",
-      "./_nogit/**",
-      "apps/integra/cypress"
-    ]
+    }
   },
   "javascript": {
     "parser": {

@@ -68,10 +68,13 @@
         "[jsonc]": {
           "editor.defaultFormatter": "biomejs.biome"
         },
-        "[html]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "[css]": {
+          "editor.defaultFormatter": "biomejs.biome"
         },
         "[scss]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[html]": {
           "editor.defaultFormatter": "esbenp.prettier-vscode"
         },
         "[md]": {
