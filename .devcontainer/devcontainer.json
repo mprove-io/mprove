@@ -62,14 +62,20 @@
         "[javascript]": {
           "editor.defaultFormatter": "biomejs.biome"
         },
-        "[html]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
-        },
         "[json]": {
           "editor.defaultFormatter": "biomejs.biome"
         },
         "[jsonc]": {
           "editor.defaultFormatter": "biomejs.biome"
+        },
+        "[html]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[scss]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[md]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
         },
         "search.exclude": {
           "**/node_modules": true,

@@ -22,7 +22,7 @@
     "dz:upmeta": "drizzle-kit up --config apps/backend/src/drizzle/postgres/drizzle.config.ts",
     "dz:check": "drizzle-kit check --config apps/backend/src/drizzle/postgres/drizzle.config.ts",
     "mcli": "ENV_FILE_PATH=.env yarn node -r ts-node/register -r tsconfig-paths/register apps/mcli/src/main.ts",
-    "fm": "prettier \"**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js",
+    "fm": "prettier \"**/*.{scss,html,md}\" --write --config .prettierrc.js",
     "circular": "madge --circular apps libs",
     "lint": "eslint \"**/*.ts\"",
     "pj": "yarn pjc && yarn pjd",
@@ -271,10 +271,7 @@
     "webpack": "5.95.0"
   },
   "madge": {
-    "fileExtensions": [
-      "ts",
-      "tsx"
-    ],
+    "fileExtensions": ["ts", "tsx"],
     "tsConfig": "./tsconfig.json"
   },
   "husky": {
@@ -284,7 +281,11 @@
   },
   "lint-staged": {
     "linters": {
-      "./**/*.{ts,js,json,scss,html,md}": [
+      "./**/*.{ts,js,json,jsonc} --config-path biome.jsonc": [
+        "biome check --write",
+        "git add"
+      ],
+      "./**/*.{scss,html,md}": [
         "prettier --write --config .prettierrc.js",
         "git add"
       ]
