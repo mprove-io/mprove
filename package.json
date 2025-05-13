@@ -24,7 +24,7 @@
     "mcli": "ENV_FILE_PATH=.env yarn node -r ts-node/register -r tsconfig-paths/register apps/mcli/src/main.ts",
     "fm": "prettier \"**/*.{scss,html,md}\" --write --config .prettierrc.js",
     "circular": "madge --circular apps libs",
-    "lint": "eslint \"**/*.ts\"",
+    "lint": "biome lint",
     "pj": "yarn pjc && yarn pjd",
     "pjc": "ts-node ./tools/utils/prepare-package-json-for-cli",
     "pjd": "ts-node ./tools/utils/prepare-package-json-for-docker",
