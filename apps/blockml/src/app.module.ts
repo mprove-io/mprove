@@ -60,7 +60,10 @@ import { logToConsoleBlockml } from './functions/log-to-console-blockml';
   providers: [Logger, ...appServices]
 })
 export class AppModule implements OnModuleInit {
-  constructor(private logger: Logger, private cs: ConfigService) {} 
+  constructor(
+    private logger: Logger,
+    private cs: ConfigService
+  ) {}
 
   async onModuleInit() {
     logToConsoleBlockml({
