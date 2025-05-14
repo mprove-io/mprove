@@ -64,9 +64,14 @@ export class ReportComponent {
   };
 
   gridTheme = themeAlpine.withParams({
+    wrapperBorder: '1px solid #99a1af',
+    headerRowBorder: '1px solid #99a1af',
+    headerColumnBorder: '1px solid #dde2eb',
+    pinnedColumnBorder: '1.5px solid #99a1af',
+    columnBorder: '1px solid #dde2eb',
+    headerBackgroundColor: '#f8f8f8',
     headerFontFamily: 'arial, sans-serif',
     headerFontSize: '17px',
-    headerColumnBorder: '1px solid #dde2eb',
     fontFamily: 'Montserrat',
     fontSize: '17px',
     dataFontSize: '17px',
@@ -75,8 +80,6 @@ export class ReportComponent {
     oddRowBackgroundColor: 'rgb(0, 0, 0, 0)',
     backgroundColor: 'rgb(0, 0, 0, 0)',
     rangeSelectionBorderColor: 'rgb(0, 0, 0, 0)',
-    columnBorder: '1px solid #dde2eb',
-    pinnedColumnBorder: '1px solid #99a1af',
     focusShadow: 'none'
   });
 
