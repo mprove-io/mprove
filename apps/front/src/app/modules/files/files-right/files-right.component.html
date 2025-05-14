@@ -138,17 +138,20 @@
     </div>
 
     <div
-      class="ml-6 mr-6 h-full overflow-y-auto rounded"
+      class="flex h-2 w-full flex-grow flex-row pl-6 pr-6"
       *ngIf="isShowSpinner === false"
     >
-      <code-editor
-        style="height: 100%"
-        [(ngModel)]="secondFileContent"
-        [readonly]="true"
-        [language]="lang"
-        [languages]="languages"
-        [theme]="theme"
-      ></code-editor>
+      <div class="flex w-2 flex-1">
+        <code-editor
+          class="w-full outline-none"
+          style="height: 100%"
+          [(ngModel)]="secondFileContent"
+          [readonly]="true"
+          [language]="lang"
+          [languages]="languages"
+          [theme]="theme"
+        ></code-editor>
+      </div>
     </div>
   </div>
 </div>

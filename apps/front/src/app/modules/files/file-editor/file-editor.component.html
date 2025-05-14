@@ -95,39 +95,44 @@
     <div class="flex flex-row"></div>
   </div>
 
-  <div class="h-full overflow-y-auto rounded">
-    <code-editor
-      class="ml-6 mr-6 outline-none"
-      *ngIf="panel === panelTree"
-      #codeEditor
-      data-cy="fileEditorCodeEditor"
-      style="height: 100%"
-      [(ngModel)]="content"
-      [readonly]="nav?.isRepoProd === true || file?.isExist === false"
-      [language]="lang"
-      [languages]="languages"
-      [theme]="theme"
-      [indentWithTab]="indentWithTab"
-      [indentUnit]="indentUnit"
-      [extensions]="extensions"
-      (ngModelChange)="onTextChanged({ isDiffEditor: false })"
-    ></code-editor>
+  <div class="flex h-2 w-full flex-grow flex-row pl-6 pr-6">
+    <div *ngIf="panel === panelTree" class="flex w-2 flex-1">
+      <code-editor
+        class="w-full outline-none"
+        #codeEditor
+        data-cy="fileEditorCodeEditor"
+        style="height: 100%"
+        [(ngModel)]="content"
+        [readonly]="nav?.isRepoProd === true || file?.isExist === false"
+        [language]="lang"
+        [languages]="languages"
+        [theme]="theme"
+        [indentWithTab]="indentWithTab"
+        [indentUnit]="indentUnit"
+        [extensions]="extensions"
+        (ngModelChange)="onTextChanged({ isDiffEditor: false })"
+      ></code-editor>
+    </div>
 
-    <diff-editor
-      class="ml-6 mr-6"
+    <div
+      class="flex w-2 flex-1"
       *ngIf="
         showDiff === true &&
         panel !== panelTree &&
         !!originalExtensions &&
         !!modifiedExtensions
       "
-      style="height: 100%"
-      [(ngModel)]="diffContent"
-      [originalExtensions]="originalExtensions"
-      [modifiedExtensions]="modifiedExtensions"
-      [disabled]="nav?.isRepoProd === true || file?.isExist === false"
-      (modifiedValueChange)="onTextChanged({ isDiffEditor: true })"
-    ></diff-editor>
+    >
+      <diff-editor
+        class="w-full outline-none"
+        style="height: 100%"
+        [(ngModel)]="diffContent"
+        [originalExtensions]="originalExtensions"
+        [modifiedExtensions]="modifiedExtensions"
+        [disabled]="nav?.isRepoProd === true || file?.isExist === false"
+        (modifiedValueChange)="onTextChanged({ isDiffEditor: true })"
+      ></diff-editor>
+    </div>
   </div>
 </div>
 
