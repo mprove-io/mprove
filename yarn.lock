@@ -7504,24 +7504,25 @@ adm-zip@^0.5.10:
   resolved "https://registry.yarnpkg.com/adm-zip/-/adm-zip-0.5.16.tgz#0b5e4c779f07dedea5805cdccb1147071d94a909"
   integrity sha512-TGw5yVi4saajsSEgz25grObGHEUaDrniwvA2qwSC060KfqGPdglhvPMA2lPIoxs3PQIItj2iag35fONcQqgUaQ==
 
-ag-charts-types@10.1.0:
-  version "10.1.0"
-  resolved "https://registry.yarnpkg.com/ag-charts-types/-/ag-charts-types-10.1.0.tgz#f265665f6b92742bb0bc2dcfab319b21e6d78749"
-  integrity sha512-pk9ft8hbgTXJ/thI/SEUR1BoauNplYExpcHh7tMOqVikoDsta1O15TB1ZL4XWnl4TPIzROBmONKsz7d8a2HBuQ==
+ag-charts-types@11.3.0:
+  version "11.3.0"
+  resolved "https://registry.yarnpkg.com/ag-charts-types/-/ag-charts-types-11.3.0.tgz#5f57fd56f0a230e751daa75f28528791b675f29f"
+  integrity sha512-FXyk24PizYS4QoPTk7FVaFDgvmZYBQo6sgl5n3lkHugTNTZBtwBmN3i4JnBXgNjGDB6Q05MRkoBA2rvW8rPBag==
 
-ag-grid-angular@32.1.0:
-  version "32.1.0"
-  resolved "https://registry.yarnpkg.com/ag-grid-angular/-/ag-grid-angular-32.1.0.tgz#6cc14ac456ca35c18197e2af6df7711993b1c76a"
-  integrity sha512-d21XbuSUvuy8Hp3m/ltU1dIjPRRB082+tNeKodf2Mwt0zNCY5H+Y1kSimRDnhU5KLK/3yIiCzpgAzwz6AmnxtQ==
+ag-grid-angular@33.3.0:
+  version "33.3.0"
+  resolved "https://registry.yarnpkg.com/ag-grid-angular/-/ag-grid-angular-33.3.0.tgz#e226eb68ca85015b0978a4430e5bd8ee14833081"
+  integrity sha512-rEWKkMbxoeikvV7bP0EnEo+SDq7B1gl+3aTDRXOywDtunbtTGX1VpBIDMI5bDpM/t5/v1brls8xqLBJnacYrRw==
   dependencies:
+    ag-grid-community "33.3.0"
     tslib "^2.3.0"
 
-ag-grid-community@32.1.0:
-  version "32.1.0"
-  resolved "https://registry.yarnpkg.com/ag-grid-community/-/ag-grid-community-32.1.0.tgz#69d5b0af1b4d5cd5262705ecd87a3bd16c9c4155"
-  integrity sha512-RVvkjRH61nuCXwIqTKQPqNbKR+8cGBKw7S1qmmMXsy0pCBAJaQn4kL3v31hKHxDtV4bPscBXLFKGnKzHuss0GQ==
+ag-grid-community@33.3.0:
+  version "33.3.0"
+  resolved "https://registry.yarnpkg.com/ag-grid-community/-/ag-grid-community-33.3.0.tgz#a55c80b8108ad185a31420ec61be939e1ab83c12"
+  integrity sha512-Nr7Wd3Qc0tbR+BWZ4y8LgEwLkHTvrtJ4f4k5eb4zuoNZFM52MyLfu+m4OAplIm9nOVBdp5tg/ALWvu13jak+Nw==
   dependencies:
-    ag-charts-types "10.1.0"
+    ag-charts-types "11.3.0"
 
 agent-base@6:
   version "6.0.2"

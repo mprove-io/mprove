@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyDirective } from '@ngneat/helipopper';
 import { AgGridModule } from 'ag-grid-angular';
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
@@ -27,6 +28,8 @@ import { ReportsListComponent } from './reports-list/reports-list.component';
 import { ReportsComponent } from './reports.component';
 import { RowFiltersComponent } from './row-filters/row-filters.component';
 import { RowComponent } from './row/row.component';
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 @NgModule({
   declarations: [

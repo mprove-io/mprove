@@ -40,6 +40,8 @@ import { RowIdRendererComponent } from './row-id-renderer/row-id-renderer.compon
 import { StatusHeaderComponent } from './status-header/status-header.component';
 import { StatusRendererComponent } from './status-renderer/status-renderer.component';
 
+import { themeAlpine } from 'ag-grid-community';
+
 @Component({
   standalone: false,
   selector: 'm-report',
@@ -51,6 +53,25 @@ export class ReportComponent {
   // onEscKeyUp() {
   //   this.agGrid.api.deselectAll();
   // }
+
+  gridTheme = themeAlpine.withParams({
+    headerFontFamily: 'arial, sans-serif',
+    headerFontSize: '17px',
+    headerColumnBorder: '1px solid #dde2eb',
+    fontFamily: 'Montserrat',
+    fontSize: '17px',
+    dataFontSize: '17px',
+    selectedRowBackgroundColor: 'rgb(255, 224, 129)',
+    rowHoverColor: 'rgb(0, 0, 0, 0)',
+    oddRowBackgroundColor: 'rgb(0, 0, 0, 0)',
+    backgroundColor: 'rgb(0, 0, 0, 0)',
+    rangeSelectionBorderColor: 'rgb(0, 0, 0, 0)',
+    columnBorder: '1px solid #dde2eb',
+    pinnedColumnBorder: '1px solid #99a1af'
+    // rangeSelectionBorderStyle: 'none',
+    // selectCellBorder: 'none',
+    // cellEditingBorder: 'none'
+  });
 
   overlayNoRowsTemplate = `
     <span style="font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 20px; color: #4D4F5C">

@@ -2,15 +2,6 @@
 @use 'tailwindcss/components';
 @use 'tailwindcss/utilities';
 
-@use 'ag-grid-community/styles' as ag;
-
-@include ag.grid-styles(
-  (
-    theme: alpine,
-    --ag-cell-horizontal-border: solid #dde2eb
-  )
-);
-
 html,
 body {
   width: 100%;
@@ -27,31 +18,7 @@ body {
   outline: none;
 }
 
-// @import 'ag-grid-community/styles/ag-grid.css';
-// @import 'ag-grid-community/styles/ag-theme-alpine.css';
-
-.ag-theme-alpine {
-  font-family: arial, sans-serif;
-  --ag-font-size: 16px;
-
-  // --ag-selected-row-background-color: rgb(231, 242, 253);
-  --ag-selected-row-background-color: rgb(255, 224, 129);
-  --ag-row-hover-color: rgb(0, 0, 0, 0);
-  // --ag-row-hover-color: rgb(231, 242, 253);
-
-  --ag-odd-row-background-color: rgb(0, 0, 0, 0);
-  --ag-background-color: rgb(0, 0, 0, 0);
-  --ag-range-selection-border-color: rgb(0, 0, 0, 0);
-
-  // --ag-header-foreground-color: rgb(204, 245, 172);
-  // --ag-header-background-color: rgb(235, 66, 142);
-  // --ag-header-column-resize-handle-color: rgb(126, 46, 132);
-
-  // --ag-foreground-color: rgb(253, 132, 19);
-}
-
 @import '~@ng-select/ng-select/themes/default.theme.css';
-// @import "~@ng-select/ng-select/themes/material.theme.css";
 
 @import '~tippy.js/dist/tippy.css';
 @import '~tippy.js/themes/light.css';
@@ -176,10 +143,6 @@ body {
 // .hov {
 //   visibility: hidden;
 // }
-
-.ag-row-selected .hov {
-  visibility: visible;
-}
 
 // .css-zoom {
 // 	zoom: 67%;

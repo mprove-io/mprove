@@ -2,6 +2,7 @@
   <ag-grid-angular
     style="width: 100%; height: 100%"
     class="ag-theme-alpine mb-5 mt-5"
+    [theme]="gridTheme"
     [rowClass]="rowCssClasses"
     [headerHeight]="60"
     [overlayNoRowsTemplate]="overlayNoRowsTemplate"
@@ -13,7 +14,7 @@
     [suppressColumnVirtualisation]="false"
     [rowDragMultiRow]="true"
     [suppressCellFocus]="true"
-    [animateRows]="true"
+    [animateRows]="false"
     [rowSelection]="'multiple'"
     [rowMultiSelectWithClick]="false"
     [getRowHeight]="getRowHeight.bind(this)"
