@@ -41,6 +41,7 @@ import { StatusHeaderComponent } from './status-header/status-header.component';
 import { StatusRendererComponent } from './status-renderer/status-renderer.component';
 
 import { themeAlpine } from 'ag-grid-community';
+import { MultiRowSelectionOptions } from 'ag-grid-community/dist/types/src/entities/gridOptions';
 
 @Component({
   standalone: false,
@@ -53,6 +54,14 @@ export class ReportComponent {
   // onEscKeyUp() {
   //   this.agGrid.api.deselectAll();
   // }
+
+  rowSelection: MultiRowSelectionOptions<DataRow> = {
+    mode: 'multiRow',
+    enableSelectionWithoutKeys: false,
+    enableClickSelection: true,
+    headerCheckbox: false,
+    checkboxes: false
+  };
 
   gridTheme = themeAlpine.withParams({
     headerFontFamily: 'arial, sans-serif',
@@ -67,10 +76,8 @@ export class ReportComponent {
     backgroundColor: 'rgb(0, 0, 0, 0)',
     rangeSelectionBorderColor: 'rgb(0, 0, 0, 0)',
     columnBorder: '1px solid #dde2eb',
-    pinnedColumnBorder: '1px solid #99a1af'
-    // rangeSelectionBorderStyle: 'none',
-    // selectCellBorder: 'none',
-    // cellEditingBorder: 'none'
+    pinnedColumnBorder: '1px solid #99a1af',
+    focusShadow: 'none'
   });
 
   overlayNoRowsTemplate = `
