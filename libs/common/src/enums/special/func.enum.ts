@@ -153,6 +153,8 @@ export enum FuncEnum {
   CheckReportRowParameters = '17-report/07-check-report-row-parameters',
   BuildReportRowParameterFractions = '17-report/08-build-report-row-parameter-fractions',
 
+  CheckMalloy = '18-malloy/01-check-malloy',
+
   CheckAccess = 'special/check-access',
   CheckVmdrFilterConditions = 'special/check-vmdr-filter-conditions',
   CheckStoreFraction = 'special/check-store-fraction',
