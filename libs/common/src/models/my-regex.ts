@@ -1,6 +1,5 @@
 import { constants } from '~common/barrels/constants';
-
-const cloneRegexp = require('clone-regexp');
+import { cloneRegexp } from '~common/functions/clone-regexp';
 
 export class MyRegex {
   // COMMON

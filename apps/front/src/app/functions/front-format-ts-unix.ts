@@ -1,17 +1,19 @@
 import { enums } from '~common/barrels/enums';
 
-let dayjs = require('dayjs');
-let utc = require('dayjs/plugin/utc');
-let timezone = require('dayjs/plugin/timezone');
-let customParseFormat = require('dayjs/plugin/customParseFormat');
-let advancedFormat = require('dayjs/plugin/advancedFormat');
+import dayjs from 'dayjs';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
+import timezone from 'dayjs/plugin/customParseFormat';
+import customParseFormat from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+
+// function content is the same as nodeFormatTsUnix
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(customParseFormat);
 dayjs.extend(advancedFormat);
 
-export function formatTsUnix(item: {
+export function frontFormatTsUnix(item: {
   timeSpec: enums.TimeSpecEnum;
   unixTimeZoned: number;
 }) {

@@ -31,6 +31,7 @@ import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { nodeCommon } from '~backend/barrels/node-common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
@@ -490,7 +491,7 @@ export class BlockmlService {
       let column: common.Column = {
         columnId: unixTimeZoned,
         // tsUTC: tsUTC,
-        label: common.formatTsUnix({
+        label: nodeCommon.nodeFormatTsUnix({
           timeSpec: timeSpec,
           unixTimeZoned: unixTimeZoned
         })

@@ -5,7 +5,7 @@
   "sourceRoot": "apps/front/src",
   "targets": {
     "build": {
-      "executor": "@angular-devkit/build-angular:browser",
+      "executor": "@nx/angular:browser-esbuild",
       "options": {
         "allowedCommonJsDependencies": [
           "fast-deep-equal",
@@ -25,7 +25,7 @@
         "assets": ["apps/front/src/favicon.svg", "apps/front/src/assets"],
         "styles": [
           "apps/front/src/styles.scss",
-          "./node_modules/ngx-ui-switch/ui-switch.component.scss",
+          "./node_modules/ngx-ui-switch/ui-switch.component.css",
           "./node_modules/ngx-spinner/animations/ball-clip-rotate.css",
           "./node_modules/ngx-spinner/animations/ball-pulse.css",
           "./node_modules/ngx-spinner/animations/line-scale.css"
@@ -71,7 +71,7 @@
       }
     },
     "serve": {
-      "executor": "@angular-devkit/build-angular:dev-server",
+      "executor": "@nx/angular:dev-server",
       "options": {
         "buildTarget": "front:build"
       },

@@ -4,6 +4,7 @@ import { SeriesOption } from 'echarts';
 import { NO_FIELDS_SELECTED, capitalizeFirstLetter } from '~common/_index';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+import { frontFormatTsUnix } from '../functions/front-format-ts-unix';
 import { DataPoint } from '../interfaces/data-point';
 import { DataRow } from '../interfaces/data-row';
 import { StructQuery } from '../queries/struct.query';
@@ -207,7 +208,7 @@ export class DataService {
             valueFmt: common.isUndefined(value)
               ? 'NULL'
               : common.isDefined(tsValue)
-                ? common.formatTsUnix({
+                ? frontFormatTsUnix({
                     timeSpec:
                       isStore === true
                         ? storeTimeSpec
@@ -936,7 +937,7 @@ export class DataService {
 
             let timeSpec = this.uiQuery.getValue().timeSpec;
 
-            let columnLabel = common.formatTsUnix({
+            let columnLabel = frontFormatTsUnix({
               timeSpec: timeSpec,
               unixTimeZoned: p.data.value[0] / 1000
             });

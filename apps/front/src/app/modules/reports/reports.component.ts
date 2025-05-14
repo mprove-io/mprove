@@ -48,6 +48,7 @@ import {
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { EChartsInitOpts, EChartsOption } from 'echarts';
+import { frontFormatTsUnix } from '~front/app/functions/front-format-ts-unix';
 import { DataPoint } from '~front/app/interfaces/data-point';
 import { RefreshItem } from '~front/app/interfaces/refresh-item';
 import { SeriesPart } from '~front/app/interfaces/series-part';
@@ -448,7 +449,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
                     formatter: (value: any) => {
                       let timeSpec = this.uiQuery.getValue().timeSpec;
 
-                      return common.formatTsUnix({
+                      return frontFormatTsUnix({
                         timeSpec: timeSpec,
                         unixTimeZoned: value / 1000
                       });

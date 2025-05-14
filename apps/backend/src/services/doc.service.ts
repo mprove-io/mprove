@@ -6,11 +6,13 @@ import pg from 'pg-promise/typescript/pg-subset';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
+import { nodeCommon } from '~backend/barrels/node-common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { RabbitService } from './rabbit.service';
 import { UserCodeService } from './user-code.service';
+
 let Graph = require('tarjan-graph');
 let toposort = require('toposort');
 let retry = require('async-retry');
@@ -511,7 +513,7 @@ FROM main;`;
               reportColumn = {
                 columnId: columnId,
                 // tsUTC: undefined,
-                label: common.formatTsUnix({
+                label: nodeCommon.nodeFormatTsUnix({
                   timeSpec: timeSpec,
                   unixTimeZoned: columnId
                 })

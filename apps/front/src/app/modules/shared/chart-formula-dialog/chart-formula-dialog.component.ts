@@ -6,9 +6,9 @@ import {
   OnInit
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
-import { TippyDirective } from '@ngneat/helipopper';
 import { EChartsInitOpts, EChartsOption } from 'echarts';
 import { UiSwitchModule } from 'ngx-ui-switch';
+import { frontFormatTsUnix } from '~front/app/functions/front-format-ts-unix';
 import { ChartPointsData } from '~front/app/interfaces/chart-points-data';
 import { DataPoint } from '~front/app/interfaces/data-point';
 import { DataRow } from '~front/app/interfaces/data-row';
@@ -107,7 +107,7 @@ export class ChartFormulaDialogComponent implements OnInit {
                 formatter: (value: any) => {
                   let timeSpec = this.uiQuery.getValue().timeSpec;
 
-                  return common.formatTsUnix({
+                  return frontFormatTsUnix({
                     timeSpec: timeSpec,
                     unixTimeZoned: value / 1000
                   });
