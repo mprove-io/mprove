@@ -480,10 +480,10 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         let lineNumber = this.line;
         let editorView = this.codeEditorRef?.view;
 
-        if (common.isUndefined(editorView)) {
-          console.warn('this.codeEditorRef?.view not defined');
-          return;
-        }
+        // if (common.isUndefined(editorView)) {
+        //   console.warn('this.codeEditorRef?.view not defined');
+        //   return;
+        // }
 
         const lines = this.content.split('\n');
 
