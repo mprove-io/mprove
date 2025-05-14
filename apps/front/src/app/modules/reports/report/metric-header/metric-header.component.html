@@ -19,7 +19,7 @@
       [ngClass]="{
         'border-s400 text-s500 hover:bg-m0':
           report?.rows.length > 0 && report?.fields.length > 0,
-        'border-s300  text-s400 cursor-default':
+        'border-s300 text-s400 cursor-default':
           report?.rows.length === 0 || report?.fields.length === 0
       }"
       [disabled]="report?.rows.length === 0 || report?.fields.length === 0"

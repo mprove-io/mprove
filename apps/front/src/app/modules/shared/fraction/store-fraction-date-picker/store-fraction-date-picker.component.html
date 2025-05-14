@@ -21,8 +21,8 @@
           fractionControl.value.split('$METRICS_DATE_FROM').length > 1
             ? metricsStartDateYYYYMMDD
             : fractionControl.value.split('$METRICS_DATE_TO').length > 1
-            ? metricsEndDateYYYYMMDD
-            : fractionControl.value
+              ? metricsEndDateYYYYMMDD
+              : fractionControl.value
         "
         [i18n]="dateI18n"
         (value-changed)="dateValueChanged($event)"

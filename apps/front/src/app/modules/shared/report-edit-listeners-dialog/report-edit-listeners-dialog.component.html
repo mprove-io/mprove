@@ -127,13 +127,13 @@
                 i
               }}"
               (change)="
-              listenerChange({
+                listenerChange({
                   reportFieldId: reportField.id,
                   row: row,
                   rowIndex: rowIndex,
                   i: i,
                   items: row.modelFields[reportField.id],
-                  selected: $event,
+                  selected: $event
                 })
               "
               (keyup.esc)="

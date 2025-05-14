@@ -91,7 +91,7 @@
                     <div
                       class="flex justify-center"
                       [ngClass]="{
-                        'text-s400 ':
+                        'text-s400':
                           member.memberId === userId || isAdmin === false
                       }"
                     >
@@ -187,8 +187,7 @@
                       data-cy="projectTeamIsEditorButton"
                       class="text-m0 flex h-5 w-5 items-center justify-center rounded border-2 focus:outline-none"
                       [ngClass]="{
-                        'bg-m600 ':
-                          member.isEditor === true && isAdmin === true,
+                        'bg-m600': member.isEditor === true && isAdmin === true,
                         'bg-s400 cursor-default':
                           member.isEditor === true && isAdmin === false,
                         'border-m600': isAdmin === true,
@@ -213,7 +212,7 @@
                       data-cy="projectTeamIsExplorerButton"
                       class="text-m0 flex h-5 w-5 items-center justify-center rounded border-2 focus:outline-none"
                       [ngClass]="{
-                        'bg-m600 ':
+                        'bg-m600':
                           member.isExplorer === true && isAdmin === true,
                         'bg-s400 cursor-default':
                           member.isExplorer === true && isAdmin === false,

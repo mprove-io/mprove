@@ -80,7 +80,7 @@
           data-cy="chartEditorHideColumnsCheckbox"
           class="border-m600 text-m0 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 focus:outline-none"
           [ngClass]="{
-            'bg-m600 ': hideColumnsIsChecked(column.id)
+            'bg-m600': hideColumnsIsChecked(column.id)
           }"
           (click)="hideColumnsOnClick(column.id)"
         >
@@ -414,7 +414,7 @@
             data-cy="chartEditorYFieldsCheckbox"
             class="border-m600 text-m0 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded border-2 focus:outline-none"
             [ngClass]="{
-              'bg-m600 ': yFieldsIsChecked(column.id)
+              'bg-m600': yFieldsIsChecked(column.id)
             }"
             (click)="yFieldsOnClick(column.id)"
           >

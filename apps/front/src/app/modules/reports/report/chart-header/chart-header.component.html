@@ -2,10 +2,9 @@
   <m-bottom-panel-icon
     class="ml-[4px] flex flex-shrink-0"
     [ngClass]="{
-    'text-s500 cursor-pointer':
-    reportSelectedNodes.length === 0,
-    'text-s300 cursor-default': reportSelectedNodes.length > 0,
-  }"
+      'text-s500 cursor-pointer': reportSelectedNodes.length === 0,
+      'text-s300 cursor-default': reportSelectedNodes.length > 0
+    }"
     [isFilled]="showMetricsChart === true"
     (click)="toggleShowMetricsChart()"
   ></m-bottom-panel-icon>

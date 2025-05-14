@@ -13,7 +13,7 @@
         class="ml-5 flex flex-shrink-0 flex-row items-center focus:outline-none"
         [ngClass]="{
           'text-s400': isSelectedFileValid === false,
-          'text-m600 ': isSelectedFileValid === true
+          'text-m600': isSelectedFileValid === true
         }"
         *ngIf="
           showGoTo === true &&
@@ -80,8 +80,8 @@
         data-cy="fileEditorCancelButton"
         class="flex h-11 flex-shrink-0 rounded border px-5 py-2 text-base font-medium focus:outline-none"
         [ngClass]="{
-          ' border-s400 text-s400 cursor-default': !needSave,
-          'border-m600 text-m600 ': needSave
+          'border-s400 text-s400 cursor-default': !needSave,
+          'border-m600 text-m600': needSave
         }"
         (click)="cancel()"
         [disabled]="!needSave"

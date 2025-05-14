@@ -94,10 +94,10 @@
         isToHeader === true
           ? (rowTypeHeader | capitalize)
           : isToFormula === true
-          ? (rowTypeFormula | capitalize)
-          : isToMetric === true
-          ? (rowTypeMetric | capitalize)
-          : (reportSelectedNode.data.rowType | capitalize)
+            ? (rowTypeFormula | capitalize)
+            : isToMetric === true
+              ? (rowTypeMetric | capitalize)
+              : (reportSelectedNode.data.rowType | capitalize)
       }}</div>
     </div>
 

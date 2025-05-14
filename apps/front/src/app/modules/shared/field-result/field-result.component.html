@@ -48,18 +48,18 @@
     result === fieldResultQuarterOfYear
       ? 'Enum: ' + result
       : !!result &&
-        result !== fieldResultNumber &&
-        result !== fieldResultString &&
-        result !== fieldResultYesno &&
-        result !== fieldResultTs &&
-        result !== fieldResultDayOfWeek &&
-        result !== fieldResultDayOfWeekIndex &&
-        result !== fieldResultMonthName &&
-        result !== fieldResultQuarterOfYear
-      ? 'Custom: ' + result
-      : !!result
-      ? result
-      : 'Filter'
+          result !== fieldResultNumber &&
+          result !== fieldResultString &&
+          result !== fieldResultYesno &&
+          result !== fieldResultTs &&
+          result !== fieldResultDayOfWeek &&
+          result !== fieldResultDayOfWeekIndex &&
+          result !== fieldResultMonthName &&
+          result !== fieldResultQuarterOfYear
+        ? 'Custom: ' + result
+        : !!result
+          ? result
+          : 'Filter'
   }}"
 >
   <m-type-number-icon

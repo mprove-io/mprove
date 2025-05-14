@@ -81,9 +81,9 @@
                     fraction.operator === fractionOperatorEnum.Or
                       ? 'OR'
                       : !isFirst &&
-                        fraction.operator === fractionOperatorEnum.And
-                      ? 'AND'
-                      : ''
+                          fraction.operator === fractionOperatorEnum.And
+                        ? 'AND'
+                        : ''
                   }}
                 </div>
               </div>
@@ -131,9 +131,9 @@
                       control.value.split('$METRICS_DATE_FROM').length > 1
                         ? metricsStartDateYYYYMMDD
                         : control.controlClass === controlClassDatePicker &&
-                          control.value.split('$METRICS_DATE_TO').length > 1
-                        ? getMetricsEndDateYYYYMMDD(filter.field.store)
-                        : control.value
+                            control.value.split('$METRICS_DATE_TO').length > 1
+                          ? getMetricsEndDateYYYYMMDD(filter.field.store)
+                          : control.value
                     }}</div>
                   </div>
                 </div>

@@ -97,13 +97,13 @@
                 dashboardField.id
               }}-----{{ i }}"
               (change)="
-              listenerChange({
+                listenerChange({
                   dashboardFieldId: dashboardField.id,
                   tile: tile,
                   tileIndex: tileIndex,
                   i: i,
                   items: tile.modelFields[dashboardField.id],
-                  selected: $event,
+                  selected: $event
                 })
               "
               (keyup.esc)="

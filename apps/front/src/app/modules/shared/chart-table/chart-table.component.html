@@ -11,7 +11,7 @@
             column.fieldClass === fieldClassCalculation
         }"
         *ngFor="
-          let column of mconfigFields | hideColumns : hideColumns;
+          let column of mconfigFields | hideColumns: hideColumns;
           let columnIndex = index
         "
       >
@@ -46,7 +46,7 @@
         <td
           style="min-width: 200px; max-width: 350px"
           data-cy="chartTableCell"
-          *ngFor="let column of mconfigFields | hideColumns : hideColumns"
+          *ngFor="let column of mconfigFields | hideColumns: hideColumns"
           class="truncate px-5"
           [ngClass]="{
             'bg-s100': (i + 1) % 2 === 0,
