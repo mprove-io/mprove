@@ -13,10 +13,6 @@
       "label": "cypress web"
     }
   },
-  "containerEnv": {
-    "DISPLAY": ":14",
-    "LIBGL_ALWAYS_INDIRECT": "0"
-  },
   "remoteUser": "root",
   "workspaceFolder": "/mprove",
   "mounts": [

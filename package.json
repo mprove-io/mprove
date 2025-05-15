@@ -84,7 +84,6 @@
     "clean:cypress": "rm -rf ~/.cache/Cypress/*",
     "clean:node_modules": "rm -rf ./node_modules/*",
     "clean:npm": "npm cache clean --force",
-    "x11": "docker-compose up -d --force-recreate x11-bridge",
     "pacx:mcli": "caxa --input dist/apps/mcli --output dist/bin/mp -- \"{{caxa}}/node_modules/.bin/node\" \"{{caxa}}/main.js\"",
     "pacx:mcli:win": "caxa --input dist/apps/mcli --output dist/bin/mp.exe -- \"{{caxa}}/node_modules/.bin/node\" \"{{caxa}}/main.js\""
   },
