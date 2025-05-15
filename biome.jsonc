@@ -45,7 +45,7 @@
         "useBlockStatements": "off"
       },
       "suspicious": {
-        "noEmptyBlockStatements": "error",
+        "noEmptyBlockStatements": "off",
         "noExplicitAny": "warn",
         "noExtraNonNullAssertion": "error",
         "noMisleadingInstantiator": "error",
