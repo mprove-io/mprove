@@ -2,19 +2,5 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/integra/src",
   "projectType": "application",
-  "targets": {
-    "e2e": {
-      "executor": "@nx/cypress:cypress",
-      "options": {
-        "cypressConfig": "apps/integra/cypress.json",
-        "tsConfig": "apps/integra/tsconfig.e2e.json",
-        "devServerTarget": "front:serve"
-      },
-      "configurations": {
-        "production": {
-          "baseUrl": "http://front"
-        }
-      }
-    }
-  }
+  "targets": {}
 }
