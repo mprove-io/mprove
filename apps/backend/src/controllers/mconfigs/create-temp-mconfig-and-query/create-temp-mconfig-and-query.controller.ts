@@ -139,9 +139,9 @@ export class CreateTempMconfigAndQueryController {
     let isError = false;
 
     if (model.isStoreModel === true) {
-      // console.log('createMconfigAndQuery prepMconfigQuery');
+      // console.log('createMconfigAndQuery prepStoreMconfigQuery');
 
-      let mqe = await this.mconfigsService.prepMconfigQuery({
+      let mqe = await this.mconfigsService.prepStoreMconfigQuery({
         struct: struct,
         project: project,
         envId: envId,

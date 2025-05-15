@@ -4,8 +4,8 @@ import { common } from '~node-common/barrels/common';
 
 export function makeQueryId(item: {
   sql: string[];
-  storeStructId: string;
-  storeModelId: string;
+  // storeStructId: string;
+  // storeModelId: string;
   storeMethod: enums.StoreMethodEnum;
   storeRequestJsonPartsString: string;
   orgId: string;
@@ -19,18 +19,17 @@ export function makeQueryId(item: {
     envId,
     connectionId,
     sql,
-    storeStructId,
-    storeModelId,
+    // storeStructId,
+    // storeModelId,
     storeMethod,
     storeRequestJsonPartsString
   } = item;
 
   let preText = common.isDefined(sql)
     ? sql.join('\n')
-    : storeStructId +
-      storeModelId +
-      storeMethod.toString() +
-      storeRequestJsonPartsString;
+    : // storeStructId +
+      // storeModelId +
+      storeMethod.toString() + storeRequestJsonPartsString;
 
   let text = preText + orgId + projectId + envId + connectionId;
 

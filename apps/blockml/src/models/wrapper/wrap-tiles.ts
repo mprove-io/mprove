@@ -53,8 +53,6 @@ export function wrapTiles(item: {
         ? common.EMPTY_QUERY_ID
         : nodeCommon.makeQueryId({
             sql: tile.sql,
-            storeStructId: undefined,
-            storeModelId: undefined,
             storeMethod: undefined,
             storeRequestJsonPartsString: undefined,
             orgId: orgId,

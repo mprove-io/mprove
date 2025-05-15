@@ -402,9 +402,9 @@ export class ReportDataService {
             // console.log('columns[0].columnId');
             // console.log(columns[0].columnId);
 
-            // console.log('getRepData prepMconfigQuery');
+            // console.log('getRepData prepStoreMconfigQuery');
 
-            let mqe = await this.mconfigsService.prepMconfigQuery({
+            let mqe = await this.mconfigsService.prepStoreMconfigQuery({
               struct: struct,
               project: project,
               envId: envId,

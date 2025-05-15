@@ -281,7 +281,7 @@ export class GetDashboardController {
 
         let model = models.find(y => y.modelId === mconfig.modelId);
 
-        let mqe = await this.mconfigsService.prepMconfigQuery({
+        let mqe = await this.mconfigsService.prepStoreMconfigQuery({
           struct: struct,
           project: project,
           envId: envId,

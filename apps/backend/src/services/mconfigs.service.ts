@@ -35,7 +35,7 @@ export class MconfigsService {
     return mconfig;
   }
 
-  async prepMconfigQuery(item: {
+  async prepStoreMconfigQuery(item: {
     struct: schemaPostgres.StructEnt;
     project: schemaPostgres.ProjectEnt;
     envId: string;
@@ -122,9 +122,7 @@ export class MconfigsService {
         : JSON.parse(processedRequest.result).body;
 
     let queryId = nodeCommon.makeQueryId({
-      sql: undefined,
-      storeStructId: struct.structId,
-      storeModelId: model.modelId,
+      sql: undefined, // isStore true
       storeMethod: (model.content as common.FileStore)
         .method as common.StoreMethodEnum,
       storeRequestJsonPartsString: processedRequest.result,

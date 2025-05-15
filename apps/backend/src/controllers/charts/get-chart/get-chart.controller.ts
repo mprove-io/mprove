@@ -163,7 +163,7 @@ export class GetChartController {
           temp: true
         });
 
-        let mqe = await this.mconfigsService.prepMconfigQuery({
+        let mqe = await this.mconfigsService.prepStoreMconfigQuery({
           struct: struct,
           project: project,
           envId: envId,
