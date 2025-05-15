@@ -210,20 +210,11 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   }
 
   startCheckRunning() {
-    let nav: NavState;
-    this.navQuery
-      .select()
-      .pipe(
-        tap(x => {
-          nav = x;
-        }),
-        take(1)
-      )
-      .subscribe();
-
     this.checkRunning$ = interval(3000)
       .pipe(
         concatMap(() => {
+          let nav = this.navQuery.getValue();
+
           if (this.query?.status === common.QueryStatusEnum.Running) {
             let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
               projectId: nav.projectId,

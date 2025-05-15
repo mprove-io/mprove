@@ -99,17 +99,6 @@ export class DashboardTileChartComponent
   async ngOnInit() {
     // console.log(this.mconfig.queryId === this.query.queryId);
 
-    let nav: NavState;
-    this.navQuery
-      .select()
-      .pipe(
-        tap(x => {
-          nav = x;
-        }),
-        take(1)
-      )
-      .subscribe();
-
     this.qData =
       this.mconfig.queryId === this.query.queryId
         ? this.dataService.makeQData({
@@ -121,6 +110,8 @@ export class DashboardTileChartComponent
     this.checkRunning$ = interval(3000)
       .pipe(
         concatMap(() => {
+          let nav = this.navQuery.getValue();
+
           if (this.query?.status === common.QueryStatusEnum.Running) {
             let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
               projectId: nav.projectId,
