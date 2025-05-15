@@ -1,16 +1,11 @@
-# _nogit/
 .angular/
-# .devcontainer/
-# .github/
 .nx/
-# .vscode/
+apps/backend/src/drizzle/postgres/migrations/
+apps/integra/cypress/
 dist/
 node_modules/
-# secrets/
 tmp/
-
+tools/data/
 package.docker.json
-apps/backend/src/drizzle/postgres/migrations/
-apps/integra/cypress
 
 coverage/

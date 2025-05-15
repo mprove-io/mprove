@@ -4,11 +4,16 @@
   "files": {
     "ignoreUnknown": false,
     "ignore": [
-      "_nogit/cypress",
-      "**/node_modules/",
-      "apps/integra/cypress",
-      "./dist/**",
-      "**/package.docker.json"
+      ".angular/",
+      ".nx/",
+      "apps/backend/src/drizzle/postgres/migrations/",
+      "apps/integra/cypress/",
+      "dist/",
+      "node_modules/",
+      "tmp/",
+      "tools/data/",
+      "package.docker.json",
+      "coverage/"
     ],
     "include": ["**/*.css", "**/*.ts", "**/*.js"]
   },
@@ -34,7 +39,7 @@
       },
       "correctness": {
         "noPrecisionLoss": "error",
-        "noUnusedVariables": "warn",
+        "noUnusedVariables": "off",
         "useArrayLiterals": "off"
       },
       "style": {
