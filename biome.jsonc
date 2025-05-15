@@ -10,7 +10,7 @@
       "./dist/**",
       "**/package.docker.json"
     ],
-    "include": ["**/*.css", "**/*.ts", "**/*.js", "**/*.jsonc"]
+    "include": ["**/*.css", "**/*.ts", "**/*.js"]
   },
   "formatter": {
     "enabled": true,

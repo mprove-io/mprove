@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "cli": {
-    "defaultCollection": "@nrwl/nest"
+    "defaultCollection": "@nx/nest"
   },
   "tasksRunnerOptions": {
     "default": {

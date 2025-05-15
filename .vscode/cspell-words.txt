@@ -120,7 +120,6 @@ nodeport
 nogit
 notin
 notins
-nrwl
 nums
 octokit
 Octokit

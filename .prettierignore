@@ -1,12 +1,12 @@
 _nogit/
 .angular/
-.devcontainer/
-.github/
+# .devcontainer/
+# .github/
 .nx/
-.vscode/
+# .vscode/
 dist/
 node_modules/
-secrets/
+# secrets/
 tmp/
 
 package.docker.json

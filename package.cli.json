@@ -62,9 +62,5 @@
     "~api-to-disk": "dist/tests/api-to-disk/libs/api-to-disk/src",
     "~common": "dist/tests/common/libs/common/src",
     "~node-common": "dist/tests/node-common/libs/node-common/src"
-  },
-  "resolutions": {
-    "prettier": "2.8.1",
-    "string-width": "4.2.3"
   }
 }

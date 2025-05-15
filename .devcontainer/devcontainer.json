@@ -5,7 +5,13 @@
   },
   "features": {
     "docker-in-docker": "20.10",
-    "sshd": "latest"
+    "ghcr.io/devcontainers/features/desktop-lite:1": {}
+  },
+  "forwardPorts": [6080],
+  "portsAttributes": {
+    "6080": {
+      "label": "cypress web"
+    }
   },
   "containerEnv": {
     "DISPLAY": ":14",
