@@ -8,8 +8,7 @@
       "options": {
         "cypressConfig": "apps/integra/cypress.json",
         "tsConfig": "apps/integra/tsconfig.e2e.json",
-        "browser": "chrome",
-        "baseUrl": "http://localhost:4200"
+        "devServerTarget": "front:serve"
       },
       "configurations": {
         "production": {
