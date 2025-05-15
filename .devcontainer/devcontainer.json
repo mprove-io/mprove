@@ -5,7 +5,7 @@
   },
   "features": {
     "docker-in-docker": "20.10",
-    "ghcr.io/devcontainers/features/desktop-lite:1": {}
+    "ghcr.io/devcontainers/features/desktop-lite": "1.2.6"
   },
   "forwardPorts": [6080],
   "portsAttributes": {
