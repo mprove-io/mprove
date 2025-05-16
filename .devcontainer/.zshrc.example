@@ -5,7 +5,7 @@ alias c=docker-compose
 fpath=(~/.zsh/completion $fpath)
 autoload -Uz compinit && compinit -i
 
-export PATH="./node_modules/.bin:$PATH"
+export PATH="./node_modules/.bin:$HOME/bin:$PATH"
 
 # env
 export ZSH="/root/.oh-my-zsh"

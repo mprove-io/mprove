@@ -1,7 +1,7 @@
 #!/bin/bash
 
-containerWorkspaceFolder=$1
-$containerWorkspaceFolder/node_modules/.bin/cypress install
+# containerWorkspaceFolder=$1
+# $containerWorkspaceFolder/node_modules/.bin/cypress install
 
 # sudo chown node /etc/hosts 
 sudo chmod -R 775 "/root/mprove_data/db-main"
