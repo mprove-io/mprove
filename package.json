@@ -82,7 +82,7 @@
     "clean:angular": "rm -rf .angular/*",
     "clean:nx": "rm -rf .nx/*",
     "clean:cypress": "rm -rf ~/.cache/Cypress/*",
-    "clean:node_modules": "rm -rf ./node_modules/* && rm -rf ./node_modules/.cache && rm -rf ./node_modules/.bin && rm -rf ./node_modules/.yarn-integrity",
+    "clean:node_modules": "rm -rf ./node_modules/* && rm -rf ./node_modules/.cache/* && rm -rf ./node_modules/.bin/* && rm -rf ./node_modules/.yarn-integrity",
     "clean:npm": "npm cache clean --force",
     "pacx:mcli": "caxa --input dist/apps/mcli --output dist/bin/mp -- \"{{caxa}}/node_modules/.bin/node\" \"{{caxa}}/main.js\"",
     "pacx:mcli:win": "caxa --input dist/apps/mcli --output dist/bin/mp.exe -- \"{{caxa}}/node_modules/.bin/node\" \"{{caxa}}/main.js\""
