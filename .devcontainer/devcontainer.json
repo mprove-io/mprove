@@ -4,17 +4,20 @@
     "dockerfile": "Dockerfile"
   },
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
     "ghcr.io/devcontainers/features/desktop-lite:1": {}
   },
-  "forwardPorts": [6080],
+  "forwardPorts": [6080, 5901],
   "portsAttributes": {
     "6080": {
       "label": "cypress web"
+    },
+    "5901": {
+      "label": "vnc"
     }
   },
   "remoteUser": "root",
   "workspaceFolder": "/mprove",
+  "runArgs": ["--network=host"],
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.kube/config,target=/root/.kube/config,type=bind,consistency=cached",
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.zsh_history,target=/root/.zsh_history,type=bind,consistency=cached",

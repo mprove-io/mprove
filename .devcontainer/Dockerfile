@@ -19,9 +19,9 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     xvfb
 
 # chrome
-RUN curl -LO  https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
-RUN rm google-chrome-stable_current_amd64.deb
+# RUN curl -LO  https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+# RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
+# RUN rm google-chrome-stable_current_amd64.deb
 
 # direnv
 RUN apt-get install -y direnv
