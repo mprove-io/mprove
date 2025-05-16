@@ -35,8 +35,9 @@
     "source=mprove_data-dwh-clickhouse-logs,target=/root/mprove_data/dwh-clickhouse-logs,type=volume"
   ],
   "initializeCommand": "bash .devcontainer/init.sh",
-  "postCreateCommand": "bash .devcontainer/post-create.sh ${containerWorkspaceFolder}",
-  "postStartCommand": "bash .devcontainer/post-start.sh ${containerWorkspaceFolder}",
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "bash .devcontainer/post-start.sh",
+  "postAttachCommand": "bash .devcontainer/post-attach.sh",
   "customizations": {
     "vscode": {
       "extensions": [

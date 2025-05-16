@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "post-start ...";
+
 # sudo chown node /etc/hosts 
 sudo chmod -R 775 "/root/mprove_data/db-main"
 sudo chmod -R 775 "/root/mprove_data/redis"
