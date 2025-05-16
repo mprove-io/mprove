@@ -3,7 +3,7 @@
 echo "post-attach ...";
 
 cp -n /mprove/.devcontainer/.zshrc.example /mprove/.devcontainer/.zshrc 
-ln -sf /mprove/.devcontainer/.zshrc /root/.zshrc 
+cp /mprove/.devcontainer/.zshrc /root/.zshrc 
 
 # instead of post-create.sh ${containerWorkspaceFolder}
 # echo $1;

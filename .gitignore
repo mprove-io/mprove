@@ -1,26 +1,29 @@
 # 
 nogit/
 _nogit/
+.angular/
+.devcontainer/dot-files/
+.nx/
+.vscode/*
+!.vscode/cspell-words.txt
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+apps/integra/cypress/
+dist/
+node_modules/
 secrets/
-tools/data
-
-# env
+tmp/
+tools/data/
 *.env
 .envrc
-secrets
-.e-values.yml
 
 # System Files
 .DS_Store
 Thumbs.db
 
 # compiled output
-/dist
-/tmp
-/out-tsc
-
-# dependencies
-/node_modules
+out-tsc
 
 # IDEs and editors
 /.idea
@@ -30,13 +33,6 @@ Thumbs.db
 *.launch
 .settings/
 *.sublime-workspace
-
-# IDE - VSCode
-.vscode/*
-!.vscode/cspell-words.txt
-!.vscode/extensions.json
-!.vscode/tasks.json
-!.vscode/launch.json
 
 # misc
 /.sass-cache
@@ -60,13 +56,3 @@ lerna-debug.log*
 coverage/
 .nyc_output
 
-.devcontainer/.zshrc
-.devcontainer/hosts
-
-apps/integra/cypress
-
-.devspace/
-
-.angular
-
-.nx
