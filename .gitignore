@@ -2,7 +2,7 @@
 nogit/
 _nogit/
 .angular/
-.devcontainer/dot-files/
+.devcontainer/.zshrc
 .nx/
 .vscode/*
 !.vscode/cspell-words.txt
