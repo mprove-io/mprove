@@ -24,7 +24,8 @@ export async function prepareRemoteAndProd(item: {
 
     // init central repo
     let isBare = 1;
-    await nodegit.Repository.init(centralDir, isBare);
+    let repo = await nodegit.Repository.init(centralDir, isBare);
+    await repo.setHead(`refs/heads/${common.BRANCH_MAIN}`);
   }
 
   let remoteUrl =

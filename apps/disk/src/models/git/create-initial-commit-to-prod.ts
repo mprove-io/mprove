@@ -66,7 +66,19 @@ simplify_safe_aggregates: true
 
   let message = 'init';
 
-  // Since we're creating an initial commit, it has no parents. Note that unlike
-  // normal we don't get the head either, because there isn't one yet.
-  await gitRepo.createCommit('HEAD', author, committer, message, oid, []);
+  // // Since we're creating an initial commit, it has no parents. Note that unlike
+  // // normal we don't get the head either, because there isn't one yet.
+  let commitOid = await gitRepo.createCommit(
+    null,
+    author,
+    committer,
+    message,
+    oid,
+    []
+  );
+  // await gitRepo.createCommit('HEAD', author, committer, message, oid, []);
+
+  await gitRepo.createBranch(common.BRANCH_MAIN, commitOid, false);
+
+  await gitRepo.setHead(`refs/heads/${common.BRANCH_MAIN}`);
 }

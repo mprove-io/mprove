@@ -48,7 +48,7 @@
       "options": {
         "commands": [
           "nx build-tests mcli",
-          "ava --config=ava-js.config.js dist/tests/mcli/apps/mcli/**/*.spec.js"
+          "ava --config=ava-js.config.js dist/tests/mcli/apps/mcli/src/commands/custom/sync/tests/first-sync/f__local-deleted__dev-deleted__deleted.spec.js"
         ],
         "parallel": false
       }

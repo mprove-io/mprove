@@ -229,7 +229,7 @@ services:
       - 3306:3306
     volumes:
       - type: bind
-        source: $COMPOSE_DB_VOLUME_SOURCE_PATH
+        source: $COMPOSE_DB_MYSQL_VOLUME_SOURCE_PATH
         target: /var/lib/mysql
 
   dwh-clickhouse:

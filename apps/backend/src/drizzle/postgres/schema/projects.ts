@@ -15,7 +15,7 @@ export const projectsTable = pgTable(
     projectId: varchar('project_id', { length: 32 }).notNull().primaryKey(),
     orgId: varchar('org_id', { length: 128 }).notNull(),
     name: text('name').notNull(), // name is unique across org projects
-    defaultBranch: text('default_branch').default('master').notNull(),
+    defaultBranch: text('default_branch').default('main').notNull(),
     remoteType: varchar('remote_type')
       .default('Managed')
       .$type<common.ProjectRemoteTypeEnum>()

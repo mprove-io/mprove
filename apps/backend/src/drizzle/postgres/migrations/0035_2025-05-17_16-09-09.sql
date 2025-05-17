@@ -1,0 +1,1 @@
+ALTER TABLE "projects" ALTER COLUMN "default_branch" SET DEFAULT 'main';
