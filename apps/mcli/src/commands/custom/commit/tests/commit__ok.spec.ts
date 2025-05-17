@@ -20,7 +20,7 @@ test('1', async t => {
   let context: CustomContext;
 
   await retry(async (bail: any) => {
-    let branch = common.BRANCH_MASTER;
+    let branch = common.BRANCH_MAIN;
 
     let projectId = common.makeId();
     let commandLine = `commit \

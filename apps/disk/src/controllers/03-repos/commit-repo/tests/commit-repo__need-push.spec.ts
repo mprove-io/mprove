@@ -56,7 +56,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: common.BRANCH_MASTER,
+        branch: common.BRANCH_MAIN,
         fileNodeId: `${projectId}/readme.md`,
         content: '1',
         userAlias: 'u1',
@@ -73,7 +73,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: common.BRANCH_MASTER,
+        branch: common.BRANCH_MAIN,
         userAlias: 'u1',
         commitMessage: 'commitMessage-1',
         remoteType: common.ProjectRemoteTypeEnum.Managed

@@ -22,7 +22,7 @@ test('1', async t => {
 
   await retry(async (bail: any) => {
     let repo = enums.RepoEnum.Dev;
-    let branch = common.BRANCH_MASTER;
+    let branch = common.BRANCH_MAIN;
 
     let projectId = common.makeId();
     let commandLine = `push \

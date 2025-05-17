@@ -57,7 +57,7 @@ test('1', async t => {
             projectId,
             testProjectId,
             name: projectName,
-            defaultBranch: common.BRANCH_MASTER,
+            defaultBranch: common.BRANCH_MAIN,
             remoteType: common.ProjectRemoteTypeEnum.Managed
           }
         ],
@@ -93,7 +93,7 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         isRepoProd: false,
-        branchId: common.BRANCH_MASTER,
+        branchId: common.BRANCH_MAIN,
         envId: common.PROJECT_ENV_PROD,
         rowIds: undefined,
         changeType: common.ChangeTypeEnum.AddEmpty,
@@ -126,7 +126,7 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         isRepoProd: false,
-        branchId: common.BRANCH_MASTER,
+        branchId: common.BRANCH_MAIN,
         envId: common.PROJECT_ENV_PROD,
         reportId: resp1.payload.report.reportId,
         rowIds: undefined,

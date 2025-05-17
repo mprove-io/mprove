@@ -21,7 +21,7 @@ test('1', async t => {
 
   await retry(async (bail: any) => {
     let theirBranch = 'b1';
-    let defaultBranch = common.BRANCH_MASTER;
+    let defaultBranch = common.BRANCH_MAIN;
 
     let projectId = common.makeId();
     let commandLine = `merge \

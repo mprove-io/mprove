@@ -21,7 +21,7 @@ test('1', async t => {
   let queriesStats: interfaces.QueriesStats;
 
   await retry(async (bail: any) => {
-    let defaultBranch = common.BRANCH_MASTER;
+    let defaultBranch = common.BRANCH_MAIN;
 
     let projectId = common.makeId();
 

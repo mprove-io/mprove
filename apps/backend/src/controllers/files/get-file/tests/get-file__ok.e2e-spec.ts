@@ -21,7 +21,7 @@ let orgName = testId;
 let projectId = common.makeId();
 let projectName = testId;
 
-let branchId = common.BRANCH_MASTER;
+let branchId = common.BRANCH_MAIN;
 
 let prep: interfaces.Prep;
 
@@ -59,7 +59,7 @@ test('1', async t => {
             projectId,
             name: projectName,
             remoteType: common.ProjectRemoteTypeEnum.Managed,
-            defaultBranch: common.BRANCH_MASTER
+            defaultBranch: common.BRANCH_MAIN
           }
         ],
         members: [

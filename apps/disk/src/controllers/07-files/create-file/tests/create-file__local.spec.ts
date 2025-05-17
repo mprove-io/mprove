@@ -56,7 +56,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: common.BRANCH_MASTER,
+        branch: common.BRANCH_MAIN,
         parentNodeId: `${projectId}/`,
         fileName: 's.view',
         userAlias: 'u1',

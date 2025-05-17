@@ -18,7 +18,7 @@ test('1', async t => {
   let context: CustomContext;
 
   await retry(async (bail: any) => {
-    let defaultBranch = common.BRANCH_MASTER;
+    let defaultBranch = common.BRANCH_MAIN;
 
     let projectId = common.makeId();
     let commandLine = `create-branch \

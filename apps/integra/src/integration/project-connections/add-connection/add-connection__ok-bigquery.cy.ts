@@ -49,7 +49,7 @@ describe('integra', () => {
           orgId,
           projectId,
           name: projectName,
-          defaultBranch: common.BRANCH_MASTER,
+          defaultBranch: common.BRANCH_MAIN,
           remoteType: common.ProjectRemoteTypeEnum.Managed
         }
       ],

@@ -56,7 +56,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         repoId: common.PROD_REPO_ID,
-        branch: common.BRANCH_MASTER,
+        branch: common.BRANCH_MAIN,
         fileNodeId: `${projectId}/readme.md`,
         userAlias: 'u1',
         remoteType: common.ProjectRemoteTypeEnum.Managed

@@ -43,7 +43,7 @@ describe('integra', () => {
           orgId,
           projectId,
           name: projectName,
-          defaultBranch: common.BRANCH_MASTER,
+          defaultBranch: common.BRANCH_MAIN,
           remoteType: common.ProjectRemoteTypeEnum.Managed
         }
       ],
@@ -60,7 +60,7 @@ describe('integra', () => {
     });
     cy.loginUser({ email: email, password: password });
     cy.visit(
-      `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_REPO}/${userId}/${common.PATH_BRANCH}/${common.BRANCH_MASTER}/${common.PATH_ENV}/${common.PROJECT_ENV_PROD}/${common.PATH_FILES}`
+      `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_REPO}/${userId}/${common.PATH_BRANCH}/${common.BRANCH_MAIN}/${common.PATH_ENV}/${common.PROJECT_ENV_PROD}/${common.PATH_FILES}`
     );
     cy.get('[data-cy=branchSelect]').click();
     cy.get('[data-cy=branchSelectCreateBranchButton]').click();
@@ -70,6 +70,6 @@ describe('integra', () => {
     cy.get('[data-cy=branchSelect]').click();
     cy.get('[data-cy=branchSelectDeleteBranchButton]').click();
     cy.get('[data-cy=deleteBranchDialogDeleteButton]').click();
-    cy.url().should('include', common.BRANCH_MASTER);
+    cy.url().should('include', common.BRANCH_MAIN);
   });
 });

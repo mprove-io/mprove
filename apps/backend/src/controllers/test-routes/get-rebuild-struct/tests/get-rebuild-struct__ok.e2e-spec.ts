@@ -64,7 +64,7 @@ test('1', async t => {
             projectId,
             name: projectName,
             remoteType: common.ProjectRemoteTypeEnum.Managed,
-            defaultBranch: common.BRANCH_MASTER
+            defaultBranch: common.BRANCH_MAIN
           }
         ],
         members: [
@@ -94,7 +94,7 @@ test('1', async t => {
         testProjectId: testProjectId,
         devRepoId: devRepoId,
         userAlias: userAlias,
-        defaultBranch: common.BRANCH_MASTER,
+        defaultBranch: common.BRANCH_MAIN,
         remoteType: common.ProjectRemoteTypeEnum.Managed,
         gitUrl: undefined,
         privateKey: undefined,
@@ -124,7 +124,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         repoId: devRepoId,
-        branch: common.BRANCH_MASTER,
+        branch: common.BRANCH_MAIN,
         envId: envId,
         overrideTimezone: undefined
       }

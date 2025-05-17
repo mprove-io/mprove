@@ -56,7 +56,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: common.BRANCH_MASTER,
+        branch: common.BRANCH_MAIN,
         parentNodeId: `${projectId}/`,
         folderName: 'fo1',
         remoteType: common.ProjectRemoteTypeEnum.Managed
@@ -72,7 +72,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: common.BRANCH_MASTER,
+        branch: common.BRANCH_MAIN,
         fromNodeId: `${projectId}/readme.md`,
         toNodeId: `${projectId}/fo1/readme.md`,
         remoteType: common.ProjectRemoteTypeEnum.Managed

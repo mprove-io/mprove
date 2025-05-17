@@ -55,7 +55,7 @@ test('1', async t => {
             projectId,
             name: projectName,
             remoteType: common.ProjectRemoteTypeEnum.Managed,
-            defaultBranch: common.BRANCH_MASTER
+            defaultBranch: common.BRANCH_MAIN
           }
         ],
         members: [

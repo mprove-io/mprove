@@ -57,7 +57,7 @@ test('1', async t => {
             projectId,
             testProjectId,
             name: projectName,
-            defaultBranch: common.BRANCH_MASTER,
+            defaultBranch: common.BRANCH_MAIN,
             remoteType: common.ProjectRemoteTypeEnum.Managed
           }
         ],
@@ -92,7 +92,7 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         isRepoProd: false,
-        branchId: common.BRANCH_MASTER,
+        branchId: common.BRANCH_MAIN,
         envId: common.PROJECT_ENV_PROD,
         dashboardId: 'ec_d4',
         timezone: 'UTC'
@@ -121,7 +121,7 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         isRepoProd: false,
-        branchId: common.BRANCH_MASTER,
+        branchId: common.BRANCH_MAIN,
         envId: common.PROJECT_ENV_PROD,
         oldMconfigId: oldMconfigId,
         mconfig: newMconfig

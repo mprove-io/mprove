@@ -57,7 +57,7 @@ test('1', async t => {
         projectId: projectId,
         repoId: 'r1',
         newBranch: 'b2',
-        fromBranch: common.BRANCH_MASTER,
+        fromBranch: common.BRANCH_MAIN,
         isFromRemote: true,
         remoteType: common.ProjectRemoteTypeEnum.Managed
       }
@@ -89,7 +89,7 @@ test('1', async t => {
         repoId: common.PROD_REPO_ID,
         branch: 'b2',
         remoteType: common.ProjectRemoteTypeEnum.Managed,
-        defaultBranch: common.BRANCH_MASTER
+        defaultBranch: common.BRANCH_MAIN
       }
     };
 

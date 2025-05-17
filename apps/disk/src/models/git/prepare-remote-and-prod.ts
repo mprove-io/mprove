@@ -49,7 +49,7 @@ export async function prepareRemoteAndProd(item: {
       projectDir: item.projectDir,
       repoId: common.PROD_REPO_ID,
       repoDir: prodDir,
-      branch: common.BRANCH_MASTER,
+      branch: common.BRANCH_MAIN,
       fetchOptions: item.cloneOptions.fetchOpts
     });
   }

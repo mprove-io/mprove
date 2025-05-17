@@ -45,7 +45,7 @@ describe('integra', () => {
           projectId,
           testProjectId,
           name: projectName,
-          defaultBranch: common.BRANCH_MASTER,
+          defaultBranch: common.BRANCH_MAIN,
           remoteType: common.ProjectRemoteTypeEnum.Managed
         }
       ],
@@ -62,7 +62,7 @@ describe('integra', () => {
     });
     cy.loginUser({ email: email, password: password });
     cy.visit(
-      `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_REPO}/${userId}/${common.PATH_BRANCH}/${common.BRANCH_MASTER}/${common.PATH_ENV}/${common.PROJECT_ENV_PROD}/${common.PATH_FILES}/${common.PATH_FILE}/readme.md`
+      `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_REPO}/${userId}/${common.PATH_BRANCH}/${common.BRANCH_MAIN}/${common.PATH_ENV}/${common.PROJECT_ENV_PROD}/${common.PATH_FILES}/${common.PATH_FILE}/readme.md`
     );
     cy.loading();
 
@@ -85,7 +85,7 @@ describe('integra', () => {
     cy.loading();
 
     cy.visit(
-      `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_REPO}/${userId}/${common.PATH_BRANCH}/${common.BRANCH_MASTER}/${common.PATH_ENV}/${common.PROJECT_ENV_PROD}/${common.PATH_FILES}/${common.PATH_FILE}/readme.md`
+      `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_REPO}/${userId}/${common.PATH_BRANCH}/${common.BRANCH_MAIN}/${common.PATH_ENV}/${common.PROJECT_ENV_PROD}/${common.PATH_FILES}/${common.PATH_FILE}/readme.md`
     );
     cy.loading();
 

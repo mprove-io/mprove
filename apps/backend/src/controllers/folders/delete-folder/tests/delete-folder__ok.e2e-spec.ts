@@ -21,7 +21,7 @@ let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = testId;
 
-let branchId = common.BRANCH_MASTER;
+let branchId = common.BRANCH_MAIN;
 
 let prep: interfaces.Prep;
 
@@ -59,7 +59,7 @@ test('1', async t => {
             projectId,
             testProjectId,
             name: projectName,
-            defaultBranch: common.BRANCH_MASTER,
+            defaultBranch: common.BRANCH_MAIN,
             remoteType: common.ProjectRemoteTypeEnum.Managed
           }
         ],
