@@ -23,10 +23,7 @@
     "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind,consistency=cached",
     "source=mprove-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
     "source=mprove-dist,target=${containerWorkspaceFolder}/dist,type=volume",
-    "source=mprove-cypress-cache,target=/root/.cache/Cypress,type=volume",
-    "source=mprove_data-organizations,target=/root/mprove_data/organizations,type=volume",
-    "source=mprove_data-blockml-logs,target=/root/mprove_data/blockml-logs,type=volume",
-    "source=mprove_data-mcli-repos,target=/root/mprove_data/mcli-repos,type=volume"
+    "source=mprove-cypress-cache,target=/root/.cache/Cypress,type=volume"
   ],
   "initializeCommand": "bash .devcontainer/init.sh",
   "postCreateCommand": "bash .devcontainer/post-create.sh",
