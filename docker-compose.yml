@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 services:
   db:
     image: docker.io/bitnami/postgresql:17.0.0-debian-12-r9
@@ -70,7 +70,7 @@ services:
     depends_on:
       - db
       - rabbit
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:3306 --timeout=120 -- node dist/apps/backend/main.js'
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- node dist/apps/backend/main.js'
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -92,7 +92,7 @@ services:
     depends_on:
       - db
       - rabbit
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:3306 --timeout=120 -- node dist/apps/backend/main.js'     
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- node dist/apps/backend/main.js'     
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -275,3 +275,7 @@ services:
       - type: bind
         source: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PUBLIC_KEY_SOURCE_PATH
         target: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PUBLIC_KEY_PATH        
+
+networks:
+  app-network:
+    driver: bridge
