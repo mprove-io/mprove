@@ -16,6 +16,8 @@ COPY ava.config.js ava-js.config.js ava-js-e2e.config.js nx.json package.json ts
 
 COPY package.cli.json .
 
+ENV NX_DAEMON=false
+
 RUN yarn build:mcli
 RUN yarn build-tests:mcli
 

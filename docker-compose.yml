@@ -274,29 +274,29 @@ services:
         source: $COMPOSE_DWH_CLICKHOUSE_LOGS_VOLUME_SOURCE_PATH
         target: /var/log/clickhouse-server
 
+  mcli:
+    build:
+      context: ./
+      dockerfile: tools/docker/mcli.Dockerfile
+    image: ghcr.io/mprove-io/mprove-mcli:$MPROVE_RELEASE_TAG
+    env_file:
+      - $ENV_FILE_PATH    
+    volumes:
+      - type: bind
+        source: $ENV_FILE_SOURCE_PATH
+        target: $ENV_FILE_TARGET_PATH
+      - type: bind
+        source: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PRIVATE_KEY_SOURCE_PATH
+        target: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PRIVATE_KEY_PATH
+      - type: bind
+        source: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PUBLIC_KEY_SOURCE_PATH
+        target: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PUBLIC_KEY_PATH        
+
   # integra:
   #   build:
   #     context: ./
   #     dockerfile: tools/docker/integra.Dockerfile
   #   image: ghcr.io/mprove-io/mprove-integra:$MPROVE_RELEASE_TAG
-
-  # mcli:
-  #   build:
-  #     context: ./
-  #     dockerfile: tools/docker/mcli.Dockerfile
-  #   image: ghcr.io/mprove-io/mprove-mcli:$MPROVE_RELEASE_TAG
-  #   env_file:
-  #     - $ENV_FILE_PATH    
-  #   volumes:
-  #     - type: bind
-  #       source: $ENV_FILE_SOURCE_PATH
-  #       target: $ENV_FILE_TARGET_PATH
-  #     - type: bind
-  #       source: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PRIVATE_KEY_SOURCE_PATH
-  #       target: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PRIVATE_KEY_PATH
-  #     - type: bind
-  #       source: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PUBLIC_KEY_SOURCE_PATH
-  #       target: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PUBLIC_KEY_PATH        
 
 networks:
   app-network:
