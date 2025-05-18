@@ -14,7 +14,6 @@ export async function cloneRepo(item: {
   let parentPath = repoPath.split('/').slice(0, -1).join('/');
 
   await fse.ensureDir(parentPath);
-
   await fse.remove(repoPath);
 
   if (withKeys === true) {
