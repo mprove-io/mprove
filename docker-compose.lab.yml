@@ -2,10 +2,13 @@ services:
   disk:
     image: ghcr.io/mprove-io/mprove-lab-disk:$MPROVE_RELEASE_TAG
 
-  backend:
+  backend-combo:
     image: ghcr.io/mprove-io/mprove-lab-backend:$MPROVE_RELEASE_TAG
 
   backend-scheduler:
+    image: ghcr.io/mprove-io/mprove-lab-backend:$MPROVE_RELEASE_TAG
+
+  backend:
     image: ghcr.io/mprove-io/mprove-lab-backend:$MPROVE_RELEASE_TAG
 
   blockml-single:
@@ -22,9 +25,6 @@ services:
 
   front:
     image: ghcr.io/mprove-io/mprove-lab-front:$MPROVE_RELEASE_TAG
-
-  # frontnode:
-  #   image: ghcr.io/mprove-io/mprove-lab-frontnode:$MPROVE_RELEASE_TAG
 
   dwh-postgres:
     image: ghcr.io/mprove-io/mprove-lab-dwh-postgres:$MPROVE_RELEASE_TAG

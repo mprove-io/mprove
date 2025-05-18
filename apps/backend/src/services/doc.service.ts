@@ -107,7 +107,7 @@ export class DocService {
         host: this.cs.get<interfaces.Config['firstProjectDwhPostgresHost']>(
           'firstProjectDwhPostgresHost'
         ),
-        port: 5432,
+        port: 5436,
         database: 'p_db',
         user: 'postgres',
         password: this.cs.get<

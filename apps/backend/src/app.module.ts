@@ -322,7 +322,7 @@ export class AppModule implements OnModuleInit {
                 host: this.cs.get<
                   interfaces.Config['firstProjectDwhPostgresHost']
                 >('firstProjectDwhPostgresHost'),
-                port: 5432,
+                port: 5436,
                 database: 'p_db',
                 username: 'postgres',
                 password: this.cs.get<

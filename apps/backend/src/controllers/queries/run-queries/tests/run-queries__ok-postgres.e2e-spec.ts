@@ -78,7 +78,7 @@ test('1', async t => {
             envId: common.PROJECT_ENV_PROD,
             type: common.ConnectionTypeEnum.PostgreSQL,
             host: '0.0.0.0',
-            port: 5432,
+            port: 5436,
             database: 'p_db',
             username: 'p_user',
             password: 'p_pass'

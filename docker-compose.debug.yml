@@ -8,10 +8,10 @@ services:
         source: $COMPOSE_DIST_APPS_DISK_SOURCE_PATH
         target: /usr/src/app/dist/apps/disk
 
-  backend:
+  backend-combo:
     ports:
-      - 9231:9229
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:3306 --timeout=120 -- yarn serve:backend'
+      - 9237:9229
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- yarn serve:backend'
     volumes:
       - type: bind
         source: $COMPOSE_DIST_APPS_BACKEND_SOURCE_PATH
@@ -20,7 +20,16 @@ services:
   backend-scheduler:
     ports:
       - 9232:9229
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:3306 --timeout=120 -- yarn serve:backend'
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- yarn serve:backend'
+    volumes:
+      - type: bind
+        source: $COMPOSE_DIST_APPS_BACKEND_SOURCE_PATH
+        target: /usr/src/app/dist/apps/backend
+
+  backend:
+    ports:
+      - 9231:9229
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- yarn serve:backend'
     volumes:
       - type: bind
         source: $COMPOSE_DIST_APPS_BACKEND_SOURCE_PATH
