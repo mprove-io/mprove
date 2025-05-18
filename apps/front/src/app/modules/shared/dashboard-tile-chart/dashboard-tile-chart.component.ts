@@ -163,7 +163,7 @@ export class DashboardTileChartComponent
   ngOnChanges(changes: SimpleChanges): void {
     if (
       changes.query?.currentValue?.status === common.QueryStatusEnum.Running &&
-      (common.isUndefined(changes.query?.currentValue?.status) ||
+      (common.isUndefined(changes.query?.previousValue?.status) ||
         changes.query.previousValue.status !== common.QueryStatusEnum.Running)
     ) {
       this.showSpinner();

@@ -35,6 +35,6 @@ services:
   # integra:
   #   image: ghcr.io/mprove-io/mprove-lab-integra:$MPROVE_RELEASE_TAG
 
-  mcli:
-    image: ghcr.io/mprove-io/mprove-lab-mcli:$MPROVE_RELEASE_TAG
+  # mcli:
+  #   image: ghcr.io/mprove-io/mprove-lab-mcli:$MPROVE_RELEASE_TAG
      
