@@ -186,8 +186,8 @@ export class ModelsListComponent implements OnInit, OnDestroy {
       modelId: item.modelId
     });
 
-    if (this.uiQuery.getValue().showModel === false) {
-      this.uiQuery.updatePart({ showModel: true });
+    if (this.uiQuery.getValue().showSchema === false) {
+      this.uiQuery.updatePart({ showSchema: true });
     }
   }
 

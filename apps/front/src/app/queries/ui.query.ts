@@ -23,7 +23,7 @@ export class UiState {
   chartPointsData: ChartPointsData;
   reportSelectedNodes: IRowNode<DataRow>[];
   metricsLoadedTs: number;
-  showModel: boolean;
+  showSchema: boolean;
   panel: common.PanelEnum;
   needSave: boolean;
   showTileParameters: boolean;
@@ -65,7 +65,7 @@ let uiState: UiState = {
   },
   reportSelectedNodes: [],
   metricsLoadedTs: 0,
-  showModel: false,
+  showSchema: false,
   panel: common.PanelEnum.Tree,
   needSave: false,
   showTileParameters: false,
@@ -120,7 +120,7 @@ export class UiQuery extends BaseQuery<UiState> {
 
   isAutoRun$ = this.store.pipe(select(state => state.isAutoRun));
 
-  showModel$ = this.store.pipe(select(state => state.showModel));
+  showSchema$ = this.store.pipe(select(state => state.showSchema));
 
   projectFileLinks$ = this.store.pipe(select(state => state.projectFileLinks));
 

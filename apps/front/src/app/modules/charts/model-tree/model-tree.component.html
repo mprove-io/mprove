@@ -35,7 +35,15 @@
             class="bg-m0 flex w-full select-none flex-row pr-5"
             [ngClass]="{
               'pl-6': !node.data.isField,
-              'hover:bg-m50 cursor-pointer':
+              'cursor-pointer':
+                (!node.data.isField && node.hasChildren) ||
+                (node.data.required === false &&
+                  [
+                    nodeClassDimension,
+                    nodeClassMeasure,
+                    nodeClassCalculation
+                  ].indexOf(node.data.nodeClass) > -1),
+              'hover:bg-m50':
                 node.data.required === false &&
                 [
                   nodeClassDimension,

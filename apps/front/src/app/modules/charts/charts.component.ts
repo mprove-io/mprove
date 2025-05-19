@@ -295,10 +295,10 @@ export class ChartsComponent implements OnInit, OnDestroy {
   refreshSubscription: Subscription;
   refreshId: string;
 
-  showModel = false;
-  showModel$ = this.uiQuery.showModel$.pipe(
+  showSchema = false;
+  showSchema$ = this.uiQuery.showSchema$.pipe(
     tap(x => {
-      this.showModel = x;
+      this.showSchema = x;
 
       this.cd.detectChanges();
     })
@@ -394,9 +394,9 @@ export class ChartsComponent implements OnInit, OnDestroy {
       if (
         isPathEmptyChartSelected === true &&
         this.chart.chartId === common.EMPTY_CHART_ID &&
-        this.showModel === false
+        this.showSchema === false
       ) {
-        this.toggleShowModel();
+        this.showSchema = true;
       }
 
       this.cd.detectChanges();
@@ -682,12 +682,28 @@ export class ChartsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  toggleShowModel() {
-    let newShowModelValue = !this.showModel;
+  toggleShowSchema() {
+    if (this.showSchema === true) {
+      return;
+    }
 
-    this.showModel = newShowModelValue;
+    this.showSchema = true;
+    this.uiQuery.updatePart({ showSchema: true });
 
-    this.uiQuery.updatePart({ showModel: newShowModelValue });
+    this.cd.detectChanges();
+
+    setTimeout(() => {
+      this.scrollToSelectedChart({ isSmooth: true });
+    });
+  }
+
+  toggleShowCharts() {
+    if (this.showSchema === false) {
+      return;
+    }
+
+    this.showSchema = false;
+    this.uiQuery.updatePart({ showSchema: false });
 
     this.cd.detectChanges();
 
@@ -884,9 +900,9 @@ export class ChartsComponent implements OnInit, OnDestroy {
       if (
         (this.lastUrl === this.pathCharts ||
           this.chart.chartId === common.EMPTY_CHART_ID) &&
-        this.showModel === false
+        this.showSchema === false
       ) {
-        this.toggleShowModel();
+        this.showSchema = true;
       }
 
       if (common.isDefined(modelId)) {
@@ -1618,8 +1634,8 @@ ${this.mconfig.storePart?.reqFunction}`
 
   newChart() {
     if (common.isDefined(this.model.modelId)) {
-      if (this.showModel === false) {
-        this.toggleShowModel();
+      if (this.showSchema === false) {
+        this.showSchema = true;
       }
 
       this.setProjectChartLink({ chartId: common.EMPTY_CHART_ID });

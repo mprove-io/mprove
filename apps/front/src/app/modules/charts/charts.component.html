@@ -347,18 +347,10 @@
             class="text-s1 flex h-[92px] w-full flex-shrink-0 flex-row items-center pb-6 pt-6"
           >
             <div
-              (click)="toggleShowModel()"
-              class="flex h-11 cursor-pointer select-none flex-row items-center pl-[22px] pr-3 text-lg font-semibold"
+              class="flex h-11 select-none flex-row items-center pl-6 pr-3 text-lg font-semibold"
             >
               <div class="flex flex-row items-center">
-                <m-chevron-right-icon
-                  *ngIf="showModel === false"
-                ></m-chevron-right-icon>
-                <m-chevron-down-icon
-                  *ngIf="showModel === true"
-                ></m-chevron-down-icon>
-
-                <div class="ml-[12px]"> MODEL </div>
+                <div> MODEL </div>
               </div>
             </div>
 
@@ -392,20 +384,75 @@
                   </ng-template>
                 </ng-select>
               </form>
-
-              <button
-                *ngIf="showModel === true"
-                class="text-s400 ml-5 h-6 w-6 flex-shrink-0 cursor-pointer select-none items-center text-lg"
-                (click)="toggleModelTreeLevels()"
-              >
-                <m-tree-icon
-                  [isFlat]="modelTreeLevels === modelTreeLevelsFlat"
-                ></m-tree-icon>
-              </button>
             </div>
           </div>
 
-          <div class="flex flex-1 flex-col" *ngIf="showModel === true">
+          <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
+            <div class="flex flex-row"></div>
+            <div class="flex flex-row"></div>
+          </div>
+
+          <div
+            class="text-s1 mb-4 mt-4 flex h-11 w-full flex-shrink-0 flex-row items-center"
+          >
+            <div class="ml-6 flex h-9 w-9 flex-shrink-0">
+              <button
+                *ngIf="showSchema === true"
+                class="text-s500 hover:bg-m200 flex h-9 w-9 flex-shrink-0 cursor-pointer select-none flex-row items-center justify-center rounded"
+                (click)="toggleModelTreeLevels()"
+              >
+                <div class="flex h-6 w-6">
+                  <m-tree-icon
+                    [isFlat]="modelTreeLevels === modelTreeLevelsFlat"
+                  ></m-tree-icon>
+                </div>
+              </button>
+            </div>
+
+            <div
+              (click)="toggleShowSchema()"
+              class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center pl-0 pr-2 text-lg"
+            >
+              <div class="flex w-[84px] flex-row items-center justify-center">
+                <div
+                  [ngClass]="{
+                    'font-semibold': showSchema === true
+                  }"
+                >
+                  SCHEMA
+                </div>
+              </div>
+            </div>
+
+            <div
+              (click)="toggleShowCharts()"
+              class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center pl-2 pr-4 text-lg"
+            >
+              <div class="flex w-[78px] flex-row items-center justify-center">
+                <div
+                  [ngClass]="{
+                    'font-semibold': showSchema === false
+                  }"
+                >
+                  CHARTS
+                </div>
+              </div>
+            </div>
+
+            <div
+              *ngIf="showSchema === false && !!model?.modelId"
+              class="hover:bg-m200 text-s500 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
+              (click)="toggleFilterByModel()"
+              tp="Filter Charts by selected Model"
+            >
+              <m-filter-icon
+                class="flex h-6 w-6 flex-shrink-0"
+                [isFilled]="isFilterByModel === true"
+              ></m-filter-icon>
+            </div>
+          </div>
+
+          <div class="flex flex-1 flex-col" *ngIf="showSchema === true">
             <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
               <div class="flex flex-row"></div>
               <div class="flex flex-row"></div>
@@ -422,13 +469,7 @@
             <div class="flex flex-row"></div>
           </div>
 
-          <div
-            class="flex h-2 flex-col"
-            [ngClass]="{
-              'h-[45%]': showModel === true,
-              'flex-1': showModel === false
-            }"
-          >
+          <div *ngIf="showSchema === false" class="flex h-2 flex-1 flex-col">
             <div class="mb-5 mt-5 flex h-11 flex-row items-center">
               <m-search-icon class="text-s1 ml-6"></m-search-icon>
 
@@ -455,7 +496,7 @@
                 ></m-delete-icon>
               </div>
 
-              <div
+              <!-- <div
                 *ngIf="!!model?.modelId"
                 class="hover:bg-m200 text-s500 ml-5 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
                 (click)="toggleFilterByModel()"
@@ -465,17 +506,7 @@
                   class="flex h-6 w-6 flex-shrink-0"
                   [isFilled]="isFilterByModel === true"
                 ></m-filter-icon>
-
-                <!-- <div
-                  class="ml-3 w-[54px] select-none items-center text-lg"
-                  [ngClass]="{
-                    'text-s500 font-semibold': isFilterByModel === true,
-                    'text-s400': isFilterByModel === false
-                  }"
-                >
-                  Model
-                </div> -->
-              </div>
+              </div> -->
 
               <div class="flex flex-grow"></div>
 
@@ -1499,7 +1530,7 @@
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="isEditor$ | async"></div>
 <div *ngIf="modelTreeLevels$ | async"></div>
-<div *ngIf="showModel$ | async"></div>
+<div *ngIf="showSchema$ | async"></div>
 <div *ngIf="isAutoRun$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
 <div *ngIf="charts$ | async"></div>

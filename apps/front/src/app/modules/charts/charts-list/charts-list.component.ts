@@ -38,6 +38,7 @@ export class ChartsListComponent {
   filteredCharts$ = this.filteredChartsQuery.select().pipe(
     tap(x => {
       this.filteredCharts = x.filteredCharts.filter(d => d.draft === false);
+      this.cd.detectChanges();
     })
   );
 
