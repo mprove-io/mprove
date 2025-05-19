@@ -13,7 +13,29 @@
 
             <div class="flex flex-1 flex-row items-center justify-start">
               <div
-                class="ml-10 flex flex-shrink-0 cursor-pointer flex-row items-center"
+                class="ml-10 flex w-[110px] flex-shrink-0 cursor-pointer flex-row items-center justify-center"
+                (click)="navToModelsList()"
+              >
+                <!-- <m-view-list-icon
+                [ngClass]="{
+                  'text-m500': lastUrl === pathModelsList,
+                  'text-s400': lastUrl !== pathModelsList
+                }"
+              ></m-view-list-icon> -->
+
+                <div
+                  class="flex select-none items-center text-lg"
+                  [ngClass]="{
+                    'text-m500 font-semibold': lastUrl === pathModelsList,
+                    'text-s500': lastUrl !== pathModelsList
+                  }"
+                >
+                  Models List
+                </div>
+              </div>
+
+              <div
+                class="ml-10 flex w-[110px] flex-shrink-0 cursor-pointer flex-row items-center justify-center"
                 (click)="navToChartsList()"
               >
                 <!-- <m-view-list-icon
@@ -24,35 +46,13 @@
                 ></m-view-list-icon> -->
 
                 <div
-                  class="w-[62px] flex-shrink-0 select-none items-center text-lg"
+                  class="flex select-none items-center text-lg"
                   [ngClass]="{
                     'text-m500 font-semibold': lastUrl === pathChartsList,
                     'text-s500': lastUrl !== pathChartsList
                   }"
                 >
-                  Charts
-                </div>
-              </div>
-
-              <div
-                class="ml-10 flex flex-shrink-0 cursor-pointer flex-row items-center"
-                (click)="navToModelsList()"
-              >
-                <!-- <m-view-list-icon
-                  [ngClass]="{
-                    'text-m500': lastUrl === pathModelsList,
-                    'text-s400': lastUrl !== pathModelsList
-                  }"
-                ></m-view-list-icon> -->
-
-                <div
-                  class="w-[68px] select-none items-center text-lg"
-                  [ngClass]="{
-                    'text-m500 font-semibold': lastUrl === pathModelsList,
-                    'text-s500': lastUrl !== pathModelsList
-                  }"
-                >
-                  Models
+                  Charts List
                 </div>
               </div>
             </div>

@@ -23,7 +23,7 @@ export const PROJECT_INFO_PAGE_TITLE = 'Project - Info';
 export const PROJECT_TEAM_PAGE_TITLE = 'Project - Team';
 
 export const FILES_PAGE_TITLE = 'Files';
-export const CHARTS_PAGE_TITLE = 'Explore';
+export const CHARTS_PAGE_TITLE = 'Models';
 export const CHARTS_LIST_PAGE_TITLE = 'Charts List';
 export const MODELS_LIST_PAGE_TITLE = 'Models List';
 export const DASHBOARDS_PAGE_TITLE = 'Dashboards';
