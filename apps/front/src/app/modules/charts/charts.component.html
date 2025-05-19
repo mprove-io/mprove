@@ -11,20 +11,20 @@
               {{ pageTitle }}
             </div>
 
-            <div class="flex flex-1 flex-row items-center justify-center">
+            <div class="flex flex-1 flex-row items-center justify-start">
               <div
-                class="ml-5 flex flex-shrink-0 cursor-pointer flex-row items-center"
+                class="ml-10 flex flex-shrink-0 cursor-pointer flex-row items-center"
                 (click)="navToChartsList()"
               >
-                <m-view-list-icon
+                <!-- <m-view-list-icon
                   [ngClass]="{
                     'text-m500': lastUrl === pathChartsList,
                     'text-s400': lastUrl !== pathChartsList
                   }"
-                ></m-view-list-icon>
+                ></m-view-list-icon> -->
 
                 <div
-                  class="ml-3 w-[62px] flex-shrink-0 select-none items-center text-lg"
+                  class="w-[62px] flex-shrink-0 select-none items-center text-lg"
                   [ngClass]="{
                     'text-m500 font-semibold': lastUrl === pathChartsList,
                     'text-s500': lastUrl !== pathChartsList
@@ -35,18 +35,18 @@
               </div>
 
               <div
-                class="ml-5 flex flex-shrink-0 cursor-pointer flex-row items-center"
+                class="ml-10 flex flex-shrink-0 cursor-pointer flex-row items-center"
                 (click)="navToModelsList()"
               >
-                <m-view-list-icon
+                <!-- <m-view-list-icon
                   [ngClass]="{
                     'text-m500': lastUrl === pathModelsList,
                     'text-s400': lastUrl !== pathModelsList
                   }"
-                ></m-view-list-icon>
+                ></m-view-list-icon> -->
 
                 <div
-                  class="ml-[10px] w-[68px] select-none items-center text-lg"
+                  class="w-[68px] select-none items-center text-lg"
                   [ngClass]="{
                     'text-m500 font-semibold': lastUrl === pathModelsList,
                     'text-s500': lastUrl !== pathModelsList
@@ -399,7 +399,6 @@
           >
             <div class="ml-6 flex h-9 w-9 flex-shrink-0">
               <button
-                *ngIf="showSchema === true"
                 class="text-s500 hover:bg-m200 flex h-9 w-9 flex-shrink-0 cursor-pointer select-none flex-row items-center justify-center rounded"
                 (click)="toggleModelTreeLevels()"
               >
@@ -442,7 +441,7 @@
             </div>
 
             <div
-              *ngIf="showSchema === false && !!model?.modelId"
+              *ngIf="!!model?.modelId"
               class="hover:bg-m200 text-s500 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
               (click)="toggleFilterByModel()"
               tp="Filter Charts by selected Model"
