@@ -11,51 +11,53 @@
               {{ pageTitle }}
             </div>
 
-            <div
-              class="ml-5 flex flex-shrink-0 cursor-pointer flex-row items-center"
-              (click)="navToChartsList()"
-            >
-              <m-view-list-icon
-                [ngClass]="{
-                  'text-m500': lastUrl === pathChartsList,
-                  'text-s400': lastUrl !== pathChartsList
-                }"
-              ></m-view-list-icon>
+            <div class="flex flex-1 flex-row items-center justify-center">
+              <div
+                class="ml-5 flex flex-shrink-0 cursor-pointer flex-row items-center"
+                (click)="navToChartsList()"
+              >
+                <m-view-list-icon
+                  [ngClass]="{
+                    'text-m500': lastUrl === pathChartsList,
+                    'text-s400': lastUrl !== pathChartsList
+                  }"
+                ></m-view-list-icon>
+
+                <div
+                  class="ml-3 w-[62px] flex-shrink-0 select-none items-center text-lg"
+                  [ngClass]="{
+                    'text-m500 font-semibold': lastUrl === pathChartsList,
+                    'text-s500': lastUrl !== pathChartsList
+                  }"
+                >
+                  Charts
+                </div>
+              </div>
 
               <div
-                class="ml-3 w-[62px] flex-shrink-0 select-none items-center text-lg"
-                [ngClass]="{
-                  'text-m500 font-semibold': lastUrl === pathChartsList,
-                  'text-s500': lastUrl !== pathChartsList
-                }"
+                class="ml-5 flex flex-shrink-0 cursor-pointer flex-row items-center"
+                (click)="navToModelsList()"
               >
-                Charts
+                <m-view-list-icon
+                  [ngClass]="{
+                    'text-m500': lastUrl === pathModelsList,
+                    'text-s400': lastUrl !== pathModelsList
+                  }"
+                ></m-view-list-icon>
+
+                <div
+                  class="ml-[10px] w-[68px] select-none items-center text-lg"
+                  [ngClass]="{
+                    'text-m500 font-semibold': lastUrl === pathModelsList,
+                    'text-s500': lastUrl !== pathModelsList
+                  }"
+                >
+                  Models
+                </div>
               </div>
             </div>
 
-            <div
-              class="ml-5 flex flex-shrink-0 cursor-pointer flex-row items-center"
-              (click)="navToModelsList()"
-            >
-              <m-view-list-icon
-                [ngClass]="{
-                  'text-m500': lastUrl === pathModelsList,
-                  'text-s400': lastUrl !== pathModelsList
-                }"
-              ></m-view-list-icon>
-
-              <div
-                class="ml-[10px] w-[68px] select-none items-center text-lg"
-                [ngClass]="{
-                  'text-m500 font-semibold': lastUrl === pathModelsList,
-                  'text-s500': lastUrl !== pathModelsList
-                }"
-              >
-                Models
-              </div>
-            </div>
-
-            <div class="flex flex-1"></div>
+            <!-- <div class="flex flex-1"></div> -->
 
             <div
               [tp]="templateNewChart"

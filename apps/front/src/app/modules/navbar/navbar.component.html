@@ -17,7 +17,7 @@
 
         <div class="flex w-[130px] flex-row justify-start">
           <button
-            class="text-s1 ml-7 block flex h-10 flex-row items-center justify-start text-left text-base focus:outline-none"
+            class="text-s1 ml-7 flex h-10 flex-row items-center justify-start text-left text-base focus:outline-none"
             [ngClass]="{
               'text-s400 cursor-default':
                 !nav || !nav.projectId || needSave === true,
@@ -60,7 +60,7 @@
       class="flex flex-row items-center space-x-5"
     >
       <button
-        class="text-s1 ml-5 block flex h-10 w-[180px] items-center justify-center text-left text-base focus:outline-none"
+        class="text-s1 ml-5 flex h-10 w-[80px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{
           'text-s400 cursor-default':
             !nav || !nav.projectId || needSave === true,
@@ -68,11 +68,11 @@
         }"
         (click)="navigateCharts()"
         [disabled]="!nav || !nav.projectId || needSave === true"
-        >Charts and Models</button
+        >Explore</button
       >
 
       <button
-        class="text-s1 block flex h-10 w-[120px] items-center justify-center text-left text-base focus:outline-none"
+        class="text-s1 flex h-10 w-[120px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{
           'text-s400 cursor-default':
             !nav || !nav.projectId || needSave === true,
@@ -84,7 +84,7 @@
       >
 
       <button
-        class="text-s1 block flex h-10 w-[90px] items-center justify-center text-left text-base focus:outline-none"
+        class="text-s1 flex h-10 w-[90px] items-center justify-center text-left text-base focus:outline-none"
         [ngClass]="{
           'text-s400 cursor-default':
             !nav || !nav.projectId || needSave === true,
