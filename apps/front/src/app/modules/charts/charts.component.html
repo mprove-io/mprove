@@ -399,7 +399,7 @@
           >
             <div class="ml-6 flex h-9 w-9 flex-shrink-0">
               <button
-                class="text-s400 hover:bg-m200 flex h-9 w-9 flex-shrink-0 cursor-pointer select-none flex-row items-center justify-center rounded"
+                class="text-s500 hover:bg-m200 flex h-9 w-9 flex-shrink-0 cursor-pointer select-none flex-row items-center justify-center rounded"
                 (click)="toggleModelTreeLevels()"
               >
                 <div class="flex h-6 w-6">
@@ -442,12 +442,12 @@
 
             <div
               *ngIf="!!model?.modelId"
-              class="hover:bg-m200 text-s400 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
+              class="hover:bg-m200 text-s500 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
               (click)="toggleFilterByModel()"
               tp="Filter Charts by selected Model"
             >
               <m-filter-icon
-                class="flex h-6 w-6 flex-shrink-0"
+                class="mb-1 flex h-6 w-6 flex-shrink-0"
                 [isFilled]="isFilterByModel === true"
               ></m-filter-icon>
             </div>
