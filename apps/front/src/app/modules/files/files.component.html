@@ -9,127 +9,128 @@
             >{{ pageTitle }}
           </div>
 
-          <div
-            class="ml-10 flex cursor-pointer flex-row items-center"
-            tp="Need to Save changes"
-            [tpIsEnabled]="needSave === true"
-            (click)="setPanel(panelTree)"
-          >
-            <!-- <m-document-icon></m-document-icon> -->
-
-            <button
-              class="flex w-[55px] items-center text-lg focus:outline-none"
-              [ngClass]="{
-                'text-m500 font-semibold': panel === panelTree,
-                'text-s500': panel !== panelTree
-              }"
-              [disabled]="needSave === true"
-              >Repo</button
-            >
-          </div>
-
-          <div
-            class="ml-7"
-            tp="Need to Save changes"
-            [tpIsEnabled]="needSave === true"
-          >
-            <button
-              class="flex flex-shrink-0 cursor-pointer flex-row items-center focus:outline-none"
-              (click)="setPanel(panelChangesToCommit)"
-              [disabled]="needSave === true"
-            >
-              <div
-                class="flex w-[110px] flex-shrink-0 text-lg"
-                [ngClass]="{
-                  'text-m500 font-semibold': panel === panelChangesToCommit,
-                  'text-s500': panel !== panelChangesToCommit
-                }"
-                >To Commit</div
-              >
-
-              <div
-                class="text-m0 ml-2 flex flex-shrink-0 rounded px-2 py-[1px]"
-                [ngClass]="{
-                  'bg-m500': panel === panelChangesToCommit,
-                  'bg-m600':
-                    panel !== panelChangesToCommit &&
-                    repo?.changesToCommit?.length > 0,
-                  'bg-s400':
-                    panel !== panelChangesToCommit &&
-                    !(repo?.changesToCommit?.length > 0)
-                }"
-                >{{ repo?.changesToCommit?.length }}</div
-              >
-            </button>
-          </div>
-
-          <ng-template #templateChangesToPush>
-            <div *ngIf="needSave === true">Need to Save changes</div>
-            <div *ngIf="needSave === false && repo?.changesToCommit?.length > 0"
-              >Commit all changes to see Changes to Push</div
-            >
+          <div class="flex flex-1 flex-row items-center justify-center">
             <div
-              *ngIf="
-                needSave === false &&
-                repo?.changesToCommit?.length === 0 &&
-                repo?.changesToPush?.length === 0 &&
-                repo.repoStatus === repoStatusNeedPush
-              "
-              >Push branch to Remote</div
+              class="ml-5 flex cursor-pointer flex-row items-center"
+              tp="Need to Save changes"
+              [tpIsEnabled]="needSave === true"
+              (click)="setPanel(panelTree)"
             >
-          </ng-template>
+              <!-- <m-document-icon></m-document-icon> -->
 
-          <div
-            class="ml-7"
-            [tp]="templateChangesToPush"
-            [tpIsEnabled]="
-              needSave === true ||
-              repo?.changesToCommit?.length > 0 ||
-              (repo?.changesToPush?.length === 0 &&
-                repo.repoStatus === repoStatusNeedPush)
-            "
-          >
-            <button
-              class="flex flex-shrink-0 flex-row items-center focus:outline-none"
-              [ngClass]="{
-                'cursor-pointer': repo?.changesToCommit?.length === 0
-              }"
-              [disabled]="
-                needSave === true || repo?.changesToCommit?.length > 0
-              "
-              (click)="setPanel(panelChangesToPush)"
-            >
-              <div
-                class="flex w-[80px] flex-shrink-0 text-lg"
+              <button
+                class="flex w-[55px] items-center text-lg focus:outline-none"
                 [ngClass]="{
-                  'text-m500 font-semibold': panel === panelChangesToPush,
-                  'text-s500': panel !== panelChangesToPush
+                  'text-m500 font-semibold': panel === panelTree,
+                  'text-s500': panel !== panelTree
                 }"
-                >To Push</div
+                [disabled]="needSave === true"
+                >Repo</button
               >
+            </div>
 
+            <div
+              class="ml-7"
+              tp="Need to Save changes"
+              [tpIsEnabled]="needSave === true"
+            >
+              <button
+                class="flex flex-shrink-0 cursor-pointer flex-row items-center focus:outline-none"
+                (click)="setPanel(panelChangesToCommit)"
+                [disabled]="needSave === true"
+              >
+                <div
+                  class="flex w-[110px] flex-shrink-0 text-lg"
+                  [ngClass]="{
+                    'text-m500 font-semibold': panel === panelChangesToCommit,
+                    'text-s500': panel !== panelChangesToCommit
+                  }"
+                  >To Commit</div
+                >
+
+                <div
+                  class="text-m0 ml-2 flex flex-shrink-0 rounded px-2 py-[1px]"
+                  [ngClass]="{
+                    'bg-m500': panel === panelChangesToCommit,
+                    'bg-m600':
+                      panel !== panelChangesToCommit &&
+                      repo?.changesToCommit?.length > 0,
+                    'bg-s400':
+                      panel !== panelChangesToCommit &&
+                      !(repo?.changesToCommit?.length > 0)
+                  }"
+                  >{{ repo?.changesToCommit?.length }}</div
+                >
+              </button>
+            </div>
+
+            <ng-template #templateChangesToPush>
+              <div *ngIf="needSave === true">Need to Save changes</div>
+              <div
+                *ngIf="needSave === false && repo?.changesToCommit?.length > 0"
+                >Commit all changes to see Changes to Push</div
+              >
               <div
                 *ngIf="
+                  needSave === false &&
                   repo?.changesToCommit?.length === 0 &&
-                  (repo.repoStatus !== repoStatusNeedPush ||
-                    repo?.changesToPush?.length > 0)
+                  repo?.changesToPush?.length === 0 &&
+                  repo.repoStatus === repoStatusNeedPush
                 "
-                class="text-m0 ml-2 flex flex-shrink-0 rounded px-2 py-[1px]"
-                [ngClass]="{
-                  'bg-m500': panel === panelChangesToPush,
-                  'bg-m600':
-                    panel !== panelChangesToPush &&
-                    repo?.changesToPush?.length > 0,
-                  'bg-s400':
-                    panel !== panelChangesToPush &&
-                    !(repo?.changesToPush?.length > 0)
-                }"
-                >{{ repo?.changesToPush?.length }}</div
+                >Push branch to Remote</div
               >
-            </button>
-          </div>
+            </ng-template>
 
-          <div class="flex flex-1"></div>
+            <div
+              class="ml-7"
+              [tp]="templateChangesToPush"
+              [tpIsEnabled]="
+                needSave === true ||
+                repo?.changesToCommit?.length > 0 ||
+                (repo?.changesToPush?.length === 0 &&
+                  repo.repoStatus === repoStatusNeedPush)
+              "
+            >
+              <button
+                class="flex flex-shrink-0 flex-row items-center focus:outline-none"
+                [ngClass]="{
+                  'cursor-pointer': repo?.changesToCommit?.length === 0
+                }"
+                [disabled]="
+                  needSave === true || repo?.changesToCommit?.length > 0
+                "
+                (click)="setPanel(panelChangesToPush)"
+              >
+                <div
+                  class="flex w-[80px] flex-shrink-0 text-lg"
+                  [ngClass]="{
+                    'text-m500 font-semibold': panel === panelChangesToPush,
+                    'text-s500': panel !== panelChangesToPush
+                  }"
+                  >To Push</div
+                >
+
+                <div
+                  *ngIf="
+                    repo?.changesToCommit?.length === 0 &&
+                    (repo.repoStatus !== repoStatusNeedPush ||
+                      repo?.changesToPush?.length > 0)
+                  "
+                  class="text-m0 ml-2 flex flex-shrink-0 rounded px-2 py-[1px]"
+                  [ngClass]="{
+                    'bg-m500': panel === panelChangesToPush,
+                    'bg-m600':
+                      panel !== panelChangesToPush &&
+                      repo?.changesToPush?.length > 0,
+                    'bg-s400':
+                      panel !== panelChangesToPush &&
+                      !(repo?.changesToPush?.length > 0)
+                  }"
+                  >{{ repo?.changesToPush?.length }}</div
+                >
+              </button>
+            </div>
+          </div>
 
           <div
             [tp]="templateNewFile"

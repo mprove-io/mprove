@@ -35,6 +35,7 @@ export class ReportsListComponent {
   filteredReports$ = this.filteredReportsQuery.select().pipe(
     tap(x => {
       this.filteredReports = x.filteredReports.filter(d => d.draft === false);
+      this.cd.detectChanges();
     })
   );
 

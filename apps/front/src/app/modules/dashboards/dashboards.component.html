@@ -13,35 +13,35 @@
                 >{{ pageTitle }}
               </div>
 
-              <m-left-panel-icon
-                class="text-s500 ml-5 flex-shrink-0 cursor-pointer"
-                (click)="toggleShowLeft()"
-                [isFilled]="showDashboardsLeftPanel === true"
-              ></m-left-panel-icon>
-
-              <div
-                class="ml-5 flex flex-shrink-0 cursor-pointer flex-row items-center"
-                (click)="navToDashboardsList()"
-              >
-                <m-view-list-icon
-                  [ngClass]="{
-                    'text-m500': lastUrl === pathDashboardsList,
-                    'text-s400': lastUrl !== pathDashboardsList
-                  }"
-                ></m-view-list-icon>
+              <div class="flex flex-1 flex-row items-center justify-center">
+                <m-left-panel-icon
+                  class="text-s500 ml-5 flex-shrink-0 cursor-pointer"
+                  (click)="toggleShowLeft()"
+                  [isFilled]="showDashboardsLeftPanel === true"
+                ></m-left-panel-icon>
 
                 <div
-                  class="ml-3 w-[34px] select-none items-center text-lg"
-                  [ngClass]="{
-                    'text-m500 font-semibold': lastUrl === pathDashboardsList,
-                    'text-s500': lastUrl !== pathDashboardsList
-                  }"
+                  class="ml-5 flex flex-shrink-0 cursor-pointer flex-row items-center"
+                  (click)="navToDashboardsList()"
                 >
-                  List
+                  <m-view-list-icon
+                    [ngClass]="{
+                      'text-m500': lastUrl === pathDashboardsList,
+                      'text-s400': lastUrl !== pathDashboardsList
+                    }"
+                  ></m-view-list-icon>
+
+                  <div
+                    class="ml-3 w-[34px] select-none items-center text-lg"
+                    [ngClass]="{
+                      'text-m500 font-semibold': lastUrl === pathDashboardsList,
+                      'text-s500': lastUrl !== pathDashboardsList
+                    }"
+                  >
+                    List
+                  </div>
                 </div>
               </div>
-
-              <div class="flex flex-grow"></div>
 
               <div
                 [tp]="templateNewDashboard"

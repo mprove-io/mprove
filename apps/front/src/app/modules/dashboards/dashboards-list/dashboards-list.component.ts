@@ -35,6 +35,7 @@ export class DashboardsListComponent {
       this.filteredDashboards = x.filteredDashboards.filter(
         d => d.draft === false
       );
+      this.cd.detectChanges();
     })
   );
 

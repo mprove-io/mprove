@@ -53,6 +53,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
   model$ = this.modelQuery.select().pipe(
     tap(x => {
       this.modelId = x.modelId;
+      this.cd.detectChanges();
     })
   );
 
