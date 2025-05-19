@@ -52,9 +52,9 @@
               item.chartId !== filteredCharts[filteredCharts.length - 1].chartId
           }"
         >
-          <div class="flex-grow flex-col pt-1 text-base">
+          <div class="flex-grow flex-col text-base">
             <div
-              class="text-s1 group mr-5 flex w-full flex-row items-start space-x-5 rounded focus:outline-none"
+              class="text-s1 group mr-5 flex w-full flex-row items-start space-x-5 rounded pt-1 focus:outline-none"
               (click)="navigateToChart(item)"
             >
               <div class="flex w-12 pl-3">
@@ -67,7 +67,7 @@
               </div>
 
               <div
-                class="flex w-1/3 flex-row items-start truncate pb-[6px] pt-[5px]"
+                class="flex w-1/3 flex-row items-start truncate pb-[5px] pt-[6px]"
               >
                 <img class="h-6 w-6" [src]="item.iconPath" />
 
@@ -78,7 +78,7 @@
 
               <div class="flex flex-1 flex-row space-x-5 text-base">
                 <div
-                  class="flex flex-1 items-start truncate py-[6px] focus:outline-none"
+                  class="flex flex-1 items-start truncate pb-[9px] pt-[7px] focus:outline-none"
                   *ngIf="showModelId === false"
                 >
                   <span class="truncate"> {{ item.chartId }} </span>
@@ -86,7 +86,7 @@
 
                 <div
                   *ngIf="showModelId === true"
-                  class="flex flex-1 items-start truncate py-[6px] focus:outline-none"
+                  class="flex flex-1 items-start truncate pb-[9px] pt-[7px] focus:outline-none"
                   [tp]="templateChartsModel"
                   [tpIsEnabled]="item.tiles[0].hasAccessToModel === false"
                 >
@@ -109,7 +109,9 @@
                   ></m-lock-closed-icon>
                 </div>
 
-                <div class="flex flex-1 flex-wrap truncate py-[6px] text-base">
+                <div
+                  class="flex flex-1 flex-wrap truncate pb-[9px] pt-[7px] text-base"
+                >
                   <span
                     *ngFor="let role of item.accessRoles"
                     class="mr-2 truncate"
@@ -119,7 +121,7 @@
                 </div>
 
                 <div
-                  class="flex flex-1 items-start truncate py-[6px] focus:outline-none"
+                  class="flex flex-1 items-start truncate pb-[9px] pt-[7px] focus:outline-none"
                 >
                   <span>
                     {{ item.author }}

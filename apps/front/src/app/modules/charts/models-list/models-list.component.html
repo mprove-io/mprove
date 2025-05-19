@@ -67,9 +67,9 @@
               item.modelId !== filteredModels[filteredModels.length - 1].modelId
           }"
         >
-          <div class="flex-grow flex-col pt-1 text-base">
+          <div class="flex-grow flex-col text-base">
             <div
-              class="text-s1 group mr-5 flex w-full flex-row items-start space-x-5 rounded focus:outline-none"
+              class="text-s1 group mr-5 flex w-full flex-row items-start space-x-5 rounded pt-1 focus:outline-none"
               (click)="navigateToModel(item)"
             >
               <div class="flex w-12 pl-3">
@@ -106,7 +106,7 @@
               </ng-template>
 
               <div
-                class="flex w-1/4 flex-row py-[6px]"
+                class="flex w-1/4 flex-row pb-[9px] pt-[7px]"
                 [tp]="templateModelsModel"
                 [tpIsEnabled]="item.hasAccess === false"
               >
@@ -126,7 +126,7 @@
               </div>
 
               <div
-                class="flex w-1/4 items-start truncate py-[6px] focus:outline-none"
+                class="flex w-1/4 items-start truncate pb-[9px] pt-[7px] focus:outline-none"
               >
                 <span class="truncate">
                   {{ item.modelId }}
@@ -134,7 +134,7 @@
               </div>
 
               <!-- <div
-                class="flex w-1/6 items-start truncate py-[6px] focus:outline-none"
+                class="flex w-1/6 items-start truncate pt-[7px] pb-[9px] focus:outline-none"
               >
                 <span class="truncate">
                   {{
@@ -146,13 +146,15 @@
               </div> -->
 
               <div class="flex flex-1 flex-row space-x-5 text-base">
-                <div class="flex flex-1 items-start truncate py-[6px]">
+                <div class="flex flex-1 items-start truncate pb-[9px] pt-[7px]">
                   <span class="truncate">
                     {{ item.connectionId }}
                   </span>
                 </div>
 
-                <div class="flex flex-1 flex-wrap truncate py-[6px] text-base">
+                <div
+                  class="flex flex-1 flex-wrap truncate pb-[9px] pt-[7px] text-base"
+                >
                   <span
                     *ngFor="let role of item.accessRoles"
                     class="mr-2 truncate"
