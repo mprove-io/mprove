@@ -399,7 +399,7 @@
           >
             <div class="ml-6 flex h-9 w-9 flex-shrink-0">
               <button
-                class="text-s500 hover:bg-m200 flex h-9 w-9 flex-shrink-0 cursor-pointer select-none flex-row items-center justify-center rounded"
+                class="text-s400 hover:bg-m200 flex h-9 w-9 flex-shrink-0 cursor-pointer select-none flex-row items-center justify-center rounded"
                 (click)="toggleModelTreeLevels()"
               >
                 <div class="flex h-6 w-6">
@@ -411,7 +411,7 @@
             </div>
 
             <div
-              (click)="toggleShowSchema()"
+              (click)="setShowSchema()"
               class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center pl-0 pr-2 text-lg"
             >
               <div class="flex w-[84px] flex-row items-center justify-center">
@@ -426,7 +426,7 @@
             </div>
 
             <div
-              (click)="toggleShowCharts()"
+              (click)="setShowCharts()"
               class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center pl-2 pr-4 text-lg"
             >
               <div class="flex w-[78px] flex-row items-center justify-center">
@@ -442,7 +442,7 @@
 
             <div
               *ngIf="!!model?.modelId"
-              class="hover:bg-m200 text-s500 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
+              class="hover:bg-m200 text-s400 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
               (click)="toggleFilterByModel()"
               tp="Filter Charts by selected Model"
             >

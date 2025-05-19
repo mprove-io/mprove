@@ -384,20 +384,20 @@ export class ChartsComponent implements OnInit, OnDestroy {
         );
       }
 
-      let urlSegments = this.router.url.split('?')[0].split('/');
+      // let urlSegments = this.router.url.split('?')[0].split('/');
 
-      let isPathEmptyChartSelected =
-        urlSegments.length >= 15
-          ? urlSegments[15] === common.EMPTY_CHART_ID
-          : false;
+      // let isPathEmptyChartSelected =
+      //   urlSegments.length >= 15
+      //     ? urlSegments[15] === common.EMPTY_CHART_ID
+      //     : false;
 
-      if (
-        isPathEmptyChartSelected === true &&
-        this.chart.chartId === common.EMPTY_CHART_ID &&
-        this.showSchema === false
-      ) {
-        this.showSchema = true;
-      }
+      // if (
+      //   isPathEmptyChartSelected === true &&
+      //   this.chart.chartId === common.EMPTY_CHART_ID &&
+      //   this.showSchema === false
+      // ) {
+      //   this.showSchema = true;
+      // }
 
       this.cd.detectChanges();
 
@@ -682,7 +682,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  toggleShowSchema() {
+  setShowSchema() {
     if (this.showSchema === true) {
       return;
     }
@@ -697,7 +697,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleShowCharts() {
+  setShowCharts() {
     if (this.showSchema === false) {
       return;
     }
@@ -897,13 +897,13 @@ export class ChartsComponent implements OnInit, OnDestroy {
         modelId: modelId
       });
     } else {
-      if (
-        (this.lastUrl === this.pathCharts ||
-          this.chart.chartId === common.EMPTY_CHART_ID) &&
-        this.showSchema === false
-      ) {
-        this.showSchema = true;
-      }
+      // if (
+      //   (this.lastUrl === this.pathCharts ||
+      //     this.chart.chartId === common.EMPTY_CHART_ID) &&
+      //   this.showSchema === false
+      // ) {
+      //   this.showSchema = true;
+      // }
 
       if (common.isDefined(modelId)) {
         this.navigateService.navigateToChart({
