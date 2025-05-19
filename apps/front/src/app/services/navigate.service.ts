@@ -121,7 +121,7 @@ export class NavigateService {
       this.nav.branchId,
       common.PATH_ENV,
       this.nav.envId,
-      common.PATH_CHARTS
+      common.PATH_MODELS
     ]);
   }
 
@@ -143,7 +143,7 @@ export class NavigateService {
           this.nav.branchId,
           common.PATH_ENV,
           this.nav.envId,
-          common.PATH_CHARTS,
+          common.PATH_MODELS,
           common.PATH_MODEL,
           modelId,
           common.PATH_CHARTS_LIST
@@ -159,7 +159,7 @@ export class NavigateService {
           this.nav.branchId,
           common.PATH_ENV,
           this.nav.envId,
-          common.PATH_CHARTS,
+          common.PATH_MODELS,
           common.PATH_CHARTS_LIST
         ];
 
@@ -184,7 +184,7 @@ export class NavigateService {
           this.nav.branchId,
           common.PATH_ENV,
           this.nav.envId,
-          common.PATH_CHARTS,
+          common.PATH_MODELS,
           common.PATH_MODEL,
           modelId,
           common.PATH_MODELS_LIST
@@ -200,7 +200,7 @@ export class NavigateService {
           this.nav.branchId,
           common.PATH_ENV,
           this.nav.envId,
-          common.PATH_CHARTS,
+          common.PATH_MODELS,
           common.PATH_MODELS_LIST
         ];
 
@@ -227,7 +227,7 @@ export class NavigateService {
         this.nav.branchId,
         common.PATH_ENV,
         this.nav.envId,
-        common.PATH_CHARTS,
+        common.PATH_MODELS,
         common.PATH_MODEL,
         common.isDefined(modelId) ? modelId : this.model.modelId,
         common.PATH_CHART,

@@ -13,19 +13,19 @@ import { SharedModule } from '../shared/shared.module';
 import { ChartOptionsComponent } from './chart-options/chart-options.component';
 import { ChartComponent } from './chart/chart.component';
 import { ChartsListComponent } from './charts-list/charts-list.component';
-import { ChartsComponent } from './charts.component';
 import { ModelFiltersComponent } from './model-filters/model-filters.component';
 import { FieldOptionsComponent } from './model-tree/field-options/field-options.component';
 import { ModelTreeComponent } from './model-tree/model-tree.component';
 import { ModelComponent } from './model/model.component';
 import { ModelsListComponent } from './models-list/models-list.component';
+import { ModelsComponent } from './models.component';
 import { PanelTitleComponent } from './panel-title/panel-title.component';
 import { QueryInfoViewerComponent } from './query-info-viewer/query-info-viewer.component';
 import { QueryOptionsComponent } from './query-options/query-options.component';
 
 @NgModule({
   declarations: [
-    ChartsComponent,
+    ModelsComponent,
     ChartsListComponent,
     ModelsListComponent,
     ModelComponent,
@@ -53,4 +53,4 @@ import { QueryOptionsComponent } from './query-options/query-options.component';
     CodeEditor
   ]
 })
-export class ChartsModule {}
+export class ModelsModule {}

@@ -37,7 +37,7 @@ export class NavbarComponent implements OnInit {
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
   isFilesRouteActive: boolean;
-  isChartsRouteActive: boolean;
+  isModelsRouteActive: boolean;
   isDashboardsRouteActive: boolean;
   isReportsRouteActive: boolean;
 
@@ -84,8 +84,8 @@ export class NavbarComponent implements OnInit {
     this.isFilesRouteActive =
       url.split('?')[0]?.split('/')[11] === constants.PATH_FILES;
 
-    this.isChartsRouteActive =
-      url.split('?')[0]?.split('/')[11] === constants.PATH_CHARTS;
+    this.isModelsRouteActive =
+      url.split('?')[0]?.split('/')[11] === constants.PATH_MODELS;
 
     this.isDashboardsRouteActive =
       url.split('?')[0]?.split('/')[11] === constants.PATH_DASHBOARDS;
@@ -109,7 +109,7 @@ export class NavbarComponent implements OnInit {
   }
 
   navigateCharts() {
-    if (this.isChartsRouteActive === true) {
+    if (this.isModelsRouteActive === true) {
       return;
     }
 

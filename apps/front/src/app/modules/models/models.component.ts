@@ -69,10 +69,10 @@ export class ChartTypeItem {
 
 @Component({
   standalone: false,
-  selector: 'm-charts',
-  templateUrl: './charts.component.html'
+  selector: 'm-models',
+  templateUrl: './models.component.html'
 })
-export class ChartsComponent implements OnInit, OnDestroy {
+export class ModelsComponent implements OnInit, OnDestroy {
   @ViewChild('chartTypeSelect', { static: false })
   chartTypeSelectElement: NgSelectComponent;
 
@@ -96,7 +96,7 @@ export class ChartsComponent implements OnInit, OnDestroy {
 
   emptyChartId = common.EMPTY_CHART_ID;
 
-  pathCharts = common.PATH_CHARTS;
+  pathModels = common.PATH_MODELS;
   pathChartsList = common.PATH_CHARTS_LIST;
   pathModelsList = common.PATH_MODELS_LIST;
 

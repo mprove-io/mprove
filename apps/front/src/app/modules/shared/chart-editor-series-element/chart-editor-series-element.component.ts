@@ -12,7 +12,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
-import { ChartTypeItem } from '../../charts/charts.component';
+import { ChartTypeItem } from '../../models/models.component';
 import { ChartSeriesWithField } from '../chart-editor/chart-editor.component';
 
 @Component({

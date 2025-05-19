@@ -12,16 +12,16 @@ import { ForgotPasswordComponent } from './modules/auth/password/01-forgot-passw
 import { PasswordResetSentComponent } from './modules/auth/password/02-password-reset-sent/password-reset-sent.component';
 import { UpdatePasswordComponent } from './modules/auth/password/03-update-password/update-password.component';
 import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-password-was-set/new-password-was-set.component';
-import { ChartComponent } from './modules/charts/chart/chart.component';
-import { ChartsListComponent } from './modules/charts/charts-list/charts-list.component';
-import { ChartsComponent } from './modules/charts/charts.component';
-import { ModelComponent } from './modules/charts/model/model.component';
-import { ModelsListComponent } from './modules/charts/models-list/models-list.component';
 import { DashboardComponent } from './modules/dashboards/dashboard/dashboard.component';
 import { DashboardsListComponent } from './modules/dashboards/dashboards-list/dashboards-list.component';
 import { DashboardsComponent } from './modules/dashboards/dashboards.component';
 import { FileEditorComponent } from './modules/files/file-editor/file-editor.component';
 import { FilesComponent } from './modules/files/files.component';
+import { ChartComponent } from './modules/models/chart/chart.component';
+import { ChartsListComponent } from './modules/models/charts-list/charts-list.component';
+import { ModelComponent } from './modules/models/model/model.component';
+import { ModelsListComponent } from './modules/models/models-list/models-list.component';
+import { ModelsComponent } from './modules/models/models.component';
 import { NavComponent } from './modules/nav/nav.component';
 import { NavbarComponent } from './modules/navbar/navbar.component';
 import { OrgAccountComponent } from './modules/org/org-account/org-account.component';
@@ -213,8 +213,8 @@ export const appRoutes: Routes = [
                             ]
                           },
                           {
-                            component: ChartsComponent,
-                            path: common.PATH_CHARTS,
+                            component: ModelsComponent,
+                            path: common.PATH_MODELS,
                             resolve: [StructChartsResolver],
                             children: [
                               {

@@ -64,7 +64,7 @@
         [ngClass]="{
           'text-s400 cursor-default':
             !nav || !nav.projectId || needSave === true,
-          'font-semibold': isChartsRouteActive === true
+          'font-semibold': isModelsRouteActive === true
         }"
         (click)="navigateCharts()"
         [disabled]="!nav || !nav.projectId || needSave === true"

@@ -12,8 +12,8 @@ export function checkNavCharts(item: {
     nextNavAr.push(common.PATH_FILES);
     nextNavAr.push(common.PATH_FILE);
     nextNavAr.push(common.LAST_SELECTED_FILE_ID);
-  } else if (urlParts[11] === common.PATH_CHARTS) {
-    nextNavAr.push(common.PATH_CHARTS);
+  } else if (urlParts[11] === common.PATH_MODELS) {
+    nextNavAr.push(common.PATH_MODELS);
     if (urlParts[12] === common.PATH_CHARTS_LIST) {
       nextNavAr.push(common.PATH_CHARTS_LIST);
     } else if (urlParts[12] === common.PATH_MODELS_LIST) {

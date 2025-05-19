@@ -4,14 +4,6 @@ import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
 import {
-  ChartsAddColumnFieldDialogComponent,
-  ChartsAddColumnFieldDialogData
-} from '../modules/charts/charts-add-column-field-dialog/charts-add-column-field-dialog.component';
-import {
-  ChartsReplaceColumnFieldDialogComponent,
-  ChartsReplaceColumnFieldDialogData
-} from '../modules/charts/charts-replace-column-field-dialog/charts-replace-column-field-dialog.component';
-import {
   DashboardAddFilterDialogComponent,
   DashboardAddFilterDialogData
 } from '../modules/dashboards/dashboard-add-filter-dialog/dashboard-add-filter-dialog.component';
@@ -55,6 +47,14 @@ import {
   RenameFolderDialogComponent,
   RenameFolderDialogData
 } from '../modules/files/files-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
+import {
+  ChartsAddColumnFieldDialogComponent,
+  ChartsAddColumnFieldDialogData
+} from '../modules/models/charts-add-column-field-dialog/charts-add-column-field-dialog.component';
+import {
+  ChartsReplaceColumnFieldDialogComponent,
+  ChartsReplaceColumnFieldDialogData
+} from '../modules/models/charts-replace-column-field-dialog/charts-replace-column-field-dialog.component';
 import {
   CreateBranchDialogComponent,
   CreateBranchDialogData

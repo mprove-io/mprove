@@ -150,7 +150,7 @@
 
           <div
             class="flex h-11 flex-1 flex-row items-center"
-            *ngIf="lastUrl !== pathCharts && mconfig?.select.length > 0"
+            *ngIf="lastUrl !== pathModels && mconfig?.select.length > 0"
           >
             <div
               *ngIf="!!mconfig && mconfig.warnSelect.length > 0"
@@ -671,7 +671,7 @@
           class="flex h-full flex-1 flex-col"
           *ngIf="
             !(
-              lastUrl !== pathCharts &&
+              lastUrl !== pathModels &&
               lastUrl !== pathChartsList &&
               lastUrl !== pathModelsList
             )
@@ -683,7 +683,7 @@
               *ngIf="
                 lastUrl !== pathChartsList &&
                 lastUrl !== pathModelsList &&
-                lastUrl === pathCharts
+                lastUrl === pathModels
               "
             >
               <div
@@ -705,7 +705,7 @@
         <div
           class="ml-6 flex min-w-[2px] flex-grow flex-col space-y-2"
           *ngIf="
-            lastUrl !== pathCharts &&
+            lastUrl !== pathModels &&
             lastUrl !== pathChartsList &&
             lastUrl !== pathModelsList
           "
