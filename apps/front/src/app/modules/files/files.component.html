@@ -9,9 +9,9 @@
             >{{ pageTitle }}
           </div>
 
-          <div class="flex flex-1 flex-row items-center justify-center">
+          <div class="ml-10 flex flex-1 flex-row items-center justify-between">
             <div
-              class="ml-5 flex cursor-pointer flex-row items-center"
+              class="flex cursor-pointer flex-row items-center"
               tp="Need to Save changes"
               [tpIsEnabled]="needSave === true"
               (click)="setPanel(panelTree)"
@@ -49,7 +49,7 @@
                 >
 
                 <div
-                  class="text-m0 ml-2 flex flex-shrink-0 rounded px-2 py-[1px]"
+                  class="text-m0 ml-2 flex h-7 min-w-7 flex-shrink-0 items-center justify-center rounded px-2 py-[1px]"
                   [ngClass]="{
                     'bg-m500': panel === panelChangesToCommit,
                     'bg-m600':
@@ -111,12 +111,7 @@
                 >
 
                 <div
-                  *ngIf="
-                    repo?.changesToCommit?.length === 0 &&
-                    (repo.repoStatus !== repoStatusNeedPush ||
-                      repo?.changesToPush?.length > 0)
-                  "
-                  class="text-m0 ml-2 flex flex-shrink-0 rounded px-2 py-[1px]"
+                  class="text-m0 ml-2 flex h-7 min-w-7 flex-shrink-0 items-center rounded px-2 py-[1px]"
                   [ngClass]="{
                     'bg-m500': panel === panelChangesToPush,
                     'bg-m600':
@@ -126,8 +121,17 @@
                       panel !== panelChangesToPush &&
                       !(repo?.changesToPush?.length > 0)
                   }"
-                  >{{ repo?.changesToPush?.length }}</div
                 >
+                  <div
+                    *ngIf="
+                      repo?.changesToCommit?.length === 0 &&
+                      (repo?.changesToPush?.length > 0 ||
+                        repo.repoStatus !== repoStatusNeedPush)
+                    "
+                  >
+                    {{ repo?.changesToPush?.length }}
+                  </div>
+                </div>
               </button>
             </div>
           </div>
@@ -139,7 +143,7 @@
               nav?.isRepoProd === true ||
               needSave === true
             "
-            class="ml-5 flex-shrink-0"
+            class="ml-10 flex-shrink-0"
           >
             <button
               type="button"
