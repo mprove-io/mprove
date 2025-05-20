@@ -445,97 +445,103 @@
                       invisible: isInitialScrollCompleted === false
                     }"
                   >
-                    <div
-                      *ngFor="let d of filteredDashboards; let i = index"
-                      [attr.dashboardId]="d.dashboardId"
+                    <ng-scrollbar
+                      [orientation]="'vertical'"
+                      [visibility]="'hover'"
                     >
                       <div
-                        *ngIf="filteredDraftsLength > 0 && i === 0"
-                        class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
+                        *ngFor="let d of filteredDashboards; let i = index"
+                        [attr.dashboardId]="d.dashboardId"
                       >
-                        Drafts
-                      </div>
-
-                      <div
-                        *ngIf="i === filteredDraftsLength"
-                        class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
-                      >
-                        Saved Dashboards
-                      </div>
-
-                      <div
-                        class="hover:bg-m50 group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
-                        (click)="navToDashboard(d.dashboardId)"
-                        [ngClass]="{
-                          'mt-4': i === 0,
-                          'mb-5': i === filteredDashboards.length - 1
-                        }"
-                      >
-                        <div class="ml-4 mr-3 flex h-2 items-center">
-                          <div
-                            *ngIf="d.dashboardId === dashboard?.dashboardId"
-                            data-cy="dashboardsSelectedSymbol"
-                            class="bg-m600 text-m0 h-9 w-[6px] focus:outline-none"
-                          ></div>
-
-                          <div
-                            *ngIf="d.dashboardId !== dashboard?.dashboardId"
-                            class="h-9 w-[6px]"
-                          ></div>
+                        <div
+                          *ngIf="filteredDraftsLength > 0 && i === 0"
+                          class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
+                        >
+                          Drafts
                         </div>
 
                         <div
-                          class="ml-1 truncate"
+                          *ngIf="i === filteredDraftsLength"
+                          class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
+                        >
+                          Saved Dashboards
+                        </div>
+
+                        <div
+                          class="hover:bg-m50 group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
+                          (click)="navToDashboard(d.dashboardId)"
                           [ngClass]="{
-                            'text-m600 font-semibold':
-                              d.dashboardId === dashboard?.dashboardId,
-                            'text-s1': d.dashboardId !== dashboard?.dashboardId
+                            'mt-4': i === 0,
+                            'mb-5': i === filteredDashboards.length - 1
                           }"
                         >
-                          {{ d.title | capitalize }}
-                        </div>
+                          <div class="ml-4 mr-3 flex h-2 items-center">
+                            <div
+                              *ngIf="d.dashboardId === dashboard?.dashboardId"
+                              data-cy="dashboardsSelectedSymbol"
+                              class="bg-m600 text-m0 h-9 w-[6px] focus:outline-none"
+                            ></div>
 
-                        <div class="flex flex-grow"></div>
-
-                        <button
-                          *ngIf="
-                            dashboard?.draft === true &&
-                            d.dashboardId === dashboard?.dashboardId
-                          "
-                          data-cy="dashboardsSaveDraftButton"
-                          class="ml-3 flex h-11 items-center justify-center rounded focus:outline-none"
-                          (click)="dashboardSaveAs($event)"
-                        >
-                          <div
-                            class="hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded px-2"
-                          >
-                            <m-save-icon class="text-s500"></m-save-icon>
+                            <div
+                              *ngIf="d.dashboardId !== dashboard?.dashboardId"
+                              class="h-9 w-[6px]"
+                            ></div>
                           </div>
-                        </button>
 
-                        <button
-                          *ngIf="
-                            dashboard?.draft === true &&
-                            d.dashboardId === dashboard?.dashboardId
-                          "
-                          data-cy="dashboardsDeleteDraftButton"
-                          class="hover:bg-m200 text-s500 ml-3 flex h-9 flex-shrink-0 items-center justify-center rounded px-2 focus:outline-none"
-                          (click)="deleteDraftDashboard($event, d)"
-                        >
-                          <m-trash-icon></m-trash-icon>
-                        </button>
+                          <div
+                            class="ml-1 truncate"
+                            [ngClass]="{
+                              'text-m600 font-semibold':
+                                d.dashboardId === dashboard?.dashboardId,
+                              'text-s1':
+                                d.dashboardId !== dashboard?.dashboardId
+                            }"
+                          >
+                            {{ d.title | capitalize }}
+                          </div>
 
-                        <div
-                          *ngIf="d.draft === false"
-                          class="invisible ml-2 flex group-hover:visible"
-                        >
-                          <m-dashboard-options
-                            [dashboard]="d"
-                            [isHoverM]="false"
-                          ></m-dashboard-options>
+                          <div class="flex flex-grow"></div>
+
+                          <button
+                            *ngIf="
+                              dashboard?.draft === true &&
+                              d.dashboardId === dashboard?.dashboardId
+                            "
+                            data-cy="dashboardsSaveDraftButton"
+                            class="ml-3 flex h-11 items-center justify-center rounded focus:outline-none"
+                            (click)="dashboardSaveAs($event)"
+                          >
+                            <div
+                              class="hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded px-2"
+                            >
+                              <m-save-icon class="text-s500"></m-save-icon>
+                            </div>
+                          </button>
+
+                          <button
+                            *ngIf="
+                              dashboard?.draft === true &&
+                              d.dashboardId === dashboard?.dashboardId
+                            "
+                            data-cy="dashboardsDeleteDraftButton"
+                            class="hover:bg-m200 text-s500 ml-3 flex h-9 flex-shrink-0 items-center justify-center rounded px-2 focus:outline-none"
+                            (click)="deleteDraftDashboard($event, d)"
+                          >
+                            <m-trash-icon></m-trash-icon>
+                          </button>
+
+                          <div
+                            *ngIf="d.draft === false"
+                            class="invisible ml-2 flex group-hover:visible"
+                          >
+                            <m-dashboard-options
+                              [dashboard]="d"
+                              [isHoverM]="false"
+                            ></m-dashboard-options>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </ng-scrollbar>
                   </div>
 
                   <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">

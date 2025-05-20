@@ -14922,6 +14922,13 @@ ngx-pagination@6.0.3:
   dependencies:
     tslib "^2.3.0"
 
+ngx-scrollbar@18.0.0:
+  version "18.0.0"
+  resolved "https://registry.yarnpkg.com/ngx-scrollbar/-/ngx-scrollbar-18.0.0.tgz#dbf9c300b9e33ee55d631e474d436afe2db8cf46"
+  integrity sha512-+ykmY491x+nzXvnecJvZHvDz0YWuX1r7SYMxNG4RVHXm5Z68P/8kd/3ryLD6DXdNWmJawd4NGvqq2ZkUKb/g3A==
+  dependencies:
+    tslib "^2.3.0"
+
 ngx-spinner@19.0.0:
   version "19.0.0"
   resolved "https://registry.yarnpkg.com/ngx-spinner/-/ngx-spinner-19.0.0.tgz#88b4f7b7751198bc91fdd7b3503d664226f7435b"

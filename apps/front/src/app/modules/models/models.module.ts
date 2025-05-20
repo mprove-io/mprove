@@ -7,6 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyDirective } from '@ngneat/helipopper';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
@@ -50,7 +51,8 @@ import { QueryOptionsComponent } from './query-options/query-options.component';
     NgxSpinnerModule,
     TippyDirective,
     ScrollingModule,
-    CodeEditor
+    CodeEditor,
+    NgScrollbarModule
   ]
 })
 export class ModelsModule {}

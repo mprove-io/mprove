@@ -7,6 +7,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyDirective } from '@ngneat/helipopper';
 import { AgGridModule } from 'ag-grid-angular';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
@@ -63,7 +64,8 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     UiSwitchModule,
     NgxSpinnerModule,
     TippyDirective,
-    AgGridModule
+    AgGridModule,
+    NgScrollbarModule
   ]
 })
 export class ReportsModule {}

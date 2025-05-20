@@ -464,99 +464,104 @@
                       invisible: isInitialScrollCompleted === false
                     }"
                   >
-                    <div
-                      *ngFor="let r of filteredReports; let i = index"
-                      [attr.reportId]="r.reportId"
+                    <ng-scrollbar
+                      [orientation]="'vertical'"
+                      [visibility]="'hover'"
                     >
                       <div
-                        *ngIf="filteredDraftsLength > 0 && i === 0"
-                        class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
+                        *ngFor="let r of filteredReports; let i = index"
+                        [attr.reportId]="r.reportId"
                       >
-                        Drafts
-                      </div>
-
-                      <div
-                        *ngIf="i === filteredDraftsLength"
-                        class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
-                      >
-                        Saved Reports
-                      </div>
-
-                      <div
-                        class="hover:bg-m50 group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
-                        (click)="navToReport(r)"
-                        [ngClass]="{
-                          'mt-4': i === 0,
-                          'mb-5': i === filteredReports.length - 1
-                        }"
-                      >
-                        <div class="ml-4 mr-3 flex h-2 items-center">
-                          <div
-                            *ngIf="r.reportId === report?.reportId"
-                            data-cy="reportsSelectedSymbol"
-                            class="bg-m600 text-m0 h-9 w-[6px] focus:outline-none"
-                          ></div>
-
-                          <div
-                            *ngIf="r.reportId !== report?.reportId"
-                            class="h-9 w-[6px]"
-                          ></div>
+                        <div
+                          *ngIf="filteredDraftsLength > 0 && i === 0"
+                          class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
+                        >
+                          Drafts
                         </div>
 
                         <div
-                          class="ml-1 truncate"
+                          *ngIf="i === filteredDraftsLength"
+                          class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
+                        >
+                          Saved Reports
+                        </div>
+
+                        <div
+                          class="hover:bg-m50 group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
+                          (click)="navToReport(r)"
                           [ngClass]="{
-                            'text-m600 font-semibold':
-                              r.reportId === report.reportId,
-                            'text-s1': r.reportId !== report.reportId
+                            'mt-4': i === 0,
+                            'mb-5': i === filteredReports.length - 1
                           }"
                         >
-                          {{ r.title | capitalize }}
-                        </div>
+                          <div class="ml-4 mr-3 flex h-2 items-center">
+                            <div
+                              *ngIf="r.reportId === report?.reportId"
+                              data-cy="reportsSelectedSymbol"
+                              class="bg-m600 text-m0 h-9 w-[6px] focus:outline-none"
+                            ></div>
 
-                        <div class="flex flex-grow"></div>
-
-                        <button
-                          *ngIf="
-                            report.draft === true &&
-                            r.reportId === report.reportId
-                          "
-                          data-cy="reportsSaveDraftButton"
-                          class="ml-3 flex h-11 items-center justify-center rounded focus:outline-none"
-                          (click)="reportSaveAs($event)"
-                        >
-                          <div
-                            class="hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded px-2"
-                          >
-                            <m-save-icon class="text-s500"></m-save-icon>
+                            <div
+                              *ngIf="r.reportId !== report?.reportId"
+                              class="h-9 w-[6px]"
+                            ></div>
                           </div>
-                        </button>
 
-                        <button
-                          *ngIf="
-                            report.draft === true &&
-                            r.reportId === report.reportId
-                          "
-                          data-cy="reportsDeleteDraftButton"
-                          class="hover:bg-m200 text-s500 ml-3 flex h-9 flex-shrink-0 items-center justify-center rounded px-2 focus:outline-none"
-                          (click)="deleteDraftReport($event, r)"
-                        >
-                          <m-trash-icon></m-trash-icon>
-                        </button>
+                          <div
+                            class="ml-1 truncate"
+                            [ngClass]="{
+                              'text-m600 font-semibold':
+                                r.reportId === report.reportId,
+                              'text-s1': r.reportId !== report.reportId
+                            }"
+                          >
+                            {{ r.title | capitalize }}
+                          </div>
 
-                        <div
-                          *ngIf="
-                            r.draft === false && r.reportId !== emptyReportId
-                          "
-                          class="invisible ml-2 flex group-hover:visible"
-                        >
-                          <m-report-options
-                            [report]="r"
-                            [isHoverM]="false"
-                          ></m-report-options>
+                          <div class="flex flex-grow"></div>
+
+                          <button
+                            *ngIf="
+                              report.draft === true &&
+                              r.reportId === report.reportId
+                            "
+                            data-cy="reportsSaveDraftButton"
+                            class="ml-3 flex h-11 items-center justify-center rounded focus:outline-none"
+                            (click)="reportSaveAs($event)"
+                          >
+                            <div
+                              class="hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded px-2"
+                            >
+                              <m-save-icon class="text-s500"></m-save-icon>
+                            </div>
+                          </button>
+
+                          <button
+                            *ngIf="
+                              report.draft === true &&
+                              r.reportId === report.reportId
+                            "
+                            data-cy="reportsDeleteDraftButton"
+                            class="hover:bg-m200 text-s500 ml-3 flex h-9 flex-shrink-0 items-center justify-center rounded px-2 focus:outline-none"
+                            (click)="deleteDraftReport($event, r)"
+                          >
+                            <m-trash-icon></m-trash-icon>
+                          </button>
+
+                          <div
+                            *ngIf="
+                              r.draft === false && r.reportId !== emptyReportId
+                            "
+                            class="invisible ml-2 flex group-hover:visible"
+                          >
+                            <m-report-options
+                              [report]="r"
+                              [isHoverM]="false"
+                            ></m-report-options>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </ng-scrollbar>
                   </div>
                 </div>
 

@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { KtdGridModule } from '@katoid/angular-grid-layout';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyDirective } from '@ngneat/helipopper';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
@@ -34,7 +35,8 @@ import { DashboardsComponent } from './dashboards.component';
     NgxSpinnerModule,
     TippyDirective,
     NgSelectModule,
-    KtdGridModule
+    KtdGridModule,
+    NgScrollbarModule
   ]
 })
 export class DashboardsModule {}

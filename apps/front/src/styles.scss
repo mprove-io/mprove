@@ -12,6 +12,13 @@ body {
   font-feature-settings: 'tnum';
 }
 
+ng-scrollbar {
+  --scrollbar-thickness: 15;
+  --scrollbar-hover-opacity-transition-enter-duration: 200ms;
+  --scrollbar-hover-opacity-transition-leave-duration: 500ms;
+  --scrollbar-hover-opacity-transition-leave-delay: 0ms;
+}
+
 // @import '~ngx-ui-switch/ui-switch.component.scss';
 
 .switch:focus {
