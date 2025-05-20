@@ -1,19 +1,8 @@
-<!-- <div
-  [ngClass]="{
-    'overflow-y-auto': panel !== panelTree
-  }"
-></div> -->
-
 <div
+  *ngIf="panel === panelTree"
   class="bg-m0 flex w-full flex-grow rounded shadow"
-  [ngClass]="{
-    'overflow-y-auto': panel !== panelTree
-  }"
 >
-  <div
-    class="text-s1 mt-6 flex w-full flex-col text-base"
-    *ngIf="panel === panelTree"
-  >
+  <div class="text-s1 mt-6 flex w-full flex-col text-base">
     <div class="flex flex-1 flex-col">
       <div class="mb-6 flex h-11 flex-row items-center">
         <m-search-icon class="text-s1 ml-6"></m-search-icon>
@@ -49,15 +38,15 @@
       </div>
 
       <div
-        class="flex h-2 w-full grow flex-col overflow-y-auto"
+        class="flex h-2 w-full flex-grow flex-col overflow-y-auto"
         *ngIf="panel === panelTree"
       >
         <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
           <div class="mt-2 h-full w-full">
-            <div *ngIf="!!word">
+            <div *ngIf="!!word" class="ml-6 mr-5">
               <div
                 *ngFor="let fileItem of filteredFileItems"
-                class="hover:bg-m50 group flex flex-row items-center rounded px-7 py-2 hover:cursor-pointer"
+                class="hover:bg-m50 group flex flex-row items-center rounded py-2 pl-3 pr-3 hover:cursor-pointer"
                 (click)="fileItemOnClick(fileItem.fileId)"
               >
                 <div class="flex flex-col">
@@ -240,139 +229,160 @@
       </div>
     </div>
   </div>
-
-  <div
-    class="mt-4 h-2 w-full"
-    *ngIf="panel === panelChangesToCommit && repo?.changesToCommit?.length > 0"
-  >
-    <div
-      *ngIf="repo.changesToCommit.length > 0"
-      class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
-    >
-      Changes To Commit
-    </div>
-
-    <div
-      *ngFor="let change of repo.changesToCommit"
-      class="hover:bg-m50 ml-6 mr-5 flex flex-row items-center rounded py-2 pl-3 pr-6 hover:cursor-pointer"
-      (click)="changeToCommitOnClick(change.fileId)"
-    >
-      <div class="flex flex-col">
-        <div
-          class="truncate text-base"
-          [ngClass]="{
-            'text-m600 font-semibold': fileId === change.fileId,
-            'text-s1': fileId !== change.fileId
-          }"
-        >
-          {{ change.fileName }}
-        </div>
-
-        <div
-          class="truncate text-base"
-          [ngClass]="{
-            'text-m600': fileId === change.fileId,
-            'text-s400': fileId !== change.fileId
-          }"
-        >
-          {{ change.parentPath }}
-        </div>
-      </div>
-
-      <div class="flex-grow"></div>
-
-      <div class="text-s400 ml-3 flex-shrink-0 text-base">
-        {{ change.status }}
-      </div>
-    </div>
-  </div>
-
-  <div
-    class="mt-4 h-2 w-full"
-    *ngIf="panel === panelChangesToPush && repo?.changesToPush?.length > 0"
-  >
-    <div
-      *ngIf="repo.changesToPush.length > 0"
-      class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
-    >
-      Changes To Push
-    </div>
-
-    <div
-      *ngFor="let change of repo.changesToPush"
-      class="hover:bg-m50 ml-6 mr-5 flex flex-row items-center rounded py-2 pl-3 pr-6 hover:cursor-pointer"
-      (click)="changeToPushOnClick(change.fileId)"
-    >
-      <div class="flex flex-col">
-        <div
-          class="truncate text-base"
-          [ngClass]="{
-            'text-m600 font-semibold': fileId === change.fileId,
-            'text-s1': fileId !== change.fileId
-          }"
-        >
-          {{ change.fileName }}
-        </div>
-
-        <div
-          class="truncate text-base"
-          [ngClass]="{
-            'text-m600': fileId === change.fileId,
-            'text-s400': fileId !== change.fileId
-          }"
-        >
-          {{ change.parentPath }}
-        </div>
-      </div>
-
-      <div class="flex-grow"></div>
-
-      <div class="text-s400 ml-3 flex-shrink-0 text-base">
-        {{ change.status }}
-      </div>
-    </div>
-  </div>
-
-  <div
-    *ngIf="
-      panel === panelChangesToCommit && repo?.changesToCommit?.length === 0
-    "
-    class="flex h-full w-full flex-col items-center justify-center"
-  >
-    <m-completed-ring></m-completed-ring>
-    <div class="mt-4 text-xl"> No changes to Commit</div>
-  </div>
-
-  <div
-    *ngIf="
-      panel === panelChangesToPush &&
-      repo?.changesToPush?.length === 0 &&
-      repo.repoStatus !== repoStatusNeedPush
-    "
-    class="flex h-full w-full flex-col items-center justify-center"
-  >
-    <m-completed-ring></m-completed-ring>
-    <div class="mt-4 text-xl"> No changes to Push</div>
-  </div>
-
-  <div
-    *ngIf="
-      panel === panelChangesToPush &&
-      repo?.changesToPush?.length === 0 &&
-      repo.repoStatus === repoStatusNeedPush
-    "
-    class="flex h-full w-full flex-col items-center justify-center"
-  >
-    <div class="text-a500">
-      <m-alert-ring></m-alert-ring>
-    </div>
-    <div class="mt-4 text-xl"> Push branch to Remote</div>
-  </div>
-
-  <div *ngIf="struct$ | async"></div>
-  <div *ngIf="repo$ | async"></div>
-  <div *ngIf="nav$ | async"></div>
-  <div *ngIf="needSave$ | async"></div>
-  <div *ngIf="secondFileNodeId$ | async"></div>
-  <div *ngIf="file$ | async"></div>
 </div>
+
+<div
+  *ngIf="panel !== panelTree"
+  class="bg-m0 flex h-full w-full flex-grow rounded shadow"
+>
+  <div class="flex h-full w-full flex-col">
+    <div class="flex h-full flex-1 flex-col">
+      <div class="flex h-full w-full flex-grow flex-col overflow-y-auto">
+        <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
+          <div
+            class="mt-4 h-full w-full"
+            *ngIf="
+              panel === panelChangesToCommit &&
+              repo?.changesToCommit?.length > 0
+            "
+          >
+            <div
+              *ngIf="repo.changesToCommit.length > 0"
+              class="text-s500 mb-4 ml-6 mt-6 flex flex-row justify-start font-semibold"
+            >
+              Changes To Commit
+            </div>
+
+            <div
+              *ngFor="let change of repo.changesToCommit"
+              class="hover:bg-m50 ml-6 mr-5 flex flex-row items-center rounded py-2 pl-3 pr-6 hover:cursor-pointer"
+              (click)="changeToCommitOnClick(change.fileId)"
+            >
+              <div class="flex flex-col">
+                <div
+                  class="truncate text-base"
+                  [ngClass]="{
+                    'text-m600 font-semibold': fileId === change.fileId,
+                    'text-s1': fileId !== change.fileId
+                  }"
+                >
+                  {{ change.fileName }}
+                </div>
+
+                <div
+                  class="truncate text-base"
+                  [ngClass]="{
+                    'text-m600': fileId === change.fileId,
+                    'text-s400': fileId !== change.fileId
+                  }"
+                >
+                  {{ change.parentPath }}
+                </div>
+              </div>
+
+              <div class="flex-grow"></div>
+
+              <div class="text-s400 ml-3 flex-shrink-0 text-base">
+                {{ change.status }}
+              </div>
+            </div>
+          </div>
+        </ng-scrollbar>
+
+        <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
+          <div
+            class="mt-4 h-full w-full"
+            *ngIf="
+              panel === panelChangesToPush && repo?.changesToPush?.length > 0
+            "
+          >
+            <div
+              *ngIf="repo.changesToPush.length > 0"
+              class="text-s500 mb-4 ml-6 mt-6 flex flex-row justify-start font-semibold"
+            >
+              Changes To Push
+            </div>
+
+            <div
+              *ngFor="let change of repo.changesToPush"
+              class="hover:bg-m50 ml-6 mr-5 flex flex-row items-center rounded py-2 pl-3 pr-6 hover:cursor-pointer"
+              (click)="changeToPushOnClick(change.fileId)"
+            >
+              <div class="flex w-full flex-col">
+                <div
+                  class="truncate text-base"
+                  [ngClass]="{
+                    'text-m600 font-semibold': fileId === change.fileId,
+                    'text-s1': fileId !== change.fileId
+                  }"
+                >
+                  {{ change.fileName }}
+                </div>
+
+                <div
+                  class="truncate text-base"
+                  [ngClass]="{
+                    'text-m600': fileId === change.fileId,
+                    'text-s400': fileId !== change.fileId
+                  }"
+                >
+                  {{ change.parentPath }}
+                </div>
+              </div>
+
+              <div class="flex-grow"></div>
+
+              <div class="text-s400 ml-3 flex-shrink-0 text-base">
+                {{ change.status }}
+              </div>
+            </div>
+          </div>
+        </ng-scrollbar>
+
+        <div
+          *ngIf="
+            panel === panelChangesToCommit &&
+            repo?.changesToCommit?.length === 0
+          "
+          class="flex h-full w-full flex-col items-center justify-center"
+        >
+          <m-completed-ring></m-completed-ring>
+          <div class="mt-4 text-xl"> No changes to Commit</div>
+        </div>
+
+        <div
+          *ngIf="
+            panel === panelChangesToPush &&
+            repo?.changesToPush?.length === 0 &&
+            repo.repoStatus !== repoStatusNeedPush
+          "
+          class="flex h-full w-full flex-col items-center justify-center"
+        >
+          <m-completed-ring></m-completed-ring>
+          <div class="mt-4 text-xl"> No changes to Push</div>
+        </div>
+
+        <div
+          *ngIf="
+            panel === panelChangesToPush &&
+            repo?.changesToPush?.length === 0 &&
+            repo.repoStatus === repoStatusNeedPush
+          "
+          class="flex h-full w-full flex-col items-center justify-center"
+        >
+          <div class="text-a500">
+            <m-alert-ring></m-alert-ring>
+          </div>
+          <div class="mt-4 text-xl"> Push branch to Remote</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="struct$ | async"></div>
+<div *ngIf="repo$ | async"></div>
+<div *ngIf="nav$ | async"></div>
+<div *ngIf="needSave$ | async"></div>
+<div *ngIf="secondFileNodeId$ | async"></div>
+<div *ngIf="file$ | async"></div>
