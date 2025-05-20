@@ -1,192 +1,194 @@
 <div class="flex w-full flex-col">
-  <div class="flex flex-grow flex-col overflow-y-auto">
-    <tree-root
-      *ngIf="nodesExtra?.length > 0"
-      class="mt-3 h-2 w-full"
-      #itemsTree
-      [nodes]="nodesExtra"
-      [options]="treeOptions"
-      (initialized)="treeOnInitialized()"
-      (updateData)="treeOnUpdateData()"
-    >
-      <ng-template #treeNodeTemplate let-node="node" let-index="index">
-        <div
-          class="group-bar flex h-11 w-full flex-row"
-          [ngClass]="{
-            'pl-6 pr-5':
-              node.data.nodeClass === nodeClassDimension ||
-              node.data.nodeClass === nodeClassMeasure ||
-              node.data.nodeClass === nodeClassCalculation ||
-              node.data.nodeClass === nodeClassFilter
-          }"
-          tp="A required field cannot be deselected"
-          [tpIsEnabled]="
-            node.data.required === true &&
-            node.data.isSelected === true &&
-            [
-              nodeClassDimension,
-              nodeClassMeasure,
-              nodeClassCalculation
-            ].indexOf(node.data.nodeClass) > -1
-          "
-        >
+  <div class="flex h-2 flex-grow flex-col overflow-y-auto">
+    <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
+      <tree-root
+        *ngIf="nodesExtra?.length > 0"
+        class="mt-3 h-2 w-full"
+        #itemsTree
+        [nodes]="nodesExtra"
+        [options]="treeOptions"
+        (initialized)="treeOnInitialized()"
+        (updateData)="treeOnUpdateData()"
+      >
+        <ng-template #treeNodeTemplate let-node="node" let-index="index">
           <div
-            data-cy="modelTreeItem"
-            class="bg-m0 flex w-full select-none flex-row pr-5"
+            class="group-bar flex h-11 w-full flex-row"
             [ngClass]="{
-              'pl-6': !node.data.isField,
-              'cursor-pointer':
-                (!node.data.isField && node.hasChildren) ||
-                (node.data.required === false &&
+              'pl-6 pr-5':
+                node.data.nodeClass === nodeClassDimension ||
+                node.data.nodeClass === nodeClassMeasure ||
+                node.data.nodeClass === nodeClassCalculation ||
+                node.data.nodeClass === nodeClassFilter
+            }"
+            tp="A required field cannot be deselected"
+            [tpIsEnabled]="
+              node.data.required === true &&
+              node.data.isSelected === true &&
+              [
+                nodeClassDimension,
+                nodeClassMeasure,
+                nodeClassCalculation
+              ].indexOf(node.data.nodeClass) > -1
+            "
+          >
+            <div
+              data-cy="modelTreeItem"
+              class="bg-m0 flex w-full select-none flex-row pr-5"
+              [ngClass]="{
+                'pl-6': !node.data.isField,
+                'cursor-pointer':
+                  (!node.data.isField && node.hasChildren) ||
+                  (node.data.required === false &&
+                    [
+                      nodeClassDimension,
+                      nodeClassMeasure,
+                      nodeClassCalculation
+                    ].indexOf(node.data.nodeClass) > -1),
+                'hover:bg-m50':
+                  node.data.required === false &&
                   [
                     nodeClassDimension,
                     nodeClassMeasure,
                     nodeClassCalculation
-                  ].indexOf(node.data.nodeClass) > -1),
-              'hover:bg-m50':
-                node.data.required === false &&
-                [
-                  nodeClassDimension,
-                  nodeClassMeasure,
-                  nodeClassCalculation
-                ].indexOf(node.data.nodeClass) > -1
-            }"
-            (click)="nodeOnClick(node)"
-          >
-            <div class="relative flex w-full flex-row items-center">
-              <div class="flex min-w-[2px] flex-row items-center">
-                <div
-                  *ngIf="
-                    !node.data.isField && node.data.nodeClass !== nodeClassInfo
-                  "
-                  class="flex flex-row items-center space-x-1"
-                >
+                  ].indexOf(node.data.nodeClass) > -1
+              }"
+              (click)="nodeOnClick(node)"
+            >
+              <div class="relative flex w-full flex-row items-center">
+                <div class="flex min-w-[2px] flex-row items-center">
                   <div
-                    class="flex items-center"
+                    *ngIf="
+                      !node.data.isField &&
+                      node.data.nodeClass !== nodeClassInfo
+                    "
+                    class="flex flex-row items-center space-x-1"
+                  >
+                    <div
+                      class="flex items-center"
+                      [ngClass]="{
+                        'ml-3':
+                          node.data.nodeClass === nodeClassDimension &&
+                          node.data.isField === false
+                      }"
+                    >
+                      <m-chevron-right-icon
+                        *ngIf="!node.isExpanded && node.hasChildren"
+                      ></m-chevron-right-icon>
+
+                      <m-chevron-down-icon
+                        *ngIf="node.isExpanded && node.hasChildren"
+                      ></m-chevron-down-icon>
+                    </div>
+                  </div>
+
+                  <div
+                    *ngIf="node.data.isField === true"
+                    class="mr-3 flex h-2 items-center"
                     [ngClass]="{
-                      'ml-3':
-                        node.data.nodeClass === nodeClassDimension &&
-                        node.data.isField === false
+                      'ml-[10px]':
+                        !node.hasChildren &&
+                        node.parent?.data.nodeClass !== nodeClassDimension,
+                      'ml-[44px]':
+                        node.parent?.data.nodeClass === nodeClassDimension
                     }"
                   >
-                    <m-chevron-right-icon
-                      *ngIf="!node.isExpanded && node.hasChildren"
-                    ></m-chevron-right-icon>
+                    <div
+                      *ngIf="
+                        node.data.isSelected === true &&
+                        node.data.nodeClass !== nodeClassFilter
+                      "
+                      data-cy="modelTreeSelectedSymbol"
+                      class="h-[10px] w-[10px] rounded-full focus:outline-none"
+                      [ngClass]="{
+                        'bg-m600':
+                          node.data.nodeClass === nodeClassMeasure ||
+                          node.data.nodeClass === nodeClassCalculation ||
+                          node.data.nodeClass === nodeClassDimension
+                      }"
+                    ></div>
 
-                    <m-chevron-down-icon
-                      *ngIf="node.isExpanded && node.hasChildren"
-                    ></m-chevron-down-icon>
+                    <div
+                      *ngIf="
+                        node.data.isSelected === false ||
+                        node.data.nodeClass === nodeClassFilter
+                      "
+                      class="h-[10px] w-[10px]"
+                    ></div>
+                  </div>
+
+                  <div
+                    *ngIf="node.data.isField === true"
+                    class="ml-1 flex h-6 w-6 flex-shrink-0 items-center justify-center"
+                  >
+                    <m-field-result
+                      [fieldClass]="node.data.nodeClass"
+                      [result]="node.data.fieldResult"
+                      [size]="2"
+                    ></m-field-result>
+                  </div>
+
+                  <div
+                    class="text-s1 flex-grow truncate"
+                    [ngClass]="{
+                      'ml-3': node.data.isField === true
+                    }"
+                  >
+                    <span
+                      class="truncate"
+                      *ngIf="node.data.nodeClass === nodeClassInfo"
+                      class="text-s500 font-semibold"
+                    >
+                      {{ node.data.label | uppercase }}
+                    </span>
+
+                    <span
+                      class="truncate text-base"
+                      *ngIf="node.data.nodeClass !== nodeClassInfo"
+                      [ngClass]="{
+                        'ml-3':
+                          (node.hasChildren &&
+                            node.data.nodeClass !== nodeClassDimension &&
+                            (modelTreeLevels === modelTreeLevelsFlatTime ||
+                              modelTreeLevels === modelTreeLevelsFlat)) ||
+                          (node.hasChildren &&
+                            node.data.nodeClass === nodeClassDimension)
+                      }"
+                    >
+                      {{ node.data.joinLabel | capitalize }}
+                    </span>
+
+                    <span
+                      class="truncate text-base font-semibold"
+                      *ngIf="node.data.nodeClass !== nodeClassInfo"
+                    >
+                      {{ node.data.timeLabel | capitalize }}
+                    </span>
+
+                    <span
+                      class="truncate text-base font-semibold"
+                      *ngIf="node.data.nodeClass !== nodeClassInfo"
+                      [ngClass]="{
+                        'font-semibold':
+                          node.data.children.length === 0 ||
+                          node.data.nodeClass === nodeClassDimension,
+                        'ml-3':
+                          node.hasChildren &&
+                          node.data.nodeClass !== nodeClassDimension,
+                        'ml-2':
+                          node.hasChildren &&
+                          node.data.nodeClass === nodeClassDimension &&
+                          modelTreeLevels !== modelTreeLevelsFlat &&
+                          modelTreeLevels !== modelTreeLevelsNested
+                      }"
+                    >
+                      {{ node.data.label | capitalize }}
+                    </span>
                   </div>
                 </div>
 
-                <div
-                  *ngIf="node.data.isField === true"
-                  class="mr-3 flex h-2 items-center"
-                  [ngClass]="{
-                    'ml-[10px]':
-                      !node.hasChildren &&
-                      node.parent?.data.nodeClass !== nodeClassDimension,
-                    'ml-[44px]':
-                      node.parent?.data.nodeClass === nodeClassDimension
-                  }"
-                >
-                  <div
-                    *ngIf="
-                      node.data.isSelected === true &&
-                      node.data.nodeClass !== nodeClassFilter
-                    "
-                    data-cy="modelTreeSelectedSymbol"
-                    class="h-[10px] w-[10px] rounded-full focus:outline-none"
-                    [ngClass]="{
-                      'bg-m600':
-                        node.data.nodeClass === nodeClassMeasure ||
-                        node.data.nodeClass === nodeClassCalculation ||
-                        node.data.nodeClass === nodeClassDimension
-                    }"
-                  ></div>
+                <div class="flex flex-grow"></div>
 
-                  <div
-                    *ngIf="
-                      node.data.isSelected === false ||
-                      node.data.nodeClass === nodeClassFilter
-                    "
-                    class="h-[10px] w-[10px]"
-                  ></div>
-                </div>
-
-                <div
-                  *ngIf="node.data.isField === true"
-                  class="ml-1 flex h-6 w-6 flex-shrink-0 items-center justify-center"
-                >
-                  <m-field-result
-                    [fieldClass]="node.data.nodeClass"
-                    [result]="node.data.fieldResult"
-                    [size]="2"
-                  ></m-field-result>
-                </div>
-
-                <div
-                  class="text-s1 flex-grow truncate"
-                  [ngClass]="{
-                    'ml-3': node.data.isField === true
-                  }"
-                >
-                  <span
-                    class="truncate"
-                    *ngIf="node.data.nodeClass === nodeClassInfo"
-                    class="text-s500 font-semibold"
-                  >
-                    {{ node.data.label | uppercase }}
-                  </span>
-
-                  <span
-                    class="truncate text-base"
-                    *ngIf="node.data.nodeClass !== nodeClassInfo"
-                    [ngClass]="{
-                      'ml-3':
-                        (node.hasChildren &&
-                          node.data.nodeClass !== nodeClassDimension &&
-                          (modelTreeLevels === modelTreeLevelsFlatTime ||
-                            modelTreeLevels === modelTreeLevelsFlat)) ||
-                        (node.hasChildren &&
-                          node.data.nodeClass === nodeClassDimension)
-                    }"
-                  >
-                    {{ node.data.joinLabel | capitalize }}
-                  </span>
-
-                  <span
-                    class="truncate text-base font-semibold"
-                    *ngIf="node.data.nodeClass !== nodeClassInfo"
-                  >
-                    {{ node.data.timeLabel | capitalize }}
-                  </span>
-
-                  <span
-                    class="truncate text-base font-semibold"
-                    *ngIf="node.data.nodeClass !== nodeClassInfo"
-                    [ngClass]="{
-                      'font-semibold':
-                        node.data.children.length === 0 ||
-                        node.data.nodeClass === nodeClassDimension,
-                      'ml-3':
-                        node.hasChildren &&
-                        node.data.nodeClass !== nodeClassDimension,
-                      'ml-2':
-                        node.hasChildren &&
-                        node.data.nodeClass === nodeClassDimension &&
-                        modelTreeLevels !== modelTreeLevelsFlat &&
-                        modelTreeLevels !== modelTreeLevelsNested
-                    }"
-                  >
-                    {{ node.data.label | capitalize }}
-                  </span>
-                </div>
-              </div>
-
-              <div class="flex flex-grow"></div>
-
-              <!-- <div
+                <!-- <div
                 class="ml-3 flex flex-row items-center"
                 tp="A required filter cannot be removed"
                 [tpIsEnabled]="
@@ -229,17 +231,18 @@
                 </button>
               </div> -->
 
-              <div
-                *ngIf="node.data.isField === true"
-                class="invisible ml-3 flex [.group-bar:hover_&]:visible"
-              >
-                <m-field-options [node]="node"></m-field-options>
+                <div
+                  *ngIf="node.data.isField === true"
+                  class="invisible ml-3 flex [.group-bar:hover_&]:visible"
+                >
+                  <m-field-options [node]="node"></m-field-options>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </ng-template>
-    </tree-root>
+        </ng-template>
+      </tree-root>
+    </ng-scrollbar>
   </div>
 </div>
 
