@@ -66,7 +66,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   filtersIsExpanded = false;
 
-  isShow = true;
+  isShow = false;
+
+  TIMEOUT_MS = 0; // set >200 to fix right scroll padding, but add delay
 
   showDashboardsLeftPanel = true;
   showDashboardsLeftPanel$ = this.uiQuery.showDashboardsLeftPanel$.pipe(
@@ -75,11 +77,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.showDashboardsLeftPanel = x;
 
         this.isShow = false;
+        this.cd.detectChanges();
 
-        setTimeout(() => {
-          this.isShow = true;
-          this.preventHorizontalScrollWorkaround();
-        });
+        this.resetLayout({ setShowTrue: true });
       }
     })
   );
@@ -125,10 +125,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           }
       );
 
-      if (this.prevDashboardId !== this.dashboard.dashboardId) {
-        this.preventHorizontalScrollWorkaround();
-        this.prevDashboardId = this.dashboard.dashboardId;
+      if (
+        common.isDefined(this.dashboard.dashboardId) &&
+        common.isDefined(this.prevDashboardId) &&
+        this.prevDashboardId !== this.dashboard.dashboardId
+      ) {
+        this.isShow = false;
+        this.resetLayout({ setShowTrue: true, timeoutMs: this.TIMEOUT_MS });
       }
+
+      this.prevDashboardId = this.dashboard.dashboardId;
 
       this.cd.detectChanges();
     })
@@ -181,15 +187,22 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       fromEvent(window, 'orientationchange')
     )
       .pipe(debounceTime(500))
-      .subscribe(() => this.preventHorizontalScrollWorkaround());
+      .subscribe(() => this.resetLayout());
 
-    this.preventHorizontalScrollWorkaround();
+    this.resetLayout({ setShowTrue: true, timeoutMs: this.TIMEOUT_MS });
   }
 
-  preventHorizontalScrollWorkaround() {
+  resetLayout(item?: { setShowTrue?: boolean; timeoutMs?: number }) {
+    // layout workaround - prevents right padding on layout / horizontal scroll
     setTimeout(() => {
       this.layout = [...this.layout];
-    });
+
+      if (common.isDefined(item?.setShowTrue)) {
+        this.isShow = true;
+      }
+
+      this.cd.detectChanges();
+    }, item?.timeoutMs || 0);
   }
 
   ngAfterViewInit() {

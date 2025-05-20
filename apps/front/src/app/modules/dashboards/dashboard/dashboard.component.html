@@ -78,86 +78,106 @@
         </div>
       </div>
 
-      <div class="flex min-w-[2px] flex-grow flex-col">
+      <div
+        class="flex min-w-[2px] flex-grow flex-col"
+        [ngClass]="{
+          'pl-5': showDashboardsLeftPanel === true
+        }"
+      >
         <div
           #scrollable
-          class="mt-1 flex h-2 flex-grow flex-row overflow-auto pt-6"
-          [ngClass]="{
-            'pl-5': showDashboardsLeftPanel === true
-          }"
+          class="mt-1 flex h-2 w-full flex-grow flex-col overflow-auto"
         >
-          <ktd-grid
-            class="w-full"
-            *ngIf="isShow === true && dashboard.tiles"
-            [compactType]="compactType"
-            [preventCollision]="preventCollision"
-            [cols]="cols"
-            [rowHeight]="rowHeight"
-            [layout]="layout"
-            [scrollableParent]="scrollable"
-            [scrollSpeed]="scrollSpeed"
-            (layoutUpdated)="onLayoutUpdated($event)"
-            (resizeEnded)="onResizeEnded($event)"
-            (dragStarted)="onDragStarted($event)"
-            (dragEnded)="onDragEnded($event)"
-          >
-            <ktd-grid-item
-              class="group"
-              [transition]="null"
-              *ngFor="let item of layout; let i = index; trackBy: trackByFn"
-              [id]="item.id"
-            >
-              <div
-                ktdGridDragHandle
-                class="drag-handle text-s500 invisible flex h-6 w-6 flex-shrink-0 items-center justify-center group-hover:visible"
-              >
-                <m-drag-icon></m-drag-icon>
-              </div>
+          <ng-scrollbar [orientation]="'auto'" [visibility]="'hover'">
+            <div class="mb-[100px] mt-5 pr-0">
+              <!-- <ktd-grid
+                [ngClass]="{
+                  invisible: isShow === false
+                }"
+              ></ktd-grid> -->
 
-              <div class="h-full w-full pb-6 pr-5">
-                <m-dashboard-tile-chart
-                  #chartRep
-                  [title]="item.tile.title"
-                  [tile]="item.tile"
-                  [deleteFilterFn]="deleteFilterFnBindThis"
-                  [dashboard]="dashboard"
-                  [randomId]="randomId"
-                  [mconfig]="item.tile.mconfig"
-                  [query]="item.tile.query"
-                  [showTileParameters]="showTileParameters"
-                ></m-dashboard-tile-chart>
-              </div>
+              <!-- <m-dashboard-tile-chart
+                *ngIf="isShow === true"
+              ></m-dashboard-tile-chart> -->
 
-              <button
-                class="delete-handle hover:bg-m200 text-s500 invisible flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
-                (click)="deleteTile(i)"
+              <ktd-grid
+                [ngClass]="{
+                  invisible: isShow === false
+                }"
+                *ngIf="!!dashboard.tiles"
+                [compactType]="compactType"
+                [preventCollision]="preventCollision"
+                [cols]="cols"
+                [rowHeight]="rowHeight"
+                [layout]="layout"
+                [scrollableParent]="scrollable"
+                [scrollSpeed]="scrollSpeed"
+                (layoutUpdated)="onLayoutUpdated($event)"
+                (resizeEnded)="onResizeEnded($event)"
+                (dragStarted)="onDragStarted($event)"
+                (dragEnded)="onDragEnded($event)"
               >
-                <m-trash-icon></m-trash-icon>
-              </button>
+                <ktd-grid-item
+                  class="group"
+                  [transition]="null"
+                  *ngFor="let item of layout; let i = index; trackBy: trackByFn"
+                  [id]="item.id"
+                >
+                  <div
+                    ktdGridDragHandle
+                    class="drag-handle text-s500 invisible flex h-6 w-6 flex-shrink-0 items-center justify-center group-hover:visible"
+                  >
+                    <m-drag-icon></m-drag-icon>
+                  </div>
 
-              <div
-                *ngIf="
-                  !!item.tile.mconfig && item.tile.mconfig.warnSelect.length > 0
-                "
-                class="warn-handle text-p500 flex h-8 w-8 flex-shrink-0 items-center justify-center"
-                tp="Warning: The selected fields [{{
-                  item.tile.mconfig.warnSelect.join(', ')
-                }}] may use unsafe aggregations and produce incorrect results"
-                placement="left"
-              >
-                <m-exclamation-icon></m-exclamation-icon>
-              </div>
+                  <div class="h-full pb-6 pr-5">
+                    <m-dashboard-tile-chart
+                      *ngIf="isShow === true"
+                      #chartRep
+                      [title]="item.tile.title"
+                      [tile]="item.tile"
+                      [deleteFilterFn]="deleteFilterFnBindThis"
+                      [dashboard]="dashboard"
+                      [randomId]="randomId"
+                      [mconfig]="item.tile.mconfig"
+                      [query]="item.tile.query"
+                      [showTileParameters]="showTileParameters"
+                    ></m-dashboard-tile-chart>
+                  </div>
 
-              <div
-                ktdGridResizeHandle
-                class="resize-handle invisible flex h-11 w-12 flex-shrink-0 flex-row items-start justify-start group-hover:visible"
-              >
-                <m-resize-icon
-                  class="rotate-resize-icon text-s500 ml-[6px] mt-[6px] flex h-6 w-6"
-                ></m-resize-icon>
-              </div>
-            </ktd-grid-item>
-          </ktd-grid>
+                  <button
+                    class="delete-handle hover:bg-m200 text-s500 invisible flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
+                    (click)="deleteTile(i)"
+                  >
+                    <m-trash-icon></m-trash-icon>
+                  </button>
+
+                  <div
+                    *ngIf="
+                      !!item.tile.mconfig &&
+                      item.tile.mconfig.warnSelect.length > 0
+                    "
+                    class="warn-handle text-p500 flex h-8 w-8 flex-shrink-0 items-center justify-center"
+                    tp="Warning: The selected fields [{{
+                      item.tile.mconfig.warnSelect.join(', ')
+                    }}] may use unsafe aggregations and produce incorrect results"
+                    placement="left"
+                  >
+                    <m-exclamation-icon></m-exclamation-icon>
+                  </div>
+
+                  <div
+                    ktdGridResizeHandle
+                    class="resize-handle invisible flex h-11 w-12 flex-shrink-0 flex-row items-start justify-start group-hover:visible"
+                  >
+                    <m-resize-icon
+                      class="rotate-resize-icon text-s500 ml-[6px] mt-[6px] flex h-6 w-6"
+                    ></m-resize-icon>
+                  </div>
+                </ktd-grid-item>
+              </ktd-grid>
+            </div>
+          </ng-scrollbar>
         </div>
       </div>
     </div>
