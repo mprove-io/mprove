@@ -1,105 +1,109 @@
-<div class="flex w-full flex-grow overflow-y-auto">
-  <tree-root
-    class="h-2 w-full"
-    #itemsTree
-    [nodes]="nodes"
-    [options]="treeOptions"
-    (initialized)="treeOnInitialized()"
-    (updateData)="treeOnUpdateData()"
-  >
-    <ng-template #treeNodeTemplate let-node="node" let-index="index">
-      <div
-        class="group-bar flex w-full flex-row"
-        [ngClass]="{
-          'mt-3': index === 0 && node.hasChildren === true,
-          'h-[60px]': node.data.isField === false,
-          'h-11 pl-3 pr-5': node.data.isField === true
-        }"
+<div class="flex w-full flex-col">
+  <div class="flex h-2 flex-grow flex-col overflow-y-auto">
+    <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
+      <tree-root
+        class="h-2 w-full"
+        #itemsTree
+        [nodes]="nodes"
+        [options]="treeOptions"
+        (initialized)="treeOnInitialized()"
+        (updateData)="treeOnUpdateData()"
       >
-        <div
-          data-cy="metricsTreeItem"
-          class="flex w-full cursor-pointer select-none flex-row rounded pr-5"
-          [ngClass]="{
-            'hover:bg-m50 pl-11': node.data.isField === true,
-            'px-5': node.data.isField === false
-          }"
-          (click)="nodeOnClick(node)"
-        >
-          <div class="relative flex w-full flex-row items-center">
-            <div class="flex min-w-[2px] flex-row items-center">
-              <div
-                *ngIf="node.data.isField === false"
-                class="flex flex-row items-center space-x-1"
-              >
-                <div class="flex items-center">
-                  <m-chevron-right-icon
-                    *ngIf="!node.isExpanded && node.hasChildren"
-                  ></m-chevron-right-icon>
+        <ng-template #treeNodeTemplate let-node="node" let-index="index">
+          <div
+            class="group-bar flex w-full flex-row"
+            [ngClass]="{
+              'mt-3': index === 0 && node.hasChildren === true,
+              'h-[60px]': node.data.isField === false,
+              'h-11 pl-3 pr-5': node.data.isField === true
+            }"
+          >
+            <div
+              data-cy="metricsTreeItem"
+              class="flex w-full cursor-pointer select-none flex-row rounded pr-5"
+              [ngClass]="{
+                'hover:bg-m50 pl-11': node.data.isField === true,
+                'px-5': node.data.isField === false
+              }"
+              (click)="nodeOnClick(node)"
+            >
+              <div class="relative flex w-full flex-row items-center">
+                <div class="flex min-w-[2px] flex-row items-center">
+                  <div
+                    *ngIf="node.data.isField === false"
+                    class="flex flex-row items-center space-x-1"
+                  >
+                    <div class="flex items-center">
+                      <m-chevron-right-icon
+                        *ngIf="!node.isExpanded && node.hasChildren"
+                      ></m-chevron-right-icon>
 
-                  <m-chevron-down-icon
-                    *ngIf="node.isExpanded && node.hasChildren"
-                  ></m-chevron-down-icon>
-                </div>
-              </div>
+                      <m-chevron-down-icon
+                        *ngIf="node.isExpanded && node.hasChildren"
+                      ></m-chevron-down-icon>
+                    </div>
+                  </div>
 
-              <div
-                *ngIf="node.data.isField === true"
-                class="text-g1 flex h-6 w-6 flex-shrink-0 items-center justify-center"
-              >
-                <m-field-result
-                  [fieldClass]="nodeClassMeasure"
-                  [result]="node.data.fieldResult"
-                  [size]="2"
-                ></m-field-result>
-              </div>
+                  <div
+                    *ngIf="node.data.isField === true"
+                    class="text-g1 flex h-6 w-6 flex-shrink-0 items-center justify-center"
+                  >
+                    <m-field-result
+                      [fieldClass]="nodeClassMeasure"
+                      [result]="node.data.fieldResult"
+                      [size]="2"
+                    ></m-field-result>
+                  </div>
 
-              <div class="text-s1 ml-0 flex-grow truncate">
-                <div class="flex flex-col">
-                  <div class="flex">
-                    <!-- <span
+                  <div class="text-s1 ml-0 flex-grow truncate">
+                    <div class="flex flex-col">
+                      <div class="flex">
+                        <!-- <span
                       [ngClass]="{
                         'ml-3': node.hasChildren === true,
                         'ml-2': node.hasChildren === false
                       }"
                     ></span> -->
-                    <span class="ml-3 truncate text-base">
-                      <span *ngIf="node.data.isField === true">
-                        <span>{{ node.data.metric.partNodeLabel }}</span>
+                        <span class="ml-3 truncate text-base">
+                          <span *ngIf="node.data.isField === true">
+                            <span>{{ node.data.metric.partNodeLabel }}</span>
 
-                        <span class="ml-2 font-semibold">{{
-                          node.data.metric.partFieldLabel
-                        }}</span>
-                      </span>
+                            <span class="ml-2 font-semibold">{{
+                              node.data.metric.partFieldLabel
+                            }}</span>
+                          </span>
 
-                      <span *ngIf="node.data.isField === false" class="">
-                        <span class="">{{ node.data.topLabel }}</span>
+                          <span *ngIf="node.data.isField === false" class="">
+                            <span class="">{{ node.data.topLabel }}</span>
 
-                        <!-- <span class="ml-3 font-semibold text-s400"
+                            <!-- <span class="ml-3 font-semibold text-s400"
                           >by {{ node.data.timeLabel }}</span
                         > -->
-                      </span>
-                    </span>
-                  </div>
+                          </span>
+                        </span>
+                      </div>
 
-                  <div class="flex" *ngIf="node.data.isField === false">
-                    <span class="truncate text-base">
-                      <span class="">
-                        <span class="text-s400 ml-3"
-                          >by {{ node.data.timeLabel }}</span
-                        >
-                      </span>
-                    </span>
+                      <div class="flex" *ngIf="node.data.isField === false">
+                        <span class="truncate text-base">
+                          <span class="">
+                            <span class="text-s400 ml-3"
+                              >by {{ node.data.timeLabel }}</span
+                            >
+                          </span>
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                <div class="flex flex-grow"></div>
               </div>
             </div>
-
-            <div class="flex flex-grow"></div>
           </div>
-        </div>
-      </div>
-    </ng-template>
-  </tree-root>
+        </ng-template>
+      </tree-root>
+    </ng-scrollbar>
+  </div>
 </div>
 
 <div *ngIf="metrics$ | async"></div>
