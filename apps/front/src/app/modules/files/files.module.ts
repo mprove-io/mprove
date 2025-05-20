@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyDirective } from '@ngneat/helipopper';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { SharedModule } from '../shared/shared.module';
 import { FileEditorComponent } from './file-editor/file-editor.component';
@@ -43,7 +44,8 @@ import { RepoOptionsComponent } from './repo-options/repo-options.component';
     CodeEditor,
     DiffEditor,
     NgSelectModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    NgScrollbarModule
   ]
 })
 export class FilesModule {}

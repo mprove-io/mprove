@@ -262,19 +262,19 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.lang = language?.name;
     }
 
-    let loadedLanguage = await language.load();
+    let originalExtensions = [...this.baseOriginalExtensions];
+    let modifiedExtensions = [...this.baseModifiedExtensions];
 
-    // console.log('loadedLanguage');
-    // console.log(loadedLanguage);
+    if (common.isDefined(language)) {
+      let loadedLanguage = await language.load();
+      // console.log('loadedLanguage');
+      // console.log(loadedLanguage);
+      originalExtensions.push(this.originalLanguageConf.of(loadedLanguage));
+      modifiedExtensions.push(this.modifiedLanguageConf.of(loadedLanguage));
+    }
 
-    this.originalExtensions = [
-      ...this.baseOriginalExtensions,
-      this.originalLanguageConf.of(loadedLanguage)
-    ];
-    this.modifiedExtensions = [
-      ...this.baseModifiedExtensions,
-      this.modifiedLanguageConf.of(loadedLanguage)
-    ];
+    this.originalExtensions = originalExtensions;
+    this.modifiedExtensions = modifiedExtensions;
 
     if (
       this.file.fileId === common.MPROVE_CONFIG_FILENAME ||
