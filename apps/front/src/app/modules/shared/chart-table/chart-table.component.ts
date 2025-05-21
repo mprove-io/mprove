@@ -15,6 +15,9 @@ export class ChartTableComponent {
   fieldResultNumber = common.FieldResultEnum.Number;
 
   @Input()
+  isTableHeaderWide: boolean;
+
+  @Input()
   isFormat: boolean;
 
   @Input()

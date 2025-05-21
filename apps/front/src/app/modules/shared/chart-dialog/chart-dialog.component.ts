@@ -8,26 +8,26 @@ import {
   OnInit
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { Subscription, from, interval, of } from 'rxjs';
 import { concatMap, delay, startWith, take, tap } from 'rxjs/operators';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { ApiService } from '~front/app/services/api.service';
+import { ChartService } from '~front/app/services/chart.service';
 import { DataService, QDataRow } from '~front/app/services/data.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
-import { SharedModule } from '../shared.module';
-
-import uFuzzy from '@leeoniya/ufuzzy';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { ChartService } from '~front/app/services/chart.service';
 import { constants } from '~front/barrels/constants';
+import { SharedModule } from '../shared.module';
 
 export interface ChartDialogData {
   apiService: ApiService;
@@ -56,7 +56,8 @@ export interface ChartDialogData {
     NgSelectModule,
     UiSwitchModule,
     TippyDirective,
-    SharedModule
+    SharedModule,
+    NgScrollbarModule
   ]
 })
 export class ChartDialogComponent implements OnInit, OnDestroy {

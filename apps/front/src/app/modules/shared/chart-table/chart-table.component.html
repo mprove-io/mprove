@@ -2,9 +2,10 @@
   <thead>
     <tr>
       <th
-        style="min-width: 200px; max-width: 350px"
-        class="border-m0 group border-4 p-0 align-top"
+        class="border-m0 group max-w-[350px] border-4 p-0 align-top"
         [ngClass]="{
+          'min-w-[200px]': isTableHeaderWide === false,
+          'min-w-[240px]': isTableHeaderWide === true,
           'bg-m150': column.fieldClass === fieldClassDimension,
           'bg-g2':
             column.fieldClass === fieldClassMeasure ||
@@ -44,11 +45,12 @@
     <ng-container *ngFor="let row of qData; let i = index">
       <tr data-cy="chartTableRow" *ngIf="i < pageSize">
         <td
-          style="min-width: 200px; max-width: 350px"
           data-cy="chartTableCell"
           *ngFor="let column of mconfigFields | hideColumns: hideColumns"
-          class="truncate px-5"
+          class="max-w-[350px] truncate px-5"
           [ngClass]="{
+            'min-w-[200px]': isTableHeaderWide === false,
+            'min-w-[240px]': isTableHeaderWide === true,
             'bg-s100': (i + 1) % 2 === 0,
             'text-right': column.result === fieldResultNumber
           }"

@@ -53,6 +53,9 @@ export class ChartViewComponent implements OnChanges {
   ];
 
   @Input()
+  isTableHeaderWide: boolean;
+
+  @Input()
   chartInstanceId: string;
 
   @Input()

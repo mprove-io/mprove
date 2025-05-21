@@ -189,6 +189,7 @@
           mconfig?.chart.type !== chartTypeEnumTable
       }"
       [mconfigFields]="mconfig?.fields"
+      [isTableHeaderWide]="true"
       [qData]="qData"
       [chart]="mconfig?.chart"
       [isAnimation]="false"
@@ -228,13 +229,15 @@
       *ngIf="isData === true && mconfig?.fields?.length > 0"
       class="flex w-full max-w-max flex-1 overflow-auto"
     >
-      <m-main-table
-        [isEdit]="false"
-        [isFormat]="isFormat"
-        [mconfig]="mconfig"
-        [qData]="qData"
-        [mconfigFields]="mconfig?.fields"
-      ></m-main-table>
+      <ng-scrollbar [orientation]="'auto'" [visibility]="'hover'">
+        <m-main-table
+          [isEdit]="false"
+          [isFormat]="isFormat"
+          [mconfig]="mconfig"
+          [qData]="qData"
+          [mconfigFields]="mconfig?.fields"
+        ></m-main-table>
+      </ng-scrollbar>
     </div>
 
     <div class="ml-10 flex flex-shrink-0 flex-row items-start">

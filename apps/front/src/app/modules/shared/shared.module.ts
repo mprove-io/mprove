@@ -5,6 +5,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyDirective } from '@ngneat/helipopper';
 import { ColorSketchModule } from 'ngx-color/sketch';
 import { NgxEchartsModule } from 'ngx-echarts';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { MiniChartRendererComponent } from '../reports/report/mini-chart-renderer/mini-chart-renderer.component';
@@ -261,6 +262,7 @@ let sharedComponents = [
     NgxSpinnerModule,
     TippyDirective,
     UiSwitchModule,
+    NgScrollbarModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     })

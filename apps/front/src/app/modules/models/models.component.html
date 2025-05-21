@@ -981,6 +981,7 @@
                         *ngIf="mconfig?.chart"
                         class="h-full w-full"
                         [mconfigFields]="mconfig.fields"
+                        [isTableHeaderWide]="true"
                         [qData]="qData"
                         [chart]="mconfig.chart"
                         [isAnimation]="true"
@@ -1483,32 +1484,39 @@
                 <div
                   class="flex h-full w-full flex-row items-start justify-center"
                 >
-                  <div class="h-full w-2 flex-1 overflow-auto">
-                    <div class="flex flex-row items-start">
-                      <m-main-table
-                        *ngIf="mconfig?.select.length > 0"
-                        [isEdit]="true"
-                        [isFormat]="isFormat"
-                        [mconfig]="mconfig"
-                        [qData]="qData"
-                        [mconfigFields]="mconfig.fields"
-                        [modelFields]="model.fields"
-                      ></m-main-table>
-
-                      <button
-                        type="button"
-                        data-cy="chartsAddColumnButton"
-                        [ngClass]="{
-                          'ml-8': mconfig?.select.length === 0,
-                          'ml-3': mconfig?.select.length > 0
-                        }"
-                        class="border-s400 text-s500 hover:bg-s100 mt-[64px] flex flex-shrink-0 select-none rounded border px-1 py-1 focus:outline-none"
-                        (click)="addColumn()"
+                  <div class="h-full w-2 flex-1">
+                    <div class="h-full max-w-max overflow-auto">
+                      <ng-scrollbar
+                        [orientation]="'auto'"
+                        [visibility]="'hover'"
                       >
-                        <m-add-icon></m-add-icon>
-                      </button>
+                        <div class="flex flex-row items-start">
+                          <m-main-table
+                            *ngIf="mconfig?.select.length > 0"
+                            [isEdit]="true"
+                            [isFormat]="isFormat"
+                            [mconfig]="mconfig"
+                            [qData]="qData"
+                            [mconfigFields]="mconfig.fields"
+                            [modelFields]="model.fields"
+                          ></m-main-table>
 
-                      <div class="flex h-2 w-3 flex-shrink-0"></div>
+                          <button
+                            type="button"
+                            data-cy="chartsAddColumnButton"
+                            [ngClass]="{
+                              'ml-8': mconfig?.select.length === 0,
+                              'ml-3': mconfig?.select.length > 0
+                            }"
+                            class="border-s400 text-s500 hover:bg-s100 mt-[64px] flex flex-shrink-0 select-none rounded border px-1 py-1 focus:outline-none"
+                            (click)="addColumn()"
+                          >
+                            <m-add-icon></m-add-icon>
+                          </button>
+
+                          <div class="flex h-2 w-[24px] flex-shrink-0"></div>
+                        </div>
+                      </ng-scrollbar>
                     </div>
                   </div>
 
