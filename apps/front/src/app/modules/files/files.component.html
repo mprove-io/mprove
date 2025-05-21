@@ -111,18 +111,19 @@
                 >
 
                 <div
-                  class="text-m0 ml-2 flex h-7 min-w-7 flex-shrink-0 items-center rounded px-2 py-[1px]"
-                  [ngClass]="{
-                    'bg-m500': panel === panelChangesToPush,
-                    'bg-m600':
-                      panel !== panelChangesToPush &&
-                      repo?.changesToPush?.length > 0,
-                    'bg-s400':
-                      panel !== panelChangesToPush &&
-                      !(repo?.changesToPush?.length > 0)
-                  }"
+                  class="ml-2 flex h-7 min-w-7 flex-shrink-0 items-center rounded"
                 >
                   <div
+                    class="text-m0 flex h-7 min-w-7 flex-shrink-0 items-center rounded px-2 py-[1px]"
+                    [ngClass]="{
+                      'bg-m500': panel === panelChangesToPush,
+                      'bg-m600':
+                        panel !== panelChangesToPush &&
+                        repo?.changesToPush?.length > 0,
+                      'bg-s400':
+                        panel !== panelChangesToPush &&
+                        !(repo?.changesToPush?.length > 0)
+                    }"
                     *ngIf="
                       repo?.changesToCommit?.length === 0 &&
                       (repo?.changesToPush?.length > 0 ||

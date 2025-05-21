@@ -6,87 +6,91 @@
     <div>Errors</div>
   </div>
 
-  <div class="flex w-full flex-grow overflow-y-auto px-5">
-    <tree-root
-      class="mt-4 h-2 w-full"
-      #itemsTree
-      [nodes]="nodes"
-      [options]="treeOptions"
-      (initialized)="treeOnInitialized()"
-      (updateData)="treeOnUpdateData()"
-    >
-      <ng-template #treeNodeTemplate let-node="node" let-index="index">
-        <div class="flex w-full flex-row">
-          <div
-            data-cy="blockmlErrorsTreeItem"
-            class="flex min-h-[44px] w-full select-none flex-row px-5"
-            [ngClass]="{
-              'cursor-pointer': node.data.isError === false,
-              'text-m600 font-semibold':
-                node.data.isError === false &&
-                !!fileNodeId &&
-                node.data.id === fileNodeId,
-              'hover:bg-m50': node.data.isError === false
-            }"
-            (click)="nodeOnClick(node)"
-          >
+  <div class="flex w-full flex-grow flex-col overflow-y-auto pl-5">
+    <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
+      <tree-root
+        class="mt-4 h-2 w-full"
+        #itemsTree
+        [nodes]="nodes"
+        [options]="treeOptions"
+        (initialized)="treeOnInitialized()"
+        (updateData)="treeOnUpdateData()"
+      >
+        <ng-template #treeNodeTemplate let-node="node" let-index="index">
+          <div class="flex w-full flex-row pr-5">
             <div
-              class="flex w-full flex-1 flex-row items-center"
+              data-cy="blockmlErrorsTreeItem"
+              class="flex min-h-[44px] w-full select-none flex-row rounded pl-5"
               [ngClass]="{
-                'ml-2': node.data.isError
+                'cursor-pointer': node.data.isError === false,
+                'text-m600 font-semibold':
+                  node.data.isError === false &&
+                  !!fileNodeId &&
+                  node.data.id === fileNodeId,
+                'hover:bg-m50': node.data.isError === false
               }"
+              (click)="nodeOnClick(node)"
             >
-              <div class="flex min-w-[2px] flex-1 items-center">
-                <div class="flex flex-shrink-0 flex-row space-x-1">
-                  <div class="h-6 w-6" *ngIf="!node.hasChildren"></div>
-                  <m-chevron-right-icon
-                    *ngIf="!node.isExpanded && node.hasChildren"
-                  ></m-chevron-right-icon>
-                  <m-chevron-down-icon
-                    *ngIf="node.isExpanded && node.hasChildren"
-                  ></m-chevron-down-icon>
-                </div>
-
-                <div
-                  class="ml-2 flex min-h-[44px] min-w-[2px] items-center truncate text-base"
-                  *ngIf="node.data.isError === false"
-                >
-                  {{ node?.data.name }}
-                </div>
-
-                <div
-                  *ngIf="node.data.isError === true"
-                  class="mb-3 mt-3 flex flex-1 flex-col"
-                >
-                  <div class="text-r1 flex w-full text-base">{{
-                    node.data.title
-                  }}</div>
-
-                  <div class="text-s500 mb-1 mt-2 flex w-full text-base">{{
-                    node.data.message | capitalize
-                  }}</div>
+              <div
+                class="flex w-full flex-1 flex-row items-center"
+                [ngClass]="{
+                  'ml-2': node.data.isError
+                }"
+              >
+                <div class="flex min-w-[2px] flex-1 items-center">
+                  <div class="flex flex-shrink-0 flex-row space-x-1">
+                    <div class="h-6 w-6" *ngIf="!node.hasChildren"></div>
+                    <m-chevron-right-icon
+                      *ngIf="!node.isExpanded && node.hasChildren"
+                    ></m-chevron-right-icon>
+                    <m-chevron-down-icon
+                      *ngIf="node.isExpanded && node.hasChildren"
+                    ></m-chevron-down-icon>
+                  </div>
 
                   <div
-                    *ngFor="let line of node.data.lines"
-                    class="hover:bg-m50 flex py-2 pl-5 text-base hover:cursor-pointer"
-                    (click)="goToFileLine(line)"
+                    class="ml-2 flex min-h-[44px] min-w-[2px] items-center truncate text-base"
+                    *ngIf="node.data.isError === false"
                   >
-                    <div class="flex w-full flex-row">
-                      <div
-                        class="flex font-semibold"
-                        *ngIf="line.fileId === node.parent?.data.id"
-                        >line:
-                        {{ line.lineNumber === 0 ? '-' : line.lineNumber }}</div
-                      >
-                      <div
-                        class="flex font-semibold"
-                        *ngIf="line.fileId !== node.parent?.data.id"
-                        >line:
-                        {{ line.lineNumber === 0 ? '-' : line.lineNumber }}
+                    {{ node?.data.name }}
+                  </div>
 
-                        <span class="ml-5">
-                          {{ line.fileName }}
-                        </span>
+                  <div
+                    *ngIf="node.data.isError === true"
+                    class="mb-3 mt-3 flex flex-1 flex-col"
+                  >
+                    <div class="text-r1 flex w-full text-base">{{
+                      node.data.title
+                    }}</div>
+
+                    <div class="text-s500 mb-1 mt-2 flex w-full text-base">{{
+                      node.data.message | capitalize
+                    }}</div>
+
+                    <div
+                      *ngFor="let line of node.data.lines"
+                      class="hover:bg-m50 flex py-2 pl-5 text-base hover:cursor-pointer"
+                      (click)="goToFileLine(line)"
+                    >
+                      <div class="flex w-full flex-row">
+                        <div
+                          class="flex font-semibold"
+                          *ngIf="line.fileId === node.parent?.data.id"
+                          >line:
+                          {{
+                            line.lineNumber === 0 ? '-' : line.lineNumber
+                          }}</div
+                        >
+                        <div
+                          class="flex font-semibold"
+                          *ngIf="line.fileId !== node.parent?.data.id"
+                          >line:
+                          {{ line.lineNumber === 0 ? '-' : line.lineNumber }}
+
+                          <span class="ml-5">
+                            {{ line.fileName }}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -94,9 +98,9 @@
               </div>
             </div>
           </div>
-        </div>
-      </ng-template>
-    </tree-root>
+        </ng-template>
+      </tree-root>
+    </ng-scrollbar>
   </div>
 </div>
 
