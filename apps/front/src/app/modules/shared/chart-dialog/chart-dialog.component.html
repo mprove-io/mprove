@@ -189,7 +189,7 @@
           mconfig?.chart.type !== chartTypeEnumTable
       }"
       [mconfigFields]="mconfig?.fields"
-      [isTableHeaderWide]="true"
+      [isTableHeaderWide]="false"
       [qData]="qData"
       [chart]="mconfig?.chart"
       [isAnimation]="false"
@@ -231,6 +231,7 @@
     >
       <ng-scrollbar [orientation]="'auto'" [visibility]="'hover'">
         <m-main-table
+          [isTableHeaderWide]="false"
           [isEdit]="false"
           [isFormat]="isFormat"
           [mconfig]="mconfig"

@@ -2,8 +2,10 @@
   <thead>
     <tr>
       <th
-        class="border-m0 group min-w-[240px] max-w-[350px] border-4 p-0 align-top"
+        class="border-m0 group max-w-[350px] border-4 p-0 align-top"
         [ngClass]="{
+          'min-w-[200px]': isTableHeaderWide === false,
+          'min-w-[240px]': isTableHeaderWide === true,
           'bg-m150': column.fieldClass === fieldClassDimension,
           'bg-g2':
             column.fieldClass === fieldClassMeasure ||
@@ -172,8 +174,10 @@
       <td
         data-cy="mainTableCell"
         *ngFor="let column of mconfigFields"
-        class="min-w-[240px] max-w-[350px] truncate px-5"
+        class="max-w-[350px] truncate px-5"
         [ngClass]="{
+          'min-w-[200px]': isTableHeaderWide === false,
+          'min-w-[240px]': isTableHeaderWide === true,
           'bg-s100': (i + 1) % 2 === 0,
           'text-right': column.result === fieldResultNumber
         }"

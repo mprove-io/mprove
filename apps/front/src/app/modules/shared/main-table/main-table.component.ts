@@ -23,6 +23,9 @@ export class MainTableComponent {
   fieldResultNumber = common.FieldResultEnum.Number;
 
   @Input()
+  isTableHeaderWide: boolean;
+
+  @Input()
   isFormat = true;
 
   @Input()
