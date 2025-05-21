@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TippyDirective } from '@ngneat/helipopper';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from '../shared/shared.module';
 import { ProjectConnectionsComponent } from './project-connections/project-connections.component';
 import { ProjectEnvironmentsComponent } from './project-environments/project-environments.component';
@@ -23,7 +24,8 @@ import { ProjectTeamComponent } from './project-team/project-team.component';
     SharedModule,
     RouterModule,
     NgxPaginationModule,
-    TippyDirective
+    TippyDirective,
+    NgScrollbarModule
   ]
 })
 export class ProjectModule {}
