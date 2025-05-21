@@ -8,88 +8,94 @@
 
     <div class="bg-m0 mt-6 flex h-2 w-full flex-1 rounded shadow">
       <div class="h-full w-full overflow-auto">
-        <div class="ml-32 mt-16 flex flex-row">
-          <div class="flex flex-col text-base">
-            <div class="flex h-16 items-center justify-end font-semibold"
-              >Organization Name</div
-            >
-            <div class="flex h-16 items-center justify-end font-semibold"
-              >Owner</div
-            >
-            <div class="flex items-center justify-end font-semibold"></div>
-          </div>
-
-          <div class="ml-6 flex flex-col text-base">
-            <div
-              data-cy="orgAccountName"
-              class="flex h-16 max-w-xl items-center truncate"
-              >{{ org?.name }}</div
-            >
-            <div
-              data-cy="orgAccountOwnerEmail"
-              class="flex h-16 max-w-xl items-center truncate"
-              >{{ org?.ownerEmail }}</div
-            >
-            <div
-              class="mb-5 mt-7 flex items-center"
-              tp="Only organization owner can delete"
-              [tpIsEnabled]="isOrgOwner === false"
-            >
-              <button
-                data-cy="orgAccountDeleteOrgButton"
-                class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
-                [ngClass]="{
-                  'text-s400 cursor-default': isOrgOwner === false,
-                  'border-r1 text-r1': isOrgOwner === true
-                }"
-                [disabled]="isOrgOwner === false"
-                (click)="deleteOrg()"
-                >Delete Organization</button
+        <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
+          <div class="ml-32 mt-16 flex flex-row">
+            <div class="flex flex-col text-base">
+              <div class="flex h-16 items-center justify-end font-semibold"
+                >Organization Name</div
               >
+              <div class="flex h-16 items-center justify-end font-semibold"
+                >Owner</div
+              >
+              <div class="flex items-center justify-end font-semibold"></div>
             </div>
-          </div>
 
-          <div class="ml-6 flex flex-col">
-            <div class="flex h-16 items-center">
+            <div class="ml-6 flex flex-col text-base">
               <div
-                tp="Only organization owner can edit"
+                data-cy="orgAccountName"
+                class="flex h-16 max-w-xl items-center truncate"
+                >{{ org?.name }}</div
+              >
+              <div
+                data-cy="orgAccountOwnerEmail"
+                class="flex h-16 max-w-xl items-center truncate"
+                >{{ org?.ownerEmail }}</div
+              >
+              <div
+                class="mb-5 mt-7 flex items-center"
+                tp="Only organization owner can delete"
                 [tpIsEnabled]="isOrgOwner === false"
               >
                 <button
-                  data-cy="orgAccountEditNameButton"
-                  class="rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
+                  data-cy="orgAccountDeleteOrgButton"
+                  class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
                   [ngClass]="{
-                    'border-s400 text-s500 hover:bg-s100': isOrgOwner === true,
-                    'border-s300 text-s400 cursor-default': isOrgOwner === false
+                    'text-s400 cursor-default': isOrgOwner === false,
+                    'border-r1 text-r1': isOrgOwner === true
                   }"
                   [disabled]="isOrgOwner === false"
-                  (click)="editName()"
-                  >Edit</button
-                ></div
-              >
+                  (click)="deleteOrg()"
+                  >Delete Organization</button
+                >
+              </div>
             </div>
 
-            <div class="flex h-16 items-center">
-              <div
-                tp="Only organization owner can edit"
-                [tpIsEnabled]="isOrgOwner === false"
-              >
-                <button
-                  data-cy="orgAccountEditOwnerButton"
-                  class="rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
-                  [ngClass]="{
-                    'border-s400 text-s500 hover:bg-s100': isOrgOwner === true,
-                    'border-s300 text-s400 cursor-default': isOrgOwner === false
-                  }"
-                  [disabled]="isOrgOwner === false"
-                  (click)="editOwner()"
-                  >Edit</button
+            <div class="ml-6 flex flex-col">
+              <div class="flex h-16 items-center">
+                <div
+                  tp="Only organization owner can edit"
+                  [tpIsEnabled]="isOrgOwner === false"
+                >
+                  <button
+                    data-cy="orgAccountEditNameButton"
+                    class="rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
+                    [ngClass]="{
+                      'border-s400 text-s500 hover:bg-s100':
+                        isOrgOwner === true,
+                      'border-s300 text-s400 cursor-default':
+                        isOrgOwner === false
+                    }"
+                    [disabled]="isOrgOwner === false"
+                    (click)="editName()"
+                    >Edit</button
+                  ></div
+                >
+              </div>
+
+              <div class="flex h-16 items-center">
+                <div
+                  tp="Only organization owner can edit"
+                  [tpIsEnabled]="isOrgOwner === false"
+                >
+                  <button
+                    data-cy="orgAccountEditOwnerButton"
+                    class="rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
+                    [ngClass]="{
+                      'border-s400 text-s500 hover:bg-s100':
+                        isOrgOwner === true,
+                      'border-s300 text-s400 cursor-default':
+                        isOrgOwner === false
+                    }"
+                    [disabled]="isOrgOwner === false"
+                    (click)="editOwner()"
+                    >Edit</button
+                  ></div
                 ></div
-              ></div
-            >
-            <div class="flex items-center"></div>
+              >
+              <div class="flex items-center"></div>
+            </div>
           </div>
-        </div>
+        </ng-scrollbar>
       </div>
     </div>
   </div>

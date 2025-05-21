@@ -7,125 +7,124 @@
 
       <div class="ml-10 flex flex-col font-semibold">
         <div class="text-s400 flex">
-          To manage Users and Roles, select the project using selector in the
-          navigation bar,
-        </div>
-
-        <div class="text-s400 flex">
-          click the Project Settings menu and open the Project Team page
+          To manage users and roles, go to the Project Settings >> Team page
         </div>
       </div>
     </div>
 
     <div class="bg-m0 mb-4 mt-6 flex-grow overflow-auto rounded shadow">
-      <div class="text-s1 mx-5 mt-8">
-        <table class="divide-s500 min-w-full divide-y">
-          <thead>
-            <tr class="h-12 text-sm">
-              <th></th>
-              <th class="text-left">Email</th>
-              <th class="text-left">Alias</th>
-              <th class="text-left">Name</th>
-              <th class="text-left">Project User</th>
-              <th class="text-left">Project Admin</th>
-              <th class="text-left">Files Editor</th>
-              <th class="text-left">Explorer</th>
-              <th></th>
-            </tr>
-          </thead>
+      <ng-scrollbar [orientation]="'auto'" [visibility]="'hover'">
+        <div class="text-s1 mx-5 mt-8">
+          <table class="divide-s500 min-w-full divide-y">
+            <thead>
+              <tr class="h-12 text-sm">
+                <th></th>
+                <th class="text-left">Email</th>
+                <th class="text-left">Alias</th>
+                <th class="text-left">Name</th>
+                <th class="text-left">Project User</th>
+                <th class="text-left">Project Admin</th>
+                <th class="text-left">Files Editor</th>
+                <th class="text-left">Explorer</th>
+                <th></th>
+              </tr>
+            </thead>
 
-          <tbody class="divide-s300 divide-y">
-            <tr
-              *ngFor="
-                let user of users
-                  | paginate
-                    : {
-                        id: 'users',
-                        itemsPerPage: perPage,
-                        currentPage: currentPage,
-                        totalItems: total
-                      };
-                let i = index
-              "
-              class="h-16"
-            >
-              <td class="w-[80px]">
-                <div class="flex">
-                  <button
-                    class="bg-m200 ml-5 h-10 w-10 rounded-full text-base tracking-wider focus:outline-none"
-                    [ngClass]="{
-                      'cursor-default': !user.avatarSmall
-                    }"
-                    (click)="
-                      showPhoto(
-                        user.userId,
-                        user.firstName,
-                        user.lastName,
-                        user.alias
-                      )
-                    "
-                    [disabled]="!user.avatarSmall"
-                  >
-                    <m-avatar
-                      [avatar]="user.avatarSmall"
-                      [initials]="user.initials"
-                    ></m-avatar>
-                  </button>
-                </div>
-              </td>
-
-              <td data-cy="orgUsersUserEmailData" class="w-96 text-base">
-                {{ user.email }}
-              </td>
-
-              <td class="w-[300px] text-base">{{ user.alias }}</td>
-
-              <td class="w-[300px] text-base">{{ user.fullName }}</td>
-
-              <td class="w-[300px]">
-                <div class="my-3 flex flex-col">
-                  <div
-                    *ngFor="let projectUserProject of user.projectUserProjects"
-                  >
-                    <div class="flex flex-row items-center text-base">
-                      <div>{{ projectUserProject | capitalize }} </div>
-                    </div>
-                  </div>
-                </div></td
+            <tbody class="divide-s300 divide-y">
+              <tr
+                *ngFor="
+                  let user of users
+                    | paginate
+                      : {
+                          id: 'users',
+                          itemsPerPage: perPage,
+                          currentPage: currentPage,
+                          totalItems: total
+                        };
+                  let i = index
+                "
+                class="h-16"
               >
-              <td class="w-[300px]">
-                <div class="my-3 flex flex-col">
-                  <div *ngFor="let adminProject of user.adminProjects">
-                    <div class="flex flex-row items-center text-base">
-                      <div>{{ adminProject | capitalize }} </div>
-                    </div>
+                <td class="w-[80px]">
+                  <div class="flex">
+                    <button
+                      class="bg-m200 ml-5 h-10 w-10 rounded-full text-base tracking-wider focus:outline-none"
+                      [ngClass]="{
+                        'cursor-default': !user.avatarSmall
+                      }"
+                      (click)="
+                        showPhoto(
+                          user.userId,
+                          user.firstName,
+                          user.lastName,
+                          user.alias
+                        )
+                      "
+                      [disabled]="!user.avatarSmall"
+                    >
+                      <m-avatar
+                        [avatar]="user.avatarSmall"
+                        [initials]="user.initials"
+                      ></m-avatar>
+                    </button>
                   </div>
-                </div></td
-              >
-              <td class="w-[300px]">
-                <div class="my-3 flex flex-col">
-                  <div *ngFor="let editorProject of user.editorProjects">
-                    <div class="flex flex-row items-center text-base">
-                      <div>{{ editorProject | capitalize }} </div>
-                    </div>
-                  </div>
-                </div></td
-              >
-              <td class="w-[300px]">
-                <div class="my-3 flex flex-col">
-                  <div *ngFor="let explorerProject of user.explorerProjects">
-                    <div class="flex flex-row items-center text-base">
-                      <div>{{ explorerProject | capitalize }} </div>
-                    </div>
-                  </div>
-                </div></td
-              >
+                </td>
 
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                <td data-cy="orgUsersUserEmailData" class="w-96 text-base">
+                  {{ user.email }}
+                </td>
+
+                <td class="w-[300px] text-base">{{ user.alias }}</td>
+
+                <td class="w-[300px] text-base">{{ user.fullName }}</td>
+
+                <td class="w-[300px]">
+                  <div class="my-3 flex flex-col">
+                    <div
+                      *ngFor="
+                        let projectUserProject of user.projectUserProjects
+                      "
+                    >
+                      <div class="flex flex-row items-center text-base">
+                        <div>{{ projectUserProject | capitalize }} </div>
+                      </div>
+                    </div>
+                  </div></td
+                >
+                <td class="w-[300px]">
+                  <div class="my-3 flex flex-col">
+                    <div *ngFor="let adminProject of user.adminProjects">
+                      <div class="flex flex-row items-center text-base">
+                        <div>{{ adminProject | capitalize }} </div>
+                      </div>
+                    </div>
+                  </div></td
+                >
+                <td class="w-[300px]">
+                  <div class="my-3 flex flex-col">
+                    <div *ngFor="let editorProject of user.editorProjects">
+                      <div class="flex flex-row items-center text-base">
+                        <div>{{ editorProject | capitalize }} </div>
+                      </div>
+                    </div>
+                  </div></td
+                >
+                <td class="w-[300px]">
+                  <div class="my-3 flex flex-col">
+                    <div *ngFor="let explorerProject of user.explorerProjects">
+                      <div class="flex flex-row items-center text-base">
+                        <div>{{ explorerProject | capitalize }} </div>
+                      </div>
+                    </div>
+                  </div></td
+                >
+
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-scrollbar>
     </div>
 
     <pagination-controls

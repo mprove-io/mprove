@@ -7,32 +7,33 @@
     </div>
     <div class="bg-m0 mt-6 h-2 flex-1 rounded shadow">
       <div class="h-full w-full overflow-auto">
-        <div class="ml-32 mt-16 flex flex-row">
-          <div class="flex flex-col text-base">
-            <div class="flex h-24 items-center justify-end font-semibold"
-              >Profile Photo</div
-            >
-            <div class="flex h-16 items-center justify-end font-semibold"
-              >Name</div
-            >
-            <!-- <div class="flex h-16 items-center justify-end font-semibold"
+        <ng-scrollbar [orientation]="'auto'" [visibility]="'hover'">
+          <div class="ml-32 mt-16 flex flex-row">
+            <div class="flex flex-col text-base">
+              <div class="flex h-24 items-center justify-end font-semibold"
+                >Profile Photo</div
+              >
+              <div class="flex h-16 items-center justify-end font-semibold"
+                >Name</div
+              >
+              <!-- <div class="flex h-16 items-center justify-end font-semibold"
               >Default Time Zone</div
             > -->
-            <div class="flex h-16 items-center justify-end font-semibold"
-              >Email</div
-            >
-            <div class="flex h-16 items-center justify-end font-semibold"
-              >Alias</div
-            >
-            <div class="flex items-center justify-end font-semibold"></div>
-            <div class="flex items-center justify-end font-semibold"></div>
-          </div>
+              <div class="flex h-16 items-center justify-end font-semibold"
+                >Email</div
+              >
+              <div class="flex h-16 items-center justify-end font-semibold"
+                >Alias</div
+              >
+              <div class="flex items-center justify-end font-semibold"></div>
+              <div class="flex items-center justify-end font-semibold"></div>
+            </div>
 
-          <div class="ml-2 flex flex-col">
-            <div class="flex h-24 items-center"></div>
-            <div class="flex h-16 items-center"></div>
-            <div class="text-s1 flex h-16 items-center">
-              <!-- <svg
+            <div class="ml-2 flex flex-col">
+              <div class="flex h-24 items-center"></div>
+              <div class="flex h-16 items-center"></div>
+              <div class="text-s1 flex h-16 items-center">
+                <!-- <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6"
                 fill="none"
@@ -46,53 +47,53 @@
                   d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg> -->
+              </div>
+              <div class="flex h-16 items-center"></div>
+              <div class="flex items-center"></div>
+              <div class="flex items-center"></div>
+              <div class="flex items-center"></div>
             </div>
-            <div class="flex h-16 items-center"></div>
-            <div class="flex items-center"></div>
-            <div class="flex items-center"></div>
-            <div class="flex items-center"></div>
-          </div>
 
-          <div class="ml-6 flex flex-col">
-            <div class="flex h-24 items-center">
-              <div class="flex flex-row">
-                <button
-                  class="bg-m200 block h-20 w-20 rounded-full text-base tracking-wider focus:outline-none"
-                  [ngClass]="{
-                    'cursor-default': !(navQuery.avatarBig$ | async)
-                  }"
-                  [disabled]="!(navQuery.avatarBig$ | async)"
-                  (click)="showPhoto()"
-                >
-                  <m-avatar
-                    [avatar]="navQuery.avatarBig$ | async"
-                    [initials]="userQuery.initials$ | async"
-                  ></m-avatar>
-                </button>
-                <!-- <div class="ml-5 h-20 w-20">
+            <div class="ml-6 flex flex-col">
+              <div class="flex h-24 items-center">
+                <div class="flex flex-row">
+                  <button
+                    class="bg-m200 block h-20 w-20 rounded-full text-base tracking-wider focus:outline-none"
+                    [ngClass]="{
+                      'cursor-default': !(navQuery.avatarBig$ | async)
+                    }"
+                    [disabled]="!(navQuery.avatarBig$ | async)"
+                    (click)="showPhoto()"
+                  >
+                    <m-avatar
+                      [avatar]="navQuery.avatarBig$ | async"
+                      [initials]="userQuery.initials$ | async"
+                    ></m-avatar>
+                  </button>
+                  <!-- <div class="ml-5 h-20 w-20">
               <m-avatar [avatar]="navQuery.avatarSmall$ | async"
                         [initials]="userQuery.initials$ | async"
               ></m-avatar>
             </div> -->
+                </div>
               </div>
-            </div>
-            <div
-              data-cy="profileFullName"
-              class="flex h-16 max-w-xl items-center truncate text-base"
-              >{{ userQuery.fullName$ | async }}</div
-            >
-            <div
-              data-cy="profileEmail"
-              class="flex h-16 items-center text-base"
-              >{{ userQuery.email$ | async }}</div
-            >
-            <div
-              data-cy="profileAlias"
-              class="flex h-16 items-center text-base"
-              >{{ userQuery.alias$ | async }}</div
-            >
+              <div
+                data-cy="profileFullName"
+                class="flex h-16 max-w-xl items-center truncate text-base"
+                >{{ userQuery.fullName$ | async }}</div
+              >
+              <div
+                data-cy="profileEmail"
+                class="flex h-16 items-center text-base"
+                >{{ userQuery.email$ | async }}</div
+              >
+              <div
+                data-cy="profileAlias"
+                class="flex h-16 items-center text-base"
+                >{{ userQuery.alias$ | async }}</div
+              >
 
-            <!-- <div class="mt-3 flex items-center">
+              <!-- <div class="mt-3 flex items-center">
               <div
                 tp="User is restricted. Sign Up at https://mprove.io to get full access."
                 [tpIsEnabled]="alias === restrictedUserAlias"
@@ -112,90 +113,91 @@
               </div>
             </div> -->
 
-            <div class="mt-3 flex items-center">
-              <div
-                tp="User is restricted. Sign Up at https://mprove.io to get full access."
-                [tpIsEnabled]="alias === restrictedUserAlias"
-              >
-                <button
-                  data-cy="profileChangePasswordButton"
-                  class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
-                  [ngClass]="{
-                    'text-s400 cursor-default': alias === restrictedUserAlias,
-                    'border-s3 text-s1': alias !== restrictedUserAlias
-                  }"
-                  (click)="changePassword()"
-                  [disabled]="alias === restrictedUserAlias"
-                  >Change Password
-                </button>
+              <div class="mt-3 flex items-center">
+                <div
+                  tp="User is restricted. Sign Up at https://mprove.io to get full access."
+                  [tpIsEnabled]="alias === restrictedUserAlias"
+                >
+                  <button
+                    data-cy="profileChangePasswordButton"
+                    class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
+                    [ngClass]="{
+                      'text-s400 cursor-default': alias === restrictedUserAlias,
+                      'border-s3 text-s1': alias !== restrictedUserAlias
+                    }"
+                    (click)="changePassword()"
+                    [disabled]="alias === restrictedUserAlias"
+                    >Change Password
+                  </button>
+                </div>
+              </div>
+
+              <div class="mb-5 mt-7 flex items-center">
+                <div
+                  tp="User is restricted. Sign Up at https://mprove.io to get full access."
+                  [tpIsEnabled]="alias === restrictedUserAlias"
+                >
+                  <button
+                    data-cy="profileDeleteUserButton"
+                    class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
+                    [ngClass]="{
+                      'text-s400 cursor-default': alias === restrictedUserAlias,
+                      'border-r1 text-r1': alias !== restrictedUserAlias
+                    }"
+                    (click)="deleteUser()"
+                    [disabled]="alias === restrictedUserAlias"
+                    >Delete User</button
+                  >
+                </div>
               </div>
             </div>
 
-            <div class="mb-5 mt-7 flex items-center">
-              <div
-                tp="User is restricted. Sign Up at https://mprove.io to get full access."
-                [tpIsEnabled]="alias === restrictedUserAlias"
-              >
-                <button
-                  data-cy="profileDeleteUserButton"
-                  class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
-                  [ngClass]="{
-                    'text-s400 cursor-default': alias === restrictedUserAlias,
-                    'border-r1 text-r1': alias !== restrictedUserAlias
-                  }"
-                  (click)="deleteUser()"
-                  [disabled]="alias === restrictedUserAlias"
-                  >Delete User</button
+            <div class="ml-6 flex flex-col">
+              <div class="flex h-24 items-center">
+                <div
+                  tp="User is restricted. Sign Up at https://mprove.io to get full access."
+                  [tpIsEnabled]="alias === restrictedUserAlias"
+                >
+                  <button
+                    data-cy="profileEditPhotoButton"
+                    class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                    [ngClass]="{
+                      'text-s400 cursor-default': alias === restrictedUserAlias,
+                      'border-s3 text-s1': alias !== restrictedUserAlias
+                    }"
+                    (click)="editPhoto()"
+                    [disabled]="alias === restrictedUserAlias"
+                    >Edit</button
+                  ></div
                 >
               </div>
+
+              <div class="flex h-16 items-center">
+                <div
+                  tp="User is restricted. Sign Up at https://mprove.io to get full access."
+                  [tpIsEnabled]="alias === restrictedUserAlias"
+                >
+                  <button
+                    data-cy="profileEditNameButton"
+                    class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
+                    [ngClass]="{
+                      'text-s400 cursor-default': alias === restrictedUserAlias,
+                      'border-s3 text-s1': alias !== restrictedUserAlias
+                    }"
+                    (click)="editName()"
+                    [disabled]="alias === restrictedUserAlias"
+                    >Edit</button
+                  ></div
+                >
+              </div>
+
+              <div class="flex h-16 items-center"></div>
+              <div class="flex h-16 items-center"></div>
+              <div class="flex items-center"></div>
+              <div class="flex items-center"></div>
             </div>
           </div>
-
-          <div class="ml-6 flex flex-col">
-            <div class="flex h-24 items-center">
-              <div
-                tp="User is restricted. Sign Up at https://mprove.io to get full access."
-                [tpIsEnabled]="alias === restrictedUserAlias"
-              >
-                <button
-                  data-cy="profileEditPhotoButton"
-                  class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
-                  [ngClass]="{
-                    'text-s400 cursor-default': alias === restrictedUserAlias,
-                    'border-s3 text-s1': alias !== restrictedUserAlias
-                  }"
-                  (click)="editPhoto()"
-                  [disabled]="alias === restrictedUserAlias"
-                  >Edit</button
-                ></div
-              >
-            </div>
-
-            <div class="flex h-16 items-center">
-              <div
-                tp="User is restricted. Sign Up at https://mprove.io to get full access."
-                [tpIsEnabled]="alias === restrictedUserAlias"
-              >
-                <button
-                  data-cy="profileEditNameButton"
-                  class="rounded border px-3 py-2 text-base font-medium leading-3 shadow-sm focus:outline-none"
-                  [ngClass]="{
-                    'text-s400 cursor-default': alias === restrictedUserAlias,
-                    'border-s3 text-s1': alias !== restrictedUserAlias
-                  }"
-                  (click)="editName()"
-                  [disabled]="alias === restrictedUserAlias"
-                  >Edit</button
-                ></div
-              >
-            </div>
-
-            <div class="flex h-16 items-center"></div>
-            <div class="flex h-16 items-center"></div>
-            <div class="flex items-center"></div>
-            <div class="flex items-center"></div>
-          </div>
-        </div>
+        </ng-scrollbar>
       </div>
     </div>
   </div>

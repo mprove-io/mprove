@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TippyDirective } from '@ngneat/helipopper';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from '../shared/shared.module';
 import { OrgAccountComponent } from './org-account/org-account.component';
 import { OrgUsersComponent } from './org-users/org-users.component';
@@ -14,7 +15,8 @@ import { OrgUsersComponent } from './org-users/org-users.component';
     ReactiveFormsModule,
     SharedModule,
     NgxPaginationModule,
-    TippyDirective
+    TippyDirective,
+    NgScrollbarModule
   ]
 })
 export class OrgModule {}

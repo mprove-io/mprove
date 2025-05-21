@@ -1,111 +1,125 @@
 <div class="flex h-full w-full flex-col">
-  <div
-    class="relative flex h-16 flex-shrink-0 items-center overflow-auto px-6 shadow"
-  >
-    <m-logo></m-logo>
+  <div class="relative shadow">
+    <div class="h-[72px] w-full overflow-auto">
+      <ng-scrollbar [orientation]="'auto'" [visibility]="'hover'">
+        <div
+          class="relative mb-[1px] mt-[16px] flex h-[40px] w-full flex-1 flex-shrink-0 flex-row items-center px-6"
+        >
+          <m-logo></m-logo>
 
-    <!-- <div class="flex flex-1"></div> -->
-    <!-- <div class="flex flex-1"></div> -->
+          <!-- <div class="flex flex-1"></div> -->
+          <!-- <div class="flex flex-1"></div> -->
 
-    <div class="ml-10 flex flex-row items-center">
-      <div *ngIf="!!nav && !!nav.projectId" class="flex flex-row items-center">
-        <div class="text-s400 select-none font-semibold">Env</div>
-        <m-env-select class="ml-5"></m-env-select>
-
-        <div class="text-s400 ml-10 select-none font-semibold">Branch</div>
-        <m-branch-select class="ml-5"></m-branch-select>
-
-        <div class="flex w-[130px] flex-row justify-start">
-          <button
-            class="text-s1 ml-7 flex h-10 flex-row items-center justify-start text-left text-base focus:outline-none"
-            [ngClass]="{
-              'text-s400 cursor-default':
-                !nav || !nav.projectId || needSave === true,
-              'font-semibold': isFilesRouteActive === true
-            }"
-            (click)="navigateFiles()"
-            [disabled]="!nav || !nav.projectId || needSave === true"
-          >
+          <div class="ml-10 flex flex-row items-center">
             <div
-              class="flex flex-shrink-0 flex-row items-center justify-center"
+              *ngIf="!!nav && !!nav.projectId"
+              class="flex flex-row items-center"
             >
-              <div
-                class="text-a500 ml-2 mr-2 flex h-8 w-8 flex-shrink-0"
-                *ngIf="nav.needValidate === true"
-              >
-                <m-exclamation-icon></m-exclamation-icon>
-              </div>
+              <div class="text-s400 select-none font-semibold">Env</div>
+              <m-env-select class="ml-5"></m-env-select>
 
-              <div
-                class="text-r1 ml-2 mr-2 flex h-8 w-8 flex-shrink-0"
-                *ngIf="
-                  nav.needValidate === false &&
-                  (struct?.errors.length > 0 || repo?.conflicts.length > 0)
-                "
+              <div class="text-s400 ml-10 select-none font-semibold"
+                >Branch</div
               >
-                <m-exclamation-icon></m-exclamation-icon>
-              </div>
+              <m-branch-select class="ml-5"></m-branch-select>
 
-              <div class="flex w-[60px] items-center justify-center">Files</div>
+              <div class="flex w-[130px] flex-row justify-start">
+                <button
+                  class="text-s1 ml-7 flex h-10 flex-row items-center justify-start text-left text-base focus:outline-none"
+                  [ngClass]="{
+                    'text-s400 cursor-default':
+                      !nav || !nav.projectId || needSave === true,
+                    'font-semibold': isFilesRouteActive === true
+                  }"
+                  (click)="navigateFiles()"
+                  [disabled]="!nav || !nav.projectId || needSave === true"
+                >
+                  <div
+                    class="flex flex-shrink-0 flex-row items-center justify-center"
+                  >
+                    <div
+                      class="text-a500 ml-2 mr-2 flex h-8 w-8 flex-shrink-0"
+                      *ngIf="nav.needValidate === true"
+                    >
+                      <m-exclamation-icon></m-exclamation-icon>
+                    </div>
+
+                    <div
+                      class="text-r1 ml-2 mr-2 flex h-8 w-8 flex-shrink-0"
+                      *ngIf="
+                        nav.needValidate === false &&
+                        (struct?.errors.length > 0 ||
+                          repo?.conflicts.length > 0)
+                      "
+                    >
+                      <m-exclamation-icon></m-exclamation-icon>
+                    </div>
+
+                    <div class="flex w-[60px] items-center justify-center"
+                      >Files</div
+                    >
+                  </div>
+                </button>
+              </div>
             </div>
-          </button>
+          </div>
+
+          <div class="flex flex-1"></div>
+
+          <div
+            *ngIf="!!nav && !!nav.projectId"
+            class="flex flex-row items-center space-x-5"
+          >
+            <button
+              class="text-s1 ml-5 flex h-10 w-[80px] items-center justify-center text-left text-base focus:outline-none"
+              [ngClass]="{
+                'text-s400 cursor-default':
+                  !nav || !nav.projectId || needSave === true,
+                'font-semibold': isModelsRouteActive === true
+              }"
+              (click)="navigateCharts()"
+              [disabled]="!nav || !nav.projectId || needSave === true"
+              >Models</button
+            >
+
+            <button
+              class="text-s1 flex h-10 w-[120px] items-center justify-center text-left text-base focus:outline-none"
+              [ngClass]="{
+                'text-s400 cursor-default':
+                  !nav || !nav.projectId || needSave === true,
+                'font-semibold': isDashboardsRouteActive === true
+              }"
+              (click)="navigateDashboards()"
+              [disabled]="!nav || !nav.projectId || needSave === true"
+              >Dashboards</button
+            >
+
+            <button
+              class="text-s1 flex h-10 w-[90px] items-center justify-center text-left text-base focus:outline-none"
+              [ngClass]="{
+                'text-s400 cursor-default':
+                  !nav || !nav.projectId || needSave === true,
+                'font-semibold': isReportsRouteActive === true
+              }"
+              (click)="navigateReports()"
+              [disabled]="!nav || !nav.projectId || needSave === true"
+              >Reports</button
+            >
+          </div>
+
+          <div class="flex flex-1"></div>
+
+          <div class="flex flex-row items-center">
+            <m-project-menu class="ml-7"></m-project-menu>
+            <m-project-select class="ml-3"></m-project-select>
+
+            <m-org-menu class="ml-7"></m-org-menu>
+            <m-org-select class="ml-3"></m-org-select>
+
+            <m-user-menu class="ml-9"></m-user-menu>
+          </div>
         </div>
-      </div>
-    </div>
-
-    <div class="flex flex-1"></div>
-
-    <div
-      *ngIf="!!nav && !!nav.projectId"
-      class="flex flex-row items-center space-x-5"
-    >
-      <button
-        class="text-s1 ml-5 flex h-10 w-[80px] items-center justify-center text-left text-base focus:outline-none"
-        [ngClass]="{
-          'text-s400 cursor-default':
-            !nav || !nav.projectId || needSave === true,
-          'font-semibold': isModelsRouteActive === true
-        }"
-        (click)="navigateCharts()"
-        [disabled]="!nav || !nav.projectId || needSave === true"
-        >Models</button
-      >
-
-      <button
-        class="text-s1 flex h-10 w-[120px] items-center justify-center text-left text-base focus:outline-none"
-        [ngClass]="{
-          'text-s400 cursor-default':
-            !nav || !nav.projectId || needSave === true,
-          'font-semibold': isDashboardsRouteActive === true
-        }"
-        (click)="navigateDashboards()"
-        [disabled]="!nav || !nav.projectId || needSave === true"
-        >Dashboards</button
-      >
-
-      <button
-        class="text-s1 flex h-10 w-[90px] items-center justify-center text-left text-base focus:outline-none"
-        [ngClass]="{
-          'text-s400 cursor-default':
-            !nav || !nav.projectId || needSave === true,
-          'font-semibold': isReportsRouteActive === true
-        }"
-        (click)="navigateReports()"
-        [disabled]="!nav || !nav.projectId || needSave === true"
-        >Reports</button
-      >
-    </div>
-
-    <div class="flex flex-1"></div>
-
-    <div class="flex flex-row items-center">
-      <m-project-menu class="ml-7"></m-project-menu>
-      <m-project-select class="ml-3"></m-project-select>
-
-      <m-org-menu class="ml-7"></m-org-menu>
-      <m-org-select class="ml-3"></m-org-select>
-
-      <m-user-menu class="ml-9"></m-user-menu>
+      </ng-scrollbar>
     </div>
   </div>
 

@@ -28,265 +28,272 @@
     </div>
 
     <div class="bg-m0 mb-4 mt-6 flex-grow overflow-auto rounded shadow">
-      <div class="text-s1 mx-5 mt-8">
-        <table class="divide-s500 min-w-full divide-y">
-          <thead>
-            <tr class="h-12 text-sm">
-              <th></th>
-              <th></th>
-              <th class="text-left">Email</th>
-              <!-- <th class="text-left">Alias</th> -->
-              <th class="text-left">Name</th>
-              <th class="text-center">Project Admin</th>
-              <th class="text-center">Files Editor</th>
-              <th class="text-center">Explorer</th>
-              <th></th>
-              <th class="text-left">Access Roles</th>
-              <th></th>
-            </tr>
-          </thead>
+      <ng-scrollbar [orientation]="'auto'" [visibility]="'hover'">
+        <div class="text-s1 mx-5 mt-8">
+          <table class="divide-s500 min-w-full divide-y">
+            <thead>
+              <tr class="h-12 text-sm">
+                <th></th>
+                <th></th>
+                <th class="text-left">Email</th>
+                <!-- <th class="text-left">Alias</th> -->
+                <th class="text-left">Name</th>
+                <th class="text-center">Project Admin</th>
+                <th class="text-center">Files Editor</th>
+                <th class="text-center">Explorer</th>
+                <th></th>
+                <th class="text-left">Access Roles</th>
+                <th></th>
+              </tr>
+            </thead>
 
-          <tbody class="divide-s300 divide-y">
-            <tr
-              *ngFor="
-                let member of members
-                  | paginate
-                    : {
-                        id: 'members',
-                        itemsPerPage: perPage,
-                        currentPage: currentPage,
-                        totalItems: total
-                      };
-                let i = index
-              "
-              class="h-16"
-            >
-              <td class="w-[100px]">
-                <ng-template #templateRemoveMember>
-                  <div *ngIf="isAdmin === false">Admin role required</div>
-
-                  <div *ngIf="isAdmin === true && member.memberId === userId"
-                    >Only another admin can remove you from project members</div
-                  >
-                </ng-template>
-
-                <div
-                  [tp]="templateRemoveMember"
-                  [tpIsEnabled]="
-                    member.memberId === userId || isAdmin === false
-                  "
-                >
-                  <button
-                    data-cy="projectTeamRemoveMemberButton"
-                    class="text-s1 ml-5 h-9 w-9 rounded focus:outline-none"
-                    [ngClass]="{
-                      'cursor-default':
-                        member.memberId === userId || isAdmin === false,
-                      'hover:bg-m200':
-                        member.memberId !== userId && isAdmin !== false
-                    }"
-                    [disabled]="member.memberId === userId || isAdmin === false"
-                    (click)="removeMember(member)"
-                  >
-                    <div
-                      class="flex justify-center"
-                      [ngClass]="{
-                        'text-s400':
-                          member.memberId === userId || isAdmin === false
-                      }"
-                    >
-                      <m-delete-icon></m-delete-icon>
-                    </div>
-                  </button>
-                </div>
-              </td>
-
-              <td class="w-[60px]">
-                <div class="flex">
-                  <button
-                    class="bg-m200 h-10 w-10 rounded-full text-base tracking-wider focus:outline-none"
-                    [ngClass]="{
-                      'cursor-default': !member.avatarSmall
-                    }"
-                    (click)="
-                      showPhoto(
-                        member.memberId,
-                        member.firstName,
-                        member.lastName,
-                        member.alias
-                      )
-                    "
-                    [disabled]="!member.avatarSmall"
-                  >
-                    <m-avatar
-                      [avatar]="member.avatarSmall"
-                      [initials]="member.initials"
-                    ></m-avatar>
-                  </button>
-                </div>
-              </td>
-
-              <td data-cy="projectTeamMemberEmailData" class="w-96 text-base">
-                {{ member.email }}
-              </td>
-
-              <!-- <td class="w-64 text-base">{{ member.alias }}</td> -->
-
-              <td class="w-[300px] text-base">{{ member.fullName }}</td>
-
-              <td class="w-48">
-                <div class="flex justify-center">
-                  <ng-template #templateChangeAdminStatus>
+            <tbody class="divide-s300 divide-y">
+              <tr
+                *ngFor="
+                  let member of members
+                    | paginate
+                      : {
+                          id: 'members',
+                          itemsPerPage: perPage,
+                          currentPage: currentPage,
+                          totalItems: total
+                        };
+                  let i = index
+                "
+                class="h-16"
+              >
+                <td class="w-[100px]">
+                  <ng-template #templateRemoveMember>
                     <div *ngIf="isAdmin === false">Admin role required</div>
 
                     <div *ngIf="isAdmin === true && member.memberId === userId"
-                      >Only another admin can change your admin status</div
+                      >Only another admin can remove you from project
+                      members</div
                     >
                   </ng-template>
 
                   <div
-                    class="w-fit"
-                    [tp]="templateChangeAdminStatus"
+                    [tp]="templateRemoveMember"
                     [tpIsEnabled]="
-                      isAdmin === false || member.memberId === userId
+                      member.memberId === userId || isAdmin === false
                     "
                   >
                     <button
-                      data-cy="projectTeamIsAdminButton"
-                      class="text-m0 flex h-5 w-5 items-center justify-center rounded border-2 focus:outline-none"
+                      data-cy="projectTeamRemoveMemberButton"
+                      class="text-s1 ml-5 h-9 w-9 rounded focus:outline-none"
                       [ngClass]="{
-                        'bg-m600':
-                          member.isAdmin === true &&
-                          isAdmin === true &&
-                          member.memberId !== userId,
-                        'bg-s400 cursor-default':
-                          member.isAdmin === true &&
-                          (isAdmin === false || member.memberId === userId),
-                        'border-m600': isAdmin === true,
-                        'border-s400 cursor-default':
-                          member.memberId === userId || isAdmin === false
+                        'cursor-default':
+                          member.memberId === userId || isAdmin === false,
+                        'hover:bg-m200':
+                          member.memberId !== userId && isAdmin !== false
                       }"
-                      (click)="isAdminChange($event, i)"
                       [disabled]="
                         member.memberId === userId || isAdmin === false
                       "
+                      (click)="removeMember(member)"
                     >
-                      <m-check-icon *ngIf="member.isAdmin"></m-check-icon>
-                    </button>
-                  </div>
-                </div>
-              </td>
-
-              <td class="w-48">
-                <div class="flex justify-center">
-                  <div
-                    tp="Admin role required"
-                    [tpIsEnabled]="isAdmin === false"
-                  >
-                    <button
-                      data-cy="projectTeamIsEditorButton"
-                      class="text-m0 flex h-5 w-5 items-center justify-center rounded border-2 focus:outline-none"
-                      [ngClass]="{
-                        'bg-m600': member.isEditor === true && isAdmin === true,
-                        'bg-s400 cursor-default':
-                          member.isEditor === true && isAdmin === false,
-                        'border-m600': isAdmin === true,
-                        'border-s400 cursor-default': isAdmin === false
-                      }"
-                      (click)="isEditorChange($event, i)"
-                      [disabled]="isAdmin === false"
-                    >
-                      <m-check-icon *ngIf="member.isEditor"></m-check-icon>
-                    </button>
-                  </div>
-                </div>
-              </td>
-
-              <td class="w-48">
-                <div class="flex justify-center">
-                  <div
-                    tp="Admin role required"
-                    [tpIsEnabled]="isAdmin === false"
-                  >
-                    <button
-                      data-cy="projectTeamIsExplorerButton"
-                      class="text-m0 flex h-5 w-5 items-center justify-center rounded border-2 focus:outline-none"
-                      [ngClass]="{
-                        'bg-m600':
-                          member.isExplorer === true && isAdmin === true,
-                        'bg-s400 cursor-default':
-                          member.isExplorer === true && isAdmin === false,
-                        'border-m600': isAdmin === true,
-                        'border-s400 cursor-default': isAdmin === false
-                      }"
-                      (click)="isExplorerChange($event, i)"
-                      [disabled]="isAdmin === false"
-                    >
-                      <m-check-icon *ngIf="member.isExplorer"></m-check-icon>
-                    </button>
-                  </div>
-                </div>
-              </td>
-
-              <td class="w-24"></td>
-
-              <td class="w-64">
-                <div class="flex flex-row items-center">
-                  <div
-                    tp="Admin role required"
-                    [tpIsEnabled]="isAdmin === false"
-                  >
-                    <button
-                      data-cy="projectTeamAddRoleButton"
-                      class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
-                      [ngClass]="{
-                        'text-s400 cursor-default': isAdmin === false,
-                        'text-m600 hover:bg-m200': isAdmin === true
-                      }"
-                      (click)="addRole(member, i)"
-                      [disabled]="isAdmin === false"
-                    >
-                      <div>
-                        <m-add-icon></m-add-icon>
+                      <div
+                        class="flex justify-center"
+                        [ngClass]="{
+                          'text-s400':
+                            member.memberId === userId || isAdmin === false
+                        }"
+                      >
+                        <m-delete-icon></m-delete-icon>
                       </div>
                     </button>
                   </div>
+                </td>
 
-                  <div class="my-3 ml-5 flex flex-col">
-                    <div *ngFor="let role of member.roles; let n = index">
-                      <div class="flex flex-row items-center text-base">
-                        <div>{{ role }} </div>
-                        <div
-                          tp="Admin role required"
-                          [tpIsEnabled]="isAdmin === false"
-                          class="ml-3"
-                        >
-                          <button
-                            data-cy="projectTeamRemoveRoleButton"
-                            class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
-                            [ngClass]="{
-                              'text-s1 hover:bg-m200': isAdmin === true,
-                              'text-s300 cursor-default': isAdmin === false
-                            }"
-                            (click)="removeRole(member, i, n)"
-                            [disabled]="isAdmin === false"
+                <td class="w-[60px]">
+                  <div class="flex">
+                    <button
+                      class="bg-m200 h-10 w-10 rounded-full text-base tracking-wider focus:outline-none"
+                      [ngClass]="{
+                        'cursor-default': !member.avatarSmall
+                      }"
+                      (click)="
+                        showPhoto(
+                          member.memberId,
+                          member.firstName,
+                          member.lastName,
+                          member.alias
+                        )
+                      "
+                      [disabled]="!member.avatarSmall"
+                    >
+                      <m-avatar
+                        [avatar]="member.avatarSmall"
+                        [initials]="member.initials"
+                      ></m-avatar>
+                    </button>
+                  </div>
+                </td>
+
+                <td data-cy="projectTeamMemberEmailData" class="w-96 text-base">
+                  {{ member.email }}
+                </td>
+
+                <!-- <td class="w-64 text-base">{{ member.alias }}</td> -->
+
+                <td class="w-[300px] text-base">{{ member.fullName }}</td>
+
+                <td class="w-48">
+                  <div class="flex justify-center">
+                    <ng-template #templateChangeAdminStatus>
+                      <div *ngIf="isAdmin === false">Admin role required</div>
+
+                      <div
+                        *ngIf="isAdmin === true && member.memberId === userId"
+                        >Only another admin can change your admin status</div
+                      >
+                    </ng-template>
+
+                    <div
+                      class="w-fit"
+                      [tp]="templateChangeAdminStatus"
+                      [tpIsEnabled]="
+                        isAdmin === false || member.memberId === userId
+                      "
+                    >
+                      <button
+                        data-cy="projectTeamIsAdminButton"
+                        class="text-m0 flex h-5 w-5 items-center justify-center rounded border-2 focus:outline-none"
+                        [ngClass]="{
+                          'bg-m600':
+                            member.isAdmin === true &&
+                            isAdmin === true &&
+                            member.memberId !== userId,
+                          'bg-s400 cursor-default':
+                            member.isAdmin === true &&
+                            (isAdmin === false || member.memberId === userId),
+                          'border-m600': isAdmin === true,
+                          'border-s400 cursor-default':
+                            member.memberId === userId || isAdmin === false
+                        }"
+                        (click)="isAdminChange($event, i)"
+                        [disabled]="
+                          member.memberId === userId || isAdmin === false
+                        "
+                      >
+                        <m-check-icon *ngIf="member.isAdmin"></m-check-icon>
+                      </button>
+                    </div>
+                  </div>
+                </td>
+
+                <td class="w-48">
+                  <div class="flex justify-center">
+                    <div
+                      tp="Admin role required"
+                      [tpIsEnabled]="isAdmin === false"
+                    >
+                      <button
+                        data-cy="projectTeamIsEditorButton"
+                        class="text-m0 flex h-5 w-5 items-center justify-center rounded border-2 focus:outline-none"
+                        [ngClass]="{
+                          'bg-m600':
+                            member.isEditor === true && isAdmin === true,
+                          'bg-s400 cursor-default':
+                            member.isEditor === true && isAdmin === false,
+                          'border-m600': isAdmin === true,
+                          'border-s400 cursor-default': isAdmin === false
+                        }"
+                        (click)="isEditorChange($event, i)"
+                        [disabled]="isAdmin === false"
+                      >
+                        <m-check-icon *ngIf="member.isEditor"></m-check-icon>
+                      </button>
+                    </div>
+                  </div>
+                </td>
+
+                <td class="w-48">
+                  <div class="flex justify-center">
+                    <div
+                      tp="Admin role required"
+                      [tpIsEnabled]="isAdmin === false"
+                    >
+                      <button
+                        data-cy="projectTeamIsExplorerButton"
+                        class="text-m0 flex h-5 w-5 items-center justify-center rounded border-2 focus:outline-none"
+                        [ngClass]="{
+                          'bg-m600':
+                            member.isExplorer === true && isAdmin === true,
+                          'bg-s400 cursor-default':
+                            member.isExplorer === true && isAdmin === false,
+                          'border-m600': isAdmin === true,
+                          'border-s400 cursor-default': isAdmin === false
+                        }"
+                        (click)="isExplorerChange($event, i)"
+                        [disabled]="isAdmin === false"
+                      >
+                        <m-check-icon *ngIf="member.isExplorer"></m-check-icon>
+                      </button>
+                    </div>
+                  </div>
+                </td>
+
+                <td class="w-24"></td>
+
+                <td class="w-64">
+                  <div class="flex flex-row items-center">
+                    <div
+                      tp="Admin role required"
+                      [tpIsEnabled]="isAdmin === false"
+                    >
+                      <button
+                        data-cy="projectTeamAddRoleButton"
+                        class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+                        [ngClass]="{
+                          'text-s400 cursor-default': isAdmin === false,
+                          'text-m600 hover:bg-m200': isAdmin === true
+                        }"
+                        (click)="addRole(member, i)"
+                        [disabled]="isAdmin === false"
+                      >
+                        <div>
+                          <m-add-icon></m-add-icon>
+                        </div>
+                      </button>
+                    </div>
+
+                    <div class="my-3 ml-5 flex flex-col">
+                      <div *ngFor="let role of member.roles; let n = index">
+                        <div class="flex flex-row items-center text-base">
+                          <div>{{ role }} </div>
+                          <div
+                            tp="Admin role required"
+                            [tpIsEnabled]="isAdmin === false"
+                            class="ml-3"
                           >
-                            <div>
-                              <m-delete-icon></m-delete-icon>
-                            </div>
-                          </button>
+                            <button
+                              data-cy="projectTeamRemoveRoleButton"
+                              class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+                              [ngClass]="{
+                                'text-s1 hover:bg-m200': isAdmin === true,
+                                'text-s300 cursor-default': isAdmin === false
+                              }"
+                              (click)="removeRole(member, i, n)"
+                              [disabled]="isAdmin === false"
+                            >
+                              <div>
+                                <m-delete-icon></m-delete-icon>
+                              </div>
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </td>
+                </td>
 
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-scrollbar>
     </div>
 
     <pagination-controls
