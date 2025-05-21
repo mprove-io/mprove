@@ -12,16 +12,9 @@ body {
   font-feature-settings: 'tnum';
 }
 
-ng-scrollbar {
-  --scrollbar-thickness: 15;
-  --scrollbar-hover-opacity-transition-enter-duration: 200ms;
-  --scrollbar-hover-opacity-transition-leave-duration: 500ms;
-  --scrollbar-hover-opacity-transition-leave-delay: 0ms;
-}
-
 // report.scss also has scroll customization
 
-// for other places (non ngx-scrollbar)
+// scroll for other places (non ngx-scrollbar)
 ::-webkit-scrollbar {
   width: 15px;
   height: 15px;
@@ -29,7 +22,44 @@ ng-scrollbar {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 0px;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+// codemirror scroll for WebKit browsers (Chrome, Safari)
+.cm-scroller::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+
+.cm-editor:hover .cm-scroller::-webkit-scrollbar {
+  width: 15px;
+  height: 15px;
+}
+
+.cm-editor:hover .cm-scroller::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 0px;
+}
+
+.cm-editor:hover .cm-scroller::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+// codemirror focus border
+
+.cm-editor.cm-focused {
+  outline: none;
+  border-left: none;
+  border-right: none;
+}
+
+ng-scrollbar {
+  --scrollbar-thumb-color: rgb(0 0 0 / 15%);
+  --scrollbar-thickness: 15;
+  --scrollbar-hover-opacity-transition-enter-duration: 200ms;
+  --scrollbar-hover-opacity-transition-leave-duration: 500ms;
+  --scrollbar-hover-opacity-transition-leave-delay: 0ms;
 }
 
 // @import '~ngx-ui-switch/ui-switch.component.scss';
