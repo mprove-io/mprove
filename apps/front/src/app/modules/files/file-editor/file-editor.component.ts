@@ -47,21 +47,23 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   syncScrollCleanups: (() => void)[] = [];
 
-  theme: Extension = VS_LIGHT_THEME_EXTRA;
   indentWithTab = true;
   indentUnit = '  ';
   languages = languageData.languages;
   lang: string;
+  theme: Extension = VS_LIGHT_THEME_EXTRA;
 
   diagnostics: Diagnostic[] = [];
 
   extensions: Extension[] = [];
 
   baseExtensions: Extension[] = [VS_LIGHT_THEME_EXTRA];
+
   baseOriginalExtensions: Extension[] = [
     ...this.baseExtensions,
     EditorState.readOnly.of(true)
   ];
+
   baseModifiedExtensions: Extension[] = [
     ...this.baseExtensions,
     EditorState.readOnly.of(false)

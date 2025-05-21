@@ -129,6 +129,11 @@ export const VS_LIGHT_THEME_EXTRA: Extension = [
       // fontSize: '16px',
       // padding: '12px',
       // caretColor: '#000000'
+    },
+    '.cm-foldGutter': {
+      color: 'black',
+      width: '30px',
+      textAlign: 'center'
     }
     // '.cm-line': {
     // lineHeight: '1.6'
