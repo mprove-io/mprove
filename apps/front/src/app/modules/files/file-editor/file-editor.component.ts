@@ -11,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import * as languageData from '@codemirror/language-data';
 import { EditorState, Extension } from '@codemirror/state';
 
-import { CodeEditor } from '@acrodata/code-editor';
+import { CodeEditor, DiffEditor } from '@acrodata/code-editor';
 import { Diagnostic, linter } from '@codemirror/lint';
 import { Compartment } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
@@ -41,6 +41,11 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('codeEditor', { static: false })
   codeEditorRef: CodeEditor;
+
+  @ViewChild('diffEditor', { static: false })
+  diffEditorRef: DiffEditor;
+
+  syncScrollCleanups: (() => void)[] = [];
 
   theme: Extension = VS_LIGHT_THEME_EXTRA;
   indentWithTab = true;
@@ -76,7 +81,17 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
   panel: common.PanelEnum;
-  panel$ = this.uiQuery.panel$.pipe(tap(x => (this.panel = x)));
+  panel$ = this.uiQuery.panel$.pipe(
+    tap(x => {
+      this.panel = x;
+      this.cd.detectChanges();
+
+      if (this.panel === common.PanelEnum.Tree) {
+        // console.log('panel$ cleanupSyncScroll');
+        this.cleanupSyncScroll();
+      }
+    })
+  );
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -118,6 +133,18 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       await this.setEditorOptionsLanguage();
       this.checkSelectedFile();
 
+      if (
+        (this.panel === common.PanelEnum.ChangesToCommit ||
+          this.panel === common.PanelEnum.ChangesToPush) &&
+        common.isDefined(this.file.fileId)
+      ) {
+        // console.log('file$ setupDiffEditorSyncScroll');
+        this.setupDiffEditorSyncScroll();
+      } else {
+        // console.log('file$ cleanupSyncScroll');
+        this.cleanupSyncScroll();
+      }
+
       this.cd.detectChanges();
     })
   );
@@ -147,14 +174,14 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   routeLine$ = this.route.queryParams.pipe(
     tap(params => {
       this.line = Number(params['line'] ? params['line'] : 1);
-      this.moveToLine();
+      this.moveMainEditorToLine();
     })
   );
 
   fileId$ = this.fileQuery.fileId$.pipe(
     filter(v => !!v),
     tap((fileId: string) => {
-      this.moveToLine();
+      this.moveMainEditorToLine();
     })
   );
 
@@ -187,7 +214,63 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.moveToLine();
+    // console.log('ngAfterViewInit');
+    this.moveMainEditorToLine();
+    // this.setupDiffEditorSyncScroll();
+  }
+
+  setupDiffEditorSyncScroll() {
+    setTimeout(() => {
+      // console.log('setupDiffEditorSyncScroll');
+
+      if (
+        this.diffEditorRef?.mergeView?.a &&
+        this.diffEditorRef?.mergeView?.b
+      ) {
+        let editorA = this.diffEditorRef.mergeView.a;
+        let editorB = this.diffEditorRef.mergeView.b;
+
+        this.cleanupSyncScroll();
+
+        let isSyncing = false;
+
+        let syncScrollHandler = (source: EditorView, target: EditorView) => {
+          // console.log('isSyncing');
+          // console.log(isSyncing);
+          return () => {
+            if (isSyncing === true) {
+              return;
+            }
+            isSyncing = true;
+            target.scrollDOM.scrollTop = source.scrollDOM.scrollTop;
+            requestAnimationFrame(() => (isSyncing = false));
+          };
+        };
+
+        let aToB = syncScrollHandler(editorA, editorB);
+        let bToA = syncScrollHandler(editorB, editorA);
+
+        editorA.scrollDOM.addEventListener('scroll', aToB);
+        editorB.scrollDOM.addEventListener('scroll', bToA);
+
+        this.syncScrollCleanups.push(
+          () => editorA.scrollDOM.removeEventListener('scroll', aToB),
+          () => editorB.scrollDOM.removeEventListener('scroll', bToA)
+        );
+
+        // Initial sync
+        editorB.scrollDOM.scrollTop = editorA.scrollDOM.scrollTop;
+      } else {
+        console.warn('Diff editor is not defined');
+        // setTimeout(() => this.setupDiffEditorSyncScroll(), 1000);
+      }
+    });
+  }
+
+  cleanupSyncScroll() {
+    // console.log('cleanupSyncScroll');
+    this.syncScrollCleanups.forEach(cleanup => cleanup());
+    this.syncScrollCleanups = [];
   }
 
   checkSelectedFile() {
@@ -387,8 +470,8 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.createLinter();
   }
 
-  private getEditorDocument() {
-    const state = EditorState.create({ doc: this.content });
+  getEditorDocument() {
+    let state = EditorState.create({ doc: this.content });
     return state.doc;
   }
 
@@ -470,21 +553,18 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.uiQuery.updatePart({ needSave: false });
   }
 
-  moveToLine() {
+  moveMainEditorToLine() {
     setTimeout(() => {
+      let editorView = this.codeEditorRef?.view;
+
       if (
         common.isDefinedAndNotEmpty(this.content) &&
-        common.isDefined(this.line)
+        common.isDefined(this.line) &&
+        common.isDefined(editorView)
       ) {
         let lineNumber = this.line;
-        let editorView = this.codeEditorRef?.view;
 
-        // if (common.isUndefined(editorView)) {
-        //   console.warn('this.codeEditorRef?.view not defined');
-        //   return;
-        // }
-
-        const lines = this.content.split('\n');
+        let lines = this.content.split('\n');
 
         if (lineNumber < 1 || lineNumber > lines.length) {
           console.warn(
@@ -494,7 +574,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         }
 
         try {
-          const line = editorView.state.doc.line(lineNumber);
+          let line = editorView.state.doc.line(lineNumber);
 
           editorView.dispatch({
             effects: EditorView.scrollIntoView(line.from, { y: 'center' })
@@ -601,5 +681,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
     this.fileQuery.reset();
+    // console.log('ngOnDestroy cleanupSyncScroll');
+    this.cleanupSyncScroll();
   }
 }

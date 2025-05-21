@@ -98,8 +98,8 @@
   <div class="flex h-2 w-full flex-grow flex-row pl-6 pr-6">
     <div *ngIf="panel === panelTree" class="flex w-2 flex-1">
       <code-editor
-        class="w-full outline-none"
         #codeEditor
+        class="w-full outline-none"
         data-cy="fileEditorCodeEditor"
         style="height: 100%"
         [(ngModel)]="content"
@@ -124,6 +124,7 @@
       "
     >
       <diff-editor
+        #diffEditor
         class="w-full outline-none"
         style="height: 100%"
         [(ngModel)]="diffContent"
