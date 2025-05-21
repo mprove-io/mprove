@@ -19,6 +19,19 @@ ng-scrollbar {
   --scrollbar-hover-opacity-transition-leave-delay: 0ms;
 }
 
+// report.scss also has scroll customization
+
+// for other places (non ngx-scrollbar)
+::-webkit-scrollbar {
+  width: 15px;
+  height: 15px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 0px;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
 // @import '~ngx-ui-switch/ui-switch.component.scss';
 
 .switch:focus {

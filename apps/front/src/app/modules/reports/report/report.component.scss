@@ -1,13 +1,13 @@
-::ng-deep .ag-header-cell .custom-header {
+:host ::ng-deep .ag-header-cell .custom-header {
   font-family: 'Montserrat';
 }
 
-::ng-deep ::-webkit-scrollbar {
+:host ::ng-deep ::-webkit-scrollbar {
   width: 15px;
   height: 15px;
 }
 
-::ng-deep ::-webkit-scrollbar-thumb {
+:host ::ng-deep ::-webkit-scrollbar-thumb {
   border-radius: 0px;
   background-color: rgba(0, 0, 0, 0.2);
 }

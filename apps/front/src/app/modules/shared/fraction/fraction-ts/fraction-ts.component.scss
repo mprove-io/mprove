@@ -6,6 +6,6 @@ vaadin-time-picker {
   --vaadin-field-default-width: 120px;
 }
 
-::ng-deep * {
+:host ::ng-deep * {
   --lumo-font-family: 'Montserrat';
 }
