@@ -864,18 +864,23 @@
 
                   <div
                     *ngIf="report.chart.series.length > 0"
-                    class="flex h-full w-2/5 flex-shrink-0 overflow-auto border-l"
+                    class="flex h-full w-2/5 flex-shrink-0 flex-col overflow-y-auto border-l"
                     [ngClass]="{
                       'border-s300': report.chart.isValid === true,
                       'border-r600': report.chart.isValid === false
                     }"
                   >
-                    <m-chart-editor
-                      [chart]="report.chart"
-                      [isReport]="true"
-                      [report]="report"
-                      [seriesParts]="seriesParts"
-                    ></m-chart-editor>
+                    <ng-scrollbar
+                      [orientation]="'vertical'"
+                      [visibility]="'hover'"
+                    >
+                      <m-chart-editor
+                        [chart]="report.chart"
+                        [isReport]="true"
+                        [report]="report"
+                        [seriesParts]="seriesParts"
+                      ></m-chart-editor>
+                    </ng-scrollbar>
                   </div>
                 </div>
               </div>
