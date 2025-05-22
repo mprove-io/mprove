@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription, interval, of } from 'rxjs';
-import { concatMap, take, tap } from 'rxjs/operators';
+import { concatMap, tap } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DeleteFilterFnItem } from '~front/app/interfaces/delete-filter-fn-item';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';

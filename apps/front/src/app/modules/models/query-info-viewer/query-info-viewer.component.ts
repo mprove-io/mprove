@@ -8,10 +8,7 @@ import {
 import { Extension } from '@codemirror/state';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, take, tap } from 'rxjs/operators';
-import {
-  VS_LIGHT_THEME_EXTRA,
-  VS_LIGHT_THEME_EXTRA_MOD
-} from '~front/app/constants/code-themes/vs-light-theme';
+import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
