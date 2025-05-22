@@ -2,7 +2,10 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Extension } from '@codemirror/state';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, map, take, tap } from 'rxjs/operators';
-import { VS_LIGHT_THEME_EXTRA } from '~front/app/constants/code-themes/vs-light-theme';
+import {
+  VS_LIGHT_THEME_EXTRA,
+  VS_LIGHT_THEME_EXTRA_MOD
+} from '~front/app/constants/code-themes/vs-light-theme';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
@@ -23,7 +26,7 @@ import * as languageData from '@codemirror/language-data';
   templateUrl: './files-right.component.html'
 })
 export class FilesRightComponent implements OnInit {
-  theme: Extension = VS_LIGHT_THEME_EXTRA;
+  theme: Extension = VS_LIGHT_THEME_EXTRA_MOD;
 
   languages = languageData.languages;
   lang: string;

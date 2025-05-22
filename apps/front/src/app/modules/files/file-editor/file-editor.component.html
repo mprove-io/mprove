@@ -106,6 +106,7 @@
         [readonly]="nav?.isRepoProd === true || file?.isExist === false"
         [language]="lang"
         [languages]="languages"
+        [setup]="null"
         [theme]="theme"
         [indentWithTab]="indentWithTab"
         [indentUnit]="indentUnit"
@@ -127,6 +128,7 @@
         #diffEditor
         class="w-full outline-none"
         style="height: 100%"
+        [setup]="null"
         [(ngModel)]="diffContent"
         [originalExtensions]="originalExtensions"
         [modifiedExtensions]="modifiedExtensions"

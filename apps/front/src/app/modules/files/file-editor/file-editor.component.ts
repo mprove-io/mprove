@@ -17,7 +17,10 @@ import { Compartment } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, map, take, tap } from 'rxjs/operators';
-import { VS_LIGHT_THEME_EXTRA } from '~front/app/constants/code-themes/vs-light-theme';
+import {
+  VS_LIGHT_THEME_EXTRA,
+  VS_LIGHT_THEME_EXTRA_MOD
+} from '~front/app/constants/code-themes/vs-light-theme';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -51,7 +54,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   indentUnit = '  ';
   languages = languageData.languages;
   lang: string;
-  theme: Extension = VS_LIGHT_THEME_EXTRA;
+  theme: Extension = VS_LIGHT_THEME_EXTRA_MOD;
 
   diagnostics: Diagnostic[] = [];
 
