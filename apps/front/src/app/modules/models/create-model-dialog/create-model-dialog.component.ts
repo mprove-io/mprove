@@ -45,12 +45,12 @@ export class CreateModelDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  @ViewChild('modelTitle') modelTitleElement: ElementRef;
+  @ViewChild('modelName') modelNameElement: ElementRef;
 
   usersFolder = common.MPROVE_USERS_FOLDER;
 
-  titleForm: FormGroup = this.fb.group({
-    title: [undefined, [Validators.maxLength(255)]]
+  modelNameForm: FormGroup = this.fb.group({
+    name: [undefined, [Validators.maxLength(255)]]
   });
 
   rolesForm: FormGroup = this.fb.group({
@@ -89,39 +89,39 @@ export class CreateModelDialogComponent implements OnInit {
 
   ngOnInit() {
     setTimeout(() => {
-      this.modelTitleElement.nativeElement.focus();
+      this.modelNameElement.nativeElement.focus();
     }, 0);
   }
 
   create() {
-    this.titleForm.markAllAsTouched();
+    this.modelNameForm.markAllAsTouched();
 
-    if (!this.titleForm.valid) {
+    if (!this.modelNameForm.valid) {
       return;
     }
 
     if (
-      this.titleForm.controls['title'].valid &&
+      this.modelNameForm.controls['name'].valid &&
       this.rolesForm.controls['roles'].valid
     ) {
       this.ref.close();
 
-      let newTitle = this.titleForm.controls['title'].value;
+      let modelName = this.modelNameForm.controls['name'].value;
       let roles = this.rolesForm.controls['roles'].value;
 
       this.createModel({
-        newTitle: newTitle,
+        modelName: modelName,
         roles: roles
       });
     }
   }
 
-  createModel(item: { newTitle: string; roles: string }) {
+  createModel(item: { modelName: string; roles: string }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { newTitle, roles } = item;
+    let { modelName: modelName, roles } = item;
 
-    let fileName = newTitle.toLowerCase().split(' ').join('_');
+    let fileName = modelName.toLowerCase().split(' ').join('_');
 
     fileName = `${fileName}.model`;
 

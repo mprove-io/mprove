@@ -1,37 +1,32 @@
 <div class="bg-m0 flex flex-col p-9">
   <div
     data-cy="createModelDialogTitle"
-    class="text-s2 mb-9 mt-5 flex-grow text-left text-2xl font-semibold"
+    class="text-s2 mt-5 flex-grow text-left text-2xl font-semibold"
     >New Model</div
-  >
-
-  <div class="text-s400 text-base"
-    >{{ struct?.mproveDirValue | mproveDir | capitalize }} / {{ usersFolder }} /
-    {{ alias }} / {{ newModelId }}.model</div
   >
 
   <div class="mt-9 flex flex-row items-start">
     <div class="flex flex-col">
       <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
-        >Title</div
+        >Name</div
       >
     </div>
 
-    <div [formGroup]="titleForm" class="ml-5 flex flex-col items-start">
+    <div [formGroup]="modelNameForm" class="ml-5 flex flex-col items-start">
       <input
-        #modelTitle
+        #modelName
         autocomplete="off"
         spellcheck="false"
-        data-cy="createModelDialogTitleInput"
+        data-cy="createModelDialogNameInput"
         class="form-input border-s3 focus:border-m600 h-9 w-96 rounded"
         [ngClass]="{
           'border-r600':
-            titleForm.controls['title'].invalid &&
-            titleForm.controls['title'].touched
+            modelNameForm.controls['name'].invalid &&
+            modelNameForm.controls['name'].touched
         }"
-        formControlName="title"
+        formControlName="name"
       />
-      <m-validation [control]="titleForm.controls['title']"></m-validation>
+      <m-validation [control]="modelNameForm.controls['name']"></m-validation>
     </div>
   </div>
 
