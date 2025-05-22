@@ -79,13 +79,14 @@ export class ModelsComponent implements OnInit, OnDestroy {
   @ViewChild('queryPartSelect', { static: false })
   queryPartSelectElement: NgSelectComponent;
 
-  @ViewChild('chartsModelSelect', { static: false })
-  chartsModelSelectElement: NgSelectComponent;
+  @ViewChild('modelsModelSelect', { static: false })
+  modelsModelSelectElement: NgSelectComponent;
 
   @ViewChild('leftChartsContainer') leftChartsContainer!: ElementRef;
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
+    // this.modelsModelSelectElement?.close();
     this.queryPartSelectElement?.close();
     this.chartTypeSelectElement?.close();
   }
@@ -1647,7 +1648,11 @@ ${this.mconfig.storePart?.reqFunction}`
     }
   }
 
-  createNewModel() {
+  createModel(modelSelect?: any) {
+    if (common.isDefined(modelSelect)) {
+      modelSelect.close();
+    }
+
     this.myDialogService.showCreateModel({
       apiService: this.apiService
     });

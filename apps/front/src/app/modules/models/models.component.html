@@ -116,34 +116,34 @@
             *ngIf="lastUrl === pathModelsList"
           >
             <div
-              [tp]="templateNewModel"
+              [tp]="templateModelsListNewModel"
               [tpIsEnabled]="isEditor === false || nav?.isRepoProd === true"
               class="ml-[60px] flex-shrink-0"
             >
               <button
                 type="button"
-                data-cy="chartsNewModelButton"
+                data-cy="modelsListNewModelButton"
                 class="text-m0 h-11 flex-shrink-0 select-none rounded px-5 py-2 text-base font-medium focus:outline-none"
                 [ngClass]="{
                   'bg-m600': isEditor === true && nav?.isRepoProd === false,
                   'bg-s400 cursor-default':
                     isEditor === false || nav?.isRepoProd === true
                 }"
-                (click)="createNewModel()"
+                (click)="createModel()"
                 [disabled]="isEditor === false || nav?.isRepoProd === true"
                 >New Model</button
               >
             </div>
 
-            <ng-template #templateNewModel>
+            <ng-template #templateModelsListNewModel>
               <div *ngIf="isEditor === false"
                 >Models can be created by project members with FilesEditor
                 role</div
               >
 
               <div *ngIf="isEditor === true && nav?.isRepoProd === true"
-                >Switch branch from Production repo to Dev repo to create
-                model</div
+                >To create a new model, switch the branch from the Production
+                repo to the Dev repo</div
               >
             </ng-template>
           </div>
@@ -359,18 +359,18 @@
             <div class="ml-5 mr-9 flex w-2 flex-1 items-center">
               <form class="w-full" [formGroup]="modelForm">
                 <ng-select
-                  #chartsModelSelect
-                  data-cy="chartsModelSelect"
+                  #modelsModelSelect
+                  data-cy="modelsModelSelect"
                   class="model-select w-full text-base"
                   [items]="models"
                   [clearable]="false"
                   [searchable]="true"
                   (change)="modelChange()"
                   (keyup.esc)="
-                    $event.stopImmediatePropagation(); chartsModelSelect.blur()
+                    $event.stopImmediatePropagation(); modelsModelSelect.blur()
                   "
                   (keyup.enter)="
-                    $event.stopImmediatePropagation(); chartsModelSelect.blur()
+                    $event.stopImmediatePropagation(); modelsModelSelect.blur()
                   "
                   appendTo="body"
                   bindLabel="label"
@@ -383,6 +383,43 @@
 
                   <ng-template ng-option-tmp let-item="item">
                     <div class="truncate">{{ item.label }}</div>
+                  </ng-template>
+
+                  <ng-template ng-footer-tmp>
+                    <ng-template #templateModelSelectNewModel>
+                      <div *ngIf="isEditor === false"
+                        >Models can be created by project members with
+                        FilesEditor role</div
+                      >
+
+                      <div *ngIf="isEditor === true && nav?.isRepoProd === true"
+                        >To create a new model, switch the branch from the
+                        Production repo to the Dev repo</div
+                      >
+                    </ng-template>
+
+                    <div
+                      [tp]="templateModelSelectNewModel"
+                      [tpIsEnabled]="
+                        isEditor === false || nav?.isRepoProd === true
+                      "
+                    >
+                      <button
+                        data-cy="modelSelectCreateModelButton"
+                        class="w-full rounded py-3 text-base focus:outline-none"
+                        [ngClass]="{
+                          'text-m600 hover:bg-m50':
+                            isEditor === true && nav?.isRepoProd === false,
+                          'text-s400 cursor-default':
+                            isEditor === false || nav?.isRepoProd === true
+                        }"
+                        (click)="createModel(modelsModelSelect)"
+                        [disabled]="
+                          isEditor === false || nav?.isRepoProd === true
+                        "
+                        >New Model</button
+                      >
+                    </div>
                   </ng-template>
                 </ng-select>
               </form>
@@ -1420,8 +1457,8 @@
                     >
 
                     <div *ngIf="isEditor === true && nav?.isRepoProd === true"
-                      >Switch branch from Production repo to Dev repo to edit
-                      File</div
+                      >To edit model file, switch the branch from the Production
+                      repo to the Dev repo</div
                     >
                   </ng-template>
 

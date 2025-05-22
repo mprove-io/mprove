@@ -50,7 +50,7 @@ export class CreateModelDialogComponent implements OnInit {
   usersFolder = common.MPROVE_USERS_FOLDER;
 
   modelNameForm: FormGroup = this.fb.group({
-    name: [undefined, [Validators.maxLength(255)]]
+    name: [undefined, [Validators.maxLength(255), Validators.required]]
   });
 
   rolesForm: FormGroup = this.fb.group({
