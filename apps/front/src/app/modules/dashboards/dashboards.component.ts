@@ -331,7 +331,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   }
 
   newDashboard() {
-    this.myDialogService.showDashboardsNew({
+    this.myDialogService.shoCreateDashboard({
       apiService: this.apiService
     });
   }

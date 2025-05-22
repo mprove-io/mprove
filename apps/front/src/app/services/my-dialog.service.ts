@@ -4,6 +4,10 @@ import { constants } from '~front/barrels/constants';
 import { interfaces } from '~front/barrels/interfaces';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
 import {
+  CreateDashboardDialogComponent,
+  CreateDashboardDialogData
+} from '../modules/dashboards/create-dashboard-dialog/create-dashboard-dialog.component';
+import {
   DashboardAddFilterDialogComponent,
   DashboardAddFilterDialogData
 } from '../modules/dashboards/dashboard-add-filter-dialog/dashboard-add-filter-dialog.component';
@@ -11,10 +15,6 @@ import {
   DashboardAddTileDialogComponent,
   DashboardAddTileDialogData
 } from '../modules/dashboards/dashboard-add-tile-dialog/dashboard-add-tile-dialog.component';
-import {
-  DashboardsNewDialogComponent,
-  DashboardsNewDialogData
-} from '../modules/dashboards/dashboards-new-dialog/dashboards-new-dialog.component';
 import {
   CommitDialogComponent,
   CommitDialogDialogData
@@ -55,6 +55,10 @@ import {
   ChartsReplaceColumnFieldDialogComponent,
   ChartsReplaceColumnFieldDialogData
 } from '../modules/models/charts-replace-column-field-dialog/charts-replace-column-field-dialog.component';
+import {
+  CreateModelDialogComponent,
+  CreateModelDialogData
+} from '../modules/models/create-model-dialog/create-model-dialog.component';
 import {
   CreateBranchDialogComponent,
   CreateBranchDialogData
@@ -427,8 +431,8 @@ export class MyDialogService {
     });
   }
 
-  showDashboardsNew(item: DashboardsNewDialogData): void {
-    this.dialogService.open(DashboardsNewDialogComponent, {
+  shoCreateDashboard(item: CreateDashboardDialogData): void {
+    this.dialogService.open(CreateDashboardDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,
@@ -670,6 +674,15 @@ export class MyDialogService {
       closeButton: false,
       data: item,
       width: 700
+    });
+  }
+
+  showCreateModel(item: CreateModelDialogData): void {
+    this.dialogService.open(CreateModelDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 800
     });
   }
 

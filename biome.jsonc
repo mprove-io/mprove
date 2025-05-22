@@ -41,7 +41,11 @@
       "correctness": {
         "noPrecisionLoss": "error",
         "noUnusedVariables": "off",
-        "useArrayLiterals": "off"
+        "useArrayLiterals": "off",
+        "noUnusedImports": {
+          "level": "warn",
+          "fix": "safe"
+        }
       },
       "style": {
         // "noInferrableTypes": "error",

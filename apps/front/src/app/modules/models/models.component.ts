@@ -1648,22 +1648,8 @@ ${this.mconfig.storePart?.reqFunction}`
   }
 
   createNewModel() {
-    let struct = this.structQuery.getValue();
-
-    let part = struct.mproveDirValue;
-
-    part = part.startsWith('.') ? part.slice(1) : part;
-    part = part.startsWith('/') ? part.slice(1) : part;
-    part = part.endsWith('/') ? part.slice(0, -1) : part;
-
-    let parentNodeId = [struct.projectId, part].join('/');
-
-    this.myDialogService.showCreateFile({
-      apiService: this.apiService,
-      projectId: this.nav.projectId,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
-      parentNodeId: parentNodeId
+    this.myDialogService.showCreateModel({
+      apiService: this.apiService
     });
   }
 

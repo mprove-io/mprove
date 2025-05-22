@@ -17,8 +17,8 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { DashboardsQuery } from '~front/app/queries/dashboards.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { NavQuery } from '~front/app/queries/nav.query';
+import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -28,28 +28,26 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../../shared/shared.module';
 
-export interface DashboardsNewDialogData {
+export interface CreateModelDialogData {
   apiService: ApiService;
 }
 
 @Component({
-  selector: 'm-dashboards-new-dialog',
-  templateUrl: './dashboards-new-dialog.component.html',
+  selector: 'm-create-model-dialog',
+  templateUrl: './create-model-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, ReactiveFormsModule, SharedModule]
 })
-export class DashboardsNewDialogComponent implements OnInit {
+export class CreateModelDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.ref.close();
   }
 
-  @ViewChild('dashboardTitle') dashboardTitleElement: ElementRef;
+  @ViewChild('modelTitle') modelTitleElement: ElementRef;
 
   usersFolder = common.MPROVE_USERS_FOLDER;
-
-  dashboard: common.DashboardX;
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.maxLength(255)]]
@@ -59,20 +57,12 @@ export class DashboardsNewDialogComponent implements OnInit {
     roles: [undefined, [Validators.maxLength(255)]]
   });
 
-  newDashboardId = common.makeId();
+  newModelId = common.makeId();
 
   alias: string;
   alias$ = this.userQuery.alias$.pipe(
     tap(x => {
       this.alias = x;
-      this.cd.detectChanges();
-    })
-  );
-
-  nav: NavState;
-  nav$ = this.navQuery.select().pipe(
-    tap(x => {
-      this.nav = x;
       this.cd.detectChanges();
     })
   );
@@ -86,11 +76,11 @@ export class DashboardsNewDialogComponent implements OnInit {
   );
 
   constructor(
-    public ref: DialogRef<DashboardsNewDialogData>,
+    public ref: DialogRef<CreateModelDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navigateService: NavigateService,
-    private dashboardsQuery: DashboardsQuery,
+    private repoQuery: RepoQuery,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private structQuery: StructQuery,
@@ -99,7 +89,7 @@ export class DashboardsNewDialogComponent implements OnInit {
 
   ngOnInit() {
     setTimeout(() => {
-      this.dashboardTitleElement.nativeElement.focus();
+      this.modelTitleElement.nativeElement.focus();
     }, 0);
   }
 
@@ -119,26 +109,40 @@ export class DashboardsNewDialogComponent implements OnInit {
       let newTitle = this.titleForm.controls['title'].value;
       let roles = this.rolesForm.controls['roles'].value;
 
-      this.createDashboard({
+      this.createModel({
         newTitle: newTitle,
         roles: roles
       });
     }
   }
 
-  createDashboard(item: { newTitle: string; roles: string }) {
+  createModel(item: { newTitle: string; roles: string }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
     let { newTitle, roles } = item;
 
-    let payload: apiToBackend.ToBackendSaveCreateDashboardRequestPayload = {
-      projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId,
-      newDashboardId: this.newDashboardId,
-      dashboardTitle: newTitle,
-      accessRoles: roles
+    let fileName = newTitle.toLowerCase().split(' ').join('_');
+
+    fileName = `${fileName}.model`;
+
+    let nav = this.navQuery.getValue();
+
+    let struct = this.structQuery.getValue();
+
+    let part = struct.mproveDirValue;
+
+    part = part.startsWith('.') ? part.slice(1) : part;
+    part = part.startsWith('/') ? part.slice(1) : part;
+    part = part.endsWith('/') ? part.slice(0, -1) : part;
+
+    let parentNodeId = [struct.projectId, part].join('/');
+
+    let payload: apiToBackend.ToBackendCreateFileRequestPayload = {
+      projectId: nav.projectId,
+      branchId: nav.branchId,
+      envId: nav.envId,
+      parentNodeId: parentNodeId,
+      fileName: fileName
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -146,37 +150,28 @@ export class DashboardsNewDialogComponent implements OnInit {
     apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendSaveCreateDashboard,
-        payload: payload
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile,
+        payload: payload,
+        showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendSaveCreateDashboardResponse) => {
+        tap((resp: apiToBackend.ToBackendCreateFileResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let dashboardPart = resp.payload.newDashboardPart;
-            if (common.isDefined(dashboardPart)) {
-              let dashboards = this.dashboardsQuery.getValue().dashboards;
+            this.repoQuery.update(resp.payload.repo);
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
 
-              let newDashboards = [
-                dashboardPart,
-                ...dashboards.filter(
-                  d =>
-                    d.dashboardId !== dashboardPart.dashboardId &&
-                    !(
-                      d.draft === true &&
-                      d.dashboardId === this.dashboard.dashboardId
-                    )
-                )
-              ];
+            let fId = parentNodeId + '/' + fileName;
+            let fIdAr = fId.split('/');
+            fIdAr.shift();
+            let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
 
-              this.dashboardsQuery.update({ dashboards: newDashboards });
-
-              this.navigateService.navigateToDashboard({
-                dashboardId: this.newDashboardId
-              });
-            } else {
-              this.spinner.hide(constants.APP_SPINNER_NAME);
-            }
+            this.navigateService.navigateToFileLine({
+              panel: common.PanelEnum.Tree,
+              underscoreFileId: fileId
+            });
           }
         }),
         take(1)
