@@ -57,9 +57,15 @@ export class GetConnectionsController {
 
     let payload: apiToBackend.ToBackendGetConnectionsResponsePayload = {
       userMember: apiMember,
-      connections: connections.map(x =>
-        this.wrapToApiService.wrapToApiConnection(x)
-      )
+      connections: connections
+        .sort((a, b) =>
+          a.connectionId > b.connectionId
+            ? 1
+            : b.connectionId > a.connectionId
+              ? -1
+              : 0
+        )
+        .map(x => this.wrapToApiService.wrapToApiConnection(x))
     };
 
     return payload;

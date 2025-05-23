@@ -19,7 +19,8 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { SelectItem } from '~front/app/interfaces/select-item';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { MemberQuery } from '~front/app/queries/member.query';
+import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
@@ -86,7 +87,7 @@ export class CreateModelDialogComponent implements OnInit {
 
   connectionsSpinnerName = 'modelsAddConnectionSpinnerName';
 
-  connections: common.SuggestField[] = [];
+  connections: common.Connection[] = [];
   connectionsLoading = false;
   connectionsLoaded = false;
 
@@ -114,6 +115,7 @@ export class CreateModelDialogComponent implements OnInit {
     private userQuery: UserQuery,
     private navigateService: NavigateService,
     private repoQuery: RepoQuery,
+    private memberQuery: MemberQuery,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private structQuery: StructQuery,
@@ -137,22 +139,10 @@ export class CreateModelDialogComponent implements OnInit {
   loadConnections() {
     this.connectionsLoading = true;
 
-    let nav: NavState;
-    this.navQuery
-      .select()
-      .pipe(
-        tap(x => {
-          nav = x;
-        }),
-        take(1)
-      )
-      .subscribe();
+    let nav = this.navQuery.getValue();
 
-    let payload: apiToBackend.ToBackendGetSuggestFieldsRequestPayload = {
-      projectId: nav.projectId,
-      branchId: nav.branchId,
-      isRepoProd: nav.isRepoProd,
-      envId: nav.envId
+    let payload: apiToBackend.ToBackendGetConnectionsRequestPayload = {
+      projectId: nav.projectId
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -162,13 +152,15 @@ export class CreateModelDialogComponent implements OnInit {
     apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields,
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetConnections,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetSuggestFieldsResponse) => {
+        tap((resp: apiToBackend.ToBackendGetConnectionsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.connections = [...resp.payload.suggestFields];
+            this.memberQuery.update(resp.payload.userMember);
+
+            this.connections = resp.payload.connections;
 
             this.connectionsLoading = false;
             this.connectionsLoaded = true;
@@ -304,10 +296,8 @@ export class CreateModelDialogComponent implements OnInit {
       .subscribe();
   }
 
-  searchFn(term: string, suggestField: common.SuggestField) {
-    let haystack = [
-      `${suggestField.topLabel} - ${suggestField.partNodeLabel} ${suggestField.partFieldLabel}`
-    ];
+  searchFn(term: string, connection: common.Connection) {
+    let haystack = [`${connection.connectionId}`];
 
     let opts = {};
     let uf = new uFuzzy(opts);

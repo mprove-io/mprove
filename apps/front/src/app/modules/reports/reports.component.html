@@ -477,13 +477,13 @@
                   *ngIf="showSearch === true"
                   class="mb-5 mt-5 flex h-11 flex-row items-center"
                 >
-                  <!-- <m-search-icon class="text-s1 ml-6"></m-search-icon> -->
+                  <m-search-icon class="text-s1 ml-6"></m-search-icon>
 
                   <input
                     spellcheck="false"
                     autocomplete="off"
                     data-cy="dashboardsSearchInput"
-                    class="form-input focus:border-m600 border-s400 ml-6 h-10 w-[225px] rounded"
+                    class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] rounded"
                     placeholder="Search Reports"
                     [ngClass]="{
                       'bg-p200': !!word

@@ -69,16 +69,8 @@ export class ProjectConnectionsResolver
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
-            let newSortedConnections = resp.payload.connections.sort((a, b) =>
-              a.connectionId > b.connectionId
-                ? 1
-                : b.connectionId > a.connectionId
-                  ? -1
-                  : 0
-            );
-
             this.connectionsQuery.update({
-              connections: newSortedConnections
+              connections: resp.payload.connections
             });
 
             return true;
