@@ -481,7 +481,7 @@
               *ngIf="!!model?.modelId"
               class="hover:bg-m200 text-s500 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
               (click)="toggleFilterByModel()"
-              tp="Filter Charts by selected Model"
+              tp="Show charts of the selected model (instead of all charts)"
             >
               <m-filter-icon
                 class="mb-1 flex h-6 w-6 flex-shrink-0"
@@ -533,18 +533,6 @@
                   (click)="resetSearch()"
                 ></m-delete-icon>
               </div>
-
-              <!-- <div
-                *ngIf="!!model?.modelId"
-                class="hover:bg-m200 text-s500 ml-5 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
-                (click)="toggleFilterByModel()"
-                tp="Filter Charts by selected Model"
-              >
-                <m-filter-icon
-                  class="flex h-6 w-6 flex-shrink-0"
-                  [isFilled]="isFilterByModel === true"
-                ></m-filter-icon>
-              </div> -->
 
               <div class="flex flex-grow"></div>
 

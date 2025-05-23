@@ -41,6 +41,102 @@
     </div>
   </div>
 
+  <div class="mt-6 flex w-72 flex-grow select-none flex-row items-center">
+    <div class="flex flex-col">
+      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
+        >Connection</div
+      >
+    </div>
+
+    <div
+      class="relative ml-5 flex h-9 w-9 flex-shrink-0"
+      *ngIf="!suggestFieldsLoaded"
+    >
+      <ngx-spinner
+        [name]="suggestFieldsSpinnerName"
+        color="#0084d1"
+        bdColor="#00000000"
+        size="default"
+        type="ball-clip-rotate"
+        [fullScreen]="false"
+        [disableAnimation]="true"
+        [zIndex]="99998"
+      >
+      </ngx-spinner>
+    </div>
+
+    <div
+      *ngIf="!!suggestFieldsLoaded"
+      [formGroup]="suggestFieldForm"
+      class="ml-5"
+    >
+      <ng-select
+        #dashboardSuggestFieldSelect
+        data-cy="dashboardSuggestFieldSelect"
+        class="w-72 text-base"
+        [loading]="suggestFieldsLoading"
+        [items]="suggestFields"
+        [clearable]="false"
+        [searchable]="true"
+        [searchFn]="searchFn"
+        (change)="suggestFieldChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); dashboardSuggestFieldSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); dashboardSuggestFieldSelect.blur()
+        "
+        appendTo="body"
+        placeholder="Select Field"
+        formControlName="suggestField"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 flex flex-row items-center">
+            <m-field-result
+              class="h-5 w-5"
+              [size]="2"
+              [fieldClass]="item.fieldClass"
+              [result]="item.result"
+              [isEmpty]="!item.modelFieldRef"
+            ></m-field-result>
+
+            <m-suggest-field-label
+              *ngIf="!!item.modelFieldRef"
+              [suggestField]="item"
+              [isShowTop]="true"
+              [isShowTime]="true"
+              class="ml-3 flex"
+            ></m-suggest-field-label>
+          </div>
+        </ng-template>
+
+        <ng-template
+          ng-option-tmp
+          let-item="item"
+          let-index="index"
+          let-search="searchTerm"
+        >
+          <div class="ml-1 flex flex-row items-center">
+            <m-field-result
+              class="h-5 w-5"
+              [size]="2"
+              [fieldClass]="item.fieldClass"
+              [result]="item.result"
+              [isEmpty]="!item.modelFieldRef"
+            ></m-field-result>
+
+            <m-suggest-field-label
+              [suggestField]="item"
+              [isShowTop]="true"
+              [isShowTime]="true"
+              class="ml-3 flex"
+            ></m-suggest-field-label>
+          </div>
+        </ng-template>
+      </ng-select>
+    </div>
+  </div>
+
   <div class="mt-6 flex flex-row items-start">
     <div class="flex flex-col">
       <div class="text-s1 flex h-9 w-32 select-none items-center text-base"

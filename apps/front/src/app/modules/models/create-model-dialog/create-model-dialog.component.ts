@@ -4,7 +4,6 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  HostListener,
   OnInit,
   ViewChild
 } from '@angular/core';
@@ -14,12 +13,13 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { SelectItem } from '~front/app/interfaces/select-item';
-import { NavQuery } from '~front/app/queries/nav.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
@@ -39,13 +39,19 @@ export interface CreateModelDialogData {
   templateUrl: './create-model-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, ReactiveFormsModule, SharedModule, NgSelectModule]
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    NgSelectModule,
+    SharedModule,
+    NgxSpinnerModule
+  ]
 })
 export class CreateModelDialogComponent implements OnInit {
-  @HostListener('window:keyup.esc')
-  onEscKeyUp() {
-    this.ref.close();
-  }
+  // @HostListener('window:keyup.esc')
+  // onEscKeyUp() {
+  //   this.ref.close();
+  // }
 
   @ViewChild('modelName') modelNameElement: ElementRef;
 
@@ -73,6 +79,16 @@ export class CreateModelDialogComponent implements OnInit {
   rolesForm: FormGroup = this.fb.group({
     roles: [undefined, [Validators.maxLength(255)]]
   });
+
+  suggestFieldForm: FormGroup = this.fb.group({
+    suggestField: [undefined]
+  });
+
+  suggestFieldsSpinnerName = 'modelsAddConnectionSpinnerName';
+
+  suggestFields: common.SuggestField[] = [];
+  suggestFieldsLoading = false;
+  suggestFieldsLoaded = false;
 
   newModelId = common.makeId();
 
@@ -107,13 +123,69 @@ export class CreateModelDialogComponent implements OnInit {
   ngOnInit() {
     this.modelTypeForm.controls['modelType'].setValue(common.ModelTypeEnum.SQL);
 
+    setTimeout(() => {
+      if (this.suggestFieldsLoaded === false) {
+        this.loadSuggestFields();
+      }
+    }, 0);
+
     // setTimeout(() => {
     //   this.modelNameElement.nativeElement.focus();
     // }, 0);
   }
 
+  loadSuggestFields() {
+    this.suggestFieldsLoading = true;
+
+    let nav: NavState;
+    this.navQuery
+      .select()
+      .pipe(
+        tap(x => {
+          nav = x;
+        }),
+        take(1)
+      )
+      .subscribe();
+
+    let payload: apiToBackend.ToBackendGetSuggestFieldsRequestPayload = {
+      projectId: nav.projectId,
+      branchId: nav.branchId,
+      isRepoProd: nav.isRepoProd,
+      envId: nav.envId
+    };
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    this.spinner.show(this.suggestFieldsSpinnerName);
+
+    apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendGetSuggestFieldsResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.suggestFields = [...resp.payload.suggestFields];
+
+            this.suggestFieldsLoading = false;
+            this.suggestFieldsLoaded = true;
+
+            this.spinner.hide(this.suggestFieldsSpinnerName);
+
+            this.cd.detectChanges();
+          }
+        })
+      )
+      .toPromise();
+  }
+
   modelTypeChange() {
     (document.activeElement as HTMLElement).blur();
+
+    this.suggestFieldForm.controls['suggestField'].setValue(undefined);
 
     // this.formsError = undefined;
 
@@ -141,6 +213,10 @@ export class CreateModelDialogComponent implements OnInit {
     // }
   }
 
+  suggestFieldChange() {
+    (document.activeElement as HTMLElement).blur();
+  }
+
   create() {
     this.modelNameForm.markAllAsTouched();
 
@@ -155,6 +231,7 @@ export class CreateModelDialogComponent implements OnInit {
       this.ref.close();
 
       let modelName = this.modelNameForm.controls['name'].value;
+      let suggestField = this.suggestFieldForm.controls['suggestField'].value;
       let roles = this.rolesForm.controls['roles'].value;
 
       this.createModel({
@@ -225,6 +302,18 @@ export class CreateModelDialogComponent implements OnInit {
         take(1)
       )
       .subscribe();
+  }
+
+  searchFn(term: string, suggestField: common.SuggestField) {
+    let haystack = [
+      `${suggestField.topLabel} - ${suggestField.partNodeLabel} ${suggestField.partFieldLabel}`
+    ];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
   }
 
   cancel() {

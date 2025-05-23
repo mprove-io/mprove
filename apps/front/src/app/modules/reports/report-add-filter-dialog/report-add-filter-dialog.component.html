@@ -329,7 +329,7 @@
       </div>
 
       <div
-        class="mt-6 flex min-w-[2px] max-w-[1000px] flex-grow select-none flex-row items-start items-center"
+        class="mt-6 flex min-w-[2px] max-w-[1000px] flex-grow select-none flex-row items-center"
         *ngIf="modelTypeForm.get('modelType').value === modelTypeSql"
       >
         <div class="flex flex-col">
@@ -351,7 +351,10 @@
 
         <div
           class="relative flex h-9 w-9 flex-shrink-0"
-          *ngIf="!suggestFieldsLoaded"
+          *ngIf="
+            !suggestFieldsLoaded &&
+            fieldResultForm.get('fieldResult').value === fieldResultString
+          "
         >
           <ngx-spinner
             [name]="suggestFieldsSpinnerName"
