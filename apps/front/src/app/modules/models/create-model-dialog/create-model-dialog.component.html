@@ -50,10 +50,10 @@
 
     <div
       class="relative ml-5 flex h-9 w-9 flex-shrink-0"
-      *ngIf="!suggestFieldsLoaded"
+      *ngIf="!connectionsLoaded"
     >
       <ngx-spinner
-        [name]="suggestFieldsSpinnerName"
+        [name]="connectionsSpinnerName"
         color="#0084d1"
         bdColor="#00000000"
         size="default"
@@ -65,30 +65,24 @@
       </ngx-spinner>
     </div>
 
-    <div
-      *ngIf="!!suggestFieldsLoaded"
-      [formGroup]="suggestFieldForm"
-      class="ml-5"
-    >
+    <div *ngIf="!!connectionsLoaded" [formGroup]="connectionForm" class="ml-5">
       <ng-select
-        #dashboardSuggestFieldSelect
-        data-cy="dashboardSuggestFieldSelect"
+        #connectionSelect
+        data-cy="connectionSelect"
         class="w-72 text-base"
-        [loading]="suggestFieldsLoading"
-        [items]="suggestFields"
+        [loading]="connectionsLoading"
+        [items]="connections"
         [clearable]="false"
         [searchable]="true"
         [searchFn]="searchFn"
-        (change)="suggestFieldChange()"
-        (keyup.esc)="
-          $event.stopImmediatePropagation(); dashboardSuggestFieldSelect.blur()
-        "
+        (change)="connectionChange()"
+        (keyup.esc)="$event.stopImmediatePropagation(); connectionSelect.blur()"
         (keyup.enter)="
-          $event.stopImmediatePropagation(); dashboardSuggestFieldSelect.blur()
+          $event.stopImmediatePropagation(); connectionSelect.blur()
         "
         appendTo="body"
         placeholder="Select Field"
-        formControlName="suggestField"
+        formControlName="connection"
       >
         <ng-template ng-label-tmp let-item="item">
           <div class="ml-1 flex flex-row items-center">
@@ -110,12 +104,7 @@
           </div>
         </ng-template>
 
-        <ng-template
-          ng-option-tmp
-          let-item="item"
-          let-index="index"
-          let-search="searchTerm"
-        >
+        <ng-template ng-option-tmp let-item="item">
           <div class="ml-1 flex flex-row items-center">
             <m-field-result
               class="h-5 w-5"

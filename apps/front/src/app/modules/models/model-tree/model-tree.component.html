@@ -10,7 +10,7 @@
         (initialized)="treeOnInitialized()"
         (updateData)="treeOnUpdateData()"
       >
-        <ng-template #treeNodeTemplate let-node="node" let-index="index">
+        <ng-template #treeNodeTemplate let-node="node">
           <div
             class="group-bar flex h-11 w-full flex-row"
             [ngClass]="{

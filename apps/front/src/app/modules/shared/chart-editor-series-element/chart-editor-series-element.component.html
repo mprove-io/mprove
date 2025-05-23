@@ -112,12 +112,7 @@
               <div> {{ item.label }} </div>
             </div>
           </ng-template>
-          <ng-template
-            ng-option-tmp
-            let-item="item"
-            let-index="index"
-            let-search="searchTerm"
-          >
+          <ng-template ng-option-tmp let-item="item">
             <div
               class="ml-1 flex flex-row items-center justify-start space-x-2"
             >
@@ -170,12 +165,7 @@
               <div> {{ item === 0 ? 'Left' : 'Right' }} </div>
             </div>
           </ng-template>
-          <ng-template
-            ng-option-tmp
-            let-item="item"
-            let-index="index"
-            let-search="searchTerm"
-          >
+          <ng-template ng-option-tmp let-item="item">
             <div
               class="ml-1 flex flex-row items-center justify-start space-x-2"
             >

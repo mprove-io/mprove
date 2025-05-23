@@ -80,15 +80,15 @@ export class CreateModelDialogComponent implements OnInit {
     roles: [undefined, [Validators.maxLength(255)]]
   });
 
-  suggestFieldForm: FormGroup = this.fb.group({
-    suggestField: [undefined]
+  connectionForm: FormGroup = this.fb.group({
+    connection: [undefined]
   });
 
-  suggestFieldsSpinnerName = 'modelsAddConnectionSpinnerName';
+  connectionsSpinnerName = 'modelsAddConnectionSpinnerName';
 
-  suggestFields: common.SuggestField[] = [];
-  suggestFieldsLoading = false;
-  suggestFieldsLoaded = false;
+  connections: common.SuggestField[] = [];
+  connectionsLoading = false;
+  connectionsLoaded = false;
 
   newModelId = common.makeId();
 
@@ -124,8 +124,8 @@ export class CreateModelDialogComponent implements OnInit {
     this.modelTypeForm.controls['modelType'].setValue(common.ModelTypeEnum.SQL);
 
     setTimeout(() => {
-      if (this.suggestFieldsLoaded === false) {
-        this.loadSuggestFields();
+      if (this.connectionsLoaded === false) {
+        this.loadConnections();
       }
     }, 0);
 
@@ -134,8 +134,8 @@ export class CreateModelDialogComponent implements OnInit {
     // }, 0);
   }
 
-  loadSuggestFields() {
-    this.suggestFieldsLoading = true;
+  loadConnections() {
+    this.connectionsLoading = true;
 
     let nav: NavState;
     this.navQuery
@@ -157,7 +157,7 @@ export class CreateModelDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    this.spinner.show(this.suggestFieldsSpinnerName);
+    this.spinner.show(this.connectionsSpinnerName);
 
     apiService
       .req({
@@ -168,12 +168,12 @@ export class CreateModelDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendGetSuggestFieldsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.suggestFields = [...resp.payload.suggestFields];
+            this.connections = [...resp.payload.suggestFields];
 
-            this.suggestFieldsLoading = false;
-            this.suggestFieldsLoaded = true;
+            this.connectionsLoading = false;
+            this.connectionsLoaded = true;
 
-            this.spinner.hide(this.suggestFieldsSpinnerName);
+            this.spinner.hide(this.connectionsSpinnerName);
 
             this.cd.detectChanges();
           }
@@ -185,7 +185,7 @@ export class CreateModelDialogComponent implements OnInit {
   modelTypeChange() {
     (document.activeElement as HTMLElement).blur();
 
-    this.suggestFieldForm.controls['suggestField'].setValue(undefined);
+    this.connectionForm.controls['connection'].setValue(undefined);
 
     // this.formsError = undefined;
 
@@ -213,7 +213,7 @@ export class CreateModelDialogComponent implements OnInit {
     // }
   }
 
-  suggestFieldChange() {
+  connectionChange() {
     (document.activeElement as HTMLElement).blur();
   }
 
@@ -231,7 +231,7 @@ export class CreateModelDialogComponent implements OnInit {
       this.ref.close();
 
       let modelName = this.modelNameForm.controls['name'].value;
-      let suggestField = this.suggestFieldForm.controls['suggestField'].value;
+      let connection = this.connectionForm.controls['connection'].value;
       let roles = this.rolesForm.controls['roles'].value;
 
       this.createModel({

@@ -101,7 +101,7 @@
               (updateData)="treeOnUpdateData()"
               (moveNode)="onMoveNode($event)"
             >
-              <ng-template #treeNodeTemplate let-node="node" let-index="index">
+              <ng-template #treeNodeTemplate let-node="node">
                 <div
                   class="flex h-11 w-full flex-row pl-3 pr-5"
                   *ngIf="node.parent !== null && !node.parent.data.virtual"
