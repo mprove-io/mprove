@@ -100,6 +100,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   timeSpecTimestamps = common.TimeSpecEnum.Timestamps;
 
   isShow = true;
+  showSearch = false;
 
   isShowLeft = true;
 
@@ -1138,6 +1139,17 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.showMiniCharts = newShowMiniChartsValue;
 
     this.uiQuery.updatePart({ showMiniCharts: newShowMiniChartsValue });
+
+    this.cd.detectChanges();
+  }
+
+  toggleSearch() {
+    this.showSearch = !this.showSearch;
+
+    if (this.showSearch === false && common.isDefined(this.word)) {
+      this.word = undefined;
+      this.makeFilteredReports();
+    }
 
     this.cd.detectChanges();
   }

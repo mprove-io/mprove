@@ -398,7 +398,7 @@
           <div class="bg-m0 flex w-full flex-grow rounded shadow">
             <div class="text-s1 flex w-full flex-col text-base">
               <div
-                class="text-s1 mb-5 mt-7 flex w-full flex-shrink-0 flex-row items-center"
+                class="text-s1 mb-3 mt-5 flex h-11 w-full flex-shrink-0 flex-row items-center"
               >
                 <div
                   (click)="setShowMetrics()"
@@ -419,7 +419,7 @@
 
                 <div
                   (click)="setShowReports()"
-                  class="ml-2 flex cursor-pointer select-none flex-row items-center pl-2 pr-4 text-lg"
+                  class="ml-2 flex cursor-pointer select-none flex-row items-center pl-2 text-lg"
                 >
                   <div
                     class="flex w-[94px] flex-row items-center justify-center"
@@ -433,6 +433,35 @@
                     </div>
                   </div>
                 </div>
+
+                <div
+                  *ngIf="showMetrics === false"
+                  class="hover:bg-m200 text-s500 ml-4 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
+                  (click)="toggleSearch()"
+                >
+                  <m-mag-glass-icon
+                    [isFilled]="showSearch === true"
+                    class="mb-1 flex h-6 w-6 flex-shrink-0"
+                  ></m-mag-glass-icon>
+                </div>
+
+                <div class="flex flex-grow"></div>
+
+                <button
+                  *ngIf="filteredDraftsLength > 0"
+                  class="ml-3 mr-10 flex flex-row items-center rounded border px-4 py-2 focus:outline-none"
+                  [ngClass]="{
+                    'border-s400 text-s500 hover:bg-s100':
+                      filteredDraftsLength > 0,
+                    'border-s300 text-s400 cursor-default':
+                      filteredDraftsLength === 0
+                  }"
+                  [disabled]="filteredDraftsLength === 0"
+                  (click)="deleteDrafts()"
+                >
+                  <m-trash-icon></m-trash-icon>
+                  <div class="ml-3">Drafts</div>
+                </button>
               </div>
 
               <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
@@ -444,14 +473,17 @@
                 *ngIf="showMetrics === false"
                 class="flex h-2 flex-1 flex-col"
               >
-                <div class="mb-5 mt-5 flex h-11 flex-row items-center">
-                  <m-search-icon class="text-s1 ml-6"></m-search-icon>
+                <div
+                  *ngIf="showSearch === true"
+                  class="mb-5 mt-5 flex h-11 flex-row items-center"
+                >
+                  <!-- <m-search-icon class="text-s1 ml-6"></m-search-icon> -->
 
                   <input
                     spellcheck="false"
                     autocomplete="off"
                     data-cy="dashboardsSearchInput"
-                    class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] rounded"
+                    class="form-input focus:border-m600 border-s400 ml-6 h-10 w-[225px] rounded"
                     placeholder="Search Reports"
                     [ngClass]="{
                       'bg-p200': !!word
@@ -470,27 +502,12 @@
                       (click)="resetSearch()"
                     ></m-delete-icon>
                   </div>
-
-                  <div class="flex flex-grow"></div>
-
-                  <button
-                    *ngIf="filteredDraftsLength > 0"
-                    class="ml-3 mr-10 flex flex-row items-center rounded border px-4 py-2 focus:outline-none"
-                    [ngClass]="{
-                      'border-s400 text-s500 hover:bg-s100':
-                        filteredDraftsLength > 0,
-                      'border-s300 text-s400 cursor-default':
-                        filteredDraftsLength === 0
-                    }"
-                    [disabled]="filteredDraftsLength === 0"
-                    (click)="deleteDrafts()"
-                  >
-                    <m-trash-icon></m-trash-icon>
-                    <div class="ml-3">Drafts</div>
-                  </button>
                 </div>
 
-                <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
+                <div
+                  *ngIf="showSearch === true"
+                  class="divide-s300 ml-6 mr-9 flex flex-col divide-y"
+                >
                   <div class="flex flex-row"></div>
                   <div class="flex flex-row"></div>
                 </div>

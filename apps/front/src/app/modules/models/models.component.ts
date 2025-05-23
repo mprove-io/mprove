@@ -107,6 +107,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   modelCancelButtonSpinnerName = 'modelCancelButtonSpinnerName';
 
   isFilterByModel = true;
+  showSearch = false;
 
   isRunButtonPressed = false;
   isCancelButtonPressed = false;
@@ -1664,6 +1665,17 @@ ${this.mconfig.storePart?.reqFunction}`
 
     this.cd.detectChanges();
     // this.scrollToSelectedChart();
+  }
+
+  toggleSearch() {
+    this.showSearch = !this.showSearch;
+
+    if (this.showSearch === false && common.isDefined(this.word)) {
+      this.word = undefined;
+      this.makeFilteredCharts();
+    }
+
+    this.cd.detectChanges();
   }
 
   setProjectModelLink(item: { modelId: string }) {

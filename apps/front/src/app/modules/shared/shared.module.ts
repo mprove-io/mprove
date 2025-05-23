@@ -88,6 +88,7 @@ import { LeftPanelIconComponent } from './icons/left-panel-icon/left-panel-icon.
 import { LinkIconComponent } from './icons/link-icon/link-icon.component';
 import { LinkOffIconComponent } from './icons/link-off-icon/link-off-icon.component';
 import { LockClosedIconComponent } from './icons/lock-closed-icon/lock-closed-icon.component';
+import { MagGlassIconComponent } from './icons/mag-glass-icon/mag-glass-icon.component';
 import { MiniChartsIconComponent } from './icons/mini-charts-icon/mini-charts-icon.component';
 import { MinusSmIconComponent } from './icons/minus-sm-icon/minus-sm-icon.component';
 import { RefreshIconComponent } from './icons/refresh-icon/refresh-icon.component';
@@ -172,6 +173,7 @@ let sharedComponents = [
   AscIconComponent,
   CurrencyDollarIconComponent,
   FilterIconComponent,
+  MagGlassIconComponent,
   FractionComponent,
   StoreFractionSubTypeComponent,
   StoreFractionSelectorComponent,

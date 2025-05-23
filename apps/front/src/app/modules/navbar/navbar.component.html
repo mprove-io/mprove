@@ -83,18 +83,6 @@
             >
 
             <button
-              class="text-s1 flex h-10 w-[120px] items-center justify-center text-left text-base focus:outline-none"
-              [ngClass]="{
-                'text-s400 cursor-default':
-                  !nav || !nav.projectId || needSave === true,
-                'font-semibold': isDashboardsRouteActive === true
-              }"
-              (click)="navigateDashboards()"
-              [disabled]="!nav || !nav.projectId || needSave === true"
-              >Dashboards</button
-            >
-
-            <button
               class="text-s1 flex h-10 w-[90px] items-center justify-center text-left text-base focus:outline-none"
               [ngClass]="{
                 'text-s400 cursor-default':
@@ -104,6 +92,18 @@
               (click)="navigateReports()"
               [disabled]="!nav || !nav.projectId || needSave === true"
               >Reports</button
+            >
+
+            <button
+              class="text-s1 flex h-10 w-[120px] items-center justify-center text-left text-base focus:outline-none"
+              [ngClass]="{
+                'text-s400 cursor-default':
+                  !nav || !nav.projectId || needSave === true,
+                'font-semibold': isDashboardsRouteActive === true
+              }"
+              (click)="navigateDashboards()"
+              [disabled]="!nav || !nav.projectId || needSave === true"
+              >Dashboards</button
             >
           </div>
 

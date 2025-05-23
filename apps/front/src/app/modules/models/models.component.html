@@ -451,22 +451,22 @@
               (click)="setShowSchema()"
               class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center pl-0 pr-2 text-lg"
             >
-              <div class="flex w-[84px] flex-row items-center justify-center">
+              <div class="flex w-[72px] flex-row items-center justify-center">
                 <div
                   [ngClass]="{
                     'font-semibold': showSchema === true
                   }"
                 >
-                  SCHEMA
+                  FIELDS
                 </div>
               </div>
             </div>
 
             <div
               (click)="setShowCharts()"
-              class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center pl-2 pr-4 text-lg"
+              class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center pl-2 text-lg"
             >
-              <div class="flex w-[78px] flex-row items-center justify-center">
+              <div class="flex w-[80px] flex-row items-center justify-center">
                 <div
                   [ngClass]="{
                     'font-semibold': showSchema === false
@@ -478,8 +478,19 @@
             </div>
 
             <div
-              *ngIf="!!model?.modelId"
-              class="hover:bg-m200 text-s500 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
+              *ngIf="showSchema === false"
+              class="hover:bg-m200 text-s500 ml-3 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
+              (click)="toggleSearch()"
+            >
+              <m-mag-glass-icon
+                [isFilled]="showSearch === true"
+                class="mb-1 flex h-6 w-6 flex-shrink-0"
+              ></m-mag-glass-icon>
+            </div>
+
+            <div
+              *ngIf="showSchema === false"
+              class="hover:bg-m200 text-s500 ml-3 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
               (click)="toggleFilterByModel()"
               tp="Show charts of the selected model (instead of all charts)"
             >
@@ -488,6 +499,23 @@
                 [isFilled]="isFilterByModel === true"
               ></m-filter-icon>
             </div>
+
+            <div class="flex flex-grow"></div>
+
+            <button
+              *ngIf="showSchema === false && filteredDraftsLength > 0"
+              class="ml-5 mr-10 flex flex-shrink-0 flex-row items-center rounded border px-4 py-2 focus:outline-none"
+              [ngClass]="{
+                'border-s400 text-s500 hover:bg-s100': filteredDraftsLength > 0,
+                'border-s300 text-s400 cursor-default':
+                  filteredDraftsLength === 0
+              }"
+              [disabled]="filteredDraftsLength === 0"
+              (click)="deleteDrafts()"
+            >
+              <m-trash-icon></m-trash-icon>
+              <div class="ml-3">Drafts</div>
+            </button>
           </div>
 
           <div class="flex flex-1 flex-col" *ngIf="showSchema === true">
@@ -508,14 +536,17 @@
           </div>
 
           <div *ngIf="showSchema === false" class="flex h-2 flex-1 flex-col">
-            <div class="mb-5 mt-5 flex h-11 flex-row items-center">
-              <m-search-icon class="text-s1 ml-6"></m-search-icon>
+            <div
+              *ngIf="showSearch === true"
+              class="mb-5 mt-5 flex h-11 flex-row items-center"
+            >
+              <!-- <m-search-icon class="text-s1 ml-6"></m-search-icon> -->
 
               <input
                 spellcheck="false"
                 autocomplete="off"
                 data-cy="chartsSearchInput"
-                class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] rounded"
+                class="form-input focus:border-m600 border-s400 ml-6 h-10 w-[225px] rounded"
                 placeholder="Search Charts"
                 [ngClass]="{
                   'bg-p200': !!word
@@ -533,27 +564,12 @@
                   (click)="resetSearch()"
                 ></m-delete-icon>
               </div>
-
-              <div class="flex flex-grow"></div>
-
-              <button
-                *ngIf="filteredDraftsLength > 0"
-                class="ml-5 mr-10 flex flex-shrink-0 flex-row items-center rounded border px-4 py-2 focus:outline-none"
-                [ngClass]="{
-                  'border-s400 text-s500 hover:bg-s100':
-                    filteredDraftsLength > 0,
-                  'border-s300 text-s400 cursor-default':
-                    filteredDraftsLength === 0
-                }"
-                [disabled]="filteredDraftsLength === 0"
-                (click)="deleteDrafts()"
-              >
-                <m-trash-icon></m-trash-icon>
-                <div class="ml-3">Drafts</div>
-              </button>
             </div>
 
-            <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
+            <div
+              *ngIf="showSearch === true"
+              class="divide-s300 ml-6 mr-9 flex flex-col divide-y"
+            >
               <div class="flex flex-row"></div>
               <div class="flex flex-row"></div>
             </div>
