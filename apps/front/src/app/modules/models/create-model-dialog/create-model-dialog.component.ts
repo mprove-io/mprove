@@ -14,9 +14,11 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { SelectItem } from '~front/app/interfaces/select-item';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
@@ -37,7 +39,7 @@ export interface CreateModelDialogData {
   templateUrl: './create-model-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, ReactiveFormsModule, SharedModule]
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, NgSelectModule]
 })
 export class CreateModelDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
@@ -52,6 +54,21 @@ export class CreateModelDialogComponent implements OnInit {
   modelNameForm: FormGroup = this.fb.group({
     name: [undefined, [Validators.maxLength(255), Validators.required]]
   });
+
+  modelTypeForm = this.fb.group({
+    modelType: [undefined]
+  });
+
+  modelTypesList: SelectItem<common.ModelTypeEnum>[] = [
+    {
+      label: 'SQL',
+      value: common.ModelTypeEnum.SQL
+    },
+    {
+      label: 'Store',
+      value: common.ModelTypeEnum.Store
+    }
+  ];
 
   rolesForm: FormGroup = this.fb.group({
     roles: [undefined, [Validators.maxLength(255)]]
@@ -88,9 +105,40 @@ export class CreateModelDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    setTimeout(() => {
-      this.modelNameElement.nativeElement.focus();
-    }, 0);
+    this.modelTypeForm.controls['modelType'].setValue(common.ModelTypeEnum.SQL);
+
+    // setTimeout(() => {
+    //   this.modelNameElement.nativeElement.focus();
+    // }, 0);
+  }
+
+  modelTypeChange() {
+    (document.activeElement as HTMLElement).blur();
+
+    // this.formsError = undefined;
+
+    // if (
+    //   this.modelTypeForm.controls['modelType'].value ===
+    //   common.ModelTypeEnum.Store
+    // ) {
+    //   this.storeModelSet = false;
+
+    //   this.storeModelForm.controls['storeModel'].setValue(undefined);
+    //   this.storeFilterForForm.controls['storeFilterFor'].setValue(
+    //     common.StoreFilterForEnum.Filter
+    //   );
+    //   this.storeFilterForm.controls['storeFilter'].setValue(undefined);
+    //   this.fieldResultForm.controls['fieldResult'].setValue(undefined);
+    //   this.suggestFieldForm.controls['suggestField'].setValue(undefined);
+
+    //   if (this.storeModelsLoaded === false) {
+    //     this.loadStoreModels();
+    //   }
+    // } else {
+    //   this.fieldResultForm.controls['fieldResult'].setValue(
+    //     common.FieldResultEnum.String
+    //   );
+    // }
   }
 
   create() {

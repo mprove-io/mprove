@@ -10,3 +10,4 @@ export * from './event-chart-toggle-y-axis-element';
 export * from './event-chart-y-axis-element-update';
 export * from './event-fraction-update';
 export * from './series-part';
+export * from './select-item';

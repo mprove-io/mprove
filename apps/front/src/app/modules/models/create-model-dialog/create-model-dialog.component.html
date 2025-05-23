@@ -8,6 +8,42 @@
   <div class="mt-9 flex flex-row items-start">
     <div class="flex flex-col">
       <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
+        >Model Type</div
+      >
+    </div>
+
+    <div class="ml-5" [formGroup]="modelTypeForm">
+      <ng-select
+        #modelTypeSelect
+        data-cy="modelTypeSelect"
+        class="w-72 text-base"
+        [items]="modelTypesList"
+        [clearable]="false"
+        [searchable]="false"
+        (keyup.esc)="$event.stopImmediatePropagation(); modelTypeSelect.blur()"
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); modelTypeSelect.blur()
+        "
+        (change)="modelTypeChange()"
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+        formControlName="modelType"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+  </div>
+
+  <div class="mt-6 flex flex-row items-start">
+    <div class="flex flex-col">
+      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
         >Name</div
       >
     </div>

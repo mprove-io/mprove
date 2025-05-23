@@ -31,6 +31,7 @@ import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../../shared/shared.module';
 
 import uFuzzy from '@leeoniya/ufuzzy';
+import { SelectItem } from '~front/app/interfaces/select-item';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 
@@ -38,11 +39,6 @@ export interface DashboardAddFilterDialogData {
   dashboardService: DashboardService;
   dashboard: common.DashboardX;
   apiService: ApiService;
-}
-
-export class ModelTypeItem {
-  value: common.ModelTypeEnum;
-  label: string;
 }
 
 export class StoreFilterForItem {
@@ -114,7 +110,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
     modelType: [undefined]
   });
 
-  modelTypesList: ModelTypeItem[] = [
+  modelTypesList: SelectItem<common.ModelTypeEnum>[] = [
     {
       label: 'SQL',
       value: common.ModelTypeEnum.SQL
