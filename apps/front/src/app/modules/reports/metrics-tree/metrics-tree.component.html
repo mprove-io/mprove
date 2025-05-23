@@ -1,6 +1,8 @@
 <div class="flex w-full flex-col">
   <div class="flex h-2 flex-grow flex-col overflow-y-auto">
     <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
+      <div class="h-[16px]"></div>
+
       <tree-root
         class="h-2 w-full"
         #itemsTree
@@ -9,11 +11,10 @@
         (initialized)="treeOnInitialized()"
         (updateData)="treeOnUpdateData()"
       >
-        <ng-template #treeNodeTemplate let-node="node" let-index="index">
+        <ng-template #treeNodeTemplate let-node="node">
           <div
             class="group-bar flex w-full flex-row"
             [ngClass]="{
-              'mt-3': index === 0 && node.hasChildren === true,
               'h-[60px]': node.data.isField === false,
               'h-11 pl-3 pr-5': node.data.isField === true
             }"

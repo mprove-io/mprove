@@ -103,10 +103,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   isShowLeft = true;
 
-  emptyReportId = common.EMPTY_REPORT_ID;
-
-  metricsIsExpanded = false;
+  showMetrics = false;
   filtersIsExpanded = false;
+
+  emptyReportId = common.EMPTY_REPORT_ID;
 
   notEmptySelectQueriesLength = 0;
 
@@ -890,11 +890,26 @@ export class ReportsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  toggleMetricsPanel() {
-    this.metricsIsExpanded = !this.metricsIsExpanded;
+  setShowMetrics() {
+    if (this.showMetrics === true) {
+      return;
+    }
 
+    this.showMetrics = true;
     this.cd.detectChanges();
-    this.scrollToSelectedReport({ isSmooth: true });
+  }
+
+  setShowReports() {
+    if (this.showMetrics === false) {
+      return;
+    }
+
+    this.showMetrics = false;
+    this.cd.detectChanges();
+
+    setTimeout(() => {
+      this.scrollToSelectedReport({ isSmooth: true });
+    });
   }
 
   toggleFiltersPanel() {

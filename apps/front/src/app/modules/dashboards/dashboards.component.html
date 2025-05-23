@@ -449,6 +449,8 @@
                       [orientation]="'vertical'"
                       [visibility]="'hover'"
                     >
+                      <div class="h-[12px]"></div>
+
                       <div
                         *ngFor="let d of filteredDashboards; let i = index"
                         [attr.dashboardId]="d.dashboardId"

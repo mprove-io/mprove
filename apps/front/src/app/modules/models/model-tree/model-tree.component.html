@@ -1,9 +1,11 @@
 <div class="flex w-full flex-col">
   <div class="flex h-2 flex-grow flex-col overflow-y-auto">
     <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
+      <div class="h-[16px]"></div>
+
       <tree-root
         *ngIf="nodesExtra?.length > 0"
-        class="mt-3 h-2 w-full"
+        class="h-2 w-full"
         #itemsTree
         [nodes]="nodesExtra"
         [options]="treeOptions"
