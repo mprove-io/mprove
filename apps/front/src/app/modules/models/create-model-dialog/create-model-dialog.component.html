@@ -33,7 +33,7 @@
       <ng-select
         #connectionSelect
         data-cy="connectionSelect"
-        class="w-72 text-base"
+        class="w-96 text-base"
         [loading]="connectionsLoading"
         [items]="connections"
         [clearable]="false"
@@ -48,53 +48,65 @@
         formControlName="connection"
       >
         <ng-template ng-label-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item.connectionId }}</div>
+          <div class="ml-1">
+            <div
+              *ngIf="
+                [connectionTypeEnumApi, connectionTypeEnumGoogleApi].indexOf(
+                  item.type
+                ) > -1
+              "
+              class="flex flex-row justify-between"
+            >
+              <span>{{ item.connectionId }}</span>
+              <span class="text-s400 ml-2">Store</span>
+            </div>
+
+            <div
+              *ngIf="
+                [connectionTypeEnumApi, connectionTypeEnumGoogleApi].indexOf(
+                  item.type
+                ) < 0
+              "
+              class="flex flex-row justify-between"
+            >
+              <span>{{ item.connectionId }}</span>
+              <span class="text-s400 ml-2">SQL</span>
+            </div>
+          </div>
         </ng-template>
 
         <ng-template ng-option-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item.connectionId }}</div>
+          <div class="ml-1">
+            <div
+              *ngIf="
+                [connectionTypeEnumApi, connectionTypeEnumGoogleApi].indexOf(
+                  item.type
+                ) > -1
+              "
+              class="flex flex-row justify-between"
+            >
+              <span>{{ item.connectionId }}</span>
+              <span class="text-s400 ml-2">Store</span>
+            </div>
+
+            <div
+              *ngIf="
+                [connectionTypeEnumApi, connectionTypeEnumGoogleApi].indexOf(
+                  item.type
+                ) < 0
+              "
+              class="flex flex-row justify-between"
+            >
+              <span>{{ item.connectionId }}</span>
+              <span class="text-s400 ml-2">SQL</span>
+            </div>
+          </div>
         </ng-template>
       </ng-select>
     </div>
   </div>
 
-  <div class="mt-6 flex flex-row items-start">
-    <div class="flex flex-col">
-      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
-        >Model Type</div
-      >
-    </div>
-
-    <div class="ml-5" [formGroup]="modelTypeForm">
-      <ng-select
-        #modelTypeSelect
-        data-cy="modelTypeSelect"
-        class="w-72 text-base"
-        [items]="modelTypesList"
-        [clearable]="false"
-        [searchable]="false"
-        (keyup.esc)="$event.stopImmediatePropagation(); modelTypeSelect.blur()"
-        (keyup.enter)="
-          $event.stopImmediatePropagation(); modelTypeSelect.blur()
-        "
-        (change)="modelTypeChange()"
-        appendTo="body"
-        bindLabel="label"
-        bindValue="value"
-        formControlName="modelType"
-      >
-        <ng-template ng-label-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item.label }}</div>
-        </ng-template>
-
-        <ng-template ng-option-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item.label }}</div>
-        </ng-template>
-      </ng-select>
-    </div>
-  </div>
-
-  <div class="mt-6 flex flex-row items-start">
+  <div class="mt-7 flex flex-row items-start">
     <div class="flex flex-col">
       <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
         >Name</div
@@ -119,7 +131,7 @@
     </div>
   </div>
 
-  <div class="flex flex-row items-start">
+  <div class="mt-1 flex flex-row items-start">
     <div class="flex flex-col">
       <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
         >Access Roles</div
@@ -143,7 +155,7 @@
     </div>
   </div>
 
-  <div class="mt-9">
+  <div class="mt-14 flex flex-row items-center">
     <button
       data-cy="createBranchDialogCreateButton"
       class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
@@ -159,6 +171,10 @@
       (click)="cancel()"
       >Cancel</button
     >
+
+    <div *ngIf="!!formsError" class="text-r1 ml-5 flex">
+      {{ formsError }}
+    </div>
   </div>
 </div>
 

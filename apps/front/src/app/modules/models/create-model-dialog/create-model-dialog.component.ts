@@ -18,7 +18,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { SelectItem } from '~front/app/interfaces/select-item';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
@@ -62,24 +61,12 @@ export class CreateModelDialogComponent implements OnInit {
     name: [undefined, [Validators.maxLength(255), Validators.required]]
   });
 
-  modelTypeForm = this.fb.group({
-    modelType: [undefined]
-  });
-
-  modelTypesList: SelectItem<common.ModelTypeEnum>[] = [
-    {
-      label: 'SQL',
-      value: common.ModelTypeEnum.SQL
-    },
-    {
-      label: 'Store',
-      value: common.ModelTypeEnum.Store
-    }
-  ];
-
   rolesForm: FormGroup = this.fb.group({
     roles: [undefined, [Validators.maxLength(255)]]
   });
+
+  connectionTypeEnumApi = common.ConnectionTypeEnum.Api;
+  connectionTypeEnumGoogleApi = common.ConnectionTypeEnum.GoogleApi;
 
   connectionForm: FormGroup = this.fb.group({
     connection: [undefined]
@@ -109,6 +96,8 @@ export class CreateModelDialogComponent implements OnInit {
     })
   );
 
+  formsError: string;
+
   constructor(
     public ref: DialogRef<CreateModelDialogData>,
     private fb: FormBuilder,
@@ -123,8 +112,6 @@ export class CreateModelDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.modelTypeForm.controls['modelType'].setValue(common.ModelTypeEnum.SQL);
-
     setTimeout(() => {
       if (this.connectionsLoaded === false) {
         this.loadConnections();
@@ -174,45 +161,23 @@ export class CreateModelDialogComponent implements OnInit {
       .toPromise();
   }
 
-  modelTypeChange() {
-    (document.activeElement as HTMLElement).blur();
-
-    this.connectionForm.controls['connection'].setValue(undefined);
-
-    // this.formsError = undefined;
-
-    // if (
-    //   this.modelTypeForm.controls['modelType'].value ===
-    //   common.ModelTypeEnum.Store
-    // ) {
-    //   this.storeModelSet = false;
-
-    //   this.storeModelForm.controls['storeModel'].setValue(undefined);
-    //   this.storeFilterForForm.controls['storeFilterFor'].setValue(
-    //     common.StoreFilterForEnum.Filter
-    //   );
-    //   this.storeFilterForm.controls['storeFilter'].setValue(undefined);
-    //   this.fieldResultForm.controls['fieldResult'].setValue(undefined);
-    //   this.suggestFieldForm.controls['suggestField'].setValue(undefined);
-
-    //   if (this.storeModelsLoaded === false) {
-    //     this.loadStoreModels();
-    //   }
-    // } else {
-    //   this.fieldResultForm.controls['fieldResult'].setValue(
-    //     common.FieldResultEnum.String
-    //   );
-    // }
-  }
-
   connectionChange() {
     (document.activeElement as HTMLElement).blur();
+
+    this.formsError = undefined;
+
+    this.cd.detectChanges();
   }
 
   create() {
     this.modelNameForm.markAllAsTouched();
 
-    if (!this.modelNameForm.valid) {
+    if (!this.modelNameForm.valid || !this.rolesForm.controls['roles'].valid) {
+      return;
+    }
+
+    if (common.isUndefined(this.connectionForm.controls['connection'].value)) {
+      this.formsError = 'Connection must be selected';
       return;
     }
 
