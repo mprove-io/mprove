@@ -151,7 +151,9 @@ export class CreateModelDialogComponent implements OnInit {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
-            this.connections = resp.payload.connections;
+            this.connections = resp.payload.connections.filter(
+              x => x.envId === nav.envId
+            );
 
             this.connectionsLoading = false;
             this.connectionsLoaded = true;
