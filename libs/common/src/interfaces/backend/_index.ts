@@ -28,3 +28,4 @@ export * from './suggest-field';
 export * from './tile-x';
 export * from './ui';
 export * from './user';
+export * from './model-info';

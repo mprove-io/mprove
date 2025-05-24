@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import {
   FormBuilder,
+  FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators
@@ -68,8 +69,10 @@ export class CreateModelDialogComponent implements OnInit {
   connectionTypeEnumApi = common.ConnectionTypeEnum.Api;
   connectionTypeEnumGoogleApi = common.ConnectionTypeEnum.GoogleApi;
 
-  connectionForm: FormGroup = this.fb.group({
-    connection: [undefined]
+  connectionForm: FormGroup = new FormGroup({
+    connection: new FormControl<common.Connection>(undefined, {
+      validators: [Validators.required, Validators.email]
+    })
   });
 
   connectionsSpinnerName = 'modelsAddConnectionSpinnerName';
@@ -192,20 +195,33 @@ export class CreateModelDialogComponent implements OnInit {
       let roles = this.rolesForm.controls['roles'].value;
 
       this.createModel({
+        connection: this.connectionForm.controls['connection'].value,
         modelName: modelName,
         roles: roles
       });
     }
   }
 
-  createModel(item: { modelName: string; roles: string }) {
+  createModel(item: {
+    modelName: string;
+    roles: string;
+    connection: common.Connection;
+  }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { modelName: modelName, roles } = item;
+    let { modelName, connection, roles } = item;
 
-    let fileName = modelName.toLowerCase().split(' ').join('_');
+    let filePart = modelName.toLowerCase().split(' ').join('_');
 
-    fileName = `${fileName}.model`;
+    let fileExt =
+      [
+        common.ConnectionTypeEnum.Api,
+        common.ConnectionTypeEnum.GoogleApi
+      ].indexOf(connection.type) > -1
+        ? 'store'
+        : 'model';
+
+    let fileName = `${filePart}.${fileExt}`;
 
     let nav = this.navQuery.getValue();
 
@@ -224,7 +240,12 @@ export class CreateModelDialogComponent implements OnInit {
       branchId: nav.branchId,
       envId: nav.envId,
       parentNodeId: parentNodeId,
-      fileName: fileName
+      fileName: fileName,
+      modelInfo: {
+        connectionId: connection.connectionId,
+        name: modelName,
+        accessRoles: roles?.split(',').map(x => x.trim())
+      }
     };
 
     let apiService: ApiService = this.ref.data.apiService;

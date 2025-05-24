@@ -19,6 +19,7 @@ import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '~backend/functions/get-retry-option';
+import { makeModelFileText } from '~backend/functions/make-model-file-text';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
@@ -58,7 +59,7 @@ export class CreateFileController {
     let reqValid: apiToBackend.ToBackendCreateFileRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, branchId, parentNodeId, fileName, envId } =
+    let { projectId, branchId, parentNodeId, fileName, envId, modelInfo } =
       reqValid.payload;
 
     let repoId = user.userId;
@@ -91,6 +92,18 @@ export class CreateFileController {
       envId: envId
     });
 
+    let fileText: string;
+
+    if (common.isDefined(modelInfo)) {
+      fileText = makeModelFileText({
+        modelId: fileName.split('.')[0],
+        isStore: fileName.split('.')[1] === 'store',
+        label: modelInfo.name,
+        connectionId: modelInfo.connectionId,
+        roles: modelInfo.accessRoles?.join(', ')
+      });
+    }
+
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
@@ -103,6 +116,7 @@ export class CreateFileController {
         branch: branchId,
         parentNodeId: parentNodeId,
         fileName: fileName.toLowerCase(),
+        fileText: fileText,
         userAlias: user.alias,
         remoteType: project.remoteType,
         gitUrl: project.gitUrl,

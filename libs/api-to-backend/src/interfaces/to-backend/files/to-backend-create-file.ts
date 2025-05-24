@@ -1,5 +1,10 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
@@ -18,6 +23,11 @@ export class ToBackendCreateFileRequestPayload {
 
   @IsString()
   fileName: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => common.ModelInfo)
+  modelInfo?: common.ModelInfo;
 }
 
 export class ToBackendCreateFileRequest extends ToBackendRequest {
