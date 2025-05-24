@@ -19,6 +19,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { APP_SPINNER_NAME } from '~front/app/constants/top';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
@@ -248,6 +249,8 @@ export class CreateModelDialogComponent implements OnInit {
       }
     };
 
+    this.spinner.show(APP_SPINNER_NAME);
+
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
@@ -255,7 +258,7 @@ export class CreateModelDialogComponent implements OnInit {
         pathInfoName:
           apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile,
         payload: payload,
-        showSpinner: true
+        showSpinner: false
       })
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateFileResponse) => {
