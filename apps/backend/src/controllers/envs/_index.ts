@@ -7,3 +7,4 @@ export * from './delete-env/delete-env.controller';
 export * from './edit-env-var/edit-env-var.controller';
 export * from './get-envs-list/get-envs-list.controller';
 export * from './get-envs/get-envs.controller';
+export * from './edit-env-fallbacks/edit-env-fallbacks.controller';

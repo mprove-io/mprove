@@ -7,3 +7,4 @@ export * from './to-backend-delete-env-var';
 export * from './to-backend-edit-env-var';
 export * from './to-backend-get-envs';
 export * from './to-backend-get-envs-list';
+export * from './to-backend-edit-env-fallbacks';

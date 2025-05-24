@@ -71,6 +71,7 @@ export const appControllers = [
   controllers.EditEnvVarController,
   controllers.GetEnvsController,
   controllers.GetEnvsListController,
+  controllers.EditEnvFallbacksController,
 
   controllers.CancelQueriesController,
   controllers.GetQueriesController,

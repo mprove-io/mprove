@@ -143,9 +143,81 @@ export class ProjectEnvironmentsComponent implements OnInit {
       .subscribe();
   }
 
-  isFallbackConnectionsChange(env: common.Env) {}
+  isFallbackConnectionsChange(env: common.Env) {
+    let payload: apiToBackend.ToBackendEditEnvFallbacksRequestPayload = {
+      projectId: env.projectId,
+      envId: env.envId,
+      isFallbackToProdConnections: !env.isFallbackToProdConnections,
+      isFallbackToProdVariables: env.isFallbackToProdVariables
+    };
 
-  isFallbackEnvVarsChange(env: common.Env) {}
+    this.apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEnvFallbacks,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendEditEnvFallbacksResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let environmentsState = this.environmentsQuery.getValue();
+
+            let envIndex = environmentsState.environments.findIndex(
+              x => x.envId === env.envId
+            );
+
+            let newEnvironments = environmentsState.environments.map(
+              (x, index) => (index === envIndex ? resp.payload.env : x)
+            );
+
+            this.environmentsQuery.update({
+              environments: newEnvironments
+            });
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  isFallbackEnvVarsChange(env: common.Env) {
+    let payload: apiToBackend.ToBackendEditEnvFallbacksRequestPayload = {
+      projectId: env.projectId,
+      envId: env.envId,
+      isFallbackToProdConnections: env.isFallbackToProdConnections,
+      isFallbackToProdVariables: !env.isFallbackToProdVariables
+    };
+
+    this.apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEnvFallbacks,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap((resp: apiToBackend.ToBackendEditEnvFallbacksResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            let environmentsState = this.environmentsQuery.getValue();
+
+            let envIndex = environmentsState.environments.findIndex(
+              x => x.envId === env.envId
+            );
+
+            let newEnvironments = environmentsState.environments.map(
+              (x, index) => (index === envIndex ? resp.payload.env : x)
+            );
+
+            this.environmentsQuery.update({
+              environments: newEnvironments
+            });
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
 
   addVar(env: common.Env) {
     this.myDialogService.showAddEv({

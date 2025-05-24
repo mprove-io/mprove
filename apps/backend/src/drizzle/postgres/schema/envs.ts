@@ -1,6 +1,7 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,
+  boolean,
   index,
   json,
   pgTable,
@@ -17,6 +18,12 @@ export const envsTable = pgTable(
     envId: varchar('env_id', { length: 32 }).notNull(), // name
     memberIds: json('member_ids').$type<string[]>().default([]),
     evs: json('evs').$type<common.Ev[]>().default([]),
+    isFallbackToProdConnections: boolean(
+      'is_fallback_to_prod_connections'
+    ).default(false),
+    isFallbackToProdVariables: boolean('is_fallback_to_prod_variables').default(
+      false
+    ),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

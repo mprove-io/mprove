@@ -159,7 +159,9 @@ export class WrapToApiService {
       envId: env.envId,
       envConnectionIds: envConnectionIds,
       evs: env.evs,
-      envUsers: envUsers
+      envUsers: envUsers,
+      isFallbackToProdConnections: env.isFallbackToProdConnections,
+      isFallbackToProdVariables: env.isFallbackToProdVariables
     };
   }
 

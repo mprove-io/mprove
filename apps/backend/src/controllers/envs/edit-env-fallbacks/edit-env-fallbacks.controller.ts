@@ -7,7 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
@@ -16,6 +16,8 @@ import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
+import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/envs.service';
@@ -27,7 +29,7 @@ let retry = require('async-retry');
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
-export class EditEnvVarController {
+export class EditEnvFallbacksController {
   constructor(
     private projectsService: ProjectsService,
     private envsService: EnvsService,
@@ -38,14 +40,19 @@ export class EditEnvVarController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEnvVar)
-  async editEnvVar(
+  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEnvFallbacks)
+  async editEnvFallbacks(
     @AttachUser() user: schemaPostgres.UserEnt,
     @Req() request: any
   ) {
-    let reqValid: apiToBackend.ToBackendEditEnvVarRequest = request.body;
+    let reqValid: apiToBackend.ToBackendEditEnvFallbacksRequest = request.body;
 
-    let { projectId, envId, evId, val } = reqValid.payload;
+    let {
+      projectId,
+      envId,
+      isFallbackToProdConnections,
+      isFallbackToProdVariables
+    } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -71,15 +78,8 @@ export class EditEnvVarController {
       member: member
     });
 
-    let ev = env.evs.find(x => x.evId === evId);
-
-    if (common.isUndefined(ev)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_EV_DOES_NOT_EXIST
-      });
-    }
-
-    ev.val = val;
+    env.isFallbackToProdConnections = isFallbackToProdConnections;
+    env.isFallbackToProdVariables = isFallbackToProdVariables;
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
@@ -106,8 +106,28 @@ export class EditEnvVarController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendEditEnvVarResponsePayload = {
-      ev: ev
+    let connections = await this.db.drizzle.query.connectionsTable.findMany({
+      where: and(
+        eq(connectionsTable.projectId, projectId),
+        inArray(connectionsTable.envId, [env.envId])
+      )
+    });
+
+    let members = await this.db.drizzle.query.membersTable.findMany({
+      where: eq(membersTable.projectId, projectId)
+    });
+
+    let payload: apiToBackend.ToBackendEditEnvFallbacksResponsePayload = {
+      env: this.wrapToApiService.wrapToApiEnv({
+        env: env,
+        envConnectionIds: connections.map(
+          connection => connection.connectionId
+        ),
+        envMembers:
+          env.envId === common.PROJECT_ENV_PROD
+            ? []
+            : members.filter(m => env.memberIds.indexOf(m.memberId) > -1)
+      })
     };
 
     return payload;

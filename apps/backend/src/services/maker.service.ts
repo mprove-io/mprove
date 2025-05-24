@@ -99,6 +99,8 @@ export class MakerService {
       envId: envId,
       evs: evs,
       memberIds: [],
+      isFallbackToProdConnections: true,
+      isFallbackToProdVariables: true,
       serverTs: undefined
     };
 

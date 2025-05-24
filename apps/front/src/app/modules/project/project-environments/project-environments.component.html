@@ -41,7 +41,7 @@
                 <th class="text-center"
                   >Environment Variables Fallback to Prod Env</th
                 >
-                <th class="text-left">Environment Variables</th>
+                <th class="pl-5 text-left">Environment Variables</th>
                 <th></th>
               </tr>
             </thead>
@@ -179,16 +179,21 @@
                         data-cy="projectTeamIsExplorerButton"
                         class="text-m0 flex h-5 w-5 items-center justify-center rounded border-2 focus:outline-none"
                         [ngClass]="{
-                          'bg-m600': !!environment === true && isAdmin === true,
+                          'bg-m600':
+                            environment.isFallbackToProdConnections === true &&
+                            isAdmin === true,
                           'bg-s400 cursor-default':
-                            !!environment === true && isAdmin === false,
+                            environment.isFallbackToProdConnections === true &&
+                            isAdmin === false,
                           'border-m600': isAdmin === true,
                           'border-s400 cursor-default': isAdmin === false
                         }"
                         (click)="isFallbackConnectionsChange(environment)"
                         [disabled]="isAdmin === false"
                       >
-                        <m-check-icon *ngIf="!!environment"></m-check-icon>
+                        <m-check-icon
+                          *ngIf="environment.isFallbackToProdConnections"
+                        ></m-check-icon>
                       </button>
                     </div>
                   </div>
@@ -204,16 +209,21 @@
                         data-cy="projectTeamIsExplorerButton"
                         class="text-m0 flex h-5 w-5 items-center justify-center rounded border-2 focus:outline-none"
                         [ngClass]="{
-                          'bg-m600': !!environment === true && isAdmin === true,
+                          'bg-m600':
+                            environment.isFallbackToProdVariables === true &&
+                            isAdmin === true,
                           'bg-s400 cursor-default':
-                            !!environment === true && isAdmin === false,
+                            environment.isFallbackToProdVariables === true &&
+                            isAdmin === false,
                           'border-m600': isAdmin === true,
                           'border-s400 cursor-default': isAdmin === false
                         }"
                         (click)="isFallbackEnvVarsChange(environment)"
                         [disabled]="isAdmin === false"
                       >
-                        <m-check-icon *ngIf="!!environment"></m-check-icon>
+                        <m-check-icon
+                          *ngIf="environment.isFallbackToProdVariables"
+                        ></m-check-icon>
                       </button>
                     </div>
                   </div>
@@ -221,7 +231,7 @@
 
                 <td>
                   <div class="my-3 flex flex-col">
-                    <div class="flex flex-row items-center">
+                    <div class="flex flex-row items-center pl-5">
                       <div
                         tp="Admin role required"
                         [tpIsEnabled]="isAdmin === false"

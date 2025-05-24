@@ -91,6 +91,8 @@ export const nameToClass = {
     interfaces.ToBackendDeleteEnvVarRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteEnvUser]:
     interfaces.ToBackendDeleteEnvUserRequest,
+  [enums.ToBackendRequestInfoNameEnum.ToBackendEditEnvFallbacks]:
+    interfaces.ToBackendEditEnvFallbacksRequest,
   //
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetMembers]:
     interfaces.ToBackendGetMembersRequest,
