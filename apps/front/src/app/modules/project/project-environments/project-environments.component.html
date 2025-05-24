@@ -166,12 +166,16 @@
                         <div>{{ connectionId }} </div>
                       </div>
                     </div>
-                  </div></td
-                >
+                  </div>
+                </td>
 
                 <td class="w-[160px]">
                   <div class="flex justify-center">
+                    <div tp="This env is prod">
+                      <div *ngIf="environment.envId === envProd">—</div>
+                    </div>
                     <div
+                      *ngIf="environment.envId !== envProd"
                       tp="Admin role required"
                       [tpIsEnabled]="isAdmin === false"
                     >
@@ -201,7 +205,11 @@
 
                 <td class="w-[230px]">
                   <div class="flex justify-center">
+                    <div tp="This env is prod">
+                      <div *ngIf="environment.envId === envProd">—</div>
+                    </div>
                     <div
+                      *ngIf="environment.envId !== envProd"
                       tp="Admin role required"
                       [tpIsEnabled]="isAdmin === false"
                     >

@@ -123,7 +123,9 @@ export class CreateEnvController {
     let payload: apiToBackend.ToBackendCreateEnvResponsePayload = {
       env: this.wrapToApiService.wrapToApiEnv({
         env: newEnv,
-        envConnectionIds: envConnectionIds,
+        envConnectionIds: envConnectionIds.sort((a, b) =>
+          a > b ? 1 : b > a ? -1 : 0
+        ),
         envMembers:
           newEnv.envId === common.PROJECT_ENV_PROD
             ? []

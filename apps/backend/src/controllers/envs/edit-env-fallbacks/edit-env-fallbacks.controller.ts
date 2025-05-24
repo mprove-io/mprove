@@ -120,9 +120,9 @@ export class EditEnvFallbacksController {
     let payload: apiToBackend.ToBackendEditEnvFallbacksResponsePayload = {
       env: this.wrapToApiService.wrapToApiEnv({
         env: env,
-        envConnectionIds: connections.map(
-          connection => connection.connectionId
-        ),
+        envConnectionIds: connections
+          .map(connection => connection.connectionId)
+          .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0)),
         envMembers:
           env.envId === common.PROJECT_ENV_PROD
             ? []

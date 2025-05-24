@@ -67,7 +67,8 @@ export class GetEnvsController {
           env: x,
           envConnectionIds: connections
             .filter(y => y.envId === x.envId)
-            .map(connection => connection.connectionId),
+            .map(connection => connection.connectionId)
+            .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0)),
           envMembers:
             x.envId === common.PROJECT_ENV_PROD
               ? []
