@@ -42,7 +42,7 @@
                 <th class="text-left">Connection Name</th>
                 <th class="text-left">Environment</th>
                 <th class="text-left">Type</th>
-                <th class="text-left">SSL (https)</th>
+                <th class="text-left">SSL</th>
                 <th class="text-left">Host / API Base URL</th>
                 <th class="text-left">Port</th>
                 <th class="text-left">Database</th>
@@ -112,7 +112,7 @@
                 >
                   {{
                     !!connection.baseUrl
-                      ? 'True if URL starts with "https://"'
+                      ? ''
                       : (connection.isSSL.toString() | capitalize)
                   }}
                 </td>

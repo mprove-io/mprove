@@ -37,6 +37,8 @@
                 <th class="text-left">Environment Name</th>
                 <th class="text-left">Users</th>
                 <th class="text-left">Connections</th>
+                <th class="text-center">Fallback to Prod Connections</th>
+                <th class="text-center">Fallback to Prod Variables</th>
                 <th class="text-left">Environment Variables</th>
                 <th></th>
               </tr>
@@ -153,7 +155,7 @@
                   </div>
                 </td>
 
-                <td class="w-96">
+                <td class="w-80">
                   <div class="my-3 flex flex-col">
                     <div
                       *ngFor="let connectionId of environment.envConnectionIds"
@@ -164,6 +166,56 @@
                     </div>
                   </div></td
                 >
+
+                <td class="w-48">
+                  <div class="flex justify-center">
+                    <div
+                      tp="Admin role required"
+                      [tpIsEnabled]="isAdmin === false"
+                    >
+                      <button
+                        data-cy="projectTeamIsExplorerButton"
+                        class="text-m0 flex h-5 w-5 items-center justify-center rounded border-2 focus:outline-none"
+                        [ngClass]="{
+                          'bg-m600': !!environment === true && isAdmin === true,
+                          'bg-s400 cursor-default':
+                            !!environment === true && isAdmin === false,
+                          'border-m600': isAdmin === true,
+                          'border-s400 cursor-default': isAdmin === false
+                        }"
+                        (click)="isFallbackConnectionsChange(environment)"
+                        [disabled]="isAdmin === false"
+                      >
+                        <m-check-icon *ngIf="!!environment"></m-check-icon>
+                      </button>
+                    </div>
+                  </div>
+                </td>
+
+                <td class="w-48">
+                  <div class="flex justify-center">
+                    <div
+                      tp="Admin role required"
+                      [tpIsEnabled]="isAdmin === false"
+                    >
+                      <button
+                        data-cy="projectTeamIsExplorerButton"
+                        class="text-m0 flex h-5 w-5 items-center justify-center rounded border-2 focus:outline-none"
+                        [ngClass]="{
+                          'bg-m600': !!environment === true && isAdmin === true,
+                          'bg-s400 cursor-default':
+                            !!environment === true && isAdmin === false,
+                          'border-m600': isAdmin === true,
+                          'border-s400 cursor-default': isAdmin === false
+                        }"
+                        (click)="isFallbackEnvVarsChange(environment)"
+                        [disabled]="isAdmin === false"
+                      >
+                        <m-check-icon *ngIf="!!environment"></m-check-icon>
+                      </button>
+                    </div>
+                  </div>
+                </td>
 
                 <td>
                   <div class="my-3 flex flex-col">

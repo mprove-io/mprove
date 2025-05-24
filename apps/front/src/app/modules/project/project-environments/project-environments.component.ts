@@ -143,6 +143,10 @@ export class ProjectEnvironmentsComponent implements OnInit {
       .subscribe();
   }
 
+  isFallbackConnectionsChange(env: common.Env) {}
+
+  isFallbackEnvVarsChange(env: common.Env) {}
+
   addVar(env: common.Env) {
     this.myDialogService.showAddEv({
       apiService: this.apiService,
