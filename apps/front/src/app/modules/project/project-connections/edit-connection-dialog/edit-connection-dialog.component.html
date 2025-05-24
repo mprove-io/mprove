@@ -11,21 +11,21 @@
     (ngSubmit)="save()"
   >
     <div class="mt-9 flex flex-row">
-      <div class="mb-6 w-[200px] flex-shrink-0">Name</div>
+      <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Name</div>
       <div>
         {{ this.ref.data.connection.connectionId }}
       </div>
     </div>
 
     <div class="flex flex-row">
-      <div class="mb-6 w-[200px] flex-shrink-0">Env</div>
+      <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Env</div>
       <div>
         {{ this.ref.data.connection.envId }}
       </div>
     </div>
 
     <div class="flex flex-row">
-      <div class="mb-6 w-[200px] flex-shrink-0">Type</div>
+      <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Type</div>
       <div>
         {{ this.ref.data.connection.type }}
       </div>
@@ -39,7 +39,7 @@
       "
     >
       <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0"
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
           >Service Account Credentials</div
         >
 
@@ -72,7 +72,7 @@
       "
     >
       <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0">Base URL</div>
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Base URL</div>
 
         <div class="flex flex-col">
           <input
@@ -171,7 +171,14 @@
         ) > -1
       "
     >
-      <div class="mb-6 mt-6 flex flex-row items-center">
+      <div
+        class="mb-6 flex flex-row items-center"
+        [ngClass]="{
+          'mt-6':
+            [typeGoogleApi].indexOf(editConnectionForm.controls['type'].value) >
+            -1
+        }"
+      >
         <div class="flex w-[200px] flex-shrink-0 font-semibold">Headers</div>
 
         <!-- <button
@@ -249,7 +256,9 @@
       "
     >
       <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0">Query Size Limit, gb</div>
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
+          >Query Size Limit, gb</div
+        >
 
         <div class="flex flex-col">
           <input
@@ -280,7 +289,7 @@
       "
     >
       <div class="mb-6 flex flex-row items-center">
-        <div class="w-[200px] flex-shrink-0">{{
+        <div class="w-[200px] flex-shrink-0 font-semibold">{{
           editConnectionForm.controls['type'].value === typeClickHouse
             ? 'HTTPS'
             : editConnectionForm.controls['type'].value === typePostgreSQL
@@ -299,7 +308,7 @@
       </div>
 
       <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0">Host</div>
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Host</div>
 
         <div class="flex flex-col">
           <input
@@ -321,7 +330,7 @@
       </div>
 
       <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0">Port</div>
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Port</div>
 
         <div class="flex flex-col">
           <input
@@ -343,7 +352,7 @@
       </div>
 
       <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0">Database</div>
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Database</div>
 
         <div class="flex flex-col">
           <input
@@ -369,7 +378,7 @@
 
     <div *ngIf="editConnectionForm.controls['type'].value === typeSnowFlake">
       <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0">Account</div>
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Account</div>
 
         <div class="flex flex-col">
           <input
@@ -393,7 +402,7 @@
 
     <div *ngIf="editConnectionForm.controls['type'].value === typeSnowFlake">
       <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0">Warehouse</div>
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Warehouse</div>
 
         <div class="flex flex-col">
           <input
@@ -423,7 +432,7 @@
       "
     >
       <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0">User</div>
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">User</div>
 
         <div class="flex flex-col">
           <input
@@ -445,7 +454,7 @@
       </div>
 
       <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0">Password</div>
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Password</div>
 
         <div class="flex flex-col">
           <input
