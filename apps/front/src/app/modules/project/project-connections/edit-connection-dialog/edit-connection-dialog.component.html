@@ -45,9 +45,9 @@
 
         <div class="flex flex-col">
           <textarea
-            rows="9"
+            rows="7"
             data-cy="editConnectionDialogServiceAccountCredentialsInput"
-            class="form-input border-s3 focus:border-m600 w-[400px] resize-none rounded font-mono"
+            class="form-input border-s3 focus:border-m600 w-[400px] resize-none whitespace-nowrap rounded font-mono"
             [ngClass]="{
               'border-r600':
                 editConnectionForm.controls['serviceAccountCredentials']
@@ -123,15 +123,7 @@
       "
     >
       <div class="mb-6 flex flex-row items-center">
-        <div class="flex w-[200px] flex-shrink-0">Scopes</div>
-
-        <button
-          type="button"
-          data-cy="editConnectionDialogAddScopeButton"
-          class="border-m600 text-m600 hover:bg-m0 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
-          (click)="addScope()"
-          >Add Scope</button
-        >
+        <div class="flex w-[200px] flex-shrink-0 font-semibold">Scopes</div>
       </div>
 
       <div formArrayName="scopes">
@@ -162,6 +154,14 @@
           </div>
         </div>
       </div>
+
+      <button
+        type="button"
+        data-cy="editConnectionDialogAddScopeButton"
+        class="border-s400 text-s500 hover:bg-s100 h-11 flex-shrink-0 rounded border px-4 text-base leading-3 shadow-sm focus:outline-none"
+        (click)="addScope()"
+        >Add Scope</button
+      >
     </div>
 
     <div
@@ -171,16 +171,8 @@
         ) > -1
       "
     >
-      <div class="mb-6 flex flex-row items-center">
-        <div class="flex w-[200px] flex-shrink-0">Headers</div>
-
-        <button
-          type="button"
-          data-cy="editConnectionDialogAddHeaderButton"
-          class="border-m600 text-m600 hover:bg-m0 h-11 flex-shrink-0 select-none rounded border px-4 py-2 text-base font-medium focus:outline-none"
-          (click)="addHeader()"
-          >Add Header</button
-        >
+      <div class="mb-6 mt-6 flex flex-row items-center">
+        <div class="flex w-[200px] flex-shrink-0 font-semibold">Headers</div>
 
         <!-- <button
         type="button"
@@ -241,6 +233,14 @@
           </div>
         </div>
       </div>
+
+      <button
+        type="button"
+        data-cy="editConnectionDialogAddHeaderButton"
+        class="border-s400 text-s500 hover:bg-s100 h-11 flex-shrink-0 rounded border px-4 text-base leading-3 shadow-sm focus:outline-none"
+        (click)="addHeader()"
+        >Add Header</button
+      >
     </div>
 
     <div
@@ -468,7 +468,7 @@
       </div>
     </div>
 
-    <div class="mt-6">
+    <div class="mt-9">
       <button
         data-cy="editConnectionDialogSaveButton"
         class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
