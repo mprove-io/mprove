@@ -51,7 +51,7 @@ export class EditEnvVarController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckIsEditorOrAdmin({
+    let userMember = await this.membersService.getMemberCheckIsEditorOrAdmin({
       memberId: user.userId,
       projectId: projectId
     });
@@ -59,7 +59,7 @@ export class EditEnvVarController {
     let firstProjectId =
       this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
-    if (member.isAdmin === false && projectId === firstProjectId) {
+    if (userMember.isAdmin === false && projectId === firstProjectId) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
       });
@@ -68,7 +68,7 @@ export class EditEnvVarController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let ev = env.evs.find(x => x.evId === evId);
@@ -106,8 +106,13 @@ export class EditEnvVarController {
       getRetryOption(this.cs, this.logger)
     );
 
+    let apiEnvs = await this.envsService.getApiEnvs({
+      projectId: projectId
+    });
+
     let payload: apiToBackend.ToBackendEditEnvVarResponsePayload = {
-      ev: ev
+      userMember: this.wrapToApiService.wrapToApiMember(userMember),
+      envs: apiEnvs
     };
 
     return payload;

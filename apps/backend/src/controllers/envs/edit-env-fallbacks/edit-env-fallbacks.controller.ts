@@ -7,7 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
@@ -16,8 +16,6 @@ import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
-import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/envs.service';
@@ -59,7 +57,7 @@ export class EditEnvFallbacksController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckIsEditorOrAdmin({
+    let userMember = await this.membersService.getMemberCheckIsEditorOrAdmin({
       memberId: user.userId,
       projectId: projectId
     });
@@ -67,7 +65,7 @@ export class EditEnvFallbacksController {
     let firstProjectId =
       this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
-    if (member.isAdmin === false && projectId === firstProjectId) {
+    if (userMember.isAdmin === false && projectId === firstProjectId) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
       });
@@ -76,7 +74,7 @@ export class EditEnvFallbacksController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     env.isFallbackToProdConnections = isFallbackToProdConnections;
@@ -91,7 +89,7 @@ export class EditEnvFallbacksController {
       prodEnv = await this.envsService.getEnvCheckExistsAndAccess({
         projectId: projectId,
         envId: PROJECT_ENV_PROD,
-        member: member
+        member: userMember
       });
     }
 
@@ -120,51 +118,13 @@ export class EditEnvFallbacksController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let connections = await this.db.drizzle.query.connectionsTable.findMany({
-      where: and(
-        eq(connectionsTable.projectId, projectId),
-        inArray(
-          connectionsTable.envId,
-          env.isFallbackToProdConnections === true
-            ? [env.envId, PROJECT_ENV_PROD]
-            : [env.envId]
-        )
-      )
+    let apiEnvs = await this.envsService.getApiEnvs({
+      projectId: projectId
     });
-
-    let members = await this.db.drizzle.query.membersTable.findMany({
-      where: eq(membersTable.projectId, projectId)
-    });
-
-    let envConnectionIds = connections
-      .filter(x => x.envId === env.envId)
-      .map(connection => connection.connectionId);
 
     let payload: apiToBackend.ToBackendEditEnvFallbacksResponsePayload = {
-      env: this.wrapToApiService.wrapToApiEnv({
-        env: env,
-        envConnectionIds: envConnectionIds,
-        fallbackConnectionIds:
-          env.isFallbackToProdConnections === true
-            ? connections
-                .filter(
-                  y =>
-                    y.envId === PROJECT_ENV_PROD &&
-                    envConnectionIds.indexOf(y.connectionId) < 0
-                )
-                .map(connection => connection.connectionId)
-            : [],
-        fallbackEvs:
-          env.isFallbackToProdVariables === true
-            ? prodEnv.evs.filter(
-                y => env.evs.map(ev => ev.evId).indexOf(y.evId) < 0
-              )
-            : [],
-        envMembers:
-          env.envId === common.PROJECT_ENV_PROD
-            ? []
-            : members.filter(m => env.memberIds.indexOf(m.memberId) > -1)
-      })
+      userMember: this.wrapToApiService.wrapToApiMember(userMember),
+      envs: apiEnvs
     };
 
     return payload;

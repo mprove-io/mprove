@@ -18,8 +18,10 @@ import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { envsTable } from '~backend/drizzle/postgres/schema/envs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 let retry = require('async-retry');
 
@@ -29,6 +31,8 @@ export class DeleteEnvController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
+    private envsService: EnvsService,
+    private wrapToApiService: WrapToApiService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -47,7 +51,7 @@ export class DeleteEnvController {
       projectId: projectId
     });
 
-    await this.membersService.getMemberCheckIsAdmin({
+    let userMember = await this.membersService.getMemberCheckIsAdmin({
       memberId: user.userId,
       projectId: projectId
     });
@@ -82,7 +86,14 @@ export class DeleteEnvController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload = {};
+    let apiEnvs = await this.envsService.getApiEnvs({
+      projectId: projectId
+    });
+
+    let payload: apiToBackend.ToBackendDeleteEnvResponsePayload = {
+      userMember: this.wrapToApiService.wrapToApiMember(userMember),
+      envs: apiEnvs
+    };
 
     return payload;
   }

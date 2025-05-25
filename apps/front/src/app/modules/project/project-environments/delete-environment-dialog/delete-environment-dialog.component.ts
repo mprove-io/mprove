@@ -8,6 +8,7 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { EnvironmentsQuery } from '~front/app/queries/environments.query';
+import { MemberQuery } from '~front/app/queries/member.query';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -37,6 +38,7 @@ export class DeleteEnvironmentDialogComponent implements OnInit {
 
   constructor(
     public ref: DialogRef<DeleteEnvironmentDialogData>,
+    private memberQuery: MemberQuery,
     private environmentsQuery: EnvironmentsQuery
   ) {}
 
@@ -66,17 +68,8 @@ export class DeleteEnvironmentDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteEnvResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let envs = this.environmentsQuery.getValue();
-
-            this.environmentsQuery.update({
-              environments: envs.environments.filter(
-                x =>
-                  !(
-                    x.projectId === this.dataItem.projectId &&
-                    x.envId === this.dataItem.envId
-                  )
-              )
-            });
+            this.memberQuery.update(resp.payload.userMember);
+            this.environmentsQuery.update({ environments: resp.payload.envs });
           }
         }),
         take(1)

@@ -22,8 +22,12 @@ export class ToBackendCreateEnvUserRequest extends ToBackendRequest {
 
 export class ToBackendCreateEnvUserResponsePayload {
   @ValidateNested()
-  @Type(() => common.EnvUser)
-  envUser: common.EnvUser;
+  @Type(() => common.Member)
+  userMember: common.Member;
+
+  @ValidateNested()
+  @Type(() => common.Env)
+  envs: common.Env[];
 }
 
 export class ToBackendCreateEnvUserResponse extends common.MyResponse {

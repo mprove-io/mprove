@@ -20,6 +20,18 @@ export class ToBackendDeleteEnvVarRequest extends ToBackendRequest {
   payload: ToBackendDeleteEnvVarRequestPayload;
 }
 
+export class ToBackendDeleteEnvVarResponsePayload {
+  @ValidateNested()
+  @Type(() => common.Member)
+  userMember: common.Member;
+
+  @ValidateNested()
+  @Type(() => common.Env)
+  envs: common.Env[];
+}
+
 export class ToBackendDeleteEnvVarResponse extends common.MyResponse {
-  payload: { [k in any]: never };
+  @ValidateNested()
+  @Type(() => ToBackendDeleteEnvVarResponsePayload)
+  payload: ToBackendDeleteEnvVarResponsePayload;
 }

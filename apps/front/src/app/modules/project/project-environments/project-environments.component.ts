@@ -123,19 +123,8 @@ export class ProjectEnvironmentsComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendDeleteEnvUserResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let environmentsState = this.environmentsQuery.getValue();
-
-            let stateEnv = environmentsState.environments.find(
-              x => x.envId === env.envId
-            );
-
-            stateEnv.envUsers = stateEnv.envUsers.filter(
-              x => x.userId !== envUser.userId
-            );
-
-            this.environmentsQuery.update({
-              environments: [...environmentsState.environments]
-            });
+            this.memberQuery.update(resp.payload.userMember);
+            this.environmentsQuery.update({ environments: resp.payload.envs });
           }
         }),
         take(1)
@@ -161,19 +150,8 @@ export class ProjectEnvironmentsComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendEditEnvFallbacksResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let environmentsState = this.environmentsQuery.getValue();
-
-            let envIndex = environmentsState.environments.findIndex(
-              x => x.envId === env.envId
-            );
-
-            let newEnvironments = environmentsState.environments.map(
-              (x, index) => (index === envIndex ? resp.payload.env : x)
-            );
-
-            this.environmentsQuery.update({
-              environments: newEnvironments
-            });
+            this.memberQuery.update(resp.payload.userMember);
+            this.environmentsQuery.update({ environments: resp.payload.envs });
           }
         }),
         take(1)
@@ -199,19 +177,8 @@ export class ProjectEnvironmentsComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendEditEnvFallbacksResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let environmentsState = this.environmentsQuery.getValue();
-
-            let envIndex = environmentsState.environments.findIndex(
-              x => x.envId === env.envId
-            );
-
-            let newEnvironments = environmentsState.environments.map(
-              (x, index) => (index === envIndex ? resp.payload.env : x)
-            );
-
-            this.environmentsQuery.update({
-              environments: newEnvironments
-            });
+            this.memberQuery.update(resp.payload.userMember);
+            this.environmentsQuery.update({ environments: resp.payload.envs });
           }
         }),
         take(1)

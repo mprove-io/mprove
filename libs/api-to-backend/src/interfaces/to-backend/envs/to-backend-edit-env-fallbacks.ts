@@ -25,8 +25,12 @@ export class ToBackendEditEnvFallbacksRequest extends ToBackendRequest {
 
 export class ToBackendEditEnvFallbacksResponsePayload {
   @ValidateNested()
+  @Type(() => common.Member)
+  userMember: common.Member;
+
+  @ValidateNested()
   @Type(() => common.Env)
-  env: common.Env;
+  envs: common.Env[];
 }
 
 export class ToBackendEditEnvFallbacksResponse extends common.MyResponse {

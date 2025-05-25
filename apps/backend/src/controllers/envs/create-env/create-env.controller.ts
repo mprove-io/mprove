@@ -7,7 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { and, eq, inArray } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
@@ -15,8 +15,6 @@ import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
-import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/envs.service';
@@ -55,7 +53,7 @@ export class CreateEnvController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckIsAdmin({
+    let userMember = await this.membersService.getMemberCheckIsAdmin({
       memberId: user.userId,
       projectId: projectId
     });
@@ -80,7 +78,7 @@ export class CreateEnvController {
       prodEnv = await this.envsService.getEnvCheckExistsAndAccess({
         projectId: projectId,
         envId: PROJECT_ENV_PROD,
-        member: member
+        member: userMember
       });
     }
 
@@ -118,58 +116,13 @@ export class CreateEnvController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let connections = await this.db.drizzle.query.connectionsTable.findMany({
-      where: and(
-        eq(connectionsTable.projectId, projectId),
-        inArray(
-          connectionsTable.envId,
-          newEnv.isFallbackToProdConnections === true
-            ? [newEnv.envId, PROJECT_ENV_PROD]
-            : [newEnv.envId]
-        )
-      )
+    let apiEnvs = await this.envsService.getApiEnvs({
+      projectId: projectId
     });
-
-    let members = await this.db.drizzle.query.membersTable.findMany({
-      where: and(
-        eq(membersTable.projectId, projectId),
-        inArray(membersTable.memberId, newEnv.memberIds)
-      )
-    });
-
-    let envConnectionIds = connections
-      .filter(x => x.envId === newEnv.envId)
-      .map(connection => connection.connectionId);
-
-    let fallbackConnectionIds =
-      newEnv.isFallbackToProdConnections === true
-        ? connections
-            .filter(
-              y =>
-                y.envId === PROJECT_ENV_PROD &&
-                envConnectionIds.indexOf(y.connectionId) < 0
-            )
-            .map(connection => connection.connectionId)
-        : [];
-
-    let fallbackEvs =
-      newEnv.isFallbackToProdVariables === true
-        ? prodEnv.evs.filter(
-            y => newEnv.evs.map(ev => ev.evId).indexOf(y.evId) < 0
-          )
-        : [];
 
     let payload: apiToBackend.ToBackendCreateEnvResponsePayload = {
-      env: this.wrapToApiService.wrapToApiEnv({
-        env: newEnv,
-        envConnectionIds: envConnectionIds,
-        fallbackConnectionIds: fallbackConnectionIds,
-        fallbackEvs: fallbackEvs,
-        envMembers:
-          newEnv.envId === common.PROJECT_ENV_PROD
-            ? []
-            : members.filter(m => newEnv.memberIds.indexOf(m.memberId) > -1)
-      })
+      userMember: this.wrapToApiService.wrapToApiMember(userMember),
+      envs: apiEnvs
     };
 
     return payload;

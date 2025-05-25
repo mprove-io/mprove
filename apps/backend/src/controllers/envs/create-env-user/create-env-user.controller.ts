@@ -48,7 +48,7 @@ export class CreateEnvUserController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckIsEditorOrAdmin({
+    let userMember = await this.membersService.getMemberCheckIsEditorOrAdmin({
       memberId: user.userId,
       projectId: projectId
     });
@@ -56,7 +56,7 @@ export class CreateEnvUserController {
     let firstProjectId =
       this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
-    if (member.isAdmin === false && projectId === firstProjectId) {
+    if (userMember.isAdmin === false && projectId === firstProjectId) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
       });
@@ -65,7 +65,7 @@ export class CreateEnvUserController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let isAlreadyExist = env.memberIds.indexOf(envUserId) > -1;
@@ -97,8 +97,13 @@ export class CreateEnvUserController {
       getRetryOption(this.cs, this.logger)
     );
 
+    let apiEnvs = await this.envsService.getApiEnvs({
+      projectId: projectId
+    });
+
     let payload: apiToBackend.ToBackendCreateEnvUserResponsePayload = {
-      envUser: this.wrapToApiService.wrapToApiEnvUser(teamMember)
+      userMember: this.wrapToApiService.wrapToApiMember(userMember),
+      envs: apiEnvs
     };
 
     return payload;

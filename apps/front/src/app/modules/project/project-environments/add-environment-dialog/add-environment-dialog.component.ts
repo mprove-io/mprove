@@ -17,6 +17,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '~front/app/queries/environments.query';
+import { MemberQuery } from '~front/app/queries/member.query';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -48,6 +49,7 @@ export class AddEnvironmentDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<AddEnvironmentDialogData>,
     private fb: FormBuilder,
+    private memberQuery: MemberQuery,
     private environmentsQuery: EnvironmentsQuery
   ) {}
 
@@ -87,28 +89,8 @@ export class AddEnvironmentDialogComponent implements OnInit {
       .pipe(
         tap((resp: apiToBackend.ToBackendCreateEnvResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            let environment = resp.payload.env;
-
-            let environmentsState = this.environmentsQuery.getValue();
-
-            this.environmentsQuery.update({
-              environments: [
-                ...environmentsState.environments,
-                environment
-              ].sort((a, b) =>
-                a.envId !== common.PROJECT_ENV_PROD &&
-                b.envId === common.PROJECT_ENV_PROD
-                  ? 1
-                  : a.envId === common.PROJECT_ENV_PROD &&
-                      b.envId !== common.PROJECT_ENV_PROD
-                    ? -1
-                    : a.envId > b.envId
-                      ? 1
-                      : b.envId > a.envId
-                        ? -1
-                        : 0
-              )
-            });
+            this.memberQuery.update(resp.payload.userMember);
+            this.environmentsQuery.update({ environments: resp.payload.envs });
           }
         }),
         take(1)

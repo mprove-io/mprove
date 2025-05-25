@@ -1,13 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { common } from '~backend/barrels/common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { envsTable } from '~backend/drizzle/postgres/schema/envs';
+import { membersTable } from '~backend/drizzle/postgres/schema/members';
+import { PROJECT_ENV_PROD } from '~common/_index';
+import { WrapToApiService } from './wrap-to-api.service';
 
 @Injectable()
 export class EnvsService {
-  constructor(@Inject(DRIZZLE) private db: Db) {}
+  constructor(
+    private wrapToApiService: WrapToApiService,
+    @Inject(DRIZZLE) private db: Db
+  ) {}
 
   async checkEnvDoesNotExist(item: { projectId: string; envId: string }) {
     let { projectId, envId } = item;
@@ -51,5 +58,76 @@ export class EnvsService {
     }
 
     return env;
+  }
+
+  async getApiEnvs(item: { projectId: string }) {
+    let { projectId } = item;
+
+    let envs = await this.db.drizzle.query.envsTable.findMany({
+      where: eq(connectionsTable.projectId, projectId)
+    });
+
+    let connections = await this.db.drizzle.query.connectionsTable.findMany({
+      where: and(
+        eq(connectionsTable.projectId, projectId),
+        inArray(
+          connectionsTable.envId,
+          envs.map(x => x.envId)
+        )
+      )
+    });
+
+    let members = await this.db.drizzle.query.membersTable.findMany({
+      where: eq(membersTable.projectId, projectId)
+    });
+
+    let prodEnv = envs.find(x => x.envId === PROJECT_ENV_PROD);
+
+    let apiEnvs = envs
+      .map(x => {
+        let envConnectionIds = connections
+          .filter(y => y.envId === x.envId)
+          .map(connection => connection.connectionId);
+
+        return this.wrapToApiService.wrapToApiEnv({
+          env: x,
+          envConnectionIds: envConnectionIds,
+          fallbackConnectionIds:
+            x.isFallbackToProdConnections === true
+              ? connections
+                  .filter(
+                    y =>
+                      y.envId === PROJECT_ENV_PROD &&
+                      envConnectionIds.indexOf(y.connectionId) < 0
+                  )
+                  .map(connection => connection.connectionId)
+              : [],
+          fallbackEvs:
+            x.isFallbackToProdVariables === true
+              ? prodEnv.evs.filter(
+                  y => x.evs.map(ev => ev.evId).indexOf(y.evId) < 0
+                )
+              : [],
+          envMembers:
+            x.envId === common.PROJECT_ENV_PROD
+              ? []
+              : members.filter(m => x.memberIds.indexOf(m.memberId) > -1)
+        });
+      })
+      .sort((a, b) =>
+        a.envId !== common.PROJECT_ENV_PROD &&
+        b.envId === common.PROJECT_ENV_PROD
+          ? 1
+          : a.envId === common.PROJECT_ENV_PROD &&
+              b.envId !== common.PROJECT_ENV_PROD
+            ? -1
+            : a.envId > b.envId
+              ? 1
+              : b.envId > a.envId
+                ? -1
+                : 0
+      );
+
+    return apiEnvs;
   }
 }

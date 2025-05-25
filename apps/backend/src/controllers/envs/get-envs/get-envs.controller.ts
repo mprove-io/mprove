@@ -1,17 +1,13 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { and, eq, inArray } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
-import { PROJECT_ENV_PROD } from '~common/_index';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -19,6 +15,7 @@ export class GetEnvsController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
+    private envsService: EnvsService,
     private wrapToApiService: WrapToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -32,7 +29,7 @@ export class GetEnvsController {
 
     let { projectId } = reqValid.payload;
 
-    let project = await this.projectsService.getProjectCheckExists({
+    await this.projectsService.getProjectCheckExists({
       projectId: projectId
     });
 
@@ -41,60 +38,13 @@ export class GetEnvsController {
       memberId: user.userId
     });
 
-    let envs = await this.db.drizzle.query.envsTable.findMany({
-      where: eq(connectionsTable.projectId, projectId)
+    let apiEnvs = await this.envsService.getApiEnvs({
+      projectId: projectId
     });
-
-    let connections = await this.db.drizzle.query.connectionsTable.findMany({
-      where: and(
-        eq(connectionsTable.projectId, projectId),
-        inArray(
-          connectionsTable.envId,
-          envs.map(x => x.envId)
-        )
-      )
-    });
-
-    let members = await this.db.drizzle.query.membersTable.findMany({
-      where: eq(membersTable.projectId, projectId)
-    });
-
-    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
-
-    let prodEnv = envs.find(x => x.envId === PROJECT_ENV_PROD);
 
     let payload: apiToBackend.ToBackendGetEnvsResponsePayload = {
-      userMember: apiMember,
-      envs: envs.map(x => {
-        let envConnectionIds = connections
-          .filter(y => y.envId === x.envId)
-          .map(connection => connection.connectionId);
-
-        return this.wrapToApiService.wrapToApiEnv({
-          env: x,
-          envConnectionIds: envConnectionIds,
-          fallbackConnectionIds:
-            x.isFallbackToProdConnections === true
-              ? connections
-                  .filter(
-                    y =>
-                      y.envId === PROJECT_ENV_PROD &&
-                      envConnectionIds.indexOf(y.connectionId) < 0
-                  )
-                  .map(connection => connection.connectionId)
-              : [],
-          fallbackEvs:
-            x.isFallbackToProdVariables === true
-              ? prodEnv.evs.filter(
-                  y => x.evs.map(ev => ev.evId).indexOf(y.evId) < 0
-                )
-              : [],
-          envMembers:
-            x.envId === common.PROJECT_ENV_PROD
-              ? []
-              : members.filter(m => x.memberIds.indexOf(m.memberId) > -1)
-        });
-      })
+      userMember: this.wrapToApiService.wrapToApiMember(userMember),
+      envs: apiEnvs
     };
 
     return payload;

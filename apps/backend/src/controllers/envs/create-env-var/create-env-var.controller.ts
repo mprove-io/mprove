@@ -21,6 +21,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 let retry = require('async-retry');
 
@@ -31,6 +32,7 @@ export class CreateEnvVarController {
     private projectsService: ProjectsService,
     private envsService: EnvsService,
     private membersService: MembersService,
+    private wrapToApiService: WrapToApiService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -49,7 +51,7 @@ export class CreateEnvVarController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckIsEditorOrAdmin({
+    let userMember = await this.membersService.getMemberCheckIsEditorOrAdmin({
       memberId: user.userId,
       projectId: projectId
     });
@@ -57,7 +59,7 @@ export class CreateEnvVarController {
     let firstProjectId =
       this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
 
-    if (member.isAdmin === false && projectId === firstProjectId) {
+    if (userMember.isAdmin === false && projectId === firstProjectId) {
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
       });
@@ -66,7 +68,7 @@ export class CreateEnvVarController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let ev = env.evs.find(x => x.evId === evId);
@@ -110,8 +112,13 @@ export class CreateEnvVarController {
       getRetryOption(this.cs, this.logger)
     );
 
+    let apiEnvs = await this.envsService.getApiEnvs({
+      projectId: projectId
+    });
+
     let payload: apiToBackend.ToBackendCreateEnvVarResponsePayload = {
-      ev: newEv
+      userMember: this.wrapToApiService.wrapToApiMember(userMember),
+      envs: apiEnvs
     };
 
     return payload;

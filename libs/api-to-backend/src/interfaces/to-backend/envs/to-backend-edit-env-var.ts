@@ -25,8 +25,12 @@ export class ToBackendEditEnvVarRequest extends ToBackendRequest {
 
 export class ToBackendEditEnvVarResponsePayload {
   @ValidateNested()
-  @Type(() => common.Ev)
-  ev: common.Ev;
+  @Type(() => common.Member)
+  userMember: common.Member;
+
+  @ValidateNested()
+  @Type(() => common.Env)
+  envs: common.Env[];
 }
 
 export class ToBackendEditEnvVarResponse extends common.MyResponse {
