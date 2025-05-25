@@ -61,7 +61,7 @@ export class AddEvDialogComponent implements OnInit {
           Validators.maxLength(128)
         ]
       ],
-      val: [undefined, [Validators.required, Validators.maxLength(255)]]
+      val: [undefined, [Validators.maxLength(255)]]
     });
 
     setTimeout(() => {
@@ -82,7 +82,9 @@ export class AddEvDialogComponent implements OnInit {
       projectId: this.dataItem.projectId,
       envId: this.dataItem.envId,
       evId: this.addEvForm.value.evId,
-      val: this.addEvForm.value.val
+      val: common.isDefined(this.addEvForm.value.val)
+        ? this.addEvForm.value.val
+        : ''
     };
 
     let apiService: ApiService = this.dataItem.apiService;

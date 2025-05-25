@@ -21,6 +21,8 @@ export class ProjectEnvironmentsComponent implements OnInit {
 
   envProd = common.PROJECT_ENV_PROD;
 
+  isShowValues: boolean;
+
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
     tap(x => {
@@ -79,6 +81,10 @@ export class ProjectEnvironmentsComponent implements OnInit {
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);
+  }
+
+  toggleShowValues() {
+    this.isShowValues = !this.isShowValues;
   }
 
   addEnvironment() {

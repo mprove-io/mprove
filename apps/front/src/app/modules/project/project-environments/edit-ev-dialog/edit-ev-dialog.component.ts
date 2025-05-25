@@ -52,10 +52,7 @@ export class EditEvDialogComponent implements OnInit {
 
   ngOnInit() {
     this.editEvForm = this.fb.group({
-      val: [
-        this.dataItem.ev.val,
-        [Validators.required, Validators.maxLength(255)]
-      ]
+      val: [this.dataItem.ev.val, [Validators.maxLength(255)]]
     });
 
     setTimeout(() => {
@@ -76,7 +73,9 @@ export class EditEvDialogComponent implements OnInit {
       projectId: this.dataItem.env.projectId,
       envId: this.dataItem.env.envId,
       evId: this.dataItem.ev.evId,
-      val: this.editEvForm.value.val
+      val: common.isDefined(this.editEvForm.value.val)
+        ? this.editEvForm.value.val
+        : ''
     };
 
     let apiService: ApiService = this.dataItem.apiService;

@@ -49,7 +49,26 @@
                     <div>to Env Prod</div>
                   </div>
                 </th>
-                <th class="pl-[40px] text-left">Environment Variables</th>
+                <th class="pl-[40px] text-left">
+                  <div class="mb-2 flex flex-row items-center">
+                    <div>Environment Variables</div>
+
+                    <div class="ml-5 flex">
+                      <button
+                        data-cy="projectInfoShowValueButton"
+                        class="w-[140px] rounded border py-2 text-base font-normal leading-3 shadow-sm focus:outline-none"
+                        [ngClass]="{
+                          'border-s400 text-s500 hover:bg-s100':
+                            isAdmin === true,
+                          'border-s300 text-s400 cursor-default':
+                            isAdmin === false
+                        }"
+                        (click)="toggleShowValues()"
+                        >{{ isShowValues ? 'Hide values' : 'Show values' }}
+                      </button>
+                    </div>
+                  </div>
+                </th>
                 <th></th>
               </tr>
             </thead>
@@ -278,61 +297,93 @@
                         </button>
                       </div>
 
-                      <div class="ml-5 flex flex-col">
-                        <div *ngFor="let ev of environment.evsWithFallback">
-                          <div class="flex flex-row items-center text-base">
+                      <div class="group ml-5 flex flex-row">
+                        <div class="flex flex-col">
+                          <div *ngFor="let ev of environment.evsWithFallback">
                             <div
-                              [ngClass]="{
-                                'text-s400':
+                              class="flex h-8 flex-row items-center text-base"
+                            >
+                              <div
+                                tp="The variable is set because the fallback is enabled. You can override the value by adding a variable with the same name."
+                                [tpIsEnabled]="
                                   environment.fallbackEvIds.indexOf(ev.evId) >
                                   -1
-                              }"
-                              >{{ ev.evId }}
-                            </div>
-                            <div class="bg-s200 ml-5 rounded px-2"
-                              >{{ ev.val }}
-                            </div>
-
-                            <div
-                              tp="Admin role required"
-                              [tpIsEnabled]="isAdmin === false"
-                              class="ml-5"
-                            >
-                              <button
-                                data-cy="projectEnvironmentsEditVarButton"
-                                class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+                                "
                                 [ngClass]="{
-                                  'text-s400 cursor-default': isAdmin === false,
-                                  'text-s1 hover:bg-m200': isAdmin === true
+                                  'text-s400':
+                                    environment.fallbackEvIds.indexOf(ev.evId) >
+                                    -1
                                 }"
-                                (click)="editVar(environment, ev)"
-                                [disabled]="isAdmin === false"
-                              >
-                                <div>
-                                  <m-edit-icon></m-edit-icon>
-                                </div>
-                              </button>
+                                >{{ ev.evId }}
+                              </div>
                             </div>
+                          </div>
+                        </div>
 
+                        <div
+                          *ngIf="isShowValues === true"
+                          class="flex flex-col"
+                        >
+                          <div *ngFor="let ev of environment.evsWithFallback">
                             <div
-                              tp="Admin role required"
-                              [tpIsEnabled]="isAdmin === false"
-                              class="ml-2"
+                              class="flex h-8 flex-row items-center text-base"
                             >
-                              <button
-                                data-cy="projectEnvironmentsRemoveVarButton"
-                                class="flex h-8 w-8 items-center justify-center rounded focus:outline-none"
-                                [ngClass]="{
-                                  'text-s400 cursor-default': isAdmin === false,
-                                  'text-s1 hover:bg-m200': isAdmin === true
-                                }"
-                                (click)="removeVar(environment, ev)"
-                                [disabled]="isAdmin === false"
+                              <div
+                                tp="value is an empty string"
+                                [tpIsEnabled]="ev.val.length === 0"
+                                class="bg-s200 ml-5 h-6 rounded px-2"
+                                >{{ ev.val }}
+                              </div>
+
+                              <div
+                                *ngIf="
+                                  environment.fallbackEvIds.indexOf(ev.evId) < 0
+                                "
+                                tp="Admin role required"
+                                [tpIsEnabled]="isAdmin === false"
+                                class="ml-5"
                               >
-                                <div>
-                                  <m-delete-icon></m-delete-icon>
-                                </div>
-                              </button>
+                                <button
+                                  data-cy="projectEnvironmentsEditVarButton"
+                                  class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+                                  [ngClass]="{
+                                    'text-s400 cursor-default':
+                                      isAdmin === false,
+                                    'text-s1 hover:bg-m200': isAdmin === true
+                                  }"
+                                  (click)="editVar(environment, ev)"
+                                  [disabled]="isAdmin === false"
+                                >
+                                  <div>
+                                    <m-edit-icon></m-edit-icon>
+                                  </div>
+                                </button>
+                              </div>
+
+                              <div
+                                *ngIf="
+                                  environment.fallbackEvIds.indexOf(ev.evId) < 0
+                                "
+                                tp="Admin role required"
+                                [tpIsEnabled]="isAdmin === false"
+                                class="ml-2"
+                              >
+                                <button
+                                  data-cy="projectEnvironmentsRemoveVarButton"
+                                  class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+                                  [ngClass]="{
+                                    'text-s400 cursor-default':
+                                      isAdmin === false,
+                                    'text-s1 hover:bg-m200': isAdmin === true
+                                  }"
+                                  (click)="removeVar(environment, ev)"
+                                  [disabled]="isAdmin === false"
+                                >
+                                  <div>
+                                    <m-delete-icon></m-delete-icon>
+                                  </div>
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
