@@ -193,6 +193,12 @@
                     >
                       <div class="flex flex-row items-center text-base">
                         <div
+                          tp="The connection is set because the fallback is enabled. You can override the connection by adding a connection with the same name."
+                          [tpIsEnabled]="
+                            environment.fallbackConnectionIds.indexOf(
+                              connectionId
+                            ) > -1
+                          "
                           [ngClass]="{
                             'text-s400':
                               environment.fallbackConnectionIds.indexOf(
