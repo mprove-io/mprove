@@ -35,6 +35,9 @@ export class Env {
   @Type(() => Ev)
   fallbackEvs: Ev[];
 
+  @IsString({ each: true })
+  fallbackEvIds: string[];
+
   @IsBoolean()
   isFallbackToProdConnections: boolean;
 
