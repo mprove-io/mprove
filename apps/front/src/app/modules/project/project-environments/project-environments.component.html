@@ -160,10 +160,20 @@
                 <td class="w-80">
                   <div class="my-3 flex flex-col">
                     <div
-                      *ngFor="let connectionId of environment.envConnectionIds"
+                      *ngFor="
+                        let connectionId of environment.envConnectionIdsWithFallback
+                      "
                     >
                       <div class="flex flex-row items-center text-base">
-                        <div>{{ connectionId }} </div>
+                        <div
+                          [ngClass]="{
+                            'text-s400':
+                              environment.fallbackConnectionIds.indexOf(
+                                connectionId
+                              ) > -1
+                          }"
+                          >{{ connectionId }}
+                        </div>
                       </div>
                     </div>
                   </div>

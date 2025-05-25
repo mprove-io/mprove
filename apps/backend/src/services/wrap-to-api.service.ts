@@ -133,9 +133,17 @@ export class WrapToApiService {
   wrapToApiEnv(item: {
     env: schemaPostgres.EnvEnt;
     envConnectionIds: string[];
+    fallbackConnectionIds: string[];
+    fallbackEvs: common.Ev[];
     envMembers: schemaPostgres.MemberEnt[];
   }): common.Env {
-    let { env, envConnectionIds, envMembers } = item;
+    let {
+      env,
+      envConnectionIds,
+      fallbackConnectionIds,
+      fallbackEvs,
+      envMembers
+    } = item;
 
     let envUsers: common.EnvUser[] = [];
 
@@ -158,7 +166,16 @@ export class WrapToApiService {
       projectId: env.projectId,
       envId: env.envId,
       envConnectionIds: envConnectionIds,
+      fallbackConnectionIds: fallbackConnectionIds,
+      envConnectionIdsWithFallback: [
+        ...envConnectionIds,
+        ...fallbackConnectionIds
+      ].sort((a, b) => (a > b ? 1 : b > a ? -1 : 0)),
       evs: env.evs,
+      fallbackEvs: fallbackEvs,
+      evsWithFallback: [...env.evs, ...fallbackEvs].sort((a, b) =>
+        a.evId > b.evId ? 1 : b.evId > a.evId ? -1 : 0
+      ),
       envUsers: envUsers,
       isFallbackToProdConnections: env.isFallbackToProdConnections,
       isFallbackToProdVariables: env.isFallbackToProdVariables

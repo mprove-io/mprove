@@ -13,6 +13,12 @@ export class Env {
   @IsString({ each: true })
   envConnectionIds: string[];
 
+  @IsString({ each: true })
+  envConnectionIdsWithFallback: string[];
+
+  @IsString({ each: true })
+  fallbackConnectionIds: string[];
+
   @ValidateNested()
   @Type(() => EnvUser)
   envUsers: EnvUser[];
@@ -20,6 +26,14 @@ export class Env {
   @ValidateNested()
   @Type(() => Ev)
   evs: Ev[];
+
+  @ValidateNested()
+  @Type(() => Ev)
+  evsWithFallback: Ev[];
+
+  @ValidateNested()
+  @Type(() => Ev)
+  fallbackEvs: Ev[];
 
   @IsBoolean()
   isFallbackToProdConnections: boolean;

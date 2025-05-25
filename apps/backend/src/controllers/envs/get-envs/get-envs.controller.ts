@@ -11,6 +11,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { PROJECT_ENV_PROD } from '~common/_index';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -60,21 +61,40 @@ export class GetEnvsController {
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
+    let prodEnv = envs.find(x => x.envId === PROJECT_ENV_PROD);
+
     let payload: apiToBackend.ToBackendGetEnvsResponsePayload = {
       userMember: apiMember,
-      envs: envs.map(x =>
-        this.wrapToApiService.wrapToApiEnv({
+      envs: envs.map(x => {
+        let envConnectionIds = connections
+          .filter(y => y.envId === x.envId)
+          .map(connection => connection.connectionId);
+
+        return this.wrapToApiService.wrapToApiEnv({
           env: x,
-          envConnectionIds: connections
-            .filter(y => y.envId === x.envId)
-            .map(connection => connection.connectionId)
-            .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0)),
+          envConnectionIds: envConnectionIds,
+          fallbackConnectionIds:
+            x.isFallbackToProdConnections === true
+              ? connections
+                  .filter(
+                    y =>
+                      y.envId === PROJECT_ENV_PROD &&
+                      envConnectionIds.indexOf(y.connectionId) < 0
+                  )
+                  .map(connection => connection.connectionId)
+              : [],
+          fallbackEvs:
+            x.isFallbackToProdVariables === true
+              ? prodEnv.evs.filter(
+                  y => x.evs.map(ev => ev.evId).indexOf(y.evId) < 0
+                )
+              : [],
           envMembers:
             x.envId === common.PROJECT_ENV_PROD
               ? []
               : members.filter(m => x.memberIds.indexOf(m.memberId) > -1)
-        })
-      )
+        });
+      })
     };
 
     return payload;

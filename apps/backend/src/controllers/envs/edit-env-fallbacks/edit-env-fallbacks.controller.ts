@@ -24,6 +24,7 @@ import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { PROJECT_ENV_PROD } from '~common/_index';
 
 let retry = require('async-retry');
 
@@ -81,6 +82,19 @@ export class EditEnvFallbacksController {
     env.isFallbackToProdConnections = isFallbackToProdConnections;
     env.isFallbackToProdVariables = isFallbackToProdVariables;
 
+    let prodEnv;
+
+    if (
+      env.isFallbackToProdConnections === true ||
+      env.isFallbackToProdVariables === true
+    ) {
+      prodEnv = await this.envsService.getEnvCheckExistsAndAccess({
+        projectId: projectId,
+        envId: PROJECT_ENV_PROD,
+        member: member
+      });
+    }
+
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
         eq(bridgesTable.projectId, projectId),
@@ -109,7 +123,12 @@ export class EditEnvFallbacksController {
     let connections = await this.db.drizzle.query.connectionsTable.findMany({
       where: and(
         eq(connectionsTable.projectId, projectId),
-        inArray(connectionsTable.envId, [env.envId])
+        inArray(
+          connectionsTable.envId,
+          env.isFallbackToProdConnections === true
+            ? [env.envId, PROJECT_ENV_PROD]
+            : [env.envId]
+        )
       )
     });
 
@@ -117,12 +136,30 @@ export class EditEnvFallbacksController {
       where: eq(membersTable.projectId, projectId)
     });
 
+    let envConnectionIds = connections
+      .filter(x => x.envId === env.envId)
+      .map(connection => connection.connectionId);
+
     let payload: apiToBackend.ToBackendEditEnvFallbacksResponsePayload = {
       env: this.wrapToApiService.wrapToApiEnv({
         env: env,
-        envConnectionIds: connections
-          .map(connection => connection.connectionId)
-          .sort((a, b) => (a > b ? 1 : b > a ? -1 : 0)),
+        envConnectionIds: envConnectionIds,
+        fallbackConnectionIds:
+          env.isFallbackToProdConnections === true
+            ? connections
+                .filter(
+                  y =>
+                    y.envId === PROJECT_ENV_PROD &&
+                    envConnectionIds.indexOf(y.connectionId) < 0
+                )
+                .map(connection => connection.connectionId)
+            : [],
+        fallbackEvs:
+          env.isFallbackToProdVariables === true
+            ? prodEnv.evs.filter(
+                y => env.evs.map(ev => ev.evId).indexOf(y.evId) < 0
+              )
+            : [],
         envMembers:
           env.envId === common.PROJECT_ENV_PROD
             ? []
