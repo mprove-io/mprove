@@ -1,5 +1,5 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
@@ -9,12 +9,11 @@ import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser, SkipJwtCheck } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { envsTable } from '~backend/drizzle/postgres/schema/envs';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { EnvsService } from '~backend/services/envs.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 
 @UseGuards(TestRoutesGuard)
 @SkipJwtCheck()
@@ -24,7 +23,7 @@ export class GetRebuildStructController {
   constructor(
     private rabbitService: RabbitService,
     private projectsService: ProjectsService,
-    private wrapToApiService: WrapToApiService,
+    private envsService: EnvsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -75,16 +74,28 @@ export class GetRebuildStructController {
         }
       );
 
-    let connections = await this.db.drizzle.query.connectionsTable.findMany({
-      where: and(
-        eq(connectionsTable.projectId, projectId),
-        eq(connectionsTable.envId, envId)
-      )
+    let apiEnvs = await this.envsService.getApiEnvs({
+      projectId: projectId
     });
 
-    let env = await this.db.drizzle.query.envsTable.findFirst({
-      where: and(eq(envsTable.projectId, projectId), eq(envsTable.envId, envId))
-    });
+    let apiEnv = apiEnvs.find(x => x.envId === envId);
+
+    let connectionsEntsWithFallback =
+      await this.db.drizzle.query.connectionsTable.findMany({
+        where: and(
+          eq(connectionsTable.projectId, projectId),
+          inArray(
+            connectionsTable.connectionId,
+            apiEnv.envConnectionIdsWithFallback
+          )
+        )
+      });
+
+    let connectionsWithFallback = connectionsEntsWithFallback.map(x => ({
+      connectionId: x.connectionId,
+      type: x.type,
+      googleCloudProject: x.googleCloudProject
+    }));
 
     // to blockml
 
@@ -96,18 +107,14 @@ export class GetRebuildStructController {
       payload: {
         structId: structId,
         orgId: orgId,
-        envId: envId,
-        evs: env.evs,
         projectId: projectId,
         mproveDir: getCatalogFilesResponse.payload.mproveDir,
         files: helper.diskFilesToBlockmlFiles(
           getCatalogFilesResponse.payload.files
         ),
-        connections: connections.map(x => ({
-          connectionId: x.connectionId,
-          type: x.type,
-          googleCloudProject: x.googleCloudProject
-        })),
+        envId: envId,
+        evs: apiEnv.evsWithFallback,
+        connections: connectionsWithFallback,
         overrideTimezone: overrideTimezone
       }
     };

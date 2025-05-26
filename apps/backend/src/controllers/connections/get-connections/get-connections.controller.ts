@@ -54,7 +54,7 @@ export class GetConnectionsController {
 
     let connections;
 
-    if (common.isUndefined(envId)) {
+    if (common.isDefined(envId)) {
       let apiEnvs = await this.envsService.getApiEnvs({
         projectId: projectId
       });

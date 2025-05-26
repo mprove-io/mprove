@@ -26,7 +26,7 @@ import {
   startOfYear,
   sub
 } from 'date-fns';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
@@ -35,10 +35,11 @@ import { nodeCommon } from '~backend/barrels/node-common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { envsTable } from '~backend/drizzle/postgres/schema/envs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { processRowIds } from '~backend/functions/process-row-ids';
+import { EnvsService } from './envs.service';
 import { RabbitService } from './rabbit.service';
+import { WrapToApiService } from './wrap-to-api.service';
 import { WrapToEntService } from './wrap-to-ent.service';
 
 let retry = require('async-retry');
@@ -47,7 +48,9 @@ let retry = require('async-retry');
 export class BlockmlService {
   constructor(
     private rabbitService: RabbitService,
+    private envsService: EnvsService,
     private wrapToEntService: WrapToEntService,
+    private wrapToApiService: WrapToApiService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -79,26 +82,31 @@ export class BlockmlService {
       overrideTimezone
     } = item;
 
-    let connectionsEnts;
+    let apiEnvs = await this.envsService.getApiEnvs({
+      projectId: projectId
+    });
+
+    let apiEnv = apiEnvs.find(x => x.envId === envId);
+
+    let connectionsWithFallback;
 
     if (common.isUndefined(connections)) {
-      connectionsEnts = await this.db.drizzle.query.connectionsTable.findMany({
-        where: and(
-          eq(connectionsTable.projectId, projectId),
-          eq(connectionsTable.envId, envId)
-        )
-      });
-    }
+      let connectionsEnts =
+        await this.db.drizzle.query.connectionsTable.findMany({
+          where: and(
+            eq(connectionsTable.projectId, projectId),
+            inArray(
+              connectionsTable.connectionId,
+              apiEnv.envConnectionIdsWithFallback
+            )
+          )
+        });
 
-    if (common.isUndefined(evs)) {
-      let env = await this.db.drizzle.query.envsTable.findFirst({
-        where: and(
-          eq(envsTable.projectId, projectId),
-          eq(envsTable.envId, envId)
-        )
-      });
-
-      evs = env.evs;
+      connectionsWithFallback = connectionsEnts.map(x => ({
+        connectionId: x.connectionId,
+        type: x.type,
+        googleCloudProject: x.googleCloudProject
+      }));
     }
 
     let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest =
@@ -112,17 +120,13 @@ export class BlockmlService {
           structId: structId,
           orgId: orgId,
           projectId: projectId,
-          envId: envId,
-          evs: evs,
           mproveDir: item.mproveDir,
           files: helper.diskFilesToBlockmlFiles(diskFiles),
-          connections:
-            connections ||
-            connectionsEnts.map(x => ({
-              connectionId: x.connectionId,
-              type: x.type,
-              googleCloudProject: x.googleCloudProject
-            })),
+          envId: envId,
+          evs: common.isDefined(evs) ? evs : apiEnv.evsWithFallback,
+          connections: common.isDefined(connections)
+            ? connections
+            : connectionsWithFallback,
           overrideTimezone: overrideTimezone
         }
       };

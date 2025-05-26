@@ -252,7 +252,7 @@ export class SeedRecordsController {
           let devStructId = common.makeId();
           let prodStructId = common.makeId();
 
-          let projectConnections = connections
+          let prodEnvProjectConnections = connections
             .filter(
               y =>
                 y.projectId === newProject.projectId &&
@@ -282,7 +282,7 @@ export class SeedRecordsController {
             mproveDir: diskResponse.payload.mproveDir,
             envId: prodEnv.envId,
             skipDb: true,
-            connections: projectConnections,
+            connections: prodEnvProjectConnections,
             overrideTimezone: undefined,
             evs: prodEnv.evs
           });
@@ -305,7 +305,7 @@ export class SeedRecordsController {
             mproveDir: diskResponse.payload.mproveDir,
             envId: prodEnv.envId,
             skipDb: true,
-            connections: projectConnections,
+            connections: prodEnvProjectConnections,
             overrideTimezone: undefined,
             evs: prodEnv.evs
           });
