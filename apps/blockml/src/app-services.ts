@@ -10,9 +10,11 @@ import { ProcessQueryService } from './controllers/process-query/process-query.s
 import { RebuildStructService } from './controllers/rebuild-struct/rebuild-struct.service';
 import { ConsumerMainService } from './services/consumer-main.service';
 import { ConsumerWorkerService } from './services/consumer-worker.service';
+import { PresetsService } from './services/presets.service';
 import { RabbitService } from './services/rabbit.service';
 
 export const appServices = [
+  PresetsService,
   RabbitService,
   GenSqlService,
   {
@@ -20,12 +22,13 @@ export const appServices = [
     useFactory: (
       cs: ConfigService<interfaces.Config>,
       rabbitService: RabbitService,
+      presetsService: PresetsService,
       logger: Logger
     ) =>
       helper.isSingleOrMain(cs)
-        ? new RebuildStructService(rabbitService, cs, logger)
+        ? new RebuildStructService(rabbitService, presetsService, cs, logger)
         : {},
-    inject: [ConfigService, RabbitService]
+    inject: [ConfigService, RabbitService, PresetsService]
   },
   {
     provide: ProcessQueryService,

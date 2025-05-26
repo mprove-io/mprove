@@ -11,12 +11,14 @@ import { interfaces } from '~blockml/barrels/interfaces';
 import { nodeCommon } from '~blockml/barrels/node-common';
 import { getMproveConfigFile } from '~blockml/functions/get-mprove-config-file';
 import { BmError } from '~blockml/models/bm-error';
+import { PresetsService } from '~blockml/services/presets.service';
 import { RabbitService } from '~blockml/services/rabbit.service';
 
 @Injectable()
 export class RebuildStructService {
   constructor(
     private rabbitService: RabbitService,
+    private presetsService: PresetsService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger
   ) {}
@@ -226,6 +228,11 @@ export class RebuildStructService {
     overrideTimezone: string;
   }) {
     //
+    let presets: common.BmlFile[] = this.presetsService.getPresets();
+
+    // console.log('presets.map(x => x.name)');
+    // console.log(presets.map(x => x.name));
+
     let errors: BmError[] = [];
 
     let views: common.FileView[];
@@ -332,6 +339,7 @@ export class RebuildStructService {
     stores = barBuilder.buildStoreStart(
       {
         stores: stores,
+        presets: presets,
         structId: item.structId,
         errors: errors,
         caller: common.CallerEnum.BuildStoreStart

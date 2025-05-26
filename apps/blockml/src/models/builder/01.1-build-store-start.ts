@@ -6,6 +6,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 export function buildStoreStart(
   item: {
+    presets: common.BmlFile[];
     stores: common.FileStore[];
     errors: BmError[];
     structId: string;
@@ -18,6 +19,7 @@ export function buildStoreStart(
   stores = barStoreStart.applyStorePresets(
     {
       stores: stores,
+      presets: item.presets,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller

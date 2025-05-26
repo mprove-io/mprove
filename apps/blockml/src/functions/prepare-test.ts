@@ -13,6 +13,9 @@ import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuil
 import { ConsumerMainService } from '~blockml/services/consumer-main.service';
 import { ConsumerWorkerService } from '~blockml/services/consumer-worker.service';
 import { RabbitService } from '~blockml/services/rabbit.service';
+// import { PresetsService } from '~blockml/services/presets.service';
+// import { BmlFile } from '~common/interfaces/blockml/bml-file';
+// import { barYaml } from '~blockml/barrels/bar-yaml';
 
 export async function prepareTest(
   caller: common.CallerEnum,
@@ -28,6 +31,16 @@ export async function prepareTest(
     <interfaces.Config>{ logFunc: func },
     overrideConfigOptions
   );
+
+  // let presetFiles: common.BmlFile[] = await barYaml.collectFiles(
+  //   {
+  //     dir: `${constants.SRC_PATH}/presets`,
+  //     structId: undefined,
+  //     caller: common.CallerEnum.AppModule,
+  //     skipLog: true
+  //   },
+  //   undefined
+  // );
 
   let moduleRef: TestingModule = await Test.createTestingModule({
     imports: [
@@ -46,6 +59,12 @@ export async function prepareTest(
   })
     .overrideProvider(ConfigService)
     .useValue({ get: (key: any) => mockConfig[key as keyof interfaces.Config] })
+    // .overrideProvider(PresetsService)
+    // .useValue({
+    //   getPresets: (): BmlFile[] => {
+    //     return presetFiles;
+    //   }
+    // })
     .overrideProvider(RabbitService)
     .useValue({})
     .overrideProvider(ConsumerMainService)

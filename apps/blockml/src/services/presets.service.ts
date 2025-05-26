@@ -3,15 +3,15 @@ import { BmlFile } from '~common/_index';
 
 @Injectable()
 export class PresetsService {
-  private presets: BmlFile[] = [];
+  presets: BmlFile[] = [];
 
   constructor() {}
 
-  setPresets(presets: BmlFile[]): void {
+  setPresets(presets: BmlFile[]) {
     this.presets = presets;
   }
 
-  getPresets(): Record<string, any> {
+  getPresets(): BmlFile[] {
     return this.presets;
   }
 }

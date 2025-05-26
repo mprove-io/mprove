@@ -9,6 +9,7 @@ let func = common.FuncEnum.ApplyStorePresets;
 export function applyStorePresets(
   item: {
     stores: common.FileStore[];
+    presets: common.BmlFile[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;

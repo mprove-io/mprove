@@ -83,7 +83,7 @@ export class AppModule implements OnModuleInit {
           dir: `${constants.SRC_PATH}/presets`,
           structId: undefined,
           caller: common.CallerEnum.AppModule,
-          skipLog: false
+          skipLog: true
         },
         this.cs
       );
