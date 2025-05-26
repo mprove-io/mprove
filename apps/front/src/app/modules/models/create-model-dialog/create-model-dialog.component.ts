@@ -133,7 +133,8 @@ export class CreateModelDialogComponent implements OnInit {
     let nav = this.navQuery.getValue();
 
     let payload: apiToBackend.ToBackendGetConnectionsRequestPayload = {
-      projectId: nav.projectId
+      projectId: nav.projectId,
+      envId: nav.envId
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -151,9 +152,7 @@ export class CreateModelDialogComponent implements OnInit {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
-            this.connections = resp.payload.connections.filter(
-              x => x.envId === nav.envId
-            );
+            this.connections = resp.payload.connections;
 
             this.connectionsLoading = false;
             this.connectionsLoaded = true;
