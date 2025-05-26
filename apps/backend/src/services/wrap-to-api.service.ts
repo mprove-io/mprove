@@ -172,7 +172,6 @@ export class WrapToApiService {
         ...fallbackConnectionIds
       ].sort((a, b) => (a > b ? 1 : b > a ? -1 : 0)),
       evs: env.evs,
-      fallbackEvs: fallbackEvs,
       fallbackEvIds: fallbackEvs.map(x => x.evId),
       evsWithFallback: [...env.evs, ...fallbackEvs].sort((a, b) =>
         a.evId > b.evId ? 1 : b.evId > a.evId ? -1 : 0
