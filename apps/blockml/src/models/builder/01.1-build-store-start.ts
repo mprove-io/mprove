@@ -15,6 +15,16 @@ export function buildStoreStart(
 ) {
   let stores = item.stores;
 
+  stores = barStoreStart.applyStorePresets(
+    {
+      stores: stores,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
   stores = barStoreStart.checkStoreFieldGroups(
     {
       stores: stores,

@@ -150,6 +150,7 @@ export function checkTopUnknownParameters(
                 common.ParameterEnum.Description.toString(),
                 common.ParameterEnum.AccessRoles.toString(),
                 common.ParameterEnum.Method.toString(),
+                common.ParameterEnum.Preset.toString(),
                 common.ParameterEnum.Request.toString(),
                 common.ParameterEnum.Response.toString(),
                 common.ParameterEnum.DateRangeIncludesRightSide.toString(),

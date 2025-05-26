@@ -93,6 +93,7 @@ export enum ParameterEnum {
   StoreFilter = 'store_filter',
   StoreResult = 'store_result',
   Method = 'method',
+  Preset = 'preset',
   Request = 'request',
   Response = 'response',
   Results = 'results',

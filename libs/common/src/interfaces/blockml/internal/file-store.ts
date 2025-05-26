@@ -10,6 +10,9 @@ export interface FileStore extends FileBasic {
   store?: string;
   store_line_num?: number;
 
+  preset?: string;
+  preset_line_num?: number;
+
   label?: string;
   label_line_num?: number;
 
