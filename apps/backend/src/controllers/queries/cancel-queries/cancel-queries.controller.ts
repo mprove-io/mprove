@@ -21,9 +21,11 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { PROJECT_ENV_PROD } from '~common/constants/top';
 
 let retry = require('async-retry');
 
@@ -33,6 +35,7 @@ export class CancelQueriesController {
   constructor(
     private membersService: MembersService,
     private queriesService: QueriesService,
+    private envsService: EnvsService,
     private wrapToApiService: WrapToApiService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
@@ -58,14 +61,14 @@ export class CancelQueriesController {
       projectId: projectId
     });
 
-    let projectConnections =
+    let projectConnectionsWithAnyEnvId =
       await this.db.drizzle.query.connectionsTable.findMany({
         where: and(
+          eq(connectionsTable.projectId, projectId),
           inArray(
             connectionsTable.connectionId,
             queries.map(q => q.connectionId)
-          ),
-          eq(connectionsTable.projectId, projectId)
+          )
         )
       });
 
@@ -73,8 +76,19 @@ export class CancelQueriesController {
       8,
       queries.filter(q => q.status === common.QueryStatusEnum.Running),
       async (query: schemaPostgres.QueryEnt) => {
-        let connection = projectConnections.find(
-          x => x.connectionId === query.connectionId
+        let apiEnvs = await this.envsService.getApiEnvs({
+          projectId: query.projectId
+        });
+
+        let apiEnv = apiEnvs.find(x => x.envId === query.envId);
+
+        let connection = projectConnectionsWithAnyEnvId.find(
+          x =>
+            x.connectionId === query.connectionId &&
+            x.envId ===
+              (apiEnv.fallbackConnectionIds.indexOf(query.connectionId) > -1
+                ? PROJECT_ENV_PROD
+                : query.envId)
         );
 
         if (common.isUndefined(connection)) {

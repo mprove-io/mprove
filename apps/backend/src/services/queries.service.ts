@@ -12,12 +12,15 @@ import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
+import { PROJECT_ENV_PROD } from '~common/constants/top';
+import { EnvsService } from './envs.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class QueriesService {
   constructor(
+    private envsService: EnvsService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -204,10 +207,22 @@ WHERE m.mconfig_id is NULL
 
     await asyncPool(8, queries, async (query: schemaPostgres.QueryEnt) => {
       try {
+        let apiEnvs = await this.envsService.getApiEnvs({
+          projectId: query.projectId
+        });
+
+        let apiEnv = apiEnvs.find(x => x.envId === query.envId);
+
         let connection = await this.db.drizzle.query.connectionsTable.findFirst(
           {
             where: and(
               eq(connectionsTable.projectId, query.projectId),
+              eq(
+                connectionsTable.envId,
+                apiEnv.fallbackConnectionIds.indexOf(query.connectionId) > -1
+                  ? PROJECT_ENV_PROD
+                  : query.envId
+              ),
               eq(connectionsTable.connectionId, query.connectionId)
             )
           }

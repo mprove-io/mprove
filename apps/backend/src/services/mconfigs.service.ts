@@ -7,11 +7,14 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
+import { PROJECT_ENV_PROD } from '~common/constants/top';
+import { EnvsService } from './envs.service';
 import { StoreService } from './store.service';
 
 @Injectable()
 export class MconfigsService {
   constructor(
+    private envsService: EnvsService,
     private storeService: StoreService,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -86,9 +89,21 @@ export class MconfigsService {
     //   });
     // });
 
+    let apiEnvs = await this.envsService.getApiEnvs({
+      projectId: project.projectId
+    });
+
+    let apiEnv = apiEnvs.find(x => x.envId === envId);
+
     let connection = await this.db.drizzle.query.connectionsTable.findFirst({
       where: and(
         eq(connectionsTable.projectId, project.projectId),
+        eq(
+          connectionsTable.envId,
+          apiEnv.fallbackConnectionIds.indexOf(model.connectionId) > -1
+            ? PROJECT_ENV_PROD
+            : envId
+        ),
         eq(connectionsTable.connectionId, model.connectionId)
       )
     });

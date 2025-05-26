@@ -306,6 +306,7 @@ export class AppModule implements OnModuleInit {
               await this.db.drizzle.query.connectionsTable.findFirst({
                 where: and(
                   eq(connectionsTable.projectId, firstProjectId),
+                  eq(connectionsTable.envId, common.PROJECT_ENV_PROD),
                   eq(connectionsTable.connectionId, 'c1_postgres')
                 )
               });
@@ -342,6 +343,7 @@ export class AppModule implements OnModuleInit {
               await this.db.drizzle.query.connectionsTable.findFirst({
                 where: and(
                   eq(connectionsTable.projectId, firstProjectId),
+                  eq(connectionsTable.envId, common.PROJECT_ENV_PROD),
                   eq(connectionsTable.connectionId, 'c2_clickhouse')
                 )
               });
@@ -376,6 +378,7 @@ export class AppModule implements OnModuleInit {
               await this.db.drizzle.query.connectionsTable.findFirst({
                 where: and(
                   eq(connectionsTable.projectId, firstProjectId),
+                  eq(connectionsTable.envId, common.PROJECT_ENV_PROD),
                   eq(connectionsTable.connectionId, 'c3_bigquery')
                 )
               });
@@ -418,6 +421,7 @@ export class AppModule implements OnModuleInit {
               await this.db.drizzle.query.connectionsTable.findFirst({
                 where: and(
                   eq(connectionsTable.projectId, firstProjectId),
+                  eq(connectionsTable.envId, common.PROJECT_ENV_PROD),
                   eq(connectionsTable.connectionId, 'c4_snowflake')
                 )
               });

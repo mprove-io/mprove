@@ -18,9 +18,11 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BigQueryService } from '~backend/services/bigquery.service';
 import { ConnectionsService } from '~backend/services/connections.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { PROJECT_ENV_PROD } from '~common/_index';
 
 let retry = require('async-retry');
 
@@ -32,6 +34,7 @@ export class RunQueriesDryController {
     private connectionsService: ConnectionsService,
     private bigqueryService: BigQueryService,
     private membersService: MembersService,
+    private envsService: EnvsService,
     private wrapToApiService: WrapToApiService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
@@ -61,9 +64,19 @@ export class RunQueriesDryController {
         memberId: user.userId
       });
 
+      let apiEnvs = await this.envsService.getApiEnvs({
+        projectId: projectId
+      });
+
+      let apiEnv = apiEnvs.find(x => x.envId === query.envId);
+
       let connection = await this.connectionsService.getConnectionCheckExists({
         projectId: query.projectId,
-        envId: query.envId,
+        envId:
+          apiEnv.isFallbackToProdConnections === true &&
+          apiEnv.fallbackConnectionIds.indexOf(query.connectionId) > -1
+            ? PROJECT_ENV_PROD
+            : query.envId,
         connectionId: query.connectionId
       });
 

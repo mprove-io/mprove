@@ -24,12 +24,14 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BigQueryService } from '~backend/services/bigquery.service';
 import { ClickHouseService } from '~backend/services/clickhouse.service';
 import { ConnectionsService } from '~backend/services/connections.service';
+import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { PgService } from '~backend/services/pg.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { SnowFlakeService } from '~backend/services/snowflake.service';
 import { StoreService } from '~backend/services/store.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { PROJECT_ENV_PROD } from '~common/constants/top';
 
 let { JWT } = require('google-auth-library');
 let retry = require('async-retry');
@@ -45,6 +47,7 @@ export class RunQueriesController {
     private storeService: StoreService,
     private clickhouseService: ClickHouseService,
     private bigqueryService: BigQueryService,
+    private envsService: EnvsService,
     private snowflakeService: SnowFlakeService,
     private wrapToApiService: WrapToApiService,
     private cs: ConfigService<interfaces.Config>,
@@ -80,50 +83,58 @@ export class RunQueriesController {
     // console.log('googleApiConnectionIds');
     // console.log(googleApiConnectionIds);
 
-    let uniqueGoogleApiConnectionIds = [...new Set(googleApiConnectionIds)];
+    let uniqueGoogleApiConnectionIdsWithAnyEnvId = [
+      ...new Set(googleApiConnectionIds)
+    ];
 
     // console.log('uniqueGoogleApiConnectionIds');
     // console.log(uniqueGoogleApiConnectionIds);
 
-    let uniqueGoogleApiConnections =
+    let uniqueGoogleApiConnectionsWithAnyEnvId =
       await this.db.drizzle.query.connectionsTable.findMany({
         where: and(
           eq(connectionsTable.projectId, projectId),
-          inArray(connectionsTable.connectionId, uniqueGoogleApiConnectionIds)
+          inArray(
+            connectionsTable.connectionId,
+            uniqueGoogleApiConnectionIdsWithAnyEnvId
+          )
         )
       });
 
-    await forEachSeries(uniqueGoogleApiConnections, async connection => {
-      // console.log('googleApiConnections start');
-      // let tsStart = Date.now();
+    await forEachSeries(
+      uniqueGoogleApiConnectionsWithAnyEnvId,
+      async connection => {
+        // console.log('googleApiConnections start');
+        // let tsStart = Date.now();
 
-      let authClient = new JWT({
-        email: (connection.serviceAccountCredentials as any).client_email,
-        key: (connection.serviceAccountCredentials as any).private_key,
-        scopes: connection.googleAuthScopes
-      });
+        let authClient = new JWT({
+          email: (connection.serviceAccountCredentials as any).client_email,
+          key: (connection.serviceAccountCredentials as any).private_key,
+          scopes: connection.googleAuthScopes
+        });
 
-      let tokens = await authClient.authorize();
+        let tokens = await authClient.authorize();
 
-      connection.googleAccessToken = tokens.access_token;
+        connection.googleAccessToken = tokens.access_token;
 
-      // console.log(Date.now() - tsStart);
-      // console.log('googleApiConnections end');
+        // console.log(Date.now() - tsStart);
+        // console.log('googleApiConnections end');
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                insertOrUpdate: {
-                  connections: [connection]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
-    });
+        await retry(
+          async () =>
+            await this.db.drizzle.transaction(
+              async tx =>
+                await this.db.packer.write({
+                  tx: tx,
+                  insertOrUpdate: {
+                    connections: [connection]
+                  }
+                })
+            ),
+          getRetryOption(this.cs, this.logger)
+        );
+      }
+    );
 
     if (common.isDefined(poolSize)) {
       startedQueryIds = queryIds;
@@ -140,10 +151,20 @@ export class RunQueriesController {
           memberId: user.userId
         });
 
+        let apiEnvs = await this.envsService.getApiEnvs({
+          projectId: projectId
+        });
+
+        let apiEnv = apiEnvs.find(x => x.envId === query.envId);
+
         let connection = await this.connectionsService.getConnectionCheckExists(
           {
             projectId: query.projectId,
-            envId: query.envId,
+            envId:
+              apiEnv.isFallbackToProdConnections === true &&
+              apiEnv.fallbackConnectionIds.indexOf(query.connectionId) > -1
+                ? PROJECT_ENV_PROD
+                : query.envId,
             connectionId: query.connectionId
           }
         );
@@ -249,10 +270,20 @@ export class RunQueriesController {
           memberId: user.userId
         });
 
+        let apiEnvs = await this.envsService.getApiEnvs({
+          projectId: projectId
+        });
+
+        let apiEnv = apiEnvs.find(x => x.envId === query.envId);
+
         let connection = await this.connectionsService.getConnectionCheckExists(
           {
             projectId: query.projectId,
-            envId: query.envId,
+            envId:
+              apiEnv.isFallbackToProdConnections === true &&
+              apiEnv.fallbackConnectionIds.indexOf(query.connectionId) > -1
+                ? PROJECT_ENV_PROD
+                : query.envId,
             connectionId: query.connectionId
           }
         );
