@@ -37,6 +37,7 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { processRowIds } from '~backend/functions/process-row-ids';
+import { ProjectConnection } from '~common/_index';
 import { EnvsService } from './envs.service';
 import { RabbitService } from './rabbit.service';
 import { WrapToApiService } from './wrap-to-api.service';
@@ -88,9 +89,12 @@ export class BlockmlService {
 
     let apiEnv = apiEnvs.find(x => x.envId === envId);
 
-    let connectionsWithFallback;
+    let connectionsWithFallback: ProjectConnection[] = [];
 
-    if (common.isUndefined(connections)) {
+    if (
+      common.isUndefined(connections) &&
+      apiEnv?.envConnectionIdsWithFallback.length > 0
+    ) {
       let connectionsEnts =
         await this.db.drizzle.query.connectionsTable.findMany({
           where: and(
