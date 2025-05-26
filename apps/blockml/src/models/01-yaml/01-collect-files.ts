@@ -12,11 +12,15 @@ export async function collectFiles(
     dir: string;
     structId: string;
     caller: common.CallerEnum;
+    skipLog: boolean;
   },
   cs: ConfigService<interfaces.Config>
 ): Promise<common.BmlFile[]> {
-  let { caller, structId } = item;
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
+  let { caller, structId, skipLog } = item;
+
+  if (skipLog === false) {
+    helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
+  }
 
   return new Promise((resolve, reject) => {
     let files: common.BmlFile[] = [];
@@ -54,8 +58,10 @@ export async function collectFiles(
     });
 
     walker.on('end', () => {
-      helper.log(cs, caller, func, structId, common.LogTypeEnum.Errors, []);
-      helper.log(cs, caller, func, structId, common.LogTypeEnum.Files, files);
+      if (skipLog === false) {
+        helper.log(cs, caller, func, structId, common.LogTypeEnum.Errors, []);
+        helper.log(cs, caller, func, structId, common.LogTypeEnum.Files, files);
+      }
       resolve(files);
     });
   });

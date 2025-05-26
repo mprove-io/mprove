@@ -188,7 +188,8 @@ export class RebuildStructService {
         {
           dir: mproveDir,
           structId: item.structId,
-          caller: common.CallerEnum.RebuildStruct
+          caller: common.CallerEnum.RebuildStruct,
+          skipLog: false
         },
         this.cs
       );

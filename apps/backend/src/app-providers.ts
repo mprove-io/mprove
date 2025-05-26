@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PresetsService } from '~blockml/services/presets.service';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { helper } from './barrels/helper';
@@ -45,6 +46,7 @@ export const appProviders = [
   HashService,
   RedisService,
   RabbitService,
+  PresetsService,
   EmailService,
   BlockmlService,
   UserCodeService,

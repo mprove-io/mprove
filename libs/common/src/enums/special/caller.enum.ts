@@ -37,6 +37,7 @@ export enum CallerEnum {
   BuildCheckModelName = 'BuildCheckModelName',
   BuildViewModel = 'BuildViewModel',
 
+  AppModule = 'AppModule',
   RebuildStruct = 'RebuildStruct',
   ProcessQuery = 'ProcessQuery'
 }

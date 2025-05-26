@@ -1,12 +1,15 @@
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { constants } from '~blockml/barrels/constants';
 import { appControllers } from './app-controllers';
 import { appServices } from './app-services';
+import { barYaml } from './barrels/bar-yaml';
 import { common } from './barrels/common';
 import { interfaces } from './barrels/interfaces';
 import { getConfig } from './config/get.config';
 import { logToConsoleBlockml } from './functions/log-to-console-blockml';
+import { PresetsService } from './services/presets.service';
 
 @Module({
   imports: [
@@ -61,6 +64,7 @@ import { logToConsoleBlockml } from './functions/log-to-console-blockml';
 })
 export class AppModule implements OnModuleInit {
   constructor(
+    private presetsService: PresetsService,
     private logger: Logger,
     private cs: ConfigService
   ) {}
@@ -72,5 +76,31 @@ export class AppModule implements OnModuleInit {
       logger: this.logger,
       cs: this.cs
     });
+
+    try {
+      let presetFiles: common.BmlFile[] = await barYaml.collectFiles(
+        {
+          dir: `${constants.SRC_PATH}/presets`,
+          structId: undefined,
+          caller: common.CallerEnum.AppModule,
+          skipLog: false
+        },
+        this.cs
+      );
+
+      // console.log('presetFiles');
+      // console.log(presetFiles);
+
+      this.presetsService.setPresets(presetFiles);
+    } catch (e) {
+      logToConsoleBlockml({
+        log: e,
+        logLevel: common.LogLevelEnum.Error,
+        logger: this.logger,
+        cs: this.cs
+      });
+
+      process.exit(1);
+    }
   }
 }
