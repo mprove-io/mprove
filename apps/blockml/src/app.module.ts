@@ -1,6 +1,7 @@
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { load } from 'js-yaml';
 import { constants } from '~blockml/barrels/constants';
 import { appControllers } from './app-controllers';
 import { appServices } from './app-services';
@@ -88,10 +89,42 @@ export class AppModule implements OnModuleInit {
         this.cs
       );
 
+      let presets: { name: string; parsedContent: any }[] = [];
+
+      presetFiles.forEach(x => {
+        try {
+          let parsedYaml = load(x.content);
+
+          presets.push({
+            name: x.name,
+            parsedContent: parsedYaml
+          });
+        } catch (e: any) {
+          logToConsoleBlockml({
+            log: `Failed to load preset ${x.path}`,
+            logLevel: common.LogLevelEnum.Error,
+            logger: this.logger,
+            cs: this.cs
+          });
+          logToConsoleBlockml({
+            log: e,
+            logLevel: common.LogLevelEnum.Error,
+            logger: this.logger,
+            cs: this.cs
+          });
+        }
+      });
+
       // console.log('presetFiles');
       // console.log(presetFiles);
 
-      this.presetsService.setPresets(presetFiles);
+      // console.log('presets.map(x=>x.name)');
+      // console.log(presets.map(x => x.name));
+
+      console.log('presets');
+      console.log(presets);
+
+      this.presetsService.setPresets(presetFiles); // TODO: presets
     } catch (e) {
       logToConsoleBlockml({
         log: e,
