@@ -17,6 +17,7 @@ let structState: StructState = {
   errors: [],
   views: [],
   metrics: [],
+  presets: [],
   udfsDict: undefined,
   serverTs: undefined,
   formatNumber: undefined,
