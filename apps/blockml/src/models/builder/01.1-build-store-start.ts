@@ -2,11 +2,12 @@ import { ConfigService } from '@nestjs/config';
 import { barStoreStart } from '~blockml/barrels/bar-store-start';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
+import { Preset } from '~blockml/interfaces/preset';
 import { BmError } from '~blockml/models/bm-error';
 
 export function buildStoreStart(
   item: {
-    presets: common.BmlFile[];
+    presets: Preset[];
     stores: common.FileStore[];
     errors: BmError[];
     structId: string;

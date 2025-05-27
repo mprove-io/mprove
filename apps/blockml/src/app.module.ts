@@ -10,6 +10,7 @@ import { common } from './barrels/common';
 import { interfaces } from './barrels/interfaces';
 import { getConfig } from './config/get.config';
 import { logToConsoleBlockml } from './functions/log-to-console-blockml';
+import { Preset } from './interfaces/preset';
 import { PresetsService } from './services/presets.service';
 
 @Module({
@@ -89,16 +90,19 @@ export class AppModule implements OnModuleInit {
         this.cs
       );
 
-      let presets: { name: string; parsedContent: any }[] = [];
+      let presets: Preset[] = [];
 
       presetFiles.forEach(x => {
         try {
           let parsedYaml = load(x.content);
 
-          presets.push({
+          let preset: Preset = {
             name: x.name,
+            path: x.path,
             parsedContent: parsedYaml
-          });
+          };
+
+          presets.push(preset);
         } catch (e: any) {
           logToConsoleBlockml({
             log: `Failed to load preset ${x.path}`,
@@ -115,16 +119,7 @@ export class AppModule implements OnModuleInit {
         }
       });
 
-      // console.log('presetFiles');
-      // console.log(presetFiles);
-
-      // console.log('presets.map(x=>x.name)');
-      // console.log(presets.map(x => x.name));
-
-      console.log('presets');
-      console.log(presets);
-
-      this.presetsService.setPresets(presetFiles); // TODO: presets
+      this.presetsService.setPresets(presets);
     } catch (e) {
       logToConsoleBlockml({
         log: e,

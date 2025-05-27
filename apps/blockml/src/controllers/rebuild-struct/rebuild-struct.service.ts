@@ -10,6 +10,7 @@ import { constants } from '~blockml/barrels/constants';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { nodeCommon } from '~blockml/barrels/node-common';
 import { getMproveConfigFile } from '~blockml/functions/get-mprove-config-file';
+import { Preset } from '~blockml/interfaces/preset';
 import { BmError } from '~blockml/models/bm-error';
 import { PresetsService } from '~blockml/services/presets.service';
 import { RabbitService } from '~blockml/services/rabbit.service';
@@ -228,10 +229,7 @@ export class RebuildStructService {
     overrideTimezone: string;
   }) {
     //
-    let presets: common.BmlFile[] = this.presetsService.getPresets();
-
-    // console.log('presets.map(x => x.name)');
-    // console.log(presets.map(x => x.name));
+    let presets: Preset[] = this.presetsService.getPresets();
 
     let errors: BmError[] = [];
 
