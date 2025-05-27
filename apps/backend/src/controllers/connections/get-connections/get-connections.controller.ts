@@ -1,5 +1,5 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray, or } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
@@ -11,6 +11,7 @@ import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { PROJECT_ENV_PROD } from '~common/_index';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()
@@ -64,9 +65,15 @@ export class GetConnectionsController {
       connections = await this.db.drizzle.query.connectionsTable.findMany({
         where: and(
           eq(connectionsTable.projectId, projectId),
-          inArray(
-            connectionsTable.connectionId,
-            apiEnv.envConnectionIdsWithFallback
+          or(
+            eq(connectionsTable.envId, envId),
+            and(
+              eq(connectionsTable.envId, PROJECT_ENV_PROD),
+              inArray(
+                connectionsTable.connectionId,
+                apiEnv.fallbackConnectionIds
+              )
+            )
           )
         )
       });
