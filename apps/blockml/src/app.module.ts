@@ -10,7 +10,6 @@ import { common } from './barrels/common';
 import { interfaces } from './barrels/interfaces';
 import { getConfig } from './config/get.config';
 import { logToConsoleBlockml } from './functions/log-to-console-blockml';
-import { Preset } from './interfaces/preset';
 import { PresetsService } from './services/presets.service';
 
 @Module({
@@ -90,14 +89,14 @@ export class AppModule implements OnModuleInit {
         this.cs
       );
 
-      let presets: Preset[] = [];
+      let presets: common.Preset[] = [];
 
       presetFiles.forEach(x => {
         try {
           let parsedYaml = load(x.content);
 
-          let preset: Preset = {
-            name: x.name,
+          let preset: common.Preset = {
+            presetId: x.name,
             path: x.path,
             parsedContent: parsedYaml
           };

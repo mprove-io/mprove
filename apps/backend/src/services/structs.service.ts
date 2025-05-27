@@ -38,6 +38,7 @@ export class StructsService {
       errors: [],
       views: [],
       metrics: [],
+      presets: [],
       udfsDict: {},
       serverTs: undefined
     };

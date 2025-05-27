@@ -2,7 +2,6 @@ import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
-import { Preset } from '~blockml/interfaces/preset';
 import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.ApplyStorePresets;
@@ -10,7 +9,7 @@ let func = common.FuncEnum.ApplyStorePresets;
 export function applyStorePresets(
   item: {
     stores: common.FileStore[];
-    presets: Preset[];
+    presets: common.Preset[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -26,7 +25,7 @@ export function applyStorePresets(
     let errorsOnStart = item.errors.length;
 
     if (common.isDefined(x.preset)) {
-      let presetNames = presets.map(x => x.name);
+      let presetNames = presets.map(x => x.presetId);
 
       if (presetNames.indexOf(x.preset) < 0) {
         item.errors.push(
@@ -44,7 +43,7 @@ export function applyStorePresets(
         );
         return;
       } else {
-        let preset = presets.find(y => y.name === x.preset);
+        let preset = presets.find(y => y.presetId === x.preset);
 
         Object.keys(preset.parsedContent).forEach(key => {
           if (common.isUndefined((x as any)[key])) {

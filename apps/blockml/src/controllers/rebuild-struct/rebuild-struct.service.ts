@@ -10,7 +10,6 @@ import { constants } from '~blockml/barrels/constants';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { nodeCommon } from '~blockml/barrels/node-common';
 import { getMproveConfigFile } from '~blockml/functions/get-mprove-config-file';
-import { Preset } from '~blockml/interfaces/preset';
 import { BmError } from '~blockml/models/bm-error';
 import { PresetsService } from '~blockml/services/presets.service';
 import { RabbitService } from '~blockml/services/rabbit.service';
@@ -60,6 +59,7 @@ export class RebuildStructService {
       stores,
       dashboards,
       metrics,
+      presets,
       models,
       reports,
       udfsDict,
@@ -152,6 +152,7 @@ export class RebuildStructService {
       reports: apiReports,
       charts: apiCharts,
       metrics: metrics,
+      presets: presets,
       mconfigs: mconfigs,
       queries: queries,
       mproveDirValue: mproveDirValue,
@@ -229,7 +230,7 @@ export class RebuildStructService {
     overrideTimezone: string;
   }) {
     //
-    let presets: Preset[] = this.presetsService.getPresets();
+    let presets: common.Preset[] = this.presetsService.getPresets();
 
     let errors: BmError[] = [];
 
@@ -267,6 +268,8 @@ export class RebuildStructService {
         errors: errors,
         views: [],
         models: [],
+        metrics: [],
+        presets: [],
         stores: [],
         reports: [],
         dashboards: [],
@@ -286,8 +289,7 @@ export class RebuildStructService {
         ),
         simplifySafeAggregates: common.toBooleanFromLowercaseString(
           constants.PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES
-        ),
-        metrics: []
+        )
       };
     }
 
@@ -677,6 +679,14 @@ export class RebuildStructService {
       stores: stores,
       dashboards: dashboards,
       metrics: metrics,
+      presets: presets.map(preset => {
+        let presetPart: common.Preset = {
+          presetId: preset.presetId,
+          path: preset.path,
+          parsedContent: undefined
+        };
+        return presetPart;
+      }),
       models: models,
       udfsDict: udfsDict,
       reports: reports,

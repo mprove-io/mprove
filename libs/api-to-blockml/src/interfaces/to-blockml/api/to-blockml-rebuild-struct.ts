@@ -106,7 +106,13 @@ export class ToBlockmlRebuildStructResponsePayload {
   @Type(() => common.Chart)
   charts: common.Chart[];
 
+  @ValidateNested()
+  @Type(() => common.ModelMetric)
   metrics: common.ModelMetric[];
+
+  @ValidateNested()
+  @Type(() => common.Preset)
+  presets: common.Preset[];
 
   @ValidateNested()
   @Type(() => common.Mconfig)

@@ -162,6 +162,7 @@ export class BlockmlService {
       charts,
       udfsDict,
       metrics,
+      presets,
       mconfigs,
       queries
     } = blockmlRebuildStructResponse.payload;
@@ -181,6 +182,7 @@ export class BlockmlService {
       errors: errors,
       views: views,
       metrics: metrics,
+      presets: presets,
       udfsDict: udfsDict,
       serverTs: undefined
     };

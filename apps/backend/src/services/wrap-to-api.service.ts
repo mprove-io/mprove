@@ -477,6 +477,7 @@ export class WrapToApiService {
       errors: struct.errors,
       views: struct.views,
       metrics: struct.metrics,
+      presets: struct.presets,
       udfsDict: struct.udfsDict,
       serverTs: Number(struct.serverTs)
     };

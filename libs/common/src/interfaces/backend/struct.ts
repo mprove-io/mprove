@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 import { IsTimezone } from '~common/functions/is-timezone';
+import { Preset } from '../_index';
 import { BmlError } from '../blockml/bml-error';
 import { ModelMetric } from '../blockml/model-metric';
 import { UdfsDict } from '../blockml/udfs-dict';
@@ -58,6 +59,10 @@ export class Struct {
   @ValidateNested()
   @Type(() => ModelMetric)
   metrics: ModelMetric[];
+
+  @ValidateNested()
+  @Type(() => Preset)
+  presets: Preset[];
 
   @ValidateNested()
   @Type(() => UdfsDict)

@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { Preset } from '~blockml/interfaces/preset';
+import { common } from '~blockml/barrels/common';
 
 @Injectable()
 export class PresetsService {
-  presets: Preset[] = [];
+  presets: common.Preset[] = [];
 
   constructor() {}
 
-  setPresets(presets: Preset[]) {
+  setPresets(presets: common.Preset[]) {
     this.presets = presets;
   }
 
-  getPresets(): Preset[] {
+  getPresets(): common.Preset[] {
     return this.presets;
   }
 }
