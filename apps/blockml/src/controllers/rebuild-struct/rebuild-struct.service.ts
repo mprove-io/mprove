@@ -682,6 +682,7 @@ export class RebuildStructService {
       presets: presets.map(preset => {
         let presetPart: common.Preset = {
           presetId: preset.presetId,
+          label: preset.label,
           path: preset.path,
           parsedContent: undefined
         };

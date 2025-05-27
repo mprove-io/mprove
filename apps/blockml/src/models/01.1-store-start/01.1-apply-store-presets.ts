@@ -25,9 +25,9 @@ export function applyStorePresets(
     let errorsOnStart = item.errors.length;
 
     if (common.isDefined(x.preset)) {
-      let presetNames = presets.map(x => x.presetId);
+      let presetIds = presets.map(x => x.presetId);
 
-      if (presetNames.indexOf(x.preset) < 0) {
+      if (presetIds.indexOf(x.preset) < 0) {
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.WRONG_PRESET,

@@ -5,6 +5,9 @@ export class Preset {
   presetId: string;
 
   @IsString()
+  label: string;
+
+  @IsString()
   path: string;
 
   parsedContent: any;

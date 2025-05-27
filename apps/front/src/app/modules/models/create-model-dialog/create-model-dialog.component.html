@@ -63,7 +63,7 @@
         [items]="connections"
         [clearable]="false"
         [searchable]="true"
-        [searchFn]="searchFn"
+        [searchFn]="connectionsSearchFn"
         (change)="connectionChange()"
         (keyup.esc)="$event.stopImmediatePropagation(); connectionSelect.blur()"
         (keyup.enter)="
@@ -131,6 +131,48 @@
     </div>
   </div>
 
+  <div
+    class="mt-7 flex w-72 flex-grow select-none flex-row items-center"
+    *ngIf="
+      [connectionTypeEnumApi, connectionTypeEnumGoogleApi].indexOf(
+        connectionForm.controls['connection'].value?.type
+      ) > -1
+    "
+  >
+    <div class="flex flex-col">
+      <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
+        >Preset</div
+      >
+    </div>
+
+    <div [formGroup]="presetForm" class="ml-5">
+      <ng-select
+        #presetSelect
+        data-cy="presetSelect"
+        class="w-96 text-base"
+        [items]="presets"
+        [clearable]="false"
+        [searchable]="true"
+        [searchFn]="presetsSearchFn"
+        (change)="presetChange()"
+        (keyup.esc)="$event.stopImmediatePropagation(); presetSelect.blur()"
+        (keyup.enter)="$event.stopImmediatePropagation(); presetSelect.blur()"
+        appendTo="body"
+        formControlName="preset"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{
+            item.label === 'Empty' ? undefined : item.label
+          }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+  </div>
+
   <div class="mt-7 flex flex-row items-start">
     <div class="flex flex-col">
       <div class="text-s1 flex h-9 w-32 select-none items-center text-base"
@@ -178,5 +220,4 @@
   </div>
 </div>
 
-<div *ngIf="alias$ | async"></div>
 <div *ngIf="struct$ | async"></div>

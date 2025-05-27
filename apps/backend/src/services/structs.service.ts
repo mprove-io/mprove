@@ -72,6 +72,7 @@ export class StructsService {
             errors: structsTable.errors,
             views: structsTable.views,
             // metrics: structsTable.metrics,
+            presets: structsTable.presets,
             udfsDict: structsTable.udfsDict,
             serverTs: structsTable.serverTs
           })

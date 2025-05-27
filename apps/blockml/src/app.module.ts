@@ -93,15 +93,30 @@ export class AppModule implements OnModuleInit {
 
       presetFiles.forEach(x => {
         try {
-          let parsedYaml = load(x.content);
+          if (
+            x.path.includes('/') === false &&
+            x.path.endsWith('.store.preset')
+          ) {
+            let parsedYaml = load(x.content);
 
-          let preset: common.Preset = {
-            presetId: x.name,
-            path: x.path,
-            parsedContent: parsedYaml
-          };
+            let preset: common.Preset = {
+              presetId: x.name.split('.')[0],
+              path: x.path,
+              label:
+                (parsedYaml as any)?.label ||
+                (x.name.split('.')[0].length > 0
+                  ? x.name.split('.')[0]
+                  : x.name),
+              parsedContent: parsedYaml
+            };
 
-          presets.push(preset);
+            // console.log('Object.keys(parsedYaml)');
+            // console.log(Object.keys(parsedYaml));
+            // console.log('preset');
+            // console.log(preset);
+
+            presets.push(preset);
+          }
         } catch (e: any) {
           logToConsoleBlockml({
             log: `Failed to load preset ${x.path}`,

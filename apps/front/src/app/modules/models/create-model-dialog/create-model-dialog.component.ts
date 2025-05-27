@@ -72,7 +72,7 @@ export class CreateModelDialogComponent implements OnInit {
 
   connectionForm: FormGroup = new FormGroup({
     connection: new FormControl<common.Connection>(undefined, {
-      validators: [Validators.required, Validators.email]
+      validators: [Validators.required]
     })
   });
 
@@ -82,20 +82,26 @@ export class CreateModelDialogComponent implements OnInit {
   connectionsLoading = false;
   connectionsLoaded = false;
 
-  newModelId = common.makeId();
+  presetForm: FormGroup = new FormGroup({
+    preset: new FormControl<common.Preset>(undefined)
+  });
 
-  alias: string;
-  alias$ = this.userQuery.alias$.pipe(
-    tap(x => {
-      this.alias = x;
-      this.cd.detectChanges();
-    })
-  );
+  presets: common.Preset[] = [];
 
   struct: StructState;
   struct$ = this.structQuery.select().pipe(
     tap(x => {
       this.struct = x;
+
+      let emptyPreset: common.Preset = {
+        presetId: undefined,
+        label: 'Empty',
+        path: undefined,
+        parsedContent: undefined
+      };
+
+      this.presets = [emptyPreset, ...x.presets];
+
       this.cd.detectChanges();
     })
   );
@@ -172,6 +178,10 @@ export class CreateModelDialogComponent implements OnInit {
     this.formsError = undefined;
 
     this.cd.detectChanges();
+  }
+
+  presetChange() {
+    (document.activeElement as HTMLElement).blur();
   }
 
   create() {
@@ -286,8 +296,18 @@ export class CreateModelDialogComponent implements OnInit {
       .subscribe();
   }
 
-  searchFn(term: string, connection: common.Connection) {
+  connectionsSearchFn(term: string, connection: common.Connection) {
     let haystack = [`${connection.connectionId}`];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
+  }
+
+  presetsSearchFn(term: string, preset: common.Preset) {
+    let haystack = [`${preset.label}`];
 
     let opts = {};
     let uf = new uFuzzy(opts);

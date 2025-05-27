@@ -1,5 +1,4 @@
-store_preset: google_analytics
-label: Google Analytics
+label: google_analytics
 description: '...'
 method: POST
 request: |
