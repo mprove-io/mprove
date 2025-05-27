@@ -7,7 +7,7 @@ export CLI_DRIZZLE_POSTGRES_DATABASE_URL=postgresql://<user>:<pass>@db:5435/<db-
 export CLI_DRIZZLE_IS_POSTGRES_TLS=FALSE
 
 export MPROVE_CLI_TEST_REMOTE_GIT_URL=
-export MPROVE_CLI_TEST_DESTINATION_URL=/root/mprove_data/mcli-repos/mp5
+export MPROVE_CLI_TEST_DESTINATION_URL=/mprove/mprove_data/mcli-repos/mp5
 
 # for local clickhouse client
 export CLICKHOUSE_CLIENT_PASSWORD=
