@@ -43,6 +43,17 @@ export function applyStorePresets(
           })
         );
         return;
+      } else {
+        let preset = presets.find(y => y.name === x.preset);
+
+        Object.keys(preset.parsedContent).forEach(key => {
+          if (common.isUndefined((x as any)[key])) {
+            let lineNumName = `${key}_line_num`;
+
+            (x as any)[key] = preset.parsedContent[key];
+            (x as any)[lineNumName] = x.preset_line_num;
+          }
+        });
       }
     }
 
