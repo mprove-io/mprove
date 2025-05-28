@@ -12,9 +12,10 @@ import * as languageData from '@codemirror/language-data';
 import { EditorState, Extension } from '@codemirror/state';
 
 import { CodeEditor, DiffEditor } from '@acrodata/code-editor';
+import { standardKeymap } from '@codemirror/commands';
 import { Diagnostic, linter } from '@codemirror/lint';
 import { Compartment } from '@codemirror/state';
-import { EditorView } from '@codemirror/view';
+import { EditorView, keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, map, take, tap } from 'rxjs/operators';
 import {
@@ -58,17 +59,18 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   diagnostics: Diagnostic[] = [];
 
-  extensions: Extension[] = [];
+  baseExtensions: Extension[] = [keymap.of(standardKeymap)];
+  mainExtensions: Extension[] = [...this.baseExtensions];
 
-  baseExtensions: Extension[] = [VS_LIGHT_THEME_EXTRA];
+  diffExtensions: Extension[] = [...this.baseExtensions, VS_LIGHT_THEME_EXTRA];
 
-  baseOriginalExtensions: Extension[] = [
-    ...this.baseExtensions,
+  diffOriginalExtensions: Extension[] = [
+    ...this.diffExtensions,
     EditorState.readOnly.of(true)
   ];
 
-  baseModifiedExtensions: Extension[] = [
-    ...this.baseExtensions,
+  diffModifiedExtensions: Extension[] = [
+    ...this.diffExtensions,
     EditorState.readOnly.of(false)
   ];
 
@@ -349,8 +351,8 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.lang = language?.name;
     }
 
-    let originalExtensions = [...this.baseOriginalExtensions];
-    let modifiedExtensions = [...this.baseModifiedExtensions];
+    let originalExtensions = [...this.diffOriginalExtensions];
+    let modifiedExtensions = [...this.diffModifiedExtensions];
 
     if (common.isDefined(language)) {
       let loadedLanguage = await language.load();
@@ -481,7 +483,10 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   createLinter() {
-    this.extensions = [linter((view: EditorView) => this.diagnostics)];
+    this.mainExtensions = [
+      ...this.baseExtensions,
+      linter((view: EditorView) => this.diagnostics)
+    ];
   }
 
   onTextChanged(item: { isDiffEditor: boolean }) {

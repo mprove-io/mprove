@@ -133,16 +133,25 @@ export class AppModule implements OnModuleInit {
             x.path.includes('/') === false &&
             x.path.endsWith('.store.preset')
           ) {
+            let presetId = x.name.split('.')[0];
+            let path = x.path;
+            let label =
+              (x as any)?.label ||
+              (x.name.split('.')[0].length > 0 ? x.name.split('.')[0] : x.name);
+
+            delete x.name;
+            delete x.path;
+            delete x.ext;
+
             let preset: common.Preset = {
-              presetId: x.name.split('.')[0],
-              path: x.path,
-              label:
-                (x as any)?.label ||
-                (x.name.split('.')[0].length > 0
-                  ? x.name.split('.')[0]
-                  : x.name),
+              presetId: presetId,
+              path: path,
+              label: label,
               parsedContent: x
             };
+
+            // console.log('Object.keys(preset.parsedContent)');
+            // console.log(Object.keys(preset.parsedContent));
 
             presets.push(preset);
           }

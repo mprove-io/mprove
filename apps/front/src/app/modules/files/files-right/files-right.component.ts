@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { standardKeymap } from '@codemirror/commands';
 import { Extension } from '@codemirror/state';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, map, take, tap } from 'rxjs/operators';
@@ -16,6 +17,7 @@ import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
 import * as languageData from '@codemirror/language-data';
+import { keymap } from '@codemirror/view';
 
 @Component({
   standalone: false,
@@ -23,6 +25,8 @@ import * as languageData from '@codemirror/language-data';
   templateUrl: './files-right.component.html'
 })
 export class FilesRightComponent implements OnInit {
+  extensions: Extension[] = [keymap.of(standardKeymap)];
+
   theme: Extension = VS_LIGHT_THEME_EXTRA_MOD;
 
   languages = languageData.languages;
