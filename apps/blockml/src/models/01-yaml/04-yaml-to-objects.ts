@@ -107,7 +107,7 @@ export function yamlToObjects(
       item.errors.push(
         new BmError({
           title: common.ErTitleEnum.PROCESSED_CONTENT_IS_NOT_YAML,
-          message: 'please contact support',
+          message: 'please, create an issue',
           lines: [
             {
               line: 0,

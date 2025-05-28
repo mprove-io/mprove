@@ -1,4 +1,4 @@
-label: google_analytics
+label: Google Analytics
 description: '...'
 method: POST
 request: |

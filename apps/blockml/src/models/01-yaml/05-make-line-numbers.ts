@@ -13,10 +13,11 @@ export function makeLineNumbers(
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
+    isSetLineNumToZero?: boolean;
   },
   cs: ConfigService<interfaces.Config>
 ): any[] {
-  let { caller, structId } = item;
+  let { caller, structId, isSetLineNumToZero } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newFilesAny: any[] = [];
@@ -27,7 +28,8 @@ export function makeLineNumbers(
       hash: element,
       fileName: element.name,
       filePath: element.path,
-      errors: item.errors
+      errors: item.errors,
+      isSetLineNumToZero: isSetLineNumToZero
     });
 
     if (errorsOnStart === item.errors.length) {
@@ -60,12 +62,16 @@ export function processLineNumbersRecursive(item: {
   fileName: string;
   filePath: string;
   errors: BmError[];
+  isSetLineNumToZero: boolean;
 }): any[] {
+  let { isSetLineNumToZero } = item;
+
   Object.keys(item.hash).forEach(oldPar => {
     let reg = common.MyRegex.CAPTURE_BETWEEN_LINE_NUM();
     let r = reg.exec(oldPar);
 
-    let lineNumber: number = r ? Number(r[1]) : 0;
+    let lineNumber: number =
+      isSetLineNumToZero === true ? 0 : r ? Number(r[1]) : 0;
 
     let npReg = common.MyRegex.BETWEEN_LINE_NUM_G();
     let newPar = oldPar.replace(npReg, '');
@@ -130,7 +136,8 @@ export function processLineNumbersRecursive(item: {
             hash: element,
             fileName: item.fileName,
             filePath: item.filePath,
-            errors: item.errors
+            errors: item.errors,
+            isSetLineNumToZero: isSetLineNumToZero
           });
         } else if (Array.isArray(element)) {
           // !hash && !array - convert to string
@@ -154,7 +161,8 @@ export function processLineNumbersRecursive(item: {
         hash: item.hash[newPar],
         fileName: item.fileName,
         filePath: item.filePath,
-        errors: item.errors
+        errors: item.errors,
+        isSetLineNumToZero: isSetLineNumToZero
       });
 
       // !hash && !array - convert to string

@@ -1,7 +1,6 @@
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { load } from 'js-yaml';
 import { constants } from '~blockml/barrels/constants';
 import { appControllers } from './app-controllers';
 import { appServices } from './app-services';
@@ -10,6 +9,7 @@ import { common } from './barrels/common';
 import { interfaces } from './barrels/interfaces';
 import { getConfig } from './config/get.config';
 import { logToConsoleBlockml } from './functions/log-to-console-blockml';
+import { BmError } from './models/bm-error';
 import { PresetsService } from './services/presets.service';
 
 @Module({
@@ -79,6 +79,8 @@ export class AppModule implements OnModuleInit {
     });
 
     try {
+      let errors: BmError[] = [];
+
       let presetFiles: common.BmlFile[] = await barYaml.collectFiles(
         {
           dir: `${constants.SRC_PATH}/presets`,
@@ -89,49 +91,63 @@ export class AppModule implements OnModuleInit {
         this.cs
       );
 
+      let filesAny: any[] = barYaml.yamlToObjects(
+        {
+          file3s: presetFiles.map(y => {
+            let pathParts = y.path.split('.');
+
+            let f: common.File3 = {
+              ext: `.${pathParts.slice(1).join('.')}` as any,
+              name: y.name,
+              path: y.path,
+              content: y.content
+            };
+            return f;
+          }),
+          structId: undefined,
+          errors: errors,
+          caller: common.CallerEnum.AppModule
+        },
+        this.cs
+      );
+
+      filesAny = barYaml.makeLineNumbers(
+        {
+          filesAny: filesAny,
+          structId: undefined,
+          errors: errors,
+          caller: common.CallerEnum.AppModule,
+          isSetLineNumToZero: true
+        },
+        this.cs
+      );
+
       let presets: common.Preset[] = [];
 
-      presetFiles.forEach(x => {
-        try {
+      if (errors.length > 0) {
+        console.log(errors);
+        throw new Error('Failed to load presets');
+      } else {
+        filesAny.forEach(x => {
           if (
             x.path.includes('/') === false &&
             x.path.endsWith('.store.preset')
           ) {
-            let parsedYaml = load(x.content);
-
             let preset: common.Preset = {
               presetId: x.name.split('.')[0],
               path: x.path,
               label:
-                (parsedYaml as any)?.label ||
+                (x as any)?.label ||
                 (x.name.split('.')[0].length > 0
                   ? x.name.split('.')[0]
                   : x.name),
-              parsedContent: parsedYaml
+              parsedContent: x
             };
-
-            // console.log('Object.keys(parsedYaml)');
-            // console.log(Object.keys(parsedYaml));
-            // console.log('preset');
-            // console.log(preset);
 
             presets.push(preset);
           }
-        } catch (e: any) {
-          logToConsoleBlockml({
-            log: `Failed to load preset ${x.path}`,
-            logLevel: common.LogLevelEnum.Error,
-            logger: this.logger,
-            cs: this.cs
-          });
-          logToConsoleBlockml({
-            log: e,
-            logLevel: common.LogLevelEnum.Error,
-            logger: this.logger,
-            cs: this.cs
-          });
-        }
-      });
+        });
+      }
 
       this.presetsService.setPresets(presets);
     } catch (e) {
