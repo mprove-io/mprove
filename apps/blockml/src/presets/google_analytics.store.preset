@@ -291,15 +291,6 @@ parameters:
     label: End Date
     value: $METRICS_DATE_TO
 
-- filter: b2
-  fraction_controls:
-  - selector: sdf
-    value: a
-    options:
-    - value: a
-    - value: b
-    - value: c
-
 results:
 - result: number
   fraction_types:
