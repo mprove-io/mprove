@@ -8,6 +8,10 @@ export class ModelInfo {
   connectionId: string;
 
   @IsOptional()
+  @IsString()
+  presetId: string;
+
+  @IsOptional()
   @IsString({ each: true })
   accessRoles: string[];
 }

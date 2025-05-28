@@ -100,6 +100,7 @@ export class CreateFileController {
         isStore: fileName.split('.')[1] === 'store',
         label: modelInfo.name,
         connectionId: modelInfo.connectionId,
+        presetId: modelInfo.presetId,
         roles: modelInfo.accessRoles?.join(', ')
       });
     }

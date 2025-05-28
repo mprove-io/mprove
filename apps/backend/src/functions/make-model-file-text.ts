@@ -5,9 +5,10 @@ export function makeModelFileText(item: {
   modelId: string;
   label: string;
   connectionId: string;
+  presetId: string;
   roles: string;
 }) {
-  let { isStore, modelId, label, connectionId, roles } = item;
+  let { isStore, modelId, label, connectionId, presetId, roles } = item;
 
   let base: any = {};
 
@@ -23,7 +24,8 @@ export function makeModelFileText(item: {
     access_roles:
       common.isDefined(roles) && roles.trim().length > 0
         ? roles.split(',').map(x => x.trim())
-        : undefined
+        : undefined,
+    preset: presetId
   });
 
   let modelFileText = common.toYaml(next);

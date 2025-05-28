@@ -82,8 +82,15 @@ export class CreateModelDialogComponent implements OnInit {
   connectionsLoading = false;
   connectionsLoaded = false;
 
+  emptyPreset: common.Preset = {
+    presetId: undefined,
+    label: 'Empty',
+    path: undefined,
+    parsedContent: undefined
+  };
+
   presetForm: FormGroup = new FormGroup({
-    preset: new FormControl<common.Preset>(undefined)
+    preset: new FormControl<common.Preset>(this.emptyPreset)
   });
 
   presets: common.Preset[] = [];
@@ -93,14 +100,7 @@ export class CreateModelDialogComponent implements OnInit {
     tap(x => {
       this.struct = x;
 
-      let emptyPreset: common.Preset = {
-        presetId: undefined,
-        label: 'Empty',
-        path: undefined,
-        parsedContent: undefined
-      };
-
-      this.presets = [emptyPreset, ...x.presets];
+      this.presets = [this.emptyPreset, ...x.presets];
 
       this.cd.detectChanges();
     })
@@ -177,6 +177,28 @@ export class CreateModelDialogComponent implements OnInit {
 
     this.formsError = undefined;
 
+    if (
+      [
+        common.ConnectionTypeEnum.Api,
+        common.ConnectionTypeEnum.GoogleApi
+      ].indexOf(this.connectionForm.controls['connection'].value.type) < 0
+    ) {
+      this.presetForm.controls['preset'].setValue(this.emptyPreset);
+    } else if (
+      this.connectionForm.controls['connection'].value.type ===
+        common.ConnectionTypeEnum.GoogleApi &&
+      this.presetForm.controls['preset'].value?.presetId !== 'google_analytics'
+    ) {
+      let presetGA = this.presets.find(x => x.presetId === 'google_analytics');
+      this.presetForm.controls['preset'].setValue(presetGA);
+    } else if (
+      this.connectionForm.controls['connection'].value.type !==
+        common.ConnectionTypeEnum.GoogleApi &&
+      this.presetForm.controls['preset'].value?.presetId === 'google_analytics'
+    ) {
+      this.presetForm.controls['preset'].setValue(this.emptyPreset);
+    }
+
     this.cd.detectChanges();
   }
 
@@ -208,6 +230,7 @@ export class CreateModelDialogComponent implements OnInit {
 
       this.createModel({
         connection: this.connectionForm.controls['connection'].value,
+        preset: this.presetForm.controls['preset'].value,
         modelName: modelName,
         roles: roles
       });
@@ -218,10 +241,11 @@ export class CreateModelDialogComponent implements OnInit {
     modelName: string;
     roles: string;
     connection: common.Connection;
+    preset: common.Preset;
   }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { modelName, connection, roles } = item;
+    let { modelName, connection, preset, roles } = item;
 
     let filePart = modelName.toLowerCase().split(' ').join('_');
 
@@ -256,7 +280,14 @@ export class CreateModelDialogComponent implements OnInit {
       modelInfo: {
         connectionId: connection.connectionId,
         name: modelName,
-        accessRoles: roles?.split(',').map(x => x.trim())
+        accessRoles: roles?.split(',').map(x => x.trim()),
+        presetId:
+          [
+            common.ConnectionTypeEnum.Api,
+            common.ConnectionTypeEnum.GoogleApi
+          ].indexOf(this.connectionForm.controls['connection'].value.type) > -1
+            ? preset.presetId
+            : undefined
       }
     };
 

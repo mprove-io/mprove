@@ -197,6 +197,15 @@
     </div>
   </div>
 
+  <div
+    class="mt-7 h-9"
+    *ngIf="
+      [connectionTypeEnumApi, connectionTypeEnumGoogleApi].indexOf(
+        connectionForm.controls['connection'].value?.type
+      ) < 0
+    "
+  ></div>
+
   <div class="mt-14 flex flex-row items-center">
     <button
       data-cy="createBranchDialogCreateButton"
