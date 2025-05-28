@@ -280,10 +280,9 @@ parameters:
   fraction_controls:
   - selector: ga_property
     label: Property
-    value: 474781769
+    value: 123456789
     options:
-    - value: 474781769
-    - value: 123123123
+    - value: 123456789
   - date_picker: start_date
     label: Start Date
     value: $METRICS_DATE_FROM
