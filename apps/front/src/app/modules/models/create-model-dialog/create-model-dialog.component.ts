@@ -18,13 +18,14 @@ import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { take, tap } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '~front/app/constants/top';
 import { MemberQuery } from '~front/app/queries/member.query';
+import { ModelsQuery } from '~front/app/queries/models.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
-import { UserQuery } from '~front/app/queries/user.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -111,9 +112,10 @@ export class CreateModelDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<CreateModelDialogData>,
     private fb: FormBuilder,
-    private userQuery: UserQuery,
+    private uiQuery: UiQuery,
     private navigateService: NavigateService,
     private repoQuery: RepoQuery,
+    private modelsQuery: ModelsQuery,
     private memberQuery: MemberQuery,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
@@ -311,14 +313,70 @@ export class CreateModelDialogComponent implements OnInit {
               needValidate: resp.payload.needValidate
             });
 
-            let fId = parentNodeId + '/' + fileName;
-            let fIdAr = fId.split('/');
-            fIdAr.shift();
-            let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
+            if (resp.payload.struct.errors.length > 0) {
+              let fId = parentNodeId + '/' + fileName;
+              let fIdAr = fId.split('/');
+              fIdAr.shift();
+              let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
 
-            this.navigateService.navigateToFileLine({
-              panel: common.PanelEnum.Tree,
-              underscoreFileId: fileId
+              this.navigateService.navigateToFileLine({
+                panel: common.PanelEnum.Tree,
+                underscoreFileId: fileId
+              });
+            } else {
+              let modelId =
+                [
+                  common.ConnectionTypeEnum.Api,
+                  common.ConnectionTypeEnum.GoogleApi
+                ].indexOf(connection.type) > -1
+                  ? `store_model_${filePart}`
+                  : filePart;
+
+              this.getModelsNavModel({ modelId: modelId });
+            }
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  getModelsNavModel(item: { modelId: string }) {
+    let { modelId } = item;
+
+    let nav = this.navQuery.getValue();
+
+    let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
+      projectId: nav.projectId,
+      isRepoProd: nav.isRepoProd,
+      branchId: nav.branchId,
+      envId: nav.envId
+    };
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    apiService
+      .req({
+        pathInfoName:
+          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
+        payload: payload
+      })
+      .pipe(
+        map((resp: apiToBackend.ToBackendGetModelsResponse) => {
+          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            this.memberQuery.update(resp.payload.userMember);
+
+            this.structQuery.update(resp.payload.struct);
+            this.navQuery.updatePart({
+              needValidate: resp.payload.needValidate
+            });
+            this.modelsQuery.update({ models: resp.payload.models });
+            //
+            this.uiQuery.updatePart({ showSchema: true });
+
+            this.navigateService.navigateToChart({
+              modelId: modelId,
+              chartId: common.EMPTY_CHART_ID
             });
           }
         }),
