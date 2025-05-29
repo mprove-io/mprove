@@ -23,7 +23,7 @@ export class ToBackendGetQueriesRequestPayload {
 
   @ArrayNotEmpty()
   @IsString({ each: true })
-  queryIds: string[];
+  mconfigIds: string[];
 }
 
 export class ToBackendGetQueriesRequest extends ToBackendRequest {

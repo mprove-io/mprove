@@ -210,7 +210,11 @@ export class RunCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    let queryIdsWithDuplicates: string[] = [];
+    // let queryIdsWithDuplicates: string[] = [];
+    let mconfigParts: {
+      mconfigId: string;
+      queryId: string;
+    }[] = [];
 
     let chartParts: ChartPart[] = [];
 
@@ -274,7 +278,11 @@ export class RunCommand extends CustomCommand {
             query: { queryId: x.tiles[0].queryId } as common.Query
           };
 
-          queryIdsWithDuplicates.push(x.tiles[0].queryId);
+          mconfigParts.push({
+            mconfigId: x.tiles[0].mconfigId,
+            queryId: x.tiles[0].queryId
+          });
+          // queryIdsWithDuplicates.push(x.tiles[0].queryId);
 
           return chartPart;
         });
@@ -337,7 +345,11 @@ export class RunCommand extends CustomCommand {
             };
 
             tileParts.push(tilePart);
-            queryIdsWithDuplicates.push(tile.queryId);
+            mconfigParts.push({
+              mconfigId: tile.mconfigId,
+              queryId: tile.queryId
+            });
+            // queryIdsWithDuplicates.push(tile.queryId);
           });
 
           let url = getDashboardUrl({
@@ -362,7 +374,7 @@ export class RunCommand extends CustomCommand {
         });
     }
 
-    let uniqueQueryIds = [...new Set(queryIdsWithDuplicates)];
+    // let uniqueQueryIds = [...new Set(queryIdsWithDuplicates)];
 
     //
     let getQueriesReqPayloadStart: apiToBackend.ToBackendGetQueriesRequestPayload =
@@ -371,7 +383,8 @@ export class RunCommand extends CustomCommand {
         isRepoProd: isRepoProd,
         branchId: this.branch,
         envId: this.env,
-        queryIds: uniqueQueryIds
+        mconfigIds: mconfigParts.map(x => x.mconfigId)
+        // queryIds: uniqueQueryIds
       };
 
     let getQueriesRespStart =
@@ -388,7 +401,11 @@ export class RunCommand extends CustomCommand {
 
     let runQueriesReqPayload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       projectId: this.projectId,
-      queryIds: uniqueQueryIds,
+      isRepoProd: isRepoProd,
+      branchId: this.branch,
+      envId: this.env,
+      mconfigIds: mconfigParts.map(x => x.mconfigId),
+      // queryIds: uniqueQueryIds,
       poolSize: this.concurrency
     };
 
@@ -420,7 +437,8 @@ export class RunCommand extends CustomCommand {
       });
     }
 
-    let queryIdsToGet: string[] = [...uniqueQueryIds];
+    // let queryIdsToGet: string[] = [...uniqueQueryIds];
+    let mconfigPartsToGet = [...mconfigParts];
 
     let waitQueries: common.Query[] = [];
 
@@ -429,14 +447,16 @@ export class RunCommand extends CustomCommand {
 
       await common.sleep(this.sleep * 1000);
 
-      while (queryIdsToGet.length > 0) {
+      // while (queryIdsToGet.length > 0) {
+      while (mconfigPartsToGet.length > 0) {
         let getQueriesReqPayload: apiToBackend.ToBackendGetQueriesRequestPayload =
           {
             projectId: this.projectId,
             isRepoProd: isRepoProd,
             branchId: this.branch,
             envId: this.env,
-            queryIds: queryIdsToGet
+            mconfigIds: mconfigPartsToGet.map(x => x.mconfigId)
+            // queryIds: queryIdsToGet
           };
 
         let getQueriesResp =
@@ -471,11 +491,14 @@ export class RunCommand extends CustomCommand {
               });
             }
 
-            queryIdsToGet = queryIdsToGet.filter(id => id !== query.queryId);
+            mconfigPartsToGet = mconfigPartsToGet.filter(
+              x => x.queryId !== query.queryId
+            );
+            // queryIdsToGet = queryIdsToGet.filter(id => id !== query.queryId);
           }
         });
 
-        if (queryIdsToGet.length > 0) {
+        if (mconfigPartsToGet.length > 0) {
           await common.sleep(this.sleep * 1000);
         }
       }

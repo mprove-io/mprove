@@ -17,13 +17,18 @@ import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
+import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
+import { ProjectsService } from '~backend/services/projects.service';
 import { QueriesService } from '~backend/services/queries.service';
+import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { PROJECT_ENV_PROD } from '~common/constants/top';
 
@@ -33,6 +38,10 @@ let retry = require('async-retry');
 @Controller()
 export class CancelQueriesController {
   constructor(
+    private structsService: StructsService,
+    private branchesService: BranchesService,
+    private projectsService: ProjectsService,
+    private bridgesService: BridgesService,
     private membersService: MembersService,
     private queriesService: QueriesService,
     private envsService: EnvsService,
@@ -49,12 +58,52 @@ export class CancelQueriesController {
   ) {
     let reqValid: apiToBackend.ToBackendCancelQueriesRequest = request.body;
 
-    let { queryIds, projectId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, envId, mconfigIds } =
+      reqValid.payload;
 
-    let member = await this.membersService.getMemberCheckExists({
+    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: projectId
+    });
+
+    let member = await this.membersService.getMemberCheckIsEditorOrAdmin({
       projectId: projectId,
       memberId: user.userId
     });
+
+    let branch = await this.branchesService.getBranchCheckExists({
+      projectId: projectId,
+      repoId: repoId,
+      branchId: branchId
+    });
+
+    let env = await this.envsService.getEnvCheckExistsAndAccess({
+      projectId: projectId,
+      envId: envId,
+      member: member
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
+      envId: envId
+    });
+
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.structId,
+      projectId: projectId
+    });
+
+    let mconfigs = await this.db.drizzle.query.mconfigsTable.findMany({
+      where: and(
+        eq(mconfigsTable.structId, bridge.structId),
+        inArray(mconfigsTable.mconfigId, mconfigIds)
+      )
+    });
+
+    let queryIds = [...new Set(mconfigs.map(x => x.queryId))];
 
     let queries = await this.queriesService.getQueriesCheckExistSkipSqlData({
       queryIds: queryIds,

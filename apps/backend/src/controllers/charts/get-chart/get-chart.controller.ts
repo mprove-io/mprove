@@ -101,11 +101,6 @@ export class GetChartController {
       projectId: projectId
     });
 
-    await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
     let chart = await this.chartsService.getChartCheckExists({
       structId: bridge.structId,
       chartId: chartId

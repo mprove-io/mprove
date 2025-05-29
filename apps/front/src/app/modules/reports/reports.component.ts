@@ -729,11 +729,19 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       projectId: nav.projectId,
-      queryIds: this.report.rows
+      isRepoProd: nav.isRepoProd,
+      branchId: nav.branchId,
+      envId: nav.envId,
+      mconfigIds: this.report.rows
         .filter(
           row => common.isDefined(row.query) && row.mconfig.select.length > 0
         )
-        .map(row => row.query.queryId)
+        .map(row => row.mconfig.mconfigId)
+      // queryIds: this.report.rows
+      //   .filter(
+      //     row => common.isDefined(row.query) && row.mconfig.select.length > 0
+      //   )
+      //   .map(row => row.query.queryId)
     };
 
     this.apiService

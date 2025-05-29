@@ -5,6 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
+import { BRANCH_MAIN, PROJECT_ENV_PROD } from '~common/_index';
 
 let testId = 'backend-run-queries__ok-postgres';
 
@@ -119,7 +120,10 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        queryIds: [chart.tiles[0].queryId]
+        isRepoProd: false,
+        branchId: BRANCH_MAIN,
+        envId: PROJECT_ENV_PROD,
+        mconfigIds: [chart.tiles[0].mconfigId]
       }
     };
 

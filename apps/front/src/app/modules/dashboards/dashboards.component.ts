@@ -620,7 +620,11 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       projectId: nav.projectId,
-      queryIds: this.dashboard.tiles.map(tile => tile.queryId)
+      isRepoProd: nav.isRepoProd,
+      branchId: nav.branchId,
+      envId: nav.envId,
+      mconfigIds: this.dashboard.tiles.map(tile => tile.mconfigId)
+      // queryIds: this.dashboard.tiles.map(tile => tile.queryId)
     };
 
     this.apiService

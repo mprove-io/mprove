@@ -17,11 +17,14 @@ import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
+import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BigQueryService } from '~backend/services/bigquery.service';
+import { BranchesService } from '~backend/services/branches.service';
+import { BridgesService } from '~backend/services/bridges.service';
 import { ClickHouseService } from '~backend/services/clickhouse.service';
 import { ConnectionsService } from '~backend/services/connections.service';
 import { EnvsService } from '~backend/services/envs.service';
@@ -30,6 +33,7 @@ import { PgService } from '~backend/services/pg.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { SnowFlakeService } from '~backend/services/snowflake.service';
 import { StoreService } from '~backend/services/store.service';
+import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { PROJECT_ENV_PROD } from '~common/constants/top';
 
@@ -40,6 +44,9 @@ let retry = require('async-retry');
 @Controller()
 export class RunQueriesController {
   constructor(
+    private branchesService: BranchesService,
+    private bridgesService: BridgesService,
+    private structsService: StructsService,
     private queriesService: QueriesService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
@@ -62,17 +69,54 @@ export class RunQueriesController {
   ) {
     let reqValid: apiToBackend.ToBackendRunQueriesRequest = request.body;
 
-    let { projectId, queryIds, poolSize } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, envId, mconfigIds, poolSize } =
+      reqValid.payload;
 
-    let runningQueries: schemaPostgres.QueryEnt[] = [];
-    let startedQueryIds: string[] = [];
+    let userMember = await this.membersService.getMemberCheckExists({
+      projectId: projectId,
+      memberId: user.userId
+    });
 
-    let pSize = 1;
+    let branch = await this.branchesService.getBranchCheckExists({
+      projectId: projectId,
+      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
+      branchId: branchId
+    });
+
+    await this.envsService.getEnvCheckExistsAndAccess({
+      projectId: projectId,
+      envId: envId,
+      member: userMember
+    });
+
+    let bridge = await this.bridgesService.getBridgeCheckExists({
+      projectId: branch.projectId,
+      repoId: branch.repoId,
+      branchId: branch.branchId,
+      envId: envId
+    });
+
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.structId,
+      projectId: projectId
+    });
+
+    let mconfigs = await this.db.drizzle.query.mconfigsTable.findMany({
+      where: and(
+        eq(mconfigsTable.structId, bridge.structId),
+        inArray(mconfigsTable.mconfigId, mconfigIds)
+      )
+    });
+
+    let queryIds = [...new Set(mconfigs.map(x => x.queryId))];
 
     let queries = await this.queriesService.getQueriesCheckExistSkipSqlData({
       queryIds: queryIds,
       projectId: projectId
     });
+
+    let runningQueries: schemaPostgres.QueryEnt[] = [];
+    let startedQueryIds: string[] = [];
 
     let googleApiConnectionIds = queries
       .filter(
@@ -138,7 +182,7 @@ export class RunQueriesController {
 
     if (common.isDefined(poolSize)) {
       startedQueryIds = queryIds;
-      pSize = Number(poolSize);
+      let pSize = Number(poolSize);
 
       asyncPool(pSize, queryIds, async queryId => {
         let query = await this.queriesService.getQueryCheckExistsSkipData({

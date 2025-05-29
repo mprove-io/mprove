@@ -960,20 +960,14 @@ export class ModelsComponent implements OnInit, OnDestroy {
   run() {
     this.startRunButtonTimer();
 
-    let nav: NavState;
-    this.navQuery
-      .select()
-      .pipe(
-        tap(x => {
-          nav = x;
-        }),
-        take(1)
-      )
-      .subscribe();
+    let nav = this.navQuery.getValue();
 
     let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
       projectId: nav.projectId,
-      queryIds: [this.query.queryId]
+      isRepoProd: nav.isRepoProd,
+      branchId: nav.branchId,
+      envId: nav.envId,
+      mconfigIds: [this.mconfig.mconfigId]
     };
 
     this.apiService
@@ -1013,22 +1007,16 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   runDry() {
-    let nav: NavState;
-    this.navQuery
-      .select()
-      .pipe(
-        tap(x => {
-          nav = x;
-        }),
-        take(1)
-      )
-      .subscribe();
+    let nav = this.navQuery.getValue();
 
     this.dryId = common.makeId();
 
     let payload: apiToBackend.ToBackendRunQueriesDryRequestPayload = {
       projectId: nav.projectId,
-      queryIds: [this.query.queryId],
+      isRepoProd: nav.isRepoProd,
+      branchId: nav.branchId,
+      envId: nav.envId,
+      mconfigIds: [this.mconfig.mconfigId],
       dryId: this.dryId
     };
 
@@ -1074,20 +1062,14 @@ export class ModelsComponent implements OnInit, OnDestroy {
   cancel() {
     this.startCancelButtonTimer();
 
-    let nav: NavState;
-    this.navQuery
-      .select()
-      .pipe(
-        tap(x => {
-          nav = x;
-        }),
-        take(1)
-      )
-      .subscribe();
+    let nav = this.navQuery.getValue();
 
     let payload: apiToBackend.ToBackendCancelQueriesRequestPayload = {
       projectId: nav.projectId,
-      queryIds: [this.query.queryId]
+      isRepoProd: nav.isRepoProd,
+      branchId: nav.branchId,
+      envId: nav.envId,
+      mconfigIds: [this.mconfig.mconfigId]
     };
 
     this.apiService

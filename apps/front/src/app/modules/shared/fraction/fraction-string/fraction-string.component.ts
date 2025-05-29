@@ -269,7 +269,11 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                       .ToBackendRunQueries,
                   payload: {
                     projectId: nav.projectId,
-                    queryIds: [q1Resp.payload.query.queryId]
+                    isRepoProd: nav.isRepoProd,
+                    branchId: nav.branchId,
+                    envId: nav.envId,
+                    mconfigIds: [q1Resp.payload.mconfig.mconfigId]
+                    // queryIds: [q1Resp.payload.query.queryId]
                   } as apiToBackend.ToBackendRunQueriesRequestPayload
                 })
                 .pipe(

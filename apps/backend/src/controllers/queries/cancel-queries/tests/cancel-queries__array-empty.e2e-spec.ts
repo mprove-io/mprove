@@ -5,6 +5,7 @@ import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
+import { BRANCH_MAIN, PROJECT_ENV_PROD } from '~common/_index';
 
 let testId = 'backend-cancel-queries__array-empty';
 
@@ -151,7 +152,10 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        queryIds: []
+        isRepoProd: true,
+        branchId: BRANCH_MAIN,
+        envId: PROJECT_ENV_PROD,
+        mconfigIds: []
       }
     };
 
@@ -173,5 +177,8 @@ test('1', async t => {
   }
 
   t.is(resp1.info.error.message, common.ErEnum.BACKEND_WRONG_REQUEST_PARAMS);
-  t.is(resp1.info.error.data[0].arrayNotEmpty, 'queryIds should not be empty');
+  t.is(
+    resp1.info.error.data[0].arrayNotEmpty,
+    'mconfigIds should not be empty'
+  );
 });

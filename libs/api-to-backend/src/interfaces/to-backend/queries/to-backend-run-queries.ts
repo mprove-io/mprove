@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
+  IsBoolean,
   IsInt,
   IsOptional,
   IsPositive,
@@ -14,9 +15,18 @@ export class ToBackendRunQueriesRequestPayload {
   @IsString()
   projectId: string;
 
+  @IsBoolean()
+  isRepoProd: boolean;
+
+  @IsString()
+  branchId: string;
+
+  @IsString()
+  envId: string;
+
   @ArrayNotEmpty()
   @IsString({ each: true })
-  queryIds: string[];
+  mconfigIds: string[];
 
   @IsOptional()
   @IsInt()

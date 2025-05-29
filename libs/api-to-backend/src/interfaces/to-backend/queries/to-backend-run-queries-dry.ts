@@ -1,5 +1,10 @@
 import { Type } from 'class-transformer';
-import { ArrayNotEmpty, IsString, ValidateNested } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsBoolean,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
 
@@ -7,12 +12,21 @@ export class ToBackendRunQueriesDryRequestPayload {
   @IsString()
   projectId: string;
 
+  @IsBoolean()
+  isRepoProd: boolean;
+
   @IsString()
-  dryId: string;
+  branchId: string;
+
+  @IsString()
+  envId: string;
 
   @ArrayNotEmpty()
   @IsString({ each: true })
-  queryIds: string[];
+  mconfigIds: string[];
+
+  @IsString()
+  dryId: string;
 }
 
 export class ToBackendRunQueriesDryRequest extends ToBackendRequest {

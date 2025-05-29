@@ -529,6 +529,8 @@ ${inputSub}
               eq(modelsTable.structId, q.storeStructId)
             )
           });
+          // console.log('model');
+          // console.log(model);
 
           let dataResult = await this.transformStoreResponseData({
             input: (model.content as common.FileStore).response,
