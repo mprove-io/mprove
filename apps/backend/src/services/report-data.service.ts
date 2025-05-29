@@ -434,7 +434,6 @@ export class ReportDataService {
                   traceId: traceId
                 },
                 payload: {
-                  orgId: project.orgId,
                   projectId: project.projectId,
                   weekStart: struct.weekStart,
                   caseSensitiveStringFilters: struct.caseSensitiveStringFilters,

@@ -4,7 +4,6 @@ import { wrapTiles } from './wrap-tiles';
 
 export function wrapCharts(item: {
   structId: string;
-  orgId: string;
   projectId: string;
   envId: string;
   timezone: string;
@@ -12,8 +11,7 @@ export function wrapCharts(item: {
   stores: common.FileStore[];
   charts: common.FileChart[];
 }) {
-  let { structId, orgId, projectId, models, stores, charts, envId, timezone } =
-    item;
+  let { structId, projectId, models, stores, charts, envId, timezone } = item;
 
   let apiCharts: common.Chart[] = [];
   let chartMconfigs: common.Mconfig[] = [];
@@ -21,7 +19,6 @@ export function wrapCharts(item: {
 
   charts.forEach(x => {
     let { apiTiles, mconfigs, queries } = wrapTiles({
-      orgId: orgId,
       projectId: projectId,
       structId: structId,
       models: models,

@@ -249,7 +249,6 @@ export class MembersService {
 
               await this.blockmlService.rebuildStruct({
                 traceId,
-                orgId: project.orgId,
                 projectId: firstProjectId,
                 structId,
                 diskFiles: diskResponse.payload.files,

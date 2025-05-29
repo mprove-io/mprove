@@ -44,7 +44,6 @@ export class RebuildStructService {
 
     let {
       structId,
-      orgId,
       projectId,
       files,
       connections,
@@ -120,7 +119,6 @@ export class RebuildStructService {
     let { apiDashboards, dashMconfigs, dashQueries } =
       barWrapper.wrapDashboards({
         structId: structId,
-        orgId: orgId,
         projectId: projectId,
         models: models,
         stores: stores,
@@ -131,7 +129,6 @@ export class RebuildStructService {
 
     let { apiCharts, chartMconfigs, chartQueries } = barWrapper.wrapCharts({
       structId: structId,
-      orgId: orgId,
       projectId: projectId,
       models: models,
       stores: stores,

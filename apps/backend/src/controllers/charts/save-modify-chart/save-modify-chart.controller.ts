@@ -243,7 +243,6 @@ export class SaveModifyChartController {
     let { struct, charts, mconfigs, queries } =
       await this.blockmlService.rebuildStruct({
         traceId: traceId,
-        orgId: project.orgId,
         projectId: projectId,
         structId: bridge.structId,
         diskFiles: diskResponse.payload.files,

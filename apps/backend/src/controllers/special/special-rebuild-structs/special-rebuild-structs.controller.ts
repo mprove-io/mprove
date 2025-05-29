@@ -155,7 +155,6 @@ export class SpecialRebuildStructsController {
 
         await this.blockmlService.rebuildStruct({
           traceId: traceId,
-          orgId: project.orgId,
           projectId: project.projectId,
           structId: structId,
           diskFiles: getCatalogFilesResponse.payload.files,

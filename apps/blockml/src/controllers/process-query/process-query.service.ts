@@ -35,7 +35,6 @@ export class ProcessQueryService {
     });
 
     let {
-      orgId,
       projectId,
       weekStart,
       caseSensitiveStringFilters,
@@ -82,13 +81,12 @@ export class ProcessQueryService {
     );
 
     let queryId = nodeCommon.makeQueryId({
-      sql: sql,
-      storeMethod: undefined, // isStore false
-      storeRequestJsonPartsString: undefined, // isStore false
-      orgId: orgId,
       projectId: projectId,
       connectionId: model.connection.connectionId,
-      envId: envId
+      envId: envId,
+      sql: sql,
+      store: undefined, // isStore false
+      storeTransformedRequestString: undefined // isStore false
     });
 
     let query: common.Query = {
@@ -97,8 +95,6 @@ export class ProcessQueryService {
       envId: envId,
       connectionId: model.connection.connectionId,
       connectionType: model.connection.type,
-      storeModelId: undefined,
-      storeStructId: undefined,
       sql: sql.join('\n'),
       apiMethod: undefined,
       apiUrl: undefined,

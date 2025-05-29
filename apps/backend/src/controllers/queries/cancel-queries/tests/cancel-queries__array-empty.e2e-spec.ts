@@ -63,8 +63,6 @@ test('1', async t => {
     envId: common.PROJECT_ENV_PROD,
     connectionId: connectionId,
     connectionType: connectionType,
-    storeModelId: undefined,
-    storeStructId: undefined,
     queryId: queryId,
     sql: '123',
     apiMethod: undefined,

@@ -163,7 +163,6 @@ export class ProjectsService {
 
     await this.blockmlService.rebuildStruct({
       traceId,
-      orgId: newProject.orgId,
       projectId: newProject.projectId,
       structId: prodStructId,
       diskFiles: diskResponse.payload.prodFiles,
@@ -175,7 +174,6 @@ export class ProjectsService {
 
     await this.blockmlService.rebuildStruct({
       traceId,
-      orgId: newProject.orgId,
       projectId: newProject.projectId,
       structId: devStructId,
       diskFiles: diskResponse.payload.prodFiles,

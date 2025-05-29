@@ -190,7 +190,6 @@ export class CreateMemberController {
 
         await this.blockmlService.rebuildStruct({
           traceId: traceId,
-          orgId: project.orgId,
           projectId: projectId,
           structId: structId,
           diskFiles: diskResponse.payload.files,

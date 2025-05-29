@@ -275,7 +275,6 @@ export class SeedRecordsController {
             queries: devQueriesApi
           } = await this.blockmlService.rebuildStruct({
             traceId: reqValid.info.traceId,
-            orgId: newProject.orgId,
             projectId: newProject.projectId,
             structId: devStructId,
             diskFiles: diskResponse.payload.files,
@@ -298,7 +297,6 @@ export class SeedRecordsController {
             queries: prodQueriesApi
           } = await this.blockmlService.rebuildStruct({
             traceId: reqValid.info.traceId,
-            orgId: newProject.orgId,
             projectId: newProject.projectId,
             structId: prodStructId,
             diskFiles: diskResponse.payload.files,

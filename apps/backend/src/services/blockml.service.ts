@@ -62,7 +62,6 @@ export class BlockmlService {
     projectId: string;
     structId: string;
     envId: string;
-    orgId: string;
     diskFiles: common.DiskCatalogFile[];
     mproveDir: string;
     skipDb?: boolean;
@@ -73,7 +72,6 @@ export class BlockmlService {
     let {
       traceId,
       structId,
-      orgId,
       projectId,
       envId,
       diskFiles,
@@ -122,7 +120,6 @@ export class BlockmlService {
         },
         payload: {
           structId: structId,
-          orgId: orgId,
           projectId: projectId,
           mproveDir: item.mproveDir,
           files: helper.diskFilesToBlockmlFiles(diskFiles),

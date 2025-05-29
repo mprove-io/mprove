@@ -168,7 +168,6 @@ export class DeleteDashboardController {
 
     let { struct } = await this.blockmlService.rebuildStruct({
       traceId: traceId,
-      orgId: project.orgId,
       projectId: projectId,
       structId: bridge.structId,
       diskFiles: diskResponse.payload.files,

@@ -106,7 +106,6 @@ export class GetRebuildStructController {
       },
       payload: {
         structId: structId,
-        orgId: orgId,
         projectId: projectId,
         mproveDir: getCatalogFilesResponse.payload.mproveDir,
         files: helper.diskFilesToBlockmlFiles(

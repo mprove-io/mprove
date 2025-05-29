@@ -335,8 +335,6 @@ export class WrapToApiService {
       envId: x.envId,
       connectionId: x.connectionId,
       connectionType: x.connectionType,
-      storeModelId: x.storeModelId,
-      storeStructId: x.storeStructId,
       queryId: x.queryId,
       sql: x.sql,
       apiMethod: x.apiMethod as common.StoreMethodEnum,

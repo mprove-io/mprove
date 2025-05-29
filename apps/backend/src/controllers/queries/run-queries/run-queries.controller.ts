@@ -18,6 +18,7 @@ import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
@@ -105,6 +106,15 @@ export class RunQueriesController {
       where: and(
         eq(mconfigsTable.structId, bridge.structId),
         inArray(mconfigsTable.mconfigId, mconfigIds)
+      )
+    });
+
+    let modelIds = [...new Set(mconfigs.map(x => x.modelId))];
+
+    let models = await this.db.drizzle.query.modelsTable.findMany({
+      where: and(
+        eq(modelsTable.structId, bridge.structId),
+        inArray(modelsTable.modelId, modelIds)
       )
     });
 
@@ -283,11 +293,15 @@ export class RunQueriesController {
               common.ConnectionTypeEnum.GoogleApi
             ].indexOf(connection.type) > -1
           ) {
+            let mconfig = mconfigs.find(x => x.queryId === query.queryId);
+            let model = models.find(x => x.modelId === mconfig.modelId);
+
             await this.storeService.runQuery({
+              projectId: projectId,
               connection: connection,
+              model: model,
               queryId: query.queryId,
-              queryJobId: query.queryJobId,
-              projectId: projectId
+              queryJobId: query.queryJobId
             });
           }
         }
@@ -442,12 +456,16 @@ export class RunQueriesController {
               common.ConnectionTypeEnum.GoogleApi
             ].indexOf(connection.type) > -1
           ) {
+            let mconfig = mconfigs.find(x => x.queryId === query.queryId);
+            let model = models.find(x => x.modelId === mconfig.modelId);
+
             this.storeService
               .runQuery({
+                projectId: projectId,
                 connection: connection,
+                model: model,
                 queryId: query.queryId,
-                queryJobId: query.queryJobId,
-                projectId: projectId
+                queryJobId: query.queryJobId
               })
               .catch(e => {
                 logToConsoleBackend({

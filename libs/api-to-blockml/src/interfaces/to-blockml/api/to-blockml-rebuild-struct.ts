@@ -12,9 +12,6 @@ import { IsTimezone } from '~common/functions/is-timezone';
 
 export class ToBlockmlRebuildStructRequestPayload {
   @IsString()
-  orgId: string;
-
-  @IsString()
   projectId: string;
 
   @IsString()

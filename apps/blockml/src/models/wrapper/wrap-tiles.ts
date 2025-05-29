@@ -8,7 +8,6 @@ import { wrapMconfigChart } from './wrap-mconfig-chart';
 
 export function wrapTiles(item: {
   structId: string;
-  orgId: string;
   projectId: string;
   envId: string;
   tiles: common.FilePartTile[];
@@ -16,8 +15,7 @@ export function wrapTiles(item: {
   stores: common.FileStore[];
   timezone: string;
 }) {
-  let { structId, orgId, projectId, models, stores, tiles, envId, timezone } =
-    item;
+  let { structId, projectId, models, stores, tiles, envId, timezone } = item;
 
   let apiTiles: common.Tile[] = [];
   let mconfigs: common.Mconfig[] = [];
@@ -52,13 +50,12 @@ export function wrapTiles(item: {
       isStore === true
         ? common.EMPTY_QUERY_ID
         : nodeCommon.makeQueryId({
-            sql: tile.sql,
-            storeMethod: undefined,
-            storeRequestJsonPartsString: undefined,
-            orgId: orgId,
             projectId: projectId,
             connectionId: connection.connectionId,
-            envId: envId
+            envId: envId,
+            sql: tile.sql,
+            store: undefined, // isStore false
+            storeTransformedRequestString: undefined // isStore false
           });
 
     let query: common.Query = {
@@ -67,8 +64,6 @@ export function wrapTiles(item: {
       envId: envId,
       connectionId: connection.connectionId,
       connectionType: connection.type,
-      storeModelId: isStore === true ? tile.model : undefined,
-      storeStructId: isStore === true ? structId : undefined,
       sql: isStore === true ? undefined : tile.sql.join('\n'),
       apiMethod: undefined,
       apiUrl: undefined,

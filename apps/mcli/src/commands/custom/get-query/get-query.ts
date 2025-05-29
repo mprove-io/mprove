@@ -54,8 +54,6 @@ interface QueryPartQ {
   // envId: string;
   connectionId: string;
   connectionType: common.ConnectionTypeEnum;
-  storeModelId: string;
-  storeStructId: string;
   queryId: string;
   status: common.QueryStatusEnum;
   lastRunBy: string;
@@ -296,8 +294,6 @@ export class GetQueryCommand extends CustomCommand {
       let queryPartQ: QueryPartQ = {
         connectionId: tileX.query.connectionId,
         connectionType: tileX.query.connectionType,
-        storeModelId: tileX.query.storeModelId,
-        storeStructId: tileX.query.storeStructId,
         queryId: tileX.query.queryId,
         status: tileX.query.status,
         lastRunBy: tileX.query.lastRunBy,
@@ -379,8 +375,6 @@ export class GetQueryCommand extends CustomCommand {
           let queryPartQ: QueryPartQ = {
             connectionId: tileX.query.connectionId,
             connectionType: tileX.query.connectionType,
-            storeModelId: tileX.query.storeModelId,
-            storeStructId: tileX.query.storeStructId,
             queryId: tileX.query.queryId,
             status: tileX.query.status,
             lastRunBy: tileX.query.lastRunBy,
@@ -473,8 +467,6 @@ export class GetQueryCommand extends CustomCommand {
             queryPartQ = {
               connectionId: row.query.connectionId,
               connectionType: row.query.connectionType,
-              storeModelId: row.query.storeModelId,
-              storeStructId: row.query.storeStructId,
               queryId: row.query.queryId,
               status: row.query.status,
               lastRunBy: row.query.lastRunBy,

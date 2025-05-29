@@ -35,8 +35,6 @@ export const emptyQuery: common.Query = {
   envId: undefined,
   connectionId: undefined,
   connectionType: undefined,
-  storeModelId: undefined,
-  storeStructId: undefined,
   queryId: common.EMPTY_QUERY_ID,
   sql: undefined,
   apiMethod: undefined,

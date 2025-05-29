@@ -134,7 +134,6 @@ export class DeleteFolderController {
 
         await this.blockmlService.rebuildStruct({
           traceId,
-          orgId: project.orgId,
           projectId,
           structId,
           diskFiles: diskResponse.payload.files,

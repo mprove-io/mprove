@@ -279,7 +279,6 @@ export class SaveCreateDashboardController {
     let { dashboards, mconfigs, queries, struct } =
       await this.blockmlService.rebuildStruct({
         traceId,
-        orgId: project.orgId,
         projectId,
         structId: bridge.structId,
         diskFiles: diskResponse.payload.files,

@@ -1,37 +1,30 @@
 import * as crypto from 'crypto';
-import { enums } from '~common/barrels/enums';
 import { common } from '~node-common/barrels/common';
 
 export function makeQueryId(item: {
-  sql: string[];
-  // storeStructId: string;
-  // storeModelId: string;
-  storeMethod: enums.StoreMethodEnum;
-  storeRequestJsonPartsString: string;
-  orgId: string;
   projectId: string;
   envId: string;
   connectionId: string;
+  sql: string[];
+  storeTransformedRequestString: string;
+  store: common.FileStore;
 }) {
   let {
-    orgId,
     projectId,
     envId,
     connectionId,
     sql,
-    // storeStructId,
-    // storeModelId,
-    storeMethod,
-    storeRequestJsonPartsString
+    storeTransformedRequestString,
+    store
   } = item;
 
-  let preText = common.isDefined(sql)
+  let postText = common.isDefined(sql)
     ? sql.join('\n')
-    : // storeStructId +
-      // storeModelId +
-      storeMethod.toString() + storeRequestJsonPartsString;
+    : storeTransformedRequestString +
+      store.method.toString() +
+      JSON.stringify(store);
 
-  let text = preText + orgId + projectId + envId + connectionId;
+  let text = projectId + envId + connectionId + postText;
 
   const hash = crypto.createHash('sha256').update(text).digest('hex');
 

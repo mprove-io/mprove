@@ -5,7 +5,6 @@ import { common } from '~backend/barrels/common';
 import { interfaces } from '~backend/barrels/interfaces';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
@@ -372,16 +371,17 @@ ${inputSub}
   }
 
   async transformStoreResponseData(item: {
-    input: string;
     storeModel: common.Model;
     respData: any;
   }): Promise<StoreUserCodeReturn> {
-    let { input, storeModel, respData } = item;
+    let { storeModel, respData } = item;
 
     // console.log('respData');
     // console.log(respData);
 
-    let inputSub = input;
+    let store = storeModel.content as common.FileStore;
+
+    let inputSub = store.response;
 
     let reg = common.MyRegex.CAPTURE_S_REF();
     let r;
@@ -404,9 +404,7 @@ ${inputSub}
       } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
         target = null;
       } else if (reference === 'STORE_FIELDS') {
-        target = JSON.stringify(
-          (storeModel.content as common.FileStore).fields
-        );
+        target = JSON.stringify(store.fields);
         // } else if (reference === 'ENV_GA_PROPERTY_ID_1') {
         //   target = '...';
       } else {
@@ -444,12 +442,13 @@ ${inputSub}
   }
 
   async runQuery(item: {
-    connection: schemaPostgres.ConnectionEnt;
-    queryJobId: string;
-    queryId: string;
     projectId: string;
+    connection: schemaPostgres.ConnectionEnt;
+    model: schemaPostgres.ModelEnt;
+    queryId: string;
+    queryJobId: string;
   }) {
-    let { connection, queryJobId, queryId, projectId } = item;
+    let { connection, queryJobId, queryId, projectId, model } = item;
 
     // console.log('store runQuery start');
     // let tsStart = Date.now();
@@ -523,17 +522,7 @@ ${inputSub}
           q.lastErrorMessage = `response has no data`;
           q.lastErrorTs = makeTsNumber();
         } else {
-          let model = await this.db.drizzle.query.modelsTable.findFirst({
-            where: and(
-              eq(modelsTable.modelId, q.storeModelId),
-              eq(modelsTable.structId, q.storeStructId)
-            )
-          });
-          // console.log('model');
-          // console.log(model);
-
           let dataResult = await this.transformStoreResponseData({
-            input: (model.content as common.FileStore).response,
             storeModel: model,
             respData: response.data
           });

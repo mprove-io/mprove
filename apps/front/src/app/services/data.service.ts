@@ -110,8 +110,8 @@ export class DataService {
   }
 
   makeQData(item: {
-    query: common.Query;
     mconfigFields: common.MconfigField[];
+    query: common.Query;
   }) {
     let { query, mconfigFields } = item;
 
@@ -131,7 +131,8 @@ export class DataService {
     // type: "custom"
 
     let data: SourceDataRow[] = query.data;
-    let isStore = common.isDefined(query.storeModelId);
+
+    let isStore = common.isUndefined(query.sql);
 
     // console.log('data');
     // console.log(data);

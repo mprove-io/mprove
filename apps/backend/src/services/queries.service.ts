@@ -38,8 +38,6 @@ export class QueriesService {
         envId: queriesTable.envId,
         connectionId: queriesTable.connectionId,
         connectionType: queriesTable.connectionType,
-        storeModelId: queriesTable.storeModelId,
-        storeStructId: queriesTable.storeStructId,
         queryId: queriesTable.queryId,
         sql: queriesTable.sql,
         apiMethod: queriesTable.apiMethod,

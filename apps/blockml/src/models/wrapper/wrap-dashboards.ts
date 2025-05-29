@@ -7,7 +7,6 @@ import { wrapTiles } from './wrap-tiles';
 
 export function wrapDashboards(item: {
   structId: string;
-  orgId: string;
   projectId: string;
   dashboards: common.FileDashboard[];
   models: common.FileModel[];
@@ -15,16 +14,8 @@ export function wrapDashboards(item: {
   envId: string;
   timezone: string;
 }) {
-  let {
-    structId,
-    orgId,
-    projectId,
-    models,
-    stores,
-    dashboards,
-    envId,
-    timezone
-  } = item;
+  let { structId, projectId, models, stores, dashboards, envId, timezone } =
+    item;
 
   let apiDashboards: common.Dashboard[] = [];
   let dashMconfigs: common.Mconfig[] = [];
@@ -189,7 +180,6 @@ export function wrapDashboards(item: {
     });
 
     let { apiTiles, mconfigs, queries } = wrapTiles({
-      orgId: orgId,
       projectId: projectId,
       structId: structId,
       models: models,

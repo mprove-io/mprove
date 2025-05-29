@@ -137,14 +137,12 @@ export class MconfigsService {
         : JSON.parse(processedRequest.result).body;
 
     let queryId = nodeCommon.makeQueryId({
-      sql: undefined, // isStore true
-      storeMethod: (model.content as common.FileStore)
-        .method as common.StoreMethodEnum,
-      storeRequestJsonPartsString: processedRequest.result,
-      orgId: project.orgId,
       projectId: project.projectId,
       envId: envId,
-      connectionId: model.connectionId
+      connectionId: model.connectionId,
+      sql: undefined, // isStore true
+      store: model.content as common.FileStore,
+      storeTransformedRequestString: processedRequest.result
     });
 
     newQuery = {
@@ -152,8 +150,6 @@ export class MconfigsService {
       projectId: project.projectId,
       envId: envId,
       connectionId: model.connectionId,
-      storeModelId: model.modelId,
-      storeStructId: model.structId,
       connectionType: (model.content as any).connection.type,
       sql: undefined,
       apiMethod: (model.content as common.FileStore)
