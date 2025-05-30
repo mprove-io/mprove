@@ -2,9 +2,11 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
+import { PROJECT_ENV_PROD } from '~common/constants/top';
 import { EnvironmentsQuery } from '~front/app/queries/environments.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -75,6 +77,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
     private apiService: ApiService,
     private router: Router,
     private navQuery: NavQuery,
+    private userQuery: UserQuery,
     private memberQuery: MemberQuery,
     private title: Title
   ) {}
@@ -131,6 +134,16 @@ export class ProjectEnvironmentsComponent implements OnInit {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
             this.environmentsQuery.update({ environments: resp.payload.envs });
+
+            let nav = this.navQuery.getValue();
+            let user = this.userQuery.getValue();
+
+            if (nav.envId === env.envId && user.userId === envUser.userId) {
+              this.navQuery.updatePart({
+                envId: PROJECT_ENV_PROD,
+                needValidate: false
+              });
+            }
           }
         }),
         take(1)

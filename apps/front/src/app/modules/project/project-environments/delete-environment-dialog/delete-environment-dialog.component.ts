@@ -7,8 +7,10 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { PROJECT_ENV_PROD } from '~common/_index';
 import { EnvironmentsQuery } from '~front/app/queries/environments.query';
 import { MemberQuery } from '~front/app/queries/member.query';
+import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -39,6 +41,7 @@ export class DeleteEnvironmentDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<DeleteEnvironmentDialogData>,
     private memberQuery: MemberQuery,
+    private navQuery: NavQuery,
     private environmentsQuery: EnvironmentsQuery
   ) {}
 
@@ -70,6 +73,15 @@ export class DeleteEnvironmentDialogComponent implements OnInit {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
             this.environmentsQuery.update({ environments: resp.payload.envs });
+
+            let nav = this.navQuery.getValue();
+
+            if (nav.envId === this.dataItem.envId) {
+              this.navQuery.updatePart({
+                envId: PROJECT_ENV_PROD,
+                needValidate: false
+              });
+            }
           }
         }),
         take(1)
