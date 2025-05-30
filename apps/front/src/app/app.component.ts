@@ -25,6 +25,8 @@ export class AppComponent implements OnInit {
 
   spinnerStartedTs: number;
 
+  isSpinnerScheduledToHide = false;
+
   routerEvents$ = this.router.events.pipe(
     tap((x: any) => {
       // console.log(x);
@@ -52,6 +54,11 @@ export class AppComponent implements OnInit {
             // urlPartArray.indexOf(common.PATH_PASSWORD_RESET_SENT_AUTH) !== 1 &&
           ) {
             // console.log('NavigationStart', x.url);
+
+            // console.log('start');
+            // console.log(Date.now());
+            this.isSpinnerScheduledToHide = false;
+
             this.spinner.show(constants.APP_SPINNER_NAME);
           }
           break;
@@ -79,7 +86,17 @@ export class AppComponent implements OnInit {
                 time
               );
             } else {
-              this.spinner.hide(constants.APP_SPINNER_NAME);
+              this.isSpinnerScheduledToHide = true;
+              // console.log('set');
+              // console.log(Date.now());
+
+              setTimeout(() => {
+                // console.log('check');
+                // console.log(Date.now());
+                if (this.isSpinnerScheduledToHide === true) {
+                  this.spinner.hide(constants.APP_SPINNER_NAME);
+                }
+              }, 30);
             }
           }
 
