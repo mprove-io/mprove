@@ -62,7 +62,7 @@ export function checkDimensions<T extends types.vsmType>(
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.UNNEST_IS_NOT_SUPPORTED_FOR_CONNECTION,
-              message: `parameter "${common.ParameterEnum.Unnest}" can not be used with ${x.connection.type}`,
+              message: `parameter "${common.ParameterEnum.Unnest}" cannot be used with ${x.connection.type}`,
               lines: [
                 {
                   line: field.unnest_line_num,

@@ -76,7 +76,7 @@ export function jsoCheckDoubleDeps(
                 new BmError({
                   title: common.ErTitleEnum.JOIN_SQL_ON_REFS_FILTER,
                   message:
-                    `"${common.ParameterEnum.SqlOn}" can not reference filters. ` +
+                    `"${common.ParameterEnum.SqlOn}" cannot reference filters. ` +
                     `found referencing filter "${depFieldName}" of ` +
                     `view "${depJoin.view.name}" as "${depAs}"`,
                   lines: [
@@ -96,7 +96,7 @@ export function jsoCheckDoubleDeps(
                 new BmError({
                   title: common.ErTitleEnum.JOIN_SQL_ON_REFS_MEASURE,
                   message:
-                    `"${common.ParameterEnum.SqlOn}" can not reference measures. ` +
+                    `"${common.ParameterEnum.SqlOn}" cannot reference measures. ` +
                     `found referencing measure "${depFieldName}" of ` +
                     `view "${depJoin.view.name}" as "${depAs}"`,
                   lines: [
@@ -116,7 +116,7 @@ export function jsoCheckDoubleDeps(
                 new BmError({
                   title: common.ErTitleEnum.JOIN_SQL_ON_REFS_CALCULATION,
                   message:
-                    `"${common.ParameterEnum.SqlOn}" can not reference calculations. ` +
+                    `"${common.ParameterEnum.SqlOn}" cannot reference calculations. ` +
                     `found referencing calculation "${depFieldName}" ` +
                     `of view "${depJoin.view.name}" as "${depAs}"`,
                   lines: [

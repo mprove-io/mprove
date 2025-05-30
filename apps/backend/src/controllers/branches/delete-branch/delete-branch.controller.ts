@@ -60,7 +60,7 @@ export class DeleteBranchController {
 
     if (branchId === project.defaultBranch) {
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_DEFAULT_BRANCH_CAN_NOT_BE_DELETED
+        message: common.ErEnum.BACKEND_DEFAULT_BRANCH_CANNOT_BE_DELETED
       });
     }
 

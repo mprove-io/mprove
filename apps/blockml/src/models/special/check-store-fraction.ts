@@ -63,7 +63,7 @@ export function checkStoreFraction(
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.UNKNOWN_FRACTIONS_ELEMENT_PARAMETER,
-              message: `parameter "${parameter}" can not be used in ${common.ParameterEnum.Fractions} element`,
+              message: `parameter "${parameter}" cannot be used in ${common.ParameterEnum.Fractions} element`,
               lines: [
                 {
                   line: fraction[
@@ -148,8 +148,8 @@ export function checkStoreFraction(
         new BmError({
           title:
             common.ErTitleEnum
-              .FRACTION_CAN_NOT_USE_LOGIC_PARAMETER_WITH_STORE_FILTER,
-          message: `parameter "${common.ParameterEnum.Logic}" can not be used with store filter`,
+              .FRACTION_CANNOT_USE_LOGIC_PARAMETER_WITH_STORE_FILTER,
+          message: `parameter "${common.ParameterEnum.Logic}" cannot be used with store filter`,
           lines: [
             {
               line: fraction.logic_line_num,
@@ -167,8 +167,8 @@ export function checkStoreFraction(
         new BmError({
           title:
             common.ErTitleEnum
-              .FRACTION_CAN_NOT_USE_TYPE_PARAMETER_WITH_STORE_FILTER,
-          message: `parameter "${common.ParameterEnum.Type}" can not be used with store filter`,
+              .FRACTION_CANNOT_USE_TYPE_PARAMETER_WITH_STORE_FILTER,
+          message: `parameter "${common.ParameterEnum.Type}" cannot be used with store filter`,
           lines: [
             {
               line: fraction.type_line_num,

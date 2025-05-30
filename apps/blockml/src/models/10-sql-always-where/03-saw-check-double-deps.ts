@@ -76,7 +76,7 @@ export function sawCheckDoubleDeps(
             new BmError({
               title: common.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_FILTER,
               message:
-                `"${common.ParameterEnum.SqlAlwaysWhere}" can not reference filters. ` +
+                `"${common.ParameterEnum.SqlAlwaysWhere}" cannot reference filters. ` +
                 `Found referencing filter "${depFieldName}" of ` +
                 `view "${depJoin.view.name}" as "${depAs}"`,
               lines: [
@@ -95,7 +95,7 @@ export function sawCheckDoubleDeps(
             new BmError({
               title: common.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MEASURE,
               message:
-                `"${common.ParameterEnum.SqlAlwaysWhere}" can not reference measures. ` +
+                `"${common.ParameterEnum.SqlAlwaysWhere}" cannot reference measures. ` +
                 `found referencing measure "${depFieldName}" of ` +
                 `view "${depJoin.view.name}" as "${depAs}"`,
               lines: [
@@ -114,7 +114,7 @@ export function sawCheckDoubleDeps(
             new BmError({
               title: common.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_CALCULATION,
               message:
-                `"${common.ParameterEnum.SqlAlwaysWhere}" can not reference calculations. ` +
+                `"${common.ParameterEnum.SqlAlwaysWhere}" cannot reference calculations. ` +
                 `found referencing measure "${depFieldName}" of ` +
                 `view "${depJoin.view.name}" as "${depAs}"`,
               lines: [

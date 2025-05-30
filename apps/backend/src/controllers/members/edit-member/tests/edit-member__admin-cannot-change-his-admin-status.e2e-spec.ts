@@ -6,7 +6,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-delete-branch__branch-master-can-not-be-deleted';
+let testId = 'backend-edit-member__admin-cannot-change-his-admin-status';
 
 let traceId = testId;
 
@@ -20,12 +20,10 @@ let orgName = testId;
 let projectId = common.makeId();
 let projectName = testId;
 
-let branchId = common.BRANCH_MAIN;
-
 let prep: interfaces.Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendDeleteBranchResponse;
+  let resp: apiToBackend.ToBackendEditMemberResponse;
 
   try {
     prep = await prepareTest({
@@ -75,25 +73,29 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendDeleteBranchRequest = {
+    let req: apiToBackend.ToBackendEditMemberRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
+        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
         traceId: traceId,
         idempotencyKey: common.makeId()
       },
       payload: {
         projectId: projectId,
-        isRepoProd: false,
-        branchId: branchId
+        memberId: userId,
+        isAdmin: false,
+        isEditor: true,
+        isExplorer: true,
+        roles: []
       }
     };
 
-    resp =
-      await helper.sendToBackend<apiToBackend.ToBackendDeleteBranchResponse>({
+    resp = await helper.sendToBackend<apiToBackend.ToBackendEditMemberResponse>(
+      {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req
-      });
+      }
+    );
 
     await prep.app.close();
   } catch (e) {
@@ -107,6 +109,6 @@ test('1', async t => {
 
   t.is(
     resp.info.error.message,
-    common.ErEnum.BACKEND_DEFAULT_BRANCH_CAN_NOT_BE_DELETED
+    common.ErEnum.BACKEND_ADMIN_CANNOT_CHANGE_HIS_ADMIN_STATUS
   );
 });

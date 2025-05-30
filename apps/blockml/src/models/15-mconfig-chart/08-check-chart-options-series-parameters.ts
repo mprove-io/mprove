@@ -46,7 +46,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
                 new BmError({
                   title: common.ErTitleEnum.OPTIONS_SERIES_UNKNOWN_PARAMETER,
                   message:
-                    `parameter "${parameter}" can not be used ` +
+                    `parameter "${parameter}" cannot be used ` +
                     'inside series element',
                   lines: [
                     {
@@ -73,7 +73,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
               item.errors.push(
                 new BmError({
                   title: common.ErTitleEnum.OPTIONS_SERIES_UNEXPECTED_LIST,
-                  message: `parameter "${parameter}" can not be a list`,
+                  message: `parameter "${parameter}" cannot be a list`,
                   lines: [
                     {
                       line: seriesElement[
@@ -98,7 +98,7 @@ export function checkChartOptionsSeriesParameters<T extends types.dcrType>(
                 new BmError({
                   title:
                     common.ErTitleEnum.OPTIONS_SERIES_UNEXPECTED_DICTIONARY,
-                  message: `parameter "${parameter}" can not be a dictionary`,
+                  message: `parameter "${parameter}" cannot be a dictionary`,
                   lines: [
                     {
                       line: seriesElement[

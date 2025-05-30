@@ -63,7 +63,7 @@ export function checkStoreFractionControls(
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.UNKNOWN_CONTROLS_ELEMENT_PARAMETER,
-              message: `parameter "${parameter}" can not be used in ${common.ParameterEnum.FractionTypes} element controls`,
+              message: `parameter "${parameter}" cannot be used in ${common.ParameterEnum.FractionTypes} element controls`,
               lines: [
                 {
                   line: control[

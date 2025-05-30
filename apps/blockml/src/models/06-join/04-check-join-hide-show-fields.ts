@@ -52,7 +52,7 @@ export function checkJoinHideShowFields(
             title: common.ErTitleEnum.JOIN_HIDE_AND_SHOW_FIELDS,
             message:
               `parameters "${common.ParameterEnum.ShowFields}" ` +
-              `and "${common.ParameterEnum.HideFields}" can not be specified at the same time`,
+              `and "${common.ParameterEnum.HideFields}" cannot be specified at the same time`,
             lines: [hideFieldsErrorLine, showFieldsErrorLine]
           })
         );

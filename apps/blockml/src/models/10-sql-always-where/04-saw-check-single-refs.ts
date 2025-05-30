@@ -62,7 +62,7 @@ export function sawCheckSingleRefs(
           new BmError({
             title: common.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MODEL_FILTER,
             message:
-              `"${common.ParameterEnum.SqlAlwaysWhere}" can not reference filters. ` +
+              `"${common.ParameterEnum.SqlAlwaysWhere}" cannot reference filters. ` +
               `Found referencing "${reference}".`,
             lines: [
               {
@@ -81,7 +81,7 @@ export function sawCheckSingleRefs(
           new BmError({
             title: common.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MODEL_MEASURE,
             message:
-              `"${common.ParameterEnum.SqlAlwaysWhere}" can not reference measures. ` +
+              `"${common.ParameterEnum.SqlAlwaysWhere}" cannot reference measures. ` +
               `Found referencing "${reference}".`,
             lines: [
               {
@@ -100,7 +100,7 @@ export function sawCheckSingleRefs(
           new BmError({
             title: common.ErTitleEnum.SQL_ALWAYS_WHERE_REFS_MODEL_CALCULATION,
             message:
-              `"${common.ParameterEnum.SqlAlwaysWhere}" can not reference calculations. ` +
+              `"${common.ParameterEnum.SqlAlwaysWhere}" cannot reference calculations. ` +
               `Found referencing "${reference}".`,
             lines: [
               {

@@ -49,7 +49,7 @@ export function checkTopUnknownParameters(
                 new BmError({
                   title: common.ErTitleEnum.UNKNOWN_UDF_PARAMETER,
                   message:
-                    `parameter "${parameter}" can not be used on top level of ` +
+                    `parameter "${parameter}" cannot be used on top level of ` +
                     `${common.FileExtensionEnum.Udf} file`,
                   lines: [
                     {
@@ -85,7 +85,7 @@ export function checkTopUnknownParameters(
                 new BmError({
                   title: common.ErTitleEnum.UNKNOWN_VIEW_PARAMETER,
                   message:
-                    `parameter "${parameter}" can not be used on top level of ` +
+                    `parameter "${parameter}" cannot be used on top level of ` +
                     `${common.FileExtensionEnum.View} file`,
                   lines: [
                     {
@@ -125,7 +125,7 @@ export function checkTopUnknownParameters(
                 new BmError({
                   title: common.ErTitleEnum.UNKNOWN_MODEL_PARAMETER,
                   message:
-                    `parameter "${parameter}" can not be used on top level of ` +
+                    `parameter "${parameter}" cannot be used on top level of ` +
                     `${common.FileExtensionEnum.Model} file`,
                   lines: [
                     {
@@ -166,7 +166,7 @@ export function checkTopUnknownParameters(
                 new BmError({
                   title: common.ErTitleEnum.UNKNOWN_STORE_PARAMETER,
                   message:
-                    `parameter "${parameter}" can not be used on top level of ` +
+                    `parameter "${parameter}" cannot be used on top level of ` +
                     `${common.FileExtensionEnum.Store} file`,
                   lines: [
                     {
@@ -199,7 +199,7 @@ export function checkTopUnknownParameters(
                 new BmError({
                   title: common.ErTitleEnum.UNKNOWN_DASHBOARD_PARAMETER,
                   message:
-                    `parameter "${parameter}" can not be used on top level of ` +
+                    `parameter "${parameter}" cannot be used on top level of ` +
                     `${common.FileExtensionEnum.Dashboard} file`,
                   lines: [
                     {
@@ -229,7 +229,7 @@ export function checkTopUnknownParameters(
                 new BmError({
                   title: common.ErTitleEnum.UNKNOWN_CHART_PARAMETER,
                   message:
-                    `parameter "${parameter}" can not be used on top level of ` +
+                    `parameter "${parameter}" cannot be used on top level of ` +
                     `${common.FileExtensionEnum.Chart} file`,
                   lines: [
                     {
@@ -260,7 +260,7 @@ export function checkTopUnknownParameters(
                 new BmError({
                   title: common.ErTitleEnum.UNKNOWN_REPORT_PARAMETER,
                   message:
-                    `parameter "${parameter}" can not be used on top level of ` +
+                    `parameter "${parameter}" cannot be used on top level of ` +
                     `${common.FileExtensionEnum.Report} file`,
                   lines: [
                     {
@@ -294,7 +294,7 @@ export function checkTopUnknownParameters(
                 new BmError({
                   title: common.ErTitleEnum.UNKNOWN_MPROVE_CONFIG_PARAMETER,
                   message:
-                    `parameter "${parameter}" can not be used on top level of ` +
+                    `parameter "${parameter}" cannot be used on top level of ` +
                     `${common.MPROVE_CONFIG_FILENAME} file`,
                   lines: [
                     {

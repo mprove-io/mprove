@@ -58,7 +58,7 @@ export class DeleteEnvController {
 
     if (envId === common.PROJECT_ENV_PROD) {
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_ENV_PROD_CAN_NOT_BE_DELETED
+        message: common.ErEnum.BACKEND_ENV_PROD_CANNOT_BE_DELETED
       });
     }
 

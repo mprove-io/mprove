@@ -63,7 +63,7 @@ export function awcCheckSingleRefs(
           new BmError({
             title: common.ErTitleEnum.SQL_ALWAYS_WHERE_CALC_REFS_MODEL_FILTER,
             message:
-              `"${common.ParameterEnum.SqlAlwaysWhereCalc}" can not reference filters. ` +
+              `"${common.ParameterEnum.SqlAlwaysWhereCalc}" cannot reference filters. ` +
               `Found referencing "${reference}".`,
             lines: [
               {

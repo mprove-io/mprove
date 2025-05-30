@@ -284,7 +284,7 @@ export function checkTopParameters(
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.FRACTIONS_LIST_IS_EMPTY,
-            message: `fractions can not be empty`,
+            message: `fractions cannot be empty`,
             lines: [
               {
                 line: field.fractions_line_num,

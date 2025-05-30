@@ -48,7 +48,7 @@ export function checkTileUnknownParameters<T extends types.dzType>(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.UNKNOWN_TILE_PARAMETER,
-                message: `parameter "${parameter}" can not be used inside Tile`,
+                message: `parameter "${parameter}" cannot be used inside Tile`,
                 lines: [
                   {
                     line: tile[
@@ -74,7 +74,7 @@ export function checkTileUnknownParameters<T extends types.dzType>(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.UNEXPECTED_LIST_IN_TILE_PARAMETERS,
-                message: `parameter "${parameter}" can not be a list`,
+                message: `parameter "${parameter}" cannot be a list`,
                 lines: [
                   {
                     line: tile[
@@ -104,7 +104,7 @@ export function checkTileUnknownParameters<T extends types.dzType>(
               new BmError({
                 title:
                   common.ErTitleEnum.UNEXPECTED_DICTIONARY_IN_TILE_PARAMETERS,
-                message: `parameter "${parameter}" can not be a dictionary`,
+                message: `parameter "${parameter}" cannot be a dictionary`,
                 lines: [
                   {
                     line: tile[

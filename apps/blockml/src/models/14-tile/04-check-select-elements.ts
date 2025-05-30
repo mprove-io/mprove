@@ -49,7 +49,7 @@ export function checkSelectElements<T extends types.dzType>(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.TILE_WRONG_SELECT_ELEMENT,
-                message: `found element "${element}" that can not be parsed as "alias.field_name"`,
+                message: `found element "${element}" that cannot be parsed as "alias.field_name"`,
                 lines: [
                   {
                     line: tile.select_line_num,

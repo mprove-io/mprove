@@ -56,7 +56,7 @@ export class EditMemberController {
 
     if (memberId === user.userId && isAdmin === false) {
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_ADMIN_CAN_NOT_CHANGE_HIS_ADMIN_STATUS
+        message: common.ErEnum.BACKEND_ADMIN_CANNOT_CHANGE_HIS_ADMIN_STATUS
       });
     }
 

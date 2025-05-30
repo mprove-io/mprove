@@ -90,7 +90,7 @@ export function checkFieldsDoubleDeps(
               new BmError({
                 title: common.ErTitleEnum.MODEL_DIMENSION_REFS_MEASURE,
                 message:
-                  'Dimensions can not reference measures. ' +
+                  'Dimensions cannot reference measures. ' +
                   `Found dimension "${fieldName}" is referencing measure "${depName}" ` +
                   `of view "${join.view.name}" as "${as}".`,
                 lines: Object.keys(x.fieldsDoubleDeps[fieldName][as]).map(
@@ -113,7 +113,7 @@ export function checkFieldsDoubleDeps(
               new BmError({
                 title: common.ErTitleEnum.MODEL_DIMENSION_REFS_CALCULATION,
                 message:
-                  'Dimensions can not reference calculations. ' +
+                  'Dimensions cannot reference calculations. ' +
                   `Found dimension "${fieldName}" is referencing calculation "${depName}" ` +
                   `of view "${join.view.name}" as "${as}".`,
                 lines: Object.keys(x.fieldsDoubleDeps[fieldName][as]).map(
@@ -136,7 +136,7 @@ export function checkFieldsDoubleDeps(
               new BmError({
                 title: common.ErTitleEnum.MODEL_MEASURE_REFS_MEASURE,
                 message:
-                  'Measures can not reference measures. ' +
+                  'Measures cannot reference measures. ' +
                   `Found measure "${fieldName}" is referencing measure "${depName}" ` +
                   `of view "${join.view.name}" as "${as}".`,
                 lines: Object.keys(x.fieldsDoubleDeps[fieldName][as]).map(
@@ -159,7 +159,7 @@ export function checkFieldsDoubleDeps(
               new BmError({
                 title: common.ErTitleEnum.MODEL_MEASURE_REFS_CALCULATION,
                 message:
-                  'Measures can not reference calculations. ' +
+                  'Measures cannot reference calculations. ' +
                   `Found measure "${fieldName}" is referencing calculation "${depName}" ` +
                   `of view "${join.view.name}" as "${as}".`,
                 lines: Object.keys(x.fieldsDoubleDeps[fieldName][as]).map(

@@ -34,7 +34,7 @@ export function checkModelBuildMetrics(
                 new BmError({
                   title: common.ErTitleEnum.BUILD_METRICS_UNKNOWN_PARAMETER,
                   message:
-                    `parameter "${parameter}" can not be used ` +
+                    `parameter "${parameter}" cannot be used ` +
                     `with "${common.ParameterEnum.BuildMetrics}"`,
                   lines: [
                     {

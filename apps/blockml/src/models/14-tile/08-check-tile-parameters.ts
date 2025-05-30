@@ -178,7 +178,7 @@ export function checkTileParameters<T extends types.dzType>(
               item.errors.push(
                 new BmError({
                   title:
-                    common.ErTitleEnum.CHART_TILE_PARAMETER_CAN_NOT_HAVE_LISTEN,
+                    common.ErTitleEnum.CHART_TILE_PARAMETER_CANNOT_HAVE_LISTEN,
                   message:
                     `${common.FileExtensionEnum.Chart} does not support ` +
                     `"${common.ParameterEnum.Listen}" parameter for tiles`,
@@ -363,7 +363,7 @@ export function checkTileParameters<T extends types.dzType>(
                   item.errors.push(
                     new BmError({
                       title: common.ErTitleEnum.APPLY_TO_CONDITIONS_IS_EMPTY,
-                      message: `apply_to conditions can not be empty`,
+                      message: `apply_to conditions cannot be empty`,
                       lines: [
                         {
                           line: p.conditions_line_num,
@@ -489,7 +489,7 @@ export function checkTileParameters<T extends types.dzType>(
                 item.errors.push(
                   new BmError({
                     title: common.ErTitleEnum.FRACTIONS_LIST_IS_EMPTY,
-                    message: `fractions can not be empty`,
+                    message: `fractions cannot be empty`,
                     lines: [
                       {
                         line: p.fractions_line_num,

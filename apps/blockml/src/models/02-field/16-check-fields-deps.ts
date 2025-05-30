@@ -58,7 +58,7 @@ export function checkFieldsDeps<T extends types.vsmType>(
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.FIELD_SELF_REFERENCE,
-              message: 'field can not reference to itself',
+              message: 'field cannot reference to itself',
               lines: [
                 {
                   line: x.fieldsDeps[field.name][depName],
@@ -74,7 +74,7 @@ export function checkFieldsDeps<T extends types.vsmType>(
             new BmError({
               title: common.ErTitleEnum.FIELD_REFS_FILTER,
               message:
-                'Filters can not be referenced through $. ' +
+                'Filters cannot be referenced through $. ' +
                 `Found field "${field.name}" is referencing filter "${depName}".`,
               lines: [
                 {
@@ -94,7 +94,7 @@ export function checkFieldsDeps<T extends types.vsmType>(
             new BmError({
               title: common.ErTitleEnum.DIMENSION_REFS_MEASURE,
               message:
-                'Dimensions can not reference measures. ' +
+                'Dimensions cannot reference measures. ' +
                 `Found dimension "${field.name}" is referencing measure "${depName}".`,
               lines: [
                 {
@@ -114,7 +114,7 @@ export function checkFieldsDeps<T extends types.vsmType>(
             new BmError({
               title: common.ErTitleEnum.DIMENSION_REFS_CALCULATION,
               message:
-                'Dimensions can not reference calculations. ' +
+                'Dimensions cannot reference calculations. ' +
                 `Found dimension "${field.name}" is referencing calculation "${depName}".`,
               lines: [
                 {
@@ -134,7 +134,7 @@ export function checkFieldsDeps<T extends types.vsmType>(
             new BmError({
               title: common.ErTitleEnum.MEASURE_REFS_MEASURE,
               message:
-                'Measures can not reference measures. ' +
+                'Measures cannot reference measures. ' +
                 `Found measure "${field.name}" is referencing measure "${depName}".`,
               lines: [
                 {
@@ -154,7 +154,7 @@ export function checkFieldsDeps<T extends types.vsmType>(
             new BmError({
               title: common.ErTitleEnum.MEASURE_REFS_CALCULATION,
               message:
-                'Measures can not reference calculations. ' +
+                'Measures cannot reference calculations. ' +
                 `Found measure "${field.name}" is referencing calculation "${depName}".`,
               lines: [
                 {

@@ -72,7 +72,7 @@ export function checkJoinUnknownParameters(
               new BmError({
                 title: common.ErTitleEnum.JOIN_UNKNOWN_PARAMETER_FOR_FROM_VIEW,
                 message:
-                  `parameter "${parameter}" can not be used ` +
+                  `parameter "${parameter}" cannot be used ` +
                   `with "${common.ParameterEnum.FromView}"`,
                 lines: [
                   {
@@ -108,7 +108,7 @@ export function checkJoinUnknownParameters(
               new BmError({
                 title: common.ErTitleEnum.JOIN_UNKNOWN_PARAMETER_FOR_JOIN_VIEW,
                 message:
-                  `parameter "${parameter}" can not be used ` +
+                  `parameter "${parameter}" cannot be used ` +
                   `with "${common.ParameterEnum.JoinView}"`,
                 lines: [
                   {

@@ -89,7 +89,7 @@ export function checkViewAsDeps(
                   common.ErTitleEnum
                     .DERIVED_TABLE_REFERENCED_VIEW_HAS_APPLY_FILTER,
                 message:
-                  `${common.ParameterEnum.DerivedTable} can not reference views that ` +
+                  `${common.ParameterEnum.DerivedTable} cannot reference views that ` +
                   `have ${constants.APPLY_FILTER}. Found reference of view "${referencedViewName}"`,
                 lines: [
                   {
@@ -129,7 +129,7 @@ export function checkViewAsDeps(
                 title: common.ErTitleEnum.DERIVED_TABLE_REFERENCES_FILTER,
                 message:
                   `Found referencing Filter "${fieldName}" of view "${referencedView.name}".` +
-                  `${common.ParameterEnum.DerivedTable} can not reference Filter fields`,
+                  `${common.ParameterEnum.DerivedTable} cannot reference Filter fields`,
                 lines: [
                   {
                     line: x.derived_table_line_num,

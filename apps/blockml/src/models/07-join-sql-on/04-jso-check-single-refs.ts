@@ -60,7 +60,7 @@ export function jsoCheckSingleRefs(
               new BmError({
                 title: common.ErTitleEnum.JOIN_SQL_ON_REFS_MODEL_FILTER,
                 message:
-                  `"${common.ParameterEnum.SqlOn}" can not reference filters. ` +
+                  `"${common.ParameterEnum.SqlOn}" cannot reference filters. ` +
                   `Found referencing "${reference}".`,
                 lines: [
                   {
@@ -79,7 +79,7 @@ export function jsoCheckSingleRefs(
               new BmError({
                 title: common.ErTitleEnum.JOIN_SQL_ON_REFS_MODEL_CALCULATION,
                 message:
-                  `"${common.ParameterEnum.SqlOn}" can not reference calculations. ` +
+                  `"${common.ParameterEnum.SqlOn}" cannot reference calculations. ` +
                   `Found referencing "${reference}".`,
                 lines: [
                   {
@@ -98,7 +98,7 @@ export function jsoCheckSingleRefs(
               new BmError({
                 title: common.ErTitleEnum.JOIN_SQL_ON_REFS_MODEL_MEASURE,
                 message:
-                  `"${common.ParameterEnum.SqlOn}" can not reference measures. ` +
+                  `"${common.ParameterEnum.SqlOn}" cannot reference measures. ` +
                   `Found referencing "${reference}".`,
                 lines: [
                   {

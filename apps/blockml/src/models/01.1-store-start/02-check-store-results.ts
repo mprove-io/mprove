@@ -78,7 +78,7 @@ export function checkStoreResults(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.UNKNOWN_RESULTS_ELEMENT_PARAMETER,
-                message: `parameter "${parameter}" can not be used in results element`,
+                message: `parameter "${parameter}" cannot be used in results element`,
                 lines: [
                   {
                     line: resultElement[
@@ -231,7 +231,7 @@ export function checkStoreResults(
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.WRONG_CHARS_IN_RESULT,
-              message: `Characters "${resultWrongCharsString}" can not be used for result (only snake_case "a...z0...9_" is allowed)`,
+              message: `Characters "${resultWrongCharsString}" cannot be used for result (only snake_case "a...z0...9_" is allowed)`,
               lines: [
                 {
                   line: result.resultLineNums[0],

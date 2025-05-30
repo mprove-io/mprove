@@ -97,7 +97,7 @@ export function checkAliases(
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.WRONG_CHARS_IN_ALIAS,
-              message: `Characters "${aliasWrongCharsString}" can not be used for alias (only snake_case "a...z0...9_" is allowed)`,
+              message: `Characters "${aliasWrongCharsString}" cannot be used for alias (only snake_case "a...z0...9_" is allowed)`,
               lines: [
                 {
                   line: alias.asLineNums[0],

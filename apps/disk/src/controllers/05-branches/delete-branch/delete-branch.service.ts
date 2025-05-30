@@ -70,7 +70,7 @@ export class DeleteBranchService {
 
     if (branch === defaultBranch) {
       throw new common.ServerError({
-        message: common.ErEnum.DISK_DEFAULT_BRANCH_CAN_NOT_BE_DELETED
+        message: common.ErEnum.DISK_DEFAULT_BRANCH_CANNOT_BE_DELETED
       });
     }
 

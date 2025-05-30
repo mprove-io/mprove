@@ -45,7 +45,7 @@ export function checkChartPlateParameters<T extends types.dzType>(
               new BmError({
                 title: common.ErTitleEnum.TILE_PLATE_UNKNOWN_PARAMETER,
                 message:
-                  `parameter "${parameter}" can not be used ` +
+                  `parameter "${parameter}" cannot be used ` +
                   'inside Tile plate',
                 lines: [
                   {
@@ -70,7 +70,7 @@ export function checkChartPlateParameters<T extends types.dzType>(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.TILE_PLATE_UNEXPECTED_LIST,
-                message: `parameter "${parameter}" can not be a list`,
+                message: `parameter "${parameter}" cannot be a list`,
                 lines: [
                   {
                     line: tile.plate[
@@ -93,7 +93,7 @@ export function checkChartPlateParameters<T extends types.dzType>(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.TILE_PLATE_UNEXPECTED_DICTIONARY,
-                message: `parameter "${parameter}" can not be a dictionary`,
+                message: `parameter "${parameter}" cannot be a dictionary`,
                 lines: [
                   {
                     line: tile.plate[

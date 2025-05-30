@@ -81,7 +81,7 @@ export function processLineNumbersRecursive(item: {
         new BmError({
           title: common.ErTitleEnum.UNDEFINED_VALUE,
           message:
-            'if parameters are specified, they can not have undefined values',
+            'if parameters are specified, they cannot have undefined values',
           lines: [
             {
               line: lineNumber,
@@ -115,7 +115,7 @@ export function processLineNumbersRecursive(item: {
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.ARRAY_ELEMENT_IS_NULL,
-              message: 'array element can not be empty',
+              message: 'array element cannot be empty',
               lines: [
                 {
                   line: lineNumber,

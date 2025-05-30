@@ -76,7 +76,7 @@ export function jswCheckDoubleDeps(
                 new BmError({
                   title: common.ErTitleEnum.JOIN_SQL_WHERE_REFS_FILTER,
                   message:
-                    `"${common.ParameterEnum.SqlWhere}" can not reference filters. ` +
+                    `"${common.ParameterEnum.SqlWhere}" cannot reference filters. ` +
                     `found referencing filter "${depFieldName}" of ` +
                     `view "${depJoin.view.name}" as "${depAs}"`,
                   lines: [
@@ -94,7 +94,7 @@ export function jswCheckDoubleDeps(
                 new BmError({
                   title: common.ErTitleEnum.JOIN_SQL_WHERE_REFS_MEASURE,
                   message:
-                    `"${common.ParameterEnum.SqlWhere}" can not reference measures. ` +
+                    `"${common.ParameterEnum.SqlWhere}" cannot reference measures. ` +
                     `found referencing measure "${depFieldName}" of ` +
                     `view "${depJoin.view.name}" as "${depAs}"`,
                   lines: [
@@ -114,7 +114,7 @@ export function jswCheckDoubleDeps(
                 new BmError({
                   title: common.ErTitleEnum.JOIN_SQL_WHERE_REFS_CALCULATION,
                   message:
-                    `"${common.ParameterEnum.SqlWhere}" can not reference calculations. ` +
+                    `"${common.ParameterEnum.SqlWhere}" cannot reference calculations. ` +
                     `found referencing calculation "${depFieldName}" of ` +
                     `view "${depJoin.view.name}" as "${depAs}"`,
                   lines: [

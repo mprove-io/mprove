@@ -54,7 +54,7 @@ export function jswCheckCharsInRefs(
             new BmError({
               title: common.ErTitleEnum.JOIN_WRONG_CHARS_IN_SQL_WHERE_REFS,
               message:
-                `characters "${jswWrongCharsString}" can not be used ` +
+                `characters "${jswWrongCharsString}" cannot be used ` +
                 `inside \$\{\} of ${common.FileExtensionEnum.Model} (only snake_case "a...z0...9_" is allowed)`,
               lines: [
                 {

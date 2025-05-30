@@ -30,7 +30,7 @@ export function checkSqlExist<T extends types.vsmdrType>(
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.UNEXPECTED_SQL_IN_FILTER,
-              message: `parameter "${common.ParameterEnum.Sql}" can not be used with ${common.FieldClassEnum.Filter} field`,
+              message: `parameter "${common.ParameterEnum.Sql}" cannot be used with ${common.FieldClassEnum.Filter} field`,
               lines: [
                 {
                   line: field.sql_line_num,

@@ -80,7 +80,7 @@ export function awcCheckDoubleDeps(
               new BmError({
                 title: common.ErTitleEnum.SQL_ALWAYS_WHERE_CALC_REFS_FILTER,
                 message:
-                  `"${common.ParameterEnum.SqlAlwaysWhereCalc}" can not reference filters. ` +
+                  `"${common.ParameterEnum.SqlAlwaysWhereCalc}" cannot reference filters. ` +
                   `Found referencing filter "${depFieldName}" of ` +
                   `view "${depJoin.view.name}" as "${depAs}"`,
                 lines: [

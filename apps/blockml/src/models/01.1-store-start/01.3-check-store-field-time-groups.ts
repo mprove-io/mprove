@@ -65,7 +65,7 @@ export function checkStoreFieldTimeGroups(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.UNKNOWN_FIELD_TIME_GROUP_PARAMETER,
-                message: `parameter "${parameter}" can not be used in ${common.ParameterEnum.FieldTimeGroups} element`,
+                message: `parameter "${parameter}" cannot be used in ${common.ParameterEnum.FieldTimeGroups} element`,
                 lines: [
                   {
                     line: fieldTimeGroup[
@@ -231,7 +231,7 @@ export function checkStoreFieldTimeGroups(
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.WRONG_CHARS_IN_TIME_NAME,
-              message: `Characters "${timeWrongCharsString}" can not be used for time (only snake_case "a...z0...9_" is allowed)`,
+              message: `Characters "${timeWrongCharsString}" cannot be used for time (only snake_case "a...z0...9_" is allowed)`,
               lines: [
                 {
                   line: timeElement.timeLineNums[0],

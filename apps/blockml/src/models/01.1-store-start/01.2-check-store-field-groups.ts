@@ -61,7 +61,7 @@ export function checkStoreFieldGroups(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.UNKNOWN_FIELD_GROUP_PARAMETER,
-                message: `parameter "${parameter}" can not be used in field_groups element`,
+                message: `parameter "${parameter}" cannot be used in field_groups element`,
                 lines: [
                   {
                     line: fieldGroup[
@@ -197,7 +197,7 @@ export function checkStoreFieldGroups(
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.WRONG_CHARS_IN_GROUP,
-              message: `Characters "${groupWrongCharsString}" can not be used for group (only snake_case "a...z0...9_" is allowed)`,
+              message: `Characters "${groupWrongCharsString}" cannot be used for group (only snake_case "a...z0...9_" is allowed)`,
               lines: [
                 {
                   line: group.groupLineNums[0],

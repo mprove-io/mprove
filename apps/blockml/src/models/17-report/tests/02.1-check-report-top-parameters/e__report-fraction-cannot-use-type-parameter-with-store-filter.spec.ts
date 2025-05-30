@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildReport;
 let func = common.FuncEnum.CheckReportTopParameters;
-let testId = 'e__report-fraction-can-not-use-logic-parameter-with-store-filter';
+let testId = 'e__report-fraction-cannot-use-type-parameter-with-store-filter';
 
 test('1', async t => {
   let errors: BmError[];
@@ -65,7 +65,7 @@ test('1', async t => {
 
   t.is(
     errors[0].title,
-    common.ErTitleEnum.FRACTION_CAN_NOT_USE_LOGIC_PARAMETER_WITH_STORE_FILTER
+    common.ErTitleEnum.FRACTION_CANNOT_USE_TYPE_PARAMETER_WITH_STORE_FILTER
   );
   t.is(errors[0].lines[0].line, 8);
 });

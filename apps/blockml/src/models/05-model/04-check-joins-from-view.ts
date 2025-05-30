@@ -30,7 +30,7 @@ export function checkJoinsFromView(
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.FROM_VIEW_AND_JOIN_VIEW,
-            message: `one Join can not contain both "${common.ParameterEnum.FromView}" and "${common.ParameterEnum.JoinView}" parameters at the same time`,
+            message: `one Join cannot contain both "${common.ParameterEnum.FromView}" and "${common.ParameterEnum.JoinView}" parameters at the same time`,
             lines: [
               {
                 line: j.from_view_line_num,

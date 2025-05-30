@@ -103,7 +103,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                 item.errors.push(
                   new BmError({
                     title: common.ErTitleEnum.UNKNOWN_DIMENSION_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Dimension} in ${x.fileExt} file`,
+                    message: `parameter "${parameter}" cannot be used with ${common.FieldClassEnum.Dimension} in ${x.fileExt} file`,
                     lines: [
                       {
                         line: field[
@@ -137,7 +137,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                 item.errors.push(
                   new BmError({
                     title: common.ErTitleEnum.UNKNOWN_TIME_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Time}`,
+                    message: `parameter "${parameter}" cannot be used with ${common.FieldClassEnum.Time}`,
                     lines: [
                       {
                         line: field[
@@ -194,7 +194,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                 item.errors.push(
                   new BmError({
                     title: common.ErTitleEnum.UNKNOWN_MEASURE_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Measure} in ${x.fileExt} file`,
+                    message: `parameter "${parameter}" cannot be used with ${common.FieldClassEnum.Measure} in ${x.fileExt} file`,
                     lines: [
                       {
                         line: field[
@@ -229,7 +229,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                 item.errors.push(
                   new BmError({
                     title: common.ErTitleEnum.UNKNOWN_CALCULATION_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Calculation}`,
+                    message: `parameter "${parameter}" cannot be used with ${common.FieldClassEnum.Calculation}`,
                     lines: [
                       {
                         line: field[
@@ -302,7 +302,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                 item.errors.push(
                   new BmError({
                     title: common.ErTitleEnum.UNKNOWN_FILTER_PARAMETER,
-                    message: `parameter "${parameter}" can not be used with ${common.FieldClassEnum.Filter} in ${x.fileExt} file`,
+                    message: `parameter "${parameter}" cannot be used with ${common.FieldClassEnum.Filter} in ${x.fileExt} file`,
                     lines: [
                       {
                         line: field[

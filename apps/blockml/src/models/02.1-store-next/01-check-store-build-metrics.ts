@@ -46,7 +46,7 @@ export function checkStoreBuildMetrics(
           title:
             common.ErTitleEnum
               .BUILD_METRICS_AND_REQUIRED_FIELDS_DO_NOT_WORK_TOGETHER,
-          message: `${common.ParameterEnum.BuildMetrics} can not be used in store when there are fields with "required" set to true`,
+          message: `${common.ParameterEnum.BuildMetrics} cannot be used in store when there are fields with "required" set to true`,
           lines: [
             {
               line: x.build_metrics_line_num,
@@ -95,7 +95,7 @@ export function checkStoreBuildMetrics(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.UNKNOWN_BUILD_METRIC_PARAMETER,
-                message: `parameter "${parameter}" can not be used in ${common.ParameterEnum.BuildMetrics} element`,
+                message: `parameter "${parameter}" cannot be used in ${common.ParameterEnum.BuildMetrics} element`,
                 lines: [
                   {
                     line: buildMetric[

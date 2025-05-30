@@ -46,7 +46,7 @@ export function checkChartData<T extends types.dzType>(
               new BmError({
                 title: common.ErTitleEnum.TILE_DATA_UNKNOWN_PARAMETER,
                 message:
-                  `parameter "${parameter}" can not be used ` +
+                  `parameter "${parameter}" cannot be used ` +
                   'inside Tile Data',
                 lines: [
                   {
@@ -75,7 +75,7 @@ export function checkChartData<T extends types.dzType>(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.TILE_DATA_UNEXPECTED_LIST,
-                message: `parameter "${parameter}" can not be a List`,
+                message: `parameter "${parameter}" cannot be a List`,
                 lines: [
                   {
                     line: tile.data[
@@ -98,7 +98,7 @@ export function checkChartData<T extends types.dzType>(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.TILE_DATA_UNEXPECTED_DICTIONARY,
-                message: `parameter "${parameter}" can not be a Dictionary`,
+                message: `parameter "${parameter}" cannot be a Dictionary`,
                 lines: [
                   {
                     line: tile.data[

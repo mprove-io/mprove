@@ -37,7 +37,7 @@ export function checkSupportUdfs(
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.UDFS_ARE_NOT_SUPPORTED_FOR_CONNECTION,
-            message: `parameter "udfs" can not be used for connection type "${file.connection.type}"`,
+            message: `parameter "udfs" cannot be used for connection type "${file.connection.type}"`,
             lines: [
               {
                 line: file[

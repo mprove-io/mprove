@@ -6,13 +6,13 @@ import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
-let caller = common.CallerEnum.BuildChartTile;
-let func = common.FuncEnum.CheckTileParameters;
-let testId = 'e__chart-tile-parameter-can-not-have-listen';
+let caller = common.CallerEnum.BuildReport;
+let func = common.FuncEnum.CheckReportTopParameters;
+let testId = 'e__report-fraction-cannot-use-logic-parameter-with-store-filter';
 
 test('1', async t => {
   let errors: BmError[];
-  let entCharts: common.FileChart[];
+  let entReports: common.FileReport[];
 
   let wLogger;
   let configService;
@@ -33,7 +33,7 @@ test('1', async t => {
 
     let connection: common.ProjectConnection = {
       connectionId: 'c1',
-      type: common.ConnectionTypeEnum.PostgreSQL
+      type: common.ConnectionTypeEnum.GoogleApi
     };
 
     await structService.rebuildStruct({
@@ -47,7 +47,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    entCharts = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
+    entReports = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -61,11 +61,11 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entCharts.length, 0);
+  t.is(entReports.length, 0);
 
   t.is(
     errors[0].title,
-    common.ErTitleEnum.CHART_TILE_PARAMETER_CAN_NOT_HAVE_LISTEN
+    common.ErTitleEnum.FRACTION_CANNOT_USE_LOGIC_PARAMETER_WITH_STORE_FILTER
   );
-  t.is(errors[0].lines[0].line, 9);
+  t.is(errors[0].lines[0].line, 8);
 });

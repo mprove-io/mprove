@@ -173,7 +173,7 @@ export class ApiService {
             errorData: {
               message:
                 enums.ErEnum
-                  .CAN_NOT_SWITCH_BRANCH_WHILE_IT_HAS_UNCOMMITTED_CHANGES
+                  .CANNOT_SWITCH_BRANCH_WHILE_IT_HAS_UNCOMMITTED_CHANGES
             },
             isThrow: false
           });

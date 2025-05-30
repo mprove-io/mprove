@@ -66,7 +66,7 @@ export function checkResultFractionTypes(
                 new BmError({
                   title:
                     common.ErTitleEnum.UNKNOWN_FRACTION_TYPES_ELEMENT_PARAMETER,
-                  message: `parameter "${parameter}" can not be used in ${common.ParameterEnum.FractionTypes} element`,
+                  message: `parameter "${parameter}" cannot be used in ${common.ParameterEnum.FractionTypes} element`,
                   lines: [
                     {
                       line: fractionTypesElement[
@@ -244,7 +244,7 @@ export function checkResultFractionTypes(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.WRONG_CHARS_IN_TYPE,
-                message: `Characters "${typeWrongCharsString}" can not be used for result (only snake_case "a...z0...9_" is allowed)`,
+                message: `Characters "${typeWrongCharsString}" cannot be used for result (only snake_case "a...z0...9_" is allowed)`,
                 lines: [
                   {
                     line: frType.typeLineNums[0],

@@ -6,7 +6,7 @@ import { interfaces } from '~backend/barrels/interfaces';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTest } from '~backend/functions/prepare-test';
 
-let testId = 'backend-delete-member__admin-can-not-delete-himself';
+let testId = 'backend-delete-member__admin-cannot-delete-himself';
 
 let traceId = testId;
 
@@ -104,6 +104,6 @@ test('1', async t => {
 
   t.is(
     resp.info.error.message,
-    common.ErEnum.BACKEND_ADMIN_CAN_NOT_DELETE_HIMSELF
+    common.ErEnum.BACKEND_ADMIN_CANNOT_DELETE_HIMSELF
   );
 });

@@ -42,7 +42,7 @@ export function checkReportRowUnknownParams(
                 item.errors.push(
                   new BmError({
                     title: common.ErTitleEnum.UNKNOWN_PARAMETER,
-                    message: `parameter "${parameter}" can not be used inside Parameter`,
+                    message: `parameter "${parameter}" cannot be used inside Parameter`,
                     lines: [
                       {
                         line: param[
@@ -70,7 +70,7 @@ export function checkReportRowUnknownParams(
                 item.errors.push(
                   new BmError({
                     title: common.ErTitleEnum.UNEXPECTED_LIST_IN_PARAMETERS,
-                    message: `parameter "${parameter}" can not be a list`,
+                    message: `parameter "${parameter}" cannot be a list`,
                     lines: [
                       {
                         line: param[
@@ -98,7 +98,7 @@ export function checkReportRowUnknownParams(
                   new BmError({
                     title:
                       common.ErTitleEnum.UNEXPECTED_DICTIONARY_IN_PARAMETERS,
-                    message: `parameter "${parameter}" can not be a dictionary`,
+                    message: `parameter "${parameter}" cannot be a dictionary`,
                     lines: [
                       {
                         line: param[

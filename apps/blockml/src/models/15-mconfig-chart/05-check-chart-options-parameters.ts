@@ -45,7 +45,7 @@ export function checkChartOptionsParameters<T extends types.dcrType>(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.OPTIONS_UNKNOWN_PARAMETER,
-                message: `parameter "${parameter}" can not be used inside options`,
+                message: `parameter "${parameter}" cannot be used inside options`,
                 lines: [
                   {
                     line: tile.options[
@@ -73,7 +73,7 @@ export function checkChartOptionsParameters<T extends types.dcrType>(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.OPTIONS_UNEXPECTED_LIST,
-                message: `parameter "${parameter}" can not be a list`,
+                message: `parameter "${parameter}" cannot be a list`,
                 lines: [
                   {
                     line: tile.options[
@@ -97,7 +97,7 @@ export function checkChartOptionsParameters<T extends types.dcrType>(
             item.errors.push(
               new BmError({
                 title: common.ErTitleEnum.OPTIONS_UNEXPECTED_DICTIONARY,
-                message: `parameter "${parameter}" can not be a dictionary`,
+                message: `parameter "${parameter}" cannot be a dictionary`,
                 lines: [
                   {
                     line: tile.options[

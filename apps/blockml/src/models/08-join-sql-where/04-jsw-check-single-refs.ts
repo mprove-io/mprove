@@ -65,7 +65,7 @@ export function jswCheckSingleRefs(
               new BmError({
                 title: common.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_FILTER,
                 message:
-                  `"${common.ParameterEnum.SqlWhere}" can not reference filters. ` +
+                  `"${common.ParameterEnum.SqlWhere}" cannot reference filters. ` +
                   `Found referencing "${reference}".`,
                 lines: [
                   {
@@ -84,7 +84,7 @@ export function jswCheckSingleRefs(
               new BmError({
                 title: common.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_MEASURE,
                 message:
-                  `"${common.ParameterEnum.SqlWhere}" can not reference measures. ` +
+                  `"${common.ParameterEnum.SqlWhere}" cannot reference measures. ` +
                   `Found referencing "${reference}".`,
                 lines: [
                   {
@@ -103,7 +103,7 @@ export function jswCheckSingleRefs(
               new BmError({
                 title: common.ErTitleEnum.JOIN_SQL_WHERE_REFS_MODEL_CALCULATION,
                 message:
-                  `"${common.ParameterEnum.SqlWhere}" can not reference calculations. ` +
+                  `"${common.ParameterEnum.SqlWhere}" cannot reference calculations. ` +
                   `Found referencing "${reference}".`,
                 lines: [
                   {

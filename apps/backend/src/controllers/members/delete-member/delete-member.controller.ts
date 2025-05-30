@@ -60,7 +60,7 @@ export class DeleteMemberController {
 
     if (user.userId === memberId) {
       throw new common.ServerError({
-        message: common.ErEnum.BACKEND_ADMIN_CAN_NOT_DELETE_HIMSELF
+        message: common.ErEnum.BACKEND_ADMIN_CANNOT_DELETE_HIMSELF
       });
     }
 

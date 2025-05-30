@@ -55,7 +55,7 @@ export function checkStoreFractionControlOptions(
           item.errors.push(
             new BmError({
               title: common.ErTitleEnum.UNKNOWN_OPTIONS_ELEMENT_PARAMETER,
-              message: `parameter "${parameter}" can not be used in ${common.ParameterEnum.Options} element`,
+              message: `parameter "${parameter}" cannot be used in ${common.ParameterEnum.Options} element`,
               lines: [
                 {
                   line: option[

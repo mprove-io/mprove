@@ -221,7 +221,7 @@ export function checkFieldDeclaration<T extends types.vsmdrType>(
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.WRONG_FIELD_DECLARATION,
-            message: `${fieldClass} can not be used in fields of ${x.fileExt} file`,
+            message: `${fieldClass} cannot be used in fields of ${x.fileExt} file`,
             lines: [
               {
                 line: Math.min(...fieldKeysLineNums),
