@@ -7,7 +7,7 @@ import {
 import { NavigationEnd, Router } from '@angular/router';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { filter, take, tap } from 'rxjs/operators';
-import { checkNavCharts } from '~front/app/functions/check-nav-charts';
+import { checkNavMain } from '~front/app/functions/check-nav-main';
 import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
@@ -307,7 +307,7 @@ export class BranchSelectComponent {
 
     let urlParts = this.router.url.split('/');
 
-    let navArray = checkNavCharts({
+    let navArray = checkNavMain({
       urlParts: urlParts,
       navArray: [
         common.PATH_ORG,

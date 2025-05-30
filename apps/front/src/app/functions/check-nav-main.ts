@@ -1,6 +1,6 @@
 import { common } from '~front/barrels/common';
 
-export function checkNavCharts(item: {
+export function checkNavMain(item: {
   navArray: string[];
   urlParts: string[];
 }) {

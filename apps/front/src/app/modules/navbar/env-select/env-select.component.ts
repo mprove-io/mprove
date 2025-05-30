@@ -7,7 +7,7 @@ import {
 import { NavigationEnd, Router } from '@angular/router';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { filter, map, take, tap } from 'rxjs/operators';
-import { checkNavCharts } from '~front/app/functions/check-nav-charts';
+import { checkNavMain } from '~front/app/functions/check-nav-main';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery, UserState } from '~front/app/queries/user.query';
@@ -124,7 +124,7 @@ export class EnvSelectComponent {
 
     let urlParts = this.router.url.split('/');
 
-    let navArray = checkNavCharts({
+    let navArray = checkNavMain({
       urlParts: urlParts,
       navArray: [
         common.PATH_ORG,
