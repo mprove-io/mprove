@@ -1,9 +1,9 @@
 <div
-  class="custom-header ml-[6px] flex h-full flex-row items-center justify-center font-semibold"
+  class="custom-header flex h-full flex-row items-center justify-center font-semibold"
 >
-  <div *ngIf="isRunning === false"> Info </div>
+  <div *ngIf="isRunning === false" class="ml-[6px]">Info</div>
 
-  <div *ngIf="isRunning === true" class="relative h-9 w-9">
+  <div *ngIf="isRunning === true" class="relative ml-[25px] flex h-9 w-full">
     <ngx-spinner
       [name]="spinnerName"
       color="#0084d1"

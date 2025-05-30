@@ -67,7 +67,7 @@ export class StatusRendererComponent implements ICellRendererAngularComp {
   }
 
   updateSpinner() {
-    if (this.isRunning) {
+    if (this.isRunning === true) {
       this.spinner.show(this.spinnerName);
     } else {
       this.spinner.hide(this.spinnerName);
