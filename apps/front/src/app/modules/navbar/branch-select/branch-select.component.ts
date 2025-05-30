@@ -288,11 +288,18 @@ export class BranchSelectComponent {
   }
 
   branchChange() {
-    this.hideBranchSelect();
-
     let newSelectedBranchItem = this.branchesList.find(
       x => x.extraId === this.selectedBranchExtraId
     );
+
+    let nav = this.navQuery.getValue();
+
+    if (
+      (nav.isRepoProd === true && newSelectedBranchItem.isRepoProd === false) ||
+      (nav.isRepoProd === false && newSelectedBranchItem.isRepoProd === true)
+    ) {
+      this.hideBranchSelect();
+    }
 
     let userId;
     this.userQuery.userId$

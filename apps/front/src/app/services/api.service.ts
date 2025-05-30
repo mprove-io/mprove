@@ -21,6 +21,7 @@ import { NavQuery, NavState } from '../queries/nav.query';
 import { ReportsQuery } from '../queries/reports.query';
 import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
+import { UserQuery } from '../queries/user.query';
 import { AuthService } from './auth.service';
 import { MyDialogService } from './my-dialog.service';
 import { NavigateService } from './navigate.service';
@@ -30,6 +31,7 @@ export class ApiService {
   constructor(
     private router: Router,
     private navQuery: NavQuery,
+    private userQuery: UserQuery,
     private authHttpClient: HttpClient,
     private authService: AuthService,
     private spinner: NgxSpinnerService,
@@ -163,17 +165,51 @@ export class ApiService {
         errorData.response.body.info.error.originalError?.message ===
           common.ErEnum.DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH
       ) {
-        let currentBranchId =
-          errorData.response.body.info.error.originalError.data.currentBranch;
-
         setTimeout(() => {
-          this.navigateService.navigateToFiles(currentBranchId);
+          let nav = this.navQuery.getValue();
+
+          let repoId =
+            nav.isRepoProd === true
+              ? common.PROD_REPO_ID
+              : this.userQuery.getValue().userId;
+
+          let arStart = [
+            common.PATH_ORG,
+            nav.orgId,
+            common.PATH_PROJECT,
+            nav.projectId,
+            common.PATH_REPO,
+            repoId
+          ];
+
+          let arStartStr = arStart.join('/');
+
+          let arNext = [
+            ...arStart,
+            common.PATH_BRANCH,
+            errorData.response.body.info.error.originalError.data.currentBranch,
+            common.PATH_ENV,
+            nav.envId,
+            common.PATH_FILES,
+            common.PATH_FILE,
+            common.LAST_SELECTED_FILE_ID
+          ];
+
+          this.router
+            .navigateByUrl(arStartStr, { skipLocationChange: true })
+            .then(() => {
+              this.router.navigate(arNext, {
+                queryParams: {
+                  panel: common.PanelEnum.Tree
+                }
+              });
+            });
 
           this.myDialogService.showError({
             errorData: {
               message:
                 enums.ErEnum
-                  .CANNOT_SWITCH_BRANCH_WHILE_IT_HAS_UNCOMMITTED_CHANGES
+                  .CANNOT_SWITCH_BRANCH_WHILE_SELECTED_REPO_HAS_UNCOMMITTED_CHANGES
             },
             isThrow: false
           });
