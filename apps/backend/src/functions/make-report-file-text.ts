@@ -117,51 +117,6 @@ export function makeReportFileText(item: {
 
                       let newValue = mconfigControl.value;
 
-                      // let reg = common.MyRegex.CAPTURE_S_REF();
-
-                      // let r;
-
-                      // // let refError;
-
-                      // while ((r = reg.exec(newValue))) {
-                      //   let reference = r[1];
-
-                      //   let target: any;
-
-                      //   if (reference === 'METRICS_DATE_FROM') {
-                      //     target = getYYYYMMDDCurrentDateByTimezone({
-                      //       timezone: timezone,
-                      //       deltaDays: -1
-                      //     });
-                      //   } else if (reference === 'METRICS_DATE_TO') {
-                      //     target = getYYYYMMDDCurrentDateByTimezone({
-                      //       timezone: timezone,
-                      //       deltaDays: +1
-                      //     });
-                      //   } else if (reference === 'DATE_TODAY') {
-                      //     target = getYYYYMMDDCurrentDateByTimezone({
-                      //       timezone: timezone,
-                      //       deltaDays: 0
-                      //     });
-                      //   } else if (
-                      //     reference === 'PROJECT_CONFIG_CASE_SENSITIVE'
-                      //   ) {
-                      //     target = caseSensitiveStringFilters;
-                      //     // } else if (reference === 'ENV_GA_PROPERTY_ID_1') { // TODO:
-                      //     //   target = '...';
-                      //   } else {
-                      //     target = null;
-                      //     // refError = `Unknown reference in store.${storeParam}: $${reference}`;
-                      //     // break;
-                      //   }
-
-                      // newValue = common.MyRegex.replaceSRefs(
-                      //   newValue,
-                      //   reference,
-                      //   target
-                      // );
-                      // }
-
                       newFileControl.value =
                         newFileControl.controlClass ===
                           common.ControlClassEnum.Switch &&

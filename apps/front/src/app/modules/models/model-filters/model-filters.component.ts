@@ -38,7 +38,7 @@ export class ModelFiltersComponent {
 
   fractionUpdate(
     filterExtended: common.FilterX,
-    extendedFilterIndex: number, // TODO: check why index is different from filters index (store)
+    extendedFilterIndex: number,
     eventFractionUpdate: interfaces.EventFractionUpdate
   ) {
     let newMconfig = this.structService.makeMconfig();

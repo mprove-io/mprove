@@ -181,16 +181,12 @@ export class RowComponent {
                       .map(f => f.fieldId)
                       .indexOf(filter.fieldId) > -1
             )
-            // .sort((a, b) => // TODO: sort by store group and id
-            //   a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
-            // )
             .map(filter => {
               let parameter = this.reportSelectedNode.data.parameters.find(
                 y => y.apply_to === filter.fieldId
               );
 
               return Object.assign({}, filter, {
-                // TODO: parameter?
                 listen: parameter?.listen
               } as FilterX2);
             });

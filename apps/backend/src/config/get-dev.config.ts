@@ -109,10 +109,6 @@ export function getDevConfig(envFilePath: any) {
       (process.env.BACKEND_REGISTER_ONLY_INVITED_USERS ||
         envFile.BACKEND_REGISTER_ONLY_INVITED_USERS)
     ),
-    //
-    // sendEmail: <common.BoolEnum>(
-    //   (process.env.BACKEND_SEND_EMAIL || envFile.BACKEND_SEND_EMAIL)
-    // ), // TODO: create sendEmail logic (do not send if sendEmail false)
 
     hostUrl: process.env.BACKEND_HOST_URL || envFile.BACKEND_HOST_URL,
 

@@ -144,8 +144,6 @@ export function makeDashboardFileText(item: {
                             reference === 'PROJECT_CONFIG_CASE_SENSITIVE'
                           ) {
                             target = caseSensitiveStringFilters;
-                            // } else if (reference === 'ENV_GA_PROPERTY_ID_1') { // TODO:
-                            //   target = '...';
                           } else {
                             target = null;
                             // refError = `Unknown reference in store.${storeParam}: $${reference}`;

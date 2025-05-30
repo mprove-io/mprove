@@ -197,8 +197,6 @@ export class StoreService {
                 });
               } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
                 target = caseSensitiveStringFilters;
-                // } else if (reference === 'ENV_GA_PROPERTY_ID_1') { // TODO:
-                //   target = '...';
               } else {
                 target = null;
                 // refError = `Unknown reference in store.${storeParam}: $${reference}`;
@@ -335,10 +333,6 @@ export class StoreService {
         );
       } else if (reference === 'QUERY_TIMEZONE') {
         target = mconfig.timezone;
-        // } else if (reference === 'ENV_GA_PROPERTY_ID_1') {
-        //   target = '...';
-        // } else if (reference === 'ENV_GA_PROPERTY_ID_2') {
-        //   target = '...';
       } else {
         refError = `Unknown reference in store.${storeParam}: $${reference}`;
         break;
@@ -405,8 +399,6 @@ ${inputSub}
         target = null;
       } else if (reference === 'STORE_FIELDS') {
         target = JSON.stringify(store.fields);
-        // } else if (reference === 'ENV_GA_PROPERTY_ID_1') {
-        //   target = '...';
       } else {
         refError = `Unknown reference in store.${common.ParameterEnum.Response}: $${reference}`;
         break;

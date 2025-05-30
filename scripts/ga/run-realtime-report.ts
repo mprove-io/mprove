@@ -19,6 +19,7 @@ async function runRealtimeReport() {
     const accessToken = await runRealtimeReportGetAccessToken();
 
     const propertyId = process.env.PROPERTY_ID;
+
     const response = await axios.post(
       `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runRealtimeReport`,
       {
