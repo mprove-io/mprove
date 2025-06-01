@@ -31,6 +31,7 @@ export * from './file-project-conf';
 export * from './file-report';
 export * from './file-report-row';
 export * from './file-report-row-parameter';
+export * from './file-mod';
 export * from './file-store';
 export * from './file-store-build-metric';
 export * from './file-store-field-group';

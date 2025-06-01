@@ -65,7 +65,7 @@ test('1', async t => {
     });
   }
 
-  t.is(errors.length, 2);
+  t.is(errors.length, 3);
   t.is(filesAny.length, 1);
 
   t.is(errors[0].title, common.ErTitleEnum.CONNECTION_TYPE_MISMATCH);
@@ -73,4 +73,7 @@ test('1', async t => {
 
   t.is(errors[1].title, common.ErTitleEnum.CONNECTION_TYPE_MISMATCH);
   t.is(errors[1].lines[0].line, 2);
+
+  t.is(errors[2].title, common.ErTitleEnum.CONNECTION_TYPE_MISMATCH);
+  t.is(errors[2].lines[0].line, 2);
 });

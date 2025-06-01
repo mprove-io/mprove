@@ -233,6 +233,7 @@ export class RebuildStructService {
 
     let views: common.FileView[];
     let models: common.FileModel[];
+    let mods: common.FileMod[];
     let stores: common.FileStore[];
     let reports: common.FileReport[];
     let dashboards: common.FileDashboard[];
@@ -251,9 +252,10 @@ export class RebuildStructService {
       },
       this.cs
     );
+    models = yamlBuildItem.models;
+    mods = yamlBuildItem.mods;
     stores = yamlBuildItem.stores;
     dashboards = yamlBuildItem.dashboards;
-    models = yamlBuildItem.models;
     reports = yamlBuildItem.reports;
     udfs = yamlBuildItem.udfs;
     views = yamlBuildItem.views;

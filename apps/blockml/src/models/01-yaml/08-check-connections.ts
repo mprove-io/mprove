@@ -27,6 +27,7 @@ export function checkConnections(
       [
         common.FileExtensionEnum.View,
         common.FileExtensionEnum.Model,
+        common.FileExtensionEnum.Mod,
         common.FileExtensionEnum.Store
       ].indexOf(file.ext) > -1
     ) {
@@ -79,7 +80,8 @@ export function checkConnections(
       if (
         ([
           common.FileExtensionEnum.View,
-          common.FileExtensionEnum.Model
+          common.FileExtensionEnum.Model,
+          common.FileExtensionEnum.Mod
         ].indexOf(file.ext) > -1 &&
           [
             common.ConnectionTypeEnum.PostgreSQL,

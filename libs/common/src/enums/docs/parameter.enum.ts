@@ -70,7 +70,6 @@ export enum ParameterEnum {
   Relationship = 'relationship',
   ShowFields = 'show_fields',
   Sorts = 'sorts',
-  Source = 'source',
   Sql = 'sql',
   SqlAlwaysWhere = 'sql_always_where',
   SqlAlwaysWhereCalc = 'sql_always_where_calc',
@@ -88,6 +87,11 @@ export enum ParameterEnum {
   Udfs = 'udfs',
   Unnest = 'unnest',
   View = 'view',
+
+  Mod = 'mod',
+  Source = 'source', // TODO: rename field.source
+  File = 'file',
+
   Store = 'store',
   StoreModel = 'store_model',
   StoreFilter = 'store_filter',

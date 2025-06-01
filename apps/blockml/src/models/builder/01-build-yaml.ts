@@ -17,6 +17,7 @@ export function buildYaml(
 ) {
   let views: common.FileView[];
   let models: common.FileModel[];
+  let mods: common.FileMod[];
   let stores: common.FileStore[];
   let reports: common.FileReport[];
   let dashboards: common.FileDashboard[];
@@ -51,6 +52,7 @@ export function buildYaml(
           [
             common.FileExtensionEnum.View,
             common.FileExtensionEnum.Model,
+            common.FileExtensionEnum.Mod,
             common.FileExtensionEnum.Store,
             common.FileExtensionEnum.Report,
             common.FileExtensionEnum.Dashboard,
@@ -127,10 +129,11 @@ export function buildYaml(
     cs
   );
 
+  models = splitFilesResult.models;
+  mods = splitFilesResult.mods;
   stores = splitFilesResult.stores;
   confs = splitFilesResult.confs;
   dashboards = splitFilesResult.dashboards;
-  models = splitFilesResult.models;
   reports = splitFilesResult.reports;
   udfs = splitFilesResult.udfs;
   views = splitFilesResult.views;
@@ -150,6 +153,7 @@ export function buildYaml(
   return {
     views: views,
     models: models,
+    mods: mods,
     stores: stores,
     reports: reports,
     dashboards: dashboards,

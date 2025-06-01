@@ -20,6 +20,7 @@ export function splitFiles(
 
   let views: common.FileView[] = [];
   let models: common.FileModel[] = [];
+  let mods: common.FileMod[] = [];
   let stores: common.FileStore[] = [];
   let dashboards: common.FileDashboard[] = [];
   let reports: common.FileReport[] = [];
@@ -133,6 +134,45 @@ export function splitFiles(
               lines: [
                 {
                   line: file.model_line_num,
+                  name: file.name,
+                  path: file.path
+                }
+              ]
+            })
+          );
+        }
+        break;
+      }
+
+      case common.FileExtensionEnum.Mod: {
+        if (file.name === file.mod + common.FileExtensionEnum.Mod) {
+          let label: string = file.label ? file.label : file.mod;
+          let labelLineNum: number = file.label_line_num
+            ? file.label_line_num
+            : 0;
+
+          delete file.ext;
+          delete file.name;
+          delete file.path;
+
+          let newModOptions: common.FileMod = {
+            name: file.mod,
+            fileName: fileName,
+            filePath: filePath,
+            fileExt: fileExt,
+            label: label,
+            label_line_num: labelLineNum
+          };
+
+          mods.push(Object.assign(file, newModOptions));
+        } else {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.WRONG_MOD_NAME,
+              message: `filename ${file.name} does not match "mod: ${file.mod}"`,
+              lines: [
+                {
+                  line: file.mod_line_num,
                   name: file.name,
                   path: file.path
                 }
@@ -302,6 +342,7 @@ export function splitFiles(
 
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Views, views);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, models);
+  helper.log(cs, caller, func, structId, common.LogTypeEnum.Mods, mods);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Stores, stores);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Reports, reports);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Ds, dashboards);
@@ -320,6 +361,7 @@ export function splitFiles(
   return {
     views: views,
     models: models,
+    mods: mods,
     stores: stores,
     reports: reports,
     dashboards: dashboards,

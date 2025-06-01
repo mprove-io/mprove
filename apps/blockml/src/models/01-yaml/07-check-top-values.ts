@@ -63,6 +63,7 @@ export function checkTopValues(
           [
             common.ParameterEnum.View.toString(),
             common.ParameterEnum.Model.toString(),
+            common.ParameterEnum.Mod.toString(),
             common.ParameterEnum.Store.toString(),
             common.ParameterEnum.Report.toString(),
             common.ParameterEnum.Dashboard.toString(),
