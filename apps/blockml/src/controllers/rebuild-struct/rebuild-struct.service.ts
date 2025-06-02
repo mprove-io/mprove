@@ -335,6 +335,16 @@ export class RebuildStructService {
       this.cs
     );
 
+    mods = barBuilder.buildModStart(
+      {
+        mods: mods,
+        structId: item.structId,
+        errors: errors,
+        caller: common.CallerEnum.BuildModStart
+      },
+      this.cs
+    );
+
     stores = barBuilder.buildStoreStart(
       {
         stores: stores,

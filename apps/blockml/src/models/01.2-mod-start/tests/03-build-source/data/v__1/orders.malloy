@@ -1,0 +1,12 @@
+source: orders_table is c1_postgres.table('ecommerce.orders') extend {}
+
+source: orders is orders_table extend {
+  primary_key: order_id
+  
+  -- dimension: order_id
+  -- dimension: status
+  -- dimension: user_id
+  -- dimension: created_at
+
+  measure: orders_count is count()
+}

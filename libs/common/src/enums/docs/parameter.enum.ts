@@ -90,7 +90,7 @@ export enum ParameterEnum {
 
   Mod = 'mod',
   Source = 'source', // TODO: rename field.source
-  File = 'file',
+  Location = 'location',
 
   Store = 'store',
   StoreModel = 'store_model',
