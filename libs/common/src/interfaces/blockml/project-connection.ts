@@ -11,4 +11,11 @@ export class ProjectConnection {
   @IsOptional()
   @IsString()
   googleCloudProject?: string;
+
+  postgresHost?: string;
+  postgresPort?: number;
+  postgresUsername?: string;
+  postgresPassword?: string;
+  postgresDatabaseName?: string;
+  postgresConnectionString?: string;
 }

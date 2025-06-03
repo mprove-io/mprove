@@ -335,9 +335,13 @@ export class RebuildStructService {
       this.cs
     );
 
-    mods = barBuilder.buildModStart(
+    // console.log('files');
+    // console.log(item.files);
+
+    mods = await barBuilder.buildModStart(
       {
         mods: mods,
+        files: item.files,
         structId: item.structId,
         errors: errors,
         caller: common.CallerEnum.BuildModStart

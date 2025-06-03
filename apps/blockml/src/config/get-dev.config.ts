@@ -54,6 +54,30 @@ export function getDevConfig(envFilePath: any) {
     blockmlRabbitProtocol:
       process.env.BLOCKML_RABBIT_PROTOCOL || envFile.BLOCKML_RABBIT_PROTOCOL,
 
+    blockmlTestsDwhPostgresHost:
+      process.env.BLOCKML_TESTS_DWH_POSTGRES_HOST ||
+      envFile.BLOCKML_TESTS_DWH_POSTGRES_HOST,
+
+    blockmlTestsDwhPostgresPort:
+      process.env.BLOCKML_TESTS_DWH_POSTGRES_PORT ||
+      envFile.BLOCKML_TESTS_DWH_POSTGRES_PORT,
+
+    blockmlTestsDwhPostgresUsername:
+      process.env.BLOCKML_TESTS_DWH_POSTGRES_USERNAME ||
+      envFile.BLOCKML_TESTS_DWH_POSTGRES_USERNAME,
+
+    blockmlTestsDwhPostgresPassword:
+      process.env.BLOCKML_TESTS_DWH_POSTGRES_PASSWORD ||
+      envFile.BLOCKML_TESTS_DWH_POSTGRES_PASSWORD,
+
+    blockmlTestsDwhPostgresDatabaseName:
+      process.env.BLOCKML_TESTS_DWH_POSTGRES_DATABASE_NAME ||
+      envFile.BLOCKML_TESTS_DWH_POSTGRES_DATABASE_NAME,
+
+    blockmlTestsDwhPostgresConnectionString:
+      process.env.BLOCKML_TESTS_DWH_POSTGRES_CONNECTION_STRING ||
+      envFile.BLOCKML_TESTS_DWH_POSTGRES_CONNECTION_STRING,
+
     blockmlLogIsJson: <common.BoolEnum>(
       (process.env.BLOCKML_LOG_IS_JSON || envFile.BLOCKML_LOG_IS_JSON)
     ),

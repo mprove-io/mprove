@@ -2,6 +2,7 @@ import test from 'ava';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
+import { interfaces } from '~blockml/barrels/interfaces';
 import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
@@ -32,8 +33,28 @@ test('1', async t => {
     wLogger = logger;
 
     let connection: common.ProjectConnection = {
-      connectionId: 'c1',
-      type: common.ConnectionTypeEnum.PostgreSQL
+      connectionId: 'c1_postgres',
+      type: common.ConnectionTypeEnum.PostgreSQL,
+      postgresHost: cs.get<interfaces.Config['blockmlTestsDwhPostgresHost']>(
+        'blockmlTestsDwhPostgresHost'
+      ),
+      postgresPort: Number(
+        cs.get<interfaces.Config['blockmlTestsDwhPostgresPort']>(
+          'blockmlTestsDwhPostgresPort'
+        )
+      ),
+      postgresUsername: cs.get<
+        interfaces.Config['blockmlTestsDwhPostgresUsername']
+      >('blockmlTestsDwhPostgresUsername'),
+      postgresPassword: cs.get<
+        interfaces.Config['blockmlTestsDwhPostgresPassword']
+      >('blockmlTestsDwhPostgresPassword'),
+      postgresDatabaseName: cs.get<
+        interfaces.Config['blockmlTestsDwhPostgresDatabaseName']
+      >('blockmlTestsDwhPostgresDatabaseName'),
+      postgresConnectionString: cs.get<
+        interfaces.Config['blockmlTestsDwhPostgresConnectionString']
+      >('blockmlTestsDwhPostgresConnectionString')
     };
 
     await structService.rebuildStruct({

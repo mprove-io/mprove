@@ -45,6 +45,24 @@ export class Config {
   @IsString()
   blockmlRabbitPort?: string;
 
+  @IsString()
+  blockmlTestsDwhPostgresHost?: string;
+
+  @IsString()
+  blockmlTestsDwhPostgresPort?: string;
+
+  @IsString()
+  blockmlTestsDwhPostgresUsername?: string;
+
+  @IsString()
+  blockmlTestsDwhPostgresPassword?: string;
+
+  @IsString()
+  blockmlTestsDwhPostgresDatabaseName?: string;
+
+  @IsString()
+  blockmlTestsDwhPostgresConnectionString?: string;
+
   @IsEnum(common.BoolEnum)
   blockmlLogIsJson?: common.BoolEnum;
 

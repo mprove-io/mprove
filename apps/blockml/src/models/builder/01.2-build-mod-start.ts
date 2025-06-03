@@ -4,9 +4,10 @@ import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-export function buildModStart(
+export async function buildModStart(
   item: {
     mods: common.FileMod[];
+    files: common.BmlFile[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -15,9 +16,10 @@ export function buildModStart(
 ) {
   let mods = item.mods;
 
-  mods = barModStart.buildSource(
+  mods = await barModStart.buildSource(
     {
       mods: mods,
+      files: item.files,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
