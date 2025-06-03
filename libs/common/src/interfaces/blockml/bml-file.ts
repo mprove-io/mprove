@@ -8,5 +8,8 @@ export class BmlFile {
   path: string;
 
   @IsString()
+  blockmlPath?: string;
+
+  @IsString()
   content: string;
 }

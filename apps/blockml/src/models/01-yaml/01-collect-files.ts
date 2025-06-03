@@ -41,6 +41,8 @@ export async function collectFiles(
 
         let relativePath: string = path.replace(rpReg, '/');
         let absolutePath: string = item.dir + '/' + relativePath;
+        // console.log('absolutePath');
+        // console.log(absolutePath);
 
         let { content } = await nodeCommon.readFileCheckSize({
           filePath: absolutePath,

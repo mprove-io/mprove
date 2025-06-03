@@ -46,6 +46,9 @@ export class Config {
   blockmlRabbitPort?: string;
 
   @IsString()
+  blockmlData?: string;
+
+  @IsString()
   blockmlTestsDwhPostgresHost?: string;
 
   @IsString()

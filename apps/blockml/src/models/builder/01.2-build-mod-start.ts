@@ -8,6 +8,7 @@ export async function buildModStart(
   item: {
     mods: common.FileMod[];
     files: common.BmlFile[];
+    tempDir: string;
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -19,7 +20,7 @@ export async function buildModStart(
   mods = await barModStart.buildSource(
     {
       mods: mods,
-      files: item.files,
+      tempDir: item.tempDir,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller

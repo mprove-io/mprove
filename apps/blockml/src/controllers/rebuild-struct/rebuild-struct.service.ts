@@ -1,5 +1,8 @@
+import * as path from 'path';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as fse from 'fs-extra';
+import { forEachSeries } from 'p-iteration';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { barBuilder } from '~blockml/barrels/bar-builder';
 import { barSpecial } from '~blockml/barrels/bar-special';
@@ -184,6 +187,9 @@ export class RebuildStructService {
 
     let files: common.BmlFile[] = [];
 
+    // console.log('mproveDir');
+    // console.log(mproveDir);
+
     if (common.isDefined(mproveDir)) {
       files = await barYaml.collectFiles(
         {
@@ -292,6 +298,19 @@ export class RebuildStructService {
       };
     }
 
+    let blockmlDataPath =
+      this.cs.get<interfaces.Config['blockmlData']>('blockmlData');
+
+    let tempDir = `${blockmlDataPath}/${Date.now()}-${common.makeId()}`;
+
+    let malloyFiles = item.files.filter(y => y.name.endsWith('.malloy'));
+
+    await forEachSeries(malloyFiles, async file => {
+      file.blockmlPath = `${tempDir}/${file.path}`;
+      await fse.ensureDir(path.dirname(file.blockmlPath));
+      await fse.writeFile(file.blockmlPath, file.content);
+    });
+
     if (common.isDefined(item.overrideTimezone)) {
       projectConfig.default_timezone = item.overrideTimezone;
     }
@@ -342,6 +361,7 @@ export class RebuildStructService {
       {
         mods: mods,
         files: item.files,
+        tempDir: tempDir,
         structId: item.structId,
         errors: errors,
         caller: common.CallerEnum.BuildModStart
@@ -686,6 +706,8 @@ export class RebuildStructService {
       },
       this.cs
     );
+
+    fse.remove(tempDir);
 
     return {
       errors: errors,

@@ -77,6 +77,7 @@
     "clean:dwh-pg": "rm -rf mprove_data/dwh-postgres/*",
     "clean:dwh-ch": "rm -rf mprove_data/dwh-clickhouse/* mprove_data/dwh-clickhouse-logs/*",
     "clean:dwh-mysql": "rm -rf mprove_data/dwh-mysql/*",
+    "clean:blockml-data": "rm -rf mprove_data/blockml-data/*",
     "clean:blockml-logs": "rm -rf mprove_data/blockml-logs/*",
     "clean:mcli-repos": "rm -rf mprove_data/mcli-repos/*",
     "clean:angular": "rm -rf .angular/*",

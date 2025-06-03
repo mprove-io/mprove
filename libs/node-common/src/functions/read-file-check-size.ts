@@ -2,7 +2,7 @@ import * as fse from 'fs-extra';
 import { common } from '~node-common/barrels/common';
 
 export async function readFileCheckSize(item: {
-  filePath: string;
+  filePath: string | URL;
   getStat: boolean;
 }) {
   let { filePath, getStat } = item;

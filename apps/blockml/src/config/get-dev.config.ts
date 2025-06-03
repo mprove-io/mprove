@@ -54,6 +54,8 @@ export function getDevConfig(envFilePath: any) {
     blockmlRabbitProtocol:
       process.env.BLOCKML_RABBIT_PROTOCOL || envFile.BLOCKML_RABBIT_PROTOCOL,
 
+    blockmlData: process.env.BLOCKML_DATA || envFile.BLOCKML_DATA,
+
     blockmlTestsDwhPostgresHost:
       process.env.BLOCKML_TESTS_DWH_POSTGRES_HOST ||
       envFile.BLOCKML_TESTS_DWH_POSTGRES_HOST,

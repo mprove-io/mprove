@@ -1,25 +1,27 @@
+import * as path from 'path';
 import { PostgresConnection } from '@malloydata/db-postgres';
-import { Model, ModelString, Runtime, URLReader } from '@malloydata/malloy';
+import { Model, Runtime } from '@malloydata/malloy';
 import { ConfigService } from '@nestjs/config';
 import { forEachSeries } from 'p-iteration';
 import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
+import { nodeCommon } from '~blockml/barrels/node-common';
 import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.BuildSource;
 
 export async function buildSource(
   item: {
-    files: common.BmlFile[];
     mods: common.FileMod[];
     errors: BmError[];
+    tempDir: string;
     structId: string;
     caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId, files } = item;
+  let { caller, structId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newMods: common.FileMod[] = [];
@@ -41,21 +43,47 @@ export async function buildSource(
           })
         : undefined;
 
-    let urlReader: URLReader = { readURL: async (url: URL) => null };
+    let modelPath = x.location;
+
+    let fullModelPath = `${item.tempDir}/${modelPath}`;
+    let modelUrl = new URL('file://' + fullModelPath);
+    let importBaseURL = new URL('file://' + path.dirname(fullModelPath) + '/');
+
+    let urlReader = {
+      readURL: async (url: URL) =>
+        (
+          await nodeCommon.readFileCheckSize({
+            filePath: url,
+            getStat: false
+          })
+        ).content
+      // await fse.readFile(url, 'utf-8')
+    };
 
     let runtime = new Runtime({ urlReader, connection });
 
-    let modelString: ModelString = files.find(
-      file => file.path === x.location
-    ).content;
+    // let mm = await Model.getModelMaterializer(
+    //   runtime,
+    //   importBaseURL,
+    //   modelUrl,
+    //   modelPath
+    // );
+
+    let mm = runtime.loadModel(modelUrl, { importBaseURL });
+
+    console.log('mm');
+    console.log(mm);
 
     let start = Date.now();
-    let mod: Model = await runtime.getModel(modelString);
+
+    let malloyModel: Model = await runtime.getModel(modelUrl);
+
     let end = Date.now();
     let diff = end - start;
 
-    // console.log('diff');
-    // console.log(diff);
+    console.log('diff');
+    console.log(diff);
+
     // console.log('mod');
     // console.dir(mod, { depth: null });
 

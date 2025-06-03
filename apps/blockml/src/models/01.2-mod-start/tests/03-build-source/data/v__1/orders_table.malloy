@@ -1,0 +1,1 @@
+source: orders_table is c1_postgres.table('ecommerce.orders') extend {}
