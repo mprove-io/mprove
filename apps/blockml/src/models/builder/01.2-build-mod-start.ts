@@ -17,7 +17,7 @@ export async function buildModStart(
 ) {
   let mods = item.mods;
 
-  mods = await barModStart.buildSource(
+  let buildSourceResult = await barModStart.buildSource(
     {
       mods: mods,
       tempDir: item.tempDir,
@@ -28,5 +28,8 @@ export async function buildModStart(
     cs
   );
 
-  return mods;
+  mods = buildSourceResult.mods;
+  let malloyItems = buildSourceResult.malloyItems;
+
+  return { mods: mods, malloyItems: malloyItems };
 }

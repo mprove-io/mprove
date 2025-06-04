@@ -21,4 +21,8 @@ export interface FileMod extends FileBasic {
 
   access_roles?: string[];
   access_roles_line_num?: number;
+
+  //
+
+  // malloySourceSchema?:
 }

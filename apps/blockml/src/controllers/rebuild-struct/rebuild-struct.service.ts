@@ -16,6 +16,7 @@ import { getMproveConfigFile } from '~blockml/functions/get-mprove-config-file';
 import { BmError } from '~blockml/models/bm-error';
 import { PresetsService } from '~blockml/services/presets.service';
 import { RabbitService } from '~blockml/services/rabbit.service';
+import { MalloyItem } from '~common/_index';
 
 @Injectable()
 export class RebuildStructService {
@@ -236,10 +237,11 @@ export class RebuildStructService {
     let presets: common.Preset[] = this.presetsService.getPresets();
 
     let errors: BmError[] = [];
+    let malloyItems: MalloyItem[] = [];
 
+    let mods: common.FileMod[];
     let views: common.FileView[];
     let models: common.FileModel[];
-    let mods: common.FileMod[];
     let stores: common.FileStore[];
     let reports: common.FileReport[];
     let dashboards: common.FileDashboard[];
@@ -357,7 +359,7 @@ export class RebuildStructService {
     // console.log('files');
     // console.log(item.files);
 
-    mods = await barBuilder.buildModStart(
+    let buildModStartResult = await barBuilder.buildModStart(
       {
         mods: mods,
         files: item.files,
@@ -368,6 +370,9 @@ export class RebuildStructService {
       },
       this.cs
     );
+
+    mods = buildModStartResult.mods;
+    malloyItems = buildModStartResult.malloyItems;
 
     stores = barBuilder.buildStoreStart(
       {

@@ -1,6 +1,11 @@
 import * as path from 'path';
 import { PostgresConnection } from '@malloydata/db-postgres';
-import { Model, Runtime } from '@malloydata/malloy';
+import {
+  Model,
+  ModelMaterializer,
+  Runtime,
+  modelDefToModelInfo
+} from '@malloydata/malloy';
 import { ConfigService } from '@nestjs/config';
 import { forEachSeries } from 'p-iteration';
 import { common } from '~blockml/barrels/common';
@@ -8,6 +13,7 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { nodeCommon } from '~blockml/barrels/node-common';
 import { BmError } from '~blockml/models/bm-error';
+import { MalloyItem } from '~common/interfaces/blockml/internal/malloy-item';
 
 let func = common.FuncEnum.BuildSource;
 
@@ -25,11 +31,20 @@ export async function buildSource(
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newMods: common.FileMod[] = [];
+  let malloyItems: MalloyItem[] = [];
 
   await forEachSeries(item.mods, async x => {
     let errorsOnStart = item.errors.length;
 
-    //
+    let connectionModelItem = malloyItems.find(
+      y =>
+        y.connectionId === x.connection.connectionId &&
+        y.location === x.location
+    );
+
+    if (common.isDefined(connectionModelItem)) {
+      return;
+    }
 
     let connection =
       x.connection.type === common.ConnectionTypeEnum.PostgreSQL
@@ -57,26 +72,38 @@ export async function buildSource(
             getStat: false
           })
         ).content
-      // await fse.readFile(url, 'utf-8')
     };
 
     let runtime = new Runtime({ urlReader, connection });
 
-    // let mm = await Model.getModelMaterializer(
-    //   runtime,
-    //   importBaseURL,
-    //   modelUrl,
-    //   modelPath
-    // );
-
-    let mm = runtime.loadModel(modelUrl, { importBaseURL });
-
-    console.log('mm');
-    console.log(mm);
+    let malloyModelMaterializer: ModelMaterializer = runtime.loadModel(
+      modelUrl,
+      { importBaseURL }
+    );
 
     let start = Date.now();
 
     let malloyModel: Model = await runtime.getModel(modelUrl);
+
+    let malloyModelDef = (await malloyModelMaterializer.getModel())._modelDef;
+    let malloyModelInfo = modelDefToModelInfo(malloyModelDef);
+
+    // console.log('malloyModelDef');
+    // console.log(malloyModelDef);
+
+    console.log('malloyModelInfo');
+    console.dir(malloyModelInfo, { depth: null });
+
+    let newConnectionModelItem: MalloyItem = {
+      location: x.location,
+      connectionId: x.connection.connectionId,
+      malloyModel: malloyModel,
+      malloyModelMaterializer: malloyModelMaterializer,
+      malloyModelDef: malloyModelDef,
+      malloyModelInfo: malloyModelInfo
+    };
+
+    malloyItems.push(newConnectionModelItem);
 
     let end = Date.now();
     let diff = end - start;
@@ -84,8 +111,11 @@ export async function buildSource(
     console.log('diff');
     console.log(diff);
 
-    // console.log('mod');
-    // console.dir(mod, { depth: null });
+    // console.log('malloyModel');
+    // console.dir(malloyModel, { depth: null });
+
+    // console.log('malloyModelMaterializer');
+    // console.log(malloyModelMaterializer);
 
     if (errorsOnStart === item.errors.length) {
       newMods.push(x);
@@ -102,5 +132,5 @@ export async function buildSource(
   );
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Mods, newMods);
 
-  return newMods;
+  return { mods: newMods, malloyItems: malloyItems };
 }
