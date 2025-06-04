@@ -63,9 +63,6 @@ export class Config {
   @IsString()
   blockmlTestsDwhPostgresDatabaseName?: string;
 
-  @IsString()
-  blockmlTestsDwhPostgresConnectionString?: string;
-
   @IsEnum(common.BoolEnum)
   blockmlLogIsJson?: common.BoolEnum;
 

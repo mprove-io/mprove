@@ -35,26 +35,23 @@ test('1', async t => {
     let connection: common.ProjectConnection = {
       connectionId: 'c1_postgres',
       type: common.ConnectionTypeEnum.PostgreSQL,
-      postgresHost: cs.get<interfaces.Config['blockmlTestsDwhPostgresHost']>(
+      host: cs.get<interfaces.Config['blockmlTestsDwhPostgresHost']>(
         'blockmlTestsDwhPostgresHost'
       ),
-      postgresPort: Number(
+      port: Number(
         cs.get<interfaces.Config['blockmlTestsDwhPostgresPort']>(
           'blockmlTestsDwhPostgresPort'
         )
       ),
-      postgresUsername: cs.get<
-        interfaces.Config['blockmlTestsDwhPostgresUsername']
-      >('blockmlTestsDwhPostgresUsername'),
-      postgresPassword: cs.get<
-        interfaces.Config['blockmlTestsDwhPostgresPassword']
-      >('blockmlTestsDwhPostgresPassword'),
-      postgresDatabaseName: cs.get<
+      username: cs.get<interfaces.Config['blockmlTestsDwhPostgresUsername']>(
+        'blockmlTestsDwhPostgresUsername'
+      ),
+      password: cs.get<interfaces.Config['blockmlTestsDwhPostgresPassword']>(
+        'blockmlTestsDwhPostgresPassword'
+      ),
+      databaseName: cs.get<
         interfaces.Config['blockmlTestsDwhPostgresDatabaseName']
-      >('blockmlTestsDwhPostgresDatabaseName'),
-      postgresConnectionString: cs.get<
-        interfaces.Config['blockmlTestsDwhPostgresConnectionString']
-      >('blockmlTestsDwhPostgresConnectionString')
+      >('blockmlTestsDwhPostgresDatabaseName')
     };
 
     await structService.rebuildStruct({

@@ -16,7 +16,7 @@ import { getMproveConfigFile } from '~blockml/functions/get-mprove-config-file';
 import { BmError } from '~blockml/models/bm-error';
 import { PresetsService } from '~blockml/services/presets.service';
 import { RabbitService } from '~blockml/services/rabbit.service';
-import { MalloyItem } from '~common/_index';
+import { MalloyItem, TRIPLE_UNDERSCORE } from '~common/_index';
 
 @Injectable()
 export class RebuildStructService {
@@ -85,7 +85,9 @@ export class RebuildStructService {
       evs: evs,
       connections: connections,
       mproveDir: mproveDir,
-      overrideTimezone: overrideTimezone
+      overrideTimezone: overrideTimezone,
+      projectId: projectId,
+      isTest: false
     });
 
     let apiErrors = barWrapper.wrapErrors({ errors: errors });
@@ -219,7 +221,9 @@ export class RebuildStructService {
       evs: item.evs,
       connections: item.connections,
       mproveDir: mproveDir,
-      overrideTimezone: item.overrideTimezone
+      overrideTimezone: item.overrideTimezone,
+      projectId: undefined,
+      isTest: true
     });
   }
 
@@ -232,6 +236,8 @@ export class RebuildStructService {
     connections: common.ProjectConnection[];
     mproveDir: string;
     overrideTimezone: string;
+    projectId: string;
+    isTest: boolean;
   }) {
     //
     let presets: common.Preset[] = this.presetsService.getPresets();
@@ -300,6 +306,10 @@ export class RebuildStructService {
       };
     }
 
+    if (common.isDefined(item.overrideTimezone)) {
+      projectConfig.default_timezone = item.overrideTimezone;
+    }
+
     let blockmlDataPath =
       this.cs.get<interfaces.Config['blockmlData']>('blockmlData');
 
@@ -308,14 +318,30 @@ export class RebuildStructService {
     let malloyFiles = item.files.filter(y => y.name.endsWith('.malloy'));
 
     await forEachSeries(malloyFiles, async file => {
-      file.blockmlPath = `${tempDir}/${file.path}`;
+      file.blockmlPath = `${tempDir}/${file.path.split(TRIPLE_UNDERSCORE).join('/')}`;
+
       await fse.ensureDir(path.dirname(file.blockmlPath));
       await fse.writeFile(file.blockmlPath, file.content);
     });
 
-    if (common.isDefined(item.overrideTimezone)) {
-      projectConfig.default_timezone = item.overrideTimezone;
-    }
+    // console.log('files');
+    // console.log(item.files);
+
+    let buildModStartResult = await barBuilder.buildModStart(
+      {
+        files: item.files,
+        mods: mods,
+        tempDir: tempDir,
+        projectId: item.projectId,
+        errors: errors,
+        structId: item.structId,
+        caller: common.CallerEnum.BuildModStart
+      },
+      this.cs
+    );
+
+    mods = buildModStartResult.mods;
+    malloyItems = buildModStartResult.malloyItems;
 
     views = barBuilder.buildField(
       {
@@ -355,24 +381,6 @@ export class RebuildStructService {
       },
       this.cs
     );
-
-    // console.log('files');
-    // console.log(item.files);
-
-    let buildModStartResult = await barBuilder.buildModStart(
-      {
-        mods: mods,
-        files: item.files,
-        tempDir: tempDir,
-        structId: item.structId,
-        errors: errors,
-        caller: common.CallerEnum.BuildModStart
-      },
-      this.cs
-    );
-
-    mods = buildModStartResult.mods;
-    malloyItems = buildModStartResult.malloyItems;
 
     stores = barBuilder.buildStoreStart(
       {
@@ -712,7 +720,11 @@ export class RebuildStructService {
       this.cs
     );
 
-    fse.remove(tempDir);
+    if (item.isTest === true) {
+      await fse.remove(tempDir);
+    } else {
+      fse.remove(tempDir);
+    }
 
     return {
       errors: errors,

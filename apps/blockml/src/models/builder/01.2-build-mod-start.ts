@@ -6,9 +6,10 @@ import { BmError } from '~blockml/models/bm-error';
 
 export async function buildModStart(
   item: {
-    mods: common.FileMod[];
     files: common.BmlFile[];
+    mods: common.FileMod[];
     tempDir: string;
+    projectId: string;
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
@@ -21,6 +22,7 @@ export async function buildModStart(
     {
       mods: mods,
       tempDir: item.tempDir,
+      projectId: item.projectId,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller

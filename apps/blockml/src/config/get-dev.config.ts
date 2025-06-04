@@ -76,10 +76,6 @@ export function getDevConfig(envFilePath: any) {
       process.env.BLOCKML_TESTS_DWH_POSTGRES_DATABASE_NAME ||
       envFile.BLOCKML_TESTS_DWH_POSTGRES_DATABASE_NAME,
 
-    blockmlTestsDwhPostgresConnectionString:
-      process.env.BLOCKML_TESTS_DWH_POSTGRES_CONNECTION_STRING ||
-      envFile.BLOCKML_TESTS_DWH_POSTGRES_CONNECTION_STRING,
-
     blockmlLogIsJson: <common.BoolEnum>(
       (process.env.BLOCKML_LOG_IS_JSON || envFile.BLOCKML_LOG_IS_JSON)
     ),

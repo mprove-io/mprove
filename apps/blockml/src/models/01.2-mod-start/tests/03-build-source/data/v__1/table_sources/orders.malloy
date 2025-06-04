@@ -1,4 +1,4 @@
-import './orders_table.malloy';
+source: orders_table is c1_postgres.table('ecommerce.orders') extend {}
 
 source: orders is orders_table extend {
   primary_key: order_id

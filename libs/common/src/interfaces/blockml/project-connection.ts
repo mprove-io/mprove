@@ -12,10 +12,9 @@ export class ProjectConnection {
   @IsString()
   googleCloudProject?: string;
 
-  postgresHost?: string;
-  postgresPort?: number;
-  postgresUsername?: string;
-  postgresPassword?: string;
-  postgresDatabaseName?: string;
-  postgresConnectionString?: string;
+  host?: string;
+  port?: number;
+  username?: string;
+  password?: string;
+  databaseName?: string;
 }

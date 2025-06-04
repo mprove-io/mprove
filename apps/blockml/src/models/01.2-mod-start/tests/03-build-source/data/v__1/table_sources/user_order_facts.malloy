@@ -1,0 +1,13 @@
+import './orders.malloy';
+
+##! experimental{sql_functions}
+source: user_order_facts is orders_table -> {
+  group_by: user_id
+  aggregate: first_order_created_ts is min(sql_number(""" EXTRACT(EPOCH FROM (TIMESTAMP 'epoch' + ${created_at} * INTERVAL '1 second')) """))
+  -- 
+} extend {
+  primary_key: user_id
+
+  -- dimension: user_id
+  -- dimension: first_order_created_ts
+}

@@ -104,11 +104,19 @@ export class BlockmlService {
           )
         });
 
-      connectionsWithFallback = connectionsEnts.map(x => ({
-        connectionId: x.connectionId,
-        type: x.type,
-        googleCloudProject: x.googleCloudProject
-      }));
+      connectionsWithFallback = connectionsEnts.map(
+        x =>
+          <common.ProjectConnection>{
+            connectionId: x.connectionId,
+            type: x.type,
+            googleCloudProject: x.googleCloudProject,
+            host: x.host,
+            port: x.port,
+            username: x.username,
+            password: x.password,
+            databaseName: x.database
+          }
+      );
     }
 
     let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest =

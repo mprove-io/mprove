@@ -20,14 +20,15 @@ let func = common.FuncEnum.BuildSource;
 export async function buildSource(
   item: {
     mods: common.FileMod[];
-    errors: BmError[];
     tempDir: string;
+    projectId: string;
+    errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId } = item;
+  let { caller, structId, projectId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newMods: common.FileMod[] = [];
@@ -49,18 +50,25 @@ export async function buildSource(
     let connection =
       x.connection.type === common.ConnectionTypeEnum.PostgreSQL
         ? new PostgresConnection(x.connection.connectionId, () => ({}), {
-            host: x.connection.postgresHost,
-            port: x.connection.postgresPort,
-            username: x.connection.postgresUsername,
-            password: x.connection.postgresPassword,
-            databaseName: x.connection.postgresDatabaseName,
-            connectionString: x.connection.postgresConnectionString
+            host: x.connection.host,
+            port: x.connection.port,
+            username: x.connection.username,
+            password: x.connection.password,
+            databaseName: x.connection.databaseName
           })
         : undefined;
 
+    // console.log('x.connection');
+    // console.log(x.connection);
+    // console.log('connection');
+    // console.log(connection);
+
     let modelPath = x.location;
 
-    let fullModelPath = `${item.tempDir}/${modelPath}`;
+    let fullModelPath = common.isDefined(projectId)
+      ? `${item.tempDir}/${projectId}/${modelPath}`
+      : `${item.tempDir}/${modelPath}`;
+
     let modelUrl = new URL('file://' + fullModelPath);
     let importBaseURL = new URL('file://' + path.dirname(fullModelPath) + '/');
 

@@ -258,11 +258,19 @@ export class SeedRecordsController {
                 y.projectId === newProject.projectId &&
                 y.envId === prodEnv.envId
             )
-            .map(c => ({
-              connectionId: c.connectionId,
-              type: c.type,
-              googleCloudProject: c.googleCloudProject
-            }));
+            .map(
+              c =>
+                <common.ProjectConnection>{
+                  connectionId: c.connectionId,
+                  type: c.type,
+                  googleCloudProject: c.googleCloudProject,
+                  host: c.host,
+                  port: c.port,
+                  username: c.username,
+                  password: c.password,
+                  databaseName: c.database
+                }
+            );
 
           let {
             struct: devStruct,

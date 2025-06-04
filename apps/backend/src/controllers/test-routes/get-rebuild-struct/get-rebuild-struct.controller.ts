@@ -91,13 +91,25 @@ export class GetRebuildStructController {
         )
       });
 
-    let connectionsWithFallback = connectionsEntsWithFallback.map(x => ({
-      connectionId: x.connectionId,
-      type: x.type,
-      googleCloudProject: x.googleCloudProject
-    }));
+    let connectionsWithFallback: common.ProjectConnection[] =
+      connectionsEntsWithFallback.map(
+        x =>
+          <common.ProjectConnection>{
+            connectionId: x.connectionId,
+            type: x.type,
+            googleCloudProject: x.googleCloudProject,
+            host: x.host,
+            port: x.port,
+            username: x.username,
+            password: x.password,
+            databaseName: x.database
+          }
+      );
 
     // to blockml
+
+    // console.log('connectionsWithFallback');
+    // console.log(connectionsWithFallback);
 
     let rebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest = {
       info: {

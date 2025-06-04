@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class BmlFile {
   @IsString()
@@ -7,6 +7,7 @@ export class BmlFile {
   @IsString()
   path: string;
 
+  @IsOptional()
   @IsString()
   blockmlPath?: string;
 
