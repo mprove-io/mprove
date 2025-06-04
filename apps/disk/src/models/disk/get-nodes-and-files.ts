@@ -69,15 +69,15 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
   let nodes: common.DiskCatalogNode[] = [];
 
   let folderNodes: common.DiskCatalogNode[] = [];
-  let viewNodes: common.DiskCatalogNode[] = [];
-  let storeNodes: common.DiskCatalogNode[] = [];
-  let modelNodes: common.DiskCatalogNode[] = [];
-  let reportNodes: common.DiskCatalogNode[] = [];
-  let dashboardNodes: common.DiskCatalogNode[] = [];
-  let chartNodes: common.DiskCatalogNode[] = [];
-  let udfNodes: common.DiskCatalogNode[] = [];
-  let ymlNodes: common.DiskCatalogNode[] = [];
-  let mdNodes: common.DiskCatalogNode[] = [];
+  // let viewNodes: common.DiskCatalogNode[] = [];
+  // let storeNodes: common.DiskCatalogNode[] = [];
+  // let modelNodes: common.DiskCatalogNode[] = [];
+  // let reportNodes: common.DiskCatalogNode[] = [];
+  // let dashboardNodes: common.DiskCatalogNode[] = [];
+  // let chartNodes: common.DiskCatalogNode[] = [];
+  // let udfNodes: common.DiskCatalogNode[] = [];
+  // let ymlNodes: common.DiskCatalogNode[] = [];
+  // let mdNodes: common.DiskCatalogNode[] = [];
   let otherNodes: common.DiskCatalogNode[] = [];
 
   let dirents: Dirent[] = <Dirent[]>await fse.readdir(item.dir, {
@@ -136,33 +136,33 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
         let ext: any = r ? r[1] : '';
 
         switch (ext) {
-          case common.FileExtensionEnum.View:
-            viewNodes.push(node);
-            break;
-          case common.FileExtensionEnum.Store:
-            storeNodes.push(node);
-            break;
-          case common.FileExtensionEnum.Model:
-            modelNodes.push(node);
-            break;
-          case common.FileExtensionEnum.Report:
-            reportNodes.push(node);
-            break;
-          case common.FileExtensionEnum.Dashboard:
-            dashboardNodes.push(node);
-            break;
-          case common.FileExtensionEnum.Chart:
-            chartNodes.push(node);
-            break;
-          case common.FileExtensionEnum.Udf:
-            udfNodes.push(node);
-            break;
-          case common.FileExtensionEnum.Yml:
-            ymlNodes.push(node);
-            break;
-          case common.FileExtensionEnum.Md:
-            mdNodes.push(node);
-            break;
+          // case common.FileExtensionEnum.View:
+          //   viewNodes.push(node);
+          //   break;
+          // case common.FileExtensionEnum.Store:
+          //   storeNodes.push(node);
+          //   break;
+          // case common.FileExtensionEnum.Model:
+          //   modelNodes.push(node);
+          //   break;
+          // case common.FileExtensionEnum.Report:
+          //   reportNodes.push(node);
+          //   break;
+          // case common.FileExtensionEnum.Dashboard:
+          //   dashboardNodes.push(node);
+          //   break;
+          // case common.FileExtensionEnum.Chart:
+          //   chartNodes.push(node);
+          //   break;
+          // case common.FileExtensionEnum.Udf:
+          //   udfNodes.push(node);
+          //   break;
+          // case common.FileExtensionEnum.Yml:
+          //   ymlNodes.push(node);
+          //   break;
+          // case common.FileExtensionEnum.Md:
+          //   mdNodes.push(node);
+          //   break;
           default:
             otherNodes.push(node);
         }
@@ -210,15 +210,15 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
 
   nodes = [
     ...sortNodes(folderNodes),
-    ...sortNodes(viewNodes),
-    ...sortNodes(storeNodes),
-    ...sortNodes(modelNodes),
-    ...sortNodes(reportNodes),
-    ...sortNodes(dashboardNodes),
-    ...sortNodes(chartNodes),
-    ...sortNodes(udfNodes),
-    ...sortNodes(ymlNodes),
-    ...sortNodes(mdNodes),
+    // ...sortNodes(viewNodes),
+    // ...sortNodes(storeNodes),
+    // ...sortNodes(modelNodes),
+    // ...sortNodes(reportNodes),
+    // ...sortNodes(dashboardNodes),
+    // ...sortNodes(chartNodes),
+    // ...sortNodes(udfNodes),
+    // ...sortNodes(ymlNodes),
+    // ...sortNodes(mdNodes),
     ...sortNodes(otherNodes)
   ];
 
