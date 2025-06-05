@@ -3806,6 +3806,15 @@
   dependencies:
     "@creditkarma/thrift-server-core" "^1.0.4"
 
+"@malloydata/malloy-query-builder@0.0.275":
+  version "0.0.275"
+  resolved "https://registry.yarnpkg.com/@malloydata/malloy-query-builder/-/malloy-query-builder-0.0.275.tgz#a08a2f7aa853a3406d76f8fecda5baff0652c222"
+  integrity sha512-kFYfIDFcZuUVEbu+MP8xqiWpwXsU0LCt/zDh0+TQ/kNTHxFvWIUoXwDAY2CI0AU0xV4jwTvoa0Q5e1rMfkqy0Q==
+  dependencies:
+    "@malloydata/malloy-filter" "0.0.275"
+    "@malloydata/malloy-interfaces" "0.0.275"
+    "@malloydata/malloy-tag" "0.0.275"
+
 "@malloydata/malloy-tag@0.0.275":
   version "0.0.275"
   resolved "https://registry.yarnpkg.com/@malloydata/malloy-tag/-/malloy-tag-0.0.275.tgz#e02379a1efbcf7c69f5db41bc72b0741ad425ffe"

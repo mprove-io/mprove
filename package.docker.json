@@ -36,6 +36,7 @@
     "@katoid/angular-grid-layout": "3.0.2",
     "@leeoniya/ufuzzy": "1.0.18",
     "@malloydata/malloy": "0.0.275",
+    "@malloydata/malloy-query-builder": "0.0.275",
     "@malloydata/db-postgres": "0.0.275",
     "@nestjs-modules/mailer": "1.9.1",
     "@nestjs/common": "11.1.0",

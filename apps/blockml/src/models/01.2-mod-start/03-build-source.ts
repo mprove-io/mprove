@@ -9,8 +9,10 @@ import {
 } from '@malloydata/malloy';
 import {
   ModelEntryValueWithSource,
-  ModelInfo
+  ModelInfo,
+  Query
 } from '@malloydata/malloy-interfaces';
+import { ASTQuery } from '@malloydata/malloy-query-builder';
 import { ConfigService } from '@nestjs/config';
 import { forEachSeries } from 'p-iteration';
 import { common } from '~blockml/barrels/common';
@@ -132,12 +134,31 @@ export async function buildSource(
       // console.log(malloyModelMaterializer);
     }
 
-    x.malloySourceInfo = connectionModelItem.malloyModelInfo.entries.find(
-      y => y.kind === 'source' && y.name === x.source
-    ) as ModelEntryValueWithSource;
+    x.malloyEntryValueWithSource =
+      connectionModelItem.malloyModelInfo.entries.find(
+        y => y.kind === 'source' && y.name === x.source
+      ) as ModelEntryValueWithSource;
 
     // console.log('mod');
     // console.dir(x, { depth: null });
+
+    let qb = new ASTQuery({
+      source: x.malloyEntryValueWithSource,
+      query: undefined
+    });
+
+    console.log('qb');
+    console.dir(qb, { depth: null });
+
+    let malloyStr = qb.toMalloy();
+
+    console.log('malloyStr');
+    console.dir(malloyStr, { depth: null });
+
+    let query: Query = qb.build();
+
+    console.log('query');
+    console.dir(query, { depth: null });
 
     if (errorsOnStart === item.errors.length) {
       newMods.push(x);

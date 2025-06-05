@@ -25,5 +25,5 @@ export interface FileMod extends FileBasic {
 
   //
 
-  malloySourceInfo?: ModelEntryValueWithSource;
+  malloyEntryValueWithSource?: ModelEntryValueWithSource;
 }
