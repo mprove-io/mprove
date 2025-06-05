@@ -1,3 +1,4 @@
+import { ModelEntryValueWithSource } from '@malloydata/malloy-interfaces';
 import { ProjectConnection } from '../project-connection';
 import { FileBasic } from './file-basic';
 
@@ -24,5 +25,5 @@ export interface FileMod extends FileBasic {
 
   //
 
-  // malloySourceSchema?:
+  malloySourceInfo?: ModelEntryValueWithSource;
 }
