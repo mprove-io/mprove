@@ -9,10 +9,14 @@ import {
 } from '@malloydata/malloy';
 import {
   ModelEntryValueWithSource,
-  ModelInfo,
-  Query
+  ModelInfo
 } from '@malloydata/malloy-interfaces';
-import { ASTQuery } from '@malloydata/malloy-query-builder';
+import {
+  ASTAggregateViewOperation,
+  ASTQuery,
+  ASTSegmentViewDefinition,
+  ASTViewOperation
+} from '@malloydata/malloy-query-builder';
 import { ConfigService } from '@nestjs/config';
 import { forEachSeries } from 'p-iteration';
 import { common } from '~blockml/barrels/common';
@@ -139,26 +143,59 @@ export async function buildSource(
         y => y.kind === 'source' && y.name === x.source
       ) as ModelEntryValueWithSource;
 
-    // console.log('mod');
-    // console.dir(x, { depth: null });
-
     let qb = new ASTQuery({
       source: x.malloyEntryValueWithSource,
       query: undefined
     });
 
-    console.log('qb');
-    console.dir(qb, { depth: null });
+    // console.log('qb');
+    // console.dir(qb, { depth: null });
 
-    let malloyStr = qb.toMalloy();
+    //
+    // 1
+    //
 
-    console.log('malloyStr');
-    console.dir(malloyStr, { depth: null });
+    let malloyStr1 = qb.toMalloy();
+    console.log('malloyStr1');
+    console.dir(malloyStr1, { depth: null });
 
-    let query: Query = qb.build();
+    // let query: Query = qb.build();
+    // console.log('query');
+    // console.dir(query, { depth: null });
 
-    console.log('query');
-    console.dir(query, { depth: null });
+    //
+    // 2
+    //
+
+    let segment: ASTSegmentViewDefinition = qb.getOrAddDefaultSegment();
+
+    segment.addGroupBy('state', ['users']);
+    segment.addAggregate('orders_count');
+    segment.addAggregate('users_count', ['users']);
+
+    // console.log('segment');
+    // console.dir(segment, { depth: null });
+
+    let malloyStr2 = qb.toMalloy();
+    console.log('malloyStr2');
+    console.dir(malloyStr2, { depth: null });
+
+    // 3
+
+    // export type ASTViewOperation = ASTGroupByViewOperation | ASTAggregateViewOperation | ASTOrderByViewOperation | ASTNestViewOperation | ASTLimitViewOperation | ASTWhereViewOperation | ASTHavingViewOperation;
+    // 'group_by' | 'aggregate' | 'order_by' | 'limit' | 'where' | 'nest' | 'having';
+
+    segment.operations.items
+      .filter(
+        (operation: ASTViewOperation) =>
+          operation instanceof ASTAggregateViewOperation
+      )
+      .find(y => y.field.name === 'users_count')
+      .delete();
+
+    let malloyStr3 = qb.toMalloy();
+    console.log('malloyStr3');
+    console.dir(malloyStr3, { depth: null });
 
     if (errorsOnStart === item.errors.length) {
       newMods.push(x);
