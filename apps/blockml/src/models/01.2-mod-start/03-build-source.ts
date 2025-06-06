@@ -4,6 +4,10 @@ import {
   Model,
   ModelDef,
   ModelMaterializer,
+  PreparedQuery,
+  PreparedResult,
+  QueryMaterializer,
+  Result,
   Runtime,
   modelDefToModelInfo
 } from '@malloydata/malloy';
@@ -99,20 +103,58 @@ export async function buildSource(
         { importBaseURL }
       );
 
-      let start = Date.now();
+      let start0 = Date.now();
 
       let malloyModel: Model = await runtime.getModel(modelUrl);
 
       let malloyModelDef: ModelDef = (await malloyModelMaterializer.getModel())
         ._modelDef;
 
-      let malloyModelInfo: ModelInfo = modelDefToModelInfo(malloyModelDef);
-
       // console.log('malloyModelDef');
       // console.log(malloyModelDef);
 
+      let malloyModelInfo: ModelInfo = modelDefToModelInfo(malloyModelDef);
+
       // console.log('malloyModelInfo');
       // console.dir(malloyModelInfo, { depth: null });
+
+      let qStr = `run: ec1_m2 -> {
+  top: 10
+  group_by: users.state
+  aggregate: orders.orders_count
+}`;
+
+      let start1 = Date.now();
+      let qm: QueryMaterializer = malloyModelMaterializer.loadQuery(qStr); // 0 ms
+      let end1 = Date.now();
+      let diff1 = end1 - start1;
+
+      console.log('diff1');
+      console.log(diff1);
+
+      // console.log('qm');
+      // console.dir(qm, { depth: null });
+
+      // let qSql = await qm.getSQL(); // 11 ms
+
+      // console.log('qSql');
+      // console.log(qSql);
+
+      let r: Result = await qm.run();
+      console.log('r._queryResult.result');
+      console.log(r._queryResult.result);
+      // console.log('r.toJSON');
+      // console.log(r.toJSON());
+
+      let qPreparedQuery: PreparedQuery = await qm.getPreparedQuery();
+      // console.log('qPreparedQuery');
+      // console.dir(qPreparedQuery, { depth: null });
+
+      let qPreparedResult: PreparedResult = await qm.getPreparedResult();
+      // let qSql = qPreparedResult.sql;
+
+      // console.log('qPreparedResult');
+      // console.dir(qPreparedResult, { depth: null });
 
       connectionModelItem = {
         location: x.location,
@@ -125,11 +167,11 @@ export async function buildSource(
 
       malloyItems.push(connectionModelItem);
 
-      let end = Date.now();
-      let diff = end - start;
+      let end0 = Date.now();
+      let diff0 = end0 - start0;
 
-      // console.log('diff');
-      // console.log(diff);
+      // console.log('diff0');
+      // console.log(diff0);
 
       // console.log('malloyModel');
       // console.dir(malloyModel, { depth: null });
