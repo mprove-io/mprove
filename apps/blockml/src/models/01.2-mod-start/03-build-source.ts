@@ -125,7 +125,10 @@ export async function buildSource(
 }`;
 
       let start1 = Date.now();
+
       let qm: QueryMaterializer = malloyModelMaterializer.loadQuery(qStr); // 0 ms
+      // let qm: QueryMaterializer = runtime.loadQuery(qStr);
+
       let end1 = Date.now();
       let diff1 = end1 - start1;
 
@@ -214,6 +217,7 @@ export async function buildSource(
     segment.addGroupBy('state', ['users']);
     segment.addAggregate('orders_count');
     segment.addAggregate('users_count', ['users']);
+    segment.addWhere('state', ['users'], 'WN, AA');
 
     // console.log('segment');
     // console.dir(segment, { depth: null });
@@ -256,3 +260,22 @@ export async function buildSource(
 
   return { mods: newMods, malloyItems: malloyItems };
 }
+
+// async function alt(x: common.FileMod) {
+//   let queryModel: Model = await Malloy.compile({
+//     urlReader: runtime.urlReader,
+//     connections: runtime.connections,
+//     model: malloyModel,
+//     parse: Malloy.parse({ source: qStr })
+//   });
+
+//   let modelDef = queryModel._modelDef;
+
+//   let modelInfo: ModelInfo = modelDefToModelInfo(modelDef);
+
+//   let queryPreparedQuery = queryModel.preparedQuery;
+
+//   let source = modelInfo.entries.find(
+//     entry => entry.kind === 'source' && entry.name === 'ec1_m2'
+//   );
+// }
