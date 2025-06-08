@@ -9,6 +9,7 @@ import {
   QueryMaterializer,
   Result,
   Runtime,
+  malloyToQuery,
   modelDefToModelInfo
 } from '@malloydata/malloy';
 import {
@@ -58,6 +59,12 @@ export async function buildSource(
         y.location === x.location
     );
 
+    let qStr = `run: ec1_m2 -> {
+  limit: 10
+  group_by: users.state
+  aggregate: orders.orders_count
+}`;
+
     if (common.isUndefined(connectionModelItem)) {
       let connection =
         x.connection.type === common.ConnectionTypeEnum.PostgreSQL
@@ -105,24 +112,20 @@ export async function buildSource(
 
       let start0 = Date.now();
 
-      let malloyModel: Model = await runtime.getModel(modelUrl);
+      let malloyModel: Model = await malloyModelMaterializer.getModel();
+      // let malloyModel: Model = await runtime.getModel(modelUrl);
 
-      let malloyModelDef: ModelDef = (await malloyModelMaterializer.getModel())
-        ._modelDef;
+      let malloyModelDef: ModelDef = malloyModel._modelDef;
 
       // console.log('malloyModelDef');
       // console.log(malloyModelDef);
 
-      let malloyModelInfo: ModelInfo = modelDefToModelInfo(malloyModelDef);
+      let malloyModelInfo: ModelInfo = modelDefToModelInfo(
+        malloyModel._modelDef
+      );
 
       // console.log('malloyModelInfo');
       // console.dir(malloyModelInfo, { depth: null });
-
-      let qStr = `run: ec1_m2 -> {
-  top: 10
-  group_by: users.state
-  aggregate: orders.orders_count
-}`;
 
       let start1 = Date.now();
 
@@ -187,6 +190,27 @@ export async function buildSource(
       connectionModelItem.malloyModelInfo.entries.find(
         y => y.kind === 'source' && y.name === x.source
       ) as ModelEntryValueWithSource;
+
+    let k1 = malloyToQuery(qStr);
+    console.log('k1');
+    console.log(k1);
+
+    let qb0 = new ASTQuery({
+      source: x.malloyEntryValueWithSource,
+      query: k1.query
+    });
+
+    let malloyStr0 = qb0.toMalloy();
+    console.log('malloyStr0');
+    console.dir(malloyStr0, { depth: null });
+
+    let segment0: ASTSegmentViewDefinition = qb0.getOrAddDefaultSegment();
+
+    segment0.addWhere('state', ['users'], 'WN, AA');
+
+    let malloyStr01 = qb0.toMalloy();
+    console.log('malloyStr01');
+    console.dir(malloyStr01, { depth: null });
 
     let qb = new ASTQuery({
       source: x.malloyEntryValueWithSource,
