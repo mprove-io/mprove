@@ -27,7 +27,6 @@ export function checkConnections(
       [
         common.FileExtensionEnum.View,
         common.FileExtensionEnum.Model,
-        common.FileExtensionEnum.Mod,
         common.FileExtensionEnum.Store
       ].indexOf(file.ext) > -1
     ) {

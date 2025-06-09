@@ -55,7 +55,7 @@ test('1', async t => {
     });
   }
 
-  t.is(errors.length, 4);
+  t.is(errors.length, 3);
   t.is(filesAny.length, 1);
 
   t.is(errors[0].title, common.ErTitleEnum.CONNECTION_NOT_FOUND);
@@ -64,6 +64,4 @@ test('1', async t => {
   t.is(errors[1].lines[0].line, 2);
   t.is(errors[2].title, common.ErTitleEnum.CONNECTION_NOT_FOUND);
   t.is(errors[2].lines[0].line, 2);
-  t.is(errors[3].title, common.ErTitleEnum.CONNECTION_NOT_FOUND);
-  t.is(errors[3].lines[0].line, 2);
 });

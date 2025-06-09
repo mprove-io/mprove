@@ -13,3 +13,5 @@ export * from './read-file-check-size';
 export * from './node-format-ts-unix';
 export * from './transform-valid-sync';
 export * from './wrap-error';
+export * from './get-wrap-result';
+export * from './error-to-wrap-result';

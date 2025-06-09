@@ -1,6 +1,6 @@
-source: orders_table is c1_postgres.table('ecommerce.orders') extend {}
+source: orders_table3 is c3_postgres.table('ecommerce.orders') extend {}
 
-source: orders is orders_table extend {
+source: orders3 is orders_table3 extend {
   primary_key: order_id
   
   -- dimension: order_id

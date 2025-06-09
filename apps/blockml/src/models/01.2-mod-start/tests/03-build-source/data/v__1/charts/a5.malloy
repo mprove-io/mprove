@@ -1,7 +1,0 @@
-import '../ec1_m2.malloy';
-
-run: ec1_m2 -> {
-  top: 10
-  group_by: users.state
-  aggregate: orders.orders_count
-}

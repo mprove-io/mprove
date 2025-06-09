@@ -1,0 +1,25 @@
+import './parts/order_items.malloy';
+import './parts/orders.malloy';
+import './parts/user_order_facts.malloy';
+import './parts/users.malloy';
+
+source: ec1_m3 is order_items3 extend {
+  join_one: orders3 on order_id = orders3.order_id
+  join_one: users3 on orders3.user_id = users3.user_id
+  join_one: user_order_facts3 on users3.user_id = user_order_facts3.user_id
+
+  -- # bar_chart
+  view: view_orders_count_by_users_state is {
+    top: 10
+    group_by: users3.state
+    aggregate: orders3.orders_count
+  }
+}
+
+query: query_orders_count_by_users_state3 is ec1_m3 -> view_orders_count_by_users_state + {
+  limit: 5
+}
+
+run: ec1_m3 -> view_orders_count_by_users_state
+
+run: query_orders_count_by_users_state3

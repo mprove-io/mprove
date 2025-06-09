@@ -149,7 +149,6 @@ export function checkTopUnknownParameters(
                 common.ParameterEnum.Source.toString(),
                 // common.ParameterEnum.Description.toString(),
                 common.ParameterEnum.Location.toString(),
-                common.ParameterEnum.Connection.toString(),
                 common.ParameterEnum.AccessRoles.toString()
               ].indexOf(parameter) < 0
             ) {

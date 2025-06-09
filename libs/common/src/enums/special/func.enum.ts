@@ -19,7 +19,8 @@ export enum FuncEnum {
   CheckStoreResults = '01.1-store-start/02-check-store-results',
   CheckResultFractionTypes = '01.1-store-start/03-check-result-fraction-types',
 
-  BuildSource = '01.2-mod-start/03-build-source',
+  BuildMalloyModel = '01.2-mod-start/02-build-malloy-model',
+  BuildMods = '01.2-mod-start/03-build-mods',
 
   CheckFieldsExist = '02-field/01-check-fields-exist',
   CheckParametersExist = '02-field/01.1-check-parameters-exist',

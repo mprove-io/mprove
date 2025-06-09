@@ -8,7 +8,7 @@ import { prepareTest } from '~blockml/functions/prepare-test';
 import { BmError } from '~blockml/models/bm-error';
 
 let caller = common.CallerEnum.BuildModStart;
-let func = common.FuncEnum.BuildSource;
+let func = common.FuncEnum.BuildMods;
 let testId = 'v__1';
 
 test('1', async t => {
@@ -32,8 +32,30 @@ test('1', async t => {
 
     wLogger = logger;
 
-    let connection: common.ProjectConnection = {
-      connectionId: 'c1_postgres',
+    let c2: common.ProjectConnection = {
+      connectionId: 'c2_postgres',
+      type: common.ConnectionTypeEnum.PostgreSQL,
+      host: cs.get<interfaces.Config['blockmlTestsDwhPostgresHost']>(
+        'blockmlTestsDwhPostgresHost'
+      ),
+      port: Number(
+        cs.get<interfaces.Config['blockmlTestsDwhPostgresPort']>(
+          'blockmlTestsDwhPostgresPort'
+        )
+      ),
+      username: cs.get<interfaces.Config['blockmlTestsDwhPostgresUsername']>(
+        'blockmlTestsDwhPostgresUsername'
+      ),
+      password: cs.get<interfaces.Config['blockmlTestsDwhPostgresPassword']>(
+        'blockmlTestsDwhPostgresPassword'
+      ),
+      databaseName: cs.get<
+        interfaces.Config['blockmlTestsDwhPostgresDatabaseName']
+      >('blockmlTestsDwhPostgresDatabaseName')
+    };
+
+    let c3: common.ProjectConnection = {
+      connectionId: 'c3_postgres',
       type: common.ConnectionTypeEnum.PostgreSQL,
       host: cs.get<interfaces.Config['blockmlTestsDwhPostgresHost']>(
         'blockmlTestsDwhPostgresHost'
@@ -60,7 +82,7 @@ test('1', async t => {
       structId: structId,
       envId: common.PROJECT_ENV_PROD,
       evs: [],
-      connections: [connection],
+      connections: [c2, c3],
       overrideTimezone: undefined
     });
 
@@ -86,7 +108,7 @@ test('1', async t => {
   // console.log(entMods);
 
   t.is(errors.length, 0);
-  t.is(entMods.length, 1);
+  t.is(entMods.length, 2);
 
   // t.deepEqual(entMods[0].tiles[0].sortingsAry, [
   //   {

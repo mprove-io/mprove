@@ -50,4 +50,3 @@ export * from './vars-sql';
 export * from './vars-sql-step';
 export * from './vars-sub';
 export * from './vars-sub-step';
-export * from './malloy-item';

@@ -1,4 +1,4 @@
-source: users_table is c1_postgres.table('ecommerce.users') extend {}
+source: users_table is c2_postgres.table('ecommerce.users') extend {}
 
 source: users is users_table extend {
   primary_key: user_id

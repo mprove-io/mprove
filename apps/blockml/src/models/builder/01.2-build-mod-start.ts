@@ -7,6 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 export async function buildModStart(
   item: {
     files: common.BmlFile[];
+    connections: common.ProjectConnection[];
     mods: common.FileMod[];
     tempDir: string;
     projectId: string;
@@ -18,9 +19,22 @@ export async function buildModStart(
 ) {
   let mods = item.mods;
 
-  let buildSourceResult = await barModStart.buildSource(
+  // let buildMalloyModel = await barModStart.buildMalloyModel(
+  //   {
+  //     connections: item.connections,
+  //     tempDir: item.tempDir,
+  //     projectId: item.projectId,
+  //     structId: item.structId,
+  //     errors: item.errors,
+  //     caller: item.caller
+  //   },
+  //   cs
+  // );
+
+  mods = await barModStart.buildMods(
     {
       mods: mods,
+      connections: item.connections,
       tempDir: item.tempDir,
       projectId: item.projectId,
       structId: item.structId,
@@ -30,8 +44,5 @@ export async function buildModStart(
     cs
   );
 
-  mods = buildSourceResult.mods;
-  let malloyItems = buildSourceResult.malloyItems;
-
-  return { mods: mods, malloyItems: malloyItems };
+  return { mods: mods };
 }

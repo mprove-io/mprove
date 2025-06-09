@@ -1,7 +1,7 @@
-import './table_sources/order_items.malloy';
-import './table_sources/orders.malloy';
-import './table_sources/user_order_facts.malloy';
-import './table_sources/users.malloy';
+import './parts/order_items.malloy';
+import './parts/orders.malloy';
+import './parts/user_order_facts.malloy';
+import './parts/users.malloy';
 
 source: ec1_m2 is order_items extend {
   join_one: orders on order_id = orders.order_id
@@ -22,10 +22,10 @@ source: ec1_m2 is order_items extend {
   }
 }
 
-run: ec1_m2 -> view_orders_count_by_users_state
-
-query: query_orders_count_by_users_state is ec1_m2 -> view_orders_count_by_users_state + {
+query: query_orders_count_by_users_state2 is ec1_m2 -> view_orders_count_by_users_state + {
   top: 5
 }
 
-run: query_orders_count_by_users_state
+run: ec1_m2 -> view_orders_count_by_users_state
+
+run: query_orders_count_by_users_state2

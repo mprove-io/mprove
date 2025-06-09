@@ -16,7 +16,7 @@ import { getMproveConfigFile } from '~blockml/functions/get-mprove-config-file';
 import { BmError } from '~blockml/models/bm-error';
 import { PresetsService } from '~blockml/services/presets.service';
 import { RabbitService } from '~blockml/services/rabbit.service';
-import { MalloyItem, TRIPLE_UNDERSCORE } from '~common/_index';
+import { TRIPLE_UNDERSCORE } from '~common/_index';
 
 @Injectable()
 export class RebuildStructService {
@@ -243,7 +243,6 @@ export class RebuildStructService {
     let presets: common.Preset[] = this.presetsService.getPresets();
 
     let errors: BmError[] = [];
-    let malloyItems: MalloyItem[] = [];
 
     let mods: common.FileMod[];
     let views: common.FileView[];
@@ -317,19 +316,38 @@ export class RebuildStructService {
 
     let malloyFiles = item.files.filter(y => y.name.endsWith('.malloy'));
 
+    let paths: string[] = [];
+
     await forEachSeries(malloyFiles, async file => {
-      file.blockmlPath = `${tempDir}/${file.path.split(TRIPLE_UNDERSCORE).join('/')}`;
+      let relativePath = `${file.path.split(TRIPLE_UNDERSCORE).join('/')}`;
+      file.blockmlPath = `${tempDir}/${relativePath}`;
+
+      paths.push(relativePath);
 
       await fse.ensureDir(path.dirname(file.blockmlPath));
       await fse.writeFile(file.blockmlPath, file.content);
     });
 
-    // console.log('files');
-    // console.log(item.files);
+    // let mainContent = paths.map(path => `import './${path}';`).join('\n');
+    // let mainContent = [
+    //   `import './mods/c2/ec1_m2.malloy'`,
+    //   `import './mods/c3/ec1_m3.malloy'`
+    //   // `import './charts/a5a.malloy'`,
+    //   // `import './charts/a5b.malloy'`,
+    //   // `import './charts/a5c.malloy'`,
+    //   // `import './charts/a5d.malloy'`,
+    //   // `import './charts/a5.malloy'`,
+    //   // `import './charts/a6.malloy'`,
+    // ].join('\n');
+
+    // let mainPath = `${tempDir}/mprove-main.malloy`;
+
+    // await fse.writeFile(mainPath, mainContent);
 
     let buildModStartResult = await barBuilder.buildModStart(
       {
         files: item.files,
+        connections: item.connections,
         mods: mods,
         tempDir: tempDir,
         projectId: item.projectId,
@@ -341,7 +359,6 @@ export class RebuildStructService {
     );
 
     mods = buildModStartResult.mods;
-    malloyItems = buildModStartResult.malloyItems;
 
     views = barBuilder.buildField(
       {
@@ -721,7 +738,7 @@ export class RebuildStructService {
     );
 
     if (item.isTest === true) {
-      await fse.remove(tempDir);
+      //   await fse.remove(tempDir);
     } else {
       fse.remove(tempDir);
     }
