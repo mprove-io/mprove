@@ -265,6 +265,7 @@ export class RebuildStructService {
       },
       this.cs
     );
+
     models = yamlBuildItem.models;
     mods = yamlBuildItem.mods;
     stores = yamlBuildItem.stores;
@@ -597,6 +598,7 @@ export class RebuildStructService {
         traceId: item.traceId,
         entities: dashboards,
         models: models,
+        malloyFiles: malloyFiles,
         stores: stores,
         udfsDict: udfsDict,
         weekStart: projectConfig.week_start,
@@ -621,6 +623,7 @@ export class RebuildStructService {
         entities: charts,
         models: models,
         stores: stores,
+        malloyFiles: malloyFiles,
         udfsDict: udfsDict,
         weekStart: projectConfig.week_start,
         timezone: projectConfig.default_timezone,

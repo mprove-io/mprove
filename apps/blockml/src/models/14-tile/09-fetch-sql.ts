@@ -21,6 +21,7 @@ export async function fetchSql<T extends types.dzType>(
     traceId: string;
     entities: T[];
     models: common.FileModel[];
+    malloyFiles: common.BmlFile[];
     udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
     timezone: string;
@@ -33,7 +34,7 @@ export async function fetchSql<T extends types.dzType>(
   rabbitService: RabbitService,
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId, timezone } = item;
+  let { caller, structId, timezone, malloyFiles } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let tiles: FilePartTileExtra[] = [];
@@ -56,6 +57,7 @@ export async function fetchSql<T extends types.dzType>(
     if (common.isDefined(tile.query)) {
       let qr = await barSpecial.buildMalloyQuery(
         {
+          malloyFiles: item.malloyFiles,
           filePath: tile.filePath,
           fileName: tile.fileName,
           queryName: tile.query,

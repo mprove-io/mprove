@@ -12,6 +12,7 @@ export async function buildTile<T extends types.dzType>(
     entities: T[];
     models: common.FileModel[];
     stores: common.FileStore[];
+    malloyFiles: common.BmlFile[];
     udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
     timezone: string;
@@ -108,6 +109,7 @@ export async function buildTile<T extends types.dzType>(
       traceId: item.traceId,
       entities: entities,
       models: item.models,
+      malloyFiles: item.malloyFiles,
       udfsDict: item.udfsDict,
       weekStart: item.weekStart,
       timezone: item.timezone,
