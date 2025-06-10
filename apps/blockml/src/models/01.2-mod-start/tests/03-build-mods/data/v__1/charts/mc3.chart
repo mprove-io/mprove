@@ -1,0 +1,5 @@
+chart: mc3
+tiles:
+- title: Total Profit3
+  type: table
+  query: mc3

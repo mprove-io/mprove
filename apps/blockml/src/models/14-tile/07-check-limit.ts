@@ -24,39 +24,41 @@ export function checkLimit<T extends types.dzType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    x.tiles.forEach(tile => {
-      if (!tile.limit) {
-        tile.limit = common.DEFAULT_LIMIT;
-        return;
-      }
+    x.tiles
+      .filter(tile => common.isUndefined(tile.query))
+      .forEach(tile => {
+        if (!tile.limit) {
+          tile.limit = common.DEFAULT_LIMIT;
+          return;
+        }
 
-      let reg = common.MyRegex.CAPTURE_DIGITS_START_TO_END_G();
-      let r = reg.exec(tile.limit);
+        let reg = common.MyRegex.CAPTURE_DIGITS_START_TO_END_G();
+        let r = reg.exec(tile.limit);
 
-      if (common.isUndefined(r)) {
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.TILE_WRONG_LIMIT,
-            message: `"${common.ParameterEnum.Limit}" must contain positive integer value`,
-            lines: [
-              {
-                line: tile.limit_line_num,
-                name: x.fileName,
-                path: x.filePath
-              }
-            ]
-          })
-        );
-        return;
-      }
+        if (common.isUndefined(r)) {
+          item.errors.push(
+            new BmError({
+              title: common.ErTitleEnum.TILE_WRONG_LIMIT,
+              message: `"${common.ParameterEnum.Limit}" must contain positive integer value`,
+              lines: [
+                {
+                  line: tile.limit_line_num,
+                  name: x.fileName,
+                  path: x.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
 
-      let limitNumber = Number(r[1]);
+        let limitNumber = Number(r[1]);
 
-      tile.limit =
-        limitNumber > Number(common.DEFAULT_LIMIT)
-          ? common.DEFAULT_LIMIT
-          : limitNumber.toString();
-    });
+        tile.limit =
+          limitNumber > Number(common.DEFAULT_LIMIT)
+            ? common.DEFAULT_LIMIT
+            : limitNumber.toString();
+      });
 
     if (errorsOnStart === item.errors.length) {
       newEntities.push(x);

@@ -28,7 +28,10 @@ export function checkChartDataParameters<T extends types.dzType>(
     let errorsOnStart = item.errors.length;
 
     x.tiles.forEach(tile => {
-      let isStore = tile.model.startsWith(STORE_MODEL_PREFIX);
+      let isStore =
+        common.isDefined(tile.model) &&
+        tile.model.startsWith(STORE_MODEL_PREFIX);
+
       let model: common.FileModel;
       let store: common.FileStore;
 

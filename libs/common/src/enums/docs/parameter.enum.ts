@@ -58,6 +58,7 @@ export enum ParameterEnum {
   FractionTypes = 'fraction_types',
   SuggestModelDimension = 'suggest_model_dimension',
   Rows = 'rows',
+  Query = 'query',
   Select = 'select',
 
   Input = 'input',

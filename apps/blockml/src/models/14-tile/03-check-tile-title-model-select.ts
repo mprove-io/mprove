@@ -59,11 +59,11 @@ export function checkTileTitleModelSelect<T extends types.dzType>(
         titles[tile.title.toUpperCase()] = [tile.title_line_num];
       }
 
-      if (common.isUndefined(tile.model)) {
+      if (common.isUndefined(tile.model) && common.isUndefined(tile.query)) {
         item.errors.push(
           new BmError({
-            title: common.ErTitleEnum.MISSING_TILE_MODEL,
-            message: `tile must have ${common.ParameterEnum.Model} parameter`,
+            title: common.ErTitleEnum.MISSING_TILE_QUERY_OR_MODEL,
+            message: `tile must have ${common.ParameterEnum.Query} or ${common.ParameterEnum.Model} parameter`,
             lines: [
               {
                 line: tile.title_line_num,
@@ -76,7 +76,34 @@ export function checkTileTitleModelSelect<T extends types.dzType>(
         return;
       }
 
-      let isStore = tile.model.startsWith(STORE_MODEL_PREFIX);
+      if (common.isDefined(tile.model) && common.isDefined(tile.query)) {
+        item.errors.push(
+          new BmError({
+            title:
+              common.ErTitleEnum
+                .TILE_QUERY_AND_MODEL_CANNOT_BE_SPECIFIED_AT_THE_SAME_TIME,
+            message: `tile must have only one of parameters:${common.ParameterEnum.Query}, ${common.ParameterEnum.Model}`,
+            lines: [
+              {
+                line: tile.query_line_num,
+                name: x.fileName,
+                path: x.filePath
+              },
+              {
+                line: tile.model_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
+
+      let isStore =
+        common.isDefined(tile.model) &&
+        tile.model.startsWith(STORE_MODEL_PREFIX);
+
       let model;
       let store;
 
@@ -88,7 +115,11 @@ export function checkTileTitleModelSelect<T extends types.dzType>(
         model = item.models.find(m => m.name === tile.model);
       }
 
-      if (isStore === false && common.isUndefined(model)) {
+      if (
+        isStore === false &&
+        common.isDefined(tile.model) &&
+        common.isUndefined(model)
+      ) {
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.WRONG_TILE_MODEL,
@@ -124,11 +155,11 @@ export function checkTileTitleModelSelect<T extends types.dzType>(
         return;
       }
 
-      if (common.isUndefined(tile.select)) {
+      if (common.isUndefined(tile.select) && common.isUndefined(tile.query)) {
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.MISSING_TILE_SELECT,
-            message: `tile must have "${common.ParameterEnum.Select}" parameter`,
+            message: `tile without "${common.ParameterEnum.Query}" parameter must have "${common.ParameterEnum.Select}" parameter`,
             lines: [
               {
                 line: tile.title_line_num,

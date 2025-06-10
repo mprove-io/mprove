@@ -32,7 +32,8 @@ export function wrapTiles(item: {
       data: tile.data
     });
 
-    let isStore = tile.model.startsWith(STORE_MODEL_PREFIX);
+    let isStore =
+      common.isDefined(tile.model) && tile.model.startsWith(STORE_MODEL_PREFIX);
     let model;
     let store: common.FileStore;
 

@@ -33,6 +33,7 @@ export function checkTileUnknownParameters<T extends types.dzType>(
             [
               common.ParameterEnum.Title.toString(),
               common.ParameterEnum.Description.toString(),
+              common.ParameterEnum.Query.toString(),
               common.ParameterEnum.Model.toString(),
               common.ParameterEnum.Select.toString(),
               common.ParameterEnum.Sorts.toString(),

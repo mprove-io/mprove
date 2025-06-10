@@ -25,74 +25,78 @@ export function checkSorts<T extends types.dzType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    x.tiles.forEach(tile => {
-      tile.sortingsAry = [];
+    x.tiles
+      .filter(tile => common.isDefined(tile.sorts))
+      .forEach(tile => {
+        tile.sortingsAry = [];
 
-      if (common.isUndefined(tile.sorts)) {
-        return;
-      }
-
-      let isStore = tile.model.startsWith(STORE_MODEL_PREFIX);
-
-      tile.sorts.split(',').forEach(part => {
-        let reg =
-          isStore === true
-            ? common.MyRegex.CAPTURE_STORE_SORT_WITH_OPTIONAL_DESC_G()
-            : common.MyRegex.CAPTURE_SORT_WITH_OPTIONAL_DESC_G();
-
-        let r = reg.exec(part);
-
-        if (common.isUndefined(r)) {
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.TILE_WRONG_SORTS_SYNTAX,
-              message:
-                isStore === true
-                  ? `Store Model "${common.ParameterEnum.Sorts}" can contain selected ` +
-                    'fields in form of "field_name [desc]" separated by comma'
-                  : `Model "${common.ParameterEnum.Sorts}" can contain selected ` +
-                    'fields in form of "alias.field_name [desc]" separated by comma',
-              lines: [
-                {
-                  line: tile.sorts_line_num,
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
+        if (common.isUndefined(tile.sorts)) {
           return;
         }
 
-        let sorter = r[1];
-        let desc = r[2];
+        let isStore =
+          common.isDefined(tile.model) &&
+          tile.model.startsWith(STORE_MODEL_PREFIX);
 
-        if (tile.select.findIndex(y => y === sorter) < 0) {
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.TILE_SORTS_REFS_UNSELECTED_FIELD,
-              message:
-                'We can sort only selected fields.' +
-                `Found field "${sorter}" in "${common.ParameterEnum.Sorts}" that ` +
-                `is not in "${common.ParameterEnum.Select}". `,
-              lines: [
-                {
-                  line: tile.sorts_line_num,
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
+        tile.sorts.split(',').forEach(part => {
+          let reg =
+            isStore === true
+              ? common.MyRegex.CAPTURE_STORE_SORT_WITH_OPTIONAL_DESC_G()
+              : common.MyRegex.CAPTURE_SORT_WITH_OPTIONAL_DESC_G();
 
-        tile.sortingsAry.push({
-          fieldId: sorter,
-          desc: common.isDefined(desc)
+          let r = reg.exec(part);
+
+          if (common.isUndefined(r)) {
+            item.errors.push(
+              new BmError({
+                title: common.ErTitleEnum.TILE_WRONG_SORTS_SYNTAX,
+                message:
+                  isStore === true
+                    ? `Store Model "${common.ParameterEnum.Sorts}" can contain selected ` +
+                      'fields in form of "field_name [desc]" separated by comma'
+                    : `Model "${common.ParameterEnum.Sorts}" can contain selected ` +
+                      'fields in form of "alias.field_name [desc]" separated by comma',
+                lines: [
+                  {
+                    line: tile.sorts_line_num,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+
+          let sorter = r[1];
+          let desc = r[2];
+
+          if (tile.select.findIndex(y => y === sorter) < 0) {
+            item.errors.push(
+              new BmError({
+                title: common.ErTitleEnum.TILE_SORTS_REFS_UNSELECTED_FIELD,
+                message:
+                  'We can sort only selected fields.' +
+                  `Found field "${sorter}" in "${common.ParameterEnum.Sorts}" that ` +
+                  `is not in "${common.ParameterEnum.Select}". `,
+                lines: [
+                  {
+                    line: tile.sorts_line_num,
+                    name: x.fileName,
+                    path: x.filePath
+                  }
+                ]
+              })
+            );
+            return;
+          }
+
+          tile.sortingsAry.push({
+            fieldId: sorter,
+            desc: common.isDefined(desc)
+          });
         });
       });
-    });
 
     if (errorsOnStart === item.errors.length) {
       newEntities.push(x);

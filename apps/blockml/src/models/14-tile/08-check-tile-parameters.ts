@@ -57,7 +57,9 @@ export function checkTileParameters<T extends types.dzType>(
           return;
         }
 
-        let isStore = tile.model.startsWith(STORE_MODEL_PREFIX);
+        let isStore =
+          common.isDefined(tile.model) &&
+          tile.model.startsWith(STORE_MODEL_PREFIX);
 
         if (
           isStore === false &&
@@ -155,7 +157,9 @@ export function checkTileParameters<T extends types.dzType>(
         }
         tile.combinedFilters = {};
 
-        let isStore = tile.model.startsWith(STORE_MODEL_PREFIX);
+        let isStore =
+          common.isDefined(tile.model) &&
+          tile.model.startsWith(STORE_MODEL_PREFIX);
 
         let model: common.FileModel;
         let store: common.FileStore;

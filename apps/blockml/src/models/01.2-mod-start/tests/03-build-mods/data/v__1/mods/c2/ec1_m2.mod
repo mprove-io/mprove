@@ -7,7 +7,6 @@ location: mods/c2/ec1_m2.malloy
 # tiles:
 # - title: Total Profit
 #   query: 4GI2L3ALYEO9LXWP3O92
-#   location: 4GI2L3ALYEO9LXWP3O92.malloy
 #   type: table
 #   # model: ec1_m1
 #   # select:
@@ -32,7 +31,6 @@ location: mods/c2/ec1_m2.malloy
 # tiles:
 # - title: Average Sale Price by Category
 #   query: 4GI2L3ALYEO9LXWP3O92
-#   location: ec1_d1.malloy
 #   # model: ec1_m1
 #   # select:
 #   # - products.category

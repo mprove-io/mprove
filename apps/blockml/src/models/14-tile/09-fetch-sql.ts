@@ -42,7 +42,11 @@ export async function fetchSql<T extends types.dzType>(
 
   await asyncPool(
     concurrencyLimit,
-    tiles.filter(x => x.model.startsWith(STORE_MODEL_PREFIX) === false),
+    tiles.filter(
+      x =>
+        common.isDefined(x.model) &&
+        x.model.startsWith(STORE_MODEL_PREFIX) === false
+    ),
     async (tile: common.FilePartTile) => {
       let model = item.models.find(m => m.name === tile.model);
 
