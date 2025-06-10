@@ -11,6 +11,11 @@ import { STORE_MODEL_PREFIX } from '~common/constants/top';
 
 let func = common.FuncEnum.FetchSql;
 
+interface FilePartTileExtra extends common.FilePartTile {
+  filePath?: string;
+  fileName?: string;
+}
+
 export async function fetchSql<T extends types.dzType>(
   item: {
     traceId: string;
@@ -31,23 +36,40 @@ export async function fetchSql<T extends types.dzType>(
   let { caller, structId, timezone } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let tiles: common.FilePartTile[] = [];
+  let tiles: FilePartTileExtra[] = [];
 
   item.entities.forEach(x => {
-    tiles = [...tiles, ...x.tiles];
+    tiles = [
+      ...tiles,
+      ...x.tiles.map(tile => {
+        (tile as FilePartTileExtra).filePath = x.filePath;
+        (tile as FilePartTileExtra).fileName = x.fileName;
+        return tile;
+      })
+    ];
   });
 
   let concurrencyLimit =
     cs.get<interfaces.Config['concurrencyLimit']>('concurrencyLimit');
 
-  await asyncPool(
-    concurrencyLimit,
-    tiles.filter(
-      x =>
-        common.isDefined(x.model) &&
-        x.model.startsWith(STORE_MODEL_PREFIX) === false
-    ),
-    async (tile: common.FilePartTile) => {
+  await asyncPool(concurrencyLimit, tiles, async (tile: FilePartTileExtra) => {
+    if (common.isDefined(tile.query)) {
+      let qr = await barSpecial.buildMalloyQuery(
+        {
+          filePath: tile.filePath,
+          fileName: tile.fileName,
+          queryName: tile.query,
+          queryLineNum: tile.query_line_num,
+          errors: item.errors,
+          structId: item.structId,
+          caller: item.caller
+        },
+        cs
+      );
+    } else if (
+      common.isDefined(tile.model) &&
+      tile.model.startsWith(STORE_MODEL_PREFIX) === false
+    ) {
       let model = item.models.find(m => m.name === tile.model);
 
       let filters: common.FilterBricksDictionary = {};
@@ -90,7 +112,7 @@ export async function fetchSql<T extends types.dzType>(
       tile.warnSelect = warnSelect;
       tile.varsSqlSteps = varsSqlSteps;
     }
-  );
+  });
 
   helper.log(
     cs,

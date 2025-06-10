@@ -5,6 +5,8 @@
 // import { BmError } from '~blockml/models/bm-error';
 // import * as malloy from '@malloydata/malloy';
 
+// TODO: cleanup
+
 // async function checkMalloy(
 //   item: {
 //     errors: BmError[];

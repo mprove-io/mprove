@@ -159,6 +159,7 @@ export enum FuncEnum {
 
   CheckMalloy = '18-malloy/01-check-malloy',
 
+  BuildMalloyQuery = 'special/build-malloy-query',
   CheckAccess = 'special/check-access',
   CheckVmdrFilterConditions = 'special/check-vmdr-filter-conditions',
   CheckStoreFraction = 'special/check-store-fraction',

@@ -1,5 +1,5 @@
 chart: mc2
 tiles:
 - title: Total Profit
-  type: table
   query: mc2
+  type: table
