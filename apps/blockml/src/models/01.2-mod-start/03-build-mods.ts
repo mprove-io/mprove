@@ -1,5 +1,13 @@
 import { PostgresConnection } from '@malloydata/db-postgres';
-import { Model as MalloyModel, Runtime } from '@malloydata/malloy';
+import {
+  Model as MalloyModel,
+  Runtime,
+  modelDefToModelInfo
+} from '@malloydata/malloy';
+import {
+  ModelInfo as MalloyModelInfo,
+  ModelEntryValueWithSource
+} from '@malloydata/malloy-interfaces';
 import { ConfigService } from '@nestjs/config';
 import * as fse from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
@@ -74,7 +82,7 @@ export async function buildMods(
       item.errors.push(
         new BmError({
           title: common.ErTitleEnum.MOD_COMPILATION_FAILED,
-          message: undefined, // no leak
+          message: 'Failed to compile malloy model', // no leak
           lines: [
             {
               line: x.location_line_num,
@@ -84,21 +92,34 @@ export async function buildMods(
           ]
         })
       );
+
+      // console.log('MOD_COMPILATION_FAILED'); // TODO: remove
+      // console.log(wrapResult.error); // TODO: remove
+
       return;
     }
 
     x.malloyModel = wrapResult.data;
 
-    let explore = x.malloyModel.getExploreByName(x.source);
+    // let explore = x.malloyModel.getExploreByName(x.source);
     // console.dir(explore, { depth: 3 });
 
-    // if (common.isDefined(explore)) {
-    //   fse.writeFileSync(
-    //     `${x.source}-explore.json`,
-    //     JSON.stringify(explore, null, 2),
-    //     'utf-8'
-    //   );
-    // }
+    let modelInfo: MalloyModelInfo = modelDefToModelInfo(
+      x.malloyModel._modelDef
+    );
+
+    let entrySourceInfo: ModelEntryValueWithSource = modelInfo.entries.find(
+      entry => entry.kind === 'source' && entry.name === x.source
+    ) as ModelEntryValueWithSource;
+
+    // console.log('entrySourceInfo');
+    // console.dir(entrySourceInfo, { depth: null });
+
+    // fse.writeFileSync(
+    //   `${x.source}-source-info.json`,
+    //   JSON.stringify(entrySourceInfo, null, 2),
+    //   'utf-8'
+    // );
 
     if (errorsOnStart === item.errors.length) {
       newMods.push(x);

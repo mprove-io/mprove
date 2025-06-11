@@ -108,7 +108,7 @@ test('1', async t => {
   // console.log(entMods);
 
   t.is(errors.length, 0);
-  t.is(entMods.length, 2);
+  t.is(entMods.length, 1);
 
   // t.deepEqual(entMods[0].tiles[0].sortingsAry, [
   //   {

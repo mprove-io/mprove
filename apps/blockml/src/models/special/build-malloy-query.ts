@@ -117,12 +117,12 @@ export async function buildMalloyQuery(
   // console.log('diff101');
   // console.log(Date.now() - start101); // 0ms
 
-  let start102 = Date.now();
+  // let start102 = Date.now();
 
   let aSql = await qm.getSQL();
 
-  console.log('diff102');
-  console.log(Date.now() - start102); // 14ms
+  // console.log('diff102');
+  // console.log(Date.now() - start102); // 14ms
 
   // console.log('aSql');
   // console.log(aSql);

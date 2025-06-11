@@ -231,10 +231,11 @@ export function wrapTiles(item: {
       unsafeSelect: tile.unsafeSelect || [],
       warnSelect: tile.warnSelect || [],
       joinAggregations: tile.joinAggregations || [],
-      sortings: tile.sortingsAry.map(s => ({
-        fieldId: s.fieldId,
-        desc: s.desc
-      })),
+      sortings:
+        tile.sortingsAry?.map(s => ({
+          fieldId: s.fieldId,
+          desc: s.desc
+        })) || [],
       sorts: tile.sorts,
       timezone: timezone,
       limit: tile.limit ? Number(tile.limit) : undefined,

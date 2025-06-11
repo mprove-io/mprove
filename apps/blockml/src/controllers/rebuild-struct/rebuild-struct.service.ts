@@ -200,6 +200,7 @@ export class RebuildStructService {
       files = await barYaml.collectFiles(
         {
           dir: mproveDir,
+          repoDir: item.dir,
           structId: item.structId,
           caller: common.CallerEnum.RebuildStruct,
           skipLog: false
@@ -324,7 +325,10 @@ export class RebuildStructService {
     let paths: string[] = [];
 
     await forEachSeries(malloyFiles, async file => {
-      let relativePath = `${file.path.split(TRIPLE_UNDERSCORE).join('/')}`;
+      let relativePath = common.isDefined(file.pathRelativeToRepo)
+        ? file.pathRelativeToRepo
+        : `${file.path.split(TRIPLE_UNDERSCORE).join('/')}`;
+
       file.blockmlPath = `${tempDir}/${relativePath}`;
 
       paths.push(relativePath);
@@ -349,8 +353,11 @@ export class RebuildStructService {
 
     // await fse.writeFile(mainPath, mainContent);
 
-    // TODO: more connection types
-    let malloyConnections = item.connections.map(c => {
+    let malloyConnections: PostgresConnection[] = [];
+
+    item.connections.forEach(c => {
+      // TODO: more connection types
+
       let mConnection =
         c.type === common.ConnectionTypeEnum.PostgreSQL
           ? new PostgresConnection(c.connectionId, () => ({}), {
@@ -362,8 +369,14 @@ export class RebuildStructService {
             })
           : undefined;
 
+      if (common.isDefined(mConnection)) {
+        malloyConnections.push(mConnection);
+      }
+
       return mConnection;
     });
+
+    // let startBuildModStart = Date.now();
 
     let buildModStartResult = await barBuilder.buildModStart(
       {
@@ -378,6 +391,9 @@ export class RebuildStructService {
       },
       this.cs
     );
+
+    // console.log('diffBuildModStart');
+    // console.log(Date.now() - startBuildModStart);
 
     mods = buildModStartResult.mods;
 
@@ -765,7 +781,7 @@ export class RebuildStructService {
     );
 
     if (item.isTest === true) {
-      //   await fse.remove(tempDir);
+      // await fse.remove(tempDir);
     } else {
       fse.remove(tempDir);
     }

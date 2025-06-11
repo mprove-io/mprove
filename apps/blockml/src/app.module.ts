@@ -84,6 +84,7 @@ export class AppModule implements OnModuleInit {
       let presetFiles: common.BmlFile[] = await barYaml.collectFiles(
         {
           dir: `${constants.SRC_PATH}/presets`,
+          repoDir: undefined,
           structId: undefined,
           caller: common.CallerEnum.AppModule,
           skipLog: true

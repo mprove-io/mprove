@@ -9,6 +9,10 @@ export class BmlFile {
 
   @IsOptional()
   @IsString()
+  pathRelativeToRepo?: string;
+
+  @IsOptional()
+  @IsString()
   blockmlPath?: string;
 
   @IsString()

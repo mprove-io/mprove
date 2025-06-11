@@ -10,6 +10,7 @@ let func = common.FuncEnum.CollectFiles;
 export async function collectFiles(
   item: {
     dir: string;
+    repoDir: string;
     structId: string;
     caller: common.CallerEnum;
     skipLog: boolean;
@@ -30,6 +31,12 @@ export async function collectFiles(
     walker.on('file', async (root: any, stat: any, next: any) => {
       if (!stat.name.match(common.MyRegex.IGNORED_FILE_NAMES())) {
         let fullPath = root + '/' + stat.name;
+
+        let pathRelativeToRepo = common.isDefined(item.repoDir)
+          ? fullPath.substr(item.repoDir.length + 1)
+          : undefined;
+
+        fullPath.substr(item.dir.length + 1);
 
         let path = fullPath.substr(item.dir.length + 1);
 
@@ -53,7 +60,8 @@ export async function collectFiles(
         files.push({
           name: stat.name.toLowerCase(),
           path: path,
-          content: content
+          content: content,
+          pathRelativeToRepo: pathRelativeToRepo
         });
       }
       next();
