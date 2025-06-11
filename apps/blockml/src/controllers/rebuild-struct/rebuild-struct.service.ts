@@ -1,4 +1,5 @@
 import * as path from 'path';
+import { PostgresConnection } from '@malloydata/db-postgres';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fse from 'fs-extra';
@@ -345,10 +346,26 @@ export class RebuildStructService {
 
     // await fse.writeFile(mainPath, mainContent);
 
+    // TODO: more connection types
+    let malloyConnections = item.connections.map(c => {
+      let mConnection =
+        c.type === common.ConnectionTypeEnum.PostgreSQL
+          ? new PostgresConnection(c.connectionId, () => ({}), {
+              host: c.host,
+              port: c.port,
+              username: c.username,
+              password: c.password,
+              databaseName: c.databaseName
+            })
+          : undefined;
+
+      return mConnection;
+    });
+
     let buildModStartResult = await barBuilder.buildModStart(
       {
         files: item.files,
-        connections: item.connections,
+        malloyConnections: malloyConnections,
         mods: mods,
         tempDir: tempDir,
         projectId: item.projectId,
@@ -598,6 +615,8 @@ export class RebuildStructService {
         traceId: item.traceId,
         entities: dashboards,
         models: models,
+        mods: mods,
+        malloyConnections: malloyConnections,
         malloyFiles: malloyFiles,
         stores: stores,
         udfsDict: udfsDict,
@@ -622,6 +641,8 @@ export class RebuildStructService {
         traceId: item.traceId,
         entities: charts,
         models: models,
+        mods: mods,
+        malloyConnections: malloyConnections,
         stores: stores,
         malloyFiles: malloyFiles,
         udfsDict: udfsDict,

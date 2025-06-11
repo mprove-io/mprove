@@ -1,3 +1,4 @@
+import { PostgresConnection } from '@malloydata/db-postgres';
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { barSpecial } from '~blockml/barrels/bar-special';
@@ -21,6 +22,8 @@ export async function fetchSql<T extends types.dzType>(
     traceId: string;
     entities: T[];
     models: common.FileModel[];
+    mods: common.FileMod[];
+    malloyConnections: PostgresConnection[];
     malloyFiles: common.BmlFile[];
     udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
@@ -34,7 +37,7 @@ export async function fetchSql<T extends types.dzType>(
   rabbitService: RabbitService,
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId, timezone, malloyFiles } = item;
+  let { caller, structId, timezone } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let tiles: FilePartTileExtra[] = [];
@@ -58,6 +61,8 @@ export async function fetchSql<T extends types.dzType>(
       let qr = await barSpecial.buildMalloyQuery(
         {
           malloyFiles: item.malloyFiles,
+          malloyConnections: item.malloyConnections,
+          mods: item.mods,
           filePath: tile.filePath,
           fileName: tile.fileName,
           queryName: tile.query,

@@ -1,3 +1,4 @@
+import { PostgresConnection } from '@malloydata/db-postgres';
 import { ConfigService } from '@nestjs/config';
 import { barModStart } from '~blockml/barrels/bar-mod-start';
 import { common } from '~blockml/barrels/common';
@@ -7,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 export async function buildModStart(
   item: {
     files: common.BmlFile[];
-    connections: common.ProjectConnection[];
+    malloyConnections: PostgresConnection[];
     mods: common.FileMod[];
     tempDir: string;
     projectId: string;
@@ -21,7 +22,7 @@ export async function buildModStart(
 
   // let buildMalloyModel = await barModStart.buildMalloyModel(
   //   {
-  //     connections: item.connections,
+  //     malloyConnections: item.malloyConnections,
   //     tempDir: item.tempDir,
   //     projectId: item.projectId,
   //     structId: item.structId,
@@ -34,7 +35,7 @@ export async function buildModStart(
   mods = await barModStart.buildMods(
     {
       mods: mods,
-      connections: item.connections,
+      malloyConnections: item.malloyConnections,
       tempDir: item.tempDir,
       projectId: item.projectId,
       structId: item.structId,

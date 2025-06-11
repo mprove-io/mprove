@@ -15,7 +15,7 @@ let func = common.FuncEnum.BuildMods;
 export async function buildMods(
   item: {
     mods: common.FileMod[];
-    connections: common.ProjectConnection[];
+    malloyConnections: PostgresConnection[];
     tempDir: string;
     projectId: string;
     errors: BmError[];
@@ -24,26 +24,10 @@ export async function buildMods(
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId, connections, projectId } = item;
+  let { caller, structId, projectId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newMods: common.FileMod[] = [];
-
-  // TODO: more connection types
-  let malloyConnections = connections.map(c => {
-    let mConnection =
-      c.type === common.ConnectionTypeEnum.PostgreSQL
-        ? new PostgresConnection(c.connectionId, () => ({}), {
-            host: c.host,
-            port: c.port,
-            username: c.username,
-            password: c.password,
-            databaseName: c.databaseName
-          })
-        : undefined;
-
-    return mConnection;
-  });
 
   let runtime = new Runtime({
     urlReader: {
@@ -51,7 +35,7 @@ export async function buildMods(
     },
     connections: {
       lookupConnection: async function (name: string) {
-        return malloyConnections.find(mc => mc.name === name);
+        return item.malloyConnections.find(mc => mc.name === name);
       }
     }
   });

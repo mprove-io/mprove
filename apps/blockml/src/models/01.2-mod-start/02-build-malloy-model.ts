@@ -11,7 +11,7 @@ let func = common.FuncEnum.BuildMalloyModel;
 
 export async function buildMalloyModel(
   item: {
-    connections: common.ProjectConnection[];
+    malloyConnections: PostgresConnection[];
     tempDir: string;
     projectId: string;
     errors: BmError[];
@@ -20,23 +20,8 @@ export async function buildMalloyModel(
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId, projectId, connections } = item;
+  let { caller, structId, projectId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
-
-  let malloyConnections = connections.map(c => {
-    let mConnection =
-      c.type === common.ConnectionTypeEnum.PostgreSQL
-        ? new PostgresConnection(c.connectionId, () => ({}), {
-            host: c.host,
-            port: c.port,
-            username: c.username,
-            password: c.password,
-            databaseName: c.databaseName
-          })
-        : undefined;
-
-    return mConnection;
-  });
 
   let runtime = new Runtime({
     urlReader: {
@@ -44,7 +29,7 @@ export async function buildMalloyModel(
     },
     connections: {
       lookupConnection: async function (name: string) {
-        return malloyConnections.find(mc => mc.name === name);
+        return item.malloyConnections.find(mc => mc.name === name);
       }
     }
   });

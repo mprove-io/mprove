@@ -1,3 +1,4 @@
+import { PostgresConnection } from '@malloydata/db-postgres';
 import { ConfigService } from '@nestjs/config';
 import { barTile } from '~blockml/barrels/bar-tile';
 import { common } from '~blockml/barrels/common';
@@ -12,6 +13,8 @@ export async function buildTile<T extends types.dzType>(
     entities: T[];
     models: common.FileModel[];
     stores: common.FileStore[];
+    malloyConnections: PostgresConnection[];
+    mods: common.FileMod[];
     malloyFiles: common.BmlFile[];
     udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
@@ -109,6 +112,8 @@ export async function buildTile<T extends types.dzType>(
       traceId: item.traceId,
       entities: entities,
       models: item.models,
+      mods: item.mods,
+      malloyConnections: item.malloyConnections,
       malloyFiles: item.malloyFiles,
       udfsDict: item.udfsDict,
       weekStart: item.weekStart,
