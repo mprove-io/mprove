@@ -1,8 +1,7 @@
 import { common } from '~blockml/barrels/common';
 
 export function wrapField(item: {
-  children: common.ModelNode[];
-  node: common.ModelNode;
+  topNode: common.ModelNode;
   wrappedFields: common.ModelField[];
   field: common.FieldAny;
   alias: string;
@@ -16,8 +15,7 @@ export function wrapField(item: {
     alias,
     fileName,
     filePath,
-    children,
-    node,
+    topNode,
     isStoreModel
   } = item;
 
@@ -38,8 +36,8 @@ export function wrapField(item: {
     currencyPrefix: field.currency_prefix,
     currencySuffix: field.currency_suffix,
     sqlName: isStoreModel === true ? `${field.name}` : `${alias}_${field.name}`,
-    topId: node.id,
-    topLabel: node.label,
+    topId: topNode.id,
+    topLabel: topNode.label,
     description: field.description,
     type: field.type,
     groupId: field.groupId,
@@ -67,7 +65,7 @@ export function wrapField(item: {
   };
 
   if (common.isDefined(field.groupId)) {
-    let groupNode = children.find(c =>
+    let groupNode = topNode.children.find(c =>
       isStoreModel === true
         ? c.id === `${field.groupId}`
         : c.id === `${alias}.${field.groupId}`
@@ -90,11 +88,11 @@ export function wrapField(item: {
         nodeClass: common.FieldClassEnum.Dimension
       };
 
-      children.push(newGroupNode);
+      topNode.children.push(newGroupNode);
     }
   } else {
     // add field without grouping
-    children.push(fieldNode);
+    topNode.children.push(fieldNode);
   }
 
   return;

@@ -13,19 +13,19 @@ export function wrapModels(item: {
   [...models, ...stores].forEach(x => {
     let apiFields: common.ModelField[] = [];
     let nodes: common.ModelNode[] = [];
+
     if (x.fileExt === common.FileExtensionEnum.Model) {
       {
         // model fields scope
-        let children: common.ModelNode[] = [];
 
-        let node: common.ModelNode = {
+        let topNode: common.ModelNode = {
           id: common.MF,
           label: common.ModelNodeLabelEnum.ModelFields,
           description: undefined,
           hidden: false,
           required: false,
           isField: false,
-          children: children,
+          children: [],
           nodeClass: common.FieldClassEnum.Join
         };
 
@@ -37,29 +37,27 @@ export function wrapModels(item: {
             alias: common.MF,
             filePath: x.filePath,
             fileName: x.fileName,
-            children: children,
-            node: node
+            topNode: topNode
           });
         });
 
         if (x.fields.length > 0) {
-          nodes.push(node);
+          nodes.push(topNode);
         }
       }
 
       (x as common.FileModel).joins.forEach(join => {
         // join fields scope
-        let children: common.ModelNode[] = [];
         let joinHidden = common.toBooleanFromLowercaseString(join.hidden);
 
-        let node: common.ModelNode = {
+        let topNode: common.ModelNode = {
           id: join.as,
           label: join.label,
           description: join.description,
           hidden: joinHidden,
           required: false,
           isField: false,
-          children: children,
+          children: [],
           nodeClass: common.FieldClassEnum.Join,
           viewFilePath: join.view.filePath,
           viewName: join.view.name
@@ -73,13 +71,12 @@ export function wrapModels(item: {
             alias: join.as,
             fileName: join.view.fileName,
             filePath: join.view.filePath,
-            children: children,
-            node: node
+            topNode: topNode
           });
         });
 
         if (join.view.fields.length > 0) {
-          nodes.push(node);
+          nodes.push(topNode);
         }
       });
     }
@@ -87,16 +84,15 @@ export function wrapModels(item: {
     if (x.fileExt === common.FileExtensionEnum.Store) {
       {
         // model fields scope
-        let children: common.ModelNode[] = [];
 
-        let node: common.ModelNode = {
+        let topNode: common.ModelNode = {
           id: common.MF,
           label: common.ModelNodeLabelEnum.ModelFields,
           description: undefined,
           hidden: false,
           required: false,
           isField: false,
-          children: children,
+          children: [],
           nodeClass: common.FieldClassEnum.Join
         };
 
@@ -105,8 +101,7 @@ export function wrapModels(item: {
           .forEach(field => {
             wrapField({
               isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
-              children: children,
-              node: node,
+              topNode: topNode,
               wrappedFields: apiFields,
               field: field,
               alias: common.MF,
@@ -116,22 +111,21 @@ export function wrapModels(item: {
           });
 
         if (x.fields.length > 0) {
-          nodes.push(node);
+          nodes.push(topNode);
         }
       }
 
       (x as common.FileStore).field_groups.forEach(fieldGroup => {
-        let children: common.ModelNode[] = [];
         // let joinHidden = common.toBooleanFromLowercaseString(join.hidden);
 
-        let node: common.ModelNode = {
+        let topNode: common.ModelNode = {
           id: fieldGroup.group, // join.as,
           label: fieldGroup.label || fieldGroup.group, // join.label, TODO: field_group label
           description: undefined, //join.description, TODO: field_group description
           hidden: false, // joinHidden,
           required: false,
           isField: false,
-          children: children,
+          children: [],
           nodeClass: common.FieldClassEnum.Join,
           viewFilePath: undefined, // join.view.filePath,
           viewName: undefined // join.view.name
@@ -149,13 +143,12 @@ export function wrapModels(item: {
             alias: fieldGroup.group,
             filePath: x.filePath,
             fileName: x.fileName,
-            children: children,
-            node: node
+            topNode: topNode
           });
         });
 
         if (fieldGroupFields.length > 0) {
-          nodes.push(node);
+          nodes.push(topNode);
         }
       });
     }
