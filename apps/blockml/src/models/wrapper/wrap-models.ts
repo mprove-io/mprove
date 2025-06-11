@@ -5,14 +5,79 @@ export function wrapModels(item: {
   structId: string;
   models: common.FileModel[];
   stores: common.FileStore[];
+  mods: common.FileMod[];
 }): common.Model[] {
-  let { structId, models, stores } = item;
+  let { structId, models, stores, mods } = item;
 
   let apiModels: common.Model[] = [];
 
-  [...models, ...stores].forEach(x => {
+  [...models, ...stores, ...mods].forEach(x => {
     let apiFields: common.ModelField[] = [];
     let nodes: common.ModelNode[] = [];
+
+    if (x.fileExt === common.FileExtensionEnum.Mod) {
+      {
+        // model fields scope
+        // let topNode: common.ModelNode = {
+        //   id: common.MF,
+        //   label: common.ModelNodeLabelEnum.ModelFields,
+        //   description: undefined,
+        //   hidden: false,
+        //   required: false,
+        //   isField: false,
+        //   children: [],
+        //   nodeClass: common.FieldClassEnum.Join
+        // };
+        // (x as common.FileModel).fields.forEach(field => {
+        //   wrapField({
+        //     isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
+        //     wrappedFields: apiFields,
+        //     field: field,
+        //     alias: common.MF,
+        //     filePath: x.filePath,
+        //     fileName: x.fileName,
+        //     topNode: topNode
+        //   });
+        // });
+        // if ((x as common.FileModel).fields.length > 0) {
+        //   nodes.push(topNode);
+        // }
+      }
+
+      // (x as common.FileModel).joins.forEach(join => {
+      // join fields scope
+      // let joinHidden = common.toBooleanFromLowercaseString(join.hidden);
+
+      // let topNode: common.ModelNode = {
+      //   id: join.as,
+      //   label: join.label,
+      //   description: join.description,
+      //   hidden: joinHidden,
+      //   required: false,
+      //   isField: false,
+      //   children: [],
+      //   nodeClass: common.FieldClassEnum.Join,
+      //   viewFilePath: join.view.filePath,
+      //   viewName: join.view.name
+      // };
+
+      // join.view.fields.forEach(field => {
+      //   wrapField({
+      //     isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
+      //     wrappedFields: apiFields,
+      //     field: field,
+      //     alias: join.as,
+      //     fileName: join.view.fileName,
+      //     filePath: join.view.filePath,
+      //     topNode: topNode
+      //   });
+      // });
+
+      // if (join.view.fields.length > 0) {
+      //   nodes.push(topNode);
+      // }
+      // });
+    }
 
     if (x.fileExt === common.FileExtensionEnum.Model) {
       {
@@ -29,7 +94,7 @@ export function wrapModels(item: {
           nodeClass: common.FieldClassEnum.Join
         };
 
-        x.fields.forEach(field => {
+        (x as common.FileModel).fields.forEach(field => {
           wrapField({
             isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
             wrappedFields: apiFields,
@@ -41,7 +106,7 @@ export function wrapModels(item: {
           });
         });
 
-        if (x.fields.length > 0) {
+        if ((x as common.FileModel).fields.length > 0) {
           nodes.push(topNode);
         }
       }
@@ -96,7 +161,7 @@ export function wrapModels(item: {
           nodeClass: common.FieldClassEnum.Join
         };
 
-        x.fields
+        (x as common.FileStore).fields
           .filter(field => field.group === common.MF)
           .forEach(field => {
             wrapField({
@@ -110,7 +175,7 @@ export function wrapModels(item: {
             });
           });
 
-        if (x.fields.length > 0) {
+        if ((x as common.FileStore).fields.length > 0) {
           nodes.push(topNode);
         }
       }
@@ -131,7 +196,7 @@ export function wrapModels(item: {
           viewName: undefined // join.view.name
         };
 
-        let fieldGroupFields = x.fields.filter(
+        let fieldGroupFields = (x as common.FileStore).fields.filter(
           f => f.group === fieldGroup.group
         );
 
@@ -357,7 +422,7 @@ export function wrapModels(item: {
           x.fileExt === common.FileExtensionEnum.Store
             ? `Store Model - ${x.label}`
             : x.label,
-        description: x.description,
+        description: (x as common.FileStore | common.FileModel).description,
         gr:
           x.fileExt === common.FileExtensionEnum.Model
             ? (x as common.FileModel).group

@@ -89,6 +89,17 @@ export async function buildMods(
 
     x.malloyModel = wrapResult.data;
 
+    let explore = x.malloyModel.getExploreByName(x.source);
+    // console.dir(explore, { depth: 3 });
+
+    // if (common.isDefined(explore)) {
+    //   fse.writeFileSync(
+    //     `${x.source}-explore.json`,
+    //     JSON.stringify(explore, null, 2),
+    //     'utf-8'
+    //   );
+    // }
+
     if (errorsOnStart === item.errors.length) {
       newMods.push(x);
     }

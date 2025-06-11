@@ -8,5 +8,5 @@ source: order_items3 is order_items_table3 extend {
   -- dimension: order_item_id
   -- dimension: sale_price
 
-  measure: orders_count is count()
+  measure: orders_items_count is count()
 }

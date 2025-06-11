@@ -61,6 +61,7 @@ export class RebuildStructService {
     let {
       errors,
       stores,
+      mods,
       dashboards,
       metrics,
       presets,
@@ -98,7 +99,8 @@ export class RebuildStructService {
     let apiModels = barWrapper.wrapModels({
       structId: structId,
       models: models,
-      stores: stores
+      stores: stores,
+      mods: mods
     });
 
     let apiReports = barWrapper.wrapReports({
@@ -282,6 +284,7 @@ export class RebuildStructService {
         errors: errors,
         views: [],
         models: [],
+        mods: [],
         metrics: [],
         presets: [],
         stores: [],
@@ -782,6 +785,7 @@ export class RebuildStructService {
         return presetPart;
       }),
       models: models,
+      mods: mods,
       udfsDict: udfsDict,
       reports: reports,
       views: views,
