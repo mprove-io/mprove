@@ -2,22 +2,13 @@ import { common } from '~blockml/barrels/common';
 
 export function wrapField(item: {
   topNode: common.ModelNode;
-  wrappedFields: common.ModelField[];
   field: common.FieldAny;
   alias: string;
   fileName: string;
   filePath: string;
   isStoreModel: boolean;
 }) {
-  let {
-    wrappedFields,
-    field,
-    alias,
-    fileName,
-    filePath,
-    topNode,
-    isStoreModel
-  } = item;
+  let { field, alias, fileName, filePath, topNode, isStoreModel } = item;
 
   let fieldHidden = common.toBooleanFromLowercaseString(field.hidden);
   let fieldRequired = common.toBooleanFromLowercaseString(field.required);
@@ -46,8 +37,6 @@ export function wrapField(item: {
     suggestModelDimension: field.suggest_model_dimension,
     detail: field.detail
   };
-
-  wrappedFields.push(modelField);
 
   let fieldNode: common.ModelNode = {
     id: isStoreModel === true ? `${field.name}` : `${alias}.${field.name}`,
@@ -95,5 +84,5 @@ export function wrapField(item: {
     topNode.children.push(fieldNode);
   }
 
-  return;
+  return modelField;
 }

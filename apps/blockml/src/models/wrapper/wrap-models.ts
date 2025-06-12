@@ -1,5 +1,7 @@
 import { common } from '~blockml/barrels/common';
+import { getFieldItems } from '~blockml/functions/source-to-field-items';
 import { wrapField } from './wrap-field';
+import { wrapFieldItem } from './wrap-field-item';
 
 export function wrapModels(item: {
   structId: string;
@@ -12,36 +14,61 @@ export function wrapModels(item: {
   let apiModels: common.Model[] = [];
 
   [...models, ...stores, ...mods].forEach(x => {
+    // console.log('x');
+    // console.log(x);
+
     let apiFields: common.ModelField[] = [];
     let nodes: common.ModelNode[] = [];
 
     if (x.fileExt === common.FileExtensionEnum.Mod) {
       {
         // model fields scope
-        // let topNode: common.ModelNode = {
-        //   id: common.MF,
-        //   label: common.ModelNodeLabelEnum.ModelFields,
-        //   description: undefined,
-        //   hidden: false,
-        //   required: false,
-        //   isField: false,
-        //   children: [],
-        //   nodeClass: common.FieldClassEnum.Join
-        // };
-        // (x as common.FileModel).fields.forEach(field => {
-        //   wrapField({
-        //     isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
-        //     wrappedFields: apiFields,
-        //     field: field,
-        //     alias: common.MF,
-        //     filePath: x.filePath,
-        //     fileName: x.fileName,
-        //     topNode: topNode
-        //   });
-        // });
-        // if ((x as common.FileModel).fields.length > 0) {
-        //   nodes.push(topNode);
-        // }
+
+        // console.log('x');
+        // console.log(x);
+
+        let fieldItems = getFieldItems(
+          (x as common.FileMod).valueWithSourceInfo
+        );
+
+        // fse.writeFileSync(
+        //   `${(x as common.FileMod).source}-field-items.json`,
+        //   JSON.stringify(fieldItems, null, 2),
+        //   'utf-8'
+        // );
+
+        let topNode: common.ModelNode = {
+          id: common.MF,
+          label: common.ModelNodeLabelEnum.ModelFields,
+          description: undefined,
+          hidden: false,
+          required: false,
+          isField: false,
+          children: [],
+          nodeClass: common.FieldClassEnum.Join
+        };
+
+        let filteredFieldItems = fieldItems.filter(
+          fieldItem =>
+            ['dimension', 'measure'].indexOf(fieldItem.field.kind) > -1
+        );
+
+        filteredFieldItems.forEach(fieldItem => {
+          let apiField: common.ModelField = wrapFieldItem({
+            isStoreModel: false,
+            fieldItem: fieldItem,
+            alias: common.MF,
+            filePath: x.filePath,
+            fileName: x.fileName,
+            topNode: topNode
+          });
+
+          apiFields.push(apiField);
+        });
+
+        if (filteredFieldItems.length > 0) {
+          nodes.push(topNode);
+        }
       }
 
       // (x as common.FileModel).joins.forEach(join => {
@@ -95,15 +122,16 @@ export function wrapModels(item: {
         };
 
         (x as common.FileModel).fields.forEach(field => {
-          wrapField({
+          let apiField = wrapField({
             isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
-            wrappedFields: apiFields,
             field: field,
             alias: common.MF,
             filePath: x.filePath,
             fileName: x.fileName,
             topNode: topNode
           });
+
+          apiFields.push(apiField);
         });
 
         if ((x as common.FileModel).fields.length > 0) {
@@ -129,15 +157,16 @@ export function wrapModels(item: {
         };
 
         join.view.fields.forEach(field => {
-          wrapField({
+          let apiField = wrapField({
             isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
-            wrappedFields: apiFields,
             field: field,
             alias: join.as,
             fileName: join.view.fileName,
             filePath: join.view.filePath,
             topNode: topNode
           });
+
+          apiFields.push(apiField);
         });
 
         if (join.view.fields.length > 0) {
@@ -164,15 +193,16 @@ export function wrapModels(item: {
         (x as common.FileStore).fields
           .filter(field => field.group === common.MF)
           .forEach(field => {
-            wrapField({
+            let apiField = wrapField({
               isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
               topNode: topNode,
-              wrappedFields: apiFields,
               field: field,
               alias: common.MF,
               filePath: x.filePath,
               fileName: x.fileName
             });
+
+            apiFields.push(apiField);
           });
 
         if ((x as common.FileStore).fields.length > 0) {
@@ -201,15 +231,16 @@ export function wrapModels(item: {
         );
 
         fieldGroupFields.forEach(field => {
-          wrapField({
+          let apiField = wrapField({
             isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
-            wrappedFields: apiFields,
             field: field,
             alias: fieldGroup.group,
             filePath: x.filePath,
             fileName: x.fileName,
             topNode: topNode
           });
+
+          apiFields.push(apiField);
         });
 
         if (fieldGroupFields.length > 0) {
@@ -399,7 +430,7 @@ export function wrapModels(item: {
           x.fileExt === common.FileExtensionEnum.Store
             ? `${common.STORE_MODEL_PREFIX}_${x.name}`
             : x.name,
-        connectionId: x.connection.connectionId,
+        connectionId: x.connection?.connectionId,
         filePath: x.filePath,
         content: x,
         isStoreModel: x.fileExt === common.FileExtensionEnum.Store,

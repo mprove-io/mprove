@@ -392,6 +392,13 @@ export class RebuildStructService {
       this.cs
     );
 
+    // barWrapper.wrapModels({ // TODO: remove
+    //   structId: item.structId,
+    //   models: [],
+    //   stores: [],
+    //   mods: mods
+    // });
+
     // console.log('diffBuildModStart');
     // console.log(Date.now() - startBuildModStart);
 

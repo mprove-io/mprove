@@ -101,25 +101,25 @@ export async function buildMods(
 
     x.malloyModel = wrapResult.data;
 
-    // let explore = x.malloyModel.getExploreByName(x.source);
-    // console.dir(explore, { depth: 3 });
-
     let modelInfo: MalloyModelInfo = modelDefToModelInfo(
       x.malloyModel._modelDef
     );
 
-    let entrySourceInfo: ModelEntryValueWithSource = modelInfo.entries.find(
+    x.valueWithSourceInfo = modelInfo.entries.find(
       entry => entry.kind === 'source' && entry.name === x.source
     ) as ModelEntryValueWithSource;
 
-    // console.log('entrySourceInfo');
-    // console.dir(entrySourceInfo, { depth: null });
+    // console.log('x.valueWithSourceInfo');
+    // console.dir(x.valueWithSourceInfo, { depth: null });
 
     // fse.writeFileSync(
     //   `${x.source}-source-info.json`,
-    //   JSON.stringify(entrySourceInfo, null, 2),
+    //   JSON.stringify(x.valueWithSourceInfo, null, 2),
     //   'utf-8'
     // );
+
+    // let explore = x.malloyModel.getExploreByName(x.source);
+    // console.dir(explore, { depth: 3 });
 
     if (errorsOnStart === item.errors.length) {
       newMods.push(x);

@@ -1,6 +1,9 @@
+import './users.malloy';
 source: orders_table is c2_postgres.table('ecommerce.orders') extend {}
 
 source: orders is orders_table extend {
+  -- join_one: users on user_id = users.user_id
+
   primary_key: order_id
   
   -- dimension: order_id
