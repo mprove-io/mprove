@@ -34,14 +34,18 @@ export function wrapCharts(item: {
     chartMconfigs = [...chartMconfigs, ...mconfigs];
     chartQueries = [...chartQueries, ...queries];
 
-    let isStore = x.tiles[0].model.startsWith(STORE_MODEL_PREFIX);
-    let model;
+    let mod: common.FileMod;
+    let model: common.FileModel;
     let store: common.FileStore;
+
+    let isStore = x.tiles[0].model.startsWith(STORE_MODEL_PREFIX);
 
     if (isStore === true) {
       store = stores.find(
-        m => `${STORE_MODEL_PREFIX}_${m.name}` === x.tiles[0].model
+        s => `${STORE_MODEL_PREFIX}_${s.name}` === x.tiles[0].model
       );
+    } else if (common.isDefined(x.tiles[0].query)) {
+      mod = mods.find(m => m.name === x.tiles[0].model);
     } else {
       model = models.find(m => m.name === x.tiles[0].model);
     }
@@ -53,7 +57,7 @@ export function wrapCharts(item: {
       creatorId: undefined,
       title: x.tiles[0].title,
       modelId: x.tiles[0].model,
-      modelLabel: isStore === true ? store.label : model.label,
+      modelLabel: store?.label || mod?.label || model?.label,
       filePath: x.filePath,
       accessRoles: x.access_roles || [],
       gr: x.group,

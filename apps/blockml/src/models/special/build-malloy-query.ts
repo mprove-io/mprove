@@ -2,6 +2,7 @@ import { PostgresConnection } from '@malloydata/db-postgres';
 import {
   ModelMaterializer,
   PreparedQuery,
+  PreparedResult,
   QueryMaterializer,
   Runtime
 } from '@malloydata/malloy';
@@ -119,7 +120,7 @@ export async function buildMalloyQuery(
 
   // let start102 = Date.now();
 
-  let aSql = await qm.getSQL();
+  // let aSql = await qm.getSQL();
 
   // console.log('diff102');
   // console.log(Date.now() - start102); // 14ms
@@ -129,11 +130,16 @@ export async function buildMalloyQuery(
 
   // let start103 = Date.now();
   let pq: PreparedQuery = await qm.getPreparedQuery();
+  let pr: PreparedResult = pq.getPreparedResult();
+
   // console.log('diff103');
-  // console.log(Date.now() - start103); // 0ms
+  // console.log(Date.now() - start103); // 15ms
 
   // console.log('pq');
   // console.dir(pq, { depth: null });
 
-  return 1;
+  // console.log('pr.sql')
+  // console.log(pr.sql)
+
+  return pr;
 }

@@ -23,6 +23,9 @@ export function wrapTiles(item: {
   let mconfigs: common.Mconfig[] = [];
   let queries: common.Query[] = [];
 
+  // console.log('item');
+  // console.log(item);
+
   tiles.forEach(tile => {
     let mconfigChart = wrapMconfigChart({
       title: tile.title,
@@ -34,23 +37,21 @@ export function wrapTiles(item: {
       data: tile.data
     });
 
+    let mod: common.FileMod;
+    let model: common.FileModel;
+    let store: common.FileStore;
+
     let isStore =
       common.isDefined(tile.model) && tile.model.startsWith(STORE_MODEL_PREFIX);
-
-    let mod;
-    let model;
-    let store: common.FileStore;
 
     if (isStore === true) {
       store = stores.find(
         s => `${STORE_MODEL_PREFIX}_${s.name}` === tile.model
       );
+    } else if (common.isDefined(tile.query)) {
+      mod = mods.find(m => m.name === tile.model);
     } else {
       model = models.find(m => m.name === tile.model);
-
-      if (common.isUndefined(model)) {
-        mod = mods.find(m => m.name === tile.model);
-      }
     }
 
     let connection = common.isDefined(store)
@@ -60,8 +61,6 @@ export function wrapTiles(item: {
         : common.isDefined(mod)
           ? mod.connection
           : undefined;
-
-    // TODO: tile.connectionId
 
     let queryId =
       isStore === true
@@ -249,7 +248,7 @@ export function wrapTiles(item: {
           ? true
           : false,
       storePart: undefined,
-      modelLabel: isStore === true ? store.label : model.label,
+      modelLabel: store?.label || mod?.label || model?.label,
       select: tile.select,
       unsafeSelect: tile.unsafeSelect || [],
       warnSelect: tile.warnSelect || [],

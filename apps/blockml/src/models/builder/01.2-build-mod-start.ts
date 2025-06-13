@@ -9,6 +9,7 @@ export async function buildModStart(
   item: {
     files: common.BmlFile[];
     malloyConnections: PostgresConnection[];
+    connections: common.ProjectConnection[];
     mods: common.FileMod[];
     tempDir: string;
     projectId: string;
@@ -36,6 +37,7 @@ export async function buildModStart(
     {
       mods: mods,
       malloyConnections: item.malloyConnections,
+      connections: item.connections,
       tempDir: item.tempDir,
       projectId: item.projectId,
       structId: item.structId,

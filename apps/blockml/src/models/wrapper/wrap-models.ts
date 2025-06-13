@@ -464,7 +464,7 @@ export function wrapModels(item: {
           x.fileExt === common.FileExtensionEnum.Store
             ? `${common.STORE_MODEL_PREFIX}_${x.name}`
             : x.name,
-        connectionId: x.connection?.connectionId,
+        connectionId: x.connection.connectionId,
         filePath: x.filePath,
         content: x,
         // isStoreModel: x.fileExt === common.FileExtensionEnum.Store,

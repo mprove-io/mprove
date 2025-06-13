@@ -1,4 +1,5 @@
 import { PostgresConnection } from '@malloydata/db-postgres';
+import { PreparedResult } from '@malloydata/malloy/index';
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { barSpecial } from '~blockml/barrels/bar-special';
@@ -58,7 +59,7 @@ export async function fetchSql<T extends types.dzType>(
 
   await asyncPool(concurrencyLimit, tiles, async (tile: FilePartTileExtra) => {
     if (common.isDefined(tile.query)) {
-      let qr = await barSpecial.buildMalloyQuery(
+      let pr: PreparedResult = await barSpecial.buildMalloyQuery(
         {
           malloyFiles: item.malloyFiles,
           malloyConnections: item.malloyConnections,
@@ -73,6 +74,10 @@ export async function fetchSql<T extends types.dzType>(
         },
         cs
       );
+
+      tile.sql = pr.sql.split('\n');
+      tile.model = pr._rawQuery.sourceExplore;
+      tile.filtersFractions = {};
     } else if (
       common.isDefined(tile.model) &&
       tile.model.startsWith(STORE_MODEL_PREFIX) === false

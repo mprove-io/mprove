@@ -384,6 +384,7 @@ export class RebuildStructService {
       {
         files: item.files,
         malloyConnections: malloyConnections,
+        connections: item.connections,
         mods: mods,
         tempDir: tempDir,
         projectId: item.projectId,
@@ -795,8 +796,7 @@ export class RebuildStructService {
       fse.remove(tempDir);
     }
 
-    // TODO: remove
-    // let { apiCharts, chartMconfigs, chartQueries } = barWrapper.wrapCharts({
+    // let { apiCharts, chartMconfigs, chartQueries } = barWrapper.wrapCharts({ // TODO: remove
     //   structId: item.structId,
     //   projectId: item.projectId,
     //   models: models,

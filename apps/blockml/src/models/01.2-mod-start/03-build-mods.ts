@@ -1,7 +1,9 @@
 import { PostgresConnection } from '@malloydata/db-postgres';
 import {
   Model as MalloyModel,
-  Runtime,
+  ModelDef as MalloyModelDef,
+  Runtime as MalloyRuntime,
+  SourceDef as MalloySourceDef,
   modelDefToModelInfo
 } from '@malloydata/malloy';
 import {
@@ -24,6 +26,7 @@ export async function buildMods(
   item: {
     mods: common.FileMod[];
     malloyConnections: PostgresConnection[];
+    connections: common.ProjectConnection[];
     tempDir: string;
     projectId: string;
     errors: BmError[];
@@ -37,7 +40,7 @@ export async function buildMods(
 
   let newMods: common.FileMod[] = [];
 
-  let runtime = new Runtime({
+  let runtime = new MalloyRuntime({
     urlReader: {
       readURL: async (url: URL) => await fse.readFile(url, 'utf8')
     },
@@ -106,8 +109,17 @@ export async function buildMods(
 
     x.malloyModel = wrapResult.data;
 
-    let modelInfo: MalloyModelInfo = modelDefToModelInfo(
-      x.malloyModel._modelDef
+    let malloyModelDef: MalloyModelDef = x.malloyModel._modelDef;
+
+    // export type SourceDef = TableSourceDef | SQLSourceDef | QuerySourceDef | QueryResultDef | FinalizeSourceDef | NestSourceDef | CompositeSourceDef;
+    let sourceDef: MalloySourceDef = malloyModelDef.contents[
+      x.source
+    ] as MalloySourceDef;
+
+    let modelInfo: MalloyModelInfo = modelDefToModelInfo(malloyModelDef);
+
+    x.connection = item.connections.find(
+      c => c.connectionId === sourceDef.connection
     );
 
     x.valueWithSourceInfo = modelInfo.entries.find(
