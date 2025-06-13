@@ -38,6 +38,8 @@ export class DashboardTileChartComponent
   queryStatusEnum = common.QueryStatusEnum;
   queryStatusRunning = common.QueryStatusEnum.Running;
 
+  modelTypeStore = common.ModelTypeEnum.Store;
+
   @ViewChildren('chartView') chartViewComponents: QueryList<ChartViewComponent>;
 
   @Input()
@@ -151,7 +153,8 @@ export class DashboardTileChartComponent
     let checkSelectResult = getSelectValid({
       chart: this.mconfig.chart,
       mconfigFields: this.mconfig.fields,
-      isStoreModel: this.mconfig.isStoreModel
+      isStoreModel: this.mconfig.modelType === common.ModelTypeEnum.Store
+      // isStoreModel: this.mconfig.isStoreModel
     });
 
     this.isSelectValid = checkSelectResult.isSelectValid;

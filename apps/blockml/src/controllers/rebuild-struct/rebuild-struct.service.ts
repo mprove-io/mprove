@@ -130,6 +130,7 @@ export class RebuildStructService {
         structId: structId,
         projectId: projectId,
         models: models,
+        mods: mods,
         stores: stores,
         dashboards: dashboards,
         envId: envId,
@@ -140,6 +141,7 @@ export class RebuildStructService {
       structId: structId,
       projectId: projectId,
       models: models,
+      mods: mods,
       stores: stores,
       charts: charts,
       envId: envId,
@@ -792,6 +794,24 @@ export class RebuildStructService {
     } else {
       fse.remove(tempDir);
     }
+
+    // TODO: remove
+    // let { apiCharts, chartMconfigs, chartQueries } = barWrapper.wrapCharts({
+    //   structId: item.structId,
+    //   projectId: item.projectId,
+    //   models: models,
+    //   mods: mods,
+    //   stores: stores,
+    //   charts: charts,
+    //   envId: item.envId,
+    //   timezone: 'UTC'
+    // });
+
+    // console.log('chartMconfigs.length');
+    // console.log(chartMconfigs.length);
+
+    // console.log('chartMconfigs[0]');
+    // console.log(chartMconfigs[0]);
 
     return {
       errors: errors,

@@ -11,11 +11,20 @@ export function wrapDashboards(item: {
   dashboards: common.FileDashboard[];
   models: common.FileModel[];
   stores: common.FileStore[];
+  mods: common.FileMod[];
   envId: string;
   timezone: string;
 }) {
-  let { structId, projectId, models, stores, dashboards, envId, timezone } =
-    item;
+  let {
+    structId,
+    projectId,
+    models,
+    stores,
+    mods,
+    dashboards,
+    envId,
+    timezone
+  } = item;
 
   let apiDashboards: common.Dashboard[] = [];
   let dashMconfigs: common.Mconfig[] = [];
@@ -183,6 +192,7 @@ export function wrapDashboards(item: {
       projectId: projectId,
       structId: structId,
       models: models,
+      mods: mods,
       stores: stores,
       tiles: x.tiles,
       envId: envId,

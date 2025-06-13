@@ -1,11 +1,13 @@
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
+  IsEnum,
   IsInt,
   IsOptional,
   IsString,
   ValidateNested
 } from 'class-validator';
+import { enums } from '~common/barrels/enums';
 import { ModelField } from './model-field';
 import { ModelNode } from './model-node';
 
@@ -15,6 +17,9 @@ export class Model {
 
   @IsString()
   modelId: string;
+
+  @IsEnum(enums.ModelTypeEnum)
+  type: enums.ModelTypeEnum;
 
   @IsString()
   connectionId: string;
@@ -27,8 +32,8 @@ export class Model {
   @IsBoolean()
   isViewModel: boolean;
 
-  @IsBoolean()
-  isStoreModel: boolean;
+  // @IsBoolean()
+  // isStoreModel: boolean;
 
   @IsBoolean()
   dateRangeIncludesRightSide: boolean;

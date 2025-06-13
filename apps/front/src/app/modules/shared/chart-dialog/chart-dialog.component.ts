@@ -69,6 +69,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   queryStatusRunning = common.QueryStatusEnum.Running;
   queryStatusCompleted = common.QueryStatusEnum.Completed;
 
+  modelTypeStore = common.ModelTypeEnum.Store;
+
   title: string;
 
   groupByFieldForm: FormGroup;

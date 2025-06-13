@@ -1016,7 +1016,7 @@
                         [qData]="qData"
                         [chart]="mconfig.chart"
                         [isAnimation]="true"
-                        [isStoreModel]="mconfig.isStoreModel"
+                        [isStoreModel]="mconfig.modelType === modelTypeStore"
                         [queryStatus]="query.status"
                         [chartInstanceId]="'model-chart'"
                       ></m-chart-view>
@@ -1391,7 +1391,7 @@
 
                       <div>
                         {{
-                          mconfig?.isStoreModel === true
+                          mconfig?.modelType === modelTypeStore
                             ? 'Store Query'
                             : 'Main Query'
                         }}
@@ -1409,7 +1409,7 @@
                       data-cy="queryPartSelect"
                       class="w-[250px] flex-shrink-0 text-base focus:outline-none"
                       [items]="
-                        mconfig?.isStoreModel === true
+                        mconfig?.modelType === modelTypeStore
                           ? storeQueryPartList
                           : mainQueryPartList
                       "

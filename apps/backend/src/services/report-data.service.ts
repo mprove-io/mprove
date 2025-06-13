@@ -156,7 +156,8 @@ export class ReportDataService {
 
         let model = models.find(ml => ml.modelId === metric.modelId);
 
-        if (model.isStoreModel === true) {
+        if (model.type === common.ModelTypeEnum.Store) {
+          // if (model.isStoreModel === true) {
           // add required parameters
           (model.content as common.FileStore).fields
             .filter(x => x.fieldClass === common.FieldClassEnum.Filter)
@@ -285,7 +286,8 @@ export class ReportDataService {
 
           let timeFieldIdSpec;
 
-          if (model.isStoreModel === false) {
+          if (model.type !== common.ModelTypeEnum.Store) {
+            // if (model.isStoreModel === false) {
             let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
 
             timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
@@ -305,7 +307,9 @@ export class ReportDataService {
           }
 
           let timeSorting: common.Sorting =
-            model.isStoreModel === true && common.isUndefined(timeFieldIdSpec)
+            model.type === common.ModelTypeEnum.Store &&
+            // model.isStoreModel === true
+            common.isUndefined(timeFieldIdSpec)
               ? undefined
               : {
                   desc: false,
@@ -313,7 +317,9 @@ export class ReportDataService {
                 };
 
           let timeFilter: common.Filter =
-            model.isStoreModel === true && common.isUndefined(timeFieldIdSpec)
+            model.type === common.ModelTypeEnum.Store &&
+            // model.isStoreModel === true
+            common.isUndefined(timeFieldIdSpec)
               ? undefined
               : {
                   fieldId: timeFieldIdSpec,
@@ -321,8 +327,10 @@ export class ReportDataService {
                 };
 
           let filters: common.Filter[] =
-            model.isStoreModel === true // TODO: store parametersFiltersWithExcludedTime
-              ? [...x.parametersFiltersWithExcludedTime].sort((a, b) =>
+            model.type === common.ModelTypeEnum.Store
+              ? // model.isStoreModel === true
+                // TODO: store parametersFiltersWithExcludedTime
+                [...x.parametersFiltersWithExcludedTime].sort((a, b) =>
                   a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
                 )
               : [timeFilter, ...x.parametersFiltersWithExcludedTime].sort(
@@ -338,23 +346,30 @@ export class ReportDataService {
             mconfigId: newMconfigId,
             queryId: newQueryId,
             modelId: model.modelId,
-            isStoreModel: model.isStoreModel,
+            modelType: model.type,
+            // isStoreModel: model.isStoreModel,
             dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
             storePart: undefined,
             modelLabel: model.label,
             select:
-              model.isStoreModel === true && common.isUndefined(timeFieldIdSpec)
+              model.type === common.ModelTypeEnum.Store &&
+              // model.isStoreModel === true &&
+              common.isUndefined(timeFieldIdSpec)
                 ? []
                 : [timeFieldIdSpec, metric.fieldId],
             unsafeSelect: [],
             warnSelect: [],
             joinAggregations: [],
             sortings:
-              model.isStoreModel === true && common.isUndefined(timeFieldIdSpec)
+              model.type === common.ModelTypeEnum.Store &&
+              // model.isStoreModel === true &&
+              common.isUndefined(timeFieldIdSpec)
                 ? []
                 : [timeSorting],
             sorts:
-              model.isStoreModel === true && common.isUndefined(timeFieldIdSpec)
+              model.type === common.ModelTypeEnum.Store &&
+              // model.isStoreModel === true &&
+              common.isUndefined(timeFieldIdSpec)
                 ? undefined
                 : [
                       common.FractionTypeEnum.TsIsAfterDate,
@@ -398,7 +413,9 @@ export class ReportDataService {
 
           let isError = false;
 
-          if (model.isStoreModel === true) {
+          if (model.type === common.ModelTypeEnum.Store) {
+            // if (model.isStoreModel === true) {
+
             // console.log('columns[0].columnId');
             // console.log(columns[0].columnId);
 

@@ -40,11 +40,12 @@ export class ModelsService {
       // 'modelFullId'
       structId: modelsTable.structId,
       modelId: modelsTable.modelId,
+      modelType: modelsTable.type,
+      // isStoreModel: modelsTable.isStoreModel,
       connectionId: modelsTable.connectionId,
       filePath: modelsTable.filePath,
       // 'content'
       isViewModel: modelsTable.isViewModel,
-      isStoreModel: modelsTable.isStoreModel,
       accessRoles: modelsTable.accessRoles,
       label: modelsTable.label,
       gr: modelsTable.gr,

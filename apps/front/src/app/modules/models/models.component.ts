@@ -121,6 +121,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   queryPartEnum = common.QueryPartEnum;
 
+  modelTypeStore = common.ModelTypeEnum.Store;
+
   chartTypeEnumTable = common.ChartTypeEnum.Table;
   chartTypeEnumSingle = common.ChartTypeEnum.Single;
   chartTypeEnumLine = common.ChartTypeEnum.Line;
@@ -195,18 +197,19 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.model = x;
 
       if (common.isDefined(this.model.modelId)) {
-        let queryPart =
-          this.model.isStoreModel === true &&
-          this.storeQueryPartList
-            .map(y => y.value)
-            .indexOf(this.queryPartForm.controls['queryPart'].value) < 0
-            ? common.QueryPartEnum.StoreReqJsonParts
-            : this.model.isStoreModel === false &&
-                this.mainQueryPartList
-                  .map(y => y.value)
-                  .indexOf(this.queryPartForm.controls['queryPart'].value) < 0
-              ? common.QueryPartEnum.MainSql
-              : undefined;
+        let queryPart = this.model.type === common.ModelTypeEnum.Store;
+        // this.model.isStoreModel === true &&
+        this.storeQueryPartList
+          .map(y => y.value)
+          .indexOf(this.queryPartForm.controls['queryPart'].value) < 0
+          ? common.QueryPartEnum.StoreReqJsonParts
+          : this.model.type !== common.ModelTypeEnum.Store;
+        // this.model.isStoreModel === false &&
+        this.mainQueryPartList
+          .map(y => y.value)
+          .indexOf(this.queryPartForm.controls['queryPart'].value) < 0
+          ? common.QueryPartEnum.MainSql
+          : undefined;
 
         if (
           common.isDefined(queryPart) &&
@@ -359,7 +362,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
         let checkSelectResult = getSelectValid({
           chart: this.mconfig.chart,
           mconfigFields: this.mconfig.fields,
-          isStoreModel: this.mconfig.isStoreModel
+          isStoreModel: this.mconfig.modelType === common.ModelTypeEnum.Store
+          // isStoreModel: this.mconfig.isStoreModel
         });
 
         this.isSelectValid = checkSelectResult.isSelectValid;
@@ -1330,7 +1334,8 @@ ${this.mconfig.storePart?.reqFunction}`
 
     let field = this.model.fields.find(x => x.id === this.newParameterFieldId);
 
-    if (newMconfig.isStoreModel === true) {
+    if (newMconfig.modelType === common.ModelTypeEnum.Store) {
+      // if (newMconfig.isStoreModel === true) {
       let storeFilter =
         field.fieldClass === common.FieldClassEnum.Filter
           ? (this.model.content as common.FileStore).fields.find(

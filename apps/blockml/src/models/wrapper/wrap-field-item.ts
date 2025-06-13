@@ -8,9 +8,8 @@ export function wrapFieldItem(item: {
   alias: string;
   fileName: string;
   filePath: string;
-  isStoreModel: boolean;
 }) {
-  let { fieldItem, alias, fileName, filePath, topNode, isStoreModel } = item;
+  let { fieldItem, alias, fileName, filePath, topNode } = item;
 
   let namePrefix =
     fieldItem.path.length === 0 ? '' : fieldItem.path.join('.') + '.';

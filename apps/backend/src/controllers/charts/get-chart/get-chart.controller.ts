@@ -136,7 +136,9 @@ export class GetChartController {
     let isError = false;
 
     let isSearchExisting =
-      model.isStoreModel === false && chartMconfig.timezone === timezone;
+      model.type !== common.ModelTypeEnum.Store &&
+      // model.isStoreModel === false &&
+      chartMconfig.timezone === timezone;
 
     if (isSearchExisting) {
       query = await this.queriesService.getQueryCheckExists({
@@ -144,7 +146,8 @@ export class GetChartController {
         projectId: projectId
       });
     } else {
-      if (model.isStoreModel === true) {
+      if (model.type === common.ModelTypeEnum.Store) {
+        // if (model.isStoreModel === true) {
         let newMconfigId = common.makeId();
         let newQueryId = common.makeId();
 

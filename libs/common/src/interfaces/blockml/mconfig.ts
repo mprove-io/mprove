@@ -1,12 +1,14 @@
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
+  IsEnum,
   IsInt,
   IsNumber,
   IsOptional,
   IsString,
   ValidateNested
 } from 'class-validator';
+import { enums } from '~common/barrels/enums';
 import { IsTimezone } from '~common/functions/is-timezone';
 import { Filter } from './filter';
 import { JoinAggregation } from './join-aggregation';
@@ -27,8 +29,11 @@ export class Mconfig {
   @IsString()
   modelId: string;
 
-  @IsBoolean()
-  isStoreModel: boolean;
+  @IsEnum(enums.ModelTypeEnum)
+  modelType: enums.ModelTypeEnum;
+
+  // @IsBoolean()
+  // isStoreModel: boolean;
 
   @IsOptional()
   @IsBoolean()

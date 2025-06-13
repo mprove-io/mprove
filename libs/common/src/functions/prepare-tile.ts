@@ -25,7 +25,8 @@ export function prepareTile(item: {
         apply_to: x.fieldId
       };
 
-      if (mconfig.isStoreModel === false) {
+      if (mconfig.modelType !== enums.ModelTypeEnum.Store) {
+        // if (mconfig.isStoreModel === false) {
         parameter.conditions = x.fractions.map(fraction => fraction.brick);
       } else {
         parameter.fractions = x.fractions.map(mconfigFraction => {

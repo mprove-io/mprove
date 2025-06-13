@@ -17,10 +17,19 @@ export function wrapModels(item: {
     // console.log('x');
     // console.log(x);
 
+    let modelType =
+      x.fileExt === common.FileExtensionEnum.Model
+        ? common.ModelTypeEnum.SQL
+        : x.fileExt === common.FileExtensionEnum.Store
+          ? common.ModelTypeEnum.Store
+          : x.fileExt === common.FileExtensionEnum.Mod
+            ? common.ModelTypeEnum.Malloy
+            : undefined;
+
     let apiFields: common.ModelField[] = [];
     let nodes: common.ModelNode[] = [];
 
-    if (x.fileExt === common.FileExtensionEnum.Mod) {
+    if (modelType === common.ModelTypeEnum.Malloy) {
       {
         // model fields scope
 
@@ -79,7 +88,6 @@ export function wrapModels(item: {
 
           nodeFieldItems.forEach(fieldItem => {
             let apiField: common.ModelField = wrapFieldItem({
-              isStoreModel: false,
               fieldItem: fieldItem,
               alias: topId,
               filePath: x.filePath,
@@ -131,7 +139,7 @@ export function wrapModels(item: {
       // });
     }
 
-    if (x.fileExt === common.FileExtensionEnum.Model) {
+    if (modelType === common.ModelTypeEnum.SQL) {
       {
         // model fields scope
 
@@ -200,7 +208,7 @@ export function wrapModels(item: {
       });
     }
 
-    if (x.fileExt === common.FileExtensionEnum.Store) {
+    if (modelType === common.ModelTypeEnum.Store) {
       {
         // model fields scope
 
@@ -451,6 +459,7 @@ export function wrapModels(item: {
     if (sortedNodes.length > 0) {
       apiModels.push({
         structId: structId,
+        type: modelType,
         modelId:
           x.fileExt === common.FileExtensionEnum.Store
             ? `${common.STORE_MODEL_PREFIX}_${x.name}`
@@ -458,7 +467,7 @@ export function wrapModels(item: {
         connectionId: x.connection?.connectionId,
         filePath: x.filePath,
         content: x,
-        isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
+        // isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
         dateRangeIncludesRightSide:
           x.fileExt === common.FileExtensionEnum.Store &&
           (common.isUndefined(

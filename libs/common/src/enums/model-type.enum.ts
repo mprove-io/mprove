@@ -1,4 +1,5 @@
 export enum ModelTypeEnum {
   SQL = 'sql',
-  Store = 'Store'
+  Store = 'Store',
+  Malloy = 'Malloy'
 }

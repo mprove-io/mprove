@@ -166,7 +166,8 @@ export class DashboardEditListenersDialogComponent implements OnInit {
                               : false
                           )
                         ]
-                      : model.isStoreModel === false &&
+                      : model.type !== common.ModelTypeEnum.Store &&
+                          // model.isStoreModel === false &&
                           common.isUndefined(dashField.storeModel)
                         ? [
                             emptyField,

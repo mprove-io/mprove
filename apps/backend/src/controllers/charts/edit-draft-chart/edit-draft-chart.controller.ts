@@ -146,7 +146,9 @@ export class EditDraftChartController {
 
     let isError = false;
 
-    if (model.isStoreModel === true) {
+    if (model.type === common.ModelTypeEnum.Store) {
+      // if (model.isStoreModel === true) {
+
       // console.log('createMconfigAndQuery prepStoreMconfigQuery');
 
       let mqe = await this.mconfigsService.prepStoreMconfigQuery({

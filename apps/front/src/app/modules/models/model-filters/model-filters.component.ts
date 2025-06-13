@@ -83,7 +83,8 @@ export class ModelFiltersComponent {
 
     let newFraction: common.Fraction;
 
-    if (newMconfig.isStoreModel === true) {
+    if (newMconfig.modelType === common.ModelTypeEnum.Store) {
+      // if (newMconfig.isStoreModel === true) {
       let field = filterExtended.field;
 
       let storeFilter =

@@ -165,8 +165,9 @@ export class ReportRowService {
         timeLabel: metric.timeLabel,
         showChart: false,
         parameters:
-          model.isStoreModel === false
-            ? []
+          model.type !== common.ModelTypeEnum.Store
+            ? // model.isStoreModel === false
+              []
             : (model.content as common.FileStore).fields
                 .filter(
                   x =>

@@ -18,11 +18,12 @@ export const modelsTable = pgTable(
       .primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),
     modelId: varchar('model_id', { length: 64 }).notNull(), // name
+    type: varchar('type').$type<common.ModelTypeEnum>(),
     connectionId: varchar('connection_id'),
     filePath: varchar('file_path'),
     content: json('content').notNull(),
     isViewModel: boolean('is_view_model'),
-    isStoreModel: boolean('is_store_model'),
+    // isStoreModel: boolean('is_store_model'),
     dateRangeIncludesRightSide: boolean('date_range_includes_right_side'),
     accessRoles: json('access_roles').$type<string[]>().notNull(),
     label: varchar('label').notNull(),

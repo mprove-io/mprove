@@ -293,7 +293,8 @@ export class CreateDraftDashboardController {
     let insertOrDoNothingQueries: schemaPostgres.QueryEnt[] = [];
 
     dashboardMconfigs
-      .filter(mconfig => mconfig.isStoreModel === false)
+      .filter(mconfig => mconfig.modelType !== common.ModelTypeEnum.Store)
+      // .filter(mconfig => mconfig.isStoreModel === false)
       .forEach(mconfig => {
         let query = dashboardQueries.find(y => y.queryId === mconfig.queryId);
 
@@ -305,7 +306,10 @@ export class CreateDraftDashboardController {
       });
 
     await forEachSeries(
-      dashboardMconfigs.filter(mconfig => mconfig.isStoreModel === true),
+      dashboardMconfigs.filter(
+        mconfig => mconfig.modelType === common.ModelTypeEnum.Store
+      ),
+      // dashboardMconfigs.filter(mconfig => mconfig.isStoreModel === true),
       async mconfig => {
         let newMconfig: common.Mconfig;
         let newQuery: common.Query;

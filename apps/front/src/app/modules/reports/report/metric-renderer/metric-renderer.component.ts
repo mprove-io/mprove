@@ -124,7 +124,9 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
       let selectValidResult = getSelectValid({
         chart: this.params.data.mconfig.chart,
         mconfigFields: this.params.data.mconfig.fields,
-        isStoreModel: this.params.data.mconfig.isStoreModel
+        isStoreModel:
+          this.params.data.mconfig.modelType === common.ModelTypeEnum.Store
+        // isStoreModel: this.params.data.mconfig.isStoreModel
       });
 
       this.myDialogService.showChart({

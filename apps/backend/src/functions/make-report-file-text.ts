@@ -210,14 +210,16 @@ export function makeReportFileText(item: {
                     // result: parameter.result,
                     conditions:
                       common.isDefined(parameter.listen) ||
-                      model?.isStoreModel === true
-                        ? undefined
+                      model?.type === common.ModelTypeEnum.Store
+                        ? // model?.isStoreModel === true
+                          undefined
                         : common.isDefined(parameter.fractions) &&
                             parameter.fractions.length > 0
                           ? parameter.fractions.map(fraction => fraction.brick)
                           : undefined,
                     fractions:
-                      model?.isStoreModel === true &&
+                      model?.type === common.ModelTypeEnum.Store &&
+                      // model?.isStoreModel === true &&
                       common.isUndefined(parameter.listen)
                         ? parameter.fractions.map(apiFraction => {
                             // console.log('apiFraction');

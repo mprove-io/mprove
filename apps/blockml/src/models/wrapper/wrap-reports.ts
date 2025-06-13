@@ -296,8 +296,9 @@ export function wrapReports(item: {
                     common.isUndefined(model) ||
                     common.isDefined(parameter.listen)
                       ? undefined
-                      : model.isStoreModel === false
-                        ? parameter.apiFractions
+                      : model.type !== common.ModelTypeEnum.Store
+                        ? // model.isStoreModel === false
+                          parameter.apiFractions
                         : parameter.fractions.map(y => {
                             let storeResultCurrentTypeFraction: common.FileStoreFractionType;
 

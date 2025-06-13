@@ -404,7 +404,8 @@ FROM main;`;
 
             let dataRow;
 
-            if (row.mconfig.isStoreModel === true) {
+            if (row.mconfig.modelType === common.ModelTypeEnum.Store) {
+              // if (row.mconfig.isStoreModel === true) {
               dataRow = row.query?.data?.find(
                 (r: any) => r[timeFieldId] === column.columnId
               );

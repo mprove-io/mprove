@@ -126,8 +126,9 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
                 mconfigId: common.makeId(),
                 queryId: common.makeId(),
                 modelId: modelName,
-                isStoreModel:
-                  this.fraction.type === common.FractionTypeEnum.StoreFraction,
+                modelType: common.ModelTypeEnum.Store,
+                // isStoreModel:
+                //   this.fraction.type === common.FractionTypeEnum.StoreFraction,
                 dateRangeIncludesRightSide: undefined, // adjustMconfig overrides it
                 storePart: undefined,
                 modelLabel: 'empty',

@@ -60,7 +60,9 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       common.isDefined(this.params.data.mconfig) &&
       this.params.data.rowType === common.RowTypeEnum.Metric
     ) {
-      let isStore = this.params.data.mconfig.isStoreModel;
+      let isStore =
+        this.params.data.mconfig.modelType === common.ModelTypeEnum.Store;
+      // let isStore = this.params.data.mconfig.isStoreModel;
 
       // console.log('isStore');
       // console.log(isStore);

@@ -173,7 +173,8 @@ export class ReportEditListenersDialogComponent implements OnInit {
                               : false
                           )
                         ]
-                      : model.isStoreModel === false &&
+                      : model.type !== common.ModelTypeEnum.Store &&
+                          // model.isStoreModel === false &&
                           common.isUndefined(reportField.storeModel)
                         ? [
                             emptyField,

@@ -161,7 +161,8 @@ export class GetReportsController {
         })
       ),
       storeModels: models
-        .filter(model => model.isStoreModel === true)
+        .filter(model => model.type === common.ModelTypeEnum.Store)
+        // .filter(model => model.isStoreModel === true)
         .map(model =>
           this.wrapToApiService.wrapToApiModel({
             model: model,

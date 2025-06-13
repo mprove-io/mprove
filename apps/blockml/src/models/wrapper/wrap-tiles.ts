@@ -12,10 +12,12 @@ export function wrapTiles(item: {
   envId: string;
   tiles: common.FilePartTile[];
   models: common.FileModel[];
+  mods: common.FileMod[];
   stores: common.FileStore[];
   timezone: string;
 }) {
-  let { structId, projectId, models, stores, tiles, envId, timezone } = item;
+  let { structId, projectId, models, stores, mods, tiles, envId, timezone } =
+    item;
 
   let apiTiles: common.Tile[] = [];
   let mconfigs: common.Mconfig[] = [];
@@ -34,6 +36,8 @@ export function wrapTiles(item: {
 
     let isStore =
       common.isDefined(tile.model) && tile.model.startsWith(STORE_MODEL_PREFIX);
+
+    let mod;
     let model;
     let store: common.FileStore;
 
@@ -43,9 +47,21 @@ export function wrapTiles(item: {
       );
     } else {
       model = models.find(m => m.name === tile.model);
+
+      if (common.isUndefined(model)) {
+        mod = mods.find(m => m.name === tile.model);
+      }
     }
 
-    let connection = isStore === false ? model.connection : store.connection;
+    let connection = common.isDefined(store)
+      ? store.connection
+      : common.isDefined(model)
+        ? model.connection
+        : common.isDefined(mod)
+          ? mod.connection
+          : undefined;
+
+    // TODO: tile.connectionId
 
     let queryId =
       isStore === true
@@ -216,7 +232,14 @@ export function wrapTiles(item: {
       mconfigId: mconfigId,
       queryId: queryId,
       modelId: tile.model,
-      isStoreModel: isStore,
+      modelType: common.isDefined(store)
+        ? common.ModelTypeEnum.Store
+        : common.isDefined(model)
+          ? common.ModelTypeEnum.SQL
+          : common.isDefined(mod)
+            ? common.ModelTypeEnum.Malloy
+            : undefined,
+      // isStore === true ? isStoreModel : isStore,
       dateRangeIncludesRightSide:
         isStore === true &&
         (common.isUndefined(store.date_range_includes_right_side) ||
@@ -247,11 +270,15 @@ export function wrapTiles(item: {
       serverTs: 1
     };
 
+    // console.log('mconfig');
+    // console.log(mconfig);
+
     mconfigs.push(mconfig);
     queries.push(query);
     apiTiles.push({
       modelId: tile.model,
-      modelLabel: isStore === true ? store.label : model.label,
+      modelLabel: store?.label || mod?.label || model?.label,
+      // modelLabel: isStore === true ? store.label : model.label,
       mconfigId: mconfigId,
       queryId: queryId,
       listen: tile.listen,

@@ -268,7 +268,8 @@ export class ModelTreeComponent implements AfterViewInit {
     } else {
       let newFraction: common.Fraction;
 
-      if (newMconfig.isStoreModel === true) {
+      if (newMconfig.modelType === common.ModelTypeEnum.Store) {
+        // if (newMconfig.isStoreModel === true) {
         let field = this.model.fields.find(x => x.id === node.data.id);
 
         let storeFilter =

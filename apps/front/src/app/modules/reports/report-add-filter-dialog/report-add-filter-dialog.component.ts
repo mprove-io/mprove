@@ -369,7 +369,8 @@ export class ReportAddFilterDialogComponent implements OnInit {
         tap((resp: apiToBackend.ToBackendGetModelsResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             this.storeModels = resp.payload.models.filter(
-              model => model.isStoreModel === true
+              model => model.type === common.ModelTypeEnum.Store
+              // model => model.isStoreModel === true
             );
 
             this.storeModelsList = this.storeModels.map(model => {

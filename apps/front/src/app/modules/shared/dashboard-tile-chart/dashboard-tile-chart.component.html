@@ -70,7 +70,7 @@
           [qData]="qData"
           [chart]="mconfig.chart"
           [isAnimation]="false"
-          [isStoreModel]="mconfig.isStoreModel"
+          [isStoreModel]="mconfig?.modelType === modelTypeStore"
           [queryStatus]="query?.status"
           [chartInstanceId]="'dashboard-tile-mconfig-id-' + mconfig?.mconfigId"
         ></m-chart-view>

@@ -173,8 +173,10 @@ export class RowComponent {
               (
                 filter // TODO: row store parametersFiltersWithExcludedTime
               ) =>
-                this.reportSelectedNode.data.mconfig.isStoreModel === true
-                  ? this.reportSelectedNode.data.mconfig.filters
+                this.reportSelectedNode.data.mconfig.modelType ===
+                common.ModelTypeEnum.Store
+                  ? // this.reportSelectedNode.data.mconfig.isStoreModel === true
+                    this.reportSelectedNode.data.mconfig.filters
                       .map(f => f.fieldId)
                       .indexOf(filter.fieldId) > -1
                   : this.reportSelectedNode.data.parametersFiltersWithExcludedTime
@@ -674,7 +676,8 @@ export class RowComponent {
 
     let newFraction: common.Fraction;
 
-    if (this.newParameterModel.isStoreModel === true) {
+    if (this.newParameterModel.type === common.ModelTypeEnum.Store) {
+      // if (this.newParameterModel.isStoreModel === true) {
       let storeFilter =
         field.fieldClass === common.FieldClassEnum.Filter
           ? (this.newParameterModel.content as common.FileStore).fields.find(
