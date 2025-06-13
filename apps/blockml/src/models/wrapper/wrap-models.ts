@@ -37,38 +37,63 @@ export function wrapModels(item: {
         //   'utf-8'
         // );
 
-        let topNode: common.ModelNode = {
-          id: common.MF,
-          label: common.ModelNodeLabelEnum.ModelFields,
-          description: undefined,
-          hidden: false,
-          required: false,
-          isField: false,
-          children: [],
-          nodeClass: common.FieldClassEnum.Join
-        };
-
         let filteredFieldItems = fieldItems.filter(
           fieldItem =>
             ['dimension', 'measure'].indexOf(fieldItem.field.kind) > -1
         );
 
-        filteredFieldItems.forEach(fieldItem => {
-          let apiField: common.ModelField = wrapFieldItem({
-            isStoreModel: false,
-            fieldItem: fieldItem,
-            alias: common.MF,
-            filePath: x.filePath,
-            fileName: x.fileName,
-            topNode: topNode
-          });
-
-          apiFields.push(apiField);
+        let topIds = filteredFieldItems.map(y => {
+          return y.path.length === 0 ? common.MF : y.path.join('.');
         });
 
-        if (filteredFieldItems.length > 0) {
-          nodes.push(topNode);
-        }
+        let uniqueTopIds = [...new Set(topIds)];
+
+        uniqueTopIds.forEach(topId => {
+          let topNode: common.ModelNode = {
+            id: topId,
+            label:
+              topId === common.MF
+                ? common.ModelNodeLabelEnum.ModelFields
+                : topId
+                    .split('.')
+                    .map(k => common.capitalizeFirstLetter(k))
+                    .join(' - ')
+                    .split('_')
+                    .map(k => common.capitalizeFirstLetter(k))
+                    .join(' '),
+            description: undefined,
+            hidden: false,
+            required: false,
+            isField: false,
+            children: [],
+            nodeClass: common.FieldClassEnum.Join
+          };
+
+          let nodeFieldItems = filteredFieldItems.filter(y => {
+            if (topId === common.MF) {
+              return y.path.length === 0;
+            } else {
+              return y.path.join('.') === topId;
+            }
+          });
+
+          nodeFieldItems.forEach(fieldItem => {
+            let apiField: common.ModelField = wrapFieldItem({
+              isStoreModel: false,
+              fieldItem: fieldItem,
+              alias: topId,
+              filePath: x.filePath,
+              fileName: x.fileName,
+              topNode: topNode
+            });
+
+            apiFields.push(apiField);
+          });
+
+          if (nodeFieldItems.length > 0) {
+            nodes.push(topNode);
+          }
+        });
       }
 
       // (x as common.FileModel).joins.forEach(join => {

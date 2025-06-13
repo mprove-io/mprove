@@ -79,10 +79,15 @@ export async function buildMods(
     let wrapResult = wrapResults[index];
 
     if (common.isDefined(wrapResult.error)) {
+      let blockmlDataPath =
+        cs.get<interfaces.Config['blockmlData']>('blockmlData');
+
       item.errors.push(
         new BmError({
-          title: common.ErTitleEnum.MOD_COMPILATION_FAILED,
-          message: 'Failed to compile malloy model', // no leak
+          title: common.ErTitleEnum.FAILED_TO_COMPILE_MALLOY,
+          message: wrapResult.errorStr.includes(blockmlDataPath) // TODO: check logic
+            ? wrapResult.errorStr
+            : 'To see error message, use Malloy vscode extension',
           lines: [
             {
               line: x.location_line_num,

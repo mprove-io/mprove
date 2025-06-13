@@ -34,12 +34,17 @@ export function wrapFieldItem(item: {
         ? common.FieldClassEnum.Measure
         : undefined;
 
+  let fieldLabel = fieldItem.field.name
+    .split('_')
+    .map(k => common.capitalizeFirstLetter(k))
+    .join(' ');
+
   let modelField: common.ModelField = {
     id: fieldId,
     hidden: false,
     required: false,
     maxFractions: undefined,
-    label: fieldItem.field.name,
+    label: fieldLabel,
     fieldClass: fieldClass,
     result: result,
     formatNumber: undefined,
@@ -61,7 +66,7 @@ export function wrapFieldItem(item: {
 
   let fieldNode: common.ModelNode = {
     id: fieldId,
-    label: fieldItem.field.name,
+    label: fieldLabel,
     description: undefined,
     hidden: false,
     required: false,
