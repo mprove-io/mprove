@@ -1,5 +1,4 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { and, eq, inArray } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
@@ -8,7 +7,6 @@ import { helper } from '~backend/barrels/helper';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser, SkipJwtCheck } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/envs.service';
@@ -74,37 +72,11 @@ export class GetRebuildStructController {
         }
       );
 
-    let apiEnvs = await this.envsService.getApiEnvs({
-      projectId: projectId
-    });
-
-    let apiEnv = apiEnvs.find(x => x.envId === envId);
-
-    let connectionsEntsWithFallback =
-      await this.db.drizzle.query.connectionsTable.findMany({
-        where: and(
-          eq(connectionsTable.projectId, projectId),
-          inArray(
-            connectionsTable.connectionId,
-            apiEnv.envConnectionIdsWithFallback
-          )
-        )
+    let { apiEnv, connectionsWithFallback } =
+      await this.envsService.getApiEnvConnectionsWithFallback({
+        projectId: projectId,
+        envId: envId
       });
-
-    let connectionsWithFallback: common.ProjectConnection[] =
-      connectionsEntsWithFallback.map(
-        x =>
-          <common.ProjectConnection>{
-            connectionId: x.connectionId,
-            type: x.type,
-            googleCloudProject: x.googleCloudProject,
-            host: x.host,
-            port: x.port,
-            username: x.username,
-            password: x.password,
-            databaseName: x.database
-          }
-      );
 
     // to blockml
 

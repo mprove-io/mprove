@@ -130,4 +130,48 @@ export class EnvsService {
 
     return apiEnvs;
   }
+
+  async getApiEnvConnectionsWithFallback(item: {
+    projectId: string;
+    envId: string;
+  }) {
+    let { projectId, envId } = item;
+
+    let apiEnvs = await this.getApiEnvs({
+      projectId: projectId
+    });
+
+    let apiEnv = apiEnvs.find(x => x.envId === envId);
+
+    let connectionsEntsWithFallback =
+      await this.db.drizzle.query.connectionsTable.findMany({
+        where: and(
+          eq(connectionsTable.projectId, projectId),
+          inArray(
+            connectionsTable.connectionId,
+            apiEnv.envConnectionIdsWithFallback
+          )
+        )
+      });
+
+    let connectionsWithFallback: common.ProjectConnection[] =
+      connectionsEntsWithFallback.map(
+        x =>
+          <common.ProjectConnection>{
+            connectionId: x.connectionId,
+            type: x.type,
+            googleCloudProject: x.googleCloudProject,
+            host: x.host,
+            port: x.port,
+            username: x.username,
+            password: x.password,
+            databaseName: x.database
+          }
+      );
+
+    return {
+      apiEnv,
+      connectionsWithFallback
+    };
+  }
 }

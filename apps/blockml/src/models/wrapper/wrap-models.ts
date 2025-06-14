@@ -1,3 +1,4 @@
+import { ModelDef as MalloyModelDef } from '@malloydata/malloy/index';
 import { common } from '~blockml/barrels/common';
 import { getFieldItems } from '~blockml/functions/source-to-field-items';
 import { wrapField } from './wrap-field';
@@ -29,12 +30,16 @@ export function wrapModels(item: {
     let apiFields: common.ModelField[] = [];
     let nodes: common.ModelNode[] = [];
 
+    let malloyModelDef: MalloyModelDef;
+
     if (modelType === common.ModelTypeEnum.Malloy) {
       {
         // model fields scope
 
         // console.log('x');
         // console.log(x);
+
+        malloyModelDef = (x as common.FileMod).malloyModel._modelDef;
 
         let fieldItems = getFieldItems(
           (x as common.FileMod).valueWithSourceInfo
@@ -457,9 +462,10 @@ export function wrapModels(item: {
     });
 
     if (sortedNodes.length > 0) {
-      apiModels.push({
+      let apiModel: common.Model = {
         structId: structId,
         type: modelType,
+        malloyModelDef: malloyModelDef,
         modelId:
           x.fileExt === common.FileExtensionEnum.Store
             ? `${common.STORE_MODEL_PREFIX}_${x.name}`
@@ -501,7 +507,9 @@ export function wrapModels(item: {
         fields: apiFields,
         nodes: sortedNodes,
         serverTs: 1
-      });
+      };
+
+      apiModels.push(apiModel);
     }
   });
 

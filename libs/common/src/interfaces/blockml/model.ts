@@ -1,3 +1,4 @@
+import { ModelDef as MalloyModelDef } from '@malloydata/malloy/index';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -62,6 +63,8 @@ export class Model {
   @IsOptional()
   @IsString()
   description?: string;
+
+  malloyModelDef: MalloyModelDef;
 
   @IsInt()
   serverTs: number;

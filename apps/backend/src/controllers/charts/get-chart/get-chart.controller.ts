@@ -151,10 +151,8 @@ export class GetChartController {
         let newMconfigId = common.makeId();
         let newQueryId = common.makeId();
 
-        /* prettier-ignore */
-        let sMconfig = Object.assign({}, chartMconfig, <
-          schemaPostgres.MconfigEnt
-        >{
+        // biome-ignore format: theme breaks
+        let sMconfig = Object.assign({}, chartMconfig, <schemaPostgres.MconfigEnt>{
           mconfigId: newMconfigId,
           queryId: newQueryId,
           timezone: timezone,
@@ -178,10 +176,14 @@ export class GetChartController {
         let newMconfigId = common.makeId();
         let newQueryId = common.makeId();
 
-        /* prettier-ignore */
-        let sendMconfig = Object.assign({}, chartMconfig, <
-          schemaPostgres.MconfigEnt
-        >{
+        let { apiEnv, connectionsWithFallback } =
+          await this.envsService.getApiEnvConnectionsWithFallback({
+            projectId: projectId,
+            envId: envId
+          });
+
+        // biome-ignore format: theme breaks
+        let sendMconfig = Object.assign({}, chartMconfig, <schemaPostgres.MconfigEnt>{
           mconfigId: newMconfigId,
           queryId: newQueryId,
           timezone: timezone,
@@ -203,7 +205,9 @@ export class GetChartController {
               udfsDict: struct.udfsDict,
               mconfig: sendMconfig,
               modelContent: model.content,
-              envId: envId
+              malloyModelDef: model.malloyModelDef,
+              envId: envId,
+              connections: connectionsWithFallback
             }
           };
 

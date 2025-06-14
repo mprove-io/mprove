@@ -175,6 +175,12 @@ export class CreateDraftChartController {
         newQuery = mqe.newQuery;
       }
     } else {
+      let { apiEnv, connectionsWithFallback } =
+        await this.envsService.getApiEnvConnectionsWithFallback({
+          projectId: projectId,
+          envId: envId
+        });
+
       let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
         {
           info: {
@@ -190,7 +196,9 @@ export class CreateDraftChartController {
             udfsDict: struct.udfsDict,
             mconfig: mconfig,
             modelContent: model.content,
-            envId: envId
+            malloyModelDef: model.malloyModelDef,
+            envId: envId,
+            connections: connectionsWithFallback
           }
         };
 

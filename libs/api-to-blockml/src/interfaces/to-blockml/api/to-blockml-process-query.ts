@@ -1,3 +1,4 @@
+import { ModelDef as MalloyModelDef } from '@malloydata/malloy/index';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-blockml/barrels/common';
@@ -26,6 +27,12 @@ export class ToBlockmlProcessQueryRequestPayload {
   @ValidateNested()
   @Type(() => common.Mconfig)
   mconfig: common.Mconfig;
+
+  @ValidateNested()
+  @Type(() => common.ProjectConnection)
+  connections: common.ProjectConnection[];
+
+  malloyModelDef: MalloyModelDef;
 
   modelContent: any;
 }

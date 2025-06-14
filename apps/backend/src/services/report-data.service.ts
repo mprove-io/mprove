@@ -16,6 +16,7 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '~node-common/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
 import { BlockmlService } from './blockml.service';
 import { DocService } from './doc.service';
+import { EnvsService } from './envs.service';
 import { MconfigsService } from './mconfigs.service';
 import { RabbitService } from './rabbit.service';
 import { WrapToApiService } from './wrap-to-api.service';
@@ -26,6 +27,7 @@ let retry = require('async-retry');
 @Injectable()
 export class ReportDataService {
   constructor(
+    private envsService: EnvsService,
     private docService: DocService,
     private mconfigsService: MconfigsService,
     private blockmlService: BlockmlService,
@@ -444,6 +446,12 @@ export class ReportDataService {
               newQuery.data = [];
             }
           } else {
+            let { apiEnv, connectionsWithFallback } =
+              await this.envsService.getApiEnvConnectionsWithFallback({
+                projectId: project.projectId,
+                envId: envId
+              });
+
             let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
               {
                 info: {
@@ -459,7 +467,9 @@ export class ReportDataService {
                   udfsDict: struct.udfsDict,
                   mconfig: mconfig,
                   modelContent: model.content,
-                  envId: envId
+                  malloyModelDef: model.malloyModelDef,
+                  envId: envId,
+                  connections: connectionsWithFallback
                 }
               };
 

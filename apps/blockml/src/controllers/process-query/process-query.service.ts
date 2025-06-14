@@ -1,3 +1,4 @@
+import { PreparedResult } from '@malloydata/malloy/index';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
@@ -5,6 +6,7 @@ import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { nodeCommon } from '~blockml/barrels/node-common';
+import { makeMalloyConnections } from '~blockml/functions/make-malloy-connections';
 import { RabbitService } from '~blockml/services/rabbit.service';
 
 @Injectable()
@@ -42,7 +44,9 @@ export class ProcessQueryService {
       udfsDict,
       mconfig,
       modelContent: model,
-      envId
+      envId,
+      connections,
+      malloyModelDef
     } = reqValid.payload;
 
     let { select, sorts, timezone, limit, filters } = mconfig;
@@ -55,30 +59,67 @@ export class ProcessQueryService {
       newFilters[fieldId] = bricks;
     });
 
-    let {
-      sql,
-      filtersFractions,
-      varsSqlSteps,
-      unsafeSelect,
-      warnSelect,
-      joinAggregations
-    } = await barSpecial.genSql(
-      this.rabbitService,
-      this.cs,
-      reqValid.info.traceId,
-      {
-        weekStart: weekStart,
-        caseSensitiveStringFilters: caseSensitiveStringFilters,
-        simplifySafeAggregates: simplifySafeAggregates,
-        timezone: timezone,
-        select: select,
-        sorts: sorts,
-        limit: limit.toString(),
-        filters: newFilters,
-        model: model,
-        udfsDict: udfsDict
-      }
-    );
+    let sql;
+    let filtersFractions: {
+      [s: string]: common.Fraction[];
+    };
+    let varsSqlSteps;
+    let unsafeSelect;
+    let warnSelect;
+    let joinAggregations;
+
+    if (mconfig.modelType === common.ModelTypeEnum.Malloy) {
+      // let queryStr = `run: ec1_m2 -> {
+      //   group_by: users.state
+      //   aggregate: orders.orders_count
+      //   limit: 10
+      // }`;
+
+      let queryStr = `run: abc`; // TODO: queryStr
+
+      let malloyConnections = makeMalloyConnections({
+        connections: connections
+      });
+
+      let pr: PreparedResult = await barSpecial.buildMalloyQuery(
+        {
+          malloyConnections: malloyConnections,
+          malloyModelDef: malloyModelDef,
+          queryStr: queryStr
+        },
+        this.cs
+      );
+
+      // tile.sql = pr.sql.split('\n');
+      // tile.model = pr._rawQuery.sourceExplore;
+      // tile.compiledQuery = pr._rawQuery;
+      // tile.filtersFractions = {};
+    } else if (mconfig.modelType === common.ModelTypeEnum.SQL) {
+      let genSqlResult = await barSpecial.genSql(
+        this.rabbitService,
+        this.cs,
+        reqValid.info.traceId,
+        {
+          weekStart: weekStart,
+          caseSensitiveStringFilters: caseSensitiveStringFilters,
+          simplifySafeAggregates: simplifySafeAggregates,
+          timezone: timezone,
+          select: select,
+          sorts: sorts,
+          limit: limit.toString(),
+          filters: newFilters,
+          model: model,
+          udfsDict: udfsDict
+        }
+      );
+
+      sql = genSqlResult.sql;
+      filtersFractions = genSqlResult.filtersFractions;
+      varsSqlSteps = genSqlResult.varsSqlSteps;
+      unsafeSelect = genSqlResult.unsafeSelect;
+      warnSelect = genSqlResult.warnSelect;
+      joinAggregations = genSqlResult.joinAggregations;
+    }
 
     let queryId = nodeCommon.makeQueryId({
       projectId: projectId,

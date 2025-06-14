@@ -59,18 +59,65 @@ export async function fetchSql<T extends types.dzType>(
 
   await asyncPool(concurrencyLimit, tiles, async (tile: FilePartTileExtra) => {
     if (common.isDefined(tile.query)) {
+      let malloyFile = item.malloyFiles.find(
+        file =>
+          file.path ===
+          tile.filePath.substring(0, tile.filePath.lastIndexOf('.')) + '.malloy'
+      );
+
+      if (common.isUndefined(malloyFile)) {
+        // TODO: error
+      }
+
+      // tool
+      // query:\s*(mc3)\s+is\s*([\s\S]*?)(?=(?:\nquery:\s*\w+\sis|source:\s|\nrun:\s|\nimport\s*{|\nimport\s*'|\nimport\s*"|$))
+
+      let queryPattern = new RegExp(
+        [
+          `query:`,
+          `\\s*`,
+          `(${tile.query})`,
+          `\\s+`,
+          `is`,
+          `\\s+`,
+          `(\\w+)`,
+          `\\s+`,
+          `([\\s\\S]*?)`,
+          `(?=`,
+          `(?:`,
+          `\\nquery:\\s*\\w+\\sis`,
+          `|source:\\s`,
+          `|\\nrun:\\s`,
+          `|\\nimport\\s*\\{`,
+          `|\\nimport\\s*\\'`,
+          `|\\nimport\\s*\\"`,
+          `|$`,
+          `)`,
+          `)`
+        ].join(''),
+        'g'
+      );
+
+      let source: string;
+      let queryStr: string;
+
+      let match = queryPattern.exec(malloyFile.content);
+
+      if (common.isDefined(match)) {
+        source = match[2];
+
+        queryStr = 'run: ' + source + ' ' + match[3].trimEnd();
+        // console.log('queryStr');
+        // console.log(queryStr);
+      }
+
+      let mod = item.mods.find(x => x.source === source);
+
       let pr: PreparedResult = await barSpecial.buildMalloyQuery(
         {
-          malloyFiles: item.malloyFiles,
           malloyConnections: item.malloyConnections,
-          mods: item.mods,
-          filePath: tile.filePath,
-          fileName: tile.fileName,
-          queryName: tile.query,
-          queryLineNum: tile.query_line_num,
-          errors: item.errors,
-          structId: item.structId,
-          caller: item.caller
+          malloyModelDef: mod.malloyModel._modelDef,
+          queryStr: queryStr
         },
         cs
       );
