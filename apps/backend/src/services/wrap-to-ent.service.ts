@@ -54,6 +54,7 @@ export class WrapToEntService {
       dateRangeIncludesRightSide: mconfig.dateRangeIncludesRightSide,
       storePart: mconfig.storePart,
       modelLabel: mconfig.modelLabel,
+      compiledQuery: mconfig.compiledQuery,
       select: mconfig.select,
       unsafeSelect: mconfig.unsafeSelect,
       warnSelect: mconfig.warnSelect,

@@ -1,3 +1,4 @@
+import { CompiledQuery } from '@malloydata/malloy/dist/model';
 import { enums } from '~common/barrels/enums';
 import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { Fraction } from '../fraction';
@@ -50,6 +51,10 @@ export interface FilePartTile {
 
   //
 
+  compiledQuery?: CompiledQuery;
+
+  sql?: string[];
+
   sortingsAry?: {
     fieldId?: string;
     desc?: boolean;
@@ -62,8 +67,6 @@ export interface FilePartTile {
   filtersFractions?: {
     [s: string]: Fraction[];
   };
-
-  sql?: string[];
 
   joinAggregations?: JoinAggregation[];
 

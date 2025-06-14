@@ -45,6 +45,7 @@ test('1', async t => {
     dateRangeIncludesRightSide: false,
     storePart: undefined,
     modelLabel: 'abc',
+    compiledQuery: undefined,
     select: [],
     unsafeSelect: [],
     warnSelect: [],

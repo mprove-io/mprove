@@ -226,6 +226,17 @@ export function wrapTiles(item: {
       });
     }
 
+    let compiledQuerySelect: string[] = [];
+
+    if (common.isDefined(tile.compiledQuery)) {
+      console.log('tile.compiledQuery.structs.length');
+      console.log(tile.compiledQuery.structs.length);
+
+      tile.compiledQuery.structs[0].fields.forEach(field => {
+        compiledQuerySelect.push(field.name);
+      });
+    }
+
     let mconfig: common.Mconfig = {
       structId: structId,
       mconfigId: mconfigId,
@@ -249,7 +260,10 @@ export function wrapTiles(item: {
           : false,
       storePart: undefined,
       modelLabel: store?.label || mod?.label || model?.label,
-      select: tile.select,
+      compiledQuery: tile.compiledQuery,
+      select: common.isDefined(tile.compiledQuery)
+        ? compiledQuerySelect
+        : tile.select,
       unsafeSelect: tile.unsafeSelect || [],
       warnSelect: tile.warnSelect || [],
       joinAggregations: tile.joinAggregations || [],
@@ -260,7 +274,11 @@ export function wrapTiles(item: {
         })) || [],
       sorts: tile.sorts,
       timezone: timezone,
-      limit: tile.limit ? Number(tile.limit) : undefined,
+      limit: common.isDefined(tile.compiledQuery)
+        ? tile.compiledQuery.structs[0].resultMetadata.limit
+        : common.isDefined(tile.limit)
+          ? Number(tile.limit)
+          : undefined,
       filters: filters.sort((a, b) =>
         a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
       ),

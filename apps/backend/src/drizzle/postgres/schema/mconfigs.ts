@@ -1,3 +1,4 @@
+import { CompiledQuery } from '@malloydata/malloy/dist/model';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,
@@ -22,6 +23,7 @@ export const mconfigsTable = pgTable(
     dateRangeIncludesRightSide: boolean('date_range_includes_right_side'),
     storePart: json('store_part').$type<common.StorePart>(),
     modelLabel: varchar('model_label'),
+    compiledQuery: json('compiled_query').$type<CompiledQuery>(),
     select: json('select').$type<string[]>().notNull(),
     unsafeSelect: json('unsafe_select').$type<string[]>(),
     warnSelect: json('warn_select').$type<string[]>(),

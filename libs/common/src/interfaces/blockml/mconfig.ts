@@ -1,3 +1,4 @@
+import { CompiledQuery } from '@malloydata/malloy/dist/model';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -46,6 +47,8 @@ export class Mconfig {
 
   @IsString()
   modelLabel: string;
+
+  compiledQuery: CompiledQuery;
 
   @IsString({ each: true })
   select: string[];

@@ -351,6 +351,7 @@ export class ReportDataService {
             dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
             storePart: undefined,
             modelLabel: model.label,
+            compiledQuery: undefined,
             select:
               model.type === common.ModelTypeEnum.Store &&
               // model.isStoreModel === true &&
