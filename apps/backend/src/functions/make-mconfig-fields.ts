@@ -13,6 +13,12 @@ export function makeMconfigFields(item: {
   // let selectMeasures: common.MconfigField[] = [];
   // let selectCalculations: common.MconfigField[] = [];
 
+  // console.log('select');
+  // console.log(select);
+
+  // console.log('modelFields.map(x=>x.id)');
+  // console.log(modelFields.map(x=>x.id));
+
   select.forEach((fieldId: string) => {
     let field = modelFields.find(f => f.id === fieldId);
     let f: common.MconfigField = Object.assign({}, field, <common.MconfigField>{

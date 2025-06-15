@@ -20,7 +20,7 @@ export const modelsTable = pgTable(
     structId: varchar('struct_id', { length: 32 }).notNull(),
     modelId: varchar('model_id', { length: 64 }).notNull(), // name
     type: varchar('type').$type<common.ModelTypeEnum>(),
-    malloyModelDef: varchar('malloy_model_def').$type<MalloyModelDef>(),
+    malloyModelDef: json('malloy_model_def').$type<MalloyModelDef>(),
     connectionId: varchar('connection_id'),
     filePath: varchar('file_path'),
     content: json('content').notNull(),

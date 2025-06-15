@@ -64,12 +64,12 @@ export class ProcessQueryService {
       [s: string]: common.Fraction[];
     };
     let varsSqlSteps;
-    let unsafeSelect;
-    let warnSelect;
-    let joinAggregations;
+    let unsafeSelect: string[];
+    let warnSelect: string[];
+    let joinAggregations: common.JoinAggregation[];
 
     if (mconfig.modelType === common.ModelTypeEnum.Malloy) {
-      // let queryStr = `run: ec1_m2 -> {
+      //       let queryStr = `run: ec1_m2 -> {
       //   group_by: users.state
       //   aggregate: orders.orders_count
       //   limit: 10
@@ -90,10 +90,15 @@ export class ProcessQueryService {
         this.cs
       );
 
-      // tile.sql = pr.sql.split('\n');
+      sql = pr.sql.split('\n');
       // tile.model = pr._rawQuery.sourceExplore;
       // tile.compiledQuery = pr._rawQuery;
-      // tile.filtersFractions = {};
+
+      filtersFractions = {};
+      unsafeSelect = [];
+      warnSelect = [];
+      joinAggregations = [];
+      // varsSqlSteps = genSqlResult.varsSqlSteps;
     } else if (mconfig.modelType === common.ModelTypeEnum.SQL) {
       let genSqlResult = await barSpecial.genSql(
         this.rabbitService,

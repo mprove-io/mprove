@@ -1,0 +1,1 @@
+ALTER TABLE "models" ADD COLUMN "malloy_model_def" json;

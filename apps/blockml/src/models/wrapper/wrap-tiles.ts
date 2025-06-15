@@ -1,3 +1,4 @@
+import { FieldBase } from '@malloydata/malloy/dist/model';
 import { common } from '~blockml/barrels/common';
 import { nodeCommon } from '~blockml/barrels/node-common';
 import { STORE_MODEL_PREFIX } from '~common/constants/top';
@@ -229,11 +230,18 @@ export function wrapTiles(item: {
     let compiledQuerySelect: string[] = [];
 
     if (common.isDefined(tile.compiledQuery)) {
-      console.log('tile.compiledQuery.structs.length');
-      console.log(tile.compiledQuery.structs.length);
+      // console.log('tile.compiledQuery.structs.length');
+      // console.log(tile.compiledQuery.structs.length);
+
+      // console.log('tile.compiledQuery.structs[0].fields');
+      // console.log(tile.compiledQuery.structs[0].fields);
 
       tile.compiledQuery.structs[0].fields.forEach(field => {
-        compiledQuerySelect.push(field.name);
+        // compiledQuerySelect.push(field.name);
+        compiledQuerySelect.push(
+          // TODO: if not fieldBase?
+          (field as FieldBase).resultMetadata?.sourceField
+        );
       });
     }
 
