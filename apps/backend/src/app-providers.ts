@@ -17,6 +17,7 @@ import { EmailService } from './services/email.service';
 import { EnvsService } from './services/envs.service';
 import { HashService } from './services/hash.service';
 import { MakerService } from './services/maker.service';
+import { MalloyService } from './services/malloy.service';
 import { MconfigsService } from './services/mconfigs.service';
 import { MembersService } from './services/members.service';
 import { ModelsService } from './services/models.service';
@@ -55,6 +56,7 @@ export const appProviders = [
   BranchesService,
   ModelsService,
   MconfigsService,
+  MalloyService,
   PgService,
   ClickHouseService,
   BigQueryService,
