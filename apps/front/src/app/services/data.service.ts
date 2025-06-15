@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { FieldBase } from '@malloydata/malloy/dist/model';
 import { formatLocale } from 'd3-format';
 import { SeriesOption } from 'echarts';
 import { NO_FIELDS_SELECTED, capitalizeFirstLetter } from '~common/_index';
@@ -110,10 +111,14 @@ export class DataService {
   }
 
   makeQData(item: {
-    mconfigFields: common.MconfigField[];
+    // mconfigFields: common.MconfigField[];
+
     query: common.Query;
+    mconfig: common.MconfigX;
+    // modelType: common.ModelTypeEnum;
+    // compiledQuery: CompiledQuery;
   }) {
-    let { query, mconfigFields } = item;
+    let { query, mconfig } = item;
 
     // ---mconfigField
     // description: "The date of the event, formatted as YYYYMMDD"
@@ -146,27 +151,65 @@ export class DataService {
 
     let qData: QDataRow[] = [];
 
+    console.log('data');
+    console.log(data);
+
+    console.log('mconfig.compiledQuery');
+    console.log(mconfig.compiledQuery);
+
     data.forEach((row: SourceDataRow) => {
       let r: QDataRow = {};
 
-      Object.keys(row)
+      // console.log('row');
+      // console.log(row);
+
+      let dataRow: SourceDataRow =
+        mconfig.modelType === common.ModelTypeEnum.Malloy
+          ? (row['row' as any] as unknown as SourceDataRow)
+          : row;
+
+      Object.keys(dataRow)
         .filter(k => k !== NO_FIELDS_SELECTED)
         .forEach(key => {
-          let value = row[key];
+          let value = dataRow[key];
 
-          let fieldId = key.toLowerCase();
+          // console.log('key');
+          // console.log(key);
 
-          let field = mconfigFields.find(x => {
-            let id = isStore === true ? x.id : x.sqlName;
+          let fieldId =
+            mconfig.modelType === common.ModelTypeEnum.Malloy
+              ? (
+                  mconfig.compiledQuery.structs[0].fields.find(
+                    x => x.name === key
+                  ) as FieldBase
+                ).resultMetadata.sourceField
+              : key.toLowerCase();
+
+          // console.log('fieldId');
+          // console.log(fieldId);
+
+          let field = mconfig.fields.find(x => {
+            let id =
+              isStore === true
+                ? x.id
+                : mconfig.modelType === common.ModelTypeEnum.Malloy
+                  ? x.id
+                  : x.sqlName;
             return id === fieldId;
           });
 
+          // console.log('field');
+          // console.log(field);
+
           let sqlName = field.sqlName;
+
+          // console.log('sqlName');
+          // console.log(sqlName);
 
           let tsValue: number;
 
           if (common.isDefined(field.detail)) {
-            tsValue = row[field.id] as unknown as number;
+            tsValue = dataRow[field.id] as unknown as number;
           } else if (field.result === common.FieldResultEnum.Ts) {
             let tsValueFn = this.getTsValueFn(sqlName);
 

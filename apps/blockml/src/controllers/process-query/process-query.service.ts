@@ -69,13 +69,13 @@ export class ProcessQueryService {
     let joinAggregations: common.JoinAggregation[];
 
     if (mconfig.modelType === common.ModelTypeEnum.Malloy) {
-      //       let queryStr = `run: ec1_m2 -> {
-      //   group_by: users.state
-      //   aggregate: orders.orders_count
-      //   limit: 10
-      // }`;
+      let queryStr = `run: ec1_m2 -> {
+        group_by: users.state
+        aggregate: orders.orders_count
+        limit: 10
+      }`;
 
-      let queryStr = `run: abc`; // TODO: queryStr
+      // let queryStr = `run: abc`; // TODO: queryStr
 
       let malloyConnections = makeMalloyConnections({
         connections: connections

@@ -38,6 +38,9 @@ export function wrapFieldItem(item: {
     .map(k => common.capitalizeFirstLetter(k))
     .join(' ');
 
+  let fieldSqlName = fieldItem.field.name;
+  // let fieldSqlName = fieldItem.field.name.split('.').join('_');
+
   let modelField: common.ModelField = {
     id: fieldId,
     hidden: false,
@@ -49,7 +52,7 @@ export function wrapFieldItem(item: {
     formatNumber: undefined,
     currencyPrefix: undefined,
     currencySuffix: undefined,
-    sqlName: fieldItem.field.name.split('.').join('_'),
+    sqlName: fieldSqlName,
     topId: topNode.id,
     topLabel: topNode.label,
     description: undefined,

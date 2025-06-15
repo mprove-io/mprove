@@ -355,7 +355,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
           this.mconfig.queryId === this.query.queryId
             ? this.dataService.makeQData({
                 query: this.query,
-                mconfigFields: this.mconfig.fields
+                mconfig: this.mconfig
               })
             : [];
 

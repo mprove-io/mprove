@@ -117,7 +117,7 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
         this.params.data.mconfig.queryId === this.params.data.query.queryId
           ? this.dataService.makeQData({
               query: this.params.data.query,
-              mconfigFields: this.params.data.mconfig.fields
+              mconfig: this.params.data.mconfig
             })
           : [];
 
