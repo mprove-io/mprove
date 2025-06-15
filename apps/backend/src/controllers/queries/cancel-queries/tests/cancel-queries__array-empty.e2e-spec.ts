@@ -46,6 +46,7 @@ test('1', async t => {
     storePart: undefined,
     modelLabel: 'abc',
     compiledQuery: undefined,
+    malloyQuery: undefined,
     select: [],
     unsafeSelect: [],
     warnSelect: [],

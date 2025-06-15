@@ -23,6 +23,7 @@ export const mconfigsTable = pgTable(
     dateRangeIncludesRightSide: boolean('date_range_includes_right_side'),
     storePart: json('store_part').$type<common.StorePart>(),
     modelLabel: varchar('model_label'),
+    malloyQuery: varchar('malloy_query'),
     compiledQuery: json('compiled_query').$type<CompiledQuery>(),
     select: json('select').$type<string[]>().notNull(),
     unsafeSelect: json('unsafe_select').$type<string[]>(),

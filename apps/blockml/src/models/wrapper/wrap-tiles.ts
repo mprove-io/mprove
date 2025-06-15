@@ -268,6 +268,7 @@ export function wrapTiles(item: {
           : false,
       storePart: undefined,
       modelLabel: store?.label || mod?.label || model?.label,
+      malloyQuery: tile.malloyQuery,
       compiledQuery: tile.compiledQuery,
       select: common.isDefined(tile.compiledQuery)
         ? compiledQuerySelect

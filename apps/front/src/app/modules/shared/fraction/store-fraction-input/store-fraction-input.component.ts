@@ -132,6 +132,7 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
                 dateRangeIncludesRightSide: undefined, // adjustMconfig overrides it
                 storePart: undefined,
                 modelLabel: 'empty',
+                malloyQuery: undefined,
                 compiledQuery: undefined,
                 select: [fieldId],
                 unsafeSelect: [],

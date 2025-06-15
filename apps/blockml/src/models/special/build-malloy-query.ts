@@ -17,8 +17,8 @@ let func = common.FuncEnum.BuildMalloyQuery;
 export async function buildMalloyQuery(
   item: {
     malloyConnections: PostgresConnection[];
-    queryStr: string;
     malloyModelDef: MalloyModelDef;
+    malloyQuery: string;
     // errors: BmError[];
     // structId: string;
     // caller: common.CallerEnum;
@@ -26,16 +26,16 @@ export async function buildMalloyQuery(
   cs: ConfigService<interfaces.Config>
 ) {
   let {
-    queryStr,
-    malloyModelDef
+    malloyModelDef,
+    malloyQuery
     // errors,
     // structId,
     // caller,
   } = item;
   // helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  console.log('queryStr');
-  console.log(queryStr);
+  console.log('malloyQuery');
+  console.log(malloyQuery);
 
   // console.log('malloyModelDef');
   // console.log(malloyModelDef);
@@ -57,7 +57,7 @@ export async function buildMalloyQuery(
   // console.log(Date.now() - start100); // 0ms
 
   // let start101 = Date.now();
-  let qm: QueryMaterializer = mm.loadQuery(queryStr); // 0 ms
+  let qm: QueryMaterializer = mm.loadQuery(malloyQuery); // 0 ms
   // console.log('diff101');
   // console.log(Date.now() - start101); // 0ms
 

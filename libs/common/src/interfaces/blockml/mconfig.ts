@@ -48,6 +48,10 @@ export class Mconfig {
   @IsString()
   modelLabel: string;
 
+  @IsOptional()
+  @IsString()
+  malloyQuery: string;
+
   compiledQuery: CompiledQuery;
 
   @IsString({ each: true })

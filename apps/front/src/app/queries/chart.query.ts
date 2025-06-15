@@ -15,6 +15,7 @@ export const emptyMconfig: common.MconfigX = {
   dateRangeIncludesRightSide: undefined,
   storePart: undefined,
   modelLabel: undefined,
+  malloyQuery: undefined,
   compiledQuery: undefined,
   select: [],
   unsafeSelect: [],

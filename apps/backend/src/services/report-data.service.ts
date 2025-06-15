@@ -353,6 +353,7 @@ export class ReportDataService {
             dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
             storePart: undefined,
             modelLabel: model.label,
+            malloyQuery: undefined,
             compiledQuery: undefined,
             select:
               model.type === common.ModelTypeEnum.Store &&

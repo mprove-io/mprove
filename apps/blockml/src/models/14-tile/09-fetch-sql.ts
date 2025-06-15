@@ -99,14 +99,14 @@ export async function fetchSql<T extends types.dzType>(
       );
 
       let source: string;
-      let queryStr: string;
+      let malloyQuery: string;
 
       let match = queryPattern.exec(malloyFile.content);
 
       if (common.isDefined(match)) {
         source = match[2];
 
-        queryStr = 'run: ' + source + ' ' + match[3].trimEnd();
+        malloyQuery = 'run: ' + source + ' ' + match[3].trimEnd();
 
         // console.log('queryStr');
         // console.log(queryStr);
@@ -118,13 +118,14 @@ export async function fetchSql<T extends types.dzType>(
         {
           malloyConnections: item.malloyConnections,
           malloyModelDef: mod.malloyModel._modelDef,
-          queryStr: queryStr
+          malloyQuery: malloyQuery
         },
         cs
       );
 
       tile.sql = pr.sql.split('\n');
       tile.model = pr._rawQuery.sourceExplore;
+      tile.malloyQuery = malloyQuery;
       tile.compiledQuery = pr._rawQuery;
       tile.filtersFractions = {};
     } else if (
