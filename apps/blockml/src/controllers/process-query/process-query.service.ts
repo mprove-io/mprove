@@ -1,4 +1,4 @@
-import { PreparedResult } from '@malloydata/malloy/index';
+import { PreparedResult } from '@malloydata/malloy';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
@@ -129,7 +129,7 @@ export class ProcessQueryService {
       projectId: projectId,
       connectionId: model.connection.connectionId,
       envId: envId,
-      sql: sql,
+      sql: sql.join('\n'),
       store: undefined, // isStore false
       storeTransformedRequestString: undefined // isStore false
     });

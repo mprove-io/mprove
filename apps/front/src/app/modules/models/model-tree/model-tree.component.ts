@@ -208,47 +208,62 @@ export class ModelTreeComponent implements AfterViewInit {
   selectField(node: TreeNode) {
     let newMconfig = this.structService.makeMconfig();
 
-    if (node.data.isSelected === true) {
-      newMconfig = this.mconfigService.removeField({
-        newMconfig,
-        fieldId: node.data.id
+    if (this.model.type === common.ModelTypeEnum.Malloy) {
+      let queryOperation: common.QueryOperation = {
+        type: common.QueryOperationTypeEnum.SelectField,
+        fieldId: node.data.id,
+        timezone: newMconfig.timezone
+      };
+
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId,
+        queryOperation: queryOperation
       });
     } else {
-      newMconfig.select = [...newMconfig.select, node.data.id];
+      if (node.data.isSelected === true) {
+        newMconfig = this.mconfigService.removeField({
+          newMconfig,
+          fieldId: node.data.id
+        });
+      } else {
+        newMconfig.select = [...newMconfig.select, node.data.id];
+      }
+
+      let fields: common.ModelField[];
+      this.modelQuery.fields$
+        .pipe(
+          tap(x => (fields = x)),
+          take(1)
+        )
+        .subscribe();
+
+      newMconfig = common.setChartTitleOnSelectChange({
+        mconfig: newMconfig,
+        fields: fields
+      });
+
+      newMconfig = common.setChartFields({
+        mconfig: newMconfig,
+        fields: fields
+      });
+
+      newMconfig = common.sortChartFieldsOnSelectChange({
+        mconfig: newMconfig,
+        fields: fields
+      });
+
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId
+      });
+
+      // this.mconfigService.navCreateTempMconfigAndQuery({
+      //   newMconfig: newMconfig
+      // });
     }
-
-    let fields: common.ModelField[];
-    this.modelQuery.fields$
-      .pipe(
-        tap(x => (fields = x)),
-        take(1)
-      )
-      .subscribe();
-
-    newMconfig = common.setChartTitleOnSelectChange({
-      mconfig: newMconfig,
-      fields: fields
-    });
-
-    newMconfig = common.setChartFields({
-      mconfig: newMconfig,
-      fields: fields
-    });
-
-    newMconfig = common.sortChartFieldsOnSelectChange({
-      mconfig: newMconfig,
-      fields: fields
-    });
-
-    this.chartService.editChart({
-      mconfig: newMconfig,
-      isDraft: this.chart.draft,
-      chartId: this.chart.chartId
-    });
-
-    // this.mconfigService.navCreateTempMconfigAndQuery({
-    //   newMconfig: newMconfig
-    // });
   }
 
   filterField(node: TreeNode, event: MouseEvent) {

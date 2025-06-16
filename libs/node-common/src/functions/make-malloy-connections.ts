@@ -1,5 +1,5 @@
 import { PostgresConnection } from '@malloydata/db-postgres';
-import { common } from '~blockml/barrels/common';
+import { common } from '~node-common/barrels/common';
 
 export function makeMalloyConnections(item: {
   connections: common.ProjectConnection[];

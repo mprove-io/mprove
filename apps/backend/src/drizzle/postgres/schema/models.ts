@@ -1,4 +1,4 @@
-import { ModelDef as MalloyModelDef } from '@malloydata/malloy/index';
+import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,

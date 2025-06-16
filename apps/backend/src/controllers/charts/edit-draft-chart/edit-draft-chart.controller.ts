@@ -174,17 +174,18 @@ export class EditDraftChartController {
       newQuery = mqe.newQuery;
       isError = mqe.isError;
     } else if (model.type === common.ModelTypeEnum.Malloy) {
-      let mq = await this.malloyService.createMalloyQuery({
+      let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
         projectId: projectId,
         envId: envId,
+        structId: struct.structId,
         model: model,
         mconfig: mconfig,
         queryOperation: queryOperation
       });
 
-      newMconfig = mq.newMconfig;
-      newQuery = mq.newQuery;
-      isError = mq.isError;
+      newMconfig = editMalloyQueryResult.newMconfig;
+      newQuery = editMalloyQueryResult.newQuery;
+      isError = editMalloyQueryResult.isError;
     } else {
       let { apiEnv, connectionsWithFallback } =
         await this.envsService.getApiEnvConnectionsWithFallback({

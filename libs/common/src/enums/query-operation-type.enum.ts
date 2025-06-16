@@ -1,4 +1,3 @@
 export enum QueryOperationTypeEnum {
-  Select = 'Select',
-  Deselect = 'Deselect'
+  SelectField = 'SelectField'
 }

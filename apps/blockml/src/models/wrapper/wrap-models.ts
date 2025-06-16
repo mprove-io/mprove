@@ -1,4 +1,4 @@
-import { ModelDef as MalloyModelDef } from '@malloydata/malloy/index';
+import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import { common } from '~blockml/barrels/common';
 import { getFieldItems } from '~blockml/functions/source-to-field-items';
 import { wrapField } from './wrap-field';

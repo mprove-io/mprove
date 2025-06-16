@@ -5,7 +5,7 @@ export function makeQueryId(item: {
   projectId: string;
   envId: string;
   connectionId: string;
-  sql: string[];
+  sql: string;
   storeTransformedRequestString: string;
   store: common.FileStore;
 }) {
@@ -19,7 +19,7 @@ export function makeQueryId(item: {
   } = item;
 
   let postText = common.isDefined(sql)
-    ? sql.join('\n')
+    ? sql
     : storeTransformedRequestString +
       store.method.toString() +
       JSON.stringify(store);

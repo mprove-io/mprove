@@ -1,5 +1,5 @@
 import { PostgresConnection } from '@malloydata/db-postgres';
-import { PreparedResult } from '@malloydata/malloy/index';
+import { PreparedResult } from '@malloydata/malloy';
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { barSpecial } from '~blockml/barrels/bar-special';

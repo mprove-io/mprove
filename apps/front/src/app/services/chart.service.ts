@@ -39,6 +39,7 @@ export class ChartService {
     chartId: string;
     cellMetricsStartDateMs?: number;
     cellMetricsEndDateMs?: number;
+    queryOperation?: common.QueryOperation;
   }) {
     let {
       isDraft,
@@ -46,20 +47,23 @@ export class ChartService {
       isKeepQueryId,
       chartId,
       cellMetricsStartDateMs,
-      cellMetricsEndDateMs
+      cellMetricsEndDateMs,
+      queryOperation
     } = item;
 
     if (isDraft === true) {
       this.editDraftChart({
         mconfig: mconfig,
-        chartId: chartId
+        chartId: chartId,
+        queryOperation: queryOperation
       });
     } else {
       this.navCreateDraftChart({
         mconfig: mconfig,
         isKeepQueryId: isKeepQueryId,
         cellMetricsStartDateMs: cellMetricsStartDateMs,
-        cellMetricsEndDateMs: cellMetricsEndDateMs
+        cellMetricsEndDateMs: cellMetricsEndDateMs,
+        queryOperation: queryOperation
       });
     }
   }
@@ -69,6 +73,7 @@ export class ChartService {
     isKeepQueryId: boolean;
     cellMetricsStartDateMs: number;
     cellMetricsEndDateMs: number;
+    queryOperation: common.QueryOperation;
   }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
@@ -76,7 +81,8 @@ export class ChartService {
       mconfig,
       isKeepQueryId,
       cellMetricsStartDateMs,
-      cellMetricsEndDateMs
+      cellMetricsEndDateMs,
+      queryOperation
     } = item;
 
     let payload: apiToBackend.ToBackendCreateDraftChartRequestPayload = {
@@ -87,7 +93,8 @@ export class ChartService {
       mconfig: mconfig,
       isKeepQueryId: isKeepQueryId,
       cellMetricsStartDateMs: cellMetricsStartDateMs,
-      cellMetricsEndDateMs: cellMetricsEndDateMs
+      cellMetricsEndDateMs: cellMetricsEndDateMs,
+      queryOperation: queryOperation
     };
 
     this.apiService
@@ -117,10 +124,14 @@ export class ChartService {
       .subscribe();
   }
 
-  editDraftChart(item: { chartId: string; mconfig: common.MconfigX }) {
+  editDraftChart(item: {
+    chartId: string;
+    mconfig: common.MconfigX;
+    queryOperation: common.QueryOperation;
+  }) {
     this.spinner.show(constants.APP_SPINNER_NAME);
 
-    let { chartId, mconfig } = item;
+    let { chartId, mconfig, queryOperation } = item;
 
     let payload: apiToBackend.ToBackendEditDraftChartRequestPayload = {
       projectId: this.nav.projectId,
@@ -128,7 +139,8 @@ export class ChartService {
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       chartId: chartId,
-      mconfig: mconfig
+      mconfig: mconfig,
+      queryOperation: queryOperation
     };
 
     this.apiService

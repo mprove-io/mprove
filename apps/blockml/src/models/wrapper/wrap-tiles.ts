@@ -70,7 +70,7 @@ export function wrapTiles(item: {
             projectId: projectId,
             connectionId: connection.connectionId,
             envId: envId,
-            sql: tile.sql,
+            sql: tile.sql.join('\n'),
             store: undefined, // isStore false
             storeTransformedRequestString: undefined // isStore false
           });

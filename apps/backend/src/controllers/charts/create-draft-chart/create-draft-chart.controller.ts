@@ -178,22 +178,22 @@ export class CreateDraftChartController {
         newQuery = mqs.newQuery;
       }
     } else if (model.type === common.ModelTypeEnum.Malloy) {
-      let mq = await this.malloyService.createMalloyQuery({
+      let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
         projectId: projectId,
         envId: envId,
+        structId: struct.structId,
         model: model,
         mconfig: mconfig,
         queryOperation: queryOperation
       });
 
-      isError = mq.isError;
-
-      newMconfig = mq.newMconfig;
+      isError = editMalloyQueryResult.isError;
+      newMconfig = editMalloyQueryResult.newMconfig;
 
       if (isKeepQueryId === true && isError === false) {
         newMconfig.queryId = kQueryId;
       } else {
-        newQuery = mq.newQuery;
+        newQuery = editMalloyQueryResult.newQuery;
       }
     } else {
       let { apiEnv, connectionsWithFallback } =

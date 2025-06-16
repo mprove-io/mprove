@@ -1,4 +1,4 @@
-import { ModelDef as MalloyModelDef } from '@malloydata/malloy/index';
+import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,

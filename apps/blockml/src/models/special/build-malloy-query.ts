@@ -6,7 +6,7 @@ import {
   QueryMaterializer,
   Runtime
 } from '@malloydata/malloy';
-import { ModelDef as MalloyModelDef } from '@malloydata/malloy/index';
+import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import { ConfigService } from '@nestjs/config';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';

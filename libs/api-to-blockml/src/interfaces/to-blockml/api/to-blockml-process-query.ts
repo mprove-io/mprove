@@ -1,4 +1,4 @@
-import { ModelDef as MalloyModelDef } from '@malloydata/malloy/index';
+import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-blockml/barrels/common';
