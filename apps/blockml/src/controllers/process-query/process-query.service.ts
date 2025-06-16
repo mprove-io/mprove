@@ -6,7 +6,6 @@ import { barSpecial } from '~blockml/barrels/bar-special';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { nodeCommon } from '~blockml/barrels/node-common';
-import { makeMalloyConnections } from '~blockml/functions/make-malloy-connections';
 import { RabbitService } from '~blockml/services/rabbit.service';
 
 @Injectable()
@@ -77,7 +76,7 @@ export class ProcessQueryService {
 
       // let malloyQuery = `run: abc`;
 
-      let malloyConnections = makeMalloyConnections({
+      let malloyConnections = nodeCommon.makeMalloyConnections({
         connections: connections
       });
 

@@ -22,6 +22,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
+import { MalloyService } from '~backend/services/malloy.service';
 import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
@@ -39,6 +40,7 @@ let retry = require('async-retry');
 @Controller()
 export class CreateDraftChartController {
   constructor(
+    private malloyService: MalloyService,
     private projectsService: ProjectsService,
     private modelsService: ModelsService,
     private membersService: MembersService,
@@ -72,7 +74,8 @@ export class CreateDraftChartController {
       branchId,
       envId,
       cellMetricsStartDateMs,
-      cellMetricsEndDateMs
+      cellMetricsEndDateMs,
+      queryOperation
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
@@ -145,7 +148,7 @@ export class CreateDraftChartController {
 
       // console.log('createMconfigAndQuery prepStoreMconfigQuery');
 
-      let mqe = await this.mconfigsService.prepStoreMconfigQuery({
+      let mqs = await this.mconfigsService.prepStoreMconfigQuery({
         struct: struct,
         project: project,
         envId: envId,
@@ -165,14 +168,32 @@ export class CreateDraftChartController {
           : undefined
       });
 
-      isError = mqe.isError;
+      isError = mqs.isError;
 
-      newMconfig = mqe.newMconfig;
+      newMconfig = mqs.newMconfig;
 
       if (isKeepQueryId === true && isError === false) {
         newMconfig.queryId = kQueryId;
       } else {
-        newQuery = mqe.newQuery;
+        newQuery = mqs.newQuery;
+      }
+    } else if (model.type === common.ModelTypeEnum.Malloy) {
+      let mq = await this.malloyService.createMalloyQuery({
+        projectId: projectId,
+        envId: envId,
+        model: model,
+        mconfig: mconfig,
+        queryOperation: queryOperation
+      });
+
+      isError = mq.isError;
+
+      newMconfig = mq.newMconfig;
+
+      if (isKeepQueryId === true && isError === false) {
+        newMconfig.queryId = kQueryId;
+      } else {
+        newQuery = mq.newQuery;
       }
     } else {
       let { apiEnv, connectionsWithFallback } =

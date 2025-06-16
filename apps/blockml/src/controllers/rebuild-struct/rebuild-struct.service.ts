@@ -14,7 +14,6 @@ import { constants } from '~blockml/barrels/constants';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { nodeCommon } from '~blockml/barrels/node-common';
 import { getMproveConfigFile } from '~blockml/functions/get-mprove-config-file';
-import { makeMalloyConnections } from '~blockml/functions/make-malloy-connections';
 import { BmError } from '~blockml/models/bm-error';
 import { PresetsService } from '~blockml/services/presets.service';
 import { RabbitService } from '~blockml/services/rabbit.service';
@@ -356,9 +355,10 @@ export class RebuildStructService {
 
     // await fse.writeFile(mainPath, mainContent);
 
-    let malloyConnections: PostgresConnection[] = makeMalloyConnections({
-      connections: item.connections
-    });
+    let malloyConnections: PostgresConnection[] =
+      nodeCommon.makeMalloyConnections({
+        connections: item.connections
+      });
 
     // let startBuildModStart = Date.now();
 

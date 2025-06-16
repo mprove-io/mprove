@@ -29,3 +29,4 @@ export * from './tile-x';
 export * from './ui';
 export * from './user';
 export * from './model-info';
+export * from './query-operation';

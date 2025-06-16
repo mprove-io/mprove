@@ -1,4 +1,3 @@
-import { PostgresConnection } from '@malloydata/db-postgres';
 import {
   LogMessage,
   ModelInfo as MalloyModelInfo,
@@ -6,8 +5,11 @@ import {
   ModelEntryValueWithSource
 } from '@malloydata/malloy-interfaces';
 import {
+  ASTAggregateViewOperation,
+  ASTGroupByViewOperation,
   ASTQuery,
-  ASTSegmentViewDefinition
+  ASTSegmentViewDefinition,
+  ASTViewOperation
 } from '@malloydata/malloy-query-builder';
 import {
   Runtime as MalloyRuntime,
@@ -21,24 +23,41 @@ import {
 import { Inject, Injectable } from '@nestjs/common';
 import * as fse from 'fs-extra';
 import { common } from '~backend/barrels/common';
+import { nodeCommon } from '~backend/barrels/node-common';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { QueryOperationEnum } from '~common/enums/query-operation.enum';
+import { EnvsService } from './envs.service';
 
 @Injectable()
 export class MalloyService {
   constructor(
-    // private envsService: EnvsService,
-    // private storeService: StoreService,
+    private envsService: EnvsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   async createMalloyQuery(item: {
-    queryOperation: QueryOperationEnum;
-    mconfig: common.Mconfig;
+    projectId: string;
+    envId: string;
     model: common.Model;
-    malloyConnections: PostgresConnection[];
+    mconfig: common.Mconfig;
+    queryOperation: common.QueryOperation;
   }) {
-    let { queryOperation, mconfig, model, malloyConnections } = item;
+    let { projectId, envId, model, mconfig, queryOperation } = item;
+
+    let newMconfig: common.Mconfig;
+    let newQuery: common.Query;
+
+    let isError = false;
+    let errorMessage: string;
+
+    let { apiEnv, connectionsWithFallback } =
+      await this.envsService.getApiEnvConnectionsWithFallback({
+        projectId: projectId,
+        envId: envId
+      });
+
+    let malloyConnections = nodeCommon.makeMalloyConnections({
+      connections: connectionsWithFallback
+    });
 
     let malloyToQueryResult = malloyToQuery(mconfig.malloyQuery);
 
@@ -60,22 +79,72 @@ export class MalloyService {
 
     let segment0: ASTSegmentViewDefinition = astQuery.getOrAddDefaultSegment();
 
-    if (queryOperation === common.QueryOperationEnum.Select) {
-      segment0.addAggregate('orders_count');
-    } else {
-      //   segment.addAggregate('users_count', ['users']);
-      //   segment.addGroupBy('state', ['users']);
-      // segment0.addWhere('state', ['users'], 'WN, AA');
-      //   // export type ASTViewOperation = ASTGroupByViewOperation | ASTAggregateViewOperation | ASTOrderByViewOperation | ASTNestViewOperation | ASTLimitViewOperation | ASTWhereViewOperation | ASTHavingViewOperation;
-      //   // 'group_by' | 'aggregate' | 'order_by' | 'limit' | 'where' | 'nest' | 'having';
-      //   segment.operations.items
-      //     .filter(
-      //       (operation: ASTViewOperation) =>
-      //         operation instanceof ASTAggregateViewOperation
-      //     )
-      //     .find(y => y.field.name === 'users_count')
-      //     .delete();
+    console.log('segment0');
+    console.dir(segment0, { depth: null });
+
+    if (queryOperation.type === common.QueryOperationTypeEnum.Select) {
+      if (common.isUndefined(queryOperation.fieldId)) {
+        isError = true;
+        errorMessage = `queryOperation.fieldId is not defined (QueryOperationTypeEnum.Select)`;
+      }
+
+      let modelField = model.fields.find(x => x.id === queryOperation.fieldId);
+
+      let fieldPath: string[] = queryOperation.fieldId.split('.');
+
+      let fieldName = fieldPath.pop();
+
+      if (common.isUndefined(modelField)) {
+        isError = true;
+        errorMessage = `modelField is not defined (queryOperation.fieldId: ${queryOperation.fieldId})`;
+      }
+
+      if (
+        [
+          common.FieldClassEnum.Measure,
+          common.FieldClassEnum.Dimension
+        ].indexOf(modelField.fieldClass) < 0
+      ) {
+        isError = true;
+        errorMessage = `wrong modelField.fieldClass`;
+      }
+
+      let selectIndex = mconfig.select.findIndex(
+        x => x === queryOperation.fieldId
+      );
+
+      if (selectIndex < 0) {
+        if (modelField.fieldClass === common.FieldClassEnum.Measure) {
+          segment0.addAggregate(fieldName, fieldPath);
+        } else if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
+          segment0.addGroupBy(fieldName, fieldPath);
+        }
+      } else {
+        if (modelField.fieldClass === common.FieldClassEnum.Measure) {
+          // deselect aggregate
+          segment0.operations.items
+            .filter(
+              (operation: ASTViewOperation) =>
+                operation instanceof ASTAggregateViewOperation
+            )
+            .find(y => y.field.name === fieldName)
+            .delete();
+        } else if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
+          // deselect groupBy
+          segment0.operations.items
+            .filter(
+              (operation: ASTViewOperation) =>
+                operation instanceof ASTGroupByViewOperation
+            )
+            .find(y => y.field.name === fieldName)
+            .delete();
+        }
+      }
     }
+
+    // export type ASTViewOperation = ASTGroupByViewOperation | ASTAggregateViewOperation | ASTOrderByViewOperation | ASTNestViewOperation | ASTLimitViewOperation | ASTWhereViewOperation | ASTHavingViewOperation;
+    // 'group_by' | 'aggregate' | 'order_by' | 'limit' | 'where' | 'nest' | 'having';
+    // segment0.addWhere('state', ['users'], 'WN, AA');
 
     let newMalloyQuery = astQuery.toMalloy();
 
@@ -110,11 +179,14 @@ export class MalloyService {
 
     //
 
-    let newMconfig: common.Mconfig;
-    let newQuery: common.Query;
-
-    let isError = false;
-    let errorMessage: string;
+    // let queryId = nodeCommon.makeQueryId({
+    //   projectId: project.projectId,
+    //   envId: envId,
+    //   connectionId: model.connectionId,
+    //   sql: undefined, // isStore true
+    //   store: model.content as common.FileStore,
+    //   storeTransformedRequestString: processedRequest.result
+    // });
 
     return { isError: isError, newMconfig: newMconfig, newQuery: newQuery };
   }

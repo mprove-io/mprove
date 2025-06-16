@@ -23,6 +23,7 @@ import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { ChartsService } from '~backend/services/charts.service';
 import { EnvsService } from '~backend/services/envs.service';
+import { MalloyService } from '~backend/services/malloy.service';
 import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
@@ -38,6 +39,7 @@ let retry = require('async-retry');
 @Controller()
 export class EditDraftChartController {
   constructor(
+    private malloyService: MalloyService,
     private projectsService: ProjectsService,
     private modelsService: ModelsService,
     private membersService: MembersService,
@@ -63,8 +65,15 @@ export class EditDraftChartController {
     let reqValid: apiToBackend.ToBackendEditDraftChartRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { mconfig, projectId, isRepoProd, branchId, envId, chartId } =
-      reqValid.payload;
+    let {
+      mconfig,
+      projectId,
+      isRepoProd,
+      branchId,
+      envId,
+      chartId,
+      queryOperation
+    } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
 
@@ -164,6 +173,18 @@ export class EditDraftChartController {
       newMconfig = mqe.newMconfig;
       newQuery = mqe.newQuery;
       isError = mqe.isError;
+    } else if (model.type === common.ModelTypeEnum.Malloy) {
+      let mq = await this.malloyService.createMalloyQuery({
+        projectId: projectId,
+        envId: envId,
+        model: model,
+        mconfig: mconfig,
+        queryOperation: queryOperation
+      });
+
+      newMconfig = mq.newMconfig;
+      newQuery = mq.newQuery;
+      isError = mq.isError;
     } else {
       let { apiEnv, connectionsWithFallback } =
         await this.envsService.getApiEnvConnectionsWithFallback({

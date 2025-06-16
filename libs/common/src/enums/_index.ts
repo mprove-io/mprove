@@ -44,4 +44,4 @@ export * from './time-label.enum';
 export * from './time-source.enum';
 export * from './timeframe.enum';
 export * from './timespec.enum';
-export * from './query-operation.enum';
+export * from './query-operation-type.enum';

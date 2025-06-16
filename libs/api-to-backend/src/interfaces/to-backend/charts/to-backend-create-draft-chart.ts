@@ -37,6 +37,11 @@ export class ToBackendCreateDraftChartRequestPayload {
   @IsOptional()
   @IsNumber()
   cellMetricsEndDateMs: number;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => common.QueryOperation)
+  queryOperation: common.QueryOperation;
 }
 
 export class ToBackendCreateDraftChartRequest extends ToBackendRequest {
