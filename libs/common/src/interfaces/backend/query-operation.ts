@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 import { enums } from '~common/barrels/enums';
 
 export class QueryOperation {
@@ -9,6 +9,10 @@ export class QueryOperation {
   timezone: string;
 
   @IsOptional()
+  @IsInt()
+  limit?: number;
+
+  @IsOptional()
   @IsString()
-  fieldId: string;
+  fieldId?: string;
 }

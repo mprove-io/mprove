@@ -873,17 +873,32 @@ export class ModelsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    newMconfig.limit = Number(limit.value);
+    if (this.model.type === common.ModelTypeEnum.Malloy) {
+      let queryOperation: common.QueryOperation = {
+        type: common.QueryOperationTypeEnum.Limit,
+        timezone: newMconfig.timezone,
+        limit: Number(limit.value)
+      };
 
-    this.chartService.editChart({
-      mconfig: newMconfig,
-      isDraft: this.chart.draft,
-      chartId: this.chart.chartId
-    });
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId,
+        queryOperation: queryOperation
+      });
+    } else {
+      newMconfig.limit = Number(limit.value);
 
-    // this.mconfigService.navCreateTempMconfigAndQuery({
-    //   newMconfig: newMconfig
-    // });
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId
+      });
+
+      // this.mconfigService.navCreateTempMconfigAndQuery({
+      //   newMconfig: newMconfig
+      // });
+    }
   }
 
   modelChange() {

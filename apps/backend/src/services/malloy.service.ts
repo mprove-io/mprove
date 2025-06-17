@@ -144,6 +144,8 @@ export class MalloyService {
             .delete();
         }
       }
+    } else if (queryOperation.type === common.QueryOperationTypeEnum.Limit) {
+      segment0.setLimit(queryOperation.limit);
     }
 
     let limitOp = segment0.operations.items.find(
