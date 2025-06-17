@@ -119,9 +119,17 @@ export class MalloyService {
 
       if (selectIndex < 0) {
         if (modelField.fieldClass === common.FieldClassEnum.Measure) {
-          segment0.addAggregate(fieldName, fieldPath);
+          segment0.addAggregate(
+            fieldName,
+            fieldPath,
+            [...fieldPath, fieldName].join(common.TRIPLE_UNDERSCORE)
+          );
         } else if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
-          segment0.addGroupBy(fieldName, fieldPath);
+          segment0.addGroupBy(
+            fieldName,
+            fieldPath,
+            [...fieldPath, fieldName].join(common.TRIPLE_UNDERSCORE)
+          );
         }
       } else {
         if (modelField.fieldClass === common.FieldClassEnum.Measure) {
@@ -241,10 +249,14 @@ export class MalloyService {
 
     if (common.isDefined(compiledQuery)) {
       compiledQuery.structs[0].fields.forEach(field => {
-        compiledQuerySelect.push(
-          // TODO: if not fieldBase? (more TODOs)
-          (field as FieldBase).resultMetadata?.sourceField
-        );
+        let fieldIdTripleUnderscore = (field as FieldBase).resultMetadata
+          ?.sourceField;
+
+        let fieldId = fieldIdTripleUnderscore
+          .split(common.TRIPLE_UNDERSCORE)
+          .join('.');
+
+        compiledQuerySelect.push(fieldId);
       });
     }
 
@@ -254,13 +266,28 @@ export class MalloyService {
           k => k.name === orderByItem.field
         );
 
+        // console.log('field');
+        // console.log(field);
+
         let sorting: common.Sorting;
 
         if (common.isDefined(field)) {
+          let mField = model.fields.find(f => {
+            let fieldIdTripleUnderscore = (field as FieldBase).resultMetadata
+              ?.sourceField;
+
+            let fieldId = fieldIdTripleUnderscore
+              .split(common.TRIPLE_UNDERSCORE)
+              .join('.');
+
+            return f.id === fieldId;
+          });
+
+          // console.log('mField');
+          // console.log(mField);
+
           sorting = {
-            fieldId: model.fields.find(
-              f => f.id === (field as FieldBase).resultMetadata?.sourceField
-            ).id,
+            fieldId: mField.id,
             desc: orderByItem.dir === 'desc'
           };
         }

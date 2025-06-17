@@ -176,14 +176,29 @@ export class DataService {
           // console.log('key');
           // console.log(key);
 
-          let fieldId =
-            mconfig.modelType === common.ModelTypeEnum.Malloy
-              ? (
-                  mconfig.compiledQuery.structs[0].fields.find(
-                    x => x.name === key
-                  ) as FieldBase
-                ).resultMetadata.sourceField
-              : key.toLowerCase();
+          let fieldId: string;
+
+          // console.log('mconfig.modelType');
+          // console.log(mconfig.modelType);
+
+          if (mconfig.modelType === common.ModelTypeEnum.Malloy) {
+            let compiledQueryField =
+              mconfig.compiledQuery.structs[0].fields.find(
+                x => x.name === key
+              ) as FieldBase;
+
+            // console.log('compiledQueryField');
+            // console.log(compiledQueryField);
+
+            let fieldIdTripleUnderscore =
+              compiledQueryField?.resultMetadata?.sourceField;
+
+            fieldId = fieldIdTripleUnderscore
+              .split(common.TRIPLE_UNDERSCORE)
+              .join('.');
+          } else {
+            fieldId = key.toLowerCase();
+          }
 
           // console.log('fieldId');
           // console.log(fieldId);
