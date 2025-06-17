@@ -248,6 +248,27 @@ export class MalloyService {
       });
     }
 
+    let sortings = compiledQuery.structs[0].resultMetadata.orderBy
+      .map(orderByItem => {
+        let field = compiledQuery.structs[0].fields.find(
+          k => k.name === orderByItem.field
+        );
+
+        let sorting: common.Sorting;
+
+        if (common.isDefined(field)) {
+          sorting = {
+            fieldId: model.fields.find(
+              f => f.id === (field as FieldBase).resultMetadata?.sourceField
+            ).id,
+            desc: orderByItem.dir === 'desc'
+          };
+        }
+
+        return sorting;
+      })
+      .filter(sorting => common.isDefined(sorting));
+
     let newMconfig: common.Mconfig = {
       structId: structId,
       mconfigId: common.makeId(),
@@ -263,8 +284,11 @@ export class MalloyService {
       unsafeSelect: [],
       warnSelect: [],
       joinAggregations: [],
-      sortings: [], // TODO: sortings (common.sortChartFieldsOnSelectChange)
-      sorts: undefined, // TODO: sorts (common.sortChartFieldsOnSelectChange)
+      sortings: sortings,
+      sorts:
+        common.isDefined(sortings) && sortings.length > 0
+          ? sortings.join(', ')
+          : null,
       timezone: queryOperation.timezone,
       limit: compiledQuery.structs[0].resultMetadata.limit,
       filters: [],
