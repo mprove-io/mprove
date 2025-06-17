@@ -17,6 +17,7 @@ import {
   ASTAggregateViewOperation,
   ASTGroupByViewOperation,
   ASTLimitViewOperation,
+  ASTOrderByViewOperation,
   ASTQuery,
   ASTSegmentViewDefinition,
   ASTViewOperation
@@ -71,6 +72,12 @@ export class MalloyService {
     let q1: MalloyQuery = malloyToQueryResult?.query;
     let logs: LogMessage[] = malloyToQueryResult?.logs;
 
+    // fse.writeFileSync(
+    //   'malloy-query.json',
+    //   JSON.stringify(q1, null, 2),
+    //   'utf-8'
+    // );
+
     let malloyEntryValueWithSource = malloyModelInfo.entries.find(
       // y => y.kind === 'source' && y.name === (q1.definition as any).source.name
       y => y.kind === 'source' && y.name === model.modelId
@@ -86,7 +93,9 @@ export class MalloyService {
     // console.log('segment0');
     // console.dir(segment0, { depth: null });
 
-    if (queryOperation.type === common.QueryOperationTypeEnum.SelectField) {
+    if (
+      queryOperation.type === common.QueryOperationTypeEnum.GroupOrAggregate
+    ) {
       if (common.isUndefined(queryOperation.fieldId)) {
         isError = true;
         errorMessage = `queryOperation.fieldId is not defined (QueryOperationTypeEnum.Select)`;
@@ -152,6 +161,61 @@ export class MalloyService {
             .delete();
         }
       }
+    } else if (queryOperation.type === common.QueryOperationTypeEnum.Sort) {
+      let fieldNameUnderscore = queryOperation.fieldId
+        .split('.')
+        .join(common.TRIPLE_UNDERSCORE);
+
+      // let newDirection: OrderByDirection =
+      //   queryOperation.desc === true ? 'desc' : 'asc';
+
+      let fIndex = mconfig.sortings.findIndex(
+        sorting => sorting.fieldId === queryOperation.fieldId
+      );
+
+      let op = segment0.operations.items
+        .filter(
+          (operation: ASTViewOperation) =>
+            operation instanceof ASTOrderByViewOperation
+        )
+        .find(opItem => opItem.name === fieldNameUnderscore);
+
+      if (
+        fIndex > -1 &&
+        mconfig.sortings[fIndex].desc === true &&
+        queryOperation.desc
+      ) {
+        // desc should be removed from sortings and asc should be added to end
+        op.delete();
+        segment0.addOrderBy(fieldNameUnderscore, 'asc');
+      } else if (
+        fIndex > -1 &&
+        mconfig.sortings[fIndex].desc === true &&
+        !queryOperation.desc
+      ) {
+        // not possible in UI
+        // asc should be removed from sorting
+        op.delete();
+      } else if (fIndex > -1 && mconfig.sortings[fIndex].desc === false) {
+        // asc should be removed from sortings
+        op.delete();
+      } else if (fIndex < 0) {
+        // should be added to sortings
+        segment0.addOrderBy(fieldNameUnderscore, 'desc');
+      }
+
+      // let ops = segment0.operations;
+
+      // console.log('ops');
+      // console.log(ops);
+
+      // let orderByOps = segment0.operations.items.filter(
+      //   (operation: ASTViewOperation) =>
+      //     operation instanceof ASTOrderByViewOperation
+      // );
+
+      // console.log('orderByOps');
+      // console.log(orderByOps);
     } else if (queryOperation.type === common.QueryOperationTypeEnum.Limit) {
       segment0.setLimit(queryOperation.limit);
     }
@@ -260,10 +324,17 @@ export class MalloyService {
       });
     }
 
-    let sortings = compiledQuery.structs[0].resultMetadata.orderBy
-      .map(orderByItem => {
+    let sortings = segment0.operations.items
+      .filter(
+        (operation: ASTViewOperation) =>
+          operation instanceof ASTOrderByViewOperation
+      )
+      .map((orderByItem: ASTOrderByViewOperation) => {
+        // console.log('orderByItem');
+        // console.log(orderByItem);
+
         let field = compiledQuery.structs[0].fields.find(
-          k => k.name === orderByItem.field
+          k => k.name === orderByItem.name
         );
 
         // console.log('field');
@@ -286,15 +357,26 @@ export class MalloyService {
           // console.log('mField');
           // console.log(mField);
 
+          // console.log('orderByItem.direction');
+          // console.log(orderByItem.direction);
+
           sorting = {
             fieldId: mField.id,
-            desc: orderByItem.dir === 'desc'
+            desc: orderByItem.direction === 'desc'
           };
         }
 
         return sorting;
       })
       .filter(sorting => common.isDefined(sorting));
+
+    let newSorts: string[] = [];
+
+    sortings.forEach(sorting =>
+      sorting.desc
+        ? newSorts.push(`${sorting.fieldId} desc`)
+        : newSorts.push(sorting.fieldId)
+    );
 
     let newMconfig: common.Mconfig = {
       structId: structId,
@@ -312,10 +394,7 @@ export class MalloyService {
       warnSelect: [],
       joinAggregations: [],
       sortings: sortings,
-      sorts:
-        common.isDefined(sortings) && sortings.length > 0
-          ? sortings.join(', ')
-          : null,
+      sorts: newSorts.length > 0 ? newSorts.join(', ') : null,
       timezone: queryOperation.timezone,
       limit: compiledQuery.structs[0].resultMetadata.limit,
       filters: [],
@@ -325,8 +404,9 @@ export class MalloyService {
     };
 
     if (
-      [common.QueryOperationTypeEnum.SelectField].indexOf(queryOperation.type) >
-      -1
+      [common.QueryOperationTypeEnum.GroupOrAggregate].indexOf(
+        queryOperation.type
+      ) > -1
     ) {
       newMconfig = common.setChartTitleOnSelectChange({
         mconfig: newMconfig,
@@ -335,8 +415,9 @@ export class MalloyService {
     }
 
     if (
-      [common.QueryOperationTypeEnum.SelectField].indexOf(queryOperation.type) >
-      -1
+      [common.QueryOperationTypeEnum.GroupOrAggregate].indexOf(
+        queryOperation.type
+      ) > -1
     ) {
       newMconfig = common.setChartFields({
         mconfig: newMconfig,

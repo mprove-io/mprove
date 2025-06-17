@@ -65,70 +65,86 @@ export class MainTableComponent {
     // const { fieldId, desc } = params;
     let newMconfig = this.structService.makeMconfig();
 
-    let newSortings: common.Sorting[] = [];
+    if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
+      let queryOperation: common.QueryOperation = {
+        type: common.QueryOperationTypeEnum.Sort,
+        fieldId: fieldId,
+        desc: desc,
+        timezone: newMconfig.timezone
+      };
 
-    let fIndex = newMconfig.sortings.findIndex(
-      sorting => sorting.fieldId === fieldId
-    );
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId,
+        queryOperation: queryOperation
+      });
+    } else {
+      let newSortings: common.Sorting[] = [];
 
-    if (fIndex > -1 && newMconfig.sortings[fIndex].desc === true && desc) {
-      // desc should be removed from sortings and asc should be added to end
+      let fIndex = newMconfig.sortings.findIndex(
+        sorting => sorting.fieldId === fieldId
+      );
 
-      let sorting: common.Sorting = { fieldId: fieldId, desc: false };
+      if (fIndex > -1 && newMconfig.sortings[fIndex].desc === true && desc) {
+        // desc should be removed from sortings and asc should be added to end
 
-      newSortings = [
-        ...newMconfig.sortings.slice(0, fIndex),
-        ...newMconfig.sortings.slice(fIndex + 1),
-        sorting
-      ];
-    } else if (
-      fIndex > -1 &&
-      newMconfig.sortings[fIndex].desc === true &&
-      !desc
-    ) {
-      // not possible in UI
-      // asc should be removed from sortings
+        let sorting: common.Sorting = { fieldId: fieldId, desc: false };
 
-      newSortings = [
-        ...newMconfig.sortings.slice(0, fIndex),
-        ...newMconfig.sortings.slice(fIndex + 1)
-      ];
-    } else if (fIndex > -1 && newMconfig.sortings[fIndex].desc === false) {
-      // asc should be removed from sortings
-      newSortings = [
-        ...newMconfig.sortings.slice(0, fIndex),
-        ...newMconfig.sortings.slice(fIndex + 1)
-      ];
-    } else if (fIndex < 0) {
-      // should be added to sortings
-      let sorting: common.Sorting = { fieldId: fieldId, desc: desc };
+        newSortings = [
+          ...newMconfig.sortings.slice(0, fIndex),
+          ...newMconfig.sortings.slice(fIndex + 1),
+          sorting
+        ];
+      } else if (
+        fIndex > -1 &&
+        newMconfig.sortings[fIndex].desc === true &&
+        !desc
+      ) {
+        // not possible in UI
+        // asc should be removed from sortings
 
-      newSortings = [...newMconfig.sortings, sorting];
+        newSortings = [
+          ...newMconfig.sortings.slice(0, fIndex),
+          ...newMconfig.sortings.slice(fIndex + 1)
+        ];
+      } else if (fIndex > -1 && newMconfig.sortings[fIndex].desc === false) {
+        // asc should be removed from sortings
+        newSortings = [
+          ...newMconfig.sortings.slice(0, fIndex),
+          ...newMconfig.sortings.slice(fIndex + 1)
+        ];
+      } else if (fIndex < 0) {
+        // should be added to sortings
+        let sorting: common.Sorting = { fieldId: fieldId, desc: desc };
+
+        newSortings = [...newMconfig.sortings, sorting];
+      }
+
+      newMconfig.sortings = newSortings;
+
+      // create sorts
+      let newSorts: string[] = [];
+
+      newMconfig.sortings.forEach(sorting =>
+        sorting.desc
+          ? newSorts.push(`${sorting.fieldId} desc`)
+          : newSorts.push(sorting.fieldId)
+      );
+
+      newMconfig.sorts =
+        newMconfig.sortings.length > 0 ? newSorts.join(', ') : null;
+
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId
+      });
+
+      // this.mconfigService.navCreateTempMconfigAndQuery({
+      //   newMconfig: newMconfig
+      // });
     }
-
-    newMconfig.sortings = newSortings;
-
-    // create sorts
-    let newSorts: string[] = [];
-
-    newMconfig.sortings.forEach(sorting =>
-      sorting.desc
-        ? newSorts.push(`${sorting.fieldId} desc`)
-        : newSorts.push(sorting.fieldId)
-    );
-
-    newMconfig.sorts =
-      newMconfig.sortings.length > 0 ? newSorts.join(', ') : null;
-
-    this.chartService.editChart({
-      mconfig: newMconfig,
-      isDraft: this.chart.draft,
-      chartId: this.chart.chartId
-    });
-
-    // this.mconfigService.navCreateTempMconfigAndQuery({
-    //   newMconfig: newMconfig
-    // });
   }
 
   replaceColumn(column: common.MconfigField) {

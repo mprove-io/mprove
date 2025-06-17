@@ -1,4 +1,5 @@
 export enum QueryOperationTypeEnum {
-  SelectField = 'SelectField',
+  Sort = 'Sort',
+  GroupOrAggregate = 'GroupOrAggregate',
   Limit = 'Limit'
 }

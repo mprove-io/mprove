@@ -210,7 +210,7 @@ export class ModelTreeComponent implements AfterViewInit {
 
     if (this.model.type === common.ModelTypeEnum.Malloy) {
       let queryOperation: common.QueryOperation = {
-        type: common.QueryOperationTypeEnum.SelectField,
+        type: common.QueryOperationTypeEnum.GroupOrAggregate,
         fieldId: node.data.id,
         timezone: newMconfig.timezone
       };

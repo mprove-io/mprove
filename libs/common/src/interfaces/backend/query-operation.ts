@@ -1,4 +1,10 @@
-import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString
+} from 'class-validator';
 import { enums } from '~common/barrels/enums';
 
 export class QueryOperation {
@@ -15,4 +21,8 @@ export class QueryOperation {
   @IsOptional()
   @IsString()
   fieldId?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  desc?: boolean;
 }
