@@ -107,6 +107,9 @@ export class MalloyService {
 
       let fieldName = fieldPath.pop();
 
+      // let fieldNamePrefixes =
+      //   fieldPath.length === 0 ? ['model_fields'] : [...fieldPath];
+
       if (common.isUndefined(modelField)) {
         isError = true;
         errorMessage = `modelField is not defined (queryOperation.fieldId: ${queryOperation.fieldId})`;
@@ -128,17 +131,25 @@ export class MalloyService {
 
       if (selectIndex < 0) {
         if (modelField.fieldClass === common.FieldClassEnum.Measure) {
-          segment0.addAggregate(
-            fieldName,
-            fieldPath,
-            [...fieldPath, fieldName].join(common.TRIPLE_UNDERSCORE)
-          );
+          if (fieldPath.length > 0) {
+            segment0.addAggregate(
+              fieldName,
+              fieldPath,
+              [...fieldPath, fieldName].join(common.TRIPLE_UNDERSCORE)
+            );
+          } else {
+            segment0.addAggregate(fieldName);
+          }
         } else if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
-          segment0.addGroupBy(
-            fieldName,
-            fieldPath,
-            [...fieldPath, fieldName].join(common.TRIPLE_UNDERSCORE)
-          );
+          if (fieldPath.length > 0) {
+            segment0.addGroupBy(
+              fieldName,
+              fieldPath,
+              [...fieldPath, fieldName].join(common.TRIPLE_UNDERSCORE)
+            );
+          } else {
+            segment0.addGroupBy(fieldName);
+          }
         }
       } else {
         if (modelField.fieldClass === common.FieldClassEnum.Measure) {
