@@ -19,6 +19,7 @@ export const modelsTable = pgTable(
       .primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),
     modelId: varchar('model_id', { length: 64 }).notNull(), // name
+    source: varchar('source'),
     type: varchar('type').$type<common.ModelTypeEnum>(),
     malloyModelDef: json('malloy_model_def').$type<MalloyModelDef>(),
     connectionId: varchar('connection_id'),

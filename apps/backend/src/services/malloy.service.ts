@@ -16,6 +16,7 @@ import {
 import {
   ASTAggregateViewOperation,
   ASTGroupByViewOperation,
+  ASTLimitViewOperation,
   ASTQuery,
   ASTSegmentViewDefinition,
   ASTViewOperation
@@ -59,17 +60,20 @@ export class MalloyService {
       connections: connectionsWithFallback
     });
 
-    let malloyToQueryResult = malloyToQuery(mconfig.malloyQuery);
-
-    let q1: MalloyQuery = malloyToQueryResult.query;
-    let logs: LogMessage[] = malloyToQueryResult.logs;
-
     let malloyModelInfo: MalloyModelInfo = modelDefToModelInfo(
       model.malloyModelDef
     );
 
+    let malloyToQueryResult = common.isDefined(mconfig.malloyQuery)
+      ? malloyToQuery(mconfig.malloyQuery)
+      : undefined;
+
+    let q1: MalloyQuery = malloyToQueryResult?.query;
+    let logs: LogMessage[] = malloyToQueryResult?.logs;
+
     let malloyEntryValueWithSource = malloyModelInfo.entries.find(
-      y => y.kind === 'source' && y.name === (q1.definition as any).source.name
+      // y => y.kind === 'source' && y.name === (q1.definition as any).source.name
+      y => y.kind === 'source' && y.name === model.modelId
     ) as ModelEntryValueWithSource;
 
     let astQuery: ASTQuery = new ASTQuery({
@@ -79,8 +83,8 @@ export class MalloyService {
 
     let segment0: ASTSegmentViewDefinition = astQuery.getOrAddDefaultSegment();
 
-    console.log('segment0');
-    console.dir(segment0, { depth: null });
+    // console.log('segment0');
+    // console.dir(segment0, { depth: null });
 
     if (queryOperation.type === common.QueryOperationTypeEnum.SelectField) {
       if (common.isUndefined(queryOperation.fieldId)) {
@@ -142,11 +146,22 @@ export class MalloyService {
       }
     }
 
+    let limitOp = segment0.operations.items.find(
+      operation => operation instanceof ASTLimitViewOperation
+    );
+
+    if (common.isUndefined(limitOp) || limitOp.limit > 500) {
+      segment0.setLimit(500);
+    }
+
     // export type ASTViewOperation = ASTGroupByViewOperation | ASTAggregateViewOperation | ASTOrderByViewOperation | ASTNestViewOperation | ASTLimitViewOperation | ASTWhereViewOperation | ASTHavingViewOperation;
     // 'group_by' | 'aggregate' | 'order_by' | 'limit' | 'where' | 'nest' | 'having';
     // segment0.addWhere('state', ['users'], 'WN, AA');
 
     let newMalloyQuery = astQuery.toMalloy();
+
+    console.log('newMalloyQuery');
+    console.log(newMalloyQuery);
 
     let runtime = new MalloyRuntime({
       urlReader: {

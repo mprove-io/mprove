@@ -23,6 +23,9 @@ export class Model {
   type: enums.ModelTypeEnum;
 
   @IsString()
+  source: string;
+
+  @IsString()
   connectionId: string;
 
   @IsString()

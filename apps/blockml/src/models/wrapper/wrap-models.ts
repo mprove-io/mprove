@@ -464,12 +464,13 @@ export function wrapModels(item: {
     if (sortedNodes.length > 0) {
       let apiModel: common.Model = {
         structId: structId,
-        type: modelType,
-        malloyModelDef: malloyModelDef,
         modelId:
           x.fileExt === common.FileExtensionEnum.Store
             ? `${common.STORE_MODEL_PREFIX}_${x.name}`
             : x.name,
+        type: modelType,
+        source: (x as common.FileMod).source,
+        malloyModelDef: malloyModelDef,
         connectionId: x.connection.connectionId,
         filePath: x.filePath,
         content: x,

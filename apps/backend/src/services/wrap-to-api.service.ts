@@ -270,6 +270,7 @@ export class WrapToApiService {
       structId: model.structId,
       modelId: model.modelId,
       type: model.type,
+      source: model.source,
       malloyModelDef: model.malloyModelDef,
       hasAccess: hasAccess,
       connectionId: model.connectionId,

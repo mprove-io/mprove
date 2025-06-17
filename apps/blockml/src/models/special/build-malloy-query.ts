@@ -34,8 +34,8 @@ export async function buildMalloyQuery(
   } = item;
   // helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  console.log('malloyQuery');
-  console.log(malloyQuery);
+  // console.log('malloyQuery');
+  // console.log(malloyQuery);
 
   // console.log('malloyModelDef');
   // console.log(malloyModelDef);

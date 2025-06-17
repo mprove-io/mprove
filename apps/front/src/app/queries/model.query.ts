@@ -8,11 +8,12 @@ export class ModelState extends common.Model {}
 let modelState: ModelState = {
   structId: undefined,
   modelId: undefined,
+  type: undefined,
+  source: undefined,
   connectionId: undefined,
   filePath: undefined,
   content: undefined,
   isViewModel: undefined,
-  type: undefined,
   malloyModelDef: undefined,
   // isStoreModel: undefined,
   dateRangeIncludesRightSide: undefined,

@@ -80,6 +80,7 @@ export class WrapToEntService {
       structId: model.structId,
       modelId: model.modelId,
       type: model.type,
+      source: model.source,
       malloyModelDef: model.malloyModelDef,
       connectionId: model.connectionId,
       filePath: model.filePath,
