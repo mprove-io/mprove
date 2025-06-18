@@ -156,48 +156,61 @@ export class MainTableComponent {
     });
   }
 
-  remove(columnId: string) {
-    let index = this.mconfig.select.indexOf(columnId);
-
+  remove(fieldId: string) {
     let newMconfig = this.structService.makeMconfig();
 
-    newMconfig = this.mconfigService.removeField({
-      newMconfig,
-      fieldId: columnId
-    });
+    if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
+      let queryOperation: common.QueryOperation = {
+        type: common.QueryOperationTypeEnum.Remove,
+        fieldId: fieldId,
+        timezone: newMconfig.timezone
+      };
 
-    let fields: common.ModelField[];
-    this.modelQuery.fields$
-      .pipe(
-        tap(x => (fields = x)),
-        take(1)
-      )
-      .subscribe();
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId,
+        queryOperation: queryOperation
+      });
+    } else {
+      newMconfig = this.mconfigService.removeField({
+        newMconfig,
+        fieldId: fieldId
+      });
 
-    newMconfig = common.setChartTitleOnSelectChange({
-      mconfig: newMconfig,
-      fields: fields
-    });
+      let fields: common.ModelField[];
+      this.modelQuery.fields$
+        .pipe(
+          tap(x => (fields = x)),
+          take(1)
+        )
+        .subscribe();
 
-    newMconfig = common.setChartFields({
-      mconfig: newMconfig,
-      fields: fields
-    });
+      newMconfig = common.setChartTitleOnSelectChange({
+        mconfig: newMconfig,
+        fields: fields
+      });
 
-    newMconfig = common.sortChartFieldsOnSelectChange({
-      mconfig: newMconfig,
-      fields: fields
-    });
+      newMconfig = common.setChartFields({
+        mconfig: newMconfig,
+        fields: fields
+      });
 
-    this.chartService.editChart({
-      mconfig: newMconfig,
-      isDraft: this.chart.draft,
-      chartId: this.chart.chartId
-    });
+      newMconfig = common.sortChartFieldsOnSelectChange({
+        mconfig: newMconfig,
+        fields: fields
+      });
 
-    // this.mconfigService.navCreateTempMconfigAndQuery({
-    //   newMconfig: newMconfig
-    // });
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId
+      });
+
+      // this.mconfigService.navCreateTempMconfigAndQuery({
+      //   newMconfig: newMconfig
+      // });
+    }
   }
 
   moveLeft(columnId: string) {

@@ -3,5 +3,6 @@ export enum QueryOperationTypeEnum {
   GroupOrAggregate = 'GroupOrAggregate',
   Limit = 'Limit',
   Sort = 'Sort',
-  Move = 'Move'
+  Move = 'Move',
+  Remove = 'Remove'
 }
