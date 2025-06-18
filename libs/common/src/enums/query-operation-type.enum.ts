@@ -2,5 +2,6 @@ export enum QueryOperationTypeEnum {
   Get = 'Get',
   GroupOrAggregate = 'GroupOrAggregate',
   Limit = 'Limit',
-  Sort = 'Sort'
+  Sort = 'Sort',
+  Move = 'Move'
 }

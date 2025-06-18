@@ -25,4 +25,8 @@ export class QueryOperation {
   @IsOptional()
   @IsBoolean()
   desc?: boolean;
+
+  @IsOptional()
+  @IsString({ each: true })
+  moveFieldIds?: string[];
 }

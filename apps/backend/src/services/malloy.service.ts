@@ -227,6 +227,12 @@ export class MalloyService {
 
       // console.log('orderByOps');
       // console.log(orderByOps);
+    } else if (queryOperation.type === common.QueryOperationTypeEnum.Move) {
+      segment0.reorderFields(
+        queryOperation.moveFieldIds.map(x =>
+          x.split('.').join(common.TRIPLE_UNDERSCORE)
+        )
+      );
     } else if (queryOperation.type === common.QueryOperationTypeEnum.Limit) {
       segment0.setLimit(queryOperation.limit);
     }
