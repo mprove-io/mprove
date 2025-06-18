@@ -23,6 +23,7 @@ import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { ChartsService } from '~backend/services/charts.service';
 import { EnvsService } from '~backend/services/envs.service';
+import { MalloyService } from '~backend/services/malloy.service';
 import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
@@ -39,6 +40,7 @@ let retry = require('async-retry');
 @Controller()
 export class GetChartController {
   constructor(
+    private malloyService: MalloyService,
     private branchesService: BranchesService,
     private membersService: MembersService,
     private modelsService: ModelsService,
@@ -172,6 +174,24 @@ export class GetChartController {
         newMconfig = mqe.newMconfig;
         newQuery = mqe.newQuery;
         isError = mqe.isError;
+      } else if (model.type === common.ModelTypeEnum.Malloy) {
+        let queryOperation: common.QueryOperation = {
+          type: common.QueryOperationTypeEnum.Get,
+          timezone: timezone
+        };
+
+        let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
+          projectId: projectId,
+          envId: envId,
+          structId: struct.structId,
+          model: model,
+          mconfig: chartMconfig,
+          queryOperation: queryOperation
+        });
+
+        newMconfig = editMalloyQueryResult.newMconfig;
+        newQuery = editMalloyQueryResult.newQuery;
+        isError = editMalloyQueryResult.isError;
       } else {
         let newMconfigId = common.makeId();
         let newQueryId = common.makeId();

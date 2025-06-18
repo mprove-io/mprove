@@ -1,4 +1,3 @@
-import { FieldBase } from '@malloydata/malloy/dist/model';
 import { common } from '~blockml/barrels/common';
 import { nodeCommon } from '~blockml/barrels/node-common';
 import { STORE_MODEL_PREFIX } from '~common/constants/top';
@@ -45,11 +44,13 @@ export function wrapTiles(item: {
     let isStore =
       common.isDefined(tile.model) && tile.model.startsWith(STORE_MODEL_PREFIX);
 
+    let isMod = common.isDefined(tile.query);
+
     if (isStore === true) {
       store = stores.find(
         s => `${STORE_MODEL_PREFIX}_${s.name}` === tile.model
       );
-    } else if (common.isDefined(tile.query)) {
+    } else if (isMod === true) {
       mod = mods.find(m => m.name === tile.model);
     } else {
       model = models.find(m => m.name === tile.model);
@@ -105,14 +106,7 @@ export function wrapTiles(item: {
 
     let filters: common.Filter[] = [];
 
-    if (isStore === false) {
-      Object.keys(tile.filtersFractions).forEach(fieldId => {
-        filters.push({
-          fieldId: fieldId,
-          fractions: tile.filtersFractions[fieldId] || []
-        });
-      });
-    } else {
+    if (isStore === true) {
       tile.parameters.forEach(x => {
         let storeField = store.fields.find(k => k.name === x.apply_to);
 
@@ -225,23 +219,12 @@ export function wrapTiles(item: {
         };
         filters.push(filter);
       });
-    }
-
-    let compiledQuerySelect: string[] = [];
-
-    if (common.isDefined(tile.compiledQuery)) {
-      // console.log('tile.compiledQuery.structs.length');
-      // console.log(tile.compiledQuery.structs.length);
-
-      // console.log('tile.compiledQuery.structs[0].fields');
-      // console.log(tile.compiledQuery.structs[0].fields);
-
-      tile.compiledQuery.structs[0].fields.forEach(field => {
-        // compiledQuerySelect.push(field.name);
-        compiledQuerySelect.push(
-          // TODO: if not fieldBase?
-          (field as FieldBase).resultMetadata?.sourceField
-        );
+    } else {
+      Object.keys(tile.filtersFractions).forEach(fieldId => {
+        filters.push({
+          fieldId: fieldId,
+          fractions: tile.filtersFractions[fieldId] || []
+        });
       });
     }
 
@@ -257,7 +240,6 @@ export function wrapTiles(item: {
           : common.isDefined(mod)
             ? common.ModelTypeEnum.Malloy
             : undefined,
-      // isStore === true ? isStoreModel : isStore,
       dateRangeIncludesRightSide:
         isStore === true &&
         (common.isUndefined(store.date_range_includes_right_side) ||
@@ -270,9 +252,7 @@ export function wrapTiles(item: {
       modelLabel: store?.label || mod?.label || model?.label,
       malloyQuery: tile.malloyQuery,
       compiledQuery: tile.compiledQuery,
-      select: common.isDefined(tile.compiledQuery)
-        ? compiledQuerySelect
-        : tile.select,
+      select: tile.select || [],
       unsafeSelect: tile.unsafeSelect || [],
       warnSelect: tile.warnSelect || [],
       joinAggregations: tile.joinAggregations || [],
@@ -283,11 +263,7 @@ export function wrapTiles(item: {
         })) || [],
       sorts: tile.sorts,
       timezone: timezone,
-      limit: common.isDefined(tile.compiledQuery)
-        ? tile.compiledQuery.structs[0].resultMetadata.limit
-        : common.isDefined(tile.limit)
-          ? Number(tile.limit)
-          : undefined,
+      limit: common.isDefined(tile.limit) ? Number(tile.limit) : 500,
       filters: filters.sort((a, b) =>
         a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
       ),

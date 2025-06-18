@@ -246,6 +246,7 @@ export class MalloyService {
     let newMalloyQuery = astQuery.toMalloy();
 
     console.log('newMalloyQuery');
+    console.log(Date.now());
     console.log(newMalloyQuery);
 
     let runtime = new MalloyRuntime({

@@ -1,4 +1,3 @@
-import { PreparedResult } from '@malloydata/malloy';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
@@ -68,36 +67,9 @@ export class ProcessQueryService {
     let joinAggregations: common.JoinAggregation[];
 
     if (mconfig.modelType === common.ModelTypeEnum.Malloy) {
-      // let malloyQuery = `run: ec1_m2 -> {
-      //   group_by: users.state
-      //   aggregate: orders.orders_count
-      //   limit: 10
-      // }`;
-
-      // let malloyQuery = `run: abc`;
-
-      let malloyConnections = nodeCommon.makeMalloyConnections({
-        connections: connections
+      throw new common.ServerError({
+        message: common.ErEnum.BLOCKML_WRONG_MODEL_TYPE
       });
-
-      let pr: PreparedResult = await barSpecial.buildMalloyQuery(
-        {
-          malloyConnections: malloyConnections,
-          malloyModelDef: malloyModelDef,
-          malloyQuery: mconfig.malloyQuery
-        },
-        this.cs
-      );
-
-      sql = pr.sql.split('\n');
-      // tile.model = pr._rawQuery.sourceExplore;
-      // tile.compiledQuery = pr._rawQuery;
-
-      filtersFractions = {};
-      unsafeSelect = [];
-      warnSelect = [];
-      joinAggregations = [];
-      // varsSqlSteps = genSqlResult.varsSqlSteps;
     } else if (mconfig.modelType === common.ModelTypeEnum.SQL) {
       let genSqlResult = await barSpecial.genSql(
         this.rabbitService,

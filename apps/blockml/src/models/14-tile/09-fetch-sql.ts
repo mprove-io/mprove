@@ -127,6 +127,7 @@ export async function fetchSql<T extends types.dzType>(
       tile.model = pr._rawQuery.sourceExplore;
       tile.malloyQuery = malloyQuery;
       tile.compiledQuery = pr._rawQuery;
+      tile.select = [];
       tile.filtersFractions = {};
     } else if (
       common.isDefined(tile.model) &&
