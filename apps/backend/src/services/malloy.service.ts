@@ -129,9 +129,10 @@ export class MalloyService {
         errorMessage = `modelField is not defined (queryOperation.fieldId: ${queryOperation.fieldId})`;
       }
 
-      let fieldPath: string[] = queryOperation.fieldId.split('.');
+      let fieldFullPath: string[] = queryOperation.fieldId.split('.');
 
-      let fieldName = fieldPath.pop();
+      let fieldPath: string[] = fieldFullPath.slice(0, -1);
+      let fieldName = fieldFullPath[fieldFullPath.length - 1];
 
       if (
         [
@@ -177,7 +178,17 @@ export class MalloyService {
               (operation: ASTViewOperation) =>
                 operation instanceof ASTAggregateViewOperation
             )
-            .find(y => y.field.name === fieldName)
+            .find(item => {
+              let exp = item.field.node
+                .expression as ExpressionWithFieldReference;
+
+              let fieldId = common.isDefined(exp.path)
+                ? [...exp.path, exp.name].join('.')
+                : exp.name;
+
+              return fieldId === queryOperation.fieldId;
+              // return item.field.name === fieldName;
+            })
             .delete();
         } else if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
           // deselect groupBy
@@ -186,7 +197,17 @@ export class MalloyService {
               (operation: ASTViewOperation) =>
                 operation instanceof ASTGroupByViewOperation
             )
-            .find(y => y.field.name === fieldName)
+            .find(item => {
+              let exp = item.field.node
+                .expression as ExpressionWithFieldReference;
+
+              let fieldId = common.isDefined(exp.path)
+                ? [...exp.path, exp.name].join('.')
+                : exp.name;
+
+              return fieldId === queryOperation.fieldId;
+              // return item.field.name === fieldName;
+            })
             .delete();
         }
       }
@@ -203,17 +224,22 @@ export class MalloyService {
         errorMessage = `modelField is not defined (queryOperation.fieldId: ${queryOperation.fieldId})`;
       }
 
-      let fieldPath: string[] = queryOperation.fieldId.split('.');
-
-      let fieldName = fieldPath.pop();
-
       segment0.operations.items
         .filter(
           (operation: ASTViewOperation) =>
             operation instanceof ASTGroupByViewOperation ||
             operation instanceof ASTAggregateViewOperation
         )
-        .find(y => y.field.name === fieldName)
+        .find(item => {
+          let exp = item.field.node.expression as ExpressionWithFieldReference;
+
+          let fieldId = common.isDefined(exp.path)
+            ? [...exp.path, exp.name].join('.')
+            : exp.name;
+
+          return fieldId === queryOperation.fieldId;
+          // return item.field.name === fieldName;
+        })
         .delete();
     } else if (queryOperation.type === common.QueryOperationTypeEnum.Replace) {
       if (common.isUndefined(queryOperation.fieldId)) {
@@ -230,20 +256,22 @@ export class MalloyService {
         x => x.id === queryOperation.replaceWithFieldId
       );
 
-      // console.log('replaceWithModelField');
-      // console.log(replaceWithModelField);
+      let currentFieldFullPath: string[] = queryOperation.fieldId.split('.');
 
-      let currentFieldPath: string[] = queryOperation.fieldId.split('.');
+      let currentFieldPath: string[] = currentFieldFullPath.slice(0, -1);
 
-      let currentFieldName = currentFieldPath.pop();
+      let currentFieldName =
+        currentFieldFullPath[currentFieldFullPath.length - 1];
 
-      // console.log('currentFieldName');
-      // console.log(currentFieldName);
+      //
 
-      let replaceFieldPath: string[] =
+      let replaceFieldFullPath: string[] =
         queryOperation.replaceWithFieldId.split('.');
 
-      let replaceFieldName = replaceFieldPath.pop();
+      let replaceFieldPath: string[] = replaceFieldFullPath.slice(0, -1);
+
+      let replaceFieldName =
+        replaceFieldFullPath[replaceFieldFullPath.length - 1];
 
       // let opFieldNames = segment0.operations.items
       //   .filter(
@@ -262,7 +290,16 @@ export class MalloyService {
             operation instanceof ASTGroupByViewOperation ||
             operation instanceof ASTAggregateViewOperation
         )
-        .find(y => y.field.name === currentFieldName)
+        .find(item => {
+          let exp = item.field.node.expression as ExpressionWithFieldReference;
+
+          let fieldId = common.isDefined(exp.path)
+            ? [...exp.path, exp.name].join('.')
+            : exp.name;
+
+          return fieldId === queryOperation.fieldId;
+          // return item.field.name === currentFieldName;
+        })
         .delete();
 
       if (replaceWithModelField.fieldClass === common.FieldClassEnum.Measure) {
@@ -338,7 +375,22 @@ export class MalloyService {
           (operation: ASTViewOperation) =>
             operation instanceof ASTOrderByViewOperation
         )
-        .find(opItem => opItem.name === fieldNameUnderscore);
+        .find((orderByItem: ASTOrderByViewOperation) => {
+          // let fr: ASTFieldReference = orderByItem.fieldReference;
+
+          // console.log('orderByItem');
+          // console.dir(orderByItem, { depth: null });
+
+          // console.log('fr.path');
+          // console.log(fr.path);
+
+          // let fieldId = common.isDefined(fr.path)
+          //   ? [...fr.path, fr.name].join('.')
+          //   : fr.name;
+
+          // return fieldId === queryOperation.fieldId;
+          return orderByItem.name === fieldNameUnderscore;
+        });
 
       if (
         fIndex > -1 &&
@@ -391,23 +443,23 @@ export class MalloyService {
     console.log(Date.now());
     console.log(newMalloyQuery);
 
-    let opFieldIds = segment0.operations.items
-      .filter(
-        (operation: ASTViewOperation) =>
-          operation instanceof ASTGroupByViewOperation ||
-          operation instanceof ASTAggregateViewOperation
-      )
-      .map(item => {
-        let exp = item.field.node.expression as ExpressionWithFieldReference;
-        let fieldId = common.isDefined(exp.path)
-          ? [...exp.path, exp.name].join('.')
-          : exp.name;
+    // let opFieldIds = segment0.operations.items
+    //   .filter(
+    //     (operation: ASTViewOperation) =>
+    //       operation instanceof ASTGroupByViewOperation ||
+    //       operation instanceof ASTAggregateViewOperation
+    //   )
+    //   .map(item => {
+    //     let exp = item.field.node.expression as ExpressionWithFieldReference;
+    //     let fieldId = common.isDefined(exp.path)
+    //       ? [...exp.path, exp.name].join('.')
+    //       : exp.name;
 
-        return fieldId;
-      });
+    //     return fieldId;
+    //   });
 
-    console.log('opFieldIds');
-    console.log(opFieldIds);
+    // console.log('opFieldIds');
+    // console.log(opFieldIds);
 
     let runtime = new MalloyRuntime({
       urlReader: {
@@ -498,18 +550,28 @@ export class MalloyService {
           operation instanceof ASTOrderByViewOperation
       )
       .map((orderByItem: ASTOrderByViewOperation) => {
-        let field = compiledQuery.structs[0].fields.find(
-          k => k.name === orderByItem.name
-        );
+        let field = compiledQuery.structs[0].fields.find(compiledQueryField => {
+          // let fr: ASTFieldReference = orderByItem.fieldReference;
+
+          // let fieldId = common.isDefined(fr.path)
+          //   ? [...fr.path, fr.name].join('.')
+          //   : fr.name;
+
+          // console.log('compiledQueryField');
+          // console.dir(compiledQueryField, { depth: null });
+
+          // return fieldId === (k as FieldBase).resultMetadata.sourceField
+          return compiledQueryField.name === orderByItem.name;
+        });
 
         let sorting: common.Sorting;
 
         if (common.isDefined(field)) {
           let mField = model.fields.find(f => {
-            let fieldIdTripleUnderscore = (field as FieldBase).resultMetadata
+            let fieldNameTripleUnderscore = (field as FieldBase).resultMetadata
               ?.sourceField;
 
-            let fieldId = fieldIdTripleUnderscore
+            let fieldId = fieldNameTripleUnderscore
               .split(common.TRIPLE_UNDERSCORE)
               .join('.');
 
