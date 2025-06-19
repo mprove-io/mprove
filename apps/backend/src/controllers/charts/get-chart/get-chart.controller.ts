@@ -142,6 +142,9 @@ export class GetChartController {
       // model.isStoreModel === false &&
       chartMconfig.timezone === timezone;
 
+    // console.log('isSearchExisting');
+    // console.log(isSearchExisting);
+
     if (isSearchExisting) {
       query = await this.queriesService.getQueryCheckExists({
         queryId: chartMconfig.queryId,

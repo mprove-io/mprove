@@ -100,28 +100,43 @@ export class ChartsAddColumnFieldDialogComponent implements OnInit {
 
     let newMconfig = this.structService.makeMconfig();
 
-    newMconfig.select = [...newMconfig.select, this.newColumnFieldId];
+    if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+      let queryOperation: common.QueryOperation = {
+        type: common.QueryOperationTypeEnum.GroupOrAggregate,
+        fieldId: this.newColumnFieldId,
+        timezone: newMconfig.timezone
+      };
 
-    newMconfig = common.setChartTitleOnSelectChange({
-      mconfig: newMconfig,
-      fields: this.fields
-    });
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId,
+        queryOperation: queryOperation
+      });
+    } else {
+      newMconfig.select = [...newMconfig.select, this.newColumnFieldId];
 
-    newMconfig = common.setChartFields({
-      mconfig: newMconfig,
-      fields: this.fields
-    });
+      newMconfig = common.setChartTitleOnSelectChange({
+        mconfig: newMconfig,
+        fields: this.fields
+      });
 
-    newMconfig = common.sortChartFieldsOnSelectChange({
-      mconfig: newMconfig,
-      fields: this.fields
-    });
+      newMconfig = common.setChartFields({
+        mconfig: newMconfig,
+        fields: this.fields
+      });
 
-    this.chartService.editChart({
-      mconfig: newMconfig,
-      isDraft: this.chart.draft,
-      chartId: this.chart.chartId
-    });
+      newMconfig = common.sortChartFieldsOnSelectChange({
+        mconfig: newMconfig,
+        fields: this.fields
+      });
+
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId
+      });
+    }
 
     this.ref.close();
   }
