@@ -1,3 +1,4 @@
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
 import { ChartQuery } from '~front/app/queries/chart.query';
@@ -34,6 +35,9 @@ export class MainTableComponent {
   @Input()
   mconfigFields: common.MconfigField[];
 
+  // mconfigDimensions: common.MconfigField[] = [];
+  // mconfigNotDimensions: common.MconfigField[] = [];
+
   @Input()
   qData: QDataRow[];
 
@@ -60,6 +64,27 @@ export class MainTableComponent {
     private structService: StructService,
     private cd: ChangeDetectorRef
   ) {}
+
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   console.log('changes');
+  //   console.log(changes);
+
+  //   if (common.isDefined(changes.mconfigFields?.currentValue)) {
+  //     this.mconfigDimensions = (
+  //       changes.mconfigFields.currentValue as any
+  //     ).filter(
+  //       (x: common.MconfigField) =>
+  //         x.fieldClass === common.FieldClassEnum.Dimension
+  //     );
+
+  //     this.mconfigNotDimensions = (
+  //       changes.mconfigFields.currentValue as any
+  //     ).filter(
+  //       (x: common.MconfigField) =>
+  //         x.fieldClass !== common.FieldClassEnum.Dimension
+  //     );
+  //   }
+  // }
 
   sort(fieldId: string, desc: boolean) {
     // const { fieldId, desc } = params;
@@ -293,5 +318,11 @@ export class MainTableComponent {
       //   newMconfig: newMconfig
       // });
     }
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    console.log('drop event');
+    console.log(event);
+    // moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
   }
 }

@@ -1,3 +1,4 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -259,6 +260,7 @@ let sharedComponents = [
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
+    DragDropModule,
     NgSelectModule,
     ColorSketchModule,
     NgxSpinnerModule,

@@ -1,172 +1,238 @@
 <table>
-  <thead>
+  <thead
+    cdkDropList
+    cdkDropListOrientation="horizontal"
+    (cdkDropListDropped)="drop($event)"
+  >
     <tr>
       <th
         class="border-m0 group max-w-[350px] border-4 p-0 align-top"
         [ngClass]="{
           'min-w-[200px]': isTableHeaderWide === false,
-          'min-w-[240px]': isTableHeaderWide === true,
+          'min-w-[240px]': isTableHeaderWide === true
+        }"
+        *ngFor="let column of mconfigFields; let columnIndex = index"
+      >
+        <ng-container
+          *ngTemplateOutlet="
+            tHeader;
+            context: { column: column, columnIndex: columnIndex }
+          "
+        ></ng-container>
+      </th>
+
+      <!-- <div
+        style="display: contents"
+        cdkDropList
+        cdkDropListOrientation="horizontal"
+        (cdkDropListDropped)="drop($event)"
+      >
+        <th
+          class="border-m0 group max-w-[350px] border-4 p-0 align-top"
+          [ngClass]="{
+            'min-w-[200px]': isTableHeaderWide === false,
+            'min-w-[240px]': isTableHeaderWide === true
+          }"
+          *ngFor="let column of mconfigDimensions; let columnIndex = index"
+        >
+          <ng-container
+            *ngTemplateOutlet="
+              tHeader;
+              context: { column: column, columnIndex: columnIndex }
+            "
+          ></ng-container>
+        </th>
+      </div> -->
+
+      <!-- <div
+        style="display: inline"
+        cdkDropList
+        cdkDropListOrientation="horizontal"
+        (cdkDropListDropped)="drop($event)"
+      >
+        <th
+          class="border-m0 group max-w-[350px] border-4 p-0 align-top"
+          [ngClass]="{
+            'min-w-[200px]': isTableHeaderWide === false,
+            'min-w-[240px]': isTableHeaderWide === true
+          }"
+          *ngFor="let column of mconfigNotDimensions; let columnIndex = index"
+        >
+          <ng-container
+            *ngTemplateOutlet="
+              tHeader;
+              context: { column: column, columnIndex: columnIndex }
+            "
+          ></ng-container>
+        </th>
+      </div> -->
+    </tr>
+    <ng-template #tHeader let-column="column" let-columnIndex="columnIndex">
+      <div
+        *ngIf="isEdit === true"
+        class="bg-m0 flex h-12 items-start justify-start space-x-3 pr-4 pt-2"
+      >
+        <div class="flex items-center justify-start">
+          <div
+            class="text-m500 flex h-8 w-4 select-none items-center justify-center"
+          >
+            <div *ngIf="column.sortingNumber > -1">{{
+              column.sortingNumber + 1
+            }}</div>
+          </div>
+
+          <button
+            *ngIf="column.sorting?.desc === false"
+            class="hover:bg-m200 text-m500 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+            (click)="sort(column.id, false)"
+          >
+            <m-asc-icon></m-asc-icon>
+          </button>
+
+          <button
+            *ngIf="column.sorting?.desc === true"
+            class="hover:bg-m200 text-m500 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+            (click)="sort(column.id, true)"
+          >
+            <m-desc-icon></m-desc-icon>
+          </button>
+
+          <button
+            *ngIf="!column.sorting"
+            class="hover:bg-m200 text-s500 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+            (click)="sort(column.id, true)"
+          >
+            <m-desc-icon></m-desc-icon>
+          </button>
+        </div>
+
+        <!-- <button
+                class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+                [ngClass]="{
+                  'text-s300 cursor-default':
+                    columnIndex === 0 ||
+                    ([fieldClassMeasure, fieldClassCalculation].indexOf(
+                      column.fieldClass
+                    ) > -1 &&
+                      [fieldClassMeasure, fieldClassCalculation].indexOf(
+                        mconfigFields[columnIndex - 1].fieldClass
+                      ) < 0),
+                  'hover:bg-m200 text-s500':
+                    columnIndex !== 0 &&
+                    ([fieldClassMeasure, fieldClassCalculation].indexOf(
+                      column.fieldClass
+                    ) < 0 ||
+                      [fieldClassMeasure, fieldClassCalculation].indexOf(
+                        mconfigFields[columnIndex - 1].fieldClass
+                      ) > -1)
+                }"
+                [disabled]="
+                  columnIndex === 0 ||
+                  ([fieldClassMeasure, fieldClassCalculation].indexOf(
+                    column.fieldClass
+                  ) > -1 &&
+                    [fieldClassMeasure, fieldClassCalculation].indexOf(
+                      mconfigFields[columnIndex - 1].fieldClass
+                    ) < 0)
+                "
+                (click)="moveLeft(column.id)"
+              >
+                <m-arrow-left-icon></m-arrow-left-icon>
+              </button> -->
+
+        <!-- <button
+                class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+                [ngClass]="{
+                  'text-s300 cursor-default':
+                    columnIndex + 1 === mconfigFields.length ||
+                    (column.fieldClass === fieldClassDimension &&
+                      mconfigFields[columnIndex + 1].fieldClass !==
+                        fieldClassDimension),
+                  'hover:bg-m200 text-s500':
+                    columnIndex + 1 !== mconfigFields.length &&
+                    (column.fieldClass !== fieldClassDimension ||
+                      mconfigFields[columnIndex + 1].fieldClass ===
+                        fieldClassDimension)
+                }"
+                (click)="moveRight(column.id)"
+                [disabled]="
+                  columnIndex + 1 === mconfigFields.length ||
+                  (column.fieldClass === fieldClassDimension &&
+                    mconfigFields[columnIndex + 1].fieldClass !==
+                      fieldClassDimension)
+                "
+              >
+                <m-arrow-right-icon></m-arrow-right-icon>
+              </button> -->
+
+        <!-- <span class="drag-handle" cdkDragHandle>☰</span> -->
+
+        <div
+          tp="A required field cannot be replaced"
+          [tpIsEnabled]="column.required === true"
+        >
+          <button
+            class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+            [ngClass]="{
+              'text-s300 cursor-default': column.required === true,
+              'hover:bg-m200 text-s500': column.required === false
+            }"
+            [disabled]="column.required === true"
+            (click)="replaceColumn(column)"
+          >
+            <m-edit-icon></m-edit-icon>
+          </button>
+        </div>
+
+        <div
+          tp="A required field cannot be deselected"
+          [tpIsEnabled]="column.required === true"
+        >
+          <button
+            class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+            [ngClass]="{
+              'text-s300 cursor-default': column.required === true,
+              'hover:bg-m200 text-s500': column.required === false
+            }"
+            [disabled]="column.required === true"
+            (click)="remove(column.id)"
+          >
+            <m-trash-icon></m-trash-icon>
+          </button>
+        </div>
+      </div>
+
+      <div
+        cdkDrag
+        cdkDragHandle
+        [cdkDragDisabled]="isEdit === false"
+        class="flex flex-col items-start justify-center overflow-hidden text-clip px-5 py-2"
+        [ngClass]="{
+          'cursor-move': isEdit === true,
           'bg-m150': column.fieldClass === fieldClassDimension,
           'bg-g2':
             column.fieldClass === fieldClassMeasure ||
             column.fieldClass === fieldClassCalculation
         }"
-        *ngFor="let column of mconfigFields; let columnIndex = index"
       >
-        <div
-          *ngIf="isEdit === true"
-          class="bg-m0 flex h-12 items-start justify-start space-x-3 pr-4 pt-2"
-        >
-          <div class="flex items-center justify-start">
-            <div
-              class="text-m500 flex h-8 w-4 select-none items-center justify-center"
+        <div class="flex select-none flex-col items-start justify-center">
+          <div class="truncate text-sm font-normal">{{
+            column.topLabel | capitalize
+          }}</div>
+
+          <div class="flex flex-row text-left font-semibold">
+            <div *ngIf="column.groupLabel"
+              >{{ column.groupLabel | capitalize }} -
+              {{ column.label | capitalize }}</div
             >
-              <div *ngIf="column.sortingNumber > -1">{{
-                column.sortingNumber + 1
-              }}</div>
-            </div>
 
-            <button
-              *ngIf="column.sorting?.desc === false"
-              class="hover:bg-m200 text-m500 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
-              (click)="sort(column.id, false)"
-            >
-              <m-asc-icon></m-asc-icon>
-            </button>
-
-            <button
-              *ngIf="column.sorting?.desc === true"
-              class="hover:bg-m200 text-m500 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
-              (click)="sort(column.id, true)"
-            >
-              <m-desc-icon></m-desc-icon>
-            </button>
-
-            <button
-              *ngIf="!column.sorting"
-              class="hover:bg-m200 text-s500 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
-              (click)="sort(column.id, true)"
-            >
-              <m-desc-icon></m-desc-icon>
-            </button>
-          </div>
-
-          <button
-            class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
-            [ngClass]="{
-              'text-s300 cursor-default':
-                columnIndex === 0 ||
-                ([fieldClassMeasure, fieldClassCalculation].indexOf(
-                  column.fieldClass
-                ) > -1 &&
-                  [fieldClassMeasure, fieldClassCalculation].indexOf(
-                    mconfigFields[columnIndex - 1].fieldClass
-                  ) < 0),
-              'hover:bg-m200 text-s500':
-                columnIndex !== 0 &&
-                ([fieldClassMeasure, fieldClassCalculation].indexOf(
-                  column.fieldClass
-                ) < 0 ||
-                  [fieldClassMeasure, fieldClassCalculation].indexOf(
-                    mconfigFields[columnIndex - 1].fieldClass
-                  ) > -1)
-            }"
-            [disabled]="
-              columnIndex === 0 ||
-              ([fieldClassMeasure, fieldClassCalculation].indexOf(
-                column.fieldClass
-              ) > -1 &&
-                [fieldClassMeasure, fieldClassCalculation].indexOf(
-                  mconfigFields[columnIndex - 1].fieldClass
-                ) < 0)
-            "
-            (click)="moveLeft(column.id)"
-          >
-            <m-arrow-left-icon></m-arrow-left-icon>
-          </button>
-
-          <button
-            class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
-            [ngClass]="{
-              'text-s300 cursor-default':
-                columnIndex + 1 === mconfigFields.length ||
-                (column.fieldClass === fieldClassDimension &&
-                  mconfigFields[columnIndex + 1].fieldClass !==
-                    fieldClassDimension),
-              'hover:bg-m200 text-s500':
-                columnIndex + 1 !== mconfigFields.length &&
-                (column.fieldClass !== fieldClassDimension ||
-                  mconfigFields[columnIndex + 1].fieldClass ===
-                    fieldClassDimension)
-            }"
-            (click)="moveRight(column.id)"
-            [disabled]="
-              columnIndex + 1 === mconfigFields.length ||
-              (column.fieldClass === fieldClassDimension &&
-                mconfigFields[columnIndex + 1].fieldClass !==
-                  fieldClassDimension)
-            "
-          >
-            <m-arrow-right-icon></m-arrow-right-icon>
-          </button>
-
-          <div
-            tp="A required field cannot be replaced"
-            [tpIsEnabled]="column.required === true"
-          >
-            <button
-              class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
-              [ngClass]="{
-                'text-s300 cursor-default': column.required === true,
-                'hover:bg-m200 text-s500': column.required === false
-              }"
-              [disabled]="column.required === true"
-              (click)="replaceColumn(column)"
-            >
-              <m-edit-icon></m-edit-icon>
-            </button>
-          </div>
-
-          <div
-            tp="A required field cannot be deselected"
-            [tpIsEnabled]="column.required === true"
-          >
-            <button
-              class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
-              [ngClass]="{
-                'text-s300 cursor-default': column.required === true,
-                'hover:bg-m200 text-s500': column.required === false
-              }"
-              [disabled]="column.required === true"
-              (click)="remove(column.id)"
-            >
-              <m-trash-icon></m-trash-icon>
-            </button>
-          </div>
-        </div>
-
-        <div
-          class="flex flex-col items-start justify-center overflow-hidden text-clip px-5 py-2"
-        >
-          <div class="flex select-none flex-col items-start justify-center">
-            <div class="truncate text-sm font-normal">{{
-              column.topLabel | capitalize
+            <div *ngIf="!column.groupLabel">{{
+              column.label | capitalize
             }}</div>
-
-            <div class="flex flex-row text-left font-semibold">
-              <div *ngIf="column.groupLabel"
-                >{{ column.groupLabel | capitalize }} -
-                {{ column.label | capitalize }}</div
-              >
-
-              <div *ngIf="!column.groupLabel">{{
-                column.label | capitalize
-              }}</div>
-            </div>
           </div>
         </div>
-      </th>
-    </tr>
+      </div>
+    </ng-template>
   </thead>
 
   <tbody>
