@@ -27,3 +27,4 @@ export * from './sort-chart-fields-on-select-change';
 export * from './to-boolean-from-lowercase-string';
 export * from './to-yaml';
 export * from './transform-error-message';
+export * from './replace-chart-field';

@@ -112,104 +112,64 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
 
     let newMconfig = this.structService.makeMconfig();
 
-    let index = newMconfig.select.indexOf(this.currentField.id);
-    newMconfig.select.splice(index, 1, this.newColumnFieldId);
+    if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+      let queryOperation: common.QueryOperation = {
+        type: common.QueryOperationTypeEnum.Replace,
+        fieldId: this.currentField.id,
+        replaceWithFieldId: this.newColumnFieldId,
+        timezone: newMconfig.timezone
+      };
 
-    newMconfig.sortings.forEach(sorting => {
-      if (sorting.fieldId === this.currentField.id) {
-        sorting.fieldId = this.newColumnFieldId;
-      }
-    });
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId,
+        queryOperation: queryOperation
+      });
+    } else {
+      let index = newMconfig.select.indexOf(this.currentField.id);
+      newMconfig.select.splice(index, 1, this.newColumnFieldId);
 
-    let newSorts: string[] = [];
-
-    newMconfig.sortings.forEach(sorting =>
-      sorting.desc === true
-        ? newSorts.push(`${sorting.fieldId} desc`)
-        : newSorts.push(sorting.fieldId)
-    );
-
-    newMconfig.sorts =
-      newMconfig.sortings.length > 0 ? newSorts.join(', ') : null;
-
-    newMconfig = common.setChartTitleOnSelectChange({
-      mconfig: newMconfig,
-      fields: this.fields
-    });
-
-    if (newMconfig.chart.xField === this.currentField.id) {
-      newMconfig.chart.xField = this.newColumnFieldId;
-    }
-
-    if (newMconfig.chart.multiField === this.currentField.id) {
-      newMconfig.chart.multiField = this.newColumnFieldId;
-    }
-
-    if (newMconfig.chart.sizeField === this.currentField.id) {
-      newMconfig.chart.sizeField =
-        newField.result === common.FieldResultEnum.Number
-          ? this.newColumnFieldId
-          : undefined;
-    }
-
-    if (common.isDefined(newMconfig.chart.yFields)) {
-      let yFieldsIndex = newMconfig.chart.yFields.indexOf(this.currentField.id);
-
-      if (yFieldsIndex > -1) {
-        if (newField.result === common.FieldResultEnum.Number) {
-          newMconfig.chart.yFields.splice(
-            yFieldsIndex,
-            1,
-            this.newColumnFieldId
-          );
-        } else {
-          newMconfig.chart.yFields = newMconfig.chart.yFields.filter(
-            yFieldId => yFieldId !== this.currentField.id
-          );
+      newMconfig.sortings.forEach(sorting => {
+        if (sorting.fieldId === this.currentField.id) {
+          sorting.fieldId = this.newColumnFieldId;
         }
-      }
-    }
+      });
 
-    if (common.isDefined(newMconfig.chart.hideColumns)) {
-      let hideColumnsIndex = newMconfig.chart.hideColumns.indexOf(
-        this.currentField.id
+      let newSorts: string[] = [];
+
+      newMconfig.sortings.forEach(sorting =>
+        sorting.desc === true
+          ? newSorts.push(`${sorting.fieldId} desc`)
+          : newSorts.push(sorting.fieldId)
       );
 
-      if (hideColumnsIndex > -1) {
-        newMconfig.chart.hideColumns.splice(
-          hideColumnsIndex,
-          1,
-          this.newColumnFieldId
-        );
-      }
+      newMconfig.sorts =
+        newMconfig.sortings.length > 0 ? newSorts.join(', ') : null;
+
+      newMconfig = common.setChartTitleOnSelectChange({
+        mconfig: newMconfig,
+        fields: this.fields
+      });
+
+      newMconfig = common.replaceChartField({
+        mconfig: newMconfig,
+        currentFieldId: this.currentField.id,
+        newColumnFieldId: this.newColumnFieldId,
+        newFieldResult: newField.result
+      });
+
+      newMconfig = common.setChartFields({
+        mconfig: newMconfig,
+        fields: this.fields
+      });
+
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId
+      });
     }
-
-    if (common.isDefined(newMconfig.chart.series)) {
-      let se = newMconfig.chart.series.find(
-        x => x.dataField === this.currentField.id
-      );
-
-      if (common.isDefined(se)) {
-        if (newField.result === common.FieldResultEnum.Number) {
-          se.dataField = this.newColumnFieldId;
-        } else {
-          newMconfig.chart.series = newMconfig.chart.series.filter(
-            s => s.dataField !== this.currentField.id
-          );
-        }
-      }
-    }
-
-    newMconfig = common.setChartFields({
-      mconfig: newMconfig,
-      fields: this.fields
-    });
-
-    this.chartService.editChart({
-      mconfig: newMconfig,
-      isDraft: this.chart.draft,
-      chartId: this.chart.chartId
-    });
 
     this.ref.close();
   }

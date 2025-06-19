@@ -4,5 +4,6 @@ export enum QueryOperationTypeEnum {
   Limit = 'Limit',
   Sort = 'Sort',
   Move = 'Move',
-  Remove = 'Remove'
+  Remove = 'Remove',
+  Replace = 'Replace'
 }

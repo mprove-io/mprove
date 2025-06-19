@@ -189,10 +189,7 @@ export class MalloyService {
             .delete();
         }
       }
-    } else if (
-      queryOperation.type === common.QueryOperationTypeEnum.Remove &&
-      mconfig.select?.length > 1
-    ) {
+    } else if (queryOperation.type === common.QueryOperationTypeEnum.Remove) {
       if (common.isUndefined(queryOperation.fieldId)) {
         isError = true;
         errorMessage = `queryOperation.fieldId is not defined (QueryOperationTypeEnum.Remove)`;
@@ -217,6 +214,115 @@ export class MalloyService {
         )
         .find(y => y.field.name === fieldName)
         .delete();
+    } else if (queryOperation.type === common.QueryOperationTypeEnum.Replace) {
+      if (common.isUndefined(queryOperation.fieldId)) {
+        isError = true;
+        errorMessage = `queryOperation.fieldId is not defined (QueryOperationTypeEnum.Replace)`;
+      }
+
+      if (common.isUndefined(queryOperation.replaceWithFieldId)) {
+        isError = true;
+        errorMessage = `queryOperation.replaceWithFieldId is not defined (QueryOperationTypeEnum.Replace)`;
+      }
+
+      let replaceWithModelField = model.fields.find(
+        x => x.id === queryOperation.replaceWithFieldId
+      );
+
+      // console.log('replaceWithModelField');
+      // console.log(replaceWithModelField);
+
+      let currentFieldPath: string[] = queryOperation.fieldId.split('.');
+
+      let currentFieldName = currentFieldPath.pop();
+
+      // console.log('currentFieldName');
+      // console.log(currentFieldName);
+
+      let replaceFieldPath: string[] =
+        queryOperation.replaceWithFieldId.split('.');
+
+      let replaceFieldName = replaceFieldPath.pop();
+
+      // let opFieldNames = segment0.operations.items
+      //   .filter(
+      //     (operation: ASTViewOperation) =>
+      //       operation instanceof ASTGroupByViewOperation ||
+      //       operation instanceof ASTAggregateViewOperation
+      //   )
+      //   .map(item => item.field.name);
+
+      // console.log('opFieldNames');
+      // console.log(opFieldNames);
+
+      segment0.operations.items
+        .filter(
+          (operation: ASTViewOperation) =>
+            operation instanceof ASTGroupByViewOperation ||
+            operation instanceof ASTAggregateViewOperation
+        )
+        .find(y => y.field.name === currentFieldName)
+        .delete();
+
+      if (replaceWithModelField.fieldClass === common.FieldClassEnum.Measure) {
+        if (currentFieldPath.length > 0) {
+          segment0.addAggregate(
+            replaceFieldName,
+            replaceFieldPath,
+            [...replaceFieldPath, replaceFieldName].join(
+              common.TRIPLE_UNDERSCORE
+            )
+          );
+        } else {
+          segment0.addAggregate(replaceFieldName);
+        }
+      } else if (
+        replaceWithModelField.fieldClass === common.FieldClassEnum.Dimension
+      ) {
+        if (replaceFieldPath.length > 0) {
+          segment0.addGroupBy(
+            replaceFieldName,
+            replaceFieldPath,
+            [...replaceFieldPath, replaceFieldName].join(
+              common.TRIPLE_UNDERSCORE
+            )
+          );
+        } else {
+          segment0.addGroupBy(replaceFieldName);
+        }
+      }
+
+      let mconfigSelectCopy = [...mconfig.select];
+      let index = mconfigSelectCopy.indexOf(queryOperation.fieldId);
+      mconfigSelectCopy.splice(index, 1, queryOperation.replaceWithFieldId);
+
+      segment0.reorderFields(
+        mconfigSelectCopy.map(x => x.split('.').join(common.TRIPLE_UNDERSCORE))
+      );
+
+      segment0.operations.items
+        .filter(
+          (operation: ASTViewOperation) =>
+            operation instanceof ASTOrderByViewOperation
+        )
+        .forEach(op => op.delete());
+
+      mconfig.sortings.forEach(sorting => {
+        if (sorting.fieldId === queryOperation.fieldId) {
+          sorting.fieldId = queryOperation.replaceWithFieldId;
+        }
+      });
+
+      mconfig.sortings.forEach(sorting => {
+        let fieldNameUnderscore = sorting.fieldId
+          .split('.')
+          .join(common.TRIPLE_UNDERSCORE);
+
+        segment0.addOrderBy(
+          fieldNameUnderscore,
+          sorting.desc === true ? 'desc' : 'asc'
+        );
+      });
     } else if (queryOperation.type === common.QueryOperationTypeEnum.Sort) {
       let fieldNameUnderscore = queryOperation.fieldId
         .split('.')
@@ -437,6 +543,7 @@ export class MalloyService {
     if (
       [
         common.QueryOperationTypeEnum.GroupOrAggregate,
+        common.QueryOperationTypeEnum.Replace,
         common.QueryOperationTypeEnum.Remove
       ].indexOf(queryOperation.type) > -1
     ) {
@@ -447,8 +554,24 @@ export class MalloyService {
     }
 
     if (
+      [common.QueryOperationTypeEnum.Replace].indexOf(queryOperation.type) > -1
+    ) {
+      let replaceWithModelField = model.fields.find(
+        x => x.id === queryOperation.replaceWithFieldId
+      );
+
+      newMconfig = common.replaceChartField({
+        mconfig: newMconfig,
+        currentFieldId: queryOperation.fieldId,
+        newColumnFieldId: queryOperation.replaceWithFieldId,
+        newFieldResult: replaceWithModelField.result
+      });
+    }
+
+    if (
       [
         common.QueryOperationTypeEnum.GroupOrAggregate,
+        common.QueryOperationTypeEnum.Replace,
         common.QueryOperationTypeEnum.Remove
       ].indexOf(queryOperation.type) > -1
     ) {

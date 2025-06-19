@@ -27,6 +27,10 @@ export class QueryOperation {
   desc?: boolean;
 
   @IsOptional()
+  @IsString()
+  replaceWithFieldId?: string;
+
+  @IsOptional()
   @IsString({ each: true })
   moveFieldIds?: string[];
 }
