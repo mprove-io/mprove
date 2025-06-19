@@ -8,6 +8,7 @@ import {
   modelDefToModelInfo
 } from '@malloydata/malloy';
 import {
+  ExpressionWithFieldReference,
   LogMessage,
   ModelInfo as MalloyModelInfo,
   Query as MalloyQuery,
@@ -389,6 +390,24 @@ export class MalloyService {
     console.log('newMalloyQuery');
     console.log(Date.now());
     console.log(newMalloyQuery);
+
+    let opFieldIds = segment0.operations.items
+      .filter(
+        (operation: ASTViewOperation) =>
+          operation instanceof ASTGroupByViewOperation ||
+          operation instanceof ASTAggregateViewOperation
+      )
+      .map(item => {
+        let exp = item.field.node.expression as ExpressionWithFieldReference;
+        let fieldId = common.isDefined(exp.path)
+          ? [...exp.path, exp.name].join('.')
+          : exp.name;
+
+        return fieldId;
+      });
+
+    console.log('opFieldIds');
+    console.log(opFieldIds);
 
     let runtime = new MalloyRuntime({
       urlReader: {
