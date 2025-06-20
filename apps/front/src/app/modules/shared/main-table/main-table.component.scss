@@ -1,0 +1,13 @@
+:host ::ng-deep {
+  // dragging with drag cursror
+  // https://stackblitz.com/edit/angular-g2yu5w-99sprt
+
+  .drag-handle {
+    cursor: grab;
+  }
+
+  .draggable-element.cdk-drag-preview .drag-handle {
+    pointer-events: auto;
+    cursor: grabbing;
+  }
+}

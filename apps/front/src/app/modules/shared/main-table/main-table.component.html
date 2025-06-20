@@ -75,6 +75,9 @@
         <div class="flex items-center justify-start">
           <div
             class="text-m500 flex h-8 w-4 select-none items-center justify-center"
+            [ngClass]="{
+              invisible: isDrag === true
+            }"
           >
             <div *ngIf="column.sortingNumber > -1">{{
               column.sortingNumber + 1
@@ -84,6 +87,9 @@
           <button
             *ngIf="column.sorting?.desc === false"
             class="hover:bg-m200 text-m500 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+            [ngClass]="{
+              invisible: isDrag === true
+            }"
             (click)="sort(column.id, false)"
           >
             <m-asc-icon></m-asc-icon>
@@ -93,13 +99,19 @@
             *ngIf="column.sorting?.desc === true"
             class="hover:bg-m200 text-m500 flex h-8 w-8 items-center justify-center rounded focus:outline-none"
             (click)="sort(column.id, true)"
+            [ngClass]="{
+              invisible: isDrag === true
+            }"
           >
             <m-desc-icon></m-desc-icon>
           </button>
 
           <button
             *ngIf="!column.sorting"
-            class="hover:bg-m200 text-s500 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+            class="hover:bg-m200 text-s500 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none"
+            [ngClass]="{
+              'group-hover:visible': isDrag === false
+            }"
             (click)="sort(column.id, true)"
           >
             <m-desc-icon></m-desc-icon>
@@ -107,8 +119,9 @@
         </div>
 
         <!-- <button
-                class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+                class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none"
                 [ngClass]="{
+                'group-hover:visible': isDrag === false,
                   'text-s300 cursor-default':
                     columnIndex === 0 ||
                     ([fieldClassMeasure, fieldClassCalculation].indexOf(
@@ -141,8 +154,9 @@
               </button> -->
 
         <!-- <button
-                class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+                class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none"
                 [ngClass]="{
+                'group-hover:visible': isDrag === false,
                   'text-s300 cursor-default':
                     columnIndex + 1 === mconfigFields.length ||
                     (column.fieldClass === fieldClassDimension &&
@@ -172,8 +186,9 @@
           [tpIsEnabled]="column.required === true"
         >
           <button
-            class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+            class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none"
             [ngClass]="{
+              'group-hover:visible': isDrag === false,
               'text-s300 cursor-default': column.required === true,
               'hover:bg-m200 text-s500': column.required === false
             }"
@@ -189,8 +204,9 @@
           [tpIsEnabled]="column.required === true"
         >
           <button
-            class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+            class="invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none"
             [ngClass]="{
+              'group-hover:visible': isDrag === false,
               'text-s300 cursor-default': column.required === true,
               'hover:bg-m200 text-s500': column.required === false
             }"
@@ -206,15 +222,19 @@
         cdkDrag
         cdkDragHandle
         [cdkDragDisabled]="isEdit === false"
-        class="flex flex-col items-start justify-center overflow-hidden text-clip px-5 py-2"
+        class="draggable-element flex flex-col items-start justify-center overflow-hidden text-clip px-5 py-2"
         [ngClass]="{
-          'cursor-move': isEdit === true,
+          'drag-handle': isEdit === true,
           'bg-m150': column.fieldClass === fieldClassDimension,
           'bg-g2':
             column.fieldClass === fieldClassMeasure ||
             column.fieldClass === fieldClassCalculation
         }"
+        (cdkDragStarted)="onDragStart()"
+        (cdkDragEnded)="onDragEnd()"
       >
+        <div *cdkDragPlaceholder></div>
+
         <div class="flex select-none flex-col items-start justify-center">
           <div class="truncate text-sm font-normal">{{
             column.topLabel | capitalize

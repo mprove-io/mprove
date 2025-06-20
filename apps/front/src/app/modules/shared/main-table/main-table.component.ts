@@ -14,7 +14,8 @@ import { common } from '~front/barrels/common';
 @Component({
   standalone: false,
   selector: 'm-main-table',
-  templateUrl: './main-table.component.html'
+  templateUrl: './main-table.component.html',
+  styleUrls: ['main-table.component.scss']
 })
 export class MainTableComponent {
   fieldClassDimension = common.FieldClassEnum.Dimension;
@@ -53,6 +54,8 @@ export class MainTableComponent {
       this.chart = x;
     })
   );
+
+  isDrag = false;
 
   constructor(
     private modelQuery: ModelQuery,
@@ -238,91 +241,160 @@ export class MainTableComponent {
     }
   }
 
-  moveLeft(columnId: string) {
-    let sortedSelect = this.mconfigFields.map(x => x.id);
-    let index = sortedSelect.indexOf(columnId);
+  // moveLeft(columnId: string) {
+  //   let sortedSelect = this.mconfigFields.map(x => x.id);
+  //   let index = sortedSelect.indexOf(columnId);
 
-    let newMconfig = this.structService.makeMconfig();
+  //   let newColumnsOrder = Array.from(sortedSelect);
 
-    let newColumnsOrder = Array.from(sortedSelect);
+  //   let toIndex: number = index - 1;
 
-    let toIndex: number = index - 1;
+  //   newColumnsOrder[index] = newColumnsOrder[toIndex];
+  //   newColumnsOrder[toIndex] = columnId;
 
-    newColumnsOrder[index] = newColumnsOrder[toIndex];
-    newColumnsOrder[toIndex] = columnId;
+  //   let newMconfig = this.structService.makeMconfig();
 
-    if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
-      let queryOperation: common.QueryOperation = {
-        type: common.QueryOperationTypeEnum.Move,
-        moveFieldIds: newColumnsOrder,
-        timezone: newMconfig.timezone
-      };
+  //   if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
+  //     let queryOperation: common.QueryOperation = {
+  //       type: common.QueryOperationTypeEnum.Move,
+  //       moveFieldIds: newColumnsOrder,
+  //       timezone: newMconfig.timezone
+  //     };
 
-      this.chartService.editChart({
-        mconfig: newMconfig,
-        isDraft: this.chart.draft,
-        chartId: this.chart.chartId,
-        queryOperation: queryOperation
-      });
-    } else {
-      newMconfig.select = newColumnsOrder;
+  //     this.chartService.editChart({
+  //       mconfig: newMconfig,
+  //       isDraft: this.chart.draft,
+  //       chartId: this.chart.chartId,
+  //       queryOperation: queryOperation
+  //     });
+  //   } else {
+  //     newMconfig.select = newColumnsOrder;
 
-      this.chartService.editChart({
-        mconfig: newMconfig,
-        isDraft: this.chart.draft,
-        chartId: this.chart.chartId
-      });
+  //     this.chartService.editChart({
+  //       mconfig: newMconfig,
+  //       isDraft: this.chart.draft,
+  //       chartId: this.chart.chartId
+  //     });
 
-      // this.mconfigService.navCreateTempMconfigAndQuery({
-      //   newMconfig: newMconfig
-      // });
-    }
-  }
+  //     // this.mconfigService.navCreateTempMconfigAndQuery({
+  //     //   newMconfig: newMconfig
+  //     // });
+  //   }
+  // }
 
-  moveRight(columnId: string) {
-    let sortedSelect = this.mconfigFields.map(x => x.id);
-    let index = sortedSelect.indexOf(columnId);
+  // moveRight(columnId: string) {
+  //   let sortedSelect = this.mconfigFields.map(x => x.id);
+  //   let index = sortedSelect.indexOf(columnId);
 
-    let newMconfig = this.structService.makeMconfig();
+  //   let newColumnsOrder = Array.from(sortedSelect);
 
-    let newColumnsOrder = Array.from(sortedSelect);
+  //   let toIndex: number = index + 1;
 
-    let toIndex: number = index + 1;
+  //   newColumnsOrder[index] = sortedSelect[toIndex];
+  //   newColumnsOrder[toIndex] = columnId;
 
-    newColumnsOrder[index] = sortedSelect[toIndex];
-    newColumnsOrder[toIndex] = columnId;
+  //   let newMconfig = this.structService.makeMconfig();
 
-    if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
-      let queryOperation: common.QueryOperation = {
-        type: common.QueryOperationTypeEnum.Move,
-        moveFieldIds: newColumnsOrder,
-        timezone: newMconfig.timezone
-      };
+  //   if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
+  //     let queryOperation: common.QueryOperation = {
+  //       type: common.QueryOperationTypeEnum.Move,
+  //       moveFieldIds: newColumnsOrder,
+  //       timezone: newMconfig.timezone
+  //     };
 
-      this.chartService.editChart({
-        mconfig: newMconfig,
-        isDraft: this.chart.draft,
-        chartId: this.chart.chartId,
-        queryOperation: queryOperation
-      });
-    } else {
-      newMconfig.select = newColumnsOrder;
+  //     this.chartService.editChart({
+  //       mconfig: newMconfig,
+  //       isDraft: this.chart.draft,
+  //       chartId: this.chart.chartId,
+  //       queryOperation: queryOperation
+  //     });
+  //   } else {
+  //     newMconfig.select = newColumnsOrder;
 
-      this.chartService.editChart({
-        mconfig: newMconfig,
-        isDraft: this.chart.draft,
-        chartId: this.chart.chartId
-      });
+  //     this.chartService.editChart({
+  //       mconfig: newMconfig,
+  //       isDraft: this.chart.draft,
+  //       chartId: this.chart.chartId
+  //     });
 
-      // this.mconfigService.navCreateTempMconfigAndQuery({
-      //   newMconfig: newMconfig
-      // });
-    }
-  }
+  //     // this.mconfigService.navCreateTempMconfigAndQuery({
+  //     //   newMconfig: newMconfig
+  //     // });
+  //   }
+  // }
 
   drop(event: CdkDragDrop<string[]>) {
-    console.log('drop event');
-    console.log(event);
-    // moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
+    // console.log('drop event');
+    // console.log(event.previousIndex);
+    // console.log(event.currentIndex);
+
+    let previousFieldIds = this.mconfigFields.map(x => x.id);
+
+    let newColumnsOrder = [...this.mconfigFields.map(x => x.id)];
+
+    let [movedFieldId] = newColumnsOrder.splice(event.previousIndex, 1);
+
+    newColumnsOrder.splice(event.currentIndex, 0, movedFieldId);
+
+    let dimensions = newColumnsOrder.filter(
+      fieldId =>
+        this.mconfigFields.find(x => x.id === fieldId).fieldClass ===
+        common.FieldClassEnum.Dimension
+    );
+
+    let notDimensions = newColumnsOrder.filter(
+      fieldId =>
+        this.mconfigFields.find(x => x.id === fieldId).fieldClass !==
+        common.FieldClassEnum.Dimension
+    );
+
+    let moveFieldIds = [...dimensions, ...notDimensions];
+
+    if (
+      moveFieldIds.every((value, index) => value === previousFieldIds[index])
+    ) {
+      return;
+    }
+
+    let newMconfig = this.structService.makeMconfig();
+
+    if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
+      let queryOperation: common.QueryOperation = {
+        type: common.QueryOperationTypeEnum.Move,
+        moveFieldIds: moveFieldIds,
+        timezone: newMconfig.timezone
+      };
+
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId,
+        queryOperation: queryOperation
+      });
+    } else {
+      newMconfig.select = moveFieldIds;
+
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId
+      });
+
+      // this.mconfigService.navCreateTempMconfigAndQuery({
+      //   newMconfig: newMconfig
+      // });
+    }
+  }
+
+  onDragStart() {
+    // console.log('dragStarted')
+    this.isDrag = true;
+    document.body.classList.add('force-cursor-grabbing');
+  }
+
+  onDragEnd() {
+    // console.log('dragEnded')
+    this.isDrag = false;
+    document.body.classList.remove('force-cursor-grabbing');
   }
 }
