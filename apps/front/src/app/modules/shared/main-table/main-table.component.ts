@@ -1,6 +1,6 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
-import { take, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { ModelQuery } from '~front/app/queries/model.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -96,7 +96,7 @@ export class MainTableComponent {
     if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
       let queryOperation: common.QueryOperation = {
         type: common.QueryOperationTypeEnum.Sort,
-        fieldId: fieldId,
+        sortFieldId: fieldId,
         desc: desc,
         timezone: newMconfig.timezone
       };
@@ -187,10 +187,31 @@ export class MainTableComponent {
   remove(fieldId: string) {
     let newMconfig = this.structService.makeMconfig();
 
+    let fields: common.ModelField[] = this.modelQuery.getValue().fields;
+
+    let { queryOperationType, sortFieldId, desc } =
+      common.sortFieldsOnSelectChange({
+        mconfig: newMconfig,
+        selectFieldId: fieldId,
+        modelFields: fields,
+        mconfigFields: this.mconfig.fields
+      });
+
+    // if (this.model.type === common.ModelTypeEnum.Malloy) {
+    //   let queryOperation: common.QueryOperation = {
+    //     type: queryOperationType,
+    //     fieldId: node.data.id,
+    //     sortFieldId: sortFieldId,
+    //     desc: desc,
+    //     timezone: newMconfig.timezone
+    //   };
+
     if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
       let queryOperation: common.QueryOperation = {
         type: common.QueryOperationTypeEnum.Remove,
         fieldId: fieldId,
+        sortFieldId: sortFieldId,
+        desc: desc,
         timezone: newMconfig.timezone
       };
 
@@ -205,14 +226,6 @@ export class MainTableComponent {
         newMconfig,
         fieldId: fieldId
       });
-
-      let fields: common.ModelField[];
-      this.modelQuery.fields$
-        .pipe(
-          tap(x => (fields = x)),
-          take(1)
-        )
-        .subscribe();
 
       newMconfig = common.setChartTitleOnSelectChange({
         mconfig: newMconfig,

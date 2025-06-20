@@ -100,10 +100,20 @@ export class ChartsAddColumnFieldDialogComponent implements OnInit {
 
     let newMconfig = this.structService.makeMconfig();
 
+    let { queryOperationType, sortFieldId, desc } =
+      common.sortFieldsOnSelectChange({
+        mconfig: newMconfig,
+        selectFieldId: this.newColumnFieldId,
+        modelFields: this.fields,
+        mconfigFields: newMconfig.fields
+      });
+
     if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
       let queryOperation: common.QueryOperation = {
-        type: common.QueryOperationTypeEnum.GroupOrAggregate,
+        type: queryOperationType,
         fieldId: this.newColumnFieldId,
+        sortFieldId: sortFieldId,
+        desc: desc,
         timezone: newMconfig.timezone
       };
 

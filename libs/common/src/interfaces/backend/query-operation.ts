@@ -23,6 +23,10 @@ export class QueryOperation {
   fieldId?: string;
 
   @IsOptional()
+  @IsString()
+  sortFieldId?: string;
+
+  @IsOptional()
   @IsBoolean()
   desc?: boolean;
 

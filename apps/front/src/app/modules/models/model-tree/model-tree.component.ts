@@ -208,10 +208,20 @@ export class ModelTreeComponent implements AfterViewInit {
   selectField(node: TreeNode) {
     let newMconfig = this.structService.makeMconfig();
 
+    let { queryOperationType, sortFieldId, desc } =
+      common.sortFieldsOnSelectChange({
+        mconfig: newMconfig,
+        selectFieldId: node.data.id,
+        modelFields: this.model.fields,
+        mconfigFields: this.mconfig.fields
+      });
+
     if (this.model.type === common.ModelTypeEnum.Malloy) {
       let queryOperation: common.QueryOperation = {
-        type: common.QueryOperationTypeEnum.GroupOrAggregate,
+        type: queryOperationType,
         fieldId: node.data.id,
+        sortFieldId: sortFieldId,
+        desc: desc,
         timezone: newMconfig.timezone
       };
 

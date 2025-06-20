@@ -115,7 +115,10 @@ export class MalloyService {
     // console.dir(segment0, { depth: null });
 
     if (
-      queryOperation.type === common.QueryOperationTypeEnum.GroupOrAggregate
+      [
+        common.QueryOperationTypeEnum.GroupOrAggregate,
+        common.QueryOperationTypeEnum.GroupOrAggregatePlusSort
+      ].indexOf(queryOperation.type) > -1
     ) {
       if (common.isUndefined(queryOperation.fieldId)) {
         isError = true;
@@ -361,13 +364,31 @@ export class MalloyService {
           sorting.desc === true ? 'desc' : 'asc'
         );
       });
-    } else if (queryOperation.type === common.QueryOperationTypeEnum.Sort) {
-      let fieldNameUnderscore = queryOperation.fieldId
+    } else if (queryOperation.type === common.QueryOperationTypeEnum.Move) {
+      segment0.reorderFields(
+        queryOperation.moveFieldIds.map(x =>
+          x.split('.').join(common.TRIPLE_UNDERSCORE)
+        )
+      );
+    } else if (queryOperation.type === common.QueryOperationTypeEnum.Limit) {
+      segment0.setLimit(queryOperation.limit);
+    }
+
+    // not else
+    if (
+      [
+        common.QueryOperationTypeEnum.GroupOrAggregatePlusSort,
+        common.QueryOperationTypeEnum.Remove,
+        common.QueryOperationTypeEnum.Sort
+      ].indexOf(queryOperation.type) > -1 &&
+      common.isDefined(queryOperation.sortFieldId)
+    ) {
+      let fieldNameUnderscore = queryOperation.sortFieldId
         .split('.')
         .join(common.TRIPLE_UNDERSCORE);
 
       let fIndex = mconfig.sortings.findIndex(
-        sorting => sorting.fieldId === queryOperation.fieldId
+        sorting => sorting.fieldId === queryOperation.sortFieldId
       );
 
       let op = segment0.operations.items
@@ -388,7 +409,7 @@ export class MalloyService {
           //   ? [...fr.path, fr.name].join('.')
           //   : fr.name;
 
-          // return fieldId === queryOperation.fieldId;
+          // return fieldId === queryOperation.sortFieldId;
           return orderByItem.name === fieldNameUnderscore;
         });
 
@@ -413,16 +434,11 @@ export class MalloyService {
         op.delete();
       } else if (fIndex < 0) {
         // should be added to sortings
-        segment0.addOrderBy(fieldNameUnderscore, 'desc');
+        segment0.addOrderBy(
+          fieldNameUnderscore,
+          queryOperation.desc === true ? 'desc' : 'asc'
+        );
       }
-    } else if (queryOperation.type === common.QueryOperationTypeEnum.Move) {
-      segment0.reorderFields(
-        queryOperation.moveFieldIds.map(x =>
-          x.split('.').join(common.TRIPLE_UNDERSCORE)
-        )
-      );
-    } else if (queryOperation.type === common.QueryOperationTypeEnum.Limit) {
-      segment0.setLimit(queryOperation.limit);
     }
 
     let limitOp = segment0.operations.items.find(
@@ -624,6 +640,7 @@ export class MalloyService {
     if (
       [
         common.QueryOperationTypeEnum.GroupOrAggregate,
+        common.QueryOperationTypeEnum.GroupOrAggregatePlusSort,
         common.QueryOperationTypeEnum.Replace,
         common.QueryOperationTypeEnum.Remove
       ].indexOf(queryOperation.type) > -1
@@ -652,6 +669,7 @@ export class MalloyService {
     if (
       [
         common.QueryOperationTypeEnum.GroupOrAggregate,
+        common.QueryOperationTypeEnum.GroupOrAggregatePlusSort,
         common.QueryOperationTypeEnum.Replace,
         common.QueryOperationTypeEnum.Remove
       ].indexOf(queryOperation.type) > -1
