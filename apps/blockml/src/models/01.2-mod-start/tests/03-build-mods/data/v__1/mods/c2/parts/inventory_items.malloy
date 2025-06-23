@@ -1,0 +1,13 @@
+source: inventory_items_table is c2_postgres.table('ecommerce.inventory_items') extend {}
+
+source: inventory_items is inventory_items_table extend {
+  primary_key: inventory_item_id
+  
+  dimension: actual_cost_ is actual_cost::'numeric' 
+  -- dimension: distribution_​center_​id
+  -- dimension: product_id
+
+  measure: 
+    inventory_items_count is count()
+    total_actual_cost is actual_cost_.sum()
+}

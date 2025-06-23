@@ -1,5 +1,0 @@
-chart: mc3
-tiles:
-- title: Total Profit3
-  query: mc3
-  type: table

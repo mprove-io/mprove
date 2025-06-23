@@ -1,6 +1,6 @@
-mod: ec1_m2
-source: ec1_m2
-location: mods/c2/ec1_m2.malloy
+mod: ec1_m2_order_items
+source: ec1_m2_order_items
+location: mods/c2/ec1_m2_order_items.malloy
 # build_metrics: ...
 
 # chart: 4GI2L3ALYEO9LXWP3O92

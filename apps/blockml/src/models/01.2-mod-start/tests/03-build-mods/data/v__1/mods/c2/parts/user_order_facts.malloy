@@ -1,13 +1,35 @@
 import './orders.malloy';
 
 ##! experimental{sql_functions}
-source: user_order_facts is orders_table -> {
+source: user_order_facts is orders -> {
   group_by: user_id
-  aggregate: first_order_created_ts is min(sql_number(""" EXTRACT(EPOCH FROM (TIMESTAMP 'epoch' + ${created_at} * INTERVAL '1 second')) """))
-  -- 
+  aggregate: first_order_created_at is min(created_at)
+  -- aggregate: first_order_created_at is min(sql_number(""" EXTRACT(EPOCH FROM ${created_at_ts}) """))
+  -- aggregate: first_order_created_at is min(sql_number(""" EXTRACT(EPOCH FROM (TIMESTAMP 'epoch' + ${created_at} * INTERVAL '1 second')) """))
+
 } extend {
   primary_key: user_id
 
-  -- dimension: user_id
-  -- dimension: first_order_created_ts
+  dimension: 
+    first_order_created_at_ts is sql_timestamp(""" TIMESTAMP 'epoch' + ${first_order_created_at} * INTERVAL '1 second' """)
+
+  -- #(mprove) g="abc"
+  -- dimension: 
+  --   first_order_created_at_year is first_order_created_at_ts.year
+  --   first_order_created_at_quarter is first_order_created_at_ts.quarter
+  --   first_order_created_at_month is first_order_created_at_ts.month
+  --   first_order_created_at_week is first_order_created_at_ts.week
+  --   first_order_created_at_day is first_order_created_at_ts.day
+  --   first_order_created_at_hour is first_order_created_at_ts.hour
+  --   first_order_created_at_minute is first_order_created_at_ts.minute
+  --   first_order_created_at_year_num is year(first_order_created_at_ts)
+  --   first_order_created_at_quarter_num is quarter(first_order_created_at_ts)
+  --   first_order_created_at_month_num is month(first_order_created_at_ts)
+  --   first_order_created_at_week_num is week(first_order_created_at_ts)
+  --   first_order_created_at_day_num is day(first_order_created_at_ts)
+  --   first_order_created_at_day_of_week_num is day_of_week(first_order_created_at_ts)
+  --   first_order_created_at_day_of_year_num is day_of_year(first_order_created_at_ts)
+  --   first_order_created_at_hour_num is hour(first_order_created_at_ts)
+  --   first_order_created_at_minute_num is minute(first_order_created_at_ts)
+  --   first_order_created_at_second_num is second(first_order_created_at_ts)
 }

@@ -1,4 +1,9 @@
 import './users.malloy';
+
+-- https://docs.malloydata.dev/documentation/language/timestamp-operations#truncation
+
+##! experimental{sql_functions}
+
 source: orders_table is c2_postgres.table('ecommerce.orders') extend {}
 
 source: orders is orders_table extend {
@@ -6,10 +11,45 @@ source: orders is orders_table extend {
 
   primary_key: order_id
   
-  -- dimension: order_id
-  -- dimension: status
-  -- dimension: user_id
-  -- dimension: created_at
+  dimension: 
+    -- status
+    -- user_id
+    created_at_ts is sql_timestamp(""" TIMESTAMP 'epoch' + ${created_at} * INTERVAL '1 second' """)
+    -- created_at_ts is to_timestamp!timestamp(created_at)
+    -- created_at_ts is to_timestamp!(created_at)::timestamp
+    -- created_at_ts is sql_timestamp(""" TIMESTAMP 'epoch' + ${created_at} * INTERVAL '1 second' """)
+    -- created_at_ts is sql_timestamp(""" to_timestamp(${created_at}) AT TIME ZONE 'UTC' """)
+    -- created_at_ts is sql_timestamp(""" (TIMESTAMP 'epoch' + created_at * INTERVAL '1 second')::TIMESTAMPTZ """)
+    -- created_at_ts is sql_string(""" to_timestamp(${created_at}) AT TIME ZONE 'UTC' """)::timestamp
+    -- created_at_ts is sql_string(""" (TIMESTAMP 'epoch' + created_at * INTERVAL '1 second')::TIMESTAMPTZ """)::timestamp
 
-  measure: orders_count is count()
+  #(mprove) g="g1"
+  dimension: 
+    created_at_year is created_at_ts.year
+    created_at_quarter is created_at_ts.quarter
+    created_at_month is created_at_ts.month
+    created_at_week is created_at_ts.week
+    created_at_day is created_at_ts.day
+    created_at_hour is created_at_ts.hour
+    created_at_minute is created_at_ts.minute
+    created_at_year_num is year(created_at_ts)
+    created_at_quarter_num is quarter(created_at_ts)
+    created_at_month_num is month(created_at_ts)
+    created_at_week_num is week(created_at_ts)
+    created_at_day_num is day(created_at_ts)
+    created_at_day_of_week_num is day_of_week(created_at_ts)
+    created_at_day_of_year_num is day_of_year(created_at_ts)
+    created_at_hour_num is hour(created_at_ts)
+    created_at_minute_num is minute(created_at_ts)
+    created_at_second_num is second(created_at_ts)
+
+  measure: 
+    orders_count is count()
+}
+
+run: orders -> {
+  group_by: created_at_ts_hour is created_at_ts.hour
+  order_by: created_at_ts_hour asc
+  timezone: 'Asia/Yekaterinburg'
+  limit: 5
 }

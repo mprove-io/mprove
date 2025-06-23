@@ -1,7 +1,0 @@
-import '../mods/c3/ec1_m3.malloy';
-
-query: mc3 is ec1_m3 -> {
-  group_by: users3.state
-  aggregate: orders3.orders_count
-  limit: 10
-}

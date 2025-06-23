@@ -5,8 +5,12 @@ source: order_items is order_items_table extend {
   
   -- dimension: inventory_item_id
   -- dimension: order_id
-  -- dimension: order_item_id
-  -- dimension: sale_price
+  dimension: sale_price_ is sale_price::'Numeric'
 
-  measure: orders_items_count is count()
+  measure: 
+    order_items_count is count()
+    total_sale_price is sale_price_.sum()
+    average_sale_price is sale_price_.avg()
+    least_expensive_item is sale_price_.min()
+    most_expensive_item is sale_price_.max()
 }
