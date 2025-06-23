@@ -12,14 +12,23 @@ export class FieldResultComponent {
   fieldClassCalculation = common.FieldClassEnum.Calculation;
   fieldClassFilter = common.FieldClassEnum.Filter;
 
-  fieldResultNumber = common.FieldResultEnum.Number;
-  fieldResultString = common.FieldResultEnum.String;
-  fieldResultYesno = common.FieldResultEnum.Yesno;
-  fieldResultTs = common.FieldResultEnum.Ts;
   fieldResultDayOfWeek = common.FieldResultEnum.DayOfWeek;
   fieldResultDayOfWeekIndex = common.FieldResultEnum.DayOfWeekIndex;
   fieldResultMonthName = common.FieldResultEnum.MonthName;
   fieldResultQuarterOfYear = common.FieldResultEnum.QuarterOfYear;
+  fieldResultTs = common.FieldResultEnum.Ts;
+  fieldResultYesno = common.FieldResultEnum.Yesno;
+  fieldResultString = common.FieldResultEnum.String;
+  fieldResultNumber = common.FieldResultEnum.Number;
+  fieldResultTimestamp = common.FieldResultEnum.Timestamp;
+  fieldResultDate = common.FieldResultEnum.Date;
+  fieldResultBoolean = common.FieldResultEnum.Boolean;
+  fieldResultArray = common.FieldResultEnum.Array;
+  fieldResultRecord = common.FieldResultEnum.Record;
+  fieldResultJson = common.FieldResultEnum.Json;
+  fieldResultSqlNative = common.FieldResultEnum.SqlNative;
+
+  allResultValues = common.ALL_RESULT_VALUES;
 
   @Input()
   fieldClass: common.FieldClassEnum;

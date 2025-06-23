@@ -193,6 +193,24 @@ export const MEASURE_TYPE_VALUES = [
   enums.FieldTypeEnum.Custom
 ];
 
+export const ALL_RESULT_VALUES = [
+  enums.FieldResultEnum.DayOfWeek,
+  enums.FieldResultEnum.DayOfWeekIndex,
+  enums.FieldResultEnum.MonthName,
+  enums.FieldResultEnum.QuarterOfYear,
+  enums.FieldResultEnum.Ts,
+  enums.FieldResultEnum.Yesno,
+  enums.FieldResultEnum.String,
+  enums.FieldResultEnum.Number,
+  enums.FieldResultEnum.Timestamp,
+  enums.FieldResultEnum.Date,
+  enums.FieldResultEnum.Boolean,
+  enums.FieldResultEnum.Array,
+  enums.FieldResultEnum.Record,
+  enums.FieldResultEnum.Json,
+  enums.FieldResultEnum.SqlNative
+];
+
 export const DIMENSION_RESULT_VALUES = [
   enums.FieldResultEnum.String,
   enums.FieldResultEnum.Number

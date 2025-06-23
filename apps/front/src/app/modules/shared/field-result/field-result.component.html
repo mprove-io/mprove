@@ -10,15 +10,7 @@
         result === fieldResultDayOfWeekIndex ||
         result === fieldResultMonthName ||
         result === fieldResultQuarterOfYear ||
-        (!!result &&
-          result !== fieldResultNumber &&
-          result !== fieldResultString &&
-          result !== fieldResultYesno &&
-          result !== fieldResultTs &&
-          result !== fieldResultDayOfWeek &&
-          result !== fieldResultDayOfWeekIndex &&
-          result !== fieldResultMonthName &&
-          result !== fieldResultQuarterOfYear)),
+        (!!result && allResultValues.indexOf(result) < 0)),
     'mb-[2px]':
       size === 3 &&
       (!result ||
@@ -27,15 +19,7 @@
         result === fieldResultDayOfWeekIndex ||
         result === fieldResultMonthName ||
         result === fieldResultQuarterOfYear ||
-        (!!result &&
-          result !== fieldResultNumber &&
-          result !== fieldResultString &&
-          result !== fieldResultYesno &&
-          result !== fieldResultTs &&
-          result !== fieldResultDayOfWeek &&
-          result !== fieldResultDayOfWeekIndex &&
-          result !== fieldResultMonthName &&
-          result !== fieldResultQuarterOfYear)),
+        (!!result && allResultValues.indexOf(result) < 0)),
     'text-g1':
       fieldClass === fieldClassMeasure || fieldClass === fieldClassCalculation,
     'text-m600': fieldClass === fieldClassDimension,
@@ -47,15 +31,7 @@
     result === fieldResultMonthName ||
     result === fieldResultQuarterOfYear
       ? 'Enum: ' + result
-      : !!result &&
-          result !== fieldResultNumber &&
-          result !== fieldResultString &&
-          result !== fieldResultYesno &&
-          result !== fieldResultTs &&
-          result !== fieldResultDayOfWeek &&
-          result !== fieldResultDayOfWeekIndex &&
-          result !== fieldResultMonthName &&
-          result !== fieldResultQuarterOfYear
+      : !!result && allResultValues.indexOf(result) < 0
         ? 'Custom: ' + result
         : !!result
           ? result
@@ -73,12 +49,15 @@
   ></m-type-string-icon>
 
   <m-type-on-off-icon
-    *ngIf="result === fieldResultYesno"
+    *ngIf="[fieldResultYesno, fieldResultBoolean].indexOf(result) > -1"
     [size]="size"
   ></m-type-on-off-icon>
 
   <m-type-date-icon
-    *ngIf="result === fieldResultTs"
+    *ngIf="
+      [fieldResultTs, fieldResultTimestamp, fieldResultDate].indexOf(result) >
+      -1
+    "
     [size]="size"
   ></m-type-date-icon>
 
@@ -93,17 +72,7 @@
   ></m-type-enum-icon>
 
   <m-type-custom-icon
-    *ngIf="
-      !!result &&
-      result !== fieldResultNumber &&
-      result !== fieldResultString &&
-      result !== fieldResultYesno &&
-      result !== fieldResultTs &&
-      result !== fieldResultDayOfWeek &&
-      result !== fieldResultDayOfWeekIndex &&
-      result !== fieldResultMonthName &&
-      result !== fieldResultQuarterOfYear
-    "
+    *ngIf="!!result && allResultValues.indexOf(result) < 0"
     [size]="size"
   ></m-type-custom-icon>
 

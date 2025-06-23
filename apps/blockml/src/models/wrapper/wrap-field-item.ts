@@ -16,7 +16,6 @@ export function wrapFieldItem(item: {
 
   let fieldId = `${namePrefix}${fieldItem.field.name}`;
 
-  // "string_type" | "boolean_type" | "number_type" | "json_type" | "sql_native_type" | "date_type" | "timestamp_type" | "array_type" | "record_type"
   let typeKind = ((fieldItem.field as any).type as AtomicType).kind;
 
   let result =
@@ -24,7 +23,21 @@ export function wrapFieldItem(item: {
       ? common.FieldResultEnum.String
       : typeKind === 'number_type'
         ? common.FieldResultEnum.Number
-        : undefined;
+        : typeKind === 'boolean_type'
+          ? common.FieldResultEnum.Boolean
+          : typeKind === 'timestamp_type'
+            ? common.FieldResultEnum.Timestamp
+            : typeKind === 'date_type'
+              ? common.FieldResultEnum.Date
+              : typeKind === 'array_type'
+                ? common.FieldResultEnum.Array
+                : typeKind === 'record_type'
+                  ? common.FieldResultEnum.Record
+                  : typeKind === 'json_type'
+                    ? common.FieldResultEnum.Json
+                    : typeKind === 'sql_native_type'
+                      ? common.FieldResultEnum.SqlNative
+                      : undefined;
 
   let fieldClass =
     fieldItem.field.kind === 'dimension'
