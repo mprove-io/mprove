@@ -11,6 +11,14 @@ export class ModelField {
   @IsString()
   id: string;
 
+  @IsOptional()
+  @IsString()
+  malloyFieldName?: string;
+
+  @IsOptional()
+  @IsString({ each: true })
+  malloyFieldPath?: string[];
+
   @IsBoolean()
   hidden: boolean;
 

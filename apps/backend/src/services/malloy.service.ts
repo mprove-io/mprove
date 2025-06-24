@@ -132,10 +132,16 @@ export class MalloyService {
         errorMessage = `modelField is not defined (queryOperation.fieldId: ${queryOperation.fieldId})`;
       }
 
-      let fieldFullPath: string[] = queryOperation.fieldId.split('.');
+      console.log('modelField');
+      console.log(modelField);
 
-      let fieldPath: string[] = fieldFullPath.slice(0, -1);
-      let fieldName = fieldFullPath[fieldFullPath.length - 1];
+      // let fieldFullPath: string[] = queryOperation.fieldId.split('.');
+      // let fieldPath: string[] = fieldFullPath.slice(0, -1);
+      // let fieldName = fieldFullPath[fieldFullPath.length - 1];
+
+      let fieldName = modelField.malloyFieldName;
+      let fieldPath: string[] = modelField.malloyFieldPath;
+      let fieldRename = modelField.id.split('.').join(common.TRIPLE_UNDERSCORE);
 
       if (
         [
@@ -154,21 +160,13 @@ export class MalloyService {
       if (selectIndex < 0) {
         if (modelField.fieldClass === common.FieldClassEnum.Measure) {
           if (fieldPath.length > 0) {
-            segment0.addAggregate(
-              fieldName,
-              fieldPath,
-              [...fieldPath, fieldName].join(common.TRIPLE_UNDERSCORE)
-            );
+            segment0.addAggregate(fieldName, fieldPath, fieldRename);
           } else {
             segment0.addAggregate(fieldName);
           }
         } else if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
           if (fieldPath.length > 0) {
-            segment0.addGroupBy(
-              fieldName,
-              fieldPath,
-              [...fieldPath, fieldName].join(common.TRIPLE_UNDERSCORE)
-            );
+            segment0.addGroupBy(fieldName, fieldPath, fieldRename);
           } else {
             segment0.addGroupBy(fieldName);
           }
@@ -268,13 +266,17 @@ export class MalloyService {
 
       //
 
-      let replaceFieldFullPath: string[] =
-        queryOperation.replaceWithFieldId.split('.');
+      // let replaceFieldFullPath: string[] =
+      //   queryOperation.replaceWithFieldId.split('.');
+      // let replaceFieldPath: string[] = replaceFieldFullPath.slice(0, -1);
+      // let replaceFieldName =
+      //   replaceFieldFullPath[replaceFieldFullPath.length - 1];
 
-      let replaceFieldPath: string[] = replaceFieldFullPath.slice(0, -1);
-
-      let replaceFieldName =
-        replaceFieldFullPath[replaceFieldFullPath.length - 1];
+      let replaceFieldPath = replaceWithModelField.malloyFieldPath;
+      let replaceFieldName = replaceWithModelField.malloyFieldName;
+      let replaceFieldRename = replaceWithModelField.id
+        .split('.')
+        .join(common.TRIPLE_UNDERSCORE);
 
       // let opFieldNames = segment0.operations.items
       //   .filter(
@@ -310,9 +312,7 @@ export class MalloyService {
           segment0.addAggregate(
             replaceFieldName,
             replaceFieldPath,
-            [...replaceFieldPath, replaceFieldName].join(
-              common.TRIPLE_UNDERSCORE
-            )
+            replaceFieldRename
           );
         } else {
           segment0.addAggregate(replaceFieldName);
@@ -324,9 +324,7 @@ export class MalloyService {
           segment0.addGroupBy(
             replaceFieldName,
             replaceFieldPath,
-            [...replaceFieldPath, replaceFieldName].join(
-              common.TRIPLE_UNDERSCORE
-            )
+            replaceFieldRename
           );
         } else {
           segment0.addGroupBy(replaceFieldName);

@@ -161,7 +161,7 @@ export function wrapModels(item: {
 
         (x as common.FileModel).fields.forEach(field => {
           let apiField = wrapField({
-            isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
+            isStoreModel: false,
             field: field,
             alias: common.MF,
             filePath: x.filePath,
@@ -196,7 +196,7 @@ export function wrapModels(item: {
 
         join.view.fields.forEach(field => {
           let apiField = wrapField({
-            isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
+            isStoreModel: false,
             field: field,
             alias: join.as,
             fileName: join.view.fileName,
@@ -509,6 +509,11 @@ export function wrapModels(item: {
         nodes: sortedNodes,
         serverTs: 1
       };
+
+      // if (modelType === common.ModelTypeEnum.Malloy) {
+      //   console.log('sortedNodes');
+      //   console.dir(sortedNodes, { depth: null });
+      // }
 
       apiModels.push(apiModel);
     }

@@ -1,6 +1,7 @@
 import { AtomicType } from '@malloydata/malloy-interfaces';
 import { common } from '~blockml/barrels/common';
 import { FieldItem } from '~blockml/functions/source-to-field-items';
+import { parseMproveTags } from '~common/_index';
 
 export function wrapFieldItem(item: {
   topNode: common.ModelNode;
@@ -11,12 +12,14 @@ export function wrapFieldItem(item: {
 }) {
   let { fieldItem, alias, fileName, filePath, topNode } = item;
 
-  let namePrefix =
-    fieldItem.path.length === 0 ? '' : fieldItem.path.join('.') + '.';
-
-  let fieldId = `${namePrefix}${fieldItem.field.name}`;
+  let fieldId = [...fieldItem.path, fieldItem.field.name].join('.');
 
   let typeKind = ((fieldItem.field as any).type as AtomicType).kind;
+
+  // if (typeKind === 'timestamp_type') {
+  //   console.log('fieldItem');
+  //   console.dir(fieldItem, { depth: null });
+  // }
 
   let result =
     typeKind === 'string_type'
@@ -52,10 +55,168 @@ export function wrapFieldItem(item: {
     .join(' ');
 
   let fieldSqlName = fieldItem.field.name;
-  // let fieldSqlName = fieldItem.field.name.split('.').join('_');
+
+  let mproveTags = common.isDefined(fieldItem.field.annotations)
+    ? parseMproveTags({
+        inputs: fieldItem.field.annotations.map(x => x.value)
+      })
+    : [];
+
+  let fieldNode: common.ModelNode = {
+    id: fieldId,
+    label: fieldLabel,
+    description: undefined,
+    hidden: false,
+    required: false,
+    isField: true,
+    children: [],
+    fieldFileName: fileName,
+    fieldFilePath: filePath,
+    fieldResult: result,
+    fieldLineNum: 0,
+    nodeClass: fieldClass
+  };
+
+  let fieldGroupTag = mproveTags.find(
+    x => x.key === common.MPROVE_TAG_FIELD_GROUP
+  );
+
+  let fieldTimeGroupValue = fieldGroupTag?.value;
+
+  if (
+    common.isDefined(fieldTimeGroupValue)
+    //  && result === common.FieldResultEnum.Timestamp
+  ) {
+    let groupNode = topNode.children.find(
+      c => c.id === `${alias}.${fieldTimeGroupValue}`
+    );
+
+    if (common.isDefined(groupNode)) {
+      groupNode.children.push(fieldNode);
+    } else {
+      // let fieldParts: {
+      //   id: string;
+      //   // prefix: string;
+      //   // suffix: string;
+      //   label: string;
+      //   result: common.FieldResultEnum;
+      //   malloyTimeframe: TimestampTimeframe;
+      // }[] = [
+      //   {
+      //     id: `${fieldId}`,
+      //     // prefix: ``,
+      //     // suffix: ``,
+      //     label: `${fieldLabel} Timestamp`,
+      //     result: common.FieldResultEnum.Timestamp,
+      //     malloyTimeframe: undefined
+      //   },
+      //   {
+      //     id: `${fieldId}__year`,
+      //     // prefix: ``,
+      //     // suffix: `.year`,
+      //     label: `${fieldLabel} Year`,
+      //     result: common.FieldResultEnum.Timestamp,
+      //     malloyTimeframe: TimestampTimeframe.Year
+      //   },
+      //   {
+      //     id: `${fieldId}__quarter`,
+      //     // prefix: ``,
+      //     // suffix: `.quarter`,
+      //     label: `${fieldLabel} Quarter`,
+      //     result: common.FieldResultEnum.Timestamp,
+      //     malloyTimeframe: TimestampTimeframe.Quarter
+      //   },
+      //   // {
+      //   //   id: `${fieldId}__day_of_week`,
+      //   //   prefix: `day_of_week(`,
+      //   //   suffix: `)`,
+      //   //   label: `${fieldLabel} Day of Week`,
+      //   //   result: common.FieldResultEnum.Number
+      //   // },
+      //   // {
+      //   //   id: `${fieldId}__day_of_year`,
+      //   //   prefix: `day_of_year(`,
+      //   //   suffix: `)`,
+      //   //   label: `${fieldLabel} Day of Year`,
+      //   //   result: common.FieldResultEnum.Number
+      //   // }
+      // ];
+
+      // let groupFieldNodes = [
+      //   ...fieldParts.map(part => {
+      //     let fieldNode: common.ModelNode = {
+      //       id: part.id,
+      //       label: part.label,
+      //       description: undefined,
+      //       hidden: false,
+      //       required: false,
+      //       isField: true,
+      //       children: [],
+      //       fieldFileName: fileName,
+      //       fieldFilePath: filePath,
+      //       fieldResult: result,
+      //       fieldLineNum: 0,
+      //       nodeClass: fieldClass
+      //     };
+
+      //     return fieldNode;
+      //   })
+      // ];
+
+      let newGroupNode: common.ModelNode = {
+        id: `${alias}.${fieldTimeGroupValue}`,
+        label: fieldTimeGroupValue,
+        description: undefined,
+        hidden: false,
+        required: false,
+        isField: false,
+        // children: groupFieldNodes,
+        children: [fieldNode],
+        nodeClass: common.FieldClassEnum.Dimension
+      };
+
+      topNode.children.push(newGroupNode);
+
+      // modelFields = fieldParts.map(fieldPart => {
+      //   let modelField: common.ModelField = {
+      //     id: fieldPart.id,
+      //     malloyFieldName: fieldItem.field.name,
+      //     malloyFieldPath: fieldItem.path,
+      //     // malloyTimeframe: fieldPart.malloyTimeframe,
+      //     // malloyFieldPrefix: fieldPart.prefix,
+      //     // malloyFieldSuffix: fieldPart.suffix,
+      //     hidden: false,
+      //     required: false,
+      //     maxFractions: undefined,
+      //     label: fieldPart.label,
+      //     fieldClass: common.FieldClassEnum.Dimension,
+      //     result: fieldPart.result,
+      //     formatNumber: undefined,
+      //     currencyPrefix: undefined,
+      //     currencySuffix: undefined,
+      //     sqlName: fieldSqlName,
+      //     topId: topNode.id,
+      //     topLabel: topNode.label,
+      //     description: undefined,
+      //     type: undefined,
+      //     groupId: fieldTimeGroupValue,
+      //     groupLabel: fieldTimeGroupValue,
+      //     groupDescription: undefined,
+      //     suggestModelDimension: undefined,
+      //     detail: undefined
+      //   };
+
+      //   return modelField;
+      // });
+    }
+  } else {
+    topNode.children.push(fieldNode);
+  }
 
   let modelField: common.ModelField = {
     id: fieldId,
+    malloyFieldName: fieldItem.field.name,
+    malloyFieldPath: fieldItem.path,
     hidden: false,
     required: false,
     maxFractions: undefined,
@@ -76,54 +237,6 @@ export function wrapFieldItem(item: {
     suggestModelDimension: undefined,
     detail: undefined
   };
-
-  // wrappedFields.push(modelField);
-
-  let fieldNode: common.ModelNode = {
-    id: fieldId,
-    label: fieldLabel,
-    description: undefined,
-    hidden: false,
-    required: false,
-    isField: true,
-    children: [],
-    fieldFileName: fileName,
-    fieldFilePath: filePath,
-    fieldResult: result,
-    fieldLineNum: 0,
-    nodeClass: fieldClass
-  };
-
-  // if (common.isDefined(field.groupId)) {
-  //   let groupNode = topNode.children.find(c =>
-  //     isStoreModel === true
-  //       ? c.id === `${field.groupId}`
-  //       : c.id === `${alias}.${field.groupId}`
-  //   );
-
-  //   if (common.isDefined(groupNode)) {
-  //     groupNode.children.push(fieldNode);
-  //   } else {
-  //     let newGroupNode: common.ModelNode = {
-  //       id:
-  //         isStoreModel === true
-  //           ? `${field.groupId}`
-  //           : `${alias}.${field.groupId}`,
-  //       label: field.group_label,
-  //       description: field.group_description,
-  //       hidden: fieldHidden,
-  //       required: false,
-  //       isField: false,
-  //       children: [fieldNode],
-  //       nodeClass: common.FieldClassEnum.Dimension
-  //     };
-
-  //     topNode.children.push(newGroupNode);
-  //   }
-  // } else {
-  // add field without grouping
-  topNode.children.push(fieldNode);
-  // }
 
   return modelField;
 }
