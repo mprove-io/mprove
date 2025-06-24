@@ -1,11 +1,14 @@
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
   IsNumber,
   IsOptional,
-  IsString
+  IsString,
+  ValidateNested
 } from 'class-validator';
 import { enums } from '~common/barrels/enums';
+import { KeyValuePair } from './key-value-pair';
 
 export class ModelField {
   @IsString()
@@ -18,6 +21,24 @@ export class ModelField {
   @IsOptional()
   @IsString({ each: true })
   malloyFieldPath?: string[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => KeyValuePair)
+  malloyTags?: KeyValuePair[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => KeyValuePair)
+  mproveTags?: KeyValuePair[];
+
+  @IsOptional()
+  @IsString({ each: true })
+  malloyFlags?: string[];
+
+  @IsOptional()
+  @IsString({ each: true })
+  mproveFlags?: string[];
 
   @IsBoolean()
   hidden: boolean;

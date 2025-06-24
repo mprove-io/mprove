@@ -29,4 +29,4 @@ export * from './to-yaml';
 export * from './transform-error-message';
 export * from './replace-chart-field';
 export * from './sort-fields-on-select-change';
-export * from './parse-mprove-tags';
+export * from './parse-tags-and-flags';

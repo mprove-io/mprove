@@ -256,6 +256,24 @@ export class DataService {
                                 ? common.TimeSpecEnum.Years
                                 : undefined;
 
+          let isCurrencyFlag = field.malloyFlags.indexOf('currency') > -1;
+
+          let numberTag = field.malloyTags.find(tag => tag.key === 'number');
+
+          let currencyTag = field.malloyTags.find(
+            tag => tag.key === 'currency'
+          );
+
+          let currencyPrefix =
+            field.malloyFlags.indexOf('currency') > -1 ||
+            currencyTag?.value === 'usd'
+              ? '$'
+              : currencyTag?.value === 'euro'
+                ? '€'
+                : currencyTag?.value === 'pound'
+                  ? '£'
+                  : '';
+
           let cell: QCell = {
             id: key.toLowerCase(),
             value:
@@ -274,13 +292,49 @@ export class DataService {
                         : this.getTimeSpecByFieldSqlName(sqlName),
                     unixTimeZoned: isStore === true ? tsValue : tsValue / 1000
                   })
-                : this.formatValue({
-                    value: value,
-                    formatNumber: field?.formatNumber,
-                    fieldResult: field?.result,
-                    currencyPrefix: field?.currencyPrefix,
-                    currencySuffix: field?.currencySuffix
-                  })
+                : mconfig.modelType === common.ModelTypeEnum.Malloy &&
+                    field.malloyFlags.indexOf('percent') > -1
+                  ? this.formatValue({
+                      value: value,
+                      formatNumber: '.2%',
+                      fieldResult: field?.result,
+                      currencyPrefix: '',
+                      currencySuffix: ''
+                    })
+                  : mconfig.modelType === common.ModelTypeEnum.Malloy &&
+                      (field.malloyFlags.indexOf('currency') > -1 ||
+                        common.isDefined(currencyTag))
+                    ? this.formatValue({
+                        value: value,
+                        formatNumber: '$,.2f',
+                        fieldResult: field?.result,
+                        currencyPrefix: currencyPrefix,
+                        currencySuffix: ''
+                      })
+                    : mconfig.modelType === common.ModelTypeEnum.Malloy &&
+                        common.isDefined(numberTag)
+                      ? this.formatValue({
+                          value: value,
+                          formatNumber: ',.3f',
+                          fieldResult: field?.result,
+                          currencyPrefix: currencyPrefix,
+                          currencySuffix: ''
+                        })
+                      : mconfig.modelType === common.ModelTypeEnum.Malloy
+                        ? this.formatValue({
+                            value: value,
+                            formatNumber: ',.3f',
+                            fieldResult: field?.result,
+                            currencyPrefix: currencyPrefix,
+                            currencySuffix: ''
+                          })
+                        : this.formatValue({
+                            value: value,
+                            formatNumber: field?.formatNumber,
+                            fieldResult: field?.result,
+                            currencyPrefix: field?.currencyPrefix,
+                            currencySuffix: field?.currencySuffix
+                          })
           };
 
           r[sqlName] = cell;

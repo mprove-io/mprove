@@ -1,7 +1,7 @@
 import { AtomicType } from '@malloydata/malloy-interfaces';
 import { common } from '~blockml/barrels/common';
 import { FieldItem } from '~blockml/functions/source-to-field-items';
-import { parseMproveTags } from '~common/_index';
+import { parseTagsAndFlags } from '~common/_index';
 
 export function wrapFieldItem(item: {
   topNode: common.ModelNode;
@@ -17,6 +17,11 @@ export function wrapFieldItem(item: {
   let typeKind = ((fieldItem.field as any).type as AtomicType).kind;
 
   // if (typeKind === 'timestamp_type') {
+  //   console.log('fieldItem');
+  //   console.dir(fieldItem, { depth: null });
+  // }
+
+  // if (fieldItem.field.name === 'profit_margin') {
   //   console.log('fieldItem');
   //   console.dir(fieldItem, { depth: null });
   // }
@@ -60,11 +65,9 @@ export function wrapFieldItem(item: {
 
   let fieldSqlName = fieldItem.field.name;
 
-  let mproveTags = common.isDefined(fieldItem.field.annotations)
-    ? parseMproveTags({
-        inputs: fieldItem.field.annotations.map(x => x.value)
-      })
-    : [];
+  let { malloyTags, mproveTags, mproveFlags, malloyFlags } = parseTagsAndFlags({
+    inputs: fieldItem.field.annotations?.map(x => x.value) || []
+  });
 
   let fieldNode: common.ModelNode = {
     id: fieldId,
@@ -221,6 +224,10 @@ export function wrapFieldItem(item: {
     id: fieldId,
     malloyFieldName: fieldItem.field.name,
     malloyFieldPath: fieldItem.path,
+    malloyTags: malloyTags,
+    mproveTags: mproveTags,
+    malloyFlags: malloyFlags,
+    mproveFlags: mproveFlags,
     hidden: false,
     required: false,
     maxFractions: undefined,
