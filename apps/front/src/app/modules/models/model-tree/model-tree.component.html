@@ -161,7 +161,10 @@
 
                     <span
                       class="truncate text-base font-semibold"
-                      *ngIf="node.data.nodeClass !== nodeClassInfo"
+                      *ngIf="
+                        node.data.nodeClass !== nodeClassInfo &&
+                        model.type !== modelTypeMalloy
+                      "
                     >
                       {{ node.data.timeLabel | capitalize }}
                     </span>

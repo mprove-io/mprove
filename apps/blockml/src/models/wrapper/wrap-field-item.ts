@@ -51,7 +51,11 @@ export function wrapFieldItem(item: {
 
   let fieldLabel = fieldItem.field.name
     .split('_')
-    .map(k => common.capitalizeFirstLetter(k))
+    .map(k =>
+      common.NO_CAPITALIZE_LIST.indexOf(k) < 0
+        ? common.capitalizeFirstLetter(k)
+        : k
+    )
     .join(' ');
 
   let fieldSqlName = fieldItem.field.name;

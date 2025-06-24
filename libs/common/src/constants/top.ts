@@ -49,6 +49,43 @@ export const TRIPLE_UNDERSCORE = '___';
 export const QUAD_UNDERSCORE = '____';
 
 export const MPROVE_TAG_FIELD_GROUP = 'field_group';
+export const NO_CAPITALIZE_LIST = [
+  // Articles
+  'a',
+  'an',
+  'the',
+
+  // Coordinating Conjunctions
+  'and',
+  'but',
+  'or',
+  'nor',
+  'for',
+  'so',
+  'yet',
+
+  // Common Short Prepositions (≤4 letters, per APA/MLA style)
+  'as',
+  'at',
+  'by',
+  'for',
+  'from',
+  'in',
+  'into',
+  'like',
+  'near',
+  'of',
+  'off',
+  'on',
+  'onto',
+  'out',
+  'over',
+  'per',
+  'to',
+  'up',
+  'via',
+  'with'
+];
 
 export const SOME_ROWS_HAVE_FORMULA_ERRORS = 'Some rows have formula errors';
 

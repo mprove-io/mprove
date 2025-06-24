@@ -51,6 +51,8 @@ export class ModelTreeComponent implements AfterViewInit {
   modelTreeLevelsNestedFlatTime = common.ModelTreeLevelsEnum.NestedFlatTime;
   modelTreeLevelsNested = common.ModelTreeLevelsEnum.Nested;
 
+  modelTypeMalloy = common.ModelTypeEnum.Malloy;
+
   nodesExtra: ModelNodeExtra[] = [];
 
   @Output()
