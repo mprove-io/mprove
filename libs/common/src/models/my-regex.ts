@@ -54,6 +54,12 @@ export class MyRegex {
     return cloneRegexp(/^<<<<<<</);
   }
 
+  static CAPTURE_MPROVE_MODELS(): RegExp {
+    return cloneRegexp(
+      /(?<=^|\n)#\(mprove\)\s+.*\bmodel\b.*\n\s*source:\s+(\w+)\s+is/g
+    );
+  }
+
   static replaceSlashesWithUnderscores(input: string): string {
     return input.split('/').join('___');
   }

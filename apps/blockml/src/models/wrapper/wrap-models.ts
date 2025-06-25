@@ -23,7 +23,7 @@ export function wrapModels(item: {
         ? common.ModelTypeEnum.SQL
         : x.fileExt === common.FileExtensionEnum.Store
           ? common.ModelTypeEnum.Store
-          : x.fileExt === common.FileExtensionEnum.Mod
+          : x.fileExt === common.FileExtensionEnum.Malloy
             ? common.ModelTypeEnum.Malloy
             : undefined;
 

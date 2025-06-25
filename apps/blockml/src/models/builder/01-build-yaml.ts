@@ -52,7 +52,6 @@ export function buildYaml(
           [
             common.FileExtensionEnum.View,
             common.FileExtensionEnum.Model,
-            common.FileExtensionEnum.Mod,
             common.FileExtensionEnum.Store,
             common.FileExtensionEnum.Report,
             common.FileExtensionEnum.Dashboard,

@@ -141,37 +141,6 @@ export function checkTopUnknownParameters(
             break;
           }
 
-          case common.FileExtensionEnum.Mod: {
-            if (
-              [
-                common.ParameterEnum.Mod.toString(),
-                common.ParameterEnum.Label.toString(),
-                common.ParameterEnum.Source.toString(),
-                // common.ParameterEnum.Description.toString(),
-                common.ParameterEnum.Location.toString(),
-                common.ParameterEnum.AccessRoles.toString()
-              ].indexOf(parameter) < 0
-            ) {
-              item.errors.push(
-                new BmError({
-                  title: common.ErTitleEnum.UNKNOWN_MOD_PARAMETER,
-                  message:
-                    `parameter "${parameter}" cannot be used on top level of ` +
-                    `${common.FileExtensionEnum.Mod} file`,
-                  lines: [
-                    {
-                      line: file[parameter + constants.LINE_NUM],
-                      name: file.name,
-                      path: file.path
-                    }
-                  ]
-                })
-              );
-              return;
-            }
-            break;
-          }
-
           case common.FileExtensionEnum.Store: {
             if (
               [

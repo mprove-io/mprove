@@ -1,6 +1,6 @@
-import '../mods/c2/ec1_m2_order_items.malloy';
+import '../mods/c2/ec2_order_items.malloy';
 
-query: mc2 is ec1_m2_order_items -> {
+query: mc2 is ec2_order_items -> {
   group_by: users___state is users.state
   aggregate: orsers___orders_count is orders.orders_count
   limit: 10

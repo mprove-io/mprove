@@ -144,45 +144,6 @@ export function splitFiles(
         break;
       }
 
-      case common.FileExtensionEnum.Mod: {
-        if (file.name === file.mod + common.FileExtensionEnum.Mod) {
-          let label: string = file.label ? file.label : file.mod;
-          let labelLineNum: number = file.label_line_num
-            ? file.label_line_num
-            : 0;
-
-          delete file.ext;
-          delete file.name;
-          delete file.path;
-
-          let newModOptions: common.FileMod = {
-            name: file.mod,
-            fileName: fileName,
-            filePath: filePath,
-            fileExt: fileExt,
-            label: label,
-            label_line_num: labelLineNum
-          };
-
-          mods.push(Object.assign(file, newModOptions));
-        } else {
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.WRONG_MOD_NAME,
-              message: `filename ${file.name} does not match "mod: ${file.mod}"`,
-              lines: [
-                {
-                  line: file.mod_line_num,
-                  name: file.name,
-                  path: file.path
-                }
-              ]
-            })
-          );
-        }
-        break;
-      }
-
       case common.FileExtensionEnum.Store: {
         if (file.name === file.store + common.FileExtensionEnum.Store) {
           let label: string = file.label ? file.label : file.store;

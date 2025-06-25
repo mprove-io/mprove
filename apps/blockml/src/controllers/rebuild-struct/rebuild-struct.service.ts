@@ -250,7 +250,8 @@ export class RebuildStructService {
 
     let errors: BmError[] = [];
 
-    let mods: common.FileMod[];
+    let mods: common.FileMod[] = [];
+
     let views: common.FileView[];
     let models: common.FileModel[];
     let stores: common.FileStore[];
@@ -273,7 +274,6 @@ export class RebuildStructService {
     );
 
     models = yamlBuildItem.models;
-    mods = yamlBuildItem.mods;
     stores = yamlBuildItem.stores;
     dashboards = yamlBuildItem.dashboards;
     reports = yamlBuildItem.reports;
@@ -324,6 +324,9 @@ export class RebuildStructService {
 
     let malloyFiles = item.files.filter(y => y.name.endsWith('.malloy'));
 
+    // console.log('malloyFiles');
+    // console.log(malloyFiles);
+
     let paths: string[] = [];
 
     await forEachSeries(malloyFiles, async file => {
@@ -337,6 +340,34 @@ export class RebuildStructService {
 
       await fse.ensureDir(path.dirname(file.blockmlPath));
       await fse.writeFile(file.blockmlPath, file.content);
+
+      let reg = common.MyRegex.CAPTURE_MPROVE_MODELS();
+      let r;
+
+      let captures: string[] = [];
+
+      while ((r = reg.exec(file.content))) {
+        captures.push(r[1]);
+      }
+
+      captures.forEach(sourceName => {
+        let ar = file.name.split('.');
+        let ext = ar[ar.length - 1];
+
+        let mod: common.FileMod = {
+          fileName: file.name,
+          fileExt: `.${ext}` as common.FileExtensionEnum, // malloy
+          filePath: relativePath.split('/').join(common.TRIPLE_UNDERSCORE),
+          name: sourceName,
+          // mod: sourceName,
+          location: relativePath,
+          blockmlPath: file.blockmlPath,
+          source: sourceName,
+          label: sourceName
+        };
+
+        mods.push(mod);
+      });
     });
 
     // let mainContent = paths.map(path => `import './${path}';`).join('\n');
@@ -361,6 +392,9 @@ export class RebuildStructService {
       });
 
     // let startBuildModStart = Date.now();
+
+    console.log('mods');
+    console.log(mods);
 
     let buildModStartResult = await barBuilder.buildModStart(
       {

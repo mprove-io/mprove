@@ -1,7 +1,7 @@
 export enum FileExtensionEnum {
   View = '.view',
   Model = '.model',
-  Mod = '.mod',
+  Malloy = '.malloy',
   Store = '.store',
   Report = '.report',
   Dashboard = '.dashboard',
