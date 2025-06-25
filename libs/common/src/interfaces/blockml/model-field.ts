@@ -18,6 +18,8 @@ export class ModelField {
   @IsString()
   malloyFieldName?: string;
 
+  // fieldItem -> annotations duration.terse
+
   @IsOptional()
   @IsString({ each: true })
   malloyFieldPath?: string[];

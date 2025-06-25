@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FieldBase } from '@malloydata/malloy/dist/model';
 import { formatLocale } from 'd3-format';
 import { SeriesOption } from 'echarts';
+import { format } from 'ssf';
 import { NO_FIELDS_SELECTED, capitalizeFirstLetter } from '~common/_index';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
@@ -76,11 +77,107 @@ export class DataService {
     return y;
   }
 
-  // private convertToNumberOrZero(x: any) {
-  //   let xNum = common.isDefined(x) ? Number(x) : 0;
-  //   let y = Number.isNaN(xNum) === false ? xNum : 0;
-  //   return y;
-  // }
+  // from malloy
+  private formatTimeUnit(
+    value: number,
+    unit: string,
+    options: { numFormat?: string; terse?: boolean } = {},
+    thousandsSeparator: string
+  ) {
+    let terseDurationUnitsMap = new Map<string, string>([
+      ['nanoseconds', 'ns'],
+      ['microseconds', 'µs'],
+      ['milliseconds', 'ms'],
+      ['seconds', 's'],
+      ['minutes', 'm'],
+      ['hours', 'h'],
+      ['days', 'd']
+    ]);
+
+    let unitString = unit.toString();
+
+    if (options.terse) {
+      unitString = terseDurationUnitsMap.get(unit) ?? unitString;
+    } else if (value === 1) {
+      unitString = unitString.substring(0, unitString.length - 1);
+    }
+
+    let formattedValue = options.numFormat
+      ? format(options.numFormat, value)
+      : Number(value).toLocaleString().split(',').join(thousandsSeparator);
+
+    return `${formattedValue}${options.terse ? '' : ' '}${unitString}`;
+  }
+
+  // from malloy
+  private getText(item: {
+    terse: boolean;
+    numFormat: string;
+    value: number;
+    options: {
+      durationUnit?: string;
+    };
+    thousandsSeparator: string;
+  }): string | null {
+    let { terse, numFormat, value, options, thousandsSeparator } = item;
+
+    const multiplierMap = new Map<string, number>([
+      ['nanoseconds', 1000],
+      ['microseconds', 1000],
+      ['milliseconds', 1000],
+      ['seconds', 60],
+      ['minutes', 60],
+      ['hours', 24],
+      ['days', Number.MAX_VALUE]
+    ]);
+
+    let targetUnit = options.durationUnit;
+
+    let currentDuration = value;
+    let currentUnitValue = 0;
+    let durationParts: string[] = [];
+    let foundUnit = false;
+
+    for (const [unit, multiplier] of multiplierMap) {
+      if (unit === targetUnit) {
+        foundUnit = true;
+      }
+
+      if (!foundUnit) {
+        continue;
+      }
+
+      currentUnitValue = currentDuration % multiplier;
+      currentDuration = Math.floor((currentDuration /= multiplier));
+
+      if (currentUnitValue > 0) {
+        durationParts = [
+          this.formatTimeUnit(
+            currentUnitValue,
+            unit,
+            { numFormat, terse },
+            thousandsSeparator
+          ),
+          ...durationParts
+        ];
+      }
+
+      if (currentDuration === 0) {
+        break;
+      }
+    }
+
+    if (durationParts.length > 0) {
+      return durationParts.slice(0, 2).join(' ');
+    }
+
+    return this.formatTimeUnit(
+      0,
+      targetUnit,
+      { numFormat, terse },
+      thousandsSeparator
+    );
+  }
 
   formatValue(item: {
     value: any;
@@ -256,23 +353,44 @@ export class DataService {
                                 ? common.TimeSpecEnum.Years
                                 : undefined;
 
-          let isCurrencyFlag = field.malloyFlags.indexOf('currency') > -1;
+          let malloyNumberTag = field.malloyTags?.find(
+            tag => tag.key === 'number'
+          );
 
-          let numberTag = field.malloyTags.find(tag => tag.key === 'number');
-
-          let currencyTag = field.malloyTags.find(
+          let malloyCurrencyTag = field.malloyTags?.find(
             tag => tag.key === 'currency'
           );
 
-          let currencyPrefix =
-            field.malloyFlags.indexOf('currency') > -1 ||
-            currencyTag?.value === 'usd'
+          let malloyCurrencySymbol =
+            field.malloyFlags?.indexOf('currency') > -1 ||
+            malloyCurrencyTag?.value === 'usd'
               ? '$'
-              : currencyTag?.value === 'euro'
+              : malloyCurrencyTag?.value === 'euro'
                 ? '€'
-                : currencyTag?.value === 'pound'
+                : malloyCurrencyTag?.value === 'pound'
                   ? '£'
                   : '';
+
+          let malloyDurationTag = field.malloyTags?.find(
+            tag => tag.key === 'duration'
+          );
+
+          let malloyDurationUnit =
+            field.malloyFlags?.indexOf('duration') > -1
+              ? 'seconds'
+              : [
+                    'nanoseconds',
+                    'microseconds',
+                    'milliseconds',
+                    'seconds',
+                    'minutes',
+                    'hours',
+                    'days'
+                  ].indexOf(malloyDurationTag?.value) > -1
+                ? malloyDurationTag.value
+                : 'seconds';
+
+          let thousandsSeparator = ' '; // TODO: thousandsSeparator
 
           let cell: QCell = {
             id: key.toLowerCase(),
@@ -292,49 +410,53 @@ export class DataService {
                         : this.getTimeSpecByFieldSqlName(sqlName),
                     unixTimeZoned: isStore === true ? tsValue : tsValue / 1000
                   })
-                : mconfig.modelType === common.ModelTypeEnum.Malloy &&
-                    field.malloyFlags.indexOf('percent') > -1
-                  ? this.formatValue({
-                      value: value,
-                      formatNumber: '.2%',
-                      fieldResult: field?.result,
-                      currencyPrefix: '',
-                      currencySuffix: ''
-                    })
-                  : mconfig.modelType === common.ModelTypeEnum.Malloy &&
-                      (field.malloyFlags.indexOf('currency') > -1 ||
-                        common.isDefined(currencyTag))
-                    ? this.formatValue({
-                        value: value,
-                        formatNumber: '$,.2f',
-                        fieldResult: field?.result,
-                        currencyPrefix: currencyPrefix,
-                        currencySuffix: ''
-                      })
-                    : mconfig.modelType === common.ModelTypeEnum.Malloy &&
-                        common.isDefined(numberTag)
-                      ? this.formatValue({
-                          value: value,
-                          formatNumber: ',.3f',
-                          fieldResult: field?.result,
-                          currencyPrefix: currencyPrefix,
-                          currencySuffix: ''
-                        })
-                      : mconfig.modelType === common.ModelTypeEnum.Malloy
-                        ? this.formatValue({
-                            value: value,
-                            formatNumber: ',.3f',
-                            fieldResult: field?.result,
-                            currencyPrefix: currencyPrefix,
-                            currencySuffix: ''
-                          })
-                        : this.formatValue({
-                            value: value,
-                            formatNumber: field?.formatNumber,
-                            fieldResult: field?.result,
-                            currencyPrefix: field?.currencyPrefix,
-                            currencySuffix: field?.currencySuffix
-                          })
+                : field.result === common.FieldResultEnum.Number &&
+                    mconfig.modelType === common.ModelTypeEnum.Malloy &&
+                    (field.malloyFlags.indexOf('duration') > -1 ||
+                      common.isDefined(malloyDurationTag))
+                  ? (this.getText({
+                      value: Number(value),
+                      options: {
+                        durationUnit: malloyDurationUnit
+                      },
+                      terse: field.malloyFlags.indexOf('terse') > -1,
+                      numFormat: malloyNumberTag?.value, // if null - add ?? "#,##0,",
+                      thousandsSeparator: thousandsSeparator
+                    }) ??
+                    Number(value)
+                      .toLocaleString()
+                      .split(',')
+                      .join(thousandsSeparator))
+                  : field.result === common.FieldResultEnum.Number &&
+                      mconfig.modelType === common.ModelTypeEnum.Malloy &&
+                      field.malloyFlags.indexOf('percent') > -1
+                    ? format(`#${thousandsSeparator}##0.00%`, value)
+                    : field.result === common.FieldResultEnum.Number &&
+                        mconfig.modelType === common.ModelTypeEnum.Malloy &&
+                        (field.malloyFlags.indexOf('currency') > -1 ||
+                          common.isDefined(malloyCurrencyTag))
+                      ? format(
+                          `${malloyCurrencySymbol}#${thousandsSeparator}##0.00`,
+                          value
+                        )
+                      : field.result === common.FieldResultEnum.Number &&
+                          mconfig.modelType === common.ModelTypeEnum.Malloy &&
+                          common.isDefined(malloyNumberTag)
+                        ? format(malloyNumberTag.value, value)
+                        : field.result === common.FieldResultEnum.Number &&
+                            mconfig.modelType === common.ModelTypeEnum.Malloy
+                          ? // format(`#${thousandsSeparator}##0.###`, value)
+                            Number(value)
+                              .toLocaleString()
+                              .split(',')
+                              .join(thousandsSeparator)
+                          : this.formatValue({
+                              value: value,
+                              formatNumber: field?.formatNumber,
+                              fieldResult: field?.result,
+                              currencyPrefix: field?.currencyPrefix,
+                              currencySuffix: field?.currencySuffix
+                            })
           };
 
           r[sqlName] = cell;

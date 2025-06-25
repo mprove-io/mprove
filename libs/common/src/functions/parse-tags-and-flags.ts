@@ -17,6 +17,9 @@ export function parseTagsAndFlags(item: {
   let malloyTags: KeyValuePair[] = [];
   let malloyFlags: string[] = [];
 
+  // Regex to match key-value pairs (quoted or unquoted) and flags
+  const tokenRegex = /(\w+)=(?:"([^"]*)"|\S+)|(\w+)/g;
+
   inputs.forEach(input => {
     let mproveMatch = input.match(/#\(mprove\)\s/);
     let malloyMatch = input.match(/#\s/);
@@ -25,38 +28,36 @@ export function parseTagsAndFlags(item: {
       let content = input
         .slice(mproveMatch.index + mproveMatch[0].length)
         .trim();
-      let tokens = content.split(/\s+/);
 
-      tokens.forEach(token => {
-        let pairMatch = token.match(/(\w+)=(?:"([^"]*)"|(\S+))/);
-
-        if (pairMatch) {
-          let key = pairMatch[1];
-          let value = pairMatch[2] !== undefined ? pairMatch[2] : pairMatch[3];
+      let matches = content.matchAll(tokenRegex);
+      for (let match of matches) {
+        if (match[1] && (match[2] !== undefined || match[3])) {
+          // Key-value pair
+          let key = match[1];
+          let value = match[2] !== undefined ? match[2] : match[3];
           mproveTags.push({ key, value });
-        } else {
-          let flagMatch = token.match(/^\w+$/);
-          if (flagMatch) {
-            mproveFlags.push(token);
-          }
+        } else if (match[3]) {
+          // Flag
+          mproveFlags.push(match[3]);
         }
-      });
+      }
     } else if (malloyMatch) {
-      let tokens = input.trim().split(/\s+/);
+      let content = input
+        .slice(malloyMatch.index + malloyMatch[0].length)
+        .trim();
 
-      tokens.forEach(token => {
-        let pairMatch = token.match(/(\w+)=(?:"([^"]*)"|(\S+))/);
-        if (pairMatch) {
-          let key = pairMatch[1];
-          let value = pairMatch[2] !== undefined ? pairMatch[2] : pairMatch[3];
+      let matches = content.matchAll(tokenRegex);
+      for (let match of matches) {
+        if (match[1] && (match[2] !== undefined || match[3])) {
+          // Key-value pair
+          let key = match[1];
+          let value = match[2] !== undefined ? match[2] : match[3];
           malloyTags.push({ key, value });
-        } else {
-          let flagMatch = token.match(/^\w+$/);
-          if (flagMatch) {
-            malloyFlags.push(token);
-          }
+        } else if (match[3]) {
+          // Flag
+          malloyFlags.push(match[3]);
         }
-      });
+      }
     }
   });
 
