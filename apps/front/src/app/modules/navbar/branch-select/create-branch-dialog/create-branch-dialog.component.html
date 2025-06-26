@@ -72,6 +72,7 @@
     <div class="mt-6 text-base font-semibold">Source branch</div>
     <ng-select
       #createBranchSelect
+      [fixNgSelectBottom]="createBranchSelect"
       data-cy="createBranchSelect"
       class="mt-2 w-96 text-base"
       [items]="branchesList"

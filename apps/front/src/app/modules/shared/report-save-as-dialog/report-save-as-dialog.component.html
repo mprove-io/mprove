@@ -73,6 +73,7 @@
       </div>
 
       <ng-select
+        [fixNgSelectBottom]="reportSaveAsDialogExistingReportSelect"
         #reportSaveAsDialogExistingReportSelect
         data-cy="reportSaveAsDialogExistingReportSelect"
         *ngIf="!!reports && saveAs === reportSaveAsEnum.REPLACE_EXISTING_REPORT"

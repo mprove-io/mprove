@@ -87,6 +87,7 @@
           >
             <ng-select
               #fieldSelect
+              [fixNgSelectBottom]="fieldSelect"
               data-cy="fieldSelect"
               class="w-96 text-base"
               [items]="tile.modelFields[dashboardField.id]"

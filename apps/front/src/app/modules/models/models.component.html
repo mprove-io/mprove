@@ -207,6 +207,7 @@
                 <form [formGroup]="refreshForm">
                   <ng-select
                     #refreshSelect
+                    [fixNgSelectBottom]="refreshSelect"
                     data-cy="refreshSelect"
                     class="popup-55 w-[100px]"
                     [items]="refreshList"
@@ -353,6 +354,7 @@
               <form class="w-full" [formGroup]="modelForm">
                 <ng-select
                   #modelsModelSelect
+                  [fixNgSelectBottom]="modelsModelSelect"
                   data-cy="modelsModelSelect"
                   class="model-select w-full text-base"
                   [items]="models"
@@ -934,6 +936,7 @@
                   >
                     <ng-select
                       #chartTypeSelect
+                      [fixNgSelectBottom]="chartTypeSelect"
                       data-cy="mainChartTypeSelect"
                       class="main-chart-type-select w-[220px] text-base focus:outline-none"
                       [items]="chartTypesList"
@@ -1135,6 +1138,7 @@
 
                             <ng-select
                               #filterBySelect
+                              [fixNgSelectBottom]="filterBySelect"
                               data-cy="filterBySelect"
                               class="charts-add-parameter-select w-full min-w-[2px] text-base"
                               [items]="sortedNotHiddenFieldsList"
@@ -1343,6 +1347,7 @@
                     >
                       <ng-select
                         #modelTimezoneSelect
+                        [fixNgSelectBottom]="modelTimezoneSelect"
                         data-cy="modelTimezoneSelect"
                         class="w-full text-base"
                         [items]="timezones"
@@ -1406,6 +1411,7 @@
                   >
                     <ng-select
                       #queryPartSelect
+                      [fixNgSelectBottom]="queryPartSelect"
                       data-cy="queryPartSelect"
                       class="w-[250px] flex-shrink-0 text-base focus:outline-none"
                       [items]="

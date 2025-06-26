@@ -112,6 +112,7 @@ import { MainTableComponent } from './main-table/main-table.component';
 import { MetricFieldLabelComponent } from './metric-field-label/metric-field-label.component';
 import { CapitalizeWordsPipe } from './pipes/capitalize-words.pipe';
 import { CapitalizePipe } from './pipes/capitalize.pipe';
+import { FixNgSelectDirective } from './pipes/fix-ng-select.directive';
 import { GoFromFileExtPipe } from './pipes/go-from-file-ext.pipe';
 import { HideColumnsPipe } from './pipes/hide-columns.pipe';
 import { MproveDirPipe } from './pipes/mprove-dir.pipe';
@@ -137,6 +138,8 @@ let pipesArray = [
   ResultPipe,
   PrettyJsonPipe
 ];
+
+let directivesArray = [FixNgSelectDirective];
 
 let sharedComponents = [
   LogoComponent,
@@ -255,7 +258,7 @@ let sharedComponents = [
 ];
 
 @NgModule({
-  declarations: [...sharedComponents, ...pipesArray],
+  declarations: [...sharedComponents, ...pipesArray, ...directivesArray],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -271,7 +274,7 @@ let sharedComponents = [
       echarts: () => import('echarts')
     })
   ],
-  exports: [...sharedComponents, ...pipesArray],
+  exports: [...sharedComponents, ...pipesArray, ...directivesArray],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {}

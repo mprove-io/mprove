@@ -106,6 +106,7 @@
     <form [formGroup]="xFieldForm" class="ml-5 min-w-[2px] flex-grow">
       <ng-select
         #xFieldSelect
+        [fixNgSelectBottom]="xFieldSelect"
         data-cy="xFieldSelect"
         class="text-base"
         [items]="
@@ -174,6 +175,7 @@
     <form [formGroup]="sizeFieldForm" class="ml-5 min-w-[2px] flex-grow">
       <ng-select
         #sizeFieldSelect
+        [fixNgSelectBottom]="sizeFieldSelect"
         data-cy="sizeFieldSelect"
         class="text-base"
         [items]="numbersDimensionsMeasuresCalculationsPlusEmpty"
@@ -249,6 +251,7 @@
     >
       <ng-select
         #multiFieldSelect
+        [fixNgSelectBottom]="multiFieldSelect"
         data-cy="multiFieldSelect"
         class="text-base"
         [items]="
@@ -328,6 +331,7 @@
     <form [formGroup]="yFieldForm" class="ml-5 min-w-[2px] flex-grow">
       <ng-select
         #yFieldSelect
+        [fixNgSelectBottom]="yFieldSelect"
         data-cy="yFieldSelect"
         class="text-base"
         [items]="numbersMeasuresAndCalculations"
@@ -578,6 +582,7 @@
     <form [formGroup]="colorSchemeForm" class="ml-5 min-w-[2px] flex-grow">
       <ng-select
         #colorSchemeSelect
+        [fixNgSelectBottom]="colorSchemeSelect"
         data-cy="colorSchemeSelect"
         class="text-base"
         [items]="colorSchemesList"
@@ -619,6 +624,7 @@
     <form [formGroup]="schemeTypeForm" class="ml-5 min-w-[2px] flex-grow">
       <ng-select
         #schemeTypeSelect
+        [fixNgSelectBottom]="schemeTypeSelect"
         data-cy="schemeTypeSelect"
         class="text-base"
         [items]="schemeTypesList"
@@ -658,6 +664,7 @@
     <form [formGroup]="interpolationForm" class="ml-5 min-w-[2px] flex-grow">
       <ng-select
         #interpolationSelect
+        [fixNgSelectBottom]="interpolationSelect"
         data-cy="interpolationSelect"
         class="text-base"
         [items]="interpolationsList"
@@ -1651,8 +1658,9 @@
       [formGroup]="formatNumberDataLabelForm"
       class="ml-5 flex min-w-[2px] flex-grow flex-col items-start"
     >
-      <ng-select
-        #formatNumberDataLabelSelect
+    <ng-select
+        #formatNumberDataLabelSelect  
+        [fixNgSelectBottom]="formatNumberDataLabelSelect"
         data-cy="formatNumberDataLabelSelect"
         class="w-full text-base"
         [items]="formatNumberExamples"
@@ -1723,6 +1731,7 @@
     >
       <ng-select
         #formatNumberValueSelect
+        [fixNgSelectBottom]="formatNumberValueSelect"
         data-cy="formatNumberValueSelect"
         class="w-full text-base"
         [items]="formatNumberExamples"
@@ -1792,6 +1801,7 @@
     >
       <ng-select
         #formatNumberAxisTickSelect
+        [fixNgSelectBottom]="formatNumberAxisTickSelect"
         data-cy="formatNumberAxisTickSelect"
         class="w-full text-base"
         [items]="formatNumberExamples"
@@ -1863,6 +1873,7 @@
     >
       <ng-select
         #formatNumberXAxisTickSelect
+        [fixNgSelectBottom]="formatNumberXAxisTickSelect"
         data-cy="formatNumberXAxisTickSelect"
         class="w-full text-base"
         [items]="formatNumberExamples"
@@ -1932,6 +1943,7 @@
       class="ml-5 flex min-w-[2px] flex-grow flex-col items-start"
     >
       <ng-select
+        [fixNgSelectBottom]="formatNumberYAxisTickSelect"
         #formatNumberYAxisTickSelect
         data-cy="formatNumberYAxisTickSelect"
         class="w-full text-base"

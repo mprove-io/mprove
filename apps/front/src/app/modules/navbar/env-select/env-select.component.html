@@ -1,11 +1,15 @@
 <ng-select
+  #emptyEnvSelect
+  [fixNgSelectBottom]="emptyEnvSelect"
   *ngIf="showEmptySelector === true"
   class="w-[150px] text-base"
+  appendTo="body"
 ></ng-select>
 
 <ng-select
-  *ngIf="showEmptySelector === false"
   #envSelect
+  [fixNgSelectBottom]="envSelect"
+  *ngIf="showEmptySelector === false"
   data-cy="envSelect"
   class="w-[150px] text-base"
   (open)="openEnvSelect()"

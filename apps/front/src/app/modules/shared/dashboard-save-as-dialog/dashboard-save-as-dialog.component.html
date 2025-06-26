@@ -79,6 +79,7 @@
 
       <ng-select
         #dashboardSaveAsDialogExistingDashboardSelect
+        [fixNgSelectBottom]="dashboardSaveAsDialogExistingDashboardSelect"
         data-cy="dashboardSaveAsDialogExistingDashboardSelect"
         *ngIf="
           !!dashboards &&

@@ -87,6 +87,7 @@
       <form [formGroup]="seriesTypeForm" class="ml-5 min-w-[2px] flex-grow">
         <ng-select
           #seriesTypeSelect
+          [fixNgSelectBottom]="seriesTypeSelect"
           data-cy="seriesTypeSelect"
           class="chart-type-select w-[150px] text-base focus:outline-none"
           [items]="seriesTypesList"
@@ -140,6 +141,7 @@
 
       <form [formGroup]="yAxisIndexForm" class="ml-5 min-w-[2px] flex-grow">
         <ng-select
+          [fixNgSelectBottom]="yAxisIndexSelect"
           #yAxisIndexSelect
           data-cy="yAxisIndexSelect"
           class="chart-type-select w-[130px] text-base focus:outline-none"

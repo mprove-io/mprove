@@ -38,6 +38,7 @@
       <div class="flex flex-col">
         <ng-select
           #addConnectionDialogEnvSelect
+          [fixNgSelectBottom]="addConnectionDialogEnvSelect"
           data-cy="addConnectionDialogEnvSelect"
           class="w-[400px] text-base"
           (open)="openEnvSelect()"
@@ -75,6 +76,7 @@
       <div class="flex flex-col">
         <ng-select
           #addConnectionDialogTypeSelect
+          [fixNgSelectBottom]="addConnectionDialogTypeSelect"
           data-cy="addConnectionDialogTypeSelect"
           class="w-[400px] text-base"
           [items]="connectionTypes"

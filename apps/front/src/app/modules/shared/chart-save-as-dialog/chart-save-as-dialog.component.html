@@ -68,6 +68,7 @@
 
       <ng-select
         #chartSaveAsDialogDashboardSelect
+        [fixNgSelectBottom]="chartSaveAsDialogDashboardSelect"
         data-cy="chartSaveAsDialogDashboardSelect"
         *ngIf="
           !!dashboards && chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD
@@ -163,6 +164,7 @@
         >
         <ng-select
           #chartSaveAsDialogTileSelect
+          [fixNgSelectBottom]="chartSaveAsDialogTileSelect"
           data-cy="chartSaveAsDialogTileSelect"
           *ngIf="tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE"
           class="w-[500px] flex-shrink-0 text-base"

@@ -45,6 +45,7 @@
       <form [formGroup]="modelTypeForm">
         <ng-select
           #modelTypeSelect
+          [fixNgSelectBottom]="modelTypeSelect"
           data-cy="modelTypeSelect"
           class="w-72 text-base"
           [items]="modelTypesList"
@@ -104,6 +105,7 @@
       <form [formGroup]="storeModelForm" *ngIf="!!storeModelsLoaded">
         <ng-select
           #storeModelSelect
+          [fixNgSelectBottom]="storeModelSelect"
           data-cy="storeModelSelect"
           class="w-[500px] text-base"
           [loading]="storeModelsLoading"
@@ -150,6 +152,7 @@
       <form [formGroup]="storeFilterForForm">
         <ng-select
           #storeFilterForSelect
+          [fixNgSelectBottom]="storeFilterForSelect"
           data-cy="storeFilterForSelect"
           class="w-72 text-base"
           [items]="storeFilterForList"
@@ -212,6 +215,7 @@
       <form [formGroup]="storeFilterForm" *ngIf="!!selectedModelLoaded">
         <ng-select
           #storeFilterSelect
+          [fixNgSelectBottom]="storeFilterSelect"
           data-cy="storeFilterSelect"
           class="w-[500px] text-base"
           [loading]="selectedModelLoading"
@@ -284,6 +288,7 @@
               !!selectedModelLoaded
             "
             #typeSelect
+            [fixNgSelectBottom]="typeSelect"
             data-cy="resultSelect"
             class="w-72 text-base"
             [items]="
@@ -374,11 +379,12 @@
           class="min-w-[2px] max-w-[800px] flex-grow"
         >
           <ng-select
-            #reportSuggestFieldSelect
             *ngIf="
               !!suggestFieldsLoaded &&
               fieldResultForm.get('fieldResult').value === fieldResultString
             "
+            #reportSuggestFieldSelect
+            [fixNgSelectBottom]="reportSuggestFieldSelect"
             data-cy="reportSuggestFieldSelect"
             class="w-full min-w-[2px] text-base"
             [loading]="suggestFieldsLoading"

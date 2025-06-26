@@ -35,6 +35,7 @@
         <form [formGroup]="groupByFieldForm" class="w-full">
           <ng-select
             #groupMetricBySelect
+            [fixNgSelectBottom]="groupMetricBySelect"
             data-cy="groupMetricBySelect"
             class="group-metric-by-select w-full min-w-[2px] text-base"
             [items]="dimensionsPlusEmpty"

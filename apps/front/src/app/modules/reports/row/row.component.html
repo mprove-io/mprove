@@ -209,6 +209,7 @@
 
         <ng-select
           #newMetricSelect
+          [fixNgSelectBottom]="newMetricSelect"
           data-cy="newMetricSelect"
           class="new-metric-select w-full min-w-[2px] text-base"
           [items]="metrics"
@@ -329,6 +330,7 @@
         <form [formGroup]="formatNumberForm" class="relative flex">
           <ng-select
             #formatNumberSelect
+            [fixNgSelectBottom]="formatNumberSelect"
             data-cy="formatNumberSelect"
             class="format-number-select h-15 mr-5 w-[260px] text-base"
             [items]="formatNumberExamples"
@@ -518,6 +520,7 @@
 
               <ng-select
                 #filterMetricBySelect
+                [fixNgSelectBottom]="filterMetricBySelect"
                 data-cy="filterMetricBySelect"
                 class="filter-metric-by-select w-full min-w-[2px] text-base"
                 [items]="fieldsList"

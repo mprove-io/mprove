@@ -12,6 +12,7 @@
   >
     <ng-select
       #addEnvUserDialogUserSelect
+      [fixNgSelectBottom]="addEnvUserDialogUserSelect"
       data-cy="addEnvUserDialogUserSelect"
       class="mt-12 w-80 text-base"
       (open)="openUserSelect()"

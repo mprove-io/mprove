@@ -5,6 +5,7 @@
   >
     <ng-select
       #fractionStringTypeSelect
+      [fixNgSelectBottom]="fractionStringTypeSelect"
       data-cy="fractionStringTypeSelect"
       class="popup-55 w-[250px]"
       [ngClass]="{
@@ -70,6 +71,7 @@
               fraction.type === fractionTypeEnum.StringIsNotEqualTo)
           "
           #stringValueSelect
+          [fixNgSelectBottom]="stringValueSelect"
           data-cy="stringValueSelect"
           class="w-[250px] text-base"
           [ngClass]="{

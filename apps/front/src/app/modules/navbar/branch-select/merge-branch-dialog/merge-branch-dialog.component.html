@@ -8,6 +8,7 @@
   <form class="mt-9 flex flex-col" [formGroup]="mergeForm" (ngSubmit)="merge()">
     <ng-select
       #mergeBranchSelect
+      [fixNgSelectBottom]="mergeBranchSelect"
       data-cy="mergeBranchSelect"
       class="mt-2 w-96 text-base"
       [items]="branchesList"

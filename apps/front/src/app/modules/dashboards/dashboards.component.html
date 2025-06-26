@@ -295,6 +295,7 @@
                   <form [formGroup]="refreshForm">
                     <ng-select
                       #refreshSelect
+                      [fixNgSelectBottom]="refreshSelect"
                       data-cy="refreshSelect"
                       class="popup-55 w-[100px]"
                       [items]="refreshList"
@@ -567,6 +568,7 @@
                       >
                         <ng-select
                           #metricsTimezoneSelect
+                          [fixNgSelectBottom]="metricsTimezoneSelect"
                           data-cy="metricsTimezoneSelect"
                           class="w-full text-base"
                           [items]="timezones"

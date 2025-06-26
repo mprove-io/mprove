@@ -57,6 +57,7 @@
     <div *ngIf="!!connectionsLoaded" [formGroup]="connectionForm" class="ml-5">
       <ng-select
         #connectionSelect
+        [fixNgSelectBottom]="connectionSelect"
         data-cy="connectionSelect"
         class="w-96 text-base"
         [loading]="connectionsLoading"
@@ -148,6 +149,7 @@
     <div [formGroup]="presetForm" class="ml-5">
       <ng-select
         #presetSelect
+        [fixNgSelectBottom]="presetSelect"
         data-cy="presetSelect"
         class="w-96 text-base"
         [items]="presets"

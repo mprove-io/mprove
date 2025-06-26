@@ -30,6 +30,7 @@
         >
           <ng-select
             #columnFieldSelect
+            [fixNgSelectBottom]="columnFieldSelect"
             data-cy="columnFieldSelect"
             class="charts-replace-column-select w-full min-w-[2px] text-base"
             [items]="matchFields"
