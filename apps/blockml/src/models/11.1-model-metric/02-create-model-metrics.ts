@@ -46,12 +46,17 @@ export function createModelMetrics(
       let timeLabel: string;
 
       if (common.isUndefined(storeFieldTimeGroup.group)) {
-        timeNodeLabel = 'Model Fields';
+        timeNodeLabel = store.label; // 'Model Fields'
         timeFieldLabel = storeFieldTimeGroup.label;
         timeLabel = `${timeNodeLabel} ${timeFieldLabel}`;
       } else {
         timeNodeLabel =
-          storeFieldGroup?.label || storeFieldGroup?.group || 'Model Fields';
+          storeFieldGroup?.label ??
+          storeFieldGroup?.group
+            .split('_')
+            .map(k => common.capitalizeFirstLetter(k))
+            .join(' ') ??
+          store.label; // 'Model Fields'
         timeFieldLabel =
           storeFieldTimeGroup?.label || storeFieldTimeGroup?.time;
         timeLabel = `${timeNodeLabel} ${timeFieldLabel}`;
@@ -67,15 +72,15 @@ export function createModelMetrics(
           let partId = `${storeField.name}`;
 
           let partNodeLabel = common.isDefined(storeFieldGroup)
-            ? storeFieldGroup.label || storeFieldGroup.group
-            : 'Model Fields';
+            ? (storeFieldGroup.label ?? storeFieldGroup.group)
+            : store.label; //'Model Fields'
 
           let partFieldLabel = storeField.label;
 
           let partLabel = `${partNodeLabel} ${partFieldLabel}`;
 
           let modelMetric: common.ModelMetric = {
-            metricId: `${STORE_MODEL_PREFIX}_${store.name}_${partId}_by_${timeId}`,
+            metricId: `${STORE_MODEL_PREFIX}_${store.name}.${partId}.by.${timeId}`,
             filePath: store.filePath,
             partId: partId,
             modelId: `${STORE_MODEL_PREFIX}_${store.name}`,
@@ -130,7 +135,7 @@ export function createModelMetrics(
           mField => mField.groupId === timeFieldName
         );
 
-        timeNodeLabel = 'Model Fields';
+        timeNodeLabel = model.label; // 'Model Fields'
         timeFieldLabel = timeFields[0].group_label;
         timeLabel = `${timeNodeLabel} ${timeFieldLabel}`;
       } else {
@@ -216,14 +221,14 @@ export function createModelMetrics(
         .forEach(modelField => {
           let topLabel = model.label;
 
-          let partId = `model_fields_${modelField.name}`;
+          let partId = `${modelField.name}`; // model_fields
 
-          let partNodeLabel = 'Model Fields';
+          let partNodeLabel = model.label; // 'Model Fields';
           let partFieldLabel = modelField.label;
           let partLabel = `${partNodeLabel} ${partFieldLabel}`;
 
           let modelMetric: common.ModelMetric = {
-            metricId: `${model.name}_${partId}_by_${timeId}`,
+            metricId: `${model.name}.${partId}.by.${timeId}`,
             filePath: model.filePath,
             partId: partId,
             modelId: model.name,
@@ -305,7 +310,7 @@ export function createModelMetrics(
             let partLabel = `${partNodeLabel} ${partFieldLabel}`;
 
             let modelMetric: common.ModelMetric = {
-              metricId: `${model.name}_${partId}_by_${timeId}`,
+              metricId: `${model.name}.${partId}.by.${timeId}`,
               filePath: join.view.filePath,
               partId: partId,
               modelId: model.name,

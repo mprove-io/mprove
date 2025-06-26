@@ -19,7 +19,7 @@ rows:
 
 - row_id: B
   type: metric
-  metric: ec1_m1_model_fields_total_profit_by_orders_created
+  metric: ec1_m1.total_profit.by.orders_created
   show_chart: true
   parameters:
   - apply_to: products.brand
@@ -36,7 +36,7 @@ rows:
 
 - row_id: D
   type: metric
-  metric: ec1_m1_order_items_total_sale_price_by_orders_created
+  metric: ec1_m1.order_items_total_sale_price.by.orders_created
   show_chart: true
   parameters:
   - apply_to: products.brand
@@ -47,7 +47,7 @@ rows:
 
 - row_id: E
   type: metric
-  metric: ec1_m1_inventory_items_total_actual_cost_by_orders_created
+  metric: ec1_m1.inventory_items_total_actual_cost.by.orders_created
   show_chart: true
   parameters:
   - apply_to: products.brand

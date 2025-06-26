@@ -68,11 +68,6 @@ export function splitFiles(
 
       case common.FileExtensionEnum.View: {
         if (file.name === file.view + common.FileExtensionEnum.View) {
-          let label: string = file.label ? file.label : file.view;
-          let labelLineNum: number = file.label_line_num
-            ? file.label_line_num
-            : 0;
-
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -82,8 +77,13 @@ export function splitFiles(
             fileName: fileName,
             filePath: filePath,
             fileExt: fileExt,
-            label: label,
-            label_line_num: labelLineNum
+            label:
+              file.label ??
+              file.view
+                .split('_')
+                .map((word: string) => common.capitalizeFirstLetter(word))
+                .join(' '),
+            label_line_num: file.label_line_num ?? 0
           };
 
           views.push(Object.assign(file, newViewOptions));
@@ -107,11 +107,6 @@ export function splitFiles(
 
       case common.FileExtensionEnum.Model: {
         if (file.name === file.model + common.FileExtensionEnum.Model) {
-          let label: string = file.label ? file.label : file.model;
-          let labelLineNum: number = file.label_line_num
-            ? file.label_line_num
-            : 0;
-
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -121,8 +116,13 @@ export function splitFiles(
             fileName: fileName,
             filePath: filePath,
             fileExt: fileExt,
-            label: label,
-            label_line_num: labelLineNum
+            label:
+              file.label ??
+              file.model
+                .split('_')
+                .map((word: string) => common.capitalizeFirstLetter(word))
+                .join(' '),
+            label_line_num: file.label_line_num ?? 0
           };
 
           models.push(Object.assign(file, newModelOptions));
@@ -146,11 +146,6 @@ export function splitFiles(
 
       case common.FileExtensionEnum.Store: {
         if (file.name === file.store + common.FileExtensionEnum.Store) {
-          let label: string = file.label ? file.label : file.store;
-          let labelLineNum: number = file.label_line_num
-            ? file.label_line_num
-            : 0;
-
           delete file.ext;
           delete file.name;
           delete file.path;
@@ -160,8 +155,13 @@ export function splitFiles(
             fileName: fileName,
             filePath: filePath,
             fileExt: fileExt,
-            label: label,
-            label_line_num: labelLineNum
+            label:
+              file.label ??
+              file.store
+                .split('_')
+                .map((word: string) => common.capitalizeFirstLetter(word))
+                .join(' '),
+            label_line_num: file.label_line_num ?? 0
           };
 
           stores.push(Object.assign(file, newStoreOptions));

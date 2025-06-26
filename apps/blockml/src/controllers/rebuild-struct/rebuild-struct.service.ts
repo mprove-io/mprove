@@ -364,6 +364,9 @@ export class RebuildStructService {
           blockmlPath: file.blockmlPath,
           source: sourceName,
           label: sourceName
+            .split('_')
+            .map(k => common.capitalizeFirstLetter(k))
+            .join(' ')
         };
 
         mods.push(mod);

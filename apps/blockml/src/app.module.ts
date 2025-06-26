@@ -138,7 +138,13 @@ export class AppModule implements OnModuleInit {
             let path = x.path;
             let label =
               (x as any)?.label ||
-              (x.name.split('.')[0].length > 0 ? x.name.split('.')[0] : x.name);
+              (x.name.split('.')[0].length > 0
+                ? x.name
+                    .split('.')[0]
+                    .split('_')
+                    .map((word: string) => common.capitalizeFirstLetter(word))
+                    .join(' ')
+                : x.name);
 
             delete x.name;
             delete x.path;

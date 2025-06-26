@@ -25,9 +25,8 @@ export function setImplicitLabel<T extends types.vsmdrType>(
         common.isUndefined(field.label) &&
         field.fieldClass !== common.FieldClassEnum.Time
       ) {
-        field.label = common.MyRegex.replaceUnderscoresWithSpaces(field.name);
-        field.label = field.label
-          .split(' ')
+        field.label = field.name
+          .split('_')
           .map(word => common.capitalizeFirstLetter(word))
           .join(' ');
 

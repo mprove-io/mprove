@@ -67,7 +67,8 @@ export function wrapModels(item: {
             id: topId,
             label:
               topId === common.MF
-                ? common.ModelNodeLabelEnum.ModelFields
+                ? // common.ModelNodeLabelEnum.ModelFields
+                  x.label
                 : topId
                     .split('.')
                     .map(k => common.capitalizeFirstLetter(k))
@@ -150,7 +151,7 @@ export function wrapModels(item: {
 
         let topNode: common.ModelNode = {
           id: common.MF,
-          label: common.ModelNodeLabelEnum.ModelFields,
+          label: x.label, // common.ModelNodeLabelEnum.ModelFields
           description: undefined,
           hidden: false,
           required: false,
@@ -219,7 +220,7 @@ export function wrapModels(item: {
 
         let topNode: common.ModelNode = {
           id: common.MF,
-          label: common.ModelNodeLabelEnum.ModelFields,
+          label: x.label, // common.ModelNodeLabelEnum.ModelFields
           description: undefined,
           hidden: false,
           required: false,

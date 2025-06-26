@@ -3,7 +3,7 @@ title: t
 rows:  
 - row_id: A
   type: metric
-  metric: m1_orders_mea1_by_orders_created
+  metric: m1.orders_mea1.by.orders_created
   parameters:
   - apply_to: mf.unk
     conditions:
