@@ -319,31 +319,29 @@ export function wrapModels(item: {
           }
         });
 
-        let sortedFilters = filters.sort((a, b) => {
-          let labelA = a.label.toUpperCase();
-          let labelB = b.label.toUpperCase();
-          return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
-        });
+        let sortedFilters = filters;
+        // .sort((a, b) => {
+        //   let labelA = a.label.toUpperCase();
+        //   let labelB = b.label.toUpperCase();
+        //   return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+        // });
 
-        let sortedDimensions = dimensions.sort((a, b) => {
-          let labelA = a.label.toUpperCase();
-          let labelB = b.label.toUpperCase();
-          return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
-        });
+        let sortedDimensions = dimensions;
+        // .sort((a, b) => {
+        //   let labelA = a.label.toUpperCase();
+        //   let labelB = b.label.toUpperCase();
+        //   return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+        // });
 
-        let sortedMeasures = measures.sort((a, b) => {
-          let labelA = a.label.toUpperCase();
-          let labelB = b.label.toUpperCase();
-          return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
-        });
+        let sortedMeasures = measures;
+        // .sort((a, b) => {
+        //   let labelA = a.label.toUpperCase();
+        //   let labelB = b.label.toUpperCase();
+        //   return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+        // });
 
-        let sortedCalculations = calculations.sort((a, b) => {
-          let labelA = a.label.toUpperCase();
-          let labelB = b.label.toUpperCase();
-          return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
-        });
-
-        // let sortedMeasuresAndCalculations = [...measures, ...calculations].sort((a, b) => {
+        let sortedCalculations = calculations;
+        // .sort((a, b) => {
         //   let labelA = a.label.toUpperCase();
         //   let labelB = b.label.toUpperCase();
         //   return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
@@ -429,38 +427,37 @@ export function wrapModels(item: {
         node.children = sortedChildren;
 
         node.children.forEach(nc => {
-          if (common.isDefined(nc.children)) {
-            nc.children = nc.children.sort((a, b) => {
-              let timeframeIndexA = common.TIMEFRAME_VALUES.map(t =>
-                t.toString()
-              ).indexOf(a.id.split(common.TRIPLE_UNDERSCORE)[1]);
-
-              let timeframeIndexB = common.TIMEFRAME_VALUES.map(t =>
-                t.toString()
-              ).indexOf(b.id.split(common.TRIPLE_UNDERSCORE)[1]);
-
-              let labelA = a.label.toUpperCase();
-              let labelB = b.label.toUpperCase();
-              return timeframeIndexA < timeframeIndexB
-                ? -1
-                : timeframeIndexA > timeframeIndexB
-                  ? 1
-                  : labelA < labelB
-                    ? -1
-                    : labelA > labelB
-                      ? 1
-                      : 0;
-            });
-          }
+          // if (common.isDefined(nc.children)) {
+          //   nc.children = nc.children.sort((a, b) => {
+          //     let timeframeIndexA = common.TIMEFRAME_VALUES.map(t =>
+          //       t.toString()
+          //     ).indexOf(a.id.split(common.TRIPLE_UNDERSCORE)[1]);
+          //     let timeframeIndexB = common.TIMEFRAME_VALUES.map(t =>
+          //       t.toString()
+          //     ).indexOf(b.id.split(common.TRIPLE_UNDERSCORE)[1]);
+          //     let labelA = a.label.toUpperCase();
+          //     let labelB = b.label.toUpperCase();
+          //     return timeframeIndexA < timeframeIndexB
+          //       ? -1
+          //       : timeframeIndexA > timeframeIndexB
+          //         ? 1
+          //         : labelA < labelB
+          //           ? -1
+          //           : labelA > labelB
+          //             ? 1
+          //             : 0;
+          //   });
+          // }
         });
       }
     });
 
-    let sortedNodes = nodes.sort((a, b) => {
-      let labelA = a.label.toUpperCase();
-      let labelB = b.label.toUpperCase();
-      return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
-    });
+    let sortedNodes = nodes;
+    // .sort((a, b) => {
+    //   let labelA = a.label.toUpperCase();
+    //   let labelB = b.label.toUpperCase();
+    //   return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+    // });
 
     if (sortedNodes.length > 0) {
       let apiModel: common.Model = {
