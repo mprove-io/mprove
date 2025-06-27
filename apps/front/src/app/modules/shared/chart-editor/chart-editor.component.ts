@@ -81,7 +81,8 @@ export class ChartEditorComponent implements OnChanges {
       formatNumber: x.id,
       fieldResult: common.FieldResultEnum.Number,
       currencyPrefix: structState.currencyPrefix,
-      currencySuffix: structState.currencySuffix
+      currencySuffix: structState.currencySuffix,
+      thousands: undefined // TODO: thousands
     });
 
     return x;

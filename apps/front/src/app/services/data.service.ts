@@ -185,9 +185,16 @@ export class DataService {
     fieldResult: common.FieldResultEnum;
     currencyPrefix: string;
     currencySuffix: string;
+    thousands: string;
   }) {
-    let { value, formatNumber, fieldResult, currencyPrefix, currencySuffix } =
-      item;
+    let {
+      value,
+      thousands,
+      formatNumber,
+      fieldResult,
+      currencyPrefix,
+      currencySuffix
+    } = item;
 
     if (
       fieldResult === common.FieldResultEnum.Number &&
@@ -196,9 +203,9 @@ export class DataService {
     ) {
       let locale = formatLocale({
         decimal: constants.FORMAT_NUMBER_DECIMAL,
-        thousands: constants.FORMAT_NUMBER_THOUSANDS,
+        thousands: thousands ?? constants.FORMAT_NUMBER_THOUSANDS,
         grouping: constants.FORMAT_NUMBER_GROUPING,
-        currency: [currencyPrefix, currencySuffix]
+        currency: [currencyPrefix, currencySuffix ?? '']
       });
 
       return locale.format(formatNumber)(Number(value));
@@ -391,7 +398,18 @@ export class DataService {
                 ? 'seconds'
                 : 'seconds';
 
-          let thousandsSeparator = ' '; // TODO: thousandsSeparator
+          let thousandsSeparatorTag = field.mproveTags?.find(
+            tag => tag.key === common.ParameterEnum.ThousandsSeparator
+          );
+
+          let thousandsSeparator = common.isDefined(
+            thousandsSeparatorTag?.value
+          )
+            ? thousandsSeparatorTag.value
+            : ',';
+
+          // console.log('field');
+          // console.log(field);
 
           let cell: QCell = {
             id: key.toLowerCase(),
@@ -411,7 +429,8 @@ export class DataService {
                         : this.getTimeSpecByFieldSqlName(sqlName),
                     unixTimeZoned: isStore === true ? tsValue : tsValue / 1000
                   })
-                : field.result === common.FieldResultEnum.Number &&
+                : // duration
+                  field.result === common.FieldResultEnum.Number &&
                     mconfig.modelType === common.ModelTypeEnum.Malloy &&
                     common.isDefined(malloyDurationTag)
                   ? (this.getText({
@@ -429,36 +448,53 @@ export class DataService {
                       .toLocaleString()
                       .split(',')
                       .join(thousandsSeparator))
-                  : field.result === common.FieldResultEnum.Number &&
+                  : // field.formatNumber
+                    field.result === common.FieldResultEnum.Number &&
                       mconfig.modelType === common.ModelTypeEnum.Malloy &&
-                      field.malloyTags.map(tag => tag.key).indexOf('percent') >
-                        -1
-                    ? format(`#${thousandsSeparator}##0.00%`, value)
-                    : field.result === common.FieldResultEnum.Number &&
+                      common.isDefined(field?.formatNumber)
+                    ? this.formatValue({
+                        value: value,
+                        formatNumber: field?.formatNumber,
+                        fieldResult: field?.result,
+                        currencyPrefix: field?.currencyPrefix,
+                        currencySuffix: field?.currencySuffix,
+                        thousands: thousandsSeparator
+                      })
+                    : // malloy percent
+                      field.result === common.FieldResultEnum.Number &&
                         mconfig.modelType === common.ModelTypeEnum.Malloy &&
-                        common.isDefined(malloyCurrencyTag)
-                      ? format(
-                          `${malloyCurrencySymbol}#${thousandsSeparator}##0.00`,
-                          value
-                        )
-                      : field.result === common.FieldResultEnum.Number &&
+                        field.malloyTags
+                          .map(tag => tag.key)
+                          .indexOf('percent') > -1
+                      ? format(`#${thousandsSeparator}##0.00%`, value)
+                      : // malloy currency
+                        field.result === common.FieldResultEnum.Number &&
                           mconfig.modelType === common.ModelTypeEnum.Malloy &&
-                          common.isDefined(malloyNumberTag)
-                        ? format(malloyNumberTag.value, value)
-                        : field.result === common.FieldResultEnum.Number &&
-                            mconfig.modelType === common.ModelTypeEnum.Malloy
-                          ? // format(`#${thousandsSeparator}##0.###`, value)
-                            Number(value)
-                              .toLocaleString()
-                              .split(',')
-                              .join(thousandsSeparator)
-                          : this.formatValue({
-                              value: value,
-                              formatNumber: field?.formatNumber,
-                              fieldResult: field?.result,
-                              currencyPrefix: field?.currencyPrefix,
-                              currencySuffix: field?.currencySuffix
-                            })
+                          common.isDefined(malloyCurrencyTag)
+                        ? format(
+                            `${malloyCurrencySymbol}#${thousandsSeparator}##0.00`,
+                            value
+                          )
+                        : // malloy number
+                          field.result === common.FieldResultEnum.Number &&
+                            mconfig.modelType === common.ModelTypeEnum.Malloy &&
+                            common.isDefined(malloyNumberTag)
+                          ? format(malloyNumberTag.value, value)
+                          : field.result === common.FieldResultEnum.Number &&
+                              mconfig.modelType === common.ModelTypeEnum.Malloy
+                            ? // format(`#${thousandsSeparator}##0.###`, value)
+                              Number(value)
+                                .toLocaleString()
+                                .split(',')
+                                .join(thousandsSeparator)
+                            : this.formatValue({
+                                value: value,
+                                formatNumber: field?.formatNumber,
+                                fieldResult: field?.result,
+                                currencyPrefix: field?.currencyPrefix,
+                                currencySuffix: field?.currencySuffix,
+                                thousands: thousandsSeparator
+                              })
           };
 
           r[sqlName] = cell;
@@ -1185,7 +1221,8 @@ export class DataService {
                   formatNumber: row.formatNumber,
                   fieldResult: common.FieldResultEnum.Number,
                   currencyPrefix: row.currencyPrefix,
-                  currencySuffix: row.currencySuffix
+                  currencySuffix: row.currencySuffix,
+                  thousands: undefined // TODO: separator
                 })
               : 'null';
 

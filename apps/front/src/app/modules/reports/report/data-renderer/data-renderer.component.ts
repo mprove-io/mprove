@@ -46,7 +46,8 @@ export class DataRendererComponent implements ICellRendererAngularComp {
             formatNumber: params.data.formatNumber,
             fieldResult: common.FieldResultEnum.Number,
             currencyPrefix: params.data.currencyPrefix,
-            currencySuffix: params.data.currencySuffix
+            currencySuffix: params.data.currencySuffix,
+            thousands: undefined // TODO: thousands
           })
         : this.isError === true
           ? rowDataRecord.error

@@ -19,6 +19,7 @@ export enum ParameterEnum {
   Connection = 'connection',
   CurrencyPrefix = 'currency_prefix',
   CurrencySuffix = 'currency_suffix',
+  ThousandsSeparator = 'thousands_separator',
   Dashboard = 'dashboard',
   DerivedTable = 'derived_table',
   Dimension = 'dimension',

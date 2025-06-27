@@ -223,6 +223,16 @@ export function wrapFieldItem(item: {
     topNode.children.push(fieldNode);
   }
 
+  let formatNumberTag = mproveTags?.find(tag => tag.key === 'format_number');
+
+  let currencyPrefixTag = mproveTags?.find(
+    tag => tag.key === common.ParameterEnum.CurrencyPrefix
+  );
+
+  let currencySuffixTag = mproveTags?.find(
+    tag => tag.key === common.ParameterEnum.CurrencySuffix
+  );
+
   let modelField: common.ModelField = {
     id: fieldId,
     malloyFieldName: fieldItem.field.name,
@@ -235,9 +245,9 @@ export function wrapFieldItem(item: {
     label: fieldLabel,
     fieldClass: fieldClass,
     result: result,
-    formatNumber: undefined,
-    currencyPrefix: undefined,
-    currencySuffix: undefined,
+    formatNumber: formatNumberTag?.value,
+    currencyPrefix: currencyPrefixTag?.value,
+    currencySuffix: currencySuffixTag?.value,
     sqlName: fieldSqlName,
     topId: topNode.id,
     topLabel: topNode.label,
@@ -249,6 +259,17 @@ export function wrapFieldItem(item: {
     suggestModelDimension: undefined,
     detail: undefined
   };
+
+  // if (modelField.id.includes('most_expensive_item')) {
+  //   console.log('mproveTags');
+  //   console.log(mproveTags);
+
+  //   console.log('malloyTags');
+  //   console.log(malloyTags);
+
+  //   console.log('modelField');
+  //   console.log(modelField);
+  // }
 
   return modelField;
 }

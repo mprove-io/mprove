@@ -141,7 +141,8 @@ export class RowComponent {
               formatNumber: example.id,
               fieldResult: common.FieldResultEnum.Number,
               currencyPrefix: this.reportSelectedNode.data.currencyPrefix,
-              currencySuffix: this.reportSelectedNode.data.currencySuffix
+              currencySuffix: this.reportSelectedNode.data.currencySuffix,
+              thousands: undefined // TODO: thousands
             });
 
             return example;
