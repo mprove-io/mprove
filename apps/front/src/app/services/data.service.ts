@@ -362,32 +362,33 @@ export class DataService {
           );
 
           let malloyCurrencySymbol =
-            field.malloyFlags?.indexOf('currency') > -1 ||
             malloyCurrencyTag?.value === 'usd'
               ? '$'
               : malloyCurrencyTag?.value === 'euro'
                 ? '€'
                 : malloyCurrencyTag?.value === 'pound'
                   ? '£'
-                  : '';
+                  : common.isDefined(malloyCurrencyTag)
+                    ? '$'
+                    : '';
 
           let malloyDurationTag = field.malloyTags?.find(
             tag => tag.key === 'duration'
           );
 
           let malloyDurationUnit =
-            field.malloyFlags?.indexOf('duration') > -1
-              ? 'seconds'
-              : [
-                    'nanoseconds',
-                    'microseconds',
-                    'milliseconds',
-                    'seconds',
-                    'minutes',
-                    'hours',
-                    'days'
-                  ].indexOf(malloyDurationTag?.value) > -1
-                ? malloyDurationTag.value
+            [
+              'nanoseconds',
+              'microseconds',
+              'milliseconds',
+              'seconds',
+              'minutes',
+              'hours',
+              'days'
+            ].indexOf(malloyDurationTag?.value) > -1
+              ? malloyDurationTag.value
+              : common.isDefined(malloyDurationTag)
+                ? 'seconds'
                 : 'seconds';
 
           let thousandsSeparator = ' '; // TODO: thousandsSeparator
@@ -412,14 +413,15 @@ export class DataService {
                   })
                 : field.result === common.FieldResultEnum.Number &&
                     mconfig.modelType === common.ModelTypeEnum.Malloy &&
-                    (field.malloyFlags.indexOf('duration') > -1 ||
-                      common.isDefined(malloyDurationTag))
+                    common.isDefined(malloyDurationTag)
                   ? (this.getText({
                       value: Number(value),
                       options: {
                         durationUnit: malloyDurationUnit
                       },
-                      terse: field.malloyFlags.indexOf('terse') > -1,
+                      terse:
+                        field.malloyTags.map(tag => tag.key).indexOf('terse') >
+                        -1,
                       numFormat: malloyNumberTag?.value, // if null - add ?? "#,##0,",
                       thousandsSeparator: thousandsSeparator
                     }) ??
@@ -429,12 +431,12 @@ export class DataService {
                       .join(thousandsSeparator))
                   : field.result === common.FieldResultEnum.Number &&
                       mconfig.modelType === common.ModelTypeEnum.Malloy &&
-                      field.malloyFlags.indexOf('percent') > -1
+                      field.malloyTags.map(tag => tag.key).indexOf('percent') >
+                        -1
                     ? format(`#${thousandsSeparator}##0.00%`, value)
                     : field.result === common.FieldResultEnum.Number &&
                         mconfig.modelType === common.ModelTypeEnum.Malloy &&
-                        (field.malloyFlags.indexOf('currency') > -1 ||
-                          common.isDefined(malloyCurrencyTag))
+                        common.isDefined(malloyCurrencyTag)
                       ? format(
                           `${malloyCurrencySymbol}#${thousandsSeparator}##0.00`,
                           value

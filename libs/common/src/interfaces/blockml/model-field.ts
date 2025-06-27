@@ -34,14 +34,6 @@ export class ModelField {
   @Type(() => KeyValuePair)
   mproveTags?: KeyValuePair[];
 
-  @IsOptional()
-  @IsString({ each: true })
-  malloyFlags?: string[];
-
-  @IsOptional()
-  @IsString({ each: true })
-  mproveFlags?: string[];
-
   @IsBoolean()
   hidden: boolean;
 

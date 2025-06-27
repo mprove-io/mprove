@@ -1,6 +1,8 @@
 import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
+import { ModelEntryValueWithSource } from '@malloydata/malloy-interfaces';
 import { common } from '~blockml/barrels/common';
 import { getFieldItems } from '~blockml/functions/source-to-field-items';
+import { parseTags } from '~common/functions/parse-tags';
 import { wrapField } from './wrap-field';
 import { wrapFieldItem } from './wrap-field-item';
 
@@ -31,6 +33,10 @@ export function wrapModels(item: {
     let nodes: common.ModelNode[] = [];
 
     let malloyModelDef: MalloyModelDef;
+    let malloySourceInfo: ModelEntryValueWithSource;
+    let mproveTags = [];
+    let malloyTags = [];
+    let accessRolesTag: common.KeyValuePair;
 
     if (modelType === common.ModelTypeEnum.Malloy) {
       {
@@ -40,10 +46,20 @@ export function wrapModels(item: {
         // console.log(x);
 
         malloyModelDef = (x as common.FileMod).malloyModel._modelDef;
+        malloySourceInfo = (x as common.FileMod).valueWithSourceInfo;
 
-        let fieldItems = getFieldItems(
-          (x as common.FileMod).valueWithSourceInfo
+        let tagsResult = parseTags({
+          inputs: malloySourceInfo.annotations?.map(x => x.value) || []
+        });
+
+        mproveTags = tagsResult.mproveTags;
+        malloyTags = tagsResult.malloyTags;
+
+        accessRolesTag = mproveTags.find(
+          tag => tag.key === common.ParameterEnum.AccessRoles
         );
+
+        let fieldItems = getFieldItems(malloySourceInfo);
 
         // fse.writeFileSync(
         //   `${(x as common.FileMod).source}-field-items.json`,
@@ -487,7 +503,11 @@ export function wrapModels(item: {
           x.fileExt === common.FileExtensionEnum.Model
             ? (x as common.FileModel).isViewModel
             : false,
-        accessRoles: x.access_roles || [],
+        accessRoles:
+          modelType === common.ModelTypeEnum.Malloy &&
+          common.isDefined(accessRolesTag?.value)
+            ? accessRolesTag.value.split(',').map(x => x.trim())
+            : (x.access_roles ?? []),
         label:
           x.fileExt === common.FileExtensionEnum.Store
             ? `Store Model - ${x.label}`
@@ -516,6 +536,9 @@ export function wrapModels(item: {
       apiModels.push(apiModel);
     }
   });
+
+  // console.log('apiModels.map(x=>x.accessRoles)');
+  // console.log(apiModels.map(x => x.accessRoles));
 
   return apiModels;
 }

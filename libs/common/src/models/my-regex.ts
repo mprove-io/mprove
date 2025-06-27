@@ -56,7 +56,7 @@ export class MyRegex {
 
   static CAPTURE_MPROVE_MODELS(): RegExp {
     return cloneRegexp(
-      /(?<=^|\n)#\(mprove\)\s+.*\bmodel\b.*\n\s*source:\s+(\w+)\s+is/g
+      /(?<=^|\n)#\(mprove\)\s+.*\bmodel\b.*\n(?:.*\n)*?\s*source:\s+(\w+)\s+is/g
     );
   }
 

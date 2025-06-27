@@ -38,3 +38,4 @@ export * from './tile';
 export * from './udfs-dict';
 export * from './view';
 export * from './preset';
+export * from './key-value-pair';

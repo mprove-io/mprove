@@ -124,6 +124,12 @@ export async function buildMods(
       x.source
     ] as MalloySourceDef;
 
+    // fse.writeFileSync(
+    //   `${x.source}-source-def.json`,
+    //   JSON.stringify(sourceDef, null, 2),
+    //   'utf-8'
+    // );
+
     let modelInfo: MalloyModelInfo = modelDefToModelInfo(malloyModelDef);
 
     x.connection = item.connections.find(

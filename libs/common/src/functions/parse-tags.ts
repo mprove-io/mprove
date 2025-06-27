@@ -3,11 +3,9 @@ import { KeyValuePair } from '~common/interfaces/blockml/key-value-pair';
 interface ParseResult {
   malloyTags: KeyValuePair[];
   mproveTags: KeyValuePair[];
-  malloyFlags: string[];
-  mproveFlags: string[];
 }
 
-export function parseTagsAndFlags(item: {
+export function parseTags(item: {
   inputs: string[];
 }): ParseResult {
   let { inputs } = item;
@@ -61,5 +59,16 @@ export function parseTagsAndFlags(item: {
     }
   });
 
-  return { mproveTags, mproveFlags, malloyTags, malloyFlags };
+  mproveFlags.forEach(mproveFlag =>
+    mproveTags.push({ key: mproveFlag, value: undefined })
+  );
+
+  malloyFlags.forEach(malloyFlag =>
+    malloyTags.push({ key: malloyFlag, value: undefined })
+  );
+
+  return {
+    mproveTags,
+    malloyTags
+  };
 }
