@@ -53,14 +53,18 @@ export async function buildMods(
 
   let promises: Promise<WrapResult<MalloyModel>>[] = [];
 
-  await forEachSeries(item.mods, async x => {
+  let modelPaths = item.mods.map(mod => mod.blockmlPath);
+
+  let uniqueModelPaths = [...new Set(modelPaths)];
+
+  await forEachSeries(uniqueModelPaths, async x => {
     // let modelPath = x.location;
 
     // let fullModelPath = common.isDefined(projectId)
     //   ? `${item.tempDir}/${projectId}/${modelPath}`
     //   : `${item.tempDir}/${modelPath}`;
 
-    let fullModelPath = x.blockmlPath;
+    let fullModelPath = x;
 
     let modelUrl = new URL('file://' + fullModelPath);
 
@@ -78,8 +82,10 @@ export async function buildMods(
   // console.log('wrapResults');
   // console.dir(wrapResults, { depth: 4 });
 
-  await forEachSeries(item.mods, async (x, index) => {
+  await forEachSeries(item.mods, async x => {
     let errorsOnStart = item.errors.length;
+
+    let index = uniqueModelPaths.findIndex(p => p === x.blockmlPath);
 
     let wrapResult = wrapResults[index];
 
