@@ -32,30 +32,8 @@ test('1', async t => {
 
     wLogger = logger;
 
-    let c2: common.ProjectConnection = {
-      connectionId: 'c2_postgres',
-      type: common.ConnectionTypeEnum.PostgreSQL,
-      host: cs.get<interfaces.Config['blockmlTestsDwhPostgresHost']>(
-        'blockmlTestsDwhPostgresHost'
-      ),
-      port: Number(
-        cs.get<interfaces.Config['blockmlTestsDwhPostgresPort']>(
-          'blockmlTestsDwhPostgresPort'
-        )
-      ),
-      username: cs.get<interfaces.Config['blockmlTestsDwhPostgresUsername']>(
-        'blockmlTestsDwhPostgresUsername'
-      ),
-      password: cs.get<interfaces.Config['blockmlTestsDwhPostgresPassword']>(
-        'blockmlTestsDwhPostgresPassword'
-      ),
-      databaseName: cs.get<
-        interfaces.Config['blockmlTestsDwhPostgresDatabaseName']
-      >('blockmlTestsDwhPostgresDatabaseName')
-    };
-
-    let c3: common.ProjectConnection = {
-      connectionId: 'c3_postgres',
+    let c1: common.ProjectConnection = {
+      connectionId: 'c1_postgres',
       type: common.ConnectionTypeEnum.PostgreSQL,
       host: cs.get<interfaces.Config['blockmlTestsDwhPostgresHost']>(
         'blockmlTestsDwhPostgresHost'
@@ -82,7 +60,7 @@ test('1', async t => {
       structId: structId,
       envId: common.PROJECT_ENV_PROD,
       evs: [],
-      connections: [c2, c3],
+      connections: [c1],
       overrideTimezone: undefined
     });
 
@@ -108,7 +86,7 @@ test('1', async t => {
   // console.log(entMods);
 
   t.is(errors.length, 0);
-  t.is(entMods.length, 2);
+  t.is(entMods.length, 1);
 
   // t.deepEqual(entMods[0].tiles[0].sortingsAry, [
   //   {
