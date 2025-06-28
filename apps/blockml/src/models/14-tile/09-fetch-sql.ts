@@ -114,6 +114,7 @@ export async function fetchSql<T extends types.dzType>(
 
       let mod = item.mods.find(x => x.source === source);
 
+      let startBuildMalloyQuery = Date.now();
       let pr: PreparedResult = await barSpecial.buildMalloyQuery(
         {
           malloyConnections: item.malloyConnections,
@@ -122,6 +123,8 @@ export async function fetchSql<T extends types.dzType>(
         },
         cs
       );
+      console.log('buildMalloyQuery:');
+      console.log(Date.now() - startBuildMalloyQuery);
 
       tile.sql = pr.sql.split('\n');
       tile.model = pr._rawQuery.sourceExplore;

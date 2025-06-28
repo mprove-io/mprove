@@ -476,6 +476,10 @@ export function wrapModels(item: {
     // });
 
     if (sortedNodes.length > 0) {
+      if (common.isDefined(malloyModelDef)) {
+        malloyModelDef.references = []; // TODO: clarify
+      }
+
       let apiModel: common.Model = {
         structId: structId,
         modelId:

@@ -49,6 +49,8 @@ export class MalloyService {
   }) {
     let { projectId, envId, structId, model, mconfig, queryOperation } = item;
 
+    let startEditMalloyQuery = Date.now();
+
     let isError = false;
     let errorMessage: string;
 
@@ -82,9 +84,12 @@ export class MalloyService {
       connections: connectionsWithFallback
     });
 
+    // console.log('modelDefToModelInfo');
+    // let startModelDefToModelInfo = Date.now();
     let malloyModelInfo: MalloyModelInfo = modelDefToModelInfo(
       model.malloyModelDef
     );
+    // console.log(Date.now() - startModelDefToModelInfo);
 
     let malloyToQueryResult = common.isDefined(mconfig.malloyQuery)
       ? malloyToQuery(mconfig.malloyQuery)
@@ -132,8 +137,8 @@ export class MalloyService {
         errorMessage = `modelField is not defined (queryOperation.fieldId: ${queryOperation.fieldId})`;
       }
 
-      console.log('modelField');
-      console.log(modelField);
+      // console.log('modelField');
+      // console.log(modelField);
 
       // let fieldFullPath: string[] = queryOperation.fieldId.split('.');
       // let fieldPath: string[] = fieldFullPath.slice(0, -1);
@@ -486,9 +491,12 @@ export class MalloyService {
       }
     });
 
+    // console.log('_loadModelFromModelDef');
+    // let startLoadModelFromModelDef = Date.now();
     let mm: ModelMaterializer = runtime._loadModelFromModelDef(
       model.malloyModelDef
     );
+    // console.log(Date.now() - startLoadModelFromModelDef);
 
     // let malloyModel = await mm.getModel();
 
@@ -501,8 +509,15 @@ export class MalloyService {
 
     let qm: QueryMaterializer = mm.loadQuery(newMalloyQuery); // 0 ms
 
+    // console.log('await qm.getPreparedQuery()');
+    // let startGetPreparedQuery = Date.now();
     let pq: PreparedQuery = await qm.getPreparedQuery();
+    // console.log(Date.now() - startGetPreparedQuery);
+
+    // console.log('pq.getPreparedResult()');
+    // let startGetPreparedResult = Date.now();
     let pr: PreparedResult = pq.getPreparedResult();
+    // console.log(Date.now() - startGetPreparedResult);
 
     //
 
@@ -677,6 +692,9 @@ export class MalloyService {
         fields: model.fields
       });
     }
+
+    console.log('editMalloyQuery:');
+    console.log(Date.now() - startEditMalloyQuery);
 
     return { isError: isError, newMconfig: newMconfig, newQuery: newQuery };
   }
