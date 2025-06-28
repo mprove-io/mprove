@@ -28,4 +28,7 @@ export interface FileProjectConf extends FileBasic {
 
   currency_suffix?: string;
   currency_suffix_line_num?: number;
+
+  thousands_separator?: string;
+  thousands_separator_line_num?: number;
 }

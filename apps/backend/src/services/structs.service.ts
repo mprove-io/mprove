@@ -10,6 +10,13 @@ import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { structsTable } from '~backend/drizzle/postgres/schema/structs';
 import { ProjectWeekStartEnum } from '~common/_index';
+import {
+  PROJECT_CONFIG_CURRENCY_PREFIX,
+  PROJECT_CONFIG_CURRENCY_SUFFIX,
+  PROJECT_CONFIG_DEFAULT_TIMEZONE,
+  PROJECT_CONFIG_FORMAT_NUMBER,
+  PROJECT_CONFIG_THOUSANDS_SEPARATOR
+} from '~common/constants/top';
 
 @Injectable()
 export class StructsService {
@@ -31,10 +38,11 @@ export class StructsService {
       allowTimezones: true,
       caseSensitiveStringFilters: false,
       simplifySafeAggregates: true,
-      defaultTimezone: 'UTC',
-      formatNumber: ',.0f',
-      currencyPrefix: '$',
-      currencySuffix: '',
+      defaultTimezone: PROJECT_CONFIG_DEFAULT_TIMEZONE,
+      formatNumber: PROJECT_CONFIG_FORMAT_NUMBER,
+      currencyPrefix: PROJECT_CONFIG_CURRENCY_PREFIX,
+      currencySuffix: PROJECT_CONFIG_CURRENCY_SUFFIX,
+      thousandsSeparator: PROJECT_CONFIG_THOUSANDS_SEPARATOR,
       errors: [],
       views: [],
       metrics: [],
@@ -69,6 +77,7 @@ export class StructsService {
             formatNumber: structsTable.formatNumber,
             currencyPrefix: structsTable.currencyPrefix,
             currencySuffix: structsTable.currencySuffix,
+            thousandsSeparator: structsTable.thousandsSeparator,
             errors: structsTable.errors,
             views: structsTable.views,
             // metrics: structsTable.metrics,

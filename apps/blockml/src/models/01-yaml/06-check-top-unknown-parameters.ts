@@ -286,6 +286,7 @@ export function checkTopUnknownParameters(
                 common.ParameterEnum.FormatNumber.toString(),
                 common.ParameterEnum.CurrencyPrefix.toString(),
                 common.ParameterEnum.CurrencySuffix.toString(),
+                common.ParameterEnum.ThousandsSeparator.toString(),
                 common.ParameterEnum.CaseSensitiveStringFilters.toString(),
                 common.ParameterEnum.SimplifySafeAggregates.toString()
               ].indexOf(parameter) < 0

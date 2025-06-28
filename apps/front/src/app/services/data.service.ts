@@ -185,11 +185,11 @@ export class DataService {
     fieldResult: common.FieldResultEnum;
     currencyPrefix: string;
     currencySuffix: string;
-    thousands: string;
+    thousandsSeparator: string;
   }) {
     let {
       value,
-      thousands,
+      thousandsSeparator,
       formatNumber,
       fieldResult,
       currencyPrefix,
@@ -203,9 +203,9 @@ export class DataService {
     ) {
       let locale = formatLocale({
         decimal: constants.FORMAT_NUMBER_DECIMAL,
-        thousands: thousands ?? constants.FORMAT_NUMBER_THOUSANDS,
+        thousands: thousandsSeparator,
         grouping: constants.FORMAT_NUMBER_GROUPING,
-        currency: [currencyPrefix, currencySuffix ?? '']
+        currency: [currencyPrefix ?? '', currencySuffix ?? '']
       });
 
       return locale.format(formatNumber)(Number(value));
@@ -223,6 +223,8 @@ export class DataService {
     // compiledQuery: CompiledQuery;
   }) {
     let { query, mconfig } = item;
+
+    let struct = this.structQuery.getValue();
 
     // ---mconfigField
     // description: "The date of the event, formatted as YYYYMMDD"
@@ -394,22 +396,23 @@ export class DataService {
               'days'
             ].indexOf(malloyDurationTag?.value) > -1
               ? malloyDurationTag.value
-              : common.isDefined(malloyDurationTag)
-                ? 'seconds'
-                : 'seconds';
+              : 'seconds';
 
           let thousandsSeparatorTag = field.mproveTags?.find(
             tag => tag.key === common.ParameterEnum.ThousandsSeparator
           );
 
-          let thousandsSeparator = common.isDefined(
-            thousandsSeparatorTag?.value
-          )
-            ? thousandsSeparatorTag.value
-            : ',';
+          let thousandsSeparator =
+            thousandsSeparatorTag?.value ?? struct.thousandsSeparator;
 
           // console.log('field');
           // console.log(field);
+
+          // console.log('struct.formatNumber');
+          // console.log(struct.formatNumber);
+
+          // console.log('field.formatNumber');
+          // console.log(field.formatNumber);
 
           let cell: QCell = {
             id: key.toLowerCase(),
@@ -456,9 +459,11 @@ export class DataService {
                         value: value,
                         formatNumber: field?.formatNumber,
                         fieldResult: field?.result,
-                        currencyPrefix: field?.currencyPrefix,
-                        currencySuffix: field?.currencySuffix,
-                        thousands: thousandsSeparator
+                        currencyPrefix:
+                          field?.currencyPrefix ?? struct.currencyPrefix,
+                        currencySuffix:
+                          field?.currencySuffix ?? struct.currencySuffix,
+                        thousandsSeparator: thousandsSeparator
                       })
                     : // malloy percent
                       field.result === common.FieldResultEnum.Number &&
@@ -481,20 +486,31 @@ export class DataService {
                             common.isDefined(malloyNumberTag)
                           ? format(malloyNumberTag.value, value)
                           : field.result === common.FieldResultEnum.Number &&
-                              mconfig.modelType === common.ModelTypeEnum.Malloy
-                            ? // format(`#${thousandsSeparator}##0.###`, value)
-                              Number(value)
-                                .toLocaleString()
-                                .split(',')
-                                .join(thousandsSeparator)
-                            : this.formatValue({
+                              common.isDefinedAndNotEmpty(struct.formatNumber)
+                            ? // struct.formatNumber
+                              this.formatValue({
                                 value: value,
                                 formatNumber: field?.formatNumber,
                                 fieldResult: field?.result,
                                 currencyPrefix: field?.currencyPrefix,
                                 currencySuffix: field?.currencySuffix,
-                                thousands: thousandsSeparator
+                                thousandsSeparator: thousandsSeparator
                               })
+                            : field.result === common.FieldResultEnum.Number
+                              ? // no formatNumber
+                                Number(value)
+                                  .toLocaleString()
+                                  .split(',')
+                                  .join(thousandsSeparator)
+                              : // fallback
+                                this.formatValue({
+                                  value: value,
+                                  formatNumber: field?.formatNumber,
+                                  fieldResult: field?.result,
+                                  currencyPrefix: field?.currencyPrefix,
+                                  currencySuffix: field?.currencySuffix,
+                                  thousandsSeparator: thousandsSeparator
+                                })
           };
 
           r[sqlName] = cell;
@@ -527,6 +543,8 @@ export class DataService {
       yFieldsIds,
       chartType
     } = item;
+
+    let struct = this.structQuery.getValue();
 
     // console.log('makeSeriesData item');
     // console.log(item);
@@ -695,10 +713,8 @@ export class DataService {
     // console.log('ySeries');
     // console.log(ySeries);
 
-    let structState = this.structQuery.getValue();
-
     let sortedDaysOfWeek =
-      structState.weekStart === common.ProjectWeekStartEnum.Monday
+      struct.weekStart === common.ProjectWeekStartEnum.Monday
         ? [
             'Monday',
             'Tuesday',
@@ -1139,6 +1155,8 @@ export class DataService {
       showMetricsTimeFieldName
     } = item;
 
+    let struct = this.structQuery.getValue();
+
     let rowName = this.metricsMakeRowName({
       row: row,
       showMetricsModelName: showMetricsModelName,
@@ -1222,7 +1240,7 @@ export class DataService {
                   fieldResult: common.FieldResultEnum.Number,
                   currencyPrefix: row.currencyPrefix,
                   currencySuffix: row.currencySuffix,
-                  thousands: undefined // TODO: separator
+                  thousandsSeparator: struct.thousandsSeparator
                 })
               : 'null';
 

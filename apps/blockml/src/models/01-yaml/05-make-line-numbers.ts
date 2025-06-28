@@ -174,7 +174,8 @@ export function processLineNumbersRecursive(item: {
       let reg3 =
         [
           common.ParameterEnum.CurrencyPrefix.toString(),
-          common.ParameterEnum.CurrencySuffix.toString()
+          common.ParameterEnum.CurrencySuffix.toString(),
+          common.ParameterEnum.ThousandsSeparator.toString()
         ].indexOf(newPar) > -1
           ? common.MyRegex.CAPTURE_WITH_EDGE_WHITESPACES()
           : common.MyRegex.CAPTURE_WITHOUT_EDGE_WHITESPACES();

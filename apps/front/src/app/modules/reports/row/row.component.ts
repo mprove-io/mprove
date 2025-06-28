@@ -134,6 +134,8 @@ export class RowComponent {
           : undefined;
 
       if (common.isDefined(this.reportSelectedNode)) {
+        let struct = this.structQuery.getValue();
+
         this.formatNumberExamples = constants.FORMAT_NUMBER_EXAMPLES.map(
           example => {
             example.output = this.dataService.formatValue({
@@ -142,7 +144,7 @@ export class RowComponent {
               fieldResult: common.FieldResultEnum.Number,
               currencyPrefix: this.reportSelectedNode.data.currencyPrefix,
               currencySuffix: this.reportSelectedNode.data.currencySuffix,
-              thousands: undefined // TODO: thousands
+              thousandsSeparator: struct.thousandsSeparator
             });
 
             return example;

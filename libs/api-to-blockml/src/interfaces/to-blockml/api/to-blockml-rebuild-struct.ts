@@ -69,6 +69,9 @@ export class ToBlockmlRebuildStructResponsePayload {
   @IsString()
   currencySuffix: string;
 
+  @IsString()
+  thousandsSeparator: string;
+
   @IsBoolean()
   caseSensitiveStringFilters: boolean;
 

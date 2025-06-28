@@ -66,7 +66,6 @@ export const RESULTS_LIST: common.FieldResultEnum[] = [
 export const APP_SPINNER_NAME = 'app';
 
 export const FORMAT_NUMBER_DECIMAL = '.';
-export const FORMAT_NUMBER_THOUSANDS = ' ';
 export const FORMAT_NUMBER_GROUPING = [3];
 export const FORMAT_NUMBER_EXAMPLES: {
   id: string;

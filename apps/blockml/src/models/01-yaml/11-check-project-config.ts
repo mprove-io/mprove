@@ -25,15 +25,16 @@ export function checkProjectConfig(
   let errorsOnStart = item.errors.length;
 
   let projectConfig: common.FileProjectConf = {
-    allow_timezones: constants.PROJECT_CONFIG_ALLOW_TIMEZONES,
-    default_timezone: constants.PROJECT_CONFIG_DEFAULT_TIMEZONE,
-    week_start: constants.PROJECT_CONFIG_WEEK_START,
-    currency_prefix: constants.PROJECT_CONFIG_CURRENCY_PREFIX,
-    currency_suffix: constants.PROJECT_CONFIG_CURRENCY_SUFFIX,
-    format_number: constants.PROJECT_CONFIG_FORMAT_NUMBER,
+    allow_timezones: common.PROJECT_CONFIG_ALLOW_TIMEZONES,
+    default_timezone: common.PROJECT_CONFIG_DEFAULT_TIMEZONE,
+    week_start: common.PROJECT_CONFIG_WEEK_START,
+    currency_prefix: common.PROJECT_CONFIG_CURRENCY_PREFIX,
+    currency_suffix: common.PROJECT_CONFIG_CURRENCY_SUFFIX,
+    format_number: common.PROJECT_CONFIG_FORMAT_NUMBER,
+    thousands_separator: common.PROJECT_CONFIG_THOUSANDS_SEPARATOR,
     case_sensitive_string_filters:
-      constants.PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS,
-    simplify_safe_aggregates: constants.PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES,
+      common.PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS,
+    simplify_safe_aggregates: common.PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES,
     fileName: undefined,
     fileExt: undefined,
     filePath: undefined,

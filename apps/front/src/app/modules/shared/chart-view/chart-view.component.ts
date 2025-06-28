@@ -17,6 +17,7 @@ import {
 } from 'echarts';
 import { frontFormatTsUnix } from '~front/app/functions/front-format-ts-unix';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
+import { StructQuery } from '~front/app/queries/struct.query';
 import {
   DataService,
   QDataRow,
@@ -87,6 +88,7 @@ export class ChartViewComponent implements OnChanges {
 
   constructor(
     private dataService: DataService,
+    private structQuery: StructQuery,
     private formatNumberService: FormatNumberService,
     private cd: ChangeDetectorRef
   ) {}
@@ -511,11 +513,13 @@ export class ChartViewComponent implements OnChanges {
         mconfigFields: this.mconfigFields
       });
 
+    let struct = this.structQuery.getValue();
+
     let locale = formatLocale({
       decimal: constants.FORMAT_NUMBER_DECIMAL,
-      thousands: constants.FORMAT_NUMBER_THOUSANDS,
+      thousands: struct.thousandsSeparator,
       grouping: constants.FORMAT_NUMBER_GROUPING,
-      currency: [field.currencyPrefix, field.currencySuffix]
+      currency: [field.currencyPrefix ?? '', field.currencySuffix ?? '']
     });
 
     //
@@ -545,7 +549,7 @@ export class ChartViewComponent implements OnChanges {
 
     // let locale = formatLocale({
     //   decimal: constants.FORMAT_NUMBER_DECIMAL,
-    //   thousands: constants.FORMAT_NUMBER_THOUSANDS,
+    //   thousands: struct.thousandsSeparator,
     //   grouping: constants.FORMAT_NUMBER_GROUPING,
     //   currency: [field.currencyPrefix, field.currencySuffix]
     // });
@@ -581,7 +585,7 @@ export class ChartViewComponent implements OnChanges {
 
   //   let locale = formatLocale({
   //     decimal: constants.FORMAT_NUMBER_DECIMAL,
-  //     thousands: constants.FORMAT_NUMBER_THOUSANDS,
+  //     thousands: struct.thousandsSeparator,
   //     grouping: constants.FORMAT_NUMBER_GROUPING,
   //     currency: [field.currencyPrefix, field.currencySuffix]
   //   });
@@ -611,7 +615,7 @@ export class ChartViewComponent implements OnChanges {
 
   //   let locale = formatLocale({
   //     decimal: constants.FORMAT_NUMBER_DECIMAL,
-  //     thousands: constants.FORMAT_NUMBER_THOUSANDS,
+  //     thousands: struct.thousandsSeparator,
   //     grouping: constants.FORMAT_NUMBER_GROUPING,
   //     currency: [field.currencyPrefix, field.currencySuffix]
   //   });
@@ -635,11 +639,13 @@ export class ChartViewComponent implements OnChanges {
         mconfigFields: this.mconfigFields
       });
 
+    let struct = this.structQuery.getValue();
+
     let locale = formatLocale({
       decimal: constants.FORMAT_NUMBER_DECIMAL,
-      thousands: constants.FORMAT_NUMBER_THOUSANDS,
+      thousands: struct.thousandsSeparator,
       grouping: constants.FORMAT_NUMBER_GROUPING,
-      currency: [field.currencyPrefix, field.currencySuffix]
+      currency: [field.currencyPrefix ?? '', field.currencySuffix ?? '']
     });
 
     // ngx charts horizontal passes data instead of value
@@ -663,7 +669,7 @@ export class ChartViewComponent implements OnChanges {
 
   //   let locale = formatLocale({
   //     decimal: constants.FORMAT_NUMBER_DECIMAL,
-  //     thousands: constants.FORMAT_NUMBER_THOUSANDS,
+  //     thousands: struct.thousandsSeparator,
   //     grouping: constants.FORMAT_NUMBER_GROUPING,
   //     currency: [field.currencyPrefix, field.currencySuffix]
   //   });

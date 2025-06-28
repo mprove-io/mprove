@@ -74,15 +74,15 @@ export class ChartEditorComponent implements OnChanges {
   uiChartTypes = common.UI_CHART_TYPES;
 
   formatNumberExamples: any[] = constants.FORMAT_NUMBER_EXAMPLES.map(x => {
-    let structState = this.structQuery.getValue();
+    let struct = this.structQuery.getValue();
 
     x.output = this.dataService.formatValue({
       value: x.input,
       formatNumber: x.id,
       fieldResult: common.FieldResultEnum.Number,
-      currencyPrefix: structState.currencyPrefix,
-      currencySuffix: structState.currencySuffix,
-      thousands: undefined // TODO: thousands
+      currencyPrefix: struct.currencyPrefix,
+      currencySuffix: struct.currencySuffix,
+      thousandsSeparator: struct.thousandsSeparator
     });
 
     return x;

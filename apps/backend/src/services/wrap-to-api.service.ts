@@ -478,6 +478,7 @@ export class WrapToApiService {
       formatNumber: struct.formatNumber,
       currencyPrefix: struct.currencyPrefix,
       currencySuffix: struct.currencySuffix,
+      thousandsSeparator: struct.thousandsSeparator,
       errors: struct.errors,
       views: struct.views,
       metrics: struct.metrics,

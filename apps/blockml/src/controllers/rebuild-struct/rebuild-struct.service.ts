@@ -10,7 +10,6 @@ import { barSpecial } from '~blockml/barrels/bar-special';
 import { barWrapper } from '~blockml/barrels/bar-wrapper';
 import { barYaml } from '~blockml/barrels/bar-yaml';
 import { common } from '~blockml/barrels/common';
-import { constants } from '~blockml/barrels/constants';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { nodeCommon } from '~blockml/barrels/node-common';
 import { getMproveConfigFile } from '~blockml/functions/get-mprove-config-file';
@@ -18,6 +17,30 @@ import { BmError } from '~blockml/models/bm-error';
 import { PresetsService } from '~blockml/services/presets.service';
 import { RabbitService } from '~blockml/services/rabbit.service';
 import { TRIPLE_UNDERSCORE } from '~common/_index';
+
+interface RebuildStructPrep {
+  errors: BmError[];
+  stores: common.FileStore[];
+  dashboards: common.FileDashboard[];
+  metrics: common.ModelMetric[];
+  presets: common.Preset[];
+  models: common.FileModel[];
+  mods: common.FileModel[];
+  udfsDict: common.UdfsDict;
+  reports: common.FileReport[];
+  views: common.FileView[];
+  charts: common.FileChart[];
+  mproveDirValue: string;
+  weekStart: common.ProjectWeekStartEnum;
+  allowTimezones: boolean;
+  defaultTimezone: string;
+  formatNumber: string;
+  currencyPrefix: string;
+  currencySuffix: string;
+  thousandsSeparator: string;
+  caseSensitiveStringFilters: boolean;
+  simplifySafeAggregates: boolean;
+}
 
 @Injectable()
 export class RebuildStructService {
@@ -58,28 +81,7 @@ export class RebuildStructService {
       overrideTimezone
     } = reqValid.payload;
 
-    let {
-      errors,
-      stores,
-      mods,
-      dashboards,
-      metrics,
-      presets,
-      models,
-      reports,
-      udfsDict,
-      views,
-      charts,
-      mproveDirValue,
-      weekStart,
-      allowTimezones,
-      defaultTimezone,
-      formatNumber,
-      currencyPrefix,
-      currencySuffix,
-      caseSensitiveStringFilters,
-      simplifySafeAggregates
-    } = await this.rebuildStructStateless({
+    let prep: RebuildStructPrep = await this.rebuildStructStateless({
       traceId: reqValid.info.traceId,
       files: files,
       structId: structId,
@@ -92,26 +94,26 @@ export class RebuildStructService {
       isTest: false
     });
 
-    let apiErrors = barWrapper.wrapErrors({ errors: errors });
+    let apiErrors = barWrapper.wrapErrors({ errors: prep.errors });
 
-    let apiViews = barWrapper.wrapViews({ views: views });
+    let apiViews = barWrapper.wrapViews({ views: prep.views });
 
     let apiModels = barWrapper.wrapModels({
       structId: structId,
-      models: models,
-      stores: stores,
-      mods: mods
+      models: prep.models,
+      stores: prep.stores,
+      mods: prep.mods
     });
 
     let apiReports = barWrapper.wrapReports({
       projectId: projectId,
       structId: structId,
-      reports: reports,
-      metrics: metrics,
+      reports: prep.reports,
+      metrics: prep.metrics,
       models: apiModels,
-      formatNumber: formatNumber,
-      currencyPrefix: currencyPrefix,
-      currencySuffix: currencySuffix
+      formatNumber: prep.formatNumber,
+      currencyPrefix: prep.currencyPrefix,
+      currencySuffix: prep.currencySuffix
     });
 
     // apiReports.find(report=>report.reportId === 'LBW2P1FG40HF0NNCDH3U').rows.forEach(row => {
@@ -129,23 +131,23 @@ export class RebuildStructService {
       barWrapper.wrapDashboards({
         structId: structId,
         projectId: projectId,
-        models: models,
-        mods: mods,
-        stores: stores,
-        dashboards: dashboards,
+        models: prep.models,
+        mods: prep.mods,
+        stores: prep.stores,
+        dashboards: prep.dashboards,
         envId: envId,
-        timezone: defaultTimezone
+        timezone: prep.defaultTimezone
       });
 
     let { apiCharts, chartMconfigs, chartQueries } = barWrapper.wrapCharts({
       structId: structId,
       projectId: projectId,
-      models: models,
-      mods: mods,
-      stores: stores,
-      charts: charts,
+      models: prep.models,
+      mods: prep.mods,
+      stores: prep.stores,
+      charts: prep.charts,
       envId: envId,
-      timezone: defaultTimezone
+      timezone: prep.defaultTimezone
     });
 
     let queries = [...dashQueries, ...chartQueries];
@@ -153,25 +155,26 @@ export class RebuildStructService {
 
     let payload: apiToBlockml.ToBlockmlRebuildStructResponsePayload = {
       errors: apiErrors,
-      udfsDict: udfsDict,
+      udfsDict: prep.udfsDict,
       views: apiViews,
       models: apiModels,
       dashboards: apiDashboards,
       reports: apiReports,
       charts: apiCharts,
-      metrics: metrics,
-      presets: presets,
+      metrics: prep.metrics,
+      presets: prep.presets,
       mconfigs: mconfigs,
       queries: queries,
-      mproveDirValue: mproveDirValue,
-      weekStart: weekStart,
-      allowTimezones: allowTimezones,
-      defaultTimezone: defaultTimezone,
-      formatNumber: formatNumber,
-      currencyPrefix: currencyPrefix,
-      currencySuffix: currencySuffix,
-      caseSensitiveStringFilters: caseSensitiveStringFilters,
-      simplifySafeAggregates: simplifySafeAggregates
+      mproveDirValue: prep.mproveDirValue,
+      weekStart: prep.weekStart,
+      allowTimezones: prep.allowTimezones,
+      defaultTimezone: prep.defaultTimezone,
+      formatNumber: prep.formatNumber,
+      currencyPrefix: prep.currencyPrefix,
+      currencySuffix: prep.currencySuffix,
+      thousandsSeparator: prep.thousandsSeparator,
+      caseSensitiveStringFilters: prep.caseSensitiveStringFilters,
+      simplifySafeAggregates: prep.simplifySafeAggregates
     };
 
     return payload;
@@ -185,7 +188,7 @@ export class RebuildStructService {
     evs: common.Ev[];
     connections: common.ProjectConnection[];
     overrideTimezone: string;
-  }) {
+  }): Promise<RebuildStructPrep> {
     let configPath = item.dir + '/' + common.MPROVE_CONFIG_FILENAME;
 
     let mproveDir = await nodeCommon.getMproveDir({
@@ -219,7 +222,7 @@ export class RebuildStructService {
       files.push(mproveConfigFile);
     }
 
-    return await this.rebuildStructStateless({
+    let prep: RebuildStructPrep = await this.rebuildStructStateless({
       traceId: item.traceId,
       files: files,
       structId: item.structId,
@@ -231,6 +234,8 @@ export class RebuildStructService {
       projectId: undefined,
       isTest: true
     });
+
+    return prep;
   }
 
   async rebuildStructStateless(item: {
@@ -244,7 +249,7 @@ export class RebuildStructService {
     overrideTimezone: string;
     projectId: string;
     isTest: boolean;
-  }) {
+  }): Promise<RebuildStructPrep> {
     //
     let presets: common.Preset[] = this.presetsService.getPresets();
 
@@ -296,19 +301,20 @@ export class RebuildStructService {
         charts: [],
         udfsDict: {},
         mproveDirValue: undefined,
-        weekStart: constants.PROJECT_CONFIG_WEEK_START,
+        weekStart: common.PROJECT_CONFIG_WEEK_START,
         allowTimezones: common.toBooleanFromLowercaseString(
-          constants.PROJECT_CONFIG_ALLOW_TIMEZONES
+          common.PROJECT_CONFIG_ALLOW_TIMEZONES
         ),
-        defaultTimezone: constants.PROJECT_CONFIG_DEFAULT_TIMEZONE,
-        currencyPrefix: constants.PROJECT_CONFIG_CURRENCY_PREFIX,
-        currencySuffix: constants.PROJECT_CONFIG_CURRENCY_SUFFIX,
-        formatNumber: constants.PROJECT_CONFIG_FORMAT_NUMBER,
+        defaultTimezone: common.PROJECT_CONFIG_DEFAULT_TIMEZONE,
+        currencyPrefix: common.PROJECT_CONFIG_CURRENCY_PREFIX,
+        currencySuffix: common.PROJECT_CONFIG_CURRENCY_SUFFIX,
+        thousandsSeparator: common.PROJECT_CONFIG_THOUSANDS_SEPARATOR,
+        formatNumber: common.PROJECT_CONFIG_FORMAT_NUMBER,
         caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
-          constants.PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS
+          common.PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS
         ),
         simplifySafeAggregates: common.toBooleanFromLowercaseString(
-          constants.PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES
+          common.PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES
         )
       };
     }
@@ -832,7 +838,7 @@ export class RebuildStructService {
     // console.log('chartMconfigs[0]');
     // console.log(chartMconfigs[0]);
 
-    return {
+    let prep: RebuildStructPrep = {
       errors: errors,
       stores: stores,
       dashboards: dashboards,
@@ -861,6 +867,7 @@ export class RebuildStructService {
       formatNumber: projectConfig.format_number,
       currencyPrefix: projectConfig.currency_prefix,
       currencySuffix: projectConfig.currency_suffix,
+      thousandsSeparator: projectConfig.thousands_separator,
       caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
         projectConfig.case_sensitive_string_filters
       ),
@@ -868,5 +875,7 @@ export class RebuildStructService {
         projectConfig.simplify_safe_aggregates
       )
     };
+
+    return prep;
   }
 }

@@ -42,6 +42,9 @@ export class Struct {
   @IsString()
   currencySuffix: string;
 
+  @IsString()
+  thousandsSeparator: string;
+
   @IsBoolean()
   caseSensitiveStringFilters: boolean;
 

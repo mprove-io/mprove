@@ -1,5 +1,3 @@
-import { common } from '~blockml/barrels/common';
-
 export const APP_NAME_BLOCKML = 'BLOCKML';
 
 export const SRC_PATH = `apps/blockml/src`;
@@ -45,12 +43,3 @@ export const UNKNOWN_FIELD_CLASS = 'unknown_field_class';
 export const UNKNOWN_JOIN_TYPE = 'unknown_join_type';
 
 export const STANDARD_SQL = '#standardSQL';
-
-export const PROJECT_CONFIG_ALLOW_TIMEZONES = 'true';
-export const PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES = 'true';
-export const PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS = 'false';
-export const PROJECT_CONFIG_DEFAULT_TIMEZONE = common.UTC;
-export const PROJECT_CONFIG_WEEK_START = common.ProjectWeekStartEnum.Monday;
-export const PROJECT_CONFIG_CURRENCY_PREFIX = '$';
-export const PROJECT_CONFIG_CURRENCY_SUFFIX = '';
-export const PROJECT_CONFIG_FORMAT_NUMBER = ',.0f';

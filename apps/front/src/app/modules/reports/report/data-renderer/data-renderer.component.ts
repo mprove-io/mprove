@@ -39,6 +39,8 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
     this.isError = common.isDefined(rowDataRecord?.error);
 
+    let struct = this.structQuery.getValue();
+
     this.formattedValue =
       this.isError === false && common.isDefined(params.value)
         ? this.dataService.formatValue({
@@ -47,7 +49,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
             fieldResult: common.FieldResultEnum.Number,
             currencyPrefix: params.data.currencyPrefix,
             currencySuffix: params.data.currencySuffix,
-            thousands: undefined // TODO: thousands
+            thousandsSeparator: struct.thousandsSeparator
           })
         : this.isError === true
           ? rowDataRecord.error

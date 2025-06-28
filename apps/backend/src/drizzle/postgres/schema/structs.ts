@@ -25,6 +25,7 @@ export const structsTable = pgTable(
     formatNumber: varchar('format_number'),
     currencyPrefix: varchar('currency_prefix'),
     currencySuffix: varchar('currency_suffix'),
+    thousandsSeparator: varchar('thousands_separator'),
     errors: json('errors').$type<common.BmlError[]>().notNull(),
     views: json('views').$type<common.View[]>().notNull(),
     metrics: json('metrics').$type<common.ModelMetric[]>().default([]),

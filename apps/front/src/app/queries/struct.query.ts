@@ -22,7 +22,8 @@ let structState: StructState = {
   serverTs: undefined,
   formatNumber: undefined,
   currencyPrefix: undefined,
-  currencySuffix: undefined
+  currencySuffix: undefined,
+  thousandsSeparator: undefined
 };
 
 @Injectable({ providedIn: 'root' })

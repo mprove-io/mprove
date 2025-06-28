@@ -149,50 +149,30 @@ export class BlockmlService {
         }
       );
 
-    let {
-      mproveDirValue,
-      weekStart,
-      allowTimezones,
-      caseSensitiveStringFilters,
-      simplifySafeAggregates,
-      defaultTimezone,
-      formatNumber,
-      currencyPrefix,
-      currencySuffix,
-      errors,
-      views,
-      models,
-      reports,
-      dashboards,
-      charts,
-      udfsDict,
-      metrics,
-      presets,
-      mconfigs,
-      queries
-    } = blockmlRebuildStructResponse.payload;
+    let rs = blockmlRebuildStructResponse.payload;
 
     let struct: schemaPostgres.StructEnt = {
       projectId: projectId,
       structId: structId,
-      mproveDirValue: mproveDirValue,
-      weekStart: weekStart,
-      allowTimezones: allowTimezones,
-      caseSensitiveStringFilters: caseSensitiveStringFilters,
-      simplifySafeAggregates: simplifySafeAggregates,
-      defaultTimezone: defaultTimezone,
-      formatNumber: formatNumber,
-      currencyPrefix: currencyPrefix,
-      currencySuffix: currencySuffix,
-      errors: errors,
-      views: views,
-      metrics: metrics,
-      presets: presets,
-      udfsDict: udfsDict,
+      mproveDirValue: rs.mproveDirValue,
+      weekStart: rs.weekStart,
+      allowTimezones: rs.allowTimezones,
+      caseSensitiveStringFilters: rs.caseSensitiveStringFilters,
+      simplifySafeAggregates: rs.simplifySafeAggregates,
+      defaultTimezone: rs.defaultTimezone,
+      formatNumber: rs.formatNumber,
+      currencyPrefix: rs.currencyPrefix,
+      currencySuffix: rs.currencySuffix,
+      thousandsSeparator: rs.thousandsSeparator,
+      errors: rs.errors,
+      views: rs.views,
+      metrics: rs.metrics,
+      presets: rs.presets,
+      udfsDict: rs.udfsDict,
       serverTs: undefined
     };
 
-    reports.forEach(report => {
+    rs.reports.forEach(report => {
       let newRows = processRowIds({
         rows: report.rows,
         targetRowIds: report.rows.map(r => r.rowId)
@@ -211,29 +191,29 @@ export class BlockmlService {
                 insert: {
                   // apis: apis.map(x => this.wrapService.wrapToEntityApi(x)),
                   structs: [struct],
-                  charts: charts.map(x =>
+                  charts: rs.charts.map(x =>
                     this.wrapToEntService.wrapToEntityChart({
                       chart: x,
-                      chartType: mconfigs.find(
+                      chartType: rs.mconfigs.find(
                         mconfig => mconfig.mconfigId === x.tiles[0].mconfigId
                       ).chart.type
                     })
                   ),
-                  models: models.map(x =>
+                  models: rs.models.map(x =>
                     this.wrapToEntService.wrapToEntityModel(x)
                   ),
-                  reports: reports.map(x =>
+                  reports: rs.reports.map(x =>
                     this.wrapToEntService.wrapToEntityReport(x)
                   ),
-                  mconfigs: mconfigs.map(x =>
+                  mconfigs: rs.mconfigs.map(x =>
                     this.wrapToEntService.wrapToEntityMconfig(x)
                   ),
-                  dashboards: dashboards.map(x =>
+                  dashboards: rs.dashboards.map(x =>
                     this.wrapToEntService.wrapToEntityDashboard(x)
                   )
                 },
                 insertOrDoNothing: {
-                  queries: queries.map(x =>
+                  queries: rs.queries.map(x =>
                     this.wrapToEntService.wrapToEntityQuery(x)
                   )
                 }
@@ -246,13 +226,13 @@ export class BlockmlService {
 
     return {
       struct: struct,
-      models: models,
-      reports: reports,
-      dashboards: dashboards,
-      charts: charts,
-      metrics: metrics,
-      mconfigs: mconfigs,
-      queries: queries
+      models: rs.models,
+      reports: rs.reports,
+      dashboards: rs.dashboards,
+      charts: rs.charts,
+      metrics: rs.metrics,
+      mconfigs: rs.mconfigs,
+      queries: rs.queries
     };
   }
 

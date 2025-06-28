@@ -9,6 +9,18 @@ export const MPROVE_CONFIG_DIR_DOT_SLASH = './';
 export const MPROVE_CACHE_DIR = '.mprove';
 export const MPROVE_SYNC_FILENAME = 'sync.json';
 
+export const UTC = 'UTC';
+
+export const PROJECT_CONFIG_ALLOW_TIMEZONES = 'true';
+export const PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES = 'true';
+export const PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS = 'false';
+export const PROJECT_CONFIG_DEFAULT_TIMEZONE = UTC;
+export const PROJECT_CONFIG_WEEK_START = enums.ProjectWeekStartEnum.Monday;
+export const PROJECT_CONFIG_CURRENCY_PREFIX = '$';
+export const PROJECT_CONFIG_CURRENCY_SUFFIX = '';
+export const PROJECT_CONFIG_THOUSANDS_SEPARATOR = ',';
+export const PROJECT_CONFIG_FORMAT_NUMBER = '';
+
 export const MF = 'mf';
 
 export const PROD_REPO_ID = 'production';
@@ -92,7 +104,6 @@ export const SOME_ROWS_HAVE_FORMULA_ERRORS = 'Some rows have formula errors';
 
 export const USE_PROJECT_TIMEZONE_VALUE = 'USE_PROJECT_TIMEZONE';
 export const USE_PROJECT_TIMEZONE_LABEL = 'USE PROJECT CONFIG TIMEZONE';
-export const UTC = 'UTC';
 
 export const TIME_COLUMNS_LIMIT = 100;
 
