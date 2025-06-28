@@ -363,7 +363,7 @@ export class RebuildStructService {
         let mod: common.FileMod = {
           fileName: file.name,
           fileExt: `.${ext}` as common.FileExtensionEnum, // malloy
-          filePath: relativePath.split('/').join(common.TRIPLE_UNDERSCORE),
+          filePath: relativePath,
           name: sourceName,
           // mod: sourceName,
           location: relativePath,
