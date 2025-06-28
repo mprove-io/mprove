@@ -487,7 +487,11 @@ export function wrapModels(item: {
         malloyModelDef: malloyModelDef,
         connectionId: x.connection.connectionId,
         filePath: x.filePath,
-        content: x,
+        content:
+          x.fileExt === common.FileExtensionEnum.Store ||
+          x.fileExt === common.FileExtensionEnum.Model
+            ? x
+            : undefined,
         // isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
         dateRangeIncludesRightSide:
           x.fileExt === common.FileExtensionEnum.Store &&

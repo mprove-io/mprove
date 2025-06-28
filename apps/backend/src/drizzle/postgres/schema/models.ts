@@ -24,7 +24,7 @@ export const modelsTable = pgTable(
     malloyModelDef: json('malloy_model_def').$type<MalloyModelDef>(),
     connectionId: varchar('connection_id'),
     filePath: varchar('file_path'),
-    content: json('content').notNull(),
+    content: json('content'),
     isViewModel: boolean('is_view_model'),
     // isStoreModel: boolean('is_store_model'),
     dateRangeIncludesRightSide: boolean('date_range_includes_right_side'),

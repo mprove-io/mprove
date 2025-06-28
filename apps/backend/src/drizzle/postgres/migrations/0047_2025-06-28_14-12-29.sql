@@ -1,0 +1,1 @@
+ALTER TABLE "models" ALTER COLUMN "content" DROP NOT NULL;
