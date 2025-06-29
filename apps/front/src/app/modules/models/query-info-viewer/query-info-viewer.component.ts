@@ -29,12 +29,6 @@ export class QueryInfoViewerComponent implements OnChanges {
   queryPart: common.QueryPartEnum;
 
   @Input()
-  storeReqFunctionJsContent: string;
-
-  @Input()
-  storeReqJsonParts: string;
-
-  @Input()
   modelFilePath: string;
 
   prevModelFilePath: string;
@@ -84,39 +78,47 @@ export class QueryInfoViewerComponent implements OnChanges {
     }
 
     this.lang =
-      this.queryPart === common.QueryPartEnum.QuerySql
+      this.queryPart === common.QueryPartEnum.SqlQuery
         ? 'SQL'
-        : this.queryPart === common.QueryPartEnum.QueryMalloy ||
-            this.queryPart === common.QueryPartEnum.SourceMalloy
-          ? 'Malloy'
-          : this.queryPart === common.QueryPartEnum.StoreReqFunction
-            ? // ||
-              // this.queryPart === common.QueryPartEnum.StoreReqTemplate
-              'JavaScript'
-            : this.queryPart === common.QueryPartEnum.QueryStoreRequestPartsJson
-              ? 'JSON'
-              : this.queryPart === common.QueryPartEnum.TileYaml ||
-                  this.queryPart === common.QueryPartEnum.ModelYaml
-                ? 'YAML'
-                : undefined;
+        : this.queryPart === common.QueryPartEnum.MalloyCompiledQuery
+          ? 'JSON'
+          : this.queryPart === common.QueryPartEnum.MalloyQuery ||
+              this.queryPart === common.QueryPartEnum.MalloySource
+            ? 'JSON' // TODO: malloy
+            : this.queryPart ===
+                common.QueryPartEnum.JavascriptStoreRequestFunction
+              ? 'JavaScript'
+              : this.queryPart === common.QueryPartEnum.JsonStoreRequestParts
+                ? 'JSON'
+                : this.queryPart === common.QueryPartEnum.YamlTile ||
+                    this.queryPart === common.QueryPartEnum.YamlStore ||
+                    this.queryPart === common.QueryPartEnum.YamlModel
+                  ? 'YAML'
+                  : undefined;
   }
 
   checkContent() {
     if (common.isDefined(this.chart)) {
-      if (this.queryPart === common.QueryPartEnum.QuerySql) {
+      if (this.queryPart === common.QueryPartEnum.MalloyQuery) {
+        this.content = this.chart.tiles[0].mconfig.malloyQuery;
+      } else if (this.queryPart === common.QueryPartEnum.MalloyCompiledQuery) {
+        const parsed = this.chart.tiles[0].mconfig.compiledQuery;
+        this.content = JSON.stringify(parsed, null, 2);
+      } else if (this.queryPart === common.QueryPartEnum.SqlQuery) {
         this.content = this.chart.tiles[0].query.sql;
       } else if (
-        this.queryPart === common.QueryPartEnum.StoreReqFunction
-        //  ||
-        // this.queryPart === common.QueryPartEnum.StoreReqTemplate
+        this.queryPart === common.QueryPartEnum.JavascriptStoreRequestFunction
       ) {
-        this.content = this.storeReqFunctionJsContent;
+        this.content = `// Function to make Request urlPath and body
+${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
       } else if (
-        this.queryPart === common.QueryPartEnum.QueryStoreRequestPartsJson
+        this.queryPart === common.QueryPartEnum.JsonStoreRequestParts
       ) {
         try {
-          if (this.storeReqJsonParts) {
-            const parsed = JSON.parse(this.storeReqJsonParts);
+          let jsonParts = this.chart.tiles[0].mconfig.storePart?.reqJsonParts;
+
+          if (common.isDefined(jsonParts)) {
+            const parsed = JSON.parse(jsonParts);
             this.content = JSON.stringify(parsed, null, 2);
           } else {
             this.content = '';
@@ -124,7 +126,7 @@ export class QueryInfoViewerComponent implements OnChanges {
         } catch (error: any) {
           this.content = 'Invalid JSON: ' + error.message;
         }
-      } else if (this.queryPart === common.QueryPartEnum.TileYaml) {
+      } else if (this.queryPart === common.QueryPartEnum.YamlTile) {
         let filePartTile: common.FilePartTile = common.prepareTile({
           isForDashboard: false,
           mconfig: this.chart.tiles[0].mconfig
@@ -133,8 +135,9 @@ export class QueryInfoViewerComponent implements OnChanges {
         this.content = common.toYaml({ tiles: [filePartTile] });
       } else if (
         [
-          common.QueryPartEnum.ModelYaml,
-          common.QueryPartEnum.SourceMalloy
+          common.QueryPartEnum.MalloySource,
+          common.QueryPartEnum.YamlStore,
+          common.QueryPartEnum.YamlModel
         ].indexOf(this.queryPart) > -1 &&
         this.prevModelFilePath !== this.modelFilePath
       ) {
@@ -152,7 +155,6 @@ export class QueryInfoViewerComponent implements OnChanges {
         };
 
         this.isShowSpinner = true;
-        // this.cd.detectChanges();
 
         this.spinner.show(this.spinnerName);
 
@@ -193,7 +195,7 @@ export class QueryInfoViewerComponent implements OnChanges {
           .subscribe();
       }
 
-      if (this.queryPart !== common.QueryPartEnum.ModelYaml) {
+      if (this.queryPart !== common.QueryPartEnum.YamlModel) {
         this.prevModelFilePath = undefined;
       }
 

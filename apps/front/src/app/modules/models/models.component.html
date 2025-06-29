@@ -1380,9 +1380,11 @@
                   </div>
                 </div>
 
-                <div class="flex flex-1 flex-row items-center">
+                <div
+                  class="flex flex-1 flex-row items-center"
+                  *ngIf="mconfig?.select.length > 0"
+                >
                   <div
-                    *ngIf="mconfig?.select.length > 0"
                     (click)="toggleInfoPanel()"
                     class="text-s1 flex h-11 cursor-pointer select-none flex-row items-center pl-2 pr-5 text-xl font-semibold"
                   >
@@ -1398,70 +1400,9 @@
                     </div>
                   </div>
 
-                  <!-- <form
-                    [formGroup]="queryPartForm"
-                    *ngIf="rightIsShow === true && mconfig?.select.length > 0"
-                    class="ml-5"
-                  >
-                    <ng-select
-                      #queryPartSelect
-                      [fixNgSelectBottom]="queryPartSelect"
-                      data-cy="queryPartSelect"
-                      class="w-[250px] flex-shrink-0 text-base focus:outline-none"
-                      [items]="queryPartsList"
-                      [clearable]="false"
-                      [searchable]="false"
-                      (change)="queryPartChange($event)"
-                      (keyup.esc)="
-                        $event.stopImmediatePropagation();
-                        queryPartSelect.blur()
-                      "
-                      (keyup.enter)="
-                        $event.stopImmediatePropagation();
-                        queryPartSelect.blur()
-                      "
-                      appendTo="body"
-                      bindLabel="label"
-                      bindValue="value"
-                      formControlName="queryPart"
-                    >
-                      <ng-template ng-label-tmp let-item="item">
-                        <div>{{ item.label }}</div>
-                      </ng-template>
-
-                      <ng-template ng-option-tmp let-item="item">
-                        <div>{{ item.label }}</div>
-                      </ng-template>
-                    </ng-select>
-                  </form> -->
-
-                  <div
-                    *ngIf="
-                      model.type === modelTypeMalloy ||
-                      model.type === modelTypeSQL
-                    "
-                    (click)="setShowQuerySQL()"
-                    class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
-                  >
-                    <div
-                      class="flex w-[50px] flex-row items-center justify-center"
-                    >
-                      <div
-                        [ngClass]="{
-                          'font-semibold':
-                            rightIsShow &&
-                            queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.QuerySql
-                        }"
-                      >
-                        SQL
-                      </div>
-                    </div>
-                  </div>
-
                   <div
                     *ngIf="model.type === modelTypeStore"
-                    (click)="setShowQueryStoreRequestPartsJson()"
+                    (click)="setShowJsonStoreRequestParts()"
                     class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
                     <div
@@ -1472,7 +1413,7 @@
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.QueryStoreRequestPartsJson
+                              queryPartEnum.JsonStoreRequestParts
                         }"
                       >
                         REQUEST
@@ -1481,7 +1422,98 @@
                   </div>
 
                   <div
-                    (click)="setShowTile()"
+                    *ngIf="model.type === modelTypeStore"
+                    (click)="setShowJavascriptStoreRequestFunction()"
+                    class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
+                  >
+                    <div
+                      class="flex w-[35px] flex-row items-center justify-center"
+                    >
+                      <div
+                        [ngClass]="{
+                          'font-semibold':
+                            rightIsShow &&
+                            queryPartForm.controls['queryPart'].value ===
+                              queryPartEnum.JavascriptStoreRequestFunction
+                        }"
+                      >
+                        JS
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    *ngIf="model.type === modelTypeMalloy"
+                    (click)="setShowMalloyQuery()"
+                    class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
+                  >
+                    <div
+                      class="flex w-[88px] flex-row items-center justify-center"
+                    >
+                      <div
+                        [ngClass]="{
+                          'font-semibold':
+                            rightIsShow &&
+                            queryPartForm.controls['queryPart'].value ===
+                              queryPartEnum.MalloyQuery
+                        }"
+                      >
+                        MALLOY
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    *ngIf="model.type === modelTypeMalloy"
+                    (click)="setShowMalloyCompiledQuery()"
+                    class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
+                  >
+                    <div
+                      class="flex w-[115px] flex-row items-center justify-center"
+                    >
+                      <div
+                        [ngClass]="{
+                          'font-semibold':
+                            rightIsShow &&
+                            queryPartForm.controls['queryPart'].value ===
+                              queryPartEnum.MalloyCompiledQuery
+                        }"
+                      >
+                        METADATA
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    *ngIf="
+                      model.type === modelTypeMalloy ||
+                      model.type === modelTypeSQL
+                    "
+                    (click)="setShowSqlQuery()"
+                    class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
+                    [ngClass]="{
+                      'ml-5': model.type === modelTypeSQL,
+                      'ml-3': model.type === modelTypeMalloy
+                    }"
+                  >
+                    <div
+                      class="flex w-[50px] flex-row items-center justify-center"
+                    >
+                      <div
+                        [ngClass]="{
+                          'font-semibold':
+                            rightIsShow &&
+                            queryPartForm.controls['queryPart'].value ===
+                              queryPartEnum.SqlQuery
+                        }"
+                      >
+                        SQL
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    (click)="setShowYamlTile()"
                     class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
                     <div
@@ -1492,7 +1524,7 @@
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.TileYaml
+                              queryPartEnum.YamlTile
                         }"
                       >
                         TILE
@@ -1502,7 +1534,7 @@
 
                   <div
                     *ngIf="model.type === modelTypeMalloy"
-                    (click)="setShowSource()"
+                    (click)="setShowMalloySource()"
                     class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
                     <div
@@ -1513,7 +1545,7 @@
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.SourceMalloy
+                              queryPartEnum.MalloySource
                         }"
                       >
                         SOURCE
@@ -1522,11 +1554,29 @@
                   </div>
 
                   <div
-                    *ngIf="
-                      model.type === modelTypeStore ||
-                      model.type === modelTypeSQL
-                    "
-                    (click)="setShowModel()"
+                    *ngIf="model.type === modelTypeStore"
+                    (click)="setShowYamlStore()"
+                    class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
+                  >
+                    <div
+                      class="flex w-[75px] flex-row items-center justify-center"
+                    >
+                      <div
+                        [ngClass]="{
+                          'font-semibold':
+                            rightIsShow &&
+                            queryPartForm.controls['queryPart'].value ===
+                              queryPartEnum.YamlStore
+                        }"
+                      >
+                        STORE
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    *ngIf="model.type === modelTypeSQL"
+                    (click)="setShowYamlModel()"
                     class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
                     <div
@@ -1537,7 +1587,7 @@
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.ModelYaml
+                              queryPartEnum.YamlModel
                         }"
                       >
                         MODEL
@@ -1545,7 +1595,7 @@
                     </div>
                   </div>
 
-                  <ng-template #templateEditModel>
+                  <ng-template #templateEditModelFile>
                     <div *ngIf="isEditor === false"
                       >Models can be edited by project members with FilesEditor
                       role</div
@@ -1562,10 +1612,12 @@
                     *ngIf="
                       rightIsShow === true &&
                       mconfig?.select.length > 0 &&
-                      queryPartForm.controls['queryPart'].value ===
-                        queryPartEnum.ModelYaml
+                      [
+                        queryPartEnum.YamlModel,
+                        queryPartEnum.MalloySource
+                      ].indexOf(queryPartForm.controls['queryPart'].value) > -1
                     "
-                    [tp]="templateEditModel"
+                    [tp]="templateEditModelFile"
                     [tpIsEnabled]="
                       isEditor === false || nav?.isRepoProd === true
                     "
@@ -1591,7 +1643,7 @@
 
                   <div class="flex flex-1"></div>
 
-                  <button
+                  <!-- <button
                     (click)="toggleChartPanel()"
                     class="text-s1 focus-none hover:bg-m200 ml-5 mr-9 flex h-9 w-9 items-center justify-center rounded"
                   >
@@ -1602,7 +1654,7 @@
                     <m-unfold-less-icon
                       *ngIf="chartIsExpanded === false"
                     ></m-unfold-less-icon>
-                  </button>
+                  </button> -->
                 </div>
               </div>
 
@@ -1665,8 +1717,6 @@
                     <m-query-info-viewer
                       [queryPart]="queryPartForm.controls['queryPart'].value"
                       [modelFilePath]="model.filePath"
-                      [storeReqFunctionJsContent]="storeReqFunctionJsContent"
-                      [storeReqJsonParts]="mconfig.storePart?.reqJsonParts"
                     ></m-query-info-viewer>
                   </div>
                 </div>

@@ -1,13 +1,11 @@
 export enum QueryPartEnum {
-  QueryMalloy = 'QueryMalloy',
-  QuerySql = 'QuerySql',
-  QueryStoreRequestPartsJson = 'QueryStoreRequestPartsJson',
-  //
-  SourceMalloy = 'SourceMalloy',
-  ModelYaml = 'ModelYaml',
-  //
-  TileYaml = 'TileYaml',
-  //
-  StoreReqFunction = 'StoreReqFunction'
-  // StoreReqTemplate = 'StoreReqTemplate',
+  MalloyQuery = 'MalloyQuery',
+  MalloyCompiledQuery = 'MalloyCompiledQuery',
+  JsonStoreRequestParts = 'JsonStoreRequestParts',
+  JavascriptStoreRequestFunction = 'JavascriptStoreRequestFunction',
+  SqlQuery = 'SqlQuery',
+  YamlTile = 'YamlTile',
+  YamlModel = 'YamlModel',
+  MalloySource = 'MalloySource',
+  YamlStore = 'YamlStore'
 }
