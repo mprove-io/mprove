@@ -1441,10 +1441,10 @@
                       model.type === modelTypeSQL
                     "
                     (click)="setShowQuerySQL()"
-                    class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center bg-yellow-100 pl-0 pr-2 text-lg"
+                    class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
                     <div
-                      class="flex w-[72px] flex-row items-center justify-center"
+                      class="flex w-[50px] flex-row items-center justify-center"
                     >
                       <div
                         [ngClass]="{
@@ -1462,10 +1462,10 @@
                   <div
                     *ngIf="model.type === modelTypeStore"
                     (click)="setShowQueryStoreRequestPartsJson()"
-                    class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center bg-yellow-100 pl-0 pr-2 text-lg"
+                    class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
                     <div
-                      class="flex w-[72px] flex-row items-center justify-center"
+                      class="flex w-[100px] flex-row items-center justify-center"
                     >
                       <div
                         [ngClass]="{
@@ -1475,7 +1475,27 @@
                               queryPartEnum.QueryStoreRequestPartsJson
                         }"
                       >
-                        Request
+                        REQUEST
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    (click)="setShowTile()"
+                    class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
+                  >
+                    <div
+                      class="flex w-[50px] flex-row items-center justify-center"
+                    >
+                      <div
+                        [ngClass]="{
+                          'font-semibold':
+                            rightIsShow &&
+                            queryPartForm.controls['queryPart'].value ===
+                              queryPartEnum.TileYaml
+                        }"
+                      >
+                        TILE
                       </div>
                     </div>
                   </div>
@@ -1483,10 +1503,10 @@
                   <div
                     *ngIf="model.type === modelTypeMalloy"
                     (click)="setShowSource()"
-                    class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center bg-yellow-100 pl-0 pr-2 text-lg"
+                    class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
                     <div
-                      class="flex w-[72px] flex-row items-center justify-center"
+                      class="flex w-[88px] flex-row items-center justify-center"
                     >
                       <div
                         [ngClass]="{
@@ -1496,7 +1516,7 @@
                               queryPartEnum.SourceMalloy
                         }"
                       >
-                        Source
+                        SOURCE
                       </div>
                     </div>
                   </div>
@@ -1507,10 +1527,10 @@
                       model.type === modelTypeSQL
                     "
                     (click)="setShowModel()"
-                    class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center bg-yellow-100 pl-0 pr-2 text-lg"
+                    class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
                     <div
-                      class="flex w-[72px] flex-row items-center justify-center"
+                      class="flex w-[80px] flex-row items-center justify-center"
                     >
                       <div
                         [ngClass]="{
@@ -1520,27 +1540,7 @@
                               queryPartEnum.ModelYaml
                         }"
                       >
-                        Model
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    (click)="setShowTile()"
-                    class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center bg-yellow-100 pl-0 pr-2 text-lg"
-                  >
-                    <div
-                      class="flex w-[72px] flex-row items-center justify-center"
-                    >
-                      <div
-                        [ngClass]="{
-                          'font-semibold':
-                            rightIsShow &&
-                            queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.TileYaml
-                        }"
-                      >
-                        Tile
+                        MODEL
                       </div>
                     </div>
                   </div>
