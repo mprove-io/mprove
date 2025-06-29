@@ -1394,17 +1394,11 @@
                         *ngIf="rightIsShow"
                       ></m-chevron-down-icon>
 
-                      <div>
-                        {{
-                          mconfig?.modelType === modelTypeStore
-                            ? 'Store Query'
-                            : 'Main Query'
-                        }}
-                      </div>
+                      <div> Query </div>
                     </div>
                   </div>
 
-                  <form
+                  <!-- <form
                     [formGroup]="queryPartForm"
                     *ngIf="rightIsShow === true && mconfig?.select.length > 0"
                     class="ml-5"
@@ -1414,11 +1408,7 @@
                       [fixNgSelectBottom]="queryPartSelect"
                       data-cy="queryPartSelect"
                       class="w-[250px] flex-shrink-0 text-base focus:outline-none"
-                      [items]="
-                        mconfig?.modelType === modelTypeStore
-                          ? storeQueryPartList
-                          : mainQueryPartList
-                      "
+                      [items]="queryPartsList"
                       [clearable]="false"
                       [searchable]="false"
                       (change)="queryPartChange($event)"
@@ -1443,7 +1433,117 @@
                         <div>{{ item.label }}</div>
                       </ng-template>
                     </ng-select>
-                  </form>
+                  </form> -->
+
+                  <div
+                    *ngIf="
+                      model.type === modelTypeMalloy ||
+                      model.type === modelTypeSQL
+                    "
+                    (click)="setShowQuerySQL()"
+                    class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center bg-yellow-100 pl-0 pr-2 text-lg"
+                  >
+                    <div
+                      class="flex w-[72px] flex-row items-center justify-center"
+                    >
+                      <div
+                        [ngClass]="{
+                          'font-semibold':
+                            rightIsShow &&
+                            queryPartForm.controls['queryPart'].value ===
+                              queryPartEnum.QuerySql
+                        }"
+                      >
+                        SQL
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    *ngIf="model.type === modelTypeStore"
+                    (click)="setShowQueryStoreRequestPartsJson()"
+                    class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center bg-yellow-100 pl-0 pr-2 text-lg"
+                  >
+                    <div
+                      class="flex w-[72px] flex-row items-center justify-center"
+                    >
+                      <div
+                        [ngClass]="{
+                          'font-semibold':
+                            rightIsShow &&
+                            queryPartForm.controls['queryPart'].value ===
+                              queryPartEnum.QueryStoreRequestPartsJson
+                        }"
+                      >
+                        Request
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    *ngIf="model.type === modelTypeMalloy"
+                    (click)="setShowSource()"
+                    class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center bg-yellow-100 pl-0 pr-2 text-lg"
+                  >
+                    <div
+                      class="flex w-[72px] flex-row items-center justify-center"
+                    >
+                      <div
+                        [ngClass]="{
+                          'font-semibold':
+                            rightIsShow &&
+                            queryPartForm.controls['queryPart'].value ===
+                              queryPartEnum.SourceMalloy
+                        }"
+                      >
+                        Source
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    *ngIf="
+                      model.type === modelTypeStore ||
+                      model.type === modelTypeSQL
+                    "
+                    (click)="setShowModel()"
+                    class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center bg-yellow-100 pl-0 pr-2 text-lg"
+                  >
+                    <div
+                      class="flex w-[72px] flex-row items-center justify-center"
+                    >
+                      <div
+                        [ngClass]="{
+                          'font-semibold':
+                            rightIsShow &&
+                            queryPartForm.controls['queryPart'].value ===
+                              queryPartEnum.ModelYaml
+                        }"
+                      >
+                        Model
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    (click)="setShowTile()"
+                    class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center bg-yellow-100 pl-0 pr-2 text-lg"
+                  >
+                    <div
+                      class="flex w-[72px] flex-row items-center justify-center"
+                    >
+                      <div
+                        [ngClass]="{
+                          'font-semibold':
+                            rightIsShow &&
+                            queryPartForm.controls['queryPart'].value ===
+                              queryPartEnum.TileYaml
+                        }"
+                      >
+                        Tile
+                      </div>
+                    </div>
+                  </div>
 
                   <ng-template #templateEditModel>
                     <div *ngIf="isEditor === false"
@@ -1565,8 +1665,8 @@
                     <m-query-info-viewer
                       [queryPart]="queryPartForm.controls['queryPart'].value"
                       [modelFilePath]="model.filePath"
-                      [jsContent]="jsContent"
-                      [jsonContent]="mconfig.storePart?.reqJsonParts"
+                      [storeReqFunctionJsContent]="storeReqFunctionJsContent"
+                      [storeReqJsonParts]="mconfig.storePart?.reqJsonParts"
                     ></m-query-info-viewer>
                   </div>
                 </div>

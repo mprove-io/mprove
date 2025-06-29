@@ -1,12 +1,13 @@
 export enum QueryPartEnum {
+  QueryMalloy = 'QueryMalloy',
+  QuerySql = 'QuerySql',
+  QueryStoreRequestPartsJson = 'QueryStoreRequestPartsJson',
+  //
+  SourceMalloy = 'SourceMalloy',
   ModelYaml = 'ModelYaml',
+  //
   TileYaml = 'TileYaml',
   //
-  MainSql = 'MainSql',
-  //
-  StoreReqTemplate = 'StoreReqTemplate',
-  StoreReqFunction = 'StoreReqFunction',
-  StoreReqJsonParts = 'StoreReqJsonParts'
-  // StoreReqBody = 'StoreReqBody',
-  // StoreReqUrlPath = 'StoreReqUrlPath'
+  StoreReqFunction = 'StoreReqFunction'
+  // StoreReqTemplate = 'StoreReqTemplate',
 }

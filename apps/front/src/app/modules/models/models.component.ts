@@ -122,6 +122,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
   queryPartEnum = common.QueryPartEnum;
 
   modelTypeStore = common.ModelTypeEnum.Store;
+  modelTypeSQL = common.ModelTypeEnum.SQL;
+  modelTypeMalloy = common.ModelTypeEnum.Malloy;
 
   chartTypeEnumTable = common.ChartTypeEnum.Table;
   chartTypeEnumSingle = common.ChartTypeEnum.Single;
@@ -196,24 +198,40 @@ export class ModelsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.model = x;
 
-      if (common.isDefined(this.model.modelId)) {
-        let queryPart = this.model.type === common.ModelTypeEnum.Store;
-        // this.model.isStoreModel === true &&
-        this.storeQueryPartList
-          .map(y => y.value)
-          .indexOf(this.queryPartForm.controls['queryPart'].value) < 0
-          ? common.QueryPartEnum.StoreReqJsonParts
-          : this.model.type !== common.ModelTypeEnum.Store;
-        // this.model.isStoreModel === false &&
-        this.mainQueryPartList
-          .map(y => y.value)
-          .indexOf(this.queryPartForm.controls['queryPart'].value) < 0
-          ? common.QueryPartEnum.MainSql
-          : undefined;
+      if (
+        common.isDefined(this.model.modelId) &&
+        ((this.model.type === common.ModelTypeEnum.Malloy &&
+          [
+            common.QueryPartEnum.QueryMalloy,
+            common.QueryPartEnum.QuerySql,
+            common.QueryPartEnum.SourceMalloy,
+            common.QueryPartEnum.TileYaml
+          ].indexOf(this.queryPartForm.controls['queryPart'].value) < 0) ||
+          (this.model.type === common.ModelTypeEnum.Store &&
+            [
+              common.QueryPartEnum.QueryStoreRequestPartsJson,
+              common.QueryPartEnum.ModelYaml,
+              common.QueryPartEnum.TileYaml
+            ].indexOf(this.queryPartForm.controls['queryPart'].value) < 0) ||
+          (this.model.type === common.ModelTypeEnum.SQL &&
+            [
+              common.QueryPartEnum.QuerySql,
+              common.QueryPartEnum.ModelYaml,
+              common.QueryPartEnum.TileYaml
+            ].indexOf(this.queryPartForm.controls['queryPart'].value) < 0))
+      ) {
+        let queryPart =
+          this.model.type === common.ModelTypeEnum.Store
+            ? common.QueryPartEnum.QueryStoreRequestPartsJson
+            : this.model.type === common.ModelTypeEnum.Malloy
+              ? common.QueryPartEnum.QuerySql
+              : this.model.type === common.ModelTypeEnum.SQL
+                ? common.QueryPartEnum.QuerySql
+                : undefined;
 
         if (
           common.isDefined(queryPart) &&
-          queryPart !== this.queryPartForm.controls['queryPart'].value
+          this.queryPartForm.controls['queryPart'].value !== queryPart
         ) {
           this.queryPartForm.controls['queryPart'].setValue(queryPart);
         }
@@ -492,39 +510,74 @@ export class ModelsComponent implements OnInit, OnDestroy {
     queryPart: undefined
   });
 
-  mainQueryPartList: QueryPartItem[] = [
+  queryPartsList: QueryPartItem[] = [
     {
-      label: 'SQL',
-      value: common.QueryPartEnum.MainSql
+      label: 'Malloy',
+      value: common.QueryPartEnum.QueryMalloy
     },
     {
-      label: 'Model',
+      label: 'SQL',
+      value: common.QueryPartEnum.QuerySql
+    },
+    {
+      label: 'Request Path and Body',
+      value: common.QueryPartEnum.QueryStoreRequestPartsJson
+    },
+    {
+      label: 'ModelMalloy',
+      value: common.QueryPartEnum.SourceMalloy
+    },
+    {
+      label: 'ModelYaml',
       value: common.QueryPartEnum.ModelYaml
     },
     {
       label: 'Tile',
       value: common.QueryPartEnum.TileYaml
-    }
-  ];
-
-  storeQueryPartList: QueryPartItem[] = [
-    {
-      label: 'Request Path and Body',
-      value: common.QueryPartEnum.StoreReqJsonParts
     },
+    // {
+    //   label: 'Request Template',
+    //   value: common.QueryPartEnum.StoreReqTemplate
+    // },
     {
       label: 'Request Function',
       value: common.QueryPartEnum.StoreReqFunction
-    },
-    {
-      label: 'Store Model',
-      value: common.QueryPartEnum.ModelYaml
-    },
-    {
-      label: 'Tile',
-      value: common.QueryPartEnum.TileYaml
     }
   ];
+
+  // mainQueryPartList: QueryPartItem[] = [
+  //   {
+  //     label: 'SQL',
+  //     value: common.QueryPartEnum.QuerySql
+  //   },
+  //   {
+  //     label: 'Model',
+  //     value: common.QueryPartEnum.ModelYaml
+  //   },
+  //   {
+  //     label: 'Tile',
+  //     value: common.QueryPartEnum.TileYaml
+  //   }
+  // ];
+
+  // storeQueryPartList: QueryPartItem[] = [
+  //   {
+  //     label: 'Request Path and Body',
+  //     value: common.QueryPartEnum.QueryStoreRequestPartsJson
+  //   },
+  //   {
+  //     label: 'Request Function',
+  //     value: common.QueryPartEnum.StoreReqFunction
+  //   },
+  //   {
+  //     label: 'Store Model',
+  //     value: common.QueryPartEnum.ModelYaml
+  //   },
+  //   {
+  //     label: 'Tile',
+  //     value: common.QueryPartEnum.TileYaml
+  //   }
+  // ];
 
   chartTypeForm: FormGroup = this.fb.group({
     chartType: [undefined]
@@ -591,7 +644,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     //   iconPath: 'assets/charts/gauge_linear.svg'
   ];
 
-  jsContent: string;
+  storeReqFunctionJsContent: string;
 
   private timer: any;
 
@@ -701,6 +754,69 @@ export class ModelsComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.scrollToSelectedChart({ isSmooth: true });
     });
+  }
+
+  setShowQueryMalloy() {
+    if (this.rightIsShow === false) {
+      this.rightIsShow = true;
+    }
+    this.queryPartForm.controls['queryPart'].setValue(
+      common.QueryPartEnum.QueryMalloy
+    );
+  }
+
+  setShowQuerySQL() {
+    if (this.rightIsShow === false) {
+      this.rightIsShow = true;
+    }
+    this.queryPartForm.controls['queryPart'].setValue(
+      common.QueryPartEnum.QuerySql
+    );
+  }
+
+  setShowQueryStoreRequestPartsJson() {
+    if (this.rightIsShow === false) {
+      this.rightIsShow = true;
+    }
+    this.queryPartForm.controls['queryPart'].setValue(
+      common.QueryPartEnum.QueryStoreRequestPartsJson
+    );
+  }
+
+  setShowModel() {
+    if (this.rightIsShow === false) {
+      this.rightIsShow = true;
+    }
+    this.queryPartForm.controls['queryPart'].setValue(
+      common.QueryPartEnum.ModelYaml
+    );
+  }
+
+  setShowSource() {
+    if (this.rightIsShow === false) {
+      this.rightIsShow = true;
+    }
+    this.queryPartForm.controls['queryPart'].setValue(
+      common.QueryPartEnum.SourceMalloy
+    );
+  }
+
+  setShowTile() {
+    if (this.rightIsShow === false) {
+      this.rightIsShow = true;
+    }
+    this.queryPartForm.controls['queryPart'].setValue(
+      common.QueryPartEnum.TileYaml
+    );
+  }
+
+  setShowStoreReqFunction() {
+    if (this.rightIsShow === false) {
+      this.rightIsShow = true;
+    }
+    this.queryPartForm.controls['queryPart'].setValue(
+      common.QueryPartEnum.StoreReqFunction
+    );
   }
 
   setShowCharts() {
@@ -1135,7 +1251,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
         common.QueryPartEnum.StoreReqFunction
       ].indexOf(value) > -1
     ) {
-      this.jsContent =
+      this.storeReqFunctionJsContent =
         value === common.QueryPartEnum.StoreReqFunction
           ? `// Function to make Request urlPath and body
 ${this.mconfig.storePart?.reqFunction}`

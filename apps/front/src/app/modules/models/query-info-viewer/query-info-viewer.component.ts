@@ -29,10 +29,10 @@ export class QueryInfoViewerComponent implements OnChanges {
   queryPart: common.QueryPartEnum;
 
   @Input()
-  jsContent: string;
+  storeReqFunctionJsContent: string;
 
   @Input()
-  jsonContent: string;
+  storeReqJsonParts: string;
 
   @Input()
   modelFilePath: string;
@@ -84,32 +84,39 @@ export class QueryInfoViewerComponent implements OnChanges {
     }
 
     this.lang =
-      this.queryPart === common.QueryPartEnum.MainSql
+      this.queryPart === common.QueryPartEnum.QuerySql
         ? 'SQL'
-        : this.queryPart === common.QueryPartEnum.StoreReqFunction ||
-            this.queryPart === common.QueryPartEnum.StoreReqTemplate
-          ? 'JavaScript'
-          : this.queryPart === common.QueryPartEnum.StoreReqJsonParts
-            ? 'JSON'
-            : this.queryPart === common.QueryPartEnum.TileYaml ||
-                this.queryPart === common.QueryPartEnum.ModelYaml
-              ? 'YAML'
-              : undefined;
+        : this.queryPart === common.QueryPartEnum.QueryMalloy ||
+            this.queryPart === common.QueryPartEnum.SourceMalloy
+          ? 'Malloy'
+          : this.queryPart === common.QueryPartEnum.StoreReqFunction
+            ? // ||
+              // this.queryPart === common.QueryPartEnum.StoreReqTemplate
+              'JavaScript'
+            : this.queryPart === common.QueryPartEnum.QueryStoreRequestPartsJson
+              ? 'JSON'
+              : this.queryPart === common.QueryPartEnum.TileYaml ||
+                  this.queryPart === common.QueryPartEnum.ModelYaml
+                ? 'YAML'
+                : undefined;
   }
 
   checkContent() {
     if (common.isDefined(this.chart)) {
-      if (this.queryPart === common.QueryPartEnum.MainSql) {
+      if (this.queryPart === common.QueryPartEnum.QuerySql) {
         this.content = this.chart.tiles[0].query.sql;
       } else if (
-        this.queryPart === common.QueryPartEnum.StoreReqFunction ||
-        this.queryPart === common.QueryPartEnum.StoreReqTemplate
+        this.queryPart === common.QueryPartEnum.StoreReqFunction
+        //  ||
+        // this.queryPart === common.QueryPartEnum.StoreReqTemplate
       ) {
-        this.content = this.jsContent;
-      } else if (this.queryPart === common.QueryPartEnum.StoreReqJsonParts) {
+        this.content = this.storeReqFunctionJsContent;
+      } else if (
+        this.queryPart === common.QueryPartEnum.QueryStoreRequestPartsJson
+      ) {
         try {
-          if (this.jsonContent) {
-            const parsed = JSON.parse(this.jsonContent);
+          if (this.storeReqJsonParts) {
+            const parsed = JSON.parse(this.storeReqJsonParts);
             this.content = JSON.stringify(parsed, null, 2);
           } else {
             this.content = '';
@@ -125,7 +132,10 @@ export class QueryInfoViewerComponent implements OnChanges {
 
         this.content = common.toYaml({ tiles: [filePartTile] });
       } else if (
-        this.queryPart === common.QueryPartEnum.ModelYaml &&
+        [
+          common.QueryPartEnum.ModelYaml,
+          common.QueryPartEnum.SourceMalloy
+        ].indexOf(this.queryPart) > -1 &&
         this.prevModelFilePath !== this.modelFilePath
       ) {
         this.prevModelFilePath = this.modelFilePath;
