@@ -78,9 +78,12 @@ export class QueryInfoViewerComponent implements OnChanges {
     }
 
     this.lang =
-      this.queryPart === common.QueryPartEnum.SqlQuery
+      this.queryPart === common.QueryPartEnum.SqlMalloy ||
+      this.queryPart === common.QueryPartEnum.SqlMain
         ? 'SQL'
-        : this.queryPart === common.QueryPartEnum.MalloyCompiledQuery
+        : this.queryPart === common.QueryPartEnum.MalloyCompiledQuery ||
+            this.queryPart === common.QueryPartEnum.JsonStoreRequestParts ||
+            this.queryPart === common.QueryPartEnum.JsonResults
           ? 'JSON'
           : this.queryPart === common.QueryPartEnum.MalloyQuery ||
               this.queryPart === common.QueryPartEnum.MalloySource
@@ -88,13 +91,11 @@ export class QueryInfoViewerComponent implements OnChanges {
             : this.queryPart ===
                 common.QueryPartEnum.JavascriptStoreRequestFunction
               ? 'JavaScript'
-              : this.queryPart === common.QueryPartEnum.JsonStoreRequestParts
-                ? 'JSON'
-                : this.queryPart === common.QueryPartEnum.YamlTile ||
-                    this.queryPart === common.QueryPartEnum.YamlStore ||
-                    this.queryPart === common.QueryPartEnum.YamlModel
-                  ? 'YAML'
-                  : undefined;
+              : this.queryPart === common.QueryPartEnum.YamlTile ||
+                  this.queryPart === common.QueryPartEnum.YamlStore ||
+                  this.queryPart === common.QueryPartEnum.YamlModel
+                ? 'YAML'
+                : undefined;
   }
 
   checkContent() {
@@ -102,9 +103,21 @@ export class QueryInfoViewerComponent implements OnChanges {
       if (this.queryPart === common.QueryPartEnum.MalloyQuery) {
         this.content = this.chart.tiles[0].mconfig.malloyQuery;
       } else if (this.queryPart === common.QueryPartEnum.MalloyCompiledQuery) {
-        const parsed = this.chart.tiles[0].mconfig.compiledQuery;
-        this.content = JSON.stringify(parsed, null, 2);
-      } else if (this.queryPart === common.QueryPartEnum.SqlQuery) {
+        let parsed = this.chart.tiles[0].mconfig.compiledQuery;
+
+        this.content = common.isDefined(parsed)
+          ? JSON.stringify(parsed, null, 2)
+          : '';
+      } else if (this.queryPart === common.QueryPartEnum.JsonResults) {
+        let parsed = this.chart.tiles[0].query.data;
+
+        this.content = common.isDefined(parsed)
+          ? JSON.stringify(parsed, null, 2)
+          : '';
+      } else if (
+        this.queryPart === common.QueryPartEnum.SqlMalloy ||
+        this.queryPart === common.QueryPartEnum.SqlMain
+      ) {
         this.content = this.chart.tiles[0].query.sql;
       } else if (
         this.queryPart === common.QueryPartEnum.JavascriptStoreRequestFunction
@@ -118,7 +131,7 @@ ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
           let jsonParts = this.chart.tiles[0].mconfig.storePart?.reqJsonParts;
 
           if (common.isDefined(jsonParts)) {
-            const parsed = JSON.parse(jsonParts);
+            let parsed = JSON.parse(jsonParts);
             this.content = JSON.stringify(parsed, null, 2);
           } else {
             this.content = '';

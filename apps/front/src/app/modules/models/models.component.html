@@ -444,15 +444,15 @@
 
             <div
               (click)="setShowSchema()"
-              class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center pl-0 pr-2 text-lg"
+              class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center pl-0 pr-0 text-lg"
             >
-              <div class="flex w-[72px] flex-row items-center justify-center">
+              <div class="flex w-[90px] flex-row items-center justify-center">
                 <div
                   [ngClass]="{
                     'font-semibold': showSchema === true
                   }"
                 >
-                  FIELDS
+                  SCHEMA
                 </div>
               </div>
             </div>
@@ -487,7 +487,7 @@
               *ngIf="showSchema === false"
               class="hover:bg-m200 text-s500 ml-3 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
               (click)="toggleFilterByModel()"
-              tp="Show charts of the selected model (instead of all charts)"
+              tp="Show selected model charts or all charts"
             >
               <m-filter-icon
                 class="mb-1 flex h-6 w-6 flex-shrink-0"
@@ -1381,12 +1381,12 @@
                 </div>
 
                 <div
-                  class="flex flex-1 flex-row items-center"
+                  class="text-s1 flex flex-1 flex-row items-center"
                   *ngIf="mconfig?.select.length > 0"
                 >
                   <div
                     (click)="toggleInfoPanel()"
-                    class="text-s1 flex h-11 cursor-pointer select-none flex-row items-center pl-2 pr-5 text-xl font-semibold"
+                    class="flex h-11 cursor-pointer select-none flex-row items-center pl-2 pr-5 text-xl font-semibold"
                   >
                     <div class="flex flex-row items-center space-x-2">
                       <m-chevron-right-icon
@@ -1410,6 +1410,10 @@
                     >
                       <div
                         [ngClass]="{
+                          'text-s400':
+                            rightIsShow === false ||
+                            queryPartForm.controls['queryPart'].value !==
+                              queryPartEnum.JsonStoreRequestParts,
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
@@ -1431,6 +1435,10 @@
                     >
                       <div
                         [ngClass]="{
+                          'text-s400':
+                            rightIsShow === false ||
+                            queryPartForm.controls['queryPart'].value !==
+                              queryPartEnum.JavascriptStoreRequestFunction,
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
@@ -1452,6 +1460,10 @@
                     >
                       <div
                         [ngClass]="{
+                          'text-s400':
+                            rightIsShow === false ||
+                            queryPartForm.controls['queryPart'].value !==
+                              queryPartEnum.MalloyQuery,
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
@@ -1473,6 +1485,10 @@
                     >
                       <div
                         [ngClass]="{
+                          'text-s400':
+                            rightIsShow === false ||
+                            queryPartForm.controls['queryPart'].value !==
+                              queryPartEnum.MalloyCompiledQuery,
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
@@ -1485,29 +1501,75 @@
                   </div>
 
                   <div
-                    *ngIf="
-                      model.type === modelTypeMalloy ||
-                      model.type === modelTypeSQL
-                    "
-                    (click)="setShowSqlQuery()"
-                    class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
-                    [ngClass]="{
-                      'ml-5': model.type === modelTypeSQL,
-                      'ml-3': model.type === modelTypeMalloy
-                    }"
+                    *ngIf="model.type === modelTypeMalloy"
+                    (click)="setShowSqlMalloy()"
+                    class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
                     <div
                       class="flex w-[50px] flex-row items-center justify-center"
                     >
                       <div
                         [ngClass]="{
+                          'text-s400':
+                            rightIsShow === false ||
+                            queryPartForm.controls['queryPart'].value !==
+                              queryPartEnum.SqlMalloy,
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.SqlQuery
+                              queryPartEnum.SqlMalloy
                         }"
                       >
                         SQL
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    *ngIf="model.type === modelTypeSQL"
+                    (click)="setShowSqlMain()"
+                    class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
+                  >
+                    <div
+                      class="flex w-[50px] flex-row items-center justify-center"
+                    >
+                      <div
+                        [ngClass]="{
+                          'text-s400':
+                            rightIsShow === false ||
+                            queryPartForm.controls['queryPart'].value !==
+                              queryPartEnum.SqlMain,
+                          'font-semibold':
+                            rightIsShow &&
+                            queryPartForm.controls['queryPart'].value ===
+                              queryPartEnum.SqlMain
+                        }"
+                      >
+                        SQL
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    (click)="setShowJsonResults()"
+                    class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
+                  >
+                    <div
+                      class="flex w-[60px] flex-row items-center justify-center"
+                    >
+                      <div
+                        [ngClass]="{
+                          'text-s400':
+                            rightIsShow === false ||
+                            queryPartForm.controls['queryPart'].value !==
+                              queryPartEnum.JsonResults,
+                          'font-semibold':
+                            rightIsShow &&
+                            queryPartForm.controls['queryPart'].value ===
+                              queryPartEnum.JsonResults
+                        }"
+                      >
+                        JSON
                       </div>
                     </div>
                   </div>
@@ -1521,6 +1583,10 @@
                     >
                       <div
                         [ngClass]="{
+                          'text-s400':
+                            rightIsShow === false ||
+                            queryPartForm.controls['queryPart'].value !==
+                              queryPartEnum.YamlTile,
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
@@ -1542,6 +1608,10 @@
                     >
                       <div
                         [ngClass]="{
+                          'text-s400':
+                            rightIsShow === false ||
+                            queryPartForm.controls['queryPart'].value !==
+                              queryPartEnum.MalloySource,
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
@@ -1563,6 +1633,10 @@
                     >
                       <div
                         [ngClass]="{
+                          'text-s400':
+                            rightIsShow === false ||
+                            queryPartForm.controls['queryPart'].value !==
+                              queryPartEnum.YamlStore,
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
@@ -1584,6 +1658,10 @@
                     >
                       <div
                         [ngClass]="{
+                          'text-s400':
+                            rightIsShow === false ||
+                            queryPartForm.controls['queryPart'].value !==
+                              queryPartEnum.YamlModel,
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===

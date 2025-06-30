@@ -204,22 +204,25 @@ export class ModelsComponent implements OnInit, OnDestroy {
           [
             common.QueryPartEnum.MalloyQuery,
             common.QueryPartEnum.MalloyCompiledQuery,
-            common.QueryPartEnum.SqlQuery,
+            common.QueryPartEnum.SqlMalloy,
             common.QueryPartEnum.YamlTile,
-            common.QueryPartEnum.MalloySource
+            common.QueryPartEnum.MalloySource,
+            common.QueryPartEnum.JsonResults
           ].indexOf(this.queryPartForm.controls['queryPart'].value) < 0) ||
           (this.model.type === common.ModelTypeEnum.Store &&
             [
               common.QueryPartEnum.JsonStoreRequestParts,
               common.QueryPartEnum.JavascriptStoreRequestFunction,
               common.QueryPartEnum.YamlTile,
-              common.QueryPartEnum.YamlStore
+              common.QueryPartEnum.YamlStore,
+              common.QueryPartEnum.JsonResults
             ].indexOf(this.queryPartForm.controls['queryPart'].value) < 0) ||
           (this.model.type === common.ModelTypeEnum.SQL &&
             [
-              common.QueryPartEnum.SqlQuery,
+              common.QueryPartEnum.SqlMain,
               common.QueryPartEnum.YamlTile,
-              common.QueryPartEnum.YamlModel
+              common.QueryPartEnum.YamlModel,
+              common.QueryPartEnum.JsonResults
             ].indexOf(this.queryPartForm.controls['queryPart'].value) < 0))
       ) {
         let queryPart =
@@ -228,7 +231,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
             : this.model.type === common.ModelTypeEnum.Malloy
               ? common.QueryPartEnum.MalloyQuery
               : this.model.type === common.ModelTypeEnum.SQL
-                ? common.QueryPartEnum.SqlQuery
+                ? common.QueryPartEnum.SqlMain
                 : undefined;
 
         if (
@@ -714,12 +717,21 @@ export class ModelsComponent implements OnInit, OnDestroy {
     );
   }
 
-  setShowSqlQuery() {
+  setShowSqlMalloy() {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
     this.queryPartForm.controls['queryPart'].setValue(
-      common.QueryPartEnum.SqlQuery
+      common.QueryPartEnum.SqlMalloy
+    );
+  }
+
+  setShowSqlMain() {
+    if (this.rightIsShow === false) {
+      this.rightIsShow = true;
+    }
+    this.queryPartForm.controls['queryPart'].setValue(
+      common.QueryPartEnum.SqlMain
     );
   }
 
@@ -765,6 +777,15 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
     this.queryPartForm.controls['queryPart'].setValue(
       common.QueryPartEnum.JavascriptStoreRequestFunction
+    );
+  }
+
+  setShowJsonResults() {
+    if (this.rightIsShow === false) {
+      this.rightIsShow = true;
+    }
+    this.queryPartForm.controls['queryPart'].setValue(
+      common.QueryPartEnum.JsonResults
     );
   }
 
