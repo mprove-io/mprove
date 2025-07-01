@@ -5,10 +5,19 @@ import {
   OnChanges,
   SimpleChanges
 } from '@angular/core';
-import { Extension } from '@codemirror/state';
+import { standardKeymap } from '@codemirror/commands';
+import { LanguageDescription, LanguageSupport } from '@codemirror/language';
+import * as languageData from '@codemirror/language-data';
+import { Compartment, Extension } from '@codemirror/state';
+import { keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, take, tap } from 'rxjs/operators';
+import {
+  MALLOY_LIGHT_THEME_EXTRA_MOD,
+  createMalloyLanguage
+} from '~front/app/constants/code-themes/malloy-light-theme';
 import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
+import { ChartQuery } from '~front/app/queries/chart.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -16,15 +25,14 @@ import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
-import * as languageData from '@codemirror/language-data';
-import { ChartQuery } from '~front/app/queries/chart.query';
-
 @Component({
   standalone: false,
   selector: 'm-query-info-viewer',
   templateUrl: './query-info-viewer.component.html'
 })
 export class QueryInfoViewerComponent implements OnChanges {
+  extensions: Extension[] = [keymap.of(standardKeymap)];
+
   @Input()
   queryPart: common.QueryPartEnum;
 
@@ -72,7 +80,7 @@ export class QueryInfoViewerComponent implements OnChanges {
     }
   }
 
-  setEditorOptionsLanguage() {
+  async setEditorOptionsLanguage() {
     if (common.isUndefined(this.chart.chartId)) {
       return;
     }
@@ -87,7 +95,7 @@ export class QueryInfoViewerComponent implements OnChanges {
           ? 'JSON'
           : this.queryPart === common.QueryPartEnum.MalloyQuery ||
               this.queryPart === common.QueryPartEnum.MalloySource
-            ? 'JSON' // TODO: malloy
+            ? 'Malloy'
             : this.queryPart ===
                 common.QueryPartEnum.JavascriptStoreRequestFunction
               ? 'JavaScript'
@@ -96,6 +104,50 @@ export class QueryInfoViewerComponent implements OnChanges {
                   this.queryPart === common.QueryPartEnum.YamlModel
                 ? 'YAML'
                 : undefined;
+
+    this.theme =
+      this.queryPart === common.QueryPartEnum.MalloyQuery ||
+      this.queryPart === common.QueryPartEnum.MalloySource
+        ? MALLOY_LIGHT_THEME_EXTRA_MOD
+        : VS_LIGHT_THEME_EXTRA_MOD;
+
+    if (
+      this.queryPart === common.QueryPartEnum.MalloyQuery ||
+      this.queryPart === common.QueryPartEnum.MalloySource
+    ) {
+      let malloyLanguage = await createMalloyLanguage();
+
+      let ls = new LanguageSupport(malloyLanguage, [
+        // MALLOY_LIGHT_THEME_EXTRA_MOD
+      ]);
+
+      let malloyLanguageDescription = LanguageDescription.of({
+        name: 'Malloy',
+        alias: ['malloy'],
+        extensions: ['.malloy'],
+        load: async () => {
+          return ls;
+        }
+      });
+
+      this.languages = [...languageData.languages, malloyLanguageDescription];
+
+      let originalLanguageConf = new Compartment();
+
+      this.extensions = [
+        keymap.of(standardKeymap),
+        originalLanguageConf.of(ls)
+      ];
+
+      // this.extensions.push(originalLanguageConf.of(ls))
+
+      this.cd.detectChanges();
+    }
+    // else {
+    //   this.extensions = [keymap.of(standardKeymap)];
+    //   this.languages = [...languageData.languages];
+    //   // this.cd.detectChanges();
+    // }
   }
 
   checkContent() {

@@ -1,8 +1,7 @@
-import { foldGutter } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
-import { EditorView, highlightActiveLine, lineNumbers } from '@codemirror/view';
 import { tags as t } from '@lezer/highlight';
-import { indentationMarkers } from '@replit/codemirror-indentation-markers';
+import { createThemeExtra } from './create-theme-extra';
+import { createThemeExtraMod } from './create-theme-extra-mod';
 import { CreateThemeOptions, createTheme } from './theme-parts';
 
 // https://github.com/uiwjs/react-codemirror/blob/master/themes/vscode/src/light.ts
@@ -91,6 +90,7 @@ export const vscodeLightStyle: CreateThemeOptions['styles'] = [
 
 export function vscodeLightInit(options?: Partial<CreateThemeOptions>) {
   const { theme = 'light', settings = {}, styles = [] } = options || {};
+
   return createTheme({
     theme: theme,
     settings: {
@@ -107,107 +107,7 @@ export const VS_LIGHT_THEME = vscodeLightInit({
   }
 });
 
-export const VS_LIGHT_THEME_EXTRA: Extension = [
-  VS_LIGHT_THEME,
-  indentationMarkers({
-    highlightActiveBlock: false,
-    hideFirstIndent: true,
-    markerType: 'codeOnly',
-    thickness: 1,
-    colors: {
-      // light: 'LightBlue',
-      light: '#d1d5dc',
-      dark: 'DarkBlue',
-      activeLight: 'LightGreen',
-      activeDark: 'DarkGreen'
-    }
-  }),
-  lineNumbers(),
-  highlightActiveLine(),
-  EditorView.theme({
-    // '&': {
-    // backgroundColor: '#f0f0f0',
-    // fontSize: '20px'
-    // },
-    '.cm-gutters': {
-      'border-right': 'none !important'
-    },
-    '.cm-content': {
-      paddingTop: '12px',
-      paddingBottom: '12px',
-      fontSize: '16px'
-      // padding: '12px',
-      // caretColor: '#000000'
-    },
-    // '.cm-activeLine': {
-    //   'background-color': '#f0f9ff'
-    // },
-    '.cm-line': {
-      lineHeight: '1.6'
-      // padding: '0 8px'
-    }
-  })
-];
+export const VS_LIGHT_THEME_EXTRA: Extension = createThemeExtra(VS_LIGHT_THEME);
 
-export const VS_LIGHT_THEME_EXTRA_MOD: Extension = [
-  VS_LIGHT_THEME_EXTRA,
-  foldGutter({
-    markerDOM(open) {
-      const el = document.createElement('div');
-      el.className = 'cm-fold-marker';
-      el.innerHTML = open
-        ? `<svg
-  xmlns="http://www.w3.org/2000/svg"
-  class="h-5 w-5"
-  fill="none"
-  viewBox="0 0 24 24"
-  stroke="#4D4F5C"
-  >
-  <path
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="2"
-    d="M19 9l-7 7-7-7"
-  />
-  </svg>`
-        : `<svg
-  xmlns="http://www.w3.org/2000/svg"
-  class="h-5 w-5"
-  fill="none"
-  viewBox="0 0 24 24"
-  stroke="#4D4F5C"
-  >
-  <path
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="2"
-    d="M9 5l7 7-7 7"
-  />
-  </svg>`;
-      return el;
-    }
-  }),
-  EditorView.theme({
-    '.cm-foldGutter': {
-      color: 'black',
-      // backgroundColor: 'yellow',
-      width: '30px',
-      // textAlign: 'center',
-      display: 'flex',
-      'align-items': 'center'
-    },
-    '.cm-fold-marker': {
-      opacity: 0,
-      transition: 'opacity 0.2s ease',
-      display: 'flex',
-      'align-items': 'center',
-      'justify-content': 'center'
-    },
-    '.cm-foldGutter:hover .cm-fold-marker': {
-      opacity: 1
-    },
-    '.cm-gutterElement:has(.cm-fold-marker)': {
-      cursor: 'pointer'
-    }
-  })
-];
+export const VS_LIGHT_THEME_EXTRA_MOD: Extension =
+  createThemeExtraMod(VS_LIGHT_THEME_EXTRA);
