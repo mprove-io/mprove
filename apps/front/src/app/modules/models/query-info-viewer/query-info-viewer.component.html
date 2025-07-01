@@ -1,16 +1,17 @@
 <div class="flex h-full w-full flex-col">
   <div
-    *ngIf="isShowSpinner === false"
+    *ngIf="isShowSpinner === false && isEditorOptionsInitComplete === true"
     class="ml-5 h-full overflow-y-auto rounded"
   >
     <code-editor
       style="height: 100%"
       [(ngModel)]="content"
       [readonly]="true"
-      [language]="lang"
+      [extensions]="extensions"
       [languages]="languages"
-      [setup]="null"
+      [language]="lang"
       [theme]="theme"
+      [setup]="null"
     ></code-editor>
   </div>
 

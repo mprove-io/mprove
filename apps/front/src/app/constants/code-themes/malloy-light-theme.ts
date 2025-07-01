@@ -216,8 +216,8 @@ export async function createMalloyLanguage() {
 
   if (!grammar) throw new Error('Failed to load Malloy grammar');
 
-  console.log('grammar');
-  console.log(grammar);
+  // console.log('grammar');
+  // console.log(grammar);
 
   let malloyStreamParser = {
     startState: () => ({}),

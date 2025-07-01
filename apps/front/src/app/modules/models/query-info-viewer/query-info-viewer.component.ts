@@ -3,6 +3,7 @@ import {
   Component,
   Input,
   OnChanges,
+  OnInit,
   SimpleChanges
 } from '@angular/core';
 import { standardKeymap } from '@codemirror/commands';
@@ -30,20 +31,22 @@ import { common } from '~front/barrels/common';
   selector: 'm-query-info-viewer',
   templateUrl: './query-info-viewer.component.html'
 })
-export class QueryInfoViewerComponent implements OnChanges {
-  extensions: Extension[] = [keymap.of(standardKeymap)];
-
+export class QueryInfoViewerComponent implements OnInit, OnChanges {
   @Input()
   queryPart: common.QueryPartEnum;
 
   @Input()
   modelFilePath: string;
 
+  isEditorOptionsInitComplete = false;
+
   prevModelFilePath: string;
+
+  extensions: Extension[] = [];
 
   theme: Extension = VS_LIGHT_THEME_EXTRA_MOD;
 
-  languages = languageData.languages;
+  languages: LanguageDescription[] = [];
   lang: string;
 
   spinnerName = 'queryInfoGetFile';
@@ -56,7 +59,10 @@ export class QueryInfoViewerComponent implements OnChanges {
     tap(x => {
       this.chart = x;
 
-      this.checkContent();
+      if (this.isEditorOptionsInitComplete === true) {
+        this.checkContent();
+        this.cd.detectChanges();
+      }
     })
   );
 
@@ -70,20 +76,54 @@ export class QueryInfoViewerComponent implements OnChanges {
     private apiService: ApiService
   ) {}
 
+  ngOnInit() {
+    this.initEditorOptions();
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (
       common.isDefined(changes.queryPart) &&
       changes.queryPart.currentValue !== changes.queryPart.previousValue
     ) {
       this.queryPart = changes.queryPart.currentValue;
-      this.checkContent();
+
+      if (this.isEditorOptionsInitComplete === true) {
+        this.checkContent();
+      }
     }
   }
 
-  async setEditorOptionsLanguage() {
-    if (common.isUndefined(this.chart.chartId)) {
+  async initEditorOptions() {
+    let malloyLanguage = await createMalloyLanguage();
+
+    let ls = new LanguageSupport(malloyLanguage);
+
+    let malloyLanguageDescription = LanguageDescription.of({
+      name: 'Malloy',
+      alias: ['malloy'],
+      extensions: ['.malloy'],
+      load: async () => {
+        return ls;
+      }
+    });
+
+    this.languages = [...languageData.languages, malloyLanguageDescription];
+
+    let originalLanguageConf = new Compartment();
+
+    this.extensions = [keymap.of(standardKeymap), originalLanguageConf.of(ls)];
+
+    this.checkContent();
+
+    this.isEditorOptionsInitComplete = true;
+  }
+
+  checkContent() {
+    if (common.isUndefined(this.chart) || this.languages.length === 0) {
       return;
     }
+
+    // console.log('checkContent');
 
     this.lang =
       this.queryPart === common.QueryPartEnum.SqlMalloy ||
@@ -111,161 +151,127 @@ export class QueryInfoViewerComponent implements OnChanges {
         ? MALLOY_LIGHT_THEME_EXTRA_MOD
         : VS_LIGHT_THEME_EXTRA_MOD;
 
-    if (
-      this.queryPart === common.QueryPartEnum.MalloyQuery ||
-      this.queryPart === common.QueryPartEnum.MalloySource
+    if (this.queryPart === common.QueryPartEnum.MalloyQuery) {
+      this.content = this.chart.tiles[0].mconfig.malloyQuery;
+    } else if (this.queryPart === common.QueryPartEnum.MalloyCompiledQuery) {
+      let parsed = this.chart.tiles[0].mconfig.compiledQuery;
+
+      this.content = common.isDefined(parsed)
+        ? JSON.stringify(parsed, null, 2)
+        : '';
+    } else if (this.queryPart === common.QueryPartEnum.JsonResults) {
+      let parsed = this.chart.tiles[0].query.data;
+
+      this.content = common.isDefined(parsed)
+        ? JSON.stringify(parsed, null, 2)
+        : '';
+    } else if (
+      this.queryPart === common.QueryPartEnum.SqlMalloy ||
+      this.queryPart === common.QueryPartEnum.SqlMain
     ) {
-      let malloyLanguage = await createMalloyLanguage();
+      this.content = this.chart.tiles[0].query.sql;
+    } else if (
+      this.queryPart === common.QueryPartEnum.JavascriptStoreRequestFunction
+    ) {
+      this.content = `// Function to make Request urlPath and body
+${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
+    } else if (this.queryPart === common.QueryPartEnum.JsonStoreRequestParts) {
+      try {
+        let jsonParts = this.chart.tiles[0].mconfig.storePart?.reqJsonParts;
 
-      let ls = new LanguageSupport(malloyLanguage, [
-        // MALLOY_LIGHT_THEME_EXTRA_MOD
-      ]);
-
-      let malloyLanguageDescription = LanguageDescription.of({
-        name: 'Malloy',
-        alias: ['malloy'],
-        extensions: ['.malloy'],
-        load: async () => {
-          return ls;
+        if (common.isDefined(jsonParts)) {
+          let parsed = JSON.parse(jsonParts);
+          this.content = JSON.stringify(parsed, null, 2);
+        } else {
+          this.content = '';
         }
+      } catch (error: any) {
+        this.content = 'Invalid JSON: ' + error.message;
+      }
+    } else if (this.queryPart === common.QueryPartEnum.YamlTile) {
+      let filePartTile: common.FilePartTile = common.prepareTile({
+        isForDashboard: false,
+        mconfig: this.chart.tiles[0].mconfig
       });
 
-      this.languages = [...languageData.languages, malloyLanguageDescription];
+      this.content = common.toYaml({ tiles: [filePartTile] });
+    } else if (
+      [
+        common.QueryPartEnum.MalloySource,
+        common.QueryPartEnum.YamlStore,
+        common.QueryPartEnum.YamlModel
+      ].indexOf(this.queryPart) > -1 &&
+      this.prevModelFilePath !== this.modelFilePath
+    ) {
+      this.prevModelFilePath = this.modelFilePath;
 
-      let originalLanguageConf = new Compartment();
+      let nav = this.navQuery.getValue();
 
-      this.extensions = [
-        keymap.of(standardKeymap),
-        originalLanguageConf.of(ls)
-      ];
+      let getFilePayload: apiToBackend.ToBackendGetFileRequestPayload = {
+        projectId: nav.projectId,
+        isRepoProd: nav.isRepoProd,
+        branchId: nav.branchId,
+        envId: nav.envId,
+        fileNodeId: this.modelFilePath,
+        panel: common.PanelEnum.Tree
+      };
 
-      // this.extensions.push(originalLanguageConf.of(ls))
+      this.isShowSpinner = true;
 
-      this.cd.detectChanges();
-    }
-    // else {
-    //   this.extensions = [keymap.of(standardKeymap)];
-    //   this.languages = [...languageData.languages];
-    //   // this.cd.detectChanges();
-    // }
-  }
+      this.spinner.show(this.spinnerName);
 
-  checkContent() {
-    if (common.isDefined(this.chart)) {
-      if (this.queryPart === common.QueryPartEnum.MalloyQuery) {
-        this.content = this.chart.tiles[0].mconfig.malloyQuery;
-      } else if (this.queryPart === common.QueryPartEnum.MalloyCompiledQuery) {
-        let parsed = this.chart.tiles[0].mconfig.compiledQuery;
+      this.apiService
+        .req({
+          pathInfoName:
+            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile,
+          payload: getFilePayload,
+          showSpinner: false
+        })
+        .pipe(
+          tap((resp: apiToBackend.ToBackendGetFileResponse) => {
+            if (
+              resp.info?.status === common.ResponseInfoStatusEnum.Ok &&
+              [
+                common.QueryPartEnum.MalloySource,
+                common.QueryPartEnum.YamlStore,
+                common.QueryPartEnum.YamlModel
+              ].indexOf(this.queryPart) > -1
+            ) {
+              let repoState = this.repoQuery.getValue();
 
-        this.content = common.isDefined(parsed)
-          ? JSON.stringify(parsed, null, 2)
-          : '';
-      } else if (this.queryPart === common.QueryPartEnum.JsonResults) {
-        let parsed = this.chart.tiles[0].query.data;
+              // biome-ignore format: theme breaks
+              let newRepoState: RepoState = Object.assign(resp.payload.repo, <RepoState>{
+                conflicts: repoState.conflicts, // getFile does not check for conflicts
+                repoStatus: repoState.repoStatus // getFile does not use git fetch
+              });
+              this.repoQuery.update(newRepoState);
+              this.structQuery.update(resp.payload.struct);
+              this.navQuery.updatePart({
+                needValidate: resp.payload.needValidate
+              });
 
-        this.content = common.isDefined(parsed)
-          ? JSON.stringify(parsed, null, 2)
-          : '';
-      } else if (
-        this.queryPart === common.QueryPartEnum.SqlMalloy ||
-        this.queryPart === common.QueryPartEnum.SqlMain
-      ) {
-        this.content = this.chart.tiles[0].query.sql;
-      } else if (
-        this.queryPart === common.QueryPartEnum.JavascriptStoreRequestFunction
-      ) {
-        this.content = `// Function to make Request urlPath and body
-${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
-      } else if (
-        this.queryPart === common.QueryPartEnum.JsonStoreRequestParts
-      ) {
-        try {
-          let jsonParts = this.chart.tiles[0].mconfig.storePart?.reqJsonParts;
+              this.content = resp.payload.content;
 
-          if (common.isDefined(jsonParts)) {
-            let parsed = JSON.parse(jsonParts);
-            this.content = JSON.stringify(parsed, null, 2);
-          } else {
-            this.content = '';
-          }
-        } catch (error: any) {
-          this.content = 'Invalid JSON: ' + error.message;
-        }
-      } else if (this.queryPart === common.QueryPartEnum.YamlTile) {
-        let filePartTile: common.FilePartTile = common.prepareTile({
-          isForDashboard: false,
-          mconfig: this.chart.tiles[0].mconfig
-        });
-
-        this.content = common.toYaml({ tiles: [filePartTile] });
-      } else if (
-        [
-          common.QueryPartEnum.MalloySource,
-          common.QueryPartEnum.YamlStore,
-          common.QueryPartEnum.YamlModel
-        ].indexOf(this.queryPart) > -1 &&
-        this.prevModelFilePath !== this.modelFilePath
-      ) {
-        this.prevModelFilePath = this.modelFilePath;
-
-        let nav = this.navQuery.getValue();
-
-        let getFilePayload: apiToBackend.ToBackendGetFileRequestPayload = {
-          projectId: nav.projectId,
-          isRepoProd: nav.isRepoProd,
-          branchId: nav.branchId,
-          envId: nav.envId,
-          fileNodeId: this.modelFilePath,
-          panel: common.PanelEnum.Tree
-        };
-
-        this.isShowSpinner = true;
-
-        this.spinner.show(this.spinnerName);
-
-        this.apiService
-          .req({
-            pathInfoName:
-              apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile,
-            payload: getFilePayload,
-            showSpinner: false
+              this.cd.detectChanges();
+            }
+          }),
+          take(1),
+          finalize(() => {
+            this.spinner.hide(this.spinnerName);
+            this.isShowSpinner = false;
           })
-          .pipe(
-            tap((resp: apiToBackend.ToBackendGetFileResponse) => {
-              if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-                let repoState = this.repoQuery.getValue();
-                let newRepoState: RepoState = Object.assign(resp.payload.repo, <
-                  RepoState
-                >{
-                  conflicts: repoState.conflicts, // getFile does not check for conflicts
-                  repoStatus: repoState.repoStatus // getFile does not use git fetch
-                });
-                this.repoQuery.update(newRepoState);
-                this.structQuery.update(resp.payload.struct);
-                this.navQuery.updatePart({
-                  needValidate: resp.payload.needValidate
-                });
+        )
+        .subscribe();
+    }
 
-                this.content = resp.payload.content;
-
-                this.cd.detectChanges();
-              }
-            }),
-            take(1),
-            finalize(() => {
-              this.spinner.hide(this.spinnerName);
-              this.isShowSpinner = false;
-            })
-          )
-          .subscribe();
-      }
-
-      if (this.queryPart !== common.QueryPartEnum.YamlModel) {
-        this.prevModelFilePath = undefined;
-      }
-
-      this.setEditorOptionsLanguage();
-      this.cd.detectChanges();
+    if (
+      [
+        common.QueryPartEnum.MalloySource,
+        common.QueryPartEnum.YamlStore,
+        common.QueryPartEnum.YamlModel
+      ].indexOf(this.queryPart) < 0
+    ) {
+      this.prevModelFilePath = undefined;
     }
   }
 }
