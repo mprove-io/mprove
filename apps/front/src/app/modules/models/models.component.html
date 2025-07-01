@@ -459,6 +459,7 @@
               <div class="flex w-[90px] flex-row items-center justify-center">
                 <div
                   [ngClass]="{
+                    'text-s400': showSchema === false,
                     'font-semibold': showSchema === true
                   }"
                 >
@@ -474,6 +475,8 @@
               <div class="flex w-[80px] flex-row items-center justify-center">
                 <div
                   [ngClass]="{
+                    'text-s400':
+                      showSchema === true || isFilterByModel === false,
                     'font-semibold':
                       showSchema === false && isFilterByModel === true
                   }"
@@ -490,6 +493,8 @@
               <div class="flex w-[125px] flex-row items-center justify-center">
                 <div
                   [ngClass]="{
+                    'text-s400':
+                      showSchema === true || isFilterByModel === true,
                     'font-semibold':
                       showSchema === false && isFilterByModel === false
                   }"
