@@ -350,7 +350,7 @@
               </div>
             </div>
 
-            <div class="ml-5 mr-9 flex w-2 flex-1 items-center">
+            <div class="ml-4 mr-9 flex w-2 flex-1 items-center">
               <form class="w-full" [formGroup]="modelForm">
                 <ng-select
                   #modelsModelSelect
@@ -429,7 +429,17 @@
           <div
             class="text-s1 mb-4 mt-4 flex h-11 w-full flex-shrink-0 flex-row items-center"
           >
-            <div class="ml-6 flex h-9 w-9 flex-shrink-0">
+            <div
+              class="hover:bg-m200 text-s500 ml-6 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
+              (click)="toggleSearch()"
+            >
+              <m-mag-glass-icon
+                [isFilled]="showSearch === true"
+                class="mb-1 flex h-6 w-6 flex-shrink-0"
+              ></m-mag-glass-icon>
+            </div>
+
+            <div class="ml-3 flex h-9 w-9 flex-shrink-0">
               <button
                 class="text-s500 hover:bg-m200 flex h-9 w-9 flex-shrink-0 cursor-pointer select-none flex-row items-center justify-center rounded"
                 (click)="toggleModelTreeLevels()"
@@ -444,7 +454,7 @@
 
             <div
               (click)="setShowSchema()"
-              class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center pl-0 pr-0 text-lg"
+              class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center pl-0 pr-0 text-lg"
             >
               <div class="flex w-[90px] flex-row items-center justify-center">
                 <div
@@ -458,13 +468,14 @@
             </div>
 
             <div
-              (click)="setShowCharts()"
+              (click)="setShowCharts({ isFilterByModel: true })"
               class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center pl-2 text-lg"
             >
               <div class="flex w-[80px] flex-row items-center justify-center">
                 <div
                   [ngClass]="{
-                    'font-semibold': showSchema === false
+                    'font-semibold':
+                      showSchema === false && isFilterByModel === true
                   }"
                 >
                   CHARTS
@@ -473,17 +484,22 @@
             </div>
 
             <div
-              *ngIf="showSchema === false"
-              class="hover:bg-m200 text-s500 ml-3 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
-              (click)="toggleSearch()"
+              (click)="setShowCharts({ isFilterByModel: false })"
+              class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center pl-2 text-lg"
             >
-              <m-mag-glass-icon
-                [isFilled]="showSearch === true"
-                class="mb-1 flex h-6 w-6 flex-shrink-0"
-              ></m-mag-glass-icon>
+              <div class="flex w-[125px] flex-row items-center justify-center">
+                <div
+                  [ngClass]="{
+                    'font-semibold':
+                      showSchema === false && isFilterByModel === false
+                  }"
+                >
+                  ALL CHARTS
+                </div>
+              </div>
             </div>
 
-            <div
+            <!-- <div
               *ngIf="showSchema === false"
               class="hover:bg-m200 text-s500 ml-3 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
               (click)="toggleFilterByModel()"
@@ -493,7 +509,7 @@
                 class="mb-1 flex h-6 w-6 flex-shrink-0"
                 [isFilled]="isFilterByModel === true"
               ></m-filter-icon>
-            </div>
+            </div> -->
 
             <div class="flex flex-grow"></div>
 

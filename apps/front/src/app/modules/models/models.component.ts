@@ -684,10 +684,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.uiQuery.updatePart({ showSchema: true });
 
     this.cd.detectChanges();
-
-    setTimeout(() => {
-      this.scrollToSelectedChart({ isSmooth: true });
-    });
   }
 
   setShowJsonStoreRequestParts() {
@@ -789,13 +785,14 @@ export class ModelsComponent implements OnInit, OnDestroy {
     );
   }
 
-  setShowCharts() {
-    if (this.showSchema === false) {
-      return;
-    }
+  setShowCharts(item: { isFilterByModel: boolean }) {
+    this.isFilterByModel = item.isFilterByModel;
+    this.makeFilteredCharts();
 
-    this.showSchema = false;
-    this.uiQuery.updatePart({ showSchema: false });
+    if (this.showSchema === true) {
+      this.showSchema = false;
+      this.uiQuery.updatePart({ showSchema: false });
+    }
 
     this.cd.detectChanges();
 
@@ -1556,6 +1553,11 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     this.uiQuery.updatePart({ modelTreeLevels: newValue });
     this.uiService.setUserUi({ modelTreeLevels: newValue });
+
+    if (this.showSchema === false) {
+      this.showSchema = true;
+      this.uiQuery.updatePart({ showSchema: true });
+    }
   }
 
   navToChartsList() {
@@ -1725,13 +1727,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
     });
   }
 
-  toggleFilterByModel() {
-    this.isFilterByModel = !this.isFilterByModel;
-    this.makeFilteredCharts();
+  // toggleFilterByModel() {
+  //   this.isFilterByModel = !this.isFilterByModel;
+  //   this.makeFilteredCharts();
 
-    this.cd.detectChanges();
-    // this.scrollToSelectedChart();
-  }
+  //   this.cd.detectChanges();
+  //   // this.scrollToSelectedChart();
+  // }
 
   toggleSearch() {
     this.showSearch = !this.showSearch;
