@@ -11,8 +11,9 @@ export function wrapModels(item: {
   models: common.FileModel[];
   stores: common.FileStore[];
   mods: common.FileMod[];
+  files: common.BmlFile[];
 }): common.Model[] {
-  let { structId, models, stores, mods } = item;
+  let { structId, models, stores, mods, files } = item;
 
   let apiModels: common.Model[] = [];
 
@@ -491,6 +492,7 @@ export function wrapModels(item: {
         malloyModelDef: malloyModelDef,
         connectionId: x.connection.connectionId,
         filePath: x.filePath,
+        fileText: files.find(file => file.path === x.filePath).content,
         content:
           x.fileExt === common.FileExtensionEnum.Store ||
           x.fileExt === common.FileExtensionEnum.Model

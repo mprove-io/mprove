@@ -31,6 +31,9 @@ export class Model {
   @IsString()
   filePath: string;
 
+  @IsString()
+  fileText: string;
+
   content: any;
 
   @IsBoolean()

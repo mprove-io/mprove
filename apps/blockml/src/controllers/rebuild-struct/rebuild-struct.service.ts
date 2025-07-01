@@ -102,7 +102,8 @@ export class RebuildStructService {
       structId: structId,
       models: prep.models,
       stores: prep.stores,
-      mods: prep.mods
+      mods: prep.mods,
+      files: files
     });
 
     let apiReports = barWrapper.wrapReports({

@@ -12,6 +12,7 @@ let modelState: ModelState = {
   source: undefined,
   connectionId: undefined,
   filePath: undefined,
+  fileText: undefined,
   content: undefined,
   isViewModel: undefined,
   malloyModelDef: undefined,

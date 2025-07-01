@@ -11,19 +11,13 @@ import { LanguageDescription, LanguageSupport } from '@codemirror/language';
 import * as languageData from '@codemirror/language-data';
 import { Compartment, Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { finalize, take, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import {
   MALLOY_LIGHT_THEME_EXTRA_MOD,
   createMalloyLanguage
 } from '~front/app/constants/code-themes/malloy-light-theme';
 import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
 import { ChartQuery } from '~front/app/queries/chart.query';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -36,7 +30,7 @@ export class QueryInfoViewerComponent implements OnInit, OnChanges {
   queryPart: common.QueryPartEnum;
 
   @Input()
-  modelFilePath: string;
+  modelFileText: string;
 
   isEditorOptionsInitComplete = false;
 
@@ -46,8 +40,6 @@ export class QueryInfoViewerComponent implements OnInit, OnChanges {
   lang: string;
 
   theme: Extension = VS_LIGHT_THEME_EXTRA_MOD;
-
-  prevModelFilePath: string;
 
   spinnerName = 'queryInfoGetFile';
   isShowSpinner = false;
@@ -67,13 +59,8 @@ export class QueryInfoViewerComponent implements OnInit, OnChanges {
   );
 
   constructor(
-    private structQuery: StructQuery,
     private chartQuery: ChartQuery,
-    private repoQuery: RepoQuery,
-    private navQuery: NavQuery,
-    private spinner: NgxSpinnerService,
-    private cd: ChangeDetectorRef,
-    private apiService: ApiService
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -116,14 +103,14 @@ export class QueryInfoViewerComponent implements OnInit, OnChanges {
     this.checkContent();
 
     this.isEditorOptionsInitComplete = true;
+
+    this.cd.detectChanges();
   }
 
   checkContent() {
     if (common.isUndefined(this.chart) || this.languages.length === 0) {
       return;
     }
-
-    // console.log('checkContent');
 
     this.lang =
       this.queryPart === common.QueryPartEnum.SqlMalloy ||
@@ -200,78 +187,9 @@ ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
         common.QueryPartEnum.MalloySource,
         common.QueryPartEnum.YamlStore,
         common.QueryPartEnum.YamlModel
-      ].indexOf(this.queryPart) > -1 &&
-      this.prevModelFilePath !== this.modelFilePath
+      ].indexOf(this.queryPart) > -1
     ) {
-      this.prevModelFilePath = this.modelFilePath;
-
-      let nav = this.navQuery.getValue();
-
-      let getFilePayload: apiToBackend.ToBackendGetFileRequestPayload = {
-        projectId: nav.projectId,
-        isRepoProd: nav.isRepoProd,
-        branchId: nav.branchId,
-        envId: nav.envId,
-        fileNodeId: this.modelFilePath,
-        panel: common.PanelEnum.Tree
-      };
-
-      this.isShowSpinner = true;
-
-      this.spinner.show(this.spinnerName);
-
-      this.apiService
-        .req({
-          pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile,
-          payload: getFilePayload,
-          showSpinner: false
-        })
-        .pipe(
-          tap((resp: apiToBackend.ToBackendGetFileResponse) => {
-            if (
-              resp.info?.status === common.ResponseInfoStatusEnum.Ok &&
-              [
-                common.QueryPartEnum.MalloySource,
-                common.QueryPartEnum.YamlStore,
-                common.QueryPartEnum.YamlModel
-              ].indexOf(this.queryPart) > -1
-            ) {
-              let repoState = this.repoQuery.getValue();
-
-              // biome-ignore format: theme breaks
-              let newRepoState: RepoState = Object.assign(resp.payload.repo, <RepoState>{
-                conflicts: repoState.conflicts, // getFile does not check for conflicts
-                repoStatus: repoState.repoStatus // getFile does not use git fetch
-              });
-              this.repoQuery.update(newRepoState);
-              this.structQuery.update(resp.payload.struct);
-              this.navQuery.updatePart({
-                needValidate: resp.payload.needValidate
-              });
-
-              this.content = resp.payload.content;
-            }
-          }),
-          take(1),
-          finalize(() => {
-            this.spinner.hide(this.spinnerName);
-            this.isShowSpinner = false;
-
-            this.cd.detectChanges();
-          })
-        )
-        .subscribe();
-    }
-
-    if (
-      [
-        common.QueryPartEnum.MalloySource,
-        common.QueryPartEnum.YamlStore,
-        common.QueryPartEnum.YamlModel
-      ].indexOf(this.queryPart) < 0
-    ) {
-      this.prevModelFilePath = undefined;
+      this.content = this.modelFileText;
     }
   }
 }

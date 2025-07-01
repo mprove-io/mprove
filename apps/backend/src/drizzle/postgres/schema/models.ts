@@ -24,6 +24,7 @@ export const modelsTable = pgTable(
     malloyModelDef: json('malloy_model_def').$type<MalloyModelDef>(),
     connectionId: varchar('connection_id'),
     filePath: varchar('file_path'),
+    fileText: varchar('file_text'),
     content: json('content'),
     isViewModel: boolean('is_view_model'),
     // isStoreModel: boolean('is_store_model'),
