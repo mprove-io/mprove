@@ -40,14 +40,14 @@ export class QueryInfoViewerComponent implements OnInit, OnChanges {
 
   isEditorOptionsInitComplete = false;
 
-  prevModelFilePath: string;
-
   extensions: Extension[] = [];
-
-  theme: Extension = VS_LIGHT_THEME_EXTRA_MOD;
 
   languages: LanguageDescription[] = [];
   lang: string;
+
+  theme: Extension = VS_LIGHT_THEME_EXTRA_MOD;
+
+  prevModelFilePath: string;
 
   spinnerName = 'queryInfoGetFile';
   isShowSpinner = false;
@@ -101,7 +101,7 @@ export class QueryInfoViewerComponent implements OnInit, OnChanges {
     let malloyLanguageDescription = LanguageDescription.of({
       name: 'Malloy',
       alias: ['malloy'],
-      extensions: ['.malloy'],
+      extensions: ['.malloy', '.malloysql', '.malloynb'],
       load: async () => {
         return ls;
       }
@@ -251,14 +251,14 @@ ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
               });
 
               this.content = resp.payload.content;
-
-              this.cd.detectChanges();
             }
           }),
           take(1),
           finalize(() => {
             this.spinner.hide(this.spinnerName);
             this.isShowSpinner = false;
+
+            this.cd.detectChanges();
           })
         )
         .subscribe();

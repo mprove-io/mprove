@@ -139,7 +139,7 @@
 
     <div
       class="flex h-2 w-full flex-grow flex-row pl-6 pr-6"
-      *ngIf="isShowSpinner === false"
+      *ngIf="isShowSpinner === false && isEditorOptionsInitComplete === true"
     >
       <div class="flex w-2 flex-1">
         <code-editor
@@ -147,11 +147,11 @@
           style="height: 100%"
           [(ngModel)]="secondFileContent"
           [readonly]="true"
-          [language]="lang"
-          [languages]="languages"
-          [setup]="null"
-          [theme]="theme"
           [extensions]="extensions"
+          [languages]="languages"
+          [language]="lang"
+          [theme]="theme"
+          [setup]="null"
         ></code-editor>
       </div>
     </div>

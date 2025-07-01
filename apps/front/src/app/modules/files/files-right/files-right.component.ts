@@ -1,8 +1,15 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { standardKeymap } from '@codemirror/commands';
-import { Extension } from '@codemirror/state';
+import { LanguageDescription, LanguageSupport } from '@codemirror/language';
+import * as languageData from '@codemirror/language-data';
+import { Compartment, Extension } from '@codemirror/state';
+import { keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, map, take, tap } from 'rxjs/operators';
+import {
+  MALLOY_LIGHT_THEME_EXTRA_MOD,
+  createMalloyLanguage
+} from '~front/app/constants/code-themes/malloy-light-theme';
 import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -16,21 +23,20 @@ import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
 
-import * as languageData from '@codemirror/language-data';
-import { keymap } from '@codemirror/view';
-
 @Component({
   standalone: false,
   selector: 'm-files-right',
   templateUrl: './files-right.component.html'
 })
 export class FilesRightComponent implements OnInit {
-  extensions: Extension[] = [keymap.of(standardKeymap)];
+  isEditorOptionsInitComplete = false;
+
+  extensions: Extension[] = [];
+
+  languages: LanguageDescription[] = [];
+  lang: string;
 
   theme: Extension = VS_LIGHT_THEME_EXTRA_MOD;
-
-  languages = languageData.languages;
-  lang: string;
 
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
@@ -135,80 +141,34 @@ export class FilesRightComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.initEditorOptions();
+  }
+
+  async initEditorOptions() {
+    let malloyLanguage = await createMalloyLanguage();
+
+    let ls = new LanguageSupport(malloyLanguage);
+
+    let malloyLanguageDescription = LanguageDescription.of({
+      name: 'Malloy',
+      alias: ['malloy'],
+      extensions: ['.malloy', '.malloysql', '.malloynb'],
+      load: async () => {
+        return ls;
+      }
+    });
+
+    this.languages = [...languageData.languages, malloyLanguageDescription];
+
+    let originalLanguageConf = new Compartment();
+
+    this.extensions = [keymap.of(standardKeymap), originalLanguageConf.of(ls)];
+
+    this.isEditorOptionsInitComplete = true;
+
     this.setEditorOptionsLanguage();
 
     this.cd.detectChanges();
-  }
-
-  setEditorOptionsLanguage() {
-    if (common.isUndefined(this.secondFileNodeId)) {
-      return;
-    }
-
-    this.navQuery
-      .select()
-      .pipe(take(1))
-      .subscribe(x => {
-        this.nav = x;
-      });
-
-    this.structQuery
-      .select()
-      .pipe(take(1))
-      .subscribe(x => {
-        this.struct = x;
-      });
-
-    let mdir = this.struct.mproveDirValue;
-    if (common.isDefined(this.struct.mproveDirValue)) {
-      if (mdir.substring(0, 1) === '.') {
-        mdir = mdir.substring(1);
-      }
-      if (mdir.substring(0, 1) === '/') {
-        mdir = mdir.substring(1);
-      }
-    }
-
-    let ar = this.secondFileName.split('.');
-    let ext = ar.pop();
-    let dotExt = `.${ext}`;
-
-    // this.languages.forEach((x: any) => {
-    //   console.log(x.name);
-    //   console.log('extensions');
-    //   console.log(x.extensions);
-    // });
-
-    if (
-      constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0
-    ) {
-      this.lang = 'YAML';
-    } else {
-      let language = this.languages.find(
-        (x: any) => x.extensions.indexOf(ext) > -1
-      );
-
-      this.lang = language?.name;
-    }
-
-    // console.log('ext');
-    // console.log(ext);
-
-    // console.log('lang');
-    // console.log(this.lang);
-
-    if (
-      this.secondFileName === common.MPROVE_CONFIG_FILENAME ||
-      ((this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH ||
-        (common.isDefined(mdir) &&
-          this.secondFileNodeId.split(mdir)[0] === `${this.nav.projectId}/`)) &&
-        constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >=
-          0)
-    ) {
-      this.showGoTo = true;
-    } else {
-      this.showGoTo = false;
-    }
   }
 
   validate() {
@@ -348,10 +308,9 @@ export class FilesRightComponent implements OnInit {
       let fileItems = common.getFileItems({ nodes: this.repo.nodes });
 
       if (fileItems.map(x => x.fileNodeId).indexOf(this.secondFileNodeId) < 0) {
-        setTimeout(
-          () => this.uiQuery.updatePart({ secondFileNodeId: undefined }),
-          0
-        );
+        setTimeout(() => {
+          this.uiQuery.updatePart({ secondFileNodeId: undefined });
+        }, 0);
       } else {
         let getFilePayload: apiToBackend.ToBackendGetFileRequestPayload = {
           projectId: nav.projectId,
@@ -378,9 +337,8 @@ export class FilesRightComponent implements OnInit {
             tap((resp: apiToBackend.ToBackendGetFileResponse) => {
               if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
                 let repoState = this.repoQuery.getValue();
-                let newRepoState: RepoState = Object.assign(resp.payload.repo, <
-                  RepoState
-                >{
+                // biome-ignore format: theme breaks
+                let newRepoState: RepoState = Object.assign(resp.payload.repo, <RepoState>{
                   conflicts: repoState.conflicts, // getFile does not check for conflicts
                   repoStatus: repoState.repoStatus // getFile does not use git fetch
                 });
@@ -403,10 +361,68 @@ export class FilesRightComponent implements OnInit {
             finalize(() => {
               this.spinner.hide(this.spinnerName);
               this.isShowSpinner = false;
+
+              this.cd.detectChanges();
             })
           )
           .subscribe();
       }
+    }
+  }
+
+  setEditorOptionsLanguage() {
+    if (
+      common.isUndefined(this.secondFileNodeId) ||
+      this.languages.length === 0
+    ) {
+      return;
+    }
+
+    this.nav = this.navQuery.getValue();
+    this.struct = this.structQuery.getValue();
+
+    let mdir = this.struct.mproveDirValue;
+    if (common.isDefined(this.struct.mproveDirValue)) {
+      if (mdir.substring(0, 1) === '.') {
+        mdir = mdir.substring(1);
+      }
+      if (mdir.substring(0, 1) === '/') {
+        mdir = mdir.substring(1);
+      }
+    }
+
+    let ar = this.secondFileName.split('.');
+    let ext = ar.pop();
+    let dotExt = `.${ext}`;
+
+    if (
+      constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0
+    ) {
+      this.lang = 'YAML';
+    } else {
+      let language = this.languages.find(
+        (x: any) => x.extensions.indexOf(ext) > -1
+      );
+
+      this.lang = language?.name;
+    }
+
+    this.theme =
+      this.lang === 'Malloy'
+        ? MALLOY_LIGHT_THEME_EXTRA_MOD
+        : VS_LIGHT_THEME_EXTRA_MOD;
+
+    if (
+      this.secondFileName === common.MPROVE_CONFIG_FILENAME ||
+      ((this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH ||
+        (common.isDefined(mdir) &&
+          this.secondFileNodeId.split(mdir)[0] === `${this.nav.projectId}/`)) &&
+        constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >=
+          0)
+    ) {
+      this.showGoTo = true;
+    } else {
+      this.showGoTo = false;
     }
   }
 }
