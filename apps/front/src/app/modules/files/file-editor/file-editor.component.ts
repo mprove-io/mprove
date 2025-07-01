@@ -1,3 +1,4 @@
+import { CodeEditor, DiffEditor } from '@acrodata/code-editor';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -8,16 +9,20 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import * as languageData from '@codemirror/language-data';
-import { EditorState, Extension } from '@codemirror/state';
-
-import { CodeEditor, DiffEditor } from '@acrodata/code-editor';
 import { standardKeymap } from '@codemirror/commands';
+import { LanguageDescription, LanguageSupport } from '@codemirror/language';
+import * as languageData from '@codemirror/language-data';
 import { Diagnostic, linter } from '@codemirror/lint';
+import { EditorState, Extension } from '@codemirror/state';
 import { Compartment } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, map, take, tap } from 'rxjs/operators';
+import {
+  MALLOY_LIGHT_THEME_EXTRA,
+  MALLOY_LIGHT_THEME_EXTRA_MOD,
+  createMalloyLanguage
+} from '~front/app/constants/code-themes/malloy-light-theme';
 import {
   VS_LIGHT_THEME_EXTRA,
   VS_LIGHT_THEME_EXTRA_MOD
@@ -41,6 +46,8 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './file-editor.component.html'
 })
 export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
+  isEditorOptionsInitComplete = false;
+
   panelTree = common.PanelEnum.Tree;
 
   @ViewChild('codeEditor', { static: false })
@@ -53,32 +60,31 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   indentWithTab = true;
   indentUnit = '  ';
-  languages = languageData.languages;
+
+  languages: LanguageDescription[] = [];
   lang: string;
+
   theme: Extension = VS_LIGHT_THEME_EXTRA_MOD;
 
   diagnostics: Diagnostic[] = [];
 
   baseExtensions: Extension[] = [keymap.of(standardKeymap)];
-  mainExtensions: Extension[] = [...this.baseExtensions];
 
-  diffExtensions: Extension[] = [...this.baseExtensions, VS_LIGHT_THEME_EXTRA];
+  mainPrepExtensions: Extension[] = [...this.baseExtensions];
+  mainExtensions: Extension[] = [];
 
   diffOriginalExtensions: Extension[] = [
-    ...this.diffExtensions,
+    ...this.baseExtensions,
     EditorState.readOnly.of(true)
   ];
 
   diffModifiedExtensions: Extension[] = [
-    ...this.diffExtensions,
+    ...this.baseExtensions,
     EditorState.readOnly.of(false)
   ];
 
   originalExtensions: Extension[];
   modifiedExtensions: Extension[];
-
-  originalLanguageConf = new Compartment();
-  modifiedLanguageConf = new Compartment();
 
   line: number;
 
@@ -216,8 +222,38 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     private route: ActivatedRoute
   ) {}
 
-  async ngOnInit() {
-    await this.setEditorOptionsLanguage();
+  ngOnInit() {
+    this.initEditorOptions();
+  }
+
+  async initEditorOptions() {
+    let malloyLanguage = await createMalloyLanguage();
+
+    let ls = new LanguageSupport(malloyLanguage);
+
+    let malloyLanguageDescription = LanguageDescription.of({
+      name: 'Malloy',
+      alias: ['malloy'],
+      extensions: ['malloy', 'malloysql', 'malloynb'],
+      load: async () => {
+        // console.log('ls');
+        // console.log(ls);
+        return ls;
+      }
+    });
+
+    this.languages = [...languageData.languages, malloyLanguageDescription];
+
+    // let mainLanguageConf = new Compartment();
+    // this.mainPrepExtensions = [...this.baseExtensions, mainLanguageConf.of(ls)];
+
+    this.mainExtensions = [...this.mainPrepExtensions];
+
+    this.isEditorOptionsInitComplete = true;
+
+    this.setEditorOptionsLanguage();
+
+    this.cd.detectChanges();
   }
 
   ngAfterViewInit() {
@@ -296,25 +332,18 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async setEditorOptionsLanguage() {
-    if (common.isUndefined(this.file?.name)) {
+    if (
+      common.isUndefined(this.file?.name) ||
+      this.isEditorOptionsInitComplete === false
+    ) {
       return;
     }
 
     this.showDiff = false;
 
-    this.navQuery
-      .select()
-      .pipe(take(1))
-      .subscribe(x => {
-        this.nav = x;
-      });
+    this.nav = this.navQuery.getValue();
 
-    this.structQuery
-      .select()
-      .pipe(take(1))
-      .subscribe(x => {
-        this.struct = x;
-      });
+    this.struct = this.structQuery.getValue();
 
     let mdir = this.struct.mproveDirValue;
     if (common.isDefined(this.struct.mproveDirValue)) {
@@ -326,18 +355,14 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
 
-    this.fileQuery
-      .select()
-      .pipe(take(1))
-      .subscribe(x => {
-        this.file = x;
-      });
+    this.file = this.fileQuery.getValue();
 
     let ar = this.file.name.split('.');
     let ext = ar.pop();
     let dotExt = `.${ext}`;
 
     let language: any;
+
     if (
       constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0
     ) {
@@ -351,15 +376,27 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.lang = language?.name;
     }
 
-    let originalExtensions = [...this.diffOriginalExtensions];
-    let modifiedExtensions = [...this.diffModifiedExtensions];
+    this.theme =
+      this.lang === 'Malloy'
+        ? MALLOY_LIGHT_THEME_EXTRA_MOD
+        : VS_LIGHT_THEME_EXTRA_MOD;
+
+    let themeExtra =
+      this.lang === 'Malloy' ? MALLOY_LIGHT_THEME_EXTRA : VS_LIGHT_THEME_EXTRA;
+
+    let originalExtensions = [...this.diffOriginalExtensions, themeExtra];
+    let modifiedExtensions = [...this.diffModifiedExtensions, themeExtra];
 
     if (common.isDefined(language)) {
       let loadedLanguage = await language.load();
       // console.log('loadedLanguage');
       // console.log(loadedLanguage);
-      originalExtensions.push(this.originalLanguageConf.of(loadedLanguage));
-      modifiedExtensions.push(this.modifiedLanguageConf.of(loadedLanguage));
+
+      let originalLanguageConf = new Compartment();
+      let modifiedLanguageConf = new Compartment();
+
+      originalExtensions.push(originalLanguageConf.of(loadedLanguage));
+      modifiedExtensions.push(modifiedLanguageConf.of(loadedLanguage));
     }
 
     this.originalExtensions = originalExtensions;
@@ -483,10 +520,8 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   createLinter() {
-    this.mainExtensions = [
-      ...this.baseExtensions,
-      linter((view: EditorView) => this.diagnostics)
-    ];
+    let linterExtension = linter((view: EditorView) => this.diagnostics);
+    this.mainExtensions = [...this.mainPrepExtensions, linterExtension];
   }
 
   onTextChanged(item: { isDiffEditor: boolean }) {

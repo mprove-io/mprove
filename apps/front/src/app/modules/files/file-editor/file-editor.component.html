@@ -96,7 +96,10 @@
   </div>
 
   <div class="flex h-2 w-full flex-grow flex-row pl-6 pr-6">
-    <div *ngIf="panel === panelTree" class="flex w-2 flex-1">
+    <div
+      *ngIf="panel === panelTree && isEditorOptionsInitComplete === true"
+      class="flex w-2 flex-1"
+    >
       <code-editor
         #codeEditor
         class="w-full outline-none"
@@ -104,13 +107,13 @@
         style="height: 100%"
         [(ngModel)]="content"
         [readonly]="nav?.isRepoProd === true || file?.isExist === false"
-        [language]="lang"
+        [extensions]="mainExtensions"
         [languages]="languages"
-        [setup]="null"
+        [language]="lang"
         [theme]="theme"
+        [setup]="null"
         [indentWithTab]="indentWithTab"
         [indentUnit]="indentUnit"
-        [extensions]="mainExtensions"
         (ngModelChange)="onTextChanged({ isDiffEditor: false })"
       ></code-editor>
     </div>
@@ -120,6 +123,7 @@
       *ngIf="
         showDiff === true &&
         panel !== panelTree &&
+        isEditorOptionsInitComplete === true &&
         !!originalExtensions &&
         !!modifiedExtensions
       "

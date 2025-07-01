@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { standardKeymap } from '@codemirror/commands';
 import { LanguageDescription, LanguageSupport } from '@codemirror/language';
 import * as languageData from '@codemirror/language-data';
-import { Compartment, Extension } from '@codemirror/state';
+import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, map, take, tap } from 'rxjs/operators';
@@ -152,7 +152,7 @@ export class FilesRightComponent implements OnInit {
     let malloyLanguageDescription = LanguageDescription.of({
       name: 'Malloy',
       alias: ['malloy'],
-      extensions: ['.malloy', '.malloysql', '.malloynb'],
+      extensions: ['malloy', 'malloysql', 'malloynb'],
       load: async () => {
         return ls;
       }
@@ -160,9 +160,9 @@ export class FilesRightComponent implements OnInit {
 
     this.languages = [...languageData.languages, malloyLanguageDescription];
 
-    let originalLanguageConf = new Compartment();
-
-    this.extensions = [keymap.of(standardKeymap), originalLanguageConf.of(ls)];
+    // let filesRightLanguageConf = new Compartment();
+    // this.extensions = [keymap.of(standardKeymap), filesRightLanguageConf.of(ls)];
+    this.extensions = [keymap.of(standardKeymap)];
 
     this.isEditorOptionsInitComplete = true;
 
@@ -373,7 +373,7 @@ export class FilesRightComponent implements OnInit {
   setEditorOptionsLanguage() {
     if (
       common.isUndefined(this.secondFileNodeId) ||
-      this.languages.length === 0
+      this.isEditorOptionsInitComplete === false
     ) {
       return;
     }
