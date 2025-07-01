@@ -403,14 +403,25 @@
                 class="text-s1 mb-3 mt-5 flex h-11 w-full flex-shrink-0 flex-row items-center"
               >
                 <div
+                  class="hover:bg-m200 text-s500 ml-6 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
+                  (click)="toggleSearch()"
+                >
+                  <m-mag-glass-icon
+                    [isFilled]="showSearch === true"
+                    class="mb-1 flex h-6 w-6 flex-shrink-0"
+                  ></m-mag-glass-icon>
+                </div>
+
+                <div
                   (click)="setShowMetrics()"
-                  class="ml-6 flex cursor-pointer select-none flex-row items-center pl-0 pr-2 text-lg"
+                  class="ml-3 flex cursor-pointer select-none flex-row items-center pl-0 pr-2 text-lg"
                 >
                   <div
                     class="flex w-[90px] flex-row items-center justify-center"
                   >
                     <div
                       [ngClass]="{
+                        'text-s400': showMetrics === false,
                         'font-semibold': showMetrics === true
                       }"
                     >
@@ -428,23 +439,13 @@
                   >
                     <div
                       [ngClass]="{
+                        'text-s400': showMetrics === true,
                         'font-semibold': showMetrics === false
                       }"
                     >
                       REPORTS
                     </div>
                   </div>
-                </div>
-
-                <div
-                  *ngIf="showMetrics === false"
-                  class="hover:bg-m200 text-s500 ml-4 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
-                  (click)="toggleSearch()"
-                >
-                  <m-mag-glass-icon
-                    [isFilled]="showSearch === true"
-                    class="mb-1 flex h-6 w-6 flex-shrink-0"
-                  ></m-mag-glass-icon>
                 </div>
 
                 <div class="flex flex-grow"></div>
