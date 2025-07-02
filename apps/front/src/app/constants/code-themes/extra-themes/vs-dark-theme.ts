@@ -1,5 +1,5 @@
 import { tags as t } from '@lezer/highlight';
-import { CreateThemeOptions, createTheme } from './theme-parts';
+import { CreateThemeOptions, createTheme } from '../theme-parts';
 
 // https://github.com/uiwjs/react-codemirror/blob/master/themes/vscode/src/dark.ts
 

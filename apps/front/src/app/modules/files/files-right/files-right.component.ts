@@ -6,10 +6,8 @@ import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, map, take, tap } from 'rxjs/operators';
-import {
-  MALLOY_LIGHT_THEME_EXTRA_MOD,
-  createMalloyLanguage
-} from '~front/app/constants/code-themes/malloy-light-theme';
+import { createMalloyLanguage } from '~front/app/constants/code-themes/languages/create-malloy-language';
+import { MALLOY_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/malloy-light-theme';
 import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';

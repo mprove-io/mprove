@@ -12,10 +12,8 @@ import * as languageData from '@codemirror/language-data';
 import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { tap } from 'rxjs/operators';
-import {
-  MALLOY_LIGHT_THEME_EXTRA_MOD,
-  createMalloyLanguage
-} from '~front/app/constants/code-themes/malloy-light-theme';
+import { createMalloyLanguage } from '~front/app/constants/code-themes/languages/create-malloy-language';
+import { MALLOY_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/malloy-light-theme';
 import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { common } from '~front/barrels/common';

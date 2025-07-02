@@ -1,24 +1,11 @@
 import { Extension } from '@codemirror/state';
 import { tags as t } from '@lezer/highlight';
-import { createThemeExtra } from './create-theme-extra';
-import { createThemeExtraMod } from './create-theme-extra-mod';
+import { defaultSettingsLightTheme } from './default-settings-light-theme';
+import { createThemeExtra } from './theme-creators/create-theme-extra';
+import { createThemeExtraMod } from './theme-creators/create-theme-extra-mod';
 import { CreateThemeOptions, createTheme } from './theme-parts';
 
 // https://github.com/uiwjs/react-codemirror/blob/master/themes/vscode/src/light.ts
-
-export const defaultSettingsVscodeLight: CreateThemeOptions['settings'] = {
-  background: '#ffffff',
-  foreground: '#383a42',
-  caret: '#000',
-  selection: '#add6ff',
-  selectionMatch: '#a8ac94',
-  lineHighlight: '#99999926', // overrided on init
-  gutterBackground: '#fff',
-  gutterForeground: '#237893',
-  gutterActiveForeground: '#0b216f',
-  fontFamily:
-    'Menlo, Monaco, Consolas, "Andale Mono", "Ubuntu Mono", "Courier New", monospace'
-};
 
 export const vscodeLightStyle: CreateThemeOptions['styles'] = [
   {
@@ -94,7 +81,7 @@ export function vscodeLightInit(options?: Partial<CreateThemeOptions>) {
   return createTheme({
     theme: theme,
     settings: {
-      ...defaultSettingsVscodeLight,
+      ...defaultSettingsLightTheme,
       ...settings
     },
     styles: [...vscodeLightStyle, ...styles]

@@ -18,10 +18,10 @@ import { Compartment } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, map, take, tap } from 'rxjs/operators';
+import { createMalloyLanguage } from '~front/app/constants/code-themes/languages/create-malloy-language';
 import {
   MALLOY_LIGHT_THEME_EXTRA,
-  MALLOY_LIGHT_THEME_EXTRA_MOD,
-  createMalloyLanguage
+  MALLOY_LIGHT_THEME_EXTRA_MOD
 } from '~front/app/constants/code-themes/malloy-light-theme';
 import {
   VS_LIGHT_THEME_EXTRA,
