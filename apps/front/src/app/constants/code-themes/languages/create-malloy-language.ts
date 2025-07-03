@@ -63,9 +63,20 @@ export async function createMalloyLanguage() {
         scopeName === 'source.malloy' ||
         scopeName === 'source.malloy-in-sql'
       ) {
+        const MALLOY_GRAMMAR_EXTENDED = Object.assign({}, MALLOY_GRAMMAR, {
+          patterns: [
+            {
+              name: 'punctuation.malloy-in-sql.end',
+              match: '}%',
+              captures: { '0': { name: 'punctuation.malloy-in-sql.end' } }
+            },
+            ...MALLOY_GRAMMAR.patterns
+          ]
+        });
+
         return parseRawGrammar(
-          JSON.stringify(MALLOY_GRAMMAR),
-          'malloy.tmGrammar.json'
+          JSON.stringify(MALLOY_GRAMMAR_EXTENDED),
+          'malloy-extended.tmGrammar.json'
         );
       } else if (scopeName === 'source.sql') {
         const SQL_GRAMMAR_EXTENDED = Object.assign({}, SQL_GRAMMAR, {
@@ -178,13 +189,13 @@ export async function createMalloyLanguage() {
 
       let prevGrammar = state.currentGrammar;
 
-      if (scope === 'source.sql' && prevGrammar === 'malloy') {
+      if (scope === 'punctuation.malloy-in-sql.end') {
+        state.currentGrammar = 'sql';
+      } else if (scope === 'source.sql' && prevGrammar === 'malloy') {
         if (line.length >= stream.pos + 7) {
           // 7 chars 'sql("""'
           stream.pos = stream.pos + 7;
         }
-        state.currentGrammar = 'sql';
-      } else if (scope === 'punctuation.malloy-in-sql.end') {
         state.currentGrammar = 'sql';
       } else if (scope === 'source.malloy-in-sql') {
         state.currentGrammar = 'malloy';
