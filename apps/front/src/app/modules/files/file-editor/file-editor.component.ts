@@ -234,7 +234,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     let malloyLanguageDescription = LanguageDescription.of({
       name: 'Malloy',
       alias: ['malloy'],
-      extensions: ['malloy', 'malloysql', 'malloynb'],
+      extensions: ['malloy'],
       load: async () => {
         // console.log('ls');
         // console.log(ls);

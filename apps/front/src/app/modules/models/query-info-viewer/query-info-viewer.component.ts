@@ -86,7 +86,7 @@ export class QueryInfoViewerComponent implements OnInit, OnChanges {
     let malloyLanguageDescription = LanguageDescription.of({
       name: 'Malloy',
       alias: ['malloy'],
-      extensions: ['malloy', 'malloysql', 'malloynb'],
+      extensions: ['malloy'],
       load: async () => {
         return ls;
       }
