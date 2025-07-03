@@ -10,12 +10,12 @@ import { MALLOY_GRAMMAR } from '../grammars/malloy-grammar';
 import { SQL_GRAMMAR } from '../grammars/sql-grammar';
 import { sqlScopeToStyle } from './create-sql-language';
 
-// Map TextMate scopes to CodeMirror theme styles
+// TextMate scopes to CodeMirror theme styles
 const malloyScopeToStyle = {
   'keyword.control': 'keyword',
   'keyword.other': 'keyword',
   'entity.name.function': 'function',
-  'entity.name.function.modifier': 'function', // e.g., distinct in count(distinct)
+  'entity.name.function.modifier': 'function',
   'entity.name.type': 'typeName',
   'variable.other': 'variableName',
   'variable.other.quoted': 'variableName',
@@ -91,7 +91,7 @@ export async function createMalloyLanguage() {
 
         return parseRawGrammar(
           JSON.stringify(SQL_GRAMMAR_EXTENDED),
-          'sql.tmGrammar.json'
+          'sql-extended.tmGrammar.json'
         );
       }
 
@@ -112,7 +112,7 @@ export async function createMalloyLanguage() {
   let malloyStreamParser = {
     startState: () => ({
       ruleStack: { malloy: INITIAL, sql: INITIAL },
-      currentGrammar: 'malloy' // Track current grammar (malloy or sql)
+      currentGrammar: 'malloy'
     }),
 
     token(
@@ -129,9 +129,6 @@ export async function createMalloyLanguage() {
       }
 
       let line = stream.string;
-
-      // console.log('state.currentGrammar');
-      // console.log(state.currentGrammar);
 
       let grammar = state.currentGrammar === 'sql' ? sqlGrammar : malloyGrammar;
 
@@ -150,8 +147,25 @@ export async function createMalloyLanguage() {
         t => currentPos >= t.startIndex && currentPos < t.endIndex
       );
 
-      console.log('token.scopes');
-      console.log(token.scopes);
+      // console.log('%c' + state.currentGrammar, 'font-weight: bold;');
+
+      // console.log(line);
+
+      // console.log(
+      //   'word: ',
+      //   line.substr(token.startIndex, token.endIndex - token.startIndex)
+      // );
+
+      // console.log(
+      //   'currentPos: ',
+      //   currentPos,
+      //   '  token.startIndex: ',
+      //   token.startIndex,
+      //   '  token.endIndex ',
+      //   token.endIndex
+      // );
+
+      // console.log(token.scopes);
 
       if (!token) {
         stream.skipToEnd();
@@ -162,12 +176,23 @@ export async function createMalloyLanguage() {
 
       let scope = token.scopes[token.scopes.length - 1];
 
-      if (scope === 'source.sql' || scope === 'punctuation.malloy-in-sql.end') {
+      let prevGrammar = state.currentGrammar;
+
+      if (scope === 'source.sql' && prevGrammar === 'malloy') {
+        if (line.length >= stream.pos + 7) {
+          // 7 chars 'sql("""'
+          stream.pos = stream.pos + 7;
+        }
         state.currentGrammar = 'sql';
-      } else if (
-        scope === 'source.malloy-in-sql' ||
-        scope === 'punctuation.sql-block.close'
-      ) {
+      } else if (scope === 'punctuation.malloy-in-sql.end') {
+        state.currentGrammar = 'sql';
+      } else if (scope === 'source.malloy-in-sql') {
+        state.currentGrammar = 'malloy';
+      } else if (scope === 'punctuation.sql-block.close') {
+        if (line.length >= stream.pos + 1) {
+          // 1 char ')'
+          stream.pos = line.length;
+        }
         state.currentGrammar = 'malloy';
       }
 
