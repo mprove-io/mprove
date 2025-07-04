@@ -22,7 +22,35 @@
         "main": "apps/front/src/main.ts",
         "polyfills": "apps/front/src/polyfills.ts",
         "tsConfig": "apps/front/tsconfig.app.json",
-        "assets": ["apps/front/src/favicon.svg", "apps/front/src/assets"],
+        "assets": [
+          "apps/front/src/favicon.svg",
+          "apps/front/src/assets",
+          {
+            "glob": "**/light-plus.json",
+            "input": "./node_modules/shiki/themes",
+            "output": "/assets/shiki/themes"
+          },
+          {
+            "glob": "**/sql.tmLanguage.json",
+            "input": "./node_modules/shiki/languages",
+            "output": "/assets/shiki/languages"
+          },
+          {
+            "glob": "**/json.tmLanguage.json",
+            "input": "./node_modules/shiki/languages",
+            "output": "/assets/shiki/languages"
+          },
+          {
+            "glob": "**/typescript.tmLanguage.json",
+            "input": "./node_modules/shiki/languages",
+            "output": "/assets/shiki/languages"
+          },
+          {
+            "glob": "**/onig.wasm",
+            "input": "node_modules/vscode-oniguruma/release",
+            "output": "/assets/vscode-oniguruma"
+          }
+        ],
         "styles": [
           "apps/front/src/styles.scss",
           "./node_modules/ngx-ui-switch/ui-switch.component.css",

@@ -19,8 +19,6 @@ tools/data/
 *.env
 .envrc
 
-*.wasm
-
 # System Files
 .DS_Store
 Thumbs.db

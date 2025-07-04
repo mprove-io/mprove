@@ -43,7 +43,9 @@ const malloyScopeToStyle = {
 };
 
 export async function createMalloyLanguage() {
-  let wasmBin = await (await fetch('assets/onig.wasm')).arrayBuffer();
+  let wasmBin = await (
+    await fetch('assets/vscode-oniguruma/onig.wasm')
+  ).arrayBuffer();
 
   let vscodeOnigurumaLib = loadWASM(wasmBin).then(() => {
     return {
@@ -179,6 +181,8 @@ export async function createMalloyLanguage() {
       // console.log(token.scopes);
 
       if (!token) {
+        console.log('!token - no token');
+        console.log(state.myTokens);
         stream.skipToEnd();
         return null;
       }

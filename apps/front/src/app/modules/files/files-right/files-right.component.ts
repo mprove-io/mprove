@@ -6,7 +6,10 @@ import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, map, take, tap } from 'rxjs/operators';
-import { createMalloyLanguage } from '~front/app/constants/code-themes/languages/create-malloy-language';
+import {
+  createMalloyLanguageHL2,
+  updateMalloyDocument2
+} from '~front/app/constants/code-themes/languages/create-malloy-language-hl-2';
 import { MALLOY_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/malloy-light-theme';
 import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -143,7 +146,7 @@ export class FilesRightComponent implements OnInit {
   }
 
   async initEditorOptions() {
-    let malloyLanguage = await createMalloyLanguage();
+    let malloyLanguage = await createMalloyLanguageHL2();
 
     let ls = new LanguageSupport(malloyLanguage);
 
@@ -332,7 +335,7 @@ export class FilesRightComponent implements OnInit {
             showSpinner: false
           })
           .pipe(
-            tap((resp: apiToBackend.ToBackendGetFileResponse) => {
+            tap(async (resp: apiToBackend.ToBackendGetFileResponse) => {
               if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
                 let repoState = this.repoQuery.getValue();
                 // biome-ignore format: theme breaks
@@ -347,6 +350,7 @@ export class FilesRightComponent implements OnInit {
                 });
 
                 this.secondFileContent = resp.payload.content;
+                await updateMalloyDocument2(this.secondFileContent);
 
                 this.setEditorOptionsLanguage();
 
