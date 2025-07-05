@@ -17,7 +17,7 @@ import { Compartment } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, map, take, tap } from 'rxjs/operators';
-import { createMalloyLanguage } from '~front/app/constants/code-themes/languages/create-malloy-language';
+import { createLightLanguage } from '~front/app/constants/code-themes/languages/create-light-language';
 import {
   LIGHT_PLUS_THEME_EXTRA,
   LIGHT_PLUS_THEME_EXTRA_MOD
@@ -233,7 +233,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   ) {}
 
   initEditorOptions() {
-    let malloyLanguage = createMalloyLanguage(this.highlighter);
+    let malloyLanguage = createLightLanguage(this.highlighter);
 
     let ls = new LanguageSupport(malloyLanguage);
 

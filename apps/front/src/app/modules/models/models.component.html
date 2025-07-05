@@ -1422,9 +1422,33 @@
                   </div>
 
                   <div
+                    (click)="setShowYamlTile()"
+                    class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
+                  >
+                    <div
+                      class="flex w-[50px] flex-row items-center justify-center"
+                    >
+                      <div
+                        [ngClass]="{
+                          'text-s400':
+                            rightIsShow === false ||
+                            queryPartForm.controls['queryPart'].value !==
+                              queryPartEnum.YamlTile,
+                          'font-semibold':
+                            rightIsShow &&
+                            queryPartForm.controls['queryPart'].value ===
+                              queryPartEnum.YamlTile
+                        }"
+                      >
+                        TILE
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
                     *ngIf="model.type === modelTypeStore"
                     (click)="setShowJsonStoreRequestParts()"
-                    class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
+                    class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
                     <div
                       class="flex w-[100px] flex-row items-center justify-center"
@@ -1474,7 +1498,7 @@
                   <div
                     *ngIf="model.type === modelTypeMalloy"
                     (click)="setShowMalloyQuery()"
-                    class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
+                    class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
                     <div
                       class="flex w-[88px] flex-row items-center justify-center"
@@ -1492,31 +1516,6 @@
                         }"
                       >
                         MALLOY
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    *ngIf="model.type === modelTypeMalloy"
-                    (click)="setShowMalloyCompiledQuery()"
-                    class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
-                  >
-                    <div
-                      class="flex w-[115px] flex-row items-center justify-center"
-                    >
-                      <div
-                        [ngClass]="{
-                          'text-s400':
-                            rightIsShow === false ||
-                            queryPartForm.controls['queryPart'].value !==
-                              queryPartEnum.MalloyCompiledQuery,
-                          'font-semibold':
-                            rightIsShow &&
-                            queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.MalloyCompiledQuery
-                        }"
-                      >
-                        METADATA
                       </div>
                     </div>
                   </div>
@@ -1549,7 +1548,7 @@
                   <div
                     *ngIf="model.type === modelTypeSQL"
                     (click)="setShowSqlMain()"
-                    class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
+                    class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
                     <div
                       class="flex w-[50px] flex-row items-center justify-center"
@@ -1596,25 +1595,26 @@
                   </div>
 
                   <div
-                    (click)="setShowYamlTile()"
+                    *ngIf="model.type === modelTypeMalloy"
+                    (click)="setShowMalloyCompiledQuery()"
                     class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
                     <div
-                      class="flex w-[50px] flex-row items-center justify-center"
+                      class="flex w-[115px] flex-row items-center justify-center"
                     >
                       <div
                         [ngClass]="{
                           'text-s400':
                             rightIsShow === false ||
                             queryPartForm.controls['queryPart'].value !==
-                              queryPartEnum.YamlTile,
+                              queryPartEnum.MalloyCompiledQuery,
                           'font-semibold':
                             rightIsShow &&
                             queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.YamlTile
+                              queryPartEnum.MalloyCompiledQuery
                         }"
                       >
-                        TILE
+                        METADATA
                       </div>
                     </div>
                   </div>

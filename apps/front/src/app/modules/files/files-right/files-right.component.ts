@@ -7,9 +7,9 @@ import { keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, map, take, tap } from 'rxjs/operators';
 import {
-  createMalloyLanguage,
-  updateMalloyDocument
-} from '~front/app/constants/code-themes/languages/create-malloy-language';
+  createLightLanguage,
+  updateDocText
+} from '~front/app/constants/code-themes/languages/create-light-language';
 import { LIGHT_PLUS_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/light-plus-theme';
 import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -153,18 +153,13 @@ export class FilesRightComponent {
   ) {}
 
   initEditorOptions() {
-    let malloyLanguage = createMalloyLanguage(this.highlighter);
-
-    let ls = new LanguageSupport(
-      malloyLanguage
-      // , MALLOY_LIGHT_THEME_EXTRA_MOD
-    );
+    let lightLanguage = createLightLanguage(this.highlighter);
 
     let malloyLanguageDescription = LanguageDescription.of({
       name: 'Malloy',
       alias: ['malloy'],
       extensions: ['malloy'],
-      support: ls
+      support: new LanguageSupport(lightLanguage)
     });
 
     this.languages = [...languageData.languages, malloyLanguageDescription];
@@ -358,7 +353,12 @@ export class FilesRightComponent {
                 });
 
                 this.secondFileContent = resp.payload.content;
-                updateMalloyDocument(this.secondFileContent, this.highlighter);
+                updateDocText({
+                  docText: this.secondFileContent,
+                  highlighter: this.highlighter,
+                  shikiLanguage: 'malloy',
+                  shikiTheme: 'light-plus-extended'
+                });
 
                 this.setEditorOptionsLanguage();
 

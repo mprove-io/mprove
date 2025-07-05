@@ -12,11 +12,12 @@ import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { tap } from 'rxjs/operators';
 import {
-  createMalloyLanguage,
-  updateMalloyDocument
-} from '~front/app/constants/code-themes/languages/create-malloy-language';
+  createLightLanguage,
+  updateDocText
+} from '~front/app/constants/code-themes/languages/create-light-language';
 import { LIGHT_PLUS_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/light-plus-theme';
 import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
+import { LIGHT_PLUS_LANGUAGES } from '~front/app/constants/top';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { common } from '~front/barrels/common';
@@ -90,18 +91,48 @@ export class QueryInfoViewerComponent implements OnChanges {
   }
 
   initEditorOptions() {
-    let malloyLanguage = createMalloyLanguage(this.highlighter);
+    let lightLanguage = createLightLanguage(this.highlighter);
 
-    let ls = new LanguageSupport(malloyLanguage);
-
-    let malloyLanguageDescription = LanguageDescription.of({
-      name: 'Malloy',
-      alias: ['malloy'],
-      extensions: ['malloy'],
-      support: ls
+    let markdownLanguageDescription = LanguageDescription.of({
+      name: 'markdown',
+      alias: ['markdown'],
+      extensions: ['markdown'],
+      support: new LanguageSupport(lightLanguage)
     });
 
-    this.languages = [...languageData.languages, malloyLanguageDescription];
+    let sqlLanguageDescription = LanguageDescription.of({
+      name: 'sql',
+      alias: ['sql'],
+      extensions: ['sql'],
+      support: new LanguageSupport(lightLanguage)
+    });
+
+    let malloyLanguageDescription = LanguageDescription.of({
+      name: 'malloy',
+      alias: ['malloy'],
+      extensions: ['malloy'],
+      support: new LanguageSupport(lightLanguage)
+    });
+
+    let malloysqlLanguageDescription = LanguageDescription.of({
+      name: 'malloysql',
+      alias: ['malloysql'],
+      extensions: ['malloysql'],
+      support: new LanguageSupport(lightLanguage)
+    });
+
+    this.languages = [
+      ...languageData.languages.filter(
+        language =>
+          LIGHT_PLUS_LANGUAGES.map(name => name.toLowerCase()).indexOf(
+            language.name.toLocaleLowerCase()
+          ) < 0
+      ),
+      markdownLanguageDescription,
+      sqlLanguageDescription,
+      malloyLanguageDescription,
+      malloysqlLanguageDescription
+    ];
 
     // let queryInfoLanguageConf = new Compartment();
     // this.extensions = [keymap.of(standardKeymap), queryInfoLanguageConf.of(ls)];
@@ -143,19 +174,21 @@ export class QueryInfoViewerComponent implements OnChanges {
                 : undefined;
 
     this.theme =
-      this.queryPart === common.QueryPartEnum.MalloyQuery ||
-      this.queryPart === common.QueryPartEnum.MalloySource
+      LIGHT_PLUS_LANGUAGES.indexOf(this.lang.toLowerCase()) > -1
         ? LIGHT_PLUS_THEME_EXTRA_MOD
         : VS_LIGHT_THEME_EXTRA_MOD;
 
     if (this.queryPart === common.QueryPartEnum.MalloyQuery) {
       this.content = this.chart.tiles[0].mconfig.malloyQuery;
     } else if (this.queryPart === common.QueryPartEnum.MalloyCompiledQuery) {
+      let startCQ = Date.now();
       let parsed = this.chart.tiles[0].mconfig.compiledQuery;
+      delete parsed.sql;
 
       this.content = common.isDefined(parsed)
         ? JSON.stringify(parsed, null, 2)
         : '';
+      console.log('startCQ: ', Date.now() - startCQ);
     } else if (this.queryPart === common.QueryPartEnum.JsonResults) {
       let parsed = this.chart.tiles[0].query.data;
 
@@ -202,6 +235,13 @@ ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
       this.content = this.modelFileText;
     }
 
-    updateMalloyDocument(this.content, this.highlighter);
+    if (LIGHT_PLUS_LANGUAGES.indexOf(this.lang.toLowerCase()) > -1) {
+      updateDocText({
+        docText: this.content,
+        highlighter: this.highlighter,
+        shikiLanguage: this.lang.toLowerCase(),
+        shikiTheme: 'light-plus-extended'
+      });
+    }
   }
 }

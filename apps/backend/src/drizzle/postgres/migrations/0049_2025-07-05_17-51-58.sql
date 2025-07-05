@@ -1,0 +1,1 @@
+ALTER TABLE "mconfigs" ADD COLUMN "compiled_query_str" varchar;

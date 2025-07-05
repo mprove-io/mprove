@@ -1,0 +1,1 @@
+ALTER TABLE "mconfigs" DROP COLUMN IF EXISTS "compiled_query_str";

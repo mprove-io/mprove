@@ -70,9 +70,8 @@ export class HighLightService {
         languages: '/shiki/languages/'
       } as any,
       langs: [
+        'markdown',
         'sql',
-        'json',
-        'typescript',
         {
           id: 'malloy',
           scopeName: 'source.malloy',
