@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { standardKeymap } from '@codemirror/commands';
 import { LanguageDescription, LanguageSupport } from '@codemirror/language';
 import * as languageData from '@codemirror/language-data';
@@ -7,9 +7,9 @@ import { keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, map, take, tap } from 'rxjs/operators';
 import {
-  createMalloyLanguageHL2,
-  updateMalloyDocument2
-} from '~front/app/constants/code-themes/languages/create-malloy-language-hl-2';
+  createMalloyLanguage,
+  updateMalloyDocument
+} from '~front/app/constants/code-themes/languages/create-malloy-language';
 import { MALLOY_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/malloy-light-theme';
 import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -29,7 +29,7 @@ import { constants } from '~front/barrels/constants';
   selector: 'm-files-right',
   templateUrl: './files-right.component.html'
 })
-export class FilesRightComponent implements OnInit {
+export class FilesRightComponent {
   isEditorOptionsInitComplete = false;
 
   extensions: Extension[] = [];
@@ -128,6 +128,17 @@ export class FilesRightComponent implements OnInit {
 
   secondFileContent: string;
 
+  highlighter: any;
+  highlighter$ = this.uiQuery.select().pipe(
+    tap(x => {
+      this.highlighter = x.highlighter;
+
+      if (this.isEditorOptionsInitComplete === false) {
+        this.initEditorOptions();
+      }
+    })
+  );
+
   constructor(
     private uiQuery: UiQuery,
     private structQuery: StructQuery,
@@ -141,12 +152,8 @@ export class FilesRightComponent implements OnInit {
     private apiService: ApiService
   ) {}
 
-  ngOnInit() {
-    this.initEditorOptions();
-  }
-
-  async initEditorOptions() {
-    let malloyLanguage = await createMalloyLanguageHL2();
+  initEditorOptions() {
+    let malloyLanguage = createMalloyLanguage(this.highlighter);
 
     let ls = new LanguageSupport(
       malloyLanguage
@@ -351,7 +358,7 @@ export class FilesRightComponent implements OnInit {
                 });
 
                 this.secondFileContent = resp.payload.content;
-                await updateMalloyDocument2(this.secondFileContent);
+                updateMalloyDocument(this.secondFileContent, this.highlighter);
 
                 this.setEditorOptionsLanguage();
 

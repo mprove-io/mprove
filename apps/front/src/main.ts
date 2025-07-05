@@ -2,7 +2,9 @@ import { HttpClientModule } from '@angular/common/http';
 import {
   ErrorHandler,
   enableProdMode,
-  importProvidersFrom
+  importProvidersFrom,
+  inject,
+  provideEnvironmentInitializer
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -37,6 +39,7 @@ import { ReportsModule } from './app/modules/reports/reports.module';
 import { SharedModule } from './app/modules/shared/shared.module';
 import { SpecialModule } from './app/modules/special/special.module';
 import { ErrorHandlerService } from './app/services/error-handler.service';
+import { HighLightService } from './app/services/highlight.service';
 import { environment } from './environments/environment';
 
 if (environment.production) {
@@ -47,6 +50,11 @@ if (environment.production) {
 bootstrapApplication(AppComponent, {
   providers: [
     // useClass must be last in list by order
+    provideEnvironmentInitializer(async () => {
+      // const highLightService = inject(HighLightService); // if uncomment - remove initHighlighter() call from service constructor
+      // await highLightService.initHighlighter();
+      inject(HighLightService);
+    }),
     importProvidersFrom(
       BrowserModule,
       HttpClientModule,
@@ -120,5 +128,6 @@ bootstrapApplication(AppComponent, {
       provide: ErrorHandler,
       useClass: ErrorHandlerService
     }
+    // useClass must be last in list by order
   ]
 }).catch(err => console.error(err));

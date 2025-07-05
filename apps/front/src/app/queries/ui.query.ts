@@ -17,6 +17,7 @@ export interface RepChartData {
 }
 
 export class UiState {
+  highlighter: any;
   gridApi: GridApi<DataRow>;
   gridData: DataRow[];
   repChartData: RepChartData;
@@ -52,6 +53,7 @@ export class UiState {
 }
 
 let uiState: UiState = {
+  highlighter: undefined,
   gridApi: undefined,
   gridData: [],
   repChartData: {

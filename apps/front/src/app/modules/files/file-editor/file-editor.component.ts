@@ -4,7 +4,6 @@ import {
   ChangeDetectorRef,
   Component,
   OnDestroy,
-  OnInit,
   ViewChild
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
@@ -45,7 +44,7 @@ import { constants } from '~front/barrels/constants';
   selector: 'm-file-editor',
   templateUrl: './file-editor.component.html'
 })
-export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
+export class FileEditorComponent implements OnDestroy, AfterViewInit {
   isEditorOptionsInitComplete = false;
 
   panelTree = common.PanelEnum.Tree;
@@ -206,6 +205,17 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     })
   );
 
+  highlighter: any;
+  highlighter$ = this.uiQuery.select().pipe(
+    tap(x => {
+      this.highlighter = x.highlighter;
+
+      if (this.isEditorOptionsInitComplete === false) {
+        this.initEditorOptions();
+      }
+    })
+  );
+
   constructor(
     private fileQuery: FileQuery,
     private structQuery: StructQuery,
@@ -222,12 +232,8 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     private route: ActivatedRoute
   ) {}
 
-  ngOnInit() {
-    this.initEditorOptions();
-  }
-
-  async initEditorOptions() {
-    let malloyLanguage = await createMalloyLanguage();
+  initEditorOptions() {
+    let malloyLanguage = createMalloyLanguage(this.highlighter);
 
     let ls = new LanguageSupport(malloyLanguage);
 
@@ -235,11 +241,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       name: 'Malloy',
       alias: ['malloy'],
       extensions: ['malloy'],
-      load: async () => {
-        // console.log('ls');
-        // console.log(ls);
-        return ls;
-      }
+      support: ls
     });
 
     this.languages = [...languageData.languages, malloyLanguageDescription];

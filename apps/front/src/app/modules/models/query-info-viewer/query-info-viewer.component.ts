@@ -3,7 +3,6 @@ import {
   Component,
   Input,
   OnChanges,
-  OnInit,
   SimpleChanges
 } from '@angular/core';
 import { standardKeymap } from '@codemirror/commands';
@@ -12,10 +11,14 @@ import * as languageData from '@codemirror/language-data';
 import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { tap } from 'rxjs/operators';
-import { createMalloyLanguage } from '~front/app/constants/code-themes/languages/create-malloy-language';
+import {
+  createMalloyLanguage,
+  updateMalloyDocument
+} from '~front/app/constants/code-themes/languages/create-malloy-language';
 import { MALLOY_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/malloy-light-theme';
 import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
 import { ChartQuery } from '~front/app/queries/chart.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -23,7 +26,7 @@ import { common } from '~front/barrels/common';
   selector: 'm-query-info-viewer',
   templateUrl: './query-info-viewer.component.html'
 })
-export class QueryInfoViewerComponent implements OnInit, OnChanges {
+export class QueryInfoViewerComponent implements OnChanges {
   @Input()
   queryPart: common.QueryPartEnum;
 
@@ -56,14 +59,22 @@ export class QueryInfoViewerComponent implements OnInit, OnChanges {
     })
   );
 
+  highlighter: any;
+  highlighter$ = this.uiQuery.select().pipe(
+    tap(x => {
+      this.highlighter = x.highlighter;
+
+      if (this.isEditorOptionsInitComplete === false) {
+        this.initEditorOptions();
+      }
+    })
+  );
+
   constructor(
+    private uiQuery: UiQuery,
     private chartQuery: ChartQuery,
     private cd: ChangeDetectorRef
   ) {}
-
-  ngOnInit() {
-    this.initEditorOptions();
-  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
@@ -78,8 +89,8 @@ export class QueryInfoViewerComponent implements OnInit, OnChanges {
     }
   }
 
-  async initEditorOptions() {
-    let malloyLanguage = await createMalloyLanguage();
+  initEditorOptions() {
+    let malloyLanguage = createMalloyLanguage(this.highlighter);
 
     let ls = new LanguageSupport(malloyLanguage);
 
@@ -87,9 +98,7 @@ export class QueryInfoViewerComponent implements OnInit, OnChanges {
       name: 'Malloy',
       alias: ['malloy'],
       extensions: ['malloy'],
-      load: async () => {
-        return ls;
-      }
+      support: ls
     });
 
     this.languages = [...languageData.languages, malloyLanguageDescription];
@@ -192,5 +201,7 @@ ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
     ) {
       this.content = this.modelFileText;
     }
+
+    updateMalloyDocument(this.content, this.highlighter);
   }
 }

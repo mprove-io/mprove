@@ -1,235 +1,223 @@
 import { StreamLanguage } from '@codemirror/language';
-import { OnigScanner, OnigString, loadWASM } from 'vscode-oniguruma';
+import { common } from '~front/barrels/common';
 import {
-  INITIAL,
-  Registry,
-  StateStack,
-  parseRawGrammar
-} from 'vscode-textmate';
-import { MALLOY_GRAMMAR } from '../grammars/malloy-grammar';
-import { SQL_GRAMMAR } from '../grammars/sql-grammar';
-import { sqlScopeToStyle } from './create-sql-language';
+  LIGHT_PLUS_COLOR_TO_TAG,
+  LIGHT_PLUS_CUSTOM_TAGS
+} from '../light-plus-tags';
+// import { getHL } from './hl';
 
-// TextMate scopes to CodeMirror theme styles
-const malloyScopeToStyle = {
-  'keyword.control': 'keyword',
-  'keyword.other': 'keyword',
-  'entity.name.function': 'function',
-  'entity.name.function.modifier': 'function',
-  'entity.name.type': 'typeName',
-  'variable.other': 'variableName',
-  'variable.other.quoted': 'variableName',
-  'constant.numeric': 'number',
-  'constant.numeric.date': 'literal',
-  'constant.numeric.timestamp': 'literal',
-  'keyword.other.timeframe': 'unit',
-  'constant.language': 'bool',
-  'constant.language.null': 'null',
-  'string.quoted': 'string',
-  'string.regexp': 'string',
-  comment: 'comment',
-  punctuation: 'punctuation',
-  'keyword.operator': 'operator',
-  'source.sql': 'meta',
-  'source.malloy-in-sql': 'meta',
-  'support.type.property-name.json': 'annotation',
-  'keyword.operator.comparison.ts': 'operator',
-  'keyword.control.negate': 'operator',
-  'punctuation.definition.string.begin': 'punctuation',
-  'punctuation.definition.string.end': 'punctuation',
-  'punctuation.sql-block.open': 'meta',
-  'punctuation.sql-block.close': 'meta',
-  'punctuation.definition.comment': 'comment'
-};
+// let highlighter: any = null;
 
-export async function createMalloyLanguage() {
-  let wasmBin = await (
-    await fetch('assets/vscode-oniguruma/onig.wasm')
-  ).arrayBuffer();
+let fullDocument: string | null = null;
 
-  let vscodeOnigurumaLib = loadWASM(wasmBin).then(() => {
-    return {
-      createOnigScanner(patterns: any) {
-        return new OnigScanner(patterns);
-      },
-      createOnigString(s: any) {
-        return new OnigString(s);
-      }
-    };
-  });
+let fullHtml: any;
+let fullTokenLines: any[] = [];
+let fullTokens: {
+  text: string;
+  scope: string;
+  startIndex: number;
+  endIndex: number;
+  line: number;
+  color: string;
+}[] = [];
 
-  let registry = new Registry({
-    onigLib: vscodeOnigurumaLib,
-    loadGrammar: async scopeName => {
-      if (
-        scopeName === 'source.malloy' ||
-        scopeName === 'source.malloy-in-sql'
-      ) {
-        const MALLOY_GRAMMAR_EXTENDED = Object.assign({}, MALLOY_GRAMMAR, {
-          patterns: [
-            {
-              name: 'punctuation.malloy-in-sql.end',
-              match: '}%',
-              captures: { '0': { name: 'punctuation.malloy-in-sql.end' } }
-            },
-            ...MALLOY_GRAMMAR.patterns
-          ]
-        });
+function parseShikiTokens(code: string, hl: any) {
+  let lang = 'malloy';
 
-        return parseRawGrammar(
-          JSON.stringify(MALLOY_GRAMMAR_EXTENDED),
-          'malloy-extended.tmGrammar.json'
-        );
-      } else if (scopeName === 'source.sql') {
-        const SQL_GRAMMAR_EXTENDED = Object.assign({}, SQL_GRAMMAR, {
-          patterns: [
-            {
-              name: 'punctuation.sql-block.close',
-              match: '"""',
-              captures: { '0': { name: 'punctuation.sql-block.close' } }
-            },
-            {
-              name: 'source.malloy-in-sql',
-              begin: '%{',
-              end: '}%?',
-              beginCaptures: {
-                '0': { name: 'punctuation.malloy-in-sql.begin' }
-              },
-              endCaptures: { '0': { name: 'punctuation.malloy-in-sql.end' } },
-              patterns: [{ include: 'source.malloy' }]
-            },
-            ...SQL_GRAMMAR.patterns
-          ]
-        });
+  if (!hl.getLoadedLanguages().includes(lang as any)) {
+    lang = 'text';
+  }
+  let html = hl.codeToHtml(code, lang, 'light-plus-extended');
 
-        return parseRawGrammar(
-          JSON.stringify(SQL_GRAMMAR_EXTENDED),
-          'sql-extended.tmGrammar.json'
-        );
+  let tokenLines = hl
+    .codeToThemedTokens(code, lang, 'light-plus-extended', {
+      includeExplanation: true
+    })
+    .filter((x: any) => x.length > 0);
+
+  let tokens: {
+    text: string;
+    scope: string;
+    startIndex: number;
+    endIndex: number;
+    line: number;
+    color: string;
+  }[] = [];
+
+  let docPos = 0;
+  let docLine = 0;
+
+  for (let tLine of tokenLines) {
+    let tIndex = 0;
+    for (let tItem of tLine) {
+      if (tItem.explanation.length > 1) {
+        console.log('tItem.explanation');
+        console.log(tItem.explanation);
       }
 
-      console.log(`Unknown scope name: ${scopeName}`);
-      return null;
+      for (let explanation of tItem.explanation) {
+        let text = explanation.content;
+
+        tokens.push({
+          color: tItem.color,
+          text,
+          scope:
+            explanation.scopes[explanation.scopes.length - 1]?.scopeName ||
+            'text',
+          startIndex: docPos,
+          endIndex:
+            tLine.length === tIndex + 1
+              ? docPos + text.length + 1
+              : docPos + text.length,
+          line: docLine
+        });
+
+        docPos += text.length;
+      }
+      tIndex++;
     }
-  });
+    docPos = 0;
+    docLine++;
+  }
 
-  const malloyGrammar = await registry.loadGrammar('source.malloy');
-  const sqlGrammar = await registry.loadGrammar('source.sql');
+  return { tokens: tokens, tokenLines: tokenLines, html: html };
+}
 
-  if (!malloyGrammar) throw new Error('Failed to load Malloy grammar');
-  if (!sqlGrammar) throw new Error('Failed to load SQL grammar');
+export function createMalloyLanguage(highlighter: any) {
+  console.log('createMalloyLanguage');
 
-  // console.log('grammar');
-  // console.log(grammar);
+  if (!highlighter) {
+    console.log('createMalloyLanguage - highlighter undefined');
+  }
 
   let malloyStreamParser = {
     startState: () => ({
-      ruleStack: { malloy: INITIAL, sql: INITIAL },
-      currentGrammar: 'malloy'
+      lineNumber: 0
     }),
-
-    token(
-      stream: any,
-      state: any
-      // {
-      //   malloyRuleStack: StateStack;
-      //   sqlRuleStack: StateStack;
-      //   currentGrammar: string; // malloy or sql
-      // }
-    ): any {
+    tokenTable: LIGHT_PLUS_CUSTOM_TAGS,
+    token(stream: any, state: any): string | null {
       if (stream.eol()) {
+        console.log(
+          'EOL reached, line:',
+          stream.string,
+          'lineNumber:',
+          state.lineNumber
+        );
         return null;
       }
 
       let line = stream.string;
 
-      let grammar = state.currentGrammar === 'sql' ? sqlGrammar : malloyGrammar;
-
-      let ruleStack: StateStack =
-        (state.currentGrammar === 'sql'
-          ? state.sqlRuleStack
-          : state.malloyRuleStack) || INITIAL;
-
-      let tokenizeResult = grammar.tokenizeLine(line, ruleStack);
-
-      ruleStack = tokenizeResult.ruleStack;
-
-      let currentPos = stream.pos;
-
-      let token = tokenizeResult.tokens.find(
-        t => currentPos >= t.startIndex && currentPos < t.endIndex
-      );
-
-      // console.log('%c' + state.currentGrammar, 'font-weight: bold;');
-
-      // console.log(line);
-
-      // console.log(
-      //   'word: ',
-      //   line.substr(token.startIndex, token.endIndex - token.startIndex)
-      // );
-
-      // console.log(
-      //   'currentPos: ',
-      //   currentPos,
-      //   '  token.startIndex: ',
-      //   token.startIndex,
-      //   '  token.endIndex ',
-      //   token.endIndex
-      // );
-
-      // console.log(token.scopes);
-
-      if (!token) {
-        console.log('!token - no token');
-        console.log(state.myTokens);
+      if (!line) {
+        console.log('No line', state.lineNumber);
         stream.skipToEnd();
         return null;
       }
 
-      stream.pos = token.endIndex;
+      let lineTokens = fullTokens.filter(t => t.line === state.lineNumber);
 
-      let scope = token.scopes[token.scopes.length - 1];
-
-      let prevGrammar = state.currentGrammar;
-
-      if (scope === 'punctuation.malloy-in-sql.end') {
-        state.currentGrammar = 'sql';
-      } else if (scope === 'source.sql' && prevGrammar === 'malloy') {
-        if (line.length >= stream.pos + 7) {
-          // 7 chars 'sql("""'
-          stream.pos = stream.pos + 7;
-        }
-        state.currentGrammar = 'sql';
-      } else if (scope === 'source.malloy-in-sql') {
-        state.currentGrammar = 'malloy';
-      } else if (scope === 'punctuation.sql-block.close') {
-        if (line.length >= stream.pos + 1) {
-          // 1 char ')'
-          stream.pos = line.length;
-        }
-        state.currentGrammar = 'malloy';
+      if (lineTokens.length === 0) {
+        console.log('No tokens for line', state.lineNumber);
+        console.log('stream.pos');
+        console.log(stream.pos);
+        console.log('line');
+        console.log(line);
+        stream.skipToEnd();
+        return null;
       }
 
-      let sqlScopeToStyleExtended = {
-        ...sqlScopeToStyle,
-        'punctuation.sql-block.close': 'punctuation',
-        'source.malloy-in-sql': 'malloy-in-sql',
-        'punctuation.malloy-in-sql.begin': 'punctuation',
-        'punctuation.malloy-in-sql.end': 'punctuation'
-      };
+      let tokenIndex: number = lineTokens.findIndex(
+        t => stream.pos >= t.startIndex && stream.pos < t.endIndex
+      );
 
-      for (let [textMateScope, cmStyle] of Object.entries(
-        scope === 'source.sql' ? sqlScopeToStyleExtended : malloyScopeToStyle
-      )) {
-        if (scope.includes(textMateScope)) {
-          return cmStyle;
-        }
+      if (tokenIndex < 0) {
+        console.log(
+          'No token found at stream position',
+          stream.pos,
+          'line:',
+          line,
+          'lineNumber:',
+          state.lineNumber,
+          'tokens:',
+          lineTokens
+        );
+        stream.skipToEnd();
+        return null;
       }
 
+      let token = lineTokens[tokenIndex];
+
+      let nextStreamPos;
+
+      if (token.endIndex >= line.length) {
+        state.lineNumber++;
+        nextStreamPos = token.endIndex;
+      } else {
+        nextStreamPos = token.endIndex;
+      }
+
+      stream.pos = nextStreamPos;
+
+      if (token.color) {
+        let tagName: string = LIGHT_PLUS_COLOR_TO_TAG[token.color];
+
+        if (common.isUndefined(tagName)) {
+          console.log('UNDEF tagName');
+          console.log('token.color');
+          console.log(token.color);
+        }
+
+        let cmStyle: any = tagName;
+
+        // console.log('cmStyle');
+        // console.log(cmStyle);
+
+        return cmStyle;
+      }
+
+      console.log(
+        'No style found for SCOPE: ',
+        token.scope,
+        'TEXT: ',
+        token.text,
+        'LINE: ',
+        line
+      );
       return null;
     }
   };
 
   return StreamLanguage.define(malloyStreamParser);
+}
+
+export function updateMalloyDocument(documentText: string, highlighter: any) {
+  console.log('updateMalloyDocument');
+
+  if (!highlighter) {
+    console.log('updateMalloyDocument - highlighter undefined');
+    return;
+    // console.log('updateMalloyDocument - highlighter init');
+    // highlighter = await getHL();
+  }
+
+  if (documentText !== fullDocument && !!highlighter) {
+    console.log('updateMalloyDocument - parse full document');
+
+    fullDocument = documentText;
+
+    let fullResult = parseShikiTokens(fullDocument, highlighter);
+
+    fullHtml = fullResult.html;
+    fullTokenLines = fullResult.tokenLines;
+    fullTokens = fullResult.tokens;
+
+    console.log('fullHtml');
+    console.log(fullHtml);
+
+    console.log('fullTokenLines');
+    console.log(fullTokenLines);
+
+    console.log('fullTokens');
+    console.log(fullTokens);
+  }
 }
