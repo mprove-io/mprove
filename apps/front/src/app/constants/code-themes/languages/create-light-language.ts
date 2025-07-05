@@ -147,6 +147,15 @@ export function updateDocText(item: {
 
     fullDocument = docText;
 
+    console.log('shikiLanguage');
+    console.log(shikiLanguage);
+    console.log('shikiTheme');
+    console.log(shikiTheme);
+    console.log('!!highlighter');
+    console.log(!!highlighter);
+    console.log('fullDocument');
+    console.log(fullDocument);
+
     let fullResult = parseShikiTokens({
       input: fullDocument,
       shikiLanguage: shikiLanguage,

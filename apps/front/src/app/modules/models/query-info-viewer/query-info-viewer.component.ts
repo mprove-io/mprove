@@ -181,14 +181,12 @@ export class QueryInfoViewerComponent implements OnChanges {
     if (this.queryPart === common.QueryPartEnum.MalloyQuery) {
       this.content = this.chart.tiles[0].mconfig.malloyQuery;
     } else if (this.queryPart === common.QueryPartEnum.MalloyCompiledQuery) {
-      let startCQ = Date.now();
       let parsed = this.chart.tiles[0].mconfig.compiledQuery;
       delete parsed.sql;
 
       this.content = common.isDefined(parsed)
         ? JSON.stringify(parsed, null, 2)
         : '';
-      console.log('startCQ: ', Date.now() - startCQ);
     } else if (this.queryPart === common.QueryPartEnum.JsonResults) {
       let parsed = this.chart.tiles[0].query.data;
 
@@ -237,7 +235,7 @@ ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
 
     if (LIGHT_PLUS_LANGUAGES.indexOf(this.lang.toLowerCase()) > -1) {
       updateDocText({
-        docText: this.content,
+        docText: this.content || '',
         highlighter: this.highlighter,
         shikiLanguage: this.lang.toLowerCase(),
         shikiTheme: 'light-plus-extended'
