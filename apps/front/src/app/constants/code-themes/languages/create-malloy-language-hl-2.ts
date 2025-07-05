@@ -1,64 +1,15 @@
 import { StreamLanguage } from '@codemirror/language';
-import { sqlScopeToStyle } from './create-sql-language';
+import { common } from '~front/barrels/common';
+import {
+  LIGHT_PLUS_COLOR_TO_TAG,
+  LIGHT_PLUS_CUSTOM_TAGS
+} from '../light-plus-tags';
 import { getHL } from './hl';
 
-// TextMate scopes to CodeMirror theme styles
-const malloyScopeToStyle = {
-  'keyword.control': 'keyword',
-  'keyword.control.source': 'keyword',
-  'keyword.control.is': 'keyword',
-  'keyword.control.run': 'keyword',
-  'keyword.control.select': 'keyword',
-  'keyword.control.limit': 'keyword',
-  'keyword.control.group_by': 'keyword',
-  'keyword.control.aggregate': 'keyword',
-  'keyword.other': 'keyword',
-  'entity.name.function': 'function',
-  'entity.name.function.modifier': 'function',
-  'entity.name.type': 'typeName',
-  'variable.other': 'variableName',
-  'variable.other.quoted': 'variableName',
-  'constant.numeric': 'number',
-  'constant.numeric.date': 'literal',
-  'constant.numeric.timestamp': 'literal',
-  'keyword.other.timeframe': 'unit',
-  'constant.language': 'bool',
-  'constant.language.null': 'null',
-  'string.quoted': 'string',
-  'string.quoted.single': 'string',
-  'string.regexp': 'string',
-  comment: 'comment',
-  'punctuation.definition.comment': 'comment',
-  'comment.line.double-slash': 'comment',
-  'comment.line.double-dash.sql': 'comment',
-  punctuation: 'punctuation',
-  'keyword.operator': 'operator',
-  'keyword.operator.arrow': 'operator',
-  'source.malloy': 'punctuation',
-  'source.malloy-in-sql': 'meta',
-  'punctuation.definition.string.begin': 'punctuation',
-  'punctuation.definition.string.end': 'punctuation'
-};
-
-const sqlScopeToStyleExtended = {
-  ...sqlScopeToStyle,
-  'source.sql': 'meta',
-  'keyword.other.DML.sql': 'keyword',
-  'keyword.control.sql': 'keyword',
-  'keyword.operator.star.sql': 'operator',
-  'keyword.operator.comparison.sql': 'operator',
-  'constant.numeric.sql': 'number',
-  'variable.other.sql': 'variableName',
-  'string.quoted.double.sql': 'string',
-  'punctuation.sql-block.open': 'punctuation',
-  'punctuation.sql-block.close': 'punctuation',
-  'punctuation.definition.string.sql': 'punctuation',
-  'punctuation.malloy-in-sql.begin': 'punctuation',
-  'punctuation.malloy-in-sql.end': 'punctuation'
-};
-
 let highlighter: any = null;
+
 let fullDocument: string | null = null;
+
 let fullHtml: any;
 let fullTokenLines: any[] = [];
 let fullTokens: {
@@ -76,10 +27,10 @@ function parseShikiTokens(code: string, hl: any) {
   if (!hl.getLoadedLanguages().includes(lang as any)) {
     lang = 'text';
   }
-  let html = hl.codeToHtml(code, lang, 'light-plus');
+  let html = hl.codeToHtml(code, lang, 'light-plus-extended');
 
   let tokenLines = hl
-    .codeToThemedTokens(code, lang, 'light-plus', {
+    .codeToThemedTokens(code, lang, 'light-plus-extended', {
       includeExplanation: true
     })
     .filter((x: any) => x.length > 0);
@@ -99,6 +50,11 @@ function parseShikiTokens(code: string, hl: any) {
   for (let tLine of tokenLines) {
     let tIndex = 0;
     for (let tItem of tLine) {
+      if (tItem.explanation.length > 1) {
+        console.log('tItem.explanation');
+        console.log(tItem.explanation);
+      }
+
       for (let explanation of tItem.explanation) {
         let text = explanation.content;
 
@@ -137,7 +93,7 @@ export async function createMalloyLanguageHL2() {
     startState: () => ({
       lineNumber: 0
     }),
-
+    tokenTable: LIGHT_PLUS_CUSTOM_TAGS,
     token(stream: any, state: any): string | null {
       if (stream.eol()) {
         console.log(
@@ -199,40 +155,22 @@ export async function createMalloyLanguageHL2() {
         nextStreamPos = token.endIndex;
       }
 
-      console.log({
-        color: token.color,
-        text: token.text,
-        tStart: token.startIndex,
-        sPos: stream.pos,
-        tEnd: token.endIndex,
-        nPos: nextStreamPos,
-        streamLine: state.lineNumber
-      });
-
       stream.pos = nextStreamPos;
 
-      //   if (token.color) {
-      //     console.log('Applying color', token.color, 'for token:', token.text, 'scope:', token.scope);
-      //     return `style: "color: ${token.color}"`;
-      //   }
+      if (token.color) {
+        let tagName: string = LIGHT_PLUS_COLOR_TO_TAG[token.color];
 
-      //   console.log('No color found for token:', token.text, 'scope:', token.scope, 'in line:', line);
-      //   return null;
-      // }
+        if (common.isUndefined(tagName)) {
+          console.log('UNDEF tagName');
+          console.log('token.color');
+          console.log(token.color);
+        }
 
-      let styleMap: any = token.scope.includes('sql')
-        ? sqlScopeToStyleExtended
-        : malloyScopeToStyle;
+        let cmStyle: any = tagName;
 
-      let cmStyle = styleMap[token.scope];
+        // console.log('cmStyle');
+        // console.log(cmStyle);
 
-      if (cmStyle) {
-        // console.log(
-        //   'Mapped scope',
-        //   token.scope,
-        //   'to CodeMirror style:',
-        //   cmStyle
-        // );
         return cmStyle;
       }
 

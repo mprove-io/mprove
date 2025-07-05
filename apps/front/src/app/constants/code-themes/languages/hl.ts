@@ -40,7 +40,7 @@ export async function getHL() {
   shiki.setWasm(buffer);
 
   return await shiki.getHighlighter({
-    theme: 'light-plus',
+    theme: 'light-plus-extended',
     paths: {
       themes: '/shiki/themes/',
       languages: '/shiki/languages/'

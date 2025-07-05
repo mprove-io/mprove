@@ -1,6 +1,7 @@
 import { Extension } from '@codemirror/state';
 import { tags as t } from '@lezer/highlight';
 import { defaultSettingsLightTheme } from './default-settings-light-theme';
+import { LIGHT_PLUS_STYLES } from './light-plus-tags';
 import { createThemeExtra } from './theme-creators/create-theme-extra';
 import { createThemeExtraMod } from './theme-creators/create-theme-extra-mod';
 import { CreateThemeOptions, createTheme } from './theme-parts';
@@ -81,7 +82,7 @@ export function malloyLightInit(options?: Partial<CreateThemeOptions>) {
       ...defaultSettingsLightTheme,
       ...settings
     },
-    styles: [...malloyLightStyle, ...styles]
+    styles: [...LIGHT_PLUS_STYLES, ...malloyLightStyle, ...styles]
   });
 }
 

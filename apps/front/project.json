@@ -26,11 +26,6 @@
           "apps/front/src/favicon.svg",
           "apps/front/src/assets",
           {
-            "glob": "**/light-plus.json",
-            "input": "./node_modules/shiki/themes",
-            "output": "/assets/shiki/themes"
-          },
-          {
             "glob": "**/sql.tmLanguage.json",
             "input": "./node_modules/shiki/languages",
             "output": "/assets/shiki/languages"

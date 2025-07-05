@@ -148,15 +148,16 @@ export class FilesRightComponent implements OnInit {
   async initEditorOptions() {
     let malloyLanguage = await createMalloyLanguageHL2();
 
-    let ls = new LanguageSupport(malloyLanguage);
+    let ls = new LanguageSupport(
+      malloyLanguage
+      // , MALLOY_LIGHT_THEME_EXTRA_MOD
+    );
 
     let malloyLanguageDescription = LanguageDescription.of({
       name: 'Malloy',
       alias: ['malloy'],
       extensions: ['malloy'],
-      load: async () => {
-        return ls;
-      }
+      support: ls
     });
 
     this.languages = [...languageData.languages, malloyLanguageDescription];
