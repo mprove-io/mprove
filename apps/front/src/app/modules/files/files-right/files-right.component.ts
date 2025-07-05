@@ -10,7 +10,7 @@ import {
   createMalloyLanguage,
   updateMalloyDocument
 } from '~front/app/constants/code-themes/languages/create-malloy-language';
-import { MALLOY_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/malloy-light-theme';
+import { LIGHT_PLUS_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/light-plus-theme';
 import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -419,7 +419,7 @@ export class FilesRightComponent {
 
     this.theme =
       this.lang === 'Malloy'
-        ? MALLOY_LIGHT_THEME_EXTRA_MOD
+        ? LIGHT_PLUS_THEME_EXTRA_MOD
         : VS_LIGHT_THEME_EXTRA_MOD;
 
     if (

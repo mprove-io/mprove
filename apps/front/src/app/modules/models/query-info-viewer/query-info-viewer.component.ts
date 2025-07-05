@@ -15,7 +15,7 @@ import {
   createMalloyLanguage,
   updateMalloyDocument
 } from '~front/app/constants/code-themes/languages/create-malloy-language';
-import { MALLOY_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/malloy-light-theme';
+import { LIGHT_PLUS_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/light-plus-theme';
 import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -145,7 +145,7 @@ export class QueryInfoViewerComponent implements OnChanges {
     this.theme =
       this.queryPart === common.QueryPartEnum.MalloyQuery ||
       this.queryPart === common.QueryPartEnum.MalloySource
-        ? MALLOY_LIGHT_THEME_EXTRA_MOD
+        ? LIGHT_PLUS_THEME_EXTRA_MOD
         : VS_LIGHT_THEME_EXTRA_MOD;
 
     if (this.queryPart === common.QueryPartEnum.MalloyQuery) {

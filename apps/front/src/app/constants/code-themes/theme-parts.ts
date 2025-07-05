@@ -65,19 +65,25 @@ export const createTheme = ({
   const themeOptions: Record<string, StyleSpec> = {
     '.cm-gutters': {}
   };
+
   const baseStyle: StyleSpec = {};
+
   if (settings.background) {
     baseStyle.backgroundColor = settings.background;
   }
+
   if (settings.backgroundImage) {
     baseStyle.backgroundImage = settings.backgroundImage;
   }
+
   if (settings.foreground) {
     baseStyle.color = settings.foreground;
   }
+
   if (settings.fontSize) {
     baseStyle.fontSize = settings.fontSize;
   }
+
   if (settings.background || settings.foreground) {
     themeOptions['&'] = baseStyle;
   }
@@ -87,12 +93,15 @@ export const createTheme = ({
       fontFamily: settings.fontFamily
     };
   }
+
   if (settings.gutterBackground) {
     themeOptions['.cm-gutters'].backgroundColor = settings.gutterBackground;
   }
+
   if (settings.gutterForeground) {
     themeOptions['.cm-gutters'].color = settings.gutterForeground;
   }
+
   if (settings.gutterBorder) {
     themeOptions['.cm-gutters'].borderRightColor = settings.gutterBorder;
   }
@@ -105,16 +114,21 @@ export const createTheme = ({
       borderLeftColor: settings.caret
     };
   }
+
   let activeLineGutterStyle: StyleSpec = {};
+
   if (settings.gutterActiveForeground) {
     activeLineGutterStyle.color = settings.gutterActiveForeground;
   }
+
   if (settings.lineHighlight) {
     themeOptions['.cm-activeLine'] = {
       backgroundColor: settings.lineHighlight
     };
+
     activeLineGutterStyle.backgroundColor = settings.lineHighlight;
   }
+
   themeOptions['.cm-activeLineGutter'] = activeLineGutterStyle;
 
   if (settings.selection) {
@@ -124,16 +138,19 @@ export const createTheme = ({
       background: settings.selection + ' !important'
     };
   }
+
   if (settings.selectionMatch) {
     themeOptions['& .cm-selectionMatch'] = {
       backgroundColor: settings.selectionMatch
     };
   }
+
   const themeExtension = EditorView.theme(themeOptions, {
     dark: theme === 'dark'
   });
 
   const highlightStyle = HighlightStyle.define(styles);
+
   const extension = [themeExtension, syntaxHighlighting(highlightStyle)];
 
   return extension;

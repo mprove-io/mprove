@@ -19,9 +19,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, map, take, tap } from 'rxjs/operators';
 import { createMalloyLanguage } from '~front/app/constants/code-themes/languages/create-malloy-language';
 import {
-  MALLOY_LIGHT_THEME_EXTRA,
-  MALLOY_LIGHT_THEME_EXTRA_MOD
-} from '~front/app/constants/code-themes/malloy-light-theme';
+  LIGHT_PLUS_THEME_EXTRA,
+  LIGHT_PLUS_THEME_EXTRA_MOD
+} from '~front/app/constants/code-themes/light-plus-theme';
 import {
   VS_LIGHT_THEME_EXTRA,
   VS_LIGHT_THEME_EXTRA_MOD
@@ -380,11 +380,11 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
     this.theme =
       this.lang === 'Malloy'
-        ? MALLOY_LIGHT_THEME_EXTRA_MOD
+        ? LIGHT_PLUS_THEME_EXTRA_MOD
         : VS_LIGHT_THEME_EXTRA_MOD;
 
     let themeExtra =
-      this.lang === 'Malloy' ? MALLOY_LIGHT_THEME_EXTRA : VS_LIGHT_THEME_EXTRA;
+      this.lang === 'Malloy' ? LIGHT_PLUS_THEME_EXTRA : VS_LIGHT_THEME_EXTRA;
 
     let originalExtensions = [...this.diffOriginalExtensions, themeExtra];
     let modifiedExtensions = [...this.diffModifiedExtensions, themeExtra];
