@@ -14,7 +14,13 @@ export const LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME = 'changedOwnerOrgName';
 export const LOCAL_STORAGE_DELETED_PROJECT_NAME = 'deletedProjectName';
 export const LOCAL_STORAGE_NEW_ORG_OWNER = 'newOrgOwner';
 
-export const LIGHT_PLUS_LANGUAGES = ['markdown', 'sql', 'malloy', 'malloysql'];
+export const LIGHT_PLUS_LANGUAGES = [
+  'sql',
+  'malloy',
+  'malloysql',
+  'malloynb',
+  'markdown'
+];
 
 export const DEFAULT_METRICS_COLUMN_NAME_WIDTH = 530;
 export const DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH = 155;

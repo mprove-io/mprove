@@ -2,18 +2,20 @@ import { Injectable } from '@angular/core';
 import { LanguageDescription, LanguageSupport } from '@codemirror/language';
 import * as languageData from '@codemirror/language-data';
 import * as shiki from 'shiki';
+import { common } from '~front/barrels/common';
 import { MALLOY_GRAMMAR } from '../constants/code-themes/grammars/malloy-grammar';
+import { MALLOY_NOTEBOOK_GRAMMAR } from '../constants/code-themes/grammars/malloy-notebook-grammar';
 import { MALLOY_SQL_GRAMMAR } from '../constants/code-themes/grammars/malloy-sql-grammar';
 import { createLightLanguage } from '../constants/code-themes/languages/create-light-language';
 import { LIGHT_PLUS_LANGUAGES } from '../constants/top';
 import { UiQuery } from '../queries/ui.query';
 
-let malloyTMGrammar = MALLOY_GRAMMAR;
+let malloyGrammar = common.makeCopy(MALLOY_GRAMMAR);
+let malloyNotebookGrammar = common.makeCopy(MALLOY_NOTEBOOK_GRAMMAR);
+let malloySqlGrammar = common.makeCopy(MALLOY_SQL_GRAMMAR);
 
-let malloySQLTMGrammar = MALLOY_SQL_GRAMMAR;
-
-malloySQLTMGrammar.repository['malloysql-sql'].patterns = [
-  malloySQLTMGrammar.repository['malloysql-sql'].patterns[0],
+malloySqlGrammar.repository['malloysql-sql'].patterns = [
+  malloySqlGrammar.repository['malloysql-sql'].patterns[0],
   {
     begin: '>>>malloy',
     end: '(?=>>>)',
@@ -24,16 +26,6 @@ malloySQLTMGrammar.repository['malloysql-sql'].patterns = [
     name: 'meta.embedded.block.malloysql.malloy',
     patterns: [{ include: 'source.malloy' }]
   },
-  // {
-  //   begin: '>>>sql',
-  //   end: '(?=>>>)',
-  //   endCaptures: null,
-  //   beginCaptures: {
-  //     '0': { name: 'entity.other.attribute.malloy-sql' },
-  //   },
-  //   name: 'meta.embedded.block.malloysql.sql',
-  //   patterns: [{ include: 'source.malloy-sql' }]
-  // },
   {
     begin: '(>>>sql)(\\s*connection:.*?(?<!\n)(?<!//))?',
     end: '(?=>>>)',
@@ -46,34 +38,24 @@ malloySQLTMGrammar.repository['malloysql-sql'].patterns = [
     name: 'meta.embedded.block.malloysql.sql',
     patterns: [{ include: 'source.malloy-sql' }]
   },
-  ...malloySQLTMGrammar.repository['malloysql-sql'].patterns.filter(
+  ...malloySqlGrammar.repository['malloysql-sql'].patterns.filter(
     (x, index) => index !== 0
   )
 ];
 
-let malloySqlTMGrammarExtended = malloySQLTMGrammar;
-
-let malloyDocsTMGrammar = {
-  ...malloyTMGrammar,
-  patterns: [...malloyTMGrammar.patterns, { include: '#docvar' }],
-  repository: {
-    ...malloyTMGrammar.repository,
-    docvar: {
-      patterns: [
-        {
-          match: '\\<\\<[^(\\>\\>)]*\\>\\>',
-          beginCaptures: {
-            0: { name: 'punctuation.definition.comment.begin' }
-          },
-          endCaptures: {
-            0: { name: 'punctuation.definition.comment.end' }
-          },
-          name: 'markup.italic.markdown'
-        }
-      ]
-    }
-  }
-};
+malloyNotebookGrammar.patterns = [
+  malloyNotebookGrammar.patterns[0],
+  {
+    begin: '>>>markdown',
+    end: '(?=>>>)',
+    beginCaptures: {
+      '0': { name: 'entity.other.attribute.markdown' }
+    },
+    name: 'meta.embedded.block.markdown',
+    patterns: [{ include: 'text.html.markdown' }]
+  } as any,
+  ...malloyNotebookGrammar.patterns.filter((x, index) => index !== 0)
+];
 
 @Injectable({ providedIn: 'root' })
 export class HighLightService {
@@ -85,22 +67,16 @@ export class HighLightService {
 
   async initHighlighter() {
     console.log('initHighlighter');
+    let startInitHighlighter = Date.now();
 
-    let start = Date.now();
-    let highlighter = await this.getHL();
-    console.log(`initHighlighter time, ms: ${Date.now() - start}`);
-
-    this.uiQuery.updatePart({ highlighter: highlighter });
-  }
-
-  async getHL() {
     let startFetchOnig = Date.now();
     const response = await fetch('/assets/vscode-oniguruma/onig.wasm');
-    console.log(`fetch onig time, ms: ${Date.now() - startFetchOnig}`);
+    console.log(`fetch onig.wasm time, ms: ${Date.now() - startFetchOnig}`);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch onig.wasm: ${response.statusText}`);
     }
+
     shiki.setCDN('/assets');
 
     let startArrayBuffer = Date.now();
@@ -109,7 +85,7 @@ export class HighLightService {
 
     shiki.setWasm(buffer);
 
-    let startShiki = Date.now();
+    let startGetHighlighter = Date.now();
     let hl = await shiki.getHighlighter({
       theme: 'light-plus-extended',
       paths: {
@@ -117,29 +93,36 @@ export class HighLightService {
         languages: '/shiki/languages/'
       } as any,
       langs: [
-        'markdown',
         'sql',
+        'markdown',
         {
           id: 'malloy',
           scopeName: 'source.malloy',
-          embeddedLangs: ['sql'],
-          grammar: malloyTMGrammar as any
+          grammar: malloyGrammar as any
         },
         {
           id: 'malloysql',
           scopeName: 'source.malloy-sql',
-          embeddedLangs: ['sql'],
-          grammar: malloySqlTMGrammarExtended as any
+          grammar: malloySqlGrammar as any
+        },
+        {
+          id: 'malloynb',
+          scopeName: 'source.malloy-notebook',
+          grammar: malloyNotebookGrammar as any
         }
       ]
     });
-    console.log(`startShiki time, ms: ${Date.now() - startShiki}`);
+    console.log(`getHighlighter time, ms: ${Date.now() - startGetHighlighter}`);
 
     let startInitLanguages = Date.now();
     this.initLanguages(hl);
     console.log(`initLanguages time, ms: ${Date.now() - startInitLanguages}`);
 
-    return hl;
+    console.log(
+      `initHighlighter time, ms: ${Date.now() - startInitHighlighter}`
+    );
+
+    this.uiQuery.updatePart({ highlighter: hl });
   }
 
   initLanguages(highlighter: any) {
@@ -173,6 +156,13 @@ export class HighLightService {
       support: new LanguageSupport(lightLanguage)
     });
 
+    let malloynbLanguageDescription = LanguageDescription.of({
+      name: 'malloynb',
+      alias: ['malloynb'],
+      extensions: ['malloynb'],
+      support: new LanguageSupport(lightLanguage)
+    });
+
     this.languages = [
       ...languageData.languages.filter(
         language =>
@@ -183,7 +173,8 @@ export class HighLightService {
       markdownLanguageDescription,
       sqlLanguageDescription,
       malloyLanguageDescription,
-      malloysqlLanguageDescription
+      malloysqlLanguageDescription,
+      malloynbLanguageDescription
     ];
   }
 
@@ -191,37 +182,3 @@ export class HighLightService {
     return this.languages;
   }
 }
-
-// export function highlight(
-//   highlighter: any,
-//   code: string,
-//   lang: string,
-//   { inline }: { inline?: boolean } = {}
-// ): string {
-//   // const highlighter = await HIGHLIGHTER;
-//   if (!highlighter.getLoadedLanguages().includes(lang as any)) {
-//     // as shiki.Lang
-//     lang = 'txt';
-//   }
-//   const highlightedRaw = highlighter.codeToHtml(code, { lang });
-
-//   // In docs, the highlighter recognizes <<foo>> as a way to make
-//   // "foo" look like a meta-variable. Here we remove the << and >>
-//   const removeDocVarEnclosing = highlightedRaw.replace(
-//     /(>)(&lt;&lt;)(.*?)(&gt;&gt;)(<)/g,
-//     '$1$3$5'
-//   );
-//   if (inline) {
-//     return removeDocVarEnclosing
-//       .replace(/^<pre class="shiki"/, `<code class="language-${lang}"`)
-//       .replace('<code>', '')
-//       .replace(/<\/pre>$/, '')
-//       .replace('background-color: #FFFFFF', 'background-color: #FBFBFB');
-//   } else {
-//     return removeDocVarEnclosing
-//       .replace(/^<pre class="shiki"/, `<pre class="language-${lang}"`)
-//       .replace('<code>', '')
-//       .replace(/<\/code><\/pre>$/, '</pre>')
-//       .replace('background-color: #FFFFFF', 'background-color: #FBFBFB');
-//   }
-// }
