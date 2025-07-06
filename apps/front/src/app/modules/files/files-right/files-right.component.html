@@ -139,7 +139,12 @@
 
     <div
       class="flex h-2 w-full flex-grow flex-row pl-6 pr-6"
-      *ngIf="isShowSpinner === false && isEditorOptionsInitComplete === true"
+      *ngIf="
+        isShowSpinner === false &&
+        isEditorOptionsInitComplete === true &&
+        !!secondFileNodeId &&
+        !!secondFileContent
+      "
     >
       <div class="flex w-2 flex-1">
         <code-editor

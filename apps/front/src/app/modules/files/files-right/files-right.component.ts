@@ -1,23 +1,21 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { standardKeymap } from '@codemirror/commands';
-import { LanguageDescription, LanguageSupport } from '@codemirror/language';
-import * as languageData from '@codemirror/language-data';
+import { LanguageDescription } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, map, take, tap } from 'rxjs/operators';
-import {
-  createLightLanguage,
-  updateDocText
-} from '~front/app/constants/code-themes/languages/create-light-language';
+import { updateDocText } from '~front/app/constants/code-themes/languages/create-light-language';
 import { LIGHT_PLUS_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/light-plus-theme';
 import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
+import { LIGHT_PLUS_LANGUAGES } from '~front/app/constants/top';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
+import { HighLightService } from '~front/app/services/highlight.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { UiService } from '~front/app/services/ui.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -142,6 +140,7 @@ export class FilesRightComponent {
   constructor(
     private uiQuery: UiQuery,
     private structQuery: StructQuery,
+    private highLightService: HighLightService,
     private repoQuery: RepoQuery,
     private memberQuery: MemberQuery,
     private navQuery: NavQuery,
@@ -153,16 +152,7 @@ export class FilesRightComponent {
   ) {}
 
   initEditorOptions() {
-    let lightLanguage = createLightLanguage(this.highlighter);
-
-    let malloyLanguageDescription = LanguageDescription.of({
-      name: 'Malloy',
-      alias: ['malloy'],
-      extensions: ['malloy'],
-      support: new LanguageSupport(lightLanguage)
-    });
-
-    this.languages = [...languageData.languages, malloyLanguageDescription];
+    this.languages = this.highLightService.getLanguages();
 
     // let filesRightLanguageConf = new Compartment();
     // this.extensions = [keymap.of(standardKeymap), filesRightLanguageConf.of(ls)];
@@ -170,7 +160,7 @@ export class FilesRightComponent {
 
     this.isEditorOptionsInitComplete = true;
 
-    this.setEditorOptionsLanguage();
+    this.setLanguage();
 
     this.cd.detectChanges();
   }
@@ -353,14 +343,15 @@ export class FilesRightComponent {
                 });
 
                 this.secondFileContent = resp.payload.content;
+
+                this.setLanguage();
+
                 updateDocText({
                   docText: this.secondFileContent,
                   highlighter: this.highlighter,
-                  shikiLanguage: 'malloy',
+                  shikiLanguage: this.lang.toLowerCase(),
                   shikiTheme: 'light-plus-extended'
                 });
-
-                this.setEditorOptionsLanguage();
 
                 this.uiService.setProjectFileLink();
 
@@ -380,7 +371,7 @@ export class FilesRightComponent {
     }
   }
 
-  setEditorOptionsLanguage() {
+  setLanguage() {
     if (
       common.isUndefined(this.secondFileNodeId) ||
       this.isEditorOptionsInitComplete === false
@@ -418,7 +409,7 @@ export class FilesRightComponent {
     }
 
     this.theme =
-      this.lang === 'Malloy'
+      LIGHT_PLUS_LANGUAGES.indexOf(this.lang.toLowerCase()) > -1
         ? LIGHT_PLUS_THEME_EXTRA_MOD
         : VS_LIGHT_THEME_EXTRA_MOD;
 

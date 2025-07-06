@@ -1,10 +1,57 @@
 import { Injectable } from '@angular/core';
+import { LanguageDescription, LanguageSupport } from '@codemirror/language';
+import * as languageData from '@codemirror/language-data';
 import * as shiki from 'shiki';
 import { MALLOY_GRAMMAR } from '../constants/code-themes/grammars/malloy-grammar';
 import { MALLOY_SQL_GRAMMAR } from '../constants/code-themes/grammars/malloy-sql-grammar';
+import { createLightLanguage } from '../constants/code-themes/languages/create-light-language';
+import { LIGHT_PLUS_LANGUAGES } from '../constants/top';
 import { UiQuery } from '../queries/ui.query';
 
 let malloyTMGrammar = MALLOY_GRAMMAR;
+
+let malloySQLTMGrammar = MALLOY_SQL_GRAMMAR;
+
+malloySQLTMGrammar.repository['malloysql-sql'].patterns = [
+  malloySQLTMGrammar.repository['malloysql-sql'].patterns[0],
+  {
+    begin: '>>>malloy',
+    end: '(?=>>>)',
+    beginCaptures: {
+      '0': { name: 'entity.other.attribute.malloy-sql' }
+    },
+    endCaptures: null,
+    name: 'meta.embedded.block.malloysql.malloy',
+    patterns: [{ include: 'source.malloy' }]
+  },
+  // {
+  //   begin: '>>>sql',
+  //   end: '(?=>>>)',
+  //   endCaptures: null,
+  //   beginCaptures: {
+  //     '0': { name: 'entity.other.attribute.malloy-sql' },
+  //   },
+  //   name: 'meta.embedded.block.malloysql.sql',
+  //   patterns: [{ include: 'source.malloy-sql' }]
+  // },
+  {
+    begin: '(>>>sql)(\\s*connection:.*?(?<!\n)(?<!//))?',
+    end: '(?=>>>)',
+    endCaptures: null,
+    beginCaptures: {
+      '0': { name: 'entity.other.attribute.malloy-sql' },
+      ['1' as any]: { name: 'entity.other.attribute.malloy-sql' },
+      ['3' as any]: { name: 'comment.line.double-slash' }
+    },
+    name: 'meta.embedded.block.malloysql.sql',
+    patterns: [{ include: 'source.malloy-sql' }]
+  },
+  ...malloySQLTMGrammar.repository['malloysql-sql'].patterns.filter(
+    (x, index) => index !== 0
+  )
+];
+
+let malloySqlTMGrammarExtended = malloySQLTMGrammar;
 
 let malloyDocsTMGrammar = {
   ...malloyTMGrammar,
@@ -28,10 +75,10 @@ let malloyDocsTMGrammar = {
   }
 };
 
-let malloySQLTMGrammar = MALLOY_SQL_GRAMMAR;
-
 @Injectable({ providedIn: 'root' })
 export class HighLightService {
+  languages: LanguageDescription[] = [];
+
   constructor(private uiQuery: UiQuery) {
     this.initHighlighter();
   }
@@ -76,19 +123,72 @@ export class HighLightService {
           id: 'malloy',
           scopeName: 'source.malloy',
           embeddedLangs: ['sql'],
-          grammar: malloyDocsTMGrammar as any
+          grammar: malloyTMGrammar as any
         },
         {
           id: 'malloysql',
           scopeName: 'source.malloy-sql',
           embeddedLangs: ['sql'],
-          grammar: malloySQLTMGrammar as any
+          grammar: malloySqlTMGrammarExtended as any
         }
       ]
     });
     console.log(`startShiki time, ms: ${Date.now() - startShiki}`);
 
+    let startInitLanguages = Date.now();
+    this.initLanguages(hl);
+    console.log(`initLanguages time, ms: ${Date.now() - startInitLanguages}`);
+
     return hl;
+  }
+
+  initLanguages(highlighter: any) {
+    let lightLanguage = createLightLanguage(highlighter);
+
+    let markdownLanguageDescription = LanguageDescription.of({
+      name: 'markdown',
+      alias: ['markdown'],
+      extensions: ['markdown'],
+      support: new LanguageSupport(lightLanguage)
+    });
+
+    let sqlLanguageDescription = LanguageDescription.of({
+      name: 'sql',
+      alias: ['sql'],
+      extensions: ['sql'],
+      support: new LanguageSupport(lightLanguage)
+    });
+
+    let malloyLanguageDescription = LanguageDescription.of({
+      name: 'malloy',
+      alias: ['malloy'],
+      extensions: ['malloy'],
+      support: new LanguageSupport(lightLanguage)
+    });
+
+    let malloysqlLanguageDescription = LanguageDescription.of({
+      name: 'malloysql',
+      alias: ['malloysql'],
+      extensions: ['malloysql'],
+      support: new LanguageSupport(lightLanguage)
+    });
+
+    this.languages = [
+      ...languageData.languages.filter(
+        language =>
+          LIGHT_PLUS_LANGUAGES.map(name => name.toLowerCase()).indexOf(
+            language.name.toLocaleLowerCase()
+          ) < 0
+      ),
+      markdownLanguageDescription,
+      sqlLanguageDescription,
+      malloyLanguageDescription,
+      malloysqlLanguageDescription
+    ];
+  }
+
+  getLanguages() {
+    return this.languages;
   }
 }
 
