@@ -243,6 +243,7 @@ export class HighLightService {
     }
 
     if (LIGHT_PLUS_LANGUAGES.indexOf(shikiLanguage) < 0) {
+      console.log('updateDocText - reset');
       place.docText = docText;
       place.shikiLanguage = shikiLanguage;
       place.shikiTheme = shikiTheme;
@@ -267,11 +268,13 @@ export class HighLightService {
       // console.log('shikiTheme');
       // console.log(place.shikiTheme);
 
+      let startParseShikiTokens = Date.now();
       let fullResult = this.parseShikiTokens({
         input: place.docText,
         shikiLanguage: shikiLanguage,
         shikiTheme: shikiTheme
       });
+      console.log('parseShikiTokens: ', Date.now() - startParseShikiTokens);
 
       place.fullHtml = fullResult.html;
       place.fullTokenLines = fullResult.tokenLines;
@@ -293,21 +296,22 @@ export class HighLightService {
   }) {
     let { input, shikiLanguage, shikiTheme } = item;
 
+    let html;
+    let tokenLines;
+
     if (!this.highlighter.getLoadedLanguages().includes(shikiLanguage as any)) {
       console.log('parseShikiTokens - unknown language');
-      shikiLanguage = 'text';
+    } else {
+      // let startCodeToHtml = Date.now();
+      // html = highlighter.codeToHtml(input, shikiLanguage, shikiTheme);
+      // console.log('startCodeToHtml: ', Date.now() - startCodeToHtml);
+
+      tokenLines = this.highlighter
+        .codeToThemedTokens(input, shikiLanguage, shikiTheme, {
+          includeExplanation: true
+        })
+        .filter((x: any) => x.length > 0);
     }
-
-    let html;
-    // let startCodeToHtml = Date.now();
-    // html = highlighter.codeToHtml(input, shikiLanguage, shikiTheme);
-    // console.log('startCodeToHtml: ', Date.now() - startCodeToHtml);
-
-    let tokenLines = this.highlighter
-      .codeToThemedTokens(input, shikiLanguage, shikiTheme, {
-        includeExplanation: true
-      })
-      .filter((x: any) => x.length > 0);
 
     let tokens: {
       text: string;
@@ -360,9 +364,7 @@ export class HighLightService {
   createLightLanguage(item: { placeName: PlaceNameEnum }) {
     let { placeName } = item;
 
-    console.log('createLightLanguage');
-    console.log('placeName');
-    console.log(placeName);
+    console.log('createLightLanguage, placeName: ', placeName);
 
     if (!this.highlighter) {
       console.log('createLightLanguage - highlighter undefined');
@@ -391,9 +393,9 @@ export class HighLightService {
           return null;
         }
 
-        if (!!state.lineNumber) {
-          console.log('CHUNK');
-        }
+        // if (!!state.lineNumber) {
+        //   console.log('CHUNK');
+        // }
 
         let line = stream.string;
 

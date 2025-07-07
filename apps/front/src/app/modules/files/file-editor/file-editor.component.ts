@@ -153,15 +153,11 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     tap(async x => {
       this.file = x;
 
-      console.log('LOGS AA');
-
       await this.setLanguage();
 
       this.cd.detectChanges();
 
-      console.log('LOGS BB');
       this.checkSelectedFile();
-      console.log('LOGS CC');
 
       this.highLightService.updateDocText({
         placeName: PlaceNameEnum.Main,
@@ -178,9 +174,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
         original: this.originalContent,
         modified: this.content
       };
-      console.log('LOGS DD');
 
-      console.log('LOGS EE');
       if (
         (this.panel === common.PanelEnum.ChangesToCommit ||
           this.panel === common.PanelEnum.ChangesToPush) &&
