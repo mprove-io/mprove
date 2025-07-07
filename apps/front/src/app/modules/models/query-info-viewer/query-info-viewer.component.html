@@ -1,6 +1,10 @@
 <div class="flex h-full w-full flex-col">
   <div
-    *ngIf="isShowSpinner === false && isEditorOptionsInitComplete === true"
+    *ngIf="
+      isShowSpinner === false &&
+      isEditorOptionsInitComplete === true &&
+      content != null
+    "
     class="ml-5 h-full overflow-y-auto rounded"
   >
     <code-editor

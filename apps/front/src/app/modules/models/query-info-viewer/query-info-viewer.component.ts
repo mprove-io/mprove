@@ -200,13 +200,11 @@ ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
       this.content = this.modelFileText;
     }
 
-    if (LIGHT_PLUS_LANGUAGES.indexOf(this.lang.toLowerCase()) > -1) {
-      this.highLightService.updateDocText({
-        placeName: PlaceNameEnum.QueryInfo,
-        docText: this.content || '',
-        shikiLanguage: this.lang.toLowerCase(),
-        shikiTheme: 'light-plus-extended'
-      });
-    }
+    this.highLightService.updateDocText({
+      placeName: PlaceNameEnum.QueryInfo,
+      docText: this.content ?? '',
+      shikiLanguage: this.lang.toLowerCase(),
+      shikiTheme: 'light-plus-extended'
+    });
   }
 }

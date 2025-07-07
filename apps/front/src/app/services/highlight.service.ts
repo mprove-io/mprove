@@ -242,7 +242,14 @@ export class HighLightService {
       return;
     }
 
-    if (
+    if (LIGHT_PLUS_LANGUAGES.indexOf(shikiLanguage) < 0) {
+      place.docText = docText;
+      place.shikiLanguage = shikiLanguage;
+      place.shikiTheme = shikiTheme;
+      place.fullHtml = undefined;
+      place.fullTokenLines = [];
+      place.fullTokens = [];
+    } else if (
       place.docText !== docText ||
       place.shikiLanguage !== shikiLanguage ||
       place.shikiTheme !== shikiTheme
@@ -369,6 +376,11 @@ export class HighLightService {
       }),
       tokenTable: LIGHT_PLUS_CUSTOM_TAGS,
       token(stream: any, state: any): string | null {
+        if (place.fullTokens.length === 0) {
+          stream.skipToEnd();
+          return null;
+        }
+
         if (stream.eol()) {
           console.log(
             'EOL reached, line:',

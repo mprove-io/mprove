@@ -359,7 +359,7 @@ export class FilesRightComponent {
                 this.highLightService.updateDocText({
                   placeName: PlaceNameEnum.Right,
                   docText: this.secondFileContent,
-                  shikiLanguage: this.lang.toLowerCase(),
+                  shikiLanguage: this.lang?.toLowerCase(),
                   shikiTheme: 'light-plus-extended'
                 });
 
@@ -421,7 +421,7 @@ export class FilesRightComponent {
     }
 
     this.theme =
-      LIGHT_PLUS_LANGUAGES.indexOf(this.lang.toLowerCase()) > -1
+      LIGHT_PLUS_LANGUAGES.indexOf(this.lang?.toLowerCase()) > -1
         ? LIGHT_PLUS_THEME_EXTRA_MOD
         : VS_LIGHT_THEME_EXTRA_MOD;
 

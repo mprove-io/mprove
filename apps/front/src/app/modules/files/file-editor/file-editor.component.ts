@@ -71,15 +71,11 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
   beforeChangeFilter = EditorState.transactionFilter.of(transaction => {
     if (transaction.docChanged) {
-      console.log('Changes are about to be applied');
-      // console.log(transaction.changes);
-      let newDocStr = transaction.newDoc.toString();
-      // console.log(newDocStr);
-
+      // console.log('beforeChangeFilter - transaction.docChanged');
       this.highLightService.updateDocText({
         placeName: PlaceNameEnum.Main,
-        docText: newDocStr, // TODO: check diff logic
-        shikiLanguage: this.lang.toLowerCase(),
+        docText: transaction.newDoc.toString(),
+        shikiLanguage: this.lang?.toLowerCase(),
         shikiTheme: 'light-plus-extended'
       });
 
@@ -169,8 +165,8 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
       this.highLightService.updateDocText({
         placeName: PlaceNameEnum.Main,
-        docText: x.content, // TODO: check diff logic
-        shikiLanguage: this.lang.toLowerCase(),
+        docText: x.content,
+        shikiLanguage: this.lang?.toLowerCase(),
         shikiTheme: 'light-plus-extended'
       });
 
@@ -416,12 +412,12 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     }
 
     this.theme =
-      LIGHT_PLUS_LANGUAGES.indexOf(this.lang.toLowerCase()) > -1
+      LIGHT_PLUS_LANGUAGES.indexOf(this.lang?.toLowerCase()) > -1
         ? LIGHT_PLUS_THEME_EXTRA_MOD
         : VS_LIGHT_THEME_EXTRA_MOD;
 
     let themeExtra =
-      LIGHT_PLUS_LANGUAGES.indexOf(this.lang.toLowerCase()) > -1
+      LIGHT_PLUS_LANGUAGES.indexOf(this.lang?.toLowerCase()) > -1
         ? LIGHT_PLUS_THEME_EXTRA
         : VS_LIGHT_THEME_EXTRA;
 
@@ -566,6 +562,8 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   }
 
   onTextChanged(item: { isDiffEditor: boolean }) {
+    console.log('onTextChanged');
+
     if (item.isDiffEditor === true) {
       this.content = this.diffContent.modified;
     }

@@ -100,7 +100,7 @@
       *ngIf="
         panel === panelTree &&
         isEditorOptionsInitComplete === true &&
-        !!content &&
+        content != null &&
         !!file?.fileNodeId
       "
       class="flex w-2 flex-1"
