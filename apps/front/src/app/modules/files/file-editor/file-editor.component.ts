@@ -15,6 +15,7 @@ import { Compartment } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, map, take, tap } from 'rxjs/operators';
+import { debounce } from 'throttle-debounce';
 import {
   LIGHT_PLUS_THEME_EXTRA,
   LIGHT_PLUS_THEME_EXTRA_MOD
@@ -70,16 +71,36 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   diagnostics: Diagnostic[] = [];
 
   beforeChangeFilter = EditorState.transactionFilter.of(transaction => {
-    if (transaction.docChanged) {
-      // console.log('beforeChangeFilter - transaction.docChanged');
+    // console.log(transaction);
+    if (
+      (transaction.isUserEvent('input') ||
+        transaction.isUserEvent('input.type') ||
+        transaction.isUserEvent('input.type.compose') ||
+        transaction.isUserEvent('input.paste') ||
+        transaction.isUserEvent('input.drop') ||
+        transaction.isUserEvent('input.complete') ||
+        transaction.isUserEvent('delete') ||
+        transaction.isUserEvent('delete.selection') ||
+        transaction.isUserEvent('delete.forward') ||
+        transaction.isUserEvent('delete.backward') ||
+        transaction.isUserEvent('delete.cut') ||
+        transaction.isUserEvent('move') ||
+        transaction.isUserEvent('move.drop') ||
+        transaction.isUserEvent('select') ||
+        transaction.isUserEvent('select.pointer') ||
+        transaction.isUserEvent('undo') ||
+        transaction.isUserEvent('redo')) &&
+      transaction.docChanged
+    ) {
+      console.log('beforeChangeFilter - FILTER');
+
       this.highLightService.updateDocText({
         placeName: PlaceNameEnum.Main,
-        docText: transaction.newDoc.toString(),
+        docText: this.content,
         shikiLanguage: this.lang?.toLowerCase(),
-        shikiTheme: 'light-plus-extended'
+        shikiTheme: 'light-plus-extended',
+        isFilter: true
       });
-
-      return transaction;
     }
     return transaction;
   });
@@ -131,6 +152,36 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
       this.nav = x;
       this.cd.detectChanges();
     })
+  );
+
+  enableDebounce = false;
+
+  debounceUpdateDoc = debounce(
+    300,
+    () => {
+      this.enableDebounce = false;
+
+      this.highLightService.updateDocText({
+        placeName: PlaceNameEnum.Main,
+        docText: this.content,
+        shikiLanguage: this.lang?.toLowerCase(),
+        shikiTheme: 'light-plus-extended'
+      });
+
+      let transaction = this.codeEditorRef?.view.state.update({
+        changes: [
+          {
+            from: 0,
+            to: this.codeEditorRef?.view.state.doc.length,
+            insert: this.codeEditorRef?.view.state.doc.toString()
+          }
+        ],
+        selection: this.codeEditorRef.view.state.selection
+      });
+
+      this.codeEditorRef?.view.dispatch(transaction);
+    },
+    { atBegin: false }
   );
 
   originalContent: string;
@@ -574,6 +625,12 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
       this.uiQuery.updatePart({ needSave: false });
     }
 
+    if (this.enableDebounce === true) {
+      this.debounceUpdateDoc();
+    }
+
+    this.enableDebounce = true;
+
     this.cd.detectChanges();
   }
 
@@ -621,6 +678,14 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   }
 
   cancel() {
+    this.highLightService.updateDocText({
+      placeName: PlaceNameEnum.Main,
+      docText: this.content,
+      shikiLanguage: this.lang?.toLowerCase(),
+      shikiTheme: 'light-plus-extended',
+      isFilter: true
+    });
+
     this.content = this.startText;
 
     this.diffContent = {

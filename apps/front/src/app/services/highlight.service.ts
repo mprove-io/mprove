@@ -232,8 +232,9 @@ export class HighLightService {
     docText: string;
     shikiLanguage: string;
     shikiTheme: string;
+    isFilter?: boolean;
   }) {
-    let { docText, shikiLanguage, shikiTheme, placeName } = item;
+    let { docText, shikiLanguage, shikiTheme, placeName, isFilter } = item;
 
     let place = this.getPlaceByPlaceName(placeName);
 
@@ -242,8 +243,18 @@ export class HighLightService {
       return;
     }
 
-    if (LIGHT_PLUS_LANGUAGES.indexOf(shikiLanguage) < 0) {
-      console.log('updateDocText - reset');
+    if (isFilter === true) {
+      console.log('updateDocText - Filter');
+
+      place.docText = docText;
+      place.shikiLanguage = shikiLanguage;
+      place.shikiTheme = shikiTheme;
+      place.fullHtml = undefined;
+      place.fullTokenLines = [];
+      place.fullTokens = [];
+    } else if (LIGHT_PLUS_LANGUAGES.indexOf(shikiLanguage) < 0) {
+      console.log('updateDocText - Reset');
+
       place.docText = docText;
       place.shikiLanguage = shikiLanguage;
       place.shikiTheme = shikiTheme;
