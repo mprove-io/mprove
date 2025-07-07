@@ -157,9 +157,12 @@ export class FilesRightComponent {
   ) {}
 
   initEditorOptions() {
-    this.languages = this.highLightService.getLanguages({
+    let res = this.highLightService.getLanguages({
       placeName: PlaceNameEnum.Right
     });
+
+    this.languages = res.languages;
+    let lightLanguage = res.lightLanguage;
 
     // let filesRightLanguageConf = new Compartment();
     // this.extensions = [keymap.of(standardKeymap), filesRightLanguageConf.of(ls)];

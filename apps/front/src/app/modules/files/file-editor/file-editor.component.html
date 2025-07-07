@@ -97,7 +97,12 @@
 
   <div class="flex h-2 w-full flex-grow flex-row pl-6 pr-6">
     <div
-      *ngIf="panel === panelTree && isEditorOptionsInitComplete === true"
+      *ngIf="
+        panel === panelTree &&
+        isEditorOptionsInitComplete === true &&
+        !!content &&
+        !!file?.fileNodeId
+      "
       class="flex w-2 flex-1"
     >
       <code-editor

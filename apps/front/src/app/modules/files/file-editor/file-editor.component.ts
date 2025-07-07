@@ -6,7 +6,6 @@ import {
   OnDestroy,
   ViewChild
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { standardKeymap } from '@codemirror/commands';
 import { LanguageDescription } from '@codemirror/language';
@@ -24,6 +23,7 @@ import {
   VS_LIGHT_THEME_EXTRA,
   VS_LIGHT_THEME_EXTRA_MOD
 } from '~front/app/constants/code-themes/vs-light-theme';
+import { LIGHT_PLUS_LANGUAGES } from '~front/app/constants/top';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -32,6 +32,10 @@ import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { ConfirmService } from '~front/app/services/confirm.service';
+import {
+  HighLightService,
+  PlaceNameEnum
+} from '~front/app/services/highlight.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
@@ -65,9 +69,31 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
   diagnostics: Diagnostic[] = [];
 
+  beforeChangeFilter = EditorState.transactionFilter.of(transaction => {
+    if (transaction.docChanged) {
+      console.log('Changes are about to be applied');
+      // console.log(transaction.changes);
+      let newDocStr = transaction.newDoc.toString();
+      // console.log(newDocStr);
+
+      this.highLightService.updateDocText({
+        placeName: PlaceNameEnum.Main,
+        docText: newDocStr, // TODO: check diff logic
+        shikiLanguage: this.lang.toLowerCase(),
+        shikiTheme: 'light-plus-extended'
+      });
+
+      return transaction;
+    }
+    return transaction;
+  });
+
   baseExtensions: Extension[] = [keymap.of(standardKeymap)];
 
-  mainPrepExtensions: Extension[] = [...this.baseExtensions];
+  mainPrepExtensions: Extension[] = [
+    ...this.baseExtensions,
+    this.beforeChangeFilter
+  ];
   mainExtensions: Extension[] = [];
 
   diffOriginalExtensions: Extension[] = [
@@ -131,6 +157,23 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     tap(async x => {
       this.file = x;
 
+      console.log('LOGS AA');
+
+      await this.setLanguage();
+
+      this.cd.detectChanges();
+
+      console.log('LOGS BB');
+      this.checkSelectedFile();
+      console.log('LOGS CC');
+
+      this.highLightService.updateDocText({
+        placeName: PlaceNameEnum.Main,
+        docText: x.content, // TODO: check diff logic
+        shikiLanguage: this.lang.toLowerCase(),
+        shikiTheme: 'light-plus-extended'
+      });
+
       this.originalContent = x.originalContent;
       this.content = x.content;
       this.startText = x.content;
@@ -139,10 +182,9 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
         original: this.originalContent,
         modified: this.content
       };
+      console.log('LOGS DD');
 
-      await this.setEditorOptionsLanguage();
-      this.checkSelectedFile();
-
+      console.log('LOGS EE');
       if (
         (this.panel === common.PanelEnum.ChangesToCommit ||
           this.panel === common.PanelEnum.ChangesToPush) &&
@@ -225,30 +267,31 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     private repoQuery: RepoQuery,
     private memberQuery: MemberQuery,
     private spinner: NgxSpinnerService,
-    private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private apiService: ApiService,
+    private highLightService: HighLightService,
     private confirmService: ConfirmService,
     private navigateService: NavigateService,
     private route: ActivatedRoute
   ) {}
 
   initEditorOptions() {
-    // let malloyLanguage = createLightLanguage(this.isHighlighterReady);
-    // let ls = new LanguageSupport(malloyLanguage);
-    // let malloyLanguageDescription = LanguageDescription.of({
-    //   name: 'Malloy',
-    //   alias: ['malloy'],
-    //   extensions: ['malloy'],
-    //   support: ls
-    // });
-    // this.languages = [...languageData.languages, malloyLanguageDescription];
-    // // let mainLanguageConf = new Compartment();
-    // // this.mainPrepExtensions = [...this.baseExtensions, mainLanguageConf.of(ls)];
-    // this.mainExtensions = [...this.mainPrepExtensions];
-    // this.isEditorOptionsInitComplete = true;
-    // this.setEditorOptionsLanguage();
-    // this.cd.detectChanges();
+    let res = this.highLightService.getLanguages({
+      placeName: PlaceNameEnum.Main
+    });
+
+    this.languages = res.languages;
+    let lightLanguage = res.lightLanguage;
+
+    // let mainLanguageConf = new Compartment();
+    // this.mainPrepExtensions = [...this.baseExtensions, mainLanguageConf.of(ls)];
+    this.mainExtensions = [...this.mainPrepExtensions];
+
+    this.isEditorOptionsInitComplete = true;
+
+    this.setLanguage();
+
+    this.cd.detectChanges();
   }
 
   ngAfterViewInit() {
@@ -326,7 +369,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
       : errorFileIds.indexOf(this.file.fileId) < 0;
   }
 
-  async setEditorOptionsLanguage() {
+  async setLanguage() {
     if (
       common.isUndefined(this.file?.name) ||
       this.isEditorOptionsInitComplete === false
@@ -337,7 +380,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     this.showDiff = false;
 
     this.nav = this.navQuery.getValue();
-
     this.struct = this.structQuery.getValue();
 
     let mdir = this.struct.mproveDirValue;
@@ -363,6 +405,8 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     ) {
       this.lang = 'YAML';
       language = this.languages.find((x: any) => x.name === this.lang);
+    } else if (dotExt === '.md') {
+      this.lang = 'markdown';
     } else {
       language = this.languages.find(
         (x: any) => x.extensions.indexOf(ext) > -1
@@ -372,17 +416,20 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     }
 
     this.theme =
-      this.lang === 'Malloy'
+      LIGHT_PLUS_LANGUAGES.indexOf(this.lang.toLowerCase()) > -1
         ? LIGHT_PLUS_THEME_EXTRA_MOD
         : VS_LIGHT_THEME_EXTRA_MOD;
 
     let themeExtra =
-      this.lang === 'Malloy' ? LIGHT_PLUS_THEME_EXTRA : VS_LIGHT_THEME_EXTRA;
+      LIGHT_PLUS_LANGUAGES.indexOf(this.lang.toLowerCase()) > -1
+        ? LIGHT_PLUS_THEME_EXTRA
+        : VS_LIGHT_THEME_EXTRA;
 
     let originalExtensions = [...this.diffOriginalExtensions, themeExtra];
     let modifiedExtensions = [...this.diffModifiedExtensions, themeExtra];
 
     if (common.isDefined(language)) {
+      // let loadedLanguage = language.support
       let loadedLanguage = await language.load();
       // console.log('loadedLanguage');
       // console.log(loadedLanguage);
@@ -413,7 +460,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
       this.removeMarkers();
     }
-    this.cd.detectChanges();
 
     setTimeout(() => {
       this.showDiff = true;

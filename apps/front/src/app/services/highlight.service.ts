@@ -75,6 +75,8 @@ interface FullToken {
 
 interface Place {
   docText?: string;
+  shikiLanguage?: string;
+  shikiTheme?: string;
   fullHtml?: string;
   fullTokenLines?: any[];
   fullTokens?: FullToken[];
@@ -210,7 +212,7 @@ export class HighLightService {
       malloynbLanguageDescription
     ];
 
-    return languages;
+    return { languages: languages, lightLanguage: lightLanguage };
   }
 
   getPlaceByPlaceName(placeName: PlaceNameEnum) {
@@ -235,46 +237,46 @@ export class HighLightService {
 
     let place = this.getPlaceByPlaceName(placeName);
 
-    console.log('updateDocText');
-
     if (!this.highlighter) {
       console.log('updateDocText - highlighter undefined');
       return;
     }
 
-    // if (docText !== fullDocument) {
-    console.log('updateDocText - parse full document');
+    if (
+      place.docText !== docText ||
+      place.shikiLanguage !== shikiLanguage ||
+      place.shikiTheme !== shikiTheme
+    ) {
+      console.log('updateDocText - parse full document');
 
-    place.docText = docText;
+      place.docText = docText;
+      place.shikiLanguage = shikiLanguage;
+      place.shikiTheme = shikiTheme;
 
-    console.log('shikiLanguage');
-    console.log(shikiLanguage);
-    console.log('shikiTheme');
-    console.log(shikiTheme);
-    console.log('!!this.highlighter');
-    console.log(!!this.highlighter);
-    console.log('docText');
-    console.log(place.docText);
+      // console.log('docText');
+      // console.log(place.docText);
+      // console.log('shikiLanguage');
+      // console.log(place.shikiLanguage);
+      // console.log('shikiTheme');
+      // console.log(place.shikiTheme);
 
-    let fullResult = this.parseShikiTokens({
-      input: place.docText,
-      shikiLanguage: shikiLanguage,
-      shikiTheme: shikiTheme
-    });
+      let fullResult = this.parseShikiTokens({
+        input: place.docText,
+        shikiLanguage: shikiLanguage,
+        shikiTheme: shikiTheme
+      });
 
-    place.fullHtml = fullResult.html;
-    place.fullTokenLines = fullResult.tokenLines;
-    place.fullTokens = fullResult.tokens;
+      place.fullHtml = fullResult.html;
+      place.fullTokenLines = fullResult.tokenLines;
+      place.fullTokens = fullResult.tokens;
 
-    // console.log('place.fullHtml');
-    // console.log(place.fullHtml);
-
-    // console.log('place.fullTokenLines');
-    // console.log(place.fullTokenLines);
-
-    // console.log('place.fullTokens');
-    // console.log(place.fullTokens);
-    // }
+      // console.log('place.fullHtml');
+      // console.log(place.fullHtml);
+      // console.log('place.fullTokenLines');
+      // console.log(place.fullTokenLines);
+      // console.log('place.fullTokens');
+      // console.log(place.fullTokens);
+    }
   }
 
   parseShikiTokens(item: {
@@ -352,6 +354,8 @@ export class HighLightService {
     let { placeName } = item;
 
     console.log('createLightLanguage');
+    console.log('placeName');
+    console.log(placeName);
 
     if (!this.highlighter) {
       console.log('createLightLanguage - highlighter undefined');
@@ -373,6 +377,10 @@ export class HighLightService {
             state.lineNumber
           );
           return null;
+        }
+
+        if (!!state.lineNumber) {
+          console.log('CHUNK');
         }
 
         let line = stream.string;

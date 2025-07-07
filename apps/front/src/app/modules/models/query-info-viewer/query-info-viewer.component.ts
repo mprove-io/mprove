@@ -94,9 +94,12 @@ export class QueryInfoViewerComponent implements OnChanges {
   }
 
   initEditorOptions() {
-    this.languages = this.highLightService.getLanguages({
+    let res = this.highLightService.getLanguages({
       placeName: PlaceNameEnum.QueryInfo
     });
+
+    this.languages = res.languages;
+    let lightLanguage = res.lightLanguage;
 
     // let queryInfoLanguageConf = new Compartment();
     // this.extensions = [keymap.of(standardKeymap), queryInfoLanguageConf.of(ls)];
