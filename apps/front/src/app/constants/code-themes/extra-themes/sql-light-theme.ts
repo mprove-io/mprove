@@ -1,9 +1,12 @@
 import { Extension } from '@codemirror/state';
 import { Tag, tags as t } from '@lezer/highlight';
-import { defaultSettingsLightTheme } from './default-settings-light-theme';
-import { createThemeExtra } from './theme-creators/create-theme-extra';
-import { createThemeExtraMod } from './theme-creators/create-theme-extra-mod';
-import { CreateThemeOptions, createTheme } from './theme-parts';
+import { defaultSettingsLightTheme } from '../default-settings-light-theme';
+import {
+  CreateThemeOptions,
+  createTheme
+} from '../theme-creators/create-theme';
+import { createThemeExtra } from '../theme-creators/create-theme-extra';
+import { createThemeExtraMod } from '../theme-creators/create-theme-extra-mod';
 
 // Define custom tags
 const sqlTags = {

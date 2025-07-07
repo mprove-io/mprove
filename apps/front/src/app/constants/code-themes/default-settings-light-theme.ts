@@ -1,4 +1,4 @@
-import { CreateThemeOptions } from './theme-parts';
+import { CreateThemeOptions } from './theme-creators/create-theme';
 
 // https://github.com/uiwjs/react-codemirror/blob/master/themes/vscode/src/light.ts
 

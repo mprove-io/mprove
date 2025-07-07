@@ -5,7 +5,6 @@ import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, map, take, tap } from 'rxjs/operators';
-import { updateDocText } from '~front/app/constants/code-themes/languages/create-light-language';
 import { LIGHT_PLUS_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/light-plus-theme';
 import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
 import { LIGHT_PLUS_LANGUAGES } from '~front/app/constants/top';
@@ -15,7 +14,10 @@ import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
-import { HighLightService } from '~front/app/services/highlight.service';
+import {
+  HighLightService,
+  PlaceNameEnum
+} from '~front/app/services/highlight.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { UiService } from '~front/app/services/ui.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -126,12 +128,15 @@ export class FilesRightComponent {
 
   secondFileContent: string;
 
-  highlighter: any;
-  highlighter$ = this.uiQuery.select().pipe(
+  isHighlighterReady: boolean;
+  isHighlighterReady$ = this.uiQuery.select().pipe(
     tap(x => {
-      this.highlighter = x.highlighter;
+      this.isHighlighterReady = x.isHighlighterReady;
 
-      if (this.isEditorOptionsInitComplete === false) {
+      if (
+        this.isHighlighterReady === true &&
+        this.isEditorOptionsInitComplete === false
+      ) {
         this.initEditorOptions();
       }
     })
@@ -152,7 +157,9 @@ export class FilesRightComponent {
   ) {}
 
   initEditorOptions() {
-    this.languages = this.highLightService.getLanguages();
+    this.languages = this.highLightService.getLanguages({
+      placeName: PlaceNameEnum.Right
+    });
 
     // let filesRightLanguageConf = new Compartment();
     // this.extensions = [keymap.of(standardKeymap), filesRightLanguageConf.of(ls)];
@@ -346,9 +353,9 @@ export class FilesRightComponent {
 
                 this.setLanguage();
 
-                updateDocText({
+                this.highLightService.updateDocText({
+                  placeName: PlaceNameEnum.Right,
                   docText: this.secondFileContent,
-                  highlighter: this.highlighter,
                   shikiLanguage: this.lang.toLowerCase(),
                   shikiTheme: 'light-plus-extended'
                 });

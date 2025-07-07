@@ -1,12 +1,19 @@
 import { Injectable } from '@angular/core';
-import { LanguageDescription, LanguageSupport } from '@codemirror/language';
+import {
+  LanguageDescription,
+  LanguageSupport,
+  StreamLanguage
+} from '@codemirror/language';
 import * as languageData from '@codemirror/language-data';
 import * as shiki from 'shiki';
 import { common } from '~front/barrels/common';
 import { MALLOY_GRAMMAR } from '../constants/code-themes/grammars/malloy-grammar';
 import { MALLOY_NOTEBOOK_GRAMMAR } from '../constants/code-themes/grammars/malloy-notebook-grammar';
 import { MALLOY_SQL_GRAMMAR } from '../constants/code-themes/grammars/malloy-sql-grammar';
-import { createLightLanguage } from '../constants/code-themes/languages/create-light-language';
+import {
+  LIGHT_PLUS_COLOR_TO_TAG,
+  LIGHT_PLUS_CUSTOM_TAGS
+} from '../constants/code-themes/light-plus-tags';
 import { LIGHT_PLUS_LANGUAGES } from '../constants/top';
 import { UiQuery } from '../queries/ui.query';
 
@@ -57,9 +64,35 @@ malloyNotebookGrammar.patterns = [
   ...malloyNotebookGrammar.patterns.filter((x, index) => index !== 0)
 ];
 
+interface FullToken {
+  text: string;
+  scope: string;
+  startIndex: number;
+  endIndex: number;
+  line: number;
+  color: string;
+}
+
+interface Place {
+  docText?: string;
+  fullHtml?: string;
+  fullTokenLines?: any[];
+  fullTokens?: FullToken[];
+}
+
+export enum PlaceNameEnum {
+  Main = 'Main',
+  Right = 'Right',
+  QueryInfo = 'QueryInfo'
+}
+
 @Injectable({ providedIn: 'root' })
 export class HighLightService {
-  languages: LanguageDescription[] = [];
+  highlighter: any;
+
+  filesEditorPlace: Place = {};
+  rightEditorPlace: Place = {};
+  queryInfoPlace: Place = {};
 
   constructor(private uiQuery: UiQuery) {
     this.initHighlighter();
@@ -86,7 +119,7 @@ export class HighLightService {
     shiki.setWasm(buffer);
 
     let startGetHighlighter = Date.now();
-    let hl = await shiki.getHighlighter({
+    this.highlighter = await shiki.getHighlighter({
       theme: 'light-plus-extended',
       paths: {
         themes: '/shiki/themes/',
@@ -114,19 +147,19 @@ export class HighLightService {
     });
     console.log(`getHighlighter time, ms: ${Date.now() - startGetHighlighter}`);
 
-    let startInitLanguages = Date.now();
-    this.initLanguages(hl);
-    console.log(`initLanguages time, ms: ${Date.now() - startInitLanguages}`);
-
     console.log(
       `initHighlighter time, ms: ${Date.now() - startInitHighlighter}`
     );
 
-    this.uiQuery.updatePart({ highlighter: hl });
+    this.uiQuery.updatePart({ isHighlighterReady: true });
   }
 
-  initLanguages(highlighter: any) {
-    let lightLanguage = createLightLanguage(highlighter);
+  getLanguages(item: {
+    placeName: PlaceNameEnum;
+  }) {
+    let { placeName } = item;
+
+    let lightLanguage = this.createLightLanguage({ placeName: placeName });
 
     let markdownLanguageDescription = LanguageDescription.of({
       name: 'markdown',
@@ -163,7 +196,7 @@ export class HighLightService {
       support: new LanguageSupport(lightLanguage)
     });
 
-    this.languages = [
+    let languages = [
       ...languageData.languages.filter(
         language =>
           LIGHT_PLUS_LANGUAGES.map(name => name.toLowerCase()).indexOf(
@@ -176,9 +209,255 @@ export class HighLightService {
       malloysqlLanguageDescription,
       malloynbLanguageDescription
     ];
+
+    return languages;
   }
 
-  getLanguages() {
-    return this.languages;
+  getPlaceByPlaceName(placeName: PlaceNameEnum) {
+    let place =
+      placeName === PlaceNameEnum.Main
+        ? this.filesEditorPlace
+        : placeName === PlaceNameEnum.Right
+          ? this.rightEditorPlace
+          : placeName === PlaceNameEnum.QueryInfo
+            ? this.queryInfoPlace
+            : undefined;
+    return place;
+  }
+
+  updateDocText(item: {
+    placeName: PlaceNameEnum;
+    docText: string;
+    shikiLanguage: string;
+    shikiTheme: string;
+  }) {
+    let { docText, shikiLanguage, shikiTheme, placeName } = item;
+
+    let place = this.getPlaceByPlaceName(placeName);
+
+    console.log('updateDocText');
+
+    if (!this.highlighter) {
+      console.log('updateDocText - highlighter undefined');
+      return;
+    }
+
+    // if (docText !== fullDocument) {
+    console.log('updateDocText - parse full document');
+
+    place.docText = docText;
+
+    console.log('shikiLanguage');
+    console.log(shikiLanguage);
+    console.log('shikiTheme');
+    console.log(shikiTheme);
+    console.log('!!this.highlighter');
+    console.log(!!this.highlighter);
+    console.log('docText');
+    console.log(place.docText);
+
+    let fullResult = this.parseShikiTokens({
+      input: place.docText,
+      shikiLanguage: shikiLanguage,
+      shikiTheme: shikiTheme
+    });
+
+    place.fullHtml = fullResult.html;
+    place.fullTokenLines = fullResult.tokenLines;
+    place.fullTokens = fullResult.tokens;
+
+    // console.log('place.fullHtml');
+    // console.log(place.fullHtml);
+
+    // console.log('place.fullTokenLines');
+    // console.log(place.fullTokenLines);
+
+    // console.log('place.fullTokens');
+    // console.log(place.fullTokens);
+    // }
+  }
+
+  parseShikiTokens(item: {
+    input: string;
+    shikiLanguage: string;
+    shikiTheme: string;
+  }) {
+    let { input, shikiLanguage, shikiTheme } = item;
+
+    if (!this.highlighter.getLoadedLanguages().includes(shikiLanguage as any)) {
+      console.log('parseShikiTokens - unknown language');
+      shikiLanguage = 'text';
+    }
+
+    let html;
+    // let startCodeToHtml = Date.now();
+    // html = highlighter.codeToHtml(input, shikiLanguage, shikiTheme);
+    // console.log('startCodeToHtml: ', Date.now() - startCodeToHtml);
+
+    let tokenLines = this.highlighter
+      .codeToThemedTokens(input, shikiLanguage, shikiTheme, {
+        includeExplanation: true
+      })
+      .filter((x: any) => x.length > 0);
+
+    let tokens: {
+      text: string;
+      scope: string;
+      startIndex: number;
+      endIndex: number;
+      line: number;
+      color: string;
+    }[] = [];
+
+    let docPos = 0;
+    let docLine = 0;
+
+    for (let tLine of tokenLines) {
+      let tIndex = 0;
+      for (let tItem of tLine) {
+        // if (tItem.explanation.length > 1) {
+        // console.log('tItem.explanation');
+        // console.log(tItem.explanation);
+        // }
+
+        for (let explanation of tItem.explanation) {
+          let text = explanation.content;
+
+          tokens.push({
+            color: tItem.color,
+            text,
+            scope:
+              explanation.scopes[explanation.scopes.length - 1]?.scopeName ||
+              'text',
+            startIndex: docPos,
+            endIndex:
+              tLine.length === tIndex + 1
+                ? docPos + text.length + 1
+                : docPos + text.length,
+            line: docLine
+          });
+
+          docPos += text.length;
+        }
+        tIndex++;
+      }
+      docPos = 0;
+      docLine++;
+    }
+
+    return { tokens: tokens, tokenLines: tokenLines, html: html };
+  }
+
+  createLightLanguage(item: { placeName: PlaceNameEnum }) {
+    let { placeName } = item;
+
+    console.log('createLightLanguage');
+
+    if (!this.highlighter) {
+      console.log('createLightLanguage - highlighter undefined');
+    }
+
+    let place = this.getPlaceByPlaceName(placeName);
+
+    let lightStreamParser = {
+      startState: () => ({
+        lineNumber: 0
+      }),
+      tokenTable: LIGHT_PLUS_CUSTOM_TAGS,
+      token(stream: any, state: any): string | null {
+        if (stream.eol()) {
+          console.log(
+            'EOL reached, line:',
+            stream.string,
+            'lineNumber:',
+            state.lineNumber
+          );
+          return null;
+        }
+
+        let line = stream.string;
+
+        if (!line) {
+          console.log('No line', state.lineNumber);
+          stream.skipToEnd();
+          return null;
+        }
+
+        let lineTokens = place.fullTokens.filter(
+          t => t.line === state.lineNumber
+        );
+
+        if (lineTokens.length === 0) {
+          console.log('No tokens for line', state.lineNumber);
+          console.log('stream.pos');
+          console.log(stream.pos);
+          console.log('line');
+          console.log(line);
+          stream.skipToEnd();
+          return null;
+        }
+
+        let tokenIndex: number = lineTokens.findIndex(
+          t => stream.pos >= t.startIndex && stream.pos < t.endIndex
+        );
+
+        if (tokenIndex < 0) {
+          console.log(
+            'No token found at stream position',
+            stream.pos,
+            'line:',
+            line,
+            'lineNumber:',
+            state.lineNumber,
+            'tokens:',
+            lineTokens
+          );
+          stream.skipToEnd();
+          return null;
+        }
+
+        let token = lineTokens[tokenIndex];
+
+        let nextStreamPos;
+
+        if (token.endIndex >= line.length) {
+          state.lineNumber++;
+          nextStreamPos = token.endIndex;
+        } else {
+          nextStreamPos = token.endIndex;
+        }
+
+        stream.pos = nextStreamPos;
+
+        if (token.color) {
+          let tagName: string = LIGHT_PLUS_COLOR_TO_TAG[token.color];
+
+          if (common.isUndefined(tagName)) {
+            console.log('UNDEF tagName');
+            console.log('token.color');
+            console.log(token.color);
+          }
+
+          let cmStyle: any = tagName;
+
+          // console.log('cmStyle');
+          // console.log(cmStyle);
+
+          return cmStyle;
+        }
+
+        console.log(
+          'No style found for SCOPE: ',
+          token.scope,
+          'TEXT: ',
+          token.text,
+          'LINE: ',
+          line
+        );
+        return null;
+      }
+    };
+
+    return StreamLanguage.define(lightStreamParser);
   }
 }

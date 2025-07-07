@@ -9,15 +9,13 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { standardKeymap } from '@codemirror/commands';
-import { LanguageDescription, LanguageSupport } from '@codemirror/language';
-import * as languageData from '@codemirror/language-data';
+import { LanguageDescription } from '@codemirror/language';
 import { Diagnostic, linter } from '@codemirror/lint';
 import { EditorState, Extension } from '@codemirror/state';
 import { Compartment } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, map, take, tap } from 'rxjs/operators';
-import { createLightLanguage } from '~front/app/constants/code-themes/languages/create-light-language';
 import {
   LIGHT_PLUS_THEME_EXTRA,
   LIGHT_PLUS_THEME_EXTRA_MOD
@@ -205,12 +203,15 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     })
   );
 
-  highlighter: any;
-  highlighter$ = this.uiQuery.select().pipe(
+  isHighlighterReady: boolean;
+  isHighlighterReady$ = this.uiQuery.select().pipe(
     tap(x => {
-      this.highlighter = x.highlighter;
+      this.isHighlighterReady = x.isHighlighterReady;
 
-      if (this.isEditorOptionsInitComplete === false) {
+      if (
+        this.isHighlighterReady === true &&
+        this.isEditorOptionsInitComplete === false
+      ) {
         this.initEditorOptions();
       }
     })
@@ -233,29 +234,21 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   ) {}
 
   initEditorOptions() {
-    let malloyLanguage = createLightLanguage(this.highlighter);
-
-    let ls = new LanguageSupport(malloyLanguage);
-
-    let malloyLanguageDescription = LanguageDescription.of({
-      name: 'Malloy',
-      alias: ['malloy'],
-      extensions: ['malloy'],
-      support: ls
-    });
-
-    this.languages = [...languageData.languages, malloyLanguageDescription];
-
-    // let mainLanguageConf = new Compartment();
-    // this.mainPrepExtensions = [...this.baseExtensions, mainLanguageConf.of(ls)];
-
-    this.mainExtensions = [...this.mainPrepExtensions];
-
-    this.isEditorOptionsInitComplete = true;
-
-    this.setEditorOptionsLanguage();
-
-    this.cd.detectChanges();
+    // let malloyLanguage = createLightLanguage(this.isHighlighterReady);
+    // let ls = new LanguageSupport(malloyLanguage);
+    // let malloyLanguageDescription = LanguageDescription.of({
+    //   name: 'Malloy',
+    //   alias: ['malloy'],
+    //   extensions: ['malloy'],
+    //   support: ls
+    // });
+    // this.languages = [...languageData.languages, malloyLanguageDescription];
+    // // let mainLanguageConf = new Compartment();
+    // // this.mainPrepExtensions = [...this.baseExtensions, mainLanguageConf.of(ls)];
+    // this.mainExtensions = [...this.mainPrepExtensions];
+    // this.isEditorOptionsInitComplete = true;
+    // this.setEditorOptionsLanguage();
+    // this.cd.detectChanges();
   }
 
   ngAfterViewInit() {

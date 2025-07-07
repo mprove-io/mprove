@@ -163,7 +163,7 @@
   </div>
 </div>
 
-<div *ngIf="highlighter$ | async"></div>
+<div *ngIf="isHighlighterReady$ | async"></div>
 <div *ngIf="repo$ | async"></div>
 <div *ngIf="struct$ | async"></div>
 <div *ngIf="nav$ | async"></div>

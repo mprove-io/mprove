@@ -10,13 +10,15 @@ import { LanguageDescription } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { tap } from 'rxjs/operators';
-import { updateDocText } from '~front/app/constants/code-themes/languages/create-light-language';
 import { LIGHT_PLUS_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/light-plus-theme';
 import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
 import { LIGHT_PLUS_LANGUAGES } from '~front/app/constants/top';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { UiQuery } from '~front/app/queries/ui.query';
-import { HighLightService } from '~front/app/services/highlight.service';
+import {
+  HighLightService,
+  PlaceNameEnum
+} from '~front/app/services/highlight.service';
 import { common } from '~front/barrels/common';
 
 @Component({
@@ -57,12 +59,15 @@ export class QueryInfoViewerComponent implements OnChanges {
     })
   );
 
-  highlighter: any;
-  highlighter$ = this.uiQuery.select().pipe(
+  isHighlighterReady: boolean;
+  isHighlighterReady$ = this.uiQuery.select().pipe(
     tap(x => {
-      this.highlighter = x.highlighter;
+      this.isHighlighterReady = x.isHighlighterReady;
 
-      if (this.isEditorOptionsInitComplete === false) {
+      if (
+        this.isHighlighterReady === true &&
+        this.isEditorOptionsInitComplete === false
+      ) {
         this.initEditorOptions();
       }
     })
@@ -89,7 +94,9 @@ export class QueryInfoViewerComponent implements OnChanges {
   }
 
   initEditorOptions() {
-    this.languages = this.highLightService.getLanguages();
+    this.languages = this.highLightService.getLanguages({
+      placeName: PlaceNameEnum.QueryInfo
+    });
 
     // let queryInfoLanguageConf = new Compartment();
     // this.extensions = [keymap.of(standardKeymap), queryInfoLanguageConf.of(ls)];
@@ -191,9 +198,9 @@ ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
     }
 
     if (LIGHT_PLUS_LANGUAGES.indexOf(this.lang.toLowerCase()) > -1) {
-      updateDocText({
+      this.highLightService.updateDocText({
+        placeName: PlaceNameEnum.QueryInfo,
         docText: this.content || '',
-        highlighter: this.highlighter,
         shikiLanguage: this.lang.toLowerCase(),
         shikiTheme: 'light-plus-extended'
       });
