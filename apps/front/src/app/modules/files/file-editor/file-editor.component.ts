@@ -176,18 +176,23 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
           ? this.codeEditorRef.view
           : this.diffEditorRef.mergeView.b;
 
+      let currentScrollTop = editorV.scrollDOM.scrollTop;
+
       let transaction = editorV.state.update({
-        changes: [
-          {
-            from: 0,
-            to: editorV.state.doc.length,
-            insert: editorV.state.doc.toString()
-          }
-        ],
-        selection: editorV.state.selection
+        changes: {
+          from: 0,
+          to: editorV.state.doc.length,
+          insert: editorV.state.doc.toString()
+        },
+        selection: editorV.state.selection,
+        scrollIntoView: false
       });
 
       editorV.dispatch(transaction);
+
+      requestAnimationFrame(() => {
+        editorV.scrollDOM.scrollTop = currentScrollTop;
+      });
     },
     { atBegin: false }
   );
@@ -381,8 +386,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
         let isSyncing = false;
 
         let syncScrollHandler = (source: EditorView, target: EditorView) => {
-          // console.log('isSyncing');
-          // console.log(isSyncing);
           return () => {
             if (isSyncing === true) {
               return;
