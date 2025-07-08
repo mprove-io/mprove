@@ -64,6 +64,8 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   indentUnit = '  ';
 
   languages: LanguageDescription[] = [];
+  originalLanguages: LanguageDescription[] = [];
+
   lang: string;
 
   theme: Extension = VS_LIGHT_THEME_EXTRA_MOD;
@@ -120,6 +122,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
   diffModifiedExtensions: Extension[] = [
     ...this.baseExtensions,
+    this.beforeChangeFilter,
     EditorState.readOnly.of(false)
   ];
 
@@ -168,18 +171,23 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
         shikiTheme: 'light-plus-extended'
       });
 
-      let transaction = this.codeEditorRef?.view.state.update({
+      let editorV =
+        this.panel === common.PanelEnum.Tree
+          ? this.codeEditorRef.view
+          : this.diffEditorRef.mergeView.b;
+
+      let transaction = editorV.state.update({
         changes: [
           {
             from: 0,
-            to: this.codeEditorRef?.view.state.doc.length,
-            insert: this.codeEditorRef?.view.state.doc.toString()
+            to: editorV.state.doc.length,
+            insert: editorV.state.doc.toString()
           }
         ],
-        selection: this.codeEditorRef.view.state.selection
+        selection: editorV.state.selection
       });
 
-      this.codeEditorRef?.view.dispatch(transaction);
+      editorV.dispatch(transaction);
     },
     { atBegin: false }
   );
@@ -216,6 +224,15 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
         shikiLanguage: this.lang?.toLowerCase(),
         shikiTheme: 'light-plus-extended'
       });
+
+      if (this.panel !== common.PanelEnum.Tree) {
+        this.highLightService.updateDocText({
+          placeName: PlaceNameEnum.Original,
+          docText: x.originalContent,
+          shikiLanguage: this.lang?.toLowerCase(),
+          shikiTheme: 'light-plus-extended'
+        });
+      }
 
       this.originalContent = x.originalContent;
       this.content = x.content;
@@ -317,15 +334,22 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   ) {}
 
   initEditorOptions() {
-    let res = this.highLightService.getLanguages({
+    let mainLanguagesResult = this.highLightService.getLanguages({
       placeName: PlaceNameEnum.Main
     });
 
-    this.languages = res.languages;
-    let lightLanguage = res.lightLanguage;
+    let originalLanguagesResult = this.highLightService.getLanguages({
+      placeName: PlaceNameEnum.Original
+    });
+
+    this.languages = mainLanguagesResult.languages;
+    this.originalLanguages = originalLanguagesResult.languages;
+
+    // let lightLanguage = mainLanguagesResult.lightLanguage;
 
     // let mainLanguageConf = new Compartment();
     // this.mainPrepExtensions = [...this.baseExtensions, mainLanguageConf.of(ls)];
+
     this.mainExtensions = [...this.mainPrepExtensions];
 
     this.isEditorOptionsInitComplete = true;
@@ -440,14 +464,21 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     let dotExt = `.${ext}`;
 
     let language: any;
+    let originalLanguage: any;
 
     if (
       constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0
     ) {
       this.lang = 'YAML';
       language = this.languages.find((x: any) => x.name === this.lang);
+      originalLanguage = this.originalLanguages.find(
+        (x: any) => x.name === this.lang
+      );
     } else {
       language = this.languages.find(
+        (x: any) => x.extensions.indexOf(ext) > -1
+      );
+      originalLanguage = this.originalLanguages.find(
         (x: any) => x.extensions.indexOf(ext) > -1
       );
 
@@ -468,20 +499,18 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     let modifiedExtensions = [...this.diffModifiedExtensions, themeExtra];
 
     if (common.isDefined(language)) {
-      // let loadedLanguage = language.support
-      let loadedLanguage = await language.load();
-      // console.log('loadedLanguage');
-      // console.log(loadedLanguage);
+      let loadedLanguage = await language.load(); // language.support
+      let originalLoadedLanguage = await originalLanguage.load();
 
-      let originalLanguageConf = new Compartment();
       let modifiedLanguageConf = new Compartment();
+      let originalLanguageConf = new Compartment();
 
-      originalExtensions.push(originalLanguageConf.of(loadedLanguage));
       modifiedExtensions.push(modifiedLanguageConf.of(loadedLanguage));
+      originalExtensions.push(originalLanguageConf.of(originalLoadedLanguage));
     }
 
-    this.originalExtensions = originalExtensions;
     this.modifiedExtensions = modifiedExtensions;
+    this.originalExtensions = originalExtensions;
 
     if (
       this.file.fileId === common.MPROVE_CONFIG_FILENAME ||

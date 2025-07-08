@@ -84,6 +84,7 @@ interface Place {
 
 export enum PlaceNameEnum {
   Main = 'Main',
+  Original = 'Original',
   Right = 'Right',
   QueryInfo = 'QueryInfo'
 }
@@ -92,7 +93,8 @@ export enum PlaceNameEnum {
 export class HighLightService {
   highlighter: any;
 
-  filesEditorPlace: Place = {};
+  mainEditorPlace: Place = {};
+  originalEditorPlace: Place = {};
   rightEditorPlace: Place = {};
   queryInfoPlace: Place = {};
 
@@ -218,12 +220,14 @@ export class HighLightService {
   getPlaceByPlaceName(placeName: PlaceNameEnum) {
     let place =
       placeName === PlaceNameEnum.Main
-        ? this.filesEditorPlace
-        : placeName === PlaceNameEnum.Right
-          ? this.rightEditorPlace
-          : placeName === PlaceNameEnum.QueryInfo
-            ? this.queryInfoPlace
-            : undefined;
+        ? this.mainEditorPlace
+        : placeName === PlaceNameEnum.Original
+          ? this.originalEditorPlace
+          : placeName === PlaceNameEnum.Right
+            ? this.rightEditorPlace
+            : placeName === PlaceNameEnum.QueryInfo
+              ? this.queryInfoPlace
+              : undefined;
     return place;
   }
 
@@ -239,12 +243,12 @@ export class HighLightService {
     let place = this.getPlaceByPlaceName(placeName);
 
     if (!this.highlighter) {
-      console.log('updateDocText - highlighter undefined');
+      console.log(`updateDocText - ${placeName} - highlighter undefined`);
       return;
     }
 
     if (isFilter === true) {
-      console.log('updateDocText - Filter');
+      console.log(`updateDocText - ${placeName} - Filter`);
 
       place.docText = docText;
       place.shikiLanguage = shikiLanguage;
@@ -253,7 +257,7 @@ export class HighLightService {
       place.fullTokenLines = [];
       place.fullTokens = [];
     } else if (LIGHT_PLUS_LANGUAGES.indexOf(shikiLanguage) < 0) {
-      console.log('updateDocText - Reset');
+      console.log(`updateDocText - ${placeName} - Reset`);
 
       place.docText = docText;
       place.shikiLanguage = shikiLanguage;
