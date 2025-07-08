@@ -163,20 +163,6 @@ export class HighLightService {
 
     let lightLanguage = this.createLightLanguage({ placeName: placeName });
 
-    let markdownLanguageDescription = LanguageDescription.of({
-      name: 'markdown',
-      alias: ['markdown'],
-      extensions: ['markdown'],
-      support: new LanguageSupport(lightLanguage)
-    });
-
-    let sqlLanguageDescription = LanguageDescription.of({
-      name: 'sql',
-      alias: ['sql'],
-      extensions: ['sql'],
-      support: new LanguageSupport(lightLanguage)
-    });
-
     let malloyLanguageDescription = LanguageDescription.of({
       name: 'malloy',
       alias: ['malloy'],
@@ -198,6 +184,20 @@ export class HighLightService {
       support: new LanguageSupport(lightLanguage)
     });
 
+    let markdownLanguageDescription = LanguageDescription.of({
+      name: 'markdown',
+      alias: ['markdown'],
+      extensions: ['markdown'],
+      support: new LanguageSupport(lightLanguage)
+    });
+
+    let sqlLanguageDescription = LanguageDescription.of({
+      name: 'sql',
+      alias: ['sql'],
+      extensions: ['sql'],
+      support: new LanguageSupport(lightLanguage)
+    });
+
     let languages = [
       ...languageData.languages.filter(
         language =>
@@ -205,11 +205,11 @@ export class HighLightService {
             language.name.toLocaleLowerCase()
           ) < 0
       ),
-      markdownLanguageDescription,
-      sqlLanguageDescription,
       malloyLanguageDescription,
       malloysqlLanguageDescription,
-      malloynbLanguageDescription
+      malloynbLanguageDescription,
+      markdownLanguageDescription,
+      sqlLanguageDescription
     ];
 
     return { languages: languages, lightLanguage: lightLanguage };

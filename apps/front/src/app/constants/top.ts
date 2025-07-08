@@ -14,13 +14,7 @@ export const LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME = 'changedOwnerOrgName';
 export const LOCAL_STORAGE_DELETED_PROJECT_NAME = 'deletedProjectName';
 export const LOCAL_STORAGE_NEW_ORG_OWNER = 'newOrgOwner';
 
-export const LIGHT_PLUS_LANGUAGES = [
-  'sql',
-  'malloy',
-  'malloysql',
-  'malloynb',
-  'markdown'
-];
+export const LIGHT_PLUS_LANGUAGES = ['malloy', 'malloysql', 'malloynb'];
 
 export const DEFAULT_METRICS_COLUMN_NAME_WIDTH = 530;
 export const DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH = 155;
@@ -40,15 +34,6 @@ export const DEFAULT_TIME_RANGE_FRACTION: common.Fraction = {
 
 export const MEMBERS_PER_PAGE = 10;
 export const USERS_PER_PAGE = 10;
-
-export const MARKDOWN_LANGUAGE_ID = 'markdown';
-export const YAML_LANGUAGE_ID = 'yaml';
-export const SQL_LANGUAGE_ID = 'sql';
-export const JAVASCRIPT_LANGUAGE_ID = 'javascript';
-export const JSON_LANGUAGE_ID = 'json';
-
-export const TEXTMATE_THEME = 'textmate';
-export const BLOCKML_THEME = 'blockml';
 
 export const BLOCKML_EXT_LIST: common.FileExtensionEnum[] = [
   common.FileExtensionEnum.View,

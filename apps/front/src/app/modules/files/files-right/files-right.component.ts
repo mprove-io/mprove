@@ -410,8 +410,6 @@ export class FilesRightComponent {
       constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0
     ) {
       this.lang = 'YAML';
-    } else if (dotExt === '.md') {
-      this.lang = 'markdown';
     } else {
       let language = this.languages.find(
         (x: any) => x.extensions.indexOf(ext) > -1

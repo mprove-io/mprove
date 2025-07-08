@@ -75,23 +75,15 @@ export const vscodeLightStyle: CreateThemeOptions['styles'] = [
   { tag: t.invalid, color: '#e45649' }
 ];
 
-export function vscodeLightInit(options?: Partial<CreateThemeOptions>) {
-  const { theme = 'light', settings = {}, styles = [] } = options || {};
-
-  return createTheme({
-    theme: theme,
-    settings: {
-      ...defaultSettingsLightTheme,
-      ...settings
-    },
-    styles: [...vscodeLightStyle, ...styles]
-  });
-}
-
-export const VS_LIGHT_THEME = vscodeLightInit({
+export const VS_LIGHT_THEME = createTheme({
+  theme: 'light',
   settings: {
-    lineHighlight: '#f3f4f6' //  '#f0f9ff', '#00000012'
-  }
+    ...defaultSettingsLightTheme,
+    ...{
+      lineHighlight: '#f3f4f6' //  '#f0f9ff', '#00000012'
+    }
+  },
+  styles: [...vscodeLightStyle]
 });
 
 export const VS_LIGHT_THEME_EXTRA: Extension = createThemeExtra(VS_LIGHT_THEME);

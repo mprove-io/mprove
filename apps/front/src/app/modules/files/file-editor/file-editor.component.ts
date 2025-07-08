@@ -446,8 +446,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     ) {
       this.lang = 'YAML';
       language = this.languages.find((x: any) => x.name === this.lang);
-    } else if (dotExt === '.md') {
-      this.lang = 'markdown';
     } else {
       language = this.languages.find(
         (x: any) => x.extensions.indexOf(ext) > -1
