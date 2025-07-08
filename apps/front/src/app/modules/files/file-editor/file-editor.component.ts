@@ -17,12 +17,12 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, map, take, tap } from 'rxjs/operators';
 import { debounce } from 'throttle-debounce';
 import {
-  LIGHT_PLUS_THEME_EXTRA,
-  LIGHT_PLUS_THEME_EXTRA_MOD
+  LIGHT_PLUS_THEME_EXTRA_DIFF,
+  LIGHT_PLUS_THEME_EXTRA_SINGLE
 } from '~front/app/constants/code-themes/light-plus-theme';
 import {
-  VS_LIGHT_THEME_EXTRA,
-  VS_LIGHT_THEME_EXTRA_MOD
+  VS_LIGHT_THEME_EXTRA_DIFF,
+  VS_LIGHT_THEME_EXTRA_SINGLE
 } from '~front/app/constants/code-themes/vs-light-theme';
 import { LIGHT_PLUS_LANGUAGES } from '~front/app/constants/top';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
@@ -68,7 +68,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
   lang: string;
 
-  theme: Extension = VS_LIGHT_THEME_EXTRA_MOD;
+  theme: Extension = VS_LIGHT_THEME_EXTRA_SINGLE;
 
   diagnostics: Diagnostic[] = [];
 
@@ -487,16 +487,16 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
     this.theme =
       LIGHT_PLUS_LANGUAGES.indexOf(this.lang?.toLowerCase()) > -1
-        ? LIGHT_PLUS_THEME_EXTRA_MOD
-        : VS_LIGHT_THEME_EXTRA_MOD;
+        ? LIGHT_PLUS_THEME_EXTRA_SINGLE
+        : VS_LIGHT_THEME_EXTRA_SINGLE;
 
-    let themeExtra =
+    let themeDIff =
       LIGHT_PLUS_LANGUAGES.indexOf(this.lang?.toLowerCase()) > -1
-        ? LIGHT_PLUS_THEME_EXTRA
-        : VS_LIGHT_THEME_EXTRA;
+        ? LIGHT_PLUS_THEME_EXTRA_DIFF
+        : VS_LIGHT_THEME_EXTRA_DIFF;
 
-    let originalExtensions = [...this.diffOriginalExtensions, themeExtra];
-    let modifiedExtensions = [...this.diffModifiedExtensions, themeExtra];
+    let originalExtensions = [...this.diffOriginalExtensions, themeDIff];
+    let modifiedExtensions = [...this.diffModifiedExtensions, themeDIff];
 
     if (common.isDefined(language)) {
       let loadedLanguage = await language.load(); // language.support

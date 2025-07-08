@@ -10,8 +10,8 @@ import { LanguageDescription } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { tap } from 'rxjs/operators';
-import { LIGHT_PLUS_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/light-plus-theme';
-import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
+import { LIGHT_PLUS_THEME_EXTRA_SINGLE } from '~front/app/constants/code-themes/light-plus-theme';
+import { VS_LIGHT_THEME_EXTRA_SINGLE } from '~front/app/constants/code-themes/vs-light-theme';
 import { LIGHT_PLUS_LANGUAGES } from '~front/app/constants/top';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -40,7 +40,7 @@ export class QueryInfoViewerComponent implements OnChanges {
   languages: LanguageDescription[] = [];
   lang: string;
 
-  theme: Extension = VS_LIGHT_THEME_EXTRA_MOD;
+  theme: Extension = VS_LIGHT_THEME_EXTRA_SINGLE;
 
   spinnerName = 'queryInfoGetFile';
   isShowSpinner = false;
@@ -142,8 +142,8 @@ export class QueryInfoViewerComponent implements OnChanges {
 
     this.theme =
       LIGHT_PLUS_LANGUAGES.indexOf(this.lang.toLowerCase()) > -1
-        ? LIGHT_PLUS_THEME_EXTRA_MOD
-        : VS_LIGHT_THEME_EXTRA_MOD;
+        ? LIGHT_PLUS_THEME_EXTRA_SINGLE
+        : VS_LIGHT_THEME_EXTRA_SINGLE;
 
     if (this.queryPart === common.QueryPartEnum.MalloyQuery) {
       this.content = this.chart.tiles[0].mconfig.malloyQuery;

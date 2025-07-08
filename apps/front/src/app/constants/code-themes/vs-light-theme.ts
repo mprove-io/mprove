@@ -3,7 +3,8 @@ import { tags as t } from '@lezer/highlight';
 import { defaultSettingsLightTheme } from './default-settings-light-theme';
 import { CreateThemeOptions, createTheme } from './theme-creators/create-theme';
 import { createThemeExtra } from './theme-creators/create-theme-extra';
-import { createThemeExtraMod } from './theme-creators/create-theme-extra-mod';
+import { createThemeExtraDiff } from './theme-creators/create-theme-extra-diff';
+import { createThemeExtraSingle } from './theme-creators/create-theme-extra-single';
 
 // https://github.com/uiwjs/react-codemirror/blob/master/themes/vscode/src/light.ts
 
@@ -88,5 +89,8 @@ export const VS_LIGHT_THEME = createTheme({
 
 export const VS_LIGHT_THEME_EXTRA: Extension = createThemeExtra(VS_LIGHT_THEME);
 
-export const VS_LIGHT_THEME_EXTRA_MOD: Extension =
-  createThemeExtraMod(VS_LIGHT_THEME_EXTRA);
+export const VS_LIGHT_THEME_EXTRA_SINGLE: Extension =
+  createThemeExtraSingle(VS_LIGHT_THEME_EXTRA);
+
+export const VS_LIGHT_THEME_EXTRA_DIFF: Extension =
+  createThemeExtraDiff(VS_LIGHT_THEME_EXTRA);

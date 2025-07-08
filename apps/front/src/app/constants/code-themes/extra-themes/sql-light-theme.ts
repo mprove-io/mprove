@@ -6,7 +6,8 @@ import {
   createTheme
 } from '../theme-creators/create-theme';
 import { createThemeExtra } from '../theme-creators/create-theme-extra';
-import { createThemeExtraMod } from '../theme-creators/create-theme-extra-mod';
+import { createThemeExtraDiff } from '../theme-creators/create-theme-extra-diff';
+import { createThemeExtraSingle } from '../theme-creators/create-theme-extra-single';
 
 // Define custom tags
 const sqlTags = {
@@ -107,6 +108,10 @@ export const SQL_LIGHT_THEME = sqlLightInit({
 export const SQL_LIGHT_THEME_EXTRA: Extension =
   createThemeExtra(SQL_LIGHT_THEME);
 
-export const SQL_LIGHT_THEME_EXTRA_MOD: Extension = createThemeExtraMod(
+export const SQL_LIGHT_THEME_EXTRA_SINGLE: Extension = createThemeExtraSingle(
+  SQL_LIGHT_THEME_EXTRA
+);
+
+export const SQL_LIGHT_THEME_EXTRA_DIFF: Extension = createThemeExtraDiff(
   SQL_LIGHT_THEME_EXTRA
 );

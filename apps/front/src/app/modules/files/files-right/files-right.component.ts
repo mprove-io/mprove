@@ -5,8 +5,8 @@ import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { finalize, map, take, tap } from 'rxjs/operators';
-import { LIGHT_PLUS_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/light-plus-theme';
-import { VS_LIGHT_THEME_EXTRA_MOD } from '~front/app/constants/code-themes/vs-light-theme';
+import { LIGHT_PLUS_THEME_EXTRA_SINGLE } from '~front/app/constants/code-themes/light-plus-theme';
+import { VS_LIGHT_THEME_EXTRA_SINGLE } from '~front/app/constants/code-themes/vs-light-theme';
 import { LIGHT_PLUS_LANGUAGES } from '~front/app/constants/top';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -37,7 +37,7 @@ export class FilesRightComponent {
   languages: LanguageDescription[] = [];
   lang: string;
 
-  theme: Extension = VS_LIGHT_THEME_EXTRA_MOD;
+  theme: Extension = VS_LIGHT_THEME_EXTRA_SINGLE;
 
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
@@ -420,8 +420,8 @@ export class FilesRightComponent {
 
     this.theme =
       LIGHT_PLUS_LANGUAGES.indexOf(this.lang?.toLowerCase()) > -1
-        ? LIGHT_PLUS_THEME_EXTRA_MOD
-        : VS_LIGHT_THEME_EXTRA_MOD;
+        ? LIGHT_PLUS_THEME_EXTRA_SINGLE
+        : VS_LIGHT_THEME_EXTRA_SINGLE;
 
     if (
       this.secondFileName === common.MPROVE_CONFIG_FILENAME ||
