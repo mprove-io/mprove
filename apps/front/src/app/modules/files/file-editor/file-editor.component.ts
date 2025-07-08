@@ -662,14 +662,16 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   }
 
   save() {
+    let fileNodeId =
+      this.nav.projectId +
+      '/' +
+      this.file.fileId.split(common.TRIPLE_UNDERSCORE).join('/');
+
     let payload: apiToBackend.ToBackendSaveFileRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      fileNodeId:
-        this.nav.projectId +
-        '/' +
-        this.file.fileId.split(common.TRIPLE_UNDERSCORE).join('/'),
+      fileNodeId: fileNodeId,
       content: this.content
     };
 
@@ -694,6 +696,11 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
             this.uiQuery.updatePart({
               needSave: false,
               panel: common.PanelEnum.Tree
+            });
+
+            this.navigateService.navigateToFileLine({
+              panel: common.PanelEnum.Tree,
+              underscoreFileId: this.file.fileId
             });
 
             this.cd.detectChanges();
