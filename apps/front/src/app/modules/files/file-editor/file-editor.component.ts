@@ -7,9 +7,10 @@ import {
   ViewChild
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { standardKeymap } from '@codemirror/commands';
+import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { LanguageDescription } from '@codemirror/language';
 import { Diagnostic, linter } from '@codemirror/lint';
+import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
 import { EditorState, Extension } from '@codemirror/state';
 import { Compartment } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
@@ -107,7 +108,11 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     return transaction;
   });
 
-  baseExtensions: Extension[] = [keymap.of(standardKeymap)];
+  baseExtensions: Extension[] = [
+    history(),
+    highlightSelectionMatches(),
+    keymap.of([...defaultKeymap, ...searchKeymap, ...historyKeymap])
+  ];
 
   mainPrepExtensions: Extension[] = [
     ...this.baseExtensions,

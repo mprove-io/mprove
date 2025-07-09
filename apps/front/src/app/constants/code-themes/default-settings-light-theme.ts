@@ -7,7 +7,7 @@ export const defaultSettingsLightTheme: CreateThemeOptions['settings'] = {
   foreground: '#383a42',
   caret: '#000',
   selection: '#add6ff',
-  selectionMatch: '#a8ac94',
+  selectionMatch: '#e2e8f0', // '#a8ac94'
   lineHighlight: '#f3f4f6', // overrided on malloyLightInit or vscodeLightInit
   gutterBackground: '#fff',
   gutterForeground: '#237893',

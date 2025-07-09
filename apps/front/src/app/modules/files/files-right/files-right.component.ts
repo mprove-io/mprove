@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { standardKeymap } from '@codemirror/commands';
+import { defaultKeymap } from '@codemirror/commands';
 import { LanguageDescription } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
@@ -165,8 +165,8 @@ export class FilesRightComponent {
     let lightLanguage = res.lightLanguage;
 
     // let filesRightLanguageConf = new Compartment();
-    // this.extensions = [keymap.of(standardKeymap), filesRightLanguageConf.of(ls)];
-    this.extensions = [keymap.of(standardKeymap)];
+    // this.extensions = [keymap.of(defaultKeymap), filesRightLanguageConf.of(ls)];
+    this.extensions = [keymap.of(defaultKeymap)];
 
     this.isEditorOptionsInitComplete = true;
 

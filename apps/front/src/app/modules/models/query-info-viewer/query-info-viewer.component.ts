@@ -5,7 +5,7 @@ import {
   OnChanges,
   SimpleChanges
 } from '@angular/core';
-import { standardKeymap } from '@codemirror/commands';
+import { defaultKeymap } from '@codemirror/commands';
 import { LanguageDescription } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
@@ -102,8 +102,8 @@ export class QueryInfoViewerComponent implements OnChanges {
     let lightLanguage = res.lightLanguage;
 
     // let queryInfoLanguageConf = new Compartment();
-    // this.extensions = [keymap.of(standardKeymap), queryInfoLanguageConf.of(ls)];
-    this.extensions = [keymap.of(standardKeymap)];
+    // this.extensions = [keymap.of(defaultKeymap), queryInfoLanguageConf.of(ls)];
+    this.extensions = [keymap.of(defaultKeymap)];
 
     this.isEditorOptionsInitComplete = true;
 
