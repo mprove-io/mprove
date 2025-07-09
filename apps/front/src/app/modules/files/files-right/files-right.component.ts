@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { defaultKeymap } from '@codemirror/commands';
 import { LanguageDescription } from '@codemirror/language';
+import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
 import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -166,7 +167,10 @@ export class FilesRightComponent {
 
     // let filesRightLanguageConf = new Compartment();
     // this.extensions = [keymap.of(defaultKeymap), filesRightLanguageConf.of(ls)];
-    this.extensions = [keymap.of(defaultKeymap)];
+    this.extensions = [
+      highlightSelectionMatches(),
+      keymap.of([...defaultKeymap, ...searchKeymap])
+    ];
 
     this.isEditorOptionsInitComplete = true;
 

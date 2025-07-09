@@ -7,13 +7,20 @@ import {
   ViewChild
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
+import { defaultKeymap } from '@codemirror/commands';
 import { LanguageDescription } from '@codemirror/language';
 import { Diagnostic, linter } from '@codemirror/lint';
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
-import { EditorState, Extension } from '@codemirror/state';
+import {
+  Annotation,
+  EditorSelection,
+  EditorState,
+  Extension,
+  Transaction,
+  TransactionSpec
+} from '@codemirror/state';
 import { Compartment } from '@codemirror/state';
-import { EditorView, keymap } from '@codemirror/view';
+import { EditorView, KeyBinding, keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, map, take, tap } from 'rxjs/operators';
 import { debounce } from 'throttle-debounce';
@@ -42,6 +49,12 @@ import { NavigateService } from '~front/app/services/navigate.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
 import { common } from '~front/barrels/common';
 import { constants } from '~front/barrels/constants';
+
+interface HistoryEntry {
+  fullDocContent: string;
+  positionToA: number;
+  positionToB: number;
+}
 
 @Component({
   standalone: false,
@@ -73,51 +86,200 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
   diagnostics: Diagnostic[] = [];
 
-  beforeChangeFilter = EditorState.transactionFilter.of(transaction => {
-    // console.log(transaction);
-    if (
-      (transaction.isUserEvent('input') ||
-        transaction.isUserEvent('input.type') ||
-        transaction.isUserEvent('input.type.compose') ||
-        transaction.isUserEvent('input.paste') ||
-        transaction.isUserEvent('input.drop') ||
-        transaction.isUserEvent('input.complete') ||
-        transaction.isUserEvent('delete') ||
-        transaction.isUserEvent('delete.selection') ||
-        transaction.isUserEvent('delete.forward') ||
-        transaction.isUserEvent('delete.backward') ||
-        transaction.isUserEvent('delete.cut') ||
-        transaction.isUserEvent('move') ||
-        transaction.isUserEvent('move.drop') ||
-        transaction.isUserEvent('select') ||
-        transaction.isUserEvent('select.pointer') ||
-        transaction.isUserEvent('undo') ||
-        transaction.isUserEvent('redo')) &&
-      transaction.docChanged
-    ) {
-      console.log('beforeChangeFilter - FILTER');
+  customHistoryAnnotation = Annotation.define();
+  maxHistoryOperations = 100;
 
-      this.highLightService.updateDocText({
-        placeName: PlaceNameEnum.Main,
-        docText: this.content,
-        shikiLanguage: this.lang?.toLowerCase(),
-        shikiTheme: 'light-plus-extended',
-        isFilter: true
-      });
+  undoStack: HistoryEntry[] = [];
+  redoStack: HistoryEntry[] = [];
+
+  beforeChangeFilter = EditorState.transactionFilter.of(
+    (transaction: Transaction): Transaction => {
+      let trackedEvents: string[] = [
+        'input',
+        'input.type',
+        'input.type.compose',
+        'input.paste',
+        'input.drop',
+        'input.complete',
+        'delete',
+        'delete.selection',
+        'delete.forward',
+        'delete.backward',
+        'delete.cut',
+        'move',
+        'move.drop',
+        'select',
+        'select.pointer',
+        'comment',
+        'uncomment'
+      ];
+
+      if (
+        trackedEvents.some(event => transaction.isUserEvent(event)) &&
+        transaction.docChanged
+      ) {
+        console.log('beforeChangeFilter - FILTER');
+
+        this.highLightService.updateDocText({
+          placeName: PlaceNameEnum.Main,
+          docText: this.content,
+          shikiLanguage: this.lang?.toLowerCase(),
+          shikiTheme: 'light-plus-extended',
+          isFilter: true
+        });
+
+        if (transaction.annotation(this.customHistoryAnnotation)) {
+          return transaction;
+        }
+
+        let positionToA: number;
+        let positionToB: number;
+
+        if (transaction.changes && !transaction.changes.empty) {
+          transaction.changes.iterChanges(
+            (fromA: number, toA: number, fromB: number, toB: number) => {
+              if (positionToA === undefined) {
+                positionToA = toA;
+              }
+              if (positionToB === undefined) {
+                positionToB = toB;
+              }
+            }
+          );
+        }
+
+        this.undoStack.push({
+          fullDocContent: transaction.startState.doc.toString(),
+          positionToA: positionToA,
+          positionToB: positionToB
+        });
+
+        this.redoStack = [];
+
+        if (this.undoStack.length > this.maxHistoryOperations) {
+          this.undoStack.shift();
+        }
+      }
+
+      return transaction;
     }
-    return transaction;
-  });
+  );
+
+  customUndo: (view: EditorView) => boolean = ({
+    state,
+    dispatch
+  }: EditorView) => {
+    if (this.undoStack.length === 0) {
+      return false;
+    }
+
+    let undoOperation: HistoryEntry = this.undoStack.pop();
+
+    let tr: TransactionSpec = {
+      changes: {
+        from: 0,
+        to: state.doc.length,
+        insert: undoOperation.fullDocContent
+      },
+      selection: EditorSelection.cursor(undoOperation.positionToA),
+      annotations: [
+        Transaction.userEvent.of('undo'),
+        this.customHistoryAnnotation.of(true)
+      ],
+      scrollIntoView: true,
+      effects: [
+        EditorView.scrollIntoView(undoOperation.positionToA, {
+          y: 'center',
+          x: 'nearest'
+          // yMargin: 50,
+          // xMargin: 20
+        })
+      ]
+    };
+
+    this.redoStack.push({
+      fullDocContent: state.doc.toString(),
+      positionToA: undoOperation.positionToA,
+      positionToB: undoOperation.positionToB
+    });
+
+    if (this.redoStack.length > this.maxHistoryOperations) {
+      this.redoStack.shift();
+    }
+
+    dispatch(state.update(tr));
+
+    return true;
+  };
+
+  customRedo: (view: EditorView) => boolean = ({
+    state,
+    dispatch
+  }: EditorView) => {
+    if (this.redoStack.length === 0) {
+      return false;
+    }
+
+    let redoOperation: HistoryEntry = this.redoStack.pop();
+
+    let tr: TransactionSpec = {
+      changes: {
+        from: 0,
+        to: state.doc.length,
+        insert: redoOperation.fullDocContent
+      },
+      selection: EditorSelection.cursor(redoOperation.positionToB),
+      annotations: [
+        Transaction.userEvent.of('redo'),
+        this.customHistoryAnnotation.of(true)
+      ],
+      scrollIntoView: true,
+      effects: [
+        EditorView.scrollIntoView(redoOperation.positionToB, {
+          y: 'center',
+          x: 'nearest',
+          yMargin: 50,
+          xMargin: 20
+        })
+      ]
+    };
+
+    this.undoStack.push({
+      fullDocContent: state.doc.toString(),
+      positionToA: redoOperation.positionToA,
+      positionToB: redoOperation.positionToB
+    });
+
+    if (this.undoStack.length > this.maxHistoryOperations) {
+      this.undoStack.shift();
+    }
+
+    dispatch(state.update(tr));
+
+    return true;
+  };
+
+  customHistoryKeymap: KeyBinding[] = [
+    { key: 'Mod-z', run: this.customUndo, preventDefault: true },
+    {
+      key: 'Mod-y',
+      mac: 'Mod-Shift-z',
+      run: this.customRedo,
+      preventDefault: true
+    },
+    { linux: 'Ctrl-Shift-z', run: this.customRedo, preventDefault: true }
+  ];
 
   baseExtensions: Extension[] = [
-    history(),
     highlightSelectionMatches(),
-    keymap.of([...defaultKeymap, ...searchKeymap, ...historyKeymap])
+    keymap.of([...defaultKeymap, ...searchKeymap, ...this.customHistoryKeymap])
   ];
 
   mainPrepExtensions: Extension[] = [
     ...this.baseExtensions,
     this.beforeChangeFilter
   ];
+
   mainExtensions: Extension[] = [];
 
   diffOriginalExtensions: Extension[] = [
@@ -243,6 +405,9 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
           shikiTheme: 'light-plus-extended'
         });
       }
+
+      this.undoStack = [];
+      this.redoStack = [];
 
       this.originalContent = x.originalContent;
       this.content = x.content;
@@ -701,6 +866,9 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
             this.startText = this.content;
 
+            this.undoStack = [];
+            this.redoStack = [];
+
             this.uiQuery.updatePart({
               needSave: false,
               panel: common.PanelEnum.Tree
@@ -727,6 +895,9 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
       shikiTheme: 'light-plus-extended',
       isFilter: true
     });
+
+    this.undoStack = [];
+    this.redoStack = [];
 
     this.content = this.startText;
 

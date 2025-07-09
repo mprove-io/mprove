@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { defaultKeymap } from '@codemirror/commands';
 import { LanguageDescription } from '@codemirror/language';
+import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
 import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { tap } from 'rxjs/operators';
@@ -103,7 +104,10 @@ export class QueryInfoViewerComponent implements OnChanges {
 
     // let queryInfoLanguageConf = new Compartment();
     // this.extensions = [keymap.of(defaultKeymap), queryInfoLanguageConf.of(ls)];
-    this.extensions = [keymap.of(defaultKeymap)];
+    this.extensions = [
+      highlightSelectionMatches(),
+      keymap.of([...defaultKeymap, ...searchKeymap])
+    ];
 
     this.isEditorOptionsInitComplete = true;
 
