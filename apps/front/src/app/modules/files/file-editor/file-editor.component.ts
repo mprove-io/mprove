@@ -20,11 +20,11 @@ import { debounce } from 'throttle-debounce';
 import {
   LIGHT_PLUS_THEME_EXTRA_DIFF,
   LIGHT_PLUS_THEME_EXTRA_SINGLE
-} from '~front/app/constants/code-themes/light-plus-theme';
+} from '~front/app/constants/code-themes/themes';
 import {
   VS_LIGHT_THEME_EXTRA_DIFF,
   VS_LIGHT_THEME_EXTRA_SINGLE
-} from '~front/app/constants/code-themes/vs-light-theme';
+} from '~front/app/constants/code-themes/themes';
 import { LIGHT_PLUS_LANGUAGES } from '~front/app/constants/top';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';

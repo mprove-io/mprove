@@ -1,26 +1,7 @@
+import { type TagStyle } from '@codemirror/language';
 import { tags as t } from '@lezer/highlight';
-import {
-  CreateThemeOptions,
-  createTheme
-} from '../theme-creators/create-theme';
 
-// https://github.com/uiwjs/react-codemirror/blob/master/themes/vscode/src/dark.ts
-
-export const defaultSettingsVscodeDark: CreateThemeOptions['settings'] = {
-  background: '#1e1e1e',
-  foreground: '#9cdcfe',
-  caret: '#c6c6c6',
-  selection: '#6199ff2f',
-  selectionMatch: '#72a1ff59',
-  lineHighlight: '#ffffff0f',
-  gutterBackground: '#1e1e1e',
-  gutterForeground: '#838383',
-  gutterActiveForeground: '#fff',
-  fontFamily:
-    'Menlo, Monaco, Consolas, "Andale Mono", "Ubuntu Mono", "Courier New", monospace'
-};
-
-export const vscodeDarkStyle: CreateThemeOptions['styles'] = [
+export const VS_DARK_STYLES: TagStyle[] = [
   {
     tag: [
       t.keyword,
@@ -87,17 +68,3 @@ export const vscodeDarkStyle: CreateThemeOptions['styles'] = [
   { tag: t.link, color: '#6a9955', textDecoration: 'underline' },
   { tag: t.invalid, color: '#ff0000' }
 ];
-
-export function vscodeDarkInit(options?: Partial<CreateThemeOptions>) {
-  const { theme = 'dark', settings = {}, styles = [] } = options || {};
-  return createTheme({
-    theme: theme,
-    settings: {
-      ...defaultSettingsVscodeDark,
-      ...settings
-    },
-    styles: [...vscodeDarkStyle, ...styles]
-  });
-}
-
-export const VS_DARK_THEME = vscodeDarkInit();

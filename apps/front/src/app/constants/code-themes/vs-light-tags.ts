@@ -1,14 +1,7 @@
-import { Extension } from '@codemirror/state';
+import { type TagStyle } from '@codemirror/language';
 import { tags as t } from '@lezer/highlight';
-import { defaultSettingsLightTheme } from './default-settings-light-theme';
-import { CreateThemeOptions, createTheme } from './theme-creators/create-theme';
-import { createThemeExtra } from './theme-creators/create-theme-extra';
-import { createThemeExtraDiff } from './theme-creators/create-theme-extra-diff';
-import { createThemeExtraSingle } from './theme-creators/create-theme-extra-single';
 
-// https://github.com/uiwjs/react-codemirror/blob/master/themes/vscode/src/light.ts
-
-export const vscodeLightStyle: CreateThemeOptions['styles'] = [
+export const VS_LIGHT_STYLES: TagStyle[] = [
   {
     tag: [
       t.keyword,
@@ -75,22 +68,3 @@ export const vscodeLightStyle: CreateThemeOptions['styles'] = [
   { tag: t.link, color: '#4078f2', textDecoration: 'underline' },
   { tag: t.invalid, color: '#e45649' }
 ];
-
-export const VS_LIGHT_THEME = createTheme({
-  theme: 'light',
-  settings: {
-    ...defaultSettingsLightTheme,
-    ...{
-      lineHighlight: '#f3f4f6' //  '#f0f9ff', '#00000012'
-    }
-  },
-  styles: [...vscodeLightStyle]
-});
-
-export const VS_LIGHT_THEME_EXTRA: Extension = createThemeExtra(VS_LIGHT_THEME);
-
-export const VS_LIGHT_THEME_EXTRA_SINGLE: Extension =
-  createThemeExtraSingle(VS_LIGHT_THEME_EXTRA);
-
-export const VS_LIGHT_THEME_EXTRA_DIFF: Extension =
-  createThemeExtraDiff(VS_LIGHT_THEME_EXTRA);
