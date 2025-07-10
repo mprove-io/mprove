@@ -705,7 +705,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   treeOnInitialized() {
-    if (common.isDefined(this.chart.modelId)) {
+    if (common.isDefined(this.chart.modelId) && this.chart.draft === false) {
       this.chartsTree.treeModel.getNodeById(this.chart.modelId)?.expand();
       setTimeout(() => {
         this.scrollToSelectedChart({ isSmooth: true });
