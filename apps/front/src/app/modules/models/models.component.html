@@ -655,7 +655,6 @@
                     let c of filteredCharts | slice: 0 : filteredDraftsLength;
                     let i = index
                   "
-                  [attr.chartId]="c.chartId"
                 >
                   <div
                     *ngIf="filteredDraftsLength > 0 && i === 0"
@@ -687,7 +686,6 @@
                       let c of filteredCharts | slice: filteredDraftsLength;
                       let i = index
                     "
-                    [attr.chartId]="c.chartId"
                   >
                     <ng-container
                       *ngTemplateOutlet="
@@ -717,7 +715,7 @@
                       <div class="relative flex w-full flex-row items-center">
                         <div class="flex min-w-[2px] flex-row items-center">
                           <div class="flex flex-row items-center space-x-1">
-                            <div class="text-s500 flex items-center">
+                            <div class="flex items-center">
                               <m-chevron-right-icon
                                 *ngIf="!node.isExpanded && node.hasChildren"
                               ></m-chevron-right-icon>
@@ -732,7 +730,7 @@
                             <div class="flex flex-col">
                               <div class="flex">
                                 <span
-                                  class="text-s500 ml-3 truncate text-base font-semibold"
+                                  class="ml-3 truncate text-base font-semibold"
                                 >
                                   <span class="">{{ node.data.topLabel }}</span>
                                 </span>
@@ -767,6 +765,7 @@
                   let-isDraft="isDraft"
                 >
                   <div
+                    [attr.chartId]="c.chartId"
                     class="hover:bg-m50 group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
                     (click)="navToChart(c)"
                     [ngClass]="{

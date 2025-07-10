@@ -704,7 +704,14 @@ export class ModelsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  treeOnInitialized() {}
+  treeOnInitialized() {
+    if (common.isDefined(this.chart.modelId)) {
+      this.chartsTree.treeModel.getNodeById(this.chart.modelId)?.expand();
+      setTimeout(() => {
+        this.scrollToSelectedChart({ isSmooth: true });
+      });
+    }
+  }
 
   treeOnUpdateData() {}
 
@@ -829,9 +836,11 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     this.cd.detectChanges();
 
-    setTimeout(() => {
-      this.scrollToSelectedChart({ isSmooth: true });
-    });
+    if (this.isFilterByModel === true) {
+      setTimeout(() => {
+        this.scrollToSelectedChart({ isSmooth: true });
+      });
+    }
   }
 
   toggleAutoRun() {
@@ -1784,33 +1793,48 @@ export class ModelsComponent implements OnInit, OnDestroy {
         : []
       : nonDraftCharts;
 
-    chartsFilteredByWord.forEach(chart => {
-      let chartsItemNode: ChartsItemNode = {
-        id: chart.chartId,
-        isTop: false,
-        topLabel: chart.modelLabel,
-        chart: chart,
-        children: []
-      };
+    chartsFilteredByWord
+      .sort((a, b) => {
+        let aTitle = a.title || a.chartId;
+        let bTitle = b.title || b.chartId;
 
-      let topNode: ChartsItemNode = chartsItemNodes.find(
-        (node: any) => node.id === chart.modelId
-      );
-
-      if (common.isDefined(topNode)) {
-        topNode.children.push(chartsItemNode);
-      } else {
-        topNode = {
-          id: chart.modelId,
-          isTop: true,
+        return b.draft === true && a.draft !== true
+          ? 1
+          : a.draft === true && b.draft !== true
+            ? -1
+            : aTitle > bTitle
+              ? 1
+              : bTitle > aTitle
+                ? -1
+                : 0;
+      })
+      .forEach(chart => {
+        let chartsItemNode: ChartsItemNode = {
+          id: chart.chartId,
+          isTop: false,
           topLabel: chart.modelLabel,
-          chart: undefined,
-          children: [chartsItemNode]
+          chart: chart,
+          children: []
         };
 
-        chartsItemNodes.push(topNode);
-      }
-    });
+        let topNode: ChartsItemNode = chartsItemNodes.find(
+          (node: any) => node.id === chart.modelId
+        );
+
+        if (common.isDefined(topNode)) {
+          topNode.children.push(chartsItemNode);
+        } else {
+          topNode = {
+            id: chart.modelId,
+            isTop: true,
+            topLabel: chart.modelLabel,
+            chart: undefined,
+            children: [chartsItemNode]
+          };
+
+          chartsItemNodes.push(topNode);
+        }
+      });
 
     this.filteredChartNodes = chartsItemNodes;
   }
