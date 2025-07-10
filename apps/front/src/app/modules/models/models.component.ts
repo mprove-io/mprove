@@ -107,7 +107,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   modelCancelButtonSpinnerName = 'modelCancelButtonSpinnerName';
 
   isFilterByModel = true;
-  showSearch = false;
+  showSearch = true;
 
   isRunButtonPressed = false;
   isCancelButtonPressed = false;

@@ -429,7 +429,7 @@
           <div
             class="text-s1 mb-4 mt-4 flex h-11 w-full flex-shrink-0 flex-row items-center"
           >
-            <div
+            <!-- <div
               class="hover:bg-m200 text-s500 ml-6 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
               (click)="toggleSearch()"
             >
@@ -437,9 +437,9 @@
                 [isFilled]="showSearch === true"
                 class="mb-1 flex h-6 w-6 flex-shrink-0"
               ></m-mag-glass-icon>
-            </div>
+            </div> -->
 
-            <div class="ml-3 flex h-9 w-9 flex-shrink-0">
+            <div class="ml-6 flex h-9 w-9 flex-shrink-0">
               <button
                 class="text-s500 hover:bg-m200 flex h-9 w-9 flex-shrink-0 cursor-pointer select-none flex-row items-center justify-center rounded"
                 (click)="toggleModelTreeLevels()"
@@ -472,7 +472,7 @@
               (click)="setShowCharts({ isFilterByModel: true })"
               class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center pl-2 text-lg"
             >
-              <div class="flex w-[80px] flex-row items-center justify-center">
+              <div class="flex w-[160px] flex-row items-center justify-center">
                 <div
                   [ngClass]="{
                     'text-s400':
@@ -481,7 +481,7 @@
                       showSchema === false && isFilterByModel === true
                   }"
                 >
-                  CHARTS
+                  MODEL CHARTS
                 </div>
               </div>
             </div>
@@ -515,23 +515,6 @@
                 [isFilled]="isFilterByModel === true"
               ></m-filter-icon>
             </div> -->
-
-            <div class="flex flex-grow"></div>
-
-            <button
-              *ngIf="showSchema === false && filteredDraftsLength > 0"
-              class="ml-5 mr-10 flex flex-shrink-0 flex-row items-center rounded border px-4 py-2 focus:outline-none"
-              [ngClass]="{
-                'border-s400 text-s500 hover:bg-s100': filteredDraftsLength > 0,
-                'border-s300 text-s400 cursor-default':
-                  filteredDraftsLength === 0
-              }"
-              [disabled]="filteredDraftsLength === 0"
-              (click)="deleteDrafts()"
-            >
-              <m-trash-icon></m-trash-icon>
-              <div class="ml-3">Drafts</div>
-            </button>
           </div>
 
           <div class="flex flex-1 flex-col" *ngIf="showSchema === true">
@@ -628,6 +611,24 @@
                   (click)="resetChartsSearch()"
                 ></m-delete-icon>
               </div>
+
+              <div class="flex flex-grow"></div>
+
+              <button
+                *ngIf="showSchema === false && filteredDraftsLength > 0"
+                class="ml-5 mr-10 flex flex-shrink-0 flex-row items-center rounded border px-4 py-2 focus:outline-none"
+                [ngClass]="{
+                  'border-s400 text-s500 hover:bg-s100':
+                    filteredDraftsLength > 0,
+                  'border-s300 text-s400 cursor-default':
+                    filteredDraftsLength === 0
+                }"
+                [disabled]="filteredDraftsLength === 0"
+                (click)="deleteDrafts()"
+              >
+                <m-trash-icon></m-trash-icon>
+                <div class="ml-3">Drafts</div>
+              </button>
             </div>
 
             <div
