@@ -651,7 +651,10 @@
                 <div class="h-[12px]"></div>
 
                 <div
-                  *ngFor="let c of filteredCharts; let i = index"
+                  *ngFor="
+                    let c of filteredCharts | slice: 0 : filteredDraftsLength;
+                    let i = index
+                  "
                   [attr.chartId]="c.chartId"
                 >
                   <div
@@ -661,19 +664,58 @@
                     Drafts
                   </div>
 
-                  <div
-                    *ngIf="i === filteredDraftsLength"
-                    class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
-                  >
-                    Saved Charts
-                  </div>
+                  <ng-container
+                    *ngTemplateOutlet="
+                      chartsItem;
+                      context: { i: i, c: c, isDraft: true }
+                    "
+                  ></ng-container>
+                </div>
 
+                <div
+                  *ngIf="
+                    (filteredCharts | slice: filteredDraftsLength).length > 0
+                  "
+                  class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
+                >
+                  Saved Charts
+                </div>
+
+                <div
+                  *ngFor="
+                    let c of filteredCharts | slice: filteredDraftsLength;
+                    let i = index
+                  "
+                  [attr.chartId]="c.chartId"
+                >
+                  <ng-container
+                    *ngTemplateOutlet="
+                      chartsItem;
+                      context: { i: i, c: c, isDraft: false }
+                    "
+                  ></ng-container>
+                </div>
+
+                <ng-template
+                  #chartsItem
+                  let-i="i"
+                  let-c="c"
+                  let-isDraft="isDraft"
+                >
                   <div
                     class="hover:bg-m50 group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
                     (click)="navToChart(c)"
                     [ngClass]="{
-                      'mt-4': i === 0,
-                      'mb-5': i === filteredCharts.length - 1
+                      'mt-4': isDraft === true && i === 0,
+                      'mb-5':
+                        (isDraft === false &&
+                          i ===
+                            (filteredCharts | slice: filteredDraftsLength)
+                              .length -
+                              1) ||
+                        (isDraft === true &&
+                          filteredDraftsLength === filteredCharts.length &&
+                          i === filteredCharts.length - 1)
                     }"
                   >
                     <div class="ml-4 mr-3 flex h-2 items-center">
@@ -771,7 +813,7 @@
                       ></m-chart-options>
                     </div>
                   </div>
-                </div>
+                </ng-template>
               </ng-scrollbar>
             </div>
 
