@@ -42,6 +42,11 @@ import {
   constants as frontConstants
 } from '~front/barrels/constants';
 
+import {
+  IActionMapping,
+  TreeComponent,
+  TreeNode
+} from '@ali-hm/angular-tree-component';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { RefreshItem } from '~front/app/interfaces/refresh-item';
@@ -55,6 +60,14 @@ import { StructChartResolver } from '~front/app/resolvers/struct-chart.resolver'
 import { ChartService } from '~front/app/services/chart.service';
 import { DataService } from '~front/app/services/data.service';
 import { UiService } from '~front/app/services/ui.service';
+
+export class ChartsItemNode {
+  id: string;
+  isTop: boolean;
+  topLabel: string;
+  chart: common.ChartX;
+  children: ChartsItemNode[];
+}
 
 export class QueryPartItem {
   label: string;
@@ -158,6 +171,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
   charts: common.ChartX[];
   chartsFilteredByWord: common.ChartX[];
   filteredCharts: common.ChartX[];
+
+  filteredChartNodes: ChartsItemNode[] = [];
 
   charts$ = this.chartsQuery.select().pipe(
     tap(x => {
@@ -584,6 +599,17 @@ export class ModelsComponent implements OnInit, OnDestroy {
   private searchSchemaTimer: any;
   private searchChartsTimer: any;
 
+  actionMapping: IActionMapping = {
+    mouse: {}
+  };
+
+  treeOptions = {
+    actionMapping: this.actionMapping,
+    displayField: 'label'
+  };
+
+  @ViewChild('chartsTree') chartsTree: TreeComponent;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -677,6 +703,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
       )
       .subscribe();
   }
+
+  treeOnInitialized() {}
+
+  treeOnUpdateData() {}
 
   setShowSchema() {
     if (this.showSchema === true) {
@@ -1724,6 +1754,72 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.filteredDraftsLength = this.filteredCharts.filter(
       y => y.draft === true
     ).length;
+
+    this.makeChartsItemNodes();
+  }
+
+  makeChartsItemNodes() {
+    let chartsItemNodes: ChartsItemNode[] = [];
+
+    let idxs;
+
+    let nonDraftCharts = this.charts.filter(x => x.draft === false);
+
+    if (common.isDefinedAndNotEmpty(this.searchChartsWord)) {
+      let haystack = nonDraftCharts.map(x =>
+        common.isDefined(x.title)
+          ? `${x.modelLabel} ${x.title}`
+          : `${x.modelLabel} ${x.chartId}`
+      );
+      let opts = {};
+      let uf = new uFuzzy(opts);
+      idxs = uf.filter(haystack, this.searchChartsWord);
+    }
+
+    let chartsFilteredByWord = common.isDefinedAndNotEmpty(
+      this.searchChartsWord
+    )
+      ? idxs != null && idxs.length > 0
+        ? idxs.map((idx: number): common.ChartX => nonDraftCharts[idx])
+        : []
+      : nonDraftCharts;
+
+    chartsFilteredByWord.forEach(chart => {
+      let chartsItemNode: ChartsItemNode = {
+        id: chart.chartId,
+        isTop: false,
+        topLabel: chart.modelLabel,
+        chart: chart,
+        children: []
+      };
+
+      let topNode: ChartsItemNode = chartsItemNodes.find(
+        (node: any) => node.id === chart.modelId
+      );
+
+      if (common.isDefined(topNode)) {
+        topNode.children.push(chartsItemNode);
+      } else {
+        topNode = {
+          id: chart.modelId,
+          isTop: true,
+          topLabel: chart.modelLabel,
+          chart: undefined,
+          children: [chartsItemNode]
+        };
+
+        chartsItemNodes.push(topNode);
+      }
+    });
+
+    this.filteredChartNodes = chartsItemNodes;
+  }
+
+  chartsItemModelNodeOnClick(node: TreeNode) {
+    node.toggleActivated();
+    if (node.hasChildren) {
+      node.toggleExpanded();
+    }
   }
 
   newChart() {

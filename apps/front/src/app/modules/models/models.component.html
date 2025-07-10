@@ -681,20 +681,84 @@
                   Saved Charts
                 </div>
 
-                <div
-                  *ngFor="
-                    let c of filteredCharts | slice: filteredDraftsLength;
-                    let i = index
-                  "
-                  [attr.chartId]="c.chartId"
-                >
-                  <ng-container
-                    *ngTemplateOutlet="
-                      chartsItem;
-                      context: { i: i, c: c, isDraft: false }
+                <div *ngIf="isFilterByModel === true">
+                  <div
+                    *ngFor="
+                      let c of filteredCharts | slice: filteredDraftsLength;
+                      let i = index
                     "
-                  ></ng-container>
+                    [attr.chartId]="c.chartId"
+                  >
+                    <ng-container
+                      *ngTemplateOutlet="
+                        chartsItem;
+                        context: { i: i, c: c, isDraft: false }
+                      "
+                    ></ng-container>
+                  </div>
                 </div>
+
+                <tree-root
+                  *ngIf="isFilterByModel === false"
+                  class="h-2 w-full"
+                  #chartsTree
+                  [nodes]="filteredChartNodes"
+                  [options]="treeOptions"
+                  (initialized)="treeOnInitialized()"
+                  (updateData)="treeOnUpdateData()"
+                >
+                  <ng-template #treeNodeTemplate let-node="node">
+                    <div
+                      *ngIf="node.data.isTop === true"
+                      data-cy="chartsTreeItem"
+                      class="flex h-11 w-full cursor-pointer select-none flex-row rounded px-5 pr-5"
+                      (click)="chartsItemModelNodeOnClick(node)"
+                    >
+                      <div class="relative flex w-full flex-row items-center">
+                        <div class="flex min-w-[2px] flex-row items-center">
+                          <div class="flex flex-row items-center space-x-1">
+                            <div class="text-s500 flex items-center">
+                              <m-chevron-right-icon
+                                *ngIf="!node.isExpanded && node.hasChildren"
+                              ></m-chevron-right-icon>
+
+                              <m-chevron-down-icon
+                                *ngIf="node.isExpanded && node.hasChildren"
+                              ></m-chevron-down-icon>
+                            </div>
+                          </div>
+
+                          <div class="text-s1 ml-0 flex-grow truncate">
+                            <div class="flex flex-col">
+                              <div class="flex">
+                                <span
+                                  class="text-s500 ml-3 truncate text-base font-semibold"
+                                >
+                                  <span class="">{{ node.data.topLabel }}</span>
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div *ngIf="node.data.isTop === false">
+                      <ng-container
+                        *ngTemplateOutlet="
+                          chartsItem;
+                          context: {
+                            i: null,
+                            c: node.data.chart,
+                            isDraft: false
+                          }
+                        "
+                      ></ng-container>
+                    </div>
+                  </ng-template>
+                </tree-root>
+
+                <div class="mb-5" *ngIf="isFilterByModel === false"></div>
 
                 <ng-template
                   #chartsItem
@@ -708,14 +772,15 @@
                     [ngClass]="{
                       'mt-4': isDraft === true && i === 0,
                       'mb-5':
-                        (isDraft === false &&
+                        i != null &&
+                        ((isDraft === false &&
                           i ===
                             (filteredCharts | slice: filteredDraftsLength)
                               .length -
                               1) ||
-                        (isDraft === true &&
-                          filteredDraftsLength === filteredCharts.length &&
-                          i === filteredCharts.length - 1)
+                          (isDraft === true &&
+                            filteredDraftsLength === filteredCharts.length &&
+                            i === filteredCharts.length - 1))
                     }"
                   >
                     <div class="ml-4 mr-3 flex h-2 items-center">
