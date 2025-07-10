@@ -645,7 +645,7 @@ export class ModelTreeComponent implements AfterViewInit {
       });
     }
 
-    this.nodesExtra =
+    let nodesExtra =
       this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime ||
       this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat
         ? flatNodes
@@ -654,9 +654,7 @@ export class ModelTreeComponent implements AfterViewInit {
           : nestedNodes;
 
     if (common.isDefinedAndNotEmpty(searchSchemaWord)) {
-      let filteredNodesExtra: ModelNodeExtra[] = common.makeCopy(
-        this.nodesExtra
-      );
+      let filteredNodesExtra: ModelNodeExtra[] = common.makeCopy(nodesExtra);
 
       filteredNodesExtra = filteredNodesExtra.filter(aNode => {
         let aCheck = false;
@@ -718,6 +716,8 @@ export class ModelTreeComponent implements AfterViewInit {
         //   ? []
         //   :
         filteredNodesExtra;
+    } else {
+      this.nodesExtra = nodesExtra;
     }
   }
 

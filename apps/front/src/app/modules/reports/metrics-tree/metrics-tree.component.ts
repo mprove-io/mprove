@@ -9,6 +9,8 @@ import {
   Component,
   ViewChild
 } from '@angular/core';
+import uFuzzy from '@leeoniya/ufuzzy';
+import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -39,57 +41,17 @@ export class MetricNode {
 export class MetricsTreeComponent implements AfterViewInit {
   nodeClassMeasure = common.FieldClassEnum.Measure;
 
-  nodes: MetricNode[] = [];
-
   metrics: common.ModelMetric[];
-  metrics$ = this.structQuery.metrics$.pipe(
-    tap(x => {
-      let nodes: MetricNode[] = [];
 
-      x.forEach(metric => {
-        let metricNode: MetricNode = {
-          id: metric.metricId,
-          isTop: false,
-          topLabel: metric.topLabel,
-          partNodeLabel: metric.partNodeLabel,
-          partFieldLabel: metric.partFieldLabel,
-          timeLabel: metric.timeLabel,
-          isField: true,
-          fieldResult: metric.fieldResult,
-          isSelected: false,
-          metric: metric,
-          children: []
-        };
+  metricNodes: MetricNode[] = [];
+  metricNodes$ = combineLatest([
+    this.structQuery.metrics$,
+    this.uiQuery.searchMetricsWord$
+  ]).pipe(
+    tap(([metrics, searchMetricsWord]: [common.ModelMetric[], string]) => {
+      this.metrics = metrics;
 
-        let timeId = metric.timeFieldId.split('.').join('_');
-        let topNodeId = `${metric.topNode}_by_${timeId}`;
-
-        let topNode: MetricNode = nodes.find(
-          (node: any) => node.id === topNodeId
-        );
-
-        if (common.isDefined(topNode)) {
-          topNode.children.push(metricNode);
-        } else {
-          topNode = {
-            id: topNodeId,
-            isTop: true,
-            topLabel: metric.topLabel,
-            partNodeLabel: metric.partNodeLabel,
-            partFieldLabel: metric.partFieldLabel,
-            timeLabel: metric.timeLabel,
-            isField: false,
-            fieldResult: undefined,
-            isSelected: false,
-            metric: undefined,
-            children: [metricNode]
-          };
-
-          nodes.push(topNode);
-        }
-      });
-
-      this.nodes = nodes;
+      this.makeMetricNodes({ searchMetricsWord: searchMetricsWord });
       this.cd.detectChanges();
     })
   );
@@ -140,6 +102,99 @@ export class MetricsTreeComponent implements AfterViewInit {
     // if (this.model.nodes.length === 0) {
     //   return;
     // }
+  }
+
+  makeMetricNodes(item: { searchMetricsWord: string }) {
+    let { searchMetricsWord } = item;
+
+    let metricNodes: MetricNode[] = [];
+
+    this.metrics.forEach(metric => {
+      let metricNode: MetricNode = {
+        id: metric.metricId,
+        isTop: false,
+        topLabel: metric.topLabel,
+        partNodeLabel: metric.partNodeLabel,
+        partFieldLabel: metric.partFieldLabel,
+        timeLabel: metric.timeLabel,
+        isField: true,
+        fieldResult: metric.fieldResult,
+        isSelected: false,
+        metric: metric,
+        children: []
+      };
+
+      let timeId = metric.timeFieldId.split('.').join('_');
+      let topNodeId = `${metric.topNode}_by_${timeId}`;
+
+      let topNode: MetricNode = metricNodes.find(
+        (node: any) => node.id === topNodeId
+      );
+
+      if (common.isDefined(topNode)) {
+        topNode.children.push(metricNode);
+      } else {
+        topNode = {
+          id: topNodeId,
+          isTop: true,
+          topLabel: metric.topLabel,
+          partNodeLabel: metric.partNodeLabel,
+          partFieldLabel: metric.partFieldLabel,
+          timeLabel: metric.timeLabel,
+          isField: false,
+          fieldResult: undefined,
+          isSelected: false,
+          metric: undefined,
+          children: [metricNode]
+        };
+
+        metricNodes.push(topNode);
+      }
+    });
+
+    if (common.isDefinedAndNotEmpty(searchMetricsWord)) {
+      let filteredMetricNodes: MetricNode[] = common.makeCopy(metricNodes);
+
+      filteredMetricNodes = filteredMetricNodes.filter(aNode => {
+        if (aNode.children?.length > 0) {
+          aNode.children = aNode.children.filter(bNode => {
+            return this.metricSearchFn({
+              term: searchMetricsWord,
+              topLabel: bNode.topLabel,
+              timeLabel: bNode.timeLabel,
+              partNodeLabel: bNode.partNodeLabel,
+              partFieldLabel: bNode.partFieldLabel
+            });
+          });
+        }
+
+        return aNode.children.length > 0;
+      });
+
+      this.metricNodes = filteredMetricNodes;
+    } else {
+      this.metricNodes = metricNodes;
+    }
+  }
+
+  metricSearchFn(item: {
+    term: string;
+    topLabel: string;
+    timeLabel: string;
+    partNodeLabel: string;
+    partFieldLabel: string;
+  }) {
+    let { term, topLabel, timeLabel, partNodeLabel, partFieldLabel } = item;
+
+    let haystack = [
+      `${topLabel} ${timeLabel} ${partNodeLabel} ${partFieldLabel}`
+    ];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
   }
 
   nodeOnClick(node: TreeNode) {

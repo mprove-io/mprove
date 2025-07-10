@@ -26,6 +26,7 @@ export class UiState {
   metricsLoadedTs: number;
   showSchema: boolean;
   searchSchemaWord: string;
+  searchMetricsWord: string;
   panel: common.PanelEnum;
   needSave: boolean;
   showTileParameters: boolean;
@@ -70,6 +71,7 @@ let uiState: UiState = {
   metricsLoadedTs: 0,
   showSchema: false,
   searchSchemaWord: undefined,
+  searchMetricsWord: undefined,
   panel: common.PanelEnum.Tree,
   needSave: false,
   showTileParameters: false,
@@ -167,6 +169,10 @@ export class UiQuery extends BaseQuery<UiState> {
   modelTreeLevels$ = this.store.pipe(select(state => state.modelTreeLevels));
 
   searchSchemaWord$ = this.store.pipe(select(state => state.searchSchemaWord));
+
+  searchMetricsWord$ = this.store.pipe(
+    select(state => state.searchMetricsWord)
+  );
 
   secondFileNodeId$ = this.store.pipe(select(state => state.secondFileNodeId));
 

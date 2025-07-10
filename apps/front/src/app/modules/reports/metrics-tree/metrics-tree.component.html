@@ -6,7 +6,7 @@
       <tree-root
         class="h-2 w-full"
         #itemsTree
-        [nodes]="nodes"
+        [nodes]="metricNodes"
         [options]="treeOptions"
         (initialized)="treeOnInitialized()"
         (updateData)="treeOnUpdateData()"
@@ -107,4 +107,4 @@
   </div>
 </div>
 
-<div *ngIf="metrics$ | async"></div>
+<div *ngIf="metricNodes$ | async"></div>

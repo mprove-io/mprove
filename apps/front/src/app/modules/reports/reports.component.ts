@@ -100,7 +100,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   timeSpecTimestamps = common.TimeSpecEnum.Timestamps;
 
   isShow = true;
-  showSearch = false;
+  showSearch = true;
 
   isShowLeft = true;
 
@@ -170,7 +170,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   refreshList: RefreshItem[] = constants.REFRESH_LIST;
 
-  word: string;
+  searchMetricsWord: string;
+  searchReportsWord: string;
 
   filteredDraftsLength: number;
 
@@ -971,7 +972,19 @@ export class ReportsComponent implements OnInit, OnDestroy {
     });
   }
 
-  searchWordChange() {
+  searchMetricsWordChange() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+
+    this.timer = setTimeout(() => {
+      this.uiQuery.updatePart({
+        searchMetricsWord: this.searchMetricsWord
+      });
+    }, 600);
+  }
+
+  searchReportsWordChange() {
     if (this.timer) {
       clearTimeout(this.timer);
     }
@@ -984,8 +997,15 @@ export class ReportsComponent implements OnInit, OnDestroy {
     }, 600);
   }
 
-  resetSearch() {
-    this.word = undefined;
+  resetMetricsSearch() {
+    this.searchMetricsWord = undefined;
+    this.uiQuery.updatePart({
+      searchMetricsWord: this.searchMetricsWord
+    });
+  }
+
+  resetReportsSearch() {
+    this.searchReportsWord = undefined;
     this.makeFilteredReports();
 
     this.cd.detectChanges();
@@ -998,16 +1018,18 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let draftReports = this.reports.filter(x => x.draft === true);
     let nonDraftReports = this.reports.filter(x => x.draft === false);
 
-    if (common.isDefinedAndNotEmpty(this.word)) {
+    if (common.isDefinedAndNotEmpty(this.searchReportsWord)) {
       let haystack = nonDraftReports.map(x =>
         common.isDefined(x.title) ? `${x.title}` : `${x.reportId}`
       );
       let opts = {};
       let uf = new uFuzzy(opts);
-      idxs = uf.filter(haystack, this.word);
+      idxs = uf.filter(haystack, this.searchReportsWord);
     }
 
-    this.reportsFilteredByWord = common.isDefinedAndNotEmpty(this.word)
+    this.reportsFilteredByWord = common.isDefinedAndNotEmpty(
+      this.searchReportsWord
+    )
       ? idxs != null && idxs.length > 0
         ? idxs.map((idx: number): common.ReportX => nonDraftReports[idx])
         : []
@@ -1154,8 +1176,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
   toggleSearch() {
     this.showSearch = !this.showSearch;
 
-    if (this.showSearch === false && common.isDefined(this.word)) {
-      this.word = undefined;
+    if (this.showSearch === false && common.isDefined(this.searchReportsWord)) {
+      this.searchReportsWord = undefined;
       this.makeFilteredReports();
     }
 
