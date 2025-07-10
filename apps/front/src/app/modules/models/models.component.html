@@ -540,6 +540,47 @@
               <div class="flex flex-row"></div>
             </div>
 
+            <div
+              *ngIf="showSearch === true"
+              class="mb-5 mt-5 flex h-11 flex-row items-center"
+            >
+              <m-search-icon class="text-s1 ml-8"></m-search-icon>
+
+              <input
+                spellcheck="false"
+                autocomplete="off"
+                data-cy="chartsSearchInput"
+                class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] rounded"
+                placeholder="Search Schema Fields"
+                [ngClass]="{
+                  'bg-p200': !!searchSchemaWord
+                }"
+                [(ngModel)]="searchSchemaWord"
+                (ngModelChange)="searchSchemaWordChange()"
+              />
+
+              <div
+                class="ml-3 h-9 w-9 flex-shrink-0"
+                *ngIf="!!searchSchemaWord"
+              >
+                <m-delete-icon
+                  class="text-s1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  [ngClass]="{
+                    'bg-p200 hover:bg-p300 cursor-pointer': !!searchSchemaWord
+                  }"
+                  (click)="resetSchemaSearch()"
+                ></m-delete-icon>
+              </div>
+            </div>
+
+            <div
+              *ngIf="showSearch === true"
+              class="divide-s300 ml-6 mr-9 flex flex-col divide-y"
+            >
+              <div class="flex flex-row"></div>
+              <div class="flex flex-row"></div>
+            </div>
+
             <m-model-tree
               class="flex flex-1"
               (expandFilters)="expandFiltersPanel()"
@@ -563,21 +604,28 @@
                 autocomplete="off"
                 data-cy="chartsSearchInput"
                 class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] rounded"
-                placeholder="Search Charts"
+                [placeholder]="
+                  isFilterByModel === true
+                    ? 'Search Model Charts'
+                    : 'Search All Charts'
+                "
                 [ngClass]="{
-                  'bg-p200': !!word
+                  'bg-p200': !!searchChartsWord
                 }"
-                [(ngModel)]="word"
-                (ngModelChange)="searchWordChange()"
+                [(ngModel)]="searchChartsWord"
+                (ngModelChange)="searchChartsWordChange()"
               />
 
-              <div class="ml-3 h-9 w-9 flex-shrink-0" *ngIf="!!word">
+              <div
+                class="ml-3 h-9 w-9 flex-shrink-0"
+                *ngIf="!!searchChartsWord"
+              >
                 <m-delete-icon
                   class="text-s1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                   [ngClass]="{
-                    'bg-p200 hover:bg-p300 cursor-pointer': !!word
+                    'bg-p200 hover:bg-p300 cursor-pointer': !!searchChartsWord
                   }"
-                  (click)="resetSearch()"
+                  (click)="resetChartsSearch()"
                 ></m-delete-icon>
               </div>
             </div>

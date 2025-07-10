@@ -150,7 +150,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
     })
   );
 
-  word: string;
+  searchChartsWord: string;
+  searchSchemaWord: string;
 
   filteredDraftsLength = 0;
 
@@ -580,7 +581,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
     //   iconPath: 'assets/charts/gauge_linear.svg'
   ];
 
-  private timer: any;
+  private searchSchemaTimer: any;
+  private searchChartsTimer: any;
 
   constructor(
     private router: Router,
@@ -622,7 +624,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
 
-    // this.searchWordChange();
+    // this.searchChartsWordChange();
+    // this.searchSchemaWordChange();
 
     setTimeout(() => {
       this.scrollToSelectedChart({ isSmooth: false });
@@ -1580,12 +1583,25 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
   }
 
-  searchWordChange() {
-    if (this.timer) {
-      clearTimeout(this.timer);
+  searchSchemaWordChange() {
+    if (this.searchSchemaTimer) {
+      clearTimeout(this.searchSchemaTimer);
     }
 
-    this.timer = setTimeout(() => {
+    this.searchSchemaTimer = setTimeout(() => {
+      this.makeFilteredSchema();
+
+      this.cd.detectChanges();
+      // this.scrollToSelectedChart();
+    }, 600);
+  }
+
+  searchChartsWordChange() {
+    if (this.searchChartsTimer) {
+      clearTimeout(this.searchChartsTimer);
+    }
+
+    this.searchChartsTimer = setTimeout(() => {
       this.makeFilteredCharts();
 
       this.cd.detectChanges();
@@ -1593,8 +1609,15 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }, 600);
   }
 
-  resetSearch() {
-    this.word = undefined;
+  resetSchemaSearch() {
+    this.searchSchemaWord = undefined;
+    this.makeFilteredSchema();
+
+    this.cd.detectChanges();
+  }
+
+  resetChartsSearch() {
+    this.searchChartsWord = undefined;
     this.makeFilteredCharts();
 
     this.cd.detectChanges();
@@ -1634,6 +1657,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
     });
   }
 
+  makeFilteredSchema() {}
+
   makeFilteredCharts() {
     let idxs;
 
@@ -1655,16 +1680,18 @@ export class ModelsComponent implements OnInit, OnDestroy {
             )
           : [];
 
-    if (common.isDefinedAndNotEmpty(this.word)) {
+    if (common.isDefinedAndNotEmpty(this.searchChartsWord)) {
       let haystack = nonDraftCharts.map(x =>
         common.isDefined(x.title) ? `${x.title}` : `${x.chartId}`
       );
       let opts = {};
       let uf = new uFuzzy(opts);
-      idxs = uf.filter(haystack, this.word);
+      idxs = uf.filter(haystack, this.searchChartsWord);
     }
 
-    this.chartsFilteredByWord = common.isDefinedAndNotEmpty(this.word)
+    this.chartsFilteredByWord = common.isDefinedAndNotEmpty(
+      this.searchChartsWord
+    )
       ? idxs != null && idxs.length > 0
         ? idxs.map((idx: number): common.ChartX => nonDraftCharts[idx])
         : []
@@ -1738,8 +1765,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
   toggleSearch() {
     this.showSearch = !this.showSearch;
 
-    if (this.showSearch === false && common.isDefined(this.word)) {
-      this.word = undefined;
+    if (this.showSearch === false && common.isDefined(this.searchChartsWord)) {
+      this.searchChartsWord = undefined;
       this.makeFilteredCharts();
     }
 
