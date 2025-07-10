@@ -1589,10 +1589,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
 
     this.searchSchemaTimer = setTimeout(() => {
-      this.makeFilteredSchema();
-
-      this.cd.detectChanges();
-      // this.scrollToSelectedChart();
+      this.uiQuery.updatePart({
+        searchSchemaWord: this.searchSchemaWord
+      });
     }, 600);
   }
 
@@ -1611,9 +1610,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   resetSchemaSearch() {
     this.searchSchemaWord = undefined;
-    this.makeFilteredSchema();
-
-    this.cd.detectChanges();
+    this.uiQuery.updatePart({
+      searchSchemaWord: this.searchSchemaWord
+    });
   }
 
   resetChartsSearch() {
@@ -1656,8 +1655,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
       model: this.model
     });
   }
-
-  makeFilteredSchema() {}
 
   makeFilteredCharts() {
     let idxs;

@@ -11,6 +11,7 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
+import uFuzzy from '@leeoniya/ufuzzy';
 import { combineLatest } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { FractionSubTypeOption, ModelNode } from '~common/_index';
@@ -72,19 +73,21 @@ export class ModelTreeComponent implements AfterViewInit {
   nodesExtra$ = combineLatest([
     this.modelQuery.select(),
     this.chartQuery.select(),
-    this.uiQuery.modelTreeLevels$
+    this.uiQuery.modelTreeLevels$,
+    this.uiQuery.searchSchemaWord$
   ]).pipe(
     tap(
-      ([model, chart, modelTreeLevels]: [
+      ([model, chart, modelTreeLevels, searchSchemaWord]: [
         ModelState,
         common.ChartX,
-        common.ModelTreeLevelsEnum
+        common.ModelTreeLevelsEnum,
+        string
       ]) => {
         this.model = model;
         this.mconfig = chart.tiles[0].mconfig;
         this.modelTreeLevels = modelTreeLevels;
 
-        this.makeNodesExtra();
+        this.makeNodesExtra({ searchSchemaWord: searchSchemaWord });
         this.cd.detectChanges();
       }
     )
@@ -432,7 +435,9 @@ export class ModelTreeComponent implements AfterViewInit {
     // });
   }
 
-  makeNodesExtra() {
+  makeNodesExtra(item: { searchSchemaWord: string }) {
+    let { searchSchemaWord } = item;
+
     // console.log('this.model.nodes', this.model.nodes);
     let nestedNodes = this.model.nodes.map(topNode => {
       topNode.children.map(middleNode => {
@@ -647,6 +652,94 @@ export class ModelTreeComponent implements AfterViewInit {
         : this.modelTreeLevels === common.ModelTreeLevelsEnum.NestedFlatTime
           ? nestedFlatTimeNodes
           : nestedNodes;
+
+    if (common.isDefinedAndNotEmpty(searchSchemaWord)) {
+      let filteredNodesExtra: ModelNodeExtra[] = common.makeCopy(
+        this.nodesExtra
+      );
+
+      filteredNodesExtra = filteredNodesExtra.filter(aNode => {
+        let aCheck = false;
+
+        if (aNode.children?.length > 0) {
+          aCheck = true;
+
+          aNode.children = aNode.children.filter(bNode => {
+            let bCheck = false;
+
+            if (bNode.children?.length > 0) {
+              bCheck = true;
+              bNode.children = bNode.children.filter(cNode => {
+                return (
+                  cNode.isField === false ||
+                  this.fieldSearchFn({
+                    term: searchSchemaWord,
+                    label: cNode.label,
+                    timeLabel: cNode.timeLabel,
+                    joinLabel: cNode.joinLabel
+                  })
+                );
+              });
+            }
+
+            return bCheck === true
+              ? bNode.children.length > 0
+              : bNode.isField === false ||
+                  this.fieldSearchFn({
+                    term: searchSchemaWord,
+                    label: bNode.label,
+                    timeLabel: bNode.timeLabel,
+                    joinLabel: bNode.joinLabel
+                  });
+          });
+        }
+
+        return aCheck === true &&
+          (this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime ||
+            this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat)
+          ? aNode.children.length > 0
+          : aCheck === true
+            ? aNode.children.filter(
+                x => x.nodeClass !== common.FieldClassEnum.Info
+              ).length > 0
+            : aNode.isField === false ||
+              this.fieldSearchFn({
+                term: searchSchemaWord,
+                label: aNode.label,
+                timeLabel: aNode.timeLabel,
+                joinLabel: aNode.joinLabel
+              });
+      });
+
+      this.nodesExtra =
+        // filteredNodesExtra.filter(
+        //   x => x.nodeClass !== common.FieldClassEnum.Info
+        // ).length === 0
+        //   ? []
+        //   :
+        filteredNodesExtra;
+    }
+  }
+
+  fieldSearchFn(item: {
+    term: string;
+    label: string;
+    timeLabel: string;
+    joinLabel: string;
+  }) {
+    let { term, label, timeLabel, joinLabel } = item;
+
+    let haystack = [
+      common.isDefinedAndNotEmpty(timeLabel)
+        ? `${joinLabel} ${timeLabel} ${label}`
+        : `${joinLabel} ${label}`
+    ];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
   }
 
   updateNodeExtra(node: ModelNode): ModelNodeExtra {
