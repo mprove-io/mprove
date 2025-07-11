@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { common } from '~backend/barrels/common';
 
 export function makeChartFileText(item: {
@@ -5,9 +6,19 @@ export function makeChartFileText(item: {
   chartId: string;
   tileTitle: string;
   roles: string;
+  malloyQueryFilePath: string;
   modelFilePath: string;
+  modelId: string;
 }) {
-  let { mconfig, chartId, tileTitle, roles, modelFilePath } = item;
+  let {
+    mconfig,
+    chartId,
+    tileTitle,
+    roles,
+    malloyQueryFilePath,
+    modelFilePath,
+    modelId
+  } = item;
 
   let filePartTile: common.FilePartTile = common.prepareTile({
     isForDashboard: false,
@@ -28,8 +39,13 @@ export function makeChartFileText(item: {
 
   let malloyQueryText;
 
+  let relativePath = path.relative(
+    `/${path.dirname(malloyQueryFilePath)}`,
+    `/${modelFilePath}`
+  );
+
   if (mconfig.modelType === common.ModelTypeEnum.Malloy) {
-    malloyQueryText = `import '${modelFilePath.split('/').slice(1).join('/')}';
+    malloyQueryText = `import { ${modelId} } from '${relativePath}';
 
 query: ${chartId} is ${mconfig.malloyQuery.substring(5)}
 `;
