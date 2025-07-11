@@ -7,6 +7,7 @@ import {
 } from 'class-validator';
 import { common } from '~api-to-backend/barrels/common';
 import { ToBackendRequest } from '~api-to-backend/interfaces/to-backend/to-backend-request';
+import { IsTimezone } from '~common/functions/is-timezone';
 
 export class ToBackendSaveModifyChartRequestPayload {
   @IsString()
@@ -30,14 +31,12 @@ export class ToBackendSaveModifyChartRequestPayload {
   @IsString()
   tileTitle: string;
 
+  @IsTimezone()
+  timezone: string;
+
   @IsOptional()
   @IsString()
   accessRoles?: string;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => common.MconfigX)
-  mconfig: common.MconfigX;
 }
 
 export class ToBackendSaveModifyChartRequest extends ToBackendRequest {

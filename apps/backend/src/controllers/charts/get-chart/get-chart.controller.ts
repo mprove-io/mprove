@@ -125,6 +125,9 @@ export class GetChartController {
       mconfigId: chart.tiles[0].mconfigId
     });
 
+    console.log('getChart chartMconfig.select');
+    console.log(chartMconfig.select);
+
     let model = await this.modelsService.getModelCheckExists({
       structId: bridge.structId,
       modelId: chartMconfig.modelId
@@ -138,8 +141,7 @@ export class GetChartController {
     let isError = false;
 
     let isSearchExisting =
-      model.type !== common.ModelTypeEnum.Store &&
-      // model.isStoreModel === false &&
+      model.type === common.ModelTypeEnum.SQL &&
       chartMconfig.timezone === timezone;
 
     // console.log('isSearchExisting');
@@ -284,13 +286,18 @@ export class GetChartController {
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
+    let mconfig = isSearchExisting ? chartMconfig : newMconfig;
+
+    // console.log('getChart mconfig.select');
+    // console.log(mconfig.select);
+
     let payload: apiToBackend.ToBackendGetChartResponsePayload = {
       userMember: apiMember,
       chart: this.wrapToApiService.wrapToApiChart({
         chart: chart,
         mconfigs: [
           this.wrapToApiService.wrapToApiMconfig({
-            mconfig: isSearchExisting ? chartMconfig : newMconfig,
+            mconfig: mconfig,
             modelFields: model.fields
           })
         ],

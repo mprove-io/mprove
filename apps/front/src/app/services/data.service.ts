@@ -257,11 +257,17 @@ export class DataService {
 
     let qData: QDataRow[] = [];
 
-    console.log('data');
-    console.log(data);
+    // console.log('dataService data');
+    // console.log(data);
 
-    console.log('mconfig.compiledQuery');
-    console.log(mconfig.compiledQuery);
+    // console.log('dataService mconfig.compiledQuery');
+    // console.log(mconfig.compiledQuery);
+
+    // console.log('dataService mconfig.select');
+    // console.log(mconfig.select);
+
+    // console.log('dataService mconfig.fields');
+    // console.log(mconfig.fields);
 
     data.forEach((row: SourceDataRow) => {
       let r: QDataRow = {};

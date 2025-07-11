@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
+import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
@@ -19,6 +20,7 @@ import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
+import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeChartFileText } from '~backend/functions/make-chart-file-text';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -27,6 +29,7 @@ import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { ChartsService } from '~backend/services/charts.service';
 import { EnvsService } from '~backend/services/envs.service';
+import { MalloyService } from '~backend/services/malloy.service';
 import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
@@ -43,6 +46,7 @@ let retry = require('async-retry');
 @Controller()
 export class SaveModifyChartController {
   constructor(
+    private malloyService: MalloyService,
     private branchesService: BranchesService,
     private mconfigsService: MconfigsService,
     private rabbitService: RabbitService,
@@ -85,7 +89,7 @@ export class SaveModifyChartController {
       chartId,
       tileTitle,
       accessRoles,
-      mconfig
+      timezone
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
@@ -147,22 +151,23 @@ export class SaveModifyChartController {
       chartId: chartId
     });
 
-    if (common.isUndefined(mconfig)) {
-      let mconfigEnt = await this.mconfigsService.getMconfigCheckExists({
-        structId: bridge.structId,
-        mconfigId: existingChart.tiles[0].mconfigId
-      });
+    let mconfigEnt = await this.mconfigsService.getMconfigCheckExists({
+      structId: bridge.structId,
+      mconfigId: existingChart.tiles[0].mconfigId
+    });
 
-      let model = await this.modelsService.getModelCheckExists({
-        structId: bridge.structId,
-        modelId: mconfigEnt.modelId
-      });
+    // console.log('saveModifyChart mconfigEnt.select');
+    // console.log(mconfigEnt.select);
 
-      mconfig = this.wrapToApiService.wrapToApiMconfig({
-        mconfig: mconfigEnt,
-        modelFields: model.fields
-      });
-    }
+    let model = await this.modelsService.getModelCheckExists({
+      structId: bridge.structId,
+      modelId: mconfigEnt.modelId
+    });
+
+    let mconfig = this.wrapToApiService.wrapToApiMconfig({
+      mconfig: mconfigEnt,
+      modelFields: model.fields
+    });
 
     if (member.isAdmin === false && member.isEditor === false) {
       this.chartsService.checkChartPath({
@@ -356,12 +361,146 @@ export class SaveModifyChartController {
       projectId: projectId
     });
 
+    let newMconfig: common.Mconfig;
+    let newQuery: common.Query;
+
+    let isError = false;
+
+    if (model.type === common.ModelTypeEnum.Store) {
+      // if (model.isStoreModel === true) {
+      let newMconfigId = common.makeId();
+      let newQueryId = common.makeId();
+
+      // biome-ignore format: theme breaks
+      let sMconfig = Object.assign({}, chartMconfig, <schemaPostgres.MconfigEnt>{
+        mconfigId: newMconfigId,
+        queryId: newQueryId,
+        timezone: timezone,
+        temp: true
+      });
+
+      let mqe = await this.mconfigsService.prepStoreMconfigQuery({
+        struct: struct,
+        project: project,
+        envId: envId,
+        model: model,
+        mconfig: sMconfig,
+        metricsStartDateYYYYMMDD: undefined,
+        metricsEndDateYYYYMMDD: undefined
+      });
+
+      newMconfig = mqe.newMconfig;
+      newQuery = mqe.newQuery;
+      isError = mqe.isError;
+    } else if (model.type === common.ModelTypeEnum.Malloy) {
+      let queryOperation: common.QueryOperation = {
+        type: common.QueryOperationTypeEnum.Get,
+        timezone: timezone
+      };
+
+      let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
+        projectId: projectId,
+        envId: envId,
+        structId: struct.structId,
+        model: model,
+        mconfig: chartMconfig,
+        queryOperation: queryOperation
+      });
+
+      newMconfig = editMalloyQueryResult.newMconfig;
+      newQuery = editMalloyQueryResult.newQuery;
+      isError = editMalloyQueryResult.isError;
+    } else {
+      let newMconfigId = common.makeId();
+      let newQueryId = common.makeId();
+
+      let { apiEnv, connectionsWithFallback } =
+        await this.envsService.getApiEnvConnectionsWithFallback({
+          projectId: projectId,
+          envId: envId
+        });
+
+      // biome-ignore format: theme breaks
+      let sendMconfig = Object.assign({}, chartMconfig, <schemaPostgres.MconfigEnt>{
+        mconfigId: newMconfigId,
+        queryId: newQueryId,
+        timezone: timezone,
+        temp: true
+      });
+
+      let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
+        {
+          info: {
+            name: apiToBlockml.ToBlockmlRequestInfoNameEnum
+              .ToBlockmlProcessQuery,
+            traceId: traceId
+          },
+          payload: {
+            projectId: project.projectId,
+            weekStart: struct.weekStart,
+            caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
+            simplifySafeAggregates: struct.simplifySafeAggregates,
+            udfsDict: struct.udfsDict,
+            mconfig: sendMconfig,
+            modelContent: model.content,
+            malloyModelDef: model.malloyModelDef,
+            envId: envId,
+            connections: connectionsWithFallback
+          }
+        };
+
+      let blockmlProcessQueryResponse =
+        await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
+          {
+            routingKey: common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
+            message: toBlockmlProcessQueryRequest,
+            checkIsOk: true
+          }
+        );
+
+      newMconfig = blockmlProcessQueryResponse.payload.mconfig;
+      newQuery = blockmlProcessQueryResponse.payload.query;
+    }
+
+    let newQueryEnt = this.wrapToEntService.wrapToEntityQuery(newQuery);
+    let newMconfigEnt = this.wrapToEntService.wrapToEntityMconfig(newMconfig);
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                mconfigs: [newMconfigEnt]
+              },
+              insertOrUpdate: {
+                queries: isError === true ? [newQueryEnt] : []
+              },
+              insertOrDoNothing: {
+                queries: isError === false ? [newQueryEnt] : []
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    query = await this.db.drizzle.query.queriesTable.findFirst({
+      where: and(
+        eq(queriesTable.queryId, newQuery.queryId),
+        eq(queriesTable.projectId, newQuery.projectId)
+      )
+    });
+
+    chartEnt.tiles[0].mconfigId = newMconfig.mconfigId;
+    chartEnt.tiles[0].queryId = newMconfig.queryId;
+
     let payload: apiToBackend.ToBackendSaveModifyChartResponsePayload = {
       chart: this.wrapToApiService.wrapToApiChart({
         chart: chartEnt,
         mconfigs: [
           this.wrapToApiService.wrapToApiMconfig({
-            mconfig: chartMconfig,
+            mconfig: newMconfig,
             modelFields: modelApi.fields
           })
         ],

@@ -20,6 +20,7 @@ import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { ChartsQuery } from '~front/app/queries/charts.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -83,6 +84,7 @@ export class EditChartInfoDialogComponent implements OnInit {
     private userQuery: UserQuery,
     private chartsQuery: ChartsQuery,
     private chartQuery: ChartQuery,
+    private uiQuery: UiQuery,
     private spinner: NgxSpinnerService,
     private structQuery: StructQuery,
     private cd: ChangeDetectorRef,
@@ -116,6 +118,8 @@ export class EditChartInfoDialogComponent implements OnInit {
       let newTitle: string = this.titleForm.controls['title'].value;
       let roles: string = this.rolesForm.controls['roles'].value;
 
+      let uiState = this.uiQuery.getValue();
+
       let payload: apiToBackend.ToBackendSaveModifyChartRequestPayload = {
         projectId: this.ref.data.projectId,
         isRepoProd: this.ref.data.isRepoProd,
@@ -124,8 +128,8 @@ export class EditChartInfoDialogComponent implements OnInit {
         fromChartId: this.ref.data.chart.chartId,
         chartId: this.ref.data.chart.chartId,
         tileTitle: newTitle.trim(),
-        accessRoles: roles,
-        mconfig: undefined
+        timezone: uiState.timezone,
+        accessRoles: roles
       };
 
       let apiService: ApiService = this.ref.data.apiService;

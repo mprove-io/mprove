@@ -83,6 +83,9 @@ export class SaveCreateChartController {
       envId
     } = reqValid.payload;
 
+    // console.log('saveCreateChart mconfig.select');
+    // console.log(mconfig.select);
+
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
