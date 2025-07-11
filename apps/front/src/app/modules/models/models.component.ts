@@ -1331,7 +1331,11 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.chartService.editChart({
       mconfig: newMconfig,
       isDraft: this.chart.draft,
-      chartId: this.chart.chartId
+      chartId: this.chart.chartId,
+      queryOperation: {
+        type: common.QueryOperationTypeEnum.Get,
+        timezone: newMconfig.timezone
+      }
     });
   }
 

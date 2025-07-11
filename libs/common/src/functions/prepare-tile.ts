@@ -106,52 +106,71 @@ export function prepareTile(item: {
     });
   }
 
-  let filePartTile: FilePartTile = {
-    title: chart.title,
-    description: isDefined(chart.description) ? chart.description : undefined,
-    model: mconfig.modelId,
-    select: mconfig.select,
-    sorts: isDefined(mconfig.sorts) ? mconfig.sorts : undefined,
-    limit:
-      isDefined(mconfig.limit) &&
-      mconfig.limit !== Number(constants.DEFAULT_LIMIT)
-        ? <any>mconfig.limit
+  let data = {
+    x_field:
+      constants.UI_CHART_TYPES.xField.indexOf(chart.type) > -1 &&
+      isDefined(chart.xField)
+        ? chart.xField
         : undefined,
-    parameters: Object.keys(parameters).length > 0 ? parameters : undefined,
-    type: chart.type,
-    data: {
-      x_field:
-        constants.UI_CHART_TYPES.xField.indexOf(chart.type) > -1 &&
-        isDefined(chart.xField)
-          ? chart.xField
-          : undefined,
-      y_fields:
-        (constants.UI_CHART_TYPES.yFields.indexOf(chart.type) > -1 ||
-          constants.UI_CHART_TYPES.yField.indexOf(chart.type) > -1) &&
-        isDefined(chart.yFields) &&
-        chart.yFields.length > 0
-          ? chart.yFields
-          : undefined,
-      hide_columns:
-        constants.UI_CHART_TYPES.hideColumns.indexOf(chart.type) > -1 &&
-        isDefined(chart.hideColumns) &&
-        chart.hideColumns.length > 0
-          ? chart.hideColumns
-          : undefined,
-      multi_field:
-        constants.UI_CHART_TYPES.multiField.indexOf(chart.type) > -1 &&
-        isDefined(chart.multiField)
-          ? chart.multiField
-          : undefined,
-      size_field:
-        constants.UI_CHART_TYPES.sizeField.indexOf(chart.type) > -1 &&
-        isDefined(chart.sizeField)
-          ? chart.sizeField
-          : undefined
-    },
-    options: {},
-    plate: {}
+    y_fields:
+      (constants.UI_CHART_TYPES.yFields.indexOf(chart.type) > -1 ||
+        constants.UI_CHART_TYPES.yField.indexOf(chart.type) > -1) &&
+      isDefined(chart.yFields) &&
+      chart.yFields.length > 0
+        ? chart.yFields
+        : undefined,
+    hide_columns:
+      constants.UI_CHART_TYPES.hideColumns.indexOf(chart.type) > -1 &&
+      isDefined(chart.hideColumns) &&
+      chart.hideColumns.length > 0
+        ? chart.hideColumns
+        : undefined,
+    multi_field:
+      constants.UI_CHART_TYPES.multiField.indexOf(chart.type) > -1 &&
+      isDefined(chart.multiField)
+        ? chart.multiField
+        : undefined,
+    size_field:
+      constants.UI_CHART_TYPES.sizeField.indexOf(chart.type) > -1 &&
+      isDefined(chart.sizeField)
+        ? chart.sizeField
+        : undefined
   };
+
+  let filePartTile: FilePartTile =
+    mconfig.modelType === enums.ModelTypeEnum.Malloy
+      ? {
+          title: chart.title,
+          description: isDefined(chart.description)
+            ? chart.description
+            : undefined,
+          parameters:
+            Object.keys(parameters).length > 0 ? parameters : undefined,
+          type: chart.type,
+          data: data,
+          options: {},
+          plate: {}
+        }
+      : {
+          title: chart.title,
+          description: isDefined(chart.description)
+            ? chart.description
+            : undefined,
+          model: mconfig.modelId,
+          select: mconfig.select,
+          sorts: isDefined(mconfig.sorts) ? mconfig.sorts : undefined,
+          limit:
+            isDefined(mconfig.limit) &&
+            mconfig.limit !== Number(constants.DEFAULT_LIMIT)
+              ? <any>mconfig.limit
+              : undefined,
+          parameters:
+            Object.keys(parameters).length > 0 ? parameters : undefined,
+          type: chart.type,
+          data: data,
+          options: {},
+          plate: {}
+        };
 
   filePartTile.options = toFileChartOptions({
     chart: chart,
