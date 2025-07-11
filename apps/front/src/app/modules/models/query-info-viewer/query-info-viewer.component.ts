@@ -190,7 +190,8 @@ ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
     } else if (this.queryPart === common.QueryPartEnum.YamlTile) {
       let filePartTile: common.FilePartTile = common.prepareTile({
         isForDashboard: false,
-        mconfig: this.chart.tiles[0].mconfig
+        mconfig: this.chart.tiles[0].mconfig,
+        malloyQueryId: undefined
       });
 
       this.content = common.toYaml({ tiles: [filePartTile] });

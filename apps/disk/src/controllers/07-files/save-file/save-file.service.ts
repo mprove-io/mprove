@@ -32,6 +32,8 @@ export class SaveFileService {
       branch,
       fileNodeId,
       content,
+      secondFileNodeId,
+      secondFileContent,
       userAlias,
       remoteType,
       gitUrl,
@@ -57,9 +59,6 @@ export class SaveFileService {
       privateKey: privateKey,
       publicKey: publicKey
     });
-
-    let relativeFilePath = fileNodeId.substring(projectId.length + 1);
-    let filePath = repoDir + '/' + relativeFilePath;
 
     let isOrgExist = await disk.isPathExist(orgDir);
     if (isOrgExist === false) {
@@ -102,6 +101,9 @@ export class SaveFileService {
       isFetch: false
     });
 
+    let relativeFilePath = fileNodeId.substring(projectId.length + 1);
+    let filePath = repoDir + '/' + relativeFilePath;
+
     let isFileExist = await disk.isPathExist(filePath);
     if (isFileExist === false) {
       throw new common.ServerError({
@@ -109,12 +111,29 @@ export class SaveFileService {
       });
     }
 
-    //
-
     await disk.writeToFile({
       filePath: filePath,
       content: content
     });
+
+    if (common.isDefinedAndNotEmpty(secondFileNodeId)) {
+      let relativeSecondFilePath = secondFileNodeId.substring(
+        projectId.length + 1
+      );
+      let secondFilePath = repoDir + '/' + relativeSecondFilePath;
+
+      let isSecondFileExist = await disk.isPathExist(secondFilePath);
+      if (isSecondFileExist === false) {
+        throw new common.ServerError({
+          message: common.ErEnum.DISK_FILE_IS_NOT_EXIST
+        });
+      }
+
+      await disk.writeToFile({
+        filePath: secondFilePath,
+        content: secondFileContent
+      });
+    }
 
     await git.addChangesToStage({ repoDir: repoDir });
 

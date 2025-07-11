@@ -22,6 +22,14 @@ export class ToDiskSaveFileRequestPayload {
   @IsString()
   content: string;
 
+  @IsOptional()
+  @IsString()
+  secondFileNodeId?: string;
+
+  @IsOptional()
+  @IsString()
+  secondFileContent?: string;
+
   @IsString()
   userAlias: string;
 

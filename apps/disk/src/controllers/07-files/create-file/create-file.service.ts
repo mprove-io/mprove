@@ -35,9 +35,11 @@ export class CreateFileService {
       repoId,
       branch,
       fileName,
+      fileText,
+      secondFileName,
+      secondFileText,
       parentNodeId,
       userAlias,
-      fileText,
       remoteType,
       gitUrl,
       privateKey,
@@ -47,14 +49,6 @@ export class CreateFileService {
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
     let repoDir = `${projectDir}/${repoId}`;
-
-    let parent = parentNodeId.substring(projectId.length + 1);
-    parent = parent.length > 0 ? parent + '/' : parent;
-    let relativeFilePath = parent + '/' + fileName;
-
-    let parentPath = repoDir + '/' + parent;
-    let filePath = parentPath + fileName;
-    let content = fileText || getContentFromFileName({ fileName: fileName });
 
     //
 
@@ -111,6 +105,14 @@ export class CreateFileService {
       isFetch: false
     });
 
+    let parent = parentNodeId.substring(projectId.length + 1);
+    parent = parent.length > 0 ? parent + '/' : parent;
+    let relativeFilePath = parent + '/' + fileName;
+
+    let parentPath = repoDir + '/' + parent;
+    let filePath = parentPath + fileName;
+    let content = fileText || getContentFromFileName({ fileName: fileName });
+
     await disk.ensureDir(parentPath);
 
     let isFileExist = await disk.isPathExist(filePath);
@@ -120,12 +122,28 @@ export class CreateFileService {
       });
     }
 
-    //
-
     await disk.writeToFile({
       filePath: filePath,
       content: content
     });
+
+    if (common.isDefinedAndNotEmpty(secondFileName)) {
+      let secondFilePath = parentPath + secondFileName;
+      let secondContent =
+        secondFileText || getContentFromFileName({ fileName: secondFileName });
+
+      let isSecondFileExist = await disk.isPathExist(secondFilePath);
+      if (isSecondFileExist === true) {
+        throw new common.ServerError({
+          message: common.ErEnum.DISK_FILE_ALREADY_EXIST
+        });
+      }
+
+      await disk.writeToFile({
+        filePath: secondFilePath,
+        content: secondContent
+      });
+    }
 
     await git.addChangesToStage({ repoDir: repoDir });
 

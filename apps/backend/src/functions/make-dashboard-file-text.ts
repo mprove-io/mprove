@@ -192,7 +192,8 @@ export function makeDashboardFileText(item: {
             let filePartTile: common.FilePartTile = common.prepareTile({
               tile: x,
               isForDashboard: true,
-              mconfig: newMconfig
+              mconfig: newMconfig,
+              malloyQueryId: undefined // TODO: dashboard tile malloyQueryId
             });
 
             return filePartTile;

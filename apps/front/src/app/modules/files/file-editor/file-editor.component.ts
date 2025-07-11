@@ -752,7 +752,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
         .filter(x => x.fileId === this.file.fileId)
         .map(x => x.lineNumber)
         .forEach(cLineNumber => {
-          if (cLineNumber !== 0) {
+          if (cLineNumber !== 0 && cLineNumber <= tempDoc.lines) {
             let line = tempDoc.line(cLineNumber);
 
             conflictMarkers.push({
@@ -777,7 +777,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
             return fileId === this.file.fileId;
           })
           .map(eLine => {
-            if (eLine.lineNumber !== 0) {
+            if (eLine.lineNumber !== 0 && eLine.lineNumber <= tempDoc.lines) {
               let line = tempDoc.line(eLine.lineNumber);
 
               errorMarkers.push({

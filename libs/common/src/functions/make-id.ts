@@ -1,7 +1,10 @@
 import { customAlphabet } from 'nanoid';
-const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const alphabetWithNumbers = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 export function makeId() {
-  let nanoid = customAlphabet(alphabet, 20); // => "SJ8JVTJWN2TWOY2T6ZJH"
-  return nanoid();
+  let a = customAlphabet(alphabet, 1); // => "S"
+  let b = customAlphabet(alphabetWithNumbers, 19); // => "8JVTJWN2TWOY2T6ZJHJ"
+  let id = a() + b(); // => "S8JVTJWN2TWOY2T6ZJHJ"
+  return id;
 }

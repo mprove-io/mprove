@@ -12,8 +12,9 @@ export function prepareTile(item: {
   tile?: TileX;
   mconfig: MconfigX;
   isForDashboard: boolean;
+  malloyQueryId: string;
 }): FilePartTile {
-  let { tile, mconfig, isForDashboard } = item;
+  let { tile, mconfig, isForDashboard, malloyQueryId } = item;
 
   let chart = mconfig.chart;
 
@@ -144,6 +145,7 @@ export function prepareTile(item: {
           description: isDefined(chart.description)
             ? chart.description
             : undefined,
+          query: malloyQueryId,
           parameters:
             Object.keys(parameters).length > 0 ? parameters : undefined,
           type: chart.type,

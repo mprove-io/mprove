@@ -5,12 +5,14 @@ export function makeChartFileText(item: {
   chartId: string;
   tileTitle: string;
   roles: string;
+  modelFilePath: string;
 }) {
-  let { mconfig, chartId, tileTitle, roles } = item;
+  let { mconfig, chartId, tileTitle, roles, modelFilePath } = item;
 
   let filePartTile: common.FilePartTile = common.prepareTile({
     isForDashboard: false,
-    mconfig: mconfig
+    mconfig: mconfig,
+    malloyQueryId: chartId
   });
 
   filePartTile.title = tileTitle;
@@ -24,5 +26,14 @@ export function makeChartFileText(item: {
     tiles: [filePartTile]
   });
 
-  return chartFileText;
+  let malloyQueryText;
+
+  if (mconfig.modelType === common.ModelTypeEnum.Malloy) {
+    malloyQueryText = `import '${modelFilePath.split('/').slice(1).join('/')}';
+
+query: ${chartId} is ${mconfig.malloyQuery.substring(5)}
+`;
+  }
+
+  return { chartFileText: chartFileText, malloyQueryText: malloyQueryText };
 }
