@@ -1,7 +1,7 @@
 import { AtomicType } from '@malloydata/malloy-interfaces';
 import { common } from '~blockml/barrels/common';
 import { FieldItem } from '~blockml/functions/source-to-field-items';
-import { parseTags } from '~common/_index';
+import { DOUBLE_UNDERSCORE, parseTags } from '~common/_index';
 
 export function wrapFieldItem(item: {
   topNode: common.ModelNode;
@@ -66,7 +66,15 @@ export function wrapFieldItem(item: {
     )
     .join(' ');
 
-  let fieldSqlName = fieldItem.field.name;
+  // console.log('fieldItem');
+  // console.log(fieldItem);
+
+  let fieldSqlName =
+    fieldItem.path.length > 0
+      ? fieldItem.path.join(DOUBLE_UNDERSCORE) +
+        DOUBLE_UNDERSCORE +
+        fieldItem.field.name
+      : fieldItem.field.name;
 
   let { malloyTags, mproveTags } = parseTags({
     inputs: fieldItem.field.annotations?.map(x => x.value) || []

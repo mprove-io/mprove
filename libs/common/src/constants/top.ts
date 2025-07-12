@@ -57,7 +57,7 @@ export const RESTRICTED_USER_ALIAS = 'demo-user';
 
 export const README_FILE_NAME = 'readme.md';
 
-// export const DOUBLE_UNDERSCORE = '__';
+export const DOUBLE_UNDERSCORE = '__';
 export const TRIPLE_UNDERSCORE = '___';
 export const QUAD_UNDERSCORE = '____';
 

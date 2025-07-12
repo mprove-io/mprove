@@ -289,6 +289,7 @@ export class DataService {
           // console.log(key);
 
           let fieldId: string;
+          let sqlName: string;
 
           // console.log('mconfig.modelType');
           // console.log(mconfig.modelType);
@@ -302,12 +303,24 @@ export class DataService {
             // console.log('compiledQueryField');
             // console.log(compiledQueryField);
 
-            let fieldIdTripleUnderscore =
-              compiledQueryField?.resultMetadata?.sourceField;
+            sqlName = compiledQueryField.name;
 
-            fieldId = fieldIdTripleUnderscore
-              .split(common.TRIPLE_UNDERSCORE)
-              .join('.');
+            let drillExpression =
+              compiledQueryField?.resultMetadata?.drillExpression;
+
+            fieldId =
+              drillExpression?.kind === 'field_reference'
+                ? drillExpression.path.length > 0
+                  ? drillExpression.path.join('.') + '.' + drillExpression.name
+                  : drillExpression.name
+                : undefined;
+
+            // let fieldIdTripleUnderscore =
+            //   compiledQueryField?.resultMetadata?.sourceField;
+
+            // fieldId = fieldIdTripleUnderscore
+            //   .split(common.TRIPLE_UNDERSCORE)
+            //   .join('.');
           } else {
             fieldId = key.toLowerCase();
           }
@@ -328,7 +341,12 @@ export class DataService {
           // console.log('field');
           // console.log(field);
 
-          let sqlName = field.sqlName;
+          if (
+            mconfig.modelType === common.ModelTypeEnum.Store ||
+            mconfig.modelType === common.ModelTypeEnum.SQL
+          ) {
+            sqlName = field.sqlName;
+          }
 
           // console.log('sqlName');
           // console.log(sqlName);

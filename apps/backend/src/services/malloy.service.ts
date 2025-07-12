@@ -146,7 +146,8 @@ export class MalloyService {
 
       let fieldName = modelField.malloyFieldName;
       let fieldPath: string[] = modelField.malloyFieldPath;
-      let fieldRename = modelField.id.split('.').join(common.TRIPLE_UNDERSCORE);
+      // let fieldRename = modelField.id.split('.').join(common.TRIPLE_UNDERSCORE);
+      let fieldRename = modelField.sqlName;
 
       if (
         [
@@ -279,9 +280,10 @@ export class MalloyService {
 
       let replaceFieldPath = replaceWithModelField.malloyFieldPath;
       let replaceFieldName = replaceWithModelField.malloyFieldName;
-      let replaceFieldRename = replaceWithModelField.id
-        .split('.')
-        .join(common.TRIPLE_UNDERSCORE);
+      // let replaceFieldRename = replaceWithModelField.id
+      //   .split('.')
+      //   .join(common.TRIPLE_UNDERSCORE);
+      let replaceFieldRename = replaceWithModelField.sqlName;
 
       // let opFieldNames = segment0.operations.items
       //   .filter(
@@ -341,7 +343,8 @@ export class MalloyService {
       mconfigSelectCopy.splice(index, 1, queryOperation.replaceWithFieldId);
 
       segment0.reorderFields(
-        mconfigSelectCopy.map(x => x.split('.').join(common.TRIPLE_UNDERSCORE))
+        // mconfigSelectCopy.map(x => x.split('.').join(common.TRIPLE_UNDERSCORE))
+        mconfigSelectCopy.map(x => x.split('.').join(common.DOUBLE_UNDERSCORE))
       );
 
       segment0.operations.items
@@ -360,7 +363,8 @@ export class MalloyService {
       mconfig.sortings.forEach(sorting => {
         let fieldNameUnderscore = sorting.fieldId
           .split('.')
-          .join(common.TRIPLE_UNDERSCORE);
+          // .join(common.TRIPLE_UNDERSCORE);
+          .join(common.DOUBLE_UNDERSCORE);
 
         segment0.addOrderBy(
           fieldNameUnderscore,
@@ -369,8 +373,9 @@ export class MalloyService {
       });
     } else if (queryOperation.type === common.QueryOperationTypeEnum.Move) {
       segment0.reorderFields(
-        queryOperation.moveFieldIds.map(x =>
-          x.split('.').join(common.TRIPLE_UNDERSCORE)
+        queryOperation.moveFieldIds.map(
+          // x => x.split('.').join(common.TRIPLE_UNDERSCORE)
+          x => x.split('.').join(common.DOUBLE_UNDERSCORE)
         )
       );
     } else if (queryOperation.type === common.QueryOperationTypeEnum.Limit) {
@@ -388,7 +393,8 @@ export class MalloyService {
     ) {
       let fieldNameUnderscore = queryOperation.sortFieldId
         .split('.')
-        .join(common.TRIPLE_UNDERSCORE);
+        // .join(common.TRIPLE_UNDERSCORE);
+        .join(common.DOUBLE_UNDERSCORE);
 
       let fIndex = mconfig.sortings.findIndex(
         sorting => sorting.fieldId === queryOperation.sortFieldId
@@ -562,12 +568,22 @@ export class MalloyService {
 
     if (common.isDefined(compiledQuery)) {
       compiledQuery.structs[0].fields.forEach(field => {
-        let fieldIdTripleUnderscore = (field as FieldBase).resultMetadata
-          ?.sourceField;
+        // let fieldIdTripleUnderscore = (field as FieldBase).resultMetadata
+        //   ?.sourceField;
 
-        let fieldId = fieldIdTripleUnderscore
-          .split(common.TRIPLE_UNDERSCORE)
-          .join('.');
+        // let fieldId = fieldIdTripleUnderscore
+        //   .split(common.TRIPLE_UNDERSCORE)
+        //   .join('.');
+
+        let drillExpression = (field as FieldBase).resultMetadata
+          ?.drillExpression;
+
+        let fieldId =
+          drillExpression?.kind === 'field_reference'
+            ? drillExpression.path.length > 0
+              ? drillExpression.path.join('.') + '.' + drillExpression.name
+              : drillExpression.name
+            : undefined;
 
         compiledQuerySelect.push(fieldId);
       });
@@ -597,12 +613,22 @@ export class MalloyService {
 
         if (common.isDefined(field)) {
           let mField = model.fields.find(f => {
-            let fieldNameTripleUnderscore = (field as FieldBase).resultMetadata
-              ?.sourceField;
+            // let fieldNameTripleUnderscore = (field as FieldBase).resultMetadata
+            //   ?.sourceField;
 
-            let fieldId = fieldNameTripleUnderscore
-              .split(common.TRIPLE_UNDERSCORE)
-              .join('.');
+            // let fieldId = fieldNameTripleUnderscore
+            //   .split(common.TRIPLE_UNDERSCORE)
+            //   .join('.');
+
+            let drillExpression = (field as FieldBase).resultMetadata
+              ?.drillExpression;
+
+            let fieldId =
+              drillExpression?.kind === 'field_reference'
+                ? drillExpression.path.length > 0
+                  ? drillExpression.path.join('.') + '.' + drillExpression.name
+                  : drillExpression.name
+                : undefined;
 
             return f.id === fieldId;
           });
