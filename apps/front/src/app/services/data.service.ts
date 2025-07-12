@@ -321,21 +321,19 @@ export class DataService {
             // fieldId = fieldIdTripleUnderscore
             //   .split(common.TRIPLE_UNDERSCORE)
             //   .join('.');
-          } else {
+          } else if (mconfig.modelType === common.ModelTypeEnum.Store) {
             fieldId = key.toLowerCase();
+          } else if (mconfig.modelType === common.ModelTypeEnum.SQL) {
+            fieldId = mconfig.fields.find(
+              x => x.sqlName === key.toLocaleLowerCase()
+            ).id;
           }
 
           // console.log('fieldId');
           // console.log(fieldId);
 
           let field = mconfig.fields.find(x => {
-            let id =
-              isStore === true
-                ? x.id
-                : mconfig.modelType === common.ModelTypeEnum.Malloy
-                  ? x.id
-                  : x.sqlName;
-            return id === fieldId;
+            return x.id === fieldId;
           });
 
           // console.log('field');
@@ -537,14 +535,14 @@ export class DataService {
                                 })
           };
 
-          r[sqlName] = cell;
+          r[fieldId] = cell;
         });
 
       qData.push(r);
     });
 
-    // console.log('qData');
-    // console.log(qData);
+    console.log('qData');
+    console.log(qData);
 
     return qData;
   }
@@ -591,8 +589,6 @@ export class DataService {
       yFields.push(yField);
     });
 
-    let xSqlName = xField.sqlName;
-
     let multiField = common.isDefined(multiFieldId)
       ? selectFields.find(f => f.id === multiFieldId)
       : undefined;
@@ -601,17 +597,13 @@ export class DataService {
       return [];
     }
 
-    let multiSqlName = multiField ? multiField.sqlName : undefined;
-
     let sizeField = common.isDefined(sizeFieldId)
       ? selectFields.find(f => f.id === sizeFieldId)
       : undefined;
 
-    if (sizeField && !sizeField) {
+    if (sizeFieldId && !sizeField) {
       return [];
     }
-
-    let sizeSqlName = sizeField ? sizeField.sqlName : undefined;
 
     let addNorm = 0;
     let sizeMin = 1;
@@ -629,8 +621,8 @@ export class DataService {
 
       let sizeValues = data
         .map((x: QDataRow) =>
-          this.isNumberString(x[sizeField.sqlName].value)
-            ? Number(x[sizeField.sqlName].value)
+          this.isNumberString(x[sizeField.id].value)
+            ? Number(x[sizeField.id].value)
             : undefined
         )
         .filter(x => common.isDefined(x));
@@ -651,8 +643,6 @@ export class DataService {
 
     data.forEach((row: QDataRow) => {
       yFields.forEach(yField => {
-        let ySqlName = yField.sqlName;
-
         let yKeyId: string;
 
         let yLabel =
@@ -662,13 +652,15 @@ export class DataService {
             : '') +
           ` ${capitalizeFirstLetter(yField.label)}`;
 
-        if (multiSqlName) {
+        if (multiField?.id) {
           if (yFields.length > 1) {
-            yKeyId = row[multiSqlName].value
-              ? row[multiSqlName].value + ' ' + yLabel
+            yKeyId = row[multiField.id].value
+              ? row[multiField.id].value + ' ' + yLabel
               : 'NULL' + ' ' + yLabel;
           } else {
-            yKeyId = row[multiSqlName].value ? row[multiSqlName].value : 'NULL';
+            yKeyId = row[multiField.id].value
+              ? row[multiField.id].value
+              : 'NULL';
           }
         } else {
           yKeyId = yLabel;
@@ -689,15 +681,15 @@ export class DataService {
         }
 
         // x null check
-        if (row[xSqlName]) {
-          let tsValueFn = this.getTsValueFn(xSqlName);
+        if (row[xField.id]) {
+          let tsValueFn = this.getTsValueFn(xField.sqlName);
 
           let xV =
             xField.result === common.FieldResultEnum.Ts
               ? common.isDefined(tsValueFn)
-                ? tsValueFn(row[xSqlName].value).getTime()
-                : row[xSqlName].value
-              : row[xSqlName].value;
+                ? tsValueFn(row[xField.id].value).getTime()
+                : row[xField.id].value
+              : row[xField.id].value;
 
           if (common.isDefined(xV)) {
             let seriesPoint: SeriesPoint = {
@@ -706,24 +698,24 @@ export class DataService {
                 : xField.result === common.FieldResultEnum.Number
                   ? this.convertToNumberOrNull(xV)
                   : xV,
-              xValueFmt: row[xSqlName].valueFmt,
-              yValue: this.convertToNumberOrNull(row[ySqlName].value),
-              yValueFmt: row[ySqlName].valueFmt,
+              xValueFmt: row[xField.id].valueFmt,
+              yValue: this.convertToNumberOrNull(row[yField.id].value),
+              yValueFmt: row[yField.id].valueFmt,
               sizeValueMod:
-                common.isDefined(sizeSqlName) &&
-                this.isNumberString(row[sizeSqlName].value)
-                  ? (Number(row[sizeSqlName].value) + addNorm) /
+                common.isDefined(sizeField?.id) &&
+                this.isNumberString(row[sizeField.id].value)
+                  ? (Number(row[sizeField.id].value) + addNorm) /
                     (sizeMax + sizeMin)
                   : 1,
               sizeValue:
-                common.isDefined(sizeSqlName) &&
-                this.isNumberString(row[sizeSqlName].value)
-                  ? Number(row[sizeSqlName].value)
+                common.isDefined(sizeField?.id) &&
+                this.isNumberString(row[sizeField.id].value)
+                  ? Number(row[sizeField.id].value)
                   : undefined,
               sizeValueFmt:
-                common.isDefined(sizeSqlName) &&
-                this.isNumberString(row[sizeSqlName].value)
-                  ? row[sizeSqlName].valueFmt
+                common.isDefined(sizeField?.id) &&
+                this.isNumberString(row[sizeField.id].value)
+                  ? row[sizeField.id].valueFmt
                   : undefined,
               sizeFieldName: sizeFieldLabel
             };

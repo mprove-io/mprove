@@ -3,7 +3,7 @@
     *ngIf="qData.length > 0 && !!yFieldColumn"
     class="text-s500 text-3xl font-semibold"
   >
-    {{ qData[0][yFieldColumn.sqlName].valueFmt }}
+    {{ qData[0][yFieldColumn.id].valueFmt }}
   </div>
 
   <!-- <div
@@ -12,8 +12,8 @@
   >
     {{
       isFormat === true
-        ? qData[0][yFieldColumn.sqlName].valueFmt
-        : qData[0][yFieldColumn.sqlName].value
+        ? qData[0][yFieldColumn.id].valueFmt
+        : qData[0][yFieldColumn.id].value
     }}
   </div> -->
 </div>

@@ -181,7 +181,7 @@ export class FractionStringComponent implements OnInit, OnDestroy {
       let fieldName = r[3];
 
       let fieldId = `${asName}.${fieldName}`;
-      let fieldSqlName = `${asName}_${fieldName}`;
+      // let fieldSqlName = `${asName}_${fieldName}`;
 
       this.searchSubscription = this.searchInput$
         .pipe(
@@ -328,7 +328,7 @@ export class FractionStringComponent implements OnInit, OnDestroy {
               this.items = common.isDefined(q3Resp?.payload?.query?.data)
                 ? q3Resp.payload.query.data.map((row: any, i: number) => ({
                     id: i,
-                    name: row[fieldSqlName]
+                    name: row[fieldId]
                   }))
                 : [];
 

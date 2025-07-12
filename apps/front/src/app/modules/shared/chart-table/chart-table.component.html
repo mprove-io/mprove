@@ -56,9 +56,7 @@
           }"
         >
           {{
-            isFormat === true
-              ? row[column.sqlName]?.valueFmt
-              : row[column.sqlName]?.value
+            isFormat === true ? row[column.id]?.valueFmt : row[column.id]?.value
           }}
         </td>
       </tr>
