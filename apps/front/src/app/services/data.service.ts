@@ -21,7 +21,7 @@ export interface QDataRow {
 }
 
 export interface QCell {
-  id: string;
+  name: string;
   value: string;
   valueFmt: string;
 }
@@ -437,7 +437,7 @@ export class DataService {
           // console.log(field.formatNumber);
 
           let cell: QCell = {
-            id: key.toLowerCase(),
+            name: key.toLowerCase(),
             value:
               isStore === true && common.isDefined(storeTimeSpec)
                 ? ((Number(value) * 1000) as unknown as string)
@@ -541,8 +541,8 @@ export class DataService {
       qData.push(r);
     });
 
-    console.log('qData');
-    console.log(qData);
+    // console.log('qData');
+    // console.log(qData);
 
     return qData;
   }
