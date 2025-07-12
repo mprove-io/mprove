@@ -233,6 +233,7 @@ export class EditDraftChartController {
     let tile: common.Tile = {
       modelId: newMconfig.modelId,
       modelLabel: newMconfig.modelLabel,
+      modelFilePath: newMconfig.modelFilePath,
       mconfigId: newMconfig.mconfigId,
       queryId: newQuery.queryId,
       listen: undefined,

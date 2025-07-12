@@ -122,12 +122,14 @@ export class SaveFileService {
       );
       let secondFilePath = repoDir + '/' + relativeSecondFilePath;
 
-      let isSecondFileExist = await disk.isPathExist(secondFilePath);
-      if (isSecondFileExist === false) {
-        throw new common.ServerError({
-          message: common.ErEnum.DISK_FILE_IS_NOT_EXIST
-        });
-      }
+      // malloy file may not exist when adding to a tile to dashboard
+
+      // let isSecondFileExist = await disk.isPathExist(secondFilePath);
+      // if (isSecondFileExist === false) {
+      //   throw new common.ServerError({
+      //     message: common.ErEnum.DISK_FILE_IS_NOT_EXIST
+      //   });
+      // }
 
       await disk.writeToFile({
         filePath: secondFilePath,

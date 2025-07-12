@@ -45,6 +45,7 @@ test('1', async t => {
     dateRangeIncludesRightSide: false,
     storePart: undefined,
     modelLabel: 'abc',
+    modelFilePath: 'abc',
     compiledQuery: undefined,
     malloyQuery: undefined,
     select: [],

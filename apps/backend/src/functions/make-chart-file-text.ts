@@ -6,7 +6,7 @@ export function makeChartFileText(item: {
   chartId: string;
   tileTitle: string;
   roles: string;
-  malloyQueryFilePath: string;
+  malloyChartFilePath: string;
   modelFilePath: string;
   modelId: string;
 }) {
@@ -15,7 +15,7 @@ export function makeChartFileText(item: {
     chartId,
     tileTitle,
     roles,
-    malloyQueryFilePath,
+    malloyChartFilePath,
     modelFilePath,
     modelId
   } = item;
@@ -37,19 +37,19 @@ export function makeChartFileText(item: {
     tiles: [filePartTile]
   });
 
-  let malloyQueryText;
+  let malloyFileText;
 
   let relativePath = path.relative(
-    `/${path.dirname(malloyQueryFilePath)}`,
+    `/${path.dirname(malloyChartFilePath)}`,
     `/${modelFilePath}`
   );
 
   if (mconfig.modelType === common.ModelTypeEnum.Malloy) {
-    malloyQueryText = `import { ${modelId} } from '${relativePath}';
+    malloyFileText = `import { ${modelId} } from '${relativePath}';
 
 query: ${chartId} is ${mconfig.malloyQuery.substring(5)}
 `;
   }
 
-  return { chartFileText: chartFileText, malloyQueryText: malloyQueryText };
+  return { chartFileText: chartFileText, malloyFileText: malloyFileText };
 }

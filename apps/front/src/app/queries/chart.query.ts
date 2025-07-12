@@ -15,6 +15,7 @@ export const emptyMconfig: common.MconfigX = {
   dateRangeIncludesRightSide: undefined,
   storePart: undefined,
   modelLabel: undefined,
+  modelFilePath: undefined,
   malloyQuery: undefined,
   compiledQuery: undefined,
   select: [],
@@ -62,6 +63,7 @@ export const emptyQuery: common.Query = {
 let emptyTile: common.TileX = {
   modelId: undefined,
   modelLabel: undefined,
+  modelFilePath: undefined,
   mconfigId: emptyMconfig.mconfigId,
   queryId: emptyQuery.queryId,
   listen: undefined,

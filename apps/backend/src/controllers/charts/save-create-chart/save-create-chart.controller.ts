@@ -178,19 +178,19 @@ export class SaveCreateChartController {
         ? `${newChartId}${common.FileExtensionEnum.Malloy}`
         : undefined;
 
-    let malloyQueryFilePath =
+    let malloyChartFilePath =
       mconfig.modelType === common.ModelTypeEnum.Malloy
         ? `${parentNodeId}/${malloyQueryFileName}`
         : undefined;
 
-    let { chartFileText, malloyQueryText } = makeChartFileText({
+    let { chartFileText, malloyFileText } = makeChartFileText({
       mconfig: mconfig,
       tileTitle: tileTitle,
       roles: accessRoles,
       chartId: newChartId,
       modelId: mconfigModel.modelId,
       modelFilePath: mconfigModel.filePath,
-      malloyQueryFilePath: malloyQueryFilePath
+      malloyChartFilePath: malloyChartFilePath
     });
 
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
@@ -207,8 +207,10 @@ export class SaveCreateChartController {
         parentNodeId: parentNodeId,
         fileName: fileName,
         fileText: chartFileText,
-        secondFileName: malloyQueryFileName,
-        secondFileText: malloyQueryText,
+        secondFileName: common.isDefined(malloyFileText)
+          ? malloyQueryFileName
+          : undefined,
+        secondFileText: malloyFileText,
         remoteType: project.remoteType,
         gitUrl: project.gitUrl,
         privateKey: project.privateKey,

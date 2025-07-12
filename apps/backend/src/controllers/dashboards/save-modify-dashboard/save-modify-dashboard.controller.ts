@@ -167,7 +167,13 @@ export class SaveModifyDashboardController {
       });
     }
 
-    let dashboardFileText: string;
+    let pathParts = toDashboardEntity.filePath.split('.');
+    pathParts[pathParts.length - 1] = common.FileExtensionEnum.Malloy.slice(1);
+
+    let secondFileNodeId = pathParts.join('.');
+
+    let dashFileText: string;
+    let secondFileContent: string;
 
     if (common.isDefined(newTile)) {
       let mconfigModel = await this.modelsService.getModelCheckExists({
@@ -214,14 +220,18 @@ export class SaveModifyDashboardController {
         fromDashboard.tiles = [...fromDashboard.tiles, newTile];
       }
 
-      dashboardFileText = makeDashboardFileText({
+      let { dashboardFileText, malloyFileText } = makeDashboardFileText({
         dashboard: fromDashboard,
         newDashboardId: fromDashboard.dashboardId,
         newTitle: fromDashboard.title,
         roles: fromDashboard.accessRoles.join(', '),
         caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-        timezone: common.UTC
+        timezone: common.UTC,
+        malloyDashboardFilePath: secondFileNodeId
       });
+
+      dashFileText = dashboardFileText;
+      secondFileContent = malloyFileText;
     } else {
       // dashboard save as - replace existing
       let yTiles: common.TileX[] = [];
@@ -246,14 +256,18 @@ export class SaveModifyDashboardController {
 
       fromDashboard.tiles = yTiles;
 
-      dashboardFileText = makeDashboardFileText({
+      let { dashboardFileText, malloyFileText } = makeDashboardFileText({
         dashboard: fromDashboard,
         newDashboardId: toDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
         caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-        timezone: common.UTC
+        timezone: common.UTC,
+        malloyDashboardFilePath: secondFileNodeId
       });
+
+      dashFileText = dashboardFileText;
+      secondFileContent = malloyFileText;
     }
 
     let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {
@@ -267,8 +281,12 @@ export class SaveModifyDashboardController {
         repoId: repoId,
         branch: branchId,
         fileNodeId: toDashboardEntity.filePath,
+        secondFileNodeId: common.isDefined(secondFileContent)
+          ? secondFileNodeId
+          : undefined,
+        secondFileContent: secondFileContent,
         userAlias: user.alias,
-        content: dashboardFileText,
+        content: dashFileText,
         remoteType: project.remoteType,
         gitUrl: project.gitUrl,
         privateKey: project.privateKey,

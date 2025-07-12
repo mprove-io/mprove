@@ -1,8 +1,15 @@
+import * as path from 'path';
 import { common } from '~backend/barrels/common';
 import { enums } from '~common/barrels/enums';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
 import { FileFraction } from '~common/interfaces/blockml/internal/file-fraction';
 import { getYYYYMMDDCurrentDateByTimezone } from '~node-common/functions/get-yyyymmdd-current-date-by-timezone';
+
+interface MalloyPart {
+  modelId: string;
+  malloyQueryText: string;
+  modelRelativePath: string;
+}
 
 export function makeDashboardFileText(item: {
   dashboard: common.DashboardX;
@@ -12,6 +19,7 @@ export function makeDashboardFileText(item: {
   roles: string;
   timezone: string;
   caseSensitiveStringFilters: boolean;
+  malloyDashboardFilePath: string;
 }) {
   let {
     dashboard,
@@ -19,8 +27,11 @@ export function makeDashboardFileText(item: {
     newTitle,
     roles,
     timezone,
-    caseSensitiveStringFilters
+    caseSensitiveStringFilters,
+    malloyDashboardFilePath
   } = item;
+
+  let malloyParts: MalloyPart[] = [];
 
   let dashboardFile: common.FileDashboard = {
     fileName: undefined,
@@ -186,15 +197,35 @@ export function makeDashboardFileText(item: {
         : undefined,
     tiles:
       common.isDefined(dashboard.tiles) && dashboard.tiles.length > 0
-        ? dashboard.tiles.map(x => {
+        ? dashboard.tiles.map((x, tileIndex) => {
             let newMconfig = common.makeCopy(x.mconfig);
+
+            let malloyQueryId =
+              newMconfig.modelType === common.ModelTypeEnum.Malloy
+                ? `${newDashboardId}_${tileIndex}`
+                : undefined;
 
             let filePartTile: common.FilePartTile = common.prepareTile({
               tile: x,
               isForDashboard: true,
               mconfig: newMconfig,
-              malloyQueryId: undefined // TODO: dashboard tile malloyQueryId
+              malloyQueryId: malloyQueryId
             });
+
+            if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+              let modelRelativePath = path.relative(
+                `/${path.dirname(malloyDashboardFilePath)}`,
+                `/${newMconfig.modelFilePath}`
+              );
+
+              let malloyPart: MalloyPart = {
+                modelId: newMconfig.modelId,
+                modelRelativePath: modelRelativePath,
+                malloyQueryText: `query: ${malloyQueryId} is ${newMconfig.malloyQuery.substring(5)}`
+              };
+
+              malloyParts.push(malloyPart);
+            }
 
             return filePartTile;
           })
@@ -206,5 +237,30 @@ export function makeDashboardFileText(item: {
   // console.log('dashboardFileText');
   // console.log(dashboardFileText);
 
-  return dashboardFileText;
+  let malloyFileText: string;
+
+  if (malloyParts.length > 0) {
+    malloyFileText = '';
+
+    let uniqueModelIds = [
+      ...new Set(malloyParts.map(malloyPart => malloyPart.modelId))
+    ];
+
+    malloyFileText = uniqueModelIds
+      .map(modelId => {
+        let malloyPart = malloyParts.find(y => y.modelId === modelId);
+        return `import { ${modelId} } from '${malloyPart.modelRelativePath}';`;
+      })
+      .join('\n');
+
+    malloyFileText = [
+      `${malloyFileText}\n`,
+      ...malloyParts.map(x => x.malloyQueryText)
+    ].join('\n');
+  }
+
+  return {
+    dashboardFileText: dashboardFileText,
+    malloyFileText: malloyFileText
+  };
 }

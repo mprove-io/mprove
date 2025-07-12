@@ -48,6 +48,9 @@ export class Mconfig {
   @IsString()
   modelLabel: string;
 
+  @IsString()
+  modelFilePath: string;
+
   @IsOptional()
   @IsString()
   malloyQuery: string;

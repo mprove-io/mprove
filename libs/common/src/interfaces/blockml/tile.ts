@@ -8,6 +8,9 @@ export class Tile {
   modelLabel: string;
 
   @IsString()
+  modelFilePath: string;
+
+  @IsString()
   mconfigId: string;
 
   @IsString()

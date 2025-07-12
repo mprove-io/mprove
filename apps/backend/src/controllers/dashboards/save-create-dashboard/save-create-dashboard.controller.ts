@@ -135,7 +135,28 @@ export class SaveCreateDashboardController {
       });
     }
 
-    let dashboardFileText: string;
+    let mdir = currentStruct.mproveDirValue;
+
+    if (
+      mdir.length > 2 &&
+      mdir.substring(0, 2) === common.MPROVE_CONFIG_DIR_DOT_SLASH
+    ) {
+      mdir = mdir.substring(2);
+    }
+
+    let parentNodeId =
+      currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
+        ? `${projectId}/${common.MPROVE_USERS_FOLDER}/${user.alias}`
+        : `${projectId}/${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}`;
+
+    let fileName = `${newDashboardId}${common.FileExtensionEnum.Dashboard}`;
+
+    let malloyFileName = `${newDashboardId}${common.FileExtensionEnum.Malloy}`;
+
+    let malloyDashboardFilePath = `${parentNodeId}/${malloyFileName}`;
+
+    let dashFileText: string;
+    let secondFileContent: string;
 
     if (common.isDefined(fromDashboardId)) {
       let fromDashboardEntity =
@@ -176,14 +197,18 @@ export class SaveCreateDashboardController {
 
       fromDashboard.tiles = yTiles;
 
-      dashboardFileText = makeDashboardFileText({
+      let { dashboardFileText, malloyFileText } = makeDashboardFileText({
         dashboard: fromDashboard,
         newDashboardId: newDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
         caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-        timezone: common.UTC
+        timezone: common.UTC,
+        malloyDashboardFilePath: malloyDashboardFilePath
       });
+
+      dashFileText = dashboardFileText;
+      secondFileContent = malloyFileText;
     } else {
       let newDashboard: common.DashboardX = {
         structId: undefined,
@@ -204,31 +229,19 @@ export class SaveCreateDashboardController {
         fields: []
       };
 
-      dashboardFileText = makeDashboardFileText({
+      let { dashboardFileText, malloyFileText } = makeDashboardFileText({
         dashboard: newDashboard,
         newDashboardId: newDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
         caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-        timezone: common.UTC
+        timezone: common.UTC,
+        malloyDashboardFilePath: malloyDashboardFilePath
       });
+
+      dashFileText = dashboardFileText;
+      secondFileContent = malloyFileText;
     }
-
-    let mdir = currentStruct.mproveDirValue;
-
-    if (
-      mdir.length > 2 &&
-      mdir.substring(0, 2) === common.MPROVE_CONFIG_DIR_DOT_SLASH
-    ) {
-      mdir = mdir.substring(2);
-    }
-
-    let parentNodeId =
-      currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
-        ? `${projectId}/${common.MPROVE_USERS_FOLDER}/${user.alias}`
-        : `${projectId}/${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}`;
-
-    let fileName = `${newDashboardId}${common.FileExtensionEnum.Dashboard}`;
 
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
       info: {
@@ -242,8 +255,10 @@ export class SaveCreateDashboardController {
         branch: branchId,
         parentNodeId: parentNodeId,
         fileName: fileName,
+        fileText: dashFileText,
+        secondFileName: malloyFileName,
+        secondFileText: secondFileContent,
         userAlias: user.alias,
-        fileText: dashboardFileText,
         remoteType: project.remoteType,
         gitUrl: project.gitUrl,
         privateKey: project.privateKey,

@@ -123,17 +123,6 @@ export class GetDashboardController {
 
     // fromDashboard.fields = newDashboardFields;
 
-    let newDashboardId = fromDashboard.dashboardId;
-
-    let dashboardFileText = makeDashboardFileText({
-      dashboard: fromDashboard,
-      newDashboardId: newDashboardId,
-      newTitle: fromDashboard.title,
-      roles: fromDashboard.accessRoles.join(', '),
-      caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-      timezone: common.UTC
-    });
-
     let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
@@ -163,7 +152,7 @@ export class GetDashboardController {
         }
       );
 
-    // add dashboard file
+    let newDashboardId = fromDashboard.dashboardId;
 
     let fileName = `${newDashboardId}${common.FileExtensionEnum.Dashboard}`;
 
@@ -182,6 +171,12 @@ export class GetDashboardController {
         `${fromDashboard.dashboardId}${common.FileExtensionEnum.Dashboard}`
     );
 
+    let malloyFile = diskResponse.payload.files.find(
+      x =>
+        x.name ===
+        `${fromDashboard.dashboardId}${common.FileExtensionEnum.Malloy}`
+    );
+
     let relativePath =
       currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
         ? `${common.MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`
@@ -193,7 +188,35 @@ export class GetDashboardController {
 
     let fileId = common.MyRegex.replaceSlashesWithUnderscores(relativePath);
 
-    let newDashboardFile: common.DiskCatalogFile = {
+    // second
+
+    let secondFileName = `${newDashboardId}${common.FileExtensionEnum.Malloy}`;
+
+    let secondRelativePath =
+      currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
+        ? `${common.MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`
+        : `${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`;
+
+    let secondFileNodeId = `${projectId}/${secondRelativePath}`;
+
+    let secondPathString = JSON.stringify(secondFileNodeId.split('/'));
+
+    let secondFileId =
+      common.MyRegex.replaceSlashesWithUnderscores(secondRelativePath);
+
+    let { dashboardFileText, malloyFileText } = makeDashboardFileText({
+      dashboard: fromDashboard,
+      newDashboardId: newDashboardId,
+      newTitle: fromDashboard.title,
+      roles: fromDashboard.accessRoles.join(', '),
+      caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
+      timezone: common.UTC,
+      malloyDashboardFilePath: secondFileNodeId
+    });
+
+    // add dashboard file
+
+    let tempFile: common.DiskCatalogFile = {
       projectId: projectId,
       repoId: repoId,
       fileId: fromDashboard.draft === true ? fileId : dashboardFile.fileId,
@@ -205,12 +228,25 @@ export class GetDashboardController {
       content: dashboardFileText
     };
 
+    let secondTempFile: common.DiskCatalogFile = {
+      projectId: projectId,
+      repoId: repoId,
+      fileId: fromDashboard.draft === true ? secondFileId : malloyFile.fileId,
+      pathString:
+        fromDashboard.draft === true ? secondPathString : malloyFile.pathString,
+      fileNodeId:
+        fromDashboard.draft === true ? secondFileNodeId : malloyFile.fileNodeId,
+      name: secondFileName,
+      content: malloyFileText
+    };
+
     let diskFiles = [
-      newDashboardFile,
+      tempFile,
       ...diskResponse.payload.files.filter(x => {
         let ar = x.name.split('.');
         let ext = ar[ar.length - 1];
         let allow =
+          x.fileNodeId !== secondFileNodeId &&
           [
             common.FileExtensionEnum.Chart,
             common.FileExtensionEnum.Dashboard
@@ -218,6 +254,10 @@ export class GetDashboardController {
         return allow;
       })
     ];
+
+    if (common.isDefined(malloyFileText)) {
+      diskFiles.push(secondTempFile);
+    }
 
     let { struct, dashboards, mconfigs, models, queries } =
       await this.blockmlService.rebuildStruct({

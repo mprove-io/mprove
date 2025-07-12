@@ -148,13 +148,52 @@ export class EditDraftDashboardController {
     // oldDashboardId is not on disk because it is draft
     let newDashboardId = oldDashboardId;
 
-    let dashboardFileText = makeDashboardFileText({
+    let fileName = `${newDashboardId}${common.FileExtensionEnum.Dashboard}`;
+
+    let mdir = currentStruct.mproveDirValue;
+
+    if (
+      mdir.length > 2 &&
+      mdir.substring(0, 2) === common.MPROVE_CONFIG_DIR_DOT_SLASH
+    ) {
+      mdir = mdir.substring(2);
+    }
+
+    let relativePath =
+      currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
+        ? `${common.MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`
+        : `${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`;
+
+    let fileNodeId = `${projectId}/${relativePath}`;
+
+    let pathString = JSON.stringify(fileNodeId.split('/'));
+
+    let fileId = common.MyRegex.replaceSlashesWithUnderscores(relativePath);
+
+    // second
+
+    let secondFileName = `${newDashboardId}${common.FileExtensionEnum.Malloy}`;
+
+    let secondRelativePath =
+      currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
+        ? `${common.MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`
+        : `${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`;
+
+    let secondFileNodeId = `${projectId}/${secondRelativePath}`;
+
+    let secondPathString = JSON.stringify(secondFileNodeId.split('/'));
+
+    let secondFileId =
+      common.MyRegex.replaceSlashesWithUnderscores(secondRelativePath);
+
+    let { dashboardFileText, malloyFileText } = makeDashboardFileText({
       dashboard: fromDashboard,
       newDashboardId: newDashboardId,
       newTitle: newDashboardId,
       roles: fromDashboard.accessRoles.join(', '),
       caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-      timezone: common.UTC
+      timezone: common.UTC,
+      malloyDashboardFilePath: secondFileNodeId
     });
 
     let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
@@ -188,28 +227,6 @@ export class EditDraftDashboardController {
 
     // add dashboard file
 
-    let fileName = `${newDashboardId}${common.FileExtensionEnum.Dashboard}`;
-
-    let mdir = currentStruct.mproveDirValue;
-
-    if (
-      mdir.length > 2 &&
-      mdir.substring(0, 2) === common.MPROVE_CONFIG_DIR_DOT_SLASH
-    ) {
-      mdir = mdir.substring(2);
-    }
-
-    let relativePath =
-      currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
-        ? `${common.MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`
-        : `${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`;
-
-    let fileNodeId = `${projectId}/${relativePath}`;
-
-    let pathString = JSON.stringify(fileNodeId.split('/'));
-
-    let fileId = common.MyRegex.replaceSlashesWithUnderscores(relativePath);
-
     let tempFile: common.DiskCatalogFile = {
       projectId: projectId,
       repoId: repoId,
@@ -220,12 +237,23 @@ export class EditDraftDashboardController {
       content: dashboardFileText
     };
 
+    let secondTempFile: common.DiskCatalogFile = {
+      projectId: projectId,
+      repoId: repoId,
+      fileId: secondFileId,
+      pathString: secondPathString,
+      fileNodeId: secondFileNodeId,
+      name: secondFileName,
+      content: malloyFileText
+    };
+
     let diskFiles = [
       tempFile,
       ...diskResponse.payload.files.filter(x => {
         let ar = x.name.split('.');
         let ext = ar[ar.length - 1];
         let allow =
+          x.fileNodeId !== secondFileNodeId &&
           [
             common.FileExtensionEnum.Chart,
             common.FileExtensionEnum.Dashboard
@@ -233,6 +261,10 @@ export class EditDraftDashboardController {
         return allow;
       })
     ];
+
+    if (common.isDefined(malloyFileText)) {
+      diskFiles.push(secondTempFile);
+    }
 
     let { struct, dashboards, mconfigs, models, queries } =
       await this.blockmlService.rebuildStruct({

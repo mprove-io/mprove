@@ -65,6 +65,7 @@ export class StructService {
       dateRangeIncludesRightSide: this.model.dateRangeIncludesRightSide,
       storePart: undefined,
       modelLabel: this.model.label,
+      modelFilePath: this.model.filePath,
       malloyQuery: undefined,
       compiledQuery: undefined,
       select: [],

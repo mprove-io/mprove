@@ -353,6 +353,7 @@ export class ReportDataService {
             dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
             storePart: undefined,
             modelLabel: model.label,
+            modelFilePath: model.filePath,
             malloyQuery: undefined,
             compiledQuery: undefined,
             select:

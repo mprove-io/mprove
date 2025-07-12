@@ -201,14 +201,14 @@ export class SaveModifyChartController {
         ? pathParts.join('.')
         : undefined;
 
-    let { chartFileText, malloyQueryText } = makeChartFileText({
+    let { chartFileText, malloyFileText } = makeChartFileText({
       mconfig: mconfig,
       tileTitle: tileTitle,
       roles: accessRoles,
       chartId: chartId,
       modelId: mconfigModel.modelId,
       modelFilePath: mconfigModel.filePath,
-      malloyQueryFilePath: secondFileNodeId
+      malloyChartFilePath: secondFileNodeId
     });
 
     let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {
@@ -224,8 +224,10 @@ export class SaveModifyChartController {
         fileNodeId: existingChart.filePath,
         userAlias: user.alias,
         content: chartFileText,
-        secondFileNodeId: secondFileNodeId,
-        secondFileContent: malloyQueryText,
+        secondFileNodeId: common.isDefined(malloyFileText)
+          ? secondFileNodeId
+          : undefined,
+        secondFileContent: malloyFileText,
         remoteType: project.remoteType,
         gitUrl: project.gitUrl,
         privateKey: project.privateKey,

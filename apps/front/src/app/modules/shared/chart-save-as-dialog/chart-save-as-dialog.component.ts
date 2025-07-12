@@ -384,6 +384,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       mconfig: this.chart.tiles[0].mconfig,
       modelId: this.chart.tiles[0].mconfig.modelId,
       modelLabel: this.ref.data.model.label,
+      modelFilePath: this.ref.data.model.filePath,
       mconfigId: this.chart.tiles[0].mconfig.mconfigId,
       listen: {},
       deletedFilterFieldIds: undefined,
