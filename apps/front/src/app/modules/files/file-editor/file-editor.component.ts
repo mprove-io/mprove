@@ -26,7 +26,11 @@ import { filter, map, take, tap } from 'rxjs/operators';
 import { debounce } from 'throttle-debounce';
 import {
   LIGHT_PLUS_THEME_EXTRA_DIFF,
-  LIGHT_PLUS_THEME_EXTRA_SINGLE
+  LIGHT_PLUS_THEME_EXTRA_DIFF_READ,
+  LIGHT_PLUS_THEME_EXTRA_SINGLE,
+  LIGHT_PLUS_THEME_EXTRA_SINGLE_READ,
+  VS_LIGHT_THEME_EXTRA_DIFF_READ,
+  VS_LIGHT_THEME_EXTRA_SINGLE_READ
 } from '~front/app/constants/code-themes/themes';
 import {
   VS_LIGHT_THEME_EXTRA_DIFF,
@@ -658,15 +662,25 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
       this.lang = language?.name;
     }
 
+    let nav = this.navQuery.getValue();
+
     this.theme =
       LIGHT_PLUS_LANGUAGES.indexOf(this.lang?.toLowerCase()) > -1
-        ? LIGHT_PLUS_THEME_EXTRA_SINGLE
-        : VS_LIGHT_THEME_EXTRA_SINGLE;
+        ? nav.isRepoProd === true
+          ? LIGHT_PLUS_THEME_EXTRA_SINGLE_READ
+          : LIGHT_PLUS_THEME_EXTRA_SINGLE
+        : nav.isRepoProd === true
+          ? VS_LIGHT_THEME_EXTRA_SINGLE_READ
+          : VS_LIGHT_THEME_EXTRA_SINGLE;
 
     let themeDIff =
       LIGHT_PLUS_LANGUAGES.indexOf(this.lang?.toLowerCase()) > -1
-        ? LIGHT_PLUS_THEME_EXTRA_DIFF
-        : VS_LIGHT_THEME_EXTRA_DIFF;
+        ? nav.isRepoProd === true
+          ? LIGHT_PLUS_THEME_EXTRA_DIFF_READ
+          : LIGHT_PLUS_THEME_EXTRA_DIFF
+        : nav.isRepoProd === true
+          ? VS_LIGHT_THEME_EXTRA_DIFF_READ
+          : VS_LIGHT_THEME_EXTRA_DIFF;
 
     let originalExtensions = [...this.diffOriginalExtensions, themeDIff];
     let modifiedExtensions = [...this.diffModifiedExtensions, themeDIff];
