@@ -35,6 +35,7 @@ export class DeleteFileService {
       repoId,
       branch,
       fileNodeId,
+      secondFileNodeId,
       userAlias,
       remoteType,
       gitUrl,
@@ -114,6 +115,15 @@ export class DeleteFileService {
     //
 
     await disk.removePath(filePath);
+
+    if (common.isDefined(secondFileNodeId)) {
+      let secondRelativeFilePath = secondFileNodeId.substring(
+        projectId.length + 1
+      );
+      let secondFilePath = repoDir + '/' + secondRelativeFilePath;
+
+      await disk.removePath(secondFilePath);
+    }
 
     await git.addChangesToStage({ repoDir: repoDir });
 

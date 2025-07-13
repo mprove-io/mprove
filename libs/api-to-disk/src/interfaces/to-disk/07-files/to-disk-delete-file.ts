@@ -19,6 +19,10 @@ export class ToDiskDeleteFileRequestPayload {
   @IsString()
   fileNodeId: string;
 
+  @IsOptional()
+  @IsString()
+  secondFileNodeId?: string;
+
   @IsString()
   userAlias: string;
 

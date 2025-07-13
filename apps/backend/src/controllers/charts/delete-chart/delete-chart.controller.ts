@@ -26,6 +26,7 @@ import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { ChartsService } from '~backend/services/charts.service';
 import { EnvsService } from '~backend/services/envs.service';
+import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -36,6 +37,7 @@ let retry = require('async-retry');
 @Controller()
 export class DeleteChartController {
   constructor(
+    private mconfigsService: MconfigsService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private membersService: MembersService,
@@ -120,6 +122,22 @@ export class DeleteChartController {
       });
     }
 
+    let chartMconfig = await this.mconfigsService.getMconfigCheckExists({
+      structId: bridge.structId,
+      mconfigId: existingChart.tiles[0].mconfigId
+    });
+
+    let secondFileNodeId;
+
+    if (chartMconfig.modelType === common.ModelTypeEnum.Malloy) {
+      let pathParts = existingChart.filePath.split('.');
+
+      pathParts[pathParts.length - 1] =
+        common.FileExtensionEnum.Malloy.slice(1);
+
+      secondFileNodeId = pathParts.join('.');
+    }
+
     let toDiskDeleteFileRequest: apiToDisk.ToDiskDeleteFileRequest = {
       info: {
         name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
@@ -131,6 +149,7 @@ export class DeleteChartController {
         repoId: repoId,
         branch: branchId,
         fileNodeId: existingChart.filePath,
+        secondFileNodeId: secondFileNodeId,
         userAlias: user.alias,
         remoteType: project.remoteType,
         gitUrl: project.gitUrl,
