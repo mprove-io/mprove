@@ -24,6 +24,7 @@ import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { DashboardsService } from '~backend/services/dashboards.service';
 import { EnvsService } from '~backend/services/envs.service';
+import { MalloyService } from '~backend/services/malloy.service';
 import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -37,6 +38,7 @@ let retry = require('async-retry');
 @Controller()
 export class EditDraftDashboardController {
   constructor(
+    private malloyService: MalloyService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private membersService: MembersService,
@@ -324,7 +326,9 @@ export class EditDraftDashboardController {
 
     await forEachSeries(
       dashboardMconfigs.filter(
-        mconfig => mconfig.modelType === common.ModelTypeEnum.Store
+        mconfig =>
+          mconfig.modelType === common.ModelTypeEnum.Store ||
+          mconfig.modelType === common.ModelTypeEnum.Malloy
       ),
       // dashboardMconfigs.filter(mconfig => mconfig.isStoreModel === true),
       async mconfig => {
@@ -334,24 +338,43 @@ export class EditDraftDashboardController {
 
         let model = models.find(y => y.modelId === mconfig.modelId);
 
-        let mqe = await this.mconfigsService.prepStoreMconfigQuery({
-          struct: struct,
-          project: project,
-          envId: envId,
-          model: this.wrapToEntService.wrapToEntityModel(model),
-          mconfig: mconfig,
-          metricsStartDateYYYYMMDD: undefined,
-          metricsEndDateYYYYMMDD: undefined
-        });
+        if (mconfig.modelType === common.ModelTypeEnum.Store) {
+          let mqe = await this.mconfigsService.prepStoreMconfigQuery({
+            struct: struct,
+            project: project,
+            envId: envId,
+            model: this.wrapToEntService.wrapToEntityModel(model),
+            mconfig: mconfig,
+            metricsStartDateYYYYMMDD: undefined,
+            metricsEndDateYYYYMMDD: undefined
+          });
 
-        newMconfig = mqe.newMconfig;
-        newQuery = mqe.newQuery;
-        isError = mqe.isError;
+          newMconfig = mqe.newMconfig;
+          newQuery = mqe.newQuery;
+          isError = mqe.isError;
+        } else if (mconfig.modelType === common.ModelTypeEnum.Malloy) {
+          let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
+            projectId: projectId,
+            envId: envId,
+            structId: struct.structId,
+            model: model,
+            mconfig: mconfig,
+            queryOperation: {
+              type: common.QueryOperationTypeEnum.Get,
+              timezone: timezone
+            }
+          });
+
+          newMconfig = editMalloyQueryResult.newMconfig;
+          newQuery = editMalloyQueryResult.newQuery;
+          isError = editMalloyQueryResult.isError;
+        }
 
         let newDashboardTile = newDashboard.tiles.find(
           tile => tile.mconfigId === mconfig.mconfigId
         );
         newDashboardTile.queryId = newMconfig.queryId;
+        newDashboardTile.mconfigId = newMconfig.mconfigId;
 
         insertMconfigs.push(
           this.wrapToEntService.wrapToEntityMconfig(newMconfig)

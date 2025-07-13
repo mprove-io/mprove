@@ -302,7 +302,11 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       mconfig: newMconfig,
       isKeepQueryId: true,
       isDraft: false,
-      chartId: undefined
+      chartId: undefined,
+      queryOperation: {
+        type: common.QueryOperationTypeEnum.Get,
+        timezone: newMconfig.timezone
+      }
     });
 
     // this.navigateService.navigateMconfigQuery({
