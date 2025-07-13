@@ -44,6 +44,15 @@
     </ng-template>
 
     <div
+      *ngIf="nav?.isRepoProd === true"
+      class="mr-6 flex flex-col font-semibold"
+    >
+      <div class="text-s400 flex text-lg">
+        To make changes, select the dev repo branch
+      </div>
+    </div>
+
+    <div
       class="ml-5 flex flex-shrink-0"
       *ngIf="nav?.isRepoProd === false"
       [tp]="templateSave"
