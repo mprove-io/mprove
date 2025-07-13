@@ -23,6 +23,7 @@ let fileState: FileState = {
 @Injectable({ providedIn: 'root' })
 export class FileQuery extends BaseQuery<FileState> {
   fileId$ = this.store.pipe(select(state => state.fileId));
+  fileNodeId$ = this.store.pipe(select(state => state.fileNodeId));
 
   constructor() {
     super(createStore({ name: 'file' }, withProps<FileState>(fileState)));

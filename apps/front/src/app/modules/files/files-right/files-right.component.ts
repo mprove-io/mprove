@@ -9,6 +9,7 @@ import { finalize, map, take, tap } from 'rxjs/operators';
 import { LIGHT_PLUS_THEME_EXTRA_SINGLE } from '~front/app/constants/code-themes/themes';
 import { VS_LIGHT_THEME_EXTRA_SINGLE } from '~front/app/constants/code-themes/themes';
 import { LIGHT_PLUS_LANGUAGES } from '~front/app/constants/top';
+import { FileQuery } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
@@ -127,6 +128,14 @@ export class FilesRightComponent {
     })
   );
 
+  mainFileNodeId: string;
+  fileNodeId$ = this.fileQuery.fileNodeId$.pipe(
+    tap(x => {
+      this.mainFileNodeId = x;
+      this.cd.detectChanges();
+    })
+  );
+
   secondFileContent: string;
 
   isHighlighterReady: boolean;
@@ -145,6 +154,7 @@ export class FilesRightComponent {
 
   constructor(
     private uiQuery: UiQuery,
+    private fileQuery: FileQuery,
     private structQuery: StructQuery,
     private highLightService: HighLightService,
     private repoQuery: RepoQuery,
@@ -439,5 +449,15 @@ export class FilesRightComponent {
     } else {
       this.showGoTo = false;
     }
+  }
+
+  goToEditFile() {
+    let fileIdAr = this.secondFileNodeId.split('/');
+    fileIdAr.shift();
+
+    this.navigateService.navigateToFileLine({
+      panel: common.PanelEnum.Tree,
+      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
+    });
   }
 }
