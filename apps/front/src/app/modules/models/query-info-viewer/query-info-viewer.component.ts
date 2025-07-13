@@ -11,8 +11,10 @@ import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
 import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { tap } from 'rxjs/operators';
-import { LIGHT_PLUS_THEME_EXTRA_SINGLE } from '~front/app/constants/code-themes/themes';
-import { VS_LIGHT_THEME_EXTRA_SINGLE } from '~front/app/constants/code-themes/themes';
+import {
+  LIGHT_PLUS_THEME_EXTRA_SINGLE_READ,
+  VS_LIGHT_THEME_EXTRA_SINGLE_READ
+} from '~front/app/constants/code-themes/themes';
 import { LIGHT_PLUS_LANGUAGES } from '~front/app/constants/top';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -41,7 +43,7 @@ export class QueryInfoViewerComponent implements OnChanges {
   languages: LanguageDescription[] = [];
   lang: string;
 
-  theme: Extension = VS_LIGHT_THEME_EXTRA_SINGLE;
+  theme: Extension = VS_LIGHT_THEME_EXTRA_SINGLE_READ;
 
   spinnerName = 'queryInfoGetFile';
   isShowSpinner = false;
@@ -146,8 +148,8 @@ export class QueryInfoViewerComponent implements OnChanges {
 
     this.theme =
       LIGHT_PLUS_LANGUAGES.indexOf(this.lang.toLowerCase()) > -1
-        ? LIGHT_PLUS_THEME_EXTRA_SINGLE
-        : VS_LIGHT_THEME_EXTRA_SINGLE;
+        ? LIGHT_PLUS_THEME_EXTRA_SINGLE_READ
+        : VS_LIGHT_THEME_EXTRA_SINGLE_READ;
 
     if (this.queryPart === common.QueryPartEnum.MalloyQuery) {
       this.content = this.chart.tiles[0].mconfig.malloyQuery;

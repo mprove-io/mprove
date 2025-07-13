@@ -56,7 +56,18 @@ let lightSpec: {
   }
 };
 
+// LIGHT_START
+
 const LIGHT_START_THEME = EditorView.theme(lightSpec, { dark: false });
+
+const LIGHT_START_THEME_READ = EditorView.theme(
+  Object.assign({}, lightSpec, {
+    '.cm-content': {
+      caretColor: 'transparent'
+    }
+  }),
+  { dark: false }
+);
 
 // LIGHT_PLUS
 
@@ -76,8 +87,25 @@ export const LIGHT_PLUS_THEME_EXTRA_DIFF: Extension = createThemeExtraDiff(
   LIGHT_PLUS_THEME_EXTRA
 );
 
-// VS_LIGHT
-// https://github.com/uiwjs/react-codemirror/blob/master/themes/vscode/src/light.ts
+// LIGHT_PLUS READ
+
+export const LIGHT_PLUS_THEME_READ = [
+  LIGHT_START_THEME_READ,
+  syntaxHighlighting(HighlightStyle.define([...LIGHT_PLUS_STYLES]))
+];
+
+export const LIGHT_PLUS_THEME_EXTRA_READ: Extension = createThemeExtra(
+  LIGHT_PLUS_THEME_READ
+);
+
+export const LIGHT_PLUS_THEME_EXTRA_SINGLE_READ: Extension =
+  createThemeExtraSingle(LIGHT_PLUS_THEME_EXTRA_READ);
+
+export const LIGHT_PLUS_THEME_EXTRA_DIFF_READ: Extension = createThemeExtraDiff(
+  LIGHT_PLUS_THEME_EXTRA_READ
+);
+
+// VS_LIGHT https://github.com/uiwjs/react-codemirror/blob/master/themes/vscode/src/light.ts
 
 export const VS_LIGHT_THEME = [
   LIGHT_START_THEME,
@@ -91,3 +119,20 @@ export const VS_LIGHT_THEME_EXTRA_SINGLE: Extension =
 
 export const VS_LIGHT_THEME_EXTRA_DIFF: Extension =
   createThemeExtraDiff(VS_LIGHT_THEME_EXTRA);
+
+// VS_LIGHT READ
+
+export const VS_LIGHT_THEME_READ = [
+  LIGHT_START_THEME_READ,
+  syntaxHighlighting(HighlightStyle.define([...VS_LIGHT_STYLES]))
+];
+
+export const VS_LIGHT_THEME_EXTRA_READ: Extension =
+  createThemeExtra(VS_LIGHT_THEME_READ);
+
+export const VS_LIGHT_THEME_EXTRA_SINGLE_READ: Extension =
+  createThemeExtraSingle(VS_LIGHT_THEME_EXTRA_READ);
+
+export const VS_LIGHT_THEME_EXTRA_DIFF_READ: Extension = createThemeExtraDiff(
+  VS_LIGHT_THEME_EXTRA_READ
+);

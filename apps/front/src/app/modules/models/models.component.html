@@ -1849,7 +1849,7 @@
                     </div>
                   </div>
 
-                  <ng-template #templateEditModelFile>
+                  <!-- <ng-template #templateEditModelFile>
                     <div *ngIf="isEditor === false"
                       >Models can be edited by project members with FilesEditor
                       role</div
@@ -1859,10 +1859,10 @@
                       >To edit model file, switch the branch from the Production
                       repo to the Dev repo</div
                     >
-                  </ng-template>
+                  </ng-template> -->
 
                   <div
-                    class="ml-5"
+                    class="ml-5 select-none"
                     *ngIf="
                       rightIsShow === true &&
                       mconfig?.select.length > 0 &&
@@ -1871,23 +1871,10 @@
                         queryPartEnum.MalloySource
                       ].indexOf(queryPartForm.controls['queryPart'].value) > -1
                     "
-                    [tp]="templateEditModelFile"
-                    [tpIsEnabled]="
-                      isEditor === false || nav?.isRepoProd === true
-                    "
                   >
                     <button
-                      class="flex flex-shrink-0 flex-row items-center focus:outline-none"
-                      [ngClass]="{
-                        'text-s400':
-                          isEditor === false || nav?.isRepoProd === true,
-                        'text-m600':
-                          isEditor === true && nav?.isRepoProd === false
-                      }"
+                      class="text-m600 flex flex-shrink-0 flex-row items-center focus:outline-none"
                       (click)="goToEditFile()"
-                      [disabled]="
-                        isEditor === false || nav?.isRepoProd === true
-                      "
                     >
                       <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
 
