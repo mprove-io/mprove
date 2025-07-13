@@ -281,10 +281,9 @@ export class SaveModifyDashboardController {
         repoId: repoId,
         branch: branchId,
         fileNodeId: toDashboardEntity.filePath,
-        secondFileNodeId: common.isDefined(secondFileContent)
-          ? secondFileNodeId
-          : undefined,
+        secondFileNodeId: secondFileNodeId,
         secondFileContent: secondFileContent,
+        isDeleteSecondFile: common.isUndefinedOrEmpty(secondFileContent),
         userAlias: user.alias,
         content: dashFileText,
         remoteType: project.remoteType,

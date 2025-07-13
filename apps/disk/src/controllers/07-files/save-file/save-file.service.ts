@@ -34,6 +34,7 @@ export class SaveFileService {
       content,
       secondFileNodeId,
       secondFileContent,
+      isDeleteSecondFile,
       userAlias,
       remoteType,
       gitUrl,
@@ -116,7 +117,10 @@ export class SaveFileService {
       content: content
     });
 
-    if (common.isDefinedAndNotEmpty(secondFileNodeId)) {
+    if (
+      common.isDefined(secondFileNodeId) &&
+      common.isDefinedAndNotEmpty(secondFileContent)
+    ) {
       let relativeSecondFilePath = secondFileNodeId.substring(
         projectId.length + 1
       );
@@ -135,6 +139,15 @@ export class SaveFileService {
         filePath: secondFilePath,
         content: secondFileContent
       });
+    }
+
+    if (common.isDefined(secondFileNodeId) && isDeleteSecondFile === true) {
+      let secondRelativeFilePath = secondFileNodeId.substring(
+        projectId.length + 1
+      );
+      let secondFilePath = repoDir + '/' + secondRelativeFilePath;
+
+      await disk.removePath(secondFilePath);
     }
 
     await git.addChangesToStage({ repoDir: repoDir });
