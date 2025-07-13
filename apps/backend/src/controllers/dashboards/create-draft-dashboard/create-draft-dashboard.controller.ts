@@ -128,6 +128,10 @@ export class CreateDraftDashboardController {
     tiles.forEach(freshTile => {
       let yTile = fromDashboard.tiles.find(y => freshTile.title === y.title);
 
+      if (common.isDefined(yTile.malloyQueryId)) {
+        yTile.malloyQueryId = common.makeId();
+      }
+
       yTile.plateX = freshTile.plateX;
       yTile.plateY = freshTile.plateY;
       yTile.plateWidth = freshTile.plateWidth;

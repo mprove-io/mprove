@@ -231,11 +231,15 @@ export class GetDashboardController {
     let secondTempFile: common.DiskCatalogFile = {
       projectId: projectId,
       repoId: repoId,
-      fileId: fromDashboard.draft === true ? secondFileId : malloyFile.fileId,
+      fileId: fromDashboard.draft === true ? secondFileId : malloyFile?.fileId,
       pathString:
-        fromDashboard.draft === true ? secondPathString : malloyFile.pathString,
+        fromDashboard.draft === true
+          ? secondPathString
+          : malloyFile?.pathString,
       fileNodeId:
-        fromDashboard.draft === true ? secondFileNodeId : malloyFile.fileNodeId,
+        fromDashboard.draft === true
+          ? secondFileNodeId
+          : malloyFile?.fileNodeId,
       name: secondFileName,
       content: malloyFileText
     };

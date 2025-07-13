@@ -200,16 +200,15 @@ export function makeDashboardFileText(item: {
         ? dashboard.tiles.map((x, tileIndex) => {
             let newMconfig = common.makeCopy(x.mconfig);
 
-            let malloyQueryId =
-              newMconfig.modelType === common.ModelTypeEnum.Malloy
-                ? `${newDashboardId}_${tileIndex}`
-                : undefined;
+            if (common.isUndefined(x.malloyQueryId)) {
+              x.malloyQueryId = common.makeId();
+            }
 
             let filePartTile: common.FilePartTile = common.prepareTile({
               tile: x,
               isForDashboard: true,
               mconfig: newMconfig,
-              malloyQueryId: malloyQueryId
+              malloyQueryId: x.malloyQueryId
             });
 
             if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
@@ -221,7 +220,7 @@ export function makeDashboardFileText(item: {
               let malloyPart: MalloyPart = {
                 modelId: newMconfig.modelId,
                 modelRelativePath: modelRelativePath,
-                malloyQueryText: `query: ${malloyQueryId} is ${newMconfig.malloyQuery.substring(5)}`
+                malloyQueryText: `query: ${x.malloyQueryId} is ${newMconfig.malloyQuery.substring(5)}`
               };
 
               malloyParts.push(malloyPart);

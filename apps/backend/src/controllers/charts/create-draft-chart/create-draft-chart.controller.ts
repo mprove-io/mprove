@@ -259,6 +259,7 @@ export class CreateDraftChartController {
       modelFilePath: newMconfig.modelFilePath,
       mconfigId: newMconfig.mconfigId,
       queryId: newMconfig.queryId,
+      malloyQueryId: undefined,
       listen: undefined,
       deletedFilterFieldIds: undefined,
       title: undefined,

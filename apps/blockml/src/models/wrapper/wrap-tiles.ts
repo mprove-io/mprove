@@ -285,6 +285,7 @@ export function wrapTiles(item: {
       modelFilePath: store?.filePath || mod?.filePath || model?.filePath,
       mconfigId: mconfigId,
       queryId: queryId,
+      malloyQueryId: tile.query,
       listen: tile.listen,
       deletedFilterFieldIds: undefined,
       title: mconfigChart.title,
