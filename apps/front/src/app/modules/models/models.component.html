@@ -985,16 +985,23 @@
                     data-cy="chartSaveAsButton"
                     class="w-28 flex-shrink-0 rounded border py-2 text-base font-medium focus:outline-none"
                     [ngClass]="{
-                      'border-s400 text-s500 hover:bg-s100':
-                        isSelectValid === true &&
-                        mconfig.chart.isValid === true &&
-                        chartTitleForm.valid === true &&
-                        alias !== restrictedUserAlias,
                       'border-s300 text-s400 cursor-default':
                         isSelectValid === false ||
                         mconfig.chart.isValid === false ||
                         chartTitleForm.valid === false ||
-                        alias === restrictedUserAlias
+                        alias === restrictedUserAlias,
+                      'border-s400 text-s500 hover:bg-s100':
+                        isSelectValid === true &&
+                        mconfig.chart.isValid === true &&
+                        chartTitleForm.valid === true &&
+                        alias !== restrictedUserAlias &&
+                        chart.draft === false,
+                      'border-m600 text-m600':
+                        isSelectValid === true &&
+                        mconfig.chart.isValid === true &&
+                        chartTitleForm.valid === true &&
+                        alias !== restrictedUserAlias &&
+                        chart.draft === true
                     }"
                     (click)="chartSaveAs($event)"
                     [disabled]="
