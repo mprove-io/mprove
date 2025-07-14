@@ -606,7 +606,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
               filePath: l.fileId.split('/').slice(1).join('/')
             })
           )
-          // .map(l => l.fileId.split('/').slice(1).join(common.TRIPLE_UNDERSCORE))
           .flat()
       )
       .flat();
@@ -796,7 +795,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
             let filePath = lineFileIdAr.join('/');
 
             let fileId = common.encodeFilePath({ filePath: filePath });
-            // let fileId = lineFileIdAr.join(common.TRIPLE_UNDERSCORE);
             return fileId === this.file.fileId;
           })
           .map(eLine => {
@@ -862,7 +860,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
       this.nav.projectId +
       '/' +
       common.decodeFilePath({ filePath: this.file.fileId });
-    // this.file.fileId.split(common.TRIPLE_UNDERSCORE).join('/');
 
     let payload: apiToBackend.ToBackendSaveFileRequestPayload = {
       projectId: this.nav.projectId,

@@ -70,10 +70,8 @@ export class FileService {
 
     let fileNodeId =
       this.nav.projectId + '/' + common.decodeFilePath({ filePath: fileId });
-    // fileId.split(common.TRIPLE_UNDERSCORE).join('/');
 
     let fileNodeIdParts = fileNodeId.split('/');
-    // let fileIdArr = fileId.split(common.TRIPLE_UNDERSCORE);
 
     fileName = fileNodeIdParts[fileNodeIdParts.length - 1];
 

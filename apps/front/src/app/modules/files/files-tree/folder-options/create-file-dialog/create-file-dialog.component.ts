@@ -125,7 +125,6 @@ export class CreateFileDialogComponent implements OnInit {
 
             let filePath = fIdAr.join('/');
 
-            // let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
             let fileId = common.encodeFilePath({ filePath: filePath });
 
             this.navigateService.navigateToFileLine({

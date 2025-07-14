@@ -316,13 +316,6 @@ export class DataService {
                   ? drillExpression.path.join('.') + '.' + drillExpression.name
                   : drillExpression.name
                 : undefined;
-
-            // let fieldIdTripleUnderscore =
-            //   compiledQueryField?.resultMetadata?.sourceField;
-
-            // fieldId = fieldIdTripleUnderscore
-            //   .split(common.TRIPLE_UNDERSCORE)
-            //   .join('.');
           } else if (mconfig.modelType === common.ModelTypeEnum.Store) {
             fieldId = key.toLowerCase();
           } else if (mconfig.modelType === common.ModelTypeEnum.SQL) {

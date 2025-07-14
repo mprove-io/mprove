@@ -125,8 +125,6 @@ export class FilesTreeComponent implements OnDestroy {
         )
         .subscribe();
 
-      // let fIdAr = x.fileId.split(common.TRIPLE_UNDERSCORE);
-
       let filePath = common.decodeFilePath({ filePath: x.fileId });
 
       let fIdAr = filePath.split('/');
@@ -222,7 +220,6 @@ export class FilesTreeComponent implements OnDestroy {
 
             let filePath = common.decodeFilePath({ filePath: x.fileId });
 
-            // x.fileId.split(common.TRIPLE_UNDERSCORE).forEach(part => {
             filePath.split('/').forEach(part => {
               levelPath = levelPath ? `${levelPath}/${part}` : part;
               this.itemsTree.treeModel.getNodeById(levelPath)?.expand();
@@ -311,7 +308,6 @@ export class FilesTreeComponent implements OnDestroy {
 
     if (common.isDefined(this.fileId)) {
       let selectedPath = common.decodeFilePath({ filePath: this.fileId });
-      // let selectedPath = this.fileId.split(common.TRIPLE_UNDERSCORE).join('/');
 
       let fromPath = fromNodeId.split('/').slice(1).join('/');
       let toPath = toNodeId.split('/').slice(1).join('/');
@@ -329,7 +325,6 @@ export class FilesTreeComponent implements OnDestroy {
           ? `${toPath}/${relativePath}`
           : toPath;
 
-        // newFileId = newPath.split('/').join(common.TRIPLE_UNDERSCORE);
         newFileId = common.encodeFilePath({ filePath: newPath });
       }
     }

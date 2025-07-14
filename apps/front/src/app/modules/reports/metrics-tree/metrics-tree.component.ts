@@ -255,7 +255,6 @@ export class MetricsTreeComponent implements AfterViewInit {
     this.navigateService.navigateToFileLine({
       panel: common.PanelEnum.Tree,
       encodedFileId: common.encodeFilePath({ filePath: filePath }),
-      // underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE),
       lineNumber: fieldLineNumber
     });
   }

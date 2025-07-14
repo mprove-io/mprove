@@ -110,9 +110,6 @@ export class RenameFileDialogComponent implements OnInit {
     if (common.isDefined(selectedFileId)) {
       let selectedPath = common.decodeFilePath({ filePath: selectedFileId });
 
-      // let selectedPath = selectedFileId
-      //   .split(common.TRIPLE_UNDERSCORE)
-      //   .join('/');
       let fromPath = this.ref.data.nodeId.split('/').slice(1).join('/');
 
       if (selectedPath === fromPath) {
@@ -173,7 +170,6 @@ export class RenameFileDialogComponent implements OnInit {
 
               let filePath = fIdAr.join('/');
 
-              // let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
               let fileId = common.encodeFilePath({ filePath: filePath });
 
               this.navigateService.navigateToFileLine({

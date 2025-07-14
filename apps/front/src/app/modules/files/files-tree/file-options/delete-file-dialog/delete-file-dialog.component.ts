@@ -66,10 +66,6 @@ export class DeleteFileDialogComponent implements OnInit {
     if (common.isDefined(selectedFileId)) {
       let selectedPath = common.decodeFilePath({ filePath: selectedFileId });
 
-      // let selectedPath = selectedFileId
-      //   .split(common.TRIPLE_UNDERSCORE)
-      //   .join('/');
-
       let fromPath = this.ref.data.fileNodeId.split('/').slice(1).join('/');
 
       if (selectedPath === fromPath) {
