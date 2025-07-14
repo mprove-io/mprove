@@ -104,7 +104,7 @@ export class NavbarComponent implements OnInit {
 
     this.navigateService.navigateToFileLine({
       panel: common.PanelEnum.Tree,
-      underscoreFileId: common.LAST_SELECTED_FILE_ID
+      encodedFileId: common.LAST_SELECTED_FILE_ID
     });
   }
 

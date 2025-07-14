@@ -166,7 +166,7 @@ export class FilesComponent implements OnInit {
         if (common.isDefined(pFileId)) {
           this.navigateService.navigateToFileLine({
             panel: common.PanelEnum.Tree,
-            underscoreFileId: pFileId
+            encodedFileId: pFileId
           });
         } else {
           this.navigateService.navigateToFiles();

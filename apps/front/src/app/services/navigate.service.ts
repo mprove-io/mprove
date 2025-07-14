@@ -74,10 +74,10 @@ export class NavigateService {
 
   navigateToFileLine(item: {
     panel: common.PanelEnum;
-    underscoreFileId: string;
+    encodedFileId: string;
     lineNumber?: number;
   }) {
-    let { panel, underscoreFileId, lineNumber } = item;
+    let { panel, encodedFileId, lineNumber } = item;
 
     let repoId =
       this.nav.isRepoProd === true ? common.PROD_REPO_ID : this.userId;
@@ -95,7 +95,7 @@ export class NavigateService {
       this.nav.envId,
       common.PATH_FILES,
       common.PATH_FILE,
-      underscoreFileId
+      encodedFileId
     ];
 
     this.router.navigate(ar, {

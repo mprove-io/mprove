@@ -304,7 +304,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
 
     this.navigateService.navigateToFileLine({
       panel: common.PanelEnum.Tree,
-      underscoreFileId: fileId,
+      encodedFileId: fileId,
       lineNumber: line.lineNumber
     });
   }

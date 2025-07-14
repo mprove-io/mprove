@@ -466,7 +466,7 @@ export class FilesRightComponent {
 
     this.navigateService.navigateToFileLine({
       panel: common.PanelEnum.Tree,
-      underscoreFileId: common.encodeFilePath({ filePath: filePath })
+      encodedFileId: common.encodeFilePath({ filePath: filePath })
       // underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
     });
   }

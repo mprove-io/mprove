@@ -130,7 +130,7 @@ export class CreateFileDialogComponent implements OnInit {
 
             this.navigateService.navigateToFileLine({
               panel: common.PanelEnum.Tree,
-              underscoreFileId: fileId
+              encodedFileId: fileId
             });
           }
         }),

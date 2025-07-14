@@ -327,7 +327,7 @@ export class CreateModelDialogComponent implements OnInit {
 
               this.navigateService.navigateToFileLine({
                 panel: common.PanelEnum.Tree,
-                underscoreFileId: fileId
+                encodedFileId: fileId
               });
             } else {
               let modelId =

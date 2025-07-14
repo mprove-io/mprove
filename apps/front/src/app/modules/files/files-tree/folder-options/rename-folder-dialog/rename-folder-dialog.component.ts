@@ -189,7 +189,7 @@ export class RenameFolderDialogComponent implements OnInit {
             if (isNavigateNewFile === true) {
               this.navigateService.navigateToFileLine({
                 panel: common.PanelEnum.Tree,
-                underscoreFileId: newFileId
+                encodedFileId: newFileId
               });
             }
           }

@@ -245,21 +245,21 @@ export class FilesTreeComponent implements OnDestroy {
   changeToCommitOnClick(fileId: string) {
     this.navigateService.navigateToFileLine({
       panel: common.PanelEnum.ChangesToCommit,
-      underscoreFileId: fileId
+      encodedFileId: fileId
     });
   }
 
   changeToPushOnClick(fileId: string) {
     this.navigateService.navigateToFileLine({
       panel: common.PanelEnum.ChangesToPush,
-      underscoreFileId: fileId
+      encodedFileId: fileId
     });
   }
 
   fileItemOnClick(fileId: string) {
     this.navigateService.navigateToFileLine({
       panel: common.PanelEnum.Tree,
-      underscoreFileId: fileId
+      encodedFileId: fileId
     });
   }
 
@@ -272,7 +272,7 @@ export class FilesTreeComponent implements OnDestroy {
     } else {
       this.navigateService.navigateToFileLine({
         panel: common.PanelEnum.Tree,
-        underscoreFileId: node.data.fileId
+        encodedFileId: node.data.fileId
       });
     }
   }
@@ -355,7 +355,7 @@ export class FilesTreeComponent implements OnDestroy {
             if (common.isDefined(newFileId)) {
               this.navigateService.navigateToFileLine({
                 panel: common.PanelEnum.Tree,
-                underscoreFileId: newFileId
+                encodedFileId: newFileId
               });
             }
           }

@@ -900,7 +900,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
             this.navigateService.navigateToFileLine({
               panel: common.PanelEnum.Tree,
-              underscoreFileId: this.file.fileId
+              encodedFileId: this.file.fileId
             });
 
             this.cd.detectChanges();

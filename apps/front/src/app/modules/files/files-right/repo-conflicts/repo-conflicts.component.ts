@@ -33,7 +33,7 @@ export class RepoConflictsComponent {
   goToFileLine(conflict: common.DiskFileLine) {
     this.navigateService.navigateToFileLine({
       panel: common.PanelEnum.Tree,
-      underscoreFileId: conflict.fileId,
+      encodedFileId: conflict.fileId,
       lineNumber: conflict.lineNumber
     });
   }

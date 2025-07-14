@@ -178,7 +178,7 @@ export class RenameFileDialogComponent implements OnInit {
 
               this.navigateService.navigateToFileLine({
                 panel: common.PanelEnum.Tree,
-                underscoreFileId: fileId
+                encodedFileId: fileId
               });
             }
           }

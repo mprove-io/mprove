@@ -34,7 +34,7 @@ export class FieldOptionsComponent {
 
     this.navigateService.navigateToFileLine({
       panel: common.PanelEnum.Tree,
-      underscoreFileId: common.encodeFilePath({ filePath: filePath }),
+      encodedFileId: common.encodeFilePath({ filePath: filePath }),
       // underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE),
       lineNumber: this.node.data.fieldLineNum
     });
