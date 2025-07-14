@@ -83,7 +83,6 @@ export class UiService {
 
   setProjectFileLink() {
     let fileId = this.fileQuery.getValue().fileId;
-    let secondFileNodeId = this.uiQuery.getValue().secondFileNodeId;
 
     let projectId = this.navQuery.getValue().projectId;
     let links = this.uiQuery.getValue().projectFileLinks;
@@ -98,7 +97,6 @@ export class UiService {
       let newLink: common.ProjectFileLink = {
         projectId: projectId,
         fileId: common.isDefined(fileId) ? fileId : link.fileId,
-        secondFileNodeId: secondFileNodeId,
         lastNavTs: Date.now()
       };
 
@@ -110,7 +108,6 @@ export class UiService {
       let newLink: common.ProjectFileLink = {
         projectId: projectId,
         fileId: fileId,
-        secondFileNodeId: secondFileNodeId,
         lastNavTs: Date.now()
       };
 

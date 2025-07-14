@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -26,6 +27,7 @@ export class DashboardOptionsComponent {
     private navigateService: NavigateService,
     private dashboardQuery: DashboardQuery,
     private navQuery: NavQuery,
+    private uiQuery: UiQuery,
     private apiService: ApiService,
     private cd: ChangeDetectorRef
   ) {}
@@ -35,6 +37,8 @@ export class DashboardOptionsComponent {
   }
 
   goToFile(event?: MouseEvent) {
+    this.uiQuery.updatePart({ secondFileNodeId: undefined });
+
     event.stopPropagation();
 
     let fileIdAr = this.dashboard.filePath.split('/');

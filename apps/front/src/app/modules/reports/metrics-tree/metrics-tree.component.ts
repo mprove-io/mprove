@@ -245,6 +245,8 @@ export class MetricsTreeComponent implements AfterViewInit {
   ) {
     event.stopPropagation();
 
+    this.uiQuery.updatePart({ secondFileNodeId: undefined });
+
     let fileIdAr = fieldFilePath.split('/');
     fileIdAr.shift();
 

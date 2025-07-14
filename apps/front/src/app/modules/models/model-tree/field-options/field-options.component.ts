@@ -1,6 +1,6 @@
 import { TreeNode } from '@ali-hm/angular-tree-component';
 import { Component, Input } from '@angular/core';
-import { NavQuery } from '~front/app/queries/nav.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { common } from '~front/barrels/common';
 
@@ -14,7 +14,7 @@ export class FieldOptionsComponent {
   node: TreeNode;
 
   constructor(
-    private navQuery: NavQuery,
+    private uiQuery: UiQuery,
     private navigateService: NavigateService
   ) {}
 
@@ -24,6 +24,8 @@ export class FieldOptionsComponent {
 
   goToFileLine(event: MouseEvent) {
     event.stopPropagation();
+
+    this.uiQuery.updatePart({ secondFileNodeId: undefined });
 
     let fileIdAr = this.node.data.fieldFilePath.split('/');
     fileIdAr.shift();

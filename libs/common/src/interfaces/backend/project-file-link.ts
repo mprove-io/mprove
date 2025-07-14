@@ -8,10 +8,6 @@ export class ProjectFileLink {
   @IsString()
   fileId: string;
 
-  @IsOptional()
-  @IsString()
-  secondFileNodeId: string;
-
   @IsInt()
   lastNavTs: number;
 }

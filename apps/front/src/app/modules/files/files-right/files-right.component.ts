@@ -123,7 +123,6 @@ export class FilesRightComponent {
         this.checkContent();
       } else {
         this.secondFileName = undefined;
-        this.uiService.setProjectFileLink();
       }
 
       this.cd.detectChanges();
@@ -378,8 +377,6 @@ export class FilesRightComponent {
                   shikiLanguage: this.lang?.toLowerCase(),
                   shikiTheme: 'light-plus-extended'
                 });
-
-                this.uiService.setProjectFileLink();
 
                 this.cd.detectChanges();
               }

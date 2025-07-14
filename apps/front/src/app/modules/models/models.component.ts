@@ -980,6 +980,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
   toggleDataPanel() {}
 
   goToEditFile() {
+    this.uiQuery.updatePart({ secondFileNodeId: undefined });
+
     let fileIdAr = this.model.filePath.split('/');
     fileIdAr.shift();
 

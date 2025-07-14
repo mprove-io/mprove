@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { NavQuery } from '~front/app/queries/nav.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -21,7 +22,8 @@ export class ChartOptionsComponent {
     private myDialogService: MyDialogService,
     private apiService: ApiService,
     private navigateService: NavigateService,
-    private navQuery: NavQuery
+    private navQuery: NavQuery,
+    private uiQuery: UiQuery
   ) {}
 
   clickMenu(event: MouseEvent) {
@@ -33,6 +35,8 @@ export class ChartOptionsComponent {
 
     let fileIdAr = this.chart.filePath.split('/');
     fileIdAr.shift();
+
+    this.uiQuery.updatePart({ secondFileNodeId: undefined });
 
     this.navigateService.navigateToFileLine({
       panel: common.PanelEnum.Tree,

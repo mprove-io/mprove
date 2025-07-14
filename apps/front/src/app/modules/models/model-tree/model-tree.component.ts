@@ -764,6 +764,8 @@ export class ModelTreeComponent implements AfterViewInit {
   ) {
     event.stopPropagation();
 
+    this.uiQuery.updatePart({ secondFileNodeId: undefined });
+
     let fileIdAr = fieldFilePath.split('/');
     fileIdAr.shift();
 

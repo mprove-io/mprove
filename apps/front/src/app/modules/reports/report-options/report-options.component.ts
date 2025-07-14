@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ReportQuery } from '~front/app/queries/report.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -23,6 +24,7 @@ export class ReportOptionsComponent {
     private apiService: ApiService,
     private reportQuery: ReportQuery,
     private navQuery: NavQuery,
+    private uiQuery: UiQuery,
     private myDialogService: MyDialogService
   ) {}
 
@@ -32,6 +34,8 @@ export class ReportOptionsComponent {
 
   goToFile(event: MouseEvent) {
     event.stopPropagation();
+
+    this.uiQuery.updatePart({ secondFileNodeId: undefined });
 
     let fileIdAr = this.report.filePath.split('/');
     fileIdAr.shift();

@@ -169,6 +169,8 @@ export class ModelsListComponent implements OnInit, OnDestroy {
   goToFile(event: any, model: common.ModelX) {
     event.stopPropagation();
 
+    this.uiQuery.updatePart({ secondFileNodeId: undefined });
+
     let fileIdAr = model.filePath.split('/');
     fileIdAr.shift();
 

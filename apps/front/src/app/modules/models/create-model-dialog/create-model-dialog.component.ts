@@ -319,6 +319,8 @@ export class CreateModelDialogComponent implements OnInit {
               fIdAr.shift();
               let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
 
+              this.uiQuery.updatePart({ secondFileNodeId: undefined });
+
               this.navigateService.navigateToFileLine({
                 panel: common.PanelEnum.Tree,
                 underscoreFileId: fileId

@@ -39,14 +39,6 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
       nav: nav
     });
 
-    let projectFileLinks = this.uiQuery.getValue().projectFileLinks;
-
-    let pLink = projectFileLinks.find(link => link.projectId === nav.projectId);
-
-    if (common.isDefined(pLink)) {
-      this.uiQuery.updatePart({ secondFileNodeId: pLink.secondFileNodeId });
-    }
-
     let branchId = route.params[common.PARAMETER_BRANCH_ID];
     let envId = route.params[common.PARAMETER_ENV_ID];
 

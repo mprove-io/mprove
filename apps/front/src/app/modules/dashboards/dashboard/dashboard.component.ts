@@ -223,6 +223,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goToFile() {
+    this.uiQuery.updatePart({ secondFileNodeId: undefined });
+
     let fileIdAr = this.dashboard.filePath.split('/');
     fileIdAr.shift();
 
