@@ -60,6 +60,7 @@ export const README_FILE_NAME = 'readme.md';
 export const DOUBLE_UNDERSCORE = '__';
 export const TRIPLE_UNDERSCORE = '___';
 export const QUAD_UNDERSCORE = '____';
+export const DOT_SYMBOL = '_DOT_';
 
 export const MPROVE_TAG_FIELD_GROUP = 'field_group';
 export const NO_CAPITALIZE_LIST = [

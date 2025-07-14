@@ -62,7 +62,12 @@ export async function fetchSql<T extends types.dzType>(
       let malloyFile = item.malloyFiles.find(
         file =>
           file.path ===
-          tile.filePath.substring(0, tile.filePath.lastIndexOf('.')) + '.malloy'
+          tile.filePath.substring(
+            0,
+            tile.filePath.lastIndexOf(common.DOT_SYMBOL)
+          ) +
+            common.DOT_SYMBOL +
+            'malloy'
       );
 
       if (common.isUndefined(malloyFile)) {
