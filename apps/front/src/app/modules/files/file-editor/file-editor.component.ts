@@ -947,6 +947,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
           let line = editorView.state.doc.line(lineNumber);
 
           editorView.dispatch({
+            selection: { anchor: line.from },
             effects: EditorView.scrollIntoView(line.from, { y: 'center' })
           });
         } catch (error) {
