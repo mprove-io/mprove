@@ -99,6 +99,7 @@ export class RebuildStructService {
     let apiViews = barWrapper.wrapViews({ views: prep.views });
 
     let apiModels = barWrapper.wrapModels({
+      projectId: projectId,
       structId: structId,
       models: prep.models,
       stores: prep.stores,

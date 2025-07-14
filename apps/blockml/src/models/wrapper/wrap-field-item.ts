@@ -1,11 +1,11 @@
 import { AtomicType } from '@malloydata/malloy-interfaces';
 import { common } from '~blockml/barrels/common';
-import { FieldItem } from '~blockml/functions/source-to-field-items';
 import { DOUBLE_UNDERSCORE, parseTags } from '~common/_index';
+import { FieldItemX } from './wrap-models';
 
 export function wrapFieldItem(item: {
   topNode: common.ModelNode;
-  fieldItem: FieldItem;
+  fieldItem: FieldItemX;
   alias: string;
   fileName: string;
   filePath: string;
@@ -66,6 +66,9 @@ export function wrapFieldItem(item: {
     )
     .join(' ');
 
+  // console.log('filePath');
+  // console.log(filePath);
+
   // console.log('fieldItem');
   // console.log(fieldItem);
 
@@ -89,9 +92,9 @@ export function wrapFieldItem(item: {
     isField: true,
     children: [],
     fieldFileName: fileName,
-    fieldFilePath: filePath,
+    fieldFilePath: fieldItem.filePath,
     fieldResult: result,
-    fieldLineNum: 0,
+    fieldLineNum: fieldItem.lineNum,
     nodeClass: fieldClass
   };
 

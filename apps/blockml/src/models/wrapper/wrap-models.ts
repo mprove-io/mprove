@@ -1,19 +1,31 @@
-import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
+import {
+  ModelDef as MalloyModelDef,
+  SourceDef as MalloySourceDef
+} from '@malloydata/malloy';
 import { ModelEntryValueWithSource } from '@malloydata/malloy-interfaces';
 import { common } from '~blockml/barrels/common';
-import { getFieldItems } from '~blockml/functions/source-to-field-items';
+import {
+  FieldItem,
+  getFieldItems
+} from '~blockml/functions/source-to-field-items';
 import { parseTags } from '~common/functions/parse-tags';
 import { wrapField } from './wrap-field';
 import { wrapFieldItem } from './wrap-field-item';
 
+export interface FieldItemX extends FieldItem {
+  filePath: string;
+  lineNum: number;
+}
+
 export function wrapModels(item: {
+  projectId: string;
   structId: string;
   models: common.FileModel[];
   stores: common.FileStore[];
   mods: common.FileMod[];
   files: common.BmlFile[];
 }): common.Model[] {
-  let { structId, models, stores, mods, files } = item;
+  let { projectId, structId, models, stores, mods, files } = item;
 
   let apiModels: common.Model[] = [];
 
@@ -68,12 +80,50 @@ export function wrapModels(item: {
         //   'utf-8'
         // );
 
-        let filteredFieldItems = fieldItems.filter(
-          fieldItem =>
-            ['dimension', 'measure'].indexOf(fieldItem.field.kind) > -1
+        let fieldItemXs: FieldItemX[] = [];
+
+        let sourceDef: MalloySourceDef = malloyModelDef.contents[
+          (x as common.FileMod).source
+        ] as MalloySourceDef;
+
+        fieldItems.forEach(fieldItem => {
+          // console.log('fieldItem');
+          // console.log(fieldItem);
+
+          let fields = sourceDef.fields;
+
+          fieldItem.path.forEach(path => {
+            let parent = fields.find(
+              pField => pField.as === path || pField.name === path
+            );
+
+            if (common.isDefined(parent)) {
+              fields = (parent as any).fields;
+            }
+          });
+
+          let field = fields.find(
+            pField =>
+              pField.as === fieldItem.field.name ||
+              pField.name === fieldItem.field.name
+          );
+
+          let filePathStartIndex = field.location.url.indexOf(`${projectId}/`);
+
+          let fieldItemX = Object.assign({}, fieldItem, <FieldItemX>{
+            filePath: field.location.url.slice(filePathStartIndex),
+            lineNum: field.location.range.start.line + 1
+          });
+
+          fieldItemXs.push(fieldItemX);
+        });
+
+        let filteredFieldItemXs = fieldItemXs.filter(
+          fieldItemX =>
+            ['dimension', 'measure'].indexOf(fieldItemX.field.kind) > -1
         );
 
-        let topIds = filteredFieldItems.map(y => {
+        let topIds = filteredFieldItemXs.map(y => {
           return y.path.length === 0 ? common.MF : y.path.join('.');
         });
 
@@ -101,7 +151,7 @@ export function wrapModels(item: {
             nodeClass: common.FieldClassEnum.Join
           };
 
-          let nodeFieldItems = filteredFieldItems.filter(y => {
+          let nodeFieldItems = filteredFieldItemXs.filter(y => {
             if (topId === common.MF) {
               return y.path.length === 0;
             } else {
@@ -109,9 +159,9 @@ export function wrapModels(item: {
             }
           });
 
-          nodeFieldItems.forEach(fieldItem => {
+          nodeFieldItems.forEach(fieldItemX => {
             let apiField: common.ModelField = wrapFieldItem({
-              fieldItem: fieldItem,
+              fieldItem: fieldItemX,
               alias: topId,
               filePath: x.filePath,
               fileName: x.fileName,
