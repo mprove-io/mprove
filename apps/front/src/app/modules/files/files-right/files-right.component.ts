@@ -301,7 +301,12 @@ export class FilesRightComponent {
       .getValue()
       .errors.map(e =>
         e.lines
-          .map(l => l.fileId.split('/').slice(1).join(common.TRIPLE_UNDERSCORE))
+          .map(l =>
+            common.encodeFilePath({
+              filePath: l.fileId.split('/').slice(1).join('/')
+            })
+          )
+          // .map(l => l.fileId.split('/').slice(1).join(common.TRIPLE_UNDERSCORE))
           .flat()
       )
       .flat();
@@ -310,7 +315,10 @@ export class FilesRightComponent {
       let fileIdAr = this.secondFileNodeId.split('/');
       fileIdAr.shift();
 
-      let secondFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
+      let filePath = fileIdAr.join('/');
+
+      let secondFileId = common.encodeFilePath({ filePath: filePath });
+      // let secondFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
 
       this.isSecondFileValid = common.isUndefined(secondFileId)
         ? true
@@ -454,9 +462,12 @@ export class FilesRightComponent {
     let fileIdAr = this.secondFileNodeId.split('/');
     fileIdAr.shift();
 
+    let filePath = fileIdAr.join('/');
+
     this.navigateService.navigateToFileLine({
       panel: common.PanelEnum.Tree,
-      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
+      underscoreFileId: common.encodeFilePath({ filePath: filePath })
+      // underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
     });
   }
 }

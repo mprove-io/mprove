@@ -108,7 +108,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
 
         files = [...files, ...itemDir.files];
 
-        let node = {
+        let node: common.DiskCatalogNode = {
           id: nodeId,
           name: dirent.name,
           isFolder: true,
@@ -120,8 +120,8 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
         let fileRelativePath = fileAbsolutePath.substring(
           item.repoDirPathLength + 1
         );
-        let fileId =
-          common.MyRegex.replaceSlashesWithUnderscores(fileRelativePath);
+        let fileId = common.encodeFilePath({ filePath: fileRelativePath });
+        // common.MyRegex.replaceSlashesWithUnderscores(fileRelativePath);
 
         let node = {
           id: nodeId,

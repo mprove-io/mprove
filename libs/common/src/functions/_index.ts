@@ -30,3 +30,5 @@ export * from './transform-error-message';
 export * from './replace-chart-field';
 export * from './sort-fields-on-select-change';
 export * from './parse-tags';
+export * from './encode-file-path';
+export * from './decode-file-path';

@@ -98,9 +98,11 @@ export class RenameFolderDialogComponent implements OnInit {
     let newFileId: string;
 
     if (common.isDefined(selectedFileId)) {
-      let selectedPath = selectedFileId
-        .split(common.TRIPLE_UNDERSCORE)
-        .join('/');
+      let selectedPath = common.decodeFilePath({ filePath: selectedFileId });
+
+      // let selectedPath = selectedFileId
+      //   .split(common.TRIPLE_UNDERSCORE)
+      //   .join('/');
 
       let fromPath = this.ref.data.nodeId.split('/').slice(1).join('/');
 
@@ -121,7 +123,8 @@ export class RenameFolderDialogComponent implements OnInit {
           ? `${toPath}/${relativePath}`
           : toPath;
 
-        newFileId = newPath.split('/').join(common.TRIPLE_UNDERSCORE);
+        newFileId = common.encodeFilePath({ filePath: newPath });
+        // newFileId = newPath.split('/').join(common.TRIPLE_UNDERSCORE);
       }
     }
 

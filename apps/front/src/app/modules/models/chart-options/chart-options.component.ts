@@ -36,11 +36,14 @@ export class ChartOptionsComponent {
     let fileIdAr = this.chart.filePath.split('/');
     fileIdAr.shift();
 
+    let filePath = fileIdAr.join('/');
+
     this.uiQuery.updatePart({ secondFileNodeId: undefined });
 
     this.navigateService.navigateToFileLine({
       panel: common.PanelEnum.Tree,
-      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
+      underscoreFileId: common.encodeFilePath({ filePath: filePath })
+      // underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
     });
   }
 

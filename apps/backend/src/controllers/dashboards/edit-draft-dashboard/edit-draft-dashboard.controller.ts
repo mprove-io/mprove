@@ -170,7 +170,8 @@ export class EditDraftDashboardController {
 
     let pathString = JSON.stringify(fileNodeId.split('/'));
 
-    let fileId = common.MyRegex.replaceSlashesWithUnderscores(relativePath);
+    let fileId = common.encodeFilePath({ filePath: relativePath });
+    // common.MyRegex.replaceSlashesWithUnderscores(relativePath);
 
     // second
 
@@ -185,8 +186,8 @@ export class EditDraftDashboardController {
 
     let secondPathString = JSON.stringify(secondFileNodeId.split('/'));
 
-    let secondFileId =
-      common.MyRegex.replaceSlashesWithUnderscores(secondRelativePath);
+    let secondFileId = common.encodeFilePath({ filePath: secondRelativePath });
+    // common.MyRegex.replaceSlashesWithUnderscores(secondRelativePath);
 
     let { dashboardFileText, malloyFileText } = makeDashboardFileText({
       dashboard: fromDashboard,

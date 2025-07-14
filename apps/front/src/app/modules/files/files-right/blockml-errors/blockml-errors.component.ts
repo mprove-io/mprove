@@ -189,7 +189,10 @@ export class BlockmlErrorsComponent implements OnDestroy {
         )
         .subscribe();
 
-      let fIdAr = x.fileId.split(common.TRIPLE_UNDERSCORE);
+      let filePath = common.decodeFilePath({ filePath: x.fileId });
+
+      let fIdAr = filePath.split('/');
+      // let fIdAr = x.fileId.split(common.TRIPLE_UNDERSCORE);
 
       this.fileNodeId = [projectId, ...fIdAr].join('/');
       this.cd.detectChanges();
@@ -224,7 +227,11 @@ export class BlockmlErrorsComponent implements OnDestroy {
             .subscribe();
 
           if (common.isDefined(x.fileId)) {
-            let fileIdAr = x.fileId.split(common.TRIPLE_UNDERSCORE);
+            let filePath = common.decodeFilePath({ filePath: x.fileId });
+
+            let fileIdAr = filePath.split('/');
+
+            // let fileIdAr = x.fileId.split(common.TRIPLE_UNDERSCORE);
             let fileId = [projectId, ...fileIdAr].join('/');
 
             let node = this.itemsTree.treeModel.getNodeById(fileId);
@@ -289,7 +296,11 @@ export class BlockmlErrorsComponent implements OnDestroy {
     let lineFileIdAr = line.fileId.split('/');
     lineFileIdAr.shift();
 
-    let fileId = lineFileIdAr.join(common.TRIPLE_UNDERSCORE);
+    let filePath = lineFileIdAr.join('/');
+
+    let fileId = common.encodeFilePath({ filePath: filePath });
+
+    // let fileId = lineFileIdAr.join(common.TRIPLE_UNDERSCORE);
 
     this.navigateService.navigateToFileLine({
       panel: common.PanelEnum.Tree,

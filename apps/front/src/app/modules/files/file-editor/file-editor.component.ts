@@ -601,7 +601,12 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
       .getValue()
       .errors.map(e =>
         e.lines
-          .map(l => l.fileId.split('/').slice(1).join(common.TRIPLE_UNDERSCORE))
+          .map(l =>
+            common.encodeFilePath({
+              filePath: l.fileId.split('/').slice(1).join('/')
+            })
+          )
+          // .map(l => l.fileId.split('/').slice(1).join(common.TRIPLE_UNDERSCORE))
           .flat()
       )
       .flat();
@@ -787,7 +792,11 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
           .filter(x => {
             let lineFileIdAr = x.fileId.split('/');
             lineFileIdAr.shift();
-            let fileId = lineFileIdAr.join(common.TRIPLE_UNDERSCORE);
+
+            let filePath = lineFileIdAr.join('/');
+
+            let fileId = common.encodeFilePath({ filePath: filePath });
+            // let fileId = lineFileIdAr.join(common.TRIPLE_UNDERSCORE);
             return fileId === this.file.fileId;
           })
           .map(eLine => {
@@ -852,7 +861,8 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     let fileNodeId =
       this.nav.projectId +
       '/' +
-      this.file.fileId.split(common.TRIPLE_UNDERSCORE).join('/');
+      common.decodeFilePath({ filePath: this.file.fileId });
+    // this.file.fileId.split(common.TRIPLE_UNDERSCORE).join('/');
 
     let payload: apiToBackend.ToBackendSaveFileRequestPayload = {
       projectId: this.nav.projectId,

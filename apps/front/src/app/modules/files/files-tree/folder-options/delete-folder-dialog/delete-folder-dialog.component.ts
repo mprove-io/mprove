@@ -64,9 +64,12 @@ export class DeleteFolderDialogComponent implements OnInit {
     let selectedFileId = this.fileQuery.getValue().fileId;
 
     if (common.isDefined(selectedFileId)) {
-      let selectedPath = selectedFileId
-        .split(common.TRIPLE_UNDERSCORE)
-        .join('/');
+      let selectedPath = common.decodeFilePath({ filePath: selectedFileId });
+
+      // let selectedPath = selectedFileId
+      //   .split(common.TRIPLE_UNDERSCORE)
+      //   .join('/');
+
       let fromPath = this.ref.data.folderNodeId.split('/').slice(1).join('/');
 
       if (selectedPath.startsWith(fromPath + '/')) {

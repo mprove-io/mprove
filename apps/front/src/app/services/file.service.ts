@@ -69,12 +69,13 @@ export class FileService {
     let fileName: string;
 
     let fileNodeId =
-      this.nav.projectId +
-      '/' +
-      fileId.split(common.TRIPLE_UNDERSCORE).join('/');
+      this.nav.projectId + '/' + common.decodeFilePath({ filePath: fileId });
+    // fileId.split(common.TRIPLE_UNDERSCORE).join('/');
 
-    let fileIdArr = fileId.split(common.TRIPLE_UNDERSCORE);
-    fileName = fileIdArr[fileIdArr.length - 1];
+    let fileNodeIdParts = fileNodeId.split('/');
+    // let fileIdArr = fileId.split(common.TRIPLE_UNDERSCORE);
+
+    fileName = fileNodeIdParts[fileNodeIdParts.length - 1];
 
     let getFilePayload: apiToBackend.ToBackendGetFileRequestPayload = {
       projectId: this.nav.projectId,

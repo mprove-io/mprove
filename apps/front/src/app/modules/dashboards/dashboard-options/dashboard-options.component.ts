@@ -44,9 +44,12 @@ export class DashboardOptionsComponent {
     let fileIdAr = this.dashboard.filePath.split('/');
     fileIdAr.shift();
 
+    let filePath = fileIdAr.join('/');
+
     this.navigateService.navigateToFileLine({
       panel: common.PanelEnum.Tree,
-      underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
+      underscoreFileId: common.encodeFilePath({ filePath: filePath })
+      // underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
     });
   }
 

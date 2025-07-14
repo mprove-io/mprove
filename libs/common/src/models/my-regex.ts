@@ -60,9 +60,9 @@ export class MyRegex {
     );
   }
 
-  static replaceSlashesWithUnderscores(input: string): string {
-    return input.split('/').join('___');
-  }
+  // static replaceSlashesWithUnderscores(input: string): string {
+  //   return input.split('/').join('___');
+  // }
 
   // BLOCKML
 

@@ -317,7 +317,11 @@ export class CreateModelDialogComponent implements OnInit {
               let fId = parentNodeId + '/' + fileName;
               let fIdAr = fId.split('/');
               fIdAr.shift();
-              let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
+
+              let filePath = fIdAr.join('/');
+
+              // let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
+              let fileId = common.encodeFilePath({ filePath: filePath });
 
               this.uiQuery.updatePart({ secondFileNodeId: undefined });
 

@@ -178,7 +178,11 @@ export class NewFileDialogComponent implements OnInit {
               let fId = parentNodeId + '/' + name;
               let fIdAr = fId.split('/');
               fIdAr.shift();
-              let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
+
+              let filePath = fIdAr.join('/');
+
+              let fileId = common.encodeFilePath({ filePath: filePath });
+              // let fileId = fIdAr.join(common.TRIPLE_UNDERSCORE);
 
               this.navigateService.navigateToFileLine({
                 panel: common.PanelEnum.Tree,
