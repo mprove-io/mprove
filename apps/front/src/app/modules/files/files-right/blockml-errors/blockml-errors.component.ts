@@ -256,7 +256,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
     //   }
     // } else {
     //   this.navigateService.navigateToFileLine({
-    //     underscoreFileId: node.data.fileId
+    //     encodedFileId: node.data.fileId
     //   });
     // }
   }

@@ -345,8 +345,7 @@ export class ApiService {
         errorData.onClickFnBindThis = (() => {
           this.navigateService.navigateToFileLine({
             panel: common.PanelEnum.Tree,
-            encodedFileId:
-              errorData.response.body.info.error.data.underscoreFileId
+            encodedFileId: errorData.response.body.info.error.data.encodedFileId
           });
         }).bind(this);
 

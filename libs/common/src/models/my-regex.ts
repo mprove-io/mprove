@@ -8,10 +8,6 @@ export class MyRegex {
     return input.split(' ').join('_');
   }
 
-  static replaceNonLettersNumbersWithUnderscores(input: string): string {
-    return input.replace(/[^a-zA-Z0-9]/g, '_');
-  }
-
   static SLASH_G(): RegExp {
     return cloneRegexp(/[/]/g);
   }
@@ -59,10 +55,6 @@ export class MyRegex {
       /(?<=^|\n)#\(mprove\)\s+.*\bmodel\b.*\n(?:.*\n)*?\s*source:\s+(\w+)\s+is/g
     );
   }
-
-  // static replaceSlashesWithUnderscores(input: string): string {
-  //   return input.split('/').join('___');
-  // }
 
   // BLOCKML
 

@@ -295,12 +295,12 @@ export class SaveCreateReportController {
       let fileId = `${parentNodeId}/${fileName}`;
       let fileIdAr = fileId.split('/');
       fileIdAr.shift();
-      let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
+      let filePath = fileIdAr.join('/');
 
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_CREATE_REPORT_FAIL,
         data: {
-          underscoreFileId: underscoreFileId
+          encodedFileId: common.encodeFilePath({ filePath: filePath })
         }
       });
     }

@@ -86,7 +86,7 @@ export class ChartsListComponent {
 
   //   this.navigateService.navigateToFileLine({
   //     panel: common.PanelEnum.Tree,
-  //     underscoreFileId: fileIdAr.join(common.TRIPLE_UNDERSCORE)
+  //     encodedFileId:
   //   });
   // }
 

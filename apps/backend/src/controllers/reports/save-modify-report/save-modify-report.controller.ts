@@ -298,12 +298,12 @@ export class SaveModifyReportController {
     if (common.isUndefined(report)) {
       let fileIdAr = existingModReport.filePath.split('/');
       fileIdAr.shift();
-      let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
+      let filePath = fileIdAr.join('/');
 
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_MODIFY_REPORT_FAIL,
         data: {
-          underscoreFileId: underscoreFileId
+          encodedFileId: common.encodeFilePath({ filePath: filePath })
         }
       });
     }

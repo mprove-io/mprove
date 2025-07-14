@@ -277,12 +277,12 @@ export class SaveModifyChartController {
     if (common.isUndefined(chart)) {
       let fileIdAr = existingChart.filePath.split('/');
       fileIdAr.shift();
-      let underscoreFileId = fileIdAr.join(common.TRIPLE_UNDERSCORE);
+      let filePath = fileIdAr.join('/');
 
       throw new common.ServerError({
         message: common.ErEnum.BACKEND_MODIFY_CHART_FAIL,
         data: {
-          underscoreFileId: underscoreFileId
+          encodedFileId: common.encodeFilePath({ filePath: filePath })
         }
       });
     }

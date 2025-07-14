@@ -121,7 +121,6 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
           item.repoDirPathLength + 1
         );
         let fileId = common.encodeFilePath({ filePath: fileRelativePath });
-        // common.MyRegex.replaceSlashesWithUnderscores(fileRelativePath);
 
         let node = {
           id: nodeId,
