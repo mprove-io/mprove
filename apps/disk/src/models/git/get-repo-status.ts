@@ -85,7 +85,8 @@ export async function getRepoStatus(item: {
             let filePath = file.path();
             let filePathArray = filePath.split('/');
 
-            let fileId = filePathArray.join(common.TRIPLE_UNDERSCORE);
+            let fileId = common.encodeFilePath({ filePath: filePath });
+
             let fileName = filePathArray.slice(-1)[0];
 
             let fileParentPath =

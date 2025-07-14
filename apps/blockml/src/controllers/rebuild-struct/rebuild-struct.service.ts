@@ -16,7 +16,6 @@ import { getMproveConfigFile } from '~blockml/functions/get-mprove-config-file';
 import { BmError } from '~blockml/models/bm-error';
 import { PresetsService } from '~blockml/services/presets.service';
 import { RabbitService } from '~blockml/services/rabbit.service';
-import { TRIPLE_UNDERSCORE } from '~common/_index';
 
 interface RebuildStructPrep {
   errors: BmError[];
@@ -340,7 +339,7 @@ export class RebuildStructService {
     await forEachSeries(malloyFiles, async file => {
       let relativePath = common.isDefined(file.pathRelativeToRepo)
         ? file.pathRelativeToRepo
-        : `${file.path.split(TRIPLE_UNDERSCORE).join('/')}`;
+        : common.decodeFilePath({ filePath: file.path });
 
       file.blockmlPath = `${tempDir}/${relativePath}`;
 

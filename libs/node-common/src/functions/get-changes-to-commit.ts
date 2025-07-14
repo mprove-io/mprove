@@ -19,7 +19,7 @@ export async function getChangesToCommit(item: {
     let path = x.path();
     let pathArray = path.split('/');
 
-    let fileId = pathArray.join(common.TRIPLE_UNDERSCORE);
+    let fileId = common.encodeFilePath({ filePath: path });
 
     let fileName = pathArray.slice(-1)[0];
 

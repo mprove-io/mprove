@@ -8,10 +8,6 @@ export class MyRegex {
     return input.split(' ').join('_');
   }
 
-  static SLASH_G(): RegExp {
-    return cloneRegexp(/[/]/g);
-  }
-
   static IGNORED_FILE_NAMES(): RegExp {
     return cloneRegexp(/^(?:\.git|\.svn|\.hg|\.DS_Store)$/);
   }
@@ -77,9 +73,6 @@ export class MyRegex {
   }
   static IDEA_FOLDER(): RegExp {
     return cloneRegexp(/[.]idea/);
-  }
-  static TRIPLE_UNDERSCORE_G(): RegExp {
-    return cloneRegexp(/___/g);
   }
   static COMMENTS_G(): RegExp {
     return cloneRegexp(/[#][\s\S]*/g);

@@ -132,7 +132,9 @@ export class AppModule implements OnModuleInit {
         filesAny.forEach(x => {
           if (
             x.path.includes('/') === false &&
-            x.path.endsWith('.store.preset')
+            common
+              .decodeFilePath({ filePath: x.path })
+              .endsWith('.store.preset')
           ) {
             let presetId = x.name.split('.')[0];
             let path = x.path;

@@ -40,16 +40,10 @@ export async function collectFiles(
 
         let path = fullPath.substr(item.dir.length + 1);
 
-        let pReg = common.MyRegex.SLASH_G();
-        path = path.replace(pReg, common.TRIPLE_UNDERSCORE);
+        let relativePath = path;
+        let absolutePath = item.dir + '/' + relativePath;
 
-        // recreating absolute path
-        let rpReg = common.MyRegex.TRIPLE_UNDERSCORE_G();
-
-        let relativePath: string = path.replace(rpReg, '/');
-        let absolutePath: string = item.dir + '/' + relativePath;
-        // console.log('absolutePath');
-        // console.log(absolutePath);
+        path = common.encodeFilePath({ filePath: path });
 
         let { content } = await nodeCommon.readFileCheckSize({
           filePath: absolutePath,
