@@ -19,13 +19,13 @@
               <!-- <m-document-icon></m-document-icon> -->
 
               <button
-                class="flex w-[55px] items-center text-lg focus:outline-none"
+                class="flex w-[54px] items-center justify-center text-lg focus:outline-none"
                 [ngClass]="{
                   'text-m500 font-semibold': panel === panelTree,
                   'text-s500': panel !== panelTree
                 }"
                 [disabled]="needSave === true"
-                >Repo</button
+                >Code</button
               >
             </div>
 
@@ -40,7 +40,7 @@
                 [disabled]="needSave === true"
               >
                 <div
-                  class="flex w-[110px] flex-shrink-0 text-lg"
+                  class="flex w-[110px] flex-shrink-0 justify-center text-lg"
                   [ngClass]="{
                     'text-m500 font-semibold': panel === panelChangesToCommit,
                     'text-s500': panel !== panelChangesToCommit
@@ -102,7 +102,7 @@
                 (click)="setPanel(panelChangesToPush)"
               >
                 <div
-                  class="flex w-[80px] flex-shrink-0 text-lg"
+                  class="flex w-[80px] flex-shrink-0 justify-center text-lg"
                   [ngClass]="{
                     'text-m500 font-semibold': panel === panelChangesToPush,
                     'text-s500': panel !== panelChangesToPush
