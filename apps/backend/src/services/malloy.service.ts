@@ -65,8 +65,10 @@ export class MalloyService {
     );
 
     if (
-      queryOperation.type === common.QueryOperationTypeEnum.Remove &&
-      mconfig.select?.length === 1
+      (queryOperation.type === common.QueryOperationTypeEnum.Get &&
+        common.isUndefined(mconfig.malloyQuery)) ||
+      (queryOperation.type === common.QueryOperationTypeEnum.Remove &&
+        mconfig.select?.length === 1)
     ) {
       let { blankMconfig, blankQuery } = this.getBlankMconfigQuery({
         projectId: projectId,

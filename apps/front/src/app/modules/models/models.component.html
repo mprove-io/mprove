@@ -843,7 +843,9 @@
 
                     <button
                       *ngIf="
-                        chart.draft === true && c.chartId === chart.chartId
+                        chart.draft === true &&
+                        c.chartId === chart.chartId &&
+                        mconfig?.select.length > 0
                       "
                       data-cy="chartsSaveDraftButton"
                       class="ml-3 flex h-11 items-center justify-center rounded focus:outline-none"
