@@ -109,19 +109,17 @@ export class ChartsAddColumnFieldDialogComponent implements OnInit {
       });
 
     if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
-      let queryOperation: common.QueryOperation = {
-        type: queryOperationType,
-        fieldId: this.newColumnFieldId,
-        sortFieldId: sortFieldId,
-        desc: desc,
-        timezone: newMconfig.timezone
-      };
-
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
-        queryOperation: queryOperation
+        queryOperation: {
+          type: queryOperationType,
+          fieldId: this.newColumnFieldId,
+          sortFieldId: sortFieldId,
+          desc: desc,
+          timezone: newMconfig.timezone
+        }
       });
     } else {
       newMconfig.select = [...newMconfig.select, this.newColumnFieldId];

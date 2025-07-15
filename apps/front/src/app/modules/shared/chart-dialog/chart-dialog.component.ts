@@ -298,16 +298,25 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       serverTs: 1
     });
 
-    this.chartService.editChart({
-      mconfig: newMconfig,
-      isKeepQueryId: true,
-      isDraft: false,
-      chartId: undefined,
-      queryOperation: {
-        type: common.QueryOperationTypeEnum.Get,
-        timezone: newMconfig.timezone
-      }
-    });
+    if (this.model.type === common.ModelTypeEnum.Malloy) {
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isKeepQueryId: true,
+        isDraft: false,
+        chartId: undefined,
+        queryOperation: {
+          type: common.QueryOperationTypeEnum.Get,
+          timezone: newMconfig.timezone
+        }
+      });
+    } else {
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isKeepQueryId: true,
+        isDraft: false,
+        chartId: undefined
+      });
+    }
 
     // this.navigateService.navigateMconfigQuery({
     //   modelId: this.mconfig.modelId,

@@ -94,18 +94,16 @@ export class MainTableComponent {
     let newMconfig = this.structService.makeMconfig();
 
     if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
-      let queryOperation: common.QueryOperation = {
-        type: common.QueryOperationTypeEnum.Sort,
-        sortFieldId: fieldId,
-        desc: desc,
-        timezone: newMconfig.timezone
-      };
-
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
-        queryOperation: queryOperation
+        queryOperation: {
+          type: common.QueryOperationTypeEnum.Sort,
+          sortFieldId: fieldId,
+          desc: desc,
+          timezone: newMconfig.timezone
+        }
       });
     } else {
       let newSortings: common.Sorting[] = [];
@@ -207,19 +205,17 @@ export class MainTableComponent {
     //   };
 
     if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
-      let queryOperation: common.QueryOperation = {
-        type: common.QueryOperationTypeEnum.Remove,
-        fieldId: fieldId,
-        sortFieldId: sortFieldId,
-        desc: desc,
-        timezone: newMconfig.timezone
-      };
-
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
-        queryOperation: queryOperation
+        queryOperation: {
+          type: common.QueryOperationTypeEnum.Remove,
+          fieldId: fieldId,
+          sortFieldId: sortFieldId,
+          desc: desc,
+          timezone: newMconfig.timezone
+        }
       });
     } else {
       newMconfig = this.mconfigService.removeField({
@@ -372,17 +368,15 @@ export class MainTableComponent {
     let newMconfig = this.structService.makeMconfig();
 
     if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
-      let queryOperation: common.QueryOperation = {
-        type: common.QueryOperationTypeEnum.Move,
-        moveFieldIds: moveFieldIds,
-        timezone: newMconfig.timezone
-      };
-
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
-        queryOperation: queryOperation
+        queryOperation: {
+          type: common.QueryOperationTypeEnum.Move,
+          moveFieldIds: moveFieldIds,
+          timezone: newMconfig.timezone
+        }
       });
     } else {
       newMconfig.select = moveFieldIds;

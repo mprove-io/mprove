@@ -113,18 +113,16 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
     let newMconfig = this.structService.makeMconfig();
 
     if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
-      let queryOperation: common.QueryOperation = {
-        type: common.QueryOperationTypeEnum.Replace,
-        fieldId: this.currentField.id,
-        replaceWithFieldId: this.newColumnFieldId,
-        timezone: newMconfig.timezone
-      };
-
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
-        queryOperation: queryOperation
+        queryOperation: {
+          type: common.QueryOperationTypeEnum.Replace,
+          fieldId: this.currentField.id,
+          replaceWithFieldId: this.newColumnFieldId,
+          timezone: newMconfig.timezone
+        }
       });
     } else {
       let index = newMconfig.select.indexOf(this.currentField.id);

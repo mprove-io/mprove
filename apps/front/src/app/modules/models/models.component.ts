@@ -1003,17 +1003,15 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
 
     if (this.model.type === common.ModelTypeEnum.Malloy) {
-      let queryOperation: common.QueryOperation = {
-        type: common.QueryOperationTypeEnum.Limit,
-        timezone: newMconfig.timezone,
-        limit: Number(limit.value)
-      };
-
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
-        queryOperation: queryOperation
+        queryOperation: {
+          type: common.QueryOperationTypeEnum.Limit,
+          timezone: newMconfig.timezone,
+          limit: Number(limit.value)
+        }
       });
     } else {
       newMconfig.limit = Number(limit.value);
