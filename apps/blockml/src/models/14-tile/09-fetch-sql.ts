@@ -59,15 +59,13 @@ export async function fetchSql<T extends types.dzType>(
 
   await asyncPool(concurrencyLimit, tiles, async (tile: FilePartTileExtra) => {
     if (common.isDefined(tile.query)) {
+      // console.log('tile');
+      // console.log(tile);
+
       let malloyFile = item.malloyFiles.find(
         file =>
           file.path ===
-          tile.filePath.substring(
-            0,
-            tile.filePath.lastIndexOf(common.DOT_SYMBOL)
-          ) +
-            common.DOT_SYMBOL +
-            'malloy'
+          tile.filePath.substring(0, tile.filePath.lastIndexOf('.')) + '.malloy'
       );
 
       if (common.isUndefined(malloyFile)) {

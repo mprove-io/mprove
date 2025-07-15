@@ -75,6 +75,7 @@ export class BlockmlService {
       projectId,
       envId,
       diskFiles,
+      mproveDir,
       skipDb,
       connections,
       evs,
@@ -129,7 +130,7 @@ export class BlockmlService {
         payload: {
           structId: structId,
           projectId: projectId,
-          mproveDir: item.mproveDir,
+          mproveDir: mproveDir,
           files: helper.diskFilesToBlockmlFiles(diskFiles),
           envId: envId,
           evs: common.isDefined(evs) ? evs : apiEnv.evsWithFallback,
