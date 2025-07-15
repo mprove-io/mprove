@@ -359,33 +359,36 @@ export class ChartEditorComponent implements OnChanges {
 
       newMconfig = setChartSeries({ mconfig: newMconfig });
 
+      let isCheckPass = false;
+
       if (isCheck === true) {
         let isValid = this.getIsValid();
+
         if (isValid === true) {
           newMconfig.chart.isValid = true;
+          isCheckPass = true;
+        }
+      }
 
-          // this.mconfigService.navCreateTempMconfig({
-          //   newMconfig: newMconfig
-          // });
-
-          // query not changed
+      if (isCheck === false || isCheckPass === true) {
+        // query not changed
+        if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+          this.chartService.editChart({
+            mconfig: newMconfig,
+            isDraft: this.chartQuery.getValue().draft,
+            chartId: this.chartQuery.getValue().chartId,
+            queryOperation: {
+              type: common.QueryOperationTypeEnum.Get,
+              timezone: newMconfig.timezone
+            }
+          });
+        } else {
           this.chartService.editChart({
             mconfig: newMconfig,
             isDraft: this.chartQuery.getValue().draft,
             chartId: this.chartQuery.getValue().chartId
           });
         }
-      } else {
-        // this.mconfigService.navCreateTempMconfig({
-        //   newMconfig: newMconfig
-        // });
-
-        // query not changed
-        this.chartService.editChart({
-          mconfig: newMconfig,
-          isDraft: this.chartQuery.getValue().draft,
-          chartId: this.chartQuery.getValue().chartId
-        });
       }
     } else {
       let newChart = Object.assign({}, this.report.chart, chartPart);
