@@ -159,15 +159,19 @@ export class ReportAddFilterDialogComponent implements OnInit {
   suggestFieldsLoading = false;
   suggestFieldsLoaded = false;
 
-  emptySuggestField = Object.assign({}, constants.EMPTY_MCONFIG_FIELD, {
-    modelFieldRef: undefined,
-    topLabel: 'Empty',
-    partNodeLabel: undefined,
-    partFieldLabel: undefined,
-    partLabel: undefined,
-    fieldClass: undefined,
-    result: undefined
-  }) as common.SuggestField;
+  emptySuggestField = Object.assign(
+    {},
+    common.makeCopy(constants.EMPTY_MCONFIG_FIELD),
+    {
+      modelFieldRef: undefined,
+      topLabel: 'Empty',
+      partNodeLabel: undefined,
+      partFieldLabel: undefined,
+      partLabel: undefined,
+      fieldClass: undefined,
+      result: undefined
+    }
+  ) as common.SuggestField;
 
   labelForm: FormGroup<{
     label: FormControl<string>;

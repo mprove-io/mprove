@@ -22,15 +22,15 @@ export const DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH = 220;
 
 export const DEFAULT_TIME_SPEC = common.TimeSpecEnum.Days;
 
-export const DEFAULT_TIME_RANGE_FRACTION: common.Fraction = {
-  brick: 'last 5 days',
-  operator: common.FractionOperatorEnum.Or,
-  tsLastCompleteOption:
-    common.FractionTsLastCompleteOptionEnum.CompletePlusCurrent,
-  tsLastUnit: common.FractionTsLastUnitEnum.Days,
-  tsLastValue: 5,
-  type: common.FractionTypeEnum.TsIsInLast
-};
+// export const DEFAULT_TIME_RANGE_FRACTION: common.Fraction = {
+//   brick: 'last 5 days',
+//   operator: common.FractionOperatorEnum.Or,
+//   tsLastCompleteOption:
+//     common.FractionTsLastCompleteOptionEnum.CompletePlusCurrent,
+//   tsLastUnit: common.FractionTsLastUnitEnum.Days,
+//   tsLastValue: 5,
+//   type: common.FractionTypeEnum.TsIsInLast
+// };
 
 export const MEMBERS_PER_PAGE = 10;
 export const USERS_PER_PAGE = 10;

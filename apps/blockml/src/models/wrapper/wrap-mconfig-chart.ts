@@ -38,11 +38,11 @@ export function wrapMconfigChart(item: {
       return yAxisElement;
     });
   } else {
-    yAxis = [common.DEFAULT_CHART_Y_AXIS];
+    yAxis = [common.makeCopy(common.DEFAULT_CHART_Y_AXIS)];
   }
 
   if (yAxis.length === 1) {
-    yAxis = [...yAxis, common.DEFAULT_CHART_Y_AXIS];
+    yAxis = [...yAxis, common.makeCopy(common.DEFAULT_CHART_Y_AXIS)];
   }
 
   let series: common.MconfigChartSeries[] = [];

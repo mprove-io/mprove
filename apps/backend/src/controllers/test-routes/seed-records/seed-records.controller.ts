@@ -106,7 +106,7 @@ export class SeedRecordsController {
             jwtMinIat: undefined,
             firstName: undefined,
             lastName: undefined,
-            ui: constants.DEFAULT_SRV_UI,
+            ui: common.makeCopy(constants.DEFAULT_SRV_UI),
             serverTs: undefined
           };
 

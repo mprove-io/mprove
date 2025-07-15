@@ -137,7 +137,7 @@ export class GetReportController {
       timezone: timezone
     });
 
-    user.ui = user.ui || constants.DEFAULT_SRV_UI;
+    user.ui = user.ui || common.makeCopy(constants.DEFAULT_SRV_UI);
     user.ui.timezone = timezone;
     user.ui.timeSpec = timeSpec;
     user.ui.timeRangeFraction = repApi.timeRangeFraction;

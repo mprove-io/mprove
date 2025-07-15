@@ -814,9 +814,6 @@ export class DataService {
       } as SeriesDataElement)
     );
 
-    // console.log('data seriesData');
-    // console.log(seriesData);
-
     return seriesData;
   }
 

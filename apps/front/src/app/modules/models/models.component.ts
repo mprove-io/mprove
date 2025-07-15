@@ -1292,11 +1292,23 @@ export class ModelsComponent implements OnInit, OnDestroy {
     // });
 
     // query not changed
-    this.chartService.editChart({
-      mconfig: newMconfig,
-      isDraft: this.chart.draft,
-      chartId: this.chart.chartId
-    });
+    if (this.model.type === common.ModelTypeEnum.Malloy) {
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId,
+        queryOperation: {
+          type: common.QueryOperationTypeEnum.Get,
+          timezone: newMconfig.timezone
+        }
+      });
+    } else {
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId
+      });
+    }
   }
 
   showChart(event?: MouseEvent) {
@@ -1332,15 +1344,23 @@ export class ModelsComponent implements OnInit, OnDestroy {
     // });
 
     // query not changed
-    this.chartService.editChart({
-      mconfig: newMconfig,
-      isDraft: this.chart.draft,
-      chartId: this.chart.chartId,
-      queryOperation: {
-        type: common.QueryOperationTypeEnum.Get,
-        timezone: newMconfig.timezone
-      }
-    });
+    if (this.model.type === common.ModelTypeEnum.Malloy) {
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId,
+        queryOperation: {
+          type: common.QueryOperationTypeEnum.Get,
+          timezone: newMconfig.timezone
+        }
+      });
+    } else {
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId
+      });
+    }
   }
 
   isQueryIdTheSameAndServerTsChanged(respQuery: common.Query) {

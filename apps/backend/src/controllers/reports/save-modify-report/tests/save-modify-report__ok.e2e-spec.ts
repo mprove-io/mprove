@@ -103,7 +103,7 @@ test('1', async t => {
         timeSpec: common.TimeSpecEnum.Months,
         timezone: 'UTC',
         newReportFields: [],
-        chart: common.DEFAULT_CHART
+        chart: common.makeCopy(common.DEFAULT_CHART)
       }
     };
 

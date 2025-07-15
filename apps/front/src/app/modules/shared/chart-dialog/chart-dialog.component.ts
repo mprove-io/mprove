@@ -426,9 +426,13 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
     let apiService = this.ref.data.apiService;
 
-    let emptyField = Object.assign({}, constants.EMPTY_MCONFIG_FIELD, {
-      partLabel: 'Empty'
-    } as common.ModelFieldY);
+    let emptyField = Object.assign(
+      {},
+      common.makeCopy(constants.EMPTY_MCONFIG_FIELD),
+      {
+        partLabel: 'Empty'
+      } as common.ModelFieldY
+    );
 
     apiService
       .req({

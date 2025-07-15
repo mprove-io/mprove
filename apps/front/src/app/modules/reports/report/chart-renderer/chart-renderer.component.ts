@@ -46,7 +46,9 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
       let newChart = common.makeCopy(report.chart);
 
       if (newShowChart === true) {
-        let newSeries: MconfigChartSeries = common.DEFAULT_CHART_SERIES_LINE;
+        let newSeries: MconfigChartSeries = common.makeCopy(
+          common.DEFAULT_CHART_SERIES_LINE
+        );
         newSeries.dataRowId = this.params.data.rowId;
         newChart.series.push(newSeries);
       }

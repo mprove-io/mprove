@@ -30,14 +30,14 @@ export function setChartSeries<T extends Mconfig>(item: { mconfig: T }) {
       } else {
         let newSeriesElement: MconfigChartSeries =
           mconfig.chart.type === enums.ChartTypeEnum.Line
-            ? DEFAULT_CHART_SERIES_LINE
+            ? makeCopy(DEFAULT_CHART_SERIES_LINE)
             : mconfig.chart.type === enums.ChartTypeEnum.Bar
-              ? DEFAULT_CHART_SERIES_BAR
+              ? makeCopy(DEFAULT_CHART_SERIES_BAR)
               : mconfig.chart.type === enums.ChartTypeEnum.Scatter
-                ? DEFAULT_CHART_SERIES_SCATTER
+                ? makeCopy(DEFAULT_CHART_SERIES_SCATTER)
                 : mconfig.chart.type === enums.ChartTypeEnum.Pie
-                  ? DEFAULT_CHART_SERIES_PIE
-                  : DEFAULT_CHART_SERIES_LINE;
+                  ? makeCopy(DEFAULT_CHART_SERIES_PIE)
+                  : makeCopy(DEFAULT_CHART_SERIES_LINE);
 
         newSeriesElement.dataField = y;
         sortedSeries.push(newSeriesElement);

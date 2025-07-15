@@ -203,7 +203,7 @@ export class ChartEditorComponent implements OnChanges {
       );
 
       this.numbersDimensionsMeasuresCalculationsPlusEmpty = [
-        constants.EMPTY_MCONFIG_FIELD,
+        common.makeCopy(constants.EMPTY_MCONFIG_FIELD),
         ...this.numbersDimensionsMeasuresCalculations
       ];
 
@@ -212,7 +212,7 @@ export class ChartEditorComponent implements OnChanges {
       );
 
       this.dimensionsPlusEmpty = [
-        constants.EMPTY_MCONFIG_FIELD,
+        common.makeCopy(constants.EMPTY_MCONFIG_FIELD),
         ...this.dimensions
       ];
 
@@ -224,7 +224,7 @@ export class ChartEditorComponent implements OnChanges {
       );
 
       this.numbersMeasuresAndCalculationsPlusEmpty = [
-        constants.EMPTY_MCONFIG_FIELD,
+        common.makeCopy(constants.EMPTY_MCONFIG_FIELD),
         ...this.numbersMeasuresAndCalculations
       ];
 
@@ -614,7 +614,7 @@ export class ChartEditorComponent implements OnChanges {
   addYAxis() {
     this.yAxisIsExpanded = true;
 
-    let newYAxis = common.DEFAULT_CHART_Y_AXIS;
+    let newYAxis = common.makeCopy(common.DEFAULT_CHART_Y_AXIS);
 
     // let newYAxis = Object.assign({}, common.DEFAULT_CHART_Y_AXIS, {
     //   axisLine: { onZero: false },

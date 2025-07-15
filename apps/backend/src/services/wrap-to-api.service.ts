@@ -491,6 +491,8 @@ export class WrapToApiService {
   }
 
   wrapToApiUser(user: schemaPostgres.UserEnt): common.User {
+    let defaultSrvUi = common.makeCopy(constants.DEFAULT_SRV_UI);
+
     return {
       userId: user.userId,
       email: user.email,
@@ -499,35 +501,34 @@ export class WrapToApiService {
       lastName: user.lastName,
       isEmailVerified: user.isEmailVerified,
       ui: {
-        timezone: user.ui?.timezone || constants.DEFAULT_SRV_UI.timezone,
-        timeSpec: user.ui?.timeSpec || constants.DEFAULT_SRV_UI.timeSpec,
+        timezone: user.ui?.timezone || defaultSrvUi.timezone,
+        timeSpec: user.ui?.timeSpec || defaultSrvUi.timeSpec,
         timeRangeFraction:
-          user.ui?.timeRangeFraction ||
-          constants.DEFAULT_SRV_UI.timeRangeFraction,
+          user.ui?.timeRangeFraction || defaultSrvUi.timeRangeFraction,
 
         projectFileLinks: common.isDefined(user.ui?.projectFileLinks)
           ? user.ui?.projectFileLinks
-          : constants.DEFAULT_SRV_UI.projectFileLinks,
+          : defaultSrvUi.projectFileLinks,
 
         projectModelLinks: common.isDefined(user.ui?.projectModelLinks)
           ? user.ui?.projectModelLinks
-          : constants.DEFAULT_SRV_UI.projectModelLinks,
+          : defaultSrvUi.projectModelLinks,
 
         projectChartLinks: common.isDefined(user.ui?.projectChartLinks)
           ? user.ui?.projectChartLinks
-          : constants.DEFAULT_SRV_UI.projectChartLinks,
+          : defaultSrvUi.projectChartLinks,
 
         projectDashboardLinks: common.isDefined(user.ui?.projectDashboardLinks)
           ? user.ui?.projectDashboardLinks
-          : constants.DEFAULT_SRV_UI.projectDashboardLinks,
+          : defaultSrvUi.projectDashboardLinks,
 
         projectReportLinks: common.isDefined(user.ui?.projectReportLinks)
           ? user.ui?.projectReportLinks
-          : constants.DEFAULT_SRV_UI.projectReportLinks,
+          : defaultSrvUi.projectReportLinks,
 
         modelTreeLevels: common.isDefined(user.ui?.modelTreeLevels)
           ? user.ui?.modelTreeLevels
-          : constants.DEFAULT_SRV_UI.modelTreeLevels
+          : defaultSrvUi.modelTreeLevels
       },
       serverTs: Number(user.serverTs)
     };
