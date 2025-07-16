@@ -10,6 +10,7 @@ let func = common.FuncEnum.CreateModelMetrics;
 export function createModelMetrics(
   item: {
     models: common.FileModel[];
+    apiModels: common.Model[];
     stores: common.FileStore[];
     errors: BmError[];
     structId: string;
@@ -110,6 +111,56 @@ export function createModelMetrics(
         });
     });
   });
+
+  item.apiModels
+    .filter(m => m.type === common.ModelTypeEnum.Malloy)
+    .forEach(apiModel => {
+      apiModel.fields
+        .filter(
+          x =>
+            x.buildMetrics === true &&
+            (x.result === common.FieldResultEnum.Ts ||
+              x.result === common.FieldResultEnum.Date)
+        )
+        .forEach(x => {
+          // console.log(x);
+          // {
+          //   id: 'orders.created_at_minute',
+          //   malloyFieldName: 'created_at_minute',
+          //   malloyFieldPath: [ 'orders' ],
+          //   malloyTags: [],
+          //   mproveTags: [
+          //     { key: 'field_group', value: 'Created at - Timeframes' },
+          //     { key: 'build_metrics', value: undefined }
+          //   ],
+          //   hidden: false,
+          //   required: false,
+          //   maxFractions: undefined,
+          //   label: 'Created at Minute',
+          //   fieldClass: 'dimension',
+          //   result: 'ts',
+          //   formatNumber: undefined,
+          //   currencyPrefix: undefined,
+          //   currencySuffix: undefined,
+          //   buildMetrics: true,
+          //   timeframe: 'minute',
+          //   sqlName: 'orders__created_at_minute',
+          //   topId: 'orders',
+          //   topLabel: 'Orders',
+          //   description: undefined,
+          //   type: undefined,
+          //   groupId: undefined,
+          //   groupLabel: undefined,
+          //   groupDescription: undefined,
+          //   suggestModelDimension: undefined,
+          //   detail: undefined
+          // }
+
+          apiModel.fields.forEach(y => {
+            //
+          });
+        });
+    });
 
   item.models.forEach(model => {
     if (

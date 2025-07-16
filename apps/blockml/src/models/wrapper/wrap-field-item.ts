@@ -244,6 +244,10 @@ export function wrapFieldItem(item: {
     tag => tag.key === common.ParameterEnum.CurrencySuffix
   );
 
+  let buildMetricsTag = mproveTags?.find(
+    tag => tag.key === common.ParameterEnum.BuildMetrics
+  );
+
   let modelField: common.ModelField = {
     id: fieldId,
     malloyFieldName: fieldItem.field.name,
@@ -259,6 +263,8 @@ export function wrapFieldItem(item: {
     formatNumber: formatNumberTag?.value,
     currencyPrefix: currencyPrefixTag?.value,
     currencySuffix: currencySuffixTag?.value,
+    buildMetrics: common.isDefined(buildMetricsTag),
+    timeframe: (fieldItem?.field as any)?.type?.timeframe,
     sqlName: fieldSqlName,
     topId: topNode.id,
     topLabel: topNode.label,

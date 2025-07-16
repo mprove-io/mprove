@@ -99,6 +99,14 @@ export class ModelField {
   currencySuffix?: string;
 
   @IsOptional()
+  @IsBoolean()
+  buildMetrics?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  timeframe?: string;
+
+  @IsOptional()
   @IsString()
   detail?: enums.DetailUnitEnum;
 }

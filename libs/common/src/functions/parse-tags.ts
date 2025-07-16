@@ -57,6 +57,12 @@ export function parseTags(item: { inputs: string[] }): ParseResult {
     malloyTags.push({ key: malloyFlag, value: undefined })
   );
 
+  // console.log('mproveTags');
+  // console.log(mproveTags);
+
+  // console.log('malloyTags');
+  // console.log(malloyTags);
+
   return {
     mproveTags,
     malloyTags

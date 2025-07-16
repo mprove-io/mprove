@@ -637,6 +637,7 @@ export class RebuildStructService {
     let buildMetricsNextResult = barBuilder.buildMetricsNext(
       {
         models: models,
+        apiModels: apiModels,
         stores: stores,
         structId: item.structId,
         errors: errors,
