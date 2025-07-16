@@ -130,12 +130,7 @@ export class AppModule implements OnModuleInit {
         throw new Error('Failed to load presets');
       } else {
         filesAny.forEach(x => {
-          if (
-            x.path.includes('/') === false &&
-            common
-              .decodeFilePath({ filePath: x.path })
-              .endsWith('.store.preset')
-          ) {
+          if (x.path.endsWith('.store.preset')) {
             let presetId = x.name.split('.')[0];
             let path = x.path;
             let label =

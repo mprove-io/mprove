@@ -24,6 +24,7 @@ interface RebuildStructPrep {
   metrics: common.ModelMetric[];
   presets: common.Preset[];
   models: common.FileModel[];
+  apiModels: common.Model[];
   mods: common.FileModel[];
   udfsDict: common.UdfsDict;
   reports: common.FileReport[];
@@ -97,36 +98,16 @@ export class RebuildStructService {
 
     let apiViews = barWrapper.wrapViews({ views: prep.views });
 
-    let apiModels = barWrapper.wrapModels({
-      projectId: projectId,
-      structId: structId,
-      models: prep.models,
-      stores: prep.stores,
-      mods: prep.mods,
-      files: files
-    });
-
     let apiReports = barWrapper.wrapReports({
       projectId: projectId,
       structId: structId,
       reports: prep.reports,
       metrics: prep.metrics,
-      models: apiModels,
+      models: prep.apiModels,
       formatNumber: prep.formatNumber,
       currencyPrefix: prep.currencyPrefix,
       currencySuffix: prep.currencySuffix
     });
-
-    // apiReports.find(report=>report.reportId === 'LBW2P1FG40HF0NNCDH3U').rows.forEach(row => {
-    //   console.log('row.rowId');
-    //   console.log(row.rowId);
-    //   row.parameters.forEach(rowParameter => {
-    //     console.log('rowParameter');
-    //     console.log(rowParameter);
-    //     console.log('rowParameter.fractions');
-    //     console.log(rowParameter.fractions);
-    //   });
-    // });
 
     let { apiDashboards, dashMconfigs, dashQueries } =
       barWrapper.wrapDashboards({
@@ -158,7 +139,7 @@ export class RebuildStructService {
       errors: apiErrors,
       udfsDict: prep.udfsDict,
       views: apiViews,
-      models: apiModels,
+      models: prep.apiModels,
       dashboards: apiDashboards,
       reports: apiReports,
       charts: apiCharts,
@@ -293,6 +274,7 @@ export class RebuildStructService {
         errors: errors,
         views: [],
         models: [],
+        apiModels: [],
         mods: [],
         metrics: [],
         presets: [],
@@ -634,6 +616,26 @@ export class RebuildStructService {
     models = buildModelMetricResult.models;
     let metrics = buildModelMetricResult.metrics;
 
+    barSpecial.checkVmdrSuggestModelDimension(
+      {
+        entities: [...views, ...models],
+        models: models,
+        errors: errors,
+        structId: item.structId,
+        caller: common.CallerEnum.BuildCheckVmdSuggestModelDimension
+      },
+      this.cs
+    );
+
+    let apiModels = barWrapper.wrapModels({
+      projectId: item.projectId,
+      structId: item.structId,
+      models: models,
+      stores: stores,
+      mods: mods,
+      files: item.files
+    });
+
     dashboards = barBuilder.buildDashboard(
       {
         dashboards: dashboards,
@@ -783,7 +785,7 @@ export class RebuildStructService {
 
     barSpecial.checkVmdrSuggestModelDimension(
       {
-        entities: [...views, ...models, ...dashboards, ...reports],
+        entities: [...dashboards, ...reports],
         models: models,
         errors: errors,
         structId: item.structId,
@@ -830,6 +832,7 @@ export class RebuildStructService {
         return presetPart;
       }),
       models: models,
+      apiModels: apiModels,
       mods: mods,
       udfsDict: udfsDict,
       reports: reports,

@@ -30,9 +30,6 @@ export function wrapModels(item: {
   let apiModels: common.Model[] = [];
 
   [...models, ...stores, ...mods].forEach(x => {
-    // console.log('x');
-    // console.log(x);
-
     let modelType =
       x.fileExt === common.FileExtensionEnum.Model
         ? common.ModelTypeEnum.SQL

@@ -43,8 +43,6 @@ export async function collectFiles(
         let relativePath = path;
         let absolutePath = item.dir + '/' + relativePath;
 
-        path = common.encodeFilePath({ filePath: path });
-
         let { content } = await nodeCommon.readFileCheckSize({
           filePath: absolutePath,
           getStat: false
