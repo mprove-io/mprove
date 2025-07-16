@@ -54,10 +54,7 @@
   ></m-type-on-off-icon>
 
   <m-type-date-icon
-    *ngIf="
-      [fieldResultTs, fieldResultTimestamp, fieldResultDate].indexOf(result) >
-      -1
-    "
+    *ngIf="[fieldResultTs, fieldResultDate].indexOf(result) > -1"
     [size]="size"
   ></m-type-date-icon>
 

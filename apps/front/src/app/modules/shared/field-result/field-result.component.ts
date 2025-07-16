@@ -17,10 +17,10 @@ export class FieldResultComponent {
   fieldResultMonthName = common.FieldResultEnum.MonthName;
   fieldResultQuarterOfYear = common.FieldResultEnum.QuarterOfYear;
   fieldResultTs = common.FieldResultEnum.Ts;
+  // fieldResultTimestamp = common.FieldResultEnum.Timestamp;
   fieldResultYesno = common.FieldResultEnum.Yesno;
   fieldResultString = common.FieldResultEnum.String;
   fieldResultNumber = common.FieldResultEnum.Number;
-  fieldResultTimestamp = common.FieldResultEnum.Timestamp;
   fieldResultDate = common.FieldResultEnum.Date;
   fieldResultBoolean = common.FieldResultEnum.Boolean;
   fieldResultArray = common.FieldResultEnum.Array;

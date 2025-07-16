@@ -298,7 +298,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       serverTs: 1
     });
 
-    if (this.model.type === common.ModelTypeEnum.Malloy) {
+    if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
       this.chartService.editChart({
         mconfig: newMconfig,
         isKeepQueryId: true,

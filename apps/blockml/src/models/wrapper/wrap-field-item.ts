@@ -37,7 +37,7 @@ export function wrapFieldItem(item: {
         : typeKind === 'boolean_type'
           ? common.FieldResultEnum.Boolean
           : typeKind === 'timestamp_type'
-            ? common.FieldResultEnum.Timestamp
+            ? common.FieldResultEnum.Ts
             : typeKind === 'date_type'
               ? common.FieldResultEnum.Date
               : typeKind === 'array_type'
