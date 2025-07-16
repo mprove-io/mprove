@@ -385,8 +385,8 @@ export class RebuildStructService {
 
     // let startBuildModStart = Date.now();
 
-    console.log('mods');
-    console.log(mods);
+    // console.log('mods');
+    // console.log(mods);
 
     let buildModStartResult = await barBuilder.buildModStart(
       {
@@ -602,20 +602,6 @@ export class RebuildStructService {
       this.cs
     );
 
-    let buildModelMetricResult = barBuilder.buildModelMetric(
-      {
-        models: models,
-        stores: stores,
-        structId: item.structId,
-        errors: errors,
-        caller: common.CallerEnum.BuildModelMetric
-      },
-      this.cs
-    );
-
-    models = buildModelMetricResult.models;
-    let metrics = buildModelMetricResult.metrics;
-
     barSpecial.checkVmdrSuggestModelDimension(
       {
         entities: [...views, ...models],
@@ -627,6 +613,18 @@ export class RebuildStructService {
       this.cs
     );
 
+    let buildMetricsStartResult = barBuilder.buildMetricsStart(
+      {
+        models: models,
+        structId: item.structId,
+        errors: errors,
+        caller: common.CallerEnum.BuildModelMetric
+      },
+      this.cs
+    );
+
+    models = buildMetricsStartResult.models;
+
     let apiModels = barWrapper.wrapModels({
       projectId: item.projectId,
       structId: item.structId,
@@ -635,6 +633,19 @@ export class RebuildStructService {
       mods: mods,
       files: item.files
     });
+
+    let buildMetricsNextResult = barBuilder.buildMetricsNext(
+      {
+        models: models,
+        stores: stores,
+        structId: item.structId,
+        errors: errors,
+        caller: common.CallerEnum.BuildModelMetric
+      },
+      this.cs
+    );
+
+    let metrics = buildMetricsNextResult.metrics;
 
     dashboards = barBuilder.buildDashboard(
       {

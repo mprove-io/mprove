@@ -117,8 +117,9 @@ export enum FuncEnum {
   AwcCheckApplyFilter = '11-sql-always-where-calc/07-awc-check-apply-filter',
   AwcUpdateAlwaysJoinUnique = '11-sql-always-where-calc/08-awc-update-always-join-unique',
 
-  CheckModelBuildMetrics = '11.1-model-metric/01-check-model-build-metrics',
-  CreateModelMetrics = '11.1-model-metric/02-create-model-metrics',
+  CheckModelBuildMetrics = '11.1-metrics-start/01-check-model-build-metrics',
+
+  CreateModelMetrics = '11.2-metrics-next/01-create-model-metrics',
 
   CheckDashboardAccess = '12-dashboard/01-check-dashboard-access',
   CheckDashboardTopParameters = '12-dashboard/02.1-check-dashboard-top-parameters',

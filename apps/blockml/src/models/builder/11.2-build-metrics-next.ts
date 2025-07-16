@@ -1,10 +1,10 @@
 import { ConfigService } from '@nestjs/config';
-import { barModelMetric } from '~blockml/barrels/bar-model-metric';
+import { barMetricsNext } from '~blockml/barrels/bar-metrics-next';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 
-export function buildModelMetric(
+export function buildMetricsNext(
   item: {
     models: common.FileModel[];
     stores: common.FileStore[];
@@ -16,17 +16,7 @@ export function buildModelMetric(
 ) {
   let { models, stores } = item;
 
-  models = barModelMetric.checkModelBuildMetrics(
-    {
-      models: models,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  let metrics: common.ModelMetric[] = barModelMetric.createModelMetrics(
+  let metrics: common.ModelMetric[] = barMetricsNext.createModelMetrics(
     {
       models: models,
       stores: stores,
@@ -37,11 +27,7 @@ export function buildModelMetric(
     cs
   );
 
-  // console.log('metrics');
-  // console.log(metrics);
-
   return {
-    models: models,
     metrics: metrics
   };
 }
