@@ -152,10 +152,11 @@ export class ChartEditorComponent implements OnChanges {
   });
 
   chartOptionsIsExpanded = false;
-  xAxisIsExpanded = false;
+  xAxisIsExpanded: boolean; // initial set in ngOnChanges
   yAxisIsExpanded = true;
-  seriesExpanded: string[] = [];
-  yAxisExpanded: number[] = [];
+  seriesToggleExpandList: string[] = [];
+  yAxisToggleExpandList: number[] = [];
+
   yAxisIndexList: number[] = [];
 
   constructor(
@@ -175,6 +176,13 @@ export class ChartEditorComponent implements OnChanges {
 
     // console.log('this.chart');
     // console.log(this.chart);
+
+    if (
+      common.isUndefined(this.xAxisIsExpanded) &&
+      common.isDefined(this.isReport)
+    ) {
+      this.xAxisIsExpanded = this.isReport === false;
+    }
 
     this.yAxisIndexList = this.chart.yAxis.map((x, i) => i);
 
@@ -565,10 +573,12 @@ export class ChartEditorComponent implements OnChanges {
       ? seriesDataField
       : seriesDataRowId;
 
-    if (this.seriesExpanded.indexOf(id) > -1) {
-      this.seriesExpanded = this.seriesExpanded.filter(x => x !== id);
+    if (this.seriesToggleExpandList.indexOf(id) > -1) {
+      this.seriesToggleExpandList = this.seriesToggleExpandList.filter(
+        x => x !== id
+      );
     } else {
-      this.seriesExpanded = [...this.seriesExpanded, id];
+      this.seriesToggleExpandList = [...this.seriesToggleExpandList, id];
     }
   }
 
@@ -634,10 +644,12 @@ export class ChartEditorComponent implements OnChanges {
   chartToggleYAxisElement(event: interfaces.EventChartToggleYAxisElement) {
     let { yAxisIndex } = event;
 
-    if (this.yAxisExpanded.indexOf(yAxisIndex) > -1) {
-      this.yAxisExpanded = this.yAxisExpanded.filter(x => x !== yAxisIndex);
+    if (this.yAxisToggleExpandList.indexOf(yAxisIndex) > -1) {
+      this.yAxisToggleExpandList = this.yAxisToggleExpandList.filter(
+        x => x !== yAxisIndex
+      );
     } else {
-      this.yAxisExpanded = [...this.yAxisExpanded, yAxisIndex];
+      this.yAxisToggleExpandList = [...this.yAxisToggleExpandList, yAxisIndex];
     }
   }
 
@@ -648,7 +660,7 @@ export class ChartEditorComponent implements OnChanges {
       yAxis: this.chart.yAxis.filter((x, i) => i !== yAxisIndex)
     };
 
-    this.yAxisExpanded = [];
+    this.yAxisToggleExpandList = [];
 
     this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
   }

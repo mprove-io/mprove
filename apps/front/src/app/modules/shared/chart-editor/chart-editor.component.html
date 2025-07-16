@@ -466,8 +466,8 @@
         [isReport]="isReport"
         [isExpanded]="
           isReport === true
-            ? seriesExpanded.indexOf(seriesElement.dataRowId) > -1
-            : seriesExpanded.indexOf(seriesElement.dataField) > -1
+            ? seriesToggleExpandList.indexOf(seriesElement.dataRowId) > -1
+            : seriesToggleExpandList.indexOf(seriesElement.dataField) < 0
         "
         (chartToggleSeries)="chartToggleSeries($event)"
         (chartSeriesElementUpdate)="chartSeriesElementUpdate($event)"
@@ -559,7 +559,11 @@
           class="flex"
           [yAxisIndex]="i"
           [yAxisElement]="yAxisElement"
-          [isExpanded]="yAxisExpanded.indexOf(i) > -1"
+          [isExpanded]="
+            isReport === true
+              ? yAxisToggleExpandList.indexOf(i) > -1
+              : yAxisToggleExpandList.indexOf(i) < 0
+          "
           [chartType]="chart.type"
           (chartDeleteYAxisElement)="chartDeleteYAxisElement($event)"
           (chartToggleYAxisElement)="chartToggleYAxisElement($event)"
