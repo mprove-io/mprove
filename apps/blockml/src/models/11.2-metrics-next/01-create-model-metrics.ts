@@ -156,9 +156,15 @@ export function createModelMetrics(
           //   detail: undefined
           // }
 
-          apiModel.fields.forEach(y => {
-            //
-          });
+          apiModel.fields
+            .filter(
+              y =>
+                y.fieldClass === common.FieldClassEnum.Measure &&
+                y.result === common.FieldResultEnum.Number
+            )
+            .forEach(y => {
+              //
+            });
         });
     });
 
@@ -205,7 +211,7 @@ export function createModelMetrics(
         .filter(y => {
           if (
             y.fieldClass === common.FieldClassEnum.Measure &&
-            y.type !== common.FieldTypeEnum.List
+            y.result === common.FieldResultEnum.Number
           ) {
             return true;
           } else if (y.fieldClass === common.FieldClassEnum.Calculation) {
