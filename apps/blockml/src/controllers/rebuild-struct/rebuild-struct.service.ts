@@ -421,13 +421,6 @@ export class RebuildStructService {
       this.cs
     );
 
-    // barWrapper.wrapModels({ // TODO: remove
-    //   structId: item.structId,
-    //   models: [],
-    //   stores: [],
-    //   mods: mods
-    // });
-
     // console.log('diffBuildModStart');
     // console.log(Date.now() - startBuildModStart);
 
@@ -817,27 +810,10 @@ export class RebuildStructService {
     );
 
     if (item.isTest === true) {
-      // await fse.remove(tempDir);
+      await fse.remove(tempDir);
     } else {
       fse.remove(tempDir);
     }
-
-    // let { apiCharts, chartMconfigs, chartQueries } = barWrapper.wrapCharts({ // TODO: remove
-    //   structId: item.structId,
-    //   projectId: item.projectId,
-    //   models: models,
-    //   mods: mods,
-    //   stores: stores,
-    //   charts: charts,
-    //   envId: item.envId,
-    //   timezone: 'UTC'
-    // });
-
-    // console.log('chartMconfigs.length');
-    // console.log(chartMconfigs.length);
-
-    // console.log('chartMconfigs[0]');
-    // console.log(chartMconfigs[0]);
 
     let prep: RebuildStructPrep = {
       errors: errors,
