@@ -68,7 +68,7 @@ export class ModelTreeComponent implements AfterViewInit {
 
   model: ModelState;
   mconfig: common.MconfigX;
-  modelTreeLevels = common.ModelTreeLevelsEnum.FlatTime;
+  modelTreeLevels = common.ModelTreeLevelsEnum.Flat;
 
   nodesExtra$ = combineLatest([
     this.modelQuery.select(),
@@ -456,8 +456,8 @@ export class ModelTreeComponent implements AfterViewInit {
     // let flatNodesMeasuresAndCalculations: ModelNodeExtra[] = [];
 
     if (
-      this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime ||
-      this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat
+      this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat ||
+      this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime
     ) {
       nestedNodes.forEach(topNode => {
         topNode.children.forEach(middleNode => {
@@ -644,8 +644,8 @@ export class ModelTreeComponent implements AfterViewInit {
     }
 
     let nodesExtra =
-      this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime ||
-      this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat
+      this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat ||
+      this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime
         ? flatNodes
         : this.modelTreeLevels === common.ModelTreeLevelsEnum.NestedFlatTime
           ? nestedFlatTimeNodes
@@ -691,8 +691,8 @@ export class ModelTreeComponent implements AfterViewInit {
         }
 
         return aCheck === true &&
-          (this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime ||
-            this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat)
+          (this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat ||
+            this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime)
           ? aNode.children.length > 0
           : aCheck === true
             ? aNode.children.filter(

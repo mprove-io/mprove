@@ -147,7 +147,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   lastUrl: string;
 
-  modelTreeLevels = common.ModelTreeLevelsEnum.FlatTime;
+  modelTreeLevels = common.ModelTreeLevelsEnum.Flat;
   modelTreeLevels$ = this.uiQuery.modelTreeLevels$.pipe(
     tap(x => {
       this.modelTreeLevels = x;
