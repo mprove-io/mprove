@@ -115,57 +115,108 @@ export function createModelMetrics(
   item.apiModels
     .filter(m => m.type === common.ModelTypeEnum.Malloy)
     .forEach(apiModel => {
+      let timeGroups: {
+        timeId: string;
+        timeNodeLabel: string;
+        timeFieldLabel: string;
+        timeLabel: string;
+      }[] = [];
+
       apiModel.fields
         .filter(
           x =>
             x.buildMetrics === true &&
+            common.isDefined(x.timeframe) &&
             (x.result === common.FieldResultEnum.Ts ||
               x.result === common.FieldResultEnum.Date)
         )
         .forEach(x => {
-          // console.log(x);
-          // {
-          //   id: 'orders.created_at_minute',
-          //   malloyFieldName: 'created_at_minute',
-          //   malloyFieldPath: [ 'orders' ],
-          //   malloyTags: [],
-          //   mproveTags: [
-          //     { key: 'field_group', value: 'Created at - Timeframes' },
-          //     { key: 'build_metrics', value: undefined }
-          //   ],
-          //   hidden: false,
-          //   required: false,
-          //   maxFractions: undefined,
-          //   label: 'Created at Minute',
-          //   fieldClass: 'dimension',
-          //   result: 'ts',
-          //   formatNumber: undefined,
-          //   currencyPrefix: undefined,
-          //   currencySuffix: undefined,
-          //   buildMetrics: true,
-          //   timeframe: 'minute',
-          //   sqlName: 'orders__created_at_minute',
-          //   topId: 'orders',
-          //   topLabel: 'Orders',
-          //   description: undefined,
-          //   type: undefined,
-          //   groupId: undefined,
-          //   groupLabel: undefined,
-          //   groupDescription: undefined,
-          //   suggestModelDimension: undefined,
-          //   detail: undefined
-          // }
+          let timeId = x.id.slice(0, -(x.timeframe.length + 1));
 
-          apiModel.fields
-            .filter(
-              y =>
-                y.fieldClass === common.FieldClassEnum.Measure &&
-                y.result === common.FieldResultEnum.Number
-            )
-            .forEach(y => {
-              //
+          let fieldGroupTag = x.mproveTags.find(
+            x => x.key === common.MPROVE_TAG_FIELD_GROUP
+          );
+
+          let timeFieldLabel =
+            fieldGroupTag?.value ??
+            timeId
+              .split('_')
+              .map(k => common.capitalizeFirstLetter(k))
+              .join(' ');
+
+          let xParentNode =
+            x.malloyFieldPath.length > 0
+              ? apiModel.nodes.find(n => n.id === x.malloyFieldPath.join('.'))
+              : apiModel.nodes.find(n => n.id === common.MF);
+
+          // let xNode = xParentNode.children.find(n => n.id === x.id);
+
+          let timeNodeLabel: string = xParentNode?.label;
+
+          let timeLabel = `${timeNodeLabel} ${timeFieldLabel}`;
+
+          if (timeGroups.map(tg => tg.timeId).indexOf(timeId) < 0) {
+            timeGroups.push({
+              timeId: timeId,
+              timeNodeLabel: timeNodeLabel,
+              timeFieldLabel: timeFieldLabel,
+              timeLabel: timeLabel
             });
+          }
         });
+
+      timeGroups.forEach(tg => {
+        apiModel.fields
+          .filter(
+            y =>
+              y.fieldClass === common.FieldClassEnum.Measure &&
+              y.result === common.FieldResultEnum.Number
+          )
+          .forEach(y => {
+            let topLabel = apiModel.label;
+
+            let yParentNode =
+              y.malloyFieldPath.length > 0
+                ? apiModel.nodes.find(n => n.id === y.malloyFieldPath.join('.'))
+                : apiModel.nodes.find(n => n.id === common.MF);
+
+            let yNode = yParentNode.children.find(n => n.id === y.id);
+
+            let partId = yParentNode.id.split('.').join('_');
+            let partNodeLabel = yParentNode.label;
+            let partFieldLabel = y.label;
+            let partLabel = `${partNodeLabel} ${partFieldLabel}`;
+
+            let modelMetric: common.ModelMetric = {
+              metricId: `${apiModel.modelId}.${partId}.by.${tg.timeId}`,
+              filePath: yNode.fieldFilePath,
+              partId: partId,
+              modelId: apiModel.modelId,
+              topNode: apiModel.modelId,
+              topLabel: topLabel,
+              fieldId: y.id,
+              fieldClass: y.fieldClass,
+              fieldResult: y.result,
+              timeFieldId: tg.timeId,
+              timeNodeLabel: tg.timeNodeLabel,
+              timeFieldLabel: tg.timeFieldLabel,
+              timeLabel: tg.timeLabel,
+              structId: structId,
+              type: common.MetricTypeEnum.Model,
+              label: `${topLabel} ${partLabel} by ${tg.timeLabel}`,
+              partNodeLabel: partNodeLabel,
+              partFieldLabel: partFieldLabel,
+              partLabel: partLabel,
+              description: y.description,
+              formatNumber: y.formatNumber,
+              currencyPrefix: y.currencyPrefix,
+              currencySuffix: y.currencySuffix,
+              serverTs: 1
+            };
+
+            modelMetrics.push(modelMetric);
+          });
+      });
     });
 
   item.models.forEach(model => {
