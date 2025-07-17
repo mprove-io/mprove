@@ -119,7 +119,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   modelRunButtonSpinnerName = 'modelRunButtonSpinnerName';
   modelCancelButtonSpinnerName = 'modelCancelButtonSpinnerName';
 
-  isFilterByModel = true;
+  isFilterByModel = false;
   showSearch = true;
 
   isRunButtonPressed = false;
