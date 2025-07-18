@@ -1580,6 +1580,12 @@ export class ModelsComponent implements OnInit, OnDestroy {
                 return newControl;
               })
       };
+    } else if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+      newFraction = {
+        brick: 'any', // TODO: symbol any
+        operator: common.FractionOperatorEnum.Or,
+        type: common.getFractionTypeForAny(field.result)
+      };
     } else {
       newFraction = {
         brick: 'any',
@@ -1593,15 +1599,29 @@ export class ModelsComponent implements OnInit, OnDestroy {
       fractions: [newFraction]
     };
 
-    newMconfig.filters = [...newMconfig.filters, newFilter].sort((a, b) =>
-      a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
-    );
+    if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId,
+        queryOperation: {
+          type: common.QueryOperationTypeEnum.WhereOrHaving,
+          timezone: newMconfig.timezone,
+          fieldId: newFilter.fieldId,
+          fractions: newFilter.fractions
+        }
+      });
+    } else {
+      newMconfig.filters = [...newMconfig.filters, newFilter].sort((a, b) =>
+        a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+      );
 
-    this.chartService.editChart({
-      mconfig: newMconfig,
-      isDraft: this.chart.draft,
-      chartId: this.chart.chartId
-    });
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId
+      });
+    }
   }
 
   cancelAddParameter() {

@@ -1,5 +1,6 @@
 export enum QueryOperationTypeEnum {
   Get = 'Get',
+  WhereOrHaving = 'WhereOrHaving',
   GroupOrAggregate = 'GroupOrAggregate',
   GroupOrAggregatePlusSort = 'GroupOrAggregatePlusSort',
   Limit = 'Limit',

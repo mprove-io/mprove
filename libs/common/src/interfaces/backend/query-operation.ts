@@ -1,11 +1,14 @@
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
   IsInt,
   IsOptional,
-  IsString
+  IsString,
+  ValidateNested
 } from 'class-validator';
 import { enums } from '~common/barrels/enums';
+import { Fraction } from '../blockml/fraction';
 
 export class QueryOperation {
   @IsEnum(enums.QueryOperationTypeEnum)
@@ -21,6 +24,11 @@ export class QueryOperation {
   @IsOptional()
   @IsString()
   fieldId?: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => Fraction)
+  fractions?: Fraction[];
 
   @IsOptional()
   @IsString()

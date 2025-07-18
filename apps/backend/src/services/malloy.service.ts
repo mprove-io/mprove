@@ -220,6 +220,100 @@ export class MalloyService {
             .delete();
         }
       }
+    } else if (
+      queryOperation.type === common.QueryOperationTypeEnum.WhereOrHaving
+    ) {
+      if (common.isUndefined(queryOperation.fieldId)) {
+        isError = true;
+        errorMessage = `queryOperation.fieldId is not defined (QueryOperationTypeEnum.Remove)`;
+      }
+
+      let modelField = model.fields.find(x => x.id === queryOperation.fieldId);
+
+      if (common.isUndefined(modelField)) {
+        isError = true;
+        errorMessage = `modelField is not defined (queryOperation.fieldId: ${queryOperation.fieldId})`;
+      }
+
+      //
+
+      let fieldName = modelField.malloyFieldName;
+      let fieldPath: string[] = modelField.malloyFieldPath;
+
+      let fstr =
+        queryOperation.fractions[0].brick === 'any'
+          ? ''
+          : queryOperation.fractions[0].brick;
+
+      if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
+        segment0.addWhere(fieldName, fieldPath, fstr);
+        // segment0.addWhere(fieldName, fieldPath, {
+        //   kind: 'string',
+        //   parsed: {
+        //     operator: ',',
+        //     members: [
+        //       { operator: 'starts', values: [`st`] },
+        //       { operator: 'ends', values: [`nd`] },
+        //       { operator: '~', escaped_values: [`null`] }
+        //     ]
+        //   }
+        // });
+        // segment0.addWhere(fieldName, fieldPath, {
+        //   kind: 'string',
+        //   parsed: {
+        //     operator: ',',
+        //     members: [{ operator: '~', escaped_values: [`-a`, '-b', '-null'] }]
+        //   }
+        // });
+        // segment0.addWhere(fieldName, fieldPath, {
+        //   kind: 'timestamp',
+        //   parsed: {
+        //     operator: 'or',
+        //     members: [
+        //       {
+        //         operator: 'in',
+        //         in: { moment: 'literal', literal: '2001-02-03', units: 'day' }
+        //       },
+        //       {
+        //         operator: 'in',
+        //         in: { moment: 'this', units: 'hour' }
+        //       }
+        //     ]
+        //   }
+        // });
+        // segment0.addWhere(fieldName, fieldPath, {
+        //   kind: 'timestamp',
+        //   parsed: {
+        //     operator: 'and',
+        //     members: [
+        //       { operator: 'in', not: true, in: { moment: 'now' } },
+        //       {
+        //         operator: 'in',
+        //         not: true,
+        //         in: { moment: 'this', units: 'month' }
+        //       }
+        //     ]
+        //   }
+        // });
+        // segment0.addWhere(fieldName, fieldPath, {
+        //   kind: 'string',
+        //   parsed: {
+        //     operator: 'and',
+        //     members: [{ operator: 'in', not: true, in: { moment: 'now' } }]
+        //   }
+        // });
+      } else {
+        segment0.addHaving(fieldName, fieldPath, fstr);
+      }
+
+      let newFilter: common.Filter = {
+        fieldId: modelField.id,
+        fractions: queryOperation.fractions
+      };
+
+      mconfig.filters = [...mconfig.filters, newFilter].sort((a, b) =>
+        a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+      );
     } else if (queryOperation.type === common.QueryOperationTypeEnum.Remove) {
       if (common.isUndefined(queryOperation.fieldId)) {
         isError = true;
