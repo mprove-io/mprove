@@ -246,6 +246,15 @@ export class MalloyService {
           : queryOperation.fractions[0].brick;
 
       if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
+        // segment0.operations.items
+        //   .filter(
+        //     (operation: ASTViewOperation) =>
+        //       operation instanceof ASTWhereViewOperation
+        //   )
+        //   .forEach(item => {
+        //     item.delete();
+        //   });
+
         segment0.addWhere(fieldName, fieldPath, fstr);
         // segment0.addWhere(fieldName, fieldPath, {
         //   kind: 'string',
