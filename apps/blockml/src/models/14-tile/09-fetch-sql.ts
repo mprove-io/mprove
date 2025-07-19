@@ -1,5 +1,9 @@
 import { PostgresConnection } from '@malloydata/db-postgres';
 import { PreparedResult } from '@malloydata/malloy';
+import {
+  ExpressionWithFieldReference as MalloyExpressionWithFieldReference,
+  FilterWithFilterString as MalloyFilterWithFilterString
+} from '@malloydata/malloy-interfaces';
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { barSpecial } from '~blockml/barrels/bar-special';
@@ -133,8 +137,55 @@ export async function fetchSql<T extends types.dzType>(
       tile.model = pr._rawQuery.sourceExplore;
       tile.malloyQuery = malloyQuery;
       tile.compiledQuery = pr._rawQuery;
+
+      // console.dir('tile.compiledQuery');
+      // console.dir(tile.compiledQuery, { depth: 5 });
+      // console.dir('tile.compiledQuery.structs[0].filterList');
+      // console.dir(tile.compiledQuery.structs[0].resultMetadata.filterList, {
+      //   depth: 5
+      // });
+
+      let filtersFractions: {
+        [s: string]: common.Fraction[];
+      } = {};
+
+      tile.compiledQuery.structs[0].resultMetadata.filterList
+        .filter(
+          filterListItem =>
+            filterListItem.isSourceFilter === false &&
+            (
+              (filterListItem?.stableFilter as MalloyFilterWithFilterString)
+                ?.expression as MalloyExpressionWithFieldReference
+            )?.kind === 'field_reference'
+        )
+        .forEach(x => {
+          let stableFilter = x.stableFilter as MalloyFilterWithFilterString;
+
+          let expression =
+            stableFilter.expression as MalloyExpressionWithFieldReference;
+
+          let fieldId =
+            expression.path?.length > 0
+              ? expression.path.join('.') + '.' + expression.name
+              : expression.name;
+
+          let fraction = {
+            // brick: `f'${stableFilter.filter}'`,
+            brick: stableFilter.filter,
+            operator: common.FractionOperatorEnum.Or,
+            type: common.FractionTypeEnum.StringIsEqualTo,
+            stringValue: stableFilter.filter
+          };
+
+          if (common.isDefined(filtersFractions[fieldId])) {
+            filtersFractions[fieldId].push(fraction);
+          } else {
+            filtersFractions[fieldId] = [fraction];
+          }
+        });
+
       tile.select = [];
-      tile.filtersFractions = {};
+      tile.filtersFractions = filtersFractions;
     } else if (
       common.isDefined(tile.model) &&
       tile.model.startsWith(STORE_MODEL_PREFIX) === false

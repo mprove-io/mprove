@@ -718,6 +718,21 @@ export class MalloyService {
       });
     }
 
+    // console.log('filterItems');
+
+    // let fs = segment0.operations.items
+    //   .filter(
+    //     (operation: ASTViewOperation) =>
+    //       operation instanceof ASTWhereViewOperation
+    //     // ||
+    //     // operation instanceof ASTHavingViewOperation // TODO: having
+    //   )
+    //   .map((filterItem: ASTWhereViewOperation) => {
+    //     console.dir(filterItem, {depth:null})
+
+    //     return filterItem.filter;
+    //   });
+
     let sortings = segment0.operations.items
       .filter(
         (operation: ASTViewOperation) =>
