@@ -189,6 +189,12 @@ export class ModelFiltersComponent {
               return newControl;
             })
       };
+    } else if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+      newFraction = {
+        brick: 'any', // TODO: symbol any
+        operator: common.FractionOperatorEnum.Or,
+        type: common.getFractionTypeForAny(filterExtended.field.result)
+      };
     } else {
       newFraction = {
         brick: 'any',
@@ -197,23 +203,38 @@ export class ModelFiltersComponent {
       };
     }
 
-    let newFractions = [...fractions, newFraction];
+    if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId,
+        queryOperation: {
+          type: common.QueryOperationTypeEnum.WhereOrHaving,
+          timezone: newMconfig.timezone,
+          fieldId: filterExtended.fieldId,
+          fractions: [newFraction]
+        }
+      });
+    } else {
+      let newFractions = [...fractions, newFraction];
 
-    let newFilter = Object.assign({}, filterExtended, {
-      fractions: newFractions
-    });
+      let newFilter: common.Filter = {
+        fieldId: filterExtended.fieldId,
+        fractions: newFractions
+      };
 
-    newMconfig.filters = [
-      ...newMconfig.filters.slice(0, filterIndex),
-      newFilter,
-      ...newMconfig.filters.slice(filterIndex + 1)
-    ];
+      newMconfig.filters = [
+        ...newMconfig.filters.slice(0, filterIndex),
+        newFilter,
+        ...newMconfig.filters.slice(filterIndex + 1)
+      ];
 
-    this.chartService.editChart({
-      mconfig: newMconfig,
-      isDraft: this.chart.draft,
-      chartId: this.chart.chartId
-    });
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId
+      });
+    }
 
     // this.mconfigService.navCreateTempMconfigAndQuery({
     //   newMconfig: newMconfig

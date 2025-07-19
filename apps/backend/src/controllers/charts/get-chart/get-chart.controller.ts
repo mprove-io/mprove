@@ -125,8 +125,8 @@ export class GetChartController {
       mconfigId: chart.tiles[0].mconfigId
     });
 
-    console.log('getChart chartMconfig.select');
-    console.log(chartMconfig.select);
+    // console.log('getChart chartMconfig.select');
+    // console.log(chartMconfig.select);
 
     let model = await this.modelsService.getModelCheckExists({
       structId: bridge.structId,

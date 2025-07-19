@@ -1594,11 +1594,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
       };
     }
 
-    let newFilter: common.Filter = {
-      fieldId: field.id,
-      fractions: [newFraction]
-    };
-
     if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
       this.chartService.editChart({
         mconfig: newMconfig,
@@ -1607,11 +1602,16 @@ export class ModelsComponent implements OnInit, OnDestroy {
         queryOperation: {
           type: common.QueryOperationTypeEnum.WhereOrHaving,
           timezone: newMconfig.timezone,
-          fieldId: newFilter.fieldId,
-          fractions: newFilter.fractions
+          fieldId: field.id,
+          fractions: [newFraction]
         }
       });
     } else {
+      let newFilter: common.Filter = {
+        fieldId: field.id,
+        fractions: [newFraction]
+      };
+
       newMconfig.filters = [...newMconfig.filters, newFilter].sort((a, b) =>
         a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
       );

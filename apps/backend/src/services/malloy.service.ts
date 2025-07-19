@@ -306,14 +306,38 @@ export class MalloyService {
         segment0.addHaving(fieldName, fieldPath, fstr);
       }
 
-      let newFilter: common.Filter = {
-        fieldId: modelField.id,
-        fractions: queryOperation.fractions
-      };
-
-      mconfig.filters = [...mconfig.filters, newFilter].sort((a, b) =>
-        a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+      let filterIndex = mconfig.filters.findIndex(
+        x => x.fieldId === modelField.id
       );
+
+      if (filterIndex < 0) {
+        let newFilter: common.Filter = {
+          fieldId: modelField.id,
+          fractions: queryOperation.fractions
+        };
+
+        mconfig.filters = [...mconfig.filters, newFilter].sort((a, b) =>
+          a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+        );
+      } else {
+        let existingFilter = mconfig.filters[filterIndex];
+
+        let newFractions = [
+          ...existingFilter.fractions,
+          ...queryOperation.fractions
+        ];
+
+        let newFilter: common.Filter = {
+          fieldId: modelField.id,
+          fractions: newFractions
+        };
+
+        mconfig.filters = [
+          ...mconfig.filters.slice(0, filterIndex),
+          newFilter,
+          ...mconfig.filters.slice(filterIndex + 1)
+        ];
+      }
     } else if (queryOperation.type === common.QueryOperationTypeEnum.Remove) {
       if (common.isUndefined(queryOperation.fieldId)) {
         isError = true;
@@ -767,7 +791,7 @@ export class MalloyService {
       sorts: newSorts.length > 0 ? newSorts.join(', ') : null,
       timezone: queryOperation.timezone,
       limit: compiledQuery.structs[0].resultMetadata.limit,
-      filters: [],
+      filters: mconfig.filters,
       chart: mconfig.chart, // previous mconfig chart
       temp: false,
       serverTs: 1
