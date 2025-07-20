@@ -4,9 +4,16 @@ import {
   PreparedQuery,
   PreparedResult,
   QueryMaterializer,
-  Runtime
+  Runtime,
+  malloyToQuery
 } from '@malloydata/malloy';
 import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
+import {
+  LogMessage,
+  Query as MalloyQuery,
+  ModelEntryValueWithSource
+} from '@malloydata/malloy-interfaces';
+import { ASTQuery } from '@malloydata/malloy-query-builder';
 import { ConfigService } from '@nestjs/config';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
@@ -19,6 +26,7 @@ export async function buildMalloyQuery(
     malloyConnections: PostgresConnection[];
     malloyModelDef: MalloyModelDef;
     malloyQuery: string;
+    malloyEntryValueWithSource: ModelEntryValueWithSource;
     // errors: BmError[];
     // structId: string;
     // caller: common.CallerEnum;
@@ -72,8 +80,8 @@ export async function buildMalloyQuery(
   // console.log(aSql);
 
   // let start103 = Date.now();
-  let pq: PreparedQuery = await qm.getPreparedQuery();
-  let pr: PreparedResult = pq.getPreparedResult();
+  let preparedQuery: PreparedQuery = await qm.getPreparedQuery();
+  let preparedResult: PreparedResult = preparedQuery.getPreparedResult();
 
   // console.log('diff103');
   // console.log(Date.now() - start103); // 15ms
@@ -84,5 +92,25 @@ export async function buildMalloyQuery(
   // console.log('pr.sql')
   // console.log(pr.sql)
 
-  return pr;
+  // let start104 = Date.now();
+  let malloyToQueryResult = malloyToQuery(item.malloyQuery);
+  // console.log('diff104');
+  // console.log(Date.now() - start104);
+
+  let logs: LogMessage[] = malloyToQueryResult?.logs;
+  let q1: MalloyQuery = malloyToQueryResult?.query;
+
+  // let start105 = Date.now();
+  let astQuery: ASTQuery = new ASTQuery({
+    source: item.malloyEntryValueWithSource,
+    query: q1
+  });
+  // console.log('diff105');
+  // console.log(Date.now() - start105);
+
+  return {
+    preparedQuery: preparedQuery,
+    preparedResult: preparedResult,
+    astQuery: astQuery
+  };
 }

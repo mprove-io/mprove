@@ -13,8 +13,9 @@ export async function buildTile<T extends types.dzType>(
     entities: T[];
     models: common.FileModel[];
     stores: common.FileStore[];
-    malloyConnections: PostgresConnection[];
     mods: common.FileMod[];
+    apiModels: common.Model[];
+    malloyConnections: PostgresConnection[];
     malloyFiles: common.BmlFile[];
     udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
@@ -113,6 +114,7 @@ export async function buildTile<T extends types.dzType>(
       entities: entities,
       models: item.models,
       mods: item.mods,
+      apiModels: item.apiModels,
       malloyConnections: item.malloyConnections,
       malloyFiles: item.malloyFiles,
       udfsDict: item.udfsDict,

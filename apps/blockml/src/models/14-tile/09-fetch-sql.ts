@@ -1,9 +1,17 @@
 import { PostgresConnection } from '@malloydata/db-postgres';
-import { PreparedResult } from '@malloydata/malloy';
 import {
-  ExpressionWithFieldReference as MalloyExpressionWithFieldReference,
-  FilterWithFilterString as MalloyFilterWithFilterString
+  ExpressionWithFieldReference,
+  FilterWithFilterString
 } from '@malloydata/malloy-interfaces';
+import {
+  ASTFilter,
+  ASTFilterWithFilterString,
+  ASTSegmentViewDefinition,
+  ASTViewOperation,
+  ASTWhereViewOperation,
+  ParsedFilter
+} from '@malloydata/malloy-query-builder';
+// import { FilterMatchExpr } from '@malloydata/malloy/dist/model';
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { barSpecial } from '~blockml/barrels/bar-special';
@@ -28,6 +36,7 @@ export async function fetchSql<T extends types.dzType>(
     entities: T[];
     models: common.FileModel[];
     mods: common.FileMod[];
+    apiModels: common.Model[];
     malloyConnections: PostgresConnection[];
     malloyFiles: common.BmlFile[];
     udfsDict: common.UdfsDict;
@@ -122,21 +131,23 @@ export async function fetchSql<T extends types.dzType>(
       let mod = item.mods.find(x => x.source === source);
 
       let startBuildMalloyQuery = Date.now();
-      let pr: PreparedResult = await barSpecial.buildMalloyQuery(
-        {
-          malloyConnections: item.malloyConnections,
-          malloyModelDef: mod.malloyModel._modelDef,
-          malloyQuery: malloyQuery
-        },
-        cs
-      );
+      let { preparedQuery, preparedResult, astQuery } =
+        await barSpecial.buildMalloyQuery(
+          {
+            malloyConnections: item.malloyConnections,
+            malloyModelDef: mod.malloyModel._modelDef,
+            malloyQuery: malloyQuery,
+            malloyEntryValueWithSource: mod.valueWithSourceInfo
+          },
+          cs
+        );
       console.log('buildMalloyQuery:');
       console.log(Date.now() - startBuildMalloyQuery);
 
-      tile.sql = pr.sql.split('\n');
-      tile.model = pr._rawQuery.sourceExplore;
+      tile.sql = preparedResult.sql.split('\n');
+      tile.model = preparedResult._rawQuery.sourceExplore;
       tile.malloyQuery = malloyQuery;
-      tile.compiledQuery = pr._rawQuery;
+      tile.compiledQuery = preparedResult._rawQuery;
 
       // console.dir('tile.compiledQuery');
       // console.dir(tile.compiledQuery, { depth: 5 });
@@ -145,44 +156,127 @@ export async function fetchSql<T extends types.dzType>(
       //   depth: 5
       // });
 
+      // fse.writeFileSync(
+      //   'malloy-preparedQuery.json',
+      //   JSON.stringify(preparedQuery, null, 2),
+      //   'utf-8'
+      // );
+
+      // fse.writeFileSync(
+      //   'malloy-preparedResult.json',
+      //   JSON.stringify(preparedResult, null, 2),
+      //   'utf-8'
+      // );
+
       let filtersFractions: {
         [s: string]: common.Fraction[];
       } = {};
 
-      tile.compiledQuery.structs[0].resultMetadata.filterList
+      let apiModel = item.apiModels.find(y => y.modelId === mod.name);
+
+      let segment0: ASTSegmentViewDefinition =
+        astQuery.getOrAddDefaultSegment();
+
+      console.log('operations:');
+      let fs = segment0.operations.items
         .filter(
-          filterListItem =>
-            filterListItem.isSourceFilter === false &&
-            (
-              (filterListItem?.stableFilter as MalloyFilterWithFilterString)
-                ?.expression as MalloyExpressionWithFieldReference
-            )?.kind === 'field_reference'
+          (operation: ASTViewOperation) =>
+            operation instanceof ASTWhereViewOperation
+          // ||
+          // operation instanceof ASTHavingViewOperation // TODO: having
         )
-        .forEach(x => {
-          let stableFilter = x.stableFilter as MalloyFilterWithFilterString;
+        .map((op: ASTWhereViewOperation) => {
+          // console.log('op');
+          // console.dir(op, { depth: null });
 
-          let expression =
-            stableFilter.expression as MalloyExpressionWithFieldReference;
+          let astFilter: ASTFilter = op.filter;
 
-          let fieldId =
-            expression.path?.length > 0
-              ? expression.path.join('.') + '.' + expression.name
-              : expression.name;
+          let parsedFilter: ParsedFilter = (
+            astFilter as ASTFilterWithFilterString
+          ).getFilter();
 
-          let fraction = {
-            // brick: `f'${stableFilter.filter}'`,
-            brick: stableFilter.filter,
-            operator: common.FractionOperatorEnum.Or,
-            type: common.FractionTypeEnum.StringIsEqualTo,
-            stringValue: stableFilter.filter
-          };
+          console.log('parsedFilter');
+          console.dir(parsedFilter, { depth: null });
+
+          let exp = op.node.filter.expression as ExpressionWithFieldReference;
+
+          let fieldId = common.isDefined(exp.path)
+            ? [...exp.path, exp.name].join('.')
+            : exp.name;
+
+          let field = apiModel.fields.find(k => k.id === fieldId);
+
+          let fraction: common.Fraction;
+
+          if (field.result === common.FieldResultEnum.String) {
+            fraction = {
+              // brick: `f'${(op.node.filter as FilterWithFilterString).filter}'`,
+              brick: (op.node.filter as FilterWithFilterString).filter,
+              operator: common.FractionOperatorEnum.Or,
+              type: common.FractionTypeEnum.StringIsEqualTo,
+              stringValue: (op.node.filter as FilterWithFilterString).filter
+            };
+          }
 
           if (common.isDefined(filtersFractions[fieldId])) {
             filtersFractions[fieldId].push(fraction);
           } else {
             filtersFractions[fieldId] = [fraction];
           }
+
+          return op.filter;
         });
+
+      console.log('filtersFractions');
+      console.log(filtersFractions);
+
+      // console.log('filterList:');
+      // tile.compiledQuery.structs[0].resultMetadata.filterList
+      //   .filter(
+      //     filterListItem =>
+      //       filterListItem.isSourceFilter === false &&
+      //       (
+      //         (filterListItem?.stableFilter as MalloyFilterWithFilterString)
+      //           ?.expression as MalloyExpressionWithFieldReference
+      //       )?.kind === 'field_reference'
+      //   )
+      //   .forEach(x => {
+      //     console.log('x');
+      //     console.dir(x, { depth: null });
+
+      //     let stableFilter = x.stableFilter as MalloyFilterWithFilterString;
+
+      //     // console.log('stableFilter');
+      //     // console.dir(stableFilter, { depth: null });
+
+      //     let expression =
+      //       stableFilter.expression as MalloyExpressionWithFieldReference;
+
+      //     let fieldId =
+      //       expression.path?.length > 0
+      //         ? expression.path.join('.') + '.' + expression.name
+      //         : expression.name;
+
+      //     let field = apiModel.fields.find(k => k.id === fieldId);
+
+      //     let fraction: common.Fraction;
+
+      //     if (field.result === common.FieldResultEnum.String) {
+      //       fraction = {
+      //         // brick: `f'${stableFilter.filter}'`,
+      //         brick: stableFilter.filter,
+      //         operator: common.FractionOperatorEnum.Or,
+      //         type: common.FractionTypeEnum.StringIsEqualTo,
+      //         stringValue: stableFilter.filter
+      //       };
+      //     }
+
+      //     if (common.isDefined(filtersFractions[fieldId])) {
+      //       filtersFractions[fieldId].push(fraction);
+      //     } else {
+      //       filtersFractions[fieldId] = [fraction];
+      //     }
+      //   });
 
       tile.select = [];
       tile.filtersFractions = filtersFractions;
