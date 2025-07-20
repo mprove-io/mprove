@@ -1,11 +1,17 @@
 import { PostgresConnection } from '@malloydata/db-postgres';
 import {
+  StringCondition,
+  StringFilter,
+  StringMatch
+} from '@malloydata/malloy-filter';
+import {
   ExpressionWithFieldReference,
   FilterWithFilterString
 } from '@malloydata/malloy-interfaces';
 import {
   ASTFilter,
   ASTFilterWithFilterString,
+  ASTHavingViewOperation,
   ASTSegmentViewDefinition,
   ASTViewOperation,
   ASTWhereViewOperation,
@@ -22,6 +28,20 @@ import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 import { RabbitService } from '~blockml/services/rabbit.service';
 import { STORE_MODEL_PREFIX } from '~common/constants/top';
+
+// packages/malloy-filter/src/clause_utils.ts
+
+export function unescape(str: string) {
+  return str.replace(/\\(.)/g, '$1');
+}
+
+export function escape(str: string) {
+  const lstr = str.toLowerCase();
+  if (lstr === 'null' || lstr === 'empty') {
+    return '\\' + str;
+  }
+  return str.replace(/([,; |()\\%_-])/g, '\\$1');
+}
 
 let func = common.FuncEnum.FetchSql;
 
@@ -177,15 +197,13 @@ export async function fetchSql<T extends types.dzType>(
       let segment0: ASTSegmentViewDefinition =
         astQuery.getOrAddDefaultSegment();
 
-      console.log('operations:');
-      let fs = segment0.operations.items
+      segment0.operations.items
         .filter(
           (operation: ASTViewOperation) =>
-            operation instanceof ASTWhereViewOperation
-          // ||
-          // operation instanceof ASTHavingViewOperation // TODO: having
+            operation instanceof ASTWhereViewOperation ||
+            operation instanceof ASTHavingViewOperation
         )
-        .map((op: ASTWhereViewOperation) => {
+        .map((op: ASTWhereViewOperation | ASTHavingViewOperation) => {
           // console.log('op');
           // console.dir(op, { depth: null });
 
@@ -195,8 +213,26 @@ export async function fetchSql<T extends types.dzType>(
             astFilter as ASTFilterWithFilterString
           ).getFilter();
 
-          console.log('parsedFilter');
-          console.dir(parsedFilter, { depth: null });
+          // console.log('parsedFilter');
+          // console.dir(parsedFilter, { depth: null });
+
+          // { kind: 'string', parsed: { operator: '=', values: [ 'TX' ] } }
+          // { kind: 'string', parsed: { operator: '=', values: [ 'OH', 'NY' ] } }
+          // {
+          //   kind: 'string',
+          //   parsed: { operator: '=', values: [ 'NC', 'ND' ], not: true }
+          // }
+          // {
+          //   kind: 'string',
+          //   parsed: {
+          //     operator: ',',
+          //     members: [
+          //       { operator: '=', values: [ 'UT' ] },
+          //       { operator: 'starts', values: [ 'MT' ] }
+          //     ]
+          //   }
+          // }
+          // { kind: 'string', parsed: null }
 
           let exp = op.node.filter.expression as ExpressionWithFieldReference;
 
@@ -208,20 +244,59 @@ export async function fetchSql<T extends types.dzType>(
 
           let fraction: common.Fraction;
 
-          if (field.result === common.FieldResultEnum.String) {
-            fraction = {
-              // brick: `f'${(op.node.filter as FilterWithFilterString).filter}'`,
-              brick: (op.node.filter as FilterWithFilterString).filter,
-              operator: common.FractionOperatorEnum.Or,
-              type: common.FractionTypeEnum.StringIsEqualTo,
-              stringValue: (op.node.filter as FilterWithFilterString).filter
-            };
-          }
+          if (
+            field.result === common.FieldResultEnum.String &&
+            parsedFilter.kind === 'string'
+          ) {
+            let stringFilters: StringFilter[] = [];
 
-          if (common.isDefined(filtersFractions[fieldId])) {
-            filtersFractions[fieldId].push(fraction);
-          } else {
-            filtersFractions[fieldId] = [fraction];
+            if (parsedFilter?.parsed?.operator === ',') {
+              stringFilters = parsedFilter.parsed.members;
+            } else if (common.isDefined(parsedFilter)) {
+              stringFilters = [parsedFilter.parsed];
+            } else {
+              stringFilters = [null];
+            }
+
+            stringFilters.forEach(stringFilter => {
+              let eValues = [];
+
+              if (common.isUndefined(stringFilter)) {
+                eValues = [null];
+              } else {
+                let values = (stringFilter as StringCondition).values ?? [];
+
+                let escapedValues =
+                  (stringFilter as StringMatch).escaped_values ?? [];
+
+                eValues = [...values.map(v => escape(v)), ...escapedValues];
+              }
+
+              eValues.forEach(eValue => {
+                fraction = {
+                  // brick: (op.node.filter as FilterWithFilterString).filter,
+                  // brick: common.isDefined(eValue) ? eValue : '',
+                  brick:
+                    'f`' +
+                    (op.node.filter as FilterWithFilterString).filter +
+                    '`',
+                  operator:
+                    (stringFilter as { not: boolean })?.not === true
+                      ? common.FractionOperatorEnum.And
+                      : common.FractionOperatorEnum.Or,
+                  type: common.isDefined(eValue)
+                    ? common.FractionTypeEnum.StringIsEqualTo
+                    : common.FractionTypeEnum.StringIsAnyValue,
+                  stringValue: common.isDefined(eValue) ? eValue : undefined
+                };
+
+                if (common.isDefined(filtersFractions[fieldId])) {
+                  filtersFractions[fieldId].push(fraction);
+                } else {
+                  filtersFractions[fieldId] = [fraction];
+                }
+              });
+            });
           }
 
           return op.filter;

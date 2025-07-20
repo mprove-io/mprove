@@ -1,8 +1,15 @@
 import '../ec1_order_items.malloy';
 
 query: mc1 is ec1_order_items -> {
-  where: users.state ~ f'UT, MT%'
-  group_by: users___state is users.state
-  aggregate: orsers___orders_count is orders.orders_count
+  where: 
+    users.state ~ f`TX`,
+    users.state ~ f`OH, NY`,
+    users.state ~ f`-NC, -ND`,
+    users.state ~ f`UT, MT%`,
+    users.state ~ f`a%z`,
+    users.state ~ f`\\%%`,
+    users.state ~ f``
+  group_by: users__state is users.state
+  aggregate: orsers__orders_count is orders.orders_count
   limit: 10
 }
