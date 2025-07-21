@@ -539,63 +539,56 @@ export async function buildMalloyQuery(
             ) > -1
           ) {
             // values
-            let values: string[] =
-              (numberFilter as NumberCondition).values ?? [];
+            let fractionOperator =
+              (numberFilter as { not: boolean })?.not === true ||
+              numberFilter.operator === '!='
+                ? common.FractionOperatorEnum.And
+                : common.FractionOperatorEnum.Or;
 
-            values.forEach(eValue => {
-              let fractionOperator =
-                (numberFilter as { not: boolean })?.not === true ||
-                numberFilter.operator === '!='
-                  ? common.FractionOperatorEnum.And
-                  : common.FractionOperatorEnum.Or;
-
-              let fraction: common.Fraction = {
-                brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
-                operator: fractionOperator,
-                type:
-                  numberFilter.operator === '='
+            let fraction: common.Fraction = {
+              brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+              operator: fractionOperator,
+              type:
+                numberFilter.operator === '='
+                  ? fractionOperator === common.FractionOperatorEnum.Or
+                    ? common.FractionTypeEnum.NumberIsEqualTo
+                    : common.FractionTypeEnum.NumberIsNotEqualTo
+                  : numberFilter.operator === '!='
                     ? fractionOperator === common.FractionOperatorEnum.Or
-                      ? common.FractionTypeEnum.NumberIsEqualTo
+                      ? common.FractionTypeEnum.NumberIsEqualTo // not possible
                       : common.FractionTypeEnum.NumberIsNotEqualTo
-                    : numberFilter.operator === '!='
+                    : numberFilter.operator === '<='
                       ? fractionOperator === common.FractionOperatorEnum.Or
-                        ? common.FractionTypeEnum.NumberIsEqualTo // not possible
-                        : common.FractionTypeEnum.NumberIsNotEqualTo
-                      : numberFilter.operator === '<='
+                        ? common.FractionTypeEnum.NumberIsLessThanOrEqualTo
+                        : common.FractionTypeEnum.NumberIsNotLessThanOrEqualTo
+                      : numberFilter.operator === '>='
                         ? fractionOperator === common.FractionOperatorEnum.Or
-                          ? common.FractionTypeEnum.NumberIsLessThanOrEqualTo
-                          : common.FractionTypeEnum.NumberIsNotLessThanOrEqualTo
-                        : numberFilter.operator === '>='
+                          ? common.FractionTypeEnum.NumberIsGreaterThanOrEqualTo
+                          : common.FractionTypeEnum
+                              .NumberIsNotGreaterThanOrEqualTo
+                        : numberFilter.operator === '<'
                           ? fractionOperator === common.FractionOperatorEnum.Or
-                            ? common.FractionTypeEnum
-                                .NumberIsGreaterThanOrEqualTo
-                            : common.FractionTypeEnum
-                                .NumberIsNotGreaterThanOrEqualTo
-                          : numberFilter.operator === '<'
+                            ? common.FractionTypeEnum.NumberIsLessThan
+                            : common.FractionTypeEnum.NumberIsNotLessThan
+                          : numberFilter.operator === '>'
                             ? fractionOperator ===
                               common.FractionOperatorEnum.Or
-                              ? common.FractionTypeEnum.NumberIsLessThan
-                              : common.FractionTypeEnum.NumberIsNotLessThan
-                            : numberFilter.operator === '>'
+                              ? common.FractionTypeEnum.NumberIsGreaterThan
+                              : common.FractionTypeEnum.NumberIsNotGreaterThan
+                            : numberFilter.operator === 'null'
                               ? fractionOperator ===
                                 common.FractionOperatorEnum.Or
-                                ? common.FractionTypeEnum.NumberIsGreaterThan
-                                : common.FractionTypeEnum.NumberIsNotGreaterThan
-                              : numberFilter.operator === 'null'
-                                ? fractionOperator ===
-                                  common.FractionOperatorEnum.Or
-                                  ? common.FractionTypeEnum.NumberIsNull
-                                  : common.FractionTypeEnum.NumberIsNotNull
-                                : undefined,
-                stringValue: common.isDefined(eValue) ? eValue : undefined
-              };
+                                ? common.FractionTypeEnum.NumberIsNull
+                                : common.FractionTypeEnum.NumberIsNotNull
+                              : undefined,
+              numberValues: (numberFilter as NumberCondition).values.join(', ')
+            };
 
-              if (common.isDefined(filtersFractions[fieldId])) {
-                filtersFractions[fieldId].push(fraction);
-              } else {
-                filtersFractions[fieldId] = [fraction];
-              }
-            });
+            if (common.isDefined(filtersFractions[fieldId])) {
+              filtersFractions[fieldId].push(fraction);
+            } else {
+              filtersFractions[fieldId] = [fraction];
+            }
           }
         });
       }
