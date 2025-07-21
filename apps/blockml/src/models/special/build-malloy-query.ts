@@ -272,7 +272,7 @@ export async function buildMalloyQuery(
                                 ? common.FractionTypeEnum.StringIsBlank
                                 : common.FractionTypeEnum.StringIsNotBlank
                               : undefined,
-                stringValue: common.isDefined(eValue) ? eValue : undefined
+                stringValue: eValue
               };
 
               if (common.isDefined(filtersFractions[fieldId])) {
