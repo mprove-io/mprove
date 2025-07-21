@@ -1,22 +1,4 @@
 import { PostgresConnection } from '@malloydata/db-postgres';
-import {
-  StringCondition,
-  StringFilter,
-  StringMatch
-} from '@malloydata/malloy-filter';
-import {
-  ExpressionWithFieldReference,
-  FilterWithFilterString
-} from '@malloydata/malloy-interfaces';
-import {
-  ASTFilter,
-  ASTFilterWithFilterString,
-  ASTHavingViewOperation,
-  ASTSegmentViewDefinition,
-  ASTViewOperation,
-  ASTWhereViewOperation,
-  ParsedFilter
-} from '@malloydata/malloy-query-builder';
 // import { FilterMatchExpr } from '@malloydata/malloy/dist/model';
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
@@ -150,10 +132,14 @@ export async function fetchSql<T extends types.dzType>(
 
       let mod = item.mods.find(x => x.source === source);
 
+      let apiModel = item.apiModels.find(y => y.modelId === mod.name);
+
       let startBuildMalloyQuery = Date.now();
-      let { preparedQuery, preparedResult, astQuery } =
+
+      let { preparedResult, filtersFractions } =
         await barSpecial.buildMalloyQuery(
           {
+            apiModel: apiModel,
             malloyConnections: item.malloyConnections,
             malloyModelDef: mod.malloyModel._modelDef,
             malloyQuery: malloyQuery,
@@ -161,6 +147,7 @@ export async function fetchSql<T extends types.dzType>(
           },
           cs
         );
+
       console.log('buildMalloyQuery:');
       console.log(Date.now() - startBuildMalloyQuery);
 
@@ -168,218 +155,6 @@ export async function fetchSql<T extends types.dzType>(
       tile.model = preparedResult._rawQuery.sourceExplore;
       tile.malloyQuery = malloyQuery;
       tile.compiledQuery = preparedResult._rawQuery;
-
-      // console.dir('tile.compiledQuery');
-      // console.dir(tile.compiledQuery, { depth: 5 });
-      // console.dir('tile.compiledQuery.structs[0].filterList');
-      // console.dir(tile.compiledQuery.structs[0].resultMetadata.filterList, {
-      //   depth: 5
-      // });
-
-      // fse.writeFileSync(
-      //   'malloy-preparedQuery.json',
-      //   JSON.stringify(preparedQuery, null, 2),
-      //   'utf-8'
-      // );
-
-      // fse.writeFileSync(
-      //   'malloy-preparedResult.json',
-      //   JSON.stringify(preparedResult, null, 2),
-      //   'utf-8'
-      // );
-
-      let filtersFractions: {
-        [s: string]: common.Fraction[];
-      } = {};
-
-      let apiModel = item.apiModels.find(y => y.modelId === mod.name);
-
-      let segment0: ASTSegmentViewDefinition =
-        astQuery.getOrAddDefaultSegment();
-
-      segment0.operations.items
-        .filter(
-          (operation: ASTViewOperation) =>
-            operation instanceof ASTWhereViewOperation ||
-            operation instanceof ASTHavingViewOperation
-        )
-        .map((op: ASTWhereViewOperation | ASTHavingViewOperation) => {
-          // console.log('op');
-          // console.dir(op, { depth: null });
-
-          let astFilter: ASTFilter = op.filter;
-
-          let parsedFilter: ParsedFilter = (
-            astFilter as ASTFilterWithFilterString
-          ).getFilter();
-
-          // console.log('parsedFilter');
-          // console.dir(parsedFilter, { depth: null });
-
-          // { kind: 'string', parsed: { operator: '=', values: [ 'TX' ] } }
-          // { kind: 'string', parsed: { operator: '=', values: [ 'OH', 'NY' ] } }
-          // {
-          //   kind: 'string',
-          //   parsed: { operator: '=', values: [ 'NC', 'ND' ], not: true }
-          // }
-          // {
-          //   kind: 'string',
-          //   parsed: {
-          //     operator: ',',
-          //     members: [
-          //       { operator: '=', values: [ 'UT' ] },
-          //       { operator: 'starts', values: [ 'MT' ] }
-          //     ]
-          //   }
-          // }
-          // { kind: 'string', parsed: null }
-
-          let exp = op.node.filter.expression as ExpressionWithFieldReference;
-
-          let fieldId = common.isDefined(exp.path)
-            ? [...exp.path, exp.name].join('.')
-            : exp.name;
-
-          let field = apiModel.fields.find(k => k.id === fieldId);
-
-          let fraction: common.Fraction;
-
-          if (
-            field.result === common.FieldResultEnum.String &&
-            parsedFilter.kind === 'string'
-          ) {
-            let stringFilters: StringFilter[] = [];
-
-            if (parsedFilter?.parsed?.operator === ',') {
-              stringFilters = parsedFilter.parsed.members;
-            } else if (common.isDefined(parsedFilter)) {
-              stringFilters = [parsedFilter.parsed];
-            } else {
-              stringFilters = [null];
-            }
-
-            stringFilters.forEach(stringFilter => {
-              let eValues = [];
-
-              if (common.isUndefined(stringFilter)) {
-                eValues = [null];
-              } else {
-                let values = (stringFilter as StringCondition).values ?? [];
-
-                let escapedValues =
-                  (stringFilter as StringMatch).escaped_values ?? [];
-
-                eValues = [...values.map(v => escape(v)), ...escapedValues];
-              }
-
-              eValues.forEach(eValue => {
-                let fractionOperator =
-                  (stringFilter as { not: boolean })?.not === true
-                    ? common.FractionOperatorEnum.And
-                    : common.FractionOperatorEnum.Or;
-
-                fraction = {
-                  brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
-                  operator: fractionOperator,
-                  type: common.isUndefined(eValue)
-                    ? common.FractionTypeEnum.StringIsAnyValue
-                    : stringFilter.operator === '~'
-                      ? fractionOperator === common.FractionOperatorEnum.Or
-                        ? common.FractionTypeEnum.StringIsLike
-                        : common.FractionTypeEnum.StringIsNotLike
-                      : stringFilter.operator === '='
-                        ? fractionOperator === common.FractionOperatorEnum.Or
-                          ? common.FractionTypeEnum.StringIsEqualTo
-                          : common.FractionTypeEnum.StringIsNotEqualTo
-                        : stringFilter.operator === 'contains'
-                          ? fractionOperator === common.FractionOperatorEnum.Or
-                            ? common.FractionTypeEnum.StringContains
-                            : common.FractionTypeEnum.StringDoesNotContain
-                          : stringFilter.operator === 'starts'
-                            ? fractionOperator ===
-                              common.FractionOperatorEnum.Or
-                              ? common.FractionTypeEnum.StringStartsWith
-                              : common.FractionTypeEnum.StringDoesNotStartWith
-                            : stringFilter.operator === 'ends'
-                              ? fractionOperator ===
-                                common.FractionOperatorEnum.Or
-                                ? common.FractionTypeEnum.StringEndsWith
-                                : common.FractionTypeEnum.StringDoesNotEndWith
-                              : stringFilter.operator === 'empty'
-                                ? common.FractionOperatorEnum.Or
-                                  ? common.FractionTypeEnum.StringIsBlank
-                                  : common.FractionTypeEnum.StringIsNotBlank
-                                : stringFilter.operator === 'null'
-                                  ? common.FractionOperatorEnum.Or
-                                    ? common.FractionTypeEnum.StringIsNull
-                                    : common.FractionTypeEnum.StringIsNotNull
-                                  : undefined,
-                  stringValue: common.isDefined(eValue) ? eValue : undefined
-                };
-
-                if (common.isDefined(filtersFractions[fieldId])) {
-                  filtersFractions[fieldId].push(fraction);
-                } else {
-                  filtersFractions[fieldId] = [fraction];
-                }
-              });
-            });
-          }
-
-          return op.filter;
-        });
-
-      console.log('filtersFractions');
-      console.log(filtersFractions);
-
-      // console.log('filterList:');
-      // tile.compiledQuery.structs[0].resultMetadata.filterList
-      //   .filter(
-      //     filterListItem =>
-      //       filterListItem.isSourceFilter === false &&
-      //       (
-      //         (filterListItem?.stableFilter as MalloyFilterWithFilterString)
-      //           ?.expression as MalloyExpressionWithFieldReference
-      //       )?.kind === 'field_reference'
-      //   )
-      //   .forEach(x => {
-      //     console.log('x');
-      //     console.dir(x, { depth: null });
-
-      //     let stableFilter = x.stableFilter as MalloyFilterWithFilterString;
-
-      //     // console.log('stableFilter');
-      //     // console.dir(stableFilter, { depth: null });
-
-      //     let expression =
-      //       stableFilter.expression as MalloyExpressionWithFieldReference;
-
-      //     let fieldId =
-      //       expression.path?.length > 0
-      //         ? expression.path.join('.') + '.' + expression.name
-      //         : expression.name;
-
-      //     let field = apiModel.fields.find(k => k.id === fieldId);
-
-      //     let fraction: common.Fraction;
-
-      //     if (field.result === common.FieldResultEnum.String) {
-      //       fraction = {
-      //         // brick: `f'${stableFilter.filter}'`,
-      //         brick: stableFilter.filter,
-      //         operator: common.FractionOperatorEnum.Or,
-      //         type: common.FractionTypeEnum.StringIsEqualTo,
-      //         stringValue: stableFilter.filter
-      //       };
-      //     }
-
-      //     if (common.isDefined(filtersFractions[fieldId])) {
-      //       filtersFractions[fieldId].push(fraction);
-      //     } else {
-      //       filtersFractions[fieldId] = [fraction];
-      //     }
-      //   });
-
       tile.select = [];
       tile.filtersFractions = filtersFractions;
     } else if (
