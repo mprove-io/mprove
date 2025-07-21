@@ -9,6 +9,7 @@ import {
 } from '@malloydata/malloy';
 import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import {
+  BooleanFilter,
   Null,
   NumberCondition,
   NumberFilter,
@@ -308,52 +309,60 @@ export async function buildMalloyQuery(
         // { kind: 'boolean', parsed: { operator: 'false', not: true } }
         // { kind: 'boolean', parsed: { operator: 'null', not: true } }
 
-        // let booleanFilters: BooleanFilter[] = [];
-        // if (parsedFilter?.parsed?.operator === ',') {
-        //   stringFilters = parsedFilter.parsed.members;
-        // } else
-        let booleanFilter;
+        let booleanFilters: BooleanFilter[] = [];
 
-        if (common.isDefined(parsedFilter)) {
-          booleanFilter = parsedFilter.parsed;
+        if (common.isDefined(parsedFilter.parsed)) {
+          booleanFilters = [parsedFilter.parsed];
         } else {
-          booleanFilter = null;
+          // boolean any
+          let fraction: common.Fraction = {
+            brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+            operator: common.FractionOperatorEnum.Or,
+            type: common.FractionTypeEnum.BooleanIsAnyValue
+          };
+
+          if (common.isDefined(filtersFractions[fieldId])) {
+            filtersFractions[fieldId].push(fraction);
+          } else {
+            filtersFractions[fieldId] = [fraction];
+          }
         }
 
-        let fractionOperator =
-          (booleanFilter as { not: boolean })?.not === true
-            ? common.FractionOperatorEnum.And
-            : common.FractionOperatorEnum.Or;
+        booleanFilters.forEach(booleanFilter => {
+          let fractionOperator =
+            (booleanFilter as { not: boolean })?.not === true
+              ? common.FractionOperatorEnum.And
+              : common.FractionOperatorEnum.Or;
 
-        let fraction: common.Fraction = {
-          brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
-          operator: fractionOperator,
-          type: common.isUndefined(booleanFilter)
-            ? common.FractionTypeEnum.BooleanIsAnyValue
-            : booleanFilter.operator === 'true'
-              ? fractionOperator === common.FractionOperatorEnum.Or
-                ? common.FractionTypeEnum.BooleanIsTrue
-                : common.FractionTypeEnum.BooleanIsNotTrue
-              : booleanFilter.operator === 'false'
+          let fraction: common.Fraction = {
+            brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+            operator: fractionOperator,
+            type:
+              booleanFilter.operator === 'true'
                 ? fractionOperator === common.FractionOperatorEnum.Or
-                  ? common.FractionTypeEnum.BooleanIsFalse
-                  : common.FractionTypeEnum.BooleanIsNotFalse
-                : booleanFilter.operator === 'false_or_null'
+                  ? common.FractionTypeEnum.BooleanIsTrue
+                  : common.FractionTypeEnum.BooleanIsNotTrue
+                : booleanFilter.operator === 'false'
                   ? fractionOperator === common.FractionOperatorEnum.Or
-                    ? common.FractionTypeEnum.BooleanIsFalseOrNull
-                    : common.FractionTypeEnum.BooleanIsNotFalseOrNull
-                  : booleanFilter.operator === 'null'
+                    ? common.FractionTypeEnum.BooleanIsFalse
+                    : common.FractionTypeEnum.BooleanIsNotFalse
+                  : booleanFilter.operator === 'false_or_null'
                     ? fractionOperator === common.FractionOperatorEnum.Or
-                      ? common.FractionTypeEnum.BooleanIsNull
-                      : common.FractionTypeEnum.BooleanIsNotNull
-                    : undefined
-        };
+                      ? common.FractionTypeEnum.BooleanIsFalseOrNull
+                      : common.FractionTypeEnum.BooleanIsNotFalseOrNull
+                    : booleanFilter.operator === 'null'
+                      ? fractionOperator === common.FractionOperatorEnum.Or
+                        ? common.FractionTypeEnum.BooleanIsNull
+                        : common.FractionTypeEnum.BooleanIsNotNull
+                      : undefined
+          };
 
-        if (common.isDefined(filtersFractions[fieldId])) {
-          filtersFractions[fieldId].push(fraction);
-        } else {
-          filtersFractions[fieldId] = [fraction];
-        }
+          if (common.isDefined(filtersFractions[fieldId])) {
+            filtersFractions[fieldId].push(fraction);
+          } else {
+            filtersFractions[fieldId] = [fraction];
+          }
+        });
       } else if (
         field.result === common.FieldResultEnum.Number &&
         parsedFilter.kind === 'number'
@@ -503,7 +512,7 @@ export async function buildMalloyQuery(
         } else if (common.isDefined(parsedFilter.parsed)) {
           numberFilters = [parsedFilter.parsed];
         } else {
-          // any
+          // number any
           let fraction: common.Fraction = {
             brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
             operator: common.FractionOperatorEnum.Or,
@@ -524,7 +533,7 @@ export async function buildMalloyQuery(
               : undefined;
 
           if (common.isDefined(range)) {
-            // range
+            // number range
             let fractionOperator =
               (numberFilter as { not: boolean })?.not === true
                 ? common.FractionOperatorEnum.And
@@ -558,7 +567,7 @@ export async function buildMalloyQuery(
               filtersFractions[fieldId] = [fraction];
             }
           } else if ((numberFilter as Null).operator === 'null') {
-            // null
+            // number null
             let fractionOperator =
               (numberFilter as { not: boolean })?.not === true
                 ? common.FractionOperatorEnum.And
@@ -583,7 +592,7 @@ export async function buildMalloyQuery(
               (numberFilter as NumberCondition).operator
             ) > -1
           ) {
-            // values
+            // number values
             let fractionOperator =
               (numberFilter as { not: boolean })?.not === true ||
               numberFilter.operator === '!='
