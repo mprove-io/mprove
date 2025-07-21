@@ -157,7 +157,39 @@ export async function buildMalloyQuery(
         field.result === common.FieldResultEnum.String &&
         parsedFilter.kind === 'string'
       ) {
-        // { kind: 'string', parsed: { operator: '=', values: [ 'TX' ] } }
+        // { kind: 'string', parsed: null }
+        // {
+        //   kind: 'string',
+        //   parsed: { operator: '~', escaped_values: [ 'a%z' ] }
+        // }
+        // { kind: 'string', parsed: { operator: '=', values: [ 'b' ] } }
+        // { kind: 'string', parsed: { operator: 'contains', values: [ 'c' ] } }
+        // { kind: 'string', parsed: { operator: 'starts', values: [ 's' ] } }
+        // { kind: 'string', parsed: { operator: 'ends', values: [ 'e' ] } }
+        // { kind: 'string', parsed: { operator: 'null' } }
+        // { kind: 'string', parsed: { operator: 'empty' } }
+        // {
+        //   kind: 'string',
+        //   parsed: { operator: '~', escaped_values: [ 'a%z' ], not: true }
+        // }
+        // {
+        //   kind: 'string',
+        //   parsed: { operator: '=', values: [ 'b' ], not: true }
+        // }
+        // {
+        //   kind: 'string',
+        //   parsed: { operator: 'contains', values: [ 'c' ], not: true }
+        // }
+        // {
+        //   kind: 'string',
+        //   parsed: { operator: 'starts', values: [ 's' ], not: true }
+        // }
+        // {
+        //   kind: 'string',
+        //   parsed: { operator: 'ends', values: [ 'e' ], not: true }
+        // }
+        // { kind: 'string', parsed: { operator: 'null', not: true } }
+        // { kind: 'string', parsed: { operator: 'empty', not: true } }
         // { kind: 'string', parsed: { operator: '=', values: [ 'OH', 'NY' ] } }
         // {
         //   kind: 'string',
@@ -173,16 +205,30 @@ export async function buildMalloyQuery(
         //     ]
         //   }
         // }
-        // { kind: 'string', parsed: null }
+        // {
+        //   kind: 'string',
+        //   parsed: { operator: '~', escaped_values: [ '\\\\%%' ] }
+        // }
 
         let stringFilters: StringFilter[] = [];
 
-        if (parsedFilter?.parsed?.operator === ',') {
+        if (parsedFilter.parsed?.operator === ',') {
           stringFilters = parsedFilter.parsed.members;
-        } else if (common.isDefined(parsedFilter)) {
+        } else if (common.isDefined(parsedFilter.parsed)) {
           stringFilters = [parsedFilter.parsed];
         } else {
-          stringFilters = [null];
+          // any
+          let fraction: common.Fraction = {
+            brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+            operator: common.FractionOperatorEnum.Or,
+            type: common.FractionTypeEnum.StringIsAnyValue
+          };
+
+          if (common.isDefined(filtersFractions[fieldId])) {
+            filtersFractions[fieldId].push(fraction);
+          } else {
+            filtersFractions[fieldId] = [fraction];
+          }
         }
 
         stringFilters.forEach(stringFilter => {
@@ -208,9 +254,8 @@ export async function buildMalloyQuery(
             let fraction: common.Fraction = {
               brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
               operator: fractionOperator,
-              type: common.isUndefined(eValue)
-                ? common.FractionTypeEnum.StringIsAnyValue
-                : stringFilter.operator === '~'
+              type:
+                stringFilter.operator === '~'
                   ? fractionOperator === common.FractionOperatorEnum.Or
                     ? common.FractionTypeEnum.StringIsLike
                     : common.FractionTypeEnum.StringIsNotLike
