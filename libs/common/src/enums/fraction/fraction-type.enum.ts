@@ -30,6 +30,10 @@ export enum FractionTypeEnum {
   NumberIsNull = 'NumberIsNull',
 
   NumberIsNotEqualTo = 'NumberIsNotEqualTo',
+  NumberIsNotGreaterThan = 'NumberIsNotGreaterThan', //
+  NumberIsNotGreaterThanOrEqualTo = 'NumberIsNotGreaterThanOrEqualTo', //
+  NumberIsNotLessThan = 'NumberIsNotLessThan', //
+  NumberIsNotLessThanOrEqualTo = 'NumberIsNotLessThanOrEqualTo', //
   NumberIsNotBetween = 'NumberIsNotBetween',
   NumberIsNotNull = 'NumberIsNotNull',
 

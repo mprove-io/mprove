@@ -9,6 +9,10 @@ import {
 } from '@malloydata/malloy';
 import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import {
+  Null,
+  NumberCondition,
+  NumberFilter,
+  NumberRange,
   StringCondition,
   StringFilter,
   StringMatch
@@ -129,8 +133,8 @@ export async function buildMalloyQuery(
         operation instanceof ASTHavingViewOperation
     )
     .map((op: ASTWhereViewOperation | ASTHavingViewOperation) => {
-      console.log('op');
-      console.dir(op, { depth: null });
+      // console.log('op');
+      // console.dir(op, { depth: null });
 
       let astFilter: ASTFilter = op.filter;
 
@@ -138,7 +142,7 @@ export async function buildMalloyQuery(
         astFilter as ASTFilterWithFilterString
       ).getFilter();
 
-      console.log('parsedFilter');
+      // console.log('parsedFilter');
       console.dir(parsedFilter, { depth: null });
 
       let exp = op.node.filter.expression as ExpressionWithFieldReference;
@@ -305,6 +309,295 @@ export async function buildMalloyQuery(
         } else {
           filtersFractions[fieldId] = [fraction];
         }
+      } else if (
+        field.result === common.FieldResultEnum.Number &&
+        parsedFilter.kind === 'number'
+      ) {
+        // { kind: 'number', parsed: null }
+        // { kind: 'number', parsed: { operator: '=', values: [ '1' ] } }
+        // { kind: 'number', parsed: { operator: '<=', values: [ '2' ] } }
+        // { kind: 'number', parsed: { operator: '>=', values: [ '3' ] } }
+        // { kind: 'number', parsed: { operator: '<', values: [ '4' ] } }
+        // { kind: 'number', parsed: { operator: '>', values: [ '5' ] } }
+        // { kind: 'number', parsed: { operator: 'null' } }
+        // {
+        //   kind: 'number',
+        //   parsed: {
+        //     operator: 'range',
+        //     startValue: '6',
+        //     startOperator: '>',
+        //     endValue: '7',
+        //     endOperator: '<'
+        //   }
+        // }
+        // {
+        //   kind: 'number',
+        //   parsed: {
+        //     operator: 'range',
+        //     startValue: '8',
+        //     startOperator: '>',
+        //     endValue: '9',
+        //     endOperator: '<='
+        //   }
+        // }
+        // {
+        //   kind: 'number',
+        //   parsed: {
+        //     operator: 'range',
+        //     startValue: '10',
+        //     startOperator: '>=',
+        //     endValue: '11',
+        //     endOperator: '<'
+        //   }
+        // }
+        // {
+        //   kind: 'number',
+        //   parsed: {
+        //     operator: 'range',
+        //     startValue: '12',
+        //     startOperator: '>=',
+        //     endValue: '13',
+        //     endOperator: '<='
+        //   }
+        // }
+        // { kind: 'number', parsed: { operator: '=', values: [ '14', '15' ] } }
+        // {
+        //   kind: 'number',
+        //   parsed: {
+        //     operator: 'or',
+        //     members: [
+        //       { operator: '=', values: [ '16', '17', '18' ] },
+        //       { operator: '<', values: [ '19' ] }
+        //     ]
+        //   }
+        // }
+        // { kind: 'number', parsed: { operator: '!=', values: [ '20' ] } }
+        // { kind: 'number', parsed: { operator: '!=', values: [ '1' ] } }
+        // {
+        //   kind: 'number',
+        //   parsed: { operator: '<=', values: [ '2' ], not: true }
+        // }
+        // {
+        //   kind: 'number',
+        //   parsed: { operator: '>=', values: [ '3' ], not: true }
+        // }
+        // {
+        //   kind: 'number',
+        //   parsed: { operator: '<', values: [ '4' ], not: true }
+        // }
+        // {
+        //   kind: 'number',
+        //   parsed: { operator: '>', values: [ '5' ], not: true }
+        // }
+        // { kind: 'number', parsed: { operator: 'null', not: true } }
+        // {
+        //   kind: 'number',
+        //   parsed: {
+        //     operator: 'range',
+        //     startValue: '6',
+        //     startOperator: '>',
+        //     endValue: '7',
+        //     endOperator: '<',
+        //     not: true
+        //   }
+        // }
+        // {
+        //   kind: 'number',
+        //   parsed: {
+        //     operator: 'range',
+        //     startValue: '8',
+        //     startOperator: '>',
+        //     endValue: '9',
+        //     endOperator: '<=',
+        //     not: true
+        //   }
+        // }
+        // {
+        //   kind: 'number',
+        //   parsed: {
+        //     operator: 'range',
+        //     startValue: '10',
+        //     startOperator: '>=',
+        //     endValue: '11',
+        //     endOperator: '<',
+        //     not: true
+        //   }
+        // }
+        // {
+        //   kind: 'number',
+        //   parsed: {
+        //     operator: 'range',
+        //     startValue: '12',
+        //     startOperator: '>=',
+        //     endValue: '13',
+        //     endOperator: '<=',
+        //     not: true
+        //   }
+        // }
+        // { kind: 'number', parsed: { operator: '!=', values: [ '14', '15' ] } }
+        // {
+        //   kind: 'number',
+        //   parsed: {
+        //     operator: 'and',
+        //     members: [
+        //       { operator: '!=', values: [ '16' ] },
+        //       { operator: '!=', values: [ '17', '18' ] },
+        //       { operator: '<', values: [ '19' ], not: true }
+        //     ]
+        //   }
+        // }
+        // { kind: 'number', parsed: { operator: '=', values: [ '20' ] } }
+
+        let numberFilters: NumberFilter[] = [];
+
+        if (
+          parsedFilter?.parsed?.operator === 'or' ||
+          parsedFilter?.parsed?.operator === 'and'
+        ) {
+          numberFilters = parsedFilter.parsed.members;
+        } else if (common.isDefined(parsedFilter.parsed)) {
+          numberFilters = [parsedFilter.parsed];
+        } else {
+          // any
+          let fraction: common.Fraction = {
+            brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+            operator: common.FractionOperatorEnum.Or,
+            type: common.FractionTypeEnum.NumberIsAnyValue
+          };
+
+          if (common.isDefined(filtersFractions[fieldId])) {
+            filtersFractions[fieldId].push(fraction);
+          } else {
+            filtersFractions[fieldId] = [fraction];
+          }
+        }
+
+        numberFilters.forEach(numberFilter => {
+          let range: NumberRange =
+            (numberFilter as NumberRange)?.operator === 'range'
+              ? (numberFilter as NumberRange)
+              : undefined;
+
+          if (common.isDefined(range)) {
+            // range
+            let fractionOperator =
+              (numberFilter as { not: boolean })?.not === true
+                ? common.FractionOperatorEnum.And
+                : common.FractionOperatorEnum.Or;
+
+            let fraction: common.Fraction = {
+              brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+              operator: fractionOperator,
+              type:
+                fractionOperator === common.FractionOperatorEnum.Or
+                  ? common.FractionTypeEnum.NumberIsBetween
+                  : common.FractionTypeEnum.NumberIsNotBetween,
+              numberValue1: Number(range.startValue),
+              numberValue2: Number(range.endValue),
+              numberBetweenOption:
+                range.startOperator === '>=' && range.endOperator === '<='
+                  ? common.FractionNumberBetweenOptionEnum.Inclusive
+                  : range.startOperator === '>' && range.endOperator === '<'
+                    ? common.FractionNumberBetweenOptionEnum.Exclusive
+                    : range.startOperator === '>=' && range.endOperator === '<'
+                      ? common.FractionNumberBetweenOptionEnum.LeftInclusive
+                      : range.startOperator === '>' &&
+                          range.endOperator === '<='
+                        ? common.FractionNumberBetweenOptionEnum.RightInclusive
+                        : undefined
+            };
+
+            if (common.isDefined(filtersFractions[fieldId])) {
+              filtersFractions[fieldId].push(fraction);
+            } else {
+              filtersFractions[fieldId] = [fraction];
+            }
+          } else if ((numberFilter as Null).operator === 'null') {
+            // null
+            let fractionOperator =
+              (numberFilter as { not: boolean })?.not === true
+                ? common.FractionOperatorEnum.And
+                : common.FractionOperatorEnum.Or;
+
+            let fraction: common.Fraction = {
+              brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+              operator: fractionOperator,
+              type:
+                fractionOperator === common.FractionOperatorEnum.Or
+                  ? common.FractionTypeEnum.NumberIsNull
+                  : common.FractionTypeEnum.NumberIsNotNull
+            };
+
+            if (common.isDefined(filtersFractions[fieldId])) {
+              filtersFractions[fieldId].push(fraction);
+            } else {
+              filtersFractions[fieldId] = [fraction];
+            }
+          } else if (
+            ['=', '!=', '<=', '>=', '<', '>'].indexOf(
+              (numberFilter as NumberCondition).operator
+            ) > -1
+          ) {
+            // values
+            let values: string[] =
+              (numberFilter as NumberCondition).values ?? [];
+
+            values.forEach(eValue => {
+              let fractionOperator =
+                (numberFilter as { not: boolean })?.not === true ||
+                numberFilter.operator === '!='
+                  ? common.FractionOperatorEnum.And
+                  : common.FractionOperatorEnum.Or;
+
+              let fraction: common.Fraction = {
+                brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                operator: fractionOperator,
+                type:
+                  numberFilter.operator === '='
+                    ? fractionOperator === common.FractionOperatorEnum.Or
+                      ? common.FractionTypeEnum.NumberIsEqualTo
+                      : common.FractionTypeEnum.NumberIsNotEqualTo
+                    : numberFilter.operator === '!='
+                      ? fractionOperator === common.FractionOperatorEnum.Or
+                        ? common.FractionTypeEnum.NumberIsEqualTo // not possible
+                        : common.FractionTypeEnum.NumberIsNotEqualTo
+                      : numberFilter.operator === '<='
+                        ? fractionOperator === common.FractionOperatorEnum.Or
+                          ? common.FractionTypeEnum.NumberIsLessThanOrEqualTo
+                          : common.FractionTypeEnum.NumberIsNotLessThanOrEqualTo
+                        : numberFilter.operator === '>='
+                          ? fractionOperator === common.FractionOperatorEnum.Or
+                            ? common.FractionTypeEnum
+                                .NumberIsGreaterThanOrEqualTo
+                            : common.FractionTypeEnum
+                                .NumberIsNotGreaterThanOrEqualTo
+                          : numberFilter.operator === '<'
+                            ? fractionOperator ===
+                              common.FractionOperatorEnum.Or
+                              ? common.FractionTypeEnum.NumberIsLessThan
+                              : common.FractionTypeEnum.NumberIsNotLessThan
+                            : numberFilter.operator === '>'
+                              ? fractionOperator ===
+                                common.FractionOperatorEnum.Or
+                                ? common.FractionTypeEnum.NumberIsGreaterThan
+                                : common.FractionTypeEnum.NumberIsNotGreaterThan
+                              : numberFilter.operator === 'null'
+                                ? fractionOperator ===
+                                  common.FractionOperatorEnum.Or
+                                  ? common.FractionTypeEnum.NumberIsNull
+                                  : common.FractionTypeEnum.NumberIsNotNull
+                                : undefined,
+                stringValue: common.isDefined(eValue) ? eValue : undefined
+              };
+
+              if (common.isDefined(filtersFractions[fieldId])) {
+                filtersFractions[fieldId].push(fraction);
+              } else {
+                filtersFractions[fieldId] = [fraction];
+              }
+            });
+          }
+        });
       }
 
       return op.filter;
