@@ -273,20 +273,47 @@ export async function fetchSql<T extends types.dzType>(
               }
 
               eValues.forEach(eValue => {
+                let fractionOperator =
+                  (stringFilter as { not: boolean })?.not === true
+                    ? common.FractionOperatorEnum.And
+                    : common.FractionOperatorEnum.Or;
+
                 fraction = {
-                  // brick: (op.node.filter as FilterWithFilterString).filter,
-                  // brick: common.isDefined(eValue) ? eValue : '',
-                  brick:
-                    'f`' +
-                    (op.node.filter as FilterWithFilterString).filter +
-                    '`',
-                  operator:
-                    (stringFilter as { not: boolean })?.not === true
-                      ? common.FractionOperatorEnum.And
-                      : common.FractionOperatorEnum.Or,
-                  type: common.isDefined(eValue)
-                    ? common.FractionTypeEnum.StringIsEqualTo
-                    : common.FractionTypeEnum.StringIsAnyValue,
+                  brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                  operator: fractionOperator,
+                  type: common.isUndefined(eValue)
+                    ? common.FractionTypeEnum.StringIsAnyValue
+                    : stringFilter.operator === '~'
+                      ? fractionOperator === common.FractionOperatorEnum.Or
+                        ? common.FractionTypeEnum.StringIsLike
+                        : common.FractionTypeEnum.StringIsNotLike
+                      : stringFilter.operator === '='
+                        ? fractionOperator === common.FractionOperatorEnum.Or
+                          ? common.FractionTypeEnum.StringIsEqualTo
+                          : common.FractionTypeEnum.StringIsNotEqualTo
+                        : stringFilter.operator === 'contains'
+                          ? fractionOperator === common.FractionOperatorEnum.Or
+                            ? common.FractionTypeEnum.StringContains
+                            : common.FractionTypeEnum.StringDoesNotContain
+                          : stringFilter.operator === 'starts'
+                            ? fractionOperator ===
+                              common.FractionOperatorEnum.Or
+                              ? common.FractionTypeEnum.StringStartsWith
+                              : common.FractionTypeEnum.StringDoesNotStartWith
+                            : stringFilter.operator === 'ends'
+                              ? fractionOperator ===
+                                common.FractionOperatorEnum.Or
+                                ? common.FractionTypeEnum.StringEndsWith
+                                : common.FractionTypeEnum.StringDoesNotEndWith
+                              : stringFilter.operator === 'empty'
+                                ? common.FractionOperatorEnum.Or
+                                  ? common.FractionTypeEnum.StringIsBlank
+                                  : common.FractionTypeEnum.StringIsNotBlank
+                                : stringFilter.operator === 'null'
+                                  ? common.FractionOperatorEnum.Or
+                                    ? common.FractionTypeEnum.StringIsNull
+                                    : common.FractionTypeEnum.StringIsNotNull
+                                  : undefined,
                   stringValue: common.isDefined(eValue) ? eValue : undefined
                 };
 
