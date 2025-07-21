@@ -129,8 +129,8 @@ export async function buildMalloyQuery(
         operation instanceof ASTHavingViewOperation
     )
     .map((op: ASTWhereViewOperation | ASTHavingViewOperation) => {
-      // console.log('op');
-      // console.dir(op, { depth: null });
+      console.log('op');
+      console.dir(op, { depth: null });
 
       let astFilter: ASTFilter = op.filter;
 
@@ -138,26 +138,8 @@ export async function buildMalloyQuery(
         astFilter as ASTFilterWithFilterString
       ).getFilter();
 
-      // console.log('parsedFilter');
-      // console.dir(parsedFilter, { depth: null });
-
-      // { kind: 'string', parsed: { operator: '=', values: [ 'TX' ] } }
-      // { kind: 'string', parsed: { operator: '=', values: [ 'OH', 'NY' ] } }
-      // {
-      //   kind: 'string',
-      //   parsed: { operator: '=', values: [ 'NC', 'ND' ], not: true }
-      // }
-      // {
-      //   kind: 'string',
-      //   parsed: {
-      //     operator: ',',
-      //     members: [
-      //       { operator: '=', values: [ 'UT' ] },
-      //       { operator: 'starts', values: [ 'MT' ] }
-      //     ]
-      //   }
-      // }
-      // { kind: 'string', parsed: null }
+      console.log('parsedFilter');
+      console.dir(parsedFilter, { depth: null });
 
       let exp = op.node.filter.expression as ExpressionWithFieldReference;
 
@@ -167,12 +149,28 @@ export async function buildMalloyQuery(
 
       let field = apiModel.fields.find(k => k.id === fieldId);
 
-      let fraction: common.Fraction;
-
       if (
         field.result === common.FieldResultEnum.String &&
         parsedFilter.kind === 'string'
       ) {
+        // { kind: 'string', parsed: { operator: '=', values: [ 'TX' ] } }
+        // { kind: 'string', parsed: { operator: '=', values: [ 'OH', 'NY' ] } }
+        // {
+        //   kind: 'string',
+        //   parsed: { operator: '=', values: [ 'NC', 'ND' ], not: true }
+        // }
+        // {
+        //   kind: 'string',
+        //   parsed: {
+        //     operator: ',',
+        //     members: [
+        //       { operator: '=', values: [ 'UT' ] },
+        //       { operator: 'starts', values: [ 'MT' ] }
+        //     ]
+        //   }
+        // }
+        // { kind: 'string', parsed: null }
+
         let stringFilters: StringFilter[] = [];
 
         if (parsedFilter?.parsed?.operator === ',') {
@@ -203,7 +201,7 @@ export async function buildMalloyQuery(
                 ? common.FractionOperatorEnum.And
                 : common.FractionOperatorEnum.Or;
 
-            fraction = {
+            let fraction: common.Fraction = {
               brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
               operator: fractionOperator,
               type: common.isUndefined(eValue)
@@ -247,6 +245,66 @@ export async function buildMalloyQuery(
             }
           });
         });
+      } else if (
+        field.result === common.FieldResultEnum.Boolean &&
+        parsedFilter.kind === 'boolean'
+      ) {
+        // { kind: 'boolean', parsed: null }
+        // { kind: 'boolean', parsed: { operator: 'true' } }
+        // { kind: 'boolean', parsed: { operator: 'false_or_null' } }
+        // { kind: 'boolean', parsed: { operator: 'false' } }
+        // { kind: 'boolean', parsed: { operator: 'null' } }
+        // { kind: 'boolean', parsed: { operator: 'true', not: true } }
+        // { kind: 'boolean', parsed: { operator: 'false_or_null', not: true } }
+        // { kind: 'boolean', parsed: { operator: 'false', not: true } }
+        // { kind: 'boolean', parsed: { operator: 'null', not: true } }
+
+        // let booleanFilters: BooleanFilter[] = [];
+        // if (parsedFilter?.parsed?.operator === ',') {
+        //   stringFilters = parsedFilter.parsed.members;
+        // } else
+        let booleanFilter;
+
+        if (common.isDefined(parsedFilter)) {
+          booleanFilter = parsedFilter.parsed;
+        } else {
+          booleanFilter = null;
+        }
+
+        let fractionOperator =
+          (booleanFilter as { not: boolean })?.not === true
+            ? common.FractionOperatorEnum.And
+            : common.FractionOperatorEnum.Or;
+
+        let fraction: common.Fraction = {
+          brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+          operator: fractionOperator,
+          type: common.isUndefined(booleanFilter)
+            ? common.FractionTypeEnum.BooleanIsAnyValue
+            : booleanFilter.operator === 'true'
+              ? fractionOperator === common.FractionOperatorEnum.Or
+                ? common.FractionTypeEnum.BooleanIsTrue
+                : common.FractionTypeEnum.BooleanIsNotTrue
+              : booleanFilter.operator === 'false'
+                ? fractionOperator === common.FractionOperatorEnum.Or
+                  ? common.FractionTypeEnum.BooleanIsFalse
+                  : common.FractionTypeEnum.BooleanIsNotFalse
+                : booleanFilter.operator === 'false_or_null'
+                  ? fractionOperator === common.FractionOperatorEnum.Or
+                    ? common.FractionTypeEnum.BooleanIsFalseOrNull
+                    : common.FractionTypeEnum.BooleanIsNotFalseOrNull
+                  : booleanFilter.operator === 'null'
+                    ? fractionOperator === common.FractionOperatorEnum.Or
+                      ? common.FractionTypeEnum.BooleanIsNull
+                      : common.FractionTypeEnum.BooleanIsNotNull
+                    : undefined
+        };
+
+        if (common.isDefined(filtersFractions[fieldId])) {
+          filtersFractions[fieldId].push(fraction);
+        } else {
+          filtersFractions[fieldId] = [fraction];
+        }
       }
 
       return op.filter;

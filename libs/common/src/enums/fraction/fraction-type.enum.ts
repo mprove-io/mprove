@@ -1,6 +1,8 @@
 export enum FractionTypeEnum {
   StoreFraction = 'StoreFraction',
   //
+  StringIsAnyValue = 'StringIsAnyValue',
+
   StringIsLike = 'StringIsLike',
   StringIsEqualTo = 'StringIsEqualTo',
   StringContains = 'StringContains',
@@ -8,7 +10,7 @@ export enum FractionTypeEnum {
   StringEndsWith = 'StringEndsWith',
   StringIsNull = 'StringIsNull',
   StringIsBlank = 'StringIsBlank',
-  StringIsAnyValue = 'StringIsAnyValue',
+
   StringIsNotLike = 'StringIsNotLike',
   StringIsNotEqualTo = 'StringIsNotEqualTo',
   StringDoesNotContain = 'StringDoesNotContain',
@@ -16,6 +18,9 @@ export enum FractionTypeEnum {
   StringDoesNotEndWith = 'StringDoesNotEndWith',
   StringIsNotNull = 'StringIsNotNull',
   StringIsNotBlank = 'StringIsNotBlank',
+
+  NumberIsAnyValue = 'NumberIsAnyValue',
+
   NumberIsEqualTo = 'NumberIsEqualTo',
   NumberIsGreaterThan = 'NumberIsGreaterThan',
   NumberIsGreaterThanOrEqualTo = 'NumberIsGreaterThanOrEqualTo',
@@ -23,12 +28,26 @@ export enum FractionTypeEnum {
   NumberIsLessThanOrEqualTo = 'NumberIsLessThanOrEqualTo',
   NumberIsBetween = 'NumberIsBetween',
   NumberIsNull = 'NumberIsNull',
-  NumberIsAnyValue = 'NumberIsAnyValue',
+
   NumberIsNotEqualTo = 'NumberIsNotEqualTo',
   NumberIsNotBetween = 'NumberIsNotBetween',
   NumberIsNotNull = 'NumberIsNotNull',
+
+  BooleanIsAnyValue = 'BooleanIsAnyValue',
+
+  BooleanIsTrue = 'BooleanIsTrue',
+  BooleanIsFalse = 'BooleanIsFalse',
+  BooleanIsFalseOrNull = 'BooleanIsFalseOrNull',
+  BooleanIsNull = 'BooleanIsNull',
+
+  BooleanIsNotTrue = 'BooleanIsNotTrue',
+  BooleanIsNotFalse = 'BooleanIsNotFalse',
+  BooleanIsNotFalseOrNull = 'BooleanIsNotFalseOrNull',
+  BooleanIsNotNull = 'BooleanIsNotNull',
+
   YesnoIs = 'YesnoIs',
   YesnoIsAnyValue = 'YesnoIsAnyValue',
+
   DayOfWeekIs = 'DayOfWeekIs',
   DayOfWeekIsNull = 'DayOfWeekIsNull',
   DayOfWeekIsAnyValue = 'DayOfWeekIsAnyValue',
@@ -62,5 +81,6 @@ export enum FractionTypeEnum {
   TsIsInLast = 'TsIsInLast',
   TsIsNull = 'TsIsNull',
   TsIsAnyValue = 'TsIsAnyValue',
+
   TsIsNotNull = 'TsIsNotNull'
 }
