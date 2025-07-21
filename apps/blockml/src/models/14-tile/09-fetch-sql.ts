@@ -1,5 +1,4 @@
 import { PostgresConnection } from '@malloydata/db-postgres';
-// import { FilterMatchExpr } from '@malloydata/malloy/dist/model';
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { barSpecial } from '~blockml/barrels/bar-special';
@@ -10,20 +9,6 @@ import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 import { RabbitService } from '~blockml/services/rabbit.service';
 import { STORE_MODEL_PREFIX } from '~common/constants/top';
-
-// packages/malloy-filter/src/clause_utils.ts
-
-export function unescape(str: string) {
-  return str.replace(/\\(.)/g, '$1');
-}
-
-export function escape(str: string) {
-  const lstr = str.toLowerCase();
-  if (lstr === 'null' || lstr === 'empty') {
-    return '\\' + str;
-  }
-  return str.replace(/([,; |()\\%_-])/g, '\\$1');
-}
 
 let func = common.FuncEnum.FetchSql;
 
