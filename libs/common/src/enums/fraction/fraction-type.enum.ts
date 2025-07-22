@@ -30,10 +30,10 @@ export enum FractionTypeEnum {
   NumberIsNull = 'NumberIsNull',
 
   NumberIsNotEqualTo = 'NumberIsNotEqualTo',
-  NumberIsNotGreaterThan = 'NumberIsNotGreaterThan', //
-  NumberIsNotGreaterThanOrEqualTo = 'NumberIsNotGreaterThanOrEqualTo', //
-  NumberIsNotLessThan = 'NumberIsNotLessThan', //
-  NumberIsNotLessThanOrEqualTo = 'NumberIsNotLessThanOrEqualTo', //
+  NumberIsNotGreaterThan = 'NumberIsNotGreaterThan', // new
+  NumberIsNotGreaterThanOrEqualTo = 'NumberIsNotGreaterThanOrEqualTo', // new
+  NumberIsNotLessThan = 'NumberIsNotLessThan', // new
+  NumberIsNotLessThanOrEqualTo = 'NumberIsNotLessThanOrEqualTo', // new
   NumberIsNotBetween = 'NumberIsNotBetween',
   NumberIsNotNull = 'NumberIsNotNull',
 
@@ -49,29 +49,16 @@ export enum FractionTypeEnum {
   BooleanIsNotFalseOrNull = 'BooleanIsNotFalseOrNull',
   BooleanIsNotNull = 'BooleanIsNotNull',
 
-  YesnoIs = 'YesnoIs',
-  YesnoIsAnyValue = 'YesnoIsAnyValue',
+  TsIsAnyValue = 'TsIsAnyValue',
 
-  DayOfWeekIs = 'DayOfWeekIs',
-  DayOfWeekIsNull = 'DayOfWeekIsNull',
-  DayOfWeekIsAnyValue = 'DayOfWeekIsAnyValue',
-  DayOfWeekIsNot = 'DayOfWeekIsNot',
-  DayOfWeekIsNotNull = 'DayOfWeekIsNotNull',
-  DayOfWeekIndexIsEqualTo = 'DayOfWeekIndexIsEqualTo',
-  DayOfWeekIndexIsNull = 'DayOfWeekIndexIsNull',
-  DayOfWeekIndexIsAnyValue = 'DayOfWeekIndexIsAnyValue',
-  DayOfWeekIndexIsNotEqualTo = 'DayOfWeekIndexIsNotEqualTo',
-  DayOfWeekIndexIsNotNull = 'DayOfWeekIndexIsNotNull',
-  MonthNameIs = 'MonthNameIs',
-  MonthNameIsNull = 'MonthNameIsNull',
-  MonthNameIsAnyValue = 'MonthNameIsAnyValue',
-  MonthNameIsNot = 'MonthNameIsNot',
-  MonthNameIsNotNull = 'MonthNameIsNotNull',
-  QuarterOfYearIs = 'QuarterOfYearIs',
-  QuarterOfYearIsNull = 'QuarterOfYearIsNull',
-  QuarterOfYearIsAnyValue = 'QuarterOfYearIsAnyValue',
-  QuarterOfYearIsNot = 'QuarterOfYearIsNot',
-  QuarterOfYearIsNotNull = 'QuarterOfYearIsNotNull',
+  TsIsInLast = 'TsIsInLast',
+  TsIsInNext = 'TsIsInNext', // new
+  TsIsNull = 'TsIsNull',
+
+  TsIsNotInLast = 'TsIsNotInLast', // new
+  TsIsNotInNext = 'TsIsNotInNext', // new
+  TsIsNotNull = 'TsIsNotNull',
+
   TsIsOnMinute = 'TsIsOnMinute',
   TsIsOnHour = 'TsIsOnHour',
   TsIsOnDay = 'TsIsOnDay',
@@ -82,9 +69,31 @@ export enum FractionTypeEnum {
   TsIsAfterDate = 'TsIsAfterDate',
   TsIsBeforeRelative = 'TsIsBeforeRelative',
   TsIsAfterRelative = 'TsIsAfterRelative',
-  TsIsInLast = 'TsIsInLast',
-  TsIsNull = 'TsIsNull',
-  TsIsAnyValue = 'TsIsAnyValue',
 
-  TsIsNotNull = 'TsIsNotNull'
+  DayOfWeekIsAnyValue = 'DayOfWeekIsAnyValue',
+  DayOfWeekIs = 'DayOfWeekIs',
+  DayOfWeekIsNull = 'DayOfWeekIsNull',
+  DayOfWeekIsNot = 'DayOfWeekIsNot',
+  DayOfWeekIsNotNull = 'DayOfWeekIsNotNull',
+
+  DayOfWeekIndexIsAnyValue = 'DayOfWeekIndexIsAnyValue',
+  DayOfWeekIndexIsEqualTo = 'DayOfWeekIndexIsEqualTo',
+  DayOfWeekIndexIsNull = 'DayOfWeekIndexIsNull',
+  DayOfWeekIndexIsNotEqualTo = 'DayOfWeekIndexIsNotEqualTo',
+  DayOfWeekIndexIsNotNull = 'DayOfWeekIndexIsNotNull',
+
+  MonthNameIsAnyValue = 'MonthNameIsAnyValue',
+  MonthNameIs = 'MonthNameIs',
+  MonthNameIsNull = 'MonthNameIsNull',
+  MonthNameIsNot = 'MonthNameIsNot',
+  MonthNameIsNotNull = 'MonthNameIsNotNull',
+
+  QuarterOfYearIsAnyValue = 'QuarterOfYearIsAnyValue',
+  QuarterOfYearIs = 'QuarterOfYearIs',
+  QuarterOfYearIsNull = 'QuarterOfYearIsNull',
+  QuarterOfYearIsNot = 'QuarterOfYearIsNot',
+  QuarterOfYearIsNotNull = 'QuarterOfYearIsNotNull',
+
+  YesnoIsAnyValue = 'YesnoIsAnyValue',
+  YesnoIs = 'YesnoIs'
 }

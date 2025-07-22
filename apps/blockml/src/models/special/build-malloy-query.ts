@@ -10,13 +10,16 @@ import {
 import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import {
   BooleanFilter,
+  JustUnits,
   Null,
   NumberCondition,
   NumberFilter,
   NumberRange,
   StringCondition,
   StringFilter,
-  StringMatch
+  StringMatch,
+  TemporalFilter,
+  in_last
 } from '@malloydata/malloy-filter';
 import {
   LogMessage,
@@ -224,7 +227,7 @@ export async function buildMalloyQuery(
               stringFilter.operator
             ) > -1
           ) {
-            // string values
+            // string main
             let values = (stringFilter as StringCondition).values ?? [];
 
             let escapedValues =
@@ -236,7 +239,6 @@ export async function buildMalloyQuery(
             ];
 
             eValues.forEach(eValue => {
-              // string values
               let fractionOperator =
                 (stringFilter as { not: boolean })?.not === true
                   ? common.FractionOperatorEnum.And
@@ -457,7 +459,7 @@ export async function buildMalloyQuery(
             ['=', '!=', '<=', '>=', '<', '>'].indexOf(numberFilter.operator) >
             -1
           ) {
-            // number values
+            // number main
             let fractionOperator =
               (numberFilter as { not: boolean })?.not === true ||
               numberFilter.operator === '!='
@@ -509,7 +511,7 @@ export async function buildMalloyQuery(
         [common.FieldResultEnum.Ts, common.FieldResultEnum.Date].indexOf(
           field.result
         ) > -1 &&
-        ['timestamp', 'date'].indexOf(parsedFilter.kind) > -1
+        (parsedFilter.kind === 'timestamp' || parsedFilter.kind === 'date')
       ) {
         // {value: 'in_last', label: 'last'},
         // {value: 'last', label: 'last complete'},
@@ -522,6 +524,7 @@ export async function buildMalloyQuery(
         // {value: 'to', label: 'between'},
         // {value: 'null', label: 'null'},
         // {value: '-null', label: 'not null'},
+
         // is in last
         // is in range
         // is on Year
@@ -536,6 +539,125 @@ export async function buildMalloyQuery(
         // is any value
         // is null
         // is not null
+
+        let temporalFilters: TemporalFilter[] = [];
+
+        if (
+          parsedFilter.parsed?.operator === 'or' ||
+          parsedFilter.parsed?.operator === 'and'
+        ) {
+          temporalFilters = parsedFilter.parsed.members;
+        } else if (common.isDefined(parsedFilter.parsed)) {
+          temporalFilters = [parsedFilter.parsed];
+        } else {
+          // temporal any
+          let fraction: common.Fraction = {
+            brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+            operator: common.FractionOperatorEnum.Or,
+            type: common.FractionTypeEnum.TsIsAnyValue
+          };
+
+          if (common.isDefined(filtersFractions[fieldId])) {
+            filtersFractions[fieldId].push(fraction);
+          } else {
+            filtersFractions[fieldId] = [fraction];
+          }
+        }
+
+        // export type TemporalFilter = Null | Before | After | To | For | JustUnits | in_last | InMoment | BooleanChain<TemporalFilter> | ClauseGroup<TemporalFilter>;
+        temporalFilters
+          .filter(
+            temporalFilter =>
+              [
+                'null',
+                'last',
+                'in_last',
+                'next',
+                'in',
+                'for',
+                'before',
+                'after',
+                'to'
+              ].indexOf(temporalFilter.operator) > -1
+          )
+          .forEach(temporalFilter => {
+            // temporal main
+
+            let fractionOperator =
+              (temporalFilter as { not: boolean })?.not === true
+                ? common.FractionOperatorEnum.And
+                : common.FractionOperatorEnum.Or;
+
+            let fraction: common.Fraction;
+
+            if ((temporalFilter as Null).operator === 'null') {
+              // temporal null
+              fraction = {
+                brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                operator: fractionOperator,
+                type:
+                  fractionOperator === common.FractionOperatorEnum.Or
+                    ? common.FractionTypeEnum.NumberIsNull
+                    : common.FractionTypeEnum.NumberIsNotNull
+              };
+            } else if ((temporalFilter as JustUnits).operator === 'last') {
+              // temporal last (complete)
+              let tFilter = temporalFilter as JustUnits;
+
+              fraction = {
+                brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                operator: fractionOperator,
+                type:
+                  fractionOperator === common.FractionOperatorEnum.Or
+                    ? common.FractionTypeEnum.TsIsInLast
+                    : common.FractionTypeEnum.TsIsNotInLast,
+                tsLastValue: Number(tFilter.n),
+                tsLastUnit: common.getFractionTsLastUnits(tFilter.units),
+                tsLastCompleteOption:
+                  common.FractionTsLastCompleteOptionEnum.Complete
+              };
+            } else if ((temporalFilter as in_last).operator === 'in_last') {
+              // temporal in_last (incomplete)
+              let tFilter = temporalFilter as in_last;
+
+              fraction = {
+                brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                operator: fractionOperator,
+                type:
+                  fractionOperator === common.FractionOperatorEnum.Or
+                    ? common.FractionTypeEnum.TsIsInLast
+                    : common.FractionTypeEnum.TsIsNotInLast,
+                tsLastValue: Number(tFilter.n),
+                tsLastUnit: common.getFractionTsLastUnits(tFilter.units),
+                tsLastCompleteOption:
+                  common.FractionTsLastCompleteOptionEnum.Incomplete
+              };
+            } else if ((temporalFilter as JustUnits).operator === 'next') {
+              // temporal next (complete)
+              let tFilter = temporalFilter as JustUnits;
+
+              fraction = {
+                brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                operator: fractionOperator,
+                type:
+                  fractionOperator === common.FractionOperatorEnum.Or
+                    ? common.FractionTypeEnum.TsIsInNext
+                    : common.FractionTypeEnum.TsIsNotInNext,
+                tsLastValue: Number(tFilter.n),
+                tsLastUnit: common.getFractionTsLastUnits(tFilter.units),
+                tsLastCompleteOption:
+                  common.FractionTsLastCompleteOptionEnum.Complete
+              };
+            }
+
+            if (common.isDefined(fraction)) {
+              if (common.isDefined(filtersFractions[fieldId])) {
+                filtersFractions[fieldId].push(fraction);
+              } else {
+                filtersFractions[fieldId] = [fraction];
+              }
+            }
+          });
       }
 
       return op.filter;
