@@ -58,10 +58,11 @@ query: mc1 is ec1_order_items -> {
     orders.created_at_day ~ f`next 5 days`,       -- operator: 'next',    units: 'day', n: '5'
     orders.created_at_day ~ f`5 days`,            -- operator: 'in_last', units: 'day', n: '5'
 
-    orders.created_at_day ~ f`before tuesday`,    -- operator: 'before',  before: { moment: 'tuesday', which: 'last' }
-    orders.created_at_day ~ f`starting tuesday`,  -- operator: 'before',  before: { moment: 'tuesday', which: 'last' }, not: true
-    orders.created_at_day ~ f`after tuesday`,     -- operator: 'after',   after:  { moment: 'tuesday', which: 'last' }
-    orders.created_at_day ~ f`through tuesday`,   -- operator: 'after',   after:  { moment: 'tuesday', which: 'last' }, not: true
+    orders.created_at_day ~ f`before 2025-02-03 04:05:06.7`,  -- operator: 'before', before: { moment: 'literal', literal: '2025-02-03 04:05:06.7' }
+    orders.created_at_day ~ f`before tuesday`,                -- operator: 'before', before: { moment: 'tuesday', which: 'last' }
+    orders.created_at_day ~ f`starting tuesday`,              -- operator: 'before', before: { moment: 'tuesday', which: 'last' }, not: true
+    orders.created_at_day ~ f`after tuesday`,                 -- operator: 'after',  after:  { moment: 'tuesday', which: 'last' }
+    orders.created_at_day ~ f`through tuesday`,               -- operator: 'after',  after:  { moment: 'tuesday', which: 'last' }, not: true
 
     orders.created_at_day ~ f`last monday to next friday`,  -- operator: 'to', fromMoment: { moment: 'monday', which: 'last' }, toMoment: { moment: 'friday', which: 'next' }
     

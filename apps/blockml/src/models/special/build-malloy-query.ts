@@ -9,6 +9,7 @@ import {
 } from '@malloydata/malloy';
 import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import {
+  Before,
   BooleanFilter,
   JustUnits,
   Null,
@@ -647,6 +648,30 @@ export async function buildMalloyQuery(
                 tsLastUnit: common.getFractionTsLastUnits(tFilter.units),
                 tsLastCompleteOption:
                   common.FractionTsLastCompleteOptionEnum.Complete
+              };
+            } else if ((temporalFilter as Before).operator === 'before') {
+              // temporal before
+              let tFilter = temporalFilter as Before;
+
+              fraction = {
+                brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                operator: fractionOperator,
+                type:
+                  fractionOperator === common.FractionOperatorEnum.Or
+                    ? common.FractionTypeEnum.TsIsBeforeDate
+                    : common.FractionTypeEnum.TsIsNotBeforeDate
+
+                // tsDateYear: Number(year),
+                // tsDateMonth: Number(month),
+                // tsDateDay: Number(day),
+                // tsDateHour: Number(hour),
+                // tsDateMinute: Number(minute),
+
+                // tsForOption: forUnit
+                //   ? common.FractionTsForOptionEnum.For
+                //   : common.FractionTsForOptionEnum.ForInfinity,
+                // tsForValue: Number(forIntegerStr),
+                // tsForUnit: <any>forUnit
               };
             }
 

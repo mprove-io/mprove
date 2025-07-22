@@ -345,6 +345,30 @@ export class MyRegex {
   }
 
   // BRICK_TS
+  static BRICK_TS_LITERAL(): RegExp {
+    return cloneRegexp(
+      new RegExp(
+        [
+          '^(last|before|after)', // way
+          '(?:\\s+(?:(\\d+)', // integer
+          '\\s+(minutes|hours|days|weeks|months|quarters|years))', // unit
+          '|(?:\\s+(\\d\\d\\d\\d)', // year
+          '(?:\\/(\\d\\d)', // month
+          '(?:\\/(\\d\\d)', // day
+          '(?:\\s+(\\d\\d)', // hour
+          '(?::(\\d\\d)', // minute
+          '?)?)?)?)?))', //
+          '(?:\\s+(complete))?', // complete
+          '(?:\\s+(ago|in\\s*future))?', // when
+          '(?:\\s+(plus\\s*current))?', // plus_current
+          '(?:\\s+for\\s+(\\d+)\\s+', // for_integer
+          '(minutes|hours|days|weeks|months|quarters|years))?', // for_unit
+          '$' //
+        ].join('')
+      )
+    );
+  }
+
   static BRICK_TS_INTERVALS(): RegExp {
     return cloneRegexp(
       new RegExp(
@@ -368,6 +392,7 @@ export class MyRegex {
       )
     );
   }
+
   static BRICK_TS_IS_BETWEEN_ON(): RegExp {
     return cloneRegexp(
       new RegExp(
