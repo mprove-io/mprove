@@ -653,6 +653,8 @@ export async function buildMalloyQuery(
               // temporal before
               let tFilter = temporalFilter as Before;
 
+              let parseStr;
+
               fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
