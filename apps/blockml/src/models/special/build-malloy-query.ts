@@ -505,6 +505,37 @@ export async function buildMalloyQuery(
             }
           }
         });
+      } else if (
+        [common.FieldResultEnum.Ts, common.FieldResultEnum.Date].indexOf(
+          field.result
+        ) > -1 &&
+        ['timestamp', 'date'].indexOf(parsedFilter.kind) > -1
+      ) {
+        // {value: 'in_last', label: 'last'},
+        // {value: 'last', label: 'last complete'},
+        // {value: 'next', label: 'next complete'},
+        // {value: '-before', label: 'starting'},
+        // {value: 'after', label: 'after'},
+        // {value: 'before', label: 'before'},
+        // {value: '-after', label: 'through'},
+        // {value: 'in', label: 'is'},
+        // {value: 'to', label: 'between'},
+        // {value: 'null', label: 'null'},
+        // {value: '-null', label: 'not null'},
+        // is in last
+        // is in range
+        // is on Year
+        // is on Month
+        // is on Day
+        // is on Hour
+        // is on Minute
+        // is before
+        // is after
+        // is before (relative)
+        // is after (relative)
+        // is any value
+        // is null
+        // is not null
       }
 
       return op.filter;

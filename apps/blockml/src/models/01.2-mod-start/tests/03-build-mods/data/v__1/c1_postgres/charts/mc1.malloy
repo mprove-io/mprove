@@ -2,8 +2,70 @@ import '../ec1_order_items.malloy';
 
 query: mc1 is ec1_order_items -> {
   where: 
-    orders.created_at_month ~ f``,
-    orders.created_at_date ~ f``
+    orders.created_at_day ~ f``,      -- { kind: 'timestamp', parsed: null }
+    orders.created_at_day ~ f`null`,  -- { kind: 'timestamp', parsed: { operator: 'null' } }
+
+    orders.created_at_day ~ f`now`,       -- operator: 'in', in: { moment: 'now' }
+    orders.created_at_day ~ f`today`,     -- operator: 'in', in: { moment: 'today' }
+    orders.created_at_day ~ f`yesterday`, -- operator: 'in', in: { moment: 'yesterday' }
+    orders.created_at_day ~ f`tomorrow`,  -- operator: 'in', in: { moment: 'tomorrow' }
+
+    orders.created_at_day ~ f`2025`,              -- operator: 'in', in: { moment: 'literal', literal: '2025', units: 'year' }
+    orders.created_at_day ~ f`2025-Q1`,
+    orders.created_at_day ~ f`2025-01`, 
+    orders.created_at_day ~ f`2025-02-03-WK`, 
+    orders.created_at_day ~ f`2025-02-03`, 
+    orders.created_at_day ~ f`2025-02-03 04`, 
+    orders.created_at_day ~ f`2025-02-03 04:05`, 
+    orders.created_at_day ~ f`2025-02-03 04:05:06`,   -- operator: 'in', in: { moment: 'literal', literal: '2025-02-03 04:05:06' } -- no units
+    orders.created_at_day ~ f`2025-02-03 04:05:06.7`, -- operator: 'in', in: { moment: 'literal', literal: '2025-02-03 04:05:06.7' } -- no units
+
+    orders.created_at_day ~ f`this year`,         -- operator: 'in', in: { moment: 'this', units: 'year' }
+    orders.created_at_day ~ f`this quarter`,
+    orders.created_at_day ~ f`this month`,
+    orders.created_at_day ~ f`this week`,
+    orders.created_at_day ~ f`this day`,
+    orders.created_at_day ~ f`this hour`,
+    orders.created_at_day ~ f`this minute`,
+
+    orders.created_at_day ~ f`last year`,         -- operator: 'in', in: { moment: 'last', units: 'year' }
+    orders.created_at_day ~ f`last quarter`,
+    orders.created_at_day ~ f`last month`,
+    orders.created_at_day ~ f`last week`,
+    orders.created_at_day ~ f`last day`,
+    orders.created_at_day ~ f`last hour`,
+    orders.created_at_day ~ f`last minute`,
+
+    orders.created_at_day ~ f`next year`,         -- operator: 'in', in: { moment: 'next', units: 'year' }
+    orders.created_at_day ~ f`next quarter`,
+    orders.created_at_day ~ f`next month`,
+    orders.created_at_day ~ f`next week`,
+    orders.created_at_day ~ f`next day`,
+    orders.created_at_day ~ f`next hour`,
+    orders.created_at_day ~ f`next minute`,
+
+    orders.created_at_day ~ f`monday`,            -- operator: 'in', in: { moment: 'monday', which: 'last' }
+    orders.created_at_day ~ f`last monday`,       -- operator: 'in', in: { moment: 'monday', which: 'last' }
+    orders.created_at_day ~ f`next monday`,       -- operator: 'in', in: { moment: 'monday', which: 'next' }
+
+    orders.created_at_day ~ f`5 days ago`,        -- operator: 'in', in: { moment: 'ago',       units: 'day', n: '5' }
+    orders.created_at_day ~ f`5 days from now`,   -- operator: 'in', in: { moment: 'from_now',  units: 'day', n: '5' }
+
+    orders.created_at_day ~ f`5 days ago for 2 days`,         -- operator: 'for', units: 'day', n: '2', begin: { moment: 'ago',       units: 'day', n: '5' }
+    orders.created_at_day ~ f`5 days from now for 2 days`,    -- operator: 'for', units: 'day', n: '2', begin: { moment: 'from_now',  units: 'day', n: '5' }
+
+    orders.created_at_day ~ f`last 5 days`,       -- operator: 'last',    units: 'day', n: '5'
+    orders.created_at_day ~ f`next 5 days`,       -- operator: 'next',    units: 'day', n: '5'
+    orders.created_at_day ~ f`5 days`,            -- operator: 'in_last', units: 'day', n: '5'
+
+    orders.created_at_day ~ f`before tuesday`,    -- operator: 'before',  before: { moment: 'tuesday', which: 'last' }
+    orders.created_at_day ~ f`starting tuesday`,  -- operator: 'before',  before: { moment: 'tuesday', which: 'last' }, not: true
+    orders.created_at_day ~ f`after tuesday`,     -- operator: 'after',   after:  { moment: 'tuesday', which: 'last' }
+    orders.created_at_day ~ f`through tuesday`,   -- operator: 'after',   after:  { moment: 'tuesday', which: 'last' }, not: true
+
+    orders.created_at_day ~ f`last monday to next friday`,  -- operator: 'to', fromMoment: { moment: 'monday', which: 'last' }, toMoment: { moment: 'friday', which: 'next' }
+
+    -- orders.created_at_date ~ f``
 
     -- sale_price ~ f``,
     -- sale_price ~ f`1`,
