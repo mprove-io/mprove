@@ -162,7 +162,7 @@ export async function buildMalloyQuery(
       parsedFilters.push(parsedFilter); // for logs
 
       // console.log('parsedFilter');
-      // console.dir(parsedFilter, { depth: null });
+      console.dir(parsedFilter, { depth: null });
 
       let exp = op.node.filter.expression as ExpressionWithFieldReference;
 
@@ -525,8 +525,8 @@ export async function buildMalloyQuery(
   //   'utf-8'
   // );
 
-  // console.log('filtersFractions');
-  // console.log(filtersFractions);
+  console.log('filtersFractions');
+  console.log(filtersFractions);
 
   return {
     // astQuery: astQuery,
