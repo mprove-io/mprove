@@ -61,12 +61,18 @@ query: mc1 is ec1_order_items -> {
     orders.created_at_day ~ f`before 2025-Q2`,                -- operator: 'before', before: { moment: 'literal', literal: '2025-Q2', units: 'quarter' }
     orders.created_at_day ~ f`before 2025-02-03-WK`,          -- operator: 'before', before: { moment: 'literal', literal: '2025-02-03-WK', units: 'week' }
     orders.created_at_day ~ f`before 2025-02-03 04:05:06.7`,  -- operator: 'before', before: { moment: 'literal', literal: '2025-02-03 04:05:06.7' }
+
+    orders.created_at_day ~ f`after 2025-Q2`,                -- operator: 'after', after: { moment: 'literal', literal: '2025-Q2', units: 'quarter' }
+    orders.created_at_day ~ f`after 2025-02-03-WK`,          -- operator: 'after', after: { moment: 'literal', literal: '2025-02-03-WK', units: 'week' }
+    orders.created_at_day ~ f`after 2025-02-03 04:05:06.7`,  -- operator: 'after', after: { moment: 'literal', literal: '2025-02-03 04:05:06.7' }
+
     orders.created_at_day ~ f`before tuesday`,                -- operator: 'before', before: { moment: 'tuesday', which: 'last' }
     orders.created_at_day ~ f`starting tuesday`,              -- operator: 'before', before: { moment: 'tuesday', which: 'last' }, not: true
     orders.created_at_day ~ f`after tuesday`,                 -- operator: 'after',  after:  { moment: 'tuesday', which: 'last' }
     orders.created_at_day ~ f`through tuesday`,               -- operator: 'after',  after:  { moment: 'tuesday', which: 'last' }, not: true
 
-    orders.created_at_day ~ f`last monday to next friday`,  -- operator: 'to', fromMoment: { moment: 'monday', which: 'last' }, toMoment: { moment: 'friday', which: 'next' }
+    orders.created_at_day ~ f`last monday to next friday`,                  -- operator: 'to', fromMoment: { moment: 'monday', which: 'last' }, toMoment: { moment: 'friday', which: 'next' }
+    orders.created_at_day ~ f`2025-01-02 03:04:05 to 2026-07-08 04:05:06`,  -- operator: 'to', fromMoment: { moment: 'literal', literal: '2025-01-02 03:04:05' }, toMoment: { moment: 'literal', literal: '2026-07-08 04:05:06' }
     
     orders.created_at_day ~ f`today or tomorrow`,  -- operator: 'or', members: [{ operator: 'in', in: { moment: 'today' } }, { operator: 'in', in: { moment: 'tomorrow' } }]
 

@@ -22,6 +22,7 @@ import {
   StringMatch,
   TemporalFilter,
   TemporalLiteral,
+  To,
   in_last
 } from '@malloydata/malloy-filter';
 import {
@@ -718,6 +719,62 @@ export async function buildMalloyQuery(
                 //   : common.FractionTsForOptionEnum.ForInfinity
                 // tsForValue: Number(forIntegerStr),
                 // tsForUnit: <any>forUnit
+              };
+            } else if ((temporalFilter as To).operator === 'to') {
+              // temporal after
+              let tFilter = temporalFilter as To;
+              let from = tFilter.fromMoment as TemporalLiteral;
+              let to = tFilter.toMoment as TemporalLiteral;
+
+              let { year, month, day, hour, minute } = common.parseTsLiteral({
+                input: from.literal,
+                units: from.units
+              });
+
+              let {
+                year: toYear,
+                month: toMonth,
+                day: toDay,
+                hour: toHour,
+                minute: toMinute
+              } = common.parseTsLiteral({
+                input: to.literal,
+                units: to.units
+              });
+
+              fraction = {
+                brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                operator: fractionOperator,
+                type:
+                  fractionOperator === common.FractionOperatorEnum.Or
+                    ? common.FractionTypeEnum.TsIsInRange
+                    : common.FractionTypeEnum.TsIsNotAfterDate,
+                tsFromMoment: from,
+                tsToMoment: to,
+                tsDateYear: common.isDefined(year) ? Number(year) : undefined,
+                tsDateMonth: common.isDefined(month)
+                  ? Number(month)
+                  : undefined,
+                tsDateDay: common.isDefined(day) ? Number(day) : undefined,
+                tsDateHour: common.isDefined(hour) ? Number(hour) : undefined,
+                tsDateMinute: common.isDefined(minute)
+                  ? Number(minute)
+                  : undefined,
+                tsDateToYear: common.isDefined(toYear)
+                  ? Number(toYear)
+                  : undefined,
+                tsDateToMonth: common.isDefined(toMonth)
+                  ? Number(toMonth)
+                  : undefined,
+                tsDateToDay: common.isDefined(toDay)
+                  ? Number(toDay)
+                  : undefined,
+                tsDateToHour: common.isDefined(toHour)
+                  ? Number(toHour)
+                  : undefined,
+                tsDateToMinute: common.isDefined(toMinute)
+                  ? Number(toMinute)
+                  : undefined
               };
             }
 

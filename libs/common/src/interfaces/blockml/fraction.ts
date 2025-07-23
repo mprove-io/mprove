@@ -181,6 +181,12 @@ export class Fraction {
   tsAfterMoment?: Moment;
 
   @IsOptional()
+  tsFromMoment?: Moment;
+
+  @IsOptional()
+  tsToMoment?: Moment;
+
+  @IsOptional()
   @IsEnum(enums.FractionTsLastCompleteOptionEnum)
   tsLastCompleteOption?: enums.FractionTsLastCompleteOptionEnum;
 }

@@ -55,12 +55,14 @@ export enum FractionTypeEnum {
   TsIsInNext = 'TsIsInNext', // new
   TsIsBeforeDate = 'TsIsBeforeDate',
   TsIsAfterDate = 'TsIsAfterDate',
+  TsIsInRange = 'TsIsInRange',
   TsIsNull = 'TsIsNull',
 
   TsIsNotInLast = 'TsIsNotInLast', // new
   TsIsNotInNext = 'TsIsNotInNext', // new
   TsIsNotBeforeDate = 'TsIsNotBeforeDate', // new
   TsIsNotAfterDate = 'TsIsNotAfterDate', // new
+  TsIsNotInRange = 'TsIsNotInRange', // new
   TsIsNotNull = 'TsIsNotNull',
 
   TsIsOnMinute = 'TsIsOnMinute',
@@ -68,7 +70,6 @@ export enum FractionTypeEnum {
   TsIsOnDay = 'TsIsOnDay',
   TsIsOnMonth = 'TsIsOnMonth',
   TsIsOnYear = 'TsIsOnYear',
-  TsIsInRange = 'TsIsInRange',
 
   TsIsBeforeRelative = 'TsIsBeforeRelative',
   TsIsAfterRelative = 'TsIsAfterRelative',
