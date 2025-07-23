@@ -1,3 +1,4 @@
+import { Moment } from '@malloydata/malloy-filter';
 import { Type } from 'class-transformer';
 import {
   IsEnum,
@@ -172,6 +173,12 @@ export class Fraction {
   @IsOptional()
   @IsEnum(enums.FractionTsLastUnitEnum)
   tsLastUnit?: enums.FractionTsLastUnitEnum;
+
+  @IsOptional()
+  tsBeforeMoment?: Moment;
+
+  @IsOptional()
+  tsAfterMoment?: Moment;
 
   @IsOptional()
   @IsEnum(enums.FractionTsLastCompleteOptionEnum)

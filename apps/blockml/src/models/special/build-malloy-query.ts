@@ -9,6 +9,7 @@ import {
 } from '@malloydata/malloy';
 import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import {
+  After,
   Before,
   BooleanFilter,
   JustUnits,
@@ -20,6 +21,7 @@ import {
   StringFilter,
   StringMatch,
   TemporalFilter,
+  TemporalLiteral,
   in_last
 } from '@malloydata/malloy-filter';
 import {
@@ -574,11 +576,11 @@ export async function buildMalloyQuery(
                 'last',
                 'in_last',
                 'next',
-                'in',
-                'for',
                 'before',
                 'after',
-                'to'
+                'to',
+                'in',
+                'for'
               ].indexOf(temporalFilter.operator) > -1
           )
           .forEach(temporalFilter => {
@@ -653,7 +655,34 @@ export async function buildMalloyQuery(
               // temporal before
               let tFilter = temporalFilter as Before;
 
-              let parseStr;
+              let before = tFilter.before as TemporalLiteral;
+
+              let year;
+              let month;
+              let day;
+              let hour;
+              let minute;
+
+              if (common.isDefined(before.literal)) {
+                let literalToParse =
+                  before?.units === 'quarter'
+                    ? before?.literal.slice(0, -3)
+                    : before?.units === 'week'
+                      ? before?.literal.slice(0, -3)
+                      : before?.literal;
+
+                let r;
+
+                if (
+                  (r = common.MyRegex.BRICK_TS_LITERAL().exec(literalToParse))
+                ) {
+                  year = r[1];
+                  month = r[2];
+                  day = r[3];
+                  hour = r[4];
+                  minute = r[5];
+                }
+              }
 
               fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
@@ -661,17 +690,78 @@ export async function buildMalloyQuery(
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? common.FractionTypeEnum.TsIsBeforeDate
-                    : common.FractionTypeEnum.TsIsNotBeforeDate
-
-                // tsDateYear: Number(year),
-                // tsDateMonth: Number(month),
-                // tsDateDay: Number(day),
-                // tsDateHour: Number(hour),
-                // tsDateMinute: Number(minute),
-
+                    : common.FractionTypeEnum.TsIsNotBeforeDate,
+                tsBeforeMoment: before,
+                tsDateYear: common.isDefined(year) ? Number(year) : undefined,
+                tsDateMonth: common.isDefined(month)
+                  ? Number(month)
+                  : undefined,
+                tsDateDay: common.isDefined(day) ? Number(day) : undefined,
+                tsDateHour: common.isDefined(hour) ? Number(hour) : undefined,
+                tsDateMinute: common.isDefined(minute)
+                  ? Number(minute)
+                  : undefined,
+                tsForOption: common.FractionTsForOptionEnum.ForInfinity
                 // tsForOption: forUnit
                 //   ? common.FractionTsForOptionEnum.For
-                //   : common.FractionTsForOptionEnum.ForInfinity,
+                //   : common.FractionTsForOptionEnum.ForInfinity
+                // tsForValue: Number(forIntegerStr),
+                // tsForUnit: <any>forUnit
+              };
+            } else if ((temporalFilter as After).operator === 'after') {
+              // temporal after
+              let tFilter = temporalFilter as After;
+
+              let after = tFilter.after as TemporalLiteral;
+
+              let year;
+              let month;
+              let day;
+              let hour;
+              let minute;
+
+              if (common.isDefined(after.literal)) {
+                let literalToParse =
+                  after?.units === 'quarter'
+                    ? after?.literal.slice(0, -3)
+                    : after?.units === 'week'
+                      ? after?.literal.slice(0, -3)
+                      : after?.literal;
+
+                let r;
+
+                if (
+                  (r = common.MyRegex.BRICK_TS_LITERAL().exec(literalToParse))
+                ) {
+                  year = r[1];
+                  month = r[2];
+                  day = r[3];
+                  hour = r[4];
+                  minute = r[5];
+                }
+              }
+
+              fraction = {
+                brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                operator: fractionOperator,
+                type:
+                  fractionOperator === common.FractionOperatorEnum.Or
+                    ? common.FractionTypeEnum.TsIsAfterDate
+                    : common.FractionTypeEnum.TsIsNotAfterDate,
+                tsAfterMoment: after,
+                tsDateYear: common.isDefined(year) ? Number(year) : undefined,
+                tsDateMonth: common.isDefined(month)
+                  ? Number(month)
+                  : undefined,
+                tsDateDay: common.isDefined(day) ? Number(day) : undefined,
+                tsDateHour: common.isDefined(hour) ? Number(hour) : undefined,
+                tsDateMinute: common.isDefined(minute)
+                  ? Number(minute)
+                  : undefined,
+                tsForOption: common.FractionTsForOptionEnum.ForInfinity
+                // tsForOption: forUnit
+                //   ? common.FractionTsForOptionEnum.For
+                //   : common.FractionTsForOptionEnum.ForInfinity
                 // tsForValue: Number(forIntegerStr),
                 // tsForUnit: <any>forUnit
               };
@@ -706,7 +796,7 @@ export async function buildMalloyQuery(
   // );
 
   console.log('filtersFractions');
-  console.log(filtersFractions);
+  console.dir(filtersFractions, { depth: null });
 
   return {
     // astQuery: astQuery,
