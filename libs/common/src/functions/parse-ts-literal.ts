@@ -9,6 +9,7 @@ export function parseTsLiteral(item: {
   let { input, units } = item;
 
   let year;
+  let quarter;
   let month;
   let day;
   let hour;
@@ -22,6 +23,9 @@ export function parseTsLiteral(item: {
           ? input.slice(0, -3)
           : input;
 
+    // console.log('literalToParse');
+    // console.log(literalToParse);
+
     let r;
 
     if ((r = MyRegex.BRICK_TS_LITERAL().exec(literalToParse))) {
@@ -33,8 +37,24 @@ export function parseTsLiteral(item: {
     }
   }
 
+  quarter =
+    isDefined(input) && units === 'quarter'
+      ? input[input.length - 1]
+      : isDefined(month)
+        ? [1, 2, 3].indexOf(Number(month)) > -1
+          ? '1'
+          : [4, 5, 6].indexOf(Number(month)) > -1
+            ? '2'
+            : [7, 8, 9].indexOf(Number(month)) > -1
+              ? '3'
+              : [10, 11, 12].indexOf(Number(month)) > -1
+                ? '4'
+                : undefined
+        : undefined;
+
   return {
     year: year,
+    quarter: quarter,
     month: month,
     day: day,
     hour: hour,

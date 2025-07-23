@@ -12,6 +12,7 @@ import {
   After,
   Before,
   BooleanFilter,
+  InMoment,
   JustUnits,
   Null,
   NumberCondition,
@@ -657,10 +658,11 @@ export async function buildMalloyQuery(
               let tFilter = temporalFilter as Before;
               let before = tFilter.before as TemporalLiteral;
 
-              let { year, month, day, hour, minute } = common.parseTsLiteral({
-                input: before.literal,
-                units: before.units
-              });
+              let { year, quarter, month, day, hour, minute } =
+                common.parseTsLiteral({
+                  input: before.literal,
+                  units: before.units
+                });
 
               fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
@@ -671,6 +673,9 @@ export async function buildMalloyQuery(
                     : common.FractionTypeEnum.TsIsNotBeforeDate,
                 tsBeforeMoment: before,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
+                tsDateQuarter: common.isDefined(quarter)
+                  ? Number(quarter)
+                  : undefined,
                 tsDateMonth: common.isDefined(month)
                   ? Number(month)
                   : undefined,
@@ -691,10 +696,11 @@ export async function buildMalloyQuery(
               let tFilter = temporalFilter as After;
               let after = tFilter.after as TemporalLiteral;
 
-              let { year, month, day, hour, minute } = common.parseTsLiteral({
-                input: after.literal,
-                units: after.units
-              });
+              let { year, quarter, month, day, hour, minute } =
+                common.parseTsLiteral({
+                  input: after.literal,
+                  units: after.units
+                });
 
               fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
@@ -705,6 +711,9 @@ export async function buildMalloyQuery(
                     : common.FractionTypeEnum.TsIsNotAfterDate,
                 tsAfterMoment: after,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
+                tsDateQuarter: common.isDefined(quarter)
+                  ? Number(quarter)
+                  : undefined,
                 tsDateMonth: common.isDefined(month)
                   ? Number(month)
                   : undefined,
@@ -721,18 +730,20 @@ export async function buildMalloyQuery(
                 // tsForUnit: <any>forUnit
               };
             } else if ((temporalFilter as To).operator === 'to') {
-              // temporal after
+              // temporal to
               let tFilter = temporalFilter as To;
               let from = tFilter.fromMoment as TemporalLiteral;
               let to = tFilter.toMoment as TemporalLiteral;
 
-              let { year, month, day, hour, minute } = common.parseTsLiteral({
-                input: from.literal,
-                units: from.units
-              });
+              let { year, quarter, month, day, hour, minute } =
+                common.parseTsLiteral({
+                  input: from.literal,
+                  units: from.units
+                });
 
               let {
                 year: toYear,
+                quarter: toQuarter,
                 month: toMonth,
                 day: toDay,
                 hour: toHour,
@@ -748,10 +759,13 @@ export async function buildMalloyQuery(
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? common.FractionTypeEnum.TsIsInRange
-                    : common.FractionTypeEnum.TsIsNotAfterDate,
+                    : common.FractionTypeEnum.TsIsNotInRange,
                 tsFromMoment: from,
                 tsToMoment: to,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
+                tsDateQuarter: common.isDefined(quarter)
+                  ? Number(quarter)
+                  : undefined,
                 tsDateMonth: common.isDefined(month)
                   ? Number(month)
                   : undefined,
@@ -762,6 +776,9 @@ export async function buildMalloyQuery(
                   : undefined,
                 tsDateToYear: common.isDefined(toYear)
                   ? Number(toYear)
+                  : undefined,
+                tsDateToQuarter: common.isDefined(toQuarter)
+                  ? Number(toQuarter)
                   : undefined,
                 tsDateToMonth: common.isDefined(toMonth)
                   ? Number(toMonth)
@@ -774,6 +791,67 @@ export async function buildMalloyQuery(
                   : undefined,
                 tsDateToMinute: common.isDefined(toMinute)
                   ? Number(toMinute)
+                  : undefined
+              };
+            } else if ((temporalFilter as InMoment).operator === 'in') {
+              // temporal in
+              let tFilter = temporalFilter as InMoment;
+              let tFilterIn = tFilter.in as TemporalLiteral;
+
+              let { year, quarter, month, day, hour, minute } =
+                common.parseTsLiteral({
+                  input: tFilterIn.literal,
+                  units: tFilterIn.units
+                });
+
+              fraction = {
+                brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                operator: fractionOperator,
+                type:
+                  tFilterIn.units === 'year'
+                    ? common.FractionOperatorEnum.Or
+                      ? common.FractionTypeEnum.TsIsOnYear
+                      : common.FractionTypeEnum.TsIsNotOnYear
+                    : tFilterIn.units === 'quarter'
+                      ? common.FractionOperatorEnum.Or
+                        ? common.FractionTypeEnum.TsIsOnQuarter
+                        : common.FractionTypeEnum.TsIsNotOnQuarter
+                      : tFilterIn.units === 'month'
+                        ? common.FractionOperatorEnum.Or
+                          ? common.FractionTypeEnum.TsIsOnMonth
+                          : common.FractionTypeEnum.TsIsNotOnMonth
+                        : tFilterIn.units === 'week'
+                          ? common.FractionOperatorEnum.Or
+                            ? common.FractionTypeEnum.TsIsOnWeek
+                            : common.FractionTypeEnum.TsIsNotOnWeek
+                          : tFilterIn.units === 'day'
+                            ? common.FractionOperatorEnum.Or
+                              ? common.FractionTypeEnum.TsIsOnDay
+                              : common.FractionTypeEnum.TsIsNotOnDay
+                            : tFilterIn.units === 'hour'
+                              ? common.FractionOperatorEnum.Or
+                                ? common.FractionTypeEnum.TsIsOnHour
+                                : common.FractionTypeEnum.TsIsNotOnHour
+                              : tFilterIn.units === 'minute'
+                                ? common.FractionOperatorEnum.Or
+                                  ? common.FractionTypeEnum.TsIsOnMinute
+                                  : common.FractionTypeEnum.TsIsNotOnMinute
+                                : tFilterIn.moment === 'literal'
+                                  ? common.FractionOperatorEnum.Or
+                                    ? common.FractionTypeEnum.TsIsOnTimestamp
+                                    : common.FractionTypeEnum.TsIsNotOnTimestamp
+                                  : undefined,
+                tsDateYear: common.isDefined(year) ? Number(year) : undefined,
+                tsDateQuarter: common.isDefined(quarter)
+                  ? Number(quarter)
+                  : undefined,
+                tsDateMonth: common.isDefined(month)
+                  ? Number(month)
+                  : undefined,
+                tsDateDay: common.isDefined(day) ? Number(day) : undefined,
+                tsDateHour: common.isDefined(hour) ? Number(hour) : undefined,
+                tsDateMinute: common.isDefined(minute)
+                  ? Number(minute)
                   : undefined
               };
             }

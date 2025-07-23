@@ -104,6 +104,10 @@ export class Fraction {
 
   @IsOptional()
   @IsNumber()
+  tsDateQuarter?: number;
+
+  @IsOptional()
+  @IsNumber()
   tsDateMonth?: number;
 
   @IsOptional()
@@ -121,6 +125,10 @@ export class Fraction {
   @IsOptional()
   @IsNumber()
   tsDateToYear?: number;
+
+  @IsOptional()
+  @IsNumber()
+  tsDateToQuarter?: number;
 
   @IsOptional()
   @IsNumber()
