@@ -15,6 +15,7 @@ import {
   For,
   InMoment,
   JustUnits,
+  NowMoment,
   Null,
   NumberCondition,
   NumberFilter,
@@ -686,13 +687,7 @@ export async function buildMalloyQuery(
                 tsDateHour: common.isDefined(hour) ? Number(hour) : undefined,
                 tsDateMinute: common.isDefined(minute)
                   ? Number(minute)
-                  : undefined,
-                tsForOption: common.FractionTsForOptionEnum.ForInfinity
-                // tsForOption: forUnit
-                //   ? common.FractionTsForOptionEnum.For
-                //   : common.FractionTsForOptionEnum.ForInfinity
-                // tsForValue: Number(forIntegerStr),
-                // tsForUnit: <any>forUnit
+                  : undefined
               };
             } else if ((temporalFilter as After).operator === 'after') {
               // temporal after
@@ -724,13 +719,7 @@ export async function buildMalloyQuery(
                 tsDateHour: common.isDefined(hour) ? Number(hour) : undefined,
                 tsDateMinute: common.isDefined(minute)
                   ? Number(minute)
-                  : undefined,
-                tsForOption: common.FractionTsForOptionEnum.ForInfinity
-                // tsForOption: forUnit
-                //   ? common.FractionTsForOptionEnum.For
-                //   : common.FractionTsForOptionEnum.ForInfinity
-                // tsForValue: Number(forIntegerStr),
-                // tsForUnit: <any>forUnit
+                  : undefined
               };
             } else if ((temporalFilter as To).operator === 'to') {
               // temporal to
@@ -853,7 +842,9 @@ export async function buildMalloyQuery(
                                 ? common.FractionOperatorEnum.Or
                                   ? common.FractionTypeEnum.TsIsOnMinute
                                   : common.FractionTypeEnum.TsIsNotOnMinute
-                                : tFilterIn.moment === 'literal'
+                                : tFilterIn.moment === 'literal' ||
+                                    (tFilterIn as unknown as NowMoment)
+                                      .moment === 'now'
                                   ? common.FractionOperatorEnum.Or
                                     ? common.FractionTypeEnum.TsIsOnTimestamp
                                     : common.FractionTypeEnum.TsIsNotOnTimestamp
