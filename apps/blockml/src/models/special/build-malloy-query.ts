@@ -654,35 +654,12 @@ export async function buildMalloyQuery(
             } else if ((temporalFilter as Before).operator === 'before') {
               // temporal before
               let tFilter = temporalFilter as Before;
-
               let before = tFilter.before as TemporalLiteral;
 
-              let year;
-              let month;
-              let day;
-              let hour;
-              let minute;
-
-              if (common.isDefined(before.literal)) {
-                let literalToParse =
-                  before?.units === 'quarter'
-                    ? before?.literal.slice(0, -3)
-                    : before?.units === 'week'
-                      ? before?.literal.slice(0, -3)
-                      : before?.literal;
-
-                let r;
-
-                if (
-                  (r = common.MyRegex.BRICK_TS_LITERAL().exec(literalToParse))
-                ) {
-                  year = r[1];
-                  month = r[2];
-                  day = r[3];
-                  hour = r[4];
-                  minute = r[5];
-                }
-              }
+              let { year, month, day, hour, minute } = common.parseTsLiteral({
+                input: before.literal,
+                units: before.units
+              });
 
               fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
@@ -711,35 +688,12 @@ export async function buildMalloyQuery(
             } else if ((temporalFilter as After).operator === 'after') {
               // temporal after
               let tFilter = temporalFilter as After;
-
               let after = tFilter.after as TemporalLiteral;
 
-              let year;
-              let month;
-              let day;
-              let hour;
-              let minute;
-
-              if (common.isDefined(after.literal)) {
-                let literalToParse =
-                  after?.units === 'quarter'
-                    ? after?.literal.slice(0, -3)
-                    : after?.units === 'week'
-                      ? after?.literal.slice(0, -3)
-                      : after?.literal;
-
-                let r;
-
-                if (
-                  (r = common.MyRegex.BRICK_TS_LITERAL().exec(literalToParse))
-                ) {
-                  year = r[1];
-                  month = r[2];
-                  day = r[3];
-                  hour = r[4];
-                  minute = r[5];
-                }
-              }
+              let { year, month, day, hour, minute } = common.parseTsLiteral({
+                input: after.literal,
+                units: after.units
+              });
 
               fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
