@@ -83,8 +83,7 @@ export enum FractionTypeEnum {
   TsIsNotOnTimestamp = 'TsIsNotOnTimestamp', // new
   TsIsNotNull = 'TsIsNotNull',
 
-  TsIsBeforeRelative = 'TsIsBeforeRelative',
-  TsIsAfterRelative = 'TsIsAfterRelative',
+  //
 
   DayOfWeekIsAnyValue = 'DayOfWeekIsAnyValue',
   DayOfWeekIs = 'DayOfWeekIs',
@@ -109,6 +108,11 @@ export enum FractionTypeEnum {
   QuarterOfYearIsNull = 'QuarterOfYearIsNull',
   QuarterOfYearIsNot = 'QuarterOfYearIsNot',
   QuarterOfYearIsNotNull = 'QuarterOfYearIsNotNull',
+
+  //
+
+  TsIsBeforeRelative = 'TsIsBeforeRelative',
+  TsIsAfterRelative = 'TsIsAfterRelative',
 
   YesnoIsAnyValue = 'YesnoIsAnyValue',
   YesnoIs = 'YesnoIs'
