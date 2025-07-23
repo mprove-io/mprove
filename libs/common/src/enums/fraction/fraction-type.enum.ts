@@ -64,6 +64,7 @@ export enum FractionTypeEnum {
   TsIsOnHour = 'TsIsOnHour',
   TsIsOnMinute = 'TsIsOnMinute',
   TsIsOnTimestamp = 'TsIsOnTimestamp', // new
+  TsIsBegin = 'TsIsBegin', // new
   TsIsNull = 'TsIsNull',
 
   TsIsNotInLast = 'TsIsNotInLast', // new
@@ -79,6 +80,7 @@ export enum FractionTypeEnum {
   TsIsNotOnHour = 'TsIsNotOnHour', // new
   TsIsNotOnMinute = 'TsIsNotOnMinute', // new
   TsIsNotOnTimestamp = 'TsIsNotOnTimestamp', // new
+  TsIsNotBegin = 'TsIsNotBegin', // new
   TsIsNotNull = 'TsIsNotNull',
 
   TsIsBeforeRelative = 'TsIsBeforeRelative',

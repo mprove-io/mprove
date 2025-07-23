@@ -12,6 +12,7 @@ import {
   After,
   Before,
   BooleanFilter,
+  For,
   InMoment,
   JustUnits,
   Null,
@@ -24,6 +25,8 @@ import {
   TemporalFilter,
   TemporalLiteral,
   To,
+  WeekdayMoment,
+  WhichdayMoment,
   in_last
 } from '@malloydata/malloy-filter';
 import {
@@ -824,7 +827,21 @@ export async function buildMalloyQuery(
                           ? common.FractionOperatorEnum.Or
                             ? common.FractionTypeEnum.TsIsOnWeek
                             : common.FractionTypeEnum.TsIsNotOnWeek
-                          : tFilterIn.units === 'day'
+                          : tFilterIn.units === 'day' ||
+                              ['today', 'yesterday', 'tomorrow'].indexOf(
+                                (tFilterIn as unknown as WhichdayMoment).moment
+                              ) > -1 ||
+                              [
+                                'sunday',
+                                'monday',
+                                'tuesday',
+                                'wednesday',
+                                'thursday',
+                                'friday',
+                                'saturday'
+                              ].indexOf(
+                                (tFilterIn as unknown as WeekdayMoment).moment
+                              ) > -1
                             ? common.FractionOperatorEnum.Or
                               ? common.FractionTypeEnum.TsIsOnDay
                               : common.FractionTypeEnum.TsIsNotOnDay
@@ -841,6 +858,7 @@ export async function buildMalloyQuery(
                                     ? common.FractionTypeEnum.TsIsOnTimestamp
                                     : common.FractionTypeEnum.TsIsNotOnTimestamp
                                   : undefined,
+                tsInMoment: tFilter.in,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
                   ? Number(quarter)
@@ -853,6 +871,41 @@ export async function buildMalloyQuery(
                 tsDateMinute: common.isDefined(minute)
                   ? Number(minute)
                   : undefined
+              };
+            } else if ((temporalFilter as For).operator === 'for') {
+              // temporal for
+              let tFilter = temporalFilter as For;
+              let begin = tFilter.begin as TemporalLiteral;
+
+              let { year, quarter, month, day, hour, minute } =
+                common.parseTsLiteral({
+                  input: begin.literal,
+                  units: begin.units
+                });
+
+              fraction = {
+                brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                operator: fractionOperator,
+                type:
+                  fractionOperator === common.FractionOperatorEnum.Or
+                    ? common.FractionTypeEnum.TsIsBegin
+                    : common.FractionTypeEnum.TsIsNotBegin,
+                tsBeginMoment: begin,
+                tsDateYear: common.isDefined(year) ? Number(year) : undefined,
+                tsDateQuarter: common.isDefined(quarter)
+                  ? Number(quarter)
+                  : undefined,
+                tsDateMonth: common.isDefined(month)
+                  ? Number(month)
+                  : undefined,
+                tsDateDay: common.isDefined(day) ? Number(day) : undefined,
+                tsDateHour: common.isDefined(hour) ? Number(hour) : undefined,
+                tsDateMinute: common.isDefined(minute)
+                  ? Number(minute)
+                  : undefined,
+                tsForOption: common.FractionTsForOptionEnum.For,
+                tsForUnit: common.getFractionTsForUnits(tFilter.units),
+                tsLastValue: Number(tFilter.n)
               };
             }
 

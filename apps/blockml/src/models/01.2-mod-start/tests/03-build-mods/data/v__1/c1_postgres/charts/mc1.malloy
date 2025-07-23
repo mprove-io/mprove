@@ -54,6 +54,9 @@ query: mc1 is ec1_order_items -> {
     orders.created_at_day ~ f`5 days ago for 2 days`,         -- operator: 'for', units: 'day', n: '2', begin: { moment: 'ago',       units: 'day', n: '5' }
     orders.created_at_day ~ f`5 days from now for 2 days`,    -- operator: 'for', units: 'day', n: '2', begin: { moment: 'from_now',  units: 'day', n: '5' }
 
+    orders.created_at_day ~ f`5 weeks ago for 2 months`,         -- operator: 'for', units: 'month', n: '2', begin: { moment: 'ago',       units: 'week', n: '5' }
+    orders.created_at_day ~ f`5 weeks from now for 2 months`,    -- operator: 'for', units: 'month', n: '2', begin: { moment: 'from_now',  units: 'week', n: '5' }
+
     orders.created_at_day ~ f`last 5 days`,       -- operator: 'last',    units: 'day', n: '5'
     orders.created_at_day ~ f`next 5 days`,       -- operator: 'next',    units: 'day', n: '5'
     orders.created_at_day ~ f`5 days`,            -- operator: 'in_last', units: 'day', n: '5'
@@ -62,9 +65,9 @@ query: mc1 is ec1_order_items -> {
     orders.created_at_day ~ f`before 2025-02-03-WK`,          -- operator: 'before', before: { moment: 'literal', literal: '2025-02-03-WK', units: 'week' }
     orders.created_at_day ~ f`before 2025-02-03 04:05:06.7`,  -- operator: 'before', before: { moment: 'literal', literal: '2025-02-03 04:05:06.7' }
 
-    orders.created_at_day ~ f`after 2025-Q2`,                -- operator: 'after', after: { moment: 'literal', literal: '2025-Q2', units: 'quarter' }
-    orders.created_at_day ~ f`after 2025-02-03-WK`,          -- operator: 'after', after: { moment: 'literal', literal: '2025-02-03-WK', units: 'week' }
-    orders.created_at_day ~ f`after 2025-02-03 04:05:06.7`,  -- operator: 'after', after: { moment: 'literal', literal: '2025-02-03 04:05:06.7' }
+    orders.created_at_day ~ f`after 2025-Q2`,                 -- operator: 'after', after: { moment: 'literal', literal: '2025-Q2', units: 'quarter' }
+    orders.created_at_day ~ f`after 2025-02-03-WK`,           -- operator: 'after', after: { moment: 'literal', literal: '2025-02-03-WK', units: 'week' }
+    orders.created_at_day ~ f`after 2025-02-03 04:05:06.7`,   -- operator: 'after', after: { moment: 'literal', literal: '2025-02-03 04:05:06.7' }
 
     orders.created_at_day ~ f`before tuesday`,                -- operator: 'before', before: { moment: 'tuesday', which: 'last' }
     orders.created_at_day ~ f`starting tuesday`,              -- operator: 'before', before: { moment: 'tuesday', which: 'last' }, not: true
