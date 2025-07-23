@@ -600,17 +600,17 @@ export async function buildMalloyQuery(
             let fraction: common.Fraction;
 
             if ((temporalFilter as Null).operator === 'null') {
-              // temporal null
+              // temporal null (null)
               fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
-                    ? common.FractionTypeEnum.NumberIsNull
-                    : common.FractionTypeEnum.NumberIsNotNull
+                    ? common.FractionTypeEnum.TsIsNull
+                    : common.FractionTypeEnum.TsIsNotNull
               };
             } else if ((temporalFilter as JustUnits).operator === 'last') {
-              // temporal last (complete)
+              // temporal last (last complete)
               let tFilter = temporalFilter as JustUnits;
 
               fraction = {
@@ -626,7 +626,7 @@ export async function buildMalloyQuery(
                   common.FractionTsLastCompleteOptionEnum.Complete
               };
             } else if ((temporalFilter as in_last).operator === 'in_last') {
-              // temporal in_last (incomplete)
+              // temporal in_last (last [incomplete])
               let tFilter = temporalFilter as in_last;
 
               fraction = {
@@ -642,7 +642,7 @@ export async function buildMalloyQuery(
                   common.FractionTsLastCompleteOptionEnum.Incomplete
               };
             } else if ((temporalFilter as JustUnits).operator === 'next') {
-              // temporal next (complete)
+              // temporal next (next complete)
               let tFilter = temporalFilter as JustUnits;
 
               fraction = {
@@ -658,7 +658,7 @@ export async function buildMalloyQuery(
                   common.FractionTsLastCompleteOptionEnum.Complete
               };
             } else if ((temporalFilter as Before).operator === 'before') {
-              // temporal before
+              // temporal before (before)
               let tFilter = temporalFilter as Before;
               let before = tFilter.before as TemporalLiteral;
 
@@ -690,7 +690,7 @@ export async function buildMalloyQuery(
                   : undefined
               };
             } else if ((temporalFilter as After).operator === 'after') {
-              // temporal after
+              // temporal after (after)
               let tFilter = temporalFilter as After;
               let after = tFilter.after as TemporalLiteral;
 
@@ -722,7 +722,7 @@ export async function buildMalloyQuery(
                   : undefined
               };
             } else if ((temporalFilter as To).operator === 'to') {
-              // temporal to
+              // temporal to (in range) [from ... to ...]
               let tFilter = temporalFilter as To;
               let from = tFilter.fromMoment as TemporalLiteral;
               let to = tFilter.toMoment as TemporalLiteral;
@@ -786,7 +786,7 @@ export async function buildMalloyQuery(
                   : undefined
               };
             } else if ((temporalFilter as InMoment).operator === 'in') {
-              // temporal in
+              // temporal in (on)
               let tFilter = temporalFilter as InMoment;
               let tFilterIn = tFilter.in as TemporalLiteral;
 
@@ -864,7 +864,7 @@ export async function buildMalloyQuery(
                   : undefined
               };
             } else if ((temporalFilter as For).operator === 'for') {
-              // temporal for
+              // temporal for (begin ... for ...) [starts ... for ...]
               let tFilter = temporalFilter as For;
               let begin = tFilter.begin as TemporalLiteral;
 
@@ -879,8 +879,8 @@ export async function buildMalloyQuery(
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
-                    ? common.FractionTypeEnum.TsIsBegin
-                    : common.FractionTypeEnum.TsIsNotBegin,
+                    ? common.FractionTypeEnum.TsIsBeginFor
+                    : common.FractionTypeEnum.TsIsNotBeginFor,
                 tsBeginMoment: begin,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
