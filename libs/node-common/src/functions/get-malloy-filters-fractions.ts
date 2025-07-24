@@ -35,6 +35,7 @@ import {
 } from '@malloydata/malloy-query-builder';
 import { MALLOY_FILTER_ANY } from '~common/_index';
 import { common } from '~node-common/barrels/common';
+import { getMalloyMomentStr } from './get-malloy-moment-str';
 
 // packages/malloy-filter/src/clause_utils.ts
 
@@ -301,12 +302,12 @@ export function getMalloyFiltersFractions(item: {
                     : 'f`not true`'
                   : booleanFilter.operator === 'false'
                     ? fractionOperator === common.FractionOperatorEnum.Or
-                      ? 'f`false`'
-                      : 'f`not false`'
+                      ? 'f`=false`'
+                      : 'f`not =false`'
                     : booleanFilter.operator === 'false_or_null'
                       ? fractionOperator === common.FractionOperatorEnum.Or
-                        ? 'f`false_or_null`'
-                        : 'f`not false_or_null`'
+                        ? 'f`false`'
+                        : 'f`not false`'
                       : undefined,
               brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
               operator: fractionOperator,
@@ -651,8 +652,8 @@ export function getMalloyFiltersFractions(item: {
               fraction = {
                 brick:
                   fractionOperator === common.FractionOperatorEnum.Or
-                    ? `f\`last ${tFilter.n} ${tFilter.units}\``
-                    : `f\`not last ${tFilter.n} ${tFilter.units}\``,
+                    ? `f\`last ${tFilter.n} ${tFilter.units}s\``
+                    : `f\`not last ${tFilter.n} ${tFilter.units}s\``,
                 brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
@@ -671,8 +672,8 @@ export function getMalloyFiltersFractions(item: {
               fraction = {
                 brick:
                   fractionOperator === common.FractionOperatorEnum.Or
-                    ? `f\`${tFilter.n} ${tFilter.units}\``
-                    : `f\`not ${tFilter.n} ${tFilter.units}\``,
+                    ? `f\`${tFilter.n} ${tFilter.units}s\``
+                    : `f\`not ${tFilter.n} ${tFilter.units}s\``,
                 brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
@@ -691,8 +692,8 @@ export function getMalloyFiltersFractions(item: {
               fraction = {
                 brick:
                   fractionOperator === common.FractionOperatorEnum.Or
-                    ? `f\`next ${tFilter.n} ${tFilter.units}\``
-                    : `f\`not next ${tFilter.n} ${tFilter.units}\``,
+                    ? `f\`next ${tFilter.n} ${tFilter.units}s\``
+                    : `f\`not next ${tFilter.n} ${tFilter.units}s\``,
                 brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
@@ -715,18 +716,13 @@ export function getMalloyFiltersFractions(item: {
                   units: before.units
                 });
 
+              let beforeMomentStr = getMalloyMomentStr(tFilter.before);
+
               fraction = {
-                brick: common.isDefined(before.literal)
-                  ? fractionOperator === common.FractionOperatorEnum.Or
-                    ? `f\`before ${before.literal}\``
-                    : `f\`not before ${before.literal}\``
-                  : common.isDefined((before as unknown as WeekdayMoment).which)
-                    ? fractionOperator === common.FractionOperatorEnum.Or
-                      ? `f\`before ${(before as unknown as WeekdayMoment).which} ${(before as unknown as WeekdayMoment).moment}\``
-                      : `f\`not before ${(before as unknown as WeekdayMoment).which} ${(before as unknown as WeekdayMoment).moment}\``
-                    : fractionOperator === common.FractionOperatorEnum.Or
-                      ? `f\`before ${(before as unknown as WhichdayMoment).moment}\``
-                      : `f\`not before ${(before as unknown as WhichdayMoment).moment}\``,
+                brick:
+                  fractionOperator === common.FractionOperatorEnum.Or
+                    ? `f\`before ${beforeMomentStr}\``
+                    : `f\`not before ${beforeMomentStr}\``,
                 brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
@@ -758,18 +754,13 @@ export function getMalloyFiltersFractions(item: {
                   units: after.units
                 });
 
+              let afterMomentStr = getMalloyMomentStr(tFilter.after);
+
               fraction = {
-                brick: common.isDefined(after.literal)
-                  ? fractionOperator === common.FractionOperatorEnum.Or
-                    ? `f\`after ${after.literal}\``
-                    : `f\`not after ${after.literal}\``
-                  : common.isDefined((after as unknown as WeekdayMoment).which)
-                    ? fractionOperator === common.FractionOperatorEnum.Or
-                      ? `f\`after ${(after as unknown as WeekdayMoment).which} ${(after as unknown as WeekdayMoment).moment}\``
-                      : `f\`not after ${(after as unknown as WeekdayMoment).which} ${(after as unknown as WeekdayMoment).moment}\``
-                    : fractionOperator === common.FractionOperatorEnum.Or
-                      ? `f\`after ${(after as unknown as WhichdayMoment).moment}\``
-                      : `f\`not after ${(after as unknown as WhichdayMoment).moment}\``,
+                brick:
+                  fractionOperator === common.FractionOperatorEnum.Or
+                    ? `f\`after ${afterMomentStr}\``
+                    : `f\`not after ${afterMomentStr}\``,
                 brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
@@ -814,8 +805,14 @@ export function getMalloyFiltersFractions(item: {
                 units: to.units
               });
 
+              let fromMomentStr = getMalloyMomentStr(tFilter.fromMoment);
+              let toMomentStr = getMalloyMomentStr(tFilter.toMoment);
+
               fraction = {
-                brick: undefined,
+                brick:
+                  fractionOperator === common.FractionOperatorEnum.Or
+                    ? `f\`${fromMomentStr} to ${toMomentStr}\``
+                    : `f\`not ${fromMomentStr} to ${toMomentStr}\``,
                 brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
@@ -866,8 +863,13 @@ export function getMalloyFiltersFractions(item: {
                   units: tFilterIn.units
                 });
 
+              let inMomentStr = getMalloyMomentStr(tFilter.in);
+
               fraction = {
-                brick: undefined,
+                brick:
+                  fractionOperator === common.FractionOperatorEnum.Or
+                    ? `f\`${inMomentStr}\``
+                    : `f\`not ${inMomentStr}\``,
                 brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
@@ -889,7 +891,7 @@ export function getMalloyFiltersFractions(item: {
                             : common.FractionTypeEnum.TsIsNotOnWeek
                           : tFilterIn.units === 'day' ||
                               ['today', 'yesterday', 'tomorrow'].indexOf(
-                                (tFilterIn as unknown as WhichdayMoment).moment
+                                (tFilter.in as WhichdayMoment).moment
                               ) > -1 ||
                               [
                                 'sunday',
@@ -899,9 +901,8 @@ export function getMalloyFiltersFractions(item: {
                                 'thursday',
                                 'friday',
                                 'saturday'
-                              ].indexOf(
-                                (tFilterIn as unknown as WeekdayMoment).moment
-                              ) > -1
+                              ].indexOf((tFilter.in as WeekdayMoment).moment) >
+                                -1
                             ? common.FractionOperatorEnum.Or
                               ? common.FractionTypeEnum.TsIsOnDay
                               : common.FractionTypeEnum.TsIsNotOnDay
@@ -914,8 +915,7 @@ export function getMalloyFiltersFractions(item: {
                                   ? common.FractionTypeEnum.TsIsOnMinute
                                   : common.FractionTypeEnum.TsIsNotOnMinute
                                 : tFilterIn.moment === 'literal' ||
-                                    (tFilterIn as unknown as NowMoment)
-                                      .moment === 'now'
+                                    (tFilter.in as NowMoment).moment === 'now'
                                   ? common.FractionOperatorEnum.Or
                                     ? common.FractionTypeEnum.TsIsOnTimestamp
                                     : common.FractionTypeEnum.TsIsNotOnTimestamp
@@ -945,8 +945,13 @@ export function getMalloyFiltersFractions(item: {
                   units: begin.units
                 });
 
+              let beginMomentStr = getMalloyMomentStr(tFilter.begin);
+
               fraction = {
-                brick: undefined,
+                brick:
+                  fractionOperator === common.FractionOperatorEnum.Or
+                    ? `f\`${beginMomentStr} for ${tFilter.n} ${tFilter.units}s\``
+                    : `f\`not ${beginMomentStr} for ${tFilter.n} ${tFilter.units}s\``,
                 brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
@@ -997,8 +1002,17 @@ export function getMalloyFiltersFractions(item: {
   //   'utf-8'
   // );
 
-  console.log('filtersFractions');
-  console.dir(filtersFractions, { depth: null });
+  // console.log('filtersFractions');
+  // console.dir(filtersFractions, { depth: null });
+
+  // Object.keys(filtersFractions).forEach(key => {
+  //   filtersFractions[key].forEach(fraction => {
+  //     if (fraction.brick !== fraction.brickParent) {
+  //       console.log(fraction.brickParent);
+  //       console.log(fraction.brick);
+  //     }
+  //   });
+  // });
 
   return { filtersFractions: filtersFractions, parsedFilters: parsedFilters };
 }
