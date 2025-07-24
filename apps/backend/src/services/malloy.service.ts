@@ -30,6 +30,7 @@ import { common } from '~backend/barrels/common';
 import { nodeCommon } from '~backend/barrels/node-common';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
+import { getMalloyFiltersFractions } from '~node-common/functions/get-malloy-filters-fractions';
 import { EnvsService } from './envs.service';
 
 @Injectable()
@@ -315,38 +316,56 @@ export class MalloyService {
         segment0.addHaving(fieldName, fieldPath, fstr);
       }
 
-      let filterIndex = mconfig.filters.findIndex(
-        x => x.fieldId === modelField.id
+      let { filtersFractions, parsedFilters } = getMalloyFiltersFractions({
+        segment: segment0,
+        apiModel: model
+      });
+
+      let filters: common.Filter[] = [];
+
+      Object.keys(filtersFractions).forEach(fieldId => {
+        filters.push({
+          fieldId: fieldId,
+          fractions: filtersFractions[fieldId] || []
+        });
+      });
+
+      mconfig.filters = filters.sort((a, b) =>
+        a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
       );
 
-      if (filterIndex < 0) {
-        let newFilter: common.Filter = {
-          fieldId: modelField.id,
-          fractions: queryOperation.fractions
-        };
+      // let filterIndex = mconfig.filters.findIndex(
+      //   x => x.fieldId === modelField.id
+      // );
 
-        mconfig.filters = [...mconfig.filters, newFilter].sort((a, b) =>
-          a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
-        );
-      } else {
-        let existingFilter = mconfig.filters[filterIndex];
+      // if (filterIndex < 0) {
+      //   let newFilter: common.Filter = {
+      //     fieldId: modelField.id,
+      //     fractions: queryOperation.fractions
+      //   };
 
-        let newFractions = [
-          ...existingFilter.fractions,
-          ...queryOperation.fractions
-        ];
+      //   mconfig.filters = [...mconfig.filters, newFilter].sort((a, b) =>
+      //     a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+      //   );
+      // } else {
+      //   let existingFilter = mconfig.filters[filterIndex];
 
-        let newFilter: common.Filter = {
-          fieldId: modelField.id,
-          fractions: newFractions
-        };
+      //   let newFractions = [
+      //     ...existingFilter.fractions,
+      //     ...queryOperation.fractions
+      //   ];
 
-        mconfig.filters = [
-          ...mconfig.filters.slice(0, filterIndex),
-          newFilter,
-          ...mconfig.filters.slice(filterIndex + 1)
-        ];
-      }
+      //   let newFilter: common.Filter = {
+      //     fieldId: modelField.id,
+      //     fractions: newFractions
+      //   };
+
+      //   mconfig.filters = [
+      //     ...mconfig.filters.slice(0, filterIndex),
+      //     newFilter,
+      //     ...mconfig.filters.slice(filterIndex + 1)
+      //   ];
+      // }
     } else if (queryOperation.type === common.QueryOperationTypeEnum.Remove) {
       if (common.isUndefined(queryOperation.fieldId)) {
         isError = true;

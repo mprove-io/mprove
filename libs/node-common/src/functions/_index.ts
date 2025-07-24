@@ -16,3 +16,4 @@ export * from './wrap-error';
 export * from './get-wrap-result';
 export * from './error-to-wrap-result';
 export * from './make-malloy-connections';
+export * from './get-malloy-filters-fractions';
