@@ -81,76 +81,77 @@ query: mc1 is ec1_order_items -> {
 
     -- orders.created_at_date ~ f``
 
-    -- sale_price ~ f``,
-    -- sale_price ~ f`1`,
-    -- sale_price ~ f`<= 2`,
-    -- sale_price ~ f`>= 3`,
-    -- sale_price ~ f`< 4`,
-    -- sale_price ~ f`> 5`,
-    -- sale_price ~ f`null`,
-    -- sale_price ~ f`(6 to 7)`,
-    -- sale_price ~ f`(8 to 9]`,
-    -- sale_price ~ f`[10 to 11)`,
-    -- sale_price ~ f`[12 to 13]`,
-    -- sale_price ~ f`14, 15`,
-    -- sale_price ~ f`16 or 17, 18 or < 19`,
-    -- sale_price ~ f`!= 20`,
+    sale_price ~ f``,
+    sale_price ~ f`1`,                                      -- operator: '=', values: [ '1' ]
+    sale_price ~ f`<= 2`,                                   -- operator: '<=', values: [ '2' ]
+    sale_price ~ f`>= 3`,                                   -- operator: '>=', values: [ '3' ]
+    sale_price ~ f`< 4`,                                    -- operator: '<', values: [ '4' ]
+    sale_price ~ f`> 5`,                                    -- operator: '>', values: [ '5' ]
+    sale_price ~ f`null`,                                   -- operator: 'null'
+    sale_price ~ f`(6 to 7)`,                               -- operator: 'range', startValue: '6', startOperator: '>', endValue: '7', endOperator: '<'
+    sale_price ~ f`(8 to 9]`,                               -- operator: 'range', startValue: '8', startOperator: '>', endValue: '9', endOperator: '<='
+    sale_price ~ f`[10 to 11)`,                             -- operator: 'range', startValue: '10', startOperator: '>=', endValue: '11', endOperator: '<'
+    sale_price ~ f`[12 to 13]`,                             -- operator: 'range', startValue: '12', startOperator: '>=', endValue: '13', endOperator: '<='
+    sale_price ~ f`14, 15`,                                 -- operator: '=', values: [ '14', '15' ]
+    sale_price ~ f`16 or 17, 18 or < 19`,                   -- operator: 'or', members: [ { operator: '=', values: [ '16', '17', '18' ] }, { operator: '<', values: [ '19' ] } ]
+    sale_price ~ f`!= 20`,                                  -- operator: '!=', values: [ '20' ]
 
-    -- sale_price ~ f`not 1`,
-    -- sale_price ~ f`not <= 2`,
-    -- sale_price ~ f`not >= 3`,
-    -- sale_price ~ f`not < 4`,
-    -- sale_price ~ f`not > 5`,
-    -- sale_price ~ f`not null`,
-    -- sale_price ~ f`not (6 to 7)`,
-    -- sale_price ~ f`not (8 to 9]`,
-    -- sale_price ~ f`not [10 to 11)`,
-    -- sale_price ~ f`not [12 to 13]`,
-    -- sale_price ~ f`not 14, 15`,
-    -- sale_price ~ f`not 16 and not 17, 18 and not < 19`,
-    -- sale_price ~ f`not != 20`,
+    sale_price ~ f`not 1`,                                  -- operator: '!=', values: [ '1' ] }
+    sale_price ~ f`not <= 2`,                               -- operator: '<=', values: [ '2' ], not: true
+    sale_price ~ f`not >= 3`,                               -- operator: '>=', values: [ '3' ], not: true
+    sale_price ~ f`not < 4`,                                -- operator: '<', values: [ '4' ], not: true
+    sale_price ~ f`not > 5`,                                -- operator: '>', values: [ '5' ], not: true
+    sale_price ~ f`not null`,                               -- operator: 'null', not: true
+    sale_price ~ f`not (6 to 7)`,                           -- operator: 'range', startValue: '6', startOperator: '>', endValue: '7', endOperator: '<', not: true
+    sale_price ~ f`not (8 to 9]`,                           -- operator: 'range', startValue: '8', startOperator: '>', endValue: '9', endOperator: '<=', not: true
+    sale_price ~ f`not [10 to 11)`,                         -- operator: 'range', startValue: '10', startOperator: '>=', endValue: '11', endOperator: '<', not: true
+    sale_price ~ f`not [12 to 13]`,                         -- operator: 'range', startValue: '12', startOperator: '>=', endValue: '13', endOperator: '<=', not: true
+    sale_price ~ f`not 14, 15`,                             -- operator: '!=', values: [ '14', '15' ]
+    sale_price ~ f`not 16 and not 17, 18 and not < 19`,     -- operator: 'and', members: [ { operator: '!=', values: [ '16' ] }, { operator: '!=', values: [ '17', '18' ] }, { operator: '<', values: [ '19' ], not: true } ]
+    sale_price ~ f`not != 20`,                              -- operator: '=', values: [ '20' ]
 
-    -- sale_price ~ f`= 0`,
-    -- sale_price ~ f`!= 0`,
-    -- sale_price ~ f`= 14, 15`,
-    -- sale_price ~ f`!= 14, 15`,
-    -- sale_price ~ f`(21, 22)`,
-    -- sale_price ~ f`not (21, 22)`,
+    sale_price ~ f`= 0`,                  -- operator: '=', values: [ '0' ]
+    sale_price ~ f`!= 0`,                 -- operator: '!=', values: [ '0' ] }
+    sale_price ~ f`= 14, 15`,             -- operator: '=', values: [ '14', '15' ] }
+    sale_price ~ f`!= 14, 15`,            -- operator: '!=', values: [ '14', '15' ] }
+    sale_price ~ f`(21, 22)`,             -- operator: '()', expr: { operator: '=', values: [ '21', '22' ] }
+    sale_price ~ f`not (21, 22)`,         -- operator: '()', expr: { operator: '=', values: [ '21', '22' ] }, not: true
 
-    -- users.has_last_name ~ f``,
-    -- 
-    -- users.has_last_name ~ f`true`,
-    -- users.has_last_name ~ f`false`,
-    -- users.has_last_name ~ f`=false`,
-    -- users.has_last_name ~ f`null`,
-    -- 
-    -- users.has_last_name ~ f`not true`,
-    -- users.has_last_name ~ f`not false`,
-    -- users.has_last_name ~ f`not =false`,
-    -- users.has_last_name ~ f`not null`,
-    -- 
-    -- users.state ~ f``,
-    -- 
-    users.state ~ f`a%z`,
-    users.state ~ f`b`,
-    users.state ~ f`%c%`,
-    users.state ~ f`s%`,
-    users.state ~ f`%e`,
-    users.state ~ f`null`,
-    users.state ~ f`empty`,
+    users.has_last_name ~ f``,
     
-    users.state ~ f`-a%z`,
-    users.state ~ f`-b`,
-    users.state ~ f`-%c%`,
-    users.state ~ f`-s%`,
-    users.state ~ f`-%e`,
-    users.state ~ f`-null`,
-    users.state ~ f`-empty`,
-    -- 
-    -- users.state ~ f`OH, NY`,
-    -- users.state ~ f`-NC, -ND`,
-    -- users.state ~ f`UT, MT%`,
-    -- users.state ~ f`\\%%`,
+    users.has_last_name ~ f`true`,        -- operator: 'true'
+    users.has_last_name ~ f`=false`,      -- operator: 'false'
+    users.has_last_name ~ f`false`,       -- operator: 'false_or_null'
+    users.has_last_name ~ f`null`,        -- operator: 'null'
+    
+    users.has_last_name ~ f`not true`,    -- operator: 'true', not: true
+    users.has_last_name ~ f`not =false`,  -- operator: 'false', not: true
+    users.has_last_name ~ f`not false`,   -- operator: 'false_or_null', not: true
+    users.has_last_name ~ f`not null`,    -- operator: 'null', not: true
+    
+    users.state ~ f``,
+    
+    users.state ~ f`a%z`,       -- operator: '~', escaped_values: [ 'a%z' ]
+    users.state ~ f`b`,         -- operator: '=', values: [ 'b' ]
+    users.state ~ f`%c%`,       -- operator: 'contains', values: [ 'c' ]
+    users.state ~ f`s%`,        -- operator: 'starts', values: [ 's' ]
+    users.state ~ f`%e`,        -- operator: 'ends', values: [ 'e' ]
+    users.state ~ f`null`,      -- operator: 'null'
+    users.state ~ f`empty`,     -- operator: 'empty'
+    
+    users.state ~ f`-a%z`,      -- operator: '~', escaped_values: [ 'a%z' ], not: true
+    users.state ~ f`-b`,        -- operator: '=', values: [ 'b' ], not: true
+    users.state ~ f`-%c%`,      -- operator: 'contains', values: [ 'c' ], not: true
+    users.state ~ f`-s%`,       -- operator: 'starts', values: [ 's' ], not: true
+    users.state ~ f`-%e`,       -- operator: 'ends', values: [ 'e' ], not: true
+    users.state ~ f`-null`,     -- operator: 'null', not: true
+    users.state ~ f`-empty`,    -- operator: 'empty', not: true
+    
+    users.state ~ f`OH, NY`,    -- operator: '=', values: [ 'OH', 'NY' ] 
+    users.state ~ f`-NC, -ND`,  -- operator: '=', values: [ 'NC', 'ND' ], not: true
+    users.state ~ f`UT, MT%`,   -- operator: ',', members: [ { operator: '=', values: [ 'UT' ] }, { operator: 'starts', values: [ 'MT' ] } ]
+    users.state ~ f`\\%%`,      -- operator: '~', escaped_values: [ '\\\\%%' ]
+  
   group_by: users__state is users.state
   aggregate: orsers__orders_count is orders.orders_count
   limit: 10

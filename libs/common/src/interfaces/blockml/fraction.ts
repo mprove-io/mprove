@@ -25,7 +25,7 @@ export class Fraction {
 
   @IsOptional()
   @IsString()
-  brickPart?: string;
+  brickParent?: string;
 
   @IsOptional()
   @IsEnum(enums.FractionOperatorEnum)
