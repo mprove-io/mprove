@@ -649,7 +649,10 @@ export function getMalloyFiltersFractions(item: {
               let tFilter = temporalFilter as JustUnits;
 
               fraction = {
-                brick: undefined,
+                brick:
+                  fractionOperator === common.FractionOperatorEnum.Or
+                    ? `f\`last ${tFilter.n} ${tFilter.units}\``
+                    : `f\`not last ${tFilter.n} ${tFilter.units}\``,
                 brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
@@ -666,7 +669,10 @@ export function getMalloyFiltersFractions(item: {
               let tFilter = temporalFilter as in_last;
 
               fraction = {
-                brick: undefined,
+                brick:
+                  fractionOperator === common.FractionOperatorEnum.Or
+                    ? `f\`${tFilter.n} ${tFilter.units}\``
+                    : `f\`not ${tFilter.n} ${tFilter.units}\``,
                 brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
@@ -683,7 +689,10 @@ export function getMalloyFiltersFractions(item: {
               let tFilter = temporalFilter as JustUnits;
 
               fraction = {
-                brick: undefined,
+                brick:
+                  fractionOperator === common.FractionOperatorEnum.Or
+                    ? `f\`next ${tFilter.n} ${tFilter.units}\``
+                    : `f\`not next ${tFilter.n} ${tFilter.units}\``,
                 brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
@@ -707,7 +716,17 @@ export function getMalloyFiltersFractions(item: {
                 });
 
               fraction = {
-                brick: undefined,
+                brick: common.isDefined(before.literal)
+                  ? fractionOperator === common.FractionOperatorEnum.Or
+                    ? `f\`before ${before.literal}\``
+                    : `f\`not before ${before.literal}\``
+                  : common.isDefined((before as unknown as WeekdayMoment).which)
+                    ? fractionOperator === common.FractionOperatorEnum.Or
+                      ? `f\`before ${(before as unknown as WeekdayMoment).which} ${(before as unknown as WeekdayMoment).moment}\``
+                      : `f\`not before ${(before as unknown as WeekdayMoment).which} ${(before as unknown as WeekdayMoment).moment}\``
+                    : fractionOperator === common.FractionOperatorEnum.Or
+                      ? `f\`before ${(before as unknown as WhichdayMoment).moment}\``
+                      : `f\`not before ${(before as unknown as WhichdayMoment).moment}\``,
                 brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
@@ -740,7 +759,17 @@ export function getMalloyFiltersFractions(item: {
                 });
 
               fraction = {
-                brick: undefined,
+                brick: common.isDefined(after.literal)
+                  ? fractionOperator === common.FractionOperatorEnum.Or
+                    ? `f\`after ${after.literal}\``
+                    : `f\`not after ${after.literal}\``
+                  : common.isDefined((after as unknown as WeekdayMoment).which)
+                    ? fractionOperator === common.FractionOperatorEnum.Or
+                      ? `f\`after ${(after as unknown as WeekdayMoment).which} ${(after as unknown as WeekdayMoment).moment}\``
+                      : `f\`not after ${(after as unknown as WeekdayMoment).which} ${(after as unknown as WeekdayMoment).moment}\``
+                    : fractionOperator === common.FractionOperatorEnum.Or
+                      ? `f\`after ${(after as unknown as WhichdayMoment).moment}\``
+                      : `f\`not after ${(after as unknown as WhichdayMoment).moment}\``,
                 brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
