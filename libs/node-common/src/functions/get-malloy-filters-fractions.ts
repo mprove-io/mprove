@@ -104,6 +104,7 @@ export function getMalloyFiltersFractions(item: {
           // string any
           let fraction: common.Fraction = {
             brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+            brickPart: '',
             operator: common.FractionOperatorEnum.Or,
             type: common.FractionTypeEnum.StringIsAnyValue
           };
@@ -125,6 +126,10 @@ export function getMalloyFiltersFractions(item: {
 
             let fraction: common.Fraction = {
               brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+              brickPart:
+                fractionOperator === common.FractionOperatorEnum.Or
+                  ? 'null'
+                  : '-null',
               operator: fractionOperator,
               type:
                 fractionOperator === common.FractionOperatorEnum.Or
@@ -161,6 +166,33 @@ export function getMalloyFiltersFractions(item: {
 
               let fraction: common.Fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                brickPart:
+                  stringFilter.operator === '~'
+                    ? fractionOperator === common.FractionOperatorEnum.Or
+                      ? `${eValue}`
+                      : `-${eValue}`
+                    : stringFilter.operator === '='
+                      ? fractionOperator === common.FractionOperatorEnum.Or
+                        ? `${eValue}`
+                        : `-${eValue}`
+                      : stringFilter.operator === 'contains'
+                        ? fractionOperator === common.FractionOperatorEnum.Or
+                          ? `%${eValue}%`
+                          : `-%${eValue}%`
+                        : stringFilter.operator === 'starts'
+                          ? fractionOperator === common.FractionOperatorEnum.Or
+                            ? `${eValue}%`
+                            : `-${eValue}%`
+                          : stringFilter.operator === 'ends'
+                            ? fractionOperator ===
+                              common.FractionOperatorEnum.Or
+                              ? `%${eValue}`
+                              : `-%${eValue}`
+                            : stringFilter.operator === 'empty'
+                              ? common.FractionOperatorEnum.Or
+                                ? `empty`
+                                : `-empty`
+                              : undefined,
                 operator: fractionOperator,
                 type:
                   stringFilter.operator === '~'
@@ -212,6 +244,7 @@ export function getMalloyFiltersFractions(item: {
           // boolean any
           let fraction: common.Fraction = {
             brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+            brickPart: undefined,
             operator: common.FractionOperatorEnum.Or,
             type: common.FractionTypeEnum.BooleanIsAnyValue
           };
@@ -233,6 +266,7 @@ export function getMalloyFiltersFractions(item: {
 
             let fraction: common.Fraction = {
               brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+              brickPart: undefined,
               operator: fractionOperator,
               type:
                 fractionOperator === common.FractionOperatorEnum.Or
@@ -257,6 +291,7 @@ export function getMalloyFiltersFractions(item: {
 
             let fraction: common.Fraction = {
               brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+              brickPart: undefined,
               operator: fractionOperator,
               type:
                 booleanFilter.operator === 'true'
@@ -298,6 +333,7 @@ export function getMalloyFiltersFractions(item: {
           // number any
           let fraction: common.Fraction = {
             brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+            brickPart: undefined,
             operator: common.FractionOperatorEnum.Or,
             type: common.FractionTypeEnum.NumberIsAnyValue
           };
@@ -324,6 +360,7 @@ export function getMalloyFiltersFractions(item: {
 
             let fraction: common.Fraction = {
               brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+              brickPart: undefined,
               operator: fractionOperator,
               type:
                 fractionOperator === common.FractionOperatorEnum.Or
@@ -358,6 +395,7 @@ export function getMalloyFiltersFractions(item: {
 
             let fraction: common.Fraction = {
               brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+              brickPart: undefined,
               operator: fractionOperator,
               type:
                 fractionOperator === common.FractionOperatorEnum.Or
@@ -383,6 +421,7 @@ export function getMalloyFiltersFractions(item: {
 
             let fraction: common.Fraction = {
               brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+              brickPart: undefined,
               operator: fractionOperator,
               type:
                 numberFilter.operator === '='
@@ -468,6 +507,7 @@ export function getMalloyFiltersFractions(item: {
           // temporal any
           let fraction: common.Fraction = {
             brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+            brickPart: undefined,
             operator: common.FractionOperatorEnum.Or,
             type: common.FractionTypeEnum.TsIsAnyValue
           };
@@ -509,6 +549,7 @@ export function getMalloyFiltersFractions(item: {
               // temporal null (null)
               fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                brickPart: undefined,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
@@ -521,6 +562,7 @@ export function getMalloyFiltersFractions(item: {
 
               fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                brickPart: undefined,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
@@ -537,6 +579,7 @@ export function getMalloyFiltersFractions(item: {
 
               fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                brickPart: undefined,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
@@ -553,6 +596,7 @@ export function getMalloyFiltersFractions(item: {
 
               fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                brickPart: undefined,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
@@ -576,6 +620,7 @@ export function getMalloyFiltersFractions(item: {
 
               fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                brickPart: undefined,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
@@ -608,6 +653,7 @@ export function getMalloyFiltersFractions(item: {
 
               fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                brickPart: undefined,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
@@ -653,6 +699,7 @@ export function getMalloyFiltersFractions(item: {
 
               fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                brickPart: undefined,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
@@ -704,6 +751,7 @@ export function getMalloyFiltersFractions(item: {
 
               fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                brickPart: undefined,
                 operator: fractionOperator,
                 type:
                   tFilterIn.units === 'year'
@@ -782,6 +830,7 @@ export function getMalloyFiltersFractions(item: {
 
               fraction = {
                 brick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                brickPart: undefined,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or

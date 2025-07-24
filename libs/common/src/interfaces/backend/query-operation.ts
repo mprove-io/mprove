@@ -8,7 +8,7 @@ import {
   ValidateNested
 } from 'class-validator';
 import { enums } from '~common/barrels/enums';
-import { Fraction } from '../blockml/fraction';
+import { Filter } from '../_index';
 
 export class QueryOperation {
   @IsEnum(enums.QueryOperationTypeEnum)
@@ -27,8 +27,8 @@ export class QueryOperation {
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => Fraction)
-  fractions?: Fraction[];
+  @Type(() => Filter)
+  filters?: Filter[];
 
   @IsOptional()
   @IsString()

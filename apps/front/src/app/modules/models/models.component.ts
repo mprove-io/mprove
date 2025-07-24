@@ -49,6 +49,7 @@ import {
 } from '@ali-hm/angular-tree-component';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
+import { MALLOY_FILTER_ANY } from '~common/_index';
 import { RefreshItem } from '~front/app/interfaces/refresh-item';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { ChartsQuery } from '~front/app/queries/charts.query';
@@ -1582,7 +1583,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
       };
     } else if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
       newFraction = {
-        brick: 'any', // TODO: symbol any
+        brick: MALLOY_FILTER_ANY,
+        brickPart: '',
         operator: common.FractionOperatorEnum.Or,
         type: common.getFractionTypeForAny(field.result)
       };
@@ -1594,6 +1596,17 @@ export class ModelsComponent implements OnInit, OnDestroy {
       };
     }
 
+    let newFilters = [];
+
+    let newFilter: common.Filter = {
+      fieldId: field.id,
+      fractions: [newFraction]
+    };
+
+    newFilters = [...newMconfig.filters, newFilter].sort((a, b) =>
+      a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
+    );
+
     if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
       this.chartService.editChart({
         mconfig: newMconfig,
@@ -1603,18 +1616,11 @@ export class ModelsComponent implements OnInit, OnDestroy {
           type: common.QueryOperationTypeEnum.WhereOrHaving,
           timezone: newMconfig.timezone,
           fieldId: field.id,
-          fractions: [newFraction]
+          filters: newFilters
         }
       });
     } else {
-      let newFilter: common.Filter = {
-        fieldId: field.id,
-        fractions: [newFraction]
-      };
-
-      newMconfig.filters = [...newMconfig.filters, newFilter].sort((a, b) =>
-        a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
-      );
+      newMconfig.filters = newFilters;
 
       this.chartService.editChart({
         mconfig: newMconfig,

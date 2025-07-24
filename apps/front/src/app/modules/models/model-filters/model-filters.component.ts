@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { tap } from 'rxjs/operators';
+import { MALLOY_FILTER_ANY } from '~common/constants/top';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { ChartService } from '~front/app/services/chart.service';
@@ -191,7 +192,8 @@ export class ModelFiltersComponent {
       };
     } else if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
       newFraction = {
-        brick: 'any', // TODO: symbol any
+        brick: MALLOY_FILTER_ANY,
+        brickPart: '',
         operator: common.FractionOperatorEnum.Or,
         type: common.getFractionTypeForAny(filterExtended.field.result)
       };
@@ -203,6 +205,19 @@ export class ModelFiltersComponent {
       };
     }
 
+    let newFractions = [...fractions, newFraction];
+
+    let newFilter: common.Filter = {
+      fieldId: filterExtended.fieldId,
+      fractions: newFractions
+    };
+
+    let newFilters = [
+      ...newMconfig.filters.slice(0, filterIndex),
+      newFilter,
+      ...newMconfig.filters.slice(filterIndex + 1)
+    ];
+
     if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
       this.chartService.editChart({
         mconfig: newMconfig,
@@ -212,22 +227,11 @@ export class ModelFiltersComponent {
           type: common.QueryOperationTypeEnum.WhereOrHaving,
           timezone: newMconfig.timezone,
           fieldId: filterExtended.fieldId,
-          fractions: [newFraction]
+          filters: newFilters
         }
       });
     } else {
-      let newFractions = [...fractions, newFraction];
-
-      let newFilter: common.Filter = {
-        fieldId: filterExtended.fieldId,
-        fractions: newFractions
-      };
-
-      newMconfig.filters = [
-        ...newMconfig.filters.slice(0, filterIndex),
-        newFilter,
-        ...newMconfig.filters.slice(filterIndex + 1)
-      ];
+      newMconfig.filters = newFilters;
 
       this.chartService.editChart({
         mconfig: newMconfig,

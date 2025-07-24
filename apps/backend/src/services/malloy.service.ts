@@ -17,11 +17,13 @@ import {
 import {
   ASTAggregateViewOperation,
   ASTGroupByViewOperation,
+  ASTHavingViewOperation,
   ASTLimitViewOperation,
   ASTOrderByViewOperation,
   ASTQuery,
   ASTSegmentViewDefinition,
-  ASTViewOperation
+  ASTViewOperation,
+  ASTWhereViewOperation
 } from '@malloydata/malloy-query-builder';
 import { FieldBase } from '@malloydata/malloy/dist/model';
 import { Inject, Injectable } from '@nestjs/common';
@@ -30,6 +32,7 @@ import { common } from '~backend/barrels/common';
 import { nodeCommon } from '~backend/barrels/node-common';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
+import { MALLOY_FILTER_ANY } from '~common/_index';
 import { getMalloyFiltersFractions } from '~node-common/functions/get-malloy-filters-fractions';
 import { EnvsService } from './envs.service';
 
@@ -236,85 +239,171 @@ export class MalloyService {
         errorMessage = `modelField is not defined (queryOperation.fieldId: ${queryOperation.fieldId})`;
       }
 
-      //
+      segment0.operations.items
+        .filter(
+          (operation: ASTViewOperation) =>
+            operation instanceof ASTWhereViewOperation ||
+            operation instanceof ASTHavingViewOperation
+        )
+        .forEach(item => {
+          item.delete();
+        });
 
-      let fieldName = modelField.malloyFieldName;
-      let fieldPath: string[] = modelField.malloyFieldPath;
+      // let isExistingFilter =
+      //   mconfig.filters.findIndex(y => y.fieldId === queryOperation.fieldId) >
+      //   -1;
 
-      let fstr =
-        queryOperation.fractions[0].brick === 'any'
-          ? ''
-          : queryOperation.fractions[0].brick;
+      // let preFilters: common.Filter[] =
+      //   isExistingFilter === true
+      //     ? mconfig.filters
+      //     : [
+      //         {
+      //           fieldId: queryOperation.fieldId,
+      //           fractions: queryOperation.fractions
+      //         },
+      //         ...mconfig.filters
+      //       ];
 
-      if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
-        // segment0.operations.items
-        //   .filter(
-        //     (operation: ASTViewOperation) =>
-        //       operation instanceof ASTWhereViewOperation
-        //   )
-        //   .forEach(item => {
-        //     item.delete();
-        //   });
+      queryOperation.filters.forEach(filter => {
+        // let fractions =
+        //   queryOperation.fieldId === filter.fieldId && isExistingFilter === true
+        //     ? [...filter.fractions, ...queryOperation.fractions]
+        //     : filter.fractions;
 
-        segment0.addWhere(fieldName, fieldPath, fstr);
-        // segment0.addWhere(fieldName, fieldPath, {
-        //   kind: 'string',
-        //   parsed: {
-        //     operator: ',',
-        //     members: [
-        //       { operator: 'starts', values: [`st`] },
-        //       { operator: 'ends', values: [`nd`] },
-        //       { operator: '~', escaped_values: [`null`] }
-        //     ]
-        //   }
-        // });
-        // segment0.addWhere(fieldName, fieldPath, {
-        //   kind: 'string',
-        //   parsed: {
-        //     operator: ',',
-        //     members: [{ operator: '~', escaped_values: [`-a`, '-b', '-null'] }]
-        //   }
-        // });
-        // segment0.addWhere(fieldName, fieldPath, {
-        //   kind: 'timestamp',
-        //   parsed: {
-        //     operator: 'or',
-        //     members: [
-        //       {
-        //         operator: 'in',
-        //         in: { moment: 'literal', literal: '2001-02-03', units: 'day' }
-        //       },
-        //       {
-        //         operator: 'in',
-        //         in: { moment: 'this', units: 'hour' }
-        //       }
-        //     ]
-        //   }
-        // });
-        // segment0.addWhere(fieldName, fieldPath, {
-        //   kind: 'timestamp',
-        //   parsed: {
-        //     operator: 'and',
-        //     members: [
-        //       { operator: 'in', not: true, in: { moment: 'now' } },
-        //       {
-        //         operator: 'in',
-        //         not: true,
-        //         in: { moment: 'this', units: 'month' }
-        //       }
-        //     ]
-        //   }
-        // });
-        // segment0.addWhere(fieldName, fieldPath, {
-        //   kind: 'string',
-        //   parsed: {
-        //     operator: 'and',
-        //     members: [{ operator: 'in', not: true, in: { moment: 'now' } }]
-        //   }
-        // });
-      } else {
-        segment0.addHaving(fieldName, fieldPath, fstr);
-      }
+        let anyValues = filter.fractions.filter(
+          y => y.brick === MALLOY_FILTER_ANY
+        );
+
+        let ORs = filter.fractions.filter(
+          y =>
+            y.operator === common.FractionOperatorEnum.Or &&
+            y.brick !== MALLOY_FILTER_ANY
+        );
+
+        let ANDs = filter.fractions.filter(
+          y =>
+            y.operator === common.FractionOperatorEnum.And &&
+            y.brick !== MALLOY_FILTER_ANY
+        );
+
+        let filterModelField = model.fields.find(x => x.id === filter.fieldId);
+
+        let filterFieldName = filterModelField.malloyFieldName;
+        let filterFieldPath: string[] = filterModelField.malloyFieldPath;
+
+        if (ORs.length > 0) {
+          let fstrORs =
+            filterModelField.result === common.FieldResultEnum.String
+              ? ORs.map(y => y.brickPart).join(', ')
+              : filterModelField.result === common.FieldResultEnum.Number
+                ? ORs.map(y => y.brickPart).join(' or ')
+                : filterModelField.result === common.FieldResultEnum.Boolean
+                  ? ORs.map(y => y.brickPart).join(' or ')
+                  : filterModelField.result === common.FieldResultEnum.Ts
+                    ? ORs.map(y => y.brickPart).join(' or ')
+                    : filterModelField.result === common.FieldResultEnum.Date
+                      ? ORs.map(y => y.brickPart).join(' or ')
+                      : undefined;
+
+          if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
+            segment0.addWhere(filterFieldName, filterFieldPath, fstrORs);
+          } else {
+            segment0.addHaving(filterFieldName, filterFieldPath, fstrORs);
+          }
+        }
+
+        if (ANDs.length > 0) {
+          let fstrANDs =
+            filterModelField.result === common.FieldResultEnum.String
+              ? ANDs.map(y => y.brickPart).join(', ')
+              : filterModelField.result === common.FieldResultEnum.Number
+                ? ANDs.map(y => y.brickPart).join(' and ')
+                : filterModelField.result === common.FieldResultEnum.Boolean
+                  ? ANDs.map(y => y.brickPart).join(' and ')
+                  : filterModelField.result === common.FieldResultEnum.Ts
+                    ? ANDs.map(y => y.brickPart).join(' and ')
+                    : filterModelField.result === common.FieldResultEnum.Date
+                      ? ANDs.map(y => y.brickPart).join(' and ')
+                      : undefined;
+
+          if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
+            segment0.addWhere(filterFieldName, filterFieldPath, fstrANDs);
+          } else {
+            segment0.addHaving(filterFieldName, filterFieldPath, fstrANDs);
+          }
+        }
+
+        if (anyValues.length > 0) {
+          let fstrAny = '';
+
+          if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
+            segment0.addWhere(filterFieldName, filterFieldPath, fstrAny);
+          } else {
+            segment0.addHaving(filterFieldName, filterFieldPath, fstrAny);
+          }
+        }
+      });
+
+      // let fstr =
+      // queryOperation.fractions[0].brick === 'any'
+      //   ? ''
+      //   : queryOperation.fractions[0].brick;
+
+      // segment0.addWhere(fieldName, fieldPath, {
+      //   kind: 'string',
+      //   parsed: {
+      //     operator: ',',
+      //     members: [
+      //       { operator: 'starts', values: [`st`] },
+      //       { operator: 'ends', values: [`nd`] },
+      //       { operator: '~', escaped_values: [`null`] }
+      //     ]
+      //   }
+      // });
+      // segment0.addWhere(fieldName, fieldPath, {
+      //   kind: 'string',
+      //   parsed: {
+      //     operator: ',',
+      //     members: [{ operator: '~', escaped_values: [`-a`, '-b', '-null'] }]
+      //   }
+      // });
+      // segment0.addWhere(fieldName, fieldPath, {
+      //   kind: 'timestamp',
+      //   parsed: {
+      //     operator: 'or',
+      //     members: [
+      //       {
+      //         operator: 'in',
+      //         in: { moment: 'literal', literal: '2001-02-03', units: 'day' }
+      //       },
+      //       {
+      //         operator: 'in',
+      //         in: { moment: 'this', units: 'hour' }
+      //       }
+      //     ]
+      //   }
+      // });
+      // segment0.addWhere(fieldName, fieldPath, {
+      //   kind: 'timestamp',
+      //   parsed: {
+      //     operator: 'and',
+      //     members: [
+      //       { operator: 'in', not: true, in: { moment: 'now' } },
+      //       {
+      //         operator: 'in',
+      //         not: true,
+      //         in: { moment: 'this', units: 'month' }
+      //       }
+      //     ]
+      //   }
+      // });
+      // segment0.addWhere(fieldName, fieldPath, {
+      //   kind: 'string',
+      //   parsed: {
+      //     operator: 'and',
+      //     members: [{ operator: 'in', not: true, in: { moment: 'now' } }]
+      //   }
+      // });
 
       let { filtersFractions, parsedFilters } = getMalloyFiltersFractions({
         segment: segment0,
