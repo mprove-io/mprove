@@ -545,6 +545,25 @@ export function getMalloyFiltersFractions(item: {
         // {value: 'null', label: 'null'},
         // {value: '-null', label: 'not null'},
 
+        // is last
+        // is last complete
+        // is next complete
+        // is starting (not before) // TODO:
+        // is after
+        // is before
+        // is through (not after) // TODO:
+        // is from ... to ...
+        // is begin ... for ...
+        // is on Year
+        // is on Quarter // TODO: ui
+        // is on Month
+        // is on Week // TODO: ui
+        // is on Day
+        // is on Hour
+        // is on Minute
+        // is any value
+        // is null
+
         // is in last
         // is in range
         // is on Year
@@ -743,7 +762,7 @@ export function getMalloyFiltersFractions(item: {
                   : undefined
               };
             } else if ((temporalFilter as To).operator === 'to') {
-              // temporal to (in range) [from ... to ...]
+              // temporal to (in range)
               let tFilter = temporalFilter as To;
               let from = tFilter.fromMoment as TemporalLiteral;
               let to = tFilter.toMoment as TemporalLiteral;
