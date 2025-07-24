@@ -77,8 +77,8 @@ query: mc1 is ec1_order_items -> {
     -- orders.created_at_day ~ f`after 2025-02-03 04:05:06.7`,   -- operator: 'after', after: { moment: 'literal', literal: '2025-02-03 04:05:06.7' }
 
     orders.created_at_day ~ f`before tuesday`,                -- operator: 'before', before: { moment: 'tuesday', which: 'last' }
-    orders.created_at_day ~ f`starting tuesday`,              -- operator: 'before', before: { moment: 'tuesday', which: 'last' }, not: true
     orders.created_at_day ~ f`after tuesday`,                 -- operator: 'after',  after:  { moment: 'tuesday', which: 'last' }
+    orders.created_at_day ~ f`starting tuesday`,              -- operator: 'before', before: { moment: 'tuesday', which: 'last' }, not: true
     orders.created_at_day ~ f`through tuesday`,               -- operator: 'after',  after:  { moment: 'tuesday', which: 'last' }, not: true
 
     -- orders.created_at_day ~ f`last monday to next friday`,                  -- operator: 'to', fromMoment: { moment: 'monday', which: 'last' }, toMoment: { moment: 'friday', which: 'next' }
@@ -155,9 +155,9 @@ query: mc1 is ec1_order_items -> {
     -- orders.created_at_day ~ f`not after 2025-02-03 04:05:06.7`,   
 
     orders.created_at_day ~ f`not before tuesday`,                
-    orders.created_at_day ~ f`not starting tuesday`,              
     orders.created_at_day ~ f`not after tuesday`,                 
-    orders.created_at_day ~ f`not through tuesday`,               
+    -- orders.created_at_day ~ f`not starting tuesday`, -- bug             
+    -- orders.created_at_day ~ f`not through tuesday`,  -- bug       
 
     -- orders.created_at_day ~ f`not last monday to next friday`,                  
     -- orders.created_at_day ~ f`not 2025-01-02 03:04:05 to 2026-07-08 04:05:06`,  

@@ -549,10 +549,10 @@ export function getMalloyFiltersFractions(item: {
         // is last
         // is last complete
         // is next complete
-        // is starting (not before) // TODO:
+        // is starting (not before)
         // is after
         // is before
-        // is through (not after) // TODO:
+        // is through (not after)
         // is from ... to ...
         // is begin ... for ...
         // is on Year
@@ -722,13 +722,13 @@ export function getMalloyFiltersFractions(item: {
                 brick:
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? `f\`before ${beforeMomentStr}\``
-                    : `f\`not before ${beforeMomentStr}\``,
+                    : `f\`starting ${beforeMomentStr}\``,
                 brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? common.FractionTypeEnum.TsIsBeforeDate
-                    : common.FractionTypeEnum.TsIsNotBeforeDate,
+                    : common.FractionTypeEnum.TsIsStarting,
                 tsBeforeMoment: before,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
@@ -760,13 +760,13 @@ export function getMalloyFiltersFractions(item: {
                 brick:
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? `f\`after ${afterMomentStr}\``
-                    : `f\`not after ${afterMomentStr}\``,
+                    : `f\`through ${afterMomentStr}\``,
                 brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? common.FractionTypeEnum.TsIsAfterDate
-                    : common.FractionTypeEnum.TsIsNotAfterDate,
+                    : common.FractionTypeEnum.TsIsThrough,
                 tsAfterMoment: after,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)

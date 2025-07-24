@@ -69,8 +69,8 @@ export enum FractionTypeEnum {
 
   TsIsNotInLast = 'TsIsNotInLast', // new
   TsIsNotInNext = 'TsIsNotInNext', // new
-  TsIsNotBeforeDate = 'TsIsNotBeforeDate', // new
-  TsIsNotAfterDate = 'TsIsNotAfterDate', // new
+  TsIsStarting = 'TsIsStarting', // new // TsIsNotBeforeDate
+  TsIsThrough = 'TsIsThrough', // new // TsIsNotAfterDate
   TsIsNotInRange = 'TsIsNotInRange', // new
   TsIsNotBeginFor = 'TsIsNotBeginFor', // new
   TsIsNotOnYear = 'TsIsNotOnYear', // new
