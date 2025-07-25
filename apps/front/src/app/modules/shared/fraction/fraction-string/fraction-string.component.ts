@@ -21,6 +21,7 @@ import {
   take,
   tap
 } from 'rxjs';
+import { MALLOY_FILTER_ANY } from '~common/constants/top';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -514,7 +515,7 @@ export class FractionStringComponent implements OnInit, OnDestroy {
 
     switch (fractionType) {
       case this.fractionTypeEnum.StringIsAnyValue: {
-        let mBrick = 'f``';
+        let mBrick = MALLOY_FILTER_ANY;
 
         this.fraction = {
           brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`,
