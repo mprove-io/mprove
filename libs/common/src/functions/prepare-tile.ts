@@ -26,10 +26,13 @@ export function prepareTile(item: {
         apply_to: x.fieldId
       };
 
-      if (mconfig.modelType !== enums.ModelTypeEnum.Store) {
-        // if (mconfig.isStoreModel === false) {
+      if (mconfig.modelType === enums.ModelTypeEnum.SQL) {
         parameter.conditions = x.fractions.map(fraction => fraction.brick);
-      } else {
+      } else if (mconfig.modelType === enums.ModelTypeEnum.Malloy) {
+        let fractionsBricks = x.fractions.map(fraction => fraction.brick);
+
+        parameter.conditions = [...new Set(fractionsBricks)];
+      } else if (mconfig.modelType === enums.ModelTypeEnum.Store) {
         parameter.fractions = x.fractions.map(mconfigFraction => {
           let fileFraction: FileFraction = {};
 

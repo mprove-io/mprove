@@ -28,6 +28,9 @@ export function checkVmdrFilterConditions<T extends types.vsmdrType>(
 
     // x.filters = {};
 
+    // console.log('checkVmdrFilterConditions');
+    // console.log(x);
+
     x.fields.forEach(field => {
       if (
         field.fieldClass !== common.FieldClassEnum.Filter ||
