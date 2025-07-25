@@ -82,6 +82,15 @@
       (fractionUpdate)="fractionUpdate.emit($event)"
     ></m-fraction-ts>
 
+    <m-fraction-boolean
+      *ngSwitchCase="fieldResultEnum.Boolean"
+      [fraction]="fraction"
+      [isFirst]="isFirst"
+      [fractionIndex]="fractionIndex"
+      [isDisabled]="isDisabled"
+      (fractionUpdate)="fractionUpdate.emit($event)"
+    ></m-fraction-boolean>
+
     <m-fraction-yesno
       *ngSwitchCase="fieldResultEnum.Yesno"
       [fraction]="fraction"

@@ -27,6 +27,7 @@ import { DashboardTileChartComponent } from './dashboard-tile-chart/dashboard-ti
 import { FieldLabelComponent } from './field-label/field-label.component';
 import { FieldResultComponent } from './field-result/field-result.component';
 import { FormatNumberComponent } from './format-number/format-number.component';
+import { FractionBooleanComponent } from './fraction/fraction-boolean/fraction-boolean.component';
 import { FractionDayOfWeekIndexComponent } from './fraction/fraction-day-of-week-index/fraction-day-of-week-index.component';
 import { FractionDayOfWeekComponent } from './fraction/fraction-day-of-week/fraction-day-of-week.component';
 import { FractionMonthNameComponent } from './fraction/fraction-month-name/fraction-month-name.component';
@@ -186,6 +187,7 @@ let sharedComponents = [
   StoreFractionDatePickerComponent,
   FractionStringComponent,
   FractionNumberComponent,
+  FractionBooleanComponent,
   FractionYesnoComponent,
   FractionMonthNameComponent,
   FractionDayOfWeekComponent,

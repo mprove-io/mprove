@@ -1,0 +1,42 @@
+<div class="ml-2 flex h-16 flex-row space-x-5">
+  <div
+    tp="Turn off formula to activate control"
+    [tpIsEnabled]="isDisabled === true"
+  >
+    <ng-select
+      #fractionBooleanTypeSelect
+      [fixNgSelectBottom]="fractionBooleanTypeSelect"
+      data-cy="fractionBooleanTypeSelect"
+      class="popup-55 w-[270px]"
+      [ngClass]="{
+        'cursor-default': isDisabled === true
+      }"
+      [items]="fractionBooleanTypesList"
+      [clearable]="false"
+      [searchable]="false"
+      [disabled]="isDisabled === true"
+      [(ngModel)]="fraction.type"
+      (change)="typeChange($event)"
+      (keyup.esc)="
+        $event.stopImmediatePropagation(); fractionBooleanTypeSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); fractionBooleanTypeSelect.blur()
+      "
+      appendTo="body"
+      bindLabel="label"
+      bindValue="value"
+    >
+      <ng-template ng-label-tmp let-item="item">
+        <div class="ml-1 truncate">{{ item.label }}</div>
+      </ng-template>
+
+      <ng-template ng-option-tmp let-item="item">
+        <div class="flex flex-row">
+          <div class="ml-1">{{ item.operator | uppercase }} -</div>
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </div>
+      </ng-template>
+    </ng-select>
+  </div>
+</div>

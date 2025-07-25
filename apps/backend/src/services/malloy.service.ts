@@ -274,16 +274,50 @@ export class MalloyService {
           y => y.brick === MALLOY_FILTER_ANY
         );
 
+        let booleanValues = filter.fractions.filter(
+          y =>
+            [
+              common.FractionTypeEnum.BooleanIsTrue,
+              common.FractionTypeEnum.BooleanIsFalse,
+              common.FractionTypeEnum.BooleanIsFalseOrNull,
+              common.FractionTypeEnum.BooleanIsNull,
+              common.FractionTypeEnum.BooleanIsNotTrue,
+              common.FractionTypeEnum.BooleanIsNotFalse,
+              common.FractionTypeEnum.BooleanIsNotFalseOrNull,
+              common.FractionTypeEnum.BooleanIsNotNull
+            ].indexOf(y.type) > -1
+        );
+
         let ORs = filter.fractions.filter(
           y =>
             y.operator === common.FractionOperatorEnum.Or &&
-            y.brick !== MALLOY_FILTER_ANY
+            y.brick !== MALLOY_FILTER_ANY &&
+            [
+              common.FractionTypeEnum.BooleanIsTrue,
+              common.FractionTypeEnum.BooleanIsFalse,
+              common.FractionTypeEnum.BooleanIsFalseOrNull,
+              common.FractionTypeEnum.BooleanIsNull,
+              common.FractionTypeEnum.BooleanIsNotTrue,
+              common.FractionTypeEnum.BooleanIsNotFalse,
+              common.FractionTypeEnum.BooleanIsNotFalseOrNull,
+              common.FractionTypeEnum.BooleanIsNotNull
+            ].indexOf(y.type) < 0
         );
 
         let ANDs = filter.fractions.filter(
           y =>
             y.operator === common.FractionOperatorEnum.And &&
-            y.brick !== MALLOY_FILTER_ANY
+            y.brick !== MALLOY_FILTER_ANY &&
+            [
+              common.FractionTypeEnum.BooleanIsTrue,
+              common.FractionTypeEnum.BooleanIsFalse,
+              common.FractionTypeEnum.BooleanIsFalseOrNull,
+              common.FractionTypeEnum.BooleanIsNull,
+              common.FractionTypeEnum.BooleanIsNotTrue,
+              common.FractionTypeEnum.BooleanIsNotFalse,
+              common.FractionTypeEnum.BooleanIsNotFalseOrNull,
+              common.FractionTypeEnum.BooleanIsNotNull
+            ].indexOf(y.type) < 0
         );
 
         let filterModelField = model.fields.find(x => x.id === filter.fieldId);
@@ -297,13 +331,13 @@ export class MalloyService {
               ? ORs.map(y => y.brick.slice(2, -1)).join(', ')
               : filterModelField.result === common.FieldResultEnum.Number
                 ? ORs.map(y => y.brick.slice(2, -1)).join(' or ')
-                : filterModelField.result === common.FieldResultEnum.Boolean
+                : // : filterModelField.result === common.FieldResultEnum.Boolean
+                  //   ? ORs.map(y => y.brick.slice(2, -1)).join(' or ')
+                  filterModelField.result === common.FieldResultEnum.Ts
                   ? ORs.map(y => y.brick.slice(2, -1)).join(' or ')
-                  : filterModelField.result === common.FieldResultEnum.Ts
+                  : filterModelField.result === common.FieldResultEnum.Date
                     ? ORs.map(y => y.brick.slice(2, -1)).join(' or ')
-                    : filterModelField.result === common.FieldResultEnum.Date
-                      ? ORs.map(y => y.brick.slice(2, -1)).join(' or ')
-                      : undefined;
+                    : undefined;
 
           if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
             segment0.addWhere(filterFieldName, filterFieldPath, fstrORs);
@@ -318,19 +352,31 @@ export class MalloyService {
               ? ANDs.map(y => y.brick.slice(2, -1)).join(', ')
               : filterModelField.result === common.FieldResultEnum.Number
                 ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
-                : filterModelField.result === common.FieldResultEnum.Boolean
+                : // : filterModelField.result === common.FieldResultEnum.Boolean
+                  //   ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
+                  filterModelField.result === common.FieldResultEnum.Ts
                   ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
-                  : filterModelField.result === common.FieldResultEnum.Ts
+                  : filterModelField.result === common.FieldResultEnum.Date
                     ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
-                    : filterModelField.result === common.FieldResultEnum.Date
-                      ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
-                      : undefined;
+                    : undefined;
 
           if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
             segment0.addWhere(filterFieldName, filterFieldPath, fstrANDs);
           } else {
             segment0.addHaving(filterFieldName, filterFieldPath, fstrANDs);
           }
+        }
+
+        if (booleanValues.length > 0) {
+          booleanValues.forEach(x => {
+            let fstrAny = x.brick.slice(2, -1);
+
+            if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
+              segment0.addWhere(filterFieldName, filterFieldPath, fstrAny);
+            } else {
+              segment0.addHaving(filterFieldName, filterFieldPath, fstrAny);
+            }
+          });
         }
 
         if (anyValues.length > 0) {

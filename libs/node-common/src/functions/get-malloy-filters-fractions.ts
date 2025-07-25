@@ -265,7 +265,7 @@ export function getMalloyFiltersFractions(item: {
           let fraction: common.Fraction = {
             brick: MALLOY_FILTER_ANY,
             parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
-            operator: common.FractionOperatorEnum.Or,
+            operator: common.FractionOperatorEnum.And, // "And" isntead of "Or"
             type: common.FractionTypeEnum.BooleanIsAnyValue
           };
 
@@ -277,22 +277,22 @@ export function getMalloyFiltersFractions(item: {
         }
 
         booleanFilters.forEach(booleanFilter => {
+          let fractionOperator =
+            // (booleanFilter as { not: boolean })?.not === true
+            //   ? common.FractionOperatorEnum.And
+            //   : common.FractionOperatorEnum.Or;
+            common.FractionOperatorEnum.And;
+
+          let isNot = (booleanFilter as { not: boolean })?.not === true;
+
           if ((booleanFilter as Null).operator === 'null') {
             // boolean null
-            let fractionOperator =
-              (booleanFilter as { not: boolean })?.not === true
-                ? common.FractionOperatorEnum.And
-                : common.FractionOperatorEnum.Or;
-
             let fraction: common.Fraction = {
-              brick:
-                fractionOperator === common.FractionOperatorEnum.Or
-                  ? 'f`null`'
-                  : 'f`not null`',
+              brick: isNot === false ? 'f`null`' : 'f`not null`',
               parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
               operator: fractionOperator,
               type:
-                fractionOperator === common.FractionOperatorEnum.Or
+                isNot === false
                   ? common.FractionTypeEnum.BooleanIsNull
                   : common.FractionTypeEnum.BooleanIsNotNull
             };
@@ -307,23 +307,18 @@ export function getMalloyFiltersFractions(item: {
             -1
           ) {
             // boolean main
-            let fractionOperator =
-              (booleanFilter as { not: boolean })?.not === true
-                ? common.FractionOperatorEnum.And
-                : common.FractionOperatorEnum.Or;
-
             let fraction: common.Fraction = {
               brick:
                 booleanFilter.operator === 'true'
-                  ? fractionOperator === common.FractionOperatorEnum.Or
+                  ? isNot === false
                     ? 'f`true`'
                     : 'f`not true`'
                   : booleanFilter.operator === 'false'
-                    ? fractionOperator === common.FractionOperatorEnum.Or
+                    ? isNot === false
                       ? 'f`=false`'
                       : 'f`not =false`'
                     : booleanFilter.operator === 'false_or_null'
-                      ? fractionOperator === common.FractionOperatorEnum.Or
+                      ? isNot === false
                         ? 'f`false`'
                         : 'f`not false`'
                       : undefined,
@@ -331,15 +326,15 @@ export function getMalloyFiltersFractions(item: {
               operator: fractionOperator,
               type:
                 booleanFilter.operator === 'true'
-                  ? fractionOperator === common.FractionOperatorEnum.Or
+                  ? isNot === false
                     ? common.FractionTypeEnum.BooleanIsTrue
                     : common.FractionTypeEnum.BooleanIsNotTrue
                   : booleanFilter.operator === 'false'
-                    ? fractionOperator === common.FractionOperatorEnum.Or
+                    ? isNot === false
                       ? common.FractionTypeEnum.BooleanIsFalse
                       : common.FractionTypeEnum.BooleanIsNotFalse
                     : booleanFilter.operator === 'false_or_null'
-                      ? fractionOperator === common.FractionOperatorEnum.Or
+                      ? isNot === false
                         ? common.FractionTypeEnum.BooleanIsFalseOrNull
                         : common.FractionTypeEnum.BooleanIsNotFalseOrNull
                       : undefined
