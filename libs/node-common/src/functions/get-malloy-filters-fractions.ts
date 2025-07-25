@@ -191,8 +191,8 @@ export function getMalloyFiltersFractions(item: {
                               : `f\`-%${eValue}\``
                             : stringFilter.operator === 'empty'
                               ? common.FractionOperatorEnum.Or
-                                ? `f\`empty\``
-                                : `f\`-empty\``
+                                ? 'f`empty`'
+                                : 'f`-empty`'
                               : undefined,
                 parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,

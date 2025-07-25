@@ -60,17 +60,33 @@ export class ModelFiltersComponent {
       .map(y => y.fieldId)
       .indexOf(filterExtended.fieldId);
 
-    newMconfig.filters = [
+    let newFilters = [
       ...newMconfig.filters.slice(0, filterIndex),
       newFilter,
       ...newMconfig.filters.slice(filterIndex + 1)
     ];
 
-    this.chartService.editChart({
-      mconfig: newMconfig,
-      isDraft: this.chart.draft,
-      chartId: this.chart.chartId
-    });
+    if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId,
+        queryOperation: {
+          type: common.QueryOperationTypeEnum.WhereOrHaving,
+          timezone: newMconfig.timezone,
+          fieldId: filterExtended.fieldId,
+          filters: newFilters
+        }
+      });
+    } else {
+      newMconfig.filters = newFilters;
+
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId
+      });
+    }
 
     // this.mconfigService.navCreateTempMconfigAndQuery({
     //   newMconfig: newMconfig

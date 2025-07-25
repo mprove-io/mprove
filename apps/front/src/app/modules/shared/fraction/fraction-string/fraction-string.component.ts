@@ -481,8 +481,13 @@ export class FractionStringComponent implements OnInit, OnDestroy {
 
     switch (fractionType) {
       case this.fractionTypeEnum.StringIsAnyValue: {
+        let mBrick = 'f``';
+
         this.fraction = {
-          brick: `any`,
+          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType
         };
@@ -492,22 +497,15 @@ export class FractionStringComponent implements OnInit, OnDestroy {
       }
 
       case this.fractionTypeEnum.StringIsEqualTo: {
+        let mBrick = `f\`${this.defaultStringValue}\``;
+
         this.fraction = {
-          brick: `-${this.defaultStringValue}-`,
-          operator: common.FractionOperatorEnum.Or,
-          type: fractionType,
-          stringValue: this.defaultStringValue
-        };
-
-        this.updateControlValueFromFraction();
-        this.emitFractionUpdate();
-
-        break;
-      }
-
-      case this.fractionTypeEnum.StringContains: {
-        this.fraction = {
-          brick: `%${this.defaultStringValue}%`,
+          brick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : `-${this.defaultStringValue}-`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
           stringValue: this.defaultStringValue
@@ -520,8 +518,15 @@ export class FractionStringComponent implements OnInit, OnDestroy {
       }
 
       case this.fractionTypeEnum.StringStartsWith: {
+        let mBrick = `f\`${this.defaultStringValue}%\``;
+
         this.fraction = {
-          brick: `${this.defaultStringValue}%`,
+          brick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : `${this.defaultStringValue}%`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
           stringValue: this.defaultStringValue
@@ -534,8 +539,55 @@ export class FractionStringComponent implements OnInit, OnDestroy {
       }
 
       case this.fractionTypeEnum.StringEndsWith: {
+        let mBrick = `f\`%${this.defaultStringValue}\``;
+
         this.fraction = {
-          brick: `%${this.defaultStringValue}`,
+          brick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : `%${this.defaultStringValue}`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
+          operator: common.FractionOperatorEnum.Or,
+          type: fractionType,
+          stringValue: this.defaultStringValue
+        };
+
+        this.updateControlValueFromFraction();
+        this.emitFractionUpdate();
+
+        break;
+      }
+
+      case this.fractionTypeEnum.StringContains: {
+        let mBrick = `f\`%${this.defaultStringValue}%\``;
+
+        this.fraction = {
+          brick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : `%${this.defaultStringValue}%`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
+          operator: common.FractionOperatorEnum.Or,
+          type: fractionType,
+          stringValue: this.defaultStringValue
+        };
+
+        this.updateControlValueFromFraction();
+        this.emitFractionUpdate();
+
+        break;
+      }
+
+      case this.fractionTypeEnum.StringIsLike: {
+        let mBrick = `f\`a%c\``;
+
+        this.fraction = {
+          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`, // TODO: remove
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
           stringValue: this.defaultStringValue
@@ -548,8 +600,13 @@ export class FractionStringComponent implements OnInit, OnDestroy {
       }
 
       case this.fractionTypeEnum.StringIsNull: {
+        let mBrick = 'f`null`';
+
         this.fraction = {
-          brick: `null`,
+          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `null`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType
         };
@@ -559,8 +616,13 @@ export class FractionStringComponent implements OnInit, OnDestroy {
       }
 
       case this.fractionTypeEnum.StringIsBlank: {
+        let mBrick = 'f`empty`';
+
         this.fraction = {
-          brick: `blank`,
+          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `blank`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType
         };
@@ -570,21 +632,15 @@ export class FractionStringComponent implements OnInit, OnDestroy {
       }
 
       case this.fractionTypeEnum.StringIsNotEqualTo: {
-        this.fraction = {
-          brick: `not -${this.defaultStringValue}-`,
-          operator: common.FractionOperatorEnum.And,
-          type: fractionType,
-          stringValue: this.defaultStringValue
-        };
+        let mBrick = `f\`-${this.defaultStringValue}\``;
 
-        this.updateControlValueFromFraction();
-        this.emitFractionUpdate();
-        break;
-      }
-
-      case this.fractionTypeEnum.StringDoesNotContain: {
         this.fraction = {
-          brick: `not %${this.defaultStringValue}%`,
+          brick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : `not -${this.defaultStringValue}-`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
           operator: common.FractionOperatorEnum.And,
           type: fractionType,
           stringValue: this.defaultStringValue
@@ -596,8 +652,15 @@ export class FractionStringComponent implements OnInit, OnDestroy {
       }
 
       case this.fractionTypeEnum.StringDoesNotStartWith: {
+        let mBrick = `f\`-${this.defaultStringValue}%\``;
+
         this.fraction = {
-          brick: `${this.defaultStringValue}% not`,
+          brick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : `${this.defaultStringValue}% not`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
           operator: common.FractionOperatorEnum.And,
           type: fractionType,
           stringValue: this.defaultStringValue
@@ -609,8 +672,15 @@ export class FractionStringComponent implements OnInit, OnDestroy {
       }
 
       case this.fractionTypeEnum.StringDoesNotEndWith: {
+        let mBrick = `f\`-%${this.defaultStringValue}\``;
+
         this.fraction = {
-          brick: `not %${this.defaultStringValue}`,
+          brick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : `not %${this.defaultStringValue}`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
           operator: common.FractionOperatorEnum.And,
           type: fractionType,
           stringValue: this.defaultStringValue
@@ -621,9 +691,54 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         break;
       }
 
-      case this.fractionTypeEnum.StringIsNotNull: {
+      case this.fractionTypeEnum.StringDoesNotContain: {
+        let mBrick = `f\`-%${this.defaultStringValue}%\``;
+
         this.fraction = {
-          brick: `not null`,
+          brick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : `not %${this.defaultStringValue}%`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
+          operator: common.FractionOperatorEnum.And,
+          type: fractionType,
+          stringValue: this.defaultStringValue
+        };
+
+        this.updateControlValueFromFraction();
+        this.emitFractionUpdate();
+        break;
+      }
+
+      case this.fractionTypeEnum.StringIsNotLike: {
+        let mBrick = `f\`-${this.defaultStringValue}\``;
+
+        this.fraction = {
+          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`, // TODO: remove
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
+          operator: common.FractionOperatorEnum.And,
+          type: fractionType,
+          stringValue: this.defaultStringValue
+        };
+
+        this.updateControlValueFromFraction();
+        this.emitFractionUpdate();
+        break;
+      }
+
+      case this.fractionTypeEnum.StringIsNotBlank: {
+        let mBrick = 'f`-empty`';
+
+        this.fraction = {
+          brick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : `not blank`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
           operator: common.FractionOperatorEnum.And,
           type: fractionType
         };
@@ -632,9 +747,16 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         break;
       }
 
-      case this.fractionTypeEnum.StringIsNotBlank: {
+      case this.fractionTypeEnum.StringIsNotNull: {
+        let mBrick = 'f`-null`';
+
         this.fraction = {
-          brick: `not blank`,
+          brick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : `not null`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
           operator: common.FractionOperatorEnum.And,
           type: fractionType
         };

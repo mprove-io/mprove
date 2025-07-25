@@ -3,21 +3,21 @@ export enum FractionTypeEnum {
   //
   StringIsAnyValue = 'StringIsAnyValue',
 
-  StringIsLike = 'StringIsLike', // new
   StringIsEqualTo = 'StringIsEqualTo',
-  StringContains = 'StringContains',
   StringStartsWith = 'StringStartsWith',
   StringEndsWith = 'StringEndsWith',
-  StringIsNull = 'StringIsNull',
+  StringContains = 'StringContains',
+  StringIsLike = 'StringIsLike', // new
   StringIsBlank = 'StringIsBlank',
+  StringIsNull = 'StringIsNull',
 
-  StringIsNotLike = 'StringIsNotLike', // new
   StringIsNotEqualTo = 'StringIsNotEqualTo',
-  StringDoesNotContain = 'StringDoesNotContain',
   StringDoesNotStartWith = 'StringDoesNotStartWith',
   StringDoesNotEndWith = 'StringDoesNotEndWith',
-  StringIsNotNull = 'StringIsNotNull',
+  StringDoesNotContain = 'StringDoesNotContain',
+  StringIsNotLike = 'StringIsNotLike', // new
   StringIsNotBlank = 'StringIsNotBlank',
+  StringIsNotNull = 'StringIsNotNull',
 
   NumberIsAnyValue = 'NumberIsAnyValue',
 
