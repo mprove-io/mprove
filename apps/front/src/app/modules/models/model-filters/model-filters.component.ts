@@ -252,12 +252,14 @@ export class ModelFiltersComponent {
   ) {
     let newMconfig = this.structService.makeMconfig();
 
+    let newFilters = [...newMconfig.filters];
+
     let fractions = filterExtended.fractions;
 
     if (fractions.length === 1) {
-      newMconfig.filters = [
-        ...newMconfig.filters.slice(0, filterIndex),
-        ...newMconfig.filters.slice(filterIndex + 1)
+      newFilters = [
+        ...newFilters.slice(0, filterIndex),
+        ...newFilters.slice(filterIndex + 1)
       ];
     } else {
       let newFractions = [
@@ -269,18 +271,34 @@ export class ModelFiltersComponent {
         fractions: newFractions
       });
 
-      newMconfig.filters = [
-        ...newMconfig.filters.slice(0, filterIndex),
+      newFilters = [
+        ...newFilters.slice(0, filterIndex),
         newFilter,
-        ...newMconfig.filters.slice(filterIndex + 1)
+        ...newFilters.slice(filterIndex + 1)
       ];
     }
 
-    this.chartService.editChart({
-      mconfig: newMconfig,
-      isDraft: this.chart.draft,
-      chartId: this.chart.chartId
-    });
+    if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId,
+        queryOperation: {
+          type: common.QueryOperationTypeEnum.WhereOrHaving,
+          timezone: newMconfig.timezone,
+          fieldId: filterExtended.fieldId,
+          filters: newFilters
+        }
+      });
+    } else {
+      newMconfig.filters = newFilters;
+
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId
+      });
+    }
 
     // this.mconfigService.navCreateTempMconfigAndQuery({
     //   newMconfig: newMconfig
@@ -290,15 +308,31 @@ export class ModelFiltersComponent {
   deleteFilter(filterExtended: common.FilterX) {
     let newMconfig = this.structService.makeMconfig();
 
-    newMconfig.filters = newMconfig.filters.filter(
+    let newFilters = newMconfig.filters.filter(
       x => x.fieldId !== filterExtended.fieldId
     );
 
-    this.chartService.editChart({
-      mconfig: newMconfig,
-      isDraft: this.chart.draft,
-      chartId: this.chart.chartId
-    });
+    if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId,
+        queryOperation: {
+          type: common.QueryOperationTypeEnum.WhereOrHaving,
+          timezone: newMconfig.timezone,
+          fieldId: filterExtended.fieldId,
+          filters: newFilters
+        }
+      });
+    } else {
+      newMconfig.filters = newFilters;
+
+      this.chartService.editChart({
+        mconfig: newMconfig,
+        isDraft: this.chart.draft,
+        chartId: this.chart.chartId
+      });
+    }
 
     // this.mconfigService.navCreateTempMconfigAndQuery({
     //   newMconfig: newMconfig
