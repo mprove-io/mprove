@@ -404,14 +404,7 @@ export class FractionStringComponent implements OnInit, OnDestroy {
     let value = this.fractionForm.controls['stringValue'].value;
 
     if (value !== this.fraction.stringValue) {
-      let newBrick = this.getValueBrick(this.fraction.type, value);
-
-      this.fraction = {
-        brick: newBrick,
-        operator: this.fraction.operator,
-        type: this.fraction.type,
-        stringValue: value
-      };
+      this.fraction = this.getChangedFraction({ value: value });
 
       if (this.fractionForm.valid) {
         this.emitFractionUpdate();
@@ -423,14 +416,7 @@ export class FractionStringComponent implements OnInit, OnDestroy {
     let value = this.fractionForm.controls['stringValue'].value;
 
     if (value !== this.fraction.stringValue) {
-      let newBrick = this.getValueBrick(this.fraction.type, value);
-
-      this.fraction = {
-        brick: newBrick,
-        operator: this.fraction.operator,
-        type: this.fraction.type,
-        stringValue: value
-      };
+      this.fraction = this.getChangedFraction({ value: value });
 
       if (this.fractionForm.valid) {
         this.emitFractionUpdate();
@@ -444,29 +430,76 @@ export class FractionStringComponent implements OnInit, OnDestroy {
     );
   }
 
-  getValueBrick(fractionType: common.FractionTypeEnum, value: string) {
-    let newBrick =
+  getChangedFraction(item: { value: string }) {
+    let { value } = item;
+
+    let fractionType = this.fraction.type;
+
+    let sqlBrick =
       fractionType === common.FractionTypeEnum.StringIsEqualTo
         ? `-${value}-`
-        : fractionType === common.FractionTypeEnum.StringContains
-          ? `%${value}%`
-          : fractionType === common.FractionTypeEnum.StringStartsWith
-            ? `${value}%`
-            : fractionType === common.FractionTypeEnum.StringEndsWith
-              ? `%${value}`
-              : fractionType === common.FractionTypeEnum.StringIsNotEqualTo
-                ? `not -${value}-`
-                : fractionType === common.FractionTypeEnum.StringDoesNotContain
-                  ? `not %${value}%`
+        : fractionType === common.FractionTypeEnum.StringStartsWith
+          ? `${value}%`
+          : fractionType === common.FractionTypeEnum.StringEndsWith
+            ? `%${value}`
+            : fractionType === common.FractionTypeEnum.StringContains
+              ? `%${value}%`
+              : fractionType === common.FractionTypeEnum.StringIsLike
+                ? `any` // TODO: remove
+                : fractionType === common.FractionTypeEnum.StringIsNotEqualTo
+                  ? `not -${value}-`
                   : fractionType ===
                       common.FractionTypeEnum.StringDoesNotStartWith
                     ? `${value}% not`
                     : fractionType ===
                         common.FractionTypeEnum.StringDoesNotEndWith
                       ? `not %${value}`
-                      : '';
+                      : fractionType ===
+                          common.FractionTypeEnum.StringDoesNotContain
+                        ? `not %${value}%`
+                        : fractionType ===
+                            common.FractionTypeEnum.StringIsNotLike
+                          ? `any` // TODO: remove
+                          : '';
 
-    return newBrick;
+    let mBrick =
+      fractionType === common.FractionTypeEnum.StringIsEqualTo
+        ? `f\`${value}\``
+        : fractionType === common.FractionTypeEnum.StringStartsWith
+          ? `f\`${value}%\``
+          : fractionType === common.FractionTypeEnum.StringEndsWith
+            ? `f\`%${value}\``
+            : fractionType === common.FractionTypeEnum.StringContains
+              ? `f\`%${value}%\``
+              : fractionType === common.FractionTypeEnum.StringIsLike
+                ? `f\`${value}\``
+                : fractionType === common.FractionTypeEnum.StringIsNotEqualTo
+                  ? `f\`-${value}\``
+                  : fractionType ===
+                      common.FractionTypeEnum.StringDoesNotStartWith
+                    ? `f\`-${value}%\``
+                    : fractionType ===
+                        common.FractionTypeEnum.StringDoesNotEndWith
+                      ? `f\`-%${value}\``
+                      : fractionType ===
+                          common.FractionTypeEnum.StringDoesNotContain
+                        ? `f\`-%${value}%\``
+                        : fractionType ===
+                            common.FractionTypeEnum.StringIsNotLike
+                          ? `f\`-${value}\``
+                          : '';
+
+    let newFraction: common.Fraction = {
+      brick: common.isDefined(this.fraction.parentBrick) ? mBrick : sqlBrick,
+      parentBrick: common.isDefined(this.fraction.parentBrick)
+        ? mBrick
+        : undefined,
+      operator: this.fraction.operator,
+      type: fractionType,
+      stringValue: value
+    };
+
+    return newFraction;
   }
 
   emitFractionUpdate() {
