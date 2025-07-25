@@ -294,15 +294,15 @@ export class MalloyService {
         if (ORs.length > 0) {
           let fstrORs =
             filterModelField.result === common.FieldResultEnum.String
-              ? ORs.map(y => y.brick.slice(1, -2)).join(', ')
+              ? ORs.map(y => y.brick.slice(2, -1)).join(', ')
               : filterModelField.result === common.FieldResultEnum.Number
-                ? ORs.map(y => y.brick.slice(1, -2)).join(' or ')
+                ? ORs.map(y => y.brick.slice(2, -1)).join(' or ')
                 : filterModelField.result === common.FieldResultEnum.Boolean
-                  ? ORs.map(y => y.brick.slice(1, -2)).join(' or ')
+                  ? ORs.map(y => y.brick.slice(2, -1)).join(' or ')
                   : filterModelField.result === common.FieldResultEnum.Ts
-                    ? ORs.map(y => y.brick.slice(1, -2)).join(' or ')
+                    ? ORs.map(y => y.brick.slice(2, -1)).join(' or ')
                     : filterModelField.result === common.FieldResultEnum.Date
-                      ? ORs.map(y => y.brick.slice(1, -2)).join(' or ')
+                      ? ORs.map(y => y.brick.slice(2, -1)).join(' or ')
                       : undefined;
 
           if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
@@ -315,15 +315,15 @@ export class MalloyService {
         if (ANDs.length > 0) {
           let fstrANDs =
             filterModelField.result === common.FieldResultEnum.String
-              ? ANDs.map(y => y.brick.slice(1, -2)).join(', ')
+              ? ANDs.map(y => y.brick.slice(2, -1)).join(', ')
               : filterModelField.result === common.FieldResultEnum.Number
-                ? ANDs.map(y => y.brick.slice(1, -2)).join(' and ')
+                ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
                 : filterModelField.result === common.FieldResultEnum.Boolean
-                  ? ANDs.map(y => y.brick.slice(1, -2)).join(' and ')
+                  ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
                   : filterModelField.result === common.FieldResultEnum.Ts
-                    ? ANDs.map(y => y.brick.slice(1, -2)).join(' and ')
+                    ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
                     : filterModelField.result === common.FieldResultEnum.Date
-                      ? ANDs.map(y => y.brick.slice(1, -2)).join(' and ')
+                      ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
                       : undefined;
 
           if (modelField.fieldClass === common.FieldClassEnum.Dimension) {

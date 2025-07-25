@@ -29,9 +29,11 @@ export function prepareTile(item: {
       if (mconfig.modelType === enums.ModelTypeEnum.SQL) {
         parameter.conditions = x.fractions.map(fraction => fraction.brick);
       } else if (mconfig.modelType === enums.ModelTypeEnum.Malloy) {
-        let fractionsBricks = x.fractions.map(fraction => fraction.brick);
+        let fractionsBrickParents = x.fractions.map(
+          fraction => fraction.brickParent
+        );
 
-        parameter.conditions = [...new Set(fractionsBricks)];
+        parameter.conditions = [...new Set(fractionsBrickParents)];
       } else if (mconfig.modelType === enums.ModelTypeEnum.Store) {
         parameter.fractions = x.fractions.map(mconfigFraction => {
           let fileFraction: FileFraction = {};
