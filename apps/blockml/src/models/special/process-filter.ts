@@ -546,13 +546,13 @@ export function processFilter(item: {
           fractions.push({
             brick: brick,
             operator: common.FractionOperatorEnum.And,
-            type: common.FractionTypeEnum.StringIsNotBlank
+            type: common.FractionTypeEnum.StringIsNotEmpty
           });
         } else {
           fractions.push({
             brick: brick,
             operator: common.FractionOperatorEnum.Or,
-            type: common.FractionTypeEnum.StringIsBlank
+            type: common.FractionTypeEnum.StringIsEmpty
           });
         }
 

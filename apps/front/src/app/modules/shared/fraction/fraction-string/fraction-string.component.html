@@ -45,19 +45,21 @@
     class="flex flex-col"
     *ngIf="
       fraction.type === fractionTypeEnum.StringIsEqualTo ||
-      fraction.type === fractionTypeEnum.StringContains ||
       fraction.type === fractionTypeEnum.StringStartsWith ||
       fraction.type === fractionTypeEnum.StringEndsWith ||
+      fraction.type === fractionTypeEnum.StringContains ||
+      fraction.type === fractionTypeEnum.StringIsLike ||
       fraction.type === fractionTypeEnum.StringIsNotEqualTo ||
-      fraction.type === fractionTypeEnum.StringDoesNotContain ||
       fraction.type === fractionTypeEnum.StringDoesNotStartWith ||
-      fraction.type === fractionTypeEnum.StringDoesNotEndWith
+      fraction.type === fractionTypeEnum.StringDoesNotEndWith ||
+      fraction.type === fractionTypeEnum.StringDoesNotContain ||
+      fraction.type === fractionTypeEnum.StringIsNotLike
     "
   >
     <!-- StringIsNull -->
-    <!-- StringIsBlank -->
+    <!-- StringIsEmpty -->
     <!-- StringIsNotNull -->
-    <!-- StringIsNotBlank -->
+    <!-- StringIsNotEmpty -->
 
     <div
       tp="Turn off formula to activate control"

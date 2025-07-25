@@ -95,13 +95,13 @@ export class FractionStringComponent implements OnInit, OnDestroy {
       operator: common.FractionOperatorEnum.Or
     },
     {
-      label: 'is blank',
-      value: common.FractionTypeEnum.StringIsBlank,
+      label: 'is null',
+      value: common.FractionTypeEnum.StringIsNull,
       operator: common.FractionOperatorEnum.Or
     },
     {
-      label: 'is null',
-      value: common.FractionTypeEnum.StringIsNull,
+      label: 'is empty',
+      value: common.FractionTypeEnum.StringIsEmpty,
       operator: common.FractionOperatorEnum.Or
     },
     {
@@ -125,11 +125,6 @@ export class FractionStringComponent implements OnInit, OnDestroy {
       operator: common.FractionOperatorEnum.And
     },
     {
-      label: 'is not blank',
-      value: common.FractionTypeEnum.StringIsNotBlank,
-      operator: common.FractionOperatorEnum.And
-    },
-    {
       label: 'does not match',
       value: common.FractionTypeEnum.StringIsNotLike,
       operator: common.FractionOperatorEnum.And
@@ -137,6 +132,11 @@ export class FractionStringComponent implements OnInit, OnDestroy {
     {
       label: 'is not null',
       value: common.FractionTypeEnum.StringIsNotNull,
+      operator: common.FractionOperatorEnum.And
+    },
+    {
+      label: 'is not empty',
+      value: common.FractionTypeEnum.StringIsNotEmpty,
       operator: common.FractionOperatorEnum.And
     }
   ];
@@ -615,7 +615,7 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         break;
       }
 
-      case this.fractionTypeEnum.StringIsBlank: {
+      case this.fractionTypeEnum.StringIsEmpty: {
         let mBrick = 'f`empty`';
 
         this.fraction = {
@@ -729,7 +729,7 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         break;
       }
 
-      case this.fractionTypeEnum.StringIsNotBlank: {
+      case this.fractionTypeEnum.StringIsNotEmpty: {
         let mBrick = 'f`-empty`';
 
         this.fraction = {

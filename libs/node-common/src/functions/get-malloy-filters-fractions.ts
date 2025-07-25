@@ -161,8 +161,8 @@ export function getMalloyFiltersFractions(item: {
               operator: fractionOperator,
               type:
                 fractionOperator === common.FractionOperatorEnum.Or
-                  ? common.FractionTypeEnum.StringIsBlank
-                  : common.FractionTypeEnum.StringIsNotBlank
+                  ? common.FractionTypeEnum.StringIsEmpty
+                  : common.FractionTypeEnum.StringIsNotEmpty
             };
 
             if (common.isDefined(filtersFractions[fieldId])) {
