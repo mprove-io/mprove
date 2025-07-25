@@ -9,7 +9,7 @@
     <table>
       <tbody class="divide-s300 divide-y">
         <tr
-          *ngFor="let filter of extendedFilters; let filterIndex = index"
+          *ngFor="let filter of proFilters; let filterIndex = index"
           class="group-link"
         >
           <td class="pb-2 pt-1 align-top">
@@ -90,8 +90,9 @@
               <div
                 *ngIf="!!fraction.brick"
                 class="flex max-w-[450px] flex-shrink-0 pr-5"
-                >{{ fraction.brick }}</div
+                >{{ fraction.parentBrick ?? fraction.brick }}</div
               >
+
               <div
                 *ngIf="!fraction.brick"
                 class="flex max-w-[450px] flex-shrink-0 pr-5"

@@ -30,7 +30,7 @@ export function prepareTile(item: {
         parameter.conditions = x.fractions.map(fraction => fraction.brick);
       } else if (mconfig.modelType === enums.ModelTypeEnum.Malloy) {
         let fractionsBrickParents = x.fractions.map(
-          fraction => fraction.brickParent
+          fraction => fraction.parentBrick
         );
 
         parameter.conditions = [...new Set(fractionsBrickParents)];

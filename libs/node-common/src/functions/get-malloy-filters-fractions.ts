@@ -106,7 +106,7 @@ export function getMalloyFiltersFractions(item: {
           // string any
           let fraction: common.Fraction = {
             brick: MALLOY_FILTER_ANY,
-            brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+            parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
             operator: common.FractionOperatorEnum.Or,
             type: common.FractionTypeEnum.StringIsAnyValue
           };
@@ -131,7 +131,7 @@ export function getMalloyFiltersFractions(item: {
                 fractionOperator === common.FractionOperatorEnum.Or
                   ? 'f`null`'
                   : 'f`-null`',
-              brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+              parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
               operator: fractionOperator,
               type:
                 fractionOperator === common.FractionOperatorEnum.Or
@@ -194,7 +194,7 @@ export function getMalloyFiltersFractions(item: {
                                 ? `f\`empty\``
                                 : `f\`-empty\``
                               : undefined,
-                brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
                   stringFilter.operator === '~'
@@ -246,7 +246,7 @@ export function getMalloyFiltersFractions(item: {
           // boolean any
           let fraction: common.Fraction = {
             brick: MALLOY_FILTER_ANY,
-            brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+            parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
             operator: common.FractionOperatorEnum.Or,
             type: common.FractionTypeEnum.BooleanIsAnyValue
           };
@@ -271,7 +271,7 @@ export function getMalloyFiltersFractions(item: {
                 fractionOperator === common.FractionOperatorEnum.Or
                   ? 'f`null`'
                   : 'f`not null`',
-              brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+              parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
               operator: fractionOperator,
               type:
                 fractionOperator === common.FractionOperatorEnum.Or
@@ -309,7 +309,7 @@ export function getMalloyFiltersFractions(item: {
                         ? 'f`false`'
                         : 'f`not false`'
                       : undefined,
-              brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+              parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
               operator: fractionOperator,
               type:
                 booleanFilter.operator === 'true'
@@ -351,7 +351,7 @@ export function getMalloyFiltersFractions(item: {
           // number any
           let fraction: common.Fraction = {
             brick: MALLOY_FILTER_ANY,
-            brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+            parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
             operator: common.FractionOperatorEnum.Or,
             type: common.FractionTypeEnum.NumberIsAnyValue
           };
@@ -396,7 +396,7 @@ export function getMalloyFiltersFractions(item: {
                           ? `f\`(${range.startValue} to ${range.endValue}]\``
                           : `f\`not (${range.startValue} to ${range.endValue}]\``
                         : undefined,
-              brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+              parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
               operator: fractionOperator,
               type:
                 fractionOperator === common.FractionOperatorEnum.Or
@@ -434,7 +434,7 @@ export function getMalloyFiltersFractions(item: {
                 fractionOperator === common.FractionOperatorEnum.Or
                   ? 'f`null`'
                   : 'f`not null`',
-              brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+              parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
               operator: fractionOperator,
               type:
                 fractionOperator === common.FractionOperatorEnum.Or
@@ -488,7 +488,7 @@ export function getMalloyFiltersFractions(item: {
                               ? `f\`> ${valuesStr}\``
                               : `f\`not > ${valuesStr}\``
                             : undefined,
-              brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+              parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
               operator: fractionOperator,
               type:
                 numberFilter.operator === '='
@@ -579,7 +579,7 @@ export function getMalloyFiltersFractions(item: {
           // temporal any
           let fraction: common.Fraction = {
             brick: MALLOY_FILTER_ANY,
-            brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+            parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
             operator: common.FractionOperatorEnum.Or,
             type: common.FractionTypeEnum.TsIsAnyValue
           };
@@ -624,7 +624,7 @@ export function getMalloyFiltersFractions(item: {
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? 'f`null`'
                     : 'f`not null`',
-                brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
@@ -640,7 +640,7 @@ export function getMalloyFiltersFractions(item: {
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? `f\`last ${tFilter.n} ${tFilter.units}s\``
                     : `f\`not last ${tFilter.n} ${tFilter.units}s\``,
-                brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
@@ -660,7 +660,7 @@ export function getMalloyFiltersFractions(item: {
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? `f\`${tFilter.n} ${tFilter.units}s\``
                     : `f\`not ${tFilter.n} ${tFilter.units}s\``,
-                brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
@@ -680,7 +680,7 @@ export function getMalloyFiltersFractions(item: {
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? `f\`next ${tFilter.n} ${tFilter.units}s\``
                     : `f\`not next ${tFilter.n} ${tFilter.units}s\``,
-                brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
@@ -709,7 +709,7 @@ export function getMalloyFiltersFractions(item: {
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? `f\`before ${beforeMomentStr}\``
                     : `f\`starting ${beforeMomentStr}\``,
-                brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
@@ -747,7 +747,7 @@ export function getMalloyFiltersFractions(item: {
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? `f\`after ${afterMomentStr}\``
                     : `f\`through ${afterMomentStr}\``,
-                brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
@@ -799,7 +799,7 @@ export function getMalloyFiltersFractions(item: {
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? `f\`${fromMomentStr} to ${toMomentStr}\``
                     : `f\`not ${fromMomentStr} to ${toMomentStr}\``,
-                brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
@@ -877,7 +877,7 @@ export function getMalloyFiltersFractions(item: {
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? `f\`${inMomentStr}\``
                     : `f\`not ${inMomentStr}\``,
-                brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
                   (tFilterIn as TemporalLiteral).units === 'year'
@@ -960,7 +960,7 @@ export function getMalloyFiltersFractions(item: {
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? `f\`${beginMomentStr} for ${tFilter.n} ${tFilter.units}s\``
                     : `f\`not ${beginMomentStr} for ${tFilter.n} ${tFilter.units}s\``,
-                brickParent: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+                parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or

@@ -193,7 +193,7 @@ export class ModelFiltersComponent {
     } else if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
       newFraction = {
         brick: MALLOY_FILTER_ANY,
-        brickParent: undefined,
+        parentBrick: MALLOY_FILTER_ANY,
         operator: common.FractionOperatorEnum.Or,
         type: common.getFractionTypeForAny(filterExtended.field.result)
       };
