@@ -334,13 +334,15 @@ export class MalloyService {
         }
 
         if (anyValues.length > 0) {
-          let fstrAny = '';
+          anyValues.forEach(x => {
+            let fstrAny = '';
 
-          if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
-            segment0.addWhere(filterFieldName, filterFieldPath, fstrAny);
-          } else {
-            segment0.addHaving(filterFieldName, filterFieldPath, fstrAny);
-          }
+            if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
+              segment0.addWhere(filterFieldName, filterFieldPath, fstrAny);
+            } else {
+              segment0.addHaving(filterFieldName, filterFieldPath, fstrAny);
+            }
+          });
         }
       });
 

@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { MALLOY_FILTER_ANY } from '~common/_index';
 import { DeleteFilterFnItem } from '~front/app/interfaces/delete-filter-fn-item';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { common } from '~front/barrels/common';
@@ -46,17 +47,27 @@ export class BricksComponent implements OnChanges {
 
       // deduplicate fractions with the same parent bricks
       proFilters.forEach(x => {
+        let fractionsWithAny = x.fractions.filter(
+          fraction =>
+            common.isDefined(fraction.parentBrick) &&
+            fraction.parentBrick === MALLOY_FILTER_ANY
+        );
+
         let parentBricks: string[] = [];
 
         x.fractions
-          .filter(fraction => common.isDefined(fraction.parentBrick))
+          .filter(
+            fraction =>
+              common.isDefined(fraction.parentBrick) &&
+              fraction.parentBrick !== MALLOY_FILTER_ANY
+          )
           .forEach(fraction => {
             parentBricks.push(fraction.parentBrick);
           });
 
         let uniqueParentBricks = [...new Set(parentBricks)];
 
-        // fractions with unique parent bricks
+        // fractions with unique parent bricks (but no any value)
         let proFractions: common.Fraction[] = [];
 
         uniqueParentBricks.forEach(parentBrick => {
@@ -66,6 +77,8 @@ export class BricksComponent implements OnChanges {
 
           proFractions.push(proFraction);
         });
+
+        proFractions = [...proFractions, ...fractionsWithAny];
 
         // fractions not modified if no fractionsWithUniqueParentBricks
         if (proFractions.length > 0) {
