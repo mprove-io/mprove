@@ -11,6 +11,7 @@ import {
   NumberFilter,
   NumberRange,
   StringCondition,
+  StringEmpty,
   StringFilter,
   StringMatch,
   TemporalFilter,
@@ -144,8 +145,33 @@ export function getMalloyFiltersFractions(item: {
             } else {
               filtersFractions[fieldId] = [fraction];
             }
+          } else if ((stringFilter as StringEmpty).operator === 'empty') {
+            // string empty
+            let fractionOperator =
+              (stringFilter as { not: boolean })?.not === true
+                ? common.FractionOperatorEnum.And
+                : common.FractionOperatorEnum.Or;
+
+            let fraction: common.Fraction = {
+              brick:
+                fractionOperator === common.FractionOperatorEnum.Or
+                  ? 'f`empty`'
+                  : 'f`-empty`',
+              parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
+              operator: fractionOperator,
+              type:
+                fractionOperator === common.FractionOperatorEnum.Or
+                  ? common.FractionTypeEnum.StringIsBlank
+                  : common.FractionTypeEnum.StringIsNotBlank
+            };
+
+            if (common.isDefined(filtersFractions[fieldId])) {
+              filtersFractions[fieldId].push(fraction);
+            } else {
+              filtersFractions[fieldId] = [fraction];
+            }
           } else if (
-            ['~', '=', 'contains', 'starts', 'ends', 'empty'].indexOf(
+            ['~', '=', 'contains', 'starts', 'ends'].indexOf(
               stringFilter.operator
             ) > -1
           ) {
@@ -189,11 +215,7 @@ export function getMalloyFiltersFractions(item: {
                               common.FractionOperatorEnum.Or
                               ? `f\`%${eValue}\``
                               : `f\`-%${eValue}\``
-                            : stringFilter.operator === 'empty'
-                              ? common.FractionOperatorEnum.Or
-                                ? 'f`empty`'
-                                : 'f`-empty`'
-                              : undefined,
+                            : undefined,
                 parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
@@ -218,11 +240,7 @@ export function getMalloyFiltersFractions(item: {
                               common.FractionOperatorEnum.Or
                               ? common.FractionTypeEnum.StringEndsWith
                               : common.FractionTypeEnum.StringDoesNotEndWith
-                            : stringFilter.operator === 'empty'
-                              ? common.FractionOperatorEnum.Or
-                                ? common.FractionTypeEnum.StringIsBlank
-                                : common.FractionTypeEnum.StringIsNotBlank
-                              : undefined,
+                            : undefined,
                 stringValue: eValue
               };
 

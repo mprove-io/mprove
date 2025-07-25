@@ -712,7 +712,7 @@ export class FractionStringComponent implements OnInit, OnDestroy {
       }
 
       case this.fractionTypeEnum.StringIsNotLike: {
-        let mBrick = `f\`-${this.defaultStringValue}\``;
+        let mBrick = `f\`-a%c\``;
 
         this.fraction = {
           brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`, // TODO: remove
