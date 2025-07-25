@@ -3,7 +3,7 @@ export enum FractionTypeEnum {
   //
   StringIsAnyValue = 'StringIsAnyValue',
 
-  StringIsLike = 'StringIsLike',
+  StringIsLike = 'StringIsLike', // new
   StringIsEqualTo = 'StringIsEqualTo',
   StringContains = 'StringContains',
   StringStartsWith = 'StringStartsWith',
@@ -11,7 +11,7 @@ export enum FractionTypeEnum {
   StringIsNull = 'StringIsNull',
   StringIsBlank = 'StringIsBlank',
 
-  StringIsNotLike = 'StringIsNotLike',
+  StringIsNotLike = 'StringIsNotLike', // new
   StringIsNotEqualTo = 'StringIsNotEqualTo',
   StringDoesNotContain = 'StringDoesNotContain',
   StringDoesNotStartWith = 'StringDoesNotStartWith',
