@@ -30,11 +30,11 @@ export enum FractionTypeEnum {
   NumberIsNull = 'NumberIsNull',
 
   NumberIsNotEqualTo = 'NumberIsNotEqualTo',
-  NumberIsNotGreaterThan = 'NumberIsNotGreaterThan', // new
-  NumberIsNotGreaterThanOrEqualTo = 'NumberIsNotGreaterThanOrEqualTo', // new
-  NumberIsNotLessThan = 'NumberIsNotLessThan', // new
-  NumberIsNotLessThanOrEqualTo = 'NumberIsNotLessThanOrEqualTo', // new
-  NumberIsNotBetween = 'NumberIsNotBetween',
+  NumberIsNotGreaterThan = 'NumberIsNotGreaterThan', // new // not supported (malloy issue)
+  NumberIsNotGreaterThanOrEqualTo = 'NumberIsNotGreaterThanOrEqualTo', // new // not supported (malloy issue)
+  NumberIsNotLessThan = 'NumberIsNotLessThan', // new // not supported (malloy issue)
+  NumberIsNotLessThanOrEqualTo = 'NumberIsNotLessThanOrEqualTo', // new // not supported (malloy issue)
+  NumberIsNotBetween = 'NumberIsNotBetween', // not supported (malloy issue)
   NumberIsNotNull = 'NumberIsNotNull',
 
   BooleanIsAnyValue = 'BooleanIsAnyValue',
@@ -44,9 +44,9 @@ export enum FractionTypeEnum {
   BooleanIsFalseOrNull = 'BooleanIsFalseOrNull',
   BooleanIsNull = 'BooleanIsNull',
 
-  BooleanIsNotTrue = 'BooleanIsNotTrue',
-  BooleanIsNotFalse = 'BooleanIsNotFalse',
-  BooleanIsNotFalseOrNull = 'BooleanIsNotFalseOrNull',
+  BooleanIsNotTrue = 'BooleanIsNotTrue', // not supported (malloy issue)
+  BooleanIsNotFalse = 'BooleanIsNotFalse', // not supported (malloy issue)
+  BooleanIsNotFalseOrNull = 'BooleanIsNotFalseOrNull', // not supported (malloy issue)
   BooleanIsNotNull = 'BooleanIsNotNull',
 
   TsIsAnyValue = 'TsIsAnyValue',

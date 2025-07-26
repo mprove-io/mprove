@@ -71,17 +71,17 @@ export class FractionBooleanComponent {
     // {
     //   operator: common.FractionOperatorEnum.And,
     //   label: 'is not true',
-    //   value: common.FractionTypeEnum.BooleanIsNotTrue // not is not supported (malloy issue)
+    //   value: common.FractionTypeEnum.BooleanIsNotTrue // not supported (malloy issue)
     // },
     // {
     //   operator: common.FractionOperatorEnum.And,
     //   label: 'is not false or null',
-    //   value: common.FractionTypeEnum.BooleanIsNotFalseOrNull // not is not supported (malloy issue)
+    //   value: common.FractionTypeEnum.BooleanIsNotFalseOrNull // not supported (malloy issue)
     // },
     // {
     //   operator: common.FractionOperatorEnum.And,
     //   label: 'is not false',
-    //   value: common.FractionTypeEnum.BooleanIsNotFalse // not is not supported (malloy issue)
+    //   value: common.FractionTypeEnum.BooleanIsNotFalse // not supported (malloy issue)
     // },
     {
       operator: common.FractionOperatorEnum.And,
