@@ -1922,15 +1922,28 @@ export class FractionTsComponent implements OnInit {
   }
 
   buildFractionLast() {
+    let mBrick =
+      this.fraction.tsLastCompleteOption ===
+      common.FractionTsLastCompleteOptionEnum.Incomplete
+        ? `f\`${this.fraction.tsLastValue} ${this.fraction.tsLastUnit}\``
+        : this.fraction.tsLastCompleteOption ===
+            common.FractionTsLastCompleteOptionEnum.Complete
+          ? `f\`last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit}\``
+          : `f\`${this.fraction.tsLastValue} ${this.fraction.tsLastUnit} ago to now\``;
+
     this.fraction = {
-      brick:
-        this.fraction.tsLastCompleteOption ===
-        common.FractionTsLastCompleteOptionEnum.Incomplete
+      brick: common.isDefined(this.fraction.parentBrick)
+        ? mBrick
+        : this.fraction.tsLastCompleteOption ===
+            common.FractionTsLastCompleteOptionEnum.Incomplete
           ? `last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit}`
           : this.fraction.tsLastCompleteOption ===
               common.FractionTsLastCompleteOptionEnum.Complete
             ? `last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit} complete`
             : `last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit} complete plus current`,
+      parentBrick: common.isDefined(this.fraction.parentBrick)
+        ? mBrick
+        : undefined,
       operator: common.FractionOperatorEnum.Or,
       type: common.FractionTypeEnum.TsIsInLast,
       tsLastValue: this.fraction.tsLastValue,

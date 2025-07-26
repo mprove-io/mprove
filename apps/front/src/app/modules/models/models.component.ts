@@ -463,7 +463,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   resultsIsShowTemp = false;
 
-  rightIsShow = false;
+  rightIsShow = true;
 
   dryTimeAgo$ = interval(1000).pipe(
     startWith(0),
