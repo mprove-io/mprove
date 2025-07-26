@@ -361,6 +361,6 @@ export class RowFiltersComponent {
 
     return this.modelsQuery
       .getValue()
-      .models.find(x => x.modelId === metric.modelId)?.content;
+      .models.find(x => x.modelId === metric?.modelId)?.content;
   }
 }
