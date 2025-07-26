@@ -21,6 +21,7 @@ import {
 import '@vaadin/time-picker';
 import { TimePicker } from '@vaadin/time-picker';
 import { tap } from 'rxjs';
+import { MALLOY_FILTER_ANY } from '~common/constants/top';
 import { COMMON_I18N } from '~front/app/constants/top';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -663,8 +664,13 @@ export class FractionTsComponent implements OnInit {
 
     switch (fractionType) {
       case this.fractionTypeEnum.TsIsAnyValue: {
+        let mBrick = MALLOY_FILTER_ANY;
+
         this.fraction = {
-          brick: `any`,
+          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType
         };
@@ -674,10 +680,19 @@ export class FractionTsComponent implements OnInit {
       }
 
       case this.fractionTypeEnum.TsIsOnYear: {
+        let yearStr = this.timeService.getYearStr({
+          dateValue: this.dateStr
+        });
+
+        let mBrick = `f\`${yearStr}\``;
+
         this.fraction = {
-          brick: `on ${this.timeService.getYearStr({
-            dateValue: this.dateStr
-          })}`,
+          brick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : `on ${yearStr}`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType,
           tsDateYear: Number(this.dateStr.split('-')[0])
@@ -1058,8 +1073,22 @@ export class FractionTsComponent implements OnInit {
           dateValue: value
         });
 
+        // this.fraction = {
+        //   brick: `on ${onYearStr}`,
+        //   operator: this.fraction.operator,
+        //   type: this.fraction.type,
+        //   tsDateYear: Number(value.split('-')[0])
+        // };
+
+        let mBrick = `f\`${onYearStr}\``;
+
         this.fraction = {
-          brick: `on ${onYearStr}`,
+          brick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : `on ${onYearStr}`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
           operator: this.fraction.operator,
           type: this.fraction.type,
           tsDateYear: Number(value.split('-')[0])
