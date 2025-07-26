@@ -135,8 +135,38 @@ export class FractionTsComponent implements OnInit {
       operator: common.FractionOperatorEnum.Or
     },
     {
-      label: 'is in range',
+      label: 'is in next',
+      value: common.FractionTypeEnum.TsIsInNext,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is between',
       value: common.FractionTypeEnum.TsIsInRange,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is starting',
+      value: common.FractionTypeEnum.TsIsStarting,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is starting ... for ...',
+      value: common.FractionTypeEnum.TsIsBeginFor,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is after',
+      value: common.FractionTypeEnum.TsIsAfterDate,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is before',
+      value: common.FractionTypeEnum.TsIsBeforeDate,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is through',
+      value: common.FractionTypeEnum.TsIsThrough,
       operator: common.FractionOperatorEnum.Or
     },
     {
@@ -145,8 +175,18 @@ export class FractionTsComponent implements OnInit {
       operator: common.FractionOperatorEnum.Or
     },
     {
+      label: 'is on Quarter',
+      value: common.FractionTypeEnum.TsIsOnQuarter,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
       label: 'is on Month',
       value: common.FractionTypeEnum.TsIsOnMonth,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is on Week',
+      value: common.FractionTypeEnum.TsIsOnWeek,
       operator: common.FractionOperatorEnum.Or
     },
     {
@@ -165,30 +205,94 @@ export class FractionTsComponent implements OnInit {
       operator: common.FractionOperatorEnum.Or
     },
     {
-      label: 'is before',
-      value: common.FractionTypeEnum.TsIsBeforeDate,
+      label: 'is on Timestamp',
+      value: common.FractionTypeEnum.TsIsOnTimestamp,
       operator: common.FractionOperatorEnum.Or
     },
-    {
-      label: 'is after',
-      value: common.FractionTypeEnum.TsIsAfterDate,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is before (relative)',
-      value: common.FractionTypeEnum.TsIsBeforeRelative,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is after (relative)',
-      value: common.FractionTypeEnum.TsIsAfterRelative,
-      operator: common.FractionOperatorEnum.Or
-    },
-
     {
       label: 'is null',
       value: common.FractionTypeEnum.TsIsNull,
       operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is not in last',
+      value: common.FractionTypeEnum.TsIsNotInLast,
+      operator: common.FractionOperatorEnum.And
+    },
+    {
+      label: 'is not in next',
+      value: common.FractionTypeEnum.TsIsNotInNext,
+      operator: common.FractionOperatorEnum.And
+    },
+    {
+      label: 'is not between',
+      value: common.FractionTypeEnum.TsIsNotInRange,
+      operator: common.FractionOperatorEnum.And
+    },
+    // {
+    //   label: 'is not starting',
+    //   value: common.FractionTypeEnum.TsIsNotStarting, // is before // not supported (malloy issue)
+    //   operator: common.FractionOperatorEnum.And
+    // },
+    {
+      label: 'is not starting ... for ...',
+      value: common.FractionTypeEnum.TsIsNotBeginFor,
+      operator: common.FractionOperatorEnum.And
+    },
+    // {
+    //   label: 'is not after',
+    //   value: common.FractionTypeEnum.TsIsNotAfterDate, // is through
+    //   operator: common.FractionOperatorEnum.And
+    // },
+    // {
+    //   label: 'is not before',
+    //   value: common.FractionTypeEnum.TsIsNotBeforeDate, // is starting
+    //   operator: common.FractionOperatorEnum.And
+    // },
+    // {
+    //   label: 'is not through',
+    //   value: common.FractionTypeEnum.TsIsNotThrough, // is after // not supported (malloy issue)
+    //   operator: common.FractionOperatorEnum.And
+    // },
+    {
+      label: 'is not on Year',
+      value: common.FractionTypeEnum.TsIsNotOnYear,
+      operator: common.FractionOperatorEnum.And
+    },
+    {
+      label: 'is not on Quarter',
+      value: common.FractionTypeEnum.TsIsNotOnQuarter,
+      operator: common.FractionOperatorEnum.And
+    },
+    {
+      label: 'is not on Month',
+      value: common.FractionTypeEnum.TsIsNotOnMonth,
+      operator: common.FractionOperatorEnum.And
+    },
+    {
+      label: 'is not on Week',
+      value: common.FractionTypeEnum.TsIsNotOnWeek,
+      operator: common.FractionOperatorEnum.And
+    },
+    {
+      label: 'is not on Day',
+      value: common.FractionTypeEnum.TsIsNotOnDay,
+      operator: common.FractionOperatorEnum.And
+    },
+    {
+      label: 'is not on Hour',
+      value: common.FractionTypeEnum.TsIsNotOnHour,
+      operator: common.FractionOperatorEnum.And
+    },
+    {
+      label: 'is not on Minute',
+      value: common.FractionTypeEnum.TsIsNotOnMinute,
+      operator: common.FractionOperatorEnum.And
+    },
+    {
+      label: 'is not on Timestamp',
+      value: common.FractionTypeEnum.TsIsNotOnTimestamp,
+      operator: common.FractionOperatorEnum.And
     },
     {
       label: 'is not null',

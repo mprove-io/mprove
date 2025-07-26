@@ -1030,17 +1030,17 @@ export function getMalloyFiltersFractions(item: {
   //   'utf-8'
   // );
 
-  // console.log('filtersFractions');
-  // console.dir(filtersFractions, { depth: null });
+  console.log('filtersFractions');
+  console.dir(filtersFractions, { depth: null });
 
-  // Object.keys(filtersFractions).forEach(key => {
-  //   filtersFractions[key].forEach(fraction => {
-  //     if (fraction.brick !== fraction.brickParent) {
-  //       console.log(fraction.brickParent);
-  //       console.log(fraction.brick);
-  //     }
-  //   });
-  // });
+  Object.keys(filtersFractions).forEach(key => {
+    filtersFractions[key].forEach(fraction => {
+      if (fraction.brick !== fraction.parentBrick) {
+        console.log(fraction.parentBrick);
+        console.log(fraction.brick);
+      }
+    });
+  });
 
   return { filtersFractions: filtersFractions, parsedFilters: parsedFilters };
 }
