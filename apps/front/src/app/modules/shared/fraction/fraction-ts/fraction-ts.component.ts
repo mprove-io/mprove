@@ -970,8 +970,15 @@ export class FractionTsComponent implements OnInit {
       dateSeparator: common.isDefined(this.fraction.parentBrick) ? '-' : '/'
     });
 
+    let mBrick = `f\`${minuteStr} to ${minuteToStr}\``;
+
     this.fraction = {
-      brick: `on ${minuteStr} to ${minuteToStr}`,
+      brick: common.isDefined(this.fraction.parentBrick)
+        ? mBrick
+        : `on ${minuteStr} to ${minuteToStr}`,
+      parentBrick: common.isDefined(this.fraction.parentBrick)
+        ? mBrick
+        : undefined,
       operator: common.FractionOperatorEnum.Or,
       type: common.FractionTypeEnum.TsIsInRange,
       tsDateYear: Number(dateValue.split('-')[0]),
