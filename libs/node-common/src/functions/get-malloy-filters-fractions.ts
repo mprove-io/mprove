@@ -531,7 +531,14 @@ export function getMalloyFiltersFractions(item: {
                               ? common.FractionTypeEnum.NumberIsGreaterThan
                               : common.FractionTypeEnum.NumberIsNotGreaterThan
                             : undefined,
-              numberValues: valuesStr
+              numberValues:
+                ['=', '!='].indexOf(numberFilter.operator) > -1
+                  ? valuesStr
+                  : undefined,
+              numberValue1:
+                ['<=', '>=', '<', '>'].indexOf(numberFilter.operator) > -1
+                  ? Number(valuesStr)
+                  : undefined
             };
 
             if (common.isDefined(filtersFractions[fieldId])) {
