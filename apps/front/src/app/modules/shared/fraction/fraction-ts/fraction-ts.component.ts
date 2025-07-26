@@ -924,8 +924,13 @@ export class FractionTsComponent implements OnInit {
       }
 
       case this.fractionTypeEnum.TsIsNull: {
+        let mBrick = 'f`null`';
+
         this.fraction = {
-          brick: `null`,
+          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `null`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
           operator: common.FractionOperatorEnum.Or,
           type: fractionType
         };
@@ -935,8 +940,15 @@ export class FractionTsComponent implements OnInit {
       }
 
       case this.fractionTypeEnum.TsIsNotNull: {
+        let mBrick = 'f`not null`';
+
         this.fraction = {
-          brick: `not null`,
+          brick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : `not null`,
+          parentBrick: common.isDefined(this.fraction.parentBrick)
+            ? mBrick
+            : undefined,
           operator: common.FractionOperatorEnum.And,
           type: fractionType
         };
@@ -964,13 +976,25 @@ export class FractionTsComponent implements OnInit {
       dateSeparator: common.isDefined(this.fraction.parentBrick) ? '-' : '/'
     });
 
+    let dateMinuteStr =
+      Number(timeValue.split(':')[0].replace(/^0+/, '')) > 0 ||
+      Number(timeValue.split(':')[1].replace(/^0+/, '')) > 0
+        ? minuteStr
+        : minuteStr.split(' ')[0];
+
     let minuteToStr = this.timeService.getMinuteStr({
       dateValue: dateToValue,
       timeValue: timeToValue,
       dateSeparator: common.isDefined(this.fraction.parentBrick) ? '-' : '/'
     });
 
-    let mBrick = `f\`${minuteStr} to ${minuteToStr}\``;
+    let dateMinuteToStr =
+      Number(timeToValue.split(':')[0].replace(/^0+/, '')) > 0 ||
+      Number(timeToValue.split(':')[1].replace(/^0+/, '')) > 0
+        ? minuteToStr
+        : minuteToStr.split(' ')[0];
+
+    let mBrick = `f\`${dateMinuteStr} to ${dateMinuteToStr}\``;
 
     this.fraction = {
       brick: common.isDefined(this.fraction.parentBrick)
@@ -1007,11 +1031,23 @@ export class FractionTsComponent implements OnInit {
       ? this.fraction.tsForOption
       : common.FractionTsForOptionEnum.ForInfinity;
 
+    let dateMinuteStr =
+      Number(timeValue.split(':')[0].replace(/^0+/, '')) > 0 ||
+      Number(timeValue.split(':')[1].replace(/^0+/, '')) > 0
+        ? minuteStr
+        : minuteStr.split(' ')[0];
+
+    let mBrick = `f\`before ${dateMinuteStr}\``;
+
     this.fraction = {
-      brick:
-        newTsForOption === common.FractionTsForOptionEnum.ForInfinity
+      brick: common.isDefined(this.fraction.parentBrick)
+        ? mBrick
+        : newTsForOption === common.FractionTsForOptionEnum.ForInfinity
           ? `before ${minuteStr}`
           : `before ${minuteStr} for ${this.fraction.tsForValue} ${this.fraction.tsForUnit}`,
+      parentBrick: common.isDefined(this.fraction.parentBrick)
+        ? mBrick
+        : undefined,
       operator: common.FractionOperatorEnum.Or,
       type: common.FractionTypeEnum.TsIsBeforeDate,
       tsDateYear: Number(dateValue.split('-')[0]),
@@ -1038,11 +1074,23 @@ export class FractionTsComponent implements OnInit {
       ? this.fraction.tsForOption
       : common.FractionTsForOptionEnum.ForInfinity;
 
+    let dateMinuteStr =
+      Number(timeValue.split(':')[0].replace(/^0+/, '')) > 0 ||
+      Number(timeValue.split(':')[1].replace(/^0+/, '')) > 0
+        ? minuteStr
+        : minuteStr.split(' ')[0];
+
+    let mBrick = `f\`after ${dateMinuteStr}\``;
+
     this.fraction = {
-      brick:
-        newTsForOption === common.FractionTsForOptionEnum.ForInfinity
+      brick: common.isDefined(this.fraction.parentBrick)
+        ? mBrick
+        : newTsForOption === common.FractionTsForOptionEnum.ForInfinity
           ? `after ${minuteStr}`
           : `after ${minuteStr} for ${this.fraction.tsForValue} ${this.fraction.tsForUnit}`,
+      parentBrick: common.isDefined(this.fraction.parentBrick)
+        ? mBrick
+        : undefined,
       operator: common.FractionOperatorEnum.Or,
       type: common.FractionTypeEnum.TsIsAfterDate,
       tsDateYear: Number(dateValue.split('-')[0]),

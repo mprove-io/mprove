@@ -518,10 +518,11 @@
   <!-- for -->
   <div
     *ngIf="
-      fraction.type === fractionTypeEnum.TsIsBeforeDate ||
-      fraction.type === fractionTypeEnum.TsIsAfterDate ||
-      fraction.type === fractionTypeEnum.TsIsBeforeRelative ||
-      fraction.type === fractionTypeEnum.TsIsAfterRelative
+      !fraction.parentBrick &&
+      (fraction.type === fractionTypeEnum.TsIsBeforeDate ||
+        fraction.type === fractionTypeEnum.TsIsAfterDate ||
+        fraction.type === fractionTypeEnum.TsIsBeforeRelative ||
+        fraction.type === fractionTypeEnum.TsIsAfterRelative)
     "
     class="flex flex-row space-x-5"
   >
