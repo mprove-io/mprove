@@ -5,6 +5,9 @@ export class ModelMetric {
   @IsString()
   modelId?: string;
 
+  @IsEnum(enums.ModelTypeEnum)
+  modelType: enums.ModelTypeEnum;
+
   @IsString()
   fieldId?: string;
 

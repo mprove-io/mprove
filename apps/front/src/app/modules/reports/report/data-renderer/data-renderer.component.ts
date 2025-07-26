@@ -213,12 +213,16 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
       let minuteStr = this.timeService.getMinuteStr({
         dateValue: dateStr,
-        timeValue: timeStr
+        timeValue: timeStr,
+        dateSeparator:
+          metric.modelType === common.ModelTypeEnum.Malloy ? '-' : '/'
       });
 
       let minuteToStr = this.timeService.getMinuteStr({
         dateValue: dateToStr,
-        timeValue: timeToStr
+        timeValue: timeToStr,
+        dateSeparator:
+          metric.modelType === common.ModelTypeEnum.Malloy ? '-' : '/'
       });
 
       timeRangeFraction = {

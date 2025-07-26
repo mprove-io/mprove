@@ -58,28 +58,36 @@ export class TimeService {
     return `${year}`;
   }
 
-  getMonthStr(item: { dateValue: string }) {
+  getMonthStr(item: { dateValue: string; dateSeparator: string }) {
     let year = item.dateValue.split('-')[0];
     let month = item.dateValue.split('-')[1];
 
-    return `${year}/${month}`;
+    return `${year}${item.dateSeparator}${month}`;
   }
 
-  getDayStr(item: { dateValue: string }) {
-    let date = item.dateValue.split('-').join('/');
+  getDayStr(item: { dateValue: string; dateSeparator: string }) {
+    let date = item.dateValue.split('-').join(item.dateSeparator);
 
     return `${date}`;
   }
 
-  getHourStr(item: { dateValue: string; timeValue: string }) {
-    let date = item.dateValue.split('-').join('/');
+  getHourStr(item: {
+    dateValue: string;
+    dateSeparator: string;
+    timeValue: string;
+  }) {
+    let date = item.dateValue.split('-').join(item.dateSeparator);
     let hour = item.timeValue.split(':')[0];
 
     return `${date} ${hour}`;
   }
 
-  getMinuteStr(item: { dateValue: string; timeValue: string }) {
-    let date = item.dateValue.split('-').join('/');
+  getMinuteStr(item: {
+    dateValue: string;
+    timeValue: string;
+    dateSeparator: string;
+  }) {
+    let date = item.dateValue.split('-').join(item.dateSeparator);
     let hour = item.timeValue.split(':')[0];
     let minute = item.timeValue.split(':')[1];
 
