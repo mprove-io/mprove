@@ -136,41 +136,6 @@ export class FractionTsComponent implements OnInit {
       operator: common.FractionOperatorEnum.Or
     },
     {
-      label: 'is in next',
-      value: common.FractionTypeEnum.TsIsInNext,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is between',
-      value: common.FractionTypeEnum.TsIsInRange,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is starting',
-      value: common.FractionTypeEnum.TsIsStarting,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is starting ... for ...',
-      value: common.FractionTypeEnum.TsIsBeginFor,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is after',
-      value: common.FractionTypeEnum.TsIsAfterDate,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is before',
-      value: common.FractionTypeEnum.TsIsBeforeDate,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is through',
-      value: common.FractionTypeEnum.TsIsThrough,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
       label: 'is on Year',
       value: common.FractionTypeEnum.TsIsOnYear,
       operator: common.FractionOperatorEnum.Or
@@ -193,6 +158,41 @@ export class FractionTsComponent implements OnInit {
     {
       label: 'is on Day',
       value: common.FractionTypeEnum.TsIsOnDay,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is between',
+      value: common.FractionTypeEnum.TsIsInRange,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is before',
+      value: common.FractionTypeEnum.TsIsBeforeDate,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is through',
+      value: common.FractionTypeEnum.TsIsThrough,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is after',
+      value: common.FractionTypeEnum.TsIsAfterDate,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is starting',
+      value: common.FractionTypeEnum.TsIsStarting,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is starting ... for ...',
+      value: common.FractionTypeEnum.TsIsBeginFor,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is in next',
+      value: common.FractionTypeEnum.TsIsInNext,
       operator: common.FractionOperatorEnum.Or
     },
     {

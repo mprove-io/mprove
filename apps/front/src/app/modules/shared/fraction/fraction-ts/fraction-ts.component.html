@@ -4,13 +4,11 @@
     [tpIsEnabled]="isDisabled === true"
   >
     <ng-select
+      *ngIf="isMetrics === true"
       #fractionTsTypeSelect
       [fixNgSelectBottom]="fractionTsTypeSelect"
       data-cy="fractionTsTypeSelect"
-      class="popup-55 w-[280px]"
-      [ngClass]="{
-        'cursor-default': isDisabled === true
-      }"
+      class="fraction-type-select w-[230px]"
       [items]="fractionTsTypesList"
       [clearable]="false"
       [searchable]="false"
@@ -33,9 +31,74 @@
 
       <ng-template ng-option-tmp let-item="item">
         <div class="flex flex-row">
-          <div *ngIf="isMetrics === false" class="ml-1"
-            >{{ item.operator | uppercase }} -</div
-          >
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </div>
+      </ng-template>
+    </ng-select>
+
+    <ng-select
+      *ngIf="isMetrics === false && isDisabled === false"
+      #fractionTsTypeSelect
+      [fixNgSelectBottom]="fractionTsTypeSelect"
+      data-cy="fractionTsTypeSelect"
+      class="fraction-type-select w-[280px]"
+      [items]="fractionTsTypesList"
+      [clearable]="false"
+      [searchable]="false"
+      [disabled]="false"
+      [(ngModel)]="fraction.type"
+      (change)="typeChange($event)"
+      (keyup.esc)="
+        $event.stopImmediatePropagation(); fractionTsTypeSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); fractionTsTypeSelect.blur()
+      "
+      appendTo="body"
+      bindLabel="label"
+      bindValue="value"
+    >
+      <ng-template ng-label-tmp let-item="item">
+        <div class="ml-1 truncate">{{ item.label }}</div>
+      </ng-template>
+
+      <ng-template ng-option-tmp let-item="item">
+        <div class="flex flex-row">
+          <div class="ml-1">{{ item.operator | uppercase }} -</div>
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </div>
+      </ng-template>
+    </ng-select>
+
+    <ng-select
+      *ngIf="isMetrics === false && isDisabled === true"
+      #fractionTsTypeSelect
+      [fixNgSelectBottom]="fractionTsTypeSelect"
+      data-cy="fractionTsTypeSelect"
+      class="fraction-type-select w-[280px] cursor-default"
+      [items]="fractionTsTypesList"
+      [clearable]="false"
+      [searchable]="false"
+      [disabled]="isDisabled === true"
+      [(ngModel)]="fraction.type"
+      (change)="typeChange($event)"
+      (keyup.esc)="
+        $event.stopImmediatePropagation(); fractionTsTypeSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); fractionTsTypeSelect.blur()
+      "
+      appendTo="body"
+      bindLabel="label"
+      bindValue="value"
+    >
+      <ng-template ng-label-tmp let-item="item">
+        <div class="ml-1 truncate">{{ item.label }}</div>
+      </ng-template>
+
+      <ng-template ng-option-tmp let-item="item">
+        <div class="flex flex-row">
+          <div class="ml-1">{{ item.operator | uppercase }} -</div>
           <div class="ml-1 truncate">{{ item.label }}</div>
         </div>
       </ng-template>
