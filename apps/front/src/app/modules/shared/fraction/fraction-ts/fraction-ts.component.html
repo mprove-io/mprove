@@ -109,9 +109,11 @@
     *ngIf="
       fraction.type === fractionTypeEnum.TsIsInRange ||
       fraction.type === fractionTypeEnum.TsIsBeforeDate ||
-      fraction.type === fractionTypeEnum.TsIsAfterDate
+      fraction.type === fractionTypeEnum.TsIsThrough ||
+      fraction.type === fractionTypeEnum.TsIsAfterDate ||
+      fraction.type === fractionTypeEnum.TsIsStarting
     "
-    tp="Disabled if time is not 00:00"
+    tp="The switch is disabled if the time is not 00:00"
     [tpIsEnabled]="
       timeStr !== zeroHoursMinutes ||
       (fraction.type === fractionTypeEnum.TsIsInRange &&
@@ -389,6 +391,43 @@
     </div>
   </div>
 
+  <!-- is through -->
+  <div
+    *ngIf="fraction.type === fractionTypeEnum.TsIsThrough"
+    class="flex flex-row space-x-5"
+  >
+    <div
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
+    >
+      <vaadin-date-picker
+        #datePickerThrough
+        class="py-0"
+        required
+        [value]="dateStr"
+        [i18n]="throughI18n"
+        (value-changed)="throughDateValueChanged($event)"
+        [disabled]="isDisabled === true"
+      ></vaadin-date-picker>
+    </div>
+
+    <div
+      *ngIf="showHours === true || timeStr !== zeroHoursMinutes"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
+    >
+      <vaadin-time-picker
+        #timePickerThrough
+        class="py-0"
+        required
+        [value]="timeStr"
+        (value-changed)="throughTimeValueChanged($event)"
+        (opened-changed)="throughTimeOpenedChanged($event)"
+        [disabled]="isDisabled === true"
+      ></vaadin-time-picker>
+    </div>
+  </div>
+
   <!-- is after -->
   <div
     *ngIf="fraction.type === fractionTypeEnum.TsIsAfterDate"
@@ -421,6 +460,43 @@
         [value]="timeStr"
         (value-changed)="afterTimeValueChanged($event)"
         (opened-changed)="afterTimeOpenedChanged($event)"
+        [disabled]="isDisabled === true"
+      ></vaadin-time-picker>
+    </div>
+  </div>
+
+  <!-- is starting -->
+  <div
+    *ngIf="fraction.type === fractionTypeEnum.TsIsStarting"
+    class="flex flex-row space-x-5"
+  >
+    <div
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
+    >
+      <vaadin-date-picker
+        #datePickerStarting
+        class="py-0"
+        required
+        [value]="dateStr"
+        [i18n]="startingI18n"
+        (value-changed)="startingDateValueChanged($event)"
+        [disabled]="isDisabled === true"
+      ></vaadin-date-picker>
+    </div>
+
+    <div
+      *ngIf="showHours === true || timeStr !== zeroHoursMinutes"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
+    >
+      <vaadin-time-picker
+        #timePickerStarting
+        class="py-0"
+        required
+        [value]="timeStr"
+        (value-changed)="startingTimeValueChanged($event)"
+        (opened-changed)="startingTimeOpenedChanged($event)"
         [disabled]="isDisabled === true"
       ></vaadin-time-picker>
     </div>

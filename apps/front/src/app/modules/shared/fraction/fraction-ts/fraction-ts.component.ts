@@ -109,8 +109,14 @@ export class FractionTsComponent implements OnInit {
   @ViewChild('datePickerBefore') datePickerBefore: ElementRef<DatePicker>;
   @ViewChild('timePickerBefore') timePickerBefore: ElementRef<TimePicker>;
 
+  @ViewChild('timePickerThrough') timePickerThrough: ElementRef<TimePicker>;
+  @ViewChild('datePickerThrough') datePickerThrough: ElementRef<DatePicker>;
+
   @ViewChild('datePickerAfter') datePickerAfter: ElementRef<DatePicker>;
   @ViewChild('timePickerAfter') timePickerAfter: ElementRef<TimePicker>;
+
+  @ViewChild('timePickerStarting') timePickerStarting: ElementRef<TimePicker>;
+  @ViewChild('datePickerStarting') datePickerStarting: ElementRef<DatePicker>;
 
   @ViewChild('datePickerInRangeFrom')
   datePickerInRangeFrom: ElementRef<DatePicker>;
@@ -452,7 +458,9 @@ export class FractionTsComponent implements OnInit {
   onHourDateI18n = Object.assign({}, this.commonI18n);
   onMinuteDateI18n = Object.assign({}, this.commonI18n);
   beforeDateI18n = Object.assign({}, this.commonI18n);
+  throughI18n = Object.assign({}, this.commonI18n);
   afterDateI18n = Object.assign({}, this.commonI18n);
+  startingI18n = Object.assign({}, this.commonI18n);
   inRangeFromDateI18n = Object.assign({}, this.commonI18n);
   inRangeToDateI18n = Object.assign({}, this.commonI18n);
 
@@ -847,6 +855,27 @@ export class FractionTsComponent implements OnInit {
         break;
       }
 
+      case this.fractionTypeEnum.TsIsThrough: {
+        // this.fraction.tsForOption = common.FractionTsForOptionEnum.ForInfinity;
+        // this.fraction.tsForValue = 1;
+        // this.fraction.tsForUnit = common.FractionTsForUnitEnum.Weeks;
+
+        this.buildFractionThrough({
+          dateValue: this.dateStr,
+          timeValue: this.timeStr
+        });
+        this.updateForControls();
+
+        // if (
+        // this.fraction.tsForOption ===
+        //   common.FractionTsForOptionEnum.ForInfinity ||
+        // this.tsForValueForm.valid
+        // ) {
+        this.emitFractionUpdate();
+        // }
+        break;
+      }
+
       case this.fractionTypeEnum.TsIsAfterDate: {
         this.fraction.tsForOption = common.FractionTsForOptionEnum.ForInfinity;
         this.fraction.tsForValue = 1;
@@ -865,6 +894,27 @@ export class FractionTsComponent implements OnInit {
         ) {
           this.emitFractionUpdate();
         }
+        break;
+      }
+
+      case this.fractionTypeEnum.TsIsStarting: {
+        // this.fraction.tsForOption = common.FractionTsForOptionEnum.ForInfinity;
+        // this.fraction.tsForValue = 1;
+        // this.fraction.tsForUnit = common.FractionTsForUnitEnum.Weeks;
+
+        this.buildFractionStarting({
+          dateValue: this.dateStr,
+          timeValue: this.timeStr
+        });
+        this.updateForControls();
+
+        // if (
+        // this.fraction.tsForOption ===
+        //   common.FractionTsForOptionEnum.ForInfinity ||
+        // this.tsForValueForm.valid
+        // ) {
+        this.emitFractionUpdate();
+        // }
         break;
       }
 
@@ -1061,6 +1111,45 @@ export class FractionTsComponent implements OnInit {
     };
   }
 
+  buildFractionThrough(item: { dateValue: string; timeValue: string }) {
+    let { dateValue, timeValue } = item;
+
+    let minuteStr = this.timeService.getMinuteStr({
+      dateValue: dateValue,
+      timeValue: timeValue,
+      dateSeparator: common.isDefined(this.fraction.parentBrick) ? '-' : '/'
+    });
+
+    // let newTsForOption = common.isDefined(this.fraction.tsForOption)
+    //   ? this.fraction.tsForOption
+    //   : common.FractionTsForOptionEnum.ForInfinity;
+
+    let dateMinuteStr =
+      Number(timeValue.split(':')[0].replace(/^0+/, '')) > 0 ||
+      Number(timeValue.split(':')[1].replace(/^0+/, '')) > 0
+        ? minuteStr
+        : minuteStr.split(' ')[0];
+
+    let mBrick = `f\`through ${dateMinuteStr}\``;
+
+    this.fraction = {
+      brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`,
+      parentBrick: common.isDefined(this.fraction.parentBrick)
+        ? mBrick
+        : undefined,
+      operator: common.FractionOperatorEnum.Or,
+      type: common.FractionTypeEnum.TsIsThrough,
+      tsDateYear: Number(dateValue.split('-')[0]),
+      tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
+      tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
+      tsDateHour: Number(timeValue.split(':')[0].replace(/^0+/, '')),
+      tsDateMinute: Number(timeValue.split(':')[1].replace(/^0+/, ''))
+      // tsForOption: newTsForOption,
+      // tsForValue: this.fraction.tsForValue,
+      // tsForUnit: this.fraction.tsForUnit
+    };
+  }
+
   buildFractionAfterDate(item: { dateValue: string; timeValue: string }) {
     let { dateValue, timeValue } = item;
 
@@ -1101,6 +1190,45 @@ export class FractionTsComponent implements OnInit {
       tsForOption: newTsForOption,
       tsForValue: this.fraction.tsForValue,
       tsForUnit: this.fraction.tsForUnit
+    };
+  }
+
+  buildFractionStarting(item: { dateValue: string; timeValue: string }) {
+    let { dateValue, timeValue } = item;
+
+    let minuteStr = this.timeService.getMinuteStr({
+      dateValue: dateValue,
+      timeValue: timeValue,
+      dateSeparator: common.isDefined(this.fraction.parentBrick) ? '-' : '/'
+    });
+
+    // let newTsForOption = common.isDefined(this.fraction.tsForOption)
+    //   ? this.fraction.tsForOption
+    //   : common.FractionTsForOptionEnum.ForInfinity;
+
+    let dateMinuteStr =
+      Number(timeValue.split(':')[0].replace(/^0+/, '')) > 0 ||
+      Number(timeValue.split(':')[1].replace(/^0+/, '')) > 0
+        ? minuteStr
+        : minuteStr.split(' ')[0];
+
+    let mBrick = `f\`starting ${dateMinuteStr}\``;
+
+    this.fraction = {
+      brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`,
+      parentBrick: common.isDefined(this.fraction.parentBrick)
+        ? mBrick
+        : undefined,
+      operator: common.FractionOperatorEnum.Or,
+      type: common.FractionTypeEnum.TsIsStarting,
+      tsDateYear: Number(dateValue.split('-')[0]),
+      tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
+      tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
+      tsDateHour: Number(timeValue.split(':')[0].replace(/^0+/, '')),
+      tsDateMinute: Number(timeValue.split(':')[1].replace(/^0+/, ''))
+      // tsForOption: newTsForOption,
+      // tsForValue: this.fraction.tsForValue,
+      // tsForUnit: this.fraction.tsForUnit
     };
   }
 
@@ -1712,6 +1840,74 @@ export class FractionTsComponent implements OnInit {
     }, 1);
   }
 
+  throughDateValueChanged(x: any) {
+    let datePickerThrough = this.datePickerThrough?.nativeElement;
+    if (common.isDefined(datePickerThrough)) {
+      let value = datePickerThrough.value;
+
+      if (common.isDefinedAndNotEmpty(value)) {
+        this.dateStr = value;
+
+        this.buildFractionThrough({
+          dateValue: value,
+          timeValue: this.timeStr
+        });
+
+        // if (
+        //   this.fraction.tsForOption ===
+        //     common.FractionTsForOptionEnum.ForInfinity ||
+        //   this.tsForValueForm.valid
+        // ) {
+        this.emitFractionUpdate();
+        // }
+
+        setTimeout(() => {
+          datePickerThrough.blur();
+        }, 1);
+      }
+    }
+  }
+
+  throughTimeValueChanged(x: any) {
+    let timePickerThrough = this.timePickerThrough?.nativeElement;
+    if (common.isDefined(timePickerThrough)) {
+      let value = timePickerThrough.value;
+
+      if (common.isDefinedAndNotEmpty(value)) {
+        this.timeStr = value;
+
+        this.buildFractionThrough({
+          dateValue: this.dateStr,
+          timeValue: value
+        });
+
+        // if (
+        //   this.fraction.tsForOption ===
+        //     common.FractionTsForOptionEnum.ForInfinity ||
+        //   this.tsForValueForm.valid
+        // ) {
+        this.emitFractionUpdate();
+        // }
+
+        setTimeout(() => {
+          timePickerThrough.blur();
+        }, 1);
+      }
+    }
+  }
+
+  throughTimeOpenedChanged(x: any) {
+    setTimeout(() => {
+      let timePickerThrough = this.timePickerThrough?.nativeElement;
+      if (
+        common.isDefined(timePickerThrough) &&
+        timePickerThrough.opened === false
+      ) {
+        timePickerThrough.blur();
+      }
+    }, 1);
+  }
+
   afterDateValueChanged(x: any) {
     let datePickerAfter = this.datePickerAfter?.nativeElement;
     if (common.isDefined(datePickerAfter)) {
@@ -1776,6 +1972,74 @@ export class FractionTsComponent implements OnInit {
         timePickerAfter.opened === false
       ) {
         timePickerAfter.blur();
+      }
+    }, 1);
+  }
+
+  startingDateValueChanged(x: any) {
+    let datePickerStarting = this.datePickerStarting?.nativeElement;
+    if (common.isDefined(datePickerStarting)) {
+      let value = datePickerStarting.value;
+
+      if (common.isDefinedAndNotEmpty(value)) {
+        this.dateStr = value;
+
+        this.buildFractionStarting({
+          dateValue: value,
+          timeValue: this.timeStr
+        });
+
+        // if (
+        //   this.fraction.tsForOption ===
+        //     common.FractionTsForOptionEnum.ForInfinity ||
+        //   this.tsForValueForm.valid
+        // ) {
+        this.emitFractionUpdate();
+        // }
+
+        setTimeout(() => {
+          datePickerStarting.blur();
+        }, 1);
+      }
+    }
+  }
+
+  startingTimeValueChanged(x: any) {
+    let timePickerStarting = this.timePickerStarting?.nativeElement;
+    if (common.isDefined(timePickerStarting)) {
+      let value = timePickerStarting.value;
+
+      if (common.isDefinedAndNotEmpty(value)) {
+        this.timeStr = value;
+
+        this.buildFractionStarting({
+          dateValue: this.dateStr,
+          timeValue: value
+        });
+
+        // if (
+        //   this.fraction.tsForOption ===
+        //     common.FractionTsForOptionEnum.ForInfinity ||
+        //   this.tsForValueForm.valid
+        // ) {
+        this.emitFractionUpdate();
+        // }
+
+        setTimeout(() => {
+          timePickerStarting.blur();
+        }, 1);
+      }
+    }
+  }
+
+  startingTimeOpenedChanged(x: any) {
+    setTimeout(() => {
+      let timePickerStarting = this.timePickerStarting?.nativeElement;
+      if (
+        common.isDefined(timePickerStarting) &&
+        timePickerStarting.opened === false
+      ) {
+        timePickerStarting.blur();
       }
     }, 1);
   }
