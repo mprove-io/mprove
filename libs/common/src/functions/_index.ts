@@ -33,6 +33,7 @@ export * from './parse-tags';
 export * from './encode-file-path';
 export * from './decode-file-path';
 export * from './get-fraction-ts-last-units';
+export * from './get-fraction-ts-next-units';
 export * from './get-fraction-ts-for-units';
 export * from './get-fraction-ts-units';
 export * from './parse-ts-literal';

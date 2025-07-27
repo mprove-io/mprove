@@ -1025,6 +1025,115 @@
       </ng-select>
     </div>
   </div>
+
+  <!-- in next -->
+  <div
+    *ngIf="fraction.type === fractionTypeEnum.TsIsInNext"
+    class="flex flex-row space-x-5"
+  >
+    <form [formGroup]="tsNextValueForm">
+      <div
+        tp="Turn off formula to activate control"
+        [tpIsEnabled]="isDisabled === true"
+      >
+        <fieldset [disabled]="isDisabled === true">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="fractionTsNextValueInput"
+            class="form-input border-s3 focus:border-m600 h-[36px] w-[100px] rounded"
+            [ngClass]="{
+              'border-r600':
+                tsNextValueForm.controls['tsNextValue'].invalid &&
+                tsNextValueForm.controls['tsNextValue'].touched
+            }"
+            formControlName="tsNextValue"
+            (blur)="tsNextValueBlur()"
+          />
+        </fieldset>
+      </div>
+
+      <m-validation
+        [control]="tsNextValueForm.controls['tsNextValue']"
+      ></m-validation>
+    </form>
+
+    <div
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
+    >
+      <ng-select
+        #tsNextUnitsSelect
+        [fixNgSelectBottom]="tsNextUnitsSelect"
+        data-cy="tsNextUnitsSelect"
+        class="popup-55 w-32"
+        [ngClass]="{
+          'cursor-default': isDisabled === true
+        }"
+        [items]="fractionTsNextUnitsList"
+        [clearable]="false"
+        [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsNextUnit"
+        (change)="tsNextUnitChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); tsNextUnitsSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); tsNextUnitsSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+
+    <!-- <div
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
+    >
+      <ng-select
+        #tsNextCompleteOptionsSelect
+        [fixNgSelectBottom]="tsNextCompleteOptionsSelect"
+        data-cy="tsNextCompleteOptionsSelect"
+        class="popup-55 w-56"
+        [ngClass]="{
+          'cursor-default': isDisabled === true
+        }"
+        [items]="fractionTsNextCompleteOptionsList"
+        [clearable]="false"
+        [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsNextCompleteOption"
+        (change)="tsNextCompleteOptionChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); tsNextCompleteOptionsSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); tsNextCompleteOptionsSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </div> -->
+  </div>
 </div>
 
 <div *ngIf="showHours$ | async"></div>

@@ -8,6 +8,7 @@ export * from './fraction-ts-for-option.enum';
 export * from './fraction-ts-for-unit.enum';
 export * from './fraction-ts-last-complete-option.enum';
 export * from './fraction-ts-last-unit.enum';
+export * from './fraction-ts-next-unit.enum';
 export * from './fraction-ts-relative-complete-option.enum';
 export * from './fraction-ts-relative-unit.enum';
 export * from './fraction-ts-relative-when-option.enum';

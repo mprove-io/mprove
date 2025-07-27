@@ -706,10 +706,8 @@ export function getMalloyFiltersFractions(item: {
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? common.FractionTypeEnum.TsIsInNext
                     : common.FractionTypeEnum.TsIsNotInNext,
-                tsLastValue: Number(tFilter.n),
-                tsLastUnit: common.getFractionTsLastUnits(tFilter.units),
-                tsLastCompleteOption:
-                  common.FractionTsLastCompleteOptionEnum.Complete
+                tsNextValue: Number(tFilter.n),
+                tsNextUnit: common.getFractionTsNextUnits(tFilter.units)
               };
             } else if ((temporalFilter as Before).operator === 'before') {
               // temporal before (before)

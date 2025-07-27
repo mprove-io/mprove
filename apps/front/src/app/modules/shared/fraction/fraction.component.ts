@@ -63,6 +63,11 @@ export class FractionTsLastUnitItem {
   value: common.FractionTsLastUnitEnum;
 }
 
+export class FractionTsNextUnitItem {
+  label: string;
+  value: common.FractionTsNextUnitEnum;
+}
+
 export class FractionTsLastCompleteOptionItem {
   label: string;
   value: common.FractionTsLastCompleteOptionEnum;

@@ -35,6 +35,7 @@ import {
   FractionTsForUnitItem,
   FractionTsLastCompleteOptionItem,
   FractionTsLastUnitItem,
+  FractionTsNextUnitItem,
   FractionTsRelativeCompleteOptionItem,
   FractionTsRelativeUnitItem,
   FractionTsRelativeWhenOptionItem,
@@ -132,6 +133,7 @@ export class FractionTsComponent implements OnInit {
   tsRelativeValueForm: FormGroup;
   tsForValueForm: FormGroup;
   tsLastValueForm: FormGroup;
+  tsNextValueForm: FormGroup;
 
   fractionTsTypesList: FractionTypeItem[] = [
     {
@@ -438,14 +440,45 @@ export class FractionTsComponent implements OnInit {
     }
   ];
 
-  fractionTsLastCompleteOptionsList: FractionTsLastCompleteOptionItem[] = [
+  fractionTsNextUnitsList: FractionTsNextUnitItem[] = [
     {
-      label: 'complete',
-      value: common.FractionTsLastCompleteOptionEnum.Complete
+      label: 'Years',
+      value: common.FractionTsNextUnitEnum.Years
     },
+    {
+      label: 'Quarters',
+      value: common.FractionTsNextUnitEnum.Quarters
+    },
+    {
+      label: 'Months',
+      value: common.FractionTsNextUnitEnum.Months
+    },
+    {
+      label: 'Weeks',
+      value: common.FractionTsNextUnitEnum.Weeks
+    },
+    {
+      label: 'Days',
+      value: common.FractionTsNextUnitEnum.Days
+    },
+    {
+      label: 'Hours',
+      value: common.FractionTsNextUnitEnum.Hours
+    },
+    {
+      label: 'Minutes',
+      value: common.FractionTsNextUnitEnum.Minutes
+    }
+  ];
+
+  fractionTsLastCompleteOptionsList: FractionTsLastCompleteOptionItem[] = [
     {
       label: 'complete plus current',
       value: common.FractionTsLastCompleteOptionEnum.CompletePlusCurrent
+    },
+    {
+      label: 'complete',
+      value: common.FractionTsLastCompleteOptionEnum.Complete
     },
     {
       label: 'not complete',
@@ -512,6 +545,7 @@ export class FractionTsComponent implements OnInit {
     this.buildTsRelativeValueForm();
     this.buildTsForValueForm();
     this.buildTsLastValueForm();
+    this.buildTsNextValueForm();
 
     let structState = this.structQuery.getValue();
     let firstDayOfWeek =
@@ -568,6 +602,19 @@ export class FractionTsComponent implements OnInit {
     this.tsLastValueForm = this.fb.group({
       tsLastValue: [
         this.fraction.tsLastValue,
+        [
+          Validators.required,
+          ValidationService.integerOrEmptyValidator,
+          Validators.min(0)
+        ]
+      ]
+    });
+  }
+
+  buildTsNextValueForm() {
+    this.tsNextValueForm = this.fb.group({
+      tsNextValue: [
+        this.fraction.tsNextValue,
         [
           Validators.required,
           ValidationService.integerOrEmptyValidator,
@@ -658,16 +705,6 @@ export class FractionTsComponent implements OnInit {
   updateControlForValueFromFraction() {
     this.tsForValueForm.controls['tsForValue'].setValue(
       this.fraction.tsForValue
-    );
-  }
-
-  updateLastControls() {
-    this.updateControlLastValueFromFraction();
-  }
-
-  updateControlLastValueFromFraction() {
-    this.tsLastValueForm.controls['tsLastValue'].setValue(
-      this.fraction.tsLastValue
     );
   }
 
@@ -992,7 +1029,23 @@ export class FractionTsComponent implements OnInit {
 
         this.buildFractionLast();
 
-        this.updateLastControls();
+        this.tsLastValueForm.controls['tsLastValue'].setValue(
+          this.fraction.tsLastValue
+        );
+
+        this.emitFractionUpdate();
+        break;
+      }
+
+      case this.fractionTypeEnum.TsIsInNext: {
+        this.fraction.tsNextValue = 5;
+        this.fraction.tsNextUnit = common.FractionTsNextUnitEnum.Days;
+
+        this.buildFractionNext();
+
+        this.tsNextValueForm.controls['tsNextValue'].setValue(
+          this.fraction.tsNextValue
+        );
 
         this.emitFractionUpdate();
         break;
@@ -2290,6 +2343,37 @@ export class FractionTsComponent implements OnInit {
     }
   }
 
+  buildFractionLast() {
+    let mBrick =
+      this.fraction.tsLastCompleteOption ===
+      common.FractionTsLastCompleteOptionEnum.Incomplete
+        ? `f\`${this.fraction.tsLastValue} ${this.fraction.tsLastUnit}\``
+        : this.fraction.tsLastCompleteOption ===
+            common.FractionTsLastCompleteOptionEnum.Complete
+          ? `f\`last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit}\``
+          : `f\`${this.fraction.tsLastValue} ${this.fraction.tsLastUnit} ago to now\``;
+
+    this.fraction = {
+      brick: common.isDefined(this.fraction.parentBrick)
+        ? mBrick
+        : this.fraction.tsLastCompleteOption ===
+            common.FractionTsLastCompleteOptionEnum.Incomplete
+          ? `last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit}`
+          : this.fraction.tsLastCompleteOption ===
+              common.FractionTsLastCompleteOptionEnum.Complete
+            ? `last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit} complete`
+            : `last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit} complete plus current`,
+      parentBrick: common.isDefined(this.fraction.parentBrick)
+        ? mBrick
+        : undefined,
+      operator: common.FractionOperatorEnum.Or,
+      type: common.FractionTypeEnum.TsIsInLast,
+      tsLastValue: this.fraction.tsLastValue,
+      tsLastUnit: this.fraction.tsLastUnit,
+      tsLastCompleteOption: this.fraction.tsLastCompleteOption
+    };
+  }
+
   tsLastValueBlur() {
     let value = this.tsLastValueForm.controls['tsLastValue'].value;
 
@@ -2320,35 +2404,41 @@ export class FractionTsComponent implements OnInit {
     }
   }
 
-  buildFractionLast() {
-    let mBrick =
-      this.fraction.tsLastCompleteOption ===
-      common.FractionTsLastCompleteOptionEnum.Incomplete
-        ? `f\`${this.fraction.tsLastValue} ${this.fraction.tsLastUnit}\``
-        : this.fraction.tsLastCompleteOption ===
-            common.FractionTsLastCompleteOptionEnum.Complete
-          ? `f\`last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit}\``
-          : `f\`${this.fraction.tsLastValue} ${this.fraction.tsLastUnit} ago to now\``;
+  buildFractionNext() {
+    let mBrick = `f\`next ${this.fraction.tsNextValue} ${this.fraction.tsNextUnit}\``;
 
     this.fraction = {
-      brick: common.isDefined(this.fraction.parentBrick)
-        ? mBrick
-        : this.fraction.tsLastCompleteOption ===
-            common.FractionTsLastCompleteOptionEnum.Incomplete
-          ? `last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit}`
-          : this.fraction.tsLastCompleteOption ===
-              common.FractionTsLastCompleteOptionEnum.Complete
-            ? `last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit} complete`
-            : `last ${this.fraction.tsLastValue} ${this.fraction.tsLastUnit} complete plus current`,
+      brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`,
       parentBrick: common.isDefined(this.fraction.parentBrick)
         ? mBrick
         : undefined,
       operator: common.FractionOperatorEnum.Or,
-      type: common.FractionTypeEnum.TsIsInLast,
-      tsLastValue: this.fraction.tsLastValue,
-      tsLastUnit: this.fraction.tsLastUnit,
-      tsLastCompleteOption: this.fraction.tsLastCompleteOption
+      type: common.FractionTypeEnum.TsIsInNext,
+      tsNextValue: this.fraction.tsNextValue,
+      tsNextUnit: this.fraction.tsNextUnit
     };
+  }
+
+  tsNextValueBlur() {
+    let value = this.tsNextValueForm.controls['tsNextValue'].value;
+
+    if (value !== this.fraction.tsNextValue) {
+      this.fraction.tsNextValue = Number(value);
+
+      this.buildFractionNext();
+
+      if (this.tsNextValueForm.valid) {
+        this.emitFractionUpdate();
+      }
+    }
+  }
+
+  tsNextUnitChange() {
+    this.buildFractionNext();
+
+    if (this.tsNextValueForm.valid) {
+      this.emitFractionUpdate();
+    }
   }
 
   emitFractionUpdate() {
