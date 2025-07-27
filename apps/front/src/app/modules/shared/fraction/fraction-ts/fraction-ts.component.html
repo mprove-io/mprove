@@ -546,43 +546,6 @@
     class="flex flex-row space-x-5"
   >
     <div class="flex h-9 items-center">for</div>
-    <!-- <div
-      tp="Turn off formula to activate control"
-      [tpIsEnabled]="isDisabled === true"
-    >
-      <ng-select
-        #tsForOptionsSelect
-        [fixNgSelectBottom]="tsForOptionsSelect"
-        data-cy="tsForOptionsSelect"
-        class="popup-55 w-[110px]"
-        [ngClass]="{
-          'cursor-default': isDisabled === true
-        }"
-        [items]="fractionTsForOptionsList"
-        [clearable]="false"
-        [searchable]="false"
-        [disabled]="isDisabled === true"
-        [(ngModel)]="fraction.tsForOption"
-        (change)="tsForOptionChange()"
-        (keyup.esc)="
-          $event.stopImmediatePropagation(); tsForOptionsSelect.blur()
-        "
-        (keyup.enter)="
-          $event.stopImmediatePropagation(); tsForOptionsSelect.blur()
-        "
-        appendTo="body"
-        bindLabel="label"
-        bindValue="value"
-      >
-        <ng-template ng-label-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item.label }}</div>
-        </ng-template>
-
-        <ng-template ng-option-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item.label }}</div>
-        </ng-template>
-      </ng-select>
-    </div> -->
 
     <form [formGroup]="tsForValueForm">
       <div
@@ -620,9 +583,6 @@
         [fixNgSelectBottom]="tsForUnitsSelect"
         data-cy="tsForUnitsSelect"
         class="popup-55 w-32"
-        [ngClass]="{
-          'cursor-default': isDisabled === true
-        }"
         [items]="fractionTsForUnitsList"
         [clearable]="false"
         [searchable]="false"
@@ -958,9 +918,6 @@
         [fixNgSelectBottom]="tsLastUnitsSelect"
         data-cy="tsLastUnitsSelect"
         class="popup-55 w-32"
-        [ngClass]="{
-          'cursor-default': isDisabled === true
-        }"
         [items]="fractionTsLastUnitsList"
         [clearable]="false"
         [searchable]="false"
@@ -996,9 +953,6 @@
         [fixNgSelectBottom]="tsLastCompleteOptionsSelect"
         data-cy="tsLastCompleteOptionsSelect"
         class="popup-55 w-56"
-        [ngClass]="{
-          'cursor-default': isDisabled === true
-        }"
         [items]="fractionTsLastCompleteOptionsList"
         [clearable]="false"
         [searchable]="false"
@@ -1067,9 +1021,6 @@
         [fixNgSelectBottom]="tsNextUnitsSelect"
         data-cy="tsNextUnitsSelect"
         class="popup-55 w-32"
-        [ngClass]="{
-          'cursor-default': isDisabled === true
-        }"
         [items]="fractionTsNextUnitsList"
         [clearable]="false"
         [searchable]="false"
@@ -1095,44 +1046,6 @@
         </ng-template>
       </ng-select>
     </div>
-
-    <!-- <div
-      tp="Turn off formula to activate control"
-      [tpIsEnabled]="isDisabled === true"
-    >
-      <ng-select
-        #tsNextCompleteOptionsSelect
-        [fixNgSelectBottom]="tsNextCompleteOptionsSelect"
-        data-cy="tsNextCompleteOptionsSelect"
-        class="popup-55 w-56"
-        [ngClass]="{
-          'cursor-default': isDisabled === true
-        }"
-        [items]="fractionTsNextCompleteOptionsList"
-        [clearable]="false"
-        [searchable]="false"
-        [disabled]="isDisabled === true"
-        [(ngModel)]="fraction.tsNextCompleteOption"
-        (change)="tsNextCompleteOptionChange()"
-        (keyup.esc)="
-          $event.stopImmediatePropagation(); tsNextCompleteOptionsSelect.blur()
-        "
-        (keyup.enter)="
-          $event.stopImmediatePropagation(); tsNextCompleteOptionsSelect.blur()
-        "
-        appendTo="body"
-        bindLabel="label"
-        bindValue="value"
-      >
-        <ng-template ng-label-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item.label }}</div>
-        </ng-template>
-
-        <ng-template ng-option-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item.label }}</div>
-        </ng-template>
-      </ng-select>
-    </div> -->
   </div>
 </div>
 
