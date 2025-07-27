@@ -1001,7 +1001,7 @@ export function getMalloyFiltersFractions(item: {
                   : undefined,
                 tsForOption: common.FractionTsForOptionEnum.For,
                 tsForUnit: common.getFractionTsForUnits(tFilter.units),
-                tsLastValue: Number(tFilter.n)
+                tsForValue: Number(tFilter.n)
               };
             }
 

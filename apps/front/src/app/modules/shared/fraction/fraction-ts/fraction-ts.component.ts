@@ -118,6 +118,9 @@ export class FractionTsComponent implements OnInit {
   @ViewChild('timePickerStarting') timePickerStarting: ElementRef<TimePicker>;
   @ViewChild('datePickerStarting') datePickerStarting: ElementRef<DatePicker>;
 
+  @ViewChild('timePickerBeginFor') timePickerBeginFor: ElementRef<TimePicker>;
+  @ViewChild('datePickerBeginFor') datePickerBeginFor: ElementRef<DatePicker>;
+
   @ViewChild('datePickerInRangeFrom')
   datePickerInRangeFrom: ElementRef<DatePicker>;
   @ViewChild('timePickerInRangeFrom')
@@ -192,7 +195,7 @@ export class FractionTsComponent implements OnInit {
       operator: common.FractionOperatorEnum.Or
     },
     {
-      label: 'is starting ... for ...',
+      label: 'is starting ... for',
       value: common.FractionTypeEnum.TsIsBeginFor,
       operator: common.FractionOperatorEnum.Or
     },
@@ -277,7 +280,7 @@ export class FractionTsComponent implements OnInit {
     //   operator: common.FractionOperatorEnum.And
     // },
     {
-      label: 'is not starting ... for ...',
+      label: 'is not starting ... for',
       value: common.FractionTypeEnum.TsIsNotBeginFor,
       operator: common.FractionOperatorEnum.And
     },
@@ -461,6 +464,7 @@ export class FractionTsComponent implements OnInit {
   throughI18n = Object.assign({}, this.commonI18n);
   afterDateI18n = Object.assign({}, this.commonI18n);
   startingI18n = Object.assign({}, this.commonI18n);
+  beginForI18n = Object.assign({}, this.commonI18n);
   inRangeFromDateI18n = Object.assign({}, this.commonI18n);
   inRangeToDateI18n = Object.assign({}, this.commonI18n);
 
@@ -918,6 +922,27 @@ export class FractionTsComponent implements OnInit {
         break;
       }
 
+      case this.fractionTypeEnum.TsIsBeginFor: {
+        this.fraction.tsForOption = common.FractionTsForOptionEnum.ForInfinity;
+        this.fraction.tsForValue = 1;
+        this.fraction.tsForUnit = common.FractionTsForUnitEnum.Weeks;
+
+        this.buildFractionBeginFor({
+          dateValue: this.dateStr,
+          timeValue: this.timeStr
+        });
+        this.updateForControls();
+
+        if (
+          this.fraction.tsForOption ===
+            common.FractionTsForOptionEnum.ForInfinity ||
+          this.tsForValueForm.valid
+        ) {
+          this.emitFractionUpdate();
+        }
+        break;
+      }
+
       case this.fractionTypeEnum.TsIsBeforeRelative: {
         this.fraction.tsRelativeValue = 1;
         this.fraction.tsRelativeUnit = common.FractionTsRelativeUnitEnum.Weeks;
@@ -1229,6 +1254,41 @@ export class FractionTsComponent implements OnInit {
       // tsForOption: newTsForOption,
       // tsForValue: this.fraction.tsForValue,
       // tsForUnit: this.fraction.tsForUnit
+    };
+  }
+
+  buildFractionBeginFor(item: { dateValue: string; timeValue: string }) {
+    let { dateValue, timeValue } = item;
+
+    let minuteStr = this.timeService.getMinuteStr({
+      dateValue: dateValue,
+      timeValue: timeValue,
+      dateSeparator: common.isDefined(this.fraction.parentBrick) ? '-' : '/'
+    });
+
+    let dateMinuteStr =
+      Number(timeValue.split(':')[0].replace(/^0+/, '')) > 0 ||
+      Number(timeValue.split(':')[1].replace(/^0+/, '')) > 0
+        ? minuteStr
+        : minuteStr.split(' ')[0];
+
+    let mBrick = `f\`${dateMinuteStr} for ${this.fraction.tsForValue} ${this.fraction.tsForUnit}\``;
+
+    this.fraction = {
+      brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`,
+      parentBrick: common.isDefined(this.fraction.parentBrick)
+        ? mBrick
+        : undefined,
+      operator: common.FractionOperatorEnum.Or,
+      type: common.FractionTypeEnum.TsIsBeginFor,
+      tsDateYear: Number(dateValue.split('-')[0]),
+      tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
+      tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
+      tsDateHour: Number(timeValue.split(':')[0].replace(/^0+/, '')),
+      tsDateMinute: Number(timeValue.split(':')[1].replace(/^0+/, '')),
+      // tsForOption: common.FractionTsForOptionEnum.For,
+      tsForValue: this.fraction.tsForValue,
+      tsForUnit: this.fraction.tsForUnit
     };
   }
 
@@ -2044,6 +2104,74 @@ export class FractionTsComponent implements OnInit {
     }, 1);
   }
 
+  beginForDateValueChanged(x: any) {
+    let datePickerBeginFor = this.datePickerBeginFor?.nativeElement;
+    if (common.isDefined(datePickerBeginFor)) {
+      let value = datePickerBeginFor.value;
+
+      if (common.isDefinedAndNotEmpty(value)) {
+        this.dateStr = value;
+
+        this.buildFractionBeginFor({
+          dateValue: value,
+          timeValue: this.timeStr
+        });
+
+        if (
+          // this.fraction.tsForOption ===
+          //   common.FractionTsForOptionEnum.ForInfinity ||
+          this.tsForValueForm.valid
+        ) {
+          this.emitFractionUpdate();
+        }
+
+        setTimeout(() => {
+          datePickerBeginFor.blur();
+        }, 1);
+      }
+    }
+  }
+
+  beginForTimeValueChanged(x: any) {
+    let timePickerBeginFor = this.timePickerBeginFor?.nativeElement;
+    if (common.isDefined(timePickerBeginFor)) {
+      let value = timePickerBeginFor.value;
+
+      if (common.isDefinedAndNotEmpty(value)) {
+        this.timeStr = value;
+
+        this.buildFractionBeginFor({
+          dateValue: this.dateStr,
+          timeValue: value
+        });
+
+        if (
+          //   this.fraction.tsForOption ===
+          //     common.FractionTsForOptionEnum.ForInfinity ||
+          this.tsForValueForm.valid
+        ) {
+          this.emitFractionUpdate();
+        }
+
+        setTimeout(() => {
+          timePickerBeginFor.blur();
+        }, 1);
+      }
+    }
+  }
+
+  beginForTimeOpenedChanged(x: any) {
+    setTimeout(() => {
+      let timePickerBeginFor = this.timePickerBeginFor?.nativeElement;
+      if (
+        common.isDefined(timePickerBeginFor) &&
+        timePickerBeginFor.opened === false
+      ) {
+        timePickerBeginFor.blur();
+      }
+    }, 1);
+  }
+
   relativeValueBlur() {
     let value = this.tsRelativeValueForm.controls['tsRelativeValue'].value;
 
@@ -2118,38 +2246,45 @@ export class FractionTsComponent implements OnInit {
   }
 
   buildEmitFor() {
-    if (this.fraction.type === common.FractionTypeEnum.TsIsBeforeDate) {
-      this.buildFractionBeforeDate({
-        dateValue: this.dateStr,
-        timeValue: this.timeStr
-      });
-    }
+    this.buildFractionBeginFor({
+      dateValue: this.dateStr,
+      timeValue: this.timeStr
+    });
 
-    if (this.fraction.type === common.FractionTypeEnum.TsIsAfterDate) {
-      this.buildFractionAfterDate({
-        dateValue: this.dateStr,
-        timeValue: this.timeStr
-      });
-    }
+    // if (this.fraction.type === common.FractionTypeEnum.TsIsBeforeDate) {
+    //   this.buildFractionBeforeDate({
+    //     dateValue: this.dateStr,
+    //     timeValue: this.timeStr
+    //   });
+    // }
 
-    if (this.fraction.type === common.FractionTypeEnum.TsIsBeforeRelative) {
-      this.buildFractionBeforeRelative();
-    }
-    if (this.fraction.type === common.FractionTypeEnum.TsIsAfterRelative) {
-      this.buildFractionAfterRelative();
-    }
+    // if (this.fraction.type === common.FractionTypeEnum.TsIsAfterDate) {
+    //   this.buildFractionAfterDate({
+    //     dateValue: this.dateStr,
+    //     timeValue: this.timeStr
+    //   });
+    // }
+
+    // if (this.fraction.type === common.FractionTypeEnum.TsIsBeforeRelative) {
+    //   this.buildFractionBeforeRelative();
+    // }
+    // if (this.fraction.type === common.FractionTypeEnum.TsIsAfterRelative) {
+    //   this.buildFractionAfterRelative();
+    // }
 
     this.updateForControls();
 
     if (
-      ([
-        common.FractionTypeEnum.TsIsBeforeRelative,
-        common.FractionTypeEnum.TsIsAfterRelative
-      ].indexOf(this.fraction.type) < 0 ||
-        this.tsRelativeValueForm.valid) &&
-      (this.fraction.tsForOption ===
-        common.FractionTsForOptionEnum.ForInfinity ||
-        this.tsForValueForm.valid)
+      // ([
+      //   common.FractionTypeEnum.TsIsBeforeRelative,
+      //   common.FractionTypeEnum.TsIsAfterRelative
+      // ].indexOf(this.fraction.type) < 0 ||
+      //   this.tsRelativeValueForm.valid) &&
+      // (
+      // this.fraction.tsForOption ===
+      // common.FractionTsForOptionEnum.ForInfinity ||
+      this.tsForValueForm.valid
+      // )
     ) {
       this.emitFractionUpdate();
     }

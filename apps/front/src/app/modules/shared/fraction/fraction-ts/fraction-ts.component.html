@@ -111,7 +111,8 @@
       fraction.type === fractionTypeEnum.TsIsBeforeDate ||
       fraction.type === fractionTypeEnum.TsIsThrough ||
       fraction.type === fractionTypeEnum.TsIsAfterDate ||
-      fraction.type === fractionTypeEnum.TsIsStarting
+      fraction.type === fractionTypeEnum.TsIsStarting ||
+      fraction.type === fractionTypeEnum.TsIsBeginFor
     "
     tp="The switch is disabled if the time is not 00:00"
     [tpIsEnabled]="
@@ -502,6 +503,151 @@
     </div>
   </div>
 
+  <!-- is begin for -->
+  <div
+    *ngIf="fraction.type === fractionTypeEnum.TsIsBeginFor"
+    class="flex flex-row space-x-5"
+  >
+    <div
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
+    >
+      <vaadin-date-picker
+        #datePickerBeginFor
+        class="py-0"
+        required
+        [value]="dateStr"
+        [i18n]="beginForI18n"
+        (value-changed)="beginForDateValueChanged($event)"
+        [disabled]="isDisabled === true"
+      ></vaadin-date-picker>
+    </div>
+
+    <div
+      *ngIf="showHours === true || timeStr !== zeroHoursMinutes"
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
+    >
+      <vaadin-time-picker
+        #timePickerBeginFor
+        class="py-0"
+        required
+        [value]="timeStr"
+        (value-changed)="beginForTimeValueChanged($event)"
+        (opened-changed)="beginForTimeOpenedChanged($event)"
+        [disabled]="isDisabled === true"
+      ></vaadin-time-picker>
+    </div>
+  </div>
+
+  <!-- begin for -->
+  <div
+    *ngIf="fraction.type === fractionTypeEnum.TsIsBeginFor"
+    class="flex flex-row space-x-5"
+  >
+    <div class="flex h-9 items-center">for</div>
+    <!-- <div
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
+    >
+      <ng-select
+        #tsForOptionsSelect
+        [fixNgSelectBottom]="tsForOptionsSelect"
+        data-cy="tsForOptionsSelect"
+        class="popup-55 w-[110px]"
+        [ngClass]="{
+          'cursor-default': isDisabled === true
+        }"
+        [items]="fractionTsForOptionsList"
+        [clearable]="false"
+        [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsForOption"
+        (change)="tsForOptionChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); tsForOptionsSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); tsForOptionsSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </div> -->
+
+    <form [formGroup]="tsForValueForm">
+      <div
+        tp="Turn off formula to activate control"
+        [tpIsEnabled]="isDisabled === true"
+      >
+        <fieldset [disabled]="isDisabled === true">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="fractionTsForValueInput"
+            class="form-input border-s3 focus:border-m600 h-[36px] w-16 rounded"
+            [ngClass]="{
+              'border-r600':
+                tsForValueForm.controls['tsForValue'].invalid &&
+                tsForValueForm.controls['tsForValue'].touched
+            }"
+            formControlName="tsForValue"
+            (blur)="forValueBlur()"
+          />
+        </fieldset>
+      </div>
+
+      <m-validation
+        [control]="tsForValueForm.controls['tsForValue']"
+      ></m-validation>
+    </form>
+
+    <div
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
+    >
+      <ng-select
+        #tsForUnitsSelect
+        [fixNgSelectBottom]="tsForUnitsSelect"
+        data-cy="tsForUnitsSelect"
+        class="popup-55 w-32"
+        [ngClass]="{
+          'cursor-default': isDisabled === true
+        }"
+        [items]="fractionTsForUnitsList"
+        [clearable]="false"
+        [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsForUnit"
+        (change)="tsForUnitChange()"
+        (keyup.esc)="$event.stopImmediatePropagation(); tsForUnitsSelect.blur()"
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); tsForUnitsSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+  </div>
+
   <!-- relative -->
   <div
     *ngIf="
@@ -655,7 +801,7 @@
   </div>
 
   <!-- for -->
-  <div
+  <!-- <div
     *ngIf="
       !fraction.parentBrick &&
       (fraction.type === fractionTypeEnum.TsIsBeforeDate ||
@@ -769,7 +915,7 @@
         </ng-template>
       </ng-select>
     </div>
-  </div>
+  </div> -->
 
   <!-- in last -->
   <div
