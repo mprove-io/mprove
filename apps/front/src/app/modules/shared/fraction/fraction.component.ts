@@ -73,6 +73,11 @@ export class FractionTsLastCompleteOptionItem {
   value: common.FractionTsLastCompleteOptionEnum;
 }
 
+export class FractionTsMomentTypesItem {
+  label: string;
+  value: common.FractionTsMomentTypeEnum;
+}
+
 @Component({
   standalone: false,
   selector: 'm-fraction',

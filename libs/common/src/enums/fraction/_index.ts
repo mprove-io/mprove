@@ -15,3 +15,4 @@ export * from './fraction-ts-relative-when-option.enum';
 export * from './fraction-type.enum';
 export * from './fraction-yesno-value.enum';
 export * from './fraction-ts-unit.enum';
+export * from './fraction-ts-moment-type.enum';

@@ -35,6 +35,7 @@ import {
   FractionTsForUnitItem,
   FractionTsLastCompleteOptionItem,
   FractionTsLastUnitItem,
+  FractionTsMomentTypesItem,
   FractionTsNextUnitItem,
   FractionTsRelativeCompleteOptionItem,
   FractionTsRelativeUnitItem,
@@ -483,6 +484,61 @@ export class FractionTsComponent implements OnInit {
     {
       label: 'not complete',
       value: common.FractionTsLastCompleteOptionEnum.Incomplete
+    }
+  ];
+
+  fractionTsMomentTypesList: FractionTsMomentTypesItem[] = [
+    {
+      label: 'literal',
+      value: common.FractionTsMomentTypeEnum.Literal
+    },
+    {
+      label: 'today',
+      value: common.FractionTsMomentTypeEnum.Today
+    },
+    {
+      label: 'yesterday',
+      value: common.FractionTsMomentTypeEnum.Yesterday
+    },
+    {
+      label: 'tomorrow',
+      value: common.FractionTsMomentTypeEnum.Tomorrow
+    },
+    {
+      label: 'this',
+      value: common.FractionTsMomentTypeEnum.This
+    },
+    {
+      label: 'last',
+      value: common.FractionTsMomentTypeEnum.Last
+    },
+    {
+      label: 'next',
+      value: common.FractionTsMomentTypeEnum.Next
+    },
+    {
+      label: 'this day of week',
+      value: common.FractionTsMomentTypeEnum.ThisDayOfWeek
+    },
+    {
+      label: 'last day of week',
+      value: common.FractionTsMomentTypeEnum.LastDayOfWeek
+    },
+    {
+      label: 'next day of week',
+      value: common.FractionTsMomentTypeEnum.NextDayOfWeek
+    },
+    {
+      label: 'now',
+      value: common.FractionTsMomentTypeEnum.Now
+    },
+    {
+      label: 'ago',
+      value: common.FractionTsMomentTypeEnum.Ago
+    },
+    {
+      label: 'from now',
+      value: common.FractionTsMomentTypeEnum.FromNow
     }
   ];
 

@@ -568,20 +568,20 @@ export function getMalloyFiltersFractions(item: {
 
         // is in last (complete + current) (complete) (incomplete)
         // is in next (complete)
-        // is between               [from ... to ...]
-        // is starting              [not before]
-        // is starting ... for      [begin ... for ...]
-        // is after
-        // is before
-        // is through               [not after]
-        // is on Year       literal     last, this, next
-        // is on Quarter    literal     last, this, next
-        // is on Month      literal     last, this, next
-        // is on Week       literal     last, this, next
-        // is on Day        literal     last (yesterday), this (today), next (tomorrow), last Sunday, next Sunday, ...
-        // is on Hour       literal     last, this, next
-        // is on Minute     literal     last, this, next
-        // is on Timestamp  literal     now
+        // is between           literal     last, this, next          [from ... to ...]
+        // is starting          literal     last, this, next          [not before]
+        // is starting ... for  literal     last, this, next          [begin ... for ...]
+        // is after             literal     last, this, next
+        // is before            literal     last, this, next
+        // is through           literal     last, this, next          [not after]
+        // is on Year           literal     last, this, next
+        // is on Quarter        literal     last, this, next
+        // is on Month          literal     last, this, next
+        // is on Week           literal     last, this, next
+        // is on Day            literal     last (yesterday), this (today), next (tomorrow), last Sunday, next Sunday, ...
+        // is on Hour           literal     last, this, next
+        // is on Minute         literal     last, this, next
+        // is on Timestamp      literal     now
         // is any value
         // is null
         // is not null
