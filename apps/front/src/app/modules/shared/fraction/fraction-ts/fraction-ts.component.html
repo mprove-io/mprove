@@ -107,6 +107,147 @@
     </div>
   </div>
 
+  <div
+    *ngIf="
+      [
+        fractionTypeEnum.TsIsOnYear,
+        fractionTypeEnum.TsIsOnQuarter,
+        fractionTypeEnum.TsIsOnMonth,
+        fractionTypeEnum.TsIsOnWeek,
+        fractionTypeEnum.TsIsOnDay,
+        fractionTypeEnum.TsIsOnHour,
+        fractionTypeEnum.TsIsOnMinute,
+        fractionTypeEnum.TsIsBeforeDate,
+        fractionTypeEnum.TsIsThrough,
+        fractionTypeEnum.TsIsAfterDate,
+        fractionTypeEnum.TsIsStarting,
+        fractionTypeEnum.TsIsBeginFor
+      ].indexOf(fraction.type) > -1 &&
+      [
+        fractionTsMomentTypeEnum.This,
+        fractionTsMomentTypeEnum.Last,
+        fractionTsMomentTypeEnum.Next
+      ].indexOf(fraction.tsMomentType) > -1
+    "
+    tp="Turn off formula to activate control"
+    [tpIsEnabled]="isDisabled === true"
+  >
+    <ng-select
+      #tsMomentSingularUnitSelect
+      [fixNgSelectBottom]="tsMomentSingularUnitSelect"
+      data-cy="tsMomentSingularUnitSelect"
+      class="popup-55 w-32"
+      [items]="fractionTsSingularUnitsList"
+      [clearable]="false"
+      [searchable]="false"
+      [disabled]="isDisabled === true"
+      [(ngModel)]="fraction.tsMomentUnit"
+      (change)="tsMomentSingularUnitChange()"
+      (keyup.esc)="
+        $event.stopImmediatePropagation(); tsMomentSingularUnitSelect.blur()
+      "
+      (keyup.enter)="
+        $event.stopImmediatePropagation(); tsMomentSingularUnitSelect.blur()
+      "
+      appendTo="body"
+      bindLabel="label"
+      bindValue="value"
+    >
+      <ng-template ng-label-tmp let-item="item">
+        <div class="ml-1 truncate">{{ item.label }}</div>
+      </ng-template>
+
+      <ng-template ng-option-tmp let-item="item">
+        <div class="ml-1 truncate">{{ item.label }}</div>
+      </ng-template>
+    </ng-select>
+  </div>
+
+  <div
+    *ngIf="
+      [
+        fractionTypeEnum.TsIsOnYear,
+        fractionTypeEnum.TsIsOnQuarter,
+        fractionTypeEnum.TsIsOnMonth,
+        fractionTypeEnum.TsIsOnWeek,
+        fractionTypeEnum.TsIsOnDay,
+        fractionTypeEnum.TsIsOnHour,
+        fractionTypeEnum.TsIsOnMinute,
+        fractionTypeEnum.TsIsBeforeDate,
+        fractionTypeEnum.TsIsThrough,
+        fractionTypeEnum.TsIsAfterDate,
+        fractionTypeEnum.TsIsStarting,
+        fractionTypeEnum.TsIsBeginFor
+      ].indexOf(fraction.type) > -1 &&
+      [fractionTsMomentTypeEnum.Ago, fractionTsMomentTypeEnum.FromNow].indexOf(
+        fraction.tsMomentType
+      ) > -1
+    "
+    class="flex flex-row space-x-5"
+  >
+    <form [formGroup]="tsMomentNumValueForm">
+      <div
+        tp="Turn off formula to activate control"
+        [tpIsEnabled]="isDisabled === true"
+      >
+        <fieldset [disabled]="isDisabled === true">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="fractionTsMomentNumValueInput"
+            class="form-input border-s3 focus:border-m600 h-[36px] w-16 rounded"
+            [ngClass]="{
+              'border-r600':
+                tsForValueForm.controls['tsMomentNumValue'].invalid &&
+                tsMomentNumValueForm.controls['tsMomentNumValue'].touched
+            }"
+            formControlName="tsMomentNumValue"
+            (blur)="tsMomentNumValueBlur()"
+          />
+        </fieldset>
+      </div>
+
+      <m-validation
+        [control]="tsMomentNumValueForm.controls['tsMomentNumValue']"
+      ></m-validation>
+    </form>
+
+    <div
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
+    >
+      <ng-select
+        #tsMomentAgoFromNowUnitSelect
+        [fixNgSelectBottom]="tsMomentAgoFromNowUnitSelect"
+        data-cy="tsMomentAgoFromNowUnitSelect"
+        class="popup-55 w-32"
+        [items]="fractionTsAgoFromNowUnitsList"
+        [clearable]="false"
+        [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsMomentUnit"
+        (change)="tsMomentAgoFromNowUnitChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); tsMomentAgoFromNowUnitSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); tsMomentAgoFromNowUnitSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+  </div>
+
   <div *ngIf="fraction.type === fractionTypeEnum.TsIsInRange">
     <div
       tp="Turn off formula to activate control"
@@ -148,12 +289,15 @@
 
   <div
     *ngIf="
-      fraction.type === fractionTypeEnum.TsIsInRange ||
-      fraction.type === fractionTypeEnum.TsIsBeforeDate ||
-      fraction.type === fractionTypeEnum.TsIsThrough ||
-      fraction.type === fractionTypeEnum.TsIsAfterDate ||
-      fraction.type === fractionTypeEnum.TsIsStarting ||
-      fraction.type === fractionTypeEnum.TsIsBeginFor
+      ((fraction.type === fractionTypeEnum.TsIsBeforeDate ||
+        fraction.type === fractionTypeEnum.TsIsThrough ||
+        fraction.type === fractionTypeEnum.TsIsAfterDate ||
+        fraction.type === fractionTypeEnum.TsIsStarting ||
+        fraction.type === fractionTypeEnum.TsIsBeginFor) &&
+        fraction.tsMomentType === fractionTsMomentTypeEnum.Literal) ||
+      (fraction.type === fractionTypeEnum.TsIsInRange &&
+        (fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal ||
+          fraction.tsToMomentType === fractionTsMomentTypeEnum.Literal))
     "
     tp="The switch is disabled if the time is not 00:00"
     [tpIsEnabled]="
@@ -197,7 +341,10 @@
 
   <!-- on year -->
   <div
-    *ngIf="fraction.type === fractionTypeEnum.TsIsOnYear"
+    *ngIf="
+      fraction.type === fractionTypeEnum.TsIsOnYear &&
+      fraction.tsMomentType === fractionTsMomentTypeEnum.Literal
+    "
     tp="Turn off formula to activate control"
     [tpIsEnabled]="isDisabled === true"
   >
@@ -214,7 +361,10 @@
 
   <!-- on month -->
   <div
-    *ngIf="fraction.type === fractionTypeEnum.TsIsOnMonth"
+    *ngIf="
+      fraction.type === fractionTypeEnum.TsIsOnMonth &&
+      fraction.tsMomentType === fractionTsMomentTypeEnum.Literal
+    "
     tp="Turn off formula to activate control"
     [tpIsEnabled]="isDisabled === true"
   >
@@ -231,7 +381,10 @@
 
   <!-- on day -->
   <div
-    *ngIf="fraction.type === fractionTypeEnum.TsIsOnDay"
+    *ngIf="
+      fraction.type === fractionTypeEnum.TsIsOnDay &&
+      fraction.tsMomentType === fractionTsMomentTypeEnum.Literal
+    "
     tp="Turn off formula to activate control"
     [tpIsEnabled]="isDisabled === true"
   >
@@ -248,7 +401,10 @@
 
   <!-- on hour -->
   <div
-    *ngIf="fraction.type === fractionTypeEnum.TsIsOnHour"
+    *ngIf="
+      fraction.type === fractionTypeEnum.TsIsOnHour &&
+      fraction.tsMomentType === fractionTsMomentTypeEnum.Literal
+    "
     class="flex flex-row space-x-5"
   >
     <div
@@ -284,7 +440,10 @@
 
   <!-- on minute -->
   <div
-    *ngIf="fraction.type === fractionTypeEnum.TsIsOnMinute"
+    *ngIf="
+      fraction.type === fractionTypeEnum.TsIsOnMinute &&
+      fraction.tsMomentType === fractionTsMomentTypeEnum.Literal
+    "
     class="flex flex-row space-x-5"
   >
     <div
@@ -324,6 +483,7 @@
     class="flex flex-row space-x-5"
   >
     <div
+      *ngIf="fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal"
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
     >
@@ -340,9 +500,10 @@
 
     <div
       *ngIf="
-        showHours === true ||
-        timeStr !== zeroHoursMinutes ||
-        timeToStr !== zeroHoursMinutes
+        fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal &&
+        (showHours === true ||
+          timeStr !== zeroHoursMinutes ||
+          timeToStr !== zeroHoursMinutes)
       "
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
@@ -396,6 +557,7 @@
     </div>
 
     <div
+      *ngIf="fraction.tsToMomentType === fractionTsMomentTypeEnum.Literal"
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
     >
@@ -412,9 +574,10 @@
 
     <div
       *ngIf="
-        showHours === true ||
-        timeStr !== zeroHoursMinutes ||
-        timeToStr !== zeroHoursMinutes
+        fraction.tsToMomentType === fractionTsMomentTypeEnum.Literal &&
+        (showHours === true ||
+          timeStr !== zeroHoursMinutes ||
+          timeToStr !== zeroHoursMinutes)
       "
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
@@ -433,7 +596,10 @@
 
   <!-- is before -->
   <div
-    *ngIf="fraction.type === fractionTypeEnum.TsIsBeforeDate"
+    *ngIf="
+      fraction.type === fractionTypeEnum.TsIsBeforeDate &&
+      fraction.tsMomentType === fractionTsMomentTypeEnum.Literal
+    "
     class="flex flex-row space-x-5"
   >
     <div
@@ -470,7 +636,10 @@
 
   <!-- is through -->
   <div
-    *ngIf="fraction.type === fractionTypeEnum.TsIsThrough"
+    *ngIf="
+      fraction.type === fractionTypeEnum.TsIsThrough &&
+      fraction.tsMomentType === fractionTsMomentTypeEnum.Literal
+    "
     class="flex flex-row space-x-5"
   >
     <div
@@ -507,7 +676,10 @@
 
   <!-- is after -->
   <div
-    *ngIf="fraction.type === fractionTypeEnum.TsIsAfterDate"
+    *ngIf="
+      fraction.type === fractionTypeEnum.TsIsAfterDate &&
+      fraction.tsMomentType === fractionTsMomentTypeEnum.Literal
+    "
     class="flex flex-row space-x-5"
   >
     <div
@@ -544,7 +716,10 @@
 
   <!-- is starting -->
   <div
-    *ngIf="fraction.type === fractionTypeEnum.TsIsStarting"
+    *ngIf="
+      fraction.type === fractionTypeEnum.TsIsStarting &&
+      fraction.tsMomentType === fractionTsMomentTypeEnum.Literal
+    "
     class="flex flex-row space-x-5"
   >
     <div
@@ -581,7 +756,10 @@
 
   <!-- is begin for -->
   <div
-    *ngIf="fraction.type === fractionTypeEnum.TsIsBeginFor"
+    *ngIf="
+      fraction.type === fractionTypeEnum.TsIsBeginFor &&
+      fraction.tsMomentType === fractionTsMomentTypeEnum.Literal
+    "
     class="flex flex-row space-x-5"
   >
     <div

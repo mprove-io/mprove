@@ -53,6 +53,11 @@ export class FractionTsForOptionItem {
   value: common.FractionTsForOptionEnum;
 }
 
+export class FractionTsUnitItem {
+  label: string;
+  value: common.FractionTsUnitEnum;
+}
+
 export class FractionTsForUnitItem {
   label: string;
   value: common.FractionTsForUnitEnum;

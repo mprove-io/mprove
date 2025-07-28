@@ -1,8 +1,10 @@
 import {
   After,
+  AgoMoment,
   Before,
   BooleanFilter,
   For,
+  FromNowMoment,
   InMoment,
   JustUnits,
   NowMoment,
@@ -17,6 +19,7 @@ import {
   TemporalFilter,
   TemporalLiteral,
   To,
+  UnitMoment,
   WeekdayMoment,
   WhichdayMoment,
   in_last
@@ -34,7 +37,7 @@ import {
   ASTWhereViewOperation,
   ParsedFilter
 } from '@malloydata/malloy-query-builder';
-import { MALLOY_FILTER_ANY } from '~common/_index';
+import { MALLOY_FILTER_ANY, getFractionTsUnits } from '~common/_index';
 import { common } from '~node-common/barrels/common';
 import { getMalloyMomentStr } from './get-malloy-moment-str';
 
@@ -735,6 +738,15 @@ export function getMalloyFiltersFractions(item: {
                     : common.FractionTypeEnum.TsIsStarting,
                 tsMomentType: m.momentType,
                 tsMoment: before,
+                tsMomentPartValue: before.moment,
+                tsMomentNumValue: common.isDefined(
+                  (before as AgoMoment | FromNowMoment).n
+                )
+                  ? Number((before as AgoMoment | FromNowMoment).n)
+                  : undefined,
+                tsMomentUnit: getFractionTsUnits(
+                  (before as UnitMoment | AgoMoment | FromNowMoment).units
+                ),
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
                   ? Number(quarter)
@@ -774,6 +786,15 @@ export function getMalloyFiltersFractions(item: {
                     : common.FractionTypeEnum.TsIsThrough,
                 tsMomentType: m.momentType,
                 tsMoment: after,
+                tsMomentPartValue: after.moment,
+                tsMomentNumValue: common.isDefined(
+                  (after as AgoMoment | FromNowMoment).n
+                )
+                  ? Number((after as AgoMoment | FromNowMoment).n)
+                  : undefined,
+                tsMomentUnit: getFractionTsUnits(
+                  (after as UnitMoment | AgoMoment | FromNowMoment).units
+                ),
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
                   ? Number(quarter)
@@ -834,7 +855,25 @@ export function getMalloyFiltersFractions(item: {
                 tsFromMomentType: mFrom.momentType,
                 tsToMomentType: mTo.momentType,
                 tsFromMoment: from,
+                tsFromMomentPartValue: from.moment,
+                tsFromMomentNumValue: common.isDefined(
+                  (from as AgoMoment | FromNowMoment).n
+                )
+                  ? Number((from as AgoMoment | FromNowMoment).n)
+                  : undefined,
+                tsFromMomentUnit: getFractionTsUnits(
+                  (from as UnitMoment | AgoMoment | FromNowMoment).units
+                ),
                 tsToMoment: to,
+                tsToMomentPartValue: to.moment,
+                tsToMomentNumValue: common.isDefined(
+                  (to as AgoMoment | FromNowMoment).n
+                )
+                  ? Number((to as AgoMoment | FromNowMoment).n)
+                  : undefined,
+                tsToMomentUnit: getFractionTsUnits(
+                  (to as UnitMoment | AgoMoment | FromNowMoment).units
+                ),
                 tsLastValue:
                   tFilter.fromMoment.moment === 'ago' &&
                   tFilter.toMoment.moment === 'now'
@@ -952,6 +991,15 @@ export function getMalloyFiltersFractions(item: {
                                   : undefined,
                 tsMomentType: m.momentType,
                 tsMoment: tFilter.in,
+                tsMomentPartValue: tFilter.in.moment,
+                tsMomentNumValue: common.isDefined(
+                  (tFilter.in as AgoMoment | FromNowMoment).n
+                )
+                  ? Number((tFilter.in as AgoMoment | FromNowMoment).n)
+                  : undefined,
+                tsMomentUnit: getFractionTsUnits(
+                  (tFilter.in as UnitMoment | AgoMoment | FromNowMoment).units
+                ),
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
                   ? Number(quarter)
@@ -991,6 +1039,15 @@ export function getMalloyFiltersFractions(item: {
                     : common.FractionTypeEnum.TsIsNotBeginFor,
                 tsMomentType: m.momentType,
                 tsMoment: begin,
+                tsMomentPartValue: begin.moment,
+                tsMomentNumValue: common.isDefined(
+                  (begin as AgoMoment | FromNowMoment).n
+                )
+                  ? Number((begin as AgoMoment | FromNowMoment).n)
+                  : undefined,
+                tsMomentUnit: getFractionTsUnits(
+                  (begin as UnitMoment | AgoMoment | FromNowMoment).units
+                ),
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
                   ? Number(quarter)

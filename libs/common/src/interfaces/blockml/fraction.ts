@@ -198,24 +198,66 @@ export class Fraction {
   @IsEnum(enums.FractionTsNextUnitEnum)
   tsNextUnit?: enums.FractionTsNextUnitEnum;
 
+  //
+
+  @IsOptional()
+  tsMoment?: Moment;
+
   @IsOptional()
   @IsEnum(enums.FractionTsMomentTypeEnum)
   tsMomentType?: enums.FractionTsMomentTypeEnum;
+
+  @IsOptional()
+  @IsEnum(enums.FractionTsUnitEnum)
+  tsMomentUnit?: enums.FractionTsUnitEnum;
+
+  @IsOptional()
+  @IsNumber()
+  tsMomentNumValue?: number;
+
+  @IsOptional()
+  @IsNumber()
+  tsMomentPartValue?: string;
+
+  //
+
+  @IsOptional()
+  tsFromMoment?: Moment;
 
   @IsOptional()
   @IsEnum(enums.FractionTsMomentTypeEnum)
   tsFromMomentType?: enums.FractionTsMomentTypeEnum;
 
   @IsOptional()
+  @IsEnum(enums.FractionTsUnitEnum)
+  tsFromMomentUnit?: enums.FractionTsUnitEnum;
+
+  @IsOptional()
+  @IsNumber()
+  tsFromMomentNumValue?: number;
+
+  @IsOptional()
+  @IsNumber()
+  tsFromMomentPartValue?: string;
+
+  //
+
+  @IsOptional()
+  tsToMoment?: Moment;
+
+  @IsOptional()
   @IsEnum(enums.FractionTsMomentTypeEnum)
   tsToMomentType?: enums.FractionTsMomentTypeEnum;
 
   @IsOptional()
-  tsMoment?: Moment;
+  @IsEnum(enums.FractionTsUnitEnum)
+  tsToMomentUnit?: enums.FractionTsUnitEnum;
 
   @IsOptional()
-  tsFromMoment?: Moment;
+  @IsNumber()
+  tsToMomentNumValue?: number;
 
   @IsOptional()
-  tsToMoment?: Moment;
+  @IsNumber()
+  tsToMomentPartValue?: string;
 }
