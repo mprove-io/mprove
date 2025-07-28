@@ -202,7 +202,7 @@ export class FractionTsComponent implements OnInit {
       operator: common.FractionOperatorEnum.Or
     },
     {
-      label: 'is starting ... for',
+      label: 'is starting - for',
       value: common.FractionTypeEnum.TsIsBeginFor,
       operator: common.FractionOperatorEnum.Or
     },
@@ -579,15 +579,15 @@ export class FractionTsComponent implements OnInit {
       value: common.FractionTsMomentTypeEnum.Last
     },
     {
-      label: 'last DOW',
-      value: common.FractionTsMomentTypeEnum.LastDayOfWeek
-    },
-    {
       label: 'next',
       value: common.FractionTsMomentTypeEnum.Next
     },
     {
-      label: 'next DOW',
+      label: 'DOW last',
+      value: common.FractionTsMomentTypeEnum.LastDayOfWeek
+    },
+    {
+      label: 'DOW next',
       value: common.FractionTsMomentTypeEnum.NextDayOfWeek
     },
     {
@@ -649,6 +649,20 @@ export class FractionTsComponent implements OnInit {
           [
             common.FractionTypeEnum.TsIsAnyValue,
             common.FractionTypeEnum.TsIsNull,
+            common.FractionTypeEnum.TsIsNotInLast,
+            common.FractionTypeEnum.TsIsNotInNext,
+            // common.FractionTypeEnum.TsIsStarting,
+            // common.FractionTypeEnum.TsIsThrough,
+            common.FractionTypeEnum.TsIsNotInRange,
+            common.FractionTypeEnum.TsIsNotBeginFor,
+            common.FractionTypeEnum.TsIsNotOnYear,
+            common.FractionTypeEnum.TsIsNotOnQuarter,
+            common.FractionTypeEnum.TsIsNotOnMonth,
+            common.FractionTypeEnum.TsIsNotOnWeek,
+            common.FractionTypeEnum.TsIsNotOnDay,
+            common.FractionTypeEnum.TsIsNotOnHour,
+            common.FractionTypeEnum.TsIsNotOnMinute,
+            common.FractionTypeEnum.TsIsNotOnTimestamp,
             common.FractionTypeEnum.TsIsNotNull
           ].indexOf(x.value) < 0
         );
