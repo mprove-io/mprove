@@ -199,20 +199,23 @@ export class Fraction {
   tsNextUnit?: enums.FractionTsNextUnitEnum;
 
   @IsOptional()
-  tsInMoment?: Moment;
+  @IsEnum(enums.FractionTsMomentTypeEnum)
+  tsMomentType?: enums.FractionTsMomentTypeEnum;
 
   @IsOptional()
-  tsBeforeMoment?: Moment;
+  @IsEnum(enums.FractionTsMomentTypeEnum)
+  tsFromMomentType?: enums.FractionTsMomentTypeEnum;
 
   @IsOptional()
-  tsAfterMoment?: Moment;
+  @IsEnum(enums.FractionTsMomentTypeEnum)
+  tsToMomentType?: enums.FractionTsMomentTypeEnum;
+
+  @IsOptional()
+  tsMoment?: Moment;
 
   @IsOptional()
   tsFromMoment?: Moment;
 
   @IsOptional()
   tsToMoment?: Moment;
-
-  @IsOptional()
-  tsBeginMoment?: Moment;
 }

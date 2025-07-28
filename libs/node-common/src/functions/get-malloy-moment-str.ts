@@ -6,6 +6,7 @@ import {
   WeekdayMoment,
   WhichdayMoment
 } from '@malloydata/malloy-filter';
+import { common } from '~node-common/barrels/common';
 
 export function getMalloyMomentStr(moment: Moment) {
   let momentStr =
@@ -33,5 +34,42 @@ export function getMalloyMomentStr(moment: Moment) {
                   ? moment.moment
                   : moment.moment;
 
-  return momentStr;
+  let momentType: common.FractionTsMomentTypeEnum =
+    moment.moment === 'literal'
+      ? common.FractionTsMomentTypeEnum.Literal
+      : moment.moment === 'today'
+        ? common.FractionTsMomentTypeEnum.Today
+        : moment.moment === 'yesterday'
+          ? common.FractionTsMomentTypeEnum.Yesterday
+          : moment.moment === 'tomorrow'
+            ? common.FractionTsMomentTypeEnum.Tomorrow
+            : moment.moment === 'this'
+              ? common.FractionTsMomentTypeEnum.This
+              : moment.moment === 'last'
+                ? common.FractionTsMomentTypeEnum.Last
+                : moment.moment === 'next'
+                  ? common.FractionTsMomentTypeEnum.Next
+                  : [
+                        'monday',
+                        'tuesday',
+                        'wednesday',
+                        'thursday',
+                        'friday',
+                        'saturday',
+                        'sunday'
+                      ].includes(moment.moment) === true
+                    ? (moment as WeekdayMoment).which === 'last'
+                      ? common.FractionTsMomentTypeEnum.LastDayOfWeek
+                      : (moment as WeekdayMoment).which === 'next'
+                        ? common.FractionTsMomentTypeEnum.NextDayOfWeek
+                        : undefined
+                    : moment.moment === 'ago'
+                      ? common.FractionTsMomentTypeEnum.Ago
+                      : moment.moment === 'from_now'
+                        ? common.FractionTsMomentTypeEnum.FromNow
+                        : moment.moment === 'now'
+                          ? common.FractionTsMomentTypeEnum.Now
+                          : undefined;
+
+  return { momentStr: momentStr, momentType: momentType };
 }

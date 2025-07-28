@@ -3,106 +3,147 @@
     tp="Turn off formula to activate control"
     [tpIsEnabled]="isDisabled === true"
   >
-    <ng-select
-      *ngIf="isMetrics === true"
-      #fractionTsTypeSelect
-      [fixNgSelectBottom]="fractionTsTypeSelect"
-      data-cy="fractionTsTypeSelect"
-      class="fraction-type-select w-[230px]"
-      [items]="fractionTsTypesList"
-      [clearable]="false"
-      [searchable]="false"
-      [disabled]="isDisabled === true"
-      [(ngModel)]="fraction.type"
-      (change)="typeChange($event)"
-      (keyup.esc)="
-        $event.stopImmediatePropagation(); fractionTsTypeSelect.blur()
-      "
-      (keyup.enter)="
-        $event.stopImmediatePropagation(); fractionTsTypeSelect.blur()
-      "
-      appendTo="body"
-      bindLabel="label"
-      bindValue="value"
-    >
-      <ng-template ng-label-tmp let-item="item">
-        <div class="ml-1 truncate">{{ item.label }}</div>
-      </ng-template>
+    <ng-container *ngTemplateOutlet="tSelect"></ng-container>
 
-      <ng-template ng-option-tmp let-item="item">
-        <div class="flex flex-row">
+    <ng-template #tSelect>
+      <ng-select
+        #fractionTsTypeSelect
+        [fixNgSelectBottom]="fractionTsTypeSelect"
+        data-cy="fractionTsTypeSelect"
+        class="fraction-type-select"
+        [class.w-[138px]]="
+          isMetrics === true && fraction.type === 'TsIsInRange'
+        "
+        [class.w-[140px]]="
+          isMetrics === false && fraction.type === 'TsIsInRange'
+        "
+        [class.w-[230px]]="
+          isMetrics === true && fraction.type !== 'TsIsInRange'
+        "
+        [class.w-[280px]]="
+          isMetrics === false && fraction.type !== 'TsIsInRange'
+        "
+        [items]="fractionTsTypesList"
+        [clearable]="false"
+        [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.type"
+        (change)="typeChange($event)"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); fractionTsTypeSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); fractionTsTypeSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+      >
+        <ng-template ng-label-tmp let-item="item">
           <div class="ml-1 truncate">{{ item.label }}</div>
-        </div>
-      </ng-template>
-    </ng-select>
+        </ng-template>
 
-    <ng-select
-      *ngIf="isMetrics === false && isDisabled === false"
-      #fractionTsTypeSelect
-      [fixNgSelectBottom]="fractionTsTypeSelect"
-      data-cy="fractionTsTypeSelect"
-      class="fraction-type-select w-[280px]"
-      [items]="fractionTsTypesList"
-      [clearable]="false"
-      [searchable]="false"
-      [disabled]="false"
-      [(ngModel)]="fraction.type"
-      (change)="typeChange($event)"
-      (keyup.esc)="
-        $event.stopImmediatePropagation(); fractionTsTypeSelect.blur()
-      "
-      (keyup.enter)="
-        $event.stopImmediatePropagation(); fractionTsTypeSelect.blur()
-      "
-      appendTo="body"
-      bindLabel="label"
-      bindValue="value"
+        <ng-template ng-option-tmp let-item="item">
+          <div class="flex flex-row">
+            <div class="ml-1" *ngIf="isMetrics === false"
+              >{{ item.operator | uppercase }} -</div
+            >
+            <div class="ml-1 truncate">{{ item.label }}</div>
+          </div>
+        </ng-template>
+      </ng-select>
+    </ng-template>
+  </div>
+
+  <div
+    *ngIf="
+      fraction.type === fractionTypeEnum.TsIsOnYear ||
+      fraction.type === fractionTypeEnum.TsIsOnQuarter ||
+      fraction.type === fractionTypeEnum.TsIsOnMonth ||
+      fraction.type === fractionTypeEnum.TsIsOnWeek ||
+      fraction.type === fractionTypeEnum.TsIsOnDay ||
+      fraction.type === fractionTypeEnum.TsIsOnHour ||
+      fraction.type === fractionTypeEnum.TsIsOnMinute ||
+      fraction.type === fractionTypeEnum.TsIsBeforeDate ||
+      fraction.type === fractionTypeEnum.TsIsThrough ||
+      fraction.type === fractionTypeEnum.TsIsAfterDate ||
+      fraction.type === fractionTypeEnum.TsIsStarting ||
+      fraction.type === fractionTypeEnum.TsIsBeginFor
+    "
+  >
+    <div
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
-      <ng-template ng-label-tmp let-item="item">
-        <div class="ml-1 truncate">{{ item.label }}</div>
-      </ng-template>
-
-      <ng-template ng-option-tmp let-item="item">
-        <div class="flex flex-row">
-          <div class="ml-1">{{ item.operator | uppercase }} -</div>
+      <ng-select
+        #fractionTsMomentTypeSelect
+        [fixNgSelectBottom]="fractionTsMomentTypeSelect"
+        data-cy="fractionTsMomentTypeSelect"
+        class="popup-55 w-32"
+        [items]="fractionTsMomentTypesList"
+        [clearable]="false"
+        [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsMomentType"
+        (change)="tsFractionMomentChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); fractionTsMomentTypeSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); fractionTsMomentTypeSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+      >
+        <ng-template ng-label-tmp let-item="item">
           <div class="ml-1 truncate">{{ item.label }}</div>
-        </div>
-      </ng-template>
-    </ng-select>
+        </ng-template>
 
-    <ng-select
-      *ngIf="isMetrics === false && isDisabled === true"
-      #fractionTsTypeSelect
-      [fixNgSelectBottom]="fractionTsTypeSelect"
-      data-cy="fractionTsTypeSelect"
-      class="fraction-type-select w-[280px] cursor-default"
-      [items]="fractionTsTypesList"
-      [clearable]="false"
-      [searchable]="false"
-      [disabled]="isDisabled === true"
-      [(ngModel)]="fraction.type"
-      (change)="typeChange($event)"
-      (keyup.esc)="
-        $event.stopImmediatePropagation(); fractionTsTypeSelect.blur()
-      "
-      (keyup.enter)="
-        $event.stopImmediatePropagation(); fractionTsTypeSelect.blur()
-      "
-      appendTo="body"
-      bindLabel="label"
-      bindValue="value"
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+  </div>
+
+  <div *ngIf="fraction.type === fractionTypeEnum.TsIsInRange">
+    <div
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
     >
-      <ng-template ng-label-tmp let-item="item">
-        <div class="ml-1 truncate">{{ item.label }}</div>
-      </ng-template>
-
-      <ng-template ng-option-tmp let-item="item">
-        <div class="flex flex-row">
-          <div class="ml-1">{{ item.operator | uppercase }} -</div>
+      <ng-select
+        #fractionTsFromMomentTypeSelect
+        [fixNgSelectBottom]="fractionTsFromMomentTypeSelect"
+        data-cy="fractionTsFromMomentTypeSelect"
+        class="popup-55 w-32"
+        [items]="fractionTsMomentTypesList"
+        [clearable]="false"
+        [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsFromMomentType"
+        (change)="tsFractionFromMomentChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation();
+          fractionTsFromMomentTypeSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation();
+          fractionTsFromMomentTypeSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+      >
+        <ng-template ng-label-tmp let-item="item">
           <div class="ml-1 truncate">{{ item.label }}</div>
-        </div>
-      </ng-template>
-    </ng-select>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
   </div>
 
   <div
@@ -318,6 +359,41 @@
     </div>
 
     <div class="flex h-[36px] items-center justify-center">to</div>
+
+    <div
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
+    >
+      <ng-select
+        #fractionTsToMomentTypeSelect
+        [fixNgSelectBottom]="fractionTsToMomentTypeSelect"
+        data-cy="fractionTsToMomentTypeSelect"
+        class="popup-55 w-32"
+        [items]="fractionTsMomentTypesList"
+        [clearable]="false"
+        [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsToMomentType"
+        (change)="tsFractionToMomentChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); fractionTsToMomentTypeSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); fractionTsToMomentTypeSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
 
     <div
       tp="Turn off formula to activate control"

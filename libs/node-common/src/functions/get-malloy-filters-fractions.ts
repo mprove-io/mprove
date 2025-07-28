@@ -720,20 +720,21 @@ export function getMalloyFiltersFractions(item: {
                   units: (before as TemporalLiteral).units
                 });
 
-              let beforeMomentStr = getMalloyMomentStr(tFilter.before);
+              let m = getMalloyMomentStr(tFilter.before);
 
               fraction = {
                 brick:
                   fractionOperator === common.FractionOperatorEnum.Or
-                    ? `f\`before ${beforeMomentStr}\``
-                    : `f\`starting ${beforeMomentStr}\``,
+                    ? `f\`before ${m.momentStr}\``
+                    : `f\`starting ${m.momentStr}\``,
                 parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? common.FractionTypeEnum.TsIsBeforeDate
                     : common.FractionTypeEnum.TsIsStarting,
-                tsBeforeMoment: before,
+                tsMomentType: m.momentType,
+                tsMoment: before,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
                   ? Number(quarter)
@@ -758,20 +759,21 @@ export function getMalloyFiltersFractions(item: {
                   units: (after as TemporalLiteral).units
                 });
 
-              let afterMomentStr = getMalloyMomentStr(tFilter.after);
+              let m = getMalloyMomentStr(tFilter.after);
 
               fraction = {
                 brick:
                   fractionOperator === common.FractionOperatorEnum.Or
-                    ? `f\`after ${afterMomentStr}\``
-                    : `f\`through ${afterMomentStr}\``,
+                    ? `f\`after ${m.momentStr}\``
+                    : `f\`through ${m.momentStr}\``,
                 parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? common.FractionTypeEnum.TsIsAfterDate
                     : common.FractionTypeEnum.TsIsThrough,
-                tsAfterMoment: after,
+                tsMomentType: m.momentType,
+                tsMoment: after,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
                   ? Number(quarter)
@@ -809,14 +811,14 @@ export function getMalloyFiltersFractions(item: {
                 units: (to as TemporalLiteral).units
               });
 
-              let fromMomentStr = getMalloyMomentStr(tFilter.fromMoment);
-              let toMomentStr = getMalloyMomentStr(tFilter.toMoment);
+              let mFrom = getMalloyMomentStr(tFilter.fromMoment);
+              let mTo = getMalloyMomentStr(tFilter.toMoment);
 
               fraction = {
                 brick:
                   fractionOperator === common.FractionOperatorEnum.Or
-                    ? `f\`${fromMomentStr} to ${toMomentStr}\``
-                    : `f\`not ${fromMomentStr} to ${toMomentStr}\``,
+                    ? `f\`${mFrom.momentStr} to ${mTo.momentStr}\``
+                    : `f\`not ${mFrom.momentStr} to ${mTo.momentStr}\``,
                 parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
@@ -829,6 +831,8 @@ export function getMalloyFiltersFractions(item: {
                         tFilter.toMoment.moment === 'now'
                       ? common.FractionTypeEnum.TsIsNotInLast
                       : common.FractionTypeEnum.TsIsNotInRange,
+                tsFromMomentType: mFrom.momentType,
+                tsToMomentType: mTo.momentType,
                 tsFromMoment: from,
                 tsToMoment: to,
                 tsLastValue:
@@ -842,7 +846,7 @@ export function getMalloyFiltersFractions(item: {
                     ? common.getFractionTsLastUnits(tFilter.fromMoment.units)
                     : undefined,
                 tsLastCompleteOption:
-                  fromMomentStr.endsWith('ago') && toMomentStr === 'now'
+                  mFrom.momentStr.endsWith('ago') && mTo.momentStr === 'now'
                     ? common.FractionTsLastCompleteOptionEnum
                         .CompletePlusCurrent
                     : undefined,
@@ -888,13 +892,13 @@ export function getMalloyFiltersFractions(item: {
                   units: (tFilterIn as TemporalLiteral).units
                 });
 
-              let inMomentStr = getMalloyMomentStr(tFilter.in);
+              let m = getMalloyMomentStr(tFilter.in);
 
               fraction = {
                 brick:
                   fractionOperator === common.FractionOperatorEnum.Or
-                    ? `f\`${inMomentStr}\``
-                    : `f\`not ${inMomentStr}\``,
+                    ? `f\`${m.momentStr}\``
+                    : `f\`not ${m.momentStr}\``,
                 parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
@@ -946,7 +950,8 @@ export function getMalloyFiltersFractions(item: {
                                     ? common.FractionTypeEnum.TsIsOnTimestamp
                                     : common.FractionTypeEnum.TsIsNotOnTimestamp
                                   : undefined,
-                tsInMoment: tFilter.in,
+                tsMomentType: m.momentType,
+                tsMoment: tFilter.in,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
                   ? Number(quarter)
@@ -971,20 +976,21 @@ export function getMalloyFiltersFractions(item: {
                   units: (begin as TemporalLiteral).units
                 });
 
-              let beginMomentStr = getMalloyMomentStr(tFilter.begin);
+              let m = getMalloyMomentStr(tFilter.begin);
 
               fraction = {
                 brick:
                   fractionOperator === common.FractionOperatorEnum.Or
-                    ? `f\`${beginMomentStr} for ${tFilter.n} ${tFilter.units}s\``
-                    : `f\`not ${beginMomentStr} for ${tFilter.n} ${tFilter.units}s\``,
+                    ? `f\`${m.momentStr} for ${tFilter.n} ${tFilter.units}s\``
+                    : `f\`not ${m.momentStr} for ${tFilter.n} ${tFilter.units}s\``,
                 parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
                     ? common.FractionTypeEnum.TsIsBeginFor
                     : common.FractionTypeEnum.TsIsNotBeginFor,
-                tsBeginMoment: begin,
+                tsMomentType: m.momentType,
+                tsMoment: begin,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
                   ? Number(quarter)

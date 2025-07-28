@@ -19,6 +19,7 @@ import {
   DatePickerI18n
 } from '@vaadin/date-picker';
 import '@vaadin/time-picker';
+import { Duration, TemporalUnit, UnitMoment } from '@malloydata/malloy-filter';
 import { TimePicker } from '@vaadin/time-picker';
 import { tap } from 'rxjs';
 import { MALLOY_FILTER_ANY } from '~common/constants/top';
@@ -513,24 +514,16 @@ export class FractionTsComponent implements OnInit {
       value: common.FractionTsMomentTypeEnum.Last
     },
     {
+      label: 'last DOW',
+      value: common.FractionTsMomentTypeEnum.LastDayOfWeek
+    },
+    {
       label: 'next',
       value: common.FractionTsMomentTypeEnum.Next
     },
     {
-      label: 'this day of week',
-      value: common.FractionTsMomentTypeEnum.ThisDayOfWeek
-    },
-    {
-      label: 'last day of week',
-      value: common.FractionTsMomentTypeEnum.LastDayOfWeek
-    },
-    {
-      label: 'next day of week',
+      label: 'next DOW',
       value: common.FractionTsMomentTypeEnum.NextDayOfWeek
-    },
-    {
-      label: 'now',
-      value: common.FractionTsMomentTypeEnum.Now
     },
     {
       label: 'ago',
@@ -539,6 +532,10 @@ export class FractionTsComponent implements OnInit {
     {
       label: 'from now',
       value: common.FractionTsMomentTypeEnum.FromNow
+    },
+    {
+      label: 'now',
+      value: common.FractionTsMomentTypeEnum.Now
     }
   ];
 
@@ -1022,7 +1019,12 @@ export class FractionTsComponent implements OnInit {
 
         this.buildFractionBeginFor({
           dateValue: this.dateStr,
-          timeValue: this.timeStr
+          timeValue: this.timeStr,
+          momentType: common.FractionTsMomentTypeEnum.Literal,
+          momentValueDOW:
+            common.FractionDayOfWeekValueEnum.Monday.toLowerCase(),
+          momentUnits: 'day',
+          momentN: 1
         });
         this.updateForControls();
 
@@ -1366,8 +1368,22 @@ export class FractionTsComponent implements OnInit {
     };
   }
 
-  buildFractionBeginFor(item: { dateValue: string; timeValue: string }) {
-    let { dateValue, timeValue } = item;
+  buildFractionBeginFor(item: {
+    dateValue: string;
+    timeValue: string;
+    momentType: common.FractionTsMomentTypeEnum;
+    momentValueDOW: string;
+    momentUnits: TemporalUnit;
+    momentN: number;
+  }) {
+    let {
+      dateValue,
+      timeValue,
+      momentType,
+      momentUnits,
+      momentN,
+      momentValueDOW
+    } = item;
 
     let minuteStr = this.timeService.getMinuteStr({
       dateValue: dateValue,
@@ -1381,7 +1397,37 @@ export class FractionTsComponent implements OnInit {
         ? minuteStr
         : minuteStr.split(' ')[0];
 
-    let mBrick = `f\`${dateMinuteStr} for ${this.fraction.tsForValue} ${this.fraction.tsForUnit}\``;
+    let momentStr =
+      momentType === common.FractionTsMomentTypeEnum.Literal
+        ? dateMinuteStr
+        : momentType === common.FractionTsMomentTypeEnum.Today
+          ? 'today'
+          : momentType === common.FractionTsMomentTypeEnum.Yesterday
+            ? 'yesterday'
+            : momentType === common.FractionTsMomentTypeEnum.Tomorrow
+              ? 'tomorrow'
+              : momentType === common.FractionTsMomentTypeEnum.This
+                ? `this ${momentUnits}`
+                : momentType === common.FractionTsMomentTypeEnum.Last
+                  ? `last ${momentUnits}`
+                  : momentType === common.FractionTsMomentTypeEnum.Next
+                    ? `next ${momentUnits}`
+                    : momentType ===
+                        common.FractionTsMomentTypeEnum.LastDayOfWeek
+                      ? `last ${momentValueDOW}`
+                      : momentType ===
+                          common.FractionTsMomentTypeEnum.NextDayOfWeek
+                        ? `next ${momentValueDOW}`
+                        : momentType === common.FractionTsMomentTypeEnum.Now
+                          ? 'now'
+                          : momentType === common.FractionTsMomentTypeEnum.Ago
+                            ? `${momentN} ${momentUnits}s ago`
+                            : momentType ===
+                                common.FractionTsMomentTypeEnum.FromNow
+                              ? `${momentN} ${momentUnits}s from now`
+                              : undefined;
+
+    let mBrick = `f\`${momentStr} for ${this.fraction.tsForValue} ${this.fraction.tsForUnit}\``;
 
     this.fraction = {
       brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`,
@@ -2223,7 +2269,17 @@ export class FractionTsComponent implements OnInit {
 
         this.buildFractionBeginFor({
           dateValue: value,
-          timeValue: this.timeStr
+          timeValue: this.timeStr,
+          momentType: this.fraction.tsMomentType,
+          momentValueDOW:
+            [
+              common.FractionTsMomentTypeEnum.LastDayOfWeek,
+              common.FractionTsMomentTypeEnum.NextDayOfWeek
+            ].indexOf(this.fraction.tsMomentType) > -1
+              ? this.fraction.tsMoment.moment
+              : undefined,
+          momentUnits: (this.fraction.tsMoment as UnitMoment).units,
+          momentN: Number((this.fraction.tsMoment as Duration).n)
         });
 
         if (
@@ -2251,7 +2307,17 @@ export class FractionTsComponent implements OnInit {
 
         this.buildFractionBeginFor({
           dateValue: this.dateStr,
-          timeValue: value
+          timeValue: value,
+          momentType: this.fraction.tsMomentType,
+          momentValueDOW:
+            [
+              common.FractionTsMomentTypeEnum.LastDayOfWeek,
+              common.FractionTsMomentTypeEnum.NextDayOfWeek
+            ].indexOf(this.fraction.tsMomentType) > -1
+              ? this.fraction.tsMoment.moment
+              : undefined,
+          momentUnits: (this.fraction.tsMoment as UnitMoment).units,
+          momentN: Number((this.fraction.tsMoment as Duration).n)
         });
 
         if (
@@ -2357,7 +2423,17 @@ export class FractionTsComponent implements OnInit {
   buildEmitFor() {
     this.buildFractionBeginFor({
       dateValue: this.dateStr,
-      timeValue: this.timeStr
+      timeValue: this.timeStr,
+      momentType: this.fraction.tsMomentType,
+      momentValueDOW:
+        [
+          common.FractionTsMomentTypeEnum.LastDayOfWeek,
+          common.FractionTsMomentTypeEnum.NextDayOfWeek
+        ].indexOf(this.fraction.tsMomentType) > -1
+          ? this.fraction.tsMoment.moment
+          : undefined,
+      momentUnits: (this.fraction.tsMoment as UnitMoment).units,
+      momentN: Number((this.fraction.tsMoment as Duration).n)
     });
 
     // if (this.fraction.type === common.FractionTypeEnum.TsIsBeforeDate) {
@@ -2496,6 +2572,29 @@ export class FractionTsComponent implements OnInit {
       this.emitFractionUpdate();
     }
   }
+
+  tsFractionMomentChange() {
+    if (this.fraction.type === common.FractionTypeEnum.TsIsBeginFor) {
+      this.buildFractionBeginFor({
+        dateValue: this.dateStr,
+        timeValue: this.timeStr,
+        momentType: this.fraction.tsMomentType,
+        momentValueDOW:
+          [
+            common.FractionTsMomentTypeEnum.LastDayOfWeek,
+            common.FractionTsMomentTypeEnum.NextDayOfWeek
+          ].indexOf(this.fraction.tsMomentType) > -1
+            ? this.fraction.tsMoment.moment
+            : undefined,
+        momentUnits: (this.fraction.tsMoment as UnitMoment).units,
+        momentN: Number((this.fraction.tsMoment as Duration).n)
+      });
+    }
+  }
+
+  tsFractionFromMomentChange() {}
+
+  tsFractionToMomentChange() {}
 
   emitFractionUpdate() {
     this.fractionUpdate.emit({
