@@ -37,7 +37,7 @@ import {
   ASTWhereViewOperation,
   ParsedFilter
 } from '@malloydata/malloy-query-builder';
-import { MALLOY_FILTER_ANY, getFractionTsUnits } from '~common/_index';
+import { MALLOY_FILTER_ANY } from '~common/_index';
 import { common } from '~node-common/barrels/common';
 import { getMalloyMomentStr } from './get-malloy-moment-str';
 
@@ -744,9 +744,8 @@ export function getMalloyFiltersFractions(item: {
                 )
                   ? Number((before as AgoMoment | FromNowMoment).n)
                   : undefined,
-                tsMomentUnit: getFractionTsUnits(
-                  (before as UnitMoment | AgoMoment | FromNowMoment).units
-                ),
+                tsMomentUnit: (before as UnitMoment | AgoMoment | FromNowMoment)
+                  .units,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
                   ? Number(quarter)
@@ -792,9 +791,8 @@ export function getMalloyFiltersFractions(item: {
                 )
                   ? Number((after as AgoMoment | FromNowMoment).n)
                   : undefined,
-                tsMomentUnit: getFractionTsUnits(
-                  (after as UnitMoment | AgoMoment | FromNowMoment).units
-                ),
+                tsMomentUnit: (after as UnitMoment | AgoMoment | FromNowMoment)
+                  .units,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
                   ? Number(quarter)
@@ -861,9 +859,9 @@ export function getMalloyFiltersFractions(item: {
                 )
                   ? Number((from as AgoMoment | FromNowMoment).n)
                   : undefined,
-                tsFromMomentUnit: getFractionTsUnits(
-                  (from as UnitMoment | AgoMoment | FromNowMoment).units
-                ),
+                tsFromMomentUnit: (
+                  from as UnitMoment | AgoMoment | FromNowMoment
+                ).units,
                 tsToMoment: to,
                 tsToMomentPartValue: to.moment,
                 tsToMomentNumValue: common.isDefined(
@@ -871,9 +869,8 @@ export function getMalloyFiltersFractions(item: {
                 )
                   ? Number((to as AgoMoment | FromNowMoment).n)
                   : undefined,
-                tsToMomentUnit: getFractionTsUnits(
-                  (to as UnitMoment | AgoMoment | FromNowMoment).units
-                ),
+                tsToMomentUnit: (to as UnitMoment | AgoMoment | FromNowMoment)
+                  .units,
                 tsLastValue:
                   tFilter.fromMoment.moment === 'ago' &&
                   tFilter.toMoment.moment === 'now'
@@ -923,12 +920,12 @@ export function getMalloyFiltersFractions(item: {
             } else if ((temporalFilter as InMoment).operator === 'in') {
               // temporal in (on)
               let tFilter = temporalFilter as InMoment;
-              let tFilterIn = tFilter.in;
+              let tfIn = tFilter.in;
 
               let { year, quarter, month, day, hour, minute } =
                 common.parseTsLiteral({
-                  input: (tFilterIn as TemporalLiteral).literal,
-                  units: (tFilterIn as TemporalLiteral).units
+                  input: (tfIn as TemporalLiteral).literal,
+                  units: (tfIn as TemporalLiteral).units
                 });
 
               let m = getMalloyMomentStr(tFilter.in);
@@ -941,23 +938,23 @@ export function getMalloyFiltersFractions(item: {
                 parentBrick: `f\`${(op.node.filter as FilterWithFilterString).filter}\``,
                 operator: fractionOperator,
                 type:
-                  (tFilterIn as TemporalLiteral).units === 'year'
+                  (tfIn as TemporalLiteral).units === 'year'
                     ? common.FractionOperatorEnum.Or
                       ? common.FractionTypeEnum.TsIsOnYear
                       : common.FractionTypeEnum.TsIsNotOnYear
-                    : (tFilterIn as TemporalLiteral).units === 'quarter'
+                    : (tfIn as TemporalLiteral).units === 'quarter'
                       ? common.FractionOperatorEnum.Or
                         ? common.FractionTypeEnum.TsIsOnQuarter
                         : common.FractionTypeEnum.TsIsNotOnQuarter
-                      : (tFilterIn as TemporalLiteral).units === 'month'
+                      : (tfIn as TemporalLiteral).units === 'month'
                         ? common.FractionOperatorEnum.Or
                           ? common.FractionTypeEnum.TsIsOnMonth
                           : common.FractionTypeEnum.TsIsNotOnMonth
-                        : (tFilterIn as TemporalLiteral).units === 'week'
+                        : (tfIn as TemporalLiteral).units === 'week'
                           ? common.FractionOperatorEnum.Or
                             ? common.FractionTypeEnum.TsIsOnWeek
                             : common.FractionTypeEnum.TsIsNotOnWeek
-                          : (tFilterIn as TemporalLiteral).units === 'day' ||
+                          : (tfIn as TemporalLiteral).units === 'day' ||
                               ['today', 'yesterday', 'tomorrow'].indexOf(
                                 (tFilter.in as WhichdayMoment).moment
                               ) > -1 ||
@@ -974,32 +971,30 @@ export function getMalloyFiltersFractions(item: {
                             ? common.FractionOperatorEnum.Or
                               ? common.FractionTypeEnum.TsIsOnDay
                               : common.FractionTypeEnum.TsIsNotOnDay
-                            : (tFilterIn as TemporalLiteral).units === 'hour'
+                            : (tfIn as TemporalLiteral).units === 'hour'
                               ? common.FractionOperatorEnum.Or
                                 ? common.FractionTypeEnum.TsIsOnHour
                                 : common.FractionTypeEnum.TsIsNotOnHour
-                              : (tFilterIn as TemporalLiteral).units ===
-                                  'minute'
+                              : (tfIn as TemporalLiteral).units === 'minute'
                                 ? common.FractionOperatorEnum.Or
                                   ? common.FractionTypeEnum.TsIsOnMinute
                                   : common.FractionTypeEnum.TsIsNotOnMinute
-                                : tFilterIn.moment === 'literal' ||
-                                    (tFilter.in as NowMoment).moment === 'now'
+                                : tfIn.moment === 'literal' ||
+                                    (tfIn as NowMoment).moment === 'now'
                                   ? common.FractionOperatorEnum.Or
                                     ? common.FractionTypeEnum.TsIsOnTimestamp
                                     : common.FractionTypeEnum.TsIsNotOnTimestamp
                                   : undefined,
                 tsMomentType: m.momentType,
-                tsMoment: tFilter.in,
-                tsMomentPartValue: tFilter.in.moment,
+                tsMoment: tfIn,
+                tsMomentPartValue: tfIn.moment,
                 tsMomentNumValue: common.isDefined(
-                  (tFilter.in as AgoMoment | FromNowMoment).n
+                  (tfIn as AgoMoment | FromNowMoment).n
                 )
-                  ? Number((tFilter.in as AgoMoment | FromNowMoment).n)
+                  ? Number((tfIn as AgoMoment | FromNowMoment).n)
                   : undefined,
-                tsMomentUnit: getFractionTsUnits(
-                  (tFilter.in as UnitMoment | AgoMoment | FromNowMoment).units
-                ),
+                tsMomentUnit: (tfIn as UnitMoment | AgoMoment | FromNowMoment)
+                  .units,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
                   ? Number(quarter)
@@ -1045,9 +1040,8 @@ export function getMalloyFiltersFractions(item: {
                 )
                   ? Number((begin as AgoMoment | FromNowMoment).n)
                   : undefined,
-                tsMomentUnit: getFractionTsUnits(
-                  (begin as UnitMoment | AgoMoment | FromNowMoment).units
-                ),
+                tsMomentUnit: (begin as UnitMoment | AgoMoment | FromNowMoment)
+                  .units,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
                   ? Number(quarter)

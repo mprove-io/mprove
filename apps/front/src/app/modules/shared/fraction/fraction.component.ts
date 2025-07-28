@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { TemporalUnit } from '@malloydata/malloy-filter';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 
@@ -55,7 +56,7 @@ export class FractionTsForOptionItem {
 
 export class FractionTsUnitItem {
   label: string;
-  value: common.FractionTsUnitEnum;
+  value: TemporalUnit;
 }
 
 export class FractionTsForUnitItem {

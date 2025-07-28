@@ -1,4 +1,4 @@
-import { Moment } from '@malloydata/malloy-filter';
+import { Moment, TemporalUnit } from '@malloydata/malloy-filter';
 import { Type } from 'class-transformer';
 import {
   IsEnum,
@@ -208,15 +208,15 @@ export class Fraction {
   tsMomentType?: enums.FractionTsMomentTypeEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsUnitEnum)
-  tsMomentUnit?: enums.FractionTsUnitEnum;
+  @IsEnum(enums.FractionTsTemporalUnitEnum)
+  tsMomentUnit?: TemporalUnit;
 
   @IsOptional()
   @IsNumber()
   tsMomentNumValue?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsString()
   tsMomentPartValue?: string;
 
   //
@@ -229,15 +229,15 @@ export class Fraction {
   tsFromMomentType?: enums.FractionTsMomentTypeEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsUnitEnum)
-  tsFromMomentUnit?: enums.FractionTsUnitEnum;
+  @IsEnum(enums.FractionTsTemporalUnitEnum)
+  tsFromMomentUnit?: TemporalUnit;
 
   @IsOptional()
   @IsNumber()
   tsFromMomentNumValue?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsString()
   tsFromMomentPartValue?: string;
 
   //
@@ -250,14 +250,14 @@ export class Fraction {
   tsToMomentType?: enums.FractionTsMomentTypeEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsUnitEnum)
-  tsToMomentUnit?: enums.FractionTsUnitEnum;
+  @IsEnum(enums.FractionTsTemporalUnitEnum)
+  tsToMomentUnit?: TemporalUnit;
 
   @IsOptional()
   @IsNumber()
   tsToMomentNumValue?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsString()
   tsToMomentPartValue?: string;
 }
