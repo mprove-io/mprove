@@ -1054,7 +1054,6 @@ export function getMalloyFiltersFractions(item: {
                 tsDateMinute: common.isDefined(minute)
                   ? Number(minute)
                   : undefined,
-                tsForOption: common.FractionTsForOptionEnum.For,
                 tsForUnit: common.getFractionTsForUnits(tFilter.units),
                 tsForValue: Number(tFilter.n)
               };
