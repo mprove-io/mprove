@@ -85,7 +85,7 @@
         [searchable]="false"
         [disabled]="isDisabled === true"
         [(ngModel)]="fraction.tsMomentType"
-        (change)="tsFractionMomentChange()"
+        (change)="momentChange()"
         (keyup.esc)="
           $event.stopImmediatePropagation(); fractionTsMomentTypeSelect.blur()
         "
@@ -141,7 +141,7 @@
       [searchable]="false"
       [disabled]="isDisabled === true"
       [(ngModel)]="fraction.tsMomentPartValue"
-      (change)="tsMomentDayOfWeekChange()"
+      (change)="dayOfWeekChange()"
       (keyup.esc)="
         $event.stopImmediatePropagation(); tsMomentDayOfWeekSelect.blur()
       "
@@ -197,7 +197,7 @@
       [searchable]="false"
       [disabled]="isDisabled === true"
       [(ngModel)]="fraction.tsMomentUnit"
-      (change)="tsMomentOnUnitChange()"
+      (change)="onUnitChange()"
       (keyup.esc)="
         $event.stopImmediatePropagation(); tsMomentOnUnitSelect.blur()
       "
@@ -261,7 +261,7 @@
                 ].touched
             }"
             formControlName="tsMomentAgoFromNowQuantity"
-            (blur)="tsMomentAgoFromNowQuantityBlur()"
+            (blur)="agoFromNowQuantityBlur()"
           />
         </fieldset>
       </div>
@@ -287,7 +287,7 @@
         [searchable]="false"
         [disabled]="isDisabled === true"
         [(ngModel)]="fraction.tsMomentUnit"
-        (change)="tsMomentAgoFromNowUnitChange()"
+        (change)="agoFromNowUnitChange()"
         (keyup.esc)="
           $event.stopImmediatePropagation(); tsMomentAgoFromNowUnitSelect.blur()
         "
@@ -324,7 +324,7 @@
         [searchable]="false"
         [disabled]="isDisabled === true"
         [(ngModel)]="fraction.tsFromMomentType"
-        (change)="tsFractionFromMomentChange()"
+        (change)="fromMomentChange()"
         (keyup.esc)="
           $event.stopImmediatePropagation();
           fractionTsFromMomentTypeSelect.blur()
@@ -596,7 +596,7 @@
         [searchable]="false"
         [disabled]="isDisabled === true"
         [(ngModel)]="fraction.tsToMomentType"
-        (change)="tsFractionToMomentChange()"
+        (change)="toMomentChange()"
         (keyup.esc)="
           $event.stopImmediatePropagation(); fractionTsToMomentTypeSelect.blur()
         "
@@ -945,7 +945,7 @@
                 tsLastValueForm.controls['tsLastValue'].touched
             }"
             formControlName="tsLastValue"
-            (blur)="tsLastValueBlur()"
+            (blur)="lastValueBlur()"
           />
         </fieldset>
       </div>
@@ -969,7 +969,7 @@
         [searchable]="false"
         [disabled]="isDisabled === true"
         [(ngModel)]="fraction.tsLastUnit"
-        (change)="tsLastUnitChange()"
+        (change)="lastUnitChange()"
         (keyup.esc)="
           $event.stopImmediatePropagation(); tsLastUnitsSelect.blur()
         "
@@ -1004,7 +1004,7 @@
         [searchable]="false"
         [disabled]="isDisabled === true"
         [(ngModel)]="fraction.tsLastCompleteOption"
-        (change)="tsLastCompleteOptionChange()"
+        (change)="lastCompleteOptionChange()"
         (keyup.esc)="
           $event.stopImmediatePropagation(); tsLastCompleteOptionsSelect.blur()
         "
@@ -1048,7 +1048,7 @@
                 tsNextValueForm.controls['tsNextValue'].touched
             }"
             formControlName="tsNextValue"
-            (blur)="tsNextValueBlur()"
+            (blur)="nextValueBlur()"
           />
         </fieldset>
       </div>
@@ -1072,7 +1072,7 @@
         [searchable]="false"
         [disabled]="isDisabled === true"
         [(ngModel)]="fraction.tsNextUnit"
-        (change)="tsNextUnitChange()"
+        (change)="nextUnitChange()"
         (keyup.esc)="
           $event.stopImmediatePropagation(); tsNextUnitsSelect.blur()
         "
