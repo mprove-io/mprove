@@ -952,6 +952,19 @@ export class FractionTsComponent implements OnInit {
       }
 
       case this.fractionTypeEnum.TsIsInRange: {
+        this.fraction.tsFromMomentType =
+          common.FractionTsMomentTypeEnum.Literal;
+        this.fraction.tsFromMomentPartValue =
+          common.FractionDayOfWeekLcEnum.Monday;
+        this.fraction.tsFromMomentAgoFromNowQuantity = 1;
+        this.fraction.tsFromMomentUnit = 'day';
+
+        this.fraction.tsToMomentType = common.FractionTsMomentTypeEnum.Literal;
+        this.fraction.tsToMomentPartValue =
+          common.FractionDayOfWeekLcEnum.Monday;
+        this.fraction.tsToMomentAgoFromNowQuantity = 1;
+        this.fraction.tsToMomentUnit = 'day';
+
         this.buildFractionRange({
           dateValue: this.dateStr,
           timeValue: this.timeStr,
@@ -964,8 +977,10 @@ export class FractionTsComponent implements OnInit {
       }
 
       case this.fractionTypeEnum.TsIsBeforeDate: {
-        this.fraction.tsForValue = 1;
-        this.fraction.tsForUnit = common.FractionTsForUnitEnum.Weeks;
+        this.fraction.tsMomentType = common.FractionTsMomentTypeEnum.Literal;
+        this.fraction.tsMomentPartValue = common.FractionDayOfWeekLcEnum.Monday;
+        this.fraction.tsMomentAgoFromNowQuantity = 1;
+        this.fraction.tsMomentUnit = 'day';
 
         this.buildFractionBeforeDate({
           dateValue: this.dateStr,
@@ -979,6 +994,11 @@ export class FractionTsComponent implements OnInit {
       }
 
       case this.fractionTypeEnum.TsIsThrough: {
+        this.fraction.tsMomentType = common.FractionTsMomentTypeEnum.Literal;
+        this.fraction.tsMomentPartValue = common.FractionDayOfWeekLcEnum.Monday;
+        this.fraction.tsMomentAgoFromNowQuantity = 1;
+        this.fraction.tsMomentUnit = 'day';
+
         this.buildFractionThrough({
           dateValue: this.dateStr,
           timeValue: this.timeStr
@@ -989,8 +1009,10 @@ export class FractionTsComponent implements OnInit {
       }
 
       case this.fractionTypeEnum.TsIsAfterDate: {
-        this.fraction.tsForValue = 1;
-        this.fraction.tsForUnit = common.FractionTsForUnitEnum.Weeks;
+        this.fraction.tsMomentType = common.FractionTsMomentTypeEnum.Literal;
+        this.fraction.tsMomentPartValue = common.FractionDayOfWeekLcEnum.Monday;
+        this.fraction.tsMomentAgoFromNowQuantity = 1;
+        this.fraction.tsMomentUnit = 'day';
 
         this.buildFractionAfterDate({
           dateValue: this.dateStr,
@@ -1004,6 +1026,11 @@ export class FractionTsComponent implements OnInit {
       }
 
       case this.fractionTypeEnum.TsIsStarting: {
+        this.fraction.tsMomentType = common.FractionTsMomentTypeEnum.Literal;
+        this.fraction.tsMomentPartValue = common.FractionDayOfWeekLcEnum.Monday;
+        this.fraction.tsMomentAgoFromNowQuantity = 1;
+        this.fraction.tsMomentUnit = 'day';
+
         this.buildFractionStarting({
           dateValue: this.dateStr,
           timeValue: this.timeStr
@@ -1201,7 +1228,18 @@ export class FractionTsComponent implements OnInit {
       tsDateToMonth: Number(dateToValue.split('-')[1].replace(/^0+/, '')),
       tsDateToDay: Number(dateToValue.split('-')[2].replace(/^0+/, '')),
       tsDateToHour: Number(timeToValue.split(':')[0].replace(/^0+/, '')),
-      tsDateToMinute: Number(timeToValue.split(':')[1].replace(/^0+/, ''))
+      tsDateToMinute: Number(timeToValue.split(':')[1].replace(/^0+/, '')),
+      tsFromMoment: undefined,
+      tsFromMomentType: this.fraction.tsFromMomentType,
+      tsFromMomentPartValue: this.fraction.tsFromMomentPartValue,
+      tsFromMomentAgoFromNowQuantity:
+        this.fraction.tsFromMomentAgoFromNowQuantity,
+      tsFromMomentUnit: this.fraction.tsFromMomentUnit,
+      tsToMoment: undefined,
+      tsToMomentType: this.fraction.tsToMomentType,
+      tsToMomentPartValue: this.fraction.tsToMomentPartValue,
+      tsToMomentAgoFromNowQuantity: this.fraction.tsToMomentAgoFromNowQuantity,
+      tsToMomentUnit: this.fraction.tsToMomentUnit
     };
   }
 
@@ -1234,8 +1272,11 @@ export class FractionTsComponent implements OnInit {
       tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
       tsDateHour: Number(timeValue.split(':')[0].replace(/^0+/, '')),
       tsDateMinute: Number(timeValue.split(':')[1].replace(/^0+/, '')),
-      tsForValue: this.fraction.tsForValue,
-      tsForUnit: this.fraction.tsForUnit
+      tsMoment: undefined,
+      tsMomentType: this.fraction.tsMomentType,
+      tsMomentPartValue: this.fraction.tsMomentPartValue,
+      tsMomentAgoFromNowQuantity: this.fraction.tsMomentAgoFromNowQuantity,
+      tsMomentUnit: this.fraction.tsMomentUnit
     };
   }
 
@@ -1267,7 +1308,12 @@ export class FractionTsComponent implements OnInit {
       tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
       tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
       tsDateHour: Number(timeValue.split(':')[0].replace(/^0+/, '')),
-      tsDateMinute: Number(timeValue.split(':')[1].replace(/^0+/, ''))
+      tsDateMinute: Number(timeValue.split(':')[1].replace(/^0+/, '')),
+      tsMoment: undefined,
+      tsMomentType: this.fraction.tsMomentType,
+      tsMomentPartValue: this.fraction.tsMomentPartValue,
+      tsMomentAgoFromNowQuantity: this.fraction.tsMomentAgoFromNowQuantity,
+      tsMomentUnit: this.fraction.tsMomentUnit
     };
   }
 
@@ -1300,8 +1346,11 @@ export class FractionTsComponent implements OnInit {
       tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
       tsDateHour: Number(timeValue.split(':')[0].replace(/^0+/, '')),
       tsDateMinute: Number(timeValue.split(':')[1].replace(/^0+/, '')),
-      tsForValue: this.fraction.tsForValue,
-      tsForUnit: this.fraction.tsForUnit
+      tsMoment: undefined,
+      tsMomentType: this.fraction.tsMomentType,
+      tsMomentPartValue: this.fraction.tsMomentPartValue,
+      tsMomentAgoFromNowQuantity: this.fraction.tsMomentAgoFromNowQuantity,
+      tsMomentUnit: this.fraction.tsMomentUnit
     };
   }
 
@@ -1333,7 +1382,12 @@ export class FractionTsComponent implements OnInit {
       tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
       tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
       tsDateHour: Number(timeValue.split(':')[0].replace(/^0+/, '')),
-      tsDateMinute: Number(timeValue.split(':')[1].replace(/^0+/, ''))
+      tsDateMinute: Number(timeValue.split(':')[1].replace(/^0+/, '')),
+      tsMoment: undefined,
+      tsMomentType: this.fraction.tsMomentType,
+      tsMomentPartValue: this.fraction.tsMomentPartValue,
+      tsMomentAgoFromNowQuantity: this.fraction.tsMomentAgoFromNowQuantity,
+      tsMomentUnit: this.fraction.tsMomentUnit
     };
   }
 
