@@ -59,6 +59,11 @@ export class FractionTsUnitItem {
   value: TemporalUnit;
 }
 
+export class FractionTsDayOfWeekLcItem {
+  label: string;
+  value: common.FractionDayOfWeekLcEnum;
+}
+
 export class FractionTsForUnitItem {
   label: string;
   value: common.FractionTsForUnitEnum;
