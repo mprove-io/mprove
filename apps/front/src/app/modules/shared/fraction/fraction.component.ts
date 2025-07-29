@@ -9,19 +9,19 @@ export class FractionTypeItem {
   operator: common.FractionOperatorEnum;
 }
 
-export class FractionNumberBetweenOptionItem {
+export class FractionTsMomentTypesItem {
   label: string;
-  value: common.FractionNumberBetweenOptionEnum;
+  value: common.FractionTsMomentTypeEnum;
 }
 
-export class FractionYesnoValueItem {
+export class FractionTsUnitItem {
   label: string;
-  value: common.FractionYesnoValueEnum;
+  value: common.FractionTsUnitEnum;
 }
 
-export class FractionMonthNameValueItem {
+export class FractionTsTemporalUnitItem {
   label: string;
-  value: common.FractionMonthNameValueEnum;
+  value: TemporalUnit;
 }
 
 export class FractionDayOfWeekValueItem {
@@ -29,34 +29,9 @@ export class FractionDayOfWeekValueItem {
   value: common.FractionDayOfWeekValueEnum;
 }
 
-export class FractionQuarterOfYearValueItem {
-  label: string;
-  value: common.FractionQuarterOfYearValueEnum;
-}
-
-export class FractionTsUnitItem {
-  label: string;
-  value: TemporalUnit;
-}
-
 export class FractionTsDayOfWeekLcItem {
   label: string;
   value: common.FractionDayOfWeekLcEnum;
-}
-
-export class FractionTsForUnitItem {
-  label: string;
-  value: common.FractionTsForUnitEnum;
-}
-
-export class FractionTsLastUnitItem {
-  label: string;
-  value: common.FractionTsLastUnitEnum;
-}
-
-export class FractionTsNextUnitItem {
-  label: string;
-  value: common.FractionTsNextUnitEnum;
 }
 
 export class FractionTsLastCompleteOptionItem {
@@ -64,9 +39,24 @@ export class FractionTsLastCompleteOptionItem {
   value: common.FractionTsLastCompleteOptionEnum;
 }
 
-export class FractionTsMomentTypesItem {
+export class FractionQuarterOfYearValueItem {
   label: string;
-  value: common.FractionTsMomentTypeEnum;
+  value: common.FractionQuarterOfYearValueEnum;
+}
+
+export class FractionMonthNameValueItem {
+  label: string;
+  value: common.FractionMonthNameValueEnum;
+}
+
+export class FractionYesnoValueItem {
+  label: string;
+  value: common.FractionYesnoValueEnum;
+}
+
+export class FractionNumberBetweenOptionItem {
+  label: string;
+  value: common.FractionNumberBetweenOptionEnum;
 }
 
 @Component({

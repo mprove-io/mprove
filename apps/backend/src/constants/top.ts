@@ -22,7 +22,7 @@ export const DEFAULT_SRV_UI: common.Ui = {
     operator: common.FractionOperatorEnum.Or,
     tsLastCompleteOption:
       common.FractionTsLastCompleteOptionEnum.CompletePlusCurrent,
-    tsLastUnit: common.FractionTsLastUnitEnum.Days,
+    tsLastUnit: common.FractionTsUnitEnum.Days,
     tsLastValue: 5,
     type: common.FractionTypeEnum.TsIsInLast
   },

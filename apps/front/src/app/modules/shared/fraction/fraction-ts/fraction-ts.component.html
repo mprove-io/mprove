@@ -17,7 +17,7 @@
         [class.w-[140px]]="
           isMetrics === false && fraction.type === 'TsIsInRange'
         "
-        [class.w-[230px]]="
+        [class.w-[180px]]="
           isMetrics === true && fraction.type !== 'TsIsInRange'
         "
         [class.w-[280px]]="
@@ -165,13 +165,6 @@
   <div
     *ngIf="
       [
-        fractionTypeEnum.TsIsOnYear,
-        fractionTypeEnum.TsIsOnQuarter,
-        fractionTypeEnum.TsIsOnMonth,
-        fractionTypeEnum.TsIsOnWeek,
-        fractionTypeEnum.TsIsOnDay,
-        fractionTypeEnum.TsIsOnHour,
-        fractionTypeEnum.TsIsOnMinute,
         fractionTypeEnum.TsIsBeforeDate,
         fractionTypeEnum.TsIsThrough,
         fractionTypeEnum.TsIsAfterDate,
@@ -299,11 +292,11 @@
         bindValue="value"
       >
         <ng-template ng-label-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item.label }}</div>
+          <div class="ml-1 truncate">{{ item.label + 's' }}</div>
         </ng-template>
 
         <ng-template ng-option-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item.label }}</div>
+          <div class="ml-1 truncate">{{ item.label + 's' }}</div>
         </ng-template>
       </ng-select>
     </div>
@@ -964,7 +957,7 @@
         [fixNgSelectBottom]="tsLastUnitsSelect"
         data-cy="tsLastUnitsSelect"
         class="popup-55 w-32"
-        [items]="fractionTsLastUnitsList"
+        [items]="fractionTsLastNextUnitsList"
         [clearable]="false"
         [searchable]="false"
         [disabled]="isDisabled === true"
@@ -1067,7 +1060,7 @@
         [fixNgSelectBottom]="tsNextUnitsSelect"
         data-cy="tsNextUnitsSelect"
         class="popup-55 w-32"
-        [items]="fractionTsNextUnitsList"
+        [items]="fractionTsLastNextUnitsList"
         [clearable]="false"
         [searchable]="false"
         [disabled]="isDisabled === true"

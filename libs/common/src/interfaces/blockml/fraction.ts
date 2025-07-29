@@ -175,16 +175,16 @@ export class Fraction {
   tsForValue?: number;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsForUnitEnum)
-  tsForUnit?: enums.FractionTsForUnitEnum;
+  @IsEnum(enums.FractionTsUnitEnum)
+  tsForUnit?: enums.FractionTsUnitEnum;
 
   @IsOptional()
   @IsNumber()
   tsLastValue?: number;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsLastUnitEnum)
-  tsLastUnit?: enums.FractionTsLastUnitEnum;
+  @IsEnum(enums.FractionTsUnitEnum)
+  tsLastUnit?: enums.FractionTsUnitEnum;
 
   @IsOptional()
   @IsEnum(enums.FractionTsLastCompleteOptionEnum)
@@ -195,8 +195,8 @@ export class Fraction {
   tsNextValue?: number;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsNextUnitEnum)
-  tsNextUnit?: enums.FractionTsNextUnitEnum;
+  @IsEnum(enums.FractionTsUnitEnum)
+  tsNextUnit?: enums.FractionTsUnitEnum;
 
   //
 

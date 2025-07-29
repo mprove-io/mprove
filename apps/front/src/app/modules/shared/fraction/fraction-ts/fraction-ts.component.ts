@@ -6,8 +6,10 @@ import {
   EventEmitter,
   HostListener,
   Input,
+  OnChanges,
   OnInit,
   Output,
+  SimpleChanges,
   ViewChild
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -32,11 +34,9 @@ import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 import {
   FractionTsDayOfWeekLcItem,
-  FractionTsForUnitItem,
   FractionTsLastCompleteOptionItem,
-  FractionTsLastUnitItem,
   FractionTsMomentTypesItem,
-  FractionTsNextUnitItem,
+  FractionTsTemporalUnitItem,
   FractionTsUnitItem,
   FractionTypeItem
 } from '../fraction.component';
@@ -48,7 +48,7 @@ import {
   styleUrls: ['fraction-ts.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FractionTsComponent implements OnInit {
+export class FractionTsComponent implements OnInit, OnChanges {
   @ViewChild('fractionTsTypeSelect', { static: false })
   fractionTsTypeSelectElement: NgSelectComponent;
 
@@ -146,7 +146,8 @@ export class FractionTsComponent implements OnInit {
   tsNextValueForm: FormGroup;
   tsMomentAgoFromNowQuantityForm: FormGroup;
 
-  fractionTsTypesList: FractionTypeItem[] = [
+  fractionTsTypesList: FractionTypeItem[] = [];
+  fractionTsTypesFullList: FractionTypeItem[] = [
     {
       label: 'is any value',
       value: common.FractionTypeEnum.TsIsAnyValue,
@@ -324,208 +325,8 @@ export class FractionTsComponent implements OnInit {
     }
   ];
 
-  fractionTsAgoFromNowUnitsList: FractionTsUnitItem[] = [
-    {
-      label: 'Years',
-      value: 'year'
-    },
-    {
-      label: 'Quarters',
-      value: 'quarter'
-    },
-    {
-      label: 'Months',
-      value: 'month'
-    },
-    {
-      label: 'Weeks',
-      value: 'week'
-    },
-    {
-      label: 'Days',
-      value: 'day'
-    },
-    {
-      label: 'Hours',
-      value: 'hour'
-    },
-    {
-      label: 'Minutes',
-      value: 'minute'
-    }
-  ];
-
-  fractionTsOnUnitsList: FractionTsUnitItem[] = [
-    {
-      label: 'Year',
-      value: 'year'
-    },
-    {
-      label: 'Quarter',
-      value: 'quarter'
-    },
-    {
-      label: 'Month',
-      value: 'month'
-    },
-    {
-      label: 'Week',
-      value: 'week'
-    },
-    {
-      label: 'Day',
-      value: 'day'
-    },
-    {
-      label: 'Hour',
-      value: 'hour'
-    },
-    {
-      label: 'Minute',
-      value: 'minute'
-    }
-  ];
-
-  fractionTsDayOfWeekLcList: FractionTsDayOfWeekLcItem[] = [
-    {
-      label: 'Monday',
-      value: common.FractionDayOfWeekLcEnum.Monday
-    },
-    {
-      label: 'Tuesday',
-      value: common.FractionDayOfWeekLcEnum.Tuesday
-    },
-    {
-      label: 'Wednesday',
-      value: common.FractionDayOfWeekLcEnum.Wednesday
-    },
-    {
-      label: 'Thursday',
-      value: common.FractionDayOfWeekLcEnum.Thursday
-    },
-    {
-      label: 'Friday',
-      value: common.FractionDayOfWeekLcEnum.Friday
-    },
-    {
-      label: 'Saturday',
-      value: common.FractionDayOfWeekLcEnum.Saturday
-    },
-    {
-      label: 'Sunday',
-      value: common.FractionDayOfWeekLcEnum.Sunday
-    }
-  ];
-
-  fractionTsForUnitsList: FractionTsForUnitItem[] = [
-    {
-      label: 'Years',
-      value: common.FractionTsForUnitEnum.Years
-    },
-    {
-      label: 'Quarters',
-      value: common.FractionTsForUnitEnum.Quarters
-    },
-    {
-      label: 'Months',
-      value: common.FractionTsForUnitEnum.Months
-    },
-    {
-      label: 'Weeks',
-      value: common.FractionTsForUnitEnum.Weeks
-    },
-    {
-      label: 'Days',
-      value: common.FractionTsForUnitEnum.Days
-    },
-    {
-      label: 'Hours',
-      value: common.FractionTsForUnitEnum.Hours
-    },
-    {
-      label: 'Minutes',
-      value: common.FractionTsForUnitEnum.Minutes
-    }
-  ];
-
-  fractionTsLastUnitsList: FractionTsLastUnitItem[] = [
-    {
-      label: 'Years',
-      value: common.FractionTsLastUnitEnum.Years
-    },
-    {
-      label: 'Quarters',
-      value: common.FractionTsLastUnitEnum.Quarters
-    },
-    {
-      label: 'Months',
-      value: common.FractionTsLastUnitEnum.Months
-    },
-    {
-      label: 'Weeks',
-      value: common.FractionTsLastUnitEnum.Weeks
-    },
-    {
-      label: 'Days',
-      value: common.FractionTsLastUnitEnum.Days
-    },
-    {
-      label: 'Hours',
-      value: common.FractionTsLastUnitEnum.Hours
-    },
-    {
-      label: 'Minutes',
-      value: common.FractionTsLastUnitEnum.Minutes
-    }
-  ];
-
-  fractionTsNextUnitsList: FractionTsNextUnitItem[] = [
-    {
-      label: 'Years',
-      value: common.FractionTsNextUnitEnum.Years
-    },
-    {
-      label: 'Quarters',
-      value: common.FractionTsNextUnitEnum.Quarters
-    },
-    {
-      label: 'Months',
-      value: common.FractionTsNextUnitEnum.Months
-    },
-    {
-      label: 'Weeks',
-      value: common.FractionTsNextUnitEnum.Weeks
-    },
-    {
-      label: 'Days',
-      value: common.FractionTsNextUnitEnum.Days
-    },
-    {
-      label: 'Hours',
-      value: common.FractionTsNextUnitEnum.Hours
-    },
-    {
-      label: 'Minutes',
-      value: common.FractionTsNextUnitEnum.Minutes
-    }
-  ];
-
-  fractionTsLastCompleteOptionsList: FractionTsLastCompleteOptionItem[] = [
-    {
-      label: 'complete plus current',
-      value: common.FractionTsLastCompleteOptionEnum.CompletePlusCurrent
-    },
-    {
-      label: 'complete',
-      value: common.FractionTsLastCompleteOptionEnum.Complete
-    },
-    {
-      label: 'not complete',
-      value: common.FractionTsLastCompleteOptionEnum.Incomplete
-    }
-  ];
-
-  fractionTsMomentTypesList: FractionTsMomentTypesItem[] = [
+  fractionTsMomentTypesList: FractionTsMomentTypesItem[] = [];
+  fractionTsMomentTypesFullList: FractionTsMomentTypesItem[] = [
     {
       label: 'literal',
       value: common.FractionTsMomentTypeEnum.Literal
@@ -576,6 +377,118 @@ export class FractionTsComponent implements OnInit {
     }
   ];
 
+  fractionTsOnUnitsList: FractionTsTemporalUnitItem[] = [];
+  fractionTsAgoFromNowUnitsList: FractionTsTemporalUnitItem[] = [];
+  fractionTsTempUnitsFullList: FractionTsTemporalUnitItem[] = [
+    {
+      label: 'Year',
+      value: 'year'
+    },
+    {
+      label: 'Quarter',
+      value: 'quarter'
+    },
+    {
+      label: 'Month',
+      value: 'month'
+    },
+    {
+      label: 'Week',
+      value: 'week'
+    },
+    {
+      label: 'Day',
+      value: 'day'
+    },
+    {
+      label: 'Hour',
+      value: 'hour'
+    },
+    {
+      label: 'Minute',
+      value: 'minute'
+    }
+  ];
+
+  fractionTsLastNextUnitsList: FractionTsUnitItem[] = [];
+  fractionTsForUnitsList: FractionTsUnitItem[] = [];
+  fractionTsUnitsFullList: FractionTsUnitItem[] = [
+    {
+      label: 'Years',
+      value: common.FractionTsUnitEnum.Years
+    },
+    {
+      label: 'Quarters',
+      value: common.FractionTsUnitEnum.Quarters
+    },
+    {
+      label: 'Months',
+      value: common.FractionTsUnitEnum.Months
+    },
+    {
+      label: 'Weeks',
+      value: common.FractionTsUnitEnum.Weeks
+    },
+    {
+      label: 'Days',
+      value: common.FractionTsUnitEnum.Days
+    },
+    {
+      label: 'Hours',
+      value: common.FractionTsUnitEnum.Hours
+    },
+    {
+      label: 'Minutes',
+      value: common.FractionTsUnitEnum.Minutes
+    }
+  ];
+
+  fractionTsDayOfWeekLcList: FractionTsDayOfWeekLcItem[] = [
+    {
+      label: 'Monday',
+      value: common.FractionDayOfWeekLcEnum.Monday
+    },
+    {
+      label: 'Tuesday',
+      value: common.FractionDayOfWeekLcEnum.Tuesday
+    },
+    {
+      label: 'Wednesday',
+      value: common.FractionDayOfWeekLcEnum.Wednesday
+    },
+    {
+      label: 'Thursday',
+      value: common.FractionDayOfWeekLcEnum.Thursday
+    },
+    {
+      label: 'Friday',
+      value: common.FractionDayOfWeekLcEnum.Friday
+    },
+    {
+      label: 'Saturday',
+      value: common.FractionDayOfWeekLcEnum.Saturday
+    },
+    {
+      label: 'Sunday',
+      value: common.FractionDayOfWeekLcEnum.Sunday
+    }
+  ];
+
+  fractionTsLastCompleteOptionsList: FractionTsLastCompleteOptionItem[] = [
+    {
+      label: 'complete plus current',
+      value: common.FractionTsLastCompleteOptionEnum.CompletePlusCurrent
+    },
+    {
+      label: 'complete',
+      value: common.FractionTsLastCompleteOptionEnum.Complete
+    },
+    {
+      label: 'not complete',
+      value: common.FractionTsLastCompleteOptionEnum.Incomplete
+    }
+  ];
+
   commonI18n: DatePickerI18n = COMMON_I18N;
 
   onYearDateI18n = Object.assign({}, this.commonI18n);
@@ -615,33 +528,35 @@ export class FractionTsComponent implements OnInit {
 
   ngOnInit() {
     // console.log(this.timeStr);
-    this.fractionTsTypesList = this.fractionTsTypesList.filter(x => {
-      if (this.isMetrics === true) {
-        return (
-          [
-            common.FractionTypeEnum.TsIsAnyValue,
-            common.FractionTypeEnum.TsIsNull,
-            common.FractionTypeEnum.TsIsNotInLast,
-            common.FractionTypeEnum.TsIsNotInNext,
-            // common.FractionTypeEnum.TsIsStarting,
-            // common.FractionTypeEnum.TsIsThrough,
-            common.FractionTypeEnum.TsIsNotInRange,
-            common.FractionTypeEnum.TsIsNotBeginFor,
-            common.FractionTypeEnum.TsIsNotOnYear,
-            common.FractionTypeEnum.TsIsNotOnQuarter,
-            common.FractionTypeEnum.TsIsNotOnMonth,
-            common.FractionTypeEnum.TsIsNotOnWeek,
-            common.FractionTypeEnum.TsIsNotOnDay,
-            common.FractionTypeEnum.TsIsNotOnHour,
-            common.FractionTypeEnum.TsIsNotOnMinute,
-            common.FractionTypeEnum.TsIsNotOnTimestamp,
-            common.FractionTypeEnum.TsIsNotNull
-          ].indexOf(x.value) < 0
-        );
-      } else {
-        return true;
-      }
-    });
+    this.fractionTsTypesList =
+      this.isMetrics === false
+        ? this.fractionTsTypesFullList
+        : this.fractionTsTypesFullList.filter(
+            x =>
+              [
+                common.FractionTypeEnum.TsIsInLast,
+                common.FractionTypeEnum.TsIsOnYear,
+                common.FractionTypeEnum.TsIsOnQuarter,
+                common.FractionTypeEnum.TsIsOnMonth,
+                common.FractionTypeEnum.TsIsOnWeek,
+                common.FractionTypeEnum.TsIsOnDay,
+                common.FractionTypeEnum.TsIsInRange,
+                common.FractionTypeEnum.TsIsBeforeDate,
+                common.FractionTypeEnum.TsIsThrough,
+                common.FractionTypeEnum.TsIsAfterDate,
+                common.FractionTypeEnum.TsIsStarting,
+                common.FractionTypeEnum.TsIsBeginFor,
+                common.FractionTypeEnum.TsIsInNext,
+                common.FractionTypeEnum.TsIsOnHour,
+                common.FractionTypeEnum.TsIsOnMinute,
+                common.FractionTypeEnum.TsIsOnTimestamp
+              ].indexOf(x.value) > -1
+          );
+
+    this.fractionTsOnUnitsList = this.fractionTsTempUnitsFullList;
+    this.fractionTsAgoFromNowUnitsList = this.fractionTsTempUnitsFullList;
+    this.fractionTsLastNextUnitsList = this.fractionTsUnitsFullList;
+    this.fractionTsForUnitsList = this.fractionTsUnitsFullList;
 
     this.resetDateUsingFraction();
     this.resetDateToUsingFraction();
@@ -674,6 +589,38 @@ export class FractionTsComponent implements OnInit {
     this.afterDateI18n.firstDayOfWeek = firstDayOfWeek;
     this.inRangeFromDateI18n.firstDayOfWeek = firstDayOfWeek;
     this.inRangeToDateI18n.firstDayOfWeek = firstDayOfWeek;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (common.isDefined(changes.fraction)) {
+      if (
+        [
+          common.FractionTypeEnum.TsIsOnYear,
+          common.FractionTypeEnum.TsIsOnQuarter,
+          common.FractionTypeEnum.TsIsOnMonth,
+          common.FractionTypeEnum.TsIsOnWeek,
+          common.FractionTypeEnum.TsIsOnDay,
+          common.FractionTypeEnum.TsIsOnHour,
+          common.FractionTypeEnum.TsIsOnMinute,
+          common.FractionTypeEnum.TsIsOnTimestamp
+        ].indexOf((changes.fraction.currentValue as common.Fraction).type) > -1
+      ) {
+        this.fractionTsMomentTypesList =
+          this.fractionTsMomentTypesFullList.filter(
+            x =>
+              [
+                common.FractionTsMomentTypeEnum.Literal,
+                common.FractionTsMomentTypeEnum.This,
+                common.FractionTsMomentTypeEnum.Last,
+                common.FractionTsMomentTypeEnum.Next,
+                common.FractionTsMomentTypeEnum.Ago,
+                common.FractionTsMomentTypeEnum.FromNow
+              ].indexOf(x.value) > -1
+          );
+      } else {
+        this.fractionTsMomentTypesList = this.fractionTsMomentTypesFullList;
+      }
+    }
   }
 
   toggleShowHours() {
@@ -1046,7 +993,7 @@ export class FractionTsComponent implements OnInit {
         this.fraction.tsMomentUnit = 'day';
 
         this.fraction.tsForValue = 1;
-        this.fraction.tsForUnit = common.FractionTsForUnitEnum.Weeks;
+        this.fraction.tsForUnit = common.FractionTsUnitEnum.Weeks;
 
         this.buildFractionBeginFor({
           dateValue: this.dateStr,
@@ -1063,7 +1010,7 @@ export class FractionTsComponent implements OnInit {
 
       case this.fractionTypeEnum.TsIsInLast: {
         this.fraction.tsLastValue = 5;
-        this.fraction.tsLastUnit = common.FractionTsLastUnitEnum.Days;
+        this.fraction.tsLastUnit = common.FractionTsUnitEnum.Days;
         this.fraction.tsLastCompleteOption =
           common.FractionTsLastCompleteOptionEnum.CompletePlusCurrent;
 
@@ -1079,7 +1026,7 @@ export class FractionTsComponent implements OnInit {
 
       case this.fractionTypeEnum.TsIsInNext: {
         this.fraction.tsNextValue = 5;
-        this.fraction.tsNextUnit = common.FractionTsNextUnitEnum.Days;
+        this.fraction.tsNextUnit = common.FractionTsUnitEnum.Days;
 
         this.buildFractionNext();
 

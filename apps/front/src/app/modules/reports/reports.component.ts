@@ -832,7 +832,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
       newFraction.tsLastUnit =
         timeSpec === common.TimeSpecEnum.Timestamps
-          ? common.FractionTsLastUnitEnum.Minutes
+          ? common.FractionTsUnitEnum.Minutes
           : timeSpec;
 
       newFraction = {

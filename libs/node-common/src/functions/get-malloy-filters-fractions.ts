@@ -670,7 +670,7 @@ export function getMalloyFiltersFractions(item: {
                     ? common.FractionTypeEnum.TsIsInLast
                     : common.FractionTypeEnum.TsIsNotInLast,
                 tsLastValue: Number(tFilter.n),
-                tsLastUnit: common.getFractionTsLastUnits(tFilter.units),
+                tsLastUnit: common.getFractionTsUnits(tFilter.units),
                 tsLastCompleteOption:
                   common.FractionTsLastCompleteOptionEnum.Complete
               };
@@ -690,7 +690,7 @@ export function getMalloyFiltersFractions(item: {
                     ? common.FractionTypeEnum.TsIsInLast
                     : common.FractionTypeEnum.TsIsNotInLast,
                 tsLastValue: Number(tFilter.n),
-                tsLastUnit: common.getFractionTsLastUnits(tFilter.units),
+                tsLastUnit: common.getFractionTsUnits(tFilter.units),
                 tsLastCompleteOption:
                   common.FractionTsLastCompleteOptionEnum.Incomplete
               };
@@ -710,7 +710,7 @@ export function getMalloyFiltersFractions(item: {
                     ? common.FractionTypeEnum.TsIsInNext
                     : common.FractionTypeEnum.TsIsNotInNext,
                 tsNextValue: Number(tFilter.n),
-                tsNextUnit: common.getFractionTsNextUnits(tFilter.units)
+                tsNextUnit: common.getFractionTsUnits(tFilter.units)
               };
             } else if ((temporalFilter as Before).operator === 'before') {
               // temporal before (before)
@@ -879,7 +879,7 @@ export function getMalloyFiltersFractions(item: {
                 tsLastUnit:
                   tFilter.fromMoment.moment === 'ago' &&
                   tFilter.toMoment.moment === 'now'
-                    ? common.getFractionTsLastUnits(tFilter.fromMoment.units)
+                    ? common.getFractionTsUnits(tFilter.fromMoment.units)
                     : undefined,
                 tsLastCompleteOption:
                   mFrom.momentStr.endsWith('ago') && mTo.momentStr === 'now'
@@ -1054,7 +1054,7 @@ export function getMalloyFiltersFractions(item: {
                 tsDateMinute: common.isDefined(minute)
                   ? Number(minute)
                   : undefined,
-                tsForUnit: common.getFractionTsForUnits(tFilter.units),
+                tsForUnit: common.getFractionTsUnits(tFilter.units),
                 tsForValue: Number(tFilter.n)
               };
             }
