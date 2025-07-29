@@ -24,7 +24,7 @@ export class ValidationService {
       ['isNotNumberValues', 'Should be Numbers separated by comma'],
       ['isNotLowerCaseValues', 'Must be lowercase'],
       ['isNotNumber', 'Is not a number'],
-      ['isNotInteger', 'Must be integer'],
+      ['isNotInteger', 'integer'],
       ['isNotZero', 'Cannot be 0'],
       ['containsThreeUnderscores', 'File name cannot contain "___"'],
       ['moreThenOneMB', 'Text must be < 1mb'],
