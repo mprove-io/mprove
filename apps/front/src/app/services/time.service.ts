@@ -151,10 +151,10 @@ export class TimeService {
                           ? 'now'
                           : fraction.tsMomentType ===
                               common.FractionTsMomentTypeEnum.Ago
-                            ? `${fraction.tsMomentNumValue} ${fraction.tsMomentUnit}s ago`
+                            ? `${fraction.tsMomentAgoFromNowQuantity} ${fraction.tsMomentUnit}s ago`
                             : fraction.tsMomentType ===
                                 common.FractionTsMomentTypeEnum.FromNow
-                              ? `${fraction.tsMomentNumValue} ${fraction.tsMomentUnit}s from now`
+                              ? `${fraction.tsMomentAgoFromNowQuantity} ${fraction.tsMomentUnit}s from now`
                               : undefined;
 
     return momentStr;

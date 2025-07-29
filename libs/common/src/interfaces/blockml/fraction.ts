@@ -213,7 +213,7 @@ export class Fraction {
 
   @IsOptional()
   @IsNumber()
-  tsMomentNumValue?: number;
+  tsMomentAgoFromNowQuantity?: number;
 
   @IsOptional()
   @IsString()
@@ -234,7 +234,7 @@ export class Fraction {
 
   @IsOptional()
   @IsNumber()
-  tsFromMomentNumValue?: number;
+  tsFromMomentAgoFromNowQuantity?: number;
 
   @IsOptional()
   @IsString()
@@ -255,7 +255,7 @@ export class Fraction {
 
   @IsOptional()
   @IsNumber()
-  tsToMomentNumValue?: number;
+  tsToMomentAgoFromNowQuantity?: number;
 
   @IsOptional()
   @IsString()

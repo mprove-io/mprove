@@ -240,7 +240,7 @@
     "
     class="flex flex-row space-x-5"
   >
-    <form [formGroup]="tsMomentNumValueForm">
+    <form [formGroup]="tsMomentAgoFromNowQuantityForm">
       <div
         tp="Turn off formula to activate control"
         [tpIsEnabled]="isDisabled === true"
@@ -249,21 +249,27 @@
           <input
             autocomplete="off"
             spellcheck="false"
-            data-cy="fractionTsMomentNumValueInput"
+            data-cy="fractionTsMomentAgoFromNowQuantityInput"
             class="form-input border-s3 focus:border-m600 h-[36px] w-16 rounded"
             [ngClass]="{
               'border-r600':
-                tsMomentNumValueForm.controls['tsMomentNumValue'].invalid &&
-                tsMomentNumValueForm.controls['tsMomentNumValue'].touched
+                tsMomentAgoFromNowQuantityForm.controls[
+                  'tsMomentAgoFromNowQuantity'
+                ].invalid &&
+                tsMomentAgoFromNowQuantityForm.controls[
+                  'tsMomentAgoFromNowQuantity'
+                ].touched
             }"
-            formControlName="tsMomentNumValue"
-            (blur)="tsMomentNumValueBlur()"
+            formControlName="tsMomentAgoFromNowQuantity"
+            (blur)="tsMomentAgoFromNowQuantityBlur()"
           />
         </fieldset>
       </div>
 
       <m-validation
-        [control]="tsMomentNumValueForm.controls['tsMomentNumValue']"
+        [control]="
+          tsMomentAgoFromNowQuantityForm.controls['tsMomentAgoFromNowQuantity']
+        "
       ></m-validation>
     </form>
 
