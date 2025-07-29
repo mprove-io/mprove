@@ -2258,6 +2258,20 @@ export class FractionTsComponent implements OnInit {
       });
 
       if (
+        [
+          common.FractionTsMomentTypeEnum.Ago,
+          common.FractionTsMomentTypeEnum.FromNow
+        ].indexOf(this.fraction.tsMomentType) > -1 &&
+        common.isUndefined(
+          this.tsMomentNumValueForm.controls['tsMomentNumValue'].value
+        )
+      ) {
+        this.tsMomentNumValueForm.controls['tsMomentNumValue'].setValue(
+          this.fraction.tsMomentNumValue
+        );
+      }
+
+      if (
         this.tsForValueForm.valid &&
         ([
           common.FractionTsMomentTypeEnum.Ago,
