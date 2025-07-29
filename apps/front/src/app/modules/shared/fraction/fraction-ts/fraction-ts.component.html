@@ -188,21 +188,21 @@
     [tpIsEnabled]="isDisabled === true"
   >
     <ng-select
-      #tsMomentSingularUnitSelect
-      [fixNgSelectBottom]="tsMomentSingularUnitSelect"
-      data-cy="tsMomentSingularUnitSelect"
+      #tsMomentOnUnitSelect
+      [fixNgSelectBottom]="tsMomentOnUnitSelect"
+      data-cy="tsMomentOnUnitSelect"
       class="popup-55 w-32"
-      [items]="fractionTsSingularUnitsList"
+      [items]="fractionTsOnUnitsList"
       [clearable]="false"
       [searchable]="false"
       [disabled]="isDisabled === true"
       [(ngModel)]="fraction.tsMomentUnit"
-      (change)="tsMomentSingularUnitChange()"
+      (change)="tsMomentOnUnitChange()"
       (keyup.esc)="
-        $event.stopImmediatePropagation(); tsMomentSingularUnitSelect.blur()
+        $event.stopImmediatePropagation(); tsMomentOnUnitSelect.blur()
       "
       (keyup.enter)="
-        $event.stopImmediatePropagation(); tsMomentSingularUnitSelect.blur()
+        $event.stopImmediatePropagation(); tsMomentOnUnitSelect.blur()
       "
       appendTo="body"
       bindLabel="label"

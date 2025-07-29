@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { common } from '~front/barrels/common';
 
 @Injectable({ providedIn: 'root' })
 export class TimeService {
@@ -118,5 +119,44 @@ export class TimeService {
     let dateUtcMs = new Date(`${dateStr}T00:00:00Z`).getTime();
 
     return { date, dateStr, timeStr, dateUtcMs };
+  }
+
+  getMomentStr(item: { fraction: common.Fraction; dateMinuteStr: string }) {
+    let { fraction, dateMinuteStr } = item;
+
+    let momentStr =
+      fraction.tsMomentType === common.FractionTsMomentTypeEnum.Literal
+        ? dateMinuteStr
+        : fraction.tsMomentType === common.FractionTsMomentTypeEnum.Today
+          ? 'today'
+          : fraction.tsMomentType === common.FractionTsMomentTypeEnum.Yesterday
+            ? 'yesterday'
+            : fraction.tsMomentType === common.FractionTsMomentTypeEnum.Tomorrow
+              ? 'tomorrow'
+              : fraction.tsMomentType === common.FractionTsMomentTypeEnum.This
+                ? `this ${fraction.tsMomentUnit}`
+                : fraction.tsMomentType === common.FractionTsMomentTypeEnum.Last
+                  ? `last ${fraction.tsMomentUnit}`
+                  : fraction.tsMomentType ===
+                      common.FractionTsMomentTypeEnum.Next
+                    ? `next ${fraction.tsMomentUnit}`
+                    : fraction.tsMomentType ===
+                        common.FractionTsMomentTypeEnum.LastDayOfWeek
+                      ? `last ${fraction.tsMomentPartValue}`
+                      : fraction.tsMomentType ===
+                          common.FractionTsMomentTypeEnum.NextDayOfWeek
+                        ? `next ${fraction.tsMomentPartValue}`
+                        : fraction.tsMomentType ===
+                            common.FractionTsMomentTypeEnum.Now
+                          ? 'now'
+                          : fraction.tsMomentType ===
+                              common.FractionTsMomentTypeEnum.Ago
+                            ? `${fraction.tsMomentNumValue} ${fraction.tsMomentUnit}s ago`
+                            : fraction.tsMomentType ===
+                                common.FractionTsMomentTypeEnum.FromNow
+                              ? `${fraction.tsMomentNumValue} ${fraction.tsMomentUnit}s from now`
+                              : undefined;
+
+    return momentStr;
   }
 }
