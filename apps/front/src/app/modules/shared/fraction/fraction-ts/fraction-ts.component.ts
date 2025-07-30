@@ -2204,6 +2204,13 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (this.tsForValueForm.valid) {
         this.emitFractionUpdate();
       }
+    } else if (this.fraction.type === common.FractionTypeEnum.TsIsOnDay) {
+      this.fraction = this.timeService.buildFractionOnDay({
+        fraction: this.fraction,
+        dateValue: this.dateStr
+      });
+
+      this.emitFractionUpdate();
     }
   }
 
@@ -2221,13 +2228,22 @@ export class FractionTsComponent implements OnInit, OnChanges {
           dateValue: this.dateStr,
           timeValue: this.timeStr
         });
-      }
 
-      if (
-        this.tsMomentAgoFromNowQuantityForm.valid &&
-        this.tsForValueForm.valid
-      ) {
-        this.emitFractionUpdate();
+        if (
+          this.tsMomentAgoFromNowQuantityForm.valid &&
+          this.tsForValueForm.valid
+        ) {
+          this.emitFractionUpdate();
+        }
+      } else if (this.fraction.type === common.FractionTypeEnum.TsIsOnDay) {
+        this.fraction = this.timeService.buildFractionOnDay({
+          fraction: this.fraction,
+          dateValue: this.dateStr
+        });
+
+        if (this.tsMomentAgoFromNowQuantityForm.valid) {
+          this.emitFractionUpdate();
+        }
       }
     }
   }
@@ -2239,12 +2255,22 @@ export class FractionTsComponent implements OnInit, OnChanges {
         dateValue: this.dateStr,
         timeValue: this.timeStr
       });
-    }
-    if (
-      this.tsMomentAgoFromNowQuantityForm.valid &&
-      this.tsForValueForm.valid
-    ) {
-      this.emitFractionUpdate();
+
+      if (
+        this.tsMomentAgoFromNowQuantityForm.valid &&
+        this.tsForValueForm.valid
+      ) {
+        this.emitFractionUpdate();
+      }
+    } else if (this.fraction.type === common.FractionTypeEnum.TsIsOnDay) {
+      this.fraction = this.timeService.buildFractionOnDay({
+        fraction: this.fraction,
+        dateValue: this.dateStr
+      });
+
+      if (this.tsMomentAgoFromNowQuantityForm.valid) {
+        this.emitFractionUpdate();
+      }
     }
   }
 

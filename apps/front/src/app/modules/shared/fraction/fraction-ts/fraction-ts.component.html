@@ -271,7 +271,22 @@
         "
       ></m-validation>
     </form>
+  </div>
 
+  <div
+    *ngIf="
+      [
+        fractionTypeEnum.TsIsBeforeDate,
+        fractionTypeEnum.TsIsThrough,
+        fractionTypeEnum.TsIsAfterDate,
+        fractionTypeEnum.TsIsStarting,
+        fractionTypeEnum.TsIsBeginFor
+      ].indexOf(fraction.type) > -1 &&
+      [fractionTsMomentTypeEnum.Ago, fractionTsMomentTypeEnum.FromNow].indexOf(
+        fraction.tsMomentType
+      ) > -1
+    "
+  >
     <div
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
