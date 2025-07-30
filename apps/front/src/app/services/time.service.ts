@@ -159,4 +159,83 @@ export class TimeService {
 
     return momentStr;
   }
+
+  buildFractionBeginFor(item: {
+    fraction: common.Fraction;
+    dateValue: string;
+    timeValue: string;
+  }) {
+    let { dateValue, timeValue, fraction } = item;
+
+    let minuteStr = this.getMinuteStr({
+      dateValue: dateValue,
+      timeValue: timeValue,
+      dateSeparator: common.isDefined(fraction.parentBrick) ? '-' : '/'
+    });
+
+    let dateMinuteStr =
+      Number(timeValue.split(':')[0].replace(/^0+/, '')) > 0 ||
+      Number(timeValue.split(':')[1].replace(/^0+/, '')) > 0
+        ? minuteStr
+        : minuteStr.split(' ')[0];
+
+    let momentStr = this.getMomentStr({
+      fraction: fraction,
+      dateMinuteStr: dateMinuteStr
+    });
+
+    let mBrick = `f\`${momentStr} for ${fraction.tsForValue} ${fraction.tsForUnit}\``;
+
+    let newFraction: common.Fraction = {
+      brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
+      parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
+      operator: common.FractionOperatorEnum.Or,
+      type: common.FractionTypeEnum.TsIsBeginFor,
+      tsDateYear: Number(dateValue.split('-')[0]),
+      tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
+      tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
+      tsDateHour: Number(timeValue.split(':')[0].replace(/^0+/, '')),
+      tsDateMinute: Number(timeValue.split(':')[1].replace(/^0+/, '')),
+      tsMoment: undefined,
+      tsMomentType: fraction.tsMomentType,
+      tsMomentPartValue: fraction.tsMomentPartValue,
+      tsMomentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+      tsMomentUnit: fraction.tsMomentUnit,
+      tsForValue: fraction.tsForValue,
+      tsForUnit: fraction.tsForUnit
+    };
+
+    return newFraction;
+  }
+
+  buildFractionOnYear(item: {
+    fraction: common.Fraction;
+    dateValue: string;
+  }) {
+    let { fraction, dateValue } = item;
+
+    let yearStr = this.getYearStr({
+      dateValue: dateValue
+    });
+
+    let momentStr = this.getMomentStr({
+      fraction: fraction,
+      dateMinuteStr: yearStr
+    });
+
+    let mBrick = `f\`${momentStr}\``;
+
+    let newFraction: common.Fraction = {
+      brick: common.isDefined(fraction.parentBrick) ? mBrick : `on ${yearStr}`,
+      parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
+      operator: common.FractionOperatorEnum.Or,
+      type: fraction.type,
+      tsDateYear: Number(dateValue.split('-')[0]),
+      tsMoment: undefined,
+      tsMomentType: fraction.tsMomentType,
+      tsMomentUnit: fraction.tsMomentUnit
+    };
+
+    return newFraction;
+  }
 }

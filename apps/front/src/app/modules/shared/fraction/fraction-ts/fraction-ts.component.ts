@@ -824,23 +824,14 @@ export class FractionTsComponent implements OnInit, OnChanges {
       }
 
       case this.fractionTypeEnum.TsIsOnYear: {
-        let yearStr = this.timeService.getYearStr({
+        this.fraction.tsMomentType = common.FractionTsMomentTypeEnum.Literal;
+        this.fraction.tsMomentAgoFromNowQuantity = 1;
+        this.fraction.tsMomentUnit = 'day';
+
+        this.fraction = this.timeService.buildFractionOnYear({
+          fraction: this.fraction,
           dateValue: this.dateStr
         });
-
-        let mBrick = `f\`${yearStr}\``;
-
-        this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
-            ? mBrick
-            : `on ${yearStr}`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
-            ? mBrick
-            : undefined,
-          operator: common.FractionOperatorEnum.Or,
-          type: fractionType,
-          tsDateYear: Number(this.dateStr.split('-')[0])
-        };
 
         this.emitFractionUpdate();
         break;
@@ -1048,14 +1039,15 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
       case this.fractionTypeEnum.TsIsBeginFor: {
         this.fraction.tsMomentType = common.FractionTsMomentTypeEnum.Literal;
-        this.fraction.tsMomentPartValue = common.FractionDayOfWeekLcEnum.Monday;
         this.fraction.tsMomentAgoFromNowQuantity = 1;
         this.fraction.tsMomentUnit = 'day';
+        this.fraction.tsMomentPartValue = common.FractionDayOfWeekLcEnum.Monday;
 
         this.fraction.tsForValue = 1;
         this.fraction.tsForUnit = common.FractionTsUnitEnum.Weeks;
 
-        this.buildFractionBeginFor({
+        this.fraction = this.timeService.buildFractionBeginFor({
+          fraction: this.fraction,
           dateValue: this.dateStr,
           timeValue: this.timeStr
         });
@@ -1395,53 +1387,6 @@ export class FractionTsComponent implements OnInit, OnChanges {
       tsMomentPartValue: this.fraction.tsMomentPartValue,
       tsMomentAgoFromNowQuantity: this.fraction.tsMomentAgoFromNowQuantity,
       tsMomentUnit: this.fraction.tsMomentUnit
-    };
-  }
-
-  buildFractionBeginFor(item: {
-    dateValue: string;
-    timeValue: string;
-  }) {
-    let { dateValue, timeValue } = item;
-
-    let minuteStr = this.timeService.getMinuteStr({
-      dateValue: dateValue,
-      timeValue: timeValue,
-      dateSeparator: common.isDefined(this.fraction.parentBrick) ? '-' : '/'
-    });
-
-    let dateMinuteStr =
-      Number(timeValue.split(':')[0].replace(/^0+/, '')) > 0 ||
-      Number(timeValue.split(':')[1].replace(/^0+/, '')) > 0
-        ? minuteStr
-        : minuteStr.split(' ')[0];
-
-    let momentStr = this.timeService.getMomentStr({
-      fraction: this.fraction,
-      dateMinuteStr: dateMinuteStr
-    });
-
-    let mBrick = `f\`${momentStr} for ${this.fraction.tsForValue} ${this.fraction.tsForUnit}\``;
-
-    this.fraction = {
-      brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: common.isDefined(this.fraction.parentBrick)
-        ? mBrick
-        : undefined,
-      operator: common.FractionOperatorEnum.Or,
-      type: common.FractionTypeEnum.TsIsBeginFor,
-      tsDateYear: Number(dateValue.split('-')[0]),
-      tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
-      tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
-      tsDateHour: Number(timeValue.split(':')[0].replace(/^0+/, '')),
-      tsDateMinute: Number(timeValue.split(':')[1].replace(/^0+/, '')),
-      tsMoment: undefined,
-      tsMomentType: this.fraction.tsMomentType,
-      tsMomentPartValue: this.fraction.tsMomentPartValue,
-      tsMomentAgoFromNowQuantity: this.fraction.tsMomentAgoFromNowQuantity,
-      tsMomentUnit: this.fraction.tsMomentUnit,
-      tsForValue: this.fraction.tsForValue,
-      tsForUnit: this.fraction.tsForUnit
     };
   }
 
@@ -2100,7 +2045,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (common.isDefinedAndNotEmpty(value)) {
         this.dateStr = value;
 
-        this.buildFractionBeginFor({
+        this.fraction = this.timeService.buildFractionBeginFor({
+          fraction: this.fraction,
           dateValue: value,
           timeValue: this.timeStr
         });
@@ -2124,7 +2070,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (common.isDefinedAndNotEmpty(value)) {
         this.timeStr = value;
 
-        this.buildFractionBeginFor({
+        this.fraction = this.timeService.buildFractionBeginFor({
+          fraction: this.fraction,
           dateValue: this.dateStr,
           timeValue: value
         });
@@ -2205,61 +2152,76 @@ export class FractionTsComponent implements OnInit, OnChanges {
   }
 
   momentChange() {
-    if (this.fraction.type === common.FractionTypeEnum.TsIsBeginFor) {
-      this.fraction.tsMomentPartValue =
-        [
-          common.FractionTsMomentTypeEnum.LastDayOfWeek,
-          common.FractionTsMomentTypeEnum.NextDayOfWeek
-        ].indexOf(this.fraction.tsMomentType) > -1
-          ? [
-              common.FractionDayOfWeekLcEnum.Sunday.toString(),
-              common.FractionDayOfWeekLcEnum.Monday.toString(),
-              common.FractionDayOfWeekLcEnum.Tuesday.toString(),
-              common.FractionDayOfWeekLcEnum.Wednesday.toString(),
-              common.FractionDayOfWeekLcEnum.Thursday.toString(),
-              common.FractionDayOfWeekLcEnum.Friday.toString(),
-              common.FractionDayOfWeekLcEnum.Saturday.toString()
-            ].indexOf(this.fraction.tsMomentPartValue) > -1
-            ? this.fraction.tsMomentPartValue
-            : common.FractionDayOfWeekLcEnum.Monday
-          : undefined;
+    this.fraction.tsMomentPartValue =
+      [
+        common.FractionTsMomentTypeEnum.LastDayOfWeek,
+        common.FractionTsMomentTypeEnum.NextDayOfWeek
+      ].indexOf(this.fraction.tsMomentType) > -1
+        ? [
+            common.FractionDayOfWeekLcEnum.Sunday.toString(),
+            common.FractionDayOfWeekLcEnum.Monday.toString(),
+            common.FractionDayOfWeekLcEnum.Tuesday.toString(),
+            common.FractionDayOfWeekLcEnum.Wednesday.toString(),
+            common.FractionDayOfWeekLcEnum.Thursday.toString(),
+            common.FractionDayOfWeekLcEnum.Friday.toString(),
+            common.FractionDayOfWeekLcEnum.Saturday.toString()
+          ].indexOf(this.fraction.tsMomentPartValue) > -1
+          ? this.fraction.tsMomentPartValue
+          : common.FractionDayOfWeekLcEnum.Monday
+        : undefined;
 
+    if (
+      [
+        common.FractionTsMomentTypeEnum.Ago,
+        common.FractionTsMomentTypeEnum.FromNow
+      ].indexOf(this.fraction.tsMomentType) > -1
+    ) {
       this.fraction.tsMomentAgoFromNowQuantity =
         this.fraction.tsMomentAgoFromNowQuantity ?? 1;
       this.fraction.tsMomentUnit = this.fraction.tsMomentUnit ?? 'day';
+    }
 
-      this.buildFractionBeginFor({
+    if (this.fraction.type === common.FractionTypeEnum.TsIsBeginFor) {
+      this.fraction = this.timeService.buildFractionBeginFor({
+        fraction: this.fraction,
         dateValue: this.dateStr,
         timeValue: this.timeStr
       });
+    } else if (this.fraction.type === common.FractionTypeEnum.TsIsOnYear) {
+      this.fraction = this.timeService.buildFractionOnYear({
+        fraction: this.fraction,
+        dateValue: this.dateStr
+      });
+    }
 
-      if (
-        [
-          common.FractionTsMomentTypeEnum.Ago,
-          common.FractionTsMomentTypeEnum.FromNow
-        ].indexOf(this.fraction.tsMomentType) > -1 &&
-        common.isUndefined(
-          this.tsMomentAgoFromNowQuantityForm.controls[
-            'tsMomentAgoFromNowQuantity'
-          ].value
-        )
-      ) {
+    if (
+      [
+        common.FractionTsMomentTypeEnum.Ago,
+        common.FractionTsMomentTypeEnum.FromNow
+      ].indexOf(this.fraction.tsMomentType) > -1 &&
+      common.isUndefined(
         this.tsMomentAgoFromNowQuantityForm.controls[
           'tsMomentAgoFromNowQuantity'
-        ].setValue(this.fraction.tsMomentAgoFromNowQuantity);
-      }
+        ].value
+      )
+    ) {
+      this.tsMomentAgoFromNowQuantityForm.controls[
+        'tsMomentAgoFromNowQuantity'
+      ].setValue(this.fraction.tsMomentAgoFromNowQuantity);
+    }
 
-      if (
-        this.tsForValueForm.valid &&
-        ([
-          common.FractionTsMomentTypeEnum.Ago,
-          common.FractionTsMomentTypeEnum.FromNow
-        ].indexOf(this.fraction.tsMomentType) < 0 ||
-          this.tsMomentAgoFromNowQuantityForm.valid)
-      ) {
+    if (
+      this.tsForValueForm.valid &&
+      [
+        common.FractionTsMomentTypeEnum.Ago,
+        common.FractionTsMomentTypeEnum.FromNow
+      ].indexOf(this.fraction.tsMomentType) > -1
+    ) {
+      if (this.tsMomentAgoFromNowQuantityForm.valid) {
         this.emitFractionUpdate();
       }
-    } else if (this.fraction.type === common.FractionTypeEnum.TsIsOnYear) {
+    } else {
+      this.emitFractionUpdate();
     }
   }
 
@@ -2269,7 +2231,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
   onUnitChange() {
     if (this.fraction.type === common.FractionTypeEnum.TsIsBeginFor) {
-      this.buildFractionBeginFor({
+      this.fraction = this.timeService.buildFractionBeginFor({
+        fraction: this.fraction,
         dateValue: this.dateStr,
         timeValue: this.timeStr
       });
@@ -2282,7 +2245,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
   dayOfWeekChange() {
     if (this.fraction.type === common.FractionTypeEnum.TsIsBeginFor) {
-      this.buildFractionBeginFor({
+      this.fraction = this.timeService.buildFractionBeginFor({
+        fraction: this.fraction,
         dateValue: this.dateStr,
         timeValue: this.timeStr
       });
@@ -2302,7 +2266,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
       this.fraction.tsMomentAgoFromNowQuantity = Number(value);
 
       if (this.fraction.type === common.FractionTypeEnum.TsIsBeginFor) {
-        this.buildFractionBeginFor({
+        this.fraction = this.timeService.buildFractionBeginFor({
+          fraction: this.fraction,
           dateValue: this.dateStr,
           timeValue: this.timeStr
         });
@@ -2319,7 +2284,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
   agoFromNowUnitChange() {
     if (this.fraction.type === common.FractionTypeEnum.TsIsBeginFor) {
-      this.buildFractionBeginFor({
+      this.fraction = this.timeService.buildFractionBeginFor({
+        fraction: this.fraction,
         dateValue: this.dateStr,
         timeValue: this.timeStr
       });
@@ -2338,7 +2304,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
     if (value !== this.fraction.tsForValue) {
       this.fraction.tsForValue = Number(value);
 
-      this.buildFractionBeginFor({
+      this.fraction = this.timeService.buildFractionBeginFor({
+        fraction: this.fraction,
         dateValue: this.dateStr,
         timeValue: this.timeStr
       });
@@ -2357,7 +2324,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
   }
 
   tsForUnitChange() {
-    this.buildFractionBeginFor({
+    this.fraction = this.timeService.buildFractionBeginFor({
+      fraction: this.fraction,
       dateValue: this.dateStr,
       timeValue: this.timeStr
     });
