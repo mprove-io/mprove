@@ -1423,11 +1423,12 @@
                         </div>
 
                         <div
-                          class="flex flex-row items-start"
+                          class="flex cursor-pointer flex-row items-start"
                           *ngIf="
                             !filtersIsExpanded &&
                             mconfig?.extendedFilters.length > 0
                           "
+                          (click)="toggleFiltersPanel()"
                         >
                           <m-bricks
                             class="mb-5 ml-3 mr-5 mt-3 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
