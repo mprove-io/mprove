@@ -599,10 +599,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
           common.FractionTypeEnum.TsIsOnQuarter,
           common.FractionTypeEnum.TsIsOnMonth,
           common.FractionTypeEnum.TsIsOnWeek,
-          common.FractionTypeEnum.TsIsOnDay,
           common.FractionTypeEnum.TsIsOnHour,
-          common.FractionTypeEnum.TsIsOnMinute,
-          common.FractionTypeEnum.TsIsOnTimestamp
+          common.FractionTypeEnum.TsIsOnMinute
         ].indexOf((changes.fraction.currentValue as common.Fraction).type) > -1
       ) {
         this.fractionTsMomentTypesList =
@@ -615,6 +613,68 @@ export class FractionTsComponent implements OnInit, OnChanges {
                 common.FractionTsMomentTypeEnum.Next,
                 common.FractionTsMomentTypeEnum.Ago,
                 common.FractionTsMomentTypeEnum.FromNow
+              ].indexOf(x.value) > -1
+          );
+      } else if (
+        [common.FractionTypeEnum.TsIsOnDay].indexOf(
+          (changes.fraction.currentValue as common.Fraction).type
+        ) > -1
+      ) {
+        this.fractionTsMomentTypesList =
+          this.fractionTsMomentTypesFullList.filter(
+            x =>
+              [
+                common.FractionTsMomentTypeEnum.Literal,
+                common.FractionTsMomentTypeEnum.Today,
+                common.FractionTsMomentTypeEnum.Yesterday,
+                common.FractionTsMomentTypeEnum.Tomorrow,
+                common.FractionTsMomentTypeEnum.This,
+                common.FractionTsMomentTypeEnum.Last,
+                common.FractionTsMomentTypeEnum.Next,
+                common.FractionTsMomentTypeEnum.LastDayOfWeek,
+                common.FractionTsMomentTypeEnum.NextDayOfWeek,
+                common.FractionTsMomentTypeEnum.Ago,
+                common.FractionTsMomentTypeEnum.FromNow
+              ].indexOf(x.value) > -1
+          );
+      } else if (
+        [common.FractionTypeEnum.TsIsOnTimestamp].indexOf(
+          (changes.fraction.currentValue as common.Fraction).type
+        ) > -1
+      ) {
+        this.fractionTsMomentTypesList =
+          this.fractionTsMomentTypesFullList.filter(
+            x =>
+              [
+                common.FractionTsMomentTypeEnum.Literal,
+                common.FractionTsMomentTypeEnum.Now
+              ].indexOf(x.value) > -1
+          );
+      } else if (
+        [
+          common.FractionTypeEnum.TsIsBeforeDate,
+          common.FractionTypeEnum.TsIsThrough,
+          common.FractionTypeEnum.TsIsAfterDate,
+          common.FractionTypeEnum.TsIsStarting,
+          common.FractionTypeEnum.TsIsBeginFor
+        ].indexOf((changes.fraction.currentValue as common.Fraction).type) > -1
+      ) {
+        this.fractionTsMomentTypesList =
+          this.fractionTsMomentTypesFullList.filter(
+            x =>
+              [
+                common.FractionTsMomentTypeEnum.Literal,
+                common.FractionTsMomentTypeEnum.Today,
+                common.FractionTsMomentTypeEnum.Yesterday,
+                common.FractionTsMomentTypeEnum.Tomorrow,
+                common.FractionTsMomentTypeEnum.This,
+                common.FractionTsMomentTypeEnum.Last,
+                common.FractionTsMomentTypeEnum.Next,
+                common.FractionTsMomentTypeEnum.LastDayOfWeek,
+                common.FractionTsMomentTypeEnum.NextDayOfWeek,
+                common.FractionTsMomentTypeEnum.Ago,
+                common.FractionTsMomentTypeEnum.FromNow,
+                common.FractionTsMomentTypeEnum.Now
               ].indexOf(x.value) > -1
           );
       } else {

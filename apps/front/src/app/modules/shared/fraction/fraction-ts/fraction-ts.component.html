@@ -12,16 +12,22 @@
         data-cy="fractionTsTypeSelect"
         class="fraction-type-select"
         [class.w-[138px]]="
-          isMetrics === true && fraction.type === 'TsIsInRange'
+          isMetrics === true &&
+          fraction.type === 'TsIsInRange' &&
+          showHours === true
         "
         [class.w-[140px]]="
-          isMetrics === false && fraction.type === 'TsIsInRange'
+          isMetrics === false &&
+          fraction.type === 'TsIsInRange' &&
+          showHours === true
         "
         [class.w-[180px]]="
-          isMetrics === true && fraction.type !== 'TsIsInRange'
+          isMetrics === true &&
+          (fraction.type !== 'TsIsInRange' || showHours === false)
         "
         [class.w-[280px]]="
-          isMetrics === false && fraction.type !== 'TsIsInRange'
+          isMetrics === false &&
+          (fraction.type !== 'TsIsInRange' || showHours === false)
         "
         [items]="fractionTsTypesList"
         [clearable]="false"
