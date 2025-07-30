@@ -569,8 +569,8 @@ export function getMalloyFiltersFractions(item: {
         // {value: 'null', label: 'null'},
         // {value: '-null', label: 'not null'},
 
-        // is in last (complete + current) (complete) (incomplete)
-        // is in next (complete)
+        // is in last (completed with current) (completed plus current) (completed)
+        // is in next (completed)
         // is between           literal     last, this, next          [from ... to ...]
         // is starting          literal     last, this, next          [not before]
         // is starting ... for  literal     last, this, next          [begin ... for ...]
@@ -655,7 +655,7 @@ export function getMalloyFiltersFractions(item: {
                     : common.FractionTypeEnum.TsIsNotNull
               };
             } else if ((temporalFilter as JustUnits).operator === 'last') {
-              // temporal last (last complete)
+              // temporal last (completed)
               let tFilter = temporalFilter as JustUnits;
 
               fraction = {
@@ -675,7 +675,7 @@ export function getMalloyFiltersFractions(item: {
                   common.FractionTsLastCompleteOptionEnum.Complete
               };
             } else if ((temporalFilter as in_last).operator === 'in_last') {
-              // temporal in_last (last [incomplete])
+              // temporal in_last (completed with current)
               let tFilter = temporalFilter as in_last;
 
               fraction = {
@@ -692,10 +692,10 @@ export function getMalloyFiltersFractions(item: {
                 tsLastValue: Number(tFilter.n),
                 tsLastUnit: common.getFractionTsUnits(tFilter.units),
                 tsLastCompleteOption:
-                  common.FractionTsLastCompleteOptionEnum.Incomplete
+                  common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent
               };
             } else if ((temporalFilter as JustUnits).operator === 'next') {
-              // temporal next (next complete)
+              // temporal next (next completed)
               let tFilter = temporalFilter as JustUnits;
 
               fraction = {

@@ -103,7 +103,7 @@ export class ModelField {
   buildMetrics?: boolean;
 
   @IsOptional()
-  @IsBoolean()
+  @IsString()
   timeframe?: string;
 
   @IsOptional()

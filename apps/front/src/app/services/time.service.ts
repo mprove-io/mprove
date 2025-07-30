@@ -74,8 +74,8 @@ export class TimeService {
 
   getHourStr(item: {
     dateValue: string;
-    dateSeparator: string;
     timeValue: string;
+    dateSeparator: string;
   }) {
     let date = item.dateValue.split('-').join(item.dateSeparator);
     let hour = item.timeValue.split(':')[0];
@@ -231,6 +231,154 @@ export class TimeService {
       operator: common.FractionOperatorEnum.Or,
       type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
+      tsMoment: undefined,
+      tsMomentType: fraction.tsMomentType,
+      tsMomentUnit: fraction.tsMomentUnit
+    };
+
+    return newFraction;
+  }
+
+  buildFractionOnMonth(item: {
+    fraction: common.Fraction;
+    dateValue: string;
+  }) {
+    let { fraction, dateValue } = item;
+
+    let monthStr = this.getMonthStr({
+      dateValue: dateValue,
+      dateSeparator: common.isDefined(fraction.parentBrick) ? '-' : '/'
+    });
+
+    let momentStr = this.getMomentStr({
+      fraction: fraction,
+      dateMinuteStr: monthStr
+    });
+
+    let mBrick = `f\`${momentStr}\``;
+
+    let newFraction: common.Fraction = {
+      brick: common.isDefined(fraction.parentBrick) ? mBrick : `on ${monthStr}`,
+      parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
+      operator: common.FractionOperatorEnum.Or,
+      type: fraction.type,
+      tsDateYear: Number(dateValue.split('-')[0]),
+      tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
+      tsMoment: undefined,
+      tsMomentType: fraction.tsMomentType,
+      tsMomentUnit: fraction.tsMomentUnit
+    };
+
+    return newFraction;
+  }
+
+  buildFractionOnDay(item: {
+    fraction: common.Fraction;
+    dateValue: string;
+  }) {
+    let { fraction, dateValue } = item;
+
+    let dayStr = this.getDayStr({
+      dateValue: dateValue,
+      dateSeparator: common.isDefined(fraction.parentBrick) ? '-' : '/'
+    });
+
+    let momentStr = this.getMomentStr({
+      fraction: fraction,
+      dateMinuteStr: dayStr
+    });
+
+    let mBrick = `f\`${momentStr}\``;
+
+    let newFraction: common.Fraction = {
+      brick: common.isDefined(fraction.parentBrick) ? mBrick : `on ${dayStr}`,
+      parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
+      operator: common.FractionOperatorEnum.Or,
+      type: fraction.type,
+      tsDateYear: Number(dateValue.split('-')[0]),
+      tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
+      tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
+      tsMoment: undefined,
+      tsMomentType: fraction.tsMomentType,
+      tsMomentUnit: fraction.tsMomentUnit
+    };
+
+    return newFraction;
+  }
+
+  buildFractionOnHour(item: {
+    fraction: common.Fraction;
+    dateValue: string;
+    timeValue: string;
+  }) {
+    let { fraction, dateValue, timeValue } = item;
+
+    let hourStr = this.getHourStr({
+      dateValue: dateValue,
+      timeValue: timeValue,
+      dateSeparator: common.isDefined(fraction.parentBrick) ? '-' : '/'
+    });
+
+    let dateHourStr = hourStr;
+
+    let momentStr = this.getMomentStr({
+      fraction: fraction,
+      dateMinuteStr: dateHourStr
+    });
+
+    let mBrick = `f\`${momentStr}\``;
+
+    let newFraction: common.Fraction = {
+      brick: common.isDefined(fraction.parentBrick) ? mBrick : `on ${hourStr}`,
+      parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
+      operator: common.FractionOperatorEnum.Or,
+      type: fraction.type,
+      tsDateYear: Number(dateValue.split('-')[0]),
+      tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
+      tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
+      tsDateHour: Number(timeValue.split(':')[0].replace(/^0+/, '')),
+      tsMoment: undefined,
+      tsMomentType: fraction.tsMomentType,
+      tsMomentUnit: fraction.tsMomentUnit
+    };
+
+    return newFraction;
+  }
+
+  buildFractionOnMinute(item: {
+    fraction: common.Fraction;
+    dateValue: string;
+    timeValue: string;
+  }) {
+    let { fraction, dateValue, timeValue } = item;
+
+    let minuteStr = this.getMinuteStr({
+      dateValue: dateValue,
+      timeValue: timeValue,
+      dateSeparator: common.isDefined(fraction.parentBrick) ? '-' : '/'
+    });
+
+    let dateMinuteStr = minuteStr;
+
+    let momentStr = this.getMomentStr({
+      fraction: fraction,
+      dateMinuteStr: dateMinuteStr
+    });
+
+    let mBrick = `f\`${momentStr}\``;
+
+    let newFraction: common.Fraction = {
+      brick: common.isDefined(fraction.parentBrick)
+        ? mBrick
+        : `on ${minuteStr}`,
+      parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
+      operator: common.FractionOperatorEnum.Or,
+      type: fraction.type,
+      tsDateYear: Number(dateValue.split('-')[0]),
+      tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
+      tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
+      tsDateHour: Number(timeValue.split(':')[0].replace(/^0+/, '')),
+      tsDateMinute: Number(timeValue.split(':')[1].replace(/^0+/, '')),
       tsMoment: undefined,
       tsMomentType: fraction.tsMomentType,
       tsMomentUnit: fraction.tsMomentUnit

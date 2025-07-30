@@ -838,7 +838,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       newFraction = {
         brick:
           newFraction.tsLastCompleteOption ===
-          common.FractionTsLastCompleteOptionEnum.Incomplete
+          common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent
             ? `last ${newFraction.tsLastValue} ${newFraction.tsLastUnit}`
             : newFraction.tsLastCompleteOption ===
                 common.FractionTsLastCompleteOptionEnum.Complete

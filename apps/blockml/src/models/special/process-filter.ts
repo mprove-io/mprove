@@ -882,7 +882,7 @@ export function processFilter(item: {
               ? common.FractionTsLastCompleteOptionEnum.CompletePlusCurrent
               : complete
                 ? common.FractionTsLastCompleteOptionEnum.Complete
-                : common.FractionTsLastCompleteOptionEnum.Incomplete;
+                : common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent;
 
           fractions.push({
             brick: brick,
