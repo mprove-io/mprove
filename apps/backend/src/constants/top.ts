@@ -21,7 +21,7 @@ export const DEFAULT_SRV_UI: common.Ui = {
     brick: 'last 5 days',
     operator: common.FractionOperatorEnum.Or,
     tsLastCompleteOption:
-      common.FractionTsLastCompleteOptionEnum.CompletePlusCurrent,
+      common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent,
     tsLastUnit: common.FractionTsUnitEnum.Days,
     tsLastValue: 5,
     type: common.FractionTypeEnum.TsIsInLast

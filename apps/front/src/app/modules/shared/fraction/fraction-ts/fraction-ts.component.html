@@ -323,6 +323,25 @@
     </div>
   </div>
 
+  <div
+    *ngIf="
+      [
+        fractionTypeEnum.TsIsOnYear,
+        fractionTypeEnum.TsIsOnQuarter,
+        fractionTypeEnum.TsIsOnMonth,
+        fractionTypeEnum.TsIsOnWeek,
+        fractionTypeEnum.TsIsOnDay,
+        fractionTypeEnum.TsIsOnHour,
+        fractionTypeEnum.TsIsOnMinute
+      ].indexOf(fraction.type) > -1 &&
+      [fractionTsMomentTypeEnum.Ago, fractionTsMomentTypeEnum.FromNow].indexOf(
+        fraction.tsMomentType
+      ) > -1
+    "
+  >
+    <div class="flex h-9 items-center">{{ fraction.tsMomentUnit + 's' }}</div>
+  </div>
+
   <div *ngIf="fraction.type === fractionTypeEnum.TsIsInRange">
     <div
       tp="Turn off formula to activate control"
