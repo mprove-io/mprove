@@ -1372,45 +1372,39 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
   yearDateValueChanged(x: any) {
     let datePickerOnYear = this.datePickerOnYear?.nativeElement;
-    if (common.isDefined(datePickerOnYear)) {
-      let value = datePickerOnYear.value;
 
-      if (common.isDefinedAndNotEmpty(value)) {
-        this.dateStr = value;
+    if (common.isDefinedAndNotEmpty(datePickerOnYear?.value)) {
+      this.dateStr = datePickerOnYear.value;
 
-        this.fraction = this.timeService.buildFractionOnYear({
-          fraction: this.fraction,
-          dateValue: this.dateStr
-        });
+      this.fraction = this.timeService.buildFractionOnYear({
+        fraction: this.fraction,
+        dateValue: this.dateStr
+      });
 
-        this.emitFractionUpdate();
+      this.emitFractionUpdate();
 
-        setTimeout(() => {
-          datePickerOnYear.blur();
-        }, 1);
-      }
+      setTimeout(() => {
+        datePickerOnYear.blur();
+      }, 1);
     }
   }
 
   monthDateValueChanged(x: any) {
     let datePickerOnMonth = this.datePickerOnMonth?.nativeElement;
-    if (common.isDefined(datePickerOnMonth)) {
-      let value = datePickerOnMonth.value;
 
-      if (common.isDefinedAndNotEmpty(value)) {
-        this.dateStr = value;
+    if (common.isDefinedAndNotEmpty(datePickerOnMonth?.value)) {
+      this.dateStr = datePickerOnMonth.value;
 
-        this.fraction = this.timeService.buildFractionOnMonth({
-          fraction: this.fraction,
-          dateValue: this.dateStr
-        });
+      this.fraction = this.timeService.buildFractionOnMonth({
+        fraction: this.fraction,
+        dateValue: this.dateStr
+      });
 
-        this.emitFractionUpdate();
+      this.emitFractionUpdate();
 
-        setTimeout(() => {
-          datePickerOnMonth.blur();
-        }, 1);
-      }
+      setTimeout(() => {
+        datePickerOnMonth.blur();
+      }, 1);
     }
   }
 
@@ -1437,69 +1431,60 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
   dayDateValueChanged(x: any) {
     let datePickerOnDay = this.datePickerOnDay?.nativeElement;
-    if (common.isDefined(datePickerOnDay)) {
-      let value = datePickerOnDay.value;
 
-      if (common.isDefinedAndNotEmpty(value)) {
-        this.dateStr = value;
+    if (common.isDefinedAndNotEmpty(datePickerOnDay?.value)) {
+      this.dateStr = datePickerOnDay.value;
 
-        this.fraction = this.timeService.buildFractionOnDay({
-          fraction: this.fraction,
-          dateValue: this.dateStr
-        });
+      this.fraction = this.timeService.buildFractionOnDay({
+        fraction: this.fraction,
+        dateValue: this.dateStr
+      });
 
-        this.emitFractionUpdate();
+      this.emitFractionUpdate();
 
-        setTimeout(() => {
-          datePickerOnDay.blur();
-        }, 1);
-      }
+      setTimeout(() => {
+        datePickerOnDay.blur();
+      }, 1);
     }
   }
 
   hourDateValueChanged(x: any) {
     let datePickerOnHour = this.datePickerOnHour?.nativeElement;
-    if (common.isDefined(datePickerOnHour)) {
-      let value = datePickerOnHour.value;
 
-      if (common.isDefinedAndNotEmpty(value)) {
-        this.dateStr = value;
+    if (common.isDefinedAndNotEmpty(datePickerOnHour?.value)) {
+      this.dateStr = datePickerOnHour.value;
 
-        this.fraction = this.timeService.buildFractionOnHour({
-          fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr
-        });
+      this.fraction = this.timeService.buildFractionOnHour({
+        fraction: this.fraction,
+        dateValue: this.dateStr,
+        timeValue: this.timeStr
+      });
 
-        this.emitFractionUpdate();
+      this.emitFractionUpdate();
 
-        setTimeout(() => {
-          datePickerOnHour.blur();
-        }, 1);
-      }
+      setTimeout(() => {
+        datePickerOnHour.blur();
+      }, 1);
     }
   }
 
   hourTimeValueChanged(x: any) {
     let timePickerOnHour = this.timePickerOnHour?.nativeElement;
-    if (common.isDefined(timePickerOnHour)) {
-      let value = timePickerOnHour.value;
 
-      if (common.isDefinedAndNotEmpty(value)) {
-        this.timeStr = value;
+    if (common.isDefinedAndNotEmpty(timePickerOnHour?.value)) {
+      this.timeStr = timePickerOnHour.value;
 
-        this.fraction = this.timeService.buildFractionOnHour({
-          fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr
-        });
+      this.fraction = this.timeService.buildFractionOnHour({
+        fraction: this.fraction,
+        dateValue: this.dateStr,
+        timeValue: this.timeStr
+      });
 
-        this.emitFractionUpdate();
+      this.emitFractionUpdate();
 
-        setTimeout(() => {
-          timePickerOnHour.blur();
-        }, 1);
-      }
+      setTimeout(() => {
+        timePickerOnHour.blur();
+      }, 1);
     }
   }
 
@@ -1517,47 +1502,40 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
   minuteDateValueChanged(x: any) {
     let datePickerOnMinute = this.datePickerOnMinute?.nativeElement;
-    if (common.isDefined(datePickerOnMinute)) {
-      let value = datePickerOnMinute.value;
+    if (common.isDefinedAndNotEmpty(datePickerOnMinute?.value)) {
+      this.dateStr = datePickerOnMinute.value;
 
-      if (common.isDefinedAndNotEmpty(value)) {
-        this.dateStr = value;
+      this.fraction = this.timeService.buildFractionOnMinute({
+        fraction: this.fraction,
+        dateValue: this.dateStr,
+        timeValue: this.timeStr
+      });
 
-        this.fraction = this.timeService.buildFractionOnMinute({
-          fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr
-        });
+      this.emitFractionUpdate();
 
-        this.emitFractionUpdate();
-
-        setTimeout(() => {
-          datePickerOnMinute.blur();
-        }, 1);
-      }
+      setTimeout(() => {
+        datePickerOnMinute.blur();
+      }, 1);
     }
   }
 
   minuteTimeValueChanged(x: any) {
     let timePickerOnMinute = this.timePickerOnMinute?.nativeElement;
-    if (common.isDefined(timePickerOnMinute)) {
-      let value = timePickerOnMinute.value;
 
-      if (common.isDefinedAndNotEmpty(value)) {
-        this.timeStr = value;
+    if (common.isDefinedAndNotEmpty(timePickerOnMinute?.value)) {
+      this.timeStr = timePickerOnMinute.value;
 
-        this.fraction = this.timeService.buildFractionOnMinute({
-          fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr
-        });
+      this.fraction = this.timeService.buildFractionOnMinute({
+        fraction: this.fraction,
+        dateValue: this.dateStr,
+        timeValue: this.timeStr
+      });
 
-        this.emitFractionUpdate();
+      this.emitFractionUpdate();
 
-        setTimeout(() => {
-          timePickerOnMinute.blur();
-        }, 1);
-      }
+      setTimeout(() => {
+        timePickerOnMinute.blur();
+      }, 1);
     }
   }
 
