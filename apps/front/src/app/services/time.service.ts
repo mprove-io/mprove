@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { common } from '~front/barrels/common';
+import { StructQuery } from '../queries/struct.query';
 
 @Injectable({ providedIn: 'root' })
 export class TimeService {
+  constructor(private structQuery: StructQuery) {}
+
   timeAgoFromNow(ts: number) {
     let time = new Date(ts).getTime();
 
@@ -425,5 +428,26 @@ export class TimeService {
     };
 
     return newFraction;
+  }
+
+  getWeekStartDate(item: { dateValue: string }) {
+    let { dateValue } = item;
+
+    let structState = this.structQuery.getValue();
+
+    let firstDayOfWeek =
+      structState.weekStart === common.ProjectWeekStartEnum.Monday ? 1 : 0;
+
+    let wDate = new Date(`${dateValue}T00:00:00Z`);
+
+    let wDay = wDate.getUTCDay(); // 0 (Sunday) to 6 (Saturday)
+
+    let wDiff = (wDay < firstDayOfWeek ? 7 : 0) + wDay - firstDayOfWeek;
+
+    wDate.setUTCDate(wDate.getUTCDate() - wDiff);
+
+    let value = wDate.toISOString().split('T')[0];
+
+    return value;
   }
 }

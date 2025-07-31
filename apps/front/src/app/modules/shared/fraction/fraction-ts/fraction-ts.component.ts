@@ -493,8 +493,18 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
   commonI18n: DatePickerI18n = COMMON_I18N;
 
-  onYearDateI18n = Object.assign({}, this.commonI18n);
-  onMonthDateI18n = Object.assign({}, this.commonI18n);
+  onYearDateI18n = Object.assign({}, this.commonI18n, {
+    formatDate: (d: DatePickerDate) => `${d.year}`
+  });
+  onMonthDateI18n = Object.assign({}, this.commonI18n, {
+    formatDate: (d: DatePickerDate) => {
+      let monthIndex = d.month + 1;
+      let month =
+        monthIndex.toString().length === 1 ? `0${monthIndex}` : `${monthIndex}`;
+
+      return `${d.year}-${month}`;
+    }
+  });
   onWeekDateI18n = Object.assign({}, this.commonI18n, {
     formatDate: (d: DatePickerDate) => {
       let monthIndex = d.month + 1;
@@ -571,8 +581,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.fractionTsLastNextUnitsList = this.fractionTsUnitsFullList;
     this.fractionTsForUnitsList = this.fractionTsUnitsFullList;
 
-    this.resetDateUsingFraction();
-    this.resetDateToUsingFraction();
+    this.resetDates({ useFraction: true });
 
     this.buildForValueForm();
     this.buildLastValueForm();
@@ -580,21 +589,13 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.buildAgoFromNowQuantityForm();
 
     let structState = this.structQuery.getValue();
+
     let firstDayOfWeek =
       structState.weekStart === common.ProjectWeekStartEnum.Monday ? 1 : 0;
 
     this.onYearDateI18n.firstDayOfWeek = firstDayOfWeek;
-    this.onYearDateI18n.formatDate = (d: DatePickerDate) => `${d.year}`;
-
     this.onMonthDateI18n.firstDayOfWeek = firstDayOfWeek;
-    this.onMonthDateI18n.formatDate = (d: DatePickerDate) => {
-      let monthIndex = d.month + 1;
-      let month =
-        monthIndex.toString().length === 1 ? `0${monthIndex}` : `${monthIndex}`;
-
-      return `${d.year}-${month}`;
-    };
-
+    this.onWeekDateI18n.firstDayOfWeek = firstDayOfWeek;
     this.onDayDateI18n.firstDayOfWeek = firstDayOfWeek;
     this.onHourDateI18n.firstDayOfWeek = firstDayOfWeek;
     this.onMinuteDateI18n.firstDayOfWeek = firstDayOfWeek;
@@ -752,28 +753,40 @@ export class FractionTsComponent implements OnInit, OnChanges {
     });
   }
 
-  resetDateUsingFraction() {
+  resetDates(item: { useFraction: boolean }) {
+    this.resetDateUsingFraction({ useFraction: item.useFraction });
+    this.resetDateToUsingFraction({ useFraction: item.useFraction });
+  }
+
+  resetDateUsingFraction(item: { useFraction: boolean }) {
+    let { useFraction } = item;
+
     let now = new Date();
 
-    let year = common.isDefined(this.fraction.tsDateYear)
-      ? this.fraction.tsDateYear
-      : now.getFullYear();
+    let year =
+      useFraction === true && common.isDefined(this.fraction.tsDateYear)
+        ? this.fraction.tsDateYear
+        : now.getFullYear();
 
-    let month = common.isDefined(this.fraction.tsDateMonth)
-      ? this.fraction.tsDateMonth
-      : now.getMonth() + 1;
+    let month =
+      useFraction === true && common.isDefined(this.fraction.tsDateMonth)
+        ? this.fraction.tsDateMonth
+        : now.getMonth() + 1;
 
-    let day = common.isDefined(this.fraction.tsDateDay)
-      ? this.fraction.tsDateDay
-      : now.getDate();
+    let day =
+      useFraction === true && common.isDefined(this.fraction.tsDateDay)
+        ? this.fraction.tsDateDay
+        : now.getDate();
 
-    let hour = common.isDefined(this.fraction.tsDateHour)
-      ? this.fraction.tsDateHour
-      : 0;
+    let hour =
+      useFraction === true && common.isDefined(this.fraction.tsDateHour)
+        ? this.fraction.tsDateHour
+        : 0;
 
-    let minute = common.isDefined(this.fraction.tsDateMinute)
-      ? this.fraction.tsDateMinute
-      : 0;
+    let minute =
+      useFraction === true && common.isDefined(this.fraction.tsDateMinute)
+        ? this.fraction.tsDateMinute
+        : 0;
 
     let second = 0;
 
@@ -783,30 +796,37 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.timeStr = `${pad(hour)}:${pad(minute)}:${pad(second)}`;
   }
 
-  resetDateToUsingFraction() {
+  resetDateToUsingFraction(item: { useFraction: boolean }) {
+    let { useFraction } = item;
+
     let date = new Date();
 
     date.setDate(date.getDate() + 1);
 
-    let year = common.isDefined(this.fraction.tsDateToYear)
-      ? this.fraction.tsDateToYear
-      : date.getFullYear();
+    let year =
+      useFraction === true && common.isDefined(this.fraction.tsDateToYear)
+        ? this.fraction.tsDateToYear
+        : date.getFullYear();
 
-    let month = common.isDefined(this.fraction.tsDateToMonth)
-      ? this.fraction.tsDateToMonth
-      : date.getMonth() + 1;
+    let month =
+      useFraction === true && common.isDefined(this.fraction.tsDateToMonth)
+        ? this.fraction.tsDateToMonth
+        : date.getMonth() + 1;
 
-    let day = common.isDefined(this.fraction.tsDateToDay)
-      ? this.fraction.tsDateToDay
-      : date.getDate();
+    let day =
+      useFraction === true && common.isDefined(this.fraction.tsDateToDay)
+        ? this.fraction.tsDateToDay
+        : date.getDate();
 
-    let hour = common.isDefined(this.fraction.tsDateToHour)
-      ? this.fraction.tsDateToHour
-      : 0;
+    let hour =
+      useFraction === true && common.isDefined(this.fraction.tsDateToHour)
+        ? this.fraction.tsDateToHour
+        : 0;
 
-    let minute = common.isDefined(this.fraction.tsDateToMinute)
-      ? this.fraction.tsDateToMinute
-      : 0;
+    let minute =
+      useFraction === true && common.isDefined(this.fraction.tsDateToMinute)
+        ? this.fraction.tsDateToMinute
+        : 0;
 
     let second = 0;
 
@@ -818,6 +838,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
   typeChange(fractionTypeItem: FractionTypeItem) {
     let fractionType = fractionTypeItem.value;
+
+    this.resetDates({ useFraction: false });
 
     switch (fractionType) {
       case this.fractionTypeEnum.TsIsAnyValue: {
@@ -864,6 +886,16 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
       case this.fractionTypeEnum.TsIsOnWeek: {
         this.fraction.tsMomentType = common.FractionTsMomentTypeEnum.Literal;
+
+        // console.log('this.dateStr');
+        // console.log(this.dateStr);
+
+        this.dateStr = this.timeService.getWeekStartDate({
+          dateValue: this.dateStr
+        });
+
+        // console.log('this.dateStr2');
+        // console.log(this.dateStr);
 
         this.fraction = this.timeService.buildFractionOnWeek({
           fraction: this.fraction,
@@ -1385,23 +1417,21 @@ export class FractionTsComponent implements OnInit, OnChanges {
   weekDateValueChanged(x: any) {
     let datePickerOnWeek = this.datePickerOnWeek?.nativeElement;
 
-    if (common.isDefined(datePickerOnWeek)) {
-      let value = datePickerOnWeek.value;
+    if (common.isDefinedAndNotEmpty(datePickerOnWeek?.value)) {
+      this.dateStr = this.timeService.getWeekStartDate({
+        dateValue: datePickerOnWeek.value
+      });
 
-      if (common.isDefinedAndNotEmpty(value)) {
-        this.dateStr = value;
+      this.fraction = this.timeService.buildFractionOnWeek({
+        fraction: this.fraction,
+        dateValue: this.dateStr
+      });
 
-        this.fraction = this.timeService.buildFractionOnWeek({
-          fraction: this.fraction,
-          dateValue: this.dateStr
-        });
+      this.emitFractionUpdate();
 
-        this.emitFractionUpdate();
-
-        setTimeout(() => {
-          datePickerOnWeek.blur();
-        }, 1);
-      }
+      setTimeout(() => {
+        datePickerOnWeek.blur();
+      }, 1);
     }
   }
 

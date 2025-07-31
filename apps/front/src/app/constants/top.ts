@@ -177,7 +177,7 @@ export const COMMON_I18N: DatePickerI18n = {
     'Saturday'
   ],
   weekdaysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-  firstDayOfWeek: 0,
+  firstDayOfWeek: 0, // adjusted in ngOnInit of fraction-ts
   week: 'Week',
   calendar: 'Calendar',
   today: 'Today',
