@@ -761,32 +761,50 @@ export class FractionTsComponent implements OnInit, OnChanges {
   resetDateUsingFraction(item: { useFraction: boolean }) {
     let { useFraction } = item;
 
+    let useNow =
+      useFraction === false ||
+      (common.isUndefined(this.fraction.tsDateYear) &&
+        common.isUndefined(this.fraction.tsDateMonth) &&
+        common.isUndefined(this.fraction.tsDateDay) &&
+        common.isUndefined(this.fraction.tsDateHour) &&
+        common.isUndefined(this.fraction.tsDateMinute));
+
     let now = new Date();
 
     let year =
-      useFraction === true && common.isDefined(this.fraction.tsDateYear)
-        ? this.fraction.tsDateYear
-        : now.getFullYear();
+      useNow === true
+        ? now.getFullYear()
+        : useFraction === true && common.isDefined(this.fraction.tsDateYear)
+          ? this.fraction.tsDateYear
+          : 2020;
 
     let month =
-      useFraction === true && common.isDefined(this.fraction.tsDateMonth)
-        ? this.fraction.tsDateMonth
-        : now.getMonth() + 1;
+      useNow === true
+        ? now.getMonth() + 1
+        : useFraction === true && common.isDefined(this.fraction.tsDateMonth)
+          ? this.fraction.tsDateMonth
+          : 1;
 
     let day =
-      useFraction === true && common.isDefined(this.fraction.tsDateDay)
-        ? this.fraction.tsDateDay
-        : now.getDate();
+      useNow === true
+        ? now.getDate()
+        : useFraction === true && common.isDefined(this.fraction.tsDateDay)
+          ? this.fraction.tsDateDay
+          : 1;
 
     let hour =
-      useFraction === true && common.isDefined(this.fraction.tsDateHour)
-        ? this.fraction.tsDateHour
-        : 0;
+      useNow === true
+        ? 0
+        : useFraction === true && common.isDefined(this.fraction.tsDateHour)
+          ? this.fraction.tsDateHour
+          : 0;
 
     let minute =
-      useFraction === true && common.isDefined(this.fraction.tsDateMinute)
-        ? this.fraction.tsDateMinute
-        : 0;
+      useNow === true
+        ? 0
+        : useFraction === true && common.isDefined(this.fraction.tsDateMinute)
+          ? this.fraction.tsDateMinute
+          : 0;
 
     let second = 0;
 
@@ -799,34 +817,52 @@ export class FractionTsComponent implements OnInit, OnChanges {
   resetDateToUsingFraction(item: { useFraction: boolean }) {
     let { useFraction } = item;
 
-    let date = new Date();
+    let useNowPlusOneDay =
+      useFraction === false ||
+      (common.isUndefined(this.fraction.tsDateToYear) &&
+        common.isUndefined(this.fraction.tsDateToMonth) &&
+        common.isUndefined(this.fraction.tsDateToDay) &&
+        common.isUndefined(this.fraction.tsDateToHour) &&
+        common.isUndefined(this.fraction.tsDateToMinute));
 
-    date.setDate(date.getDate() + 1);
+    let nowPlusOneDay = new Date();
+
+    nowPlusOneDay.setDate(nowPlusOneDay.getDate() + 1);
 
     let year =
-      useFraction === true && common.isDefined(this.fraction.tsDateToYear)
-        ? this.fraction.tsDateToYear
-        : date.getFullYear();
+      useNowPlusOneDay === true
+        ? nowPlusOneDay.getFullYear()
+        : useFraction === true && common.isDefined(this.fraction.tsDateToYear)
+          ? this.fraction.tsDateToYear
+          : 2020;
 
     let month =
-      useFraction === true && common.isDefined(this.fraction.tsDateToMonth)
-        ? this.fraction.tsDateToMonth
-        : date.getMonth() + 1;
+      useNowPlusOneDay === true
+        ? nowPlusOneDay.getMonth() + 1
+        : useFraction === true && common.isDefined(this.fraction.tsDateToMonth)
+          ? this.fraction.tsDateToMonth
+          : 1;
 
     let day =
-      useFraction === true && common.isDefined(this.fraction.tsDateToDay)
-        ? this.fraction.tsDateToDay
-        : date.getDate();
+      useNowPlusOneDay === true
+        ? nowPlusOneDay.getDate()
+        : useFraction === true && common.isDefined(this.fraction.tsDateToDay)
+          ? this.fraction.tsDateToDay
+          : 1;
 
     let hour =
-      useFraction === true && common.isDefined(this.fraction.tsDateToHour)
-        ? this.fraction.tsDateToHour
-        : 0;
+      useNowPlusOneDay === true
+        ? 0
+        : useFraction === true && common.isDefined(this.fraction.tsDateToHour)
+          ? this.fraction.tsDateToHour
+          : 0;
 
     let minute =
-      useFraction === true && common.isDefined(this.fraction.tsDateToMinute)
-        ? this.fraction.tsDateToMinute
-        : 0;
+      useNowPlusOneDay === true
+        ? 0
+        : useFraction === true && common.isDefined(this.fraction.tsDateToMinute)
+          ? this.fraction.tsDateToMinute
+          : 0;
 
     let second = 0;
 
