@@ -2,8 +2,18 @@ vaadin-date-picker {
   --vaadin-field-default-width: 160px;
 }
 
+vaadin-date-picker::part(input-field),
+vaadin-date-picker::part(text-field),
+vaadin-date-picker::part(toggle-button) {
+  cursor: pointer;
+}
+
 vaadin-time-picker {
   --vaadin-field-default-width: 105px;
+}
+
+vaadin-time-picker::part(toggle-button) {
+  cursor: pointer;
 }
 
 :host ::ng-deep * {
