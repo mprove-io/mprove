@@ -473,6 +473,26 @@
     ></vaadin-date-picker>
   </div>
 
+  <!-- on week -->
+  <div
+    *ngIf="
+      fraction.type === fractionTypeEnum.TsIsOnWeek &&
+      fraction.tsMomentType === fractionTsMomentTypeEnum.Literal
+    "
+    tp="Turn off formula to activate control"
+    [tpIsEnabled]="isDisabled === true"
+  >
+    <vaadin-date-picker
+      #datePickerOnWeek
+      class="week-width py-0"
+      required
+      [value]="dateStr"
+      [i18n]="onWeekDateI18n"
+      (value-changed)="weekDateValueChanged($event)"
+      [disabled]="isDisabled === true"
+    ></vaadin-date-picker>
+  </div>
+
   <!-- on day -->
   <div
     *ngIf="

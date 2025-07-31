@@ -66,6 +66,12 @@ export class TimeService {
     return `${year}${item.dateSeparator}${month}`;
   }
 
+  getWeekStr(item: { dateValue: string; dateSeparator: string }) {
+    let date = item.dateValue.split('-').join(item.dateSeparator);
+
+    return `${date}-WK`;
+  }
+
   getDayStr(item: { dateValue: string; dateSeparator: string }) {
     let date = item.dateValue.split('-').join(item.dateSeparator);
 
@@ -292,6 +298,40 @@ export class TimeService {
 
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `on ${dayStr}`,
+      parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
+      operator: common.FractionOperatorEnum.Or,
+      type: fraction.type,
+      tsDateYear: Number(dateValue.split('-')[0]),
+      tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
+      tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
+      tsMoment: undefined,
+      tsMomentType: fraction.tsMomentType,
+      tsMomentUnit: fraction.tsMomentUnit
+    };
+
+    return newFraction;
+  }
+
+  buildFractionOnWeek(item: {
+    fraction: common.Fraction;
+    dateValue: string;
+  }) {
+    let { fraction, dateValue } = item;
+
+    let weekStr = this.getWeekStr({
+      dateValue: dateValue,
+      dateSeparator: common.isDefined(fraction.parentBrick) ? '-' : '/'
+    });
+
+    let momentStr = this.getMomentStr({
+      fraction: fraction,
+      dateMinuteStr: weekStr
+    });
+
+    let mBrick = `f\`${momentStr}\``;
+
+    let newFraction: common.Fraction = {
+      brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
       parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
       operator: common.FractionOperatorEnum.Or,
       type: fraction.type,

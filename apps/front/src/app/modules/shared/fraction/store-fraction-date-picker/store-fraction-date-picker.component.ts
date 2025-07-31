@@ -17,6 +17,7 @@ import { interfaces } from '~front/barrels/interfaces';
   standalone: false,
   selector: 'm-store-fraction-date-picker',
   templateUrl: 'store-fraction-date-picker.component.html',
+  styleUrls: ['store-fraction-date-picker.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 // implements OnInit
