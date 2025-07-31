@@ -36,14 +36,14 @@
 
             <div class="ml-3 flex max-h-[270px] w-full flex-col overflow-auto">
               <div
-                class="mr-5 mt-1 flex cursor-pointer flex-row items-start"
+                class="mr-5 mt-1 flex flex-row items-start"
                 *ngIf="!filtersIsExpanded && dashboard.fields.length > 0"
-                (click)="toggleFiltersPanel()"
               >
                 <m-bricks
-                  class="mb-5 flex max-h-[150px] max-w-max flex-row items-start justify-start overflow-auto"
+                  class="mb-5 flex max-h-[150px] max-w-max cursor-pointer flex-row items-start justify-start overflow-auto"
                   [extendedFilters]="dashboard.extendedFilters"
                   [isKeepBackgroundColor]="false"
+                  (click)="toggleFiltersPanel()"
                 ></m-bricks>
               </div>
 
