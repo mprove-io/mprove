@@ -212,6 +212,10 @@ export class Fraction {
   tsMomentUnit?: TemporalUnit;
 
   @IsOptional()
+  @IsString()
+  tsTimestampValue?: string;
+
+  @IsOptional()
   @IsNumber()
   tsMomentAgoFromNowQuantity?: number;
 
@@ -233,6 +237,10 @@ export class Fraction {
   tsFromMomentUnit?: TemporalUnit;
 
   @IsOptional()
+  @IsString()
+  tsFromTimestampValue?: string;
+
+  @IsOptional()
   @IsNumber()
   tsFromMomentAgoFromNowQuantity?: number;
 
@@ -252,6 +260,10 @@ export class Fraction {
   @IsOptional()
   @IsEnum(enums.FractionTsTemporalUnitEnum)
   tsToMomentUnit?: TemporalUnit;
+
+  @IsOptional()
+  @IsString()
+  tsToTimestampValue?: string;
 
   @IsOptional()
   @IsNumber()

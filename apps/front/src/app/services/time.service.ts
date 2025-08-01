@@ -122,6 +122,23 @@ export class TimeService {
     return `${date} ${hour}:${minute}`;
   }
 
+  getTimestampUtc(): string {
+    const now: Date = new Date();
+
+    const year: number = now.getUTCFullYear();
+    const month: string = String(now.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day: string = String(now.getUTCDate()).padStart(2, '0');
+    const hours: string = String(now.getUTCHours()).padStart(2, '0');
+    const minutes: string = String(now.getUTCMinutes()).padStart(2, '0');
+    const seconds: string = String(now.getUTCSeconds()).padStart(2, '0');
+    const milliseconds: string = String(now.getUTCMilliseconds()).padStart(
+      3,
+      '0'
+    );
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+  }
+
   getDateTimeStrFromEpochMs(item: { ts: number }) {
     let ts = item.ts;
 
@@ -154,35 +171,40 @@ export class TimeService {
     let momentStr =
       fraction.tsMomentType === common.FractionTsMomentTypeEnum.Literal
         ? dateMinuteStr
-        : fraction.tsMomentType === common.FractionTsMomentTypeEnum.Today
-          ? 'today'
-          : fraction.tsMomentType === common.FractionTsMomentTypeEnum.Yesterday
-            ? 'yesterday'
-            : fraction.tsMomentType === common.FractionTsMomentTypeEnum.Tomorrow
-              ? 'tomorrow'
-              : fraction.tsMomentType === common.FractionTsMomentTypeEnum.This
-                ? `this ${fraction.tsMomentUnit}`
-                : fraction.tsMomentType === common.FractionTsMomentTypeEnum.Last
-                  ? `last ${fraction.tsMomentUnit}`
+        : fraction.tsMomentType === common.FractionTsMomentTypeEnum.Timestamp
+          ? dateMinuteStr
+          : fraction.tsMomentType === common.FractionTsMomentTypeEnum.Today
+            ? 'today'
+            : fraction.tsMomentType ===
+                common.FractionTsMomentTypeEnum.Yesterday
+              ? 'yesterday'
+              : fraction.tsMomentType ===
+                  common.FractionTsMomentTypeEnum.Tomorrow
+                ? 'tomorrow'
+                : fraction.tsMomentType === common.FractionTsMomentTypeEnum.This
+                  ? `this ${fraction.tsMomentUnit}`
                   : fraction.tsMomentType ===
-                      common.FractionTsMomentTypeEnum.Next
-                    ? `next ${fraction.tsMomentUnit}`
+                      common.FractionTsMomentTypeEnum.Last
+                    ? `last ${fraction.tsMomentUnit}`
                     : fraction.tsMomentType ===
-                        common.FractionTsMomentTypeEnum.LastDayOfWeek
-                      ? `last ${fraction.tsMomentPartValue}`
+                        common.FractionTsMomentTypeEnum.Next
+                      ? `next ${fraction.tsMomentUnit}`
                       : fraction.tsMomentType ===
-                          common.FractionTsMomentTypeEnum.NextDayOfWeek
-                        ? `next ${fraction.tsMomentPartValue}`
+                          common.FractionTsMomentTypeEnum.LastDayOfWeek
+                        ? `last ${fraction.tsMomentPartValue}`
                         : fraction.tsMomentType ===
-                            common.FractionTsMomentTypeEnum.Now
-                          ? 'now'
+                            common.FractionTsMomentTypeEnum.NextDayOfWeek
+                          ? `next ${fraction.tsMomentPartValue}`
                           : fraction.tsMomentType ===
-                              common.FractionTsMomentTypeEnum.Ago
-                            ? `${fraction.tsMomentAgoFromNowQuantity} ${fraction.tsMomentUnit}s ago`
+                              common.FractionTsMomentTypeEnum.Now
+                            ? 'now'
                             : fraction.tsMomentType ===
-                                common.FractionTsMomentTypeEnum.FromNow
-                              ? `${fraction.tsMomentAgoFromNowQuantity} ${fraction.tsMomentUnit}s from now`
-                              : undefined;
+                                common.FractionTsMomentTypeEnum.Ago
+                              ? `${fraction.tsMomentAgoFromNowQuantity} ${fraction.tsMomentUnit}s ago`
+                              : fraction.tsMomentType ===
+                                  common.FractionTsMomentTypeEnum.FromNow
+                                ? `${fraction.tsMomentAgoFromNowQuantity} ${fraction.tsMomentUnit}s from now`
+                                : undefined;
 
     return momentStr;
   }
@@ -233,7 +255,7 @@ export class TimeService {
                         timeValue: timeValue,
                         dateSeparator: dateSeparator
                       })
-                    : undefined;
+                    : fraction.tsTimestampValue;
 
     let momentStr = this.getMomentStr({
       fraction: fraction,
@@ -252,6 +274,7 @@ export class TimeService {
       tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
       tsDateHour: Number(timeValue.split(':')[0].replace(/^0+/, '')),
       tsDateMinute: Number(timeValue.split(':')[1].replace(/^0+/, '')),
+      tsTimestampValue: fraction.tsTimestampValue,
       tsMoment: undefined,
       tsMomentType: fraction.tsMomentType,
       tsMomentPartValue: fraction.tsMomentPartValue,
@@ -505,6 +528,34 @@ export class TimeService {
       tsMoment: undefined,
       tsMomentType: fraction.tsMomentType,
       tsMomentUnit: fraction.tsMomentUnit
+    };
+
+    return newFraction;
+  }
+
+  buildFractionOnTimestamp(item: {
+    fraction: common.Fraction;
+  }) {
+    let { fraction } = item;
+
+    let momentStr = this.getMomentStr({
+      fraction: fraction,
+      dateMinuteStr: fraction.tsTimestampValue
+    });
+
+    let mBrick = `f\`${momentStr}\``;
+
+    let newFraction: common.Fraction = {
+      brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
+      parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
+      operator: common.FractionOperatorEnum.Or,
+      tsTimestampValue:
+        fraction.tsMomentType === common.FractionTsMomentTypeEnum.Timestamp
+          ? fraction.tsTimestampValue
+          : undefined,
+      type: fraction.type,
+      tsMoment: undefined,
+      tsMomentType: fraction.tsMomentType
     };
 
     return newFraction;

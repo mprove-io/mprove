@@ -8,7 +8,8 @@ export enum FractionTsMomentTypeEnum {
   Next = 'Next',
   LastDayOfWeek = 'LastDayOfWeek',
   NextDayOfWeek = 'NextDayOfWeek',
-  Now = 'Now',
   Ago = 'Ago',
-  FromNow = 'FromNow'
+  FromNow = 'FromNow',
+  Now = 'Now',
+  Timestamp = 'Timestamp'
 }

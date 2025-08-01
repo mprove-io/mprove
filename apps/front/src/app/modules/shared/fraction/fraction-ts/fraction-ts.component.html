@@ -72,6 +72,7 @@
       fraction.type === fractionTypeEnum.TsIsOnDay ||
       fraction.type === fractionTypeEnum.TsIsOnHour ||
       fraction.type === fractionTypeEnum.TsIsOnMinute ||
+      fraction.type === fractionTypeEnum.TsIsOnTimestamp ||
       fraction.type === fractionTypeEnum.TsIsBeforeDate ||
       fraction.type === fractionTypeEnum.TsIsThrough ||
       fraction.type === fractionTypeEnum.TsIsAfterDate ||
@@ -113,6 +114,50 @@
         </ng-template>
       </ng-select>
     </div>
+  </div>
+
+  <div
+    *ngIf="
+      [
+        fractionTypeEnum.TsIsBeforeDate,
+        fractionTypeEnum.TsIsThrough,
+        fractionTypeEnum.TsIsAfterDate,
+        fractionTypeEnum.TsIsStarting,
+        fractionTypeEnum.TsIsBeginFor,
+        fractionTypeEnum.TsIsOnTimestamp
+      ].indexOf(fraction.type) > -1 &&
+      fraction.tsMomentType === fractionTsMomentTypeEnum.Timestamp
+    "
+    class="flex flex-row space-x-5"
+  >
+    <div class="flex h-9 items-center">UTC</div>
+
+    <form [formGroup]="tsTimestampValueForm">
+      <div
+        tp="Turn off formula to activate control"
+        [tpIsEnabled]="isDisabled === true"
+      >
+        <fieldset [disabled]="isDisabled === true">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="fractionTsTimestampValueInput"
+            class="form-input border-s3 focus:border-m600 h-[36px] w-[255px] rounded"
+            [ngClass]="{
+              'border-r600':
+                tsTimestampValueForm.controls['tsTimestampValue'].invalid &&
+                tsTimestampValueForm.controls['tsTimestampValue'].touched
+            }"
+            formControlName="tsTimestampValue"
+            (blur)="timestampValueBlur()"
+          />
+        </fieldset>
+      </div>
+
+      <m-validation
+        [control]="tsTimestampValueForm.controls['tsTimestampValue']"
+      ></m-validation>
+    </form>
   </div>
 
   <div
