@@ -53,15 +53,17 @@ export enum FractionTypeEnum {
 
   TsIsInLast = 'TsIsInLast',
   TsIsInNext = 'TsIsInNext', // new
-  TsIsBeforeDate = 'TsIsBeforeDate',
   TsIsAfterDate = 'TsIsAfterDate',
-  TsIsInRange = 'TsIsInRange',
+  TsIsStarting = 'TsIsStarting', // new // TsIsNotBeforeDate
   TsIsBeginFor = 'TsIsBeginFor', // new
-  TsIsOnYear = 'TsIsOnYear',
-  TsIsOnQuarter = 'TsIsOnQuarter', // new
-  TsIsOnMonth = 'TsIsOnMonth',
-  TsIsOnWeek = 'TsIsOnWeek', // new
   TsIsOnDay = 'TsIsOnDay',
+  TsIsOnWeek = 'TsIsOnWeek', // new
+  TsIsOnMonth = 'TsIsOnMonth',
+  TsIsOnQuarter = 'TsIsOnQuarter', // new
+  TsIsOnYear = 'TsIsOnYear',
+  TsIsInRange = 'TsIsInRange',
+  TsIsBeforeDate = 'TsIsBeforeDate',
+  TsIsThrough = 'TsIsThrough', // new // TsIsNotAfterDate
   TsIsOnHour = 'TsIsOnHour',
   TsIsOnMinute = 'TsIsOnMinute',
   TsIsOnTimestamp = 'TsIsOnTimestamp', // new
@@ -69,15 +71,13 @@ export enum FractionTypeEnum {
 
   TsIsNotInLast = 'TsIsNotInLast', // new
   TsIsNotInNext = 'TsIsNotInNext', // new
-  TsIsStarting = 'TsIsStarting', // new // TsIsNotBeforeDate
-  TsIsThrough = 'TsIsThrough', // new // TsIsNotAfterDate
-  TsIsNotInRange = 'TsIsNotInRange', // new
   TsIsNotBeginFor = 'TsIsNotBeginFor', // new
-  TsIsNotOnYear = 'TsIsNotOnYear', // new
-  TsIsNotOnQuarter = 'TsIsNotOnQuarter', // new
-  TsIsNotOnMonth = 'TsIsNotOnMonth', // new
-  TsIsNotOnWeek = 'TsIsNotOnWeek', // new
   TsIsNotOnDay = 'TsIsNotOnDay', // new
+  TsIsNotOnWeek = 'TsIsNotOnWeek', // new
+  TsIsNotOnMonth = 'TsIsNotOnMonth', // new
+  TsIsNotOnQuarter = 'TsIsNotOnQuarter', // new
+  TsIsNotOnYear = 'TsIsNotOnYear', // new
+  TsIsNotInRange = 'TsIsNotInRange', // new
   TsIsNotOnHour = 'TsIsNotOnHour', // new
   TsIsNotOnMinute = 'TsIsNotOnMinute', // new
   TsIsNotOnTimestamp = 'TsIsNotOnTimestamp', // new
