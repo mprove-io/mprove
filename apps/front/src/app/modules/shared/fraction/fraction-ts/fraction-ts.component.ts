@@ -22,7 +22,6 @@ import {
 } from '@vaadin/date-picker';
 import '@vaadin/time-picker';
 import { TimePicker } from '@vaadin/time-picker';
-import { tap } from 'rxjs';
 import { MALLOY_FILTER_ANY } from '~common/constants/top';
 import { COMMON_I18N } from '~front/app/constants/top';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -611,13 +610,6 @@ export class FractionTsComponent implements OnInit, OnChanges {
   timeStr: string;
   timeToStr: string;
 
-  zeroHoursMinutes = '00:00:00';
-  showHours: boolean;
-
-  showHours$ = this.uiQuery.showHours$.pipe(
-    tap(showHours => (this.showHours = showHours))
-  );
-
   constructor(
     private fb: FormBuilder,
     private uiQuery: UiQuery,
@@ -776,11 +768,6 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.fractionTsMomentTypesList = this.fractionTsMomentTypesFullList;
       }
     }
-  }
-
-  toggleShowHours() {
-    // TODO: remove showHours
-    this.uiQuery.updatePart({ showHours: !this.showHours });
   }
 
   buildTimestampValueForm() {

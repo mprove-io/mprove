@@ -429,58 +429,6 @@
     </div>
   </div>
 
-  <!-- <div
-    *ngIf="
-      ((fraction.type === fractionTypeEnum.TsIsBeforeDate ||
-        fraction.type === fractionTypeEnum.TsIsThrough ||
-        fraction.type === fractionTypeEnum.TsIsAfterDate ||
-        fraction.type === fractionTypeEnum.TsIsStarting ||
-        fraction.type === fractionTypeEnum.TsIsBeginFor) &&
-        fraction.tsMomentType === fractionTsMomentTypeEnum.Literal) ||
-      (fraction.type === fractionTypeEnum.TsIsInRange &&
-        (fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal ||
-          fraction.tsToMomentType === fractionTsMomentTypeEnum.Literal))
-    "
-    tp="The switch is disabled if the time is not 00:00"
-    [tpIsEnabled]="
-      timeStr !== zeroHoursMinutes ||
-      (fraction.type === fractionTypeEnum.TsIsInRange &&
-        timeToStr !== zeroHoursMinutes)
-    "
-  >
-    <button
-      class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-      [ngClass]="{
-        'cursor-pointer':
-          timeStr === zeroHoursMinutes &&
-          (fraction.type !== fractionTypeEnum.TsIsInRange ||
-            timeToStr === zeroHoursMinutes),
-        'text-m500':
-          ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1 &&
-          timeStr === zeroHoursMinutes &&
-          (fraction.type !== fractionTypeEnum.TsIsInRange ||
-            timeToStr === zeroHoursMinutes),
-        'text-s500':
-        ['hour', 'minute'].indexOf(fraction.tsMomentUnit) < 0 &&
-          timeStr === zeroHoursMinutes &&
-          (fraction.type !== fractionTypeEnum.TsIsInRange ||
-            timeToStr === zeroHoursMinutes),
-        'text-s300 cursor-default':
-          timeStr !== zeroHoursMinutes ||
-          (fraction.type === fractionTypeEnum.TsIsInRange &&
-            timeToStr !== zeroHoursMinutes)
-      }"
-      [disabled]="
-        timeStr !== zeroHoursMinutes ||
-        (fraction.type === fractionTypeEnum.TsIsInRange &&
-          timeToStr !== zeroHoursMinutes)
-      "
-      (click)="toggleShowHours()"
-    >
-      <m-clock-icon></m-clock-icon>
-    </button>
-  </div> -->
-
   <!-- on year -->
   <div
     *ngIf="
@@ -683,9 +631,7 @@
     <div
       *ngIf="
         fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal &&
-        (['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1 ||
-          timeStr !== zeroHoursMinutes ||
-          timeToStr !== zeroHoursMinutes)
+        ['hour', 'minute'].indexOf(fraction.tsFromMomentUnit) > -1
       "
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
@@ -757,9 +703,7 @@
     <div
       *ngIf="
         fraction.tsToMomentType === fractionTsMomentTypeEnum.Literal &&
-        (['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1 ||
-          timeStr !== zeroHoursMinutes ||
-          timeToStr !== zeroHoursMinutes)
+        ['hour', 'minute'].indexOf(fraction.tsToMomentUnit) > -1
       "
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
@@ -800,10 +744,7 @@
     </div>
 
     <div
-      *ngIf="
-        ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1 ||
-        timeStr !== zeroHoursMinutes
-      "
+      *ngIf="['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1"
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
     >
@@ -843,10 +784,7 @@
     </div>
 
     <div
-      *ngIf="
-        ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1 ||
-        timeStr !== zeroHoursMinutes
-      "
+      *ngIf="['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1"
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
     >
@@ -886,10 +824,7 @@
     </div>
 
     <div
-      *ngIf="
-        ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1 ||
-        timeStr !== zeroHoursMinutes
-      "
+      *ngIf="['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1"
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
     >
@@ -929,10 +864,7 @@
     </div>
 
     <div
-      *ngIf="
-        ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1 ||
-        timeStr !== zeroHoursMinutes
-      "
+      *ngIf="['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1"
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
     >
@@ -975,10 +907,7 @@
     </div>
 
     <div
-      *ngIf="
-        ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1 ||
-        timeStr !== zeroHoursMinutes
-      "
+      *ngIf="['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1"
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
     >
@@ -1233,5 +1162,3 @@
     </div>
   </div>
 </div>
-
-<!-- <div *ngIf="showHours$ | async"></div> -->
