@@ -453,6 +453,26 @@
     ></vaadin-date-picker>
   </div>
 
+  <!-- on quarter -->
+  <div
+    *ngIf="
+      fraction.type === fractionTypeEnum.TsIsOnQuarter &&
+      fraction.tsMomentType === fractionTsMomentTypeEnum.Literal
+    "
+    tp="Turn off formula to activate control"
+    [tpIsEnabled]="isDisabled === true"
+  >
+    <vaadin-date-picker
+      #datePickerOnQuarter
+      class="py-0"
+      required
+      [value]="dateStr"
+      [i18n]="onQuarterDateI18n"
+      (value-changed)="quarterDateValueChanged($event)"
+      [disabled]="isDisabled === true"
+    ></vaadin-date-picker>
+  </div>
+
   <!-- on month -->
   <div
     *ngIf="

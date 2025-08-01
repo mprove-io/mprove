@@ -109,6 +109,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
   @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
 
   @ViewChild('datePickerOnYear') datePickerOnYear: ElementRef<DatePicker>;
+  @ViewChild('datePickerOnQuarter') datePickerOnQuarter: ElementRef<DatePicker>;
   @ViewChild('datePickerOnMonth') datePickerOnMonth: ElementRef<DatePicker>;
   @ViewChild('datePickerOnWeek') datePickerOnWeek: ElementRef<DatePicker>;
   @ViewChild('datePickerOnDay') datePickerOnDay: ElementRef<DatePicker>;
@@ -496,6 +497,26 @@ export class FractionTsComponent implements OnInit, OnChanges {
   onYearDateI18n = Object.assign({}, this.commonI18n, {
     formatDate: (d: DatePickerDate) => `${d.year}`
   });
+  onQuarterDateI18n = Object.assign({}, this.commonI18n, {
+    formatDate: (d: DatePickerDate) => {
+      let monthIndex = d.month + 1;
+      let month =
+        monthIndex.toString().length === 1 ? `0${monthIndex}` : `${monthIndex}`;
+
+      let quarter =
+        [1, 2, 3].indexOf(Number(month)) > -1
+          ? '1'
+          : [4, 5, 6].indexOf(Number(month)) > -1
+            ? '2'
+            : [7, 8, 9].indexOf(Number(month)) > -1
+              ? '3'
+              : [10, 11, 12].indexOf(Number(month)) > -1
+                ? '4'
+                : undefined;
+
+      return `${d.year}-Q${quarter}`;
+    }
+  });
   onMonthDateI18n = Object.assign({}, this.commonI18n, {
     formatDate: (d: DatePickerDate) => {
       let monthIndex = d.month + 1;
@@ -594,6 +615,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
       structState.weekStart === common.ProjectWeekStartEnum.Monday ? 1 : 0;
 
     this.onYearDateI18n.firstDayOfWeek = firstDayOfWeek;
+    this.onQuarterDateI18n.firstDayOfWeek = firstDayOfWeek;
     this.onMonthDateI18n.firstDayOfWeek = firstDayOfWeek;
     this.onWeekDateI18n.firstDayOfWeek = firstDayOfWeek;
     this.onDayDateI18n.firstDayOfWeek = firstDayOfWeek;
@@ -781,9 +803,21 @@ export class FractionTsComponent implements OnInit, OnChanges {
     let month =
       useNow === true
         ? now.getMonth() + 1
-        : useFraction === true && common.isDefined(this.fraction.tsDateMonth)
-          ? this.fraction.tsDateMonth
-          : 1;
+        : useFraction === true &&
+            common.isUndefined(this.fraction.tsDateMonth) &&
+            common.isDefined(this.fraction.tsDateQuarter)
+          ? this.fraction.tsDateQuarter === 1
+            ? 1
+            : this.fraction.tsDateQuarter === 2
+              ? 4
+              : this.fraction.tsDateQuarter === 3
+                ? 7
+                : this.fraction.tsDateQuarter === 4
+                  ? 10
+                  : undefined
+          : useFraction === true && common.isDefined(this.fraction.tsDateMonth)
+            ? this.fraction.tsDateMonth
+            : 1;
 
     let day =
       useNow === true
@@ -839,9 +873,22 @@ export class FractionTsComponent implements OnInit, OnChanges {
     let month =
       useNowPlusOneDay === true
         ? nowPlusOneDay.getMonth() + 1
-        : useFraction === true && common.isDefined(this.fraction.tsDateToMonth)
-          ? this.fraction.tsDateToMonth
-          : 1;
+        : useFraction === true &&
+            common.isUndefined(this.fraction.tsDateMonth) &&
+            common.isDefined(this.fraction.tsDateToQuarter)
+          ? this.fraction.tsDateToQuarter === 1
+            ? 1
+            : this.fraction.tsDateToQuarter === 2
+              ? 4
+              : this.fraction.tsDateToQuarter === 3
+                ? 7
+                : this.fraction.tsDateToQuarter === 4
+                  ? 10
+                  : undefined
+          : useFraction === true &&
+              common.isDefined(this.fraction.tsDateToMonth)
+            ? this.fraction.tsDateToMonth
+            : 1;
 
     let day =
       useNowPlusOneDay === true
@@ -906,7 +953,21 @@ export class FractionTsComponent implements OnInit, OnChanges {
         break;
       }
 
-      // case this.fractionTypeEnum.TsIsOnQuarter: {} // TODO: TsIsOnQuarter
+      case this.fractionTypeEnum.TsIsOnQuarter: {
+        this.fraction.tsMomentType = common.FractionTsMomentTypeEnum.Literal;
+
+        this.dateStr = this.timeService.getQuarterStartDate({
+          dateValue: this.dateStr
+        });
+
+        this.fraction = this.timeService.buildFractionOnQuarter({
+          fraction: this.fraction,
+          dateValue: this.dateStr
+        });
+
+        this.emitFractionUpdate();
+        break;
+      }
 
       case this.fractionTypeEnum.TsIsOnMonth: {
         this.fraction.tsMomentType = common.FractionTsMomentTypeEnum.Literal;
@@ -923,15 +984,9 @@ export class FractionTsComponent implements OnInit, OnChanges {
       case this.fractionTypeEnum.TsIsOnWeek: {
         this.fraction.tsMomentType = common.FractionTsMomentTypeEnum.Literal;
 
-        // console.log('this.dateStr');
-        // console.log(this.dateStr);
-
         this.dateStr = this.timeService.getWeekStartDate({
           dateValue: this.dateStr
         });
-
-        // console.log('this.dateStr2');
-        // console.log(this.dateStr);
 
         this.fraction = this.timeService.buildFractionOnWeek({
           fraction: this.fraction,
@@ -1421,6 +1476,27 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
       setTimeout(() => {
         datePickerOnYear.blur();
+      }, 1);
+    }
+  }
+
+  quarterDateValueChanged(x: any) {
+    let datePickerOnQuarter = this.datePickerOnQuarter?.nativeElement;
+
+    if (common.isDefinedAndNotEmpty(datePickerOnQuarter?.value)) {
+      this.dateStr = this.timeService.getQuarterStartDate({
+        dateValue: datePickerOnQuarter.value
+      });
+
+      this.fraction = this.timeService.buildFractionOnQuarter({
+        fraction: this.fraction,
+        dateValue: this.dateStr
+      });
+
+      this.emitFractionUpdate();
+
+      setTimeout(() => {
+        datePickerOnQuarter.blur();
       }, 1);
     }
   }
@@ -2100,6 +2176,11 @@ export class FractionTsComponent implements OnInit, OnChanges {
         fraction: this.fraction,
         dateValue: this.dateStr
       });
+    } else if (this.fraction.type === common.FractionTypeEnum.TsIsOnQuarter) {
+      this.fraction = this.timeService.buildFractionOnQuarter({
+        fraction: this.fraction,
+        dateValue: this.dateStr
+      });
     } else if (this.fraction.type === common.FractionTypeEnum.TsIsOnMonth) {
       this.fraction = this.timeService.buildFractionOnMonth({
         fraction: this.fraction,
@@ -2218,6 +2299,11 @@ export class FractionTsComponent implements OnInit, OnChanges {
       });
     } else if (this.fraction.type === common.FractionTypeEnum.TsIsOnYear) {
       this.fraction = this.timeService.buildFractionOnYear({
+        fraction: this.fraction,
+        dateValue: this.dateStr
+      });
+    } else if (this.fraction.type === common.FractionTypeEnum.TsIsOnQuarter) {
+      this.fraction = this.timeService.buildFractionOnQuarter({
         fraction: this.fraction,
         dateValue: this.dateStr
       });

@@ -69,6 +69,24 @@ export class TimeService {
     return `${year}${item.dateSeparator}${month}`;
   }
 
+  getQuarterStr(item: { dateValue: string; dateSeparator: string }) {
+    let year = item.dateValue.split('-')[0];
+    let month = item.dateValue.split('-')[1];
+
+    let quarter =
+      [1, 2, 3].indexOf(Number(month)) > -1
+        ? '1'
+        : [4, 5, 6].indexOf(Number(month)) > -1
+          ? '2'
+          : [7, 8, 9].indexOf(Number(month)) > -1
+            ? '3'
+            : [10, 11, 12].indexOf(Number(month)) > -1
+              ? '4'
+              : undefined;
+
+    return `${year}${item.dateSeparator}Q${quarter}`;
+  }
+
   getWeekStr(item: { dateValue: string; dateSeparator: string }) {
     let date = item.dateValue.split('-').join(item.dateSeparator);
 
@@ -281,32 +299,31 @@ export class TimeService {
     return newFraction;
   }
 
-  buildFractionOnDay(item: {
+  buildFractionOnQuarter(item: {
     fraction: common.Fraction;
     dateValue: string;
   }) {
     let { fraction, dateValue } = item;
 
-    let dayStr = this.getDayStr({
+    let quarterStr = this.getQuarterStr({
       dateValue: dateValue,
       dateSeparator: common.isDefined(fraction.parentBrick) ? '-' : '/'
     });
 
     let momentStr = this.getMomentStr({
       fraction: fraction,
-      dateMinuteStr: dayStr
+      dateMinuteStr: quarterStr
     });
 
     let mBrick = `f\`${momentStr}\``;
 
     let newFraction: common.Fraction = {
-      brick: common.isDefined(fraction.parentBrick) ? mBrick : `on ${dayStr}`,
+      brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
       parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
       operator: common.FractionOperatorEnum.Or,
       type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
       tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
-      tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
       tsMoment: undefined,
       tsMomentType: fraction.tsMomentType,
       tsMomentUnit: fraction.tsMomentUnit
@@ -335,6 +352,40 @@ export class TimeService {
 
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
+      parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
+      operator: common.FractionOperatorEnum.Or,
+      type: fraction.type,
+      tsDateYear: Number(dateValue.split('-')[0]),
+      tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
+      tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
+      tsMoment: undefined,
+      tsMomentType: fraction.tsMomentType,
+      tsMomentUnit: fraction.tsMomentUnit
+    };
+
+    return newFraction;
+  }
+
+  buildFractionOnDay(item: {
+    fraction: common.Fraction;
+    dateValue: string;
+  }) {
+    let { fraction, dateValue } = item;
+
+    let dayStr = this.getDayStr({
+      dateValue: dateValue,
+      dateSeparator: common.isDefined(fraction.parentBrick) ? '-' : '/'
+    });
+
+    let momentStr = this.getMomentStr({
+      fraction: fraction,
+      dateMinuteStr: dayStr
+    });
+
+    let mBrick = `f\`${momentStr}\``;
+
+    let newFraction: common.Fraction = {
+      brick: common.isDefined(fraction.parentBrick) ? mBrick : `on ${dayStr}`,
       parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
       operator: common.FractionOperatorEnum.Or,
       type: fraction.type,
@@ -449,5 +500,25 @@ export class TimeService {
     let value = wDate.toISOString().split('T')[0];
 
     return value;
+  }
+
+  getQuarterStartDate(item: { dateValue: string }) {
+    let { dateValue } = item;
+
+    let year = dateValue.split('-')[0];
+    let month = dateValue.split('-')[1];
+
+    let newMonth =
+      [1, 2, 3].indexOf(Number(month)) > -1
+        ? '01'
+        : [4, 5, 6].indexOf(Number(month)) > -1
+          ? '04'
+          : [7, 8, 9].indexOf(Number(month)) > -1
+            ? '07'
+            : [10, 11, 12].indexOf(Number(month)) > -1
+              ? '10'
+              : undefined;
+
+    return `${year}-${newMonth}-01`;
   }
 }

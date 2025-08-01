@@ -569,7 +569,7 @@ export function getMalloyFiltersFractions(item: {
         // {value: 'null', label: 'null'},
         // {value: '-null', label: 'not null'},
 
-        // is in last (completed with current) (completed plus current) (completed)
+        // is in last (completed with current) (completed)
         // is in next (completed)
         // is between           literal     last, this, next          [from ... to ...]
         // is starting          literal     last, this, next          [not before]
