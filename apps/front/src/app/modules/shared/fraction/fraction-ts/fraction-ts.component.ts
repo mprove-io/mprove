@@ -481,10 +481,10 @@ export class FractionTsComponent implements OnInit, OnChanges {
       label: 'completed with current',
       value: common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent
     },
-    {
-      label: 'completed plus current',
-      value: common.FractionTsLastCompleteOptionEnum.CompletePlusCurrent
-    },
+    // {
+    //   label: 'completed plus current',
+    //   value: common.FractionTsLastCompleteOptionEnum.CompletePlusCurrent
+    // },
     {
       label: 'completed',
       value: common.FractionTsLastCompleteOptionEnum.Complete

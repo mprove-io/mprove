@@ -882,10 +882,11 @@ export function getMalloyFiltersFractions(item: {
                     ? common.getFractionTsUnits(tFilter.fromMoment.units)
                     : undefined,
                 tsLastCompleteOption:
-                  mFrom.momentStr.endsWith('ago') && mTo.momentStr === 'now'
-                    ? common.FractionTsLastCompleteOptionEnum
-                        .CompletePlusCurrent
-                    : undefined,
+                  // mFrom.momentStr.endsWith('ago') && mTo.momentStr === 'now'
+                  //   ? common.FractionTsLastCompleteOptionEnum
+                  //       .CompletePlusCurrent
+                  //   :
+                  undefined,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
                   ? Number(quarter)
