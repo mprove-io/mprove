@@ -383,24 +383,24 @@ export class FractionTsComponent implements OnInit, OnChanges {
   fractionTsAgoFromNowUnitsList: FractionTsTemporalUnitItem[] = [];
   fractionTsTempUnitsFullList: FractionTsTemporalUnitItem[] = [
     {
-      label: 'Year',
-      value: 'year'
-    },
-    {
-      label: 'Quarter',
-      value: 'quarter'
-    },
-    {
-      label: 'Month',
-      value: 'month'
+      label: 'Day',
+      value: 'day'
     },
     {
       label: 'Week',
       value: 'week'
     },
     {
-      label: 'Day',
-      value: 'day'
+      label: 'Month',
+      value: 'month'
+    },
+    {
+      label: 'Quarter',
+      value: 'quarter'
+    },
+    {
+      label: 'Year',
+      value: 'year'
     },
     {
       label: 'Hour',
@@ -416,24 +416,24 @@ export class FractionTsComponent implements OnInit, OnChanges {
   fractionTsForUnitsList: FractionTsUnitItem[] = [];
   fractionTsUnitsFullList: FractionTsUnitItem[] = [
     {
-      label: 'Years',
-      value: common.FractionTsUnitEnum.Years
-    },
-    {
-      label: 'Quarters',
-      value: common.FractionTsUnitEnum.Quarters
-    },
-    {
-      label: 'Months',
-      value: common.FractionTsUnitEnum.Months
+      label: 'Days',
+      value: common.FractionTsUnitEnum.Days
     },
     {
       label: 'Weeks',
       value: common.FractionTsUnitEnum.Weeks
     },
     {
-      label: 'Days',
-      value: common.FractionTsUnitEnum.Days
+      label: 'Months',
+      value: common.FractionTsUnitEnum.Months
+    },
+    {
+      label: 'Quarters',
+      value: common.FractionTsUnitEnum.Quarters
+    },
+    {
+      label: 'Years',
+      value: common.FractionTsUnitEnum.Years
     },
     {
       label: 'Hours',
