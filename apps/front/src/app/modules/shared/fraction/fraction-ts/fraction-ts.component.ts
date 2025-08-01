@@ -171,12 +171,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
       operator: common.FractionOperatorEnum.Or
     },
     {
-      label: 'is starting',
+      label: 'is starting at',
       value: common.FractionTypeEnum.TsIsStarting,
       operator: common.FractionOperatorEnum.Or
     },
     {
-      label: 'is begin ... for',
+      label: 'is beginning at',
       value: common.FractionTypeEnum.TsIsBeginFor,
       operator: common.FractionOperatorEnum.Or
     },
@@ -256,12 +256,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
     //   operator: common.FractionOperatorEnum.And
     // },
     // {
-    //   label: 'is not starting',
+    //   label: 'is not starting at',
     //   value: common.FractionTypeEnum.TsIsNotStarting, // is before // not supported (malloy issue)
     //   operator: common.FractionOperatorEnum.And
     // },
     {
-      label: 'is not begin ... for',
+      label: 'is not beginning at',
       value: common.FractionTypeEnum.TsIsNotBeginFor,
       operator: common.FractionOperatorEnum.And
     },
@@ -543,7 +543,60 @@ export class FractionTsComponent implements OnInit, OnChanges {
   throughI18n = Object.assign({}, this.commonI18n);
   afterDateI18n = Object.assign({}, this.commonI18n);
   startingI18n = Object.assign({}, this.commonI18n);
-  beginForI18n = Object.assign({}, this.commonI18n);
+  beginForI18n = Object.assign({}, this.commonI18n, {
+    formatDate: (d: DatePickerDate) => {
+      if (this.fraction.tsMomentUnit === 'year') {
+        return `${d.year}`;
+      } else if (this.fraction.tsMomentUnit === 'quarter') {
+        let monthIndex = d.month + 1;
+        let month =
+          monthIndex.toString().length === 1
+            ? `0${monthIndex}`
+            : `${monthIndex}`;
+
+        let quarter =
+          [1, 2, 3].indexOf(Number(month)) > -1
+            ? '1'
+            : [4, 5, 6].indexOf(Number(month)) > -1
+              ? '2'
+              : [7, 8, 9].indexOf(Number(month)) > -1
+                ? '3'
+                : [10, 11, 12].indexOf(Number(month)) > -1
+                  ? '4'
+                  : undefined;
+
+        return `${d.year}-Q${quarter}`;
+      } else if (this.fraction.tsMomentUnit === 'month') {
+        let monthIndex = d.month + 1;
+        let month =
+          monthIndex.toString().length === 1
+            ? `0${monthIndex}`
+            : `${monthIndex}`;
+
+        return `${d.year}-${month}`;
+      } else if (this.fraction.tsMomentUnit === 'week') {
+        let monthIndex = d.month + 1;
+        let month =
+          monthIndex.toString().length === 1
+            ? `0${monthIndex}`
+            : `${monthIndex}`;
+
+        let day = d.day.toString().length === 1 ? `0${d.day}` : `${d.day}`;
+
+        return `${d.year}-${month}-${day}-WK`;
+      } else {
+        let monthIndex = d.month + 1;
+        let month =
+          monthIndex.toString().length === 1
+            ? `0${monthIndex}`
+            : `${monthIndex}`;
+
+        let day = d.day.toString().length === 1 ? `0${d.day}` : `${d.day}`;
+
+        return `${d.year}-${month}-${day}`;
+      }
+    }
+  });
   inRangeFromDateI18n = Object.assign({}, this.commonI18n);
   inRangeToDateI18n = Object.assign({}, this.commonI18n);
 
@@ -997,6 +1050,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
       case this.fractionTypeEnum.TsIsBeginFor: {
         this.fraction.tsMomentType = common.FractionTsMomentTypeEnum.Literal;
+        this.fraction.tsMomentUnit = 'day';
 
         this.fraction.tsForValue = 1;
         this.fraction.tsForUnit = common.FractionTsUnitEnum.Weeks;
@@ -2245,6 +2299,16 @@ export class FractionTsComponent implements OnInit, OnChanges {
   toMomentChange() {}
 
   onUnitChange() {
+    if (this.fraction.tsMomentUnit === 'week') {
+      this.dateStr = this.timeService.getWeekStartDate({
+        dateValue: this.dateStr
+      });
+    } else if (this.fraction.tsMomentUnit === 'quarter') {
+      this.dateStr = this.timeService.getQuarterStartDate({
+        dateValue: this.dateStr
+      });
+    }
+
     if (this.fraction.type === common.FractionTypeEnum.TsIsBeginFor) {
       this.fraction = this.timeService.buildFractionBeginFor({
         fraction: this.fraction,

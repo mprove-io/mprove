@@ -13,21 +13,23 @@
         class="fraction-type-select"
         [class.w-[138px]]="
           isMetrics === true &&
-          fraction.type === 'TsIsInRange' &&
-          showHours === true
+          ['TsIsInRange', 'TsIsBeginFor'].indexOf(fraction.type) > -1 &&
+          ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1
         "
         [class.w-[140px]]="
           isMetrics === false &&
-          fraction.type === 'TsIsInRange' &&
-          showHours === true
+          ['TsIsInRange', 'TsIsBeginFor'].indexOf(fraction.type) > -1 &&
+          ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1
         "
         [class.w-[180px]]="
           isMetrics === true &&
-          (fraction.type !== 'TsIsInRange' || showHours === false)
+          (['TsIsInRange', 'TsIsBeginFor'].indexOf(fraction.type) < 0 ||
+            ['hour', 'minute'].indexOf(fraction.tsMomentUnit) < 0)
         "
         [class.w-[280px]]="
           isMetrics === false &&
-          (fraction.type !== 'TsIsInRange' || showHours === false)
+          (['TsIsInRange', 'TsIsBeginFor'].indexOf(fraction.type) < 0 ||
+            ['hour', 'minute'].indexOf(fraction.tsMomentUnit) < 0)
         "
         [items]="fractionTsTypesList"
         [clearable]="false"
@@ -177,11 +179,12 @@
         fractionTypeEnum.TsIsStarting,
         fractionTypeEnum.TsIsBeginFor
       ].indexOf(fraction.type) > -1 &&
-      [
-        fractionTsMomentTypeEnum.This,
-        fractionTsMomentTypeEnum.Last,
-        fractionTsMomentTypeEnum.Next
-      ].indexOf(fraction.tsMomentType) > -1
+      (fraction.tsMomentType === fractionTsMomentTypeEnum.Literal ||
+        [
+          fractionTsMomentTypeEnum.This,
+          fractionTsMomentTypeEnum.Last,
+          fractionTsMomentTypeEnum.Next
+        ].indexOf(fraction.tsMomentType) > -1)
     "
     tp="Turn off formula to activate control"
     [tpIsEnabled]="isDisabled === true"
@@ -381,7 +384,7 @@
     </div>
   </div>
 
-  <div
+  <!-- <div
     *ngIf="
       ((fraction.type === fractionTypeEnum.TsIsBeforeDate ||
         fraction.type === fractionTypeEnum.TsIsThrough ||
@@ -408,12 +411,12 @@
           (fraction.type !== fractionTypeEnum.TsIsInRange ||
             timeToStr === zeroHoursMinutes),
         'text-m500':
-          showHours === true &&
+          ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1 &&
           timeStr === zeroHoursMinutes &&
           (fraction.type !== fractionTypeEnum.TsIsInRange ||
             timeToStr === zeroHoursMinutes),
         'text-s500':
-          showHours === false &&
+        ['hour', 'minute'].indexOf(fraction.tsMomentUnit) < 0 &&
           timeStr === zeroHoursMinutes &&
           (fraction.type !== fractionTypeEnum.TsIsInRange ||
             timeToStr === zeroHoursMinutes),
@@ -431,7 +434,7 @@
     >
       <m-clock-icon></m-clock-icon>
     </button>
-  </div>
+  </div> -->
 
   <!-- on year -->
   <div
@@ -635,7 +638,7 @@
     <div
       *ngIf="
         fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal &&
-        (showHours === true ||
+        (['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1 ||
           timeStr !== zeroHoursMinutes ||
           timeToStr !== zeroHoursMinutes)
       "
@@ -709,7 +712,7 @@
     <div
       *ngIf="
         fraction.tsToMomentType === fractionTsMomentTypeEnum.Literal &&
-        (showHours === true ||
+        (['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1 ||
           timeStr !== zeroHoursMinutes ||
           timeToStr !== zeroHoursMinutes)
       "
@@ -752,7 +755,10 @@
     </div>
 
     <div
-      *ngIf="showHours === true || timeStr !== zeroHoursMinutes"
+      *ngIf="
+        ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1 ||
+        timeStr !== zeroHoursMinutes
+      "
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
     >
@@ -792,7 +798,10 @@
     </div>
 
     <div
-      *ngIf="showHours === true || timeStr !== zeroHoursMinutes"
+      *ngIf="
+        ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1 ||
+        timeStr !== zeroHoursMinutes
+      "
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
     >
@@ -832,7 +841,10 @@
     </div>
 
     <div
-      *ngIf="showHours === true || timeStr !== zeroHoursMinutes"
+      *ngIf="
+        ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1 ||
+        timeStr !== zeroHoursMinutes
+      "
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
     >
@@ -872,7 +884,10 @@
     </div>
 
     <div
-      *ngIf="showHours === true || timeStr !== zeroHoursMinutes"
+      *ngIf="
+        ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1 ||
+        timeStr !== zeroHoursMinutes
+      "
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
     >
@@ -903,6 +918,9 @@
       <vaadin-date-picker
         #datePickerBeginFor
         class="py-0"
+        [ngClass]="{
+          'week-width': fraction.tsMomentUnit === 'week'
+        }"
         required
         [value]="dateStr"
         [i18n]="beginForI18n"
@@ -912,7 +930,10 @@
     </div>
 
     <div
-      *ngIf="showHours === true || timeStr !== zeroHoursMinutes"
+      *ngIf="
+        ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1 ||
+        timeStr !== zeroHoursMinutes
+      "
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
     >
@@ -1168,4 +1189,4 @@
   </div>
 </div>
 
-<div *ngIf="showHours$ | async"></div>
+<!-- <div *ngIf="showHours$ | async"></div> -->

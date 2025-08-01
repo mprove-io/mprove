@@ -194,17 +194,46 @@ export class TimeService {
   }) {
     let { dateValue, timeValue, fraction } = item;
 
-    let minuteStr = this.getMinuteStr({
-      dateValue: dateValue,
-      timeValue: timeValue,
-      dateSeparator: common.isDefined(fraction.parentBrick) ? '-' : '/'
-    });
+    let dateSeparator = common.isDefined(fraction.parentBrick) ? '-' : '/';
 
     let dateMinuteStr =
-      Number(timeValue.split(':')[0].replace(/^0+/, '')) > 0 ||
-      Number(timeValue.split(':')[1].replace(/^0+/, '')) > 0
-        ? minuteStr
-        : minuteStr.split(' ')[0];
+      fraction.tsMomentUnit === 'year'
+        ? this.getYearStr({
+            dateValue: dateValue
+          })
+        : fraction.tsMomentUnit === 'quarter'
+          ? this.getQuarterStr({
+              dateValue: dateValue,
+              dateSeparator: dateSeparator
+            })
+          : fraction.tsMomentUnit === 'month'
+            ? this.getMonthStr({
+                dateValue: dateValue,
+                dateSeparator: dateSeparator
+              })
+            : fraction.tsMomentUnit === 'week'
+              ? this.getWeekStr({
+                  dateValue: dateValue,
+                  dateSeparator: dateSeparator
+                })
+              : fraction.tsMomentUnit === 'day'
+                ? this.getDayStr({
+                    dateValue: dateValue,
+                    dateSeparator: dateSeparator
+                  })
+                : fraction.tsMomentUnit === 'hour'
+                  ? this.getHourStr({
+                      dateValue: dateValue,
+                      timeValue: timeValue,
+                      dateSeparator: dateSeparator
+                    })
+                  : fraction.tsMomentUnit === 'minute'
+                    ? this.getMinuteStr({
+                        dateValue: dateValue,
+                        timeValue: timeValue,
+                        dateSeparator: dateSeparator
+                      })
+                    : undefined;
 
     let momentStr = this.getMomentStr({
       fraction: fraction,
