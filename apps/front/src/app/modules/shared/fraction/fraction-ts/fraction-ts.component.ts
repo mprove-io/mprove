@@ -161,26 +161,6 @@ export class FractionTsComponent implements OnInit, OnChanges {
       operator: common.FractionOperatorEnum.Or
     },
     {
-      label: 'is in next',
-      value: common.FractionTypeEnum.TsIsInNext,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is after',
-      value: common.FractionTypeEnum.TsIsAfterDate,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is starting at',
-      value: common.FractionTypeEnum.TsIsStarting,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is beginning at',
-      value: common.FractionTypeEnum.TsIsBeginFor,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
       label: 'is on Day',
       value: common.FractionTypeEnum.TsIsOnDay,
       operator: common.FractionOperatorEnum.Or
@@ -203,6 +183,26 @@ export class FractionTsComponent implements OnInit, OnChanges {
     {
       label: 'is on Year',
       value: common.FractionTypeEnum.TsIsOnYear,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is in next',
+      value: common.FractionTypeEnum.TsIsInNext,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is after',
+      value: common.FractionTypeEnum.TsIsAfterDate,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is starting at',
+      value: common.FractionTypeEnum.TsIsStarting,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is beginning at',
+      value: common.FractionTypeEnum.TsIsBeginFor,
       operator: common.FractionOperatorEnum.Or
     },
     {
@@ -346,6 +346,14 @@ export class FractionTsComponent implements OnInit, OnChanges {
       value: common.FractionTsMomentTypeEnum.Tomorrow
     },
     {
+      label: 'DOW last',
+      value: common.FractionTsMomentTypeEnum.LastDayOfWeek
+    },
+    {
+      label: 'DOW next',
+      value: common.FractionTsMomentTypeEnum.NextDayOfWeek
+    },
+    {
       label: 'this',
       value: common.FractionTsMomentTypeEnum.This
     },
@@ -356,14 +364,6 @@ export class FractionTsComponent implements OnInit, OnChanges {
     {
       label: 'next',
       value: common.FractionTsMomentTypeEnum.Next
-    },
-    {
-      label: 'DOW last',
-      value: common.FractionTsMomentTypeEnum.LastDayOfWeek
-    },
-    {
-      label: 'DOW next',
-      value: common.FractionTsMomentTypeEnum.NextDayOfWeek
     },
     {
       label: 'ago',
@@ -774,10 +774,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.tsTimestampValueForm = this.fb.group({
       tsTimestampValue: [
         this.fraction.tsTimestampValue,
-        [
-          Validators.required, // TODO: add timestamp validation
-          Validators.min(0)
-        ]
+        [Validators.required, ValidationService.timestampValidator]
       ]
     });
   }
@@ -1225,13 +1222,14 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.fraction.tsMomentType = common.FractionTsMomentTypeEnum.Timestamp;
 
         this.fraction.tsTimestampValue = this.timeService.getTimestampUtc();
-        this.tsTimestampValueForm.controls['tsTimestampValue'].setValue(
-          this.fraction.tsTimestampValue
-        );
 
         this.fraction = this.timeService.buildFractionOnTimestamp({
           fraction: this.fraction
         });
+
+        this.tsTimestampValueForm.controls['tsTimestampValue'].setValue(
+          this.fraction.tsTimestampValue
+        );
 
         this.emitFractionUpdate();
         break;
@@ -2214,9 +2212,6 @@ export class FractionTsComponent implements OnInit, OnChanges {
       this.fraction.tsMomentType === common.FractionTsMomentTypeEnum.Timestamp
     ) {
       this.fraction.tsTimestampValue = this.timeService.getTimestampUtc();
-      this.tsTimestampValueForm.controls['tsTimestampValue'].setValue(
-        this.fraction.tsTimestampValue
-      );
     }
 
     this.fraction.tsMomentUnit =
@@ -2307,26 +2302,26 @@ export class FractionTsComponent implements OnInit, OnChanges {
       [
         common.FractionTsMomentTypeEnum.Ago,
         common.FractionTsMomentTypeEnum.FromNow
-      ].indexOf(this.fraction.tsMomentType) > -1 &&
-      common.isUndefined(
-        this.tsMomentAgoFromNowQuantityForm.controls[
-          'tsMomentAgoFromNowQuantity'
-        ].value
-      )
+      ].indexOf(this.fraction.tsMomentType) > -1
     ) {
       this.tsMomentAgoFromNowQuantityForm.controls[
         'tsMomentAgoFromNowQuantity'
       ].setValue(this.fraction.tsMomentAgoFromNowQuantity);
-    }
 
-    if (
-      this.tsForValueForm.valid &&
-      [
-        common.FractionTsMomentTypeEnum.Ago,
-        common.FractionTsMomentTypeEnum.FromNow
-      ].indexOf(this.fraction.tsMomentType) > -1
+      if (
+        this.tsMomentAgoFromNowQuantityForm.valid &&
+        this.tsForValueForm.valid
+      ) {
+        this.emitFractionUpdate();
+      }
+    } else if (
+      this.fraction.tsMomentType === common.FractionTsMomentTypeEnum.Timestamp
     ) {
-      if (this.tsMomentAgoFromNowQuantityForm.valid) {
+      this.tsTimestampValueForm.controls['tsTimestampValue'].setValue(
+        this.fraction.tsTimestampValue
+      );
+
+      if (this.tsTimestampValueForm.valid) {
         this.emitFractionUpdate();
       }
     } else {
@@ -2414,7 +2409,9 @@ export class FractionTsComponent implements OnInit, OnChanges {
         fraction: this.fraction
       });
 
-      this.emitFractionUpdate();
+      if (this.tsTimestampValueForm.valid) {
+        this.emitFractionUpdate();
+      }
     }
   }
 

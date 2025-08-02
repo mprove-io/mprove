@@ -30,6 +30,7 @@ export class ValidationService {
       ['moreThenOneMB', 'Text must be < 1mb'],
       ['projectNameIsNotUnique', 'Project name already exists'],
       ['projectNameIsNotValid', 'Project name is not valid'],
+      ['wrongTimestamp', 'Wrong timestamp value'],
       ['wrongFormatNumber', 'Wrong format number'],
       ['titleIsNotUnique', 'Tile title must be unique for dashboard'],
       ['connectionNameWrongChars', 'Use only "a-z0-9_" chars'],
@@ -88,6 +89,74 @@ export class ValidationService {
       return null;
     } else {
       return { isNotNumberValues: true };
+    }
+  }
+
+  static timestampValidator(control: FormControl) {
+    let value = control.value;
+
+    if (common.isUndefinedOrEmpty(value)) {
+      return null;
+    }
+
+    if (value.endsWith('.')) {
+      return { wrongTimestamp: true };
+    } else if (value.match(common.MyRegex.IS_TIMESTAMP())) {
+      // Additional validation for date correctness (e.g., leap years, month lengths)
+      let [datePart, timePart] = value.replace('T', ' ').split(' ');
+      let [year, month, day] = datePart.split('-').map(Number);
+
+      let timePartBeforeDot = timePart.split('.')[0];
+
+      let [hour, minute, second] = timePartBeforeDot.split(':').map(Number);
+
+      let date = new Date(year, month - 1, day, hour, minute, second);
+
+      let yearCheck = date.getFullYear();
+      let monthCheck = date.getMonth() + 1;
+      let dayCheck = date.getDate();
+      let hourCheck = date.getHours();
+      let minuteCheck = date.getMinutes();
+      let secondCheck = date.getSeconds();
+
+      if (
+        yearCheck === year &&
+        monthCheck === month &&
+        dayCheck === day &&
+        hourCheck === hour &&
+        minuteCheck === minute &&
+        secondCheck === second
+      ) {
+        return null;
+      } else {
+        // console.log('year');
+        // console.log(year);
+        // console.log(yearCheck);
+
+        // console.log('month');
+        // console.log(month);
+        // console.log(monthCheck);
+
+        // console.log('day');
+        // console.log(day);
+        // console.log(dayCheck);
+
+        // console.log('hour');
+        // console.log(hour);
+        // console.log(hourCheck);
+
+        // console.log('minute');
+        // console.log(minute);
+        // console.log(minuteCheck);
+
+        // console.log('second');
+        // console.log(second);
+        // console.log(secondCheck);
+
+        return { wrongTimestamp: true };
+      }
+    } else {
+      return { wrongTimestamp: true };
     }
   }
 

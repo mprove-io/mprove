@@ -627,6 +627,12 @@ export class MyRegex {
     );
   }
 
+  static IS_TIMESTAMP(): RegExp {
+    return cloneRegexp(
+      /^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])(?:[T\s])(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?$/g
+    );
+  }
+
   static IS_DAY_OF_WEEK_INDEX_VALUES(): RegExp {
     return cloneRegexp(/^(?:[1-7](\s*,\s*[1-7])*)$/);
   }
