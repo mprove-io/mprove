@@ -1598,9 +1598,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
           timeValue: this.timeStr
         });
 
-        if (this.tsForValueForm.valid) {
-          this.emitFractionUpdate();
-        }
+        this.emitFractionUpdate();
 
         setTimeout(() => {
           datePickerBefore.blur();
@@ -1623,9 +1621,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
           timeValue: value
         });
 
-        if (this.tsForValueForm.valid) {
-          this.emitFractionUpdate();
-        }
+        this.emitFractionUpdate();
 
         setTimeout(() => {
           timePickerBefore.blur();
@@ -1718,9 +1714,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
           timeValue: this.timeStr
         });
 
-        if (this.tsForValueForm.valid) {
-          this.emitFractionUpdate();
-        }
+        this.emitFractionUpdate();
 
         setTimeout(() => {
           datePickerAfter.blur();
@@ -1743,9 +1737,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
           timeValue: value
         });
 
-        if (this.tsForValueForm.valid) {
-          this.emitFractionUpdate();
-        }
+        this.emitFractionUpdate();
 
         setTimeout(() => {
           timePickerAfter.blur();
@@ -1838,9 +1830,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
           timeValue: this.timeStr
         });
 
-        if (this.tsForValueForm.valid) {
-          this.emitFractionUpdate();
-        }
+        this.emitFractionUpdate();
 
         setTimeout(() => {
           datePickerBeginFor.blur();
@@ -1863,9 +1853,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
           timeValue: value
         });
 
-        if (this.tsForValueForm.valid) {
-          this.emitFractionUpdate();
-        }
+        this.emitFractionUpdate();
 
         setTimeout(() => {
           timePickerBeginFor.blur();
@@ -1899,9 +1887,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
       fraction: this.fraction
     });
 
-    if (this.tsLastValueForm.valid) {
-      this.emitFractionUpdate();
-    }
+    this.emitFractionUpdate();
   }
 
   lastUnitChange() {
@@ -1909,9 +1895,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
       fraction: this.fraction
     });
 
-    if (this.tsLastValueForm.valid) {
-      this.emitFractionUpdate();
-    }
+    this.emitFractionUpdate();
   }
 
   lastCompleteOptionChange() {
@@ -1919,9 +1903,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
       fraction: this.fraction
     });
 
-    if (this.tsLastValueForm.valid) {
-      this.emitFractionUpdate();
-    }
+    this.emitFractionUpdate();
   }
 
   nextValueBlur() {
@@ -1937,9 +1919,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
       fraction: this.fraction
     });
 
-    if (this.tsNextValueForm.valid) {
-      this.emitFractionUpdate();
-    }
+    this.emitFractionUpdate();
   }
 
   nextUnitChange() {
@@ -1947,9 +1927,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
       fraction: this.fraction
     });
 
-    if (this.tsNextValueForm.valid) {
-      this.emitFractionUpdate();
-    }
+    this.emitFractionUpdate();
   }
 
   momentChange() {
@@ -2044,6 +2022,14 @@ export class FractionTsComponent implements OnInit, OnChanges {
     }
 
     if (
+      this.fraction.tsMomentType === common.FractionTsMomentTypeEnum.Timestamp
+    ) {
+      this.tsTimestampValueForm.controls['tsTimestampValue'].setValue(
+        this.fraction.tsTimestampValue
+      );
+    }
+
+    if (
       [
         common.FractionTsMomentTypeEnum.Ago,
         common.FractionTsMomentTypeEnum.FromNow
@@ -2052,26 +2038,9 @@ export class FractionTsComponent implements OnInit, OnChanges {
       this.tsMomentAgoFromNowQuantityForm.controls[
         'tsMomentAgoFromNowQuantity'
       ].setValue(this.fraction.tsMomentAgoFromNowQuantity);
-
-      if (
-        this.tsMomentAgoFromNowQuantityForm.valid &&
-        this.tsForValueForm.valid
-      ) {
-        this.emitFractionUpdate();
-      }
-    } else if (
-      this.fraction.tsMomentType === common.FractionTsMomentTypeEnum.Timestamp
-    ) {
-      this.tsTimestampValueForm.controls['tsTimestampValue'].setValue(
-        this.fraction.tsTimestampValue
-      );
-
-      if (this.tsTimestampValueForm.valid) {
-        this.emitFractionUpdate();
-      }
-    } else {
-      this.emitFractionUpdate();
     }
+
+    this.emitFractionUpdate();
   }
 
   fromMomentChange() {}
@@ -2096,9 +2065,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
         timeValue: this.timeStr
       });
 
-      if (this.tsForValueForm.valid) {
-        this.emitFractionUpdate();
-      }
+      this.emitFractionUpdate();
     }
   }
 
@@ -2110,9 +2077,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
         timeValue: this.timeStr
       });
 
-      if (this.tsForValueForm.valid) {
-        this.emitFractionUpdate();
-      }
+      this.emitFractionUpdate();
     } else if (this.fraction.type === common.FractionTypeEnum.TsIsOnDay) {
       this.fraction = this.timeService.buildFractionOnDay({
         fraction: this.fraction,
@@ -2139,24 +2104,13 @@ export class FractionTsComponent implements OnInit, OnChanges {
         timeValue: this.timeStr
       });
 
-      if (
-        this.tsForValueForm.valid &&
-        ([
-          common.FractionTsMomentTypeEnum.Ago,
-          common.FractionTsMomentTypeEnum.FromNow
-        ].indexOf(this.fraction.tsMomentType) < 0 ||
-          this.tsMomentAgoFromNowQuantityForm.valid)
-      ) {
-        this.emitFractionUpdate();
-      }
+      this.emitFractionUpdate();
     } else if (this.fraction.type === common.FractionTypeEnum.TsIsOnTimestamp) {
       this.fraction = this.timeService.buildFractionOnTimestamp({
         fraction: this.fraction
       });
 
-      if (this.tsTimestampValueForm.valid) {
-        this.emitFractionUpdate();
-      }
+      this.emitFractionUpdate();
     }
   }
 
@@ -2216,13 +2170,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
       });
     }
 
-    if (
-      this.tsMomentAgoFromNowQuantityForm.valid &&
-      (this.fraction.type !== common.FractionTypeEnum.TsIsBeginFor ||
-        this.tsForValueForm.valid)
-    ) {
-      this.emitFractionUpdate();
-    }
+    this.emitFractionUpdate();
   }
 
   agoFromNowUnitChange() {
@@ -2234,13 +2182,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
       });
     }
 
-    if (
-      this.tsMomentAgoFromNowQuantityForm.valid &&
-      (this.fraction.type !== common.FractionTypeEnum.TsIsBeginFor ||
-        this.tsForValueForm.valid)
-    ) {
-      this.emitFractionUpdate();
-    }
+    this.emitFractionUpdate();
   }
 
   forValueBlur() {
@@ -2258,16 +2200,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
       timeValue: this.timeStr
     });
 
-    if (
-      this.tsForValueForm.valid &&
-      ([
-        common.FractionTsMomentTypeEnum.Ago,
-        common.FractionTsMomentTypeEnum.FromNow
-      ].indexOf(this.fraction.tsMomentType) < 0 ||
-        this.tsMomentAgoFromNowQuantityForm.valid)
-    ) {
-      this.emitFractionUpdate();
-    }
+    this.emitFractionUpdate();
   }
 
   tsForUnitChange() {
@@ -2277,19 +2210,29 @@ export class FractionTsComponent implements OnInit, OnChanges {
       timeValue: this.timeStr
     });
 
-    if (
-      this.tsForValueForm.valid &&
-      ([
-        common.FractionTsMomentTypeEnum.Ago,
-        common.FractionTsMomentTypeEnum.FromNow
-      ].indexOf(this.fraction.tsMomentType) < 0 ||
-        this.tsMomentAgoFromNowQuantityForm.valid)
-    ) {
-      this.emitFractionUpdate();
-    }
+    this.emitFractionUpdate();
   }
 
   emitFractionUpdate() {
+    if (
+      (this.fraction.type === common.FractionTypeEnum.TsIsInLast &&
+        this.tsLastValueForm.valid === false) ||
+      (this.fraction.type === common.FractionTypeEnum.TsIsInNext &&
+        this.tsNextValueForm.valid === false) ||
+      (this.fraction.tsMomentType ===
+        common.FractionTsMomentTypeEnum.Timestamp &&
+        this.tsTimestampValueForm.valid === false) ||
+      (this.fraction.type === common.FractionTypeEnum.TsIsBeginFor &&
+        this.tsForValueForm.valid === false) ||
+      ([
+        common.FractionTsMomentTypeEnum.Ago,
+        common.FractionTsMomentTypeEnum.FromNow
+      ].indexOf(this.fraction.tsMomentType) > 0 &&
+        this.tsMomentAgoFromNowQuantityForm.valid === false)
+    ) {
+      return;
+    }
+
     this.fractionUpdate.emit({
       fraction: this.fraction,
       fractionIndex: this.fractionIndex
