@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { MALLOY_FILTER_ANY } from '~common/constants/top';
 import { common } from '~front/barrels/common';
 import { StructQuery } from '../queries/struct.query';
 
@@ -207,6 +208,62 @@ export class TimeService {
                                 : undefined;
 
     return momentStr;
+  }
+
+  getWeekStartDate(item: { dateValue: string }) {
+    let { dateValue } = item;
+
+    let structState = this.structQuery.getValue();
+
+    let firstDayOfWeek =
+      structState.weekStart === common.ProjectWeekStartEnum.Monday ? 1 : 0;
+
+    let wDate = new Date(`${dateValue}T00:00:00Z`);
+
+    let wDay = wDate.getUTCDay(); // 0 (Sunday) to 6 (Saturday)
+
+    let wDiff = (wDay < firstDayOfWeek ? 7 : 0) + wDay - firstDayOfWeek;
+
+    wDate.setUTCDate(wDate.getUTCDate() - wDiff);
+
+    let value = wDate.toISOString().split('T')[0];
+
+    return value;
+  }
+
+  getQuarterStartDate(item: { dateValue: string }) {
+    let { dateValue } = item;
+
+    let year = dateValue.split('-')[0];
+    let month = dateValue.split('-')[1];
+
+    let newMonth =
+      [1, 2, 3].indexOf(Number(month)) > -1
+        ? '01'
+        : [4, 5, 6].indexOf(Number(month)) > -1
+          ? '04'
+          : [7, 8, 9].indexOf(Number(month)) > -1
+            ? '07'
+            : [10, 11, 12].indexOf(Number(month)) > -1
+              ? '10'
+              : undefined;
+
+    return `${year}-${newMonth}-01`;
+  }
+
+  buildFractionAny(item: { fraction: common.Fraction }) {
+    let { fraction } = item;
+
+    let mBrick = MALLOY_FILTER_ANY;
+
+    let newFraction: common.Fraction = {
+      brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
+      parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
+      operator: common.FractionOperatorEnum.Or,
+      type: common.FractionTypeEnum.TsIsAnyValue
+    };
+
+    return newFraction;
   }
 
   buildFractionLast(item: { fraction: common.Fraction }) {
@@ -842,44 +899,33 @@ export class TimeService {
     return newFraction;
   }
 
-  getWeekStartDate(item: { dateValue: string }) {
-    let { dateValue } = item;
+  buildFractionNull(item: { fraction: common.Fraction }) {
+    let { fraction } = item;
 
-    let structState = this.structQuery.getValue();
+    let mBrick = 'f`null`';
 
-    let firstDayOfWeek =
-      structState.weekStart === common.ProjectWeekStartEnum.Monday ? 1 : 0;
+    let newFraction: common.Fraction = {
+      brick: common.isDefined(fraction.parentBrick) ? mBrick : `null`,
+      parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
+      operator: common.FractionOperatorEnum.Or,
+      type: common.FractionTypeEnum.TsIsNull
+    };
 
-    let wDate = new Date(`${dateValue}T00:00:00Z`);
-
-    let wDay = wDate.getUTCDay(); // 0 (Sunday) to 6 (Saturday)
-
-    let wDiff = (wDay < firstDayOfWeek ? 7 : 0) + wDay - firstDayOfWeek;
-
-    wDate.setUTCDate(wDate.getUTCDate() - wDiff);
-
-    let value = wDate.toISOString().split('T')[0];
-
-    return value;
+    return newFraction;
   }
 
-  getQuarterStartDate(item: { dateValue: string }) {
-    let { dateValue } = item;
+  buildFractionNotNull(item: { fraction: common.Fraction }) {
+    let { fraction } = item;
 
-    let year = dateValue.split('-')[0];
-    let month = dateValue.split('-')[1];
+    let mBrick = 'f`not null`';
 
-    let newMonth =
-      [1, 2, 3].indexOf(Number(month)) > -1
-        ? '01'
-        : [4, 5, 6].indexOf(Number(month)) > -1
-          ? '04'
-          : [7, 8, 9].indexOf(Number(month)) > -1
-            ? '07'
-            : [10, 11, 12].indexOf(Number(month)) > -1
-              ? '10'
-              : undefined;
+    let newFraction: common.Fraction = {
+      brick: common.isDefined(fraction.parentBrick) ? mBrick : `not null`,
+      parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
+      operator: common.FractionOperatorEnum.And,
+      type: common.FractionTypeEnum.TsIsNotNull
+    };
 
-    return `${year}-${newMonth}-01`;
+    return newFraction;
   }
 }

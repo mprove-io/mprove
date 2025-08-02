@@ -22,7 +22,6 @@ import {
 } from '@vaadin/date-picker';
 import '@vaadin/time-picker';
 import { TimePicker } from '@vaadin/time-picker';
-import { MALLOY_FILTER_ANY } from '~common/constants/top';
 import { COMMON_I18N } from '~front/app/constants/top';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -984,16 +983,9 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
     switch (fractionType) {
       case this.fractionTypeEnum.TsIsAnyValue: {
-        let mBrick = MALLOY_FILTER_ANY;
-
-        this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
-            ? mBrick
-            : undefined,
-          operator: common.FractionOperatorEnum.Or,
-          type: fractionType
-        };
+        this.fraction = this.timeService.buildFractionAny({
+          fraction: this.fraction
+        });
 
         this.emitFractionUpdate();
         break;
@@ -1244,34 +1236,18 @@ export class FractionTsComponent implements OnInit, OnChanges {
       }
 
       case this.fractionTypeEnum.TsIsNull: {
-        let mBrick = 'f`null`';
-
-        this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `null`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
-            ? mBrick
-            : undefined,
-          operator: common.FractionOperatorEnum.Or,
-          type: fractionType
-        };
+        this.fraction = this.timeService.buildFractionNull({
+          fraction: this.fraction
+        });
 
         this.emitFractionUpdate();
         break;
       }
 
       case this.fractionTypeEnum.TsIsNotNull: {
-        let mBrick = 'f`not null`';
-
-        this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
-            ? mBrick
-            : `not null`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
-            ? mBrick
-            : undefined,
-          operator: common.FractionOperatorEnum.And,
-          type: fractionType
-        };
+        this.fraction = this.timeService.buildFractionNotNull({
+          fraction: this.fraction
+        });
 
         this.emitFractionUpdate();
         break;
