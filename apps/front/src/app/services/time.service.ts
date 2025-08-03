@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { TemporalUnit } from '@malloydata/malloy-filter';
 import { MALLOY_FILTER_ANY } from '~common/constants/top';
 import { common } from '~front/barrels/common';
 import { StructQuery } from '../queries/struct.query';
@@ -167,89 +168,96 @@ export class TimeService {
   }
 
   getMomentStr(item: {
-    fraction: common.Fraction;
     dateValue: string;
     timeValue: string;
+    momentUnit: TemporalUnit;
+    momentType: common.FractionTsMomentTypeEnum;
+    momentPartValue: string;
+    momentAgoFromNowQuantity: number;
+    timestampValue: string;
   }) {
-    let { fraction, dateValue, timeValue } = item;
+    let {
+      dateValue,
+      timeValue,
+      momentUnit,
+      momentType,
+      momentPartValue,
+      momentAgoFromNowQuantity,
+      timestampValue
+    } = item;
 
-    let dateSeparator = common.isDefined(fraction.parentBrick) ? '-' : '/';
+    let dateSeparator = '-';
+    // let dateSeparator = common.isDefined(fraction.parentBrick) ? '-' : '/';
 
     let dateMinuteStr =
-      fraction.tsMomentUnit === 'year'
+      momentUnit === 'year'
         ? this.getYearStr({
             dateValue: dateValue
           })
-        : fraction.tsMomentUnit === 'quarter'
+        : momentUnit === 'quarter'
           ? this.getQuarterStr({
               dateValue: dateValue,
               dateSeparator: dateSeparator
             })
-          : fraction.tsMomentUnit === 'month'
+          : momentUnit === 'month'
             ? this.getMonthStr({
                 dateValue: dateValue,
                 dateSeparator: dateSeparator
               })
-            : fraction.tsMomentUnit === 'week'
+            : momentUnit === 'week'
               ? this.getWeekStr({
                   dateValue: dateValue,
                   dateSeparator: dateSeparator
                 })
-              : fraction.tsMomentUnit === 'day'
+              : momentUnit === 'day'
                 ? this.getDayStr({
                     dateValue: dateValue,
                     dateSeparator: dateSeparator
                   })
-                : fraction.tsMomentUnit === 'hour'
+                : momentUnit === 'hour'
                   ? this.getHourStr({
                       dateValue: dateValue,
                       timeValue: timeValue,
                       dateSeparator: dateSeparator
                     })
-                  : fraction.tsMomentUnit === 'minute'
+                  : momentUnit === 'minute'
                     ? this.getMinuteStr({
                         dateValue: dateValue,
                         timeValue: timeValue,
                         dateSeparator: dateSeparator
                       })
-                    : fraction.tsTimestampValue;
+                    : timestampValue;
 
     let momentStr =
-      fraction.tsMomentType === common.FractionTsMomentTypeEnum.Literal
+      momentType === common.FractionTsMomentTypeEnum.Literal
         ? dateMinuteStr
-        : fraction.tsMomentType === common.FractionTsMomentTypeEnum.Timestamp
+        : momentType === common.FractionTsMomentTypeEnum.Timestamp
           ? dateMinuteStr
-          : fraction.tsMomentType === common.FractionTsMomentTypeEnum.Today
+          : momentType === common.FractionTsMomentTypeEnum.Today
             ? 'today'
-            : fraction.tsMomentType ===
-                common.FractionTsMomentTypeEnum.Yesterday
+            : momentType === common.FractionTsMomentTypeEnum.Yesterday
               ? 'yesterday'
-              : fraction.tsMomentType ===
-                  common.FractionTsMomentTypeEnum.Tomorrow
+              : momentType === common.FractionTsMomentTypeEnum.Tomorrow
                 ? 'tomorrow'
-                : fraction.tsMomentType === common.FractionTsMomentTypeEnum.This
-                  ? `this ${fraction.tsMomentUnit}`
-                  : fraction.tsMomentType ===
-                      common.FractionTsMomentTypeEnum.Last
-                    ? `last ${fraction.tsMomentUnit}`
-                    : fraction.tsMomentType ===
-                        common.FractionTsMomentTypeEnum.Next
-                      ? `next ${fraction.tsMomentUnit}`
-                      : fraction.tsMomentType ===
+                : momentType === common.FractionTsMomentTypeEnum.This
+                  ? `this ${momentUnit}`
+                  : momentType === common.FractionTsMomentTypeEnum.Last
+                    ? `last ${momentUnit}`
+                    : momentType === common.FractionTsMomentTypeEnum.Next
+                      ? `next ${momentUnit}`
+                      : momentType ===
                           common.FractionTsMomentTypeEnum.LastDayOfWeek
-                        ? `last ${fraction.tsMomentPartValue}`
-                        : fraction.tsMomentType ===
+                        ? `last ${momentPartValue}`
+                        : momentType ===
                             common.FractionTsMomentTypeEnum.NextDayOfWeek
-                          ? `next ${fraction.tsMomentPartValue}`
-                          : fraction.tsMomentType ===
-                              common.FractionTsMomentTypeEnum.Now
+                          ? `next ${momentPartValue}`
+                          : momentType === common.FractionTsMomentTypeEnum.Now
                             ? 'now'
-                            : fraction.tsMomentType ===
-                                common.FractionTsMomentTypeEnum.Ago
-                              ? `${fraction.tsMomentAgoFromNowQuantity} ${fraction.tsMomentUnit}s ago`
-                              : fraction.tsMomentType ===
+                            : momentType === common.FractionTsMomentTypeEnum.Ago
+                              ? `${momentAgoFromNowQuantity} ${momentUnit}s ago`
+                              : momentType ===
                                   common.FractionTsMomentTypeEnum.FromNow
-                                ? `${fraction.tsMomentAgoFromNowQuantity} ${fraction.tsMomentUnit}s from now`
+                                ? `${momentAgoFromNowQuantity} ${momentUnit}s from now`
                                 : undefined;
 
     return momentStr;
@@ -464,9 +472,13 @@ export class TimeService {
     let { fraction, dateValue } = item;
 
     let momentStr = this.getMomentStr({
-      fraction: fraction,
       dateValue: dateValue,
-      timeValue: undefined
+      timeValue: undefined,
+      momentUnit: fraction.tsMomentUnit,
+      momentType: fraction.tsMomentType,
+      momentPartValue: fraction.tsMomentPartValue,
+      momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+      timestampValue: fraction.tsTimestampValue
     });
 
     let mBrick = `f\`${momentStr}\``;
@@ -496,9 +508,13 @@ export class TimeService {
     let { fraction, dateValue } = item;
 
     let momentStr = this.getMomentStr({
-      fraction: fraction,
       dateValue: dateValue,
-      timeValue: undefined
+      timeValue: undefined,
+      momentUnit: fraction.tsMomentUnit,
+      momentType: fraction.tsMomentType,
+      momentPartValue: fraction.tsMomentPartValue,
+      momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+      timestampValue: fraction.tsTimestampValue
     });
 
     let mBrick = `f\`${momentStr}\``;
@@ -527,9 +543,13 @@ export class TimeService {
     let { fraction, dateValue } = item;
 
     let momentStr = this.getMomentStr({
-      fraction: fraction,
       dateValue: dateValue,
-      timeValue: undefined
+      timeValue: undefined,
+      momentUnit: fraction.tsMomentUnit,
+      momentType: fraction.tsMomentType,
+      momentPartValue: fraction.tsMomentPartValue,
+      momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+      timestampValue: fraction.tsTimestampValue
     });
 
     let mBrick = `f\`${momentStr}\``;
@@ -557,9 +577,13 @@ export class TimeService {
     let { fraction, dateValue } = item;
 
     let momentStr = this.getMomentStr({
-      fraction: fraction,
       dateValue: dateValue,
-      timeValue: undefined
+      timeValue: undefined,
+      momentUnit: fraction.tsMomentUnit,
+      momentType: fraction.tsMomentType,
+      momentPartValue: fraction.tsMomentPartValue,
+      momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+      timestampValue: fraction.tsTimestampValue
     });
 
     let mBrick = `f\`${momentStr}\``;
@@ -587,9 +611,13 @@ export class TimeService {
     let { fraction, dateValue } = item;
 
     let momentStr = this.getMomentStr({
-      fraction: fraction,
       dateValue: dateValue,
-      timeValue: undefined
+      timeValue: undefined,
+      momentUnit: fraction.tsMomentUnit,
+      momentType: fraction.tsMomentType,
+      momentPartValue: fraction.tsMomentPartValue,
+      momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+      timestampValue: fraction.tsTimestampValue
     });
 
     let mBrick = `f\`${momentStr}\``;
@@ -634,9 +662,13 @@ export class TimeService {
     let { fraction, dateValue, timeValue } = item;
 
     let momentStr = this.getMomentStr({
-      fraction: fraction,
       dateValue: dateValue,
-      timeValue: timeValue
+      timeValue: timeValue,
+      momentUnit: fraction.tsMomentUnit,
+      momentType: fraction.tsMomentType,
+      momentPartValue: fraction.tsMomentPartValue,
+      momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+      timestampValue: fraction.tsTimestampValue
     });
 
     let mBrick = `f\`after ${momentStr}\``;
@@ -673,9 +705,13 @@ export class TimeService {
     let { fraction, dateValue, timeValue } = item;
 
     let momentStr = this.getMomentStr({
-      fraction: fraction,
       dateValue: dateValue,
-      timeValue: timeValue
+      timeValue: timeValue,
+      momentUnit: fraction.tsMomentUnit,
+      momentType: fraction.tsMomentType,
+      momentPartValue: fraction.tsMomentPartValue,
+      momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+      timestampValue: fraction.tsTimestampValue
     });
 
     let mBrick = `f\`starting ${momentStr}\``;
@@ -712,9 +748,13 @@ export class TimeService {
     let { dateValue, timeValue, fraction } = item;
 
     let momentStr = this.getMomentStr({
-      fraction: fraction,
       dateValue: dateValue,
-      timeValue: timeValue
+      timeValue: timeValue,
+      momentUnit: fraction.tsMomentUnit,
+      momentType: fraction.tsMomentType,
+      momentPartValue: fraction.tsMomentPartValue,
+      momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+      timestampValue: fraction.tsTimestampValue
     });
 
     let mBrick = `f\`${momentStr} for ${fraction.tsForValue} ${fraction.tsForUnit}\``;
@@ -754,19 +794,27 @@ export class TimeService {
   }) {
     let { fraction, dateValue, timeValue, dateToValue, timeToValue } = item;
 
-    let momentStr = this.getMomentStr({
-      fraction: fraction,
+    let momentFromStr = this.getMomentStr({
       dateValue: dateValue,
-      timeValue: timeValue
+      timeValue: timeValue,
+      momentUnit: fraction.tsFromMomentUnit,
+      momentType: fraction.tsFromMomentType,
+      momentPartValue: fraction.tsFromMomentPartValue,
+      momentAgoFromNowQuantity: fraction.tsFromMomentAgoFromNowQuantity,
+      timestampValue: fraction.tsFromTimestampValue
     });
 
     let momentToStr = this.getMomentStr({
-      fraction: fraction,
       dateValue: dateToValue,
-      timeValue: timeToValue
+      timeValue: timeToValue,
+      momentUnit: fraction.tsToMomentUnit,
+      momentType: fraction.tsToMomentType,
+      momentPartValue: fraction.tsToMomentPartValue,
+      momentAgoFromNowQuantity: fraction.tsToMomentAgoFromNowQuantity,
+      timestampValue: fraction.tsToTimestampValue
     });
 
-    let mBrick = `f\`${momentStr} to ${momentToStr}\``;
+    let mBrick = `f\`${momentFromStr} to ${momentToStr}\``;
 
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
@@ -814,9 +862,13 @@ export class TimeService {
     let { fraction, dateValue, timeValue } = item;
 
     let momentStr = this.getMomentStr({
-      fraction: fraction,
       dateValue: dateValue,
-      timeValue: timeValue
+      timeValue: timeValue,
+      momentUnit: fraction.tsMomentUnit,
+      momentType: fraction.tsMomentType,
+      momentPartValue: fraction.tsMomentPartValue,
+      momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+      timestampValue: fraction.tsTimestampValue
     });
 
     let mBrick = `f\`before ${momentStr}\``;
@@ -853,9 +905,13 @@ export class TimeService {
     let { fraction, dateValue, timeValue } = item;
 
     let momentStr = this.getMomentStr({
-      fraction: fraction,
       dateValue: dateValue,
-      timeValue: timeValue
+      timeValue: timeValue,
+      momentUnit: fraction.tsMomentUnit,
+      momentType: fraction.tsMomentType,
+      momentPartValue: fraction.tsMomentPartValue,
+      momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+      timestampValue: fraction.tsTimestampValue
     });
 
     let mBrick = `f\`through ${momentStr}\``;
@@ -892,9 +948,13 @@ export class TimeService {
     let { fraction, dateValue, timeValue } = item;
 
     let momentStr = this.getMomentStr({
-      fraction: fraction,
       dateValue: dateValue,
-      timeValue: timeValue
+      timeValue: timeValue,
+      momentUnit: fraction.tsMomentUnit,
+      momentType: fraction.tsMomentType,
+      momentPartValue: fraction.tsMomentPartValue,
+      momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+      timestampValue: fraction.tsTimestampValue
     });
 
     let mBrick = `f\`${momentStr}\``;
@@ -925,9 +985,13 @@ export class TimeService {
     let { fraction, dateValue, timeValue } = item;
 
     let momentStr = this.getMomentStr({
-      fraction: fraction,
       dateValue: dateValue,
-      timeValue: timeValue
+      timeValue: timeValue,
+      momentUnit: fraction.tsMomentUnit,
+      momentType: fraction.tsMomentType,
+      momentPartValue: fraction.tsMomentPartValue,
+      momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+      timestampValue: fraction.tsTimestampValue
     });
 
     let mBrick = `f\`${momentStr}\``;
@@ -957,9 +1021,13 @@ export class TimeService {
     let { fraction } = item;
 
     let momentStr = this.getMomentStr({
-      fraction: fraction,
       dateValue: undefined,
-      timeValue: undefined
+      timeValue: undefined,
+      momentUnit: fraction.tsMomentUnit,
+      momentType: fraction.tsMomentType,
+      momentPartValue: fraction.tsMomentPartValue,
+      momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+      timestampValue: fraction.tsTimestampValue
     });
 
     let mBrick = `f\`${momentStr}\``;
