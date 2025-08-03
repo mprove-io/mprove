@@ -1036,7 +1036,7 @@ export function processFilter(item: {
           fractions.push({
             brick: brick,
             operator: common.FractionOperatorEnum.Or,
-            type: common.FractionTypeEnum.TsIsInRange,
+            type: common.FractionTypeEnum.TsIsBetween,
 
             tsDateYear: Number(year),
             tsDateMonth: Number(month),

@@ -88,7 +88,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   rowTypeHeader = common.RowTypeEnum.Header;
   rowTypeEmpty = common.RowTypeEnum.Empty;
 
-  fractionTypeIsInRange = common.FractionTypeEnum.TsIsInRange;
+  fractionTypeTsIsBetween = common.FractionTypeEnum.TsIsBetween;
 
   timeSpecYears = common.TimeSpecEnum.Years;
   timeSpecQuarters = common.TimeSpecEnum.Quarters;
@@ -1085,7 +1085,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       this.isAutoRun === true &&
       newQueries.length > 0 &&
       (this.report?.timeRangeFraction.type !==
-        common.FractionTypeEnum.TsIsInRange ||
+        common.FractionTypeEnum.TsIsBetween ||
         this.report?.rangeOpen < this.report?.rangeClose)
     ) {
       setTimeout(() => {
@@ -1150,7 +1150,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
           // this.isRunButtonPressed === false &&
           this.notEmptySelectQueriesLength > 0 &&
           (this.report?.timeRangeFraction.type !==
-            common.FractionTypeEnum.TsIsInRange ||
+            common.FractionTypeEnum.TsIsBetween ||
             this.report?.rangeOpen < this.report?.rangeClose)
         ) {
           this.run();

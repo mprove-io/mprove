@@ -360,8 +360,8 @@ export class TimeService {
         dateValue: dateStr,
         timeValue: timeStr
       });
-    } else if (fraction.type === common.FractionTypeEnum.TsIsInRange) {
-      fraction = this.buildFractionRange({
+    } else if (fraction.type === common.FractionTypeEnum.TsIsBetween) {
+      fraction = this.buildFractionBetween({
         fraction: fraction,
         dateValue: dateStr,
         timeValue: timeStr,
@@ -745,7 +745,7 @@ export class TimeService {
     return newFraction;
   }
 
-  buildFractionRange(item: {
+  buildFractionBetween(item: {
     fraction: common.Fraction;
     dateValue: string;
     timeValue: string;
@@ -772,7 +772,7 @@ export class TimeService {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
       parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
       operator: common.FractionOperatorEnum.Or,
-      type: common.FractionTypeEnum.TsIsInRange,
+      type: common.FractionTypeEnum.TsIsBetween,
       tsDateYear: Number(dateValue.split('-')[0]),
       tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
       tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),

@@ -816,7 +816,7 @@ export function getMalloyFiltersFractions(item: {
                   : undefined
               };
             } else if ((temporalFilter as To).operator === 'to') {
-              // temporal to (in range)
+              // temporal to (between)
               let tFilter = temporalFilter as To;
               let from = tFilter.fromMoment;
               let to = tFilter.toMoment;
@@ -855,12 +855,12 @@ export function getMalloyFiltersFractions(item: {
                       //   tFilter.toMoment.moment === 'now'
                       //   ? common.FractionTypeEnum.TsIsInLast
                       //   :
-                      common.FractionTypeEnum.TsIsInRange
+                      common.FractionTypeEnum.TsIsBetween
                     : // tFilter.fromMoment.moment === 'ago' &&
                       //     tFilter.toMoment.moment === 'now'
                       //   ? common.FractionTypeEnum.TsIsNotInLast
                       //   :
-                      common.FractionTypeEnum.TsIsNotInRange,
+                      common.FractionTypeEnum.TsIsNotBetween,
                 tsFromMomentType: mFrom.momentType,
                 tsToMomentType: mTo.momentType,
                 tsFromMoment: from,

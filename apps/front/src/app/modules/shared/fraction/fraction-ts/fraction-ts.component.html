@@ -13,22 +13,22 @@
         class="fraction-type-select"
         [class.w-[138px]]="
           isMetrics === true &&
-          ['TsIsInRange', 'TsIsBeginFor'].indexOf(fraction.type) > -1 &&
+          ['TsIsBetween', 'TsIsBeginFor'].indexOf(fraction.type) > -1 &&
           ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1
         "
         [class.w-[140px]]="
           isMetrics === false &&
-          ['TsIsInRange', 'TsIsBeginFor'].indexOf(fraction.type) > -1 &&
+          ['TsIsBetween', 'TsIsBeginFor'].indexOf(fraction.type) > -1 &&
           ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1
         "
         [class.w-[180px]]="
           isMetrics === true &&
-          (['TsIsInRange', 'TsIsBeginFor'].indexOf(fraction.type) < 0 ||
+          (['TsIsBetween', 'TsIsBeginFor'].indexOf(fraction.type) < 0 ||
             ['hour', 'minute'].indexOf(fraction.tsMomentUnit) < 0)
         "
         [class.w-[280px]]="
           isMetrics === false &&
-          (['TsIsInRange', 'TsIsBeginFor'].indexOf(fraction.type) < 0 ||
+          (['TsIsBetween', 'TsIsBeginFor'].indexOf(fraction.type) < 0 ||
             ['hour', 'minute'].indexOf(fraction.tsMomentUnit) < 0)
         "
         [items]="fractionTsTypesList"
@@ -390,7 +390,7 @@
     <div class="flex h-9 items-center">{{ fraction.tsMomentUnit + 's' }}</div>
   </div>
 
-  <div *ngIf="fraction.type === fractionTypeEnum.TsIsInRange">
+  <div *ngIf="fraction.type === fractionTypeEnum.TsIsBetween">
     <div
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
@@ -607,9 +607,9 @@
     </div>
   </div>
 
-  <!-- in range -->
+  <!-- between -->
   <div
-    *ngIf="fraction.type === fractionTypeEnum.TsIsInRange"
+    *ngIf="fraction.type === fractionTypeEnum.TsIsBetween"
     class="flex flex-row space-x-5"
   >
     <div
@@ -618,15 +618,15 @@
       [tpIsEnabled]="isDisabled === true"
     >
       <vaadin-date-picker
-        #datePickerInRangeFrom
+        #datePickerBetweenFrom
         class="py-0"
         [ngClass]="{
           'week-width': fraction.tsFromMomentUnit === 'week'
         }"
         required
         [value]="dateStr"
-        [i18n]="inRangeFromDateI18n"
-        (value-changed)="inRangeFromDateValueChanged($event)"
+        [i18n]="betweenFromDateI18n"
+        (value-changed)="betweenFromDateValueChanged($event)"
         [disabled]="isDisabled === true"
       ></vaadin-date-picker>
     </div>
@@ -640,12 +640,12 @@
       [tpIsEnabled]="isDisabled === true"
     >
       <vaadin-time-picker
-        #timePickerInRangeFrom
+        #timePickerBetweenFrom
         class="py-0"
         required
         [value]="timeStr"
-        (value-changed)="inRangeFromTimeValueChanged($event)"
-        (opened-changed)="inRangeFromTimeOpenedChanged($event)"
+        (value-changed)="betweenFromTimeValueChanged($event)"
+        (opened-changed)="betweenFromTimeOpenedChanged($event)"
         [disabled]="isDisabled === true"
       ></vaadin-time-picker>
     </div>
@@ -693,15 +693,15 @@
       [tpIsEnabled]="isDisabled === true"
     >
       <vaadin-date-picker
-        #datePickerInRangeTo
+        #datePickerBetweenTo
         class="py-0"
         [ngClass]="{
           'week-width': fraction.tsToMomentUnit === 'week'
         }"
         required
         [value]="dateToStr"
-        [i18n]="inRangeToDateI18n"
-        (value-changed)="inRangeToDateValueChanged($event)"
+        [i18n]="betweenToDateI18n"
+        (value-changed)="betweenToDateValueChanged($event)"
         [disabled]="isDisabled === true"
       ></vaadin-date-picker>
     </div>
@@ -715,12 +715,12 @@
       [tpIsEnabled]="isDisabled === true"
     >
       <vaadin-time-picker
-        #timePickerInRangeTo
+        #timePickerBetweenTo
         class="py-0"
         required
         [value]="timeToStr"
-        (value-changed)="inRangeToTimeValueChanged($event)"
-        (opened-changed)="inRangeToTimeOpenedChanged($event)"
+        (value-changed)="betweenToTimeValueChanged($event)"
+        (opened-changed)="betweenToTimeOpenedChanged($event)"
         [disabled]="isDisabled === true"
       ></vaadin-time-picker>
     </div>

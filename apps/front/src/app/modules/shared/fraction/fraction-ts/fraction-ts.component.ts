@@ -133,13 +133,13 @@ export class FractionTsComponent implements OnInit, OnChanges {
   @ViewChild('timePickerBeginFor') timePickerBeginFor: ElementRef<TimePicker>;
   @ViewChild('datePickerBeginFor') datePickerBeginFor: ElementRef<DatePicker>;
 
-  @ViewChild('datePickerInRangeFrom')
-  datePickerInRangeFrom: ElementRef<DatePicker>;
-  @ViewChild('timePickerInRangeFrom')
-  timePickerInRangeFrom: ElementRef<TimePicker>;
+  @ViewChild('datePickerBetweenFrom')
+  datePickerBetweenFrom: ElementRef<DatePicker>;
+  @ViewChild('timePickerBetweenFrom')
+  timePickerBetweenFrom: ElementRef<TimePicker>;
 
-  @ViewChild('datePickerInRangeTo') datePickerInRangeTo: ElementRef<DatePicker>;
-  @ViewChild('timePickerInRangeTo') timePickerInRangeTo: ElementRef<TimePicker>;
+  @ViewChild('datePickerBetweenTo') datePickerBetweenTo: ElementRef<DatePicker>;
+  @ViewChild('timePickerBetweenTo') timePickerBetweenTo: ElementRef<TimePicker>;
 
   tsTimestampValueForm: FormGroup;
   tsForValueForm: FormGroup;
@@ -206,7 +206,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
     },
     {
       label: 'is between',
-      value: common.FractionTypeEnum.TsIsInRange,
+      value: common.FractionTypeEnum.TsIsBetween,
       operator: common.FractionOperatorEnum.Or
     },
     {
@@ -291,7 +291,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
     },
     {
       label: 'is not between',
-      value: common.FractionTypeEnum.TsIsNotInRange,
+      value: common.FractionTypeEnum.TsIsNotBetween,
       operator: common.FractionOperatorEnum.And
     },
     // {
@@ -602,8 +602,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
   afterDateI18n = Object.assign({}, this.commonI18n, this.extraI18n);
   startingI18n = Object.assign({}, this.commonI18n, this.extraI18n);
   beginForI18n = Object.assign({}, this.commonI18n, this.extraI18n);
-  inRangeFromDateI18n = Object.assign({}, this.commonI18n, this.extraI18n);
-  inRangeToDateI18n = Object.assign({}, this.commonI18n, this.extraI18n);
+  betweenFromDateI18n = Object.assign({}, this.commonI18n, this.extraI18n);
+  betweenToDateI18n = Object.assign({}, this.commonI18n, this.extraI18n);
 
   dateStr: string;
   dateToStr: string;
@@ -638,7 +638,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
                 common.FractionTypeEnum.TsIsOnMonth,
                 common.FractionTypeEnum.TsIsOnQuarter,
                 common.FractionTypeEnum.TsIsOnYear,
-                common.FractionTypeEnum.TsIsInRange,
+                common.FractionTypeEnum.TsIsBetween,
                 common.FractionTypeEnum.TsIsBeforeDate,
                 common.FractionTypeEnum.TsIsThrough,
                 common.FractionTypeEnum.TsIsOnHour,
@@ -674,8 +674,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.onMinuteDateI18n.firstDayOfWeek = firstDayOfWeek;
     this.beforeDateI18n.firstDayOfWeek = firstDayOfWeek;
     this.afterDateI18n.firstDayOfWeek = firstDayOfWeek;
-    this.inRangeFromDateI18n.firstDayOfWeek = firstDayOfWeek;
-    this.inRangeToDateI18n.firstDayOfWeek = firstDayOfWeek;
+    this.betweenFromDateI18n.firstDayOfWeek = firstDayOfWeek;
+    this.betweenToDateI18n.firstDayOfWeek = firstDayOfWeek;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -1061,7 +1061,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
         break;
       }
 
-      case this.fractionTypeEnum.TsIsInRange: {
+      case this.fractionTypeEnum.TsIsBetween: {
         this.fraction.tsFromMomentType =
           common.FractionTsMomentTypeEnum.Literal;
         this.fraction.tsFromMomentPartValue =
@@ -1354,15 +1354,15 @@ export class FractionTsComponent implements OnInit, OnChanges {
     }, 1);
   }
 
-  inRangeFromDateValueChanged(x: any) {
-    let datePickerInRangeFrom = this.datePickerInRangeFrom?.nativeElement;
-    if (common.isDefined(datePickerInRangeFrom)) {
-      let value = datePickerInRangeFrom.value;
+  betweenFromDateValueChanged(x: any) {
+    let datePickerBetweenFrom = this.datePickerBetweenFrom?.nativeElement;
+    if (common.isDefined(datePickerBetweenFrom)) {
+      let value = datePickerBetweenFrom.value;
 
       if (common.isDefinedAndNotEmpty(value)) {
         this.dateStr = value;
 
-        this.fraction = this.timeService.buildFractionRange({
+        this.fraction = this.timeService.buildFractionBetween({
           fraction: this.fraction,
           dateValue: this.dateStr,
           timeValue: this.timeStr,
@@ -1373,21 +1373,21 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.emitFractionUpdate();
 
         setTimeout(() => {
-          datePickerInRangeFrom.blur();
+          datePickerBetweenFrom.blur();
         }, 1);
       }
     }
   }
 
-  inRangeFromTimeValueChanged(x: any) {
-    let timePickerInRangeFrom = this.timePickerInRangeFrom?.nativeElement;
-    if (common.isDefined(timePickerInRangeFrom)) {
-      let value = timePickerInRangeFrom.value;
+  betweenFromTimeValueChanged(x: any) {
+    let timePickerBetweenFrom = this.timePickerBetweenFrom?.nativeElement;
+    if (common.isDefined(timePickerBetweenFrom)) {
+      let value = timePickerBetweenFrom.value;
 
       if (common.isDefinedAndNotEmpty(value)) {
         this.timeStr = value;
 
-        this.fraction = this.timeService.buildFractionRange({
+        this.fraction = this.timeService.buildFractionBetween({
           fraction: this.fraction,
           dateValue: this.dateStr,
           timeValue: this.timeStr,
@@ -1398,33 +1398,33 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.emitFractionUpdate();
 
         setTimeout(() => {
-          timePickerInRangeFrom.blur();
+          timePickerBetweenFrom.blur();
         }, 1);
       }
     }
   }
 
-  inRangeFromTimeOpenedChanged(x: any) {
+  betweenFromTimeOpenedChanged(x: any) {
     setTimeout(() => {
-      let timePickerInRangeFrom = this.timePickerInRangeFrom?.nativeElement;
+      let timePickerBetweenFrom = this.timePickerBetweenFrom?.nativeElement;
       if (
-        common.isDefined(timePickerInRangeFrom) &&
-        timePickerInRangeFrom.opened === false
+        common.isDefined(timePickerBetweenFrom) &&
+        timePickerBetweenFrom.opened === false
       ) {
-        timePickerInRangeFrom.blur();
+        timePickerBetweenFrom.blur();
       }
     }, 1);
   }
 
-  inRangeToDateValueChanged(x: any) {
-    let datePickerInRangeTo = this.datePickerInRangeTo?.nativeElement;
-    if (common.isDefined(datePickerInRangeTo)) {
-      let value = datePickerInRangeTo.value;
+  betweenToDateValueChanged(x: any) {
+    let datePickerBetweenTo = this.datePickerBetweenTo?.nativeElement;
+    if (common.isDefined(datePickerBetweenTo)) {
+      let value = datePickerBetweenTo.value;
 
       if (common.isDefinedAndNotEmpty(value)) {
         this.dateToStr = value;
 
-        this.fraction = this.timeService.buildFractionRange({
+        this.fraction = this.timeService.buildFractionBetween({
           fraction: this.fraction,
           dateValue: this.dateStr,
           timeValue: this.timeStr,
@@ -1435,21 +1435,21 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.emitFractionUpdate();
 
         setTimeout(() => {
-          datePickerInRangeTo.blur();
+          datePickerBetweenTo.blur();
         }, 1);
       }
     }
   }
 
-  inRangeToTimeValueChanged(x: any) {
-    let timePickerInRangeTo = this.timePickerInRangeTo?.nativeElement;
-    if (common.isDefined(timePickerInRangeTo)) {
-      let value = timePickerInRangeTo.value;
+  betweenToTimeValueChanged(x: any) {
+    let timePickerBetweenTo = this.timePickerBetweenTo?.nativeElement;
+    if (common.isDefined(timePickerBetweenTo)) {
+      let value = timePickerBetweenTo.value;
 
       if (common.isDefinedAndNotEmpty(value)) {
         this.timeToStr = value;
 
-        this.fraction = this.timeService.buildFractionRange({
+        this.fraction = this.timeService.buildFractionBetween({
           fraction: this.fraction,
           dateValue: this.dateStr,
           timeValue: this.timeStr,
@@ -1460,20 +1460,20 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.emitFractionUpdate();
 
         setTimeout(() => {
-          timePickerInRangeTo.blur();
+          timePickerBetweenTo.blur();
         }, 1);
       }
     }
   }
 
-  inRangeToTimeOpenedChanged(x: any) {
+  betweenToTimeOpenedChanged(x: any) {
     setTimeout(() => {
-      let timePickerInRangeTo = this.timePickerInRangeTo?.nativeElement;
+      let timePickerBetweenTo = this.timePickerBetweenTo?.nativeElement;
       if (
-        common.isDefined(timePickerInRangeTo) &&
-        timePickerInRangeTo.opened === false
+        common.isDefined(timePickerBetweenTo) &&
+        timePickerBetweenTo.opened === false
       ) {
-        timePickerInRangeTo.blur();
+        timePickerBetweenTo.blur();
       }
     }, 1);
   }

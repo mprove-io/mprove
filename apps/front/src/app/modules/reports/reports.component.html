@@ -247,7 +247,7 @@
               class="text-r1 ml-4 flex h-8 w-8 flex-shrink-0"
               tp="The left boundary value of the time range must be less than the right boundary value"
               *ngIf="
-                report?.timeRangeFraction?.type === fractionTypeIsInRange &&
+                report?.timeRangeFraction?.type === fractionTypeTsIsBetween &&
                 report?.rangeOpen >= report?.rangeClose
               "
             >
@@ -279,7 +279,7 @@
 
                 <div
                   *ngIf="
-                    report?.timeRangeFraction?.type !== fractionTypeIsInRange
+                    report?.timeRangeFraction?.type !== fractionTypeTsIsBetween
                   "
                   class="text-s1 ml-5 flex h-9 flex-shrink-0 select-none items-center text-base"
                   >Auto Run</div
@@ -354,24 +354,25 @@
                     notEmptySelectQueriesLength > 0 &&
                     (report?.rangeOpen < report?.rangeClose ||
                       report?.timeRangeFraction?.type !==
-                        fractionTypeIsInRange),
+                        fractionTypeTsIsBetween),
                   'cursor-default':
                     notEmptySelectQueriesLength === 0 ||
                     isRunButtonPressed === true ||
                     (report?.rangeOpen >= report?.rangeClose &&
                       report?.timeRangeFraction?.type ===
-                        fractionTypeIsInRange),
+                        fractionTypeTsIsBetween),
                   'bg-s400':
                     notEmptySelectQueriesLength === 0 ||
                     (report?.timeRangeFraction?.type ===
-                      fractionTypeIsInRange &&
+                      fractionTypeTsIsBetween &&
                       report?.rangeOpen >= report?.rangeClose)
                 }"
                 (click)="run()"
                 [disabled]="
                   notEmptySelectQueriesLength === 0 ||
                   isRunButtonPressed === true ||
-                  (report?.timeRangeFraction?.type === fractionTypeIsInRange &&
+                  (report?.timeRangeFraction?.type ===
+                    fractionTypeTsIsBetween &&
                     report?.rangeOpen >= report?.rangeClose)
                 "
               >

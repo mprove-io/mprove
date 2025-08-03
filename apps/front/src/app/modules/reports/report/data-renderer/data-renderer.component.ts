@@ -228,7 +228,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       timeRangeFraction = {
         brick: `on ${minuteStr} to ${minuteToStr}`,
         operator: common.FractionOperatorEnum.Or,
-        type: common.FractionTypeEnum.TsIsInRange,
+        type: common.FractionTypeEnum.TsIsBetween,
         tsDateYear: Number(dateStr.split('-')[0]),
         tsDateMonth: Number(dateStr.split('-')[1].replace(/^0+/, '')),
         tsDateDay: Number(dateStr.split('-')[2].replace(/^0+/, '')),
