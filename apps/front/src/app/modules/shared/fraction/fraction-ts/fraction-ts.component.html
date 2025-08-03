@@ -13,22 +13,26 @@
         class="fraction-type-select"
         [class.w-[138px]]="
           isMetrics === true &&
-          ['TsIsBetween', 'TsIsBeginFor'].indexOf(fraction.type) > -1 &&
-          ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1
+          (fraction.type === 'TsIsBetween' ||
+            (fraction.type === 'TsIsBeginFor' &&
+              ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1))
         "
         [class.w-[140px]]="
           isMetrics === false &&
-          ['TsIsBetween', 'TsIsBeginFor'].indexOf(fraction.type) > -1 &&
-          ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1
+          (fraction.type === 'TsIsBetween' ||
+            (fraction.type === 'TsIsBeginFor' &&
+              ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1))
         "
         [class.w-[180px]]="
           isMetrics === true &&
-          (['TsIsBetween', 'TsIsBeginFor'].indexOf(fraction.type) < 0 ||
+          fraction.type !== 'TsIsBetween' &&
+          (fraction.type !== 'TsIsBeginFor' ||
             ['hour', 'minute'].indexOf(fraction.tsMomentUnit) < 0)
         "
         [class.w-[280px]]="
           isMetrics === false &&
-          (['TsIsBetween', 'TsIsBeginFor'].indexOf(fraction.type) < 0 ||
+          fraction.type !== 'TsIsBetween' &&
+          (fraction.type !== 'TsIsBeginFor' ||
             ['hour', 'minute'].indexOf(fraction.tsMomentUnit) < 0)
         "
         [items]="fractionTsTypesList"
@@ -192,7 +196,15 @@
       #tsMomentOnUnitSelect
       [fixNgSelectBottom]="tsMomentOnUnitSelect"
       data-cy="tsMomentOnUnitSelect"
-      class="fraction-mix-unit-select w-[180px]"
+      class="fraction-mix-unit-select"
+      [class.w-[110px]]="
+        fraction.tsMomentType === fractionTsMomentTypeEnum.Literal ||
+        fraction.tsMomentType === fractionTsMomentTypeEnum.This
+      "
+      [class.w-[150px]]="
+        fraction.tsMomentType !== fractionTsMomentTypeEnum.Literal &&
+        fraction.tsMomentType !== fractionTsMomentTypeEnum.This
+      "
       [items]="
         fraction.type === fractionTypeEnum.TsIsOnDay &&
         [fractionTsMomentTypeEnum.Last, fractionTsMomentTypeEnum.Next].indexOf(
@@ -352,45 +364,6 @@
     "
   >
     <div class="flex h-9 items-center">{{ fraction.tsMomentUnit + 's' }}</div>
-  </div>
-
-  <div *ngIf="fraction.type === fractionTypeEnum.TsIsBetween">
-    <div
-      tp="Turn off formula to activate control"
-      [tpIsEnabled]="isDisabled === true"
-    >
-      <ng-select
-        #fractionTsFromMomentTypeSelect
-        [fixNgSelectBottom]="fractionTsFromMomentTypeSelect"
-        data-cy="fractionTsFromMomentTypeSelect"
-        class="popup-55 w-32"
-        [items]="fractionTsMomentTypesList"
-        [clearable]="false"
-        [searchable]="false"
-        [disabled]="isDisabled === true"
-        [(ngModel)]="fraction.tsFromMomentType"
-        (change)="fromMomentChange()"
-        (keyup.esc)="
-          $event.stopImmediatePropagation();
-          fractionTsFromMomentTypeSelect.blur()
-        "
-        (keyup.enter)="
-          $event.stopImmediatePropagation();
-          fractionTsFromMomentTypeSelect.blur()
-        "
-        appendTo="body"
-        bindLabel="label"
-        bindValue="value"
-      >
-        <ng-template ng-label-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item.label }}</div>
-        </ng-template>
-
-        <ng-template ng-option-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item.label }}</div>
-        </ng-template>
-      </ng-select>
-    </div>
   </div>
 
   <!-- on year -->
@@ -577,6 +550,99 @@
     class="flex flex-row space-x-5"
   >
     <div
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
+    >
+      <ng-select
+        #fractionTsFromMomentTypeSelect
+        [fixNgSelectBottom]="fractionTsFromMomentTypeSelect"
+        data-cy="fractionTsFromMomentTypeSelect"
+        class="fraction-ts-moment-select w-[140px]"
+        [items]="fractionTsMomentTypesList"
+        [clearable]="false"
+        [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsFromMomentType"
+        (change)="betweenFromMomentChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation();
+          fractionTsFromMomentTypeSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation();
+          fractionTsFromMomentTypeSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+
+    <div
+      *ngIf="
+        fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal ||
+        [
+          fractionTsMomentTypeEnum.This,
+          fractionTsMomentTypeEnum.Last,
+          fractionTsMomentTypeEnum.Next
+        ].indexOf(fraction.tsFromMomentType) > -1
+      "
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
+    >
+      <ng-select
+        #tsFromMomentOnUnitSelect
+        [fixNgSelectBottom]="tsFromMomentOnUnitSelect"
+        data-cy="tsFromMomentOnUnitSelect"
+        class="fraction-mix-unit-select"
+        [class.w-[110px]]="
+          fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal ||
+          fraction.tsFromMomentType === fractionTsMomentTypeEnum.This
+        "
+        [class.w-[150px]]="
+          fraction.tsFromMomentType !== fractionTsMomentTypeEnum.Literal &&
+          fraction.tsFromMomentType !== fractionTsMomentTypeEnum.This
+        "
+        [items]="
+          fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal ||
+          fraction.tsFromMomentType === fractionTsMomentTypeEnum.This
+            ? fractionTsMixUnitsTempList
+            : fractionTsOnUnitsList
+        "
+        [clearable]="false"
+        [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsFromMomentUnit"
+        (change)="betweenFromUnitChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); tsFromMomentOnUnitSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); tsFromMomentOnUnitSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+
+    <div
       *ngIf="fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal"
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
@@ -624,18 +690,74 @@
         #fractionTsToMomentTypeSelect
         [fixNgSelectBottom]="fractionTsToMomentTypeSelect"
         data-cy="fractionTsToMomentTypeSelect"
-        class="popup-55 w-32"
+        class="fraction-ts-moment-select w-[140px]"
         [items]="fractionTsMomentTypesList"
         [clearable]="false"
         [searchable]="false"
         [disabled]="isDisabled === true"
         [(ngModel)]="fraction.tsToMomentType"
-        (change)="toMomentChange()"
+        (change)="betweenToMomentChange()"
         (keyup.esc)="
           $event.stopImmediatePropagation(); fractionTsToMomentTypeSelect.blur()
         "
         (keyup.enter)="
           $event.stopImmediatePropagation(); fractionTsToMomentTypeSelect.blur()
+        "
+        appendTo="body"
+        bindLabel="label"
+        bindValue="value"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <div class="ml-1 truncate">{{ item.label }}</div>
+        </ng-template>
+      </ng-select>
+    </div>
+
+    <div
+      *ngIf="
+        fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal ||
+        [
+          fractionTsMomentTypeEnum.This,
+          fractionTsMomentTypeEnum.Last,
+          fractionTsMomentTypeEnum.Next
+        ].indexOf(fraction.tsFromMomentType) > -1
+      "
+      tp="Turn off formula to activate control"
+      [tpIsEnabled]="isDisabled === true"
+    >
+      <ng-select
+        #tsToMomentOnUnitSelect
+        [fixNgSelectBottom]="tsToMomentOnUnitSelect"
+        data-cy="tsToMomentOnUnitSelect"
+        class="fraction-mix-unit-select"
+        [class.w-[110px]]="
+          fraction.tsToMomentType === fractionTsMomentTypeEnum.Literal ||
+          fraction.tsToMomentType === fractionTsMomentTypeEnum.This
+        "
+        [class.w-[150px]]="
+          fraction.tsToMomentType !== fractionTsMomentTypeEnum.Literal &&
+          fraction.tsToMomentType !== fractionTsMomentTypeEnum.This
+        "
+        [items]="
+          fraction.tsToMomentType === fractionTsMomentTypeEnum.Literal ||
+          fraction.tsToMomentType === fractionTsMomentTypeEnum.This
+            ? fractionTsMixUnitsTempList
+            : fractionTsOnUnitsList
+        "
+        [clearable]="false"
+        [searchable]="false"
+        [disabled]="isDisabled === true"
+        [(ngModel)]="fraction.tsToMomentUnit"
+        (change)="betweenToUnitChange()"
+        (keyup.esc)="
+          $event.stopImmediatePropagation(); tsToMomentOnUnitSelect.blur()
+        "
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); tsToMomentOnUnitSelect.blur()
         "
         appendTo="body"
         bindLabel="label"

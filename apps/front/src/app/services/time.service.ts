@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TemporalUnit, WeekdayMoment } from '@malloydata/malloy-filter';
+import { DatePickerDate } from '@vaadin/date-picker';
 import { MALLOY_FILTER_ANY } from '~common/constants/top';
 import { common } from '~front/barrels/common';
 import { StructQuery } from '../queries/struct.query';
@@ -1047,5 +1048,55 @@ export class TimeService {
     };
 
     return newFraction;
+  }
+
+  momentFormatDate(item: {
+    d: DatePickerDate;
+    momentUnit: TemporalUnit | WeekdayMoment['moment'];
+  }) {
+    let { momentUnit, d } = item;
+
+    if (momentUnit === 'year') {
+      return `${d.year}`;
+    } else if (momentUnit === 'quarter') {
+      let monthIndex = d.month + 1;
+      let month =
+        monthIndex.toString().length === 1 ? `0${monthIndex}` : `${monthIndex}`;
+
+      let quarter =
+        [1, 2, 3].indexOf(Number(month)) > -1
+          ? '1'
+          : [4, 5, 6].indexOf(Number(month)) > -1
+            ? '2'
+            : [7, 8, 9].indexOf(Number(month)) > -1
+              ? '3'
+              : [10, 11, 12].indexOf(Number(month)) > -1
+                ? '4'
+                : undefined;
+
+      return `${d.year}-Q${quarter}`;
+    } else if (momentUnit === 'month') {
+      let monthIndex = d.month + 1;
+      let month =
+        monthIndex.toString().length === 1 ? `0${monthIndex}` : `${monthIndex}`;
+
+      return `${d.year}-${month}`;
+    } else if (momentUnit === 'week') {
+      let monthIndex = d.month + 1;
+      let month =
+        monthIndex.toString().length === 1 ? `0${monthIndex}` : `${monthIndex}`;
+
+      let day = d.day.toString().length === 1 ? `0${d.day}` : `${d.day}`;
+
+      return `${d.year}-${month}-${day}-WK`;
+    } else {
+      let monthIndex = d.month + 1;
+      let month =
+        monthIndex.toString().length === 1 ? `0${monthIndex}` : `${monthIndex}`;
+
+      let day = d.day.toString().length === 1 ? `0${d.day}` : `${d.day}`;
+
+      return `${d.year}-${month}-${day}`;
+    }
   }
 }

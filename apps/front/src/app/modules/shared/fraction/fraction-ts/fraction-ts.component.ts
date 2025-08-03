@@ -517,61 +517,6 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
   commonI18n: DatePickerI18n = COMMON_I18N;
 
-  extraI18n = {
-    formatDate: (d: DatePickerDate) => {
-      if (this.fraction.tsMomentUnit === 'year') {
-        return `${d.year}`;
-      } else if (this.fraction.tsMomentUnit === 'quarter') {
-        let monthIndex = d.month + 1;
-        let month =
-          monthIndex.toString().length === 1
-            ? `0${monthIndex}`
-            : `${monthIndex}`;
-
-        let quarter =
-          [1, 2, 3].indexOf(Number(month)) > -1
-            ? '1'
-            : [4, 5, 6].indexOf(Number(month)) > -1
-              ? '2'
-              : [7, 8, 9].indexOf(Number(month)) > -1
-                ? '3'
-                : [10, 11, 12].indexOf(Number(month)) > -1
-                  ? '4'
-                  : undefined;
-
-        return `${d.year}-Q${quarter}`;
-      } else if (this.fraction.tsMomentUnit === 'month') {
-        let monthIndex = d.month + 1;
-        let month =
-          monthIndex.toString().length === 1
-            ? `0${monthIndex}`
-            : `${monthIndex}`;
-
-        return `${d.year}-${month}`;
-      } else if (this.fraction.tsMomentUnit === 'week') {
-        let monthIndex = d.month + 1;
-        let month =
-          monthIndex.toString().length === 1
-            ? `0${monthIndex}`
-            : `${monthIndex}`;
-
-        let day = d.day.toString().length === 1 ? `0${d.day}` : `${d.day}`;
-
-        return `${d.year}-${month}-${day}-WK`;
-      } else {
-        let monthIndex = d.month + 1;
-        let month =
-          monthIndex.toString().length === 1
-            ? `0${monthIndex}`
-            : `${monthIndex}`;
-
-        let day = d.day.toString().length === 1 ? `0${d.day}` : `${d.day}`;
-
-        return `${d.year}-${month}-${day}`;
-      }
-    }
-  };
-
   onYearDateI18n = Object.assign({}, this.commonI18n, {
     formatDate: (d: DatePickerDate) => `${d.year}`
   });
@@ -618,13 +563,55 @@ export class FractionTsComponent implements OnInit, OnChanges {
   onDayDateI18n = Object.assign({}, this.commonI18n);
   onHourDateI18n = Object.assign({}, this.commonI18n);
   onMinuteDateI18n = Object.assign({}, this.commonI18n);
-  beforeDateI18n = Object.assign({}, this.commonI18n, this.extraI18n);
-  throughI18n = Object.assign({}, this.commonI18n, this.extraI18n);
-  afterDateI18n = Object.assign({}, this.commonI18n, this.extraI18n);
-  startingI18n = Object.assign({}, this.commonI18n, this.extraI18n);
-  beginForI18n = Object.assign({}, this.commonI18n, this.extraI18n);
-  betweenFromDateI18n = Object.assign({}, this.commonI18n, this.extraI18n);
-  betweenToDateI18n = Object.assign({}, this.commonI18n, this.extraI18n);
+  beforeDateI18n = Object.assign({}, this.commonI18n, {
+    formatDate: (d: DatePickerDate) =>
+      this.timeService.momentFormatDate({
+        d: d,
+        momentUnit: this.fraction.tsMomentUnit
+      })
+  });
+  throughI18n = Object.assign({}, this.commonI18n, {
+    formatDate: (d: DatePickerDate) =>
+      this.timeService.momentFormatDate({
+        d: d,
+        momentUnit: this.fraction.tsMomentUnit
+      })
+  });
+  afterDateI18n = Object.assign({}, this.commonI18n, {
+    formatDate: (d: DatePickerDate) =>
+      this.timeService.momentFormatDate({
+        d: d,
+        momentUnit: this.fraction.tsMomentUnit
+      })
+  });
+  startingI18n = Object.assign({}, this.commonI18n, {
+    formatDate: (d: DatePickerDate) =>
+      this.timeService.momentFormatDate({
+        d: d,
+        momentUnit: this.fraction.tsMomentUnit
+      })
+  });
+  beginForI18n = Object.assign({}, this.commonI18n, {
+    formatDate: (d: DatePickerDate) =>
+      this.timeService.momentFormatDate({
+        d: d,
+        momentUnit: this.fraction.tsMomentUnit
+      })
+  });
+  betweenFromDateI18n = Object.assign({}, this.commonI18n, {
+    formatDate: (d: DatePickerDate) =>
+      this.timeService.momentFormatDate({
+        d: d,
+        momentUnit: this.fraction.tsFromMomentUnit
+      })
+  });
+  betweenToDateI18n = Object.assign({}, this.commonI18n, {
+    formatDate: (d: DatePickerDate) =>
+      this.timeService.momentFormatDate({
+        d: d,
+        momentUnit: this.fraction.tsToMomentUnit
+      })
+  });
 
   dateStr: string;
   dateToStr: string;
@@ -1917,9 +1904,9 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.emitFractionUpdate();
   }
 
-  fromMomentChange() {}
+  betweenFromMomentChange() {}
 
-  toMomentChange() {}
+  betweenToMomentChange() {}
 
   onUnitChange() {
     if (this.fraction.tsMomentUnit === 'week') {
@@ -1929,6 +1916,50 @@ export class FractionTsComponent implements OnInit, OnChanges {
     } else if (this.fraction.tsMomentUnit === 'quarter') {
       this.dateStr = this.timeService.getQuarterStartDate({
         dateValue: this.dateStr
+      });
+    }
+
+    this.fraction = this.timeService.buildFraction({
+      fraction: this.fraction,
+      dateStr: this.dateStr,
+      timeStr: this.timeStr,
+      dateToStr: this.dateToStr,
+      timeToStr: this.timeToStr
+    });
+
+    this.emitFractionUpdate();
+  }
+
+  betweenFromUnitChange() {
+    if (this.fraction.tsFromMomentUnit === 'week') {
+      this.dateStr = this.timeService.getWeekStartDate({
+        dateValue: this.dateStr
+      });
+    } else if (this.fraction.tsFromMomentUnit === 'quarter') {
+      this.dateStr = this.timeService.getQuarterStartDate({
+        dateValue: this.dateStr
+      });
+    }
+
+    this.fraction = this.timeService.buildFraction({
+      fraction: this.fraction,
+      dateStr: this.dateStr,
+      timeStr: this.timeStr,
+      dateToStr: this.dateToStr,
+      timeToStr: this.timeToStr
+    });
+
+    this.emitFractionUpdate();
+  }
+
+  betweenToUnitChange() {
+    if (this.fraction.tsToMomentUnit === 'week') {
+      this.dateToStr = this.timeService.getWeekStartDate({
+        dateValue: this.dateToStr
+      });
+    } else if (this.fraction.tsToMomentUnit === 'quarter') {
+      this.dateToStr = this.timeService.getQuarterStartDate({
+        dateValue: this.dateToStr
       });
     }
 

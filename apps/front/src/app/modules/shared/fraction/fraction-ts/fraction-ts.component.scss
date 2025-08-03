@@ -6,6 +6,10 @@ vaadin-date-picker.week-width {
   --vaadin-field-default-width: 195px;
 }
 
+// vaadin-date-picker.week-width-between {
+//   --vaadin-field-default-width: 185px;
+// }
+
 vaadin-date-picker::part(input-field),
 vaadin-date-picker::part(text-field),
 vaadin-date-picker::part(toggle-button) {
