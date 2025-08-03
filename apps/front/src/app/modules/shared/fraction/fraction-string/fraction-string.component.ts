@@ -49,6 +49,8 @@ export class FractionStringComponent implements OnInit, OnDestroy {
   }
 
   defaultStringValue = 'abc';
+
+  fractionOperatorEnum = common.FractionOperatorEnum;
   fractionTypeEnum = common.FractionTypeEnum;
   fieldClassEnum = common.FieldClassEnum;
 

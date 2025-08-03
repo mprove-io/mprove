@@ -35,6 +35,7 @@ export class FractionQuarterOfYearComponent {
     this.fractionQuarterOfYearValueSelectElement?.close();
   }
 
+  fractionOperatorEnum = common.FractionOperatorEnum;
   fractionTypeEnum = common.FractionTypeEnum;
 
   @Input() isDisabled: boolean;

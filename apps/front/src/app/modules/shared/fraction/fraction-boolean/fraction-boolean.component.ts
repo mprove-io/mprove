@@ -33,6 +33,7 @@ export class FractionBooleanComponent {
     this.fractionBooleanValueSelectElement?.close();
   }
 
+  fractionOperatorEnum = common.FractionOperatorEnum;
   fractionTypeEnum = common.FractionTypeEnum;
 
   @Input() isDisabled: boolean;

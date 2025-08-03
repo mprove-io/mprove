@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TemporalUnit } from '@malloydata/malloy-filter';
+import { TemporalUnit, WeekdayMoment } from '@malloydata/malloy-filter';
 import { MALLOY_FILTER_ANY } from '~common/constants/top';
 import { common } from '~front/barrels/common';
 import { StructQuery } from '../queries/struct.query';
@@ -170,9 +170,8 @@ export class TimeService {
   getMomentStr(item: {
     dateValue: string;
     timeValue: string;
-    momentUnit: TemporalUnit;
+    momentUnit: TemporalUnit | WeekdayMoment['moment'];
     momentType: common.FractionTsMomentTypeEnum;
-    momentPartValue: string;
     momentAgoFromNowQuantity: number;
     timestampValue: string;
   }) {
@@ -181,7 +180,6 @@ export class TimeService {
       timeValue,
       momentUnit,
       momentType,
-      momentPartValue,
       momentAgoFromNowQuantity,
       timestampValue
     } = item;
@@ -245,20 +243,14 @@ export class TimeService {
                     ? `last ${momentUnit}`
                     : momentType === common.FractionTsMomentTypeEnum.Next
                       ? `next ${momentUnit}`
-                      : momentType ===
-                          common.FractionTsMomentTypeEnum.LastDayOfWeek
-                        ? `last ${momentPartValue}`
-                        : momentType ===
-                            common.FractionTsMomentTypeEnum.NextDayOfWeek
-                          ? `next ${momentPartValue}`
-                          : momentType === common.FractionTsMomentTypeEnum.Now
-                            ? 'now'
-                            : momentType === common.FractionTsMomentTypeEnum.Ago
-                              ? `${momentAgoFromNowQuantity} ${momentUnit}s ago`
-                              : momentType ===
-                                  common.FractionTsMomentTypeEnum.FromNow
-                                ? `${momentAgoFromNowQuantity} ${momentUnit}s from now`
-                                : undefined;
+                      : momentType === common.FractionTsMomentTypeEnum.Now
+                        ? 'now'
+                        : momentType === common.FractionTsMomentTypeEnum.Ago
+                          ? `${momentAgoFromNowQuantity} ${momentUnit}s ago`
+                          : momentType ===
+                              common.FractionTsMomentTypeEnum.FromNow
+                            ? `${momentAgoFromNowQuantity} ${momentUnit}s from now`
+                            : undefined;
 
     return momentStr;
   }
@@ -476,7 +468,6 @@ export class TimeService {
       timeValue: undefined,
       momentUnit: fraction.tsMomentUnit,
       momentType: fraction.tsMomentType,
-      momentPartValue: fraction.tsMomentPartValue,
       momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
       timestampValue: fraction.tsTimestampValue
     });
@@ -494,8 +485,7 @@ export class TimeService {
       tsMoment: undefined,
       tsMomentType: fraction.tsMomentType,
       tsMomentUnit: fraction.tsMomentUnit,
-      tsMomentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
-      tsMomentPartValue: fraction.tsMomentPartValue
+      tsMomentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity
     };
 
     return newFraction;
@@ -512,7 +502,6 @@ export class TimeService {
       timeValue: undefined,
       momentUnit: fraction.tsMomentUnit,
       momentType: fraction.tsMomentType,
-      momentPartValue: fraction.tsMomentPartValue,
       momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
       timestampValue: fraction.tsTimestampValue
     });
@@ -547,7 +536,6 @@ export class TimeService {
       timeValue: undefined,
       momentUnit: fraction.tsMomentUnit,
       momentType: fraction.tsMomentType,
-      momentPartValue: fraction.tsMomentPartValue,
       momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
       timestampValue: fraction.tsTimestampValue
     });
@@ -581,7 +569,6 @@ export class TimeService {
       timeValue: undefined,
       momentUnit: fraction.tsMomentUnit,
       momentType: fraction.tsMomentType,
-      momentPartValue: fraction.tsMomentPartValue,
       momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
       timestampValue: fraction.tsTimestampValue
     });
@@ -615,7 +602,6 @@ export class TimeService {
       timeValue: undefined,
       momentUnit: fraction.tsMomentUnit,
       momentType: fraction.tsMomentType,
-      momentPartValue: fraction.tsMomentPartValue,
       momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
       timestampValue: fraction.tsTimestampValue
     });
@@ -666,7 +652,6 @@ export class TimeService {
       timeValue: timeValue,
       momentUnit: fraction.tsMomentUnit,
       momentType: fraction.tsMomentType,
-      momentPartValue: fraction.tsMomentPartValue,
       momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
       timestampValue: fraction.tsTimestampValue
     });
@@ -690,8 +675,7 @@ export class TimeService {
       tsMoment: undefined,
       tsMomentType: fraction.tsMomentType,
       tsMomentUnit: fraction.tsMomentUnit,
-      tsMomentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
-      tsMomentPartValue: fraction.tsMomentPartValue
+      tsMomentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity
     };
 
     return newFraction;
@@ -709,7 +693,6 @@ export class TimeService {
       timeValue: timeValue,
       momentUnit: fraction.tsMomentUnit,
       momentType: fraction.tsMomentType,
-      momentPartValue: fraction.tsMomentPartValue,
       momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
       timestampValue: fraction.tsTimestampValue
     });
@@ -733,8 +716,7 @@ export class TimeService {
       tsMoment: undefined,
       tsMomentType: fraction.tsMomentType,
       tsMomentUnit: fraction.tsMomentUnit,
-      tsMomentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
-      tsMomentPartValue: fraction.tsMomentPartValue
+      tsMomentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity
     };
 
     return newFraction;
@@ -752,7 +734,6 @@ export class TimeService {
       timeValue: timeValue,
       momentUnit: fraction.tsMomentUnit,
       momentType: fraction.tsMomentType,
-      momentPartValue: fraction.tsMomentPartValue,
       momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
       timestampValue: fraction.tsTimestampValue
     });
@@ -777,7 +758,6 @@ export class TimeService {
       tsMomentType: fraction.tsMomentType,
       tsMomentUnit: fraction.tsMomentUnit,
       tsMomentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
-      tsMomentPartValue: fraction.tsMomentPartValue,
       tsForValue: fraction.tsForValue,
       tsForUnit: fraction.tsForUnit
     };
@@ -799,7 +779,6 @@ export class TimeService {
       timeValue: timeValue,
       momentUnit: fraction.tsFromMomentUnit,
       momentType: fraction.tsFromMomentType,
-      momentPartValue: fraction.tsFromMomentPartValue,
       momentAgoFromNowQuantity: fraction.tsFromMomentAgoFromNowQuantity,
       timestampValue: fraction.tsFromTimestampValue
     });
@@ -809,7 +788,6 @@ export class TimeService {
       timeValue: timeToValue,
       momentUnit: fraction.tsToMomentUnit,
       momentType: fraction.tsToMomentType,
-      momentPartValue: fraction.tsToMomentPartValue,
       momentAgoFromNowQuantity: fraction.tsToMomentAgoFromNowQuantity,
       timestampValue: fraction.tsToTimestampValue
     });
@@ -866,7 +844,6 @@ export class TimeService {
       timeValue: timeValue,
       momentUnit: fraction.tsMomentUnit,
       momentType: fraction.tsMomentType,
-      momentPartValue: fraction.tsMomentPartValue,
       momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
       timestampValue: fraction.tsTimestampValue
     });
@@ -890,8 +867,7 @@ export class TimeService {
       tsMoment: undefined,
       tsMomentType: fraction.tsMomentType,
       tsMomentUnit: fraction.tsMomentUnit,
-      tsMomentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
-      tsMomentPartValue: fraction.tsMomentPartValue
+      tsMomentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity
     };
 
     return newFraction;
@@ -909,7 +885,6 @@ export class TimeService {
       timeValue: timeValue,
       momentUnit: fraction.tsMomentUnit,
       momentType: fraction.tsMomentType,
-      momentPartValue: fraction.tsMomentPartValue,
       momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
       timestampValue: fraction.tsTimestampValue
     });
@@ -933,8 +908,7 @@ export class TimeService {
           : undefined,
       tsMomentType: fraction.tsMomentType,
       tsMomentUnit: fraction.tsMomentUnit,
-      tsMomentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
-      tsMomentPartValue: fraction.tsMomentPartValue
+      tsMomentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity
     };
 
     return newFraction;
@@ -952,7 +926,6 @@ export class TimeService {
       timeValue: timeValue,
       momentUnit: fraction.tsMomentUnit,
       momentType: fraction.tsMomentType,
-      momentPartValue: fraction.tsMomentPartValue,
       momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
       timestampValue: fraction.tsTimestampValue
     });
@@ -989,7 +962,6 @@ export class TimeService {
       timeValue: timeValue,
       momentUnit: fraction.tsMomentUnit,
       momentType: fraction.tsMomentType,
-      momentPartValue: fraction.tsMomentPartValue,
       momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
       timestampValue: fraction.tsTimestampValue
     });
@@ -1025,7 +997,6 @@ export class TimeService {
       timeValue: undefined,
       momentUnit: fraction.tsMomentUnit,
       momentType: fraction.tsMomentType,
-      momentPartValue: fraction.tsMomentPartValue,
       momentAgoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
       timestampValue: fraction.tsTimestampValue
     });

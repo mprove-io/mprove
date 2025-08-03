@@ -1,4 +1,4 @@
-import { Moment, TemporalUnit } from '@malloydata/malloy-filter';
+import { Moment, TemporalUnit, WeekdayMoment } from '@malloydata/malloy-filter';
 import { Type } from 'class-transformer';
 import {
   IsEnum,
@@ -208,8 +208,8 @@ export class Fraction {
   tsMomentType?: enums.FractionTsMomentTypeEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsTemporalUnitEnum)
-  tsMomentUnit?: TemporalUnit;
+  @IsEnum(enums.FractionTsMixUnitEnum)
+  tsMomentUnit?: TemporalUnit | WeekdayMoment['moment'];
 
   @IsOptional()
   @IsString()
@@ -218,10 +218,6 @@ export class Fraction {
   @IsOptional()
   @IsNumber()
   tsMomentAgoFromNowQuantity?: number;
-
-  @IsOptional()
-  @IsString()
-  tsMomentPartValue?: string;
 
   //
 
@@ -233,8 +229,8 @@ export class Fraction {
   tsFromMomentType?: enums.FractionTsMomentTypeEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsTemporalUnitEnum)
-  tsFromMomentUnit?: TemporalUnit;
+  @IsEnum(enums.FractionTsMixUnitEnum)
+  tsFromMomentUnit?: TemporalUnit | WeekdayMoment['moment'];
 
   @IsOptional()
   @IsString()
@@ -258,8 +254,8 @@ export class Fraction {
   tsToMomentType?: enums.FractionTsMomentTypeEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsTemporalUnitEnum)
-  tsToMomentUnit?: TemporalUnit;
+  @IsEnum(enums.FractionTsMixUnitEnum)
+  tsToMomentUnit?: TemporalUnit | WeekdayMoment['moment'];
 
   @IsOptional()
   @IsString()

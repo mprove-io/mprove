@@ -35,6 +35,7 @@ export class FractionDayOfWeekComponent {
     this.fractionDayOfWeekValueSelectElement?.close();
   }
 
+  fractionOperatorEnum = common.FractionOperatorEnum;
   fractionTypeEnum = common.FractionTypeEnum;
 
   @Input() isDisabled: boolean;

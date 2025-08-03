@@ -52,7 +52,12 @@
         </ng-template>
 
         <ng-template ng-option-tmp let-item="item">
-          <div class="flex flex-row">
+          <div
+            class="flex flex-row"
+            [ngClass]="{
+              'text-s400': item.operator === fractionOperatorEnum.And
+            }"
+          >
             <div class="ml-1" *ngIf="isMetrics === false"
               >{{ item.operator | uppercase }} -</div
             >
@@ -88,7 +93,7 @@
         #fractionTsMomentTypeSelect
         [fixNgSelectBottom]="fractionTsMomentTypeSelect"
         data-cy="fractionTsMomentTypeSelect"
-        class="popup-55 w-[140px]"
+        class="fraction-ts-moment-select w-[140px]"
         [items]="fractionTsMomentTypesList"
         [clearable]="false"
         [searchable]="false"
@@ -162,74 +167,23 @@
 
   <div
     *ngIf="
-      [
-        fractionTypeEnum.TsIsOnYear,
-        fractionTypeEnum.TsIsOnQuarter,
-        fractionTypeEnum.TsIsOnMonth,
-        fractionTypeEnum.TsIsOnWeek,
-        fractionTypeEnum.TsIsOnDay,
-        fractionTypeEnum.TsIsOnHour,
-        fractionTypeEnum.TsIsOnMinute,
+      ([
         fractionTypeEnum.TsIsBeforeDate,
         fractionTypeEnum.TsIsThrough,
         fractionTypeEnum.TsIsAfterDate,
         fractionTypeEnum.TsIsStarting,
         fractionTypeEnum.TsIsBeginFor
       ].indexOf(fraction.type) > -1 &&
-      [
-        fractionTsMomentTypeEnum.LastDayOfWeek,
-        fractionTsMomentTypeEnum.NextDayOfWeek
-      ].indexOf(fraction.tsMomentType) > -1
-    "
-    tp="Turn off formula to activate control"
-    [tpIsEnabled]="isDisabled === true"
-  >
-    <ng-select
-      #tsMomentDayOfWeekSelect
-      [fixNgSelectBottom]="tsMomentDayOfWeekSelect"
-      data-cy="tsMomentDayOfWeekSelect"
-      class="popup-55 w-[160px]"
-      [items]="fractionTsDayOfWeekLcList"
-      [clearable]="false"
-      [searchable]="false"
-      [disabled]="isDisabled === true"
-      [(ngModel)]="fraction.tsMomentPartValue"
-      (change)="dayOfWeekChange()"
-      (keyup.esc)="
-        $event.stopImmediatePropagation(); tsMomentDayOfWeekSelect.blur()
-      "
-      (keyup.enter)="
-        $event.stopImmediatePropagation(); tsMomentDayOfWeekSelect.blur()
-      "
-      appendTo="body"
-      bindLabel="label"
-      bindValue="value"
-    >
-      <ng-template ng-label-tmp let-item="item">
-        <div class="ml-1 truncate">{{ item.label }}</div>
-      </ng-template>
-
-      <ng-template ng-option-tmp let-item="item">
-        <div class="ml-1 truncate">{{ item.label }}</div>
-      </ng-template>
-    </ng-select>
-  </div>
-
-  <div
-    *ngIf="
-      [
-        fractionTypeEnum.TsIsBeforeDate,
-        fractionTypeEnum.TsIsThrough,
-        fractionTypeEnum.TsIsAfterDate,
-        fractionTypeEnum.TsIsStarting,
-        fractionTypeEnum.TsIsBeginFor
-      ].indexOf(fraction.type) > -1 &&
-      (fraction.tsMomentType === fractionTsMomentTypeEnum.Literal ||
-        [
-          fractionTsMomentTypeEnum.This,
-          fractionTsMomentTypeEnum.Last,
-          fractionTsMomentTypeEnum.Next
-        ].indexOf(fraction.tsMomentType) > -1)
+        (fraction.tsMomentType === fractionTsMomentTypeEnum.Literal ||
+          [
+            fractionTsMomentTypeEnum.This,
+            fractionTsMomentTypeEnum.Last,
+            fractionTsMomentTypeEnum.Next
+          ].indexOf(fraction.tsMomentType) > -1)) ||
+      (fraction.type === fractionTypeEnum.TsIsOnDay &&
+        [fractionTsMomentTypeEnum.Last, fractionTsMomentTypeEnum.Next].indexOf(
+          fraction.tsMomentType
+        ) > -1)
     "
     tp="Turn off formula to activate control"
     [tpIsEnabled]="isDisabled === true"
@@ -238,8 +192,18 @@
       #tsMomentOnUnitSelect
       [fixNgSelectBottom]="tsMomentOnUnitSelect"
       data-cy="tsMomentOnUnitSelect"
-      class="popup-55 w-32"
-      [items]="fractionTsOnUnitsList"
+      class="fraction-mix-unit-select w-[180px]"
+      [items]="
+        fraction.type === fractionTypeEnum.TsIsOnDay &&
+        [fractionTsMomentTypeEnum.Last, fractionTsMomentTypeEnum.Next].indexOf(
+          fraction.tsMomentType
+        ) > -1
+          ? fractionTsOnDayUnitsList
+          : fraction.tsMomentType === fractionTsMomentTypeEnum.Literal ||
+              fraction.tsMomentType === fractionTsMomentTypeEnum.This
+            ? fractionTsMixUnitsTempList
+            : fractionTsOnUnitsList
+      "
       [clearable]="false"
       [searchable]="false"
       [disabled]="isDisabled === true"

@@ -35,6 +35,7 @@ export class FractionMonthNameComponent {
     this.fractionMonthNameValueSelectElement?.close();
   }
 
+  fractionOperatorEnum = common.FractionOperatorEnum;
   fractionTypeEnum = common.FractionTypeEnum;
 
   @Input() isDisabled: boolean;

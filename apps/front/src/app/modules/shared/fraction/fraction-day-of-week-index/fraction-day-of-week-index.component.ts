@@ -32,6 +32,7 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
 
   defaultDayOfWeekIndexValues = '1, 2, 3';
 
+  fractionOperatorEnum = common.FractionOperatorEnum;
   fractionTypeEnum = common.FractionTypeEnum;
 
   @Input() isDisabled: boolean;

@@ -61,9 +61,9 @@ export function getMalloyMomentStr(moment: Moment) {
                           'sunday'
                         ].includes(moment.moment) === true
                       ? (moment as WeekdayMoment).which === 'last'
-                        ? common.FractionTsMomentTypeEnum.LastDayOfWeek
+                        ? common.FractionTsMomentTypeEnum.Last
                         : (moment as WeekdayMoment).which === 'next'
-                          ? common.FractionTsMomentTypeEnum.NextDayOfWeek
+                          ? common.FractionTsMomentTypeEnum.Next
                           : undefined
                       : moment.moment === 'ago'
                         ? common.FractionTsMomentTypeEnum.Ago

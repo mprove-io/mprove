@@ -31,10 +31,9 @@ import { ValidationService } from '~front/app/services/validation.service';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 import {
-  FractionTsDayOfWeekLcItem,
   FractionTsLastCompleteOptionItem,
+  FractionTsMixUnitItem,
   FractionTsMomentTypesItem,
-  FractionTsTemporalUnitItem,
   FractionTsUnitItem,
   FractionTypeItem
 } from '../fraction.component';
@@ -95,6 +94,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.tsNextUnitsSelectElement?.close();
   }
 
+  fractionOperatorEnum = common.FractionOperatorEnum;
   fractionTypeEnum = common.FractionTypeEnum;
   fractionTsMomentTypeEnum = common.FractionTsMomentTypeEnum;
 
@@ -345,14 +345,6 @@ export class FractionTsComponent implements OnInit, OnChanges {
       value: common.FractionTsMomentTypeEnum.Tomorrow
     },
     {
-      label: 'DOW last',
-      value: common.FractionTsMomentTypeEnum.LastDayOfWeek
-    },
-    {
-      label: 'DOW next',
-      value: common.FractionTsMomentTypeEnum.NextDayOfWeek
-    },
-    {
       label: 'this',
       value: common.FractionTsMomentTypeEnum.This
     },
@@ -382,36 +374,100 @@ export class FractionTsComponent implements OnInit, OnChanges {
     }
   ];
 
-  fractionTsOnUnitsList: FractionTsTemporalUnitItem[] = [];
-  fractionTsAgoFromNowUnitsList: FractionTsTemporalUnitItem[] = [];
-  fractionTsTempUnitsFullList: FractionTsTemporalUnitItem[] = [
+  fractionTsOnUnitsList: FractionTsMixUnitItem[] = [];
+  fractionTsAgoFromNowUnitsList: FractionTsMixUnitItem[] = [];
+  fractionTsOnDayUnitsList: FractionTsMixUnitItem[] = [];
+
+  fractionTsMixUnitsTempList: FractionTsMixUnitItem[] = [
     {
       label: 'Day',
-      value: 'day'
+      value: common.FractionTsMixUnitEnum.Day
     },
     {
       label: 'Week',
-      value: 'week'
+      value: common.FractionTsMixUnitEnum.Week
     },
     {
       label: 'Month',
-      value: 'month'
+      value: common.FractionTsMixUnitEnum.Month
     },
     {
       label: 'Quarter',
-      value: 'quarter'
+      value: common.FractionTsMixUnitEnum.Quarter
     },
     {
       label: 'Year',
-      value: 'year'
+      value: common.FractionTsMixUnitEnum.Year
     },
     {
       label: 'Hour',
-      value: 'hour'
+      value: common.FractionTsMixUnitEnum.Hour
     },
     {
       label: 'Minute',
-      value: 'minute'
+      value: common.FractionTsMixUnitEnum.Minute
+    }
+  ];
+
+  fractionTsMixUnitsDayOfWeekSundayList: FractionTsMixUnitItem[] = [
+    {
+      label: 'Sunday',
+      value: common.FractionTsMixUnitEnum.Sunday
+    },
+    {
+      label: 'Monday',
+      value: common.FractionTsMixUnitEnum.Monday
+    },
+    {
+      label: 'Tuesday',
+      value: common.FractionTsMixUnitEnum.Tuesday
+    },
+    {
+      label: 'Wednesday',
+      value: common.FractionTsMixUnitEnum.Wednesday
+    },
+    {
+      label: 'Thursday',
+      value: common.FractionTsMixUnitEnum.Thursday
+    },
+    {
+      label: 'Friday',
+      value: common.FractionTsMixUnitEnum.Friday
+    },
+    {
+      label: 'Saturday',
+      value: common.FractionTsMixUnitEnum.Saturday
+    }
+  ];
+
+  fractionTsMixUnitsDayOfWeekMondayList: FractionTsMixUnitItem[] = [
+    {
+      label: 'Monday',
+      value: common.FractionTsMixUnitEnum.Monday
+    },
+    {
+      label: 'Tuesday',
+      value: common.FractionTsMixUnitEnum.Tuesday
+    },
+    {
+      label: 'Wednesday',
+      value: common.FractionTsMixUnitEnum.Wednesday
+    },
+    {
+      label: 'Thursday',
+      value: common.FractionTsMixUnitEnum.Thursday
+    },
+    {
+      label: 'Friday',
+      value: common.FractionTsMixUnitEnum.Friday
+    },
+    {
+      label: 'Saturday',
+      value: common.FractionTsMixUnitEnum.Saturday
+    },
+    {
+      label: 'Sunday',
+      value: common.FractionTsMixUnitEnum.Sunday
     }
   ];
 
@@ -448,46 +504,11 @@ export class FractionTsComponent implements OnInit, OnChanges {
     }
   ];
 
-  fractionTsDayOfWeekLcList: FractionTsDayOfWeekLcItem[] = [
-    {
-      label: 'Monday',
-      value: common.FractionDayOfWeekLcEnum.Monday
-    },
-    {
-      label: 'Tuesday',
-      value: common.FractionDayOfWeekLcEnum.Tuesday
-    },
-    {
-      label: 'Wednesday',
-      value: common.FractionDayOfWeekLcEnum.Wednesday
-    },
-    {
-      label: 'Thursday',
-      value: common.FractionDayOfWeekLcEnum.Thursday
-    },
-    {
-      label: 'Friday',
-      value: common.FractionDayOfWeekLcEnum.Friday
-    },
-    {
-      label: 'Saturday',
-      value: common.FractionDayOfWeekLcEnum.Saturday
-    },
-    {
-      label: 'Sunday',
-      value: common.FractionDayOfWeekLcEnum.Sunday
-    }
-  ];
-
   fractionTsLastCompleteOptionsList: FractionTsLastCompleteOptionItem[] = [
     {
       label: 'completed with current',
       value: common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent
     },
-    // {
-    //   label: 'completed plus current',
-    //   value: common.FractionTsLastCompleteOptionEnum.CompletePlusCurrent
-    // },
     {
       label: 'completed',
       value: common.FractionTsLastCompleteOptionEnum.Complete
@@ -647,8 +668,27 @@ export class FractionTsComponent implements OnInit, OnChanges {
               ].indexOf(x.value) > -1
           );
 
-    this.fractionTsOnUnitsList = this.fractionTsTempUnitsFullList;
-    this.fractionTsAgoFromNowUnitsList = this.fractionTsTempUnitsFullList;
+    let structState = this.structQuery.getValue();
+
+    let dowMixList =
+      structState.weekStart === common.ProjectWeekStartEnum.Monday
+        ? this.fractionTsMixUnitsDayOfWeekMondayList
+        : this.fractionTsMixUnitsDayOfWeekSundayList;
+
+    this.fractionTsOnUnitsList = [
+      ...this.fractionTsMixUnitsTempList,
+      ...dowMixList
+    ];
+
+    this.fractionTsAgoFromNowUnitsList = this.fractionTsMixUnitsTempList;
+
+    this.fractionTsOnDayUnitsList = [
+      ...this.fractionTsMixUnitsTempList.filter(
+        x => x.value === common.FractionTsMixUnitEnum.Day
+      ),
+      ...dowMixList
+    ];
+
     this.fractionTsLastNextUnitsList = this.fractionTsUnitsFullList;
     this.fractionTsForUnitsList = this.fractionTsUnitsFullList;
 
@@ -659,8 +699,6 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.buildLastValueForm();
     this.buildNextValueForm();
     this.buildAgoFromNowQuantityForm();
-
-    let structState = this.structQuery.getValue();
 
     let firstDayOfWeek =
       structState.weekStart === common.ProjectWeekStartEnum.Monday ? 1 : 0;
@@ -715,8 +753,6 @@ export class FractionTsComponent implements OnInit, OnChanges {
                 common.FractionTsMomentTypeEnum.Today,
                 common.FractionTsMomentTypeEnum.Yesterday,
                 common.FractionTsMomentTypeEnum.Tomorrow,
-                common.FractionTsMomentTypeEnum.LastDayOfWeek,
-                common.FractionTsMomentTypeEnum.NextDayOfWeek,
                 common.FractionTsMomentTypeEnum.This,
                 common.FractionTsMomentTypeEnum.Last,
                 common.FractionTsMomentTypeEnum.Next,
@@ -757,8 +793,6 @@ export class FractionTsComponent implements OnInit, OnChanges {
                 common.FractionTsMomentTypeEnum.This,
                 common.FractionTsMomentTypeEnum.Last,
                 common.FractionTsMomentTypeEnum.Next,
-                common.FractionTsMomentTypeEnum.LastDayOfWeek,
-                common.FractionTsMomentTypeEnum.NextDayOfWeek,
                 common.FractionTsMomentTypeEnum.Ago,
                 common.FractionTsMomentTypeEnum.FromNow,
                 common.FractionTsMomentTypeEnum.Now,
@@ -1835,25 +1869,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
       this.fraction.tsMomentType === common.FractionTsMomentTypeEnum.Now ||
       this.fraction.tsMomentType === common.FractionTsMomentTypeEnum.Timestamp
         ? undefined
-        : (this.fraction.tsMomentUnit ?? 'day');
-
-    this.fraction.tsMomentPartValue =
-      [
-        common.FractionTsMomentTypeEnum.LastDayOfWeek,
-        common.FractionTsMomentTypeEnum.NextDayOfWeek
-      ].indexOf(this.fraction.tsMomentType) > -1
-        ? [
-            common.FractionDayOfWeekLcEnum.Sunday.toString(),
-            common.FractionDayOfWeekLcEnum.Monday.toString(),
-            common.FractionDayOfWeekLcEnum.Tuesday.toString(),
-            common.FractionDayOfWeekLcEnum.Wednesday.toString(),
-            common.FractionDayOfWeekLcEnum.Thursday.toString(),
-            common.FractionDayOfWeekLcEnum.Friday.toString(),
-            common.FractionDayOfWeekLcEnum.Saturday.toString()
-          ].indexOf(this.fraction.tsMomentPartValue) > -1
-          ? this.fraction.tsMomentPartValue
-          : common.FractionDayOfWeekLcEnum.Monday
-        : undefined;
+        : 'day';
 
     if (
       [
@@ -1916,18 +1932,6 @@ export class FractionTsComponent implements OnInit, OnChanges {
       });
     }
 
-    this.fraction = this.timeService.buildFraction({
-      fraction: this.fraction,
-      dateStr: this.dateStr,
-      timeStr: this.timeStr,
-      dateToStr: this.dateToStr,
-      timeToStr: this.timeToStr
-    });
-
-    this.emitFractionUpdate();
-  }
-
-  dayOfWeekChange() {
     this.fraction = this.timeService.buildFraction({
       fraction: this.fraction,
       dateStr: this.dateStr,

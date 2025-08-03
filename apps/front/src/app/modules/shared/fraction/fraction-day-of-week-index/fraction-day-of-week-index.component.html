@@ -7,10 +7,7 @@
       #fractionDayOfWeekIndexTypeSelect
       [fixNgSelectBottom]="fractionDayOfWeekIndexTypeSelect"
       data-cy="fractionDayOfWeekIndexTypeSelect"
-      class="popup-55 w-[220px]"
-      [ngClass]="{
-        'cursor-default': isDisabled === true
-      }"
+      class="fraction-type-select w-[220px]"
       [items]="fractionDayOfWeekIndexTypesList"
       [clearable]="false"
       [searchable]="false"
@@ -34,7 +31,12 @@
       </ng-template>
 
       <ng-template ng-option-tmp let-item="item">
-        <div class="flex flex-row">
+        <div
+          class="flex flex-row"
+          [ngClass]="{
+            'text-s400': item.operator === fractionOperatorEnum.And
+          }"
+        >
           <div class="ml-1">{{ item.operator | uppercase }} -</div>
           <div class="ml-1 truncate">{{ item.label }}</div>
         </div>

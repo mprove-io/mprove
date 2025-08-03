@@ -42,6 +42,7 @@ export class FractionNumberComponent implements OnInit {
   defaultNumberValue1 = 100;
   defaultNumberValue2 = 200;
 
+  fractionOperatorEnum = common.FractionOperatorEnum;
   fractionTypeEnum = common.FractionTypeEnum;
 
   @Input() isDisabled: boolean;

@@ -14,6 +14,11 @@ export class FractionTsMomentTypesItem {
   value: common.FractionTsMomentTypeEnum;
 }
 
+export class FractionTsMixUnitItem {
+  label: string;
+  value: common.FractionTsMixUnitEnum;
+}
+
 export class FractionTsUnitItem {
   label: string;
   value: common.FractionTsUnitEnum;

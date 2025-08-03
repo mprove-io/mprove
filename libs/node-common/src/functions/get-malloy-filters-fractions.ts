@@ -738,14 +738,24 @@ export function getMalloyFiltersFractions(item: {
                     : common.FractionTypeEnum.TsIsStarting,
                 tsMomentType: m.momentType,
                 tsMoment: before,
-                tsMomentPartValue: before.moment,
                 tsMomentAgoFromNowQuantity: common.isDefined(
                   (before as AgoMoment | FromNowMoment).n
                 )
                   ? Number((before as AgoMoment | FromNowMoment).n)
                   : undefined,
-                tsMomentUnit: (before as UnitMoment | AgoMoment | FromNowMoment)
-                  .units,
+                tsMomentUnit:
+                  [
+                    'monday',
+                    'tuesday',
+                    'wednesday',
+                    'thursday',
+                    'friday',
+                    'saturday',
+                    'sunday'
+                  ].includes(before.moment) === true &&
+                  ['last', 'next'].indexOf((before as WeekdayMoment).which) > -1
+                    ? (before as WeekdayMoment).moment
+                    : (before as UnitMoment | AgoMoment | FromNowMoment).units,
                 tsTimestampValue:
                   before.moment === 'literal' &&
                   common.isUndefined(before.units)
@@ -790,14 +800,24 @@ export function getMalloyFiltersFractions(item: {
                     : common.FractionTypeEnum.TsIsThrough,
                 tsMomentType: m.momentType,
                 tsMoment: after,
-                tsMomentPartValue: after.moment,
                 tsMomentAgoFromNowQuantity: common.isDefined(
                   (after as AgoMoment | FromNowMoment).n
                 )
                   ? Number((after as AgoMoment | FromNowMoment).n)
                   : undefined,
-                tsMomentUnit: (after as UnitMoment | AgoMoment | FromNowMoment)
-                  .units,
+                tsMomentUnit:
+                  [
+                    'monday',
+                    'tuesday',
+                    'wednesday',
+                    'thursday',
+                    'friday',
+                    'saturday',
+                    'sunday'
+                  ].includes(after.moment) === true &&
+                  ['last', 'next'].indexOf((after as WeekdayMoment).which) > -1
+                    ? (after as WeekdayMoment).moment
+                    : (after as UnitMoment | AgoMoment | FromNowMoment).units,
                 tsTimestampValue:
                   after.moment === 'literal' && common.isUndefined(after.units)
                     ? after.literal
@@ -851,16 +871,8 @@ export function getMalloyFiltersFractions(item: {
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
-                    ? // tFilter.fromMoment.moment === 'ago' &&
-                      //   tFilter.toMoment.moment === 'now'
-                      //   ? common.FractionTypeEnum.TsIsInLast
-                      //   :
-                      common.FractionTypeEnum.TsIsBetween
-                    : // tFilter.fromMoment.moment === 'ago' &&
-                      //     tFilter.toMoment.moment === 'now'
-                      //   ? common.FractionTypeEnum.TsIsNotInLast
-                      //   :
-                      common.FractionTypeEnum.TsIsNotBetween,
+                    ? common.FractionTypeEnum.TsIsBetween
+                    : common.FractionTypeEnum.TsIsNotBetween,
                 tsFromMomentType: mFrom.momentType,
                 tsToMomentType: mTo.momentType,
                 tsFromMoment: from,
@@ -870,9 +882,19 @@ export function getMalloyFiltersFractions(item: {
                 )
                   ? Number((from as AgoMoment | FromNowMoment).n)
                   : undefined,
-                tsFromMomentUnit: (
-                  from as UnitMoment | AgoMoment | FromNowMoment
-                ).units,
+                tsFromMomentUnit:
+                  [
+                    'monday',
+                    'tuesday',
+                    'wednesday',
+                    'thursday',
+                    'friday',
+                    'saturday',
+                    'sunday'
+                  ].includes(from.moment) === true &&
+                  ['last', 'next'].indexOf((from as WeekdayMoment).which) > -1
+                    ? (from as WeekdayMoment).moment
+                    : (from as UnitMoment | AgoMoment | FromNowMoment).units,
                 tsFromTimestampValue:
                   from.moment === 'literal' && common.isUndefined(from.units)
                     ? from.literal
@@ -884,30 +906,26 @@ export function getMalloyFiltersFractions(item: {
                 )
                   ? Number((to as AgoMoment | FromNowMoment).n)
                   : undefined,
-                tsToMomentUnit: (to as UnitMoment | AgoMoment | FromNowMoment)
-                  .units,
+                tsToMomentUnit:
+                  [
+                    'monday',
+                    'tuesday',
+                    'wednesday',
+                    'thursday',
+                    'friday',
+                    'saturday',
+                    'sunday'
+                  ].includes(to.moment) === true &&
+                  ['last', 'next'].indexOf((to as WeekdayMoment).which) > -1
+                    ? (to as WeekdayMoment).moment
+                    : (to as UnitMoment | AgoMoment | FromNowMoment).units,
                 tsToTimestampValue:
                   to.moment === 'literal' && common.isUndefined(to.units)
                     ? to.literal
                     : undefined,
-                tsLastValue:
-                  // tFilter.fromMoment.moment === 'ago' &&
-                  // tFilter.toMoment.moment === 'now'
-                  //   ? Number(tFilter.fromMoment.n)
-                  //   :
-                  undefined,
-                tsLastUnit:
-                  // tFilter.fromMoment.moment === 'ago' &&
-                  // tFilter.toMoment.moment === 'now'
-                  //   ? common.getFractionTsUnits(tFilter.fromMoment.units)
-                  //   :
-                  undefined,
-                tsLastCompleteOption:
-                  // mFrom.momentStr.endsWith('ago') && mTo.momentStr === 'now'
-                  //   ? common.FractionTsLastCompleteOptionEnum
-                  //       .CompletePlusCurrent
-                  //   :
-                  undefined,
+                tsLastValue: undefined,
+                tsLastUnit: undefined,
+                tsLastCompleteOption: undefined,
                 tsDateYear: common.isDefined(year) ? Number(year) : undefined,
                 tsDateQuarter: common.isDefined(quarter)
                   ? Number(quarter)
@@ -1009,14 +1027,24 @@ export function getMalloyFiltersFractions(item: {
                                   : undefined,
                 tsMomentType: m.momentType,
                 tsMoment: tfIn,
-                tsMomentPartValue: tfIn.moment,
                 tsMomentAgoFromNowQuantity: common.isDefined(
                   (tfIn as AgoMoment | FromNowMoment).n
                 )
                   ? Number((tfIn as AgoMoment | FromNowMoment).n)
                   : undefined,
-                tsMomentUnit: (tfIn as UnitMoment | AgoMoment | FromNowMoment)
-                  .units,
+                tsMomentUnit:
+                  [
+                    'monday',
+                    'tuesday',
+                    'wednesday',
+                    'thursday',
+                    'friday',
+                    'saturday',
+                    'sunday'
+                  ].includes(tfIn.moment) === true &&
+                  ['last', 'next'].indexOf((tfIn as WeekdayMoment).which) > -1
+                    ? (tfIn as WeekdayMoment).moment
+                    : (tfIn as UnitMoment | AgoMoment | FromNowMoment).units,
                 tsTimestampValue:
                   tfIn.moment === 'literal' && common.isUndefined(tfIn.units)
                     ? tfIn.literal
@@ -1060,14 +1088,24 @@ export function getMalloyFiltersFractions(item: {
                     : common.FractionTypeEnum.TsIsNotBeginFor,
                 tsMomentType: m.momentType,
                 tsMoment: begin,
-                tsMomentPartValue: begin.moment,
                 tsMomentAgoFromNowQuantity: common.isDefined(
                   (begin as AgoMoment | FromNowMoment).n
                 )
                   ? Number((begin as AgoMoment | FromNowMoment).n)
                   : undefined,
-                tsMomentUnit: (begin as UnitMoment | AgoMoment | FromNowMoment)
-                  .units,
+                tsMomentUnit:
+                  [
+                    'monday',
+                    'tuesday',
+                    'wednesday',
+                    'thursday',
+                    'friday',
+                    'saturday',
+                    'sunday'
+                  ].includes(begin.moment) === true &&
+                  ['last', 'next'].indexOf((begin as WeekdayMoment).which) > -1
+                    ? (begin as WeekdayMoment).moment
+                    : (begin as UnitMoment | AgoMoment | FromNowMoment).units,
                 tsTimestampValue:
                   begin.moment === 'literal' && common.isUndefined(begin.units)
                     ? begin.literal

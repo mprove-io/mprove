@@ -430,7 +430,15 @@ ngneat-dialog {
 }
 
 .ng-dropdown-panel.fraction-type-select .scroll-host {
-  max-height: 40vh;
+  max-height: 33vh;
+}
+
+.ng-dropdown-panel.fraction-ts-moment-select .scroll-host {
+  max-height: 33vh;
+}
+
+.ng-dropdown-panel.fraction-mix-unit-select .scroll-host {
+  max-height: 33vh;
 }
 
 // pagination
