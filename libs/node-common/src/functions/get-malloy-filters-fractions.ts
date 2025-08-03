@@ -851,14 +851,16 @@ export function getMalloyFiltersFractions(item: {
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
-                    ? tFilter.fromMoment.moment === 'ago' &&
-                      tFilter.toMoment.moment === 'now'
-                      ? common.FractionTypeEnum.TsIsInLast
-                      : common.FractionTypeEnum.TsIsInRange
-                    : tFilter.fromMoment.moment === 'ago' &&
-                        tFilter.toMoment.moment === 'now'
-                      ? common.FractionTypeEnum.TsIsNotInLast
-                      : common.FractionTypeEnum.TsIsNotInRange,
+                    ? // tFilter.fromMoment.moment === 'ago' &&
+                      //   tFilter.toMoment.moment === 'now'
+                      //   ? common.FractionTypeEnum.TsIsInLast
+                      //   :
+                      common.FractionTypeEnum.TsIsInRange
+                    : // tFilter.fromMoment.moment === 'ago' &&
+                      //     tFilter.toMoment.moment === 'now'
+                      //   ? common.FractionTypeEnum.TsIsNotInLast
+                      //   :
+                      common.FractionTypeEnum.TsIsNotInRange,
                 tsFromMomentType: mFrom.momentType,
                 tsToMomentType: mTo.momentType,
                 tsFromMoment: from,
@@ -889,15 +891,17 @@ export function getMalloyFiltersFractions(item: {
                     ? to.literal
                     : undefined,
                 tsLastValue:
-                  tFilter.fromMoment.moment === 'ago' &&
-                  tFilter.toMoment.moment === 'now'
-                    ? Number(tFilter.fromMoment.n)
-                    : undefined,
+                  // tFilter.fromMoment.moment === 'ago' &&
+                  // tFilter.toMoment.moment === 'now'
+                  //   ? Number(tFilter.fromMoment.n)
+                  //   :
+                  undefined,
                 tsLastUnit:
-                  tFilter.fromMoment.moment === 'ago' &&
-                  tFilter.toMoment.moment === 'now'
-                    ? common.getFractionTsUnits(tFilter.fromMoment.units)
-                    : undefined,
+                  // tFilter.fromMoment.moment === 'ago' &&
+                  // tFilter.toMoment.moment === 'now'
+                  //   ? common.getFractionTsUnits(tFilter.fromMoment.units)
+                  //   :
+                  undefined,
                 tsLastCompleteOption:
                   // mFrom.momentStr.endsWith('ago') && mTo.momentStr === 'now'
                   //   ? common.FractionTsLastCompleteOptionEnum

@@ -620,6 +620,9 @@
       <vaadin-date-picker
         #datePickerInRangeFrom
         class="py-0"
+        [ngClass]="{
+          'week-width': fraction.tsFromMomentUnit === 'week'
+        }"
         required
         [value]="dateStr"
         [i18n]="inRangeFromDateI18n"
@@ -692,6 +695,9 @@
       <vaadin-date-picker
         #datePickerInRangeTo
         class="py-0"
+        [ngClass]="{
+          'week-width': fraction.tsToMomentUnit === 'week'
+        }"
         required
         [value]="dateToStr"
         [i18n]="inRangeToDateI18n"
@@ -735,6 +741,9 @@
       <vaadin-date-picker
         #datePickerBefore
         class="py-0"
+        [ngClass]="{
+          'week-width': fraction.tsMomentUnit === 'week'
+        }"
         required
         [value]="dateStr"
         [i18n]="beforeDateI18n"
@@ -775,6 +784,9 @@
       <vaadin-date-picker
         #datePickerThrough
         class="py-0"
+        [ngClass]="{
+          'week-width': fraction.tsMomentUnit === 'week'
+        }"
         required
         [value]="dateStr"
         [i18n]="throughI18n"
@@ -815,6 +827,9 @@
       <vaadin-date-picker
         #datePickerAfter
         class="py-0"
+        [ngClass]="{
+          'week-width': fraction.tsMomentUnit === 'week'
+        }"
         required
         [value]="dateStr"
         [i18n]="afterDateI18n"
@@ -855,6 +870,9 @@
       <vaadin-date-picker
         #datePickerStarting
         class="py-0"
+        [ngClass]="{
+          'week-width': fraction.tsMomentUnit === 'week'
+        }"
         required
         [value]="dateStr"
         [i18n]="startingI18n"
