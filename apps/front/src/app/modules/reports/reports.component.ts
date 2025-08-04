@@ -88,6 +88,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
   rowTypeHeader = common.RowTypeEnum.Header;
   rowTypeEmpty = common.RowTypeEnum.Empty;
 
+  fractionTypeEnum = common.FractionTypeEnum;
+
   fractionTypeTsIsBetween = common.FractionTypeEnum.TsIsBetween;
 
   timeSpecYears = common.TimeSpecEnum.Years;

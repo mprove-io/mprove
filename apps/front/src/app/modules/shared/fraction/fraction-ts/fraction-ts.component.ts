@@ -699,8 +699,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.fractionTsLiteralUnitsList = [
       ...this.fractionTsMixUnitsTempList.filter(
         x => x.value !== common.FractionTsMixUnitEnum.Second
-      ),
-      ...dowMixList
+      )
     ];
 
     this.fractionTsAgoFromNowUnitsList = this.fractionTsMixUnitsTempList;
@@ -2460,19 +2459,39 @@ export class FractionTsComponent implements OnInit, OnChanges {
         common.FractionTypeEnum.TsIsNotInNext
       ].indexOf(this.fraction.type) > -1 &&
         this.tsNextValueForm.valid === false) ||
-      (this.fraction.tsMomentType ===
-        common.FractionTsMomentTypeEnum.Timestamp &&
-        this.tsTimestampValueForm.valid === false) ||
       ([
         common.FractionTypeEnum.TsIsBeginFor,
         common.FractionTypeEnum.TsIsNotBeginFor
       ].indexOf(this.fraction.type) > -1 &&
         this.tsForValueForm.valid === false) ||
+      (this.fraction.tsMomentType ===
+        common.FractionTsMomentTypeEnum.Timestamp &&
+        this.tsTimestampValueForm.valid === false) ||
       ([
         common.FractionTsMomentTypeEnum.Ago,
         common.FractionTsMomentTypeEnum.FromNow
       ].indexOf(this.fraction.tsMomentType) > 0 &&
-        this.tsMomentAgoFromNowQuantityForm.valid === false)
+        this.tsMomentAgoFromNowQuantityForm.valid === false) ||
+      ([
+        common.FractionTypeEnum.TsIsBetween,
+        common.FractionTypeEnum.TsIsNotBetween
+      ].indexOf(this.fraction.type) > -1 &&
+        ((this.fraction.tsFromMomentType ===
+          common.FractionTsMomentTypeEnum.Timestamp &&
+          this.tsFromTimestampValueForm.valid === false) ||
+          (this.fraction.tsToMomentType ===
+            common.FractionTsMomentTypeEnum.Timestamp &&
+            this.tsToTimestampValueForm.valid === false) ||
+          ([
+            common.FractionTsMomentTypeEnum.Ago,
+            common.FractionTsMomentTypeEnum.FromNow
+          ].indexOf(this.fraction.tsFromMomentType) > 0 &&
+            this.tsFromMomentAgoFromNowQuantityForm.valid === false) ||
+          ([
+            common.FractionTsMomentTypeEnum.Ago,
+            common.FractionTsMomentTypeEnum.FromNow
+          ].indexOf(this.fraction.tsToMomentType) > 0 &&
+            this.tsToMomentAgoFromNowQuantityForm.valid === false)))
     ) {
       return;
     }
