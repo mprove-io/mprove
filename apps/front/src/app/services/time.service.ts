@@ -478,15 +478,7 @@ export class TimeService {
           : `f\`${fraction.tsLastValue} ${fraction.tsLastUnit} ago to now\``;
 
     let newFraction: common.Fraction = {
-      brick: common.isDefined(fraction.parentBrick)
-        ? mBrick
-        : fraction.tsLastCompleteOption ===
-            common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent
-          ? `last ${fraction.tsLastValue} ${fraction.tsLastUnit}`
-          : fraction.tsLastCompleteOption ===
-              common.FractionTsLastCompleteOptionEnum.Complete
-            ? `last ${fraction.tsLastValue} ${fraction.tsLastUnit} complete`
-            : `last ${fraction.tsLastValue} ${fraction.tsLastUnit} complete plus current`,
+      brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
       parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
       operator: fractionOperator,
       type: common.FractionTypeEnum.TsIsInLast,
