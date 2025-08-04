@@ -1230,9 +1230,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
     if (common.isDefinedAndNotEmpty(datePickerOnYear?.value)) {
       this.dateStr = datePickerOnYear.value;
 
-      this.fraction = this.timeService.buildFractionOnYear({
+      this.fraction = this.timeService.buildFraction({
         fraction: this.fraction,
-        dateValue: this.dateStr
+        dateStr: this.dateStr,
+        timeStr: this.timeStr,
+        dateToStr: this.dateToStr,
+        timeToStr: this.timeToStr
       });
 
       this.emitFractionUpdate();
@@ -1251,9 +1254,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
         dateValue: datePickerOnQuarter.value
       });
 
-      this.fraction = this.timeService.buildFractionOnQuarter({
+      this.fraction = this.timeService.buildFraction({
         fraction: this.fraction,
-        dateValue: this.dateStr
+        dateStr: this.dateStr,
+        timeStr: this.timeStr,
+        dateToStr: this.dateToStr,
+        timeToStr: this.timeToStr
       });
 
       this.emitFractionUpdate();
@@ -1270,9 +1276,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
     if (common.isDefinedAndNotEmpty(datePickerOnMonth?.value)) {
       this.dateStr = datePickerOnMonth.value;
 
-      this.fraction = this.timeService.buildFractionOnMonth({
+      this.fraction = this.timeService.buildFraction({
         fraction: this.fraction,
-        dateValue: this.dateStr
+        dateStr: this.dateStr,
+        timeStr: this.timeStr,
+        dateToStr: this.dateToStr,
+        timeToStr: this.timeToStr
       });
 
       this.emitFractionUpdate();
@@ -1291,9 +1300,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
         dateValue: datePickerOnWeek.value
       });
 
-      this.fraction = this.timeService.buildFractionOnWeek({
+      this.fraction = this.timeService.buildFraction({
         fraction: this.fraction,
-        dateValue: this.dateStr
+        dateStr: this.dateStr,
+        timeStr: this.timeStr,
+        dateToStr: this.dateToStr,
+        timeToStr: this.timeToStr
       });
 
       this.emitFractionUpdate();
@@ -1310,9 +1322,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
     if (common.isDefinedAndNotEmpty(datePickerOnDay?.value)) {
       this.dateStr = datePickerOnDay.value;
 
-      this.fraction = this.timeService.buildFractionOnDay({
+      this.fraction = this.timeService.buildFraction({
         fraction: this.fraction,
-        dateValue: this.dateStr
+        dateStr: this.dateStr,
+        timeStr: this.timeStr,
+        dateToStr: this.dateToStr,
+        timeToStr: this.timeToStr
       });
 
       this.emitFractionUpdate();
@@ -1329,10 +1344,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
     if (common.isDefinedAndNotEmpty(datePickerOnHour?.value)) {
       this.dateStr = datePickerOnHour.value;
 
-      this.fraction = this.timeService.buildFractionOnHour({
+      this.fraction = this.timeService.buildFraction({
         fraction: this.fraction,
-        dateValue: this.dateStr,
-        timeValue: this.timeStr
+        dateStr: this.dateStr,
+        timeStr: this.timeStr,
+        dateToStr: this.dateToStr,
+        timeToStr: this.timeToStr
       });
 
       this.emitFractionUpdate();
@@ -1349,10 +1366,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
     if (common.isDefinedAndNotEmpty(timePickerOnHour?.value)) {
       this.timeStr = timePickerOnHour.value;
 
-      this.fraction = this.timeService.buildFractionOnHour({
+      this.fraction = this.timeService.buildFraction({
         fraction: this.fraction,
-        dateValue: this.dateStr,
-        timeValue: this.timeStr
+        dateStr: this.dateStr,
+        timeStr: this.timeStr,
+        dateToStr: this.dateToStr,
+        timeToStr: this.timeToStr
       });
 
       this.emitFractionUpdate();
@@ -1380,10 +1399,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
     if (common.isDefinedAndNotEmpty(datePickerOnMinute?.value)) {
       this.dateStr = datePickerOnMinute.value;
 
-      this.fraction = this.timeService.buildFractionOnMinute({
+      this.fraction = this.timeService.buildFraction({
         fraction: this.fraction,
-        dateValue: this.dateStr,
-        timeValue: this.timeStr
+        dateStr: this.dateStr,
+        timeStr: this.timeStr,
+        dateToStr: this.dateToStr,
+        timeToStr: this.timeToStr
       });
 
       this.emitFractionUpdate();
@@ -1400,10 +1421,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
     if (common.isDefinedAndNotEmpty(timePickerOnMinute?.value)) {
       this.timeStr = timePickerOnMinute.value;
 
-      this.fraction = this.timeService.buildFractionOnMinute({
+      this.fraction = this.timeService.buildFraction({
         fraction: this.fraction,
-        dateValue: this.dateStr,
-        timeValue: this.timeStr
+        dateStr: this.dateStr,
+        timeStr: this.timeStr,
+        dateToStr: this.dateToStr,
+        timeToStr: this.timeToStr
       });
 
       this.emitFractionUpdate();
@@ -1434,12 +1457,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (common.isDefinedAndNotEmpty(value)) {
         this.dateStr = value;
 
-        this.fraction = this.timeService.buildFractionBetween({
+        this.fraction = this.timeService.buildFraction({
           fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr,
-          dateToValue: this.dateToStr,
-          timeToValue: this.timeToStr
+          dateStr: this.dateStr,
+          timeStr: this.timeStr,
+          dateToStr: this.dateToStr,
+          timeToStr: this.timeToStr
         });
 
         this.emitFractionUpdate();
@@ -1459,12 +1482,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (common.isDefinedAndNotEmpty(value)) {
         this.timeStr = value;
 
-        this.fraction = this.timeService.buildFractionBetween({
+        this.fraction = this.timeService.buildFraction({
           fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr,
-          dateToValue: this.dateToStr,
-          timeToValue: this.timeToStr
+          dateStr: this.dateStr,
+          timeStr: this.timeStr,
+          dateToStr: this.dateToStr,
+          timeToStr: this.timeToStr
         });
 
         this.emitFractionUpdate();
@@ -1496,12 +1519,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (common.isDefinedAndNotEmpty(value)) {
         this.dateToStr = value;
 
-        this.fraction = this.timeService.buildFractionBetween({
+        this.fraction = this.timeService.buildFraction({
           fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr,
-          dateToValue: this.dateToStr,
-          timeToValue: this.timeToStr
+          dateStr: this.dateStr,
+          timeStr: this.timeStr,
+          dateToStr: this.dateToStr,
+          timeToStr: this.timeToStr
         });
 
         this.emitFractionUpdate();
@@ -1521,12 +1544,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (common.isDefinedAndNotEmpty(value)) {
         this.timeToStr = value;
 
-        this.fraction = this.timeService.buildFractionBetween({
+        this.fraction = this.timeService.buildFraction({
           fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr,
-          dateToValue: this.dateToStr,
-          timeToValue: this.timeToStr
+          dateStr: this.dateStr,
+          timeStr: this.timeStr,
+          dateToStr: this.dateToStr,
+          timeToStr: this.timeToStr
         });
 
         this.emitFractionUpdate();
@@ -1558,10 +1581,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (common.isDefinedAndNotEmpty(value)) {
         this.dateStr = value;
 
-        this.fraction = this.timeService.buildFractionBeforeDate({
+        this.fraction = this.timeService.buildFraction({
           fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr
+          dateStr: this.dateStr,
+          timeStr: this.timeStr,
+          dateToStr: this.dateToStr,
+          timeToStr: this.timeToStr
         });
 
         this.emitFractionUpdate();
@@ -1581,10 +1606,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (common.isDefinedAndNotEmpty(value)) {
         this.timeStr = value;
 
-        this.fraction = this.timeService.buildFractionBeforeDate({
+        this.fraction = this.timeService.buildFraction({
           fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr
+          dateStr: this.dateStr,
+          timeStr: this.timeStr,
+          dateToStr: this.dateToStr,
+          timeToStr: this.timeToStr
         });
 
         this.emitFractionUpdate();
@@ -1616,10 +1643,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (common.isDefinedAndNotEmpty(value)) {
         this.dateStr = value;
 
-        this.fraction = this.timeService.buildFractionThrough({
+        this.fraction = this.timeService.buildFraction({
           fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr
+          dateStr: this.dateStr,
+          timeStr: this.timeStr,
+          dateToStr: this.dateToStr,
+          timeToStr: this.timeToStr
         });
 
         this.emitFractionUpdate();
@@ -1639,10 +1668,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (common.isDefinedAndNotEmpty(value)) {
         this.timeStr = value;
 
-        this.fraction = this.timeService.buildFractionThrough({
+        this.fraction = this.timeService.buildFraction({
           fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr
+          dateStr: this.dateStr,
+          timeStr: this.timeStr,
+          dateToStr: this.dateToStr,
+          timeToStr: this.timeToStr
         });
 
         this.emitFractionUpdate();
@@ -1674,10 +1705,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (common.isDefinedAndNotEmpty(value)) {
         this.dateStr = value;
 
-        this.fraction = this.timeService.buildFractionAfterDate({
+        this.fraction = this.timeService.buildFraction({
           fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr
+          dateStr: this.dateStr,
+          timeStr: this.timeStr,
+          dateToStr: this.dateToStr,
+          timeToStr: this.timeToStr
         });
 
         this.emitFractionUpdate();
@@ -1697,10 +1730,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (common.isDefinedAndNotEmpty(value)) {
         this.timeStr = value;
 
-        this.fraction = this.timeService.buildFractionAfterDate({
+        this.fraction = this.timeService.buildFraction({
           fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr
+          dateStr: this.dateStr,
+          timeStr: this.timeStr,
+          dateToStr: this.dateToStr,
+          timeToStr: this.timeToStr
         });
 
         this.emitFractionUpdate();
@@ -1732,10 +1767,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (common.isDefinedAndNotEmpty(value)) {
         this.dateStr = value;
 
-        this.fraction = this.timeService.buildFractionStarting({
+        this.fraction = this.timeService.buildFraction({
           fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr
+          dateStr: this.dateStr,
+          timeStr: this.timeStr,
+          dateToStr: this.dateToStr,
+          timeToStr: this.timeToStr
         });
 
         this.emitFractionUpdate();
@@ -1755,10 +1792,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (common.isDefinedAndNotEmpty(value)) {
         this.timeStr = value;
 
-        this.fraction = this.timeService.buildFractionStarting({
+        this.fraction = this.timeService.buildFraction({
           fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr
+          dateStr: this.dateStr,
+          timeStr: this.timeStr,
+          dateToStr: this.dateToStr,
+          timeToStr: this.timeToStr
         });
 
         this.emitFractionUpdate();
@@ -1790,10 +1829,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (common.isDefinedAndNotEmpty(value)) {
         this.dateStr = value;
 
-        this.fraction = this.timeService.buildFractionBeginFor({
+        this.fraction = this.timeService.buildFraction({
           fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr
+          dateStr: this.dateStr,
+          timeStr: this.timeStr,
+          dateToStr: this.dateToStr,
+          timeToStr: this.timeToStr
         });
 
         this.emitFractionUpdate();
@@ -1813,10 +1854,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
       if (common.isDefinedAndNotEmpty(value)) {
         this.timeStr = value;
 
-        this.fraction = this.timeService.buildFractionBeginFor({
+        this.fraction = this.timeService.buildFraction({
           fraction: this.fraction,
-          dateValue: this.dateStr,
-          timeValue: this.timeStr
+          dateStr: this.dateStr,
+          timeStr: this.timeStr,
+          dateToStr: this.dateToStr,
+          timeToStr: this.timeToStr
         });
 
         this.emitFractionUpdate();
@@ -1849,24 +1892,36 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
     this.fraction.tsLastValue = Number(value);
 
-    this.fraction = this.timeService.buildFractionLast({
-      fraction: this.fraction
+    this.fraction = this.timeService.buildFraction({
+      fraction: this.fraction,
+      dateStr: this.dateStr,
+      timeStr: this.timeStr,
+      dateToStr: this.dateToStr,
+      timeToStr: this.timeToStr
     });
 
     this.emitFractionUpdate();
   }
 
   lastUnitChange() {
-    this.fraction = this.timeService.buildFractionLast({
-      fraction: this.fraction
+    this.fraction = this.timeService.buildFraction({
+      fraction: this.fraction,
+      dateStr: this.dateStr,
+      timeStr: this.timeStr,
+      dateToStr: this.dateToStr,
+      timeToStr: this.timeToStr
     });
 
     this.emitFractionUpdate();
   }
 
   lastCompleteOptionChange() {
-    this.fraction = this.timeService.buildFractionLast({
-      fraction: this.fraction
+    this.fraction = this.timeService.buildFraction({
+      fraction: this.fraction,
+      dateStr: this.dateStr,
+      timeStr: this.timeStr,
+      dateToStr: this.dateToStr,
+      timeToStr: this.timeToStr
     });
 
     this.emitFractionUpdate();
@@ -1881,16 +1936,24 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
     this.fraction.tsNextValue = Number(value);
 
-    this.fraction = this.timeService.buildFractionNext({
-      fraction: this.fraction
+    this.fraction = this.timeService.buildFraction({
+      fraction: this.fraction,
+      dateStr: this.dateStr,
+      timeStr: this.timeStr,
+      dateToStr: this.dateToStr,
+      timeToStr: this.timeToStr
     });
 
     this.emitFractionUpdate();
   }
 
   nextUnitChange() {
-    this.fraction = this.timeService.buildFractionNext({
-      fraction: this.fraction
+    this.fraction = this.timeService.buildFraction({
+      fraction: this.fraction,
+      dateStr: this.dateStr,
+      timeStr: this.timeStr,
+      dateToStr: this.dateToStr,
+      timeToStr: this.timeToStr
     });
 
     this.emitFractionUpdate();
@@ -2296,20 +2359,24 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
     this.fraction.tsForValue = Number(value);
 
-    this.fraction = this.timeService.buildFractionBeginFor({
+    this.fraction = this.timeService.buildFraction({
       fraction: this.fraction,
-      dateValue: this.dateStr,
-      timeValue: this.timeStr
+      dateStr: this.dateStr,
+      timeStr: this.timeStr,
+      dateToStr: this.dateToStr,
+      timeToStr: this.timeToStr
     });
 
     this.emitFractionUpdate();
   }
 
   tsForUnitChange() {
-    this.fraction = this.timeService.buildFractionBeginFor({
+    this.fraction = this.timeService.buildFraction({
       fraction: this.fraction,
-      dateValue: this.dateStr,
-      timeValue: this.timeStr
+      dateStr: this.dateStr,
+      timeStr: this.timeStr,
+      dateToStr: this.dateToStr,
+      timeToStr: this.timeToStr
     });
 
     this.emitFractionUpdate();
