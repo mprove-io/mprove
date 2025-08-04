@@ -587,6 +587,124 @@
     </div>
 
     <div
+      *ngIf="fraction.tsFromMomentType === fractionTsMomentTypeEnum.Timestamp"
+      class="flex flex-row space-x-5"
+    >
+      <div class="flex h-9 items-center">UTC</div>
+
+      <form [formGroup]="tsFromTimestampValueForm">
+        <div
+          tp="Turn off formula to activate control"
+          [tpIsEnabled]="isDisabled === true"
+        >
+          <fieldset [disabled]="isDisabled === true">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="fractionTsFromTimestampValueInput"
+              class="form-input border-s3 focus:border-m600 h-[36px] w-[255px] rounded"
+              [ngClass]="{
+                'border-r600':
+                  tsFromTimestampValueForm.controls['tsFromTimestampValue']
+                    .invalid &&
+                  tsFromTimestampValueForm.controls['tsFromTimestampValue']
+                    .touched
+              }"
+              formControlName="tsFromTimestampValue"
+              (blur)="betweenFromTimestampValueBlur()"
+            />
+          </fieldset>
+        </div>
+
+        <m-validation
+          [control]="tsFromTimestampValueForm.controls['tsFromTimestampValue']"
+        ></m-validation>
+      </form>
+    </div>
+
+    <div
+      *ngIf="
+        [
+          fractionTsMomentTypeEnum.Ago,
+          fractionTsMomentTypeEnum.FromNow
+        ].indexOf(fraction.tsFromMomentType) > -1
+      "
+      class="flex flex-row space-x-5"
+    >
+      <form [formGroup]="tsFromMomentAgoFromNowQuantityForm">
+        <div
+          tp="Turn off formula to activate control"
+          [tpIsEnabled]="isDisabled === true"
+        >
+          <fieldset [disabled]="isDisabled === true">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="fractionTsFromMomentAgoFromNowQuantityInput"
+              class="form-input border-s3 focus:border-m600 h-[36px] w-16 rounded"
+              [ngClass]="{
+                'border-r600':
+                  tsFromMomentAgoFromNowQuantityForm.controls[
+                    'tsFromMomentAgoFromNowQuantity'
+                  ].invalid &&
+                  tsFromMomentAgoFromNowQuantityForm.controls[
+                    'tsFromMomentAgoFromNowQuantity'
+                  ].touched
+              }"
+              formControlName="tsFromMomentAgoFromNowQuantity"
+              (blur)="betweenFromMomentAgoFromNowQuantityBlur()"
+            />
+          </fieldset>
+        </div>
+
+        <m-validation
+          [control]="
+            tsFromMomentAgoFromNowQuantityForm.controls[
+              'tsFromMomentAgoFromNowQuantity'
+            ]
+          "
+        ></m-validation>
+      </form>
+
+      <div
+        tp="Turn off formula to activate control"
+        [tpIsEnabled]="isDisabled === true"
+      >
+        <ng-select
+          #tsFromMomentAgoFromNowUnitSelect
+          [fixNgSelectBottom]="tsFromMomentAgoFromNowUnitSelect"
+          data-cy="tsFromMomentAgoFromNowUnitSelect"
+          class="popup-55 w-32"
+          [items]="fractionTsAgoFromNowUnitsList"
+          [clearable]="false"
+          [searchable]="false"
+          [disabled]="isDisabled === true"
+          [(ngModel)]="fraction.tsFromMomentUnit"
+          (change)="betweenFromMomentAgoFromNowUnitChange()"
+          (keyup.esc)="
+            $event.stopImmediatePropagation();
+            tsFromMomentAgoFromNowUnitSelect.blur()
+          "
+          (keyup.enter)="
+            $event.stopImmediatePropagation();
+            tsFromMomentAgoFromNowUnitSelect.blur()
+          "
+          appendTo="body"
+          bindLabel="label"
+          bindValue="value"
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <div class="ml-1 truncate">{{ item.label + 's' }}</div>
+          </ng-template>
+
+          <ng-template ng-option-tmp let-item="item">
+            <div class="ml-1 truncate">{{ item.label + 's' }}</div>
+          </ng-template>
+        </ng-select>
+      </div>
+    </div>
+
+    <div
       *ngIf="
         fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal ||
         [
@@ -604,12 +722,10 @@
         data-cy="tsFromMomentOnUnitSelect"
         class="fraction-mix-unit-select"
         [class.w-[110px]]="
-          fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal ||
-          fraction.tsFromMomentType === fractionTsMomentTypeEnum.This
+          fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal
         "
         [class.w-[150px]]="
-          fraction.tsFromMomentType !== fractionTsMomentTypeEnum.Literal &&
-          fraction.tsFromMomentType !== fractionTsMomentTypeEnum.This
+          fraction.tsFromMomentType !== fractionTsMomentTypeEnum.Literal
         "
         [items]="
           fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal ||
@@ -718,13 +834,130 @@
     </div>
 
     <div
+      *ngIf="fraction.tsToMomentType === fractionTsMomentTypeEnum.Timestamp"
+      class="flex flex-row space-x-5"
+    >
+      <div class="flex h-9 items-center">UTC</div>
+
+      <form [formGroup]="tsToTimestampValueForm">
+        <div
+          tp="Turn off formula to activate control"
+          [tpIsEnabled]="isDisabled === true"
+        >
+          <fieldset [disabled]="isDisabled === true">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="fractionTsToTimestampValueInput"
+              class="form-input border-s3 focus:border-m600 h-[36px] w-[255px] rounded"
+              [ngClass]="{
+                'border-r600':
+                  tsToTimestampValueForm.controls['tsToTimestampValue']
+                    .invalid &&
+                  tsToTimestampValueForm.controls['tsToTimestampValue'].touched
+              }"
+              formControlName="tsToTimestampValue"
+              (blur)="betweenToTimestampValueBlur()"
+            />
+          </fieldset>
+        </div>
+
+        <m-validation
+          [control]="tsToTimestampValueForm.controls['tsToTimestampValue']"
+        ></m-validation>
+      </form>
+    </div>
+
+    <div
       *ngIf="
-        fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal ||
+        [
+          fractionTsMomentTypeEnum.Ago,
+          fractionTsMomentTypeEnum.FromNow
+        ].indexOf(fraction.tsToMomentType) > -1
+      "
+      class="flex flex-row space-x-5"
+    >
+      <form [formGroup]="tsToMomentAgoFromNowQuantityForm">
+        <div
+          tp="Turn off formula to activate control"
+          [tpIsEnabled]="isDisabled === true"
+        >
+          <fieldset [disabled]="isDisabled === true">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="fractionTsToMomentAgoFromNowQuantityInput"
+              class="form-input border-s3 focus:border-m600 h-[36px] w-16 rounded"
+              [ngClass]="{
+                'border-r600':
+                  tsToMomentAgoFromNowQuantityForm.controls[
+                    'tsToMomentAgoFromNowQuantity'
+                  ].invalid &&
+                  tsToMomentAgoFromNowQuantityForm.controls[
+                    'tsToMomentAgoFromNowQuantity'
+                  ].touched
+              }"
+              formControlName="tsToMomentAgoFromNowQuantity"
+              (blur)="betweenToMomentAgoFromNowQuantityBlur()"
+            />
+          </fieldset>
+        </div>
+
+        <m-validation
+          [control]="
+            tsToMomentAgoFromNowQuantityForm.controls[
+              'tsToMomentAgoFromNowQuantity'
+            ]
+          "
+        ></m-validation>
+      </form>
+
+      <div
+        tp="Turn off formula to activate control"
+        [tpIsEnabled]="isDisabled === true"
+      >
+        <ng-select
+          #tsToMomentAgoFromNowUnitSelect
+          [fixNgSelectBottom]="tsToMomentAgoFromNowUnitSelect"
+          data-cy="tsToMomentAgoFromNowUnitSelect"
+          class="popup-55 w-32"
+          [items]="fractionTsAgoFromNowUnitsList"
+          [clearable]="false"
+          [searchable]="false"
+          [disabled]="isDisabled === true"
+          [(ngModel)]="fraction.tsToMomentUnit"
+          (change)="betweenToMomentAgoFromNowUnitChange()"
+          (keyup.esc)="
+            $event.stopImmediatePropagation();
+            tsToMomentAgoFromNowUnitSelect.blur()
+          "
+          (keyup.enter)="
+            $event.stopImmediatePropagation();
+            tsToMomentAgoFromNowUnitSelect.blur()
+          "
+          appendTo="body"
+          bindLabel="label"
+          bindValue="value"
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <div class="ml-1 truncate">{{ item.label + 's' }}</div>
+          </ng-template>
+
+          <ng-template ng-option-tmp let-item="item">
+            <div class="ml-1 truncate">{{ item.label + 's' }}</div>
+          </ng-template>
+        </ng-select>
+      </div>
+    </div>
+
+    <div
+      *ngIf="
+        fraction.tsToMomentType === fractionTsMomentTypeEnum.Literal ||
         [
           fractionTsMomentTypeEnum.This,
           fractionTsMomentTypeEnum.Last,
           fractionTsMomentTypeEnum.Next
-        ].indexOf(fraction.tsFromMomentType) > -1
+        ].indexOf(fraction.tsToMomentType) > -1
       "
       tp="Turn off formula to activate control"
       [tpIsEnabled]="isDisabled === true"
@@ -735,12 +968,10 @@
         data-cy="tsToMomentOnUnitSelect"
         class="fraction-mix-unit-select"
         [class.w-[110px]]="
-          fraction.tsToMomentType === fractionTsMomentTypeEnum.Literal ||
-          fraction.tsToMomentType === fractionTsMomentTypeEnum.This
+          fraction.tsToMomentType === fractionTsMomentTypeEnum.Literal
         "
         [class.w-[150px]]="
-          fraction.tsToMomentType !== fractionTsMomentTypeEnum.Literal &&
-          fraction.tsToMomentType !== fractionTsMomentTypeEnum.This
+          fraction.tsToMomentType !== fractionTsMomentTypeEnum.Literal
         "
         [items]="
           fraction.tsToMomentType === fractionTsMomentTypeEnum.Literal ||
