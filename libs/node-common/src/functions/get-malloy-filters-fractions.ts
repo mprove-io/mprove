@@ -881,7 +881,6 @@ export function getMalloyFiltersFractions(item: {
                 tsFromMomentType: mFrom.momentType,
                 tsToMomentType: mTo.momentType,
                 tsFromMoment: from,
-                tsFromMomentPartValue: from.moment,
                 tsFromMomentAgoFromNowQuantity: common.isDefined(
                   (from as AgoMoment | FromNowMoment).n
                 )
@@ -907,7 +906,6 @@ export function getMalloyFiltersFractions(item: {
                     ? from.literal
                     : undefined,
                 tsToMoment: to,
-                tsToMomentPartValue: to.moment,
                 tsToMomentAgoFromNowQuantity: common.isDefined(
                   (to as AgoMoment | FromNowMoment).n
                 )

@@ -1182,14 +1182,10 @@ export class FractionTsComponent implements OnInit, OnChanges {
       case this.fractionTypeEnum.TsIsNotBetween: {
         this.fraction.tsFromMomentType =
           common.FractionTsMomentTypeEnum.Literal;
-        this.fraction.tsFromMomentPartValue =
-          common.FractionDayOfWeekLcEnum.Monday;
         this.fraction.tsFromMomentAgoFromNowQuantity = 1;
         this.fraction.tsFromMomentUnit = common.FractionTsMixUnitEnum.Day;
 
         this.fraction.tsToMomentType = common.FractionTsMomentTypeEnum.Literal;
-        this.fraction.tsToMomentPartValue =
-          common.FractionDayOfWeekLcEnum.Monday;
         this.fraction.tsToMomentAgoFromNowQuantity = 1;
         this.fraction.tsToMomentUnit = common.FractionTsMixUnitEnum.Day;
         break;

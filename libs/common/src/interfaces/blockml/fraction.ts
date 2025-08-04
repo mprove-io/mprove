@@ -240,10 +240,6 @@ export class Fraction {
   @IsNumber()
   tsFromMomentAgoFromNowQuantity?: number;
 
-  @IsOptional()
-  @IsString()
-  tsFromMomentPartValue?: string;
-
   //
 
   @IsOptional()
@@ -264,8 +260,4 @@ export class Fraction {
   @IsOptional()
   @IsNumber()
   tsToMomentAgoFromNowQuantity?: number;
-
-  @IsOptional()
-  @IsString()
-  tsToMomentPartValue?: string;
 }

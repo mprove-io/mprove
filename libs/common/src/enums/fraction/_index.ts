@@ -1,5 +1,4 @@
 export * from './fraction-day-of-week-value.enum';
-export * from './fraction-day-of-week-lc.enum';
 export * from './fraction-ts-mix-unit.enum';
 export * from './fraction-logic.enum';
 export * from './fraction-month-name-value.enum';
@@ -14,5 +13,4 @@ export * from './fraction-ts-relative-when-option.enum';
 export * from './fraction-type.enum';
 export * from './fraction-yesno-value.enum';
 export * from './fraction-ts-unit.enum';
-export * from './fraction-ts-temporal-unit.enum';
 export * from './fraction-ts-moment-type.enum';

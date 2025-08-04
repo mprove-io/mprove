@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { TemporalUnit, WeekdayMoment } from '@malloydata/malloy-filter';
 import { DatePickerDate } from '@vaadin/date-picker';
 import { MALLOY_FILTER_ANY } from '~common/constants/top';
 import { common } from '~front/barrels/common';
@@ -171,7 +170,7 @@ export class TimeService {
   getMomentStr(item: {
     dateValue: string;
     timeValue: string;
-    momentUnit: TemporalUnit | WeekdayMoment['moment'];
+    momentUnit: common.FractionTsMixUnitEnum;
     momentType: common.FractionTsMomentTypeEnum;
     momentAgoFromNowQuantity: number;
     timestampValue: string;
@@ -919,12 +918,10 @@ export class TimeService {
           : undefined,
       tsFromMoment: undefined,
       tsFromMomentType: fraction.tsFromMomentType,
-      tsFromMomentPartValue: fraction.tsFromMomentPartValue,
       tsFromMomentAgoFromNowQuantity: fraction.tsFromMomentAgoFromNowQuantity,
       tsFromMomentUnit: fraction.tsFromMomentUnit,
       tsToMoment: undefined,
       tsToMomentType: fraction.tsToMomentType,
-      tsToMomentPartValue: fraction.tsToMomentPartValue,
       tsToMomentAgoFromNowQuantity: fraction.tsToMomentAgoFromNowQuantity,
       tsToMomentUnit: fraction.tsToMomentUnit
     };
@@ -1168,7 +1165,7 @@ export class TimeService {
 
   momentFormatDate(item: {
     d: DatePickerDate;
-    momentUnit: TemporalUnit | WeekdayMoment['moment'];
+    momentUnit: common.FractionTsMixUnitEnum;
   }) {
     let { momentUnit, d } = item;
 

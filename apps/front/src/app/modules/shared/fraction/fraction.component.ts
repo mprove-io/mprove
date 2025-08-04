@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { TemporalUnit } from '@malloydata/malloy-filter';
 import { common } from '~front/barrels/common';
 import { interfaces } from '~front/barrels/interfaces';
 
@@ -24,19 +23,9 @@ export class FractionTsUnitItem {
   value: common.FractionTsUnitEnum;
 }
 
-export class FractionTsTemporalUnitItem {
-  label: string;
-  value: TemporalUnit;
-}
-
 export class FractionDayOfWeekValueItem {
   label: string;
   value: common.FractionDayOfWeekValueEnum;
-}
-
-export class FractionTsDayOfWeekLcItem {
-  label: string;
-  value: common.FractionDayOfWeekLcEnum;
 }
 
 export class FractionTsLastCompleteOptionItem {
