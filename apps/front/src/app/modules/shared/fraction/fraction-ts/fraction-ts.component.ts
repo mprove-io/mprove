@@ -2470,7 +2470,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
       ([
         common.FractionTsMomentTypeEnum.Ago,
         common.FractionTsMomentTypeEnum.FromNow
-      ].indexOf(this.fraction.tsMomentType) > 0 &&
+      ].indexOf(this.fraction.tsMomentType) > -1 &&
         this.tsMomentAgoFromNowQuantityForm.valid === false) ||
       ([
         common.FractionTypeEnum.TsIsBetween,
@@ -2485,12 +2485,12 @@ export class FractionTsComponent implements OnInit, OnChanges {
           ([
             common.FractionTsMomentTypeEnum.Ago,
             common.FractionTsMomentTypeEnum.FromNow
-          ].indexOf(this.fraction.tsFromMomentType) > 0 &&
+          ].indexOf(this.fraction.tsFromMomentType) > -1 &&
             this.tsFromMomentAgoFromNowQuantityForm.valid === false) ||
           ([
             common.FractionTsMomentTypeEnum.Ago,
             common.FractionTsMomentTypeEnum.FromNow
-          ].indexOf(this.fraction.tsToMomentType) > 0 &&
+          ].indexOf(this.fraction.tsToMomentType) > -1 &&
             this.tsToMomentAgoFromNowQuantityForm.valid === false)))
     ) {
       return;
