@@ -638,21 +638,33 @@ export class FractionTsComponent implements OnInit, OnChanges {
             x =>
               [
                 common.FractionTypeEnum.TsIsInLast,
-                common.FractionTypeEnum.TsIsInNext,
-                common.FractionTypeEnum.TsIsAfter,
-                common.FractionTypeEnum.TsIsStarting,
-                common.FractionTypeEnum.TsIsBeginFor,
                 common.FractionTypeEnum.TsIsOnDay,
                 common.FractionTypeEnum.TsIsOnWeek,
                 common.FractionTypeEnum.TsIsOnMonth,
                 common.FractionTypeEnum.TsIsOnQuarter,
                 common.FractionTypeEnum.TsIsOnYear,
+                common.FractionTypeEnum.TsIsInNext,
+                common.FractionTypeEnum.TsIsAfter,
+                common.FractionTypeEnum.TsIsStarting,
+                common.FractionTypeEnum.TsIsBeginFor,
                 common.FractionTypeEnum.TsIsBetween,
                 common.FractionTypeEnum.TsIsBefore,
                 common.FractionTypeEnum.TsIsThrough,
                 common.FractionTypeEnum.TsIsOnHour,
                 common.FractionTypeEnum.TsIsOnMinute,
-                common.FractionTypeEnum.TsIsOnTimestamp
+                common.FractionTypeEnum.TsIsOnTimestamp,
+                common.FractionTypeEnum.TsIsNotInLast,
+                common.FractionTypeEnum.TsIsNotOnDay,
+                common.FractionTypeEnum.TsIsNotOnWeek,
+                common.FractionTypeEnum.TsIsNotOnMonth,
+                common.FractionTypeEnum.TsIsNotOnQuarter,
+                common.FractionTypeEnum.TsIsNotOnYear,
+                common.FractionTypeEnum.TsIsNotInNext,
+                common.FractionTypeEnum.TsIsNotBeginFor,
+                common.FractionTypeEnum.TsIsNotBetween,
+                common.FractionTypeEnum.TsIsNotOnHour,
+                common.FractionTypeEnum.TsIsNotOnMinute,
+                common.FractionTypeEnum.TsIsNotOnTimestamp
               ].indexOf(x.value) > -1
           );
 
@@ -719,7 +731,13 @@ export class FractionTsComponent implements OnInit, OnChanges {
           common.FractionTypeEnum.TsIsOnMonth,
           common.FractionTypeEnum.TsIsOnWeek,
           common.FractionTypeEnum.TsIsOnHour,
-          common.FractionTypeEnum.TsIsOnMinute
+          common.FractionTypeEnum.TsIsOnMinute,
+          common.FractionTypeEnum.TsIsNotOnYear,
+          common.FractionTypeEnum.TsIsNotOnQuarter,
+          common.FractionTypeEnum.TsIsNotOnMonth,
+          common.FractionTypeEnum.TsIsNotOnWeek,
+          common.FractionTypeEnum.TsIsNotOnHour,
+          common.FractionTypeEnum.TsIsNotOnMinute
         ].indexOf((changes.fraction.currentValue as common.Fraction).type) > -1
       ) {
         this.fractionTsMomentTypesList =
@@ -735,9 +753,10 @@ export class FractionTsComponent implements OnInit, OnChanges {
               ].indexOf(x.value) > -1
           );
       } else if (
-        [common.FractionTypeEnum.TsIsOnDay].indexOf(
-          (changes.fraction.currentValue as common.Fraction).type
-        ) > -1
+        [
+          common.FractionTypeEnum.TsIsOnDay,
+          common.FractionTypeEnum.TsIsNotOnDay
+        ].indexOf((changes.fraction.currentValue as common.Fraction).type) > -1
       ) {
         this.fractionTsMomentTypesList =
           this.fractionTsMomentTypesFullList.filter(
@@ -755,9 +774,10 @@ export class FractionTsComponent implements OnInit, OnChanges {
               ].indexOf(x.value) > -1
           );
       } else if (
-        [common.FractionTypeEnum.TsIsOnTimestamp].indexOf(
-          (changes.fraction.currentValue as common.Fraction).type
-        ) > -1
+        [
+          common.FractionTypeEnum.TsIsOnTimestamp,
+          common.FractionTypeEnum.TsIsNotOnTimestamp
+        ].indexOf((changes.fraction.currentValue as common.Fraction).type) > -1
       ) {
         this.fractionTsMomentTypesList =
           this.fractionTsMomentTypesFullList.filter(
@@ -773,7 +793,8 @@ export class FractionTsComponent implements OnInit, OnChanges {
           common.FractionTypeEnum.TsIsThrough,
           common.FractionTypeEnum.TsIsAfter,
           common.FractionTypeEnum.TsIsStarting,
-          common.FractionTypeEnum.TsIsBeginFor
+          common.FractionTypeEnum.TsIsBeginFor,
+          common.FractionTypeEnum.TsIsNotBeginFor
         ].indexOf((changes.fraction.currentValue as common.Fraction).type) > -1
       ) {
         this.fractionTsMomentTypesList =
@@ -1206,25 +1227,37 @@ export class FractionTsComponent implements OnInit, OnChanges {
       timeToStr: this.timeToStr
     });
 
-    if (this.fraction.type === common.FractionTypeEnum.TsIsInLast) {
+    if (
+      this.fraction.type === common.FractionTypeEnum.TsIsInLast ||
+      this.fraction.type === common.FractionTypeEnum.TsIsNotInLast
+    ) {
       this.tsLastValueForm.controls['tsLastValue'].setValue(
         this.fraction.tsLastValue
       );
     }
 
-    if (this.fraction.type === common.FractionTypeEnum.TsIsInNext) {
+    if (
+      this.fraction.type === common.FractionTypeEnum.TsIsInNext ||
+      this.fraction.type === common.FractionTypeEnum.TsIsNotInNext
+    ) {
       this.tsNextValueForm.controls['tsNextValue'].setValue(
         this.fraction.tsNextValue
       );
     }
 
-    if (this.fraction.type === common.FractionTypeEnum.TsIsBeginFor) {
+    if (
+      this.fraction.type === common.FractionTypeEnum.TsIsBeginFor ||
+      this.fraction.type === common.FractionTypeEnum.TsIsNotBeginFor
+    ) {
       this.tsForValueForm.controls['tsForValue'].setValue(
         this.fraction.tsForValue
       );
     }
 
-    if (this.fraction.type === common.FractionTypeEnum.TsIsOnTimestamp) {
+    if (
+      this.fraction.type === common.FractionTypeEnum.TsIsOnTimestamp ||
+      this.fraction.type === common.FractionTypeEnum.TsIsNotOnTimestamp
+    ) {
       this.tsTimestampValueForm.controls['tsTimestampValue'].setValue(
         this.fraction.tsTimestampValue
       );
@@ -2393,14 +2426,23 @@ export class FractionTsComponent implements OnInit, OnChanges {
 
   emitFractionUpdate() {
     if (
-      (this.fraction.type === common.FractionTypeEnum.TsIsInLast &&
+      ([
+        common.FractionTypeEnum.TsIsInLast,
+        common.FractionTypeEnum.TsIsNotInLast
+      ].indexOf(this.fraction.type) > -1 &&
         this.tsLastValueForm.valid === false) ||
-      (this.fraction.type === common.FractionTypeEnum.TsIsInNext &&
+      ([
+        common.FractionTypeEnum.TsIsInNext,
+        common.FractionTypeEnum.TsIsNotInNext
+      ].indexOf(this.fraction.type) > -1 &&
         this.tsNextValueForm.valid === false) ||
       (this.fraction.tsMomentType ===
         common.FractionTsMomentTypeEnum.Timestamp &&
         this.tsTimestampValueForm.valid === false) ||
-      (this.fraction.type === common.FractionTypeEnum.TsIsBeginFor &&
+      ([
+        common.FractionTypeEnum.TsIsBeginFor,
+        common.FractionTypeEnum.TsIsNotBeginFor
+      ].indexOf(this.fraction.type) > -1 &&
         this.tsForValueForm.valid === false) ||
       ([
         common.FractionTsMomentTypeEnum.Ago,
