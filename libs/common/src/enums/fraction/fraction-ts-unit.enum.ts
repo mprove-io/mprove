@@ -1,4 +1,5 @@
 export enum FractionTsUnitEnum {
+  Seconds = 'seconds',
   Minutes = 'minutes',
   Hours = 'hours',
   Days = 'days',

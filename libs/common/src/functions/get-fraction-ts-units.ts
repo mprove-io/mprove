@@ -18,5 +18,7 @@ export function getFractionTsUnits(
               ? FractionTsUnitEnum.Hours
               : temporalUnit === 'minute'
                 ? FractionTsUnitEnum.Minutes
-                : undefined;
+                : temporalUnit === 'second'
+                  ? FractionTsUnitEnum.Seconds
+                  : undefined;
 }

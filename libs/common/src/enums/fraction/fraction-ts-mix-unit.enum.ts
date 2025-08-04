@@ -1,5 +1,5 @@
 export enum FractionTsMixUnitEnum {
-  // Second = 'second',
+  Second = 'second',
   Minute = 'minute',
   Hour = 'hour',
   Day = 'day',

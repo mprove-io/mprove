@@ -410,6 +410,10 @@ export class FractionTsComponent implements OnInit, OnChanges {
     {
       label: 'minute',
       value: common.FractionTsMixUnitEnum.Minute
+    },
+    {
+      label: 'second',
+      value: common.FractionTsMixUnitEnum.Second
     }
   ];
 
@@ -505,6 +509,10 @@ export class FractionTsComponent implements OnInit, OnChanges {
     {
       label: 'minutes',
       value: common.FractionTsUnitEnum.Minutes
+    },
+    {
+      label: 'seconds',
+      value: common.FractionTsUnitEnum.Seconds
     }
   ];
 
