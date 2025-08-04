@@ -615,6 +615,10 @@ export class MyRegex {
     return cloneRegexp(/^[-]?\d+$/);
   }
 
+  static IS_ZERO_TO_THREE_DIGITS_INTEGER(): RegExp {
+    return cloneRegexp(/^[0-9]{1,3}$/);
+  }
+
   // FRONT
 
   static HAS_UPPERCASE_VALUES(): RegExp {

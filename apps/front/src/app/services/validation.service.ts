@@ -25,6 +25,7 @@ export class ValidationService {
       ['isNotLowerCaseValues', 'Must be lowercase'],
       ['isNotNumber', 'Is not a number'],
       ['isNotInteger', 'integer'],
+      ['isNotZeroToThreeDigitsInteger', '0-999'],
       ['isNotZero', 'Cannot be 0'],
       ['containsThreeUnderscores', 'File name cannot contain "___"'],
       ['moreThenOneMB', 'Text must be < 1mb'],
@@ -194,6 +195,22 @@ export class ValidationService {
       return null;
     } else {
       return { isNotInteger: true };
+    }
+  }
+
+  static zeroToThreeDigitsIntegerOrEmptyValidator(control: FormControl) {
+    if (common.isUndefined(control.value) || control.value === '') {
+      return null;
+    }
+
+    if (
+      control.value
+        .toString()
+        .match(common.MyRegex.IS_ZERO_TO_THREE_DIGITS_INTEGER())
+    ) {
+      return null;
+    } else {
+      return { isNotZeroToThreeDigitsInteger: true };
     }
   }
 

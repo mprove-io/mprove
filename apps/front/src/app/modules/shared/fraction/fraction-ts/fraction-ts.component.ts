@@ -834,7 +834,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.fraction.tsForValue,
         [
           Validators.required,
-          ValidationService.integerOrEmptyValidator,
+          ValidationService.zeroToThreeDigitsIntegerOrEmptyValidator,
           Validators.min(0)
         ]
       ]
@@ -847,7 +847,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.fraction.tsLastValue,
         [
           Validators.required,
-          ValidationService.integerOrEmptyValidator,
+          ValidationService.zeroToThreeDigitsIntegerOrEmptyValidator,
           Validators.min(0)
         ]
       ]
@@ -860,7 +860,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.fraction.tsNextValue,
         [
           Validators.required,
-          ValidationService.integerOrEmptyValidator,
+          ValidationService.zeroToThreeDigitsIntegerOrEmptyValidator,
           Validators.min(0)
         ]
       ]
@@ -900,7 +900,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.fraction.tsMomentAgoFromNowQuantity,
         [
           Validators.required,
-          ValidationService.integerOrEmptyValidator,
+          ValidationService.zeroToThreeDigitsIntegerOrEmptyValidator,
           Validators.min(0)
         ]
       ]
@@ -913,7 +913,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.fraction.tsFromMomentAgoFromNowQuantity,
         [
           Validators.required,
-          ValidationService.integerOrEmptyValidator,
+          ValidationService.zeroToThreeDigitsIntegerOrEmptyValidator,
           Validators.min(0)
         ]
       ]
@@ -926,7 +926,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
         this.fraction.tsToMomentAgoFromNowQuantity,
         [
           Validators.required,
-          ValidationService.integerOrEmptyValidator,
+          ValidationService.zeroToThreeDigitsIntegerOrEmptyValidator,
           Validators.min(0)
         ]
       ]
