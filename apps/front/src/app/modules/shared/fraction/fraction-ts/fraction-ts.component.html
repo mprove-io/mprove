@@ -82,9 +82,9 @@
       fraction.type === fractionTypeEnum.TsIsOnHour ||
       fraction.type === fractionTypeEnum.TsIsOnMinute ||
       fraction.type === fractionTypeEnum.TsIsOnTimestamp ||
-      fraction.type === fractionTypeEnum.TsIsBeforeDate ||
+      fraction.type === fractionTypeEnum.TsIsBefore ||
       fraction.type === fractionTypeEnum.TsIsThrough ||
-      fraction.type === fractionTypeEnum.TsIsAfterDate ||
+      fraction.type === fractionTypeEnum.TsIsAfter ||
       fraction.type === fractionTypeEnum.TsIsStarting ||
       fraction.type === fractionTypeEnum.TsIsBeginFor
     "
@@ -128,9 +128,9 @@
   <div
     *ngIf="
       [
-        fractionTypeEnum.TsIsBeforeDate,
+        fractionTypeEnum.TsIsBefore,
         fractionTypeEnum.TsIsThrough,
-        fractionTypeEnum.TsIsAfterDate,
+        fractionTypeEnum.TsIsAfter,
         fractionTypeEnum.TsIsStarting,
         fractionTypeEnum.TsIsBeginFor,
         fractionTypeEnum.TsIsOnTimestamp
@@ -172,9 +172,9 @@
   <div
     *ngIf="
       ([
-        fractionTypeEnum.TsIsBeforeDate,
+        fractionTypeEnum.TsIsBefore,
         fractionTypeEnum.TsIsThrough,
-        fractionTypeEnum.TsIsAfterDate,
+        fractionTypeEnum.TsIsAfter,
         fractionTypeEnum.TsIsStarting,
         fractionTypeEnum.TsIsBeginFor
       ].indexOf(fraction.type) > -1 &&
@@ -251,9 +251,9 @@
         fractionTypeEnum.TsIsOnDay,
         fractionTypeEnum.TsIsOnHour,
         fractionTypeEnum.TsIsOnMinute,
-        fractionTypeEnum.TsIsBeforeDate,
+        fractionTypeEnum.TsIsBefore,
         fractionTypeEnum.TsIsThrough,
-        fractionTypeEnum.TsIsAfterDate,
+        fractionTypeEnum.TsIsAfter,
         fractionTypeEnum.TsIsStarting,
         fractionTypeEnum.TsIsBeginFor
       ].indexOf(fraction.type) > -1 &&
@@ -300,9 +300,9 @@
   <div
     *ngIf="
       [
-        fractionTypeEnum.TsIsBeforeDate,
+        fractionTypeEnum.TsIsBefore,
         fractionTypeEnum.TsIsThrough,
-        fractionTypeEnum.TsIsAfterDate,
+        fractionTypeEnum.TsIsAfter,
         fractionTypeEnum.TsIsStarting,
         fractionTypeEnum.TsIsBeginFor
       ].indexOf(fraction.type) > -1 &&
@@ -1046,7 +1046,7 @@
   <!-- is before -->
   <div
     *ngIf="
-      fraction.type === fractionTypeEnum.TsIsBeforeDate &&
+      fraction.type === fractionTypeEnum.TsIsBefore &&
       fraction.tsMomentType === fractionTsMomentTypeEnum.Literal
     "
     class="flex flex-row space-x-5"
@@ -1063,8 +1063,8 @@
         }"
         required
         [value]="dateStr"
-        [i18n]="beforeDateI18n"
-        (value-changed)="beforeDateValueChanged($event)"
+        [i18n]="beforeI18n"
+        (value-changed)="beforeValueChanged($event)"
         [disabled]="isDisabled === true"
       ></vaadin-date-picker>
     </div>
@@ -1132,7 +1132,7 @@
   <!-- is after -->
   <div
     *ngIf="
-      fraction.type === fractionTypeEnum.TsIsAfterDate &&
+      fraction.type === fractionTypeEnum.TsIsAfter &&
       fraction.tsMomentType === fractionTsMomentTypeEnum.Literal
     "
     class="flex flex-row space-x-5"
@@ -1149,8 +1149,8 @@
         }"
         required
         [value]="dateStr"
-        [i18n]="afterDateI18n"
-        (value-changed)="afterDateValueChanged($event)"
+        [i18n]="afterI18n"
+        (value-changed)="afterValueChanged($event)"
         [disabled]="isDisabled === true"
       ></vaadin-date-picker>
     </div>

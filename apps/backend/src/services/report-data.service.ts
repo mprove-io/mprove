@@ -377,7 +377,7 @@ export class ReportDataService {
               common.isUndefined(timeFieldIdSpec)
                 ? undefined
                 : [
-                      common.FractionTypeEnum.TsIsAfterDate,
+                      common.FractionTypeEnum.TsIsAfter,
                       common.FractionTypeEnum.TsIsAfterRelative
                     ].indexOf(timeRangeFraction.type) > -1
                   ? `${timeFieldIdSpec}`

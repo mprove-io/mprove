@@ -329,7 +329,7 @@ export class BlockmlService {
       if (
         [
           common.FractionTypeEnum.TsIsInLast,
-          common.FractionTypeEnum.TsIsBeforeDate,
+          common.FractionTypeEnum.TsIsBefore,
           common.FractionTypeEnum.TsIsBeforeRelative
         ].indexOf(timeRangeFraction.type) > -1
       ) {
@@ -469,7 +469,7 @@ export class BlockmlService {
       if (
         [
           common.FractionTypeEnum.TsIsInLast,
-          common.FractionTypeEnum.TsIsBeforeDate,
+          common.FractionTypeEnum.TsIsBefore,
           common.FractionTypeEnum.TsIsBeforeRelative
         ].indexOf(timeRangeFraction.type) > -1
       ) {

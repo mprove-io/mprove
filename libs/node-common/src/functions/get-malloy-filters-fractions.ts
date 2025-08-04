@@ -734,7 +734,7 @@ export function getMalloyFiltersFractions(item: {
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
-                    ? common.FractionTypeEnum.TsIsBeforeDate
+                    ? common.FractionTypeEnum.TsIsBefore
                     : common.FractionTypeEnum.TsIsStarting,
                 tsMomentType: m.momentType,
                 tsMoment: before,
@@ -796,7 +796,7 @@ export function getMalloyFiltersFractions(item: {
                 operator: fractionOperator,
                 type:
                   fractionOperator === common.FractionOperatorEnum.Or
-                    ? common.FractionTypeEnum.TsIsAfterDate
+                    ? common.FractionTypeEnum.TsIsAfter
                     : common.FractionTypeEnum.TsIsThrough,
                 tsMomentType: m.momentType,
                 tsMoment: after,

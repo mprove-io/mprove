@@ -896,7 +896,7 @@ export function processFilter(item: {
           fractions.push({
             brick: brick,
             operator: common.FractionOperatorEnum.Or,
-            type: common.FractionTypeEnum.TsIsBeforeDate,
+            type: common.FractionTypeEnum.TsIsBefore,
             tsDateYear: Number(year),
             tsDateMonth: Number(month),
             tsDateDay: Number(day),
@@ -933,7 +933,7 @@ export function processFilter(item: {
           fractions.push({
             brick: brick,
             operator: common.FractionOperatorEnum.Or,
-            type: common.FractionTypeEnum.TsIsAfterDate,
+            type: common.FractionTypeEnum.TsIsAfter,
             tsDateYear: Number(year),
             tsDateMonth: Number(month),
             tsDateDay: Number(day),

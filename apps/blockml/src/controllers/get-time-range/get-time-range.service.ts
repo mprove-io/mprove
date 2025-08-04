@@ -76,7 +76,7 @@ export class GetTimeRangeService {
         : common.isUndefined(rangeOpen)
           ? undefined
           : [
-                common.FractionTypeEnum.TsIsBeforeDate,
+                common.FractionTypeEnum.TsIsBefore,
                 common.FractionTypeEnum.TsIsBeforeRelative
               ].indexOf(timeRangeFraction.type) > -1 &&
               timeSpec !== common.TimeSpecEnum.Timestamps
@@ -101,7 +101,7 @@ export class GetTimeRangeService {
                 )
               )
             : [
-                  common.FractionTypeEnum.TsIsAfterDate,
+                  common.FractionTypeEnum.TsIsAfter,
                   common.FractionTypeEnum.TsIsAfterRelative
                 ].indexOf(timeRangeFraction.type) > -1
               ? rangeOpen
@@ -113,12 +113,12 @@ export class GetTimeRangeService {
         : common.isUndefined(rangeOpen)
           ? undefined
           : [
-                common.FractionTypeEnum.TsIsBeforeDate,
+                common.FractionTypeEnum.TsIsBefore,
                 common.FractionTypeEnum.TsIsBeforeRelative
               ].indexOf(timeRangeFraction.type) > -1
             ? rangeOpen
             : [
-                  common.FractionTypeEnum.TsIsAfterDate,
+                  common.FractionTypeEnum.TsIsAfter,
                   common.FractionTypeEnum.TsIsAfterRelative
                 ].indexOf(timeRangeFraction.type) > -1 &&
                 timeSpec !== common.TimeSpecEnum.Timestamps

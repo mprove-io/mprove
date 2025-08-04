@@ -58,12 +58,12 @@ export enum FractionTypeEnum {
   TsIsOnQuarter = 'TsIsOnQuarter', // new
   TsIsOnYear = 'TsIsOnYear',
   TsIsInNext = 'TsIsInNext', // new
-  TsIsAfterDate = 'TsIsAfterDate',
-  TsIsStarting = 'TsIsStarting', // new // TsIsNotBeforeDate
+  TsIsAfter = 'TsIsAfter',
+  TsIsStarting = 'TsIsStarting', // new // TsIsNotBefore
   TsIsBeginFor = 'TsIsBeginFor', // new
   TsIsBetween = 'TsIsBetween',
-  TsIsBeforeDate = 'TsIsBeforeDate',
-  TsIsThrough = 'TsIsThrough', // new // TsIsNotAfterDate
+  TsIsBefore = 'TsIsBefore',
+  TsIsThrough = 'TsIsThrough', // new // TsIsNotAfter
   TsIsOnHour = 'TsIsOnHour',
   TsIsOnMinute = 'TsIsOnMinute',
   TsIsOnTimestamp = 'TsIsOnTimestamp', // new
