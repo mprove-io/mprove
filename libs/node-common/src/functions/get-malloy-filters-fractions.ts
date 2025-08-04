@@ -38,6 +38,7 @@ import {
   ParsedFilter
 } from '@malloydata/malloy-query-builder';
 import { MALLOY_FILTER_ANY } from '~common/_index';
+import { getFractionTsMixUnit } from '~common/functions/get-fraction-ts-mix-unit';
 import { common } from '~node-common/barrels/common';
 import { getMalloyMomentStr } from './get-malloy-moment-str';
 
@@ -754,8 +755,10 @@ export function getMalloyFiltersFractions(item: {
                     'sunday'
                   ].includes(before.moment) === true &&
                   ['last', 'next'].indexOf((before as WeekdayMoment).which) > -1
-                    ? (before as WeekdayMoment).moment
-                    : (before as UnitMoment | AgoMoment | FromNowMoment).units,
+                    ? getFractionTsMixUnit((before as WeekdayMoment).moment)
+                    : getFractionTsMixUnit(
+                        (before as UnitMoment | AgoMoment | FromNowMoment).units
+                      ),
                 tsTimestampValue:
                   before.moment === 'literal' &&
                   common.isUndefined(before.units)
@@ -816,8 +819,10 @@ export function getMalloyFiltersFractions(item: {
                     'sunday'
                   ].includes(after.moment) === true &&
                   ['last', 'next'].indexOf((after as WeekdayMoment).which) > -1
-                    ? (after as WeekdayMoment).moment
-                    : (after as UnitMoment | AgoMoment | FromNowMoment).units,
+                    ? getFractionTsMixUnit((after as WeekdayMoment).moment)
+                    : getFractionTsMixUnit(
+                        (after as UnitMoment | AgoMoment | FromNowMoment).units
+                      ),
                 tsTimestampValue:
                   after.moment === 'literal' && common.isUndefined(after.units)
                     ? after.literal
@@ -893,8 +898,10 @@ export function getMalloyFiltersFractions(item: {
                     'sunday'
                   ].includes(from.moment) === true &&
                   ['last', 'next'].indexOf((from as WeekdayMoment).which) > -1
-                    ? (from as WeekdayMoment).moment
-                    : (from as UnitMoment | AgoMoment | FromNowMoment).units,
+                    ? getFractionTsMixUnit((from as WeekdayMoment).moment)
+                    : getFractionTsMixUnit(
+                        (from as UnitMoment | AgoMoment | FromNowMoment).units
+                      ),
                 tsFromTimestampValue:
                   from.moment === 'literal' && common.isUndefined(from.units)
                     ? from.literal
@@ -917,8 +924,10 @@ export function getMalloyFiltersFractions(item: {
                     'sunday'
                   ].includes(to.moment) === true &&
                   ['last', 'next'].indexOf((to as WeekdayMoment).which) > -1
-                    ? (to as WeekdayMoment).moment
-                    : (to as UnitMoment | AgoMoment | FromNowMoment).units,
+                    ? getFractionTsMixUnit((to as WeekdayMoment).moment)
+                    : getFractionTsMixUnit(
+                        (to as UnitMoment | AgoMoment | FromNowMoment).units
+                      ),
                 tsToTimestampValue:
                   to.moment === 'literal' && common.isUndefined(to.units)
                     ? to.literal
@@ -1047,8 +1056,10 @@ export function getMalloyFiltersFractions(item: {
                     'sunday'
                   ].includes(tfIn.moment) === true &&
                   ['last', 'next'].indexOf((tfIn as WeekdayMoment).which) > -1
-                    ? (tfIn as WeekdayMoment).moment
-                    : (tfIn as UnitMoment | AgoMoment | FromNowMoment).units,
+                    ? getFractionTsMixUnit((tfIn as WeekdayMoment).moment)
+                    : getFractionTsMixUnit(
+                        (tfIn as UnitMoment | AgoMoment | FromNowMoment).units
+                      ),
                 tsTimestampValue:
                   tfIn.moment === 'literal' && common.isUndefined(tfIn.units)
                     ? tfIn.literal
@@ -1108,8 +1119,10 @@ export function getMalloyFiltersFractions(item: {
                     'sunday'
                   ].includes(begin.moment) === true &&
                   ['last', 'next'].indexOf((begin as WeekdayMoment).which) > -1
-                    ? (begin as WeekdayMoment).moment
-                    : (begin as UnitMoment | AgoMoment | FromNowMoment).units,
+                    ? getFractionTsMixUnit((begin as WeekdayMoment).moment)
+                    : getFractionTsMixUnit(
+                        (begin as UnitMoment | AgoMoment | FromNowMoment).units
+                      ),
                 tsTimestampValue:
                   begin.moment === 'literal' && common.isUndefined(begin.units)
                     ? begin.literal

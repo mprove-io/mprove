@@ -12,28 +12,16 @@
         data-cy="fractionTsTypeSelect"
         class="fraction-type-select"
         [class.w-[138px]]="
-          isMetrics === true &&
-          (fraction.type === 'TsIsBetween' ||
-            (fraction.type === 'TsIsBeginFor' &&
-              ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1))
+          isMetrics === true && fraction.type === 'TsIsBetween'
         "
         [class.w-[140px]]="
-          isMetrics === false &&
-          (fraction.type === 'TsIsBetween' ||
-            (fraction.type === 'TsIsBeginFor' &&
-              ['hour', 'minute'].indexOf(fraction.tsMomentUnit) > -1))
+          isMetrics === false && fraction.type === 'TsIsBetween'
         "
         [class.w-[180px]]="
-          isMetrics === true &&
-          fraction.type !== 'TsIsBetween' &&
-          (fraction.type !== 'TsIsBeginFor' ||
-            ['hour', 'minute'].indexOf(fraction.tsMomentUnit) < 0)
+          isMetrics === true && fraction.type !== 'TsIsBetween'
         "
         [class.w-[280px]]="
-          isMetrics === false &&
-          fraction.type !== 'TsIsBetween' &&
-          (fraction.type !== 'TsIsBeginFor' ||
-            ['hour', 'minute'].indexOf(fraction.tsMomentUnit) < 0)
+          isMetrics === false && fraction.type !== 'TsIsBetween'
         "
         [items]="fractionTsTypesList"
         [clearable]="false"
@@ -227,10 +215,11 @@
           fraction.tsMomentType
         ) > -1
           ? fractionTsOnDayUnitsList
-          : fraction.tsMomentType === fractionTsMomentTypeEnum.Literal ||
-              fraction.tsMomentType === fractionTsMomentTypeEnum.This
-            ? fractionTsMixUnitsTempList
-            : fractionTsOnUnitsList
+          : fraction.tsMomentType === fractionTsMomentTypeEnum.Literal
+            ? fractionTsLiteralUnitsList
+            : fraction.tsMomentType === fractionTsMomentTypeEnum.This
+              ? fractionTsMixUnitsTempList
+              : fractionTsOnUnitsList
       "
       [clearable]="false"
       [searchable]="false"
@@ -773,10 +762,11 @@
           fraction.tsFromMomentType !== fractionTsMomentTypeEnum.Literal
         "
         [items]="
-          fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal ||
-          fraction.tsFromMomentType === fractionTsMomentTypeEnum.This
-            ? fractionTsMixUnitsTempList
-            : fractionTsOnUnitsList
+          fraction.tsFromMomentType === fractionTsMomentTypeEnum.Literal
+            ? fractionTsLiteralUnitsList
+            : fraction.tsFromMomentType === fractionTsMomentTypeEnum.This
+              ? fractionTsMixUnitsTempList
+              : fractionTsOnUnitsList
         "
         [clearable]="false"
         [searchable]="false"
@@ -1019,10 +1009,11 @@
           fraction.tsToMomentType !== fractionTsMomentTypeEnum.Literal
         "
         [items]="
-          fraction.tsToMomentType === fractionTsMomentTypeEnum.Literal ||
-          fraction.tsToMomentType === fractionTsMomentTypeEnum.This
-            ? fractionTsMixUnitsTempList
-            : fractionTsOnUnitsList
+          fraction.tsToMomentType === fractionTsMomentTypeEnum.Literal
+            ? fractionTsLiteralUnitsList
+            : fraction.tsToMomentType === fractionTsMomentTypeEnum.This
+              ? fractionTsMixUnitsTempList
+              : fractionTsOnUnitsList
         "
         [clearable]="false"
         [searchable]="false"
