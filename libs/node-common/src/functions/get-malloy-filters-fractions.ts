@@ -979,19 +979,19 @@ export function getMalloyFiltersFractions(item: {
                 operator: fractionOperator,
                 type:
                   (tfIn as TemporalLiteral).units === 'year'
-                    ? common.FractionOperatorEnum.Or
+                    ? fractionOperator === common.FractionOperatorEnum.Or
                       ? common.FractionTypeEnum.TsIsOnYear
                       : common.FractionTypeEnum.TsIsNotOnYear
                     : (tfIn as TemporalLiteral).units === 'quarter'
-                      ? common.FractionOperatorEnum.Or
+                      ? fractionOperator === common.FractionOperatorEnum.Or
                         ? common.FractionTypeEnum.TsIsOnQuarter
                         : common.FractionTypeEnum.TsIsNotOnQuarter
                       : (tfIn as TemporalLiteral).units === 'month'
-                        ? common.FractionOperatorEnum.Or
+                        ? fractionOperator === common.FractionOperatorEnum.Or
                           ? common.FractionTypeEnum.TsIsOnMonth
                           : common.FractionTypeEnum.TsIsNotOnMonth
                         : (tfIn as TemporalLiteral).units === 'week'
-                          ? common.FractionOperatorEnum.Or
+                          ? fractionOperator === common.FractionOperatorEnum.Or
                             ? common.FractionTypeEnum.TsIsOnWeek
                             : common.FractionTypeEnum.TsIsNotOnWeek
                           : (tfIn as TemporalLiteral).units === 'day' ||
@@ -1008,20 +1008,24 @@ export function getMalloyFiltersFractions(item: {
                                 'saturday'
                               ].indexOf((tFilter.in as WeekdayMoment).moment) >
                                 -1
-                            ? common.FractionOperatorEnum.Or
+                            ? fractionOperator ===
+                              common.FractionOperatorEnum.Or
                               ? common.FractionTypeEnum.TsIsOnDay
                               : common.FractionTypeEnum.TsIsNotOnDay
                             : (tfIn as TemporalLiteral).units === 'hour'
-                              ? common.FractionOperatorEnum.Or
+                              ? fractionOperator ===
+                                common.FractionOperatorEnum.Or
                                 ? common.FractionTypeEnum.TsIsOnHour
                                 : common.FractionTypeEnum.TsIsNotOnHour
                               : (tfIn as TemporalLiteral).units === 'minute'
-                                ? common.FractionOperatorEnum.Or
+                                ? fractionOperator ===
+                                  common.FractionOperatorEnum.Or
                                   ? common.FractionTypeEnum.TsIsOnMinute
                                   : common.FractionTypeEnum.TsIsNotOnMinute
                                 : tfIn.moment === 'literal' ||
                                     (tfIn as NowMoment).moment === 'now'
-                                  ? common.FractionOperatorEnum.Or
+                                  ? fractionOperator ===
+                                    common.FractionOperatorEnum.Or
                                     ? common.FractionTypeEnum.TsIsOnTimestamp
                                     : common.FractionTypeEnum.TsIsNotOnTimestamp
                                   : undefined,

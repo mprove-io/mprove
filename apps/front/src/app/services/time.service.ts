@@ -454,7 +454,7 @@ export class TimeService {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
       parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
       operator: common.FractionOperatorEnum.Or,
-      type: common.FractionTypeEnum.TsIsAnyValue
+      type: fraction.type
     };
 
     return newFraction;
@@ -468,20 +468,23 @@ export class TimeService {
         ? common.FractionOperatorEnum.Or
         : common.FractionOperatorEnum.And;
 
+    let operatorPrefix =
+      fractionOperator === common.FractionOperatorEnum.Or ? '' : 'not ';
+
     let mBrick =
       fraction.tsLastCompleteOption ===
       common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent
-        ? `f\`${fraction.tsLastValue} ${fraction.tsLastUnit}\``
+        ? `f\`${operatorPrefix}${fraction.tsLastValue} ${fraction.tsLastUnit}\``
         : fraction.tsLastCompleteOption ===
             common.FractionTsLastCompleteOptionEnum.Complete
-          ? `f\`last ${fraction.tsLastValue} ${fraction.tsLastUnit}\``
-          : `f\`${fraction.tsLastValue} ${fraction.tsLastUnit} ago to now\``;
+          ? `f\`${operatorPrefix}last ${fraction.tsLastValue} ${fraction.tsLastUnit}\``
+          : `f\`${operatorPrefix}${fraction.tsLastValue} ${fraction.tsLastUnit} ago to now\``;
 
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
       parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
       operator: fractionOperator,
-      type: common.FractionTypeEnum.TsIsInLast,
+      type: fraction.type,
       tsLastValue: fraction.tsLastValue,
       tsLastUnit: fraction.tsLastUnit,
       tsLastCompleteOption: fraction.tsLastCompleteOption
@@ -496,11 +499,6 @@ export class TimeService {
   }) {
     let { fraction, dateValue } = item;
 
-    let fractionOperator =
-      fraction.type === common.FractionTypeEnum.TsIsOnDay
-        ? common.FractionOperatorEnum.Or
-        : common.FractionOperatorEnum.And;
-
     let momentStr = this.getMomentStr({
       dateValue: dateValue,
       timeValue: undefined,
@@ -510,7 +508,15 @@ export class TimeService {
       timestampValue: fraction.tsTimestampValue
     });
 
-    let mBrick = `f\`${momentStr}\``;
+    let fractionOperator =
+      fraction.type === common.FractionTypeEnum.TsIsOnDay
+        ? common.FractionOperatorEnum.Or
+        : common.FractionOperatorEnum.And;
+
+    let operatorPrefix =
+      fractionOperator === common.FractionOperatorEnum.Or ? '' : 'not ';
+
+    let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
@@ -535,11 +541,6 @@ export class TimeService {
   }) {
     let { fraction, dateValue } = item;
 
-    let fractionOperator =
-      fraction.type === common.FractionTypeEnum.TsIsOnWeek
-        ? common.FractionOperatorEnum.Or
-        : common.FractionOperatorEnum.And;
-
     let momentStr = this.getMomentStr({
       dateValue: dateValue,
       timeValue: undefined,
@@ -549,7 +550,15 @@ export class TimeService {
       timestampValue: fraction.tsTimestampValue
     });
 
-    let mBrick = `f\`${momentStr}\``;
+    let fractionOperator =
+      fraction.type === common.FractionTypeEnum.TsIsOnWeek
+        ? common.FractionOperatorEnum.Or
+        : common.FractionOperatorEnum.And;
+
+    let operatorPrefix =
+      fractionOperator === common.FractionOperatorEnum.Or ? '' : 'not ';
+
+    let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
@@ -574,11 +583,6 @@ export class TimeService {
   }) {
     let { fraction, dateValue } = item;
 
-    let fractionOperator =
-      fraction.type === common.FractionTypeEnum.TsIsOnMonth
-        ? common.FractionOperatorEnum.Or
-        : common.FractionOperatorEnum.And;
-
     let momentStr = this.getMomentStr({
       dateValue: dateValue,
       timeValue: undefined,
@@ -588,7 +592,15 @@ export class TimeService {
       timestampValue: fraction.tsTimestampValue
     });
 
-    let mBrick = `f\`${momentStr}\``;
+    let fractionOperator =
+      fraction.type === common.FractionTypeEnum.TsIsOnMonth
+        ? common.FractionOperatorEnum.Or
+        : common.FractionOperatorEnum.And;
+
+    let operatorPrefix =
+      fractionOperator === common.FractionOperatorEnum.Or ? '' : 'not ';
+
+    let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
@@ -612,11 +624,6 @@ export class TimeService {
   }) {
     let { fraction, dateValue } = item;
 
-    let fractionOperator =
-      fraction.type === common.FractionTypeEnum.TsIsOnQuarter
-        ? common.FractionOperatorEnum.Or
-        : common.FractionOperatorEnum.And;
-
     let momentStr = this.getMomentStr({
       dateValue: dateValue,
       timeValue: undefined,
@@ -626,7 +633,15 @@ export class TimeService {
       timestampValue: fraction.tsTimestampValue
     });
 
-    let mBrick = `f\`${momentStr}\``;
+    let fractionOperator =
+      fraction.type === common.FractionTypeEnum.TsIsOnQuarter
+        ? common.FractionOperatorEnum.Or
+        : common.FractionOperatorEnum.And;
+
+    let operatorPrefix =
+      fractionOperator === common.FractionOperatorEnum.Or ? '' : 'not ';
+
+    let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
@@ -650,11 +665,6 @@ export class TimeService {
   }) {
     let { fraction, dateValue } = item;
 
-    let fractionOperator =
-      fraction.type === common.FractionTypeEnum.TsIsOnYear
-        ? common.FractionOperatorEnum.Or
-        : common.FractionOperatorEnum.And;
-
     let momentStr = this.getMomentStr({
       dateValue: dateValue,
       timeValue: undefined,
@@ -664,7 +674,15 @@ export class TimeService {
       timestampValue: fraction.tsTimestampValue
     });
 
-    let mBrick = `f\`${momentStr}\``;
+    let fractionOperator =
+      fraction.type === common.FractionTypeEnum.TsIsOnYear
+        ? common.FractionOperatorEnum.Or
+        : common.FractionOperatorEnum.And;
+
+    let operatorPrefix =
+      fractionOperator === common.FractionOperatorEnum.Or ? '' : 'not ';
+
+    let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
@@ -689,13 +707,16 @@ export class TimeService {
         ? common.FractionOperatorEnum.Or
         : common.FractionOperatorEnum.And;
 
-    let mBrick = `f\`next ${fraction.tsNextValue} ${fraction.tsNextUnit}\``;
+    let operatorPrefix =
+      fractionOperator === common.FractionOperatorEnum.Or ? '' : 'not ';
+
+    let mBrick = `f\`${operatorPrefix}next ${fraction.tsNextValue} ${fraction.tsNextUnit}\``;
 
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
       parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
       operator: fractionOperator,
-      type: common.FractionTypeEnum.TsIsInNext,
+      type: fraction.type,
       tsNextValue: fraction.tsNextValue,
       tsNextUnit: fraction.tsNextUnit
     };
@@ -725,7 +746,7 @@ export class TimeService {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
       parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
       operator: common.FractionOperatorEnum.Or,
-      type: common.FractionTypeEnum.TsIsAfter,
+      type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
       tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
       tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
@@ -766,7 +787,7 @@ export class TimeService {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
       parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
       operator: common.FractionOperatorEnum.Or,
-      type: common.FractionTypeEnum.TsIsStarting,
+      type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
       tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
       tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
@@ -792,11 +813,6 @@ export class TimeService {
   }) {
     let { dateValue, timeValue, fraction } = item;
 
-    let fractionOperator =
-      fraction.type === common.FractionTypeEnum.TsIsBeginFor
-        ? common.FractionOperatorEnum.Or
-        : common.FractionOperatorEnum.And;
-
     let momentStr = this.getMomentStr({
       dateValue: dateValue,
       timeValue: timeValue,
@@ -806,13 +822,21 @@ export class TimeService {
       timestampValue: fraction.tsTimestampValue
     });
 
-    let mBrick = `f\`${momentStr} for ${fraction.tsForValue} ${fraction.tsForUnit}\``;
+    let fractionOperator =
+      fraction.type === common.FractionTypeEnum.TsIsBeginFor
+        ? common.FractionOperatorEnum.Or
+        : common.FractionOperatorEnum.And;
+
+    let operatorPrefix =
+      fractionOperator === common.FractionOperatorEnum.Or ? '' : 'not ';
+
+    let mBrick = `f\`${operatorPrefix}${momentStr} for ${fraction.tsForValue} ${fraction.tsForUnit}\``;
 
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
       parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
       operator: fractionOperator,
-      type: common.FractionTypeEnum.TsIsBeginFor,
+      type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
       tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
       tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
@@ -842,11 +866,6 @@ export class TimeService {
   }) {
     let { fraction, dateValue, timeValue, dateToValue, timeToValue } = item;
 
-    let fractionOperator =
-      fraction.type === common.FractionTypeEnum.TsIsBetween
-        ? common.FractionOperatorEnum.Or
-        : common.FractionOperatorEnum.And;
-
     let momentFromStr = this.getMomentStr({
       dateValue: dateValue,
       timeValue: timeValue,
@@ -865,13 +884,21 @@ export class TimeService {
       timestampValue: fraction.tsToTimestampValue
     });
 
-    let mBrick = `f\`${momentFromStr} to ${momentToStr}\``;
+    let fractionOperator =
+      fraction.type === common.FractionTypeEnum.TsIsBetween
+        ? common.FractionOperatorEnum.Or
+        : common.FractionOperatorEnum.And;
+
+    let operatorPrefix =
+      fractionOperator === common.FractionOperatorEnum.Or ? '' : 'not ';
+
+    let mBrick = `f\`${operatorPrefix}${momentFromStr} to ${momentToStr}\``;
 
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
       parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
       operator: fractionOperator,
-      type: common.FractionTypeEnum.TsIsBetween,
+      type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
       tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
       tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
@@ -927,7 +954,7 @@ export class TimeService {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
       parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
       operator: common.FractionOperatorEnum.Or,
-      type: common.FractionTypeEnum.TsIsBefore,
+      type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
       tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
       tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
@@ -968,7 +995,7 @@ export class TimeService {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
       parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
       operator: common.FractionOperatorEnum.Or,
-      type: common.FractionTypeEnum.TsIsThrough,
+      type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
       tsDateMonth: Number(dateValue.split('-')[1].replace(/^0+/, '')),
       tsDateDay: Number(dateValue.split('-')[2].replace(/^0+/, '')),
@@ -994,11 +1021,6 @@ export class TimeService {
   }) {
     let { fraction, dateValue, timeValue } = item;
 
-    let fractionOperator =
-      fraction.type === common.FractionTypeEnum.TsIsOnHour
-        ? common.FractionOperatorEnum.Or
-        : common.FractionOperatorEnum.And;
-
     let momentStr = this.getMomentStr({
       dateValue: dateValue,
       timeValue: timeValue,
@@ -1008,7 +1030,15 @@ export class TimeService {
       timestampValue: fraction.tsTimestampValue
     });
 
-    let mBrick = `f\`${momentStr}\``;
+    let fractionOperator =
+      fraction.type === common.FractionTypeEnum.TsIsOnHour
+        ? common.FractionOperatorEnum.Or
+        : common.FractionOperatorEnum.And;
+
+    let operatorPrefix =
+      fractionOperator === common.FractionOperatorEnum.Or ? '' : 'not ';
+
+    let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
@@ -1035,11 +1065,6 @@ export class TimeService {
   }) {
     let { fraction, dateValue, timeValue } = item;
 
-    let fractionOperator =
-      fraction.type === common.FractionTypeEnum.TsIsOnMinute
-        ? common.FractionOperatorEnum.Or
-        : common.FractionOperatorEnum.And;
-
     let momentStr = this.getMomentStr({
       dateValue: dateValue,
       timeValue: timeValue,
@@ -1049,7 +1074,15 @@ export class TimeService {
       timestampValue: fraction.tsTimestampValue
     });
 
-    let mBrick = `f\`${momentStr}\``;
+    let fractionOperator =
+      fraction.type === common.FractionTypeEnum.TsIsOnMinute
+        ? common.FractionOperatorEnum.Or
+        : common.FractionOperatorEnum.And;
+
+    let operatorPrefix =
+      fractionOperator === common.FractionOperatorEnum.Or ? '' : 'not ';
+
+    let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
@@ -1075,11 +1108,6 @@ export class TimeService {
   }) {
     let { fraction } = item;
 
-    let fractionOperator =
-      fraction.type === common.FractionTypeEnum.TsIsOnTimestamp
-        ? common.FractionOperatorEnum.Or
-        : common.FractionOperatorEnum.And;
-
     let momentStr = this.getMomentStr({
       dateValue: undefined,
       timeValue: undefined,
@@ -1089,7 +1117,15 @@ export class TimeService {
       timestampValue: fraction.tsTimestampValue
     });
 
-    let mBrick = `f\`${momentStr}\``;
+    let fractionOperator =
+      fraction.type === common.FractionTypeEnum.TsIsOnTimestamp
+        ? common.FractionOperatorEnum.Or
+        : common.FractionOperatorEnum.And;
+
+    let operatorPrefix =
+      fractionOperator === common.FractionOperatorEnum.Or ? '' : 'not ';
+
+    let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
