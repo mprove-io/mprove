@@ -218,11 +218,9 @@ export class MetricsTreeComponent implements AfterViewInit {
 
     let rowChange: common.RowChange = {
       rowId:
-        // repSelectedNodes.length === 1 &&
-        // repSelectedNodes[0].data.rowType === common.RowTypeEnum.Empty
-        //   ? repSelectedNodes[0].data.rowId
-        //   :
-        undefined,
+        reportSelectedNodes.length === 1
+          ? reportSelectedNodes[0].data.rowId
+          : undefined,
       rowType: common.RowTypeEnum.Metric,
       metricId: node.data.metric.metricId,
       showChart: false

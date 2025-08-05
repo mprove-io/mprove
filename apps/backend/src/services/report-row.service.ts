@@ -111,6 +111,222 @@ export class ReportRowService {
           ? targetRows.map(pRow => pRow.rowId)
           : processedRows.map(pRow => pRow.rowId)
       });
+    } else if (changeType === common.ChangeTypeEnum.AddHeader) {
+      let targetIndex: number;
+
+      if (common.isDefined(rowChange.rowId)) {
+        targetIndex = processedRows.findIndex(
+          pRow => pRow.rowId === rowChange.rowId
+        );
+      }
+
+      let rowIdsNumbers = processedRows.map(y =>
+        common.rowIdLetterToNumber(y.rowId)
+      );
+
+      let maxRowIdNumber =
+        rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
+
+      let rowIdNumber = common.isDefined(maxRowIdNumber)
+        ? maxRowIdNumber + 1
+        : 0;
+
+      let rowId = common.rowIdNumberToLetter(rowIdNumber);
+
+      let newRow: common.Row = {
+        rowId: rowId,
+        rowType: common.RowTypeEnum.Header,
+        name: rowChange.name,
+        metricId: undefined,
+        topLabel: undefined,
+        partNodeLabel: undefined,
+        partFieldLabel: undefined,
+        partLabel: undefined,
+        timeNodeLabel: undefined,
+        timeFieldLabel: undefined,
+        timeLabel: undefined,
+        showChart: false,
+        parameters: [],
+        parametersFiltersWithExcludedTime: [],
+        formula: undefined,
+        deps: undefined,
+        formulaDeps: undefined,
+        rqs: [],
+        mconfig: undefined,
+        query: undefined,
+        hasAccessToModel: false,
+        records: [],
+        formatNumber: undefined,
+        currencyPrefix: undefined,
+        currencySuffix: undefined
+      };
+
+      processedRows.push(newRow);
+
+      let targetRows: common.Row[] = [];
+
+      if (common.isDefined(targetIndex)) {
+        targetRows = [
+          ...processedRows.slice(0, targetIndex + 1),
+          newRow,
+          ...processedRows.slice(targetIndex + 1, processedRows.length)
+        ];
+
+        targetRows.pop();
+      }
+
+      processedRows = processRowIds({
+        rows: common.isDefined(targetIndex) ? targetRows : processedRows,
+        targetRowIds: common.isDefined(targetIndex)
+          ? targetRows.map(pRow => pRow.rowId)
+          : processedRows.map(pRow => pRow.rowId)
+      });
+    } else if (changeType === common.ChangeTypeEnum.AddFormula) {
+      let targetIndex: number;
+
+      if (common.isDefined(rowChange.rowId)) {
+        targetIndex = processedRows.findIndex(
+          pRow => pRow.rowId === rowChange.rowId
+        );
+      }
+
+      let rowIdsNumbers = processedRows.map(y =>
+        common.rowIdLetterToNumber(y.rowId)
+      );
+
+      let maxRowIdNumber =
+        rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
+
+      let rowIdNumber = common.isDefined(maxRowIdNumber)
+        ? maxRowIdNumber + 1
+        : 0;
+
+      let rowId = common.rowIdNumberToLetter(rowIdNumber);
+
+      let newRow: common.Row = {
+        rowId: rowId,
+        rowType: common.RowTypeEnum.Formula,
+        name: rowChange.name,
+        metricId: undefined,
+        topLabel: undefined,
+        partNodeLabel: undefined,
+        partFieldLabel: undefined,
+        partLabel: undefined,
+        timeNodeLabel: undefined,
+        timeFieldLabel: undefined,
+        timeLabel: undefined,
+        showChart: false,
+        parameters: undefined,
+        parametersFiltersWithExcludedTime: [],
+        deps: undefined,
+        formulaDeps: undefined,
+        formula: rowChange.formula,
+        rqs: [],
+        mconfig: undefined,
+        query: undefined,
+        hasAccessToModel: false,
+        records: [],
+        formatNumber: struct.formatNumber,
+        currencyPrefix: struct.currencyPrefix,
+        currencySuffix: struct.currencySuffix
+      };
+
+      processedRows.push(newRow);
+
+      let targetRows: common.Row[] = [];
+
+      if (common.isDefined(targetIndex)) {
+        targetRows = [
+          ...processedRows.slice(0, targetIndex + 1),
+          newRow,
+          ...processedRows.slice(targetIndex + 1, processedRows.length)
+        ];
+
+        targetRows.pop();
+      }
+
+      processedRows = processRowIds({
+        rows: common.isDefined(targetIndex) ? targetRows : processedRows,
+        targetRowIds: common.isDefined(targetIndex)
+          ? targetRows.map(pRow => pRow.rowId)
+          : processedRows.map(pRow => pRow.rowId)
+      });
+    } else if (changeType === common.ChangeTypeEnum.AddMetric) {
+      let targetIndex: number;
+
+      if (common.isDefined(rowChange.rowId)) {
+        targetIndex = processedRows.findIndex(
+          pRow => pRow.rowId === rowChange.rowId
+        );
+      }
+
+      let rowIdsNumbers = processedRows.map(y =>
+        common.rowIdLetterToNumber(y.rowId)
+      );
+
+      let maxRowIdNumber =
+        rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
+
+      let rowIdNumber = common.isDefined(maxRowIdNumber)
+        ? maxRowIdNumber + 1
+        : 0;
+
+      let rowId = common.rowIdNumberToLetter(rowIdNumber);
+
+      let metric: common.ModelMetric = metrics.find(
+        m => m.metricId === rowChange.metricId
+      );
+
+      let newRow: common.Row = {
+        rowId: rowId,
+        rowType: rowChange.rowType,
+        name: undefined,
+        metricId: rowChange.metricId,
+        topLabel: metric.topLabel,
+        partNodeLabel: metric.partNodeLabel,
+        partFieldLabel: metric.partFieldLabel,
+        partLabel: metric.partLabel,
+        timeNodeLabel: metric.timeNodeLabel,
+        timeFieldLabel: metric.timeFieldLabel,
+        timeLabel: metric.timeLabel,
+        showChart: rowChange.showChart,
+        parameters: common.isDefined(rowChange.parameters)
+          ? rowChange.parameters
+          : [],
+        parametersFiltersWithExcludedTime: [],
+        formula: undefined,
+        deps: undefined,
+        formulaDeps: undefined,
+        rqs: [],
+        mconfig: undefined,
+        query: undefined,
+        hasAccessToModel: false,
+        records: [],
+        formatNumber: metric.formatNumber,
+        currencyPrefix: metric.currencyPrefix,
+        currencySuffix: metric.currencySuffix
+      };
+
+      processedRows.push(newRow);
+
+      let targetRows: common.Row[] = [];
+
+      if (common.isDefined(targetIndex)) {
+        targetRows = [
+          ...processedRows.slice(0, targetIndex + 1),
+          newRow,
+          ...processedRows.slice(targetIndex + 1, processedRows.length)
+        ];
+
+        targetRows.pop();
+      }
+
+      processedRows = processRowIds({
+        rows: common.isDefined(targetIndex) ? targetRows : processedRows,
+        targetRowIds: common.isDefined(targetIndex)
+          ? targetRows.map(pRow => pRow.rowId)
+          : processedRows.map(pRow => pRow.rowId)
+      });
     } else if (changeType === common.ChangeTypeEnum.EditInfo) {
       let pRow = processedRows.find(row => row.rowId === rowChange.rowId);
 
@@ -266,78 +482,6 @@ export class ReportRowService {
       processedRows = processRowIds({
         rows: processedRows,
         targetRowIds: processedRows.map(pr => pr.rowId)
-      });
-    } else if (changeType === common.ChangeTypeEnum.AddMetric) {
-      let rowId = rowChange.rowId;
-
-      if (common.isUndefined(rowId)) {
-        let rowIdsNumbers = processedRows.map(y =>
-          common.rowIdLetterToNumber(y.rowId)
-        );
-
-        let maxRowIdNumber =
-          rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
-
-        let rowIdNumber = common.isDefined(maxRowIdNumber)
-          ? maxRowIdNumber + 1
-          : 0;
-
-        rowId = common.rowIdNumberToLetter(rowIdNumber);
-      }
-
-      let metric: common.ModelMetric = metrics.find(
-        m => m.metricId === rowChange.metricId
-      );
-
-      let newRow: common.Row = {
-        rowId: rowId,
-        rowType: rowChange.rowType,
-        name: undefined,
-        metricId: rowChange.metricId,
-        topLabel: metric.topLabel,
-        partNodeLabel: metric.partNodeLabel,
-        partFieldLabel: metric.partFieldLabel,
-        partLabel: metric.partLabel,
-        timeNodeLabel: metric.timeNodeLabel,
-        timeFieldLabel: metric.timeFieldLabel,
-        timeLabel: metric.timeLabel,
-        showChart: rowChange.showChart,
-        parameters: common.isDefined(rowChange.parameters)
-          ? rowChange.parameters
-          : [],
-        parametersFiltersWithExcludedTime: [],
-        formula: undefined,
-        deps: undefined,
-        formulaDeps: undefined,
-        rqs: [],
-        mconfig: undefined,
-        query: undefined,
-        hasAccessToModel: false,
-        records: [],
-        formatNumber: metric.formatNumber,
-        currencyPrefix: metric.currencyPrefix,
-        currencySuffix: metric.currencySuffix
-      };
-
-      if (common.isDefined(rowChange.rowId)) {
-        let rowIndex = processedRows.findIndex(
-          r => r.rowId === rowChange.rowId
-        );
-
-        let newProcessedRows = [
-          ...processedRows.slice(0, rowIndex),
-          newRow,
-          ...processedRows.slice(rowIndex + 1)
-        ];
-
-        processedRows = newProcessedRows;
-      } else {
-        processedRows.push(newRow);
-      }
-
-      processedRows = processRowIds({
-        rows: processedRows,
-        targetRowIds: processedRows.map(pRow => pRow.rowId)
       });
     } else if (changeType === common.ChangeTypeEnum.EditFormula) {
       clearRowsCache({

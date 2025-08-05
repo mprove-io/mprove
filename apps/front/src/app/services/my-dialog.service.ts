@@ -173,6 +173,10 @@ import {
   ReportAddFilterDialogData
 } from '../modules/reports/report-add-filter-dialog/report-add-filter-dialog.component';
 import {
+  ReportAddRowDialogComponent,
+  ReportAddRowDialogData
+} from '../modules/reports/report-add-row-dialog/report-add-row-dialog.component';
+import {
   RowAddFilterDialogComponent,
   RowAddFilterDialogData
 } from '../modules/reports/row-add-filter-dialog/row-add-filter-dialog.component';
@@ -403,6 +407,15 @@ export class MyDialogService {
 
   showReportSaveAs(item: ReportSaveAsDialogData): void {
     this.dialogService.open(ReportSaveAsDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 900
+    });
+  }
+
+  showReportAddRow(item: ReportAddRowDialogData): void {
+    this.dialogService.open(ReportAddRowDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,
