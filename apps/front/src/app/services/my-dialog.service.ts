@@ -173,6 +173,10 @@ import {
   ReportAddFilterDialogData
 } from '../modules/reports/report-add-filter-dialog/report-add-filter-dialog.component';
 import {
+  RowAddFilterDialogComponent,
+  RowAddFilterDialogData
+} from '../modules/reports/row-add-filter-dialog/row-add-filter-dialog.component';
+import {
   ChartDialogComponent,
   ChartDialogData
 } from '../modules/shared/chart-dialog/chart-dialog.component';
@@ -335,6 +339,15 @@ export class MyDialogService {
 
   showChartAddFilter(item: ChartsAddFilterDialogData): void {
     this.dialogService.open(ChartsAddFilterDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 900
+    });
+  }
+
+  showRowAddFilter(item: RowAddFilterDialogData): void {
+    this.dialogService.open(RowAddFilterDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item,

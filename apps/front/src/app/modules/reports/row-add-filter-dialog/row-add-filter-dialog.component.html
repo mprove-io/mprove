@@ -3,7 +3,7 @@
     <div
       data-cy="chartsAddFilterDialogTitle"
       class="text-s2 mt-5 text-left text-2xl font-semibold"
-      >Add Filter</div
+      >Row - Add Filter</div
     >
 
     <div class="flex flex-col">
@@ -15,21 +15,22 @@
           class="min-w-[2px] max-w-[800px] flex-grow"
         >
           <ng-select
-            #chartsAddFilterSelect
-            [fixNgSelectBottom]="chartsAddFilterSelect"
-            data-cy="chartsAddFilterSelect"
+            #rowAddFilterSelect
+            [fixNgSelectBottom]="rowAddFilterSelect"
+            data-cy="rowAddFilterSelect"
             class="charts-add-column-select w-full min-w-[2px] text-base"
             [items]="sortedFieldsY"
+            [loading]="modelLoading"
             [clearable]="false"
             [searchable]="true"
             [searchFn]="searchFn"
             [(ngModel)]="newFieldId"
             (change)="fieldChange()"
             (keyup.esc)="
-              $event.stopImmediatePropagation(); chartsAddFilterSelect.blur()
+              $event.stopImmediatePropagation(); rowAddFilterSelect.blur()
             "
             (keyup.enter)="
-              $event.stopImmediatePropagation(); chartsAddFilterSelect.blur()
+              $event.stopImmediatePropagation(); rowAddFilterSelect.blur()
             "
             appendTo="body"
             placeholder="Select Field"
