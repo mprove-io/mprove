@@ -75,6 +75,55 @@
 
   <div class="mt-9 flex h-[150px] flex-col justify-start">
     <div
+      *ngIf="rowType === rowTypeEnum.Metric"
+      class="flex h-11 min-w-[2px] max-w-[1000px] flex-row items-center space-x-5"
+    >
+      <div
+        class="text-s1 flex flex-shrink-0 select-none items-center font-semibold"
+        >Metric</div
+      >
+
+      <ng-select
+        #newMetricSelect
+        [fixNgSelectBottom]="newMetricSelect"
+        data-cy="newMetricSelect"
+        class="new-metric-select w-full min-w-[2px] text-base"
+        [items]="metrics"
+        [clearable]="false"
+        [searchable]="true"
+        [searchFn]="newMetricSearchFn"
+        [(ngModel)]="newMetricId"
+        (change)="newMetricChange()"
+        (keyup.esc)="$event.stopImmediatePropagation(); newMetricSelect.blur()"
+        (keyup.enter)="
+          $event.stopImmediatePropagation(); newMetricSelect.blur()
+        "
+        appendTo="body"
+        placeholder="Select Metric"
+        bindLabel="label"
+        bindValue="metricId"
+      >
+        <ng-template ng-label-tmp let-item="item">
+          <m-metric-field-label
+            [metric]="item"
+            [isShowTop]="true"
+            [isShowTime]="true"
+            class="ml-1 flex"
+          ></m-metric-field-label>
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          <m-metric-field-label
+            [metric]="item"
+            [isShowTop]="true"
+            [isShowTime]="true"
+            class="ml-1 flex"
+          ></m-metric-field-label>
+        </ng-template>
+      </ng-select>
+    </div>
+
+    <div
       *ngIf="[rowTypeEnum.Header, rowTypeEnum.Formula].indexOf(rowType) > -1"
       class="flex h-11 max-w-[600px] flex-row items-center"
     >
@@ -153,5 +202,4 @@
   </div>
 </div>
 
-<div *ngIf="nav$ | async"></div>
-<!-- <div *ngIf="struct$ | async"></div> -->
+<div *ngIf="metrics$ | async"></div>

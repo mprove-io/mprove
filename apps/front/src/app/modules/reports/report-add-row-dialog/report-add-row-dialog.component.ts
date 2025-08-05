@@ -1,16 +1,19 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import uFuzzy from '@leeoniya/ufuzzy';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { tap } from 'rxjs/operators';
-import { ChartsQuery } from '~front/app/queries/charts.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
-import { NavigateService } from '~front/app/services/navigate.service';
 import { ReportService } from '~front/app/services/report.service';
 import { common } from '~front/barrels/common';
 
@@ -24,26 +27,18 @@ export interface ReportAddRowDialogData {
   templateUrl: './report-add-row-dialog.component.html'
 })
 export class ReportAddRowDialogComponent implements OnInit {
-  // @ViewChild('chartSaveAsDialogDashboardSelect', { static: false })
-  // chartSaveAsDialogDashboardSelectElement: NgSelectComponent;
+  @ViewChild('newMetricSelect', { static: false })
+  newMetricSelectElement: NgSelectComponent;
 
-  // @HostListener('window:keyup.esc')
-  // onEscKeyUp() {
-  //   this.chartSaveAsDialogDashboardSelectElement?.close();
-  //   // this.ref.close();
-  // }
+  @HostListener('window:keyup.esc')
+  onEscKeyUp() {
+    this.newMetricSelectElement?.close();
+    // this.ref.close();
+  }
 
   rowTypeEnum = common.RowTypeEnum;
 
-  rowType: common.RowTypeEnum = common.RowTypeEnum.Empty;
-
-  nav: NavState;
-  nav$ = this.navQuery.select().pipe(
-    tap(x => {
-      this.nav = x;
-      this.cd.detectChanges();
-    })
-  );
+  rowType: common.RowTypeEnum = common.RowTypeEnum.Metric;
 
   newNameForm: FormGroup = this.fb.group({
     name: [undefined, [Validators.required]]
@@ -53,26 +48,23 @@ export class ReportAddRowDialogComponent implements OnInit {
     formula: [undefined, [Validators.required]]
   });
 
-  // struct: StructState;
-  // struct$ = this.structQuery.select().pipe(
-  //   tap(x => {
-  //     this.struct = x;
-  //     this.cd.detectChanges();
-  //   })
-  // );
+  metrics: common.ModelMetric[];
+  metrics$ = this.structQuery.select().pipe(
+    tap(x => {
+      this.metrics = x.metrics;
+      this.cd.detectChanges();
+    })
+  );
+
+  newMetricId: string;
 
   constructor(
     public ref: DialogRef<ReportAddRowDialogData>,
     private fb: FormBuilder,
-    private userQuery: UserQuery,
     private reportService: ReportService,
     private uiQuery: UiQuery,
-    private navigateService: NavigateService,
-    private navQuery: NavQuery,
-    private reportQuery: ReportQuery,
-    private chartsQuery: ChartsQuery,
     private structQuery: StructQuery,
-    private spinner: NgxSpinnerService,
+    private reportQuery: ReportQuery,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -107,51 +99,17 @@ export class ReportAddRowDialogComponent implements OnInit {
     this.newNameForm.controls['name'].markAsUntouched();
   }
 
+  newMetricChange() {
+    (document.activeElement as HTMLElement).blur();
+  }
+
   save() {
-    let reportSelectedNodes = this.uiQuery.getValue().reportSelectedNodes;
-
-    let report = this.reportQuery.getValue();
-
-    let rowId =
-      reportSelectedNodes.length === 1
-        ? reportSelectedNodes[0].data.rowId
-        : undefined;
-
-    if (this.rowType === common.RowTypeEnum.Empty) {
-      let rowChange: common.RowChange = {
-        rowId: rowId,
-        rowType: common.RowTypeEnum.Empty,
-        showChart: false
-      };
-
-      this.reportService.modifyRows({
-        report: report,
-        changeType: common.ChangeTypeEnum.AddEmpty,
-        rowChange: rowChange,
-        rowIds: undefined,
-        reportFields: report.fields,
-        chart: undefined
-      });
-    } else if (this.rowType === common.RowTypeEnum.Header) {
+    if (this.rowType === common.RowTypeEnum.Header) {
       this.newNameForm.controls['name'].markAsTouched();
 
       if (this.newNameForm.valid === false) {
         return;
       }
-
-      let rowChange: common.RowChange = {
-        rowId: rowId,
-        name: this.newNameForm.controls['name'].value
-      };
-
-      this.reportService.modifyRows({
-        report: report,
-        changeType: common.ChangeTypeEnum.AddHeader,
-        rowChange: rowChange,
-        rowIds: undefined,
-        reportFields: report.fields,
-        chart: undefined
-      });
     } else if (this.rowType === common.RowTypeEnum.Formula) {
       this.newNameForm.controls['name'].markAsTouched();
       this.newFormulaForm.controls['formula'].markAsTouched();
@@ -162,27 +120,84 @@ export class ReportAddRowDialogComponent implements OnInit {
       ) {
         return;
       }
-
-      let rowChange: common.RowChange = {
-        rowId: rowId,
-        name: this.newNameForm.controls['name'].value,
-        formula: this.newFormulaForm.controls['formula'].value
-      };
-
-      this.reportService.modifyRows({
-        report: report,
-        changeType: common.ChangeTypeEnum.AddFormula,
-        rowChange: rowChange,
-        rowIds: undefined,
-        reportFields: report.fields,
-        chart: undefined
-      });
+    } else if (this.rowType === common.RowTypeEnum.Metric) {
+      if (common.isUndefined(this.newMetricId)) {
+        return;
+      }
     }
+
+    let reportSelectedNodes = this.uiQuery.getValue().reportSelectedNodes;
+
+    let report = this.reportQuery.getValue();
+
+    let rowId =
+      reportSelectedNodes.length === 1
+        ? reportSelectedNodes[0].data.rowId
+        : undefined;
+
+    let rowChange: common.RowChange =
+      this.rowType === common.RowTypeEnum.Metric
+        ? {
+            rowId: rowId,
+            metricId: this.newMetricId,
+            rowType: common.RowTypeEnum.Metric,
+            showChart: false
+          }
+        : this.rowType === common.RowTypeEnum.Formula
+          ? {
+              rowId: rowId,
+              name: this.newNameForm.controls['name'].value,
+              formula: this.newFormulaForm.controls['formula'].value,
+              showChart: false
+            }
+          : this.rowType === common.RowTypeEnum.Header
+            ? {
+                rowId: rowId,
+                name: this.newNameForm.controls['name'].value,
+                showChart: false
+              }
+            : this.rowType === common.RowTypeEnum.Empty
+              ? {
+                  rowId: rowId,
+                  rowType: common.RowTypeEnum.Empty,
+                  showChart: false
+                }
+              : undefined;
+
+    this.reportService.modifyRows({
+      report: report,
+      changeType:
+        this.rowType === common.RowTypeEnum.Metric
+          ? common.ChangeTypeEnum.AddMetric
+          : this.rowType === common.RowTypeEnum.Formula
+            ? common.ChangeTypeEnum.AddFormula
+            : this.rowType === common.RowTypeEnum.Header
+              ? common.ChangeTypeEnum.AddHeader
+              : this.rowType === common.RowTypeEnum.Empty
+                ? common.ChangeTypeEnum.AddEmpty
+                : undefined,
+      rowChange: rowChange,
+      rowIds: undefined,
+      reportFields: report.fields,
+      chart: undefined
+    });
 
     this.ref.close();
   }
 
   cancel() {
     this.ref.close();
+  }
+
+  newMetricSearchFn(term: string, metric: common.ModelMetric) {
+    let haystack = [
+      `${metric.topLabel} ${metric.partNodeLabel} ${metric.partFieldLabel} by ${metric.timeNodeLabel} ${metric.timeFieldLabel}`
+    ];
+
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+
+    return idxs != null && idxs.length > 0;
   }
 }
