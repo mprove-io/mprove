@@ -1,9 +1,3 @@
-<!-- <div
-  class="mb-5 mr-9 flex h-11 flex-row items-center text-lg"
-  *ngIf="reportSelectedNodes.length === 0"
->
-  No rows selected
-</div> -->
 <div
   class="mb-5 mr-9 flex h-11 w-full flex-row items-center"
   *ngIf="reportSelectedNodes.length > 1"
@@ -18,16 +12,6 @@
   >
     <m-trash-icon></m-trash-icon>
     <div class="ml-3"> Delete Rows </div>
-  </button>
-
-  <button
-    type="button"
-    data-cy="clearRowsButton"
-    class="border-s400 text-s500 hover:bg-m0 ml-5 flex flex-row items-center rounded border px-4 py-2 focus:outline-none"
-    (click)="clearRows()"
-  >
-    <m-delete-icon></m-delete-icon>
-    <div class="ml-3"> Clear Rows </div>
   </button>
 </div>
 
@@ -52,36 +36,6 @@
         >
           <m-trash-icon></m-trash-icon>
         </button>
-
-        <button
-          type="button"
-          data-cy="clearRowButton"
-          class="hover:bg-m200 text-s500 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-          (click)="clearRows()"
-        >
-          <m-delete-icon></m-delete-icon>
-        </button>
-      </div>
-
-      <div
-        class="ml-8"
-        *ngIf="
-          reportSelectedNode.data.rowType !== rowTypeEmpty &&
-          reportSelectedNode.data.rowType !== rowTypeHeader
-        "
-      >
-        <button
-          type="button"
-          data-cy="rowFormatButton"
-          class="text-s500 hover:bg-m0 flex h-9 w-[50px] items-center justify-center rounded border px-2 text-sm focus:outline-none"
-          [ngClass]="{
-            'border-p500 bg-m0 border-2': isShowFormatOptions === true,
-            'border-s400': isShowFormatOptions === false
-          }"
-          (click)="toggleShowFormatOptions()"
-        >
-          123
-        </button>
       </div>
     </div>
 
@@ -91,219 +45,29 @@
       >
 
       <div class="flex items-center">{{
-        isToHeader === true
-          ? (rowTypeHeader | capitalize)
-          : isToFormula === true
-            ? (rowTypeFormula | capitalize)
-            : isToMetric === true
-              ? (rowTypeMetric | capitalize)
-              : (reportSelectedNode.data.rowType | capitalize)
+        reportSelectedNode.data.rowType | capitalize
       }}</div>
     </div>
 
     <div
-      class="ml-10 flex min-w-[2px] flex-1 flex-row items-start space-x-5 overflow-auto"
-      *ngIf="reportSelectedNode.data.rowType === rowTypeEmpty"
-    >
-      <div
-        class="flex flex-row"
-        *ngIf="
-          isToHeader === false && isToFormula === false && isToMetric === false
-        "
-      >
-        <div class="text-s1 flex select-none items-center font-semibold"
-          >Convert to</div
-        >
-
-        <button
-          type="button"
-          data-cy="rowToMetricButton"
-          class="border-s400 text-s500 hover:bg-m0 ml-5 flex rounded border px-4 py-2 focus:outline-none"
-          (click)="toMetric()"
-        >
-          Metric
-        </button>
-
-        <button
-          type="button"
-          data-cy="rowToFormulaButton"
-          class="border-s400 text-s500 hover:bg-m0 ml-5 flex rounded border px-4 py-2 focus:outline-none"
-          (click)="toFormula()"
-        >
-          Formula
-        </button>
-
-        <button
-          type="button"
-          data-cy="rowToHeaderButton"
-          class="border-s400 text-s500 hover:bg-m0 ml-5 flex rounded border px-4 py-2 focus:outline-none"
-          (click)="toHeader()"
-        >
-          Header
-        </button>
-      </div>
-
-      <div
-        *ngIf="isToFormula === true"
-        class="flex flex-1 flex-row items-start space-x-5"
-      >
-        <div class="text-s1 mt-3 flex select-none items-center font-semibold"
-          >Formula</div
-        >
-
-        <div [formGroup]="newFormulaForm" class="relative flex w-full">
-          <textarea
-            data-cy="newFormulaInput"
-            class="form-input border-s3 focus:border-m600 placeholder-s400 h-[95px] w-full resize-none rounded font-mono"
-            [ngClass]="{
-              'border-r600':
-                newFormulaForm.controls['formula'].invalid &&
-                newFormulaForm.controls['formula'].touched
-            }"
-            formControlName="formula"
-            placeholder="$A + $B"
-          ></textarea>
-          <m-validation
-            class="absolute -bottom-[22px] left-0"
-            [control]="newFormulaForm.controls['formula']"
-          ></m-validation>
-        </div>
-      </div>
-
-      <div
-        *ngIf="isToHeader === true || isToFormula === true"
-        class="flex h-11 max-w-[600px] flex-1 flex-row items-center space-x-5"
-      >
-        <div class="text-s1 flex select-none items-center font-semibold"
-          >Name</div
-        >
-
-        <div [formGroup]="newNameForm" class="relative flex w-full">
-          <input
-            autocomplete="off"
-            data-cy="newNameInput"
-            class="form-input border-s3 focus:border-m600 w-full min-w-[100px] resize-none rounded"
-            [ngClass]="{
-              'border-r600':
-                newNameForm.controls['name'].invalid &&
-                newNameForm.controls['name'].touched
-            }"
-            formControlName="name"
-            placeholder=""
-          />
-          <m-validation
-            class="absolute -bottom-[22px] left-0"
-            [control]="newNameForm.controls['name']"
-          ></m-validation>
-        </div>
-      </div>
-
-      <div
-        *ngIf="isToMetric === true"
-        class="flex h-11 min-w-[2px] max-w-[1000px] flex-grow flex-row items-center space-x-5"
-      >
-        <div
-          class="text-s1 flex flex-shrink-0 select-none items-center font-semibold"
-          >Metric</div
-        >
-
-        <ng-select
-          #newMetricSelect
-          [fixNgSelectBottom]="newMetricSelect"
-          data-cy="newMetricSelect"
-          class="new-metric-select w-full min-w-[2px] text-base"
-          [items]="metrics"
-          [clearable]="false"
-          [searchable]="true"
-          [searchFn]="newMetricSearchFn"
-          [(ngModel)]="newMetricId"
-          (change)="newMetricChange()"
-          (keyup.esc)="
-            $event.stopImmediatePropagation(); newMetricSelect.blur()
-          "
-          (keyup.enter)="
-            $event.stopImmediatePropagation(); newMetricSelect.blur()
-          "
-          appendTo="body"
-          placeholder="Select Metric"
-          bindLabel="label"
-          bindValue="metricId"
-        >
-          <ng-template ng-label-tmp let-item="item">
-            <m-metric-field-label
-              [metric]="item"
-              [isShowTop]="true"
-              [isShowTime]="true"
-              class="ml-1 flex"
-            ></m-metric-field-label>
-          </ng-template>
-
-          <ng-template ng-option-tmp let-item="item">
-            <m-metric-field-label
-              [metric]="item"
-              [isShowTop]="true"
-              [isShowTime]="true"
-              class="ml-1 flex"
-            ></m-metric-field-label>
-          </ng-template>
-        </ng-select>
-      </div>
-
-      <div
-        class="flex flex-shrink-0 flex-row"
-        *ngIf="
-          isToHeader === true || isToFormula === true || isToMetric === true
-        "
-      >
-        <button
-          data-cy="rowApplyButton"
-          class="bg-m600 text-m0 select-none rounded px-4 py-2 font-medium focus:outline-none"
-          type="button"
-          (click)="applyConvert()"
-          >Apply</button
-        >
-
-        <button
-          type="button"
-          data-cy="rowCancelButton"
-          class="border-s400 text-s500 hover:bg-m0 ml-5 select-none rounded border px-4 py-2 focus:outline-none"
-          (click)="cancelConvert()"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-
-    <div
+      class="ml-8 flex h-11 flex-row items-center"
       *ngIf="
         reportSelectedNode.data.rowType !== rowTypeEmpty &&
-        reportSelectedNode.data.rowType !== rowTypeMetric
+        reportSelectedNode.data.rowType !== rowTypeHeader
       "
-      class="ml-10 flex h-11 max-w-[600px] flex-1 flex-row items-center space-x-5"
     >
-      <div class="text-s1 flex select-none items-center font-semibold"
-        >Name</div
+      <button
+        type="button"
+        data-cy="rowFormatButton"
+        class="text-s500 hover:bg-m0 flex h-10 items-center justify-center rounded border px-5 text-base focus:outline-none"
+        [ngClass]="{
+          'border-p500 bg-m0 border-2': isShowFormatOptions === true,
+          'border-s400': isShowFormatOptions === false
+        }"
+        (click)="toggleShowFormatOptions()"
       >
-
-      <div [formGroup]="nameForm" class="relative flex w-full">
-        <input
-          autocomplete="off"
-          data-cy="nameInput"
-          class="form-input border-s3 focus:border-m600 w-full min-w-[100px] resize-none rounded"
-          [ngClass]="{
-            'border-r600':
-              nameForm.controls['name'].invalid &&
-              nameForm.controls['name'].touched
-          }"
-          formControlName="name"
-          placeholder=""
-          (blur)="nameBlur()"
-        />
-        <m-validation
-          class="absolute -bottom-[22px] left-0"
-          [control]="nameForm.controls['name']"
-        ></m-validation>
-      </div>
+        Format #
+      </button>
     </div>
   </div>
 
@@ -449,11 +213,48 @@
   </div>
 
   <div
+    *ngIf="
+      reportSelectedNode.data.rowType !== rowTypeEmpty &&
+      reportSelectedNode.data.rowType !== rowTypeMetric
+    "
+    class="flex h-11 max-w-[600px] flex-row items-center space-x-5"
+  >
+    <div
+      class="text-s1 flex flex-shrink-0 select-none items-center font-semibold"
+      [ngClass]="{
+        'w-[110px]': reportSelectedNode.data.rowType === rowTypeFormula,
+        'w-[70px]': reportSelectedNode.data.rowType === rowTypeHeader
+      }"
+      >Name</div
+    >
+
+    <div [formGroup]="nameForm" class="relative flex w-full">
+      <input
+        autocomplete="off"
+        data-cy="nameInput"
+        class="form-input border-s3 focus:border-m600 w-full min-w-[100px] resize-none rounded"
+        [ngClass]="{
+          'border-r600':
+            nameForm.controls['name'].invalid &&
+            nameForm.controls['name'].touched
+        }"
+        formControlName="name"
+        placeholder=""
+        (blur)="nameBlur()"
+      />
+      <m-validation
+        class="absolute -bottom-[22px] left-0"
+        [control]="nameForm.controls['name']"
+      ></m-validation>
+    </div>
+  </div>
+
+  <div
     *ngIf="reportSelectedNode.data.rowType === rowTypeFormula"
     class="flex flex-1 flex-row items-start space-x-5"
   >
     <div
-      class="text-s1 mt-3 flex flex-shrink-0 select-none items-center font-semibold"
+      class="text-s1 mt-3 flex w-[110px] flex-shrink-0 select-none items-center font-semibold"
       >Formula SQL</div
     >
 
@@ -517,5 +318,4 @@
 </div>
 
 <div *ngIf="uiQuery$ | async"></div>
-<div *ngIf="metrics$ | async"></div>
 <div *ngIf="report$ | async"></div>
