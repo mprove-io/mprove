@@ -25,7 +25,6 @@ export interface ChartsAddFilterDialogData {
   chart: common.ChartX;
   model: common.Model;
   mconfig: common.MconfigX;
-  fields: common.ModelFieldY[];
 }
 
 @Component({
@@ -49,8 +48,7 @@ export class ChartsAddFilterDialogComponent implements OnInit {
   }
 
   chart: common.ChartX;
-  fields: common.ModelFieldY[];
-  matchFields: common.ModelField[];
+  sortedFieldsY: common.ModelFieldY[];
 
   addFilterForm: FormGroup;
 
@@ -72,20 +70,33 @@ export class ChartsAddFilterDialogComponent implements OnInit {
 
     this.chart = this.ref.data.chart;
 
-    this.fields = this.ref.data.fields;
-
-    this.matchFields = this.fields
-      .filter(
-        x => x.hidden === false && x.fieldClass !== common.FieldClassEnum.Filter
+    this.sortedFieldsY = this.ref.data.model.fields
+      .filter(x => x.hidden === false)
+      .map(x =>
+        Object.assign({}, x, {
+          partLabel: common.isDefined(x.groupLabel)
+            ? `${x.topLabel} ${x.groupLabel} ${x.label}`
+            : `${x.topLabel} ${x.label}`
+        } as common.ModelFieldY)
       )
       .sort((a, b) =>
         a.fieldClass !== common.FieldClassEnum.Dimension &&
         b.fieldClass === common.FieldClassEnum.Dimension
-          ? -1
+          ? 1
           : a.fieldClass === common.FieldClassEnum.Dimension &&
               b.fieldClass !== common.FieldClassEnum.Dimension
-            ? 1
-            : 0
+            ? -1
+            : a.fieldClass !== common.FieldClassEnum.Filter &&
+                b.fieldClass === common.FieldClassEnum.Filter
+              ? 1
+              : a.fieldClass === common.FieldClassEnum.Filter &&
+                  b.fieldClass !== common.FieldClassEnum.Filter
+                ? -1
+                : a.partLabel > b.partLabel
+                  ? 1
+                  : b.partLabel > a.partLabel
+                    ? -1
+                    : 0
       );
   }
 

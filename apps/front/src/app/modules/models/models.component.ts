@@ -1427,7 +1427,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.myDialogService.showChartAddFilter({
       apiService: this.apiService,
       chart: this.chart,
-      fields: this.sortedFieldsList,
       model: this.model,
       mconfig: this.mconfig
     });
