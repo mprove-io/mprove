@@ -660,20 +660,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
                 common.FractionTypeEnum.TsIsBefore,
                 common.FractionTypeEnum.TsIsThrough,
                 common.FractionTypeEnum.TsIsOnHour,
-                common.FractionTypeEnum.TsIsOnMinute,
-                common.FractionTypeEnum.TsIsOnTimestamp,
-                common.FractionTypeEnum.TsIsNotInLast,
-                common.FractionTypeEnum.TsIsNotOnDay,
-                common.FractionTypeEnum.TsIsNotOnWeek,
-                common.FractionTypeEnum.TsIsNotOnMonth,
-                common.FractionTypeEnum.TsIsNotOnQuarter,
-                common.FractionTypeEnum.TsIsNotOnYear,
-                common.FractionTypeEnum.TsIsNotInNext,
-                common.FractionTypeEnum.TsIsNotBeginFor,
-                common.FractionTypeEnum.TsIsNotBetween,
-                common.FractionTypeEnum.TsIsNotOnHour,
-                common.FractionTypeEnum.TsIsNotOnMinute,
-                common.FractionTypeEnum.TsIsNotOnTimestamp
+                common.FractionTypeEnum.TsIsOnMinute
               ].indexOf(x.value) > -1
           );
 
