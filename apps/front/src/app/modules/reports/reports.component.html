@@ -30,15 +30,6 @@
                   [isFilled]="isShowLeft === true"
                 ></m-left-panel-icon>
 
-                <m-chart-icon
-                  class="mb-[2px] ml-5 flex cursor-pointer"
-                  [ngClass]="{
-                    'text-s500': showMiniCharts === true,
-                    'text-s400': showMiniCharts === false
-                  }"
-                  (click)="toggleShowMiniCharts()"
-                ></m-chart-icon>
-
                 <div
                   class="ml-5 flex flex-shrink-0 cursor-pointer flex-row items-center"
                   (click)="navToReportsList()"
@@ -973,7 +964,6 @@
 </div>
 
 <div *ngIf="routerEvents$ | async"></div>
-<div *ngIf="showMiniCharts$ | async"></div>
 <div *ngIf="isAutoRun$ | async"></div>
 <div *ngIf="report$ | async"></div>
 <div *ngIf="reports$ | async"></div>

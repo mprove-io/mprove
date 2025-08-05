@@ -120,13 +120,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
   refreshSubscription: Subscription;
   refreshId: string;
 
-  showMiniCharts = true;
-  showMiniCharts$ = this.uiQuery.showMiniCharts$.pipe(
-    tap(x => {
-      this.showMiniCharts = x;
-    })
-  );
-
   isAutoRun = true;
   isAutoRun$ = this.uiQuery.isAutoRun$.pipe(
     tap(x => {
@@ -263,17 +256,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.uiQuery.repChartData$,
     this.uiQuery.showMetricsModelName$,
     this.uiQuery.showMetricsTimeFieldName$
-    // ,
-    // this.uiQuery.showMiniCharts$
   ]).pipe(
     tap(
-      ([repChartData, showMetricsModelName, showMetricsTimeFieldName]: // ,
-      // showMiniCharts
-      [
+      ([repChartData, showMetricsModelName, showMetricsTimeFieldName]: [
         RepChartData,
         boolean,
         boolean
-        // , boolean
       ]) => {
         // console.log(repChartData);
 
@@ -1163,16 +1151,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   toggleShowLeft() {
     this.isShowLeft = !this.isShowLeft;
-  }
-
-  toggleShowMiniCharts() {
-    let newShowMiniChartsValue = !this.showMiniCharts;
-
-    this.showMiniCharts = newShowMiniChartsValue;
-
-    this.uiQuery.updatePart({ showMiniCharts: newShowMiniChartsValue });
-
-    this.cd.detectChanges();
   }
 
   toggleSearch() {
