@@ -6,23 +6,6 @@
   >
 
   <div
-    data-cy="reportAddRowDialogEmptyCheckbox"
-    class="flex h-9 cursor-pointer flex-row items-center"
-    (click)="emptyOnClick()"
-  >
-    <div
-      class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
-      [ngClass]="{
-        'bg-m600': rowType === rowTypeEnum.Empty
-      }"
-    >
-      <m-check-icon *ngIf="rowType === rowTypeEnum.Empty"></m-check-icon>
-    </div>
-
-    <div class="ml-5 text-base">Empty</div>
-  </div>
-
-  <div
     data-cy="reportAddRowDialogMetricCheckbox"
     class="flex h-9 cursor-pointer flex-row items-center"
     (click)="metricOnClick()"
@@ -41,7 +24,7 @@
 
   <div
     data-cy="reportAddRowDialogFormulaCheckbox"
-    class="flex h-9 cursor-pointer flex-row items-center"
+    class="mt-5 flex h-9 cursor-pointer flex-row items-center"
     (click)="formulaOnClick()"
   >
     <div
@@ -58,7 +41,7 @@
 
   <div
     data-cy="reportAddRowDialogHeaderCheckbox"
-    class="flex h-9 cursor-pointer flex-row items-center"
+    class="mt-5 flex h-9 cursor-pointer flex-row items-center"
     (click)="headerOnClick()"
   >
     <div
@@ -74,57 +57,80 @@
   </div>
 
   <div
-    *ngIf="[rowTypeEnum.Header, rowTypeEnum.Formula].indexOf(rowType) > -1"
-    class="mt-5 flex h-11 max-w-[600px] flex-1 flex-row items-center space-x-5"
+    data-cy="reportAddRowDialogEmptyCheckbox"
+    class="mt-5 flex h-9 cursor-pointer flex-row items-center"
+    (click)="emptyOnClick()"
   >
-    <div class="text-s1 flex select-none items-center font-semibold">Name</div>
-
-    <div [formGroup]="newNameForm" class="relative flex w-full">
-      <input
-        autocomplete="off"
-        data-cy="newNameInput"
-        class="form-input border-s3 focus:border-m600 w-full min-w-[100px] resize-none rounded"
-        [ngClass]="{
-          'border-r600':
-            newNameForm.controls['name'].invalid &&
-            newNameForm.controls['name'].touched
-        }"
-        formControlName="name"
-        placeholder=""
-      />
-
-      <m-validation
-        class="absolute -bottom-[22px] left-0"
-        [control]="newNameForm.controls['name']"
-      ></m-validation>
+    <div
+      class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
+      [ngClass]="{
+        'bg-m600': rowType === rowTypeEnum.Empty
+      }"
+    >
+      <m-check-icon *ngIf="rowType === rowTypeEnum.Empty"></m-check-icon>
     </div>
+
+    <div class="ml-5 text-base">Empty</div>
   </div>
 
-  <div
-    *ngIf="rowType === rowTypeEnum.Formula"
-    class="mt-5 flex flex-1 flex-row items-start space-x-5"
-  >
-    <div class="text-s1 mt-3 flex select-none items-center font-semibold"
-      >Formula</div
+  <div class="mt-9 flex h-[150px] flex-col justify-start">
+    <div
+      *ngIf="[rowTypeEnum.Header, rowTypeEnum.Formula].indexOf(rowType) > -1"
+      class="flex h-11 max-w-[600px] flex-row items-center"
     >
+      <div
+        class="text-s1 flex w-[85px] flex-shrink-0 select-none items-center font-semibold"
+        >Name</div
+      >
 
-    <div [formGroup]="newFormulaForm" class="relative flex w-full">
-      <textarea
-        data-cy="newFormulaInput"
-        class="form-input border-s3 focus:border-m600 placeholder-s400 h-[95px] w-full resize-none rounded font-mono"
-        [ngClass]="{
-          'border-r600':
-            newFormulaForm.controls['formula'].invalid &&
-            newFormulaForm.controls['formula'].touched
-        }"
-        formControlName="formula"
-        placeholder="$A + $B"
-      ></textarea>
+      <div [formGroup]="newNameForm" class="relative flex w-full">
+        <input
+          autocomplete="off"
+          data-cy="newNameInput"
+          class="form-input border-s3 focus:border-m600 w-full min-w-[100px] resize-none rounded"
+          [ngClass]="{
+            'border-r600':
+              newNameForm.controls['name'].invalid &&
+              newNameForm.controls['name'].touched
+          }"
+          formControlName="name"
+          placeholder=""
+        />
 
-      <m-validation
-        class="absolute -bottom-[22px] left-0"
-        [control]="newFormulaForm.controls['formula']"
-      ></m-validation>
+        <m-validation
+          class="absolute -bottom-[22px] left-0"
+          [control]="newNameForm.controls['name']"
+        ></m-validation>
+      </div>
+    </div>
+
+    <div
+      *ngIf="rowType === rowTypeEnum.Formula"
+      class="mt-5 flex flex-1 flex-row items-start"
+    >
+      <div
+        class="text-s1 mt-3 flex w-[85px] flex-shrink-0 select-none items-center font-semibold"
+        >Formula</div
+      >
+
+      <div [formGroup]="newFormulaForm" class="relative flex w-full">
+        <textarea
+          data-cy="newFormulaInput"
+          class="form-input border-s3 focus:border-m600 placeholder-s400 h-[95px] w-full resize-none rounded font-mono"
+          [ngClass]="{
+            'border-r600':
+              newFormulaForm.controls['formula'].invalid &&
+              newFormulaForm.controls['formula'].touched
+          }"
+          formControlName="formula"
+          placeholder="$A + $B"
+        ></textarea>
+
+        <m-validation
+          class="absolute -bottom-[22px] left-0"
+          [control]="newFormulaForm.controls['formula']"
+        ></m-validation>
+      </div>
     </div>
   </div>
 

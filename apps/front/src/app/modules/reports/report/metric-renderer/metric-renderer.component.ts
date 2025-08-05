@@ -107,7 +107,13 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
   }
 
   showDialog(event?: MouseEvent) {
-    event.stopPropagation();
+    if (
+      [common.RowTypeEnum.Header, common.RowTypeEnum.Empty].indexOf(
+        this.params.data.rowType
+      ) < 0
+    ) {
+      event.stopPropagation();
+    }
 
     // console.log('this.params.data');
     // console.log(this.params.data);
