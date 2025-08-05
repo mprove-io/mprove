@@ -52,6 +52,10 @@ import {
   ChartsAddColumnFieldDialogData
 } from '../modules/models/charts-add-column-field-dialog/charts-add-column-field-dialog.component';
 import {
+  ChartsAddFilterDialogComponent,
+  ChartsAddFilterDialogData
+} from '../modules/models/charts-add-filter-dialog/charts-add-filter-dialog.component';
+import {
   ChartsReplaceColumnFieldDialogComponent,
   ChartsReplaceColumnFieldDialogData
 } from '../modules/models/charts-replace-column-field-dialog/charts-replace-column-field-dialog.component';
@@ -326,6 +330,15 @@ export class MyDialogService {
       data: item,
       width: '66vw',
       height: item.showNav === true ? '87vh' : '77vh'
+    });
+  }
+
+  showChartAddFilter(item: ChartsAddFilterDialogData): void {
+    this.dialogService.open(ChartsAddFilterDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item,
+      width: 900
     });
   }
 

@@ -49,7 +49,6 @@ import {
 } from '@ali-hm/angular-tree-component';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { MALLOY_FILTER_ANY } from '~common/_index';
 import { RefreshItem } from '~front/app/interfaces/refresh-item';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { ChartsQuery } from '~front/app/queries/charts.query';
@@ -204,11 +203,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
     })
   );
 
-  isAddParameter = false;
   sortedFieldsList: common.ModelFieldY[] = [];
   sortedNotHiddenFieldsList: common.ModelFieldY[] = [];
   isDisabledApplyAlreadyFiltered = false;
-  newParameterFieldId: string;
 
   model: ModelState;
   model$ = this.modelQuery.select().pipe(
@@ -381,7 +378,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
       }
 
       this.dryQueryEstimate = undefined;
-      this.cancelAddParameter();
 
       this.mconfig = x.tiles[0].mconfig;
       this.query = x.tiles[0].query;
@@ -968,10 +964,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.mconfig.extendedFilters.length > 0) {
       this.filtersIsExpanded = !this.filtersIsExpanded;
     }
-
-    if (this.filtersIsExpanded === false) {
-      this.cancelAddParameter();
-    }
   }
 
   toggleChartPanel() {
@@ -1432,7 +1424,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   addParameter() {
-    this.isAddParameter = true;
+    this.myDialogService.showChartAddFilter({
+      apiService: this.apiService,
+      chart: this.chart,
+      fields: this.sortedFieldsList,
+      model: this.model,
+      mconfig: this.mconfig
+    });
   }
 
   addColumn() {
@@ -1441,198 +1439,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
       chart: this.chart,
       fields: this.sortedFieldsList
     });
-  }
-
-  filterBySearchFn(term: string, modelFieldY: common.ModelFieldY) {
-    let haystack = [
-      common.isDefinedAndNotEmpty(modelFieldY.groupLabel)
-        ? `${modelFieldY.topLabel} ${modelFieldY.groupLabel} - ${modelFieldY.label}`
-        : `${modelFieldY.topLabel} ${modelFieldY.label}`
-    ];
-
-    let opts = {};
-    let uf = new uFuzzy(opts);
-    let idxs = uf.filter(haystack, term);
-
-    return idxs != null && idxs.length > 0;
-  }
-
-  filterByChange() {
-    (document.activeElement as HTMLElement).blur();
-
-    this.isDisabledApplyAlreadyFiltered =
-      this.mconfig.extendedFilters
-        .map(ef => ef.fieldId)
-        .indexOf(this.newParameterFieldId) > -1;
-  }
-
-  applyAddParameter() {
-    if (common.isUndefined(this.newParameterFieldId)) {
-      return;
-    }
-
-    this.filtersIsExpanded = true;
-
-    let newMconfig = this.structService.makeMconfig();
-
-    let newFraction: common.Fraction;
-
-    let field = this.model.fields.find(x => x.id === this.newParameterFieldId);
-
-    if (newMconfig.modelType === common.ModelTypeEnum.Store) {
-      // if (newMconfig.isStoreModel === true) {
-      let storeFilter =
-        field.fieldClass === common.FieldClassEnum.Filter
-          ? (this.model.content as common.FileStore).fields.find(
-              f => f.name === field.id
-            )
-          : undefined;
-
-      let storeResultFraction =
-        field.fieldClass === common.FieldClassEnum.Filter
-          ? undefined
-          : (this.model.content as common.FileStore).results.find(
-              r => r.result === field.result
-            ).fraction_types[0];
-
-      let logicGroup = common.isUndefined(storeResultFraction)
-        ? undefined
-        : common.FractionLogicEnum.Or;
-
-      let storeFractionSubTypeOptions = common.isUndefined(storeResultFraction)
-        ? []
-        : (this.model.content as common.FileStore).results
-            .find(r => r.result === field.result)
-            .fraction_types.map(ft => {
-              let options = [];
-
-              let optionOr: common.FractionSubTypeOption = {
-                logicGroup: common.FractionLogicEnum.Or,
-                typeValue: ft.type,
-                value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
-                label: ft.label
-              };
-              options.push(optionOr);
-
-              let optionAndNot: common.FractionSubTypeOption = {
-                logicGroup: common.FractionLogicEnum.AndNot,
-                value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
-                typeValue: ft.type,
-                label: ft.label
-              };
-              options.push(optionAndNot);
-
-              return options;
-            })
-            .flat()
-            .sort((a, b) => {
-              if (a.logicGroup === b.logicGroup) return 0;
-              return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
-            });
-
-      newFraction = {
-        meta: storeResultFraction?.meta,
-        operator: common.isUndefined(logicGroup)
-          ? undefined
-          : logicGroup === common.FractionLogicEnum.Or
-            ? common.FractionOperatorEnum.Or
-            : common.FractionOperatorEnum.And,
-        logicGroup: logicGroup,
-        brick: undefined,
-        type: common.FractionTypeEnum.StoreFraction,
-        storeResult: field.result,
-        storeFractionSubTypeOptions: storeFractionSubTypeOptions,
-        storeFractionSubType: storeResultFraction?.type,
-        storeFractionSubTypeLabel: common.isDefined(storeResultFraction?.type)
-          ? storeFractionSubTypeOptions.find(
-              k => k.typeValue === storeResultFraction?.type
-            ).label
-          : storeResultFraction?.type,
-        storeFractionLogicGroupWithSubType:
-          common.isDefined(logicGroup) &&
-          common.isDefined(storeResultFraction?.type)
-            ? `${logicGroup}${common.TRIPLE_UNDERSCORE}${storeResultFraction.type}`
-            : undefined,
-        controls: common.isUndefined(storeResultFraction)
-          ? storeFilter.fraction_controls.map(control => {
-              let newControl: common.FractionControl = {
-                options: control.options,
-                value: control.value,
-                label: control.label,
-                required: control.required,
-                name: control.name,
-                controlClass: control.controlClass,
-                isMetricsDate: control.isMetricsDate
-              };
-              return newControl;
-            })
-          : (this.model.content as common.FileStore).results
-              .find(r => r.result === field.result)
-              .fraction_types[0].controls.map(control => {
-                let newControl: common.FractionControl = {
-                  options: control.options,
-                  value: control.value,
-                  label: control.label,
-                  required: control.required,
-                  name: control.name,
-                  controlClass: control.controlClass,
-                  isMetricsDate: control.isMetricsDate
-                };
-                return newControl;
-              })
-      };
-    } else if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
-      newFraction = {
-        brick: MALLOY_FILTER_ANY,
-        parentBrick: MALLOY_FILTER_ANY,
-        operator: common.FractionOperatorEnum.Or,
-        type: common.getFractionTypeForAny(field.result)
-      };
-    } else {
-      newFraction = {
-        brick: 'any',
-        operator: common.FractionOperatorEnum.Or,
-        type: common.getFractionTypeForAny(field.result)
-      };
-    }
-
-    let newFilters = [];
-
-    let newFilter: common.Filter = {
-      fieldId: field.id,
-      fractions: [newFraction]
-    };
-
-    newFilters = [...newMconfig.filters, newFilter].sort((a, b) =>
-      a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
-    );
-
-    if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
-      this.chartService.editChart({
-        mconfig: newMconfig,
-        isDraft: this.chart.draft,
-        chartId: this.chart.chartId,
-        queryOperation: {
-          type: common.QueryOperationTypeEnum.WhereOrHaving,
-          timezone: newMconfig.timezone,
-          fieldId: field.id,
-          filters: newFilters
-        }
-      });
-    } else {
-      newMconfig.filters = newFilters;
-
-      this.chartService.editChart({
-        mconfig: newMconfig,
-        isDraft: this.chart.draft,
-        chartId: this.chart.chartId
-      });
-    }
-  }
-
-  cancelAddParameter() {
-    this.isAddParameter = false;
-    this.newParameterFieldId = undefined;
   }
 
   toggleInfoPanel() {

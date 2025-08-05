@@ -1,9 +1,9 @@
 <div class="bg-m0 flex flex-col p-9">
   <div class="flex flex-col justify-start">
     <div
-      data-cy="chartsAddColumnDialogTitle"
+      data-cy="chartsAddFilterDialogTitle"
       class="text-s2 mt-5 text-left text-2xl font-semibold"
-      >Add Column</div
+      >Add Filter</div
     >
 
     <div class="flex flex-col">
@@ -11,7 +11,7 @@
         class="mt-9 flex min-w-[2px] max-w-[1000px] flex-grow select-none flex-row items-start"
       >
         <form
-          [formGroup]="addFieldForm"
+          [formGroup]="addFilterForm"
           class="min-w-[2px] max-w-[800px] flex-grow"
         >
           <ng-select
@@ -23,8 +23,8 @@
             [clearable]="false"
             [searchable]="true"
             [searchFn]="searchFn"
-            [(ngModel)]="newColumnFieldId"
-            (change)="selectFieldChange()"
+            [(ngModel)]="newFieldId"
+            (change)="fieldChange()"
             (keyup.esc)="
               $event.stopImmediatePropagation(); columnFieldSelect.blur()
             "
@@ -33,7 +33,7 @@
             "
             appendTo="body"
             placeholder="Select Field"
-            formControlName="selectField"
+            formControlName="field"
             bindLabel="partLabel"
             bindValue="id"
           >
@@ -75,33 +75,33 @@
   </div>
 
   <div class="mt-14 flex flex-row items-center">
-    <ng-template #templateAddColumn>
-      <div *ngIf="isFieldAlreadySelected === true"
-        >This column is already selected</div
+    <ng-template #templateAddFilter>
+      <div *ngIf="isFieldAlreadyFiltered === true"
+        >This field is already filtered</div
       >
     </ng-template>
 
     <div
       class="flex"
-      [tpIsEnabled]="isFieldAlreadySelected === true"
-      [tp]="templateAddColumn"
+      [tpIsEnabled]="isFieldAlreadyFiltered === true"
+      [tp]="templateAddFilter"
     >
       <button
-        data-cy="chartsAddColumnDialogSaveButton"
+        data-cy="chartsAddFilterDialogSaveButton"
         class="bg-m600 text-m0 w-28 select-none rounded py-3 text-base font-medium focus:outline-none"
         [ngClass]="{
-          'bg-m600': isFieldAlreadySelected === false,
-          'bg-s400 cursor-default': isFieldAlreadySelected === true
+          'bg-m600': isFieldAlreadyFiltered === false,
+          'bg-s400 cursor-default': isFieldAlreadyFiltered === true
         }"
         type="button"
         (click)="save()"
-        [disabled]="isFieldAlreadySelected === true"
+        [disabled]="isFieldAlreadyFiltered === true"
         >Add</button
       >
     </div>
 
     <button
-      data-cy="chartsAddColumnDialogCancelButton"
+      data-cy="chartsAddFilterDialogCancelButton"
       class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
       type="button"
       (click)="cancel()"
