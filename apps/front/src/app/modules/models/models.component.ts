@@ -1428,7 +1428,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
       apiService: this.apiService,
       chart: this.chart,
       model: this.model,
-      mconfig: this.mconfig
+      mconfig: this.mconfig,
+      parameterAddedFn: () => {
+        this.filtersIsExpanded = true;
+      }
     });
   }
 

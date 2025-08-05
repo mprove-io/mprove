@@ -25,6 +25,7 @@ export interface ChartsAddFilterDialogData {
   chart: common.ChartX;
   model: common.Model;
   mconfig: common.MconfigX;
+  parameterAddedFn: () => void;
 }
 
 @Component({
@@ -271,6 +272,8 @@ export class ChartsAddFilterDialogComponent implements OnInit {
         chartId: this.chart.chartId
       });
     }
+
+    this.ref.data.parameterAddedFn();
 
     this.ref.close();
   }
