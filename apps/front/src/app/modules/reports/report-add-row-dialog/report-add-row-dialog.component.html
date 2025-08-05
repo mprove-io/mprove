@@ -7,7 +7,7 @@
 
   <div
     data-cy="reportAddRowDialogMetricCheckbox"
-    class="flex h-9 cursor-pointer flex-row items-center"
+    class="flex h-9 w-[150px] cursor-pointer flex-row items-center"
     (click)="metricOnClick()"
   >
     <div
@@ -24,7 +24,7 @@
 
   <div
     data-cy="reportAddRowDialogFormulaCheckbox"
-    class="mt-5 flex h-9 cursor-pointer flex-row items-center"
+    class="mt-3 flex h-9 w-[150px] cursor-pointer flex-row items-center"
     (click)="formulaOnClick()"
   >
     <div
@@ -41,7 +41,7 @@
 
   <div
     data-cy="reportAddRowDialogHeaderCheckbox"
-    class="mt-5 flex h-9 cursor-pointer flex-row items-center"
+    class="mt-3 flex h-9 w-[150px] cursor-pointer flex-row items-center"
     (click)="headerOnClick()"
   >
     <div
@@ -58,7 +58,7 @@
 
   <div
     data-cy="reportAddRowDialogEmptyCheckbox"
-    class="mt-5 flex h-9 cursor-pointer flex-row items-center"
+    class="mt-3 flex h-9 w-[150px] cursor-pointer flex-row items-center"
     (click)="emptyOnClick()"
   >
     <div
@@ -104,21 +104,39 @@
         bindValue="metricId"
       >
         <ng-template ng-label-tmp let-item="item">
-          <m-metric-field-label
-            [metric]="item"
-            [isShowTop]="true"
-            [isShowTime]="true"
-            class="ml-1 flex"
-          ></m-metric-field-label>
+          <div class="ml-1 flex flex-row items-center">
+            <m-field-result
+              class="h-5 w-5"
+              [size]="2"
+              [fieldClass]="item.fieldClass"
+              [result]="item.fieldResult"
+            ></m-field-result>
+
+            <m-metric-field-label
+              [metric]="item"
+              [isShowTop]="true"
+              [isShowTime]="true"
+              class="ml-3 flex"
+            ></m-metric-field-label>
+          </div>
         </ng-template>
 
         <ng-template ng-option-tmp let-item="item">
-          <m-metric-field-label
-            [metric]="item"
-            [isShowTop]="true"
-            [isShowTime]="true"
-            class="ml-1 flex"
-          ></m-metric-field-label>
+          <div class="ml-1 flex flex-row items-center">
+            <m-field-result
+              class="h-5 w-5"
+              [size]="2"
+              [fieldClass]="item.fieldClass"
+              [result]="item.fieldResult"
+            ></m-field-result>
+
+            <m-metric-field-label
+              [metric]="item"
+              [isShowTop]="true"
+              [isShowTime]="true"
+              class="ml-3 flex"
+            ></m-metric-field-label>
+          </div>
         </ng-template>
       </ng-select>
     </div>
