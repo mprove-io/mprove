@@ -152,7 +152,7 @@ export class GetQueryCommand extends CustomCommand {
 
   timeRange = Option.String(
     '--timeRange',
-    'last 5 days complete plus current',
+    'last 5 days complete plus current', // TODO: new fractions 2
     {
       description:
         '(default "last 5 days complete plus current") Ts Filter Expression'

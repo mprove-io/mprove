@@ -18,7 +18,8 @@ export const DEFAULT_SRV_UI: common.Ui = {
   timezone: common.UTC,
   timeSpec: common.TimeSpecEnum.Days,
   timeRangeFraction: {
-    brick: 'last 5 days',
+    // brick: 'last 5 days',
+    brick: 'f`last 5 days`',
     operator: common.FractionOperatorEnum.Or,
     tsLastCompleteOption:
       common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent,

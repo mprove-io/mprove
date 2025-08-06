@@ -5,7 +5,7 @@ import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { nodeCommon } from '~blockml/barrels/node-common';
-import { processFilter } from '~blockml/models/special/process-filter';
+import { bricksToFractions } from '~node-common/functions/bricks-to-fractions';
 
 @Injectable()
 export class GetTimeRangeService {
@@ -43,14 +43,23 @@ export class GetTimeRangeService {
 
     let fractions: common.Fraction[] = [];
 
-    let p = processFilter({
-      caseSensitiveStringFilters: caseSensitiveStringFilters,
+    let p = bricksToFractions({
+      // caseSensitiveStringFilters: caseSensitiveStringFilters,
       filterBricks: [timeRangeFractionBrick],
       result: common.FieldResultEnum.Ts,
       fractions: fractions,
       getTimeRange: true,
       timezone: timezone
     });
+
+    // let p = processFilter({
+    //   caseSensitiveStringFilters: caseSensitiveStringFilters,
+    //   filterBricks: [timeRangeFractionBrick],
+    //   result: common.FieldResultEnum.Ts,
+    //   fractions: fractions,
+    //   getTimeRange: true,
+    //   timezone: timezone
+    // });
 
     let timeRangeFraction = fractions[0];
 

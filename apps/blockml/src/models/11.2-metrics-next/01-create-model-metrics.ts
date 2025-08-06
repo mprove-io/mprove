@@ -183,7 +183,7 @@ export function createModelMetrics(
 
             let yNode = yParentNode.children.find(n => n.id === y.id);
 
-            let partId = yParentNode.id.split('.').join('_');
+            let partId = y.id.split('.').join('_');
             let partNodeLabel = yParentNode.label;
             let partFieldLabel = y.label;
             let partLabel = `${partNodeLabel} ${partFieldLabel}`;

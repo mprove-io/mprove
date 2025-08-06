@@ -251,7 +251,7 @@ export class GetStateCommand extends CustomCommand {
           reportId: x.reportId,
           timezone: getRepoResp.payload.struct.defaultTimezone,
           timeSpec: 'days',
-          timeRange: 'last 5 days complete plus current'
+          timeRange: 'last 5 days complete plus current' // TODO: new fractions
         });
 
         let report: any = {

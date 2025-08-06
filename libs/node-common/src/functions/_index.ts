@@ -18,3 +18,5 @@ export * from './error-to-wrap-result';
 export * from './make-malloy-connections';
 export * from './get-malloy-filters-fractions';
 export * from './get-malloy-moment-str';
+export * from './bricks-to-fractions';
+export * from './time-range-make-current-timestamps';
