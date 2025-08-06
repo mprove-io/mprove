@@ -17,6 +17,7 @@ import { getYYYYMMDDFromEpochUtcByTimezone } from '~node-common/functions/get-yy
 import { BlockmlService } from './blockml.service';
 import { DocService } from './doc.service';
 import { EnvsService } from './envs.service';
+import { MalloyService } from './malloy.service';
 import { MconfigsService } from './mconfigs.service';
 import { RabbitService } from './rabbit.service';
 import { WrapToApiService } from './wrap-to-api.service';
@@ -29,6 +30,7 @@ export class ReportDataService {
   constructor(
     private envsService: EnvsService,
     private docService: DocService,
+    private malloyService: MalloyService,
     private mconfigsService: MconfigsService,
     private blockmlService: BlockmlService,
     private rabbitService: RabbitService,
@@ -47,6 +49,7 @@ export class ReportDataService {
     struct: schemaPostgres.StructEnt;
     metrics: common.ModelMetric[];
     report: schemaPostgres.ReportEnt;
+    // queryOperation?: common.QueryOperation;
     project: schemaPostgres.ProjectEnt;
     envId: string;
     userMemberApi: common.Member;
@@ -61,6 +64,7 @@ export class ReportDataService {
       struct,
       metrics,
       report,
+      // queryOperation,
       timezone,
       project,
       envId,
@@ -159,7 +163,6 @@ export class ReportDataService {
         let model = models.find(ml => ml.modelId === metric.modelId);
 
         if (model.type === common.ModelTypeEnum.Store) {
-          // if (model.isStoreModel === true) {
           // add required parameters
           (model.content as common.FileStore).fields
             .filter(x => x.fieldClass === common.FieldClassEnum.Filter)
@@ -288,12 +291,7 @@ export class ReportDataService {
 
           let timeFieldIdSpec;
 
-          if (model.type !== common.ModelTypeEnum.Store) {
-            // if (model.isStoreModel === false) {
-            let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
-
-            timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
-          } else {
+          if (model.type === common.ModelTypeEnum.Store) {
             let timeSpecDetail = common.getTimeSpecDetail({
               timeSpec: timeSpec,
               weekStart: struct.weekStart
@@ -306,11 +304,16 @@ export class ReportDataService {
             );
 
             timeFieldIdSpec = storeField?.name;
+          } else if (model.type === common.ModelTypeEnum.Malloy) {
+            // TODO: timespec malloy
+          } else if (model.type === common.ModelTypeEnum.SQL) {
+            let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
+
+            timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
           }
 
           let timeSorting: common.Sorting =
             model.type === common.ModelTypeEnum.Store &&
-            // model.isStoreModel === true
             common.isUndefined(timeFieldIdSpec)
               ? undefined
               : {
@@ -320,7 +323,6 @@ export class ReportDataService {
 
           let timeFilter: common.Filter =
             model.type === common.ModelTypeEnum.Store &&
-            // model.isStoreModel === true
             common.isUndefined(timeFieldIdSpec)
               ? undefined
               : {
@@ -330,8 +332,7 @@ export class ReportDataService {
 
           let filters: common.Filter[] =
             model.type === common.ModelTypeEnum.Store
-              ? // model.isStoreModel === true
-                // TODO: store parametersFiltersWithExcludedTime
+              ? // TODO: store parametersFiltersWithExcludedTime
                 [...x.parametersFiltersWithExcludedTime].sort((a, b) =>
                   a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
                 )
@@ -349,7 +350,6 @@ export class ReportDataService {
             queryId: newQueryId,
             modelId: model.modelId,
             modelType: model.type,
-            // isStoreModel: model.isStoreModel,
             dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
             storePart: undefined,
             modelLabel: model.label,
@@ -358,7 +358,6 @@ export class ReportDataService {
             compiledQuery: undefined,
             select:
               model.type === common.ModelTypeEnum.Store &&
-              // model.isStoreModel === true &&
               common.isUndefined(timeFieldIdSpec)
                 ? []
                 : [timeFieldIdSpec, metric.fieldId],
@@ -367,13 +366,11 @@ export class ReportDataService {
             joinAggregations: [],
             sortings:
               model.type === common.ModelTypeEnum.Store &&
-              // model.isStoreModel === true &&
               common.isUndefined(timeFieldIdSpec)
                 ? []
                 : [timeSorting],
             sorts:
               model.type === common.ModelTypeEnum.Store &&
-              // model.isStoreModel === true &&
               common.isUndefined(timeFieldIdSpec)
                 ? undefined
                 : [
@@ -392,18 +389,6 @@ export class ReportDataService {
             // extendedFilters: [],
           };
 
-          // if (model.isStoreModel === true) {
-          //   mconfig = await this.storeService.adjustMconfig({
-          //     mconfig: mconfig,
-          //     model: model,
-          //     caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
-          //     metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
-          //     metricsEndDateYYYYMMDD: model.dateRangeIncludesRightSide
-          //       ? metricsEndDateIncludedYYYYMMDD
-          //       : metricsEndDateExcludedYYYYMMDD
-          //   });
-          // }
-
           mconfig.chart.type = common.ChartTypeEnum.Line;
 
           mconfig = common.setChartTitleOnSelectChange({
@@ -419,8 +404,6 @@ export class ReportDataService {
           let isError = false;
 
           if (model.type === common.ModelTypeEnum.Store) {
-            // if (model.isStoreModel === true) {
-
             // console.log('columns[0].columnId');
             // console.log(columns[0].columnId);
 
@@ -447,6 +430,25 @@ export class ReportDataService {
               newQuery.status = common.QueryStatusEnum.Completed;
               newQuery.data = [];
             }
+          } else if (model.type === common.ModelTypeEnum.Malloy) {
+            let queryOperation: common.QueryOperation = {
+              type: common.QueryOperationTypeEnum.Get,
+              timezone: timezone
+            };
+
+            let editMalloyQueryResult =
+              await this.malloyService.editMalloyQuery({
+                projectId: project.projectId,
+                envId: envId,
+                structId: struct.structId,
+                model: model,
+                mconfig: mconfig,
+                queryOperation: queryOperation
+              });
+
+            newMconfig = editMalloyQueryResult.newMconfig;
+            newQuery = editMalloyQueryResult.newQuery;
+            isError = editMalloyQueryResult.isError;
           } else {
             let { apiEnv, connectionsWithFallback } =
               await this.envsService.getApiEnvConnectionsWithFallback({

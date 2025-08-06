@@ -349,140 +349,139 @@ export class ReportRowService {
       processedRows = processedRows.map(row =>
         row.rowId === editRow.rowId ? editRow : row
       );
-    } else if (changeType === common.ChangeTypeEnum.ConvertToHeader) {
-      let pRow = processedRows.find(row => row.rowId === rowChange.rowId);
+      // } else if (changeType === common.ChangeTypeEnum.ConvertToHeader) {
+      //   let pRow = processedRows.find(row => row.rowId === rowChange.rowId);
 
-      let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
-        rowType: common.RowTypeEnum.Header,
-        name: rowChange.name
-      });
+      //   let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
+      //     rowType: common.RowTypeEnum.Header,
+      //     name: rowChange.name
+      //   });
 
-      processedRows = processedRows.map(row =>
-        row.rowId === editRow.rowId ? editRow : row
-      );
-    } else if (changeType === common.ChangeTypeEnum.ConvertToMetric) {
-      let metric: common.ModelMetric = metrics.find(
-        m => m.metricId === rowChange.metricId
-      );
+      //   processedRows = processedRows.map(row =>
+      //     row.rowId === editRow.rowId ? editRow : row
+      //   );
+      // } else if (changeType === common.ChangeTypeEnum.ConvertToMetric) {
+      //   let metric: common.ModelMetric = metrics.find(
+      //     m => m.metricId === rowChange.metricId
+      //   );
 
-      let model = models.find(m => m.modelId === metric.modelId);
+      //   let model = models.find(m => m.modelId === metric.modelId);
 
-      let editRow: common.Row = {
-        rowId: rowChange.rowId,
-        rowType: common.RowTypeEnum.Metric,
-        name: undefined,
-        metricId: metric.metricId,
-        topLabel: metric.topLabel,
-        partNodeLabel: metric.partNodeLabel,
-        partFieldLabel: metric.partFieldLabel,
-        partLabel: metric.partLabel,
-        timeNodeLabel: metric.timeNodeLabel,
-        timeFieldLabel: metric.timeFieldLabel,
-        timeLabel: metric.timeLabel,
-        showChart: false,
-        parameters:
-          model.type !== common.ModelTypeEnum.Store
-            ? // model.isStoreModel === false
-              []
-            : (model.content as common.FileStore).fields
-                .filter(
-                  x =>
-                    x.fieldClass === common.FieldClassEnum.Filter &&
-                    common.toBooleanFromLowercaseString(x.required) === true
-                )
-                .map(storeFilter => {
-                  let newControls: common.FractionControl[] = [];
+      //   let editRow: common.Row = {
+      //     rowId: rowChange.rowId,
+      //     rowType: common.RowTypeEnum.Metric,
+      //     name: undefined,
+      //     metricId: metric.metricId,
+      //     topLabel: metric.topLabel,
+      //     partNodeLabel: metric.partNodeLabel,
+      //     partFieldLabel: metric.partFieldLabel,
+      //     partLabel: metric.partLabel,
+      //     timeNodeLabel: metric.timeNodeLabel,
+      //     timeFieldLabel: metric.timeFieldLabel,
+      //     timeLabel: metric.timeLabel,
+      //     showChart: false,
+      //     parameters:
+      //       model.type !== common.ModelTypeEnum.Store
+      //         ? []
+      //         : (model.content as common.FileStore).fields
+      //             .filter(
+      //               x =>
+      //                 x.fieldClass === common.FieldClassEnum.Filter &&
+      //                 common.toBooleanFromLowercaseString(x.required) === true
+      //             )
+      //             .map(storeFilter => {
+      //               let newControls: common.FractionControl[] = [];
 
-                  storeFilter.fraction_controls.forEach(
-                    storeFractionControl => {
-                      let newControl: common.FractionControl = {
-                        isMetricsDate: storeFractionControl.isMetricsDate,
-                        options: storeFractionControl.options,
-                        value: storeFractionControl.value,
-                        label: storeFractionControl.label,
-                        required: storeFractionControl.required,
-                        name: storeFractionControl.name,
-                        controlClass: storeFractionControl.controlClass
-                      };
+      //               storeFilter.fraction_controls.forEach(
+      //                 storeFractionControl => {
+      //                   let newControl: common.FractionControl = {
+      //                     isMetricsDate: storeFractionControl.isMetricsDate,
+      //                     options: storeFractionControl.options,
+      //                     value: storeFractionControl.value,
+      //                     label: storeFractionControl.label,
+      //                     required: storeFractionControl.required,
+      //                     name: storeFractionControl.name,
+      //                     controlClass: storeFractionControl.controlClass
+      //                   };
 
-                      newControls.push(newControl);
-                    }
-                  );
+      //                   newControls.push(newControl);
+      //                 }
+      //               );
 
-                  let newFraction: common.Fraction = {
-                    type: common.FractionTypeEnum.StoreFraction,
-                    controls: newControls,
-                    brick: undefined as any,
-                    operator: undefined as any
-                  };
+      //               let newFraction: common.Fraction = {
+      //                 type: common.FractionTypeEnum.StoreFraction,
+      //                 controls: newControls,
+      //                 brick: undefined as any,
+      //                 operator: undefined as any
+      //               };
 
-                  let newParameter: common.Parameter = {
-                    apply_to: storeFilter.name,
-                    fractions: [newFraction],
-                    listen: undefined
-                  };
+      //               let newParameter: common.Parameter = {
+      //                 apply_to: storeFilter.name,
+      //                 fractions: [newFraction],
+      //                 listen: undefined
+      //               };
 
-                  return newParameter;
-                }),
-        parametersFiltersWithExcludedTime: [],
-        formula: undefined,
-        deps: undefined,
-        formulaDeps: undefined,
-        rqs: [],
-        mconfig: undefined,
-        query: undefined,
-        hasAccessToModel: false,
-        records: [],
-        formatNumber: metric.formatNumber,
-        currencyPrefix: metric.currencyPrefix,
-        currencySuffix: metric.currencySuffix
-      };
+      //               return newParameter;
+      //             }),
+      //     parametersFiltersWithExcludedTime: [],
+      //     formula: undefined,
+      //     deps: undefined,
+      //     formulaDeps: undefined,
+      //     rqs: [],
+      //     mconfig: undefined,
+      //     query: undefined,
+      //     hasAccessToModel: false,
+      //     records: [],
+      //     formatNumber: metric.formatNumber,
+      //     currencyPrefix: metric.currencyPrefix,
+      //     currencySuffix: metric.currencySuffix
+      //   };
 
-      processedRows = processedRows.map(row =>
-        row.rowId === editRow.rowId ? editRow : row
-      );
+      //   processedRows = processedRows.map(row =>
+      //     row.rowId === editRow.rowId ? editRow : row
+      //   );
 
-      processedRows = processRowIds({
-        rows: processedRows,
-        targetRowIds: processedRows.map(pr => pr.rowId)
-      });
-    } else if (changeType === common.ChangeTypeEnum.ConvertToFormula) {
-      let editRow: common.Row = {
-        rowId: rowChange.rowId,
-        rowType: common.RowTypeEnum.Formula,
-        name: rowChange.name,
-        metricId: undefined,
-        topLabel: undefined,
-        partNodeLabel: undefined,
-        partFieldLabel: undefined,
-        partLabel: undefined,
-        timeNodeLabel: undefined,
-        timeFieldLabel: undefined,
-        timeLabel: undefined,
-        showChart: false,
-        parameters: undefined,
-        parametersFiltersWithExcludedTime: [],
-        deps: undefined,
-        formulaDeps: undefined,
-        formula: rowChange.formula,
-        rqs: [],
-        mconfig: undefined,
-        query: undefined,
-        hasAccessToModel: false,
-        records: [],
-        formatNumber: struct.formatNumber,
-        currencyPrefix: struct.currencyPrefix,
-        currencySuffix: struct.currencySuffix
-      };
+      //   processedRows = processRowIds({
+      //     rows: processedRows,
+      //     targetRowIds: processedRows.map(pr => pr.rowId)
+      //   });
+      // } else if (changeType === common.ChangeTypeEnum.ConvertToFormula) {
+      //   let editRow: common.Row = {
+      //     rowId: rowChange.rowId,
+      //     rowType: common.RowTypeEnum.Formula,
+      //     name: rowChange.name,
+      //     metricId: undefined,
+      //     topLabel: undefined,
+      //     partNodeLabel: undefined,
+      //     partFieldLabel: undefined,
+      //     partLabel: undefined,
+      //     timeNodeLabel: undefined,
+      //     timeFieldLabel: undefined,
+      //     timeLabel: undefined,
+      //     showChart: false,
+      //     parameters: undefined,
+      //     parametersFiltersWithExcludedTime: [],
+      //     deps: undefined,
+      //     formulaDeps: undefined,
+      //     formula: rowChange.formula,
+      //     rqs: [],
+      //     mconfig: undefined,
+      //     query: undefined,
+      //     hasAccessToModel: false,
+      //     records: [],
+      //     formatNumber: struct.formatNumber,
+      //     currencyPrefix: struct.currencyPrefix,
+      //     currencySuffix: struct.currencySuffix
+      //   };
 
-      processedRows = processedRows.map(row =>
-        row.rowId === editRow.rowId ? editRow : row
-      );
+      //   processedRows = processedRows.map(row =>
+      //     row.rowId === editRow.rowId ? editRow : row
+      //   );
 
-      processedRows = processRowIds({
-        rows: processedRows,
-        targetRowIds: processedRows.map(pr => pr.rowId)
-      });
+      //   processedRows = processRowIds({
+      //     rows: processedRows,
+      //     targetRowIds: processedRows.map(pr => pr.rowId)
+      //   });
     } else if (changeType === common.ChangeTypeEnum.EditFormula) {
       clearRowsCache({
         processedRows: processedRows,
@@ -619,55 +618,55 @@ export class ReportRowService {
         rows: processedRows,
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
-    } else if (changeType === common.ChangeTypeEnum.Clear) {
-      clearRowsCache({
-        processedRows: processedRows,
-        changedRowIds: rowIds,
-        timezone: timezone,
-        timeSpec: timeSpec,
-        timeRangeFractionBrick: timeRangeFractionBrick
-      });
+      // } else if (changeType === common.ChangeTypeEnum.Clear) {
+      //   clearRowsCache({
+      //     processedRows: processedRows,
+      //     changedRowIds: rowIds,
+      //     timezone: timezone,
+      //     timeSpec: timeSpec,
+      //     timeRangeFractionBrick: timeRangeFractionBrick
+      //   });
 
-      processedRows = processedRows.map(row => {
-        if (rowIds.indexOf(row.rowId) > -1) {
-          let emptyRow: common.Row = {
-            rowId: row.rowId,
-            rowType: common.RowTypeEnum.Empty,
-            name: undefined,
-            metricId: undefined,
-            topLabel: undefined,
-            partNodeLabel: undefined,
-            partFieldLabel: undefined,
-            partLabel: undefined,
-            timeNodeLabel: undefined,
-            timeFieldLabel: undefined,
-            timeLabel: undefined,
-            showChart: false,
-            parameters: [],
-            parametersFiltersWithExcludedTime: [],
-            formula: undefined,
-            deps: undefined,
-            formulaDeps: undefined,
-            rqs: [],
-            mconfig: undefined,
-            query: undefined,
-            hasAccessToModel: false,
-            records: [],
-            formatNumber: undefined,
-            currencyPrefix: undefined,
-            currencySuffix: undefined
-          };
+      //   processedRows = processedRows.map(row => {
+      //     if (rowIds.indexOf(row.rowId) > -1) {
+      //       let emptyRow: common.Row = {
+      //         rowId: row.rowId,
+      //         rowType: common.RowTypeEnum.Empty,
+      //         name: undefined,
+      //         metricId: undefined,
+      //         topLabel: undefined,
+      //         partNodeLabel: undefined,
+      //         partFieldLabel: undefined,
+      //         partLabel: undefined,
+      //         timeNodeLabel: undefined,
+      //         timeFieldLabel: undefined,
+      //         timeLabel: undefined,
+      //         showChart: false,
+      //         parameters: [],
+      //         parametersFiltersWithExcludedTime: [],
+      //         formula: undefined,
+      //         deps: undefined,
+      //         formulaDeps: undefined,
+      //         rqs: [],
+      //         mconfig: undefined,
+      //         query: undefined,
+      //         hasAccessToModel: false,
+      //         records: [],
+      //         formatNumber: undefined,
+      //         currencyPrefix: undefined,
+      //         currencySuffix: undefined
+      //       };
 
-          return emptyRow;
-        } else {
-          return row;
-        }
-      });
+      //       return emptyRow;
+      //     } else {
+      //       return row;
+      //     }
+      //   });
 
-      processedRows = processRowIds({
-        rows: processedRows,
-        targetRowIds: processedRows.map(pRow => pRow.rowId)
-      });
+      //   processedRows = processRowIds({
+      //     rows: processedRows,
+      //     targetRowIds: processedRows.map(pRow => pRow.rowId)
+      //   });
     } else if (changeType === common.ChangeTypeEnum.Delete) {
       clearRowsCache({
         processedRows: processedRows,

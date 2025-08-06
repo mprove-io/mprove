@@ -1,11 +1,10 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { common } from '~backend/barrels/common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -124,21 +123,21 @@ export class EditDraftReportController {
 
     let models: ModelEnt[] = [];
 
-    if (
-      changeType === common.ChangeTypeEnum.ConvertToMetric &&
-      common.isDefined(rowChange?.metricId)
-    ) {
-      let metric = struct.metrics.find(x => x.metricId === rowChange.metricId);
+    // if (
+    //   changeType === common.ChangeTypeEnum.ConvertToMetric &&
+    //   common.isDefined(rowChange?.metricId)
+    // ) {
+    //   let metric = struct.metrics.find(x => x.metricId === rowChange.metricId);
 
-      let model = await this.db.drizzle.query.modelsTable.findFirst({
-        where: and(
-          eq(modelsTable.structId, struct.structId),
-          eq(modelsTable.modelId, metric.modelId)
-        )
-      });
+    //   let model = await this.db.drizzle.query.modelsTable.findFirst({
+    //     where: and(
+    //       eq(modelsTable.structId, struct.structId),
+    //       eq(modelsTable.modelId, metric.modelId)
+    //     )
+    //   });
 
-      models.push(model);
-    }
+    //   models.push(model);
+    // }
 
     let processedRows = this.reportRowService.getProcessedRows({
       rows: report.rows,

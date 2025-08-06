@@ -16,7 +16,7 @@ import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { kitsTable } from '~backend/drizzle/postgres/schema/kits';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
-import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
@@ -276,21 +276,21 @@ export class CreateDraftReportController {
 
     let models: ModelEnt[] = [];
 
-    if (
-      changeType === common.ChangeTypeEnum.ConvertToMetric &&
-      common.isDefined(rowChange?.metricId)
-    ) {
-      let metric = struct.metrics.find(x => x.metricId === rowChange.metricId);
+    // if (
+    //   changeType === common.ChangeTypeEnum.ConvertToMetric &&
+    //   common.isDefined(rowChange?.metricId)
+    // ) {
+    //   let metric = struct.metrics.find(x => x.metricId === rowChange.metricId);
 
-      let model = await this.db.drizzle.query.modelsTable.findFirst({
-        where: and(
-          eq(modelsTable.structId, struct.structId),
-          eq(modelsTable.modelId, metric.modelId)
-        )
-      });
+    //   let model = await this.db.drizzle.query.modelsTable.findFirst({
+    //     where: and(
+    //       eq(modelsTable.structId, struct.structId),
+    //       eq(modelsTable.modelId, metric.modelId)
+    //     )
+    //   });
 
-      models.push(model);
-    }
+    //   models.push(model);
+    // }
 
     let processedRows: common.Row[] = this.reportRowService.getProcessedRows({
       rows: fromReport.rows,

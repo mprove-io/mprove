@@ -1,7 +1,8 @@
 export enum ChangeTypeEnum {
-  ConvertToHeader = 'ConvertToHeader',
-  ConvertToFormula = 'ConvertToFormula',
-  ConvertToMetric = 'ConvertToMetric',
+  // ConvertToHeader = 'ConvertToHeader',
+  // ConvertToFormula = 'ConvertToFormula',
+  // ConvertToMetric = 'ConvertToMetric',
+  // Clear = 'Clear',
   AddEmpty = 'AddEmpty',
   AddMetric = 'AddMetric',
   AddHeader = 'AddHeader',
@@ -12,6 +13,5 @@ export enum ChangeTypeEnum {
   EditParameters = 'EditParameters',
   EditListeners = 'EditListeners',
   Delete = 'Delete',
-  Clear = 'Clear',
   Move = 'Move'
 }

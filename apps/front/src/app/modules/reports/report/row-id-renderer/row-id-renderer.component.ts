@@ -55,17 +55,6 @@ export class RowIdRendererComponent implements ICellRendererAngularComp {
     return true;
   }
 
-  clearRow() {
-    this.reportService.modifyRows({
-      report: this.report,
-      changeType: common.ChangeTypeEnum.Clear,
-      rowChange: undefined,
-      rowIds: [this.reportSelectedNode.data.rowId],
-      reportFields: this.report.fields,
-      chart: undefined
-    });
-  }
-
   deleteRow() {
     this.uiQuery.getValue().gridApi.deselectAll();
 
