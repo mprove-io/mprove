@@ -271,11 +271,11 @@ export class MalloyService {
         //     : filter.fractions;
 
         let anyValues = filter.fractions.filter(
-          y => y.brick === MALLOY_FILTER_ANY
+          fraction => fraction.brick === MALLOY_FILTER_ANY
         );
 
         let booleanValues = filter.fractions.filter(
-          y =>
+          fraction =>
             [
               common.FractionTypeEnum.BooleanIsTrue,
               common.FractionTypeEnum.BooleanIsFalse,
@@ -285,13 +285,13 @@ export class MalloyService {
               common.FractionTypeEnum.BooleanIsNotFalse,
               common.FractionTypeEnum.BooleanIsNotFalseOrNull,
               common.FractionTypeEnum.BooleanIsNotNull
-            ].indexOf(y.type) > -1
+            ].indexOf(fraction.type) > -1
         );
 
         let ORs = filter.fractions.filter(
-          y =>
-            y.operator === common.FractionOperatorEnum.Or &&
-            y.brick !== MALLOY_FILTER_ANY &&
+          fraction =>
+            fraction.operator === common.FractionOperatorEnum.Or &&
+            fraction.brick !== MALLOY_FILTER_ANY &&
             [
               common.FractionTypeEnum.BooleanIsTrue,
               common.FractionTypeEnum.BooleanIsFalse,
@@ -301,13 +301,13 @@ export class MalloyService {
               common.FractionTypeEnum.BooleanIsNotFalse,
               common.FractionTypeEnum.BooleanIsNotFalseOrNull,
               common.FractionTypeEnum.BooleanIsNotNull
-            ].indexOf(y.type) < 0
+            ].indexOf(fraction.type) < 0
         );
 
         let ANDs = filter.fractions.filter(
-          y =>
-            y.operator === common.FractionOperatorEnum.And &&
-            y.brick !== MALLOY_FILTER_ANY &&
+          fraction =>
+            fraction.operator === common.FractionOperatorEnum.And &&
+            fraction.brick !== MALLOY_FILTER_ANY &&
             [
               common.FractionTypeEnum.BooleanIsTrue,
               common.FractionTypeEnum.BooleanIsFalse,
@@ -317,7 +317,7 @@ export class MalloyService {
               common.FractionTypeEnum.BooleanIsNotFalse,
               common.FractionTypeEnum.BooleanIsNotFalseOrNull,
               common.FractionTypeEnum.BooleanIsNotNull
-            ].indexOf(y.type) < 0
+            ].indexOf(fraction.type) < 0
         );
 
         let filterModelField = model.fields.find(x => x.id === filter.fieldId);
@@ -328,15 +328,19 @@ export class MalloyService {
         if (ORs.length > 0) {
           let fstrORs =
             filterModelField.result === common.FieldResultEnum.String
-              ? ORs.map(y => y.brick.slice(2, -1)).join(', ')
+              ? ORs.map(fraction => fraction.brick.slice(2, -1)).join(', ')
               : filterModelField.result === common.FieldResultEnum.Number
-                ? ORs.map(y => y.brick.slice(2, -1)).join(' or ')
+                ? ORs.map(fraction => fraction.brick.slice(2, -1)).join(' or ')
                 : // : filterModelField.result === common.FieldResultEnum.Boolean
                   //   ? ORs.map(y => y.brick.slice(2, -1)).join(' or ')
                   filterModelField.result === common.FieldResultEnum.Ts
-                  ? ORs.map(y => y.brick.slice(2, -1)).join(' or ')
+                  ? ORs.map(fraction => fraction.brick.slice(2, -1)).join(
+                      ' or '
+                    )
                   : filterModelField.result === common.FieldResultEnum.Date
-                    ? ORs.map(y => y.brick.slice(2, -1)).join(' or ')
+                    ? ORs.map(fraction => fraction.brick.slice(2, -1)).join(
+                        ' or '
+                      )
                     : undefined;
 
           if (modelField.fieldClass === common.FieldClassEnum.Dimension) {

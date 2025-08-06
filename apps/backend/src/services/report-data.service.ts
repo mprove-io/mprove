@@ -74,6 +74,9 @@ export class ReportDataService {
       isSaveToDb
     } = item;
 
+    console.log('timeRangeFractionBrick');
+    console.log(timeRangeFractionBrick);
+
     let {
       columns,
       isTimeColumnsLimitExceeded,
@@ -305,7 +308,55 @@ export class ReportDataService {
 
             timeFieldIdSpec = storeField?.name;
           } else if (model.type === common.ModelTypeEnum.Malloy) {
-            // TODO: timespec malloy
+            // console.log('metric');
+            // console.log(metric);
+
+            let timeSpecDetail = common.getTimeSpecDetail({
+              timeSpec: timeSpec,
+              weekStart: struct.weekStart
+            });
+
+            // console.log('timeSpecDetail');
+            // console.log(timeSpecDetail);
+
+            // {
+            //   "id": "orders.created_at_day",
+            //   "malloyFieldName": "created_at_day",
+            //   "malloyFieldPath": [
+            //       "orders"
+            //   ],
+            //   "malloyTags": [],
+            //   "mproveTags": [
+            //       {
+            //           "key": "field_group",
+            //           "value": "Created at"
+            //       },
+            //       {
+            //           "key": "build_metrics"
+            //       }
+            //   ],
+            //   "hidden": false,
+            //   "required": false,
+            //   "label": "Created at Day",
+            //   "fieldClass": "dimension",
+            //   "result": "ts",
+            //   "buildMetrics": true,
+            //   "timeframe": "day",
+            //   "sqlName": "orders__created_at_day",
+            //   "topId": "orders",
+            //   "topLabel": "Orders"
+            // }
+
+            let mField = model.fields.find(
+              field =>
+                field.id === `${metric.timeFieldId}_${field.timeframe}` &&
+                `${field.timeframe}s` === timeSpecDetail
+            );
+
+            timeFieldIdSpec = mField?.id;
+
+            // console.log('timeFieldIdSpec');
+            // console.log(timeFieldIdSpec);
           } else if (model.type === common.ModelTypeEnum.SQL) {
             let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
 
@@ -313,7 +364,7 @@ export class ReportDataService {
           }
 
           let timeSorting: common.Sorting =
-            model.type === common.ModelTypeEnum.Store &&
+            // model.type === common.ModelTypeEnum.Store &&
             common.isUndefined(timeFieldIdSpec)
               ? undefined
               : {
@@ -322,7 +373,7 @@ export class ReportDataService {
                 };
 
           let timeFilter: common.Filter =
-            model.type === common.ModelTypeEnum.Store &&
+            // model.type === common.ModelTypeEnum.Store &&
             common.isUndefined(timeFieldIdSpec)
               ? undefined
               : {
@@ -344,6 +395,23 @@ export class ReportDataService {
           // console.log('filters');
           // console.log(filters);
 
+          let select = common.isUndefined(timeFieldIdSpec)
+            ? []
+            : [timeFieldIdSpec, metric.fieldId];
+
+          let sortings = common.isUndefined(timeFieldIdSpec)
+            ? []
+            : [timeSorting];
+
+          let sorts = common.isUndefined(timeFieldIdSpec)
+            ? undefined
+            : [
+                  common.FractionTypeEnum.TsIsAfter,
+                  common.FractionTypeEnum.TsIsAfterRelative
+                ].indexOf(timeRangeFraction.type) > -1
+              ? `${timeFieldIdSpec}`
+              : `${timeFieldIdSpec} desc`;
+
           let mconfig: common.Mconfig = {
             structId: struct.structId,
             mconfigId: newMconfigId,
@@ -356,32 +424,20 @@ export class ReportDataService {
             modelFilePath: model.filePath,
             malloyQuery: undefined,
             compiledQuery: undefined,
-            select:
-              model.type === common.ModelTypeEnum.Store &&
-              common.isUndefined(timeFieldIdSpec)
-                ? []
-                : [timeFieldIdSpec, metric.fieldId],
+            select: model.type === common.ModelTypeEnum.Malloy ? [] : select,
             unsafeSelect: [],
             warnSelect: [],
             joinAggregations: [],
             sortings:
-              model.type === common.ModelTypeEnum.Store &&
-              common.isUndefined(timeFieldIdSpec)
-                ? []
-                : [timeSorting],
+              model.type === common.ModelTypeEnum.Malloy ? [] : sortings,
             sorts:
-              model.type === common.ModelTypeEnum.Store &&
-              common.isUndefined(timeFieldIdSpec)
-                ? undefined
-                : [
-                      common.FractionTypeEnum.TsIsAfter,
-                      common.FractionTypeEnum.TsIsAfterRelative
-                    ].indexOf(timeRangeFraction.type) > -1
-                  ? `${timeFieldIdSpec}`
-                  : `${timeFieldIdSpec} desc`,
+              model.type === common.ModelTypeEnum.Malloy ? undefined : sorts,
             timezone: timezone,
-            limit: timeColumnsLimit,
-            filters: filters,
+            limit:
+              model.type === common.ModelTypeEnum.Malloy
+                ? undefined
+                : timeColumnsLimit,
+            filters: model.type === common.ModelTypeEnum.Malloy ? [] : filters,
             chart: common.makeCopy(common.DEFAULT_CHART),
             temp: true,
             serverTs: 1
@@ -400,6 +456,15 @@ export class ReportDataService {
             mconfig: mconfig,
             fields: model.fields
           });
+
+          // console.log('mconfig');
+          // console.log(mconfig);
+
+          // console.log('mconfig.filters');
+          // console.log(mconfig.filters);
+
+          // console.log('mconfig.filters[0]');
+          // console.log(mconfig.filters[0]);
 
           let isError = false;
 
@@ -431,24 +496,89 @@ export class ReportDataService {
               newQuery.data = [];
             }
           } else if (model.type === common.ModelTypeEnum.Malloy) {
-            let queryOperation: common.QueryOperation = {
-              type: common.QueryOperationTypeEnum.Get,
-              timezone: timezone
-            };
-
-            let editMalloyQueryResult =
+            let editMalloyQueryResultStep1 =
               await this.malloyService.editMalloyQuery({
                 projectId: project.projectId,
                 envId: envId,
                 structId: struct.structId,
                 model: model,
                 mconfig: mconfig,
-                queryOperation: queryOperation
+                queryOperation: {
+                  type: common.QueryOperationTypeEnum.GroupOrAggregatePlusSort,
+                  timezone: timezone,
+                  fieldId: select[0],
+                  sortFieldId: select[0],
+                  desc: false
+                }
               });
 
-            newMconfig = editMalloyQueryResult.newMconfig;
-            newQuery = editMalloyQueryResult.newQuery;
-            isError = editMalloyQueryResult.isError;
+            newMconfig = editMalloyQueryResultStep1.newMconfig;
+            newQuery = editMalloyQueryResultStep1.newQuery;
+            isError = editMalloyQueryResultStep1.isError;
+
+            let editMalloyQueryResultStep2 =
+              await this.malloyService.editMalloyQuery({
+                projectId: project.projectId,
+                envId: envId,
+                structId: struct.structId,
+                model: model,
+                mconfig: newMconfig,
+                queryOperation: {
+                  type: common.QueryOperationTypeEnum.GroupOrAggregate,
+                  timezone: timezone,
+                  fieldId: select[1]
+                }
+              });
+
+            newMconfig = editMalloyQueryResultStep2.newMconfig;
+            newQuery = editMalloyQueryResultStep2.newQuery;
+            isError = editMalloyQueryResultStep2.isError;
+
+            let editMalloyQueryResultStep3 =
+              await this.malloyService.editMalloyQuery({
+                projectId: project.projectId,
+                envId: envId,
+                structId: struct.structId,
+                model: model,
+                mconfig: newMconfig,
+                queryOperation: {
+                  type: common.QueryOperationTypeEnum.Limit,
+                  timezone: timezone,
+                  limit: timeColumnsLimit
+                }
+              });
+
+            newMconfig = editMalloyQueryResultStep3.newMconfig;
+            newQuery = editMalloyQueryResultStep3.newQuery;
+            isError = editMalloyQueryResultStep3.isError;
+
+            await forEachSeries(filters, async x => {
+              let editMalloyQueryResultStepTemp =
+                await this.malloyService.editMalloyQuery({
+                  projectId: project.projectId,
+                  envId: envId,
+                  structId: struct.structId,
+                  model: model,
+                  mconfig: newMconfig,
+                  queryOperation: {
+                    type: common.QueryOperationTypeEnum.WhereOrHaving,
+                    timezone: timezone,
+                    fieldId: x.fieldId,
+                    filters: [x]
+                  }
+                });
+
+              newMconfig = editMalloyQueryResultStepTemp.newMconfig;
+              newQuery = editMalloyQueryResultStepTemp.newQuery;
+              isError = editMalloyQueryResultStepTemp.isError;
+            });
+
+            console.log('newMconfig');
+            console.log(newMconfig);
+            console.log('newQuery');
+            console.log(newQuery);
+            console.log('isError');
+            console.log(isError);
           } else {
             let { apiEnv, connectionsWithFallback } =
               await this.envsService.getApiEnvConnectionsWithFallback({
