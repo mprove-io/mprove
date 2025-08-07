@@ -66,15 +66,12 @@ export function bricksToFractions(item: {
   console.log(filterBricks);
 
   filterBricks.forEach(brick => {
-    if (
-      // brick === 'last 5 days' ||
-      brick === 'f`last 5 days`'
-    ) {
+    if (brick === 'last 5 days' || brick === 'f`last 5 days`') {
       console.log('brick match');
 
       let fraction: common.Fraction = {
-        brick: `f\`last 5 days\``,
-        parentBrick: `f\`last 5 days\``,
+        brick: 'f`last 5 days`',
+        parentBrick: 'f`last 5 days`',
         operator: common.FractionOperatorEnum.Or,
         type: common.FractionTypeEnum.TsIsInLast,
         tsLastValue: 5,

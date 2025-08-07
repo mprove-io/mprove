@@ -63,6 +63,9 @@ export class ChartViewComponent implements OnChanges {
   isAnimation: boolean;
 
   @Input()
+  modelType: common.ModelTypeEnum;
+
+  @Input()
   mconfigFields: common.MconfigField[];
 
   yFieldColumn: common.MconfigField;
@@ -196,12 +199,31 @@ export class ChartViewComponent implements OnChanges {
       // echarts - data
 
       if (this.eChartsTypes.indexOf(this.chart.type) > -1) {
+        console.log('this.qData');
+        console.log(this.qData);
+
+        //   [
+        //     {
+        //         "order_items.total_sale_price": {
+        //             "name": "order_items_total_sale_price",
+        //             "value": 92.9,
+        //             "valueFmt": "92.9"
+        //         },
+        //         "orders.created___hour": {
+        //             "name": "orders_created___hour",
+        //             "value": "2025-08-05 09",
+        //             "valueFmt": "09:00 05 Aug 2025"
+        //         }
+        //     }
+        // ]
+
         this.seriesData =
           this.qData?.length > 0 &&
           common.isDefined(this.chart.xField) &&
           common.isDefined(this.chart.yFields) &&
           this.chart.yFields.length > 0
             ? this.dataService.makeSeriesData({
+                modelType: this.modelType,
                 selectFields: this.mconfigFields,
                 xFieldId: this.chart.xField,
                 sizeFieldId: this.chart.sizeField,
@@ -212,8 +234,24 @@ export class ChartViewComponent implements OnChanges {
               })
             : [];
 
-        // console.log('this.seriesData');
-        // console.log(this.seriesData);
+        console.log('this.seriesData');
+        console.log(this.seriesData);
+
+        //   [
+        //     {
+        //         "seriesName": "Order Items Total Sale Price",
+        //         "seriesId": "order_items.total_sale_price",
+        //         "seriesPoints": [
+        //             {
+        //                 "xValue": 1754384400000,
+        //                 "xValueFmt": "09:00 05 Aug 2025",
+        //                 "yValue": 92.9,
+        //                 "yValueFmt": "92.9",
+        //                 "sizeValueMod": 1
+        //             },
+        //         ]
+        //     }
+        // ]
       }
 
       // echarts - axes

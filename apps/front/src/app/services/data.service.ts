@@ -349,7 +349,10 @@ export class DataService {
           if (common.isDefined(field.detail)) {
             tsValue = dataRow[field.id] as unknown as number;
           } else if (field.result === common.FieldResultEnum.Ts) {
-            let tsValueFn = this.getTsValueFn(sqlName);
+            let tsValueFn =
+              mconfig.modelType === common.ModelTypeEnum.Malloy
+                ? this.getDateFromT
+                : this.getTsValueFn(sqlName);
 
             tsValue = common.isDefined(tsValueFn)
               ? tsValueFn(value).getTime()
@@ -543,6 +546,7 @@ export class DataService {
   }
 
   makeSeriesData(item: {
+    modelType: common.ModelTypeEnum;
     selectFields: common.MconfigField[];
     data: QDataRow[];
     multiFieldId: string;
@@ -552,6 +556,7 @@ export class DataService {
     chartType: common.ChartTypeEnum;
   }) {
     let {
+      modelType,
       selectFields,
       data,
       multiFieldId,
@@ -677,7 +682,10 @@ export class DataService {
 
         // x null check
         if (row[xField.id]) {
-          let tsValueFn = this.getTsValueFn(xField.sqlName);
+          let tsValueFn =
+            modelType === common.ModelTypeEnum.Malloy
+              ? this.getDateFromT
+              : this.getTsValueFn(xField.sqlName);
 
           let xV =
             xField.result === common.FieldResultEnum.Ts
@@ -966,6 +974,33 @@ export class DataService {
         parseInt(day, 10),
         parseInt(hour, 10),
         parseInt(minute, 10)
+      )
+    );
+
+    return date;
+  }
+
+  private getDateFromT(rValue: string) {
+    let data = rValue;
+
+    let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)T(\d\d)[:](\d\d)[:](\d\d)$/g;
+
+    let r = regEx.exec(data);
+
+    if (common.isUndefined(r)) {
+      return null;
+    }
+
+    let [full, year, month, day, hour, minute, second] = r;
+
+    let date = new Date(
+      Date.UTC(
+        parseInt(year, 10),
+        parseInt(month, 10) - 1,
+        parseInt(day, 10),
+        parseInt(hour, 10),
+        parseInt(minute, 10),
+        parseInt(second, 10)
       )
     );
 
