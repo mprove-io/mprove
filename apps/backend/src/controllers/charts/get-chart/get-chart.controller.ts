@@ -191,7 +191,7 @@ export class GetChartController {
           structId: struct.structId,
           model: model,
           mconfig: chartMconfig,
-          queryOperation: queryOperation
+          queryOperations: [queryOperation]
         });
 
         newMconfig = editMalloyQueryResult.newMconfig;

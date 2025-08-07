@@ -503,75 +503,37 @@ export class ReportDataService {
                 structId: struct.structId,
                 model: model,
                 mconfig: mconfig,
-                queryOperation: {
-                  type: common.QueryOperationTypeEnum.GroupOrAggregatePlusSort,
-                  timezone: timezone,
-                  fieldId: select[0],
-                  sortFieldId: select[0],
-                  desc: false
-                }
+                queryOperations: [
+                  {
+                    type: common.QueryOperationTypeEnum
+                      .GroupOrAggregatePlusSort,
+                    timezone: timezone,
+                    fieldId: select[0],
+                    sortFieldId: select[0],
+                    desc: false
+                  },
+                  {
+                    type: common.QueryOperationTypeEnum.GroupOrAggregate,
+                    timezone: timezone,
+                    fieldId: select[1]
+                  },
+                  {
+                    type: common.QueryOperationTypeEnum.Limit,
+                    timezone: timezone,
+                    limit: timeColumnsLimit
+                  },
+                  ...filters.map(filter => ({
+                    type: common.QueryOperationTypeEnum.WhereOrHaving,
+                    timezone: timezone,
+                    fieldId: filter.fieldId,
+                    filters: [filter]
+                  }))
+                ]
               });
 
             newMconfig = editMalloyQueryResultStep1.newMconfig;
             newQuery = editMalloyQueryResultStep1.newQuery;
             isError = editMalloyQueryResultStep1.isError;
-
-            let editMalloyQueryResultStep2 =
-              await this.malloyService.editMalloyQuery({
-                projectId: project.projectId,
-                envId: envId,
-                structId: struct.structId,
-                model: model,
-                mconfig: newMconfig,
-                queryOperation: {
-                  type: common.QueryOperationTypeEnum.GroupOrAggregate,
-                  timezone: timezone,
-                  fieldId: select[1]
-                }
-              });
-
-            newMconfig = editMalloyQueryResultStep2.newMconfig;
-            newQuery = editMalloyQueryResultStep2.newQuery;
-            isError = editMalloyQueryResultStep2.isError;
-
-            let editMalloyQueryResultStep3 =
-              await this.malloyService.editMalloyQuery({
-                projectId: project.projectId,
-                envId: envId,
-                structId: struct.structId,
-                model: model,
-                mconfig: newMconfig,
-                queryOperation: {
-                  type: common.QueryOperationTypeEnum.Limit,
-                  timezone: timezone,
-                  limit: timeColumnsLimit
-                }
-              });
-
-            newMconfig = editMalloyQueryResultStep3.newMconfig;
-            newQuery = editMalloyQueryResultStep3.newQuery;
-            isError = editMalloyQueryResultStep3.isError;
-
-            await forEachSeries(filters, async x => {
-              let editMalloyQueryResultStepTemp =
-                await this.malloyService.editMalloyQuery({
-                  projectId: project.projectId,
-                  envId: envId,
-                  structId: struct.structId,
-                  model: model,
-                  mconfig: newMconfig,
-                  queryOperation: {
-                    type: common.QueryOperationTypeEnum.WhereOrHaving,
-                    timezone: timezone,
-                    fieldId: x.fieldId,
-                    filters: [x]
-                  }
-                });
-
-              newMconfig = editMalloyQueryResultStepTemp.newMconfig;
-              newQuery = editMalloyQueryResultStepTemp.newQuery;
-              isError = editMalloyQueryResultStepTemp.isError;
-            });
 
             console.log('newMconfig');
             console.log(newMconfig);

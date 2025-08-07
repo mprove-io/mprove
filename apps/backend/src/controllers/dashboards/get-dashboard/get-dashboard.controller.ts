@@ -351,10 +351,12 @@ export class GetDashboardController {
             structId: struct.structId,
             model: model,
             mconfig: mconfig,
-            queryOperation: {
-              type: common.QueryOperationTypeEnum.Get,
-              timezone: timezone
-            }
+            queryOperations: [
+              {
+                type: common.QueryOperationTypeEnum.Get,
+                timezone: timezone
+              }
+            ]
           });
 
           newMconfig = editMalloyQueryResult.newMconfig;

@@ -180,7 +180,7 @@ export class EditDraftChartController {
         structId: struct.structId,
         model: model,
         mconfig: mconfig,
-        queryOperation: queryOperation
+        queryOperations: [queryOperation]
       });
 
       newMconfig = editMalloyQueryResult.newMconfig;

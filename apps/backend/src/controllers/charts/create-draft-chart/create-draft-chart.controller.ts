@@ -184,7 +184,7 @@ export class CreateDraftChartController {
         structId: struct.structId,
         model: model,
         mconfig: mconfig,
-        queryOperation: queryOperation
+        queryOperations: [queryOperation]
       });
 
       isError = editMalloyQueryResult.isError;
