@@ -10,6 +10,7 @@ import { nodeCommon } from '~backend/barrels/node-common';
 import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
+import { DOUBLE_UNDERSCORE } from '~common/_index';
 import { RabbitService } from './rabbit.service';
 import { UserCodeService } from './user-code.service';
 
@@ -367,6 +368,34 @@ FROM main;`;
 
     let reportDataColumns: common.ReportDataColumn[] = [];
 
+    report.rows
+      .filter(
+        row =>
+          row.rowType === common.RowTypeEnum.Metric &&
+          row.mconfig.select.length > 0 &&
+          common.isDefined(row.query?.data)
+      )
+      .forEach(row => {
+        row.query.data =
+          row.mconfig?.modelType === common.ModelTypeEnum.Malloy
+            ? row.query.data
+                .filter((x: any) => common.isDefined(x.row))
+                .map((x: any) => {
+                  x.row = Object.keys(x.row).reduce((destination: any, key) => {
+                    destination[key.toLowerCase()] = x.row[key];
+                    return destination;
+                  }, {});
+
+                  return x;
+                })
+            : row.query.data.map((x: any) =>
+                Object.keys(x).reduce((destination: any, key) => {
+                  destination[key.toLowerCase()] = x[key];
+                  return destination;
+                }, {})
+              );
+      });
+
     if (timeSpec !== common.TimeSpecEnum.Timestamps) {
       reportDataColumns = report.columns.map((column, i) => {
         let reportDataColumn: common.ReportDataColumn = {
@@ -383,29 +412,19 @@ FROM main;`;
               row.mconfig.select.length > 0
           )
           .forEach((row: common.Row) => {
-            let timeFieldId = row.mconfig?.select[0]
-              .split('.')
-              .join('_')
-              .toLowerCase();
+            let timeFieldId =
+              row.mconfig?.modelType === common.ModelTypeEnum.Malloy
+                ? row.mconfig?.select[0].split('.').join(DOUBLE_UNDERSCORE)
+                : row.mconfig?.select[0].split('.').join('_').toLowerCase();
 
-            let fieldId = row.mconfig?.select[1]
-              .split('.')
-              .join('_')
-              .toLowerCase();
-
-            if (common.isDefined(row.query?.data)) {
-              row.query.data = row.query.data.map((x: any) =>
-                Object.keys(x).reduce((destination: any, key) => {
-                  destination[key.toLowerCase()] = x[key];
-                  return destination;
-                }, {})
-              );
-            }
+            let fieldId =
+              row.mconfig?.modelType === common.ModelTypeEnum.Malloy
+                ? row.mconfig?.select[1].split('.').join(DOUBLE_UNDERSCORE)
+                : row.mconfig?.select[1].split('.').join('_').toLowerCase();
 
             let dataRow;
 
             if (row.mconfig.modelType === common.ModelTypeEnum.Store) {
-              // if (row.mconfig.isStoreModel === true) {
               dataRow = row.query?.data?.find(
                 (r: any) => r[timeFieldId] === column.columnId
               );
@@ -413,27 +432,34 @@ FROM main;`;
               let tsDate = fromUnixTime(column.columnId);
 
               let timeValue =
-                timeSpec === common.TimeSpecEnum.Years
-                  ? format(tsDate, 'yyyy')
-                  : timeSpec === common.TimeSpecEnum.Quarters
-                    ? format(tsDate, 'yyyy-MM')
-                    : timeSpec === common.TimeSpecEnum.Months
+                row.mconfig?.modelType === common.ModelTypeEnum.Malloy
+                  ? tsDate.toISOString().slice(0, 19)
+                  : timeSpec === common.TimeSpecEnum.Years
+                    ? format(tsDate, 'yyyy')
+                    : timeSpec === common.TimeSpecEnum.Quarters
                       ? format(tsDate, 'yyyy-MM')
-                      : timeSpec === common.TimeSpecEnum.Weeks
-                        ? format(tsDate, 'yyyy-MM-dd')
-                        : timeSpec === common.TimeSpecEnum.Days
+                      : timeSpec === common.TimeSpecEnum.Months
+                        ? format(tsDate, 'yyyy-MM')
+                        : timeSpec === common.TimeSpecEnum.Weeks
                           ? format(tsDate, 'yyyy-MM-dd')
-                          : timeSpec === common.TimeSpecEnum.Hours
-                            ? format(tsDate, 'yyyy-MM-dd HH')
-                            : timeSpec === common.TimeSpecEnum.Minutes
-                              ? format(tsDate, 'yyyy-MM-dd HH:mm')
-                              : // : timeSpec === common.TimeSpecEnum.Timestamps
-                                // ? format(tsDate, 'yyyy-MM-dd HH:mm:ss.SSS')
-                                undefined;
+                          : timeSpec === common.TimeSpecEnum.Days
+                            ? format(tsDate, 'yyyy-MM-dd')
+                            : timeSpec === common.TimeSpecEnum.Hours
+                              ? format(tsDate, 'yyyy-MM-dd HH')
+                              : timeSpec === common.TimeSpecEnum.Minutes
+                                ? format(tsDate, 'yyyy-MM-dd HH:mm')
+                                : // : timeSpec === common.TimeSpecEnum.Timestamps
+                                  // ? format(tsDate, 'yyyy-MM-dd HH:mm:ss.SSS')
+                                  undefined;
 
-              dataRow = row.query?.data?.find(
-                (r: any) => r[timeFieldId]?.toString() === timeValue
-              );
+              dataRow =
+                row.mconfig?.modelType === common.ModelTypeEnum.Malloy
+                  ? row.query?.data?.find(
+                      (r: any) => r.row?.[timeFieldId]?.toString() === timeValue
+                    )?.row
+                  : row.query?.data?.find(
+                      (r: any) => r[timeFieldId]?.toString() === timeValue
+                    );
             }
 
             if (common.isDefined(dataRow)) {
@@ -459,26 +485,22 @@ FROM main;`;
             row.mconfig.select.length > 0
         )
         .forEach((row: common.Row) => {
-          let timeFieldId = row.mconfig?.select[0]
-            .split('.')
-            .join('_')
-            .toLowerCase();
+          let timeFieldId =
+            row.mconfig?.modelType === common.ModelTypeEnum.Malloy
+              ? row.mconfig?.select[0].split('.').join(DOUBLE_UNDERSCORE)
+              : row.mconfig?.select[0].split('.').join('_').toLowerCase();
 
-          let fieldId = row.mconfig?.select[1]
-            .split('.')
-            .join('_')
-            .toLowerCase();
+          let fieldId =
+            row.mconfig?.modelType === common.ModelTypeEnum.Malloy
+              ? row.mconfig?.select[1].split('.').join(DOUBLE_UNDERSCORE)
+              : row.mconfig?.select[1].split('.').join('_').toLowerCase();
 
-          if (common.isDefined(row.query?.data)) {
-            row.query.data = row.query.data.map((x: any) =>
-              Object.keys(x).reduce((destination: any, key) => {
-                destination[key.toLowerCase()] = x[key];
-                return destination;
-              }, {})
-            );
-          }
+          (row.query?.data as any[])?.forEach(x => {
+            let dataRow =
+              row.mconfig?.modelType === common.ModelTypeEnum.Malloy
+                ? x.row
+                : x;
 
-          (row.query?.data as any[])?.forEach(dataRow => {
             let timestampString = dataRow[timeFieldId]?.toString();
 
             let columnId = dayjs(timestampString).valueOf() / 1000;
