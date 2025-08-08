@@ -1,0 +1,589 @@
+import {
+  After,
+  AgoMoment,
+  Before,
+  For,
+  FromNowMoment,
+  InMoment,
+  JustUnits,
+  NowMoment,
+  Null,
+  TemporalFilter,
+  TemporalLiteral,
+  To,
+  UnitMoment,
+  WeekdayMoment,
+  WhichdayMoment,
+  in_last
+} from '@malloydata/malloy-filter';
+import { MALLOY_FILTER_ANY } from '~common/_index';
+import { getFractionTsMixUnit } from '~common/functions/get-fraction-ts-mix-unit';
+import { common } from '~node-common/barrels/common';
+import { getMalloyMomentStr } from './get-malloy-moment-str';
+
+export function getMalloyFilterTsFractions(item: {
+  parsed: TemporalFilter;
+  parentBrick: string;
+}) {
+  let { parsed, parentBrick } = item;
+
+  // {value: 'in_last', label: 'last'},
+  // {value: 'last', label: 'last complete'},
+  // {value: 'next', label: 'next complete'},
+  // {value: '-before', label: 'starting'},
+  // {value: 'after', label: 'after'},
+  // {value: 'before', label: 'before'},
+  // {value: '-after', label: 'through'},
+  // {value: 'in', label: 'is'},
+  // {value: 'to', label: 'between'},
+  // {value: 'null', label: 'null'},
+  // {value: '-null', label: 'not null'},
+
+  // is in last (completed with current) (completed)
+  // is in next (completed)
+  // is between           literal     last, this, next          [from ... to ...]
+  // is starting          literal     last, this, next          [not before]
+  // is starting ... for  literal     last, this, next          [begin ... for ...]
+  // is after             literal     last, this, next
+  // is before            literal     last, this, next
+  // is through           literal     last, this, next          [not after]
+  // is on Year           literal     last, this, next
+  // is on Quarter        literal     last, this, next
+  // is on Month          literal     last, this, next
+  // is on Week           literal     last, this, next
+  // is on Day            literal     last (yesterday), this (today), next (tomorrow), last Sunday, next Sunday, ...
+  // is on Hour           literal     last, this, next
+  // is on Minute         literal     last, this, next
+  // is on Timestamp      literal     now
+  // is any value
+  // is null
+  // is not null
+
+  let fractions: common.Fraction[] = [];
+
+  let temporalFilters: TemporalFilter[] = [];
+
+  if (parsed?.operator === 'or' || parsed?.operator === 'and') {
+    // parsed is null for any
+    temporalFilters = parsed.members;
+  } else if (common.isDefined(parsed)) {
+    temporalFilters = [parsed];
+  } else {
+    // temporal any
+    let fraction: common.Fraction = {
+      brick: MALLOY_FILTER_ANY,
+      parentBrick: parentBrick,
+      operator: common.FractionOperatorEnum.Or,
+      type: common.FractionTypeEnum.TsIsAnyValue
+    };
+
+    fractions.push(fraction);
+  }
+
+  // export type TemporalFilter = Null | Before | After | To | For | JustUnits | in_last | InMoment | BooleanChain<TemporalFilter> | ClauseGroup<TemporalFilter>;
+  temporalFilters
+    .filter(
+      temporalFilter =>
+        [
+          'null',
+          'last',
+          'in_last',
+          'next',
+          'before',
+          'after',
+          'to',
+          'in',
+          'for'
+        ].indexOf(temporalFilter.operator) > -1
+    )
+    .forEach(temporalFilter => {
+      // temporal main
+
+      let fractionOperator =
+        (temporalFilter as { not: boolean })?.not === true
+          ? common.FractionOperatorEnum.And
+          : common.FractionOperatorEnum.Or;
+
+      let fraction: common.Fraction;
+
+      if ((temporalFilter as Null).operator === 'null') {
+        // temporal null (null)
+        fraction = {
+          brick:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? 'f`null`'
+              : 'f`not null`',
+          parentBrick: parentBrick,
+          operator: fractionOperator,
+          type:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? common.FractionTypeEnum.TsIsNull
+              : common.FractionTypeEnum.TsIsNotNull
+        };
+      } else if ((temporalFilter as JustUnits).operator === 'last') {
+        // temporal last (completed)
+        let tFilter = temporalFilter as JustUnits;
+
+        fraction = {
+          brick:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? `f\`last ${tFilter.n} ${tFilter.units}s\``
+              : `f\`not last ${tFilter.n} ${tFilter.units}s\``,
+          parentBrick: parentBrick,
+          operator: fractionOperator,
+          type:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? common.FractionTypeEnum.TsIsInLast
+              : common.FractionTypeEnum.TsIsNotInLast,
+          tsLastValue: Number(tFilter.n),
+          tsLastUnit: common.getFractionTsUnits(tFilter.units),
+          tsLastCompleteOption: common.FractionTsLastCompleteOptionEnum.Complete
+        };
+      } else if ((temporalFilter as in_last).operator === 'in_last') {
+        // temporal in_last (completed with current)
+        let tFilter = temporalFilter as in_last;
+
+        fraction = {
+          brick:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? `f\`${tFilter.n} ${tFilter.units}s\``
+              : `f\`not ${tFilter.n} ${tFilter.units}s\``,
+          parentBrick: parentBrick,
+          operator: fractionOperator,
+          type:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? common.FractionTypeEnum.TsIsInLast
+              : common.FractionTypeEnum.TsIsNotInLast,
+          tsLastValue: Number(tFilter.n),
+          tsLastUnit: common.getFractionTsUnits(tFilter.units),
+          tsLastCompleteOption:
+            common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent
+        };
+      } else if ((temporalFilter as JustUnits).operator === 'next') {
+        // temporal next (next completed)
+        let tFilter = temporalFilter as JustUnits;
+
+        fraction = {
+          brick:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? `f\`next ${tFilter.n} ${tFilter.units}s\``
+              : `f\`not next ${tFilter.n} ${tFilter.units}s\``,
+          parentBrick: parentBrick,
+          operator: fractionOperator,
+          type:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? common.FractionTypeEnum.TsIsInNext
+              : common.FractionTypeEnum.TsIsNotInNext,
+          tsNextValue: Number(tFilter.n),
+          tsNextUnit: common.getFractionTsUnits(tFilter.units)
+        };
+      } else if ((temporalFilter as Before).operator === 'before') {
+        // temporal before (before)
+        let tFilter = temporalFilter as Before;
+        let before = tFilter.before;
+
+        let { year, quarter, month, day, hour, minute } = common.parseTsLiteral(
+          {
+            input: (before as TemporalLiteral).literal,
+            units: (before as TemporalLiteral).units
+          }
+        );
+
+        let m = getMalloyMomentStr(tFilter.before);
+
+        fraction = {
+          brick:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? `f\`before ${m.momentStr}\``
+              : `f\`starting ${m.momentStr}\``,
+          parentBrick: parentBrick,
+          operator: fractionOperator,
+          type:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? common.FractionTypeEnum.TsIsBefore
+              : common.FractionTypeEnum.TsIsStarting,
+          tsMomentType: m.momentType,
+          tsMoment: before,
+          tsMomentAgoFromNowQuantity: common.isDefined(
+            (before as AgoMoment | FromNowMoment).n
+          )
+            ? Number((before as AgoMoment | FromNowMoment).n)
+            : undefined,
+          tsMomentUnit:
+            [
+              'monday',
+              'tuesday',
+              'wednesday',
+              'thursday',
+              'friday',
+              'saturday',
+              'sunday'
+            ].includes(before.moment) === true &&
+            ['last', 'next'].indexOf((before as WeekdayMoment).which) > -1
+              ? getFractionTsMixUnit((before as WeekdayMoment).moment)
+              : getFractionTsMixUnit(
+                  (before as UnitMoment | AgoMoment | FromNowMoment).units
+                ),
+          tsTimestampValue:
+            before.moment === 'literal' && common.isUndefined(before.units)
+              ? before.literal
+              : undefined,
+          tsDateYear: common.isDefined(year) ? Number(year) : undefined,
+          tsDateQuarter: common.isDefined(quarter)
+            ? Number(quarter)
+            : undefined,
+          tsDateMonth: common.isDefined(month) ? Number(month) : undefined,
+          tsDateDay: common.isDefined(day) ? Number(day) : undefined,
+          tsDateHour: common.isDefined(hour) ? Number(hour) : undefined,
+          tsDateMinute: common.isDefined(minute) ? Number(minute) : undefined
+        };
+      } else if ((temporalFilter as After).operator === 'after') {
+        // temporal after (after)
+        let tFilter = temporalFilter as After;
+        let after = tFilter.after;
+
+        let { year, quarter, month, day, hour, minute } = common.parseTsLiteral(
+          {
+            input: (after as TemporalLiteral).literal,
+            units: (after as TemporalLiteral).units
+          }
+        );
+
+        let m = getMalloyMomentStr(tFilter.after);
+
+        fraction = {
+          brick:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? `f\`after ${m.momentStr}\``
+              : `f\`through ${m.momentStr}\``,
+          parentBrick: parentBrick,
+          operator: fractionOperator,
+          type:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? common.FractionTypeEnum.TsIsAfter
+              : common.FractionTypeEnum.TsIsThrough,
+          tsMomentType: m.momentType,
+          tsMoment: after,
+          tsMomentAgoFromNowQuantity: common.isDefined(
+            (after as AgoMoment | FromNowMoment).n
+          )
+            ? Number((after as AgoMoment | FromNowMoment).n)
+            : undefined,
+          tsMomentUnit:
+            [
+              'monday',
+              'tuesday',
+              'wednesday',
+              'thursday',
+              'friday',
+              'saturday',
+              'sunday'
+            ].includes(after.moment) === true &&
+            ['last', 'next'].indexOf((after as WeekdayMoment).which) > -1
+              ? getFractionTsMixUnit((after as WeekdayMoment).moment)
+              : getFractionTsMixUnit(
+                  (after as UnitMoment | AgoMoment | FromNowMoment).units
+                ),
+          tsTimestampValue:
+            after.moment === 'literal' && common.isUndefined(after.units)
+              ? after.literal
+              : undefined,
+          tsDateYear: common.isDefined(year) ? Number(year) : undefined,
+          tsDateQuarter: common.isDefined(quarter)
+            ? Number(quarter)
+            : undefined,
+          tsDateMonth: common.isDefined(month) ? Number(month) : undefined,
+          tsDateDay: common.isDefined(day) ? Number(day) : undefined,
+          tsDateHour: common.isDefined(hour) ? Number(hour) : undefined,
+          tsDateMinute: common.isDefined(minute) ? Number(minute) : undefined
+        };
+      } else if ((temporalFilter as To).operator === 'to') {
+        // temporal to (between)
+        let tFilter = temporalFilter as To;
+        let from = tFilter.fromMoment;
+        let to = tFilter.toMoment;
+
+        let { year, quarter, month, day, hour, minute } = common.parseTsLiteral(
+          {
+            input: (from as TemporalLiteral).literal,
+            units: (from as TemporalLiteral).units
+          }
+        );
+
+        let {
+          year: toYear,
+          quarter: toQuarter,
+          month: toMonth,
+          day: toDay,
+          hour: toHour,
+          minute: toMinute
+        } = common.parseTsLiteral({
+          input: (to as TemporalLiteral).literal,
+          units: (to as TemporalLiteral).units
+        });
+
+        let mFrom = getMalloyMomentStr(tFilter.fromMoment);
+        let mTo = getMalloyMomentStr(tFilter.toMoment);
+
+        fraction = {
+          brick:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? `f\`${mFrom.momentStr} to ${mTo.momentStr}\``
+              : `f\`not ${mFrom.momentStr} to ${mTo.momentStr}\``,
+          parentBrick: parentBrick,
+          operator: fractionOperator,
+          type:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? common.FractionTypeEnum.TsIsBetween
+              : common.FractionTypeEnum.TsIsNotBetween,
+          tsFromMomentType: mFrom.momentType,
+          tsToMomentType: mTo.momentType,
+          tsFromMoment: from,
+          tsFromMomentAgoFromNowQuantity: common.isDefined(
+            (from as AgoMoment | FromNowMoment).n
+          )
+            ? Number((from as AgoMoment | FromNowMoment).n)
+            : undefined,
+          tsFromMomentUnit:
+            [
+              'monday',
+              'tuesday',
+              'wednesday',
+              'thursday',
+              'friday',
+              'saturday',
+              'sunday'
+            ].includes(from.moment) === true &&
+            ['last', 'next'].indexOf((from as WeekdayMoment).which) > -1
+              ? getFractionTsMixUnit((from as WeekdayMoment).moment)
+              : getFractionTsMixUnit(
+                  (from as UnitMoment | AgoMoment | FromNowMoment).units
+                ),
+          tsFromTimestampValue:
+            from.moment === 'literal' && common.isUndefined(from.units)
+              ? from.literal
+              : undefined,
+          tsToMoment: to,
+          tsToMomentAgoFromNowQuantity: common.isDefined(
+            (to as AgoMoment | FromNowMoment).n
+          )
+            ? Number((to as AgoMoment | FromNowMoment).n)
+            : undefined,
+          tsToMomentUnit:
+            [
+              'monday',
+              'tuesday',
+              'wednesday',
+              'thursday',
+              'friday',
+              'saturday',
+              'sunday'
+            ].includes(to.moment) === true &&
+            ['last', 'next'].indexOf((to as WeekdayMoment).which) > -1
+              ? getFractionTsMixUnit((to as WeekdayMoment).moment)
+              : getFractionTsMixUnit(
+                  (to as UnitMoment | AgoMoment | FromNowMoment).units
+                ),
+          tsToTimestampValue:
+            to.moment === 'literal' && common.isUndefined(to.units)
+              ? to.literal
+              : undefined,
+          tsLastValue: undefined,
+          tsLastUnit: undefined,
+          tsLastCompleteOption: undefined,
+          tsDateYear: common.isDefined(year) ? Number(year) : undefined,
+          tsDateQuarter: common.isDefined(quarter)
+            ? Number(quarter)
+            : undefined,
+          tsDateMonth: common.isDefined(month) ? Number(month) : undefined,
+          tsDateDay: common.isDefined(day) ? Number(day) : undefined,
+          tsDateHour: common.isDefined(hour) ? Number(hour) : undefined,
+          tsDateMinute: common.isDefined(minute) ? Number(minute) : undefined,
+          tsDateToYear: common.isDefined(toYear) ? Number(toYear) : undefined,
+          tsDateToQuarter: common.isDefined(toQuarter)
+            ? Number(toQuarter)
+            : undefined,
+          tsDateToMonth: common.isDefined(toMonth)
+            ? Number(toMonth)
+            : undefined,
+          tsDateToDay: common.isDefined(toDay) ? Number(toDay) : undefined,
+          tsDateToHour: common.isDefined(toHour) ? Number(toHour) : undefined,
+          tsDateToMinute: common.isDefined(toMinute)
+            ? Number(toMinute)
+            : undefined
+        };
+      } else if ((temporalFilter as InMoment).operator === 'in') {
+        // temporal in (on)
+        let tFilter = temporalFilter as InMoment;
+        let tfIn = tFilter.in;
+
+        let { year, quarter, month, day, hour, minute } = common.parseTsLiteral(
+          {
+            input: (tfIn as TemporalLiteral).literal,
+            units: (tfIn as TemporalLiteral).units
+          }
+        );
+
+        let m = getMalloyMomentStr(tFilter.in);
+
+        fraction = {
+          brick:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? `f\`${m.momentStr}\``
+              : `f\`not ${m.momentStr}\``,
+          parentBrick: parentBrick,
+          operator: fractionOperator,
+          type:
+            (tfIn as TemporalLiteral).units === 'year'
+              ? fractionOperator === common.FractionOperatorEnum.Or
+                ? common.FractionTypeEnum.TsIsOnYear
+                : common.FractionTypeEnum.TsIsNotOnYear
+              : (tfIn as TemporalLiteral).units === 'quarter'
+                ? fractionOperator === common.FractionOperatorEnum.Or
+                  ? common.FractionTypeEnum.TsIsOnQuarter
+                  : common.FractionTypeEnum.TsIsNotOnQuarter
+                : (tfIn as TemporalLiteral).units === 'month'
+                  ? fractionOperator === common.FractionOperatorEnum.Or
+                    ? common.FractionTypeEnum.TsIsOnMonth
+                    : common.FractionTypeEnum.TsIsNotOnMonth
+                  : (tfIn as TemporalLiteral).units === 'week'
+                    ? fractionOperator === common.FractionOperatorEnum.Or
+                      ? common.FractionTypeEnum.TsIsOnWeek
+                      : common.FractionTypeEnum.TsIsNotOnWeek
+                    : (tfIn as TemporalLiteral).units === 'day' ||
+                        ['today', 'yesterday', 'tomorrow'].indexOf(
+                          (tFilter.in as WhichdayMoment).moment
+                        ) > -1 ||
+                        [
+                          'sunday',
+                          'monday',
+                          'tuesday',
+                          'wednesday',
+                          'thursday',
+                          'friday',
+                          'saturday'
+                        ].indexOf((tFilter.in as WeekdayMoment).moment) > -1
+                      ? fractionOperator === common.FractionOperatorEnum.Or
+                        ? common.FractionTypeEnum.TsIsOnDay
+                        : common.FractionTypeEnum.TsIsNotOnDay
+                      : (tfIn as TemporalLiteral).units === 'hour'
+                        ? fractionOperator === common.FractionOperatorEnum.Or
+                          ? common.FractionTypeEnum.TsIsOnHour
+                          : common.FractionTypeEnum.TsIsNotOnHour
+                        : (tfIn as TemporalLiteral).units === 'minute'
+                          ? fractionOperator === common.FractionOperatorEnum.Or
+                            ? common.FractionTypeEnum.TsIsOnMinute
+                            : common.FractionTypeEnum.TsIsNotOnMinute
+                          : tfIn.moment === 'literal' ||
+                              (tfIn as NowMoment).moment === 'now'
+                            ? fractionOperator ===
+                              common.FractionOperatorEnum.Or
+                              ? common.FractionTypeEnum.TsIsOnTimestamp
+                              : common.FractionTypeEnum.TsIsNotOnTimestamp
+                            : undefined,
+          tsMomentType: m.momentType,
+          tsMoment: tfIn,
+          tsMomentAgoFromNowQuantity: common.isDefined(
+            (tfIn as AgoMoment | FromNowMoment).n
+          )
+            ? Number((tfIn as AgoMoment | FromNowMoment).n)
+            : undefined,
+          tsMomentUnit:
+            [
+              'monday',
+              'tuesday',
+              'wednesday',
+              'thursday',
+              'friday',
+              'saturday',
+              'sunday'
+            ].includes(tfIn.moment) === true &&
+            ['last', 'next'].indexOf((tfIn as WeekdayMoment).which) > -1
+              ? getFractionTsMixUnit((tfIn as WeekdayMoment).moment)
+              : getFractionTsMixUnit(
+                  (tfIn as UnitMoment | AgoMoment | FromNowMoment).units
+                ),
+          tsTimestampValue:
+            tfIn.moment === 'literal' && common.isUndefined(tfIn.units)
+              ? tfIn.literal
+              : undefined,
+          tsDateYear: common.isDefined(year) ? Number(year) : undefined,
+          tsDateQuarter: common.isDefined(quarter)
+            ? Number(quarter)
+            : undefined,
+          tsDateMonth: common.isDefined(month) ? Number(month) : undefined,
+          tsDateDay: common.isDefined(day) ? Number(day) : undefined,
+          tsDateHour: common.isDefined(hour) ? Number(hour) : undefined,
+          tsDateMinute: common.isDefined(minute) ? Number(minute) : undefined
+        };
+      } else if ((temporalFilter as For).operator === 'for') {
+        // temporal for (begin ... for ...) [starts ... for ...]
+        let tFilter = temporalFilter as For;
+        let begin = tFilter.begin;
+
+        let { year, quarter, month, day, hour, minute } = common.parseTsLiteral(
+          {
+            input: (begin as TemporalLiteral).literal,
+            units: (begin as TemporalLiteral).units
+          }
+        );
+
+        let m = getMalloyMomentStr(tFilter.begin);
+
+        fraction = {
+          brick:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? `f\`${m.momentStr} for ${tFilter.n} ${tFilter.units}s\``
+              : `f\`not ${m.momentStr} for ${tFilter.n} ${tFilter.units}s\``,
+          parentBrick: parentBrick,
+          operator: fractionOperator,
+          type:
+            fractionOperator === common.FractionOperatorEnum.Or
+              ? common.FractionTypeEnum.TsIsBeginFor
+              : common.FractionTypeEnum.TsIsNotBeginFor,
+          tsMomentType: m.momentType,
+          tsMoment: begin,
+          tsMomentAgoFromNowQuantity: common.isDefined(
+            (begin as AgoMoment | FromNowMoment).n
+          )
+            ? Number((begin as AgoMoment | FromNowMoment).n)
+            : undefined,
+          tsMomentUnit:
+            [
+              'monday',
+              'tuesday',
+              'wednesday',
+              'thursday',
+              'friday',
+              'saturday',
+              'sunday'
+            ].includes(begin.moment) === true &&
+            ['last', 'next'].indexOf((begin as WeekdayMoment).which) > -1
+              ? getFractionTsMixUnit((begin as WeekdayMoment).moment)
+              : getFractionTsMixUnit(
+                  (begin as UnitMoment | AgoMoment | FromNowMoment).units
+                ),
+          tsTimestampValue:
+            begin.moment === 'literal' && common.isUndefined(begin.units)
+              ? begin.literal
+              : undefined,
+          tsDateYear: common.isDefined(year) ? Number(year) : undefined,
+          tsDateQuarter: common.isDefined(quarter)
+            ? Number(quarter)
+            : undefined,
+          tsDateMonth: common.isDefined(month) ? Number(month) : undefined,
+          tsDateDay: common.isDefined(day) ? Number(day) : undefined,
+          tsDateHour: common.isDefined(hour) ? Number(hour) : undefined,
+          tsDateMinute: common.isDefined(minute) ? Number(minute) : undefined,
+          tsForUnit: common.getFractionTsUnits(tFilter.units),
+          tsForValue: Number(tFilter.n)
+        };
+      }
+
+      if (common.isDefined(fraction)) {
+        fractions.push(fraction);
+      }
+    });
+
+  return fractions;
+}
