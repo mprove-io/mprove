@@ -5,6 +5,7 @@ import {
   startOfMinute,
   startOfMonth,
   startOfQuarter,
+  startOfSecond,
   startOfWeek,
   startOfYear
 } from 'date-fns';
@@ -14,49 +15,44 @@ import { common } from '~node-common/barrels/common';
 export function timeRangeMakeCurrentTimestamps(item: {
   timezone: any;
   weekStart: any;
-  getTimeRange: boolean;
 }) {
-  let { timezone, weekStart, getTimeRange } = item;
+  let { timezone, weekStart } = item;
 
-  let currentTimestamp: string;
-  let currentMinuteTimestamp: string;
-  let currentHourTimestamp: string;
-  let currentDateTimestamp: string;
-  let currentWeekStartTimestamp: string;
-  let currentMonthTimestamp: string;
-  let currentQuarterTimestamp: string;
-  let currentYearTimestamp: string;
+  let currentDateUTC = new Date();
 
-  if (getTimeRange === true) {
-    let currentDateUTC = new Date();
+  let currentDate = toZonedTime(currentDateUTC, timezone);
 
-    let currentDate = toZonedTime(currentDateUTC, timezone);
+  let currentTimestamp = getUnixTime(currentDate).toString();
 
-    currentTimestamp = getUnixTime(currentDate).toString();
+  let currentSecondTimestamp = getUnixTime(
+    startOfSecond(currentDate)
+  ).toString();
 
-    currentMinuteTimestamp = getUnixTime(startOfMinute(currentDate)).toString();
+  let currentMinuteTimestamp = getUnixTime(
+    startOfMinute(currentDate)
+  ).toString();
 
-    currentHourTimestamp = getUnixTime(startOfHour(currentDate)).toString();
+  let currentHourTimestamp = getUnixTime(startOfHour(currentDate)).toString();
 
-    currentDateTimestamp = getUnixTime(startOfDay(currentDate)).toString();
+  let currentDateTimestamp = getUnixTime(startOfDay(currentDate)).toString();
 
-    currentWeekStartTimestamp = getUnixTime(
-      startOfWeek(currentDate, {
-        weekStartsOn: weekStart === common.ProjectWeekStartEnum.Sunday ? 0 : 1
-      })
-    ).toString();
+  let currentWeekStartTimestamp = getUnixTime(
+    startOfWeek(currentDate, {
+      weekStartsOn: weekStart === common.ProjectWeekStartEnum.Sunday ? 0 : 1
+    })
+  ).toString();
 
-    currentMonthTimestamp = getUnixTime(startOfMonth(currentDate)).toString();
+  let currentMonthTimestamp = getUnixTime(startOfMonth(currentDate)).toString();
 
-    currentQuarterTimestamp = getUnixTime(
-      startOfQuarter(currentDate)
-    ).toString();
+  let currentQuarterTimestamp = getUnixTime(
+    startOfQuarter(currentDate)
+  ).toString();
 
-    currentYearTimestamp = getUnixTime(startOfYear(currentDate)).toString();
-  }
+  let currentYearTimestamp = getUnixTime(startOfYear(currentDate)).toString();
 
   return {
     currentTs: currentTimestamp,
+    currentSecondTs: currentSecondTimestamp,
     currentMinuteTs: currentMinuteTimestamp,
     currentHourTs: currentHourTimestamp,
     currentDateTs: currentDateTimestamp,

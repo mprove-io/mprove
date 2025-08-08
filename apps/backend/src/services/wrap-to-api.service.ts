@@ -373,8 +373,10 @@ export class WrapToApiService {
     timezone: string;
     timeSpec: common.TimeSpecEnum;
     timeRangeFraction: common.Fraction;
-    rangeOpen: number;
-    rangeClose: number;
+    // rangeOpen: number;
+    // rangeClose: number;
+    rangeStart: number;
+    rangeEnd: number;
     timeColumnsLimit: number;
     columns: common.Column[];
     timeColumnsLength: number;
@@ -391,8 +393,10 @@ export class WrapToApiService {
       timeSpec,
       models,
       timeRangeFraction,
-      rangeOpen,
-      rangeClose,
+      // rangeOpen,
+      // rangeClose,
+      rangeStart,
+      rangeEnd,
       timeColumnsLimit,
       timeColumnsLength,
       isTimeColumnsLimitExceeded,
@@ -434,8 +438,10 @@ export class WrapToApiService {
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
-      rangeOpen: rangeOpen,
-      rangeClose: rangeClose,
+      // rangeOpen: rangeOpen,
+      // rangeClose: rangeClose,
+      rangeStart: rangeStart,
+      rangeEnd: rangeEnd,
       metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
       metricsEndDateExcludedYYYYMMDD: metricsEndDateExcludedYYYYMMDD,
       metricsEndDateIncludedYYYYMMDD: metricsEndDateIncludedYYYYMMDD,

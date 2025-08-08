@@ -215,8 +215,10 @@ export function wrapReports(item: {
       timezone: undefined,
       timeSpec: undefined,
       timeRangeFraction: undefined,
-      rangeOpen: undefined,
-      rangeClose: undefined,
+      // rangeOpen: undefined,
+      // rangeClose: undefined,
+      rangeStart: undefined,
+      rangeEnd: undefined,
       columns: [],
       rows: x.rows.map(row => {
         let metric: common.ModelMetric = metrics.find(

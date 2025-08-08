@@ -1076,7 +1076,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       newQueries.length > 0 &&
       (this.report?.timeRangeFraction.type !==
         common.FractionTypeEnum.TsIsBetween ||
-        this.report?.rangeOpen < this.report?.rangeClose)
+        this.report?.rangeStart < this.report?.rangeEnd)
     ) {
       setTimeout(() => {
         // console.log('checkAutoRun run');
@@ -1141,7 +1141,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
           this.notEmptySelectQueriesLength > 0 &&
           (this.report?.timeRangeFraction.type !==
             common.FractionTypeEnum.TsIsBetween ||
-            this.report?.rangeOpen < this.report?.rangeClose)
+            this.report?.rangeStart < this.report?.rangeEnd)
         ) {
           this.run();
         }

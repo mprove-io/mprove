@@ -55,13 +55,21 @@ export class Report {
   @Type(() => Fraction)
   timeRangeFraction: Fraction;
 
-  @IsOptional()
-  @IsNumber()
-  rangeOpen: number;
+  // @IsOptional()
+  // @IsNumber()
+  // rangeOpen: number;
+
+  // @IsOptional()
+  // @IsNumber()
+  // rangeClose: number;
 
   @IsOptional()
   @IsNumber()
-  rangeClose: number;
+  rangeStart: number;
+
+  @IsOptional()
+  @IsNumber()
+  rangeEnd: number;
 
   @ValidateNested()
   @Type(() => Column)

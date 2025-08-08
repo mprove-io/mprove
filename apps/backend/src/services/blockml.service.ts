@@ -289,11 +289,16 @@ export class BlockmlService {
     let timeRangeFraction =
       blockmlGetTimeRangeResponse.payload.timeRangeFraction;
 
-    let rangeOpen = blockmlGetTimeRangeResponse.payload.rangeOpen;
-    let rangeClose = blockmlGetTimeRangeResponse.payload.rangeClose;
+    // let rangeOpen = blockmlGetTimeRangeResponse.payload.rangeOpen;
+    // let rangeClose = blockmlGetTimeRangeResponse.payload.rangeClose;
 
     let rangeStart = blockmlGetTimeRangeResponse.payload.rangeStart;
     let rangeEnd = blockmlGetTimeRangeResponse.payload.rangeEnd;
+
+    // console.log('rangeStart');
+    // console.log(rangeStart);
+    // console.log('rangeEnd');
+    // console.log(rangeEnd);
 
     let startDate = common.isDefined(rangeStart)
       ? new Date(rangeStart * 1000)
@@ -501,8 +506,8 @@ export class BlockmlService {
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded,
       timeColumnsLimit: timeColumnsLimit,
       timeRangeFraction: timeRangeFraction,
-      rangeOpen: rangeOpen,
-      rangeClose: rangeClose,
+      // rangeOpen: rangeOpen,
+      // rangeClose: rangeClose,
       rangeStart: rangeStart,
       rangeEnd: rangeEnd
     };

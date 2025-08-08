@@ -248,7 +248,7 @@
               tp="The left boundary value of the time range must be less than the right boundary value"
               *ngIf="
                 report?.timeRangeFraction?.type === fractionTypeTsIsBetween &&
-                report?.rangeOpen >= report?.rangeClose
+                report?.rangeStart >= report?.rangeEnd
               "
             >
               <m-exclamation-icon></m-exclamation-icon>
@@ -349,20 +349,20 @@
                 [ngClass]="{
                   'bg-m600':
                     notEmptySelectQueriesLength > 0 &&
-                    (report?.rangeOpen < report?.rangeClose ||
+                    (report?.rangeStart < report?.rangeEnd ||
                       report?.timeRangeFraction?.type !==
                         fractionTypeTsIsBetween),
                   'cursor-default':
                     notEmptySelectQueriesLength === 0 ||
                     isRunButtonPressed === true ||
-                    (report?.rangeOpen >= report?.rangeClose &&
+                    (report?.rangeStart >= report?.rangeEnd &&
                       report?.timeRangeFraction?.type ===
                         fractionTypeTsIsBetween),
                   'bg-s400':
                     notEmptySelectQueriesLength === 0 ||
                     (report?.timeRangeFraction?.type ===
                       fractionTypeTsIsBetween &&
-                      report?.rangeOpen >= report?.rangeClose)
+                      report?.rangeStart >= report?.rangeEnd)
                 }"
                 (click)="run()"
                 [disabled]="
@@ -370,7 +370,7 @@
                   isRunButtonPressed === true ||
                   (report?.timeRangeFraction?.type ===
                     fractionTypeTsIsBetween &&
-                    report?.rangeOpen >= report?.rangeClose)
+                    report?.rangeStart >= report?.rangeEnd)
                 "
               >
                 <div *ngIf="isRunButtonPressed === false">Run</div>

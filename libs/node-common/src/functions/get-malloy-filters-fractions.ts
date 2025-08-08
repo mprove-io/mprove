@@ -101,8 +101,9 @@ export function getMalloyFiltersFractions(item: {
                     parsedFilter.kind === 'date')
                 ? getMalloyFilterTsFractions({
                     parentBrick: parentBrick,
-                    parsed: parsedFilter.parsed
-                  })
+                    parsed: parsedFilter.parsed,
+                    isGetTimeRange: false
+                  }).fractions
                 : [];
 
       if (common.isDefined(filtersFractions[fieldId])) {

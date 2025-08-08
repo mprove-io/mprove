@@ -36,11 +36,11 @@ export class ToBlockmlGetTimeRangeResponsePayload {
   @IsBoolean()
   isValid: boolean;
 
-  @IsInt()
-  rangeOpen: number;
+  // @IsInt()
+  // rangeOpen: number;
 
-  @IsInt()
-  rangeClose: number;
+  // @IsInt()
+  // rangeClose: number;
 
   @IsInt()
   rangeStart: number;

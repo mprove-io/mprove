@@ -1,8 +1,6 @@
 import { TemporalFilterExpression } from '@malloydata/malloy-filter';
-import { fromUnixTime, getUnixTime, sub } from 'date-fns';
 import { common } from '~node-common/barrels/common';
 import { getMalloyFilterTsFractions } from './get-malloy-filter-ts-fractions';
-import { timeRangeMakeCurrentTimestamps } from './time-range-make-current-timestamps';
 
 export function bricksToFractions(item: {
   filterBricks: string[];
@@ -23,8 +21,8 @@ export function bricksToFractions(item: {
 }): {
   valid: number;
   brick?: string;
-  rangeOpen?: number;
-  rangeClose?: number;
+  rangeStart?: number;
+  rangeEnd?: number;
 } {
   let {
     filterBricks,
@@ -43,26 +41,8 @@ export function bricksToFractions(item: {
     // notIns,
   } = item;
 
-  let open;
-  let close;
-
-  let rangeOpen: Date;
-  let rangeClose: Date;
-
-  let {
-    currentTs,
-    currentMinuteTs,
-    currentHourTs,
-    currentDateTs,
-    currentWeekStartTs,
-    currentMonthTs,
-    currentQuarterTs,
-    currentYearTs
-  } = timeRangeMakeCurrentTimestamps({
-    timezone: timezone,
-    weekStart: weekStart,
-    getTimeRange: getTimeRange
-  });
+  let rangeStart: number;
+  let rangeEnd: number;
 
   // console.log('filterBricks');
   // console.log(filterBricks);
@@ -86,28 +66,6 @@ export function bricksToFractions(item: {
     //       common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent
     //   };
 
-    if (brick === 'last 5 days' || brick === 'f`last 5 days`') {
-      //   console.log('brick match');
-
-      //   let fraction: common.Fraction = {
-      //     brick: 'f`last 5 days`',
-      //     parentBrick: 'f`last 5 days`',
-      //     operator: common.FractionOperatorEnum.Or,
-      //     type: common.FractionTypeEnum.TsIsInLast,
-      //     tsLastValue: 5,
-      //     tsLastUnit: common.FractionTsUnitEnum.Days,
-      //     tsLastCompleteOption:
-      //       common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent
-      //   };
-
-      //   fractions.push(fraction);
-
-      rangeOpen = sub(fromUnixTime(Number(currentTs)), { days: 5 });
-
-      //   close = currentTs;
-      rangeClose = fromUnixTime(Number(currentTs));
-    }
-
     let brickPart = brick.slice(2, -1);
 
     if (
@@ -119,12 +77,16 @@ export function bricksToFractions(item: {
       if (common.isUndefined(parseResult.parsed)) {
         answerError = { valid: 0, brick: brick };
       } else {
-        let bFractions = getMalloyFilterTsFractions({
+        let result = getMalloyFilterTsFractions({
           parentBrick: brick,
-          parsed: parseResult.parsed
+          parsed: parseResult.parsed,
+          isGetTimeRange: true
         });
 
-        resultFractions = [...resultFractions, ...bFractions];
+        rangeStart = result.rangeStart;
+        rangeEnd = result.rangeEnd;
+
+        resultFractions = [...resultFractions, ...result.fractions];
       }
     }
   });
@@ -138,12 +100,8 @@ export function bricksToFractions(item: {
   if (getTimeRange === true) {
     return {
       valid: 1,
-      rangeOpen: common.isDefined(rangeOpen)
-        ? getUnixTime(rangeOpen)
-        : undefined,
-      rangeClose: common.isDefined(rangeClose)
-        ? getUnixTime(rangeClose)
-        : undefined
+      rangeStart: rangeStart,
+      rangeEnd: rangeEnd
     };
   }
 

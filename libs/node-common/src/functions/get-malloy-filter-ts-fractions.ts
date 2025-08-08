@@ -16,16 +16,21 @@ import {
   WhichdayMoment,
   in_last
 } from '@malloydata/malloy-filter';
+import { fromUnixTime, getUnixTime, sub } from 'date-fns';
 import { MALLOY_FILTER_ANY } from '~common/_index';
 import { getFractionTsMixUnit } from '~common/functions/get-fraction-ts-mix-unit';
 import { common } from '~node-common/barrels/common';
 import { getMalloyMomentStr } from './get-malloy-moment-str';
+import { timeRangeMakeCurrentTimestamps } from './time-range-make-current-timestamps';
 
 export function getMalloyFilterTsFractions(item: {
   parsed: TemporalFilter;
   parentBrick: string;
+  isGetTimeRange: boolean;
+  weekStart?: common.ProjectWeekStartEnum;
+  timezone?: string;
 }) {
-  let { parsed, parentBrick } = item;
+  let { parsed, parentBrick, isGetTimeRange, timezone, weekStart } = item;
 
   // {value: 'in_last', label: 'last'},
   // {value: 'last', label: 'last complete'},
@@ -59,6 +64,39 @@ export function getMalloyFilterTsFractions(item: {
   // is null
   // is not null
 
+  let rangeStart: number;
+  let rangeEnd: number;
+  // let rangeOpen: number;
+  // let rangeClose: number;
+
+  let {
+    currentTs,
+    currentSecondTs,
+    currentMinuteTs,
+    currentHourTs,
+    currentDateTs,
+    currentWeekStartTs,
+    currentMonthTs,
+    currentQuarterTs,
+    currentYearTs
+  } =
+    isGetTimeRange === true
+      ? timeRangeMakeCurrentTimestamps({
+          timezone: timezone,
+          weekStart: weekStart
+        })
+      : {
+          currentTs: undefined,
+          currentSecondTs: undefined,
+          currentMinuteTs: undefined,
+          currentHourTs: undefined,
+          currentDateTs: undefined,
+          currentWeekStartTs: undefined,
+          currentMonthTs: undefined,
+          currentQuarterTs: undefined,
+          currentYearTs: undefined
+        };
+
   let fractions: common.Fraction[] = [];
 
   let temporalFilters: TemporalFilter[] = [];
@@ -78,6 +116,10 @@ export function getMalloyFilterTsFractions(item: {
     };
 
     fractions.push(fraction);
+  }
+
+  if (isGetTimeRange === true && temporalFilters.length !== 1) {
+    throw new Error('isGetTimeRange true, fractions length must be equal to 1');
   }
 
   // export type TemporalFilter = Null | Before | After | To | For | JustUnits | in_last | InMoment | BooleanChain<TemporalFilter> | ClauseGroup<TemporalFilter>;
@@ -124,6 +166,9 @@ export function getMalloyFilterTsFractions(item: {
         // temporal last (completed)
         let tFilter = temporalFilter as JustUnits;
 
+        let tsLastValue = Number(tFilter.n);
+        let tsLastUnit = common.getFractionTsUnits(tFilter.units);
+
         fraction = {
           brick:
             fractionOperator === common.FractionOperatorEnum.Or
@@ -135,10 +180,56 @@ export function getMalloyFilterTsFractions(item: {
             fractionOperator === common.FractionOperatorEnum.Or
               ? common.FractionTypeEnum.TsIsInLast
               : common.FractionTypeEnum.TsIsNotInLast,
-          tsLastValue: Number(tFilter.n),
-          tsLastUnit: common.getFractionTsUnits(tFilter.units),
+          tsLastValue: tsLastValue,
+          tsLastUnit: tsLastUnit,
           tsLastCompleteOption: common.FractionTsLastCompleteOptionEnum.Complete
         };
+
+        if (isGetTimeRange === true) {
+          let currentUnitStartTs =
+            tsLastUnit === common.FractionTsUnitEnum.Years
+              ? currentYearTs
+              : tsLastUnit === common.FractionTsUnitEnum.Quarters
+                ? currentQuarterTs
+                : tsLastUnit === common.FractionTsUnitEnum.Months
+                  ? currentMonthTs
+                  : tsLastUnit === common.FractionTsUnitEnum.Weeks
+                    ? currentWeekStartTs
+                    : tsLastUnit === common.FractionTsUnitEnum.Days
+                      ? currentDateTs
+                      : tsLastUnit === common.FractionTsUnitEnum.Hours
+                        ? currentHourTs
+                        : tsLastUnit === common.FractionTsUnitEnum.Minutes
+                          ? currentMinuteTs
+                          : tsLastUnit === common.FractionTsUnitEnum.Seconds
+                            ? currentSecondTs
+                            : undefined;
+
+          let unitDuration =
+            tsLastUnit === common.FractionTsUnitEnum.Years
+              ? { years: tsLastValue }
+              : tsLastUnit === common.FractionTsUnitEnum.Quarters
+                ? { months: tsLastValue * 3 }
+                : tsLastUnit === common.FractionTsUnitEnum.Months
+                  ? { months: tsLastValue }
+                  : tsLastUnit === common.FractionTsUnitEnum.Weeks
+                    ? { weeks: tsLastValue }
+                    : tsLastUnit === common.FractionTsUnitEnum.Days
+                      ? { days: tsLastValue }
+                      : tsLastUnit === common.FractionTsUnitEnum.Hours
+                        ? { hours: tsLastValue }
+                        : tsLastUnit === common.FractionTsUnitEnum.Minutes
+                          ? { minutes: tsLastValue }
+                          : tsLastUnit === common.FractionTsUnitEnum.Seconds
+                            ? { seconds: tsLastValue }
+                            : undefined;
+
+          rangeStart = getUnixTime(
+            sub(fromUnixTime(Number(currentUnitStartTs)), unitDuration)
+          );
+
+          rangeEnd = Number(currentUnitStartTs);
+        }
       } else if ((temporalFilter as in_last).operator === 'in_last') {
         // temporal in_last (completed with current)
         let tFilter = temporalFilter as in_last;
@@ -585,5 +676,5 @@ export function getMalloyFilterTsFractions(item: {
       }
     });
 
-  return fractions;
+  return { fractions: fractions, rangeStart: rangeStart, rangeEnd: rangeEnd };
 }
