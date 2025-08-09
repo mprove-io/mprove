@@ -208,24 +208,24 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   timeSpecList: TimeSpecItem[] = [
     {
-      label: 'Years',
-      value: common.TimeSpecEnum.Years
-    },
-    {
-      label: 'Quarters',
-      value: common.TimeSpecEnum.Quarters
-    },
-    {
-      label: 'Months',
-      value: common.TimeSpecEnum.Months
+      label: 'Days',
+      value: common.TimeSpecEnum.Days
     },
     {
       label: 'Weeks',
       value: common.TimeSpecEnum.Weeks
     },
     {
-      label: 'Days',
-      value: common.TimeSpecEnum.Days
+      label: 'Months',
+      value: common.TimeSpecEnum.Months
+    },
+    {
+      label: 'Quarters',
+      value: common.TimeSpecEnum.Quarters
+    },
+    {
+      label: 'Years',
+      value: common.TimeSpecEnum.Years
     },
     {
       label: 'Hours',
@@ -840,6 +840,29 @@ export class ReportsComponent implements OnInit, OnDestroy {
         tsLastValue: fraction.tsLastValue,
         tsLastUnit: tsLastUnit,
         tsLastCompleteOption: fraction.tsLastCompleteOption
+      };
+
+      this.uiQuery.updatePart({
+        timeSpec: timeSpec,
+        timeRangeFraction: newFraction
+      });
+    } else if (fraction.type === common.FractionTypeEnum.TsIsInNext) {
+      let tsNextUnit =
+        timeSpec === common.TimeSpecEnum.Timestamps
+          ? common.FractionTsUnitEnum.Minutes
+          : timeSpec;
+
+      let mBrick = `f\`next ${fraction.tsNextValue} ${fraction.tsNextUnit}\``;
+
+      let newFraction: common.Fraction = {
+        brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
+        parentBrick: common.isDefined(fraction.parentBrick)
+          ? mBrick
+          : undefined,
+        operator: common.FractionOperatorEnum.Or,
+        type: fraction.type,
+        tsNextValue: fraction.tsNextValue,
+        tsNextUnit: tsNextUnit
       };
 
       this.uiQuery.updatePart({
