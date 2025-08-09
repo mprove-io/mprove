@@ -23,6 +23,7 @@ import { common } from '~node-common/barrels/common';
 import { getCurrentUnitStartTs } from './get-current-unit-start-ts';
 import { getMalloyMomentStr } from './get-malloy-moment-str';
 import { getUnitDuration } from './get-unit-duration';
+import { getUnixTimeFromDateParts } from './get-unix-time-from-date-parts';
 import { timeRangeMakeCurrentTimestamps } from './time-range-make-current-timestamps';
 
 export function getMalloyFilterTsFractions(item: {
@@ -634,6 +635,111 @@ export function getMalloyFilterTsFractions(item: {
           tsDateHour: common.isDefined(hour) ? Number(hour) : undefined,
           tsDateMinute: common.isDefined(minute) ? Number(minute) : undefined
         };
+
+        if (isGetTimeRange === true) {
+          let unit =
+            (tfIn as TemporalLiteral).units === 'year'
+              ? common.FractionTsUnitEnum.Years
+              : (tfIn as TemporalLiteral).units === 'quarter'
+                ? common.FractionTsUnitEnum.Quarters
+                : (tfIn as TemporalLiteral).units === 'month'
+                  ? common.FractionTsUnitEnum.Months
+                  : (tfIn as TemporalLiteral).units === 'week'
+                    ? common.FractionTsUnitEnum.Weeks
+                    : (tfIn as TemporalLiteral).units === 'day' ||
+                        ['today', 'yesterday', 'tomorrow'].indexOf(
+                          (tFilter.in as WhichdayMoment).moment
+                        ) > -1 ||
+                        [
+                          'sunday',
+                          'monday',
+                          'tuesday',
+                          'wednesday',
+                          'thursday',
+                          'friday',
+                          'saturday'
+                        ].indexOf((tFilter.in as WeekdayMoment).moment) > -1
+                      ? common.FractionTsUnitEnum.Days
+                      : (tfIn as TemporalLiteral).units === 'hour'
+                        ? common.FractionTsUnitEnum.Hours
+                        : (tfIn as TemporalLiteral).units === 'minute'
+                          ? common.FractionTsUnitEnum.Minutes
+                          : // : tfIn.moment === 'literal' ||
+                            //     (tfIn as NowMoment).moment === 'now'
+                            //   ? fractionOperator ===
+                            //     common.FractionOperatorEnum.Or
+                            //     ? common.FractionTypeEnum.TsIsOnTimestamp
+                            //     : common.FractionTypeEnum.TsIsNotOnTimestamp
+                            undefined;
+
+          let currentUnitStartTs = getCurrentUnitStartTs({
+            unit: unit,
+            timezone: timezone,
+            weekStart: weekStart
+          });
+
+          let oneUnitDuration = getUnitDuration({
+            value: 1,
+            unit: unit
+          });
+
+          let agoFromNowDuration = getUnitDuration({
+            value: fraction.tsMomentAgoFromNowQuantity,
+            unit: unit
+          });
+
+          // calendar
+          // this
+          // last
+          // next
+          // ago
+          // from now
+
+          rangeStart =
+            fraction.tsMoment.moment === 'this'
+              ? Number(currentUnitStartTs)
+              : fraction.tsMoment.moment === 'last'
+                ? getUnixTime(
+                    sub(
+                      fromUnixTime(Number(currentUnitStartTs)),
+                      oneUnitDuration
+                    )
+                  )
+                : fraction.tsMoment.moment === 'next'
+                  ? getUnixTime(
+                      add(
+                        fromUnixTime(Number(currentUnitStartTs)),
+                        oneUnitDuration
+                      )
+                    )
+                  : fraction.tsMoment.moment === 'ago'
+                    ? getUnixTime(
+                        sub(
+                          fromUnixTime(Number(currentUnitStartTs)),
+                          agoFromNowDuration
+                        )
+                      )
+                    : fraction.tsMoment.moment === 'from_now'
+                      ? getUnixTime(
+                          add(
+                            fromUnixTime(Number(currentUnitStartTs)),
+                            agoFromNowDuration
+                          )
+                        )
+                      : fraction.tsMoment.moment === 'literal'
+                        ? getUnixTimeFromDateParts({
+                            year: year,
+                            month: month,
+                            day: day,
+                            hour: hour,
+                            minute: minute
+                          })
+                        : undefined;
+
+          rangeEnd = getUnixTime(
+            add(fromUnixTime(rangeStart), oneUnitDuration)
+          );
+        }
       } else if ((temporalFilter as For).operator === 'for') {
         // temporal for (begin ... for ...) [starts ... for ...]
         let tFilter = temporalFilter as For;
