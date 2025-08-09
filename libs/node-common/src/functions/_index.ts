@@ -24,3 +24,4 @@ export * from './get-malloy-filters-fractions';
 export * from './get-malloy-moment-str';
 export * from './bricks-to-fractions';
 export * from './time-range-make-current-timestamps';
+export * from './get-unit-duration';

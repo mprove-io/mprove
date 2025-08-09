@@ -16,11 +16,13 @@ import {
   WhichdayMoment,
   in_last
 } from '@malloydata/malloy-filter';
-import { fromUnixTime, getUnixTime, sub } from 'date-fns';
+import { add, fromUnixTime, getUnixTime, sub } from 'date-fns';
 import { MALLOY_FILTER_ANY } from '~common/_index';
 import { getFractionTsMixUnit } from '~common/functions/get-fraction-ts-mix-unit';
 import { common } from '~node-common/barrels/common';
+import { getCurrentUnitStartTs } from './get-current-unit-start-ts';
 import { getMalloyMomentStr } from './get-malloy-moment-str';
+import { getUnitDuration } from './get-unit-duration';
 import { timeRangeMakeCurrentTimestamps } from './time-range-make-current-timestamps';
 
 export function getMalloyFilterTsFractions(item: {
@@ -186,53 +188,27 @@ export function getMalloyFilterTsFractions(item: {
         };
 
         if (isGetTimeRange === true) {
-          let currentUnitStartTs =
-            tsLastUnit === common.FractionTsUnitEnum.Years
-              ? currentYearTs
-              : tsLastUnit === common.FractionTsUnitEnum.Quarters
-                ? currentQuarterTs
-                : tsLastUnit === common.FractionTsUnitEnum.Months
-                  ? currentMonthTs
-                  : tsLastUnit === common.FractionTsUnitEnum.Weeks
-                    ? currentWeekStartTs
-                    : tsLastUnit === common.FractionTsUnitEnum.Days
-                      ? currentDateTs
-                      : tsLastUnit === common.FractionTsUnitEnum.Hours
-                        ? currentHourTs
-                        : tsLastUnit === common.FractionTsUnitEnum.Minutes
-                          ? currentMinuteTs
-                          : tsLastUnit === common.FractionTsUnitEnum.Seconds
-                            ? currentSecondTs
-                            : undefined;
+          let currentUnitStartTs = getCurrentUnitStartTs({
+            unit: tsLastUnit,
+            timezone: timezone,
+            weekStart: weekStart
+          });
 
-          let unitDuration =
-            tsLastUnit === common.FractionTsUnitEnum.Years
-              ? { years: tsLastValue }
-              : tsLastUnit === common.FractionTsUnitEnum.Quarters
-                ? { months: tsLastValue * 3 }
-                : tsLastUnit === common.FractionTsUnitEnum.Months
-                  ? { months: tsLastValue }
-                  : tsLastUnit === common.FractionTsUnitEnum.Weeks
-                    ? { weeks: tsLastValue }
-                    : tsLastUnit === common.FractionTsUnitEnum.Days
-                      ? { days: tsLastValue }
-                      : tsLastUnit === common.FractionTsUnitEnum.Hours
-                        ? { hours: tsLastValue }
-                        : tsLastUnit === common.FractionTsUnitEnum.Minutes
-                          ? { minutes: tsLastValue }
-                          : tsLastUnit === common.FractionTsUnitEnum.Seconds
-                            ? { seconds: tsLastValue }
-                            : undefined;
-
-          rangeStart = getUnixTime(
-            sub(fromUnixTime(Number(currentUnitStartTs)), unitDuration)
-          );
+          let subDuration = getUnitDuration({
+            value: tsLastValue,
+            unit: tsLastUnit
+          });
 
           rangeEnd = Number(currentUnitStartTs);
+
+          rangeStart = getUnixTime(sub(fromUnixTime(rangeEnd), subDuration));
         }
       } else if ((temporalFilter as in_last).operator === 'in_last') {
         // temporal in_last (completed with current)
         let tFilter = temporalFilter as in_last;
+
+        let tsLastValue = Number(tFilter.n);
+        let tsLastUnit = common.getFractionTsUnits(tFilter.units);
 
         fraction = {
           brick:
@@ -245,14 +221,41 @@ export function getMalloyFilterTsFractions(item: {
             fractionOperator === common.FractionOperatorEnum.Or
               ? common.FractionTypeEnum.TsIsInLast
               : common.FractionTypeEnum.TsIsNotInLast,
-          tsLastValue: Number(tFilter.n),
-          tsLastUnit: common.getFractionTsUnits(tFilter.units),
+          tsLastValue: tsLastValue,
+          tsLastUnit: tsLastUnit,
           tsLastCompleteOption:
             common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent
         };
+
+        if (isGetTimeRange === true) {
+          let currentUnitStartTs = getCurrentUnitStartTs({
+            unit: tsLastUnit,
+            timezone: timezone,
+            weekStart: weekStart
+          });
+
+          let oneUnitDuration = getUnitDuration({
+            value: 1,
+            unit: tsLastUnit
+          });
+
+          rangeEnd = getUnixTime(
+            add(fromUnixTime(Number(currentUnitStartTs)), oneUnitDuration)
+          );
+
+          let duration = getUnitDuration({
+            value: tsLastValue,
+            unit: tsLastUnit
+          });
+
+          rangeStart = getUnixTime(sub(fromUnixTime(rangeEnd), duration));
+        }
       } else if ((temporalFilter as JustUnits).operator === 'next') {
         // temporal next (next completed)
         let tFilter = temporalFilter as JustUnits;
+
+        let tsNextValue = Number(tFilter.n);
+        let tsNextUnit = common.getFractionTsUnits(tFilter.units);
 
         fraction = {
           brick:
@@ -265,9 +268,33 @@ export function getMalloyFilterTsFractions(item: {
             fractionOperator === common.FractionOperatorEnum.Or
               ? common.FractionTypeEnum.TsIsInNext
               : common.FractionTypeEnum.TsIsNotInNext,
-          tsNextValue: Number(tFilter.n),
-          tsNextUnit: common.getFractionTsUnits(tFilter.units)
+          tsNextValue: tsNextValue,
+          tsNextUnit: tsNextUnit
         };
+
+        if (isGetTimeRange === true) {
+          let currentUnitStartTs = getCurrentUnitStartTs({
+            unit: tsNextUnit,
+            timezone: timezone,
+            weekStart: weekStart
+          });
+
+          let oneUnitDuration = getUnitDuration({
+            value: 1,
+            unit: tsNextUnit
+          });
+
+          rangeStart = getUnixTime(
+            add(fromUnixTime(Number(currentUnitStartTs)), oneUnitDuration)
+          );
+
+          let duration = getUnitDuration({
+            value: tsNextValue,
+            unit: tsNextUnit
+          });
+
+          rangeEnd = getUnixTime(add(fromUnixTime(rangeStart), duration));
+        }
       } else if ((temporalFilter as Before).operator === 'before') {
         // temporal before (before)
         let tFilter = temporalFilter as Before;

@@ -852,7 +852,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
           ? common.FractionTsUnitEnum.Minutes
           : timeSpec;
 
-      let mBrick = `f\`next ${fraction.tsNextValue} ${fraction.tsNextUnit}\``;
+      let mBrick = `f\`next ${fraction.tsNextValue} ${tsNextUnit}\``;
 
       let newFraction: common.Fraction = {
         brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
