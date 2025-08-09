@@ -24,6 +24,7 @@ import { getCurrentUnitStartTs } from './get-current-unit-start-ts';
 import { getMalloyMomentStr } from './get-malloy-moment-str';
 import { getUnitDuration } from './get-unit-duration';
 import { getUnixTimeFromDateParts } from './get-unix-time-from-date-parts';
+import { getUnixTimeFromDayOfWeek } from './get-unix-time-from-day-of-week';
 import { timeRangeMakeCurrentTimestamps } from './time-range-make-current-timestamps';
 
 export function getMalloyFilterTsFractions(item: {
@@ -688,53 +689,80 @@ export function getMalloyFilterTsFractions(item: {
             unit: unit
           });
 
-          // calendar
-          // this
-          // last
-          // next
-          // ago
-          // from now
-
           rangeStart =
-            fraction.tsMoment.moment === 'this'
-              ? Number(currentUnitStartTs)
-              : fraction.tsMoment.moment === 'last'
-                ? getUnixTime(
-                    sub(
-                      fromUnixTime(Number(currentUnitStartTs)),
-                      oneUnitDuration
-                    )
-                  )
-                : fraction.tsMoment.moment === 'next'
+            unit === common.FractionTsUnitEnum.Days &&
+            [
+              'sunday',
+              'monday',
+              'tuesday',
+              'wednesday',
+              'thursday',
+              'friday',
+              'saturday'
+            ].indexOf((fraction.tsMoment as WeekdayMoment).moment) > -1
+              ? getUnixTimeFromDayOfWeek({
+                  weekday: (fraction.tsMoment as WeekdayMoment).moment,
+                  lastNext: (fraction.tsMoment as WeekdayMoment).which,
+                  currentUnitStartTs: currentUnitStartTs
+                })
+              : unit === common.FractionTsUnitEnum.Days &&
+                  fraction.tsMoment.moment === 'today'
+                ? Number(currentUnitStartTs)
+                : unit === common.FractionTsUnitEnum.Days &&
+                    fraction.tsMoment.moment === 'yesterday'
                   ? getUnixTime(
-                      add(
+                      sub(
                         fromUnixTime(Number(currentUnitStartTs)),
                         oneUnitDuration
                       )
                     )
-                  : fraction.tsMoment.moment === 'ago'
+                  : unit === common.FractionTsUnitEnum.Days &&
+                      fraction.tsMoment.moment === 'tomorrow'
                     ? getUnixTime(
-                        sub(
+                        add(
                           fromUnixTime(Number(currentUnitStartTs)),
-                          agoFromNowDuration
+                          oneUnitDuration
                         )
                       )
-                    : fraction.tsMoment.moment === 'from_now'
-                      ? getUnixTime(
-                          add(
-                            fromUnixTime(Number(currentUnitStartTs)),
-                            agoFromNowDuration
+                    : fraction.tsMoment.moment === 'this'
+                      ? Number(currentUnitStartTs)
+                      : fraction.tsMoment.moment === 'last'
+                        ? getUnixTime(
+                            sub(
+                              fromUnixTime(Number(currentUnitStartTs)),
+                              oneUnitDuration
+                            )
                           )
-                        )
-                      : fraction.tsMoment.moment === 'literal'
-                        ? getUnixTimeFromDateParts({
-                            year: year,
-                            month: month,
-                            day: day,
-                            hour: hour,
-                            minute: minute
-                          })
-                        : undefined;
+                        : fraction.tsMoment.moment === 'next'
+                          ? getUnixTime(
+                              add(
+                                fromUnixTime(Number(currentUnitStartTs)),
+                                oneUnitDuration
+                              )
+                            )
+                          : fraction.tsMoment.moment === 'ago'
+                            ? getUnixTime(
+                                sub(
+                                  fromUnixTime(Number(currentUnitStartTs)),
+                                  agoFromNowDuration
+                                )
+                              )
+                            : fraction.tsMoment.moment === 'from_now'
+                              ? getUnixTime(
+                                  add(
+                                    fromUnixTime(Number(currentUnitStartTs)),
+                                    agoFromNowDuration
+                                  )
+                                )
+                              : fraction.tsMoment.moment === 'literal'
+                                ? getUnixTimeFromDateParts({
+                                    year: year,
+                                    month: month,
+                                    day: day,
+                                    hour: hour,
+                                    minute: minute
+                                  })
+                                : undefined;
 
           rangeEnd = getUnixTime(
             add(fromUnixTime(rangeStart), oneUnitDuration)

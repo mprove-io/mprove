@@ -26,3 +26,4 @@ export * from './bricks-to-fractions';
 export * from './time-range-make-current-timestamps';
 export * from './get-unit-duration';
 export * from './get-unix-time-from-date-parts';
+export * from './get-unix-time-from-day-of-week';
