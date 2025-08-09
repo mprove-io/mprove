@@ -347,10 +347,20 @@ export class ReportDataService {
             //   "topLabel": "Orders"
             // }
 
-            let mField = model.fields.find(
-              field =>
-                field.id === `${metric.timeFieldId}_${field.timeframe}` &&
-                `${field.timeframe}s` === timeSpecDetail
+            let mField = model.fields.find(field =>
+              timeSpecDetail === common.DetailUnitEnum.Timestamps
+                ? field.id === `${metric.timeFieldId}_ts`
+                : field.id === `${metric.timeFieldId}_${field.timeframe}` &&
+                  (([
+                    common.DetailUnitEnum.WeeksSunday,
+                    common.DetailUnitEnum.WeeksMonday
+                  ].indexOf(timeSpecDetail) > -1 &&
+                    `${field.timeframe}s` === 'weeks') ||
+                    ([
+                      common.DetailUnitEnum.WeeksSunday,
+                      common.DetailUnitEnum.WeeksMonday
+                    ].indexOf(timeSpecDetail) < 0 &&
+                      `${field.timeframe}s` === timeSpecDetail))
             );
 
             timeFieldIdSpec = mField?.id;
@@ -496,7 +506,7 @@ export class ReportDataService {
               newQuery.data = [];
             }
           } else if (model.type === common.ModelTypeEnum.Malloy) {
-            let editMalloyQueryResultStep1 =
+            let editMalloyQueryResult =
               await this.malloyService.editMalloyQuery({
                 projectId: project.projectId,
                 envId: envId,
@@ -531,16 +541,16 @@ export class ReportDataService {
                 ]
               });
 
-            newMconfig = editMalloyQueryResultStep1.newMconfig;
-            newQuery = editMalloyQueryResultStep1.newQuery;
-            isError = editMalloyQueryResultStep1.isError;
+            newMconfig = editMalloyQueryResult.newMconfig;
+            newQuery = editMalloyQueryResult.newQuery;
+            isError = editMalloyQueryResult.isError;
 
-            console.log('newMconfig');
-            console.log(newMconfig);
-            console.log('newQuery');
-            console.log(newQuery);
-            console.log('isError');
-            console.log(isError);
+            // console.log('newMconfig');
+            // console.log(newMconfig);
+            // console.log('newQuery');
+            // console.log(newQuery);
+            // console.log('isError');
+            // console.log(isError);
           } else {
             let { apiEnv, connectionsWithFallback } =
               await this.envsService.getApiEnvConnectionsWithFallback({

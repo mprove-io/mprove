@@ -127,12 +127,14 @@ export function createModelMetrics(
         .filter(
           x =>
             x.buildMetrics === true &&
-            common.isDefined(x.timeframe) &&
+            // common.isDefined(x.timeframe) && // timestamp does not have timeframe
             (x.result === common.FieldResultEnum.Ts ||
               x.result === common.FieldResultEnum.Date)
         )
         .forEach(x => {
-          let timeId = x.id.slice(0, -(x.timeframe.length + 1));
+          let timeId = common.isDefined(x.timeframe)
+            ? x.id.slice(0, -(x.timeframe.length + 1))
+            : x.id.slice(0, -('ts'.length + 1));
 
           let fieldGroupTag = x.mproveTags.find(
             x => x.key === common.MPROVE_TAG_FIELD_GROUP

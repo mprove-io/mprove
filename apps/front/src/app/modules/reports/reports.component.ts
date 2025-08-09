@@ -48,6 +48,7 @@ import {
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { EChartsInitOpts, EChartsOption } from 'echarts';
+import { MALLOY_FILTER_ANY } from '~common/_index';
 import { frontFormatTsUnix } from '~front/app/functions/front-format-ts-unix';
 import { DataPoint } from '~front/app/interfaces/data-point';
 import { RefreshItem } from '~front/app/interfaces/refresh-item';
@@ -814,31 +815,31 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let fraction = this.fractions[0];
 
-    if (
-      fraction.type === common.FractionTypeEnum.TsIsInLast &&
-      timeSpec !== common.TimeSpecEnum.Timestamps
-    ) {
-      let newFraction = common.makeCopy(fraction);
-
-      newFraction.tsLastUnit =
+    if (fraction.type === common.FractionTypeEnum.TsIsInLast) {
+      let tsLastUnit =
         timeSpec === common.TimeSpecEnum.Timestamps
           ? common.FractionTsUnitEnum.Minutes
           : timeSpec;
 
-      newFraction = {
-        brick:
-          newFraction.tsLastCompleteOption ===
-          common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent
-            ? `last ${newFraction.tsLastValue} ${newFraction.tsLastUnit}`
-            : newFraction.tsLastCompleteOption ===
-                common.FractionTsLastCompleteOptionEnum.Complete
-              ? `last ${newFraction.tsLastValue} ${newFraction.tsLastUnit} complete`
-              : `last ${newFraction.tsLastValue} ${newFraction.tsLastUnit} complete plus current`,
+      let mBrick =
+        fraction.tsLastCompleteOption ===
+        common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent
+          ? `f\`${fraction.tsLastValue} ${tsLastUnit}\``
+          : fraction.tsLastCompleteOption ===
+              common.FractionTsLastCompleteOptionEnum.Complete
+            ? `f\`last ${fraction.tsLastValue} ${tsLastUnit}\``
+            : MALLOY_FILTER_ANY;
+
+      let newFraction: common.Fraction = {
+        brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
+        parentBrick: common.isDefined(fraction.parentBrick)
+          ? mBrick
+          : undefined,
         operator: common.FractionOperatorEnum.Or,
-        type: common.FractionTypeEnum.TsIsInLast,
-        tsLastValue: newFraction.tsLastValue,
-        tsLastUnit: newFraction.tsLastUnit,
-        tsLastCompleteOption: newFraction.tsLastCompleteOption
+        type: fraction.type,
+        tsLastValue: fraction.tsLastValue,
+        tsLastUnit: tsLastUnit,
+        tsLastCompleteOption: fraction.tsLastCompleteOption
       };
 
       this.uiQuery.updatePart({

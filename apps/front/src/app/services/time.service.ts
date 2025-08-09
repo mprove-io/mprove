@@ -477,7 +477,7 @@ export class TimeService {
         : fraction.tsLastCompleteOption ===
             common.FractionTsLastCompleteOptionEnum.Complete
           ? `f\`${operatorPrefix}last ${fraction.tsLastValue} ${fraction.tsLastUnit}\``
-          : `f\`${operatorPrefix}${fraction.tsLastValue} ${fraction.tsLastUnit} ago to now\``;
+          : MALLOY_FILTER_ANY;
 
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
