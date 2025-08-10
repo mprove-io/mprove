@@ -353,12 +353,21 @@ export function getMalloyFilterTsFractions(item: {
             currentTs: timestampsResult.currentTs
           });
 
+          // console.log('start');
+          // console.log(start);
+
           if (fraction.type === common.FractionTypeEnum.TsIsBefore) {
             rangeEnd = start.rangeStart;
           } else if (fraction.type === common.FractionTypeEnum.TsIsStarting) {
             rangeStart = start.rangeStart;
           }
         }
+
+        // console.log('rangeStart');
+        // console.log(rangeStart);
+
+        // console.log('rangeEnd');
+        // console.log(rangeEnd);
       } else if ((temporalFilter as After).operator === 'after') {
         // temporal after (after)
         let tFilter = temporalFilter as After;
@@ -434,8 +443,8 @@ export function getMalloyFilterTsFractions(item: {
             currentTs: timestampsResult.currentTs
           });
 
-          console.log('start');
-          console.log(start);
+          // console.log('start');
+          // console.log(start);
 
           if (fraction.type === common.FractionTypeEnum.TsIsAfter) {
             rangeStart = common.isUndefined(start.oneUnitDuration) // now, literal with no units
@@ -900,11 +909,14 @@ function getStart(item: {
     unit: unit
   });
 
+  // console.log('moment');
+  // console.log(moment);
+
   let rangeStart =
     moment.moment === 'now'
       ? currentTs
       : moment.moment === 'literal' && common.isUndefined(moment.units)
-        ? currentTs // TODO: parse literal
+        ? getUnixTime(new Date(moment.literal))
         : unit === common.FractionTsUnitEnum.Days &&
             [
               'sunday',

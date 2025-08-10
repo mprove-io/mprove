@@ -78,6 +78,11 @@ export class GetTimeRangeService {
       return payload;
     }
 
+    // console.log('p.rangeStart');
+    // console.log(p.rangeStart);
+    // console.log('p.rangeEnd');
+    // console.log(p.rangeEnd);
+
     let rangeStart =
       common.isUndefined(p.rangeStart) && common.isUndefined(p.rangeEnd)
         ? undefined
@@ -106,6 +111,9 @@ export class GetTimeRangeService {
                 )
               );
 
+    // console.log('rangeStart');
+    // console.log(rangeStart);
+
     let rangeEnd =
       common.isUndefined(p.rangeStart) && common.isUndefined(p.rangeEnd)
         ? undefined
@@ -133,6 +141,9 @@ export class GetTimeRangeService {
                                 : {}
                 )
               );
+
+    // console.log('rangeEnd');
+    // console.log(rangeEnd);
 
     //   let start =
     //   common.isDefined(rangeOpen) && common.isDefined(rangeClose)
