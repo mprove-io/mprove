@@ -358,6 +358,26 @@ export function getMalloyFilterTsFractions(item: {
           tsDateHour: common.isDefined(hour) ? Number(hour) : undefined,
           tsDateMinute: common.isDefined(minute) ? Number(minute) : undefined
         };
+
+        if (isGetTimeRange === true) {
+          let start = getStart({
+            moment: before,
+            agoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+            year: year,
+            month: month,
+            day: day,
+            hour: hour,
+            minute: minute,
+            timezone: timezone,
+            weekStart: weekStart
+          });
+
+          if (fraction.type === common.FractionTypeEnum.TsIsBefore) {
+            rangeEnd = start.rangeStart;
+          } else if (fraction.type === common.FractionTypeEnum.TsIsStarting) {
+            rangeStart = start.rangeStart;
+          }
+        }
       } else if ((temporalFilter as After).operator === 'after') {
         // temporal after (after)
         let tFilter = temporalFilter as After;
@@ -418,6 +438,30 @@ export function getMalloyFilterTsFractions(item: {
           tsDateHour: common.isDefined(hour) ? Number(hour) : undefined,
           tsDateMinute: common.isDefined(minute) ? Number(minute) : undefined
         };
+
+        if (isGetTimeRange === true) {
+          let start = getStart({
+            moment: after,
+            agoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+            year: year,
+            month: month,
+            day: day,
+            hour: hour,
+            minute: minute,
+            timezone: timezone,
+            weekStart: weekStart
+          });
+
+          if (fraction.type === common.FractionTypeEnum.TsIsAfter) {
+            rangeStart = getUnixTime(
+              add(fromUnixTime(start.rangeStart), start.oneUnitDuration)
+            );
+          } else if (fraction.type === common.FractionTypeEnum.TsIsThrough) {
+            rangeEnd = getUnixTime(
+              add(fromUnixTime(start.rangeStart), start.oneUnitDuration)
+            );
+          }
+        }
       } else if ((temporalFilter as To).operator === 'to') {
         // temporal to (between)
         let tFilter = temporalFilter as To;
@@ -573,34 +617,6 @@ export function getMalloyFilterTsFractions(item: {
             units: (tfIn as TemporalLiteral).units
           }
         );
-
-        if (
-          common.isDefined(quarter) &&
-          common.isUndefined(month) &&
-          common.isUndefined(day)
-        ) {
-          day = '01';
-
-          month =
-            quarter === '1'
-              ? '01'
-              : quarter === '2'
-                ? '04'
-                : quarter === '3'
-                  ? '07'
-                  : quarter === '4'
-                    ? '10'
-                    : undefined;
-        }
-
-        // console.log('(tfIn as TemporalLiteral).literal');
-        // console.log((tfIn as TemporalLiteral).literal);
-
-        // console.log('(tfIn as TemporalLiteral).units');
-        // console.log((tfIn as TemporalLiteral).units);
-
-        // console.log('{ year, quarter, month, day, hour, minute }');
-        // console.log({ year, quarter, month, day, hour, minute });
 
         let m = getMalloyMomentStr(tfIn);
 
@@ -776,6 +792,29 @@ export function getMalloyFilterTsFractions(item: {
           tsForUnit: common.getFractionTsUnits(tFilter.units),
           tsForValue: Number(tFilter.n)
         };
+
+        if (isGetTimeRange === true) {
+          let start = getStart({
+            moment: fraction.tsMoment,
+            agoFromNowQuantity: fraction.tsMomentAgoFromNowQuantity,
+            year: year,
+            month: month,
+            day: day,
+            hour: hour,
+            minute: minute,
+            timezone: timezone,
+            weekStart: weekStart
+          });
+
+          let forDuration = getUnitDuration({
+            value: fraction.tsForValue,
+            unit: fraction.tsForUnit
+          });
+
+          rangeStart = start.rangeStart;
+
+          rangeEnd = getUnixTime(add(fromUnixTime(rangeStart), forDuration));
+        }
       }
 
       if (common.isDefined(fraction)) {
@@ -808,9 +847,6 @@ function getStart(item: {
     hour,
     minute
   } = item;
-
-  // console.log('item');
-  // console.log(item);
 
   let unit =
     (moment as TemporalLiteral).units === 'year'

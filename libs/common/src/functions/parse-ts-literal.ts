@@ -1,6 +1,7 @@
 import { TemporalUnit } from '@malloydata/malloy-filter';
 import { MyRegex } from '~common/models/my-regex';
 import { isDefined } from './is-defined';
+import { isUndefined } from './is-undefined';
 
 export function parseTsLiteral(item: {
   input: string;
@@ -51,6 +52,21 @@ export function parseTsLiteral(item: {
                 ? '4'
                 : undefined
         : undefined;
+
+  if (isDefined(quarter) && isUndefined(month) && isUndefined(day)) {
+    day = '01';
+
+    month =
+      quarter === '1'
+        ? '01'
+        : quarter === '2'
+          ? '04'
+          : quarter === '3'
+            ? '07'
+            : quarter === '4'
+              ? '10'
+              : undefined;
+  }
 
   return {
     year: year,
