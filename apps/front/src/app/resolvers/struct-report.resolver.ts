@@ -55,13 +55,13 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
         : uiState.timeSpec,
       timeRangeFractionBrick: common.isDefined(timeRangeParam)
         ? timeRangeParam
-            .split('-')
-            .join('/')
-            .split('_')
-            .join(' ')
-            .split('~')
-            .join(':')
-        : uiState.timeRangeFraction.brick
+        : // .split('-')
+          // .join('/')
+          // .split('_')
+          // .join(' ')
+          // .split('~')
+          // .join(':')
+          uiState.timeRangeFraction.brick
     });
   }
 

@@ -52,27 +52,19 @@ export function bricksToFractions(item: {
   let resultFractions: common.Fraction[] = [];
 
   filterBricks.forEach(brick => {
-    // if (brick === 'last 5 days' ) {
-    //   console.log('brick match');
-
-    //   let fraction: common.Fraction = {
-    //     brick: `last 5 days`,
-    //     // parentBrick: 'f`last 5 days`',
-    //     operator: common.FractionOperatorEnum.Or,
-    //     type: common.FractionTypeEnum.TsIsInLast,
-    //     tsLastValue: 5,
-    //     tsLastUnit: common.FractionTsUnitEnum.Days,
-    //     tsLastCompleteOption:
-    //       common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent
-    //   };
-
     let brickPart = brick.slice(2, -1);
+
+    // console.log('brickPart');
+    // console.log(brickPart);
 
     if (
       result === common.FieldResultEnum.Ts ||
       result === common.FieldResultEnum.Date
     ) {
       let parseResult = TemporalFilterExpression.parse(brickPart);
+
+      // console.log('parseResult');
+      // console.log(parseResult);
 
       if (common.isUndefined(parseResult.parsed)) {
         answerError = { valid: 0, brick: brick };

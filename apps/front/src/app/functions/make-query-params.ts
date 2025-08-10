@@ -11,12 +11,12 @@ export function makeQueryParams(item: {
     timezone: timezone.split('/').join('-'),
     timeSpec: timeSpec,
     timeRange: timeRangeFraction?.brick
-      .split('/')
-      .join('-')
-      .split(' ')
-      .join('_')
-      .split(':')
-      .join('~')
+    // .split('/')
+    // .join('-')
+    // .split(' ')
+    // .join('_')
+    // .split(':')
+    // .join('~')
   };
 
   return queryParams;

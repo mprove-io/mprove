@@ -601,6 +601,9 @@ export class TimeService {
 
     let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
+    // console.log('mBrick');
+    // console.log(mBrick);
+
     let newFraction: common.Fraction = {
       brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
       parentBrick: common.isDefined(fraction.parentBrick) ? mBrick : undefined,
