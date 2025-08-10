@@ -189,6 +189,21 @@ export class FractionTsComponent implements OnInit, OnChanges {
       operator: common.FractionOperatorEnum.Or
     },
     {
+      label: 'is on Hour',
+      value: common.FractionTypeEnum.TsIsOnHour,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is on Minute',
+      value: common.FractionTypeEnum.TsIsOnMinute,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
+      label: 'is between',
+      value: common.FractionTypeEnum.TsIsBetween,
+      operator: common.FractionOperatorEnum.Or
+    },
+    {
       label: 'is in next',
       value: common.FractionTypeEnum.TsIsInNext,
       operator: common.FractionOperatorEnum.Or
@@ -209,11 +224,6 @@ export class FractionTsComponent implements OnInit, OnChanges {
       operator: common.FractionOperatorEnum.Or
     },
     {
-      label: 'is between',
-      value: common.FractionTypeEnum.TsIsBetween,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
       label: 'is before',
       value: common.FractionTypeEnum.TsIsBefore,
       operator: common.FractionOperatorEnum.Or
@@ -221,16 +231,6 @@ export class FractionTsComponent implements OnInit, OnChanges {
     {
       label: 'is through',
       value: common.FractionTypeEnum.TsIsThrough,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is on Hour',
-      value: common.FractionTypeEnum.TsIsOnHour,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is on Minute',
-      value: common.FractionTypeEnum.TsIsOnMinute,
       operator: common.FractionOperatorEnum.Or
     },
     {
@@ -246,26 +246,6 @@ export class FractionTsComponent implements OnInit, OnChanges {
     {
       label: 'is not in last',
       value: common.FractionTypeEnum.TsIsNotInLast,
-      operator: common.FractionOperatorEnum.And
-    },
-    {
-      label: 'is not in next',
-      value: common.FractionTypeEnum.TsIsNotInNext,
-      operator: common.FractionOperatorEnum.And
-    },
-    // {
-    //   label: 'is not after',
-    //   value: common.FractionTypeEnum.TsIsNotAfter, // is through
-    //   operator: common.FractionOperatorEnum.And
-    // },
-    // {
-    //   label: 'is not starting at',
-    //   value: common.FractionTypeEnum.TsIsNotStarting, // is before // not supported (malloy issue)
-    //   operator: common.FractionOperatorEnum.And
-    // },
-    {
-      label: 'is not beginning at',
-      value: common.FractionTypeEnum.TsIsNotBeginFor,
       operator: common.FractionOperatorEnum.And
     },
     {
@@ -294,8 +274,38 @@ export class FractionTsComponent implements OnInit, OnChanges {
       operator: common.FractionOperatorEnum.And
     },
     {
+      label: 'is not on Hour',
+      value: common.FractionTypeEnum.TsIsNotOnHour,
+      operator: common.FractionOperatorEnum.And
+    },
+    {
+      label: 'is not on Minute',
+      value: common.FractionTypeEnum.TsIsNotOnMinute,
+      operator: common.FractionOperatorEnum.And
+    },
+    {
       label: 'is not between',
       value: common.FractionTypeEnum.TsIsNotBetween,
+      operator: common.FractionOperatorEnum.And
+    },
+    {
+      label: 'is not in next',
+      value: common.FractionTypeEnum.TsIsNotInNext,
+      operator: common.FractionOperatorEnum.And
+    },
+    // {
+    //   label: 'is not after',
+    //   value: common.FractionTypeEnum.TsIsNotAfter, // is through
+    //   operator: common.FractionOperatorEnum.And
+    // },
+    // {
+    //   label: 'is not starting at',
+    //   value: common.FractionTypeEnum.TsIsNotStarting, // is before // not supported (malloy issue)
+    //   operator: common.FractionOperatorEnum.And
+    // },
+    {
+      label: 'is not beginning at',
+      value: common.FractionTypeEnum.TsIsNotBeginFor,
       operator: common.FractionOperatorEnum.And
     },
     // {
@@ -308,16 +318,6 @@ export class FractionTsComponent implements OnInit, OnChanges {
     //   value: common.FractionTypeEnum.TsIsNotThrough, // is after // not supported (malloy issue)
     //   operator: common.FractionOperatorEnum.And
     // },
-    {
-      label: 'is not on Hour',
-      value: common.FractionTypeEnum.TsIsNotOnHour,
-      operator: common.FractionOperatorEnum.And
-    },
-    {
-      label: 'is not on Minute',
-      value: common.FractionTypeEnum.TsIsNotOnMinute,
-      operator: common.FractionOperatorEnum.And
-    },
     {
       label: 'is not on Timestamp',
       value: common.FractionTypeEnum.TsIsNotOnTimestamp,
