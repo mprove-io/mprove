@@ -37,6 +37,7 @@ export class GetTimeRangeService {
       timeColumnsLimit,
       timeSpec,
       timezone,
+      weekStart,
       caseSensitiveStringFilters
     } = reqValid.payload;
 
@@ -48,7 +49,8 @@ export class GetTimeRangeService {
       result: common.FieldResultEnum.Ts,
       fractions: fractions,
       getTimeRange: true,
-      timezone: timezone
+      timezone: timezone,
+      weekStart: weekStart
     });
 
     // let p = processFilter({

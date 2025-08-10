@@ -267,6 +267,7 @@ export class BlockmlService {
           timeColumnsLimit: timeColumnsLimit,
           timeSpec: timeSpec,
           timezone: timezone,
+          weekStart: projectWeekStart,
           caseSensitiveStringFilters: caseSensitiveStringFilters
         }
       };

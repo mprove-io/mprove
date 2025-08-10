@@ -103,6 +103,8 @@ export function getMalloyFiltersFractions(item: {
                     parentBrick: parentBrick,
                     parsed: parsedFilter.parsed,
                     isGetTimeRange: false
+                    // timezone: timezone,
+                    // weekStart: weekStart
                   }).fractions
                 : [];
 

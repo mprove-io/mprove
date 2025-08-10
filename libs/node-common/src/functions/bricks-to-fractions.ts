@@ -72,7 +72,9 @@ export function bricksToFractions(item: {
         let result = getMalloyFilterTsFractions({
           parentBrick: brick,
           parsed: parseResult.parsed,
-          isGetTimeRange: true
+          isGetTimeRange: true,
+          timezone: timezone,
+          weekStart: weekStart
         });
 
         rangeStart = result.rangeStart;

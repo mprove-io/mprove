@@ -14,7 +14,7 @@ export function getUnitDuration(item: {
         : unit === common.FractionTsUnitEnum.Months
           ? { months: value }
           : unit === common.FractionTsUnitEnum.Weeks
-            ? { weeks: value }
+            ? { days: value * 7 }
             : unit === common.FractionTsUnitEnum.Days
               ? { days: value }
               : unit === common.FractionTsUnitEnum.Hours

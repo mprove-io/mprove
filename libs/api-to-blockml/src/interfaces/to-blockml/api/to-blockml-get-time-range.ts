@@ -24,6 +24,9 @@ export class ToBlockmlGetTimeRangeRequestPayload {
 
   @IsEnum(common.TimeSpecEnum)
   timeSpec: common.TimeSpecEnum;
+
+  @IsEnum(common.ProjectWeekStartEnum)
+  weekStart: common.ProjectWeekStartEnum;
 }
 
 export class ToBlockmlGetTimeRangeRequest extends ToBlockmlRequest {

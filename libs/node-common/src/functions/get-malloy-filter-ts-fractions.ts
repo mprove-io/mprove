@@ -544,6 +544,34 @@ export function getMalloyFilterTsFractions(item: {
           }
         );
 
+        if (
+          common.isDefined(quarter) &&
+          common.isUndefined(month) &&
+          common.isUndefined(day)
+        ) {
+          day = '01';
+
+          month =
+            quarter === '1'
+              ? '01'
+              : quarter === '2'
+                ? '04'
+                : quarter === '3'
+                  ? '07'
+                  : quarter === '4'
+                    ? '10'
+                    : undefined;
+        }
+
+        // console.log('(tfIn as TemporalLiteral).literal');
+        // console.log((tfIn as TemporalLiteral).literal);
+
+        // console.log('(tfIn as TemporalLiteral).units');
+        // console.log((tfIn as TemporalLiteral).units);
+
+        // console.log('{ year, quarter, month, day, hour, minute }');
+        // console.log({ year, quarter, month, day, hour, minute });
+
         let m = getMalloyMomentStr(tFilter.in);
 
         fraction = {
