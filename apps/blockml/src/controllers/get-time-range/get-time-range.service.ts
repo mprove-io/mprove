@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { add, fromUnixTime, getUnixTime, sub } from 'date-fns';
 import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
@@ -76,6 +77,62 @@ export class GetTimeRangeService {
 
       return payload;
     }
+
+    let rangeStart =
+      common.isUndefined(p.rangeStart) && common.isUndefined(p.rangeEnd)
+        ? undefined
+        : common.isDefined(p.rangeStart)
+          ? p.rangeStart
+          : timeSpec === common.TimeSpecEnum.Timestamps
+            ? undefined
+            : getUnixTime(
+                sub(
+                  fromUnixTime(p.rangeEnd),
+                  timeSpec === common.TimeSpecEnum.Years
+                    ? { years: timeColumnsLimit }
+                    : timeSpec === common.TimeSpecEnum.Quarters
+                      ? { months: timeColumnsLimit * 3 }
+                      : timeSpec === common.TimeSpecEnum.Months
+                        ? { months: timeColumnsLimit }
+                        : timeSpec === common.TimeSpecEnum.Weeks
+                          ? { days: timeColumnsLimit * 7 }
+                          : timeSpec === common.TimeSpecEnum.Days
+                            ? { days: timeColumnsLimit }
+                            : timeSpec === common.TimeSpecEnum.Hours
+                              ? { hours: timeColumnsLimit }
+                              : timeSpec === common.TimeSpecEnum.Minutes
+                                ? { minutes: timeColumnsLimit }
+                                : {}
+                )
+              );
+
+    let rangeEnd =
+      common.isUndefined(p.rangeStart) && common.isUndefined(p.rangeEnd)
+        ? undefined
+        : common.isDefined(p.rangeEnd)
+          ? p.rangeEnd
+          : timeSpec === common.TimeSpecEnum.Timestamps
+            ? undefined
+            : getUnixTime(
+                add(
+                  fromUnixTime(p.rangeStart),
+                  timeSpec === common.TimeSpecEnum.Years
+                    ? { years: timeColumnsLimit }
+                    : timeSpec === common.TimeSpecEnum.Quarters
+                      ? { months: timeColumnsLimit * 3 }
+                      : timeSpec === common.TimeSpecEnum.Months
+                        ? { months: timeColumnsLimit }
+                        : timeSpec === common.TimeSpecEnum.Weeks
+                          ? { days: timeColumnsLimit * 7 }
+                          : timeSpec === common.TimeSpecEnum.Days
+                            ? { days: timeColumnsLimit }
+                            : timeSpec === common.TimeSpecEnum.Hours
+                              ? { hours: timeColumnsLimit }
+                              : timeSpec === common.TimeSpecEnum.Minutes
+                                ? { minutes: timeColumnsLimit }
+                                : {}
+                )
+              );
 
     //   let start =
     //   common.isDefined(rangeOpen) && common.isDefined(rangeClose)
@@ -155,8 +212,8 @@ export class GetTimeRangeService {
       isValid: p.valid === 1,
       // rangeOpen: rangeOpen,
       // rangeClose: rangeClose,
-      rangeStart: p.rangeStart,
-      rangeEnd: p.rangeEnd,
+      rangeStart: rangeStart,
+      rangeEnd: rangeEnd,
       timeRangeFraction: timeRangeFraction
     };
 
