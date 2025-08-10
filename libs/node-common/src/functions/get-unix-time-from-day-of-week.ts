@@ -12,7 +12,7 @@ export function getUnixTimeFromDayOfWeek(item: {
     | 'thursday'
     | 'friday'
     | 'saturday';
-  currentUnitStartTs: string;
+  currentUnitStartTs: number;
 }) {
   let { lastNext, weekday, currentUnitStartTs } = item;
 
@@ -53,8 +53,8 @@ export function getUnixTimeFromDayOfWeek(item: {
 
   let unixTime =
     daysDiff > 0
-      ? getUnixTime(add(fromUnixTime(Number(currentUnitStartTs)), duration))
-      : getUnixTime(sub(fromUnixTime(Number(currentUnitStartTs)), duration));
+      ? getUnixTime(add(fromUnixTime(currentUnitStartTs), duration))
+      : getUnixTime(sub(fromUnixTime(currentUnitStartTs), duration));
 
   return unixTime;
 }

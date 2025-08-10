@@ -12,29 +12,37 @@ import {
 import { toZonedTime } from 'date-fns-tz';
 import { common } from '~node-common/barrels/common';
 
+interface TimestampsResult {
+  currentTs: number;
+  currentSecondTs: number;
+  currentMinuteTs: number;
+  currentHourTs: number;
+  currentDateTs: number;
+  currentWeekStartTs: number;
+  currentMonthTs: number;
+  currentQuarterTs: number;
+  currentYearTs: number;
+}
+
 export function timeRangeMakeCurrentTimestamps(item: {
   timezone: any;
   weekStart: any;
-}) {
+}): TimestampsResult {
   let { timezone, weekStart } = item;
 
   let currentDateUTC = new Date();
 
   let currentDate = toZonedTime(currentDateUTC, timezone);
 
-  let currentTimestamp = getUnixTime(currentDate).toString();
+  let currentTimestamp = getUnixTime(currentDate);
 
-  let currentSecondTimestamp = getUnixTime(
-    startOfSecond(currentDate)
-  ).toString();
+  let currentSecondTimestamp = getUnixTime(startOfSecond(currentDate));
 
-  let currentMinuteTimestamp = getUnixTime(
-    startOfMinute(currentDate)
-  ).toString();
+  let currentMinuteTimestamp = getUnixTime(startOfMinute(currentDate));
 
-  let currentHourTimestamp = getUnixTime(startOfHour(currentDate)).toString();
+  let currentHourTimestamp = getUnixTime(startOfHour(currentDate));
 
-  let currentDateTimestamp = getUnixTime(startOfDay(currentDate)).toString();
+  let currentDateTimestamp = getUnixTime(startOfDay(currentDate));
 
   // console.log('weekStart');
   // console.log(weekStart);
@@ -43,20 +51,18 @@ export function timeRangeMakeCurrentTimestamps(item: {
     startOfWeek(currentDate, {
       weekStartsOn: weekStart === common.ProjectWeekStartEnum.Sunday ? 0 : 1
     })
-  ).toString();
+  );
 
   // console.log('currentWeekStartTimestamp');
   // console.log(currentWeekStartTimestamp);
 
-  let currentMonthTimestamp = getUnixTime(startOfMonth(currentDate)).toString();
+  let currentMonthTimestamp = getUnixTime(startOfMonth(currentDate));
 
-  let currentQuarterTimestamp = getUnixTime(
-    startOfQuarter(currentDate)
-  ).toString();
+  let currentQuarterTimestamp = getUnixTime(startOfQuarter(currentDate));
 
-  let currentYearTimestamp = getUnixTime(startOfYear(currentDate)).toString();
+  let currentYearTimestamp = getUnixTime(startOfYear(currentDate));
 
-  return {
+  let currentTimestampsResult: TimestampsResult = {
     currentTs: currentTimestamp,
     currentSecondTs: currentSecondTimestamp,
     currentMinuteTs: currentMinuteTimestamp,
@@ -67,4 +73,6 @@ export function timeRangeMakeCurrentTimestamps(item: {
     currentQuarterTs: currentQuarterTimestamp,
     currentYearTs: currentYearTimestamp
   };
+
+  return currentTimestampsResult;
 }

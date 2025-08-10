@@ -8,38 +8,28 @@ export function getCurrentUnitStartTs(item: {
 }) {
   let { unit, timezone, weekStart } = item;
 
-  let {
-    currentTs,
-    currentSecondTs,
-    currentMinuteTs,
-    currentHourTs,
-    currentDateTs,
-    currentWeekStartTs,
-    currentMonthTs,
-    currentQuarterTs,
-    currentYearTs
-  } = timeRangeMakeCurrentTimestamps({
+  let timestampsResult = timeRangeMakeCurrentTimestamps({
     timezone: timezone,
     weekStart: weekStart
   });
 
   let currentUnitStartTs =
     unit === common.FractionTsUnitEnum.Years
-      ? currentYearTs
+      ? timestampsResult.currentYearTs
       : unit === common.FractionTsUnitEnum.Quarters
-        ? currentQuarterTs
+        ? timestampsResult.currentQuarterTs
         : unit === common.FractionTsUnitEnum.Months
-          ? currentMonthTs
+          ? timestampsResult.currentMonthTs
           : unit === common.FractionTsUnitEnum.Weeks
-            ? currentWeekStartTs
+            ? timestampsResult.currentWeekStartTs
             : unit === common.FractionTsUnitEnum.Days
-              ? currentDateTs
+              ? timestampsResult.currentDateTs
               : unit === common.FractionTsUnitEnum.Hours
-                ? currentHourTs
+                ? timestampsResult.currentHourTs
                 : unit === common.FractionTsUnitEnum.Minutes
-                  ? currentMinuteTs
+                  ? timestampsResult.currentMinuteTs
                   : unit === common.FractionTsUnitEnum.Seconds
-                    ? currentSecondTs
+                    ? timestampsResult.currentSecondTs
                     : undefined;
 
   return currentUnitStartTs;
