@@ -105,6 +105,7 @@ export function getMalloyFiltersFractions(item: {
                     isGetTimeRange: false
                     // timezone: timezone,
                     // weekStart: weekStart
+                    // timeSpec: timeSpec
                   }).fractions
                 : [];
 

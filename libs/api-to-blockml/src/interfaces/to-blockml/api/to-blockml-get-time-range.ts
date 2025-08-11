@@ -21,6 +21,9 @@ export class ToBlockmlGetTimeRangeRequestPayload {
 
   @IsBoolean()
   caseSensitiveStringFilters: boolean;
+
+  @IsEnum(common.TimeSpecEnum)
+  timeSpec: common.TimeSpecEnum;
 }
 
 export class ToBlockmlGetTimeRangeRequest extends ToBlockmlRequest {

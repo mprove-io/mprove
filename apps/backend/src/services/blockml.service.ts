@@ -262,6 +262,7 @@ export class BlockmlService {
         },
         payload: {
           timeRangeFractionBrick: timeRangeFractionBrick,
+          timeSpec: timeSpec,
           timezone: timezone,
           weekStart: projectWeekStart,
           caseSensitiveStringFilters: caseSensitiveStringFilters

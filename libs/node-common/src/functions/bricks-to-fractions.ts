@@ -6,10 +6,11 @@ export function bricksToFractions(item: {
   filterBricks: string[];
   result: common.FieldResultEnum;
   // parameters below do not affect validation
+  getTimeRange?: boolean;
+  timeSpec?: common.TimeSpecEnum;
   weekStart?: common.ProjectWeekStartEnum;
   timezone?: string;
   fractions?: common.Fraction[];
-  getTimeRange?: boolean;
   // caseSensitiveStringFilters: boolean;
   // connection?: common.ProjectConnection;
   // proc?: string;
@@ -27,6 +28,7 @@ export function bricksToFractions(item: {
   let {
     filterBricks,
     result,
+    timeSpec,
     weekStart,
     timezone,
     fractions,
@@ -74,7 +76,8 @@ export function bricksToFractions(item: {
           parsed: parseResult.parsed,
           isGetTimeRange: true,
           timezone: timezone,
-          weekStart: weekStart
+          weekStart: weekStart,
+          timeSpec: timeSpec
         });
 
         rangeStart = result.rangeStart;

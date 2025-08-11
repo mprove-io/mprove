@@ -36,6 +36,7 @@ export class GetTimeRangeService {
       timeRangeFractionBrick,
       timezone,
       weekStart,
+      timeSpec,
       caseSensitiveStringFilters
     } = reqValid.payload;
 
@@ -48,7 +49,8 @@ export class GetTimeRangeService {
       fractions: fractions,
       getTimeRange: true,
       timezone: timezone,
-      weekStart: weekStart
+      weekStart: weekStart,
+      timeSpec: timeSpec
     });
 
     let timeRangeFraction = fractions[0];
