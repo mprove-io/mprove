@@ -14,6 +14,8 @@ import { BaseQuery } from './base.query';
 export interface RepChartData {
   rows: DataRow[];
   columns: common.Column[];
+  firstDataTimeColumnIndex: number;
+  lastDataTimeColumnIndex: number;
 }
 
 export class UiState {
@@ -60,7 +62,9 @@ let uiState: UiState = {
   gridData: [],
   repChartData: {
     rows: [],
-    columns: []
+    columns: [],
+    firstDataTimeColumnIndex: -1,
+    lastDataTimeColumnIndex: -1
   },
   chartPointsData: {
     dataPoints: undefined,

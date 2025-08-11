@@ -333,7 +333,17 @@ export class ReportsComponent implements OnInit, OnDestroy {
         let recordsWithValuesLength = 0;
 
         if (repChartData.rows.length > 0) {
-          dataPoints = repChartData.columns
+          let trimmedColumns = this.report.isTimeColumnsLimitExceeded
+            ? repChartData.columns
+            : repChartData.firstDataTimeColumnIndex > 0
+              ? repChartData.columns.filter(
+                  (c, i) =>
+                    i >= repChartData.firstDataTimeColumnIndex &&
+                    i <= repChartData.lastDataTimeColumnIndex
+                )
+              : repChartData.columns;
+
+          dataPoints = trimmedColumns
             .filter(column => column.columnId !== 0)
             .map(column => {
               let dataPoint: any = {
@@ -1208,7 +1218,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
         chartPointsData: null,
         repChartData: {
           rows: [],
-          columns: []
+          columns: [],
+          firstDataTimeColumnIndex: -1,
+          lastDataTimeColumnIndex: -1
         }
       });
 
@@ -1320,7 +1332,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
       chartPointsData: null,
       repChartData: {
         rows: [],
-        columns: []
+        columns: [],
+        firstDataTimeColumnIndex: -1,
+        lastDataTimeColumnIndex: -1
       }
     });
   }

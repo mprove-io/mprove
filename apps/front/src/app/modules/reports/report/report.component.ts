@@ -186,6 +186,8 @@ export class ReportComponent {
 
   columnDefs: ColDef<DataRow>[] = [...this.columns, this.statusColumn];
   timeColumns: ColDef<DataRow>[] = [];
+  firstDataTimeColumnIndex: number;
+  lastDataTimeColumnIndex: number;
 
   defaultColDef: ColDef<DataRow> = {
     sortable: false,
@@ -284,6 +286,67 @@ export class ReportComponent {
           return columnDef;
         });
 
+        this.firstDataTimeColumnIndex = this.timeColumns.findIndex(
+          timeColumn => {
+            let columnRow = this.report.rows.find(row => {
+              let rowRecord = row.records.find(
+                record => record.key * 1000 === Number(timeColumn.field)
+              );
+
+              return (
+                common.isDefined(rowRecord) &&
+                common.isDefinedAndNotEmpty(rowRecord.value)
+              );
+            });
+
+            return common.isDefined(columnRow);
+          }
+        );
+
+        let timeColumnsReversed = [...this.timeColumns].reverse();
+
+        let lastDataTimeColumnIndexReversed = timeColumnsReversed.findIndex(
+          timeColumn => {
+            let columnRow = this.report.rows.find(row => {
+              let rowRecord = row.records.find(
+                record => record.key * 1000 === Number(timeColumn.field)
+              );
+
+              return (
+                common.isDefined(rowRecord) &&
+                common.isDefinedAndNotEmpty(rowRecord.value)
+              );
+            });
+
+            return common.isDefined(columnRow);
+          }
+        );
+
+        this.lastDataTimeColumnIndex =
+          common.isDefined(lastDataTimeColumnIndexReversed) &&
+          lastDataTimeColumnIndexReversed > -1
+            ? this.timeColumns.length - 1 - lastDataTimeColumnIndexReversed
+            : -1;
+
+        // console.log('this.timeColumns.length');
+        // console.log(this.timeColumns.length);
+
+        // console.log('this.firstDataTimeColumnIndex');
+        // console.log(this.firstDataTimeColumnIndex);
+
+        // console.log('this.lastDataTimeColumnIndex');
+        // console.log(this.lastDataTimeColumnIndex);
+
+        let trimmedTimeColumns = this.report.isTimeColumnsLimitExceeded
+          ? this.timeColumns
+          : this.firstDataTimeColumnIndex > 0
+            ? this.timeColumns.filter(
+                (c, i) =>
+                  i >= this.firstDataTimeColumnIndex &&
+                  i <= this.lastDataTimeColumnIndex
+              )
+            : this.timeColumns;
+
         let runningQueriesLength = this.report.rows
           .filter(row => common.isDefined(row.query))
           .map(row => row.query.status)
@@ -296,11 +359,11 @@ export class ReportComponent {
           showMiniCharts === true
             ? [
                 ...this.columns,
-                ...this.timeColumns,
+                ...trimmedTimeColumns,
                 this.miniChartColumn,
                 this.statusColumn
               ]
-            : [...this.columns, ...this.timeColumns, this.statusColumn];
+            : [...this.columns, ...trimmedTimeColumns, this.statusColumn];
 
         this.checkUpdateData();
       }
@@ -514,7 +577,9 @@ export class ReportComponent {
       gridData: this.data,
       repChartData: {
         rows: this.data,
-        columns: this.report.columns
+        columns: this.report.columns,
+        firstDataTimeColumnIndex: this.firstDataTimeColumnIndex,
+        lastDataTimeColumnIndex: this.lastDataTimeColumnIndex
       }
     });
   }
