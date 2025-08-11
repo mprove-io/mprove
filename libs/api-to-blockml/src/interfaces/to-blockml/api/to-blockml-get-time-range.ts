@@ -10,23 +10,17 @@ import { common } from '~api-to-blockml/barrels/common';
 import { ToBlockmlRequest } from '~api-to-blockml/interfaces/to-blockml/to-blockml-request';
 
 export class ToBlockmlGetTimeRangeRequestPayload {
-  @IsBoolean()
-  caseSensitiveStringFilters: boolean;
+  @IsString()
+  timeRangeFractionBrick: string;
+
+  @IsEnum(common.ProjectWeekStartEnum)
+  weekStart: common.ProjectWeekStartEnum;
 
   @IsString()
   timezone: string;
 
-  @IsString()
-  timeRangeFractionBrick: string;
-
-  @IsInt()
-  timeColumnsLimit: number;
-
-  @IsEnum(common.TimeSpecEnum)
-  timeSpec: common.TimeSpecEnum;
-
-  @IsEnum(common.ProjectWeekStartEnum)
-  weekStart: common.ProjectWeekStartEnum;
+  @IsBoolean()
+  caseSensitiveStringFilters: boolean;
 }
 
 export class ToBlockmlGetTimeRangeRequest extends ToBlockmlRequest {

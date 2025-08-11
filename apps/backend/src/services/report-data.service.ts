@@ -373,12 +373,20 @@ export class ReportDataService {
             timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
           }
 
+          let isDesc =
+            [
+              common.FractionTypeEnum.TsIsBefore,
+              common.FractionTypeEnum.TsIsThrough
+            ].indexOf(timeRangeFraction.type) > -1
+              ? true
+              : false;
+
           let timeSorting: common.Sorting =
             // model.type === common.ModelTypeEnum.Store &&
             common.isUndefined(timeFieldIdSpec)
               ? undefined
               : {
-                  desc: false,
+                  desc: isDesc,
                   fieldId: timeFieldIdSpec
                 };
 
@@ -415,12 +423,9 @@ export class ReportDataService {
 
           let sorts = common.isUndefined(timeFieldIdSpec)
             ? undefined
-            : [
-                  common.FractionTypeEnum.TsIsAfter,
-                  common.FractionTypeEnum.TsIsAfterRelative
-                ].indexOf(timeRangeFraction.type) > -1
-              ? `${timeFieldIdSpec}`
-              : `${timeFieldIdSpec} desc`;
+            : isDesc === true
+              ? `${timeFieldIdSpec} desc`
+              : `${timeFieldIdSpec}`;
 
           let mconfig: common.Mconfig = {
             structId: struct.structId,
@@ -520,7 +525,7 @@ export class ReportDataService {
                     timezone: timezone,
                     fieldId: select[0],
                     sortFieldId: select[0],
-                    desc: false
+                    desc: isDesc
                   },
                   {
                     type: common.QueryOperationTypeEnum.GroupOrAggregate,

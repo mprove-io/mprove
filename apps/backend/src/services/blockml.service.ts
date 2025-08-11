@@ -16,6 +16,7 @@ import {
   eachQuarterOfInterval,
   eachWeekOfInterval,
   eachYearOfInterval,
+  fromUnixTime,
   getUnixTime,
   startOfDay,
   startOfHour,
@@ -40,7 +41,6 @@ import { processRowIds } from '~backend/functions/process-row-ids';
 import { ProjectConnection } from '~common/_index';
 import { EnvsService } from './envs.service';
 import { RabbitService } from './rabbit.service';
-import { WrapToApiService } from './wrap-to-api.service';
 import { WrapToEntService } from './wrap-to-ent.service';
 
 let retry = require('async-retry');
@@ -51,7 +51,6 @@ export class BlockmlService {
     private rabbitService: RabbitService,
     private envsService: EnvsService,
     private wrapToEntService: WrapToEntService,
-    private wrapToApiService: WrapToApiService,
     private cs: ConfigService<interfaces.Config>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -190,7 +189,6 @@ export class BlockmlService {
               await this.db.packer.write({
                 tx: tx,
                 insert: {
-                  // apis: apis.map(x => this.wrapService.wrapToEntityApi(x)),
                   structs: [struct],
                   charts: rs.charts.map(x =>
                     this.wrapToEntService.wrapToEntityChart({
@@ -264,8 +262,6 @@ export class BlockmlService {
         },
         payload: {
           timeRangeFractionBrick: timeRangeFractionBrick,
-          timeColumnsLimit: timeColumnsLimit,
-          timeSpec: timeSpec,
           timezone: timezone,
           weekStart: projectWeekStart,
           caseSensitiveStringFilters: caseSensitiveStringFilters
@@ -290,16 +286,64 @@ export class BlockmlService {
     let timeRangeFraction =
       blockmlGetTimeRangeResponse.payload.timeRangeFraction;
 
-    // let rangeOpen = blockmlGetTimeRangeResponse.payload.rangeOpen;
-    // let rangeClose = blockmlGetTimeRangeResponse.payload.rangeClose;
+    let respRangeStart = blockmlGetTimeRangeResponse.payload.rangeStart;
+    let respRangeEnd = blockmlGetTimeRangeResponse.payload.rangeEnd;
 
-    let rangeStart = blockmlGetTimeRangeResponse.payload.rangeStart;
-    let rangeEnd = blockmlGetTimeRangeResponse.payload.rangeEnd;
+    let rangeStart =
+      common.isUndefined(respRangeStart) && common.isUndefined(respRangeEnd)
+        ? undefined
+        : common.isDefined(respRangeStart)
+          ? respRangeStart
+          : timeSpec === common.TimeSpecEnum.Timestamps
+            ? undefined
+            : getUnixTime(
+                sub(
+                  fromUnixTime(respRangeEnd),
+                  timeSpec === common.TimeSpecEnum.Years
+                    ? { years: timeColumnsLimit }
+                    : timeSpec === common.TimeSpecEnum.Quarters
+                      ? { months: timeColumnsLimit * 3 }
+                      : timeSpec === common.TimeSpecEnum.Months
+                        ? { months: timeColumnsLimit }
+                        : timeSpec === common.TimeSpecEnum.Weeks
+                          ? { days: timeColumnsLimit * 7 }
+                          : timeSpec === common.TimeSpecEnum.Days
+                            ? { days: timeColumnsLimit }
+                            : timeSpec === common.TimeSpecEnum.Hours
+                              ? { hours: timeColumnsLimit }
+                              : timeSpec === common.TimeSpecEnum.Minutes
+                                ? { minutes: timeColumnsLimit }
+                                : {}
+                )
+              );
 
-    // console.log('rangeStart');
-    // console.log(rangeStart);
-    // console.log('rangeEnd');
-    // console.log(rangeEnd);
+    let rangeEnd =
+      common.isUndefined(respRangeStart) && common.isUndefined(respRangeEnd)
+        ? undefined
+        : common.isDefined(respRangeEnd)
+          ? respRangeEnd
+          : timeSpec === common.TimeSpecEnum.Timestamps
+            ? undefined
+            : getUnixTime(
+                add(
+                  fromUnixTime(respRangeStart),
+                  timeSpec === common.TimeSpecEnum.Years
+                    ? { years: timeColumnsLimit }
+                    : timeSpec === common.TimeSpecEnum.Quarters
+                      ? { months: timeColumnsLimit * 3 }
+                      : timeSpec === common.TimeSpecEnum.Months
+                        ? { months: timeColumnsLimit }
+                        : timeSpec === common.TimeSpecEnum.Weeks
+                          ? { days: timeColumnsLimit * 7 }
+                          : timeSpec === common.TimeSpecEnum.Days
+                            ? { days: timeColumnsLimit }
+                            : timeSpec === common.TimeSpecEnum.Hours
+                              ? { hours: timeColumnsLimit }
+                              : timeSpec === common.TimeSpecEnum.Minutes
+                                ? { minutes: timeColumnsLimit }
+                                : {}
+                )
+              );
 
     let startDate = common.isDefined(rangeStart)
       ? new Date(rangeStart * 1000)
@@ -332,11 +376,11 @@ export class BlockmlService {
 
     if (diffColumnsLength > timeColumnsLimit) {
       isTimeColumnsLimitExceeded = true;
+
       if (
         [
-          common.FractionTypeEnum.TsIsInLast,
-          common.FractionTypeEnum.TsIsBefore,
-          common.FractionTypeEnum.TsIsBeforeRelative
+          common.FractionTypeEnum.TsIsBefore, // maybe no such case
+          common.FractionTypeEnum.TsIsThrough // maybe no such case
         ].indexOf(timeRangeFraction.type) > -1
       ) {
         startDate = sub(
@@ -474,14 +518,15 @@ export class BlockmlService {
     if (timeColumns.length > timeColumnsLimit) {
       if (
         [
-          common.FractionTypeEnum.TsIsInLast,
           common.FractionTypeEnum.TsIsBefore,
-          common.FractionTypeEnum.TsIsBeforeRelative
+          common.FractionTypeEnum.TsIsThrough
         ].indexOf(timeRangeFraction.type) > -1
       ) {
-        timeColumns.shift();
+        console.log('timeColumns.shift()');
+        timeColumns.shift(); // detail "years" is before calendar day "2025-01-02"
       } else {
-        timeColumns.pop();
+        console.log('timeColumns.pop()');
+        timeColumns.pop(); // detail "years" is after calendar day "2025-01-02"
       }
     }
 
@@ -507,8 +552,6 @@ export class BlockmlService {
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded,
       timeColumnsLimit: timeColumnsLimit,
       timeRangeFraction: timeRangeFraction,
-      // rangeOpen: rangeOpen,
-      // rangeClose: rangeClose,
       rangeStart: rangeStart,
       rangeEnd: rangeEnd
     };
