@@ -298,16 +298,20 @@ export function getMalloyFilterTsFractions(item: {
             unit: timeSpecUnit
           });
 
-          rangeStart = getUnixTime(
-            add(
-              fromUnixTime(timeSpecCurrentUnitStartTs),
-              timeSpecOneUnitDuration
-            )
-          );
+          rangeStart = common.isUndefined(timeSpecOneUnitDuration)
+            ? timestampsResult.currentTs
+            : getUnixTime(
+                add(
+                  fromUnixTime(timeSpecCurrentUnitStartTs),
+                  timeSpecOneUnitDuration
+                )
+              );
 
-          let rStart = getUnixTime(
-            add(fromUnixTime(currentUnitStartTs), oneUnitDuration)
-          );
+          let rStart = common.isUndefined(currentUnitStartTs)
+            ? timestampsResult.currentTs
+            : getUnixTime(
+                add(fromUnixTime(currentUnitStartTs), oneUnitDuration)
+              );
 
           let duration = getUnitDuration({
             value: tsNextValue,
@@ -400,12 +404,14 @@ export function getMalloyFilterTsFractions(item: {
           } else if (fraction.type === common.FractionTypeEnum.TsIsStarting) {
             rangeStart =
               start.timeSpecMomentRangeStart < start.momentRangeStart
-                ? getUnixTime(
-                    add(
-                      fromUnixTime(start.timeSpecMomentRangeStart),
-                      start.timeSpecOneUnitDuration
+                ? common.isUndefined(start.timeSpecOneUnitDuration)
+                  ? start.timeSpecMomentRangeStart
+                  : getUnixTime(
+                      add(
+                        fromUnixTime(start.timeSpecMomentRangeStart),
+                        start.timeSpecOneUnitDuration
+                      )
                     )
-                  )
                 : start.timeSpecMomentRangeStart;
           }
         }
@@ -495,12 +501,14 @@ export function getMalloyFilterTsFractions(item: {
           // console.log(start);
 
           if (fraction.type === common.FractionTypeEnum.TsIsAfter) {
-            rangeStart = getUnixTime(
-              add(
-                fromUnixTime(start.timeSpecMomentRangeStart),
-                start.timeSpecOneUnitDuration
-              )
-            );
+            rangeStart = common.isUndefined(start.timeSpecOneUnitDuration)
+              ? start.timeSpecMomentRangeStart
+              : getUnixTime(
+                  add(
+                    fromUnixTime(start.timeSpecMomentRangeStart),
+                    start.timeSpecOneUnitDuration
+                  )
+                );
           } else if (fraction.type === common.FractionTypeEnum.TsIsThrough) {
             rangeEnd = common.isUndefined(start.momentOneUnitDuration) // now, literal with no units
               ? start.momentRangeStart
@@ -898,6 +906,12 @@ export function getMalloyFilterTsFractions(item: {
     console.log('rangeEnd set to rangeStart');
     rangeEnd = rangeStart;
   }
+
+  // console.log({
+  //   fractions: fractions,
+  //   rangeStart: rangeStart,
+  //   rangeEnd: rangeEnd
+  // });
 
   return { fractions: fractions, rangeStart: rangeStart, rangeEnd: rangeEnd };
 }

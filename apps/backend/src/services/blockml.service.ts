@@ -516,7 +516,10 @@ export class BlockmlService {
       timeColumns.pop();
     }
 
-    if (timeColumns.length > timeColumnsLimit) {
+    if (
+      timeSpec !== common.TimeSpecEnum.Timestamps &&
+      timeColumns.length > timeColumnsLimit
+    ) {
       if (
         [
           common.FractionTypeEnum.TsIsBefore,

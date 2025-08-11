@@ -25,6 +25,12 @@
         class="fraction-type-select"
         [class.w-[180px]]="isMetrics === true"
         [class.w-[280px]]="isMetrics === false"
+        [class.mt-[32px]]="
+          [
+            fractionTypeEnum.TsIsBetween,
+            fractionTypeEnum.TsIsNotBetween
+          ].indexOf(fraction.type) > -1
+        "
         [items]="fractionTsTypesList"
         [clearable]="false"
         [searchable]="false"
