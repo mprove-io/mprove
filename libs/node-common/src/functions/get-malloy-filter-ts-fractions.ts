@@ -270,7 +270,42 @@ export function getMalloyFilterTsFractions(item: {
             unit: tsNextUnit
           });
 
+          let timeSpecUnit: common.FractionTsUnitEnum =
+            timeSpec === common.TimeSpecEnum.Years
+              ? common.FractionTsUnitEnum.Years
+              : timeSpec === common.TimeSpecEnum.Quarters
+                ? common.FractionTsUnitEnum.Quarters
+                : timeSpec === common.TimeSpecEnum.Months
+                  ? common.FractionTsUnitEnum.Months
+                  : timeSpec === common.TimeSpecEnum.Weeks
+                    ? common.FractionTsUnitEnum.Weeks
+                    : timeSpec === common.TimeSpecEnum.Days
+                      ? common.FractionTsUnitEnum.Days
+                      : timeSpec === common.TimeSpecEnum.Hours
+                        ? common.FractionTsUnitEnum.Hours
+                        : timeSpec === common.TimeSpecEnum.Minutes
+                          ? common.FractionTsUnitEnum.Minutes
+                          : undefined;
+
+          let timeSpecCurrentUnitStartTs = getCurrentUnitStartTs({
+            unit: timeSpecUnit,
+            timezone: timezone,
+            weekStart: weekStart
+          });
+
+          let timeSpecOneUnitDuration = getUnitDuration({
+            value: 1,
+            unit: timeSpecUnit
+          });
+
           rangeStart = getUnixTime(
+            add(
+              fromUnixTime(timeSpecCurrentUnitStartTs),
+              timeSpecOneUnitDuration
+            )
+          );
+
+          let rStart = getUnixTime(
             add(fromUnixTime(currentUnitStartTs), oneUnitDuration)
           );
 
@@ -279,7 +314,7 @@ export function getMalloyFilterTsFractions(item: {
             unit: tsNextUnit
           });
 
-          rangeEnd = getUnixTime(add(fromUnixTime(rangeStart), duration));
+          rangeEnd = getUnixTime(add(fromUnixTime(rStart), duration));
         }
       } else if ((temporalFilter as Before).operator === 'before') {
         // temporal before (before)
@@ -854,6 +889,15 @@ export function getMalloyFilterTsFractions(item: {
         fractions.push(fraction);
       }
     });
+
+  if (
+    common.isDefined(rangeEnd) &&
+    common.isDefined(rangeStart) &&
+    rangeEnd < rangeStart
+  ) {
+    console.log('rangeEnd set to rangeStart');
+    rangeEnd = rangeStart;
+  }
 
   return { fractions: fractions, rangeStart: rangeStart, rangeEnd: rangeEnd };
 }
