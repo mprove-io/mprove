@@ -313,21 +313,33 @@ export class ReportDataService {
               weekStart: struct.weekStart
             });
 
-            let mField = model.fields.find(field =>
-              timeSpecDetail === common.DetailUnitEnum.Timestamps
-                ? field.id === `${metric.timeFieldId}_ts`
-                : field.id === `${metric.timeFieldId}_${field.timeframe}` &&
-                  (([
-                    common.DetailUnitEnum.WeeksSunday,
-                    common.DetailUnitEnum.WeeksMonday
-                  ].indexOf(timeSpecDetail) > -1 &&
-                    `${field.timeframe}s` === 'weeks') ||
-                    ([
-                      common.DetailUnitEnum.WeeksSunday,
-                      common.DetailUnitEnum.WeeksMonday
-                    ].indexOf(timeSpecDetail) < 0 &&
-                      `${field.timeframe}s` === timeSpecDetail))
-            );
+            let mField = model.fields.find(field => {
+              let fieldId =
+                timeSpecDetail === common.DetailUnitEnum.Timestamps
+                  ? `${metric.timeFieldId}_ts`
+                  : [
+                        common.DetailUnitEnum.WeeksSunday,
+                        common.DetailUnitEnum.WeeksMonday
+                      ].indexOf(timeSpecDetail) > -1
+                    ? `${metric.timeFieldId}_week`
+                    : `${metric.timeFieldId}_${timeSpecDetail.slice(0, -1)}`;
+
+              return field.id === fieldId;
+
+              // timeSpecDetail === common.DetailUnitEnum.Timestamps
+              //   ? field.id === `${metric.timeFieldId}_ts`
+              //   : field.id === `${metric.timeFieldId}_${field.timeframe}` &&
+              //     (([
+              //       common.DetailUnitEnum.WeeksSunday,
+              //       common.DetailUnitEnum.WeeksMonday
+              //     ].indexOf(timeSpecDetail) > -1 &&
+              //       `${field.timeframe}s` === 'weeks') ||
+              //       ([
+              //         common.DetailUnitEnum.WeeksSunday,
+              //         common.DetailUnitEnum.WeeksMonday
+              //       ].indexOf(timeSpecDetail) < 0 &&
+              //         `${field.timeframe}s` === timeSpecDetail));
+            });
 
             timeFieldIdSpec = mField?.id;
           } else if (model.type === common.ModelTypeEnum.SQL) {

@@ -3,7 +3,7 @@ import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
-import { STORE_MODEL_PREFIX } from '~common/constants/top';
+import { METRIC_ID_BY, STORE_MODEL_PREFIX } from '~common/constants/top';
 
 let func = common.FuncEnum.CreateModelMetrics;
 
@@ -81,7 +81,7 @@ export function createModelMetrics(
           let partLabel = `${partNodeLabel} ${partFieldLabel}`;
 
           let modelMetric: common.ModelMetric = {
-            metricId: `${STORE_MODEL_PREFIX}_${store.name}.${partId}.by.${timeId}`,
+            metricId: `${STORE_MODEL_PREFIX}_${store.name}.${partId}.${METRIC_ID_BY}.${timeId}`,
             filePath: store.filePath,
             partId: partId,
             modelId: `${STORE_MODEL_PREFIX}_${store.name}`,
@@ -191,7 +191,7 @@ export function createModelMetrics(
             let partLabel = `${partNodeLabel} ${partFieldLabel}`;
 
             let modelMetric: common.ModelMetric = {
-              metricId: `${apiModel.modelId}.${partId}.by.${tg.timeId}`,
+              metricId: `${apiModel.modelId}.${partId}.${METRIC_ID_BY}.${tg.timeId}`,
               filePath: yNode.fieldFilePath,
               partId: partId,
               modelId: apiModel.modelId,
@@ -340,7 +340,7 @@ export function createModelMetrics(
           let partLabel = `${partNodeLabel} ${partFieldLabel}`;
 
           let modelMetric: common.ModelMetric = {
-            metricId: `${model.name}.${partId}.by.${timeId}`,
+            metricId: `${model.name}.${partId}.${METRIC_ID_BY}.${timeId}`,
             filePath: model.filePath,
             partId: partId,
             modelId: model.name,
@@ -423,7 +423,7 @@ export function createModelMetrics(
             let partLabel = `${partNodeLabel} ${partFieldLabel}`;
 
             let modelMetric: common.ModelMetric = {
-              metricId: `${model.name}.${partId}.by.${timeId}`,
+              metricId: `${model.name}.${partId}.${METRIC_ID_BY}.${timeId}`,
               filePath: join.view.filePath,
               partId: partId,
               modelId: model.name,

@@ -15,7 +15,6 @@ import {
 } from 'ag-grid-community';
 import { combineLatest, tap } from 'rxjs';
 import { debounce } from 'throttle-debounce';
-import { STORE_MODEL_PREFIX } from '~common/constants/top';
 import {
   DEFAULT_METRICS_COLUMN_NAME_WIDTH,
   DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
@@ -640,21 +639,39 @@ export class ReportComponent {
     let isShowParameters = params.data.showMetricsParameters === true;
 
     if (common.isDefined(params.data.mconfig) && isShowParameters === true) {
+      let struct = this.structQuery.getValue();
+
+      let metric = struct.metrics.find(
+        y => y.metricId === params.data.metricId
+      );
+
       let timeSpec = this.reportQuery.getValue().timeSpec;
 
       let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
 
-      let metric = this.structQuery
-        .getValue()
-        .metrics.find(y => y.metricId === params.data.metricId);
+      let timeSpecDetail = common.getTimeSpecDetail({
+        timeSpec: timeSpec,
+        weekStart: struct.weekStart
+      });
 
-      let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+      let timeFieldIdSpec =
+        metric.modelType === common.ModelTypeEnum.Malloy
+          ? timeSpecDetail === common.DetailUnitEnum.Timestamps
+            ? `${metric.timeFieldId}_ts`
+            : [
+                  common.DetailUnitEnum.WeeksSunday,
+                  common.DetailUnitEnum.WeeksMonday
+                ].indexOf(timeSpecDetail) > -1
+              ? `${metric.timeFieldId}_week`
+              : `${metric.timeFieldId}_${timeSpecDetail.slice(0, -1)}`
+          : `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
-      let extendedFilters = metric.modelId.startsWith(STORE_MODEL_PREFIX)
-        ? params.data.mconfig.extendedFilters
-        : params.data.mconfig.extendedFilters.filter(
-            filter => filter.fieldId !== timeFieldIdSpec
-          );
+      let extendedFilters =
+        metric.modelType === common.ModelTypeEnum.Store
+          ? params.data.mconfig.extendedFilters
+          : params.data.mconfig.extendedFilters.filter(
+              filter => filter.fieldId !== timeFieldIdSpec
+            );
 
       if (extendedFilters.length > 0) {
         extendedFilters.forEach(x => {

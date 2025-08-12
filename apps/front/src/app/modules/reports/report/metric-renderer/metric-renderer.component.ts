@@ -71,18 +71,32 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
   update(params: ICellRendererParams<DataRow>) {
     this.params = params;
     if (this.params.data.rowType === common.RowTypeEnum.Metric) {
-      this.metric = this.structQuery
-        .getValue()
-        .metrics.find(y => y.metricId === this.params.data.metricId);
+      let struct = this.structQuery.getValue();
+
+      this.metric = struct.metrics.find(
+        y => y.metricId === this.params.data.metricId
+      );
 
       if (this.metric.type === common.MetricTypeEnum.Model) {
         let timeSpec = this.reportQuery.getValue().timeSpec;
 
         let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
 
+        let timeSpecDetail = common.getTimeSpecDetail({
+          timeSpec: timeSpec,
+          weekStart: struct.weekStart
+        });
+
         let timeFieldIdSpec =
           this.metric.modelType === common.ModelTypeEnum.Malloy
-            ? `${this.metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`
+            ? timeSpecDetail === common.DetailUnitEnum.Timestamps
+              ? `${this.metric.timeFieldId}_ts`
+              : [
+                    common.DetailUnitEnum.WeeksSunday,
+                    common.DetailUnitEnum.WeeksMonday
+                  ].indexOf(timeSpecDetail) > -1
+                ? `${this.metric.timeFieldId}_week`
+                : `${this.metric.timeFieldId}_${timeSpecDetail.slice(0, -1)}`
             : `${this.metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
         this.parametersFilters =

@@ -115,6 +115,8 @@ export const VIEW_MODEL_PREFIX = 'view_model';
 
 export const STORE_MODEL_PREFIX = 'store_model';
 
+export const METRIC_ID_BY = 'by';
+
 export const DEFAULT_LIMIT = '500';
 
 export const MPROVE_USERS_FOLDER = 'mprove-users';
