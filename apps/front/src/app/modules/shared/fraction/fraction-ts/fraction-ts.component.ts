@@ -425,97 +425,119 @@ export class FractionTsComponent implements OnInit, OnChanges {
   fractionTsMixUnitsTempList: FractionTsMixUnitItem[] = [
     {
       label: 'day',
-      value: common.FractionTsMixUnitEnum.Day
+      value: common.FractionTsMixUnitEnum.Day,
+      timeframeLevel: 5
     },
     {
       label: 'week',
-      value: common.FractionTsMixUnitEnum.Week
+      value: common.FractionTsMixUnitEnum.Week,
+      timeframeLevel: 6
     },
     {
       label: 'month',
-      value: common.FractionTsMixUnitEnum.Month
+      value: common.FractionTsMixUnitEnum.Month,
+      timeframeLevel: 7
     },
     {
       label: 'quarter',
-      value: common.FractionTsMixUnitEnum.Quarter
+      value: common.FractionTsMixUnitEnum.Quarter,
+      timeframeLevel: 8
     },
     {
       label: 'year',
-      value: common.FractionTsMixUnitEnum.Year
+      value: common.FractionTsMixUnitEnum.Year,
+      timeframeLevel: 9
     },
     {
       label: 'hour',
-      value: common.FractionTsMixUnitEnum.Hour
+      value: common.FractionTsMixUnitEnum.Hour,
+      timeframeLevel: 4
     },
     {
       label: 'minute',
-      value: common.FractionTsMixUnitEnum.Minute
+      value: common.FractionTsMixUnitEnum.Minute,
+      timeframeLevel: 3
     },
     {
       label: 'second',
-      value: common.FractionTsMixUnitEnum.Second
+      value: common.FractionTsMixUnitEnum.Second,
+      timeframeLevel: 2
     }
   ];
 
   fractionTsMixUnitsDayOfWeekSundayList: FractionTsMixUnitItem[] = [
     {
       label: 'Sunday',
-      value: common.FractionTsMixUnitEnum.Sunday
+      value: common.FractionTsMixUnitEnum.Sunday,
+      timeframeLevel: 5
     },
     {
       label: 'Monday',
-      value: common.FractionTsMixUnitEnum.Monday
+      value: common.FractionTsMixUnitEnum.Monday,
+      timeframeLevel: 5
     },
     {
       label: 'Tuesday',
-      value: common.FractionTsMixUnitEnum.Tuesday
+      value: common.FractionTsMixUnitEnum.Tuesday,
+      timeframeLevel: 5
     },
     {
       label: 'Wednesday',
-      value: common.FractionTsMixUnitEnum.Wednesday
+      value: common.FractionTsMixUnitEnum.Wednesday,
+      timeframeLevel: 5
     },
     {
       label: 'Thursday',
-      value: common.FractionTsMixUnitEnum.Thursday
+      value: common.FractionTsMixUnitEnum.Thursday,
+      timeframeLevel: 5
     },
     {
       label: 'Friday',
-      value: common.FractionTsMixUnitEnum.Friday
+      value: common.FractionTsMixUnitEnum.Friday,
+      timeframeLevel: 5
     },
     {
       label: 'Saturday',
-      value: common.FractionTsMixUnitEnum.Saturday
+      value: common.FractionTsMixUnitEnum.Saturday,
+      timeframeLevel: 5
     }
   ];
 
   fractionTsMixUnitsDayOfWeekMondayList: FractionTsMixUnitItem[] = [
     {
       label: 'Monday',
-      value: common.FractionTsMixUnitEnum.Monday
+      value: common.FractionTsMixUnitEnum.Monday,
+      timeframeLevel: 5
     },
     {
       label: 'Tuesday',
-      value: common.FractionTsMixUnitEnum.Tuesday
+      value: common.FractionTsMixUnitEnum.Tuesday,
+      timeframeLevel: 5
     },
     {
       label: 'Wednesday',
-      value: common.FractionTsMixUnitEnum.Wednesday
+      value: common.FractionTsMixUnitEnum.Wednesday,
+      timeframeLevel: 5
     },
     {
       label: 'Thursday',
-      value: common.FractionTsMixUnitEnum.Thursday
+      value: common.FractionTsMixUnitEnum.Thursday,
+      timeframeLevel: 5
     },
     {
       label: 'Friday',
-      value: common.FractionTsMixUnitEnum.Friday
+      value: common.FractionTsMixUnitEnum.Friday,
+      timeframeLevel: 5
     },
     {
       label: 'Saturday',
-      value: common.FractionTsMixUnitEnum.Saturday
+      value: common.FractionTsMixUnitEnum.Saturday,
+      timeframeLevel: 5
     },
     {
       label: 'Sunday',
-      value: common.FractionTsMixUnitEnum.Sunday
+      value: common.FractionTsMixUnitEnum.Sunday,
+      timeframeLevel: 5
     }
   ];
 
@@ -524,35 +546,43 @@ export class FractionTsComponent implements OnInit, OnChanges {
   fractionTsUnitsFullList: FractionTsUnitItem[] = [
     {
       label: 'days',
-      value: common.FractionTsUnitEnum.Days
+      value: common.FractionTsUnitEnum.Days,
+      timeframeLevel: 5
     },
     {
       label: 'weeks',
-      value: common.FractionTsUnitEnum.Weeks
+      value: common.FractionTsUnitEnum.Weeks,
+      timeframeLevel: 6
     },
     {
       label: 'months',
-      value: common.FractionTsUnitEnum.Months
+      value: common.FractionTsUnitEnum.Months,
+      timeframeLevel: 7
     },
     {
       label: 'quarters',
-      value: common.FractionTsUnitEnum.Quarters
+      value: common.FractionTsUnitEnum.Quarters,
+      timeframeLevel: 8
     },
     {
       label: 'years',
-      value: common.FractionTsUnitEnum.Years
+      value: common.FractionTsUnitEnum.Years,
+      timeframeLevel: 9
     },
     {
       label: 'hours',
-      value: common.FractionTsUnitEnum.Hours
+      value: common.FractionTsUnitEnum.Hours,
+      timeframeLevel: 4
     },
     {
       label: 'minutes',
-      value: common.FractionTsUnitEnum.Minutes
+      value: common.FractionTsUnitEnum.Minutes,
+      timeframeLevel: 3
     },
     {
       label: 'seconds',
-      value: common.FractionTsUnitEnum.Seconds
+      value: common.FractionTsUnitEnum.Seconds,
+      timeframeLevel: 2
     }
   ];
 

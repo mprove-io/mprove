@@ -17,11 +17,13 @@ export class FractionTsMomentTypesItem {
 export class FractionTsMixUnitItem {
   label: string;
   value: common.FractionTsMixUnitEnum;
+  timeframeLevel: number;
 }
 
 export class FractionTsUnitItem {
   label: string;
   value: common.FractionTsUnitEnum;
+  timeframeLevel: number;
 }
 
 export class FractionDayOfWeekValueItem {
