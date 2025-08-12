@@ -18,6 +18,7 @@ import uFuzzy from '@leeoniya/ufuzzy';
 import { TippyDirective } from '@ngneat/helipopper';
 import { IRowNode } from 'ag-grid-community';
 import { take, tap } from 'rxjs';
+import { MALLOY_FILTER_ANY } from '~common/constants/top';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -287,6 +288,13 @@ export class RowAddFilterDialogComponent implements OnInit {
                 };
                 return newControl;
               })
+      };
+    } else if (this.model.type === common.ModelTypeEnum.Malloy) {
+      newFraction = {
+        brick: MALLOY_FILTER_ANY,
+        parentBrick: MALLOY_FILTER_ANY,
+        operator: common.FractionOperatorEnum.Or,
+        type: common.getFractionTypeForAny(field.result)
       };
     } else {
       newFraction = {

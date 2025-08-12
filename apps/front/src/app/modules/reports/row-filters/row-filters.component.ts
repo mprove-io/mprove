@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { IRowNode } from 'ag-grid-community';
-import { STORE_MODEL_PREFIX } from '~common/_index';
+import { MALLOY_FILTER_ANY } from '~common/_index';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { ReportQuery } from '~front/app/queries/report.query';
@@ -115,9 +115,7 @@ export class RowFiltersComponent {
       .getValue()
       .metrics.find(y => y.metricId === this.reportSelectedNode.data.metricId);
 
-    let isStore = metric.modelId.startsWith(STORE_MODEL_PREFIX);
-
-    if (isStore === true) {
+    if (metric.modelType === common.ModelTypeEnum.Store) {
       let store = this.modelsQuery
         .getValue()
         .models.find(m => m.modelId === metric.modelId)
@@ -223,6 +221,13 @@ export class RowFiltersComponent {
               };
               return newControl;
             })
+      };
+    } else if (metric.modelType === common.ModelTypeEnum.Malloy) {
+      newFraction = {
+        brick: MALLOY_FILTER_ANY,
+        parentBrick: MALLOY_FILTER_ANY,
+        operator: common.FractionOperatorEnum.Or,
+        type: common.getFractionTypeForAny(filterExtended.field.result)
       };
     } else {
       newFraction = {

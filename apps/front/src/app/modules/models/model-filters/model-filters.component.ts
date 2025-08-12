@@ -74,7 +74,7 @@ export class ModelFiltersComponent {
         queryOperation: {
           type: common.QueryOperationTypeEnum.WhereOrHaving,
           timezone: newMconfig.timezone,
-          fieldId: filterExtended.fieldId,
+          // fieldId: filterExtended.fieldId,
           filters: newFilters
         }
       });
@@ -242,7 +242,7 @@ export class ModelFiltersComponent {
         queryOperation: {
           type: common.QueryOperationTypeEnum.WhereOrHaving,
           timezone: newMconfig.timezone,
-          fieldId: filterExtended.fieldId,
+          // fieldId: filterExtended.fieldId,
           filters: newFilters
         }
       });
@@ -302,7 +302,7 @@ export class ModelFiltersComponent {
         queryOperation: {
           type: common.QueryOperationTypeEnum.WhereOrHaving,
           timezone: newMconfig.timezone,
-          fieldId: filterExtended.fieldId,
+          // fieldId: filterExtended.fieldId,
           filters: newFilters
         }
       });
@@ -336,7 +336,7 @@ export class ModelFiltersComponent {
         queryOperation: {
           type: common.QueryOperationTypeEnum.WhereOrHaving,
           timezone: newMconfig.timezone,
-          fieldId: filterExtended.fieldId,
+          // fieldId: filterExtended.fieldId,
           filters: newFilters
         }
       });

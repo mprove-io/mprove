@@ -537,12 +537,12 @@ export class ReportDataService {
                     timezone: timezone,
                     limit: timeColumnsLimit
                   },
-                  ...filters.map(filter => ({
+                  {
                     type: common.QueryOperationTypeEnum.WhereOrHaving,
                     timezone: timezone,
-                    fieldId: filter.fieldId,
-                    filters: [filter]
-                  }))
+                    // fieldId: filter.fieldId,
+                    filters: filters
+                  }
                 ]
               });
 

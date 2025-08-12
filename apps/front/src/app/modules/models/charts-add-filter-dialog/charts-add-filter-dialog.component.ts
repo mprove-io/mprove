@@ -259,7 +259,7 @@ export class ChartsAddFilterDialogComponent implements OnInit {
         queryOperation: {
           type: common.QueryOperationTypeEnum.WhereOrHaving,
           timezone: newMconfig.timezone,
-          fieldId: field.id,
+          // fieldId: field.id,
           filters: newFilters
         }
       });

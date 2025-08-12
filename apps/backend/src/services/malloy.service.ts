@@ -227,20 +227,6 @@ export class MalloyService {
       } else if (
         queryOperation.type === common.QueryOperationTypeEnum.WhereOrHaving
       ) {
-        if (common.isUndefined(queryOperation.fieldId)) {
-          isError = true;
-          errorMessage = `queryOperation.fieldId is not defined (QueryOperationTypeEnum.Remove)`;
-        }
-
-        let modelField = model.fields.find(
-          x => x.id === queryOperation.fieldId
-        );
-
-        if (common.isUndefined(modelField)) {
-          isError = true;
-          errorMessage = `modelField is not defined (queryOperation.fieldId: ${queryOperation.fieldId})`;
-        }
-
         segment0.operations.items
           .filter(
             (operation: ASTViewOperation) =>
@@ -252,6 +238,18 @@ export class MalloyService {
           });
 
         queryOperation.filters.forEach(filter => {
+          if (common.isUndefined(filter.fieldId)) {
+            isError = true;
+            errorMessage = `filter.fieldId is not defined (QueryOperationTypeEnum.WhereOrHaving)`;
+          }
+
+          let modelField = model.fields.find(x => x.id === filter.fieldId);
+
+          if (common.isUndefined(modelField)) {
+            isError = true;
+            errorMessage = `modelField is not defined (filter.fieldId: ${filter.fieldId})`;
+          }
+
           let anyValues = filter.fractions.filter(
             fraction => fraction.brick === MALLOY_FILTER_ANY
           );

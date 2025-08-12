@@ -167,7 +167,16 @@ export class ReportFiltersComponent {
               return newControl;
             })
       };
-    } else {
+    }
+    // else if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+    //   newFraction = {
+    //     brick: MALLOY_FILTER_ANY,
+    //     parentBrick: MALLOY_FILTER_ANY,
+    //     operator: common.FractionOperatorEnum.Or,
+    //     type: common.getFractionTypeForAny(reportField.result)
+    //   };
+    // }
+    else {
       newFraction = {
         brick: 'any',
         operator: common.FractionOperatorEnum.Or,
