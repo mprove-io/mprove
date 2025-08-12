@@ -412,16 +412,29 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       .getValue()
       .metrics.find(y => y.metricId === this.ref.data.metricId);
 
-    let restrictedFilterFieldIds = [
-      `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Year}`,
-      `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Quarter}`,
-      `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Month}`,
-      `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Week}`,
-      `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Date}`,
-      `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Hour}`,
-      `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Minute}`,
-      `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Time}`
-    ];
+    let restrictedFilterFieldIds =
+      metric.modelType === common.ModelTypeEnum.Malloy
+        ? [
+            `${metric.timeFieldId}_year`,
+            `${metric.timeFieldId}_quarter`,
+            `${metric.timeFieldId}_month`,
+            `${metric.timeFieldId}_week`,
+            `${metric.timeFieldId}_day`,
+            `${metric.timeFieldId}_hour`,
+            `${metric.timeFieldId}_minute`,
+            `${metric.timeFieldId}_second`,
+            `${metric.timeFieldId}_ts`
+          ]
+        : [
+            `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Year}`,
+            `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Quarter}`,
+            `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Month}`,
+            `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Week}`,
+            `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Date}`,
+            `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Hour}`,
+            `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Minute}`,
+            `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Time}`
+          ];
 
     this.fieldsListLoading = true;
 
