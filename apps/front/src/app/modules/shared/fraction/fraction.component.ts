@@ -6,6 +6,7 @@ export class FractionTypeItem {
   label: string;
   value: common.FractionTypeEnum;
   operator: common.FractionOperatorEnum;
+  timeframeLevel?: number;
 }
 
 export class FractionTsMomentTypesItem {
@@ -79,6 +80,7 @@ export class FractionComponent {
   @Input() isMetricsPage: boolean;
   @Input() isDisabled: boolean = false;
   @Input() fieldResult: common.FieldResultEnum | string;
+  @Input() fieldTimeframe: string;
 
   @Input() fraction: common.Fraction;
   @Input() isFirst: boolean;

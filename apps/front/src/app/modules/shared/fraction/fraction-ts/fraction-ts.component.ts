@@ -101,6 +101,10 @@ export class FractionTsComponent implements OnInit, OnChanges {
   @Input() fractionIndex: number;
   @Input() isFirst: boolean;
   @Input() isMetrics: boolean;
+  @Input() timeSpec?: common.TimeSpecEnum;
+  @Input() fieldTimeframe?: string;
+
+  fieldTimeframeLevel: number = 0;
 
   @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
 
@@ -156,177 +160,212 @@ export class FractionTsComponent implements OnInit, OnChanges {
     {
       label: 'is any value',
       value: common.FractionTypeEnum.TsIsAnyValue,
-      operator: common.FractionOperatorEnum.Or
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 0
     },
     {
       label: 'is in last',
       value: common.FractionTypeEnum.TsIsInLast,
-      operator: common.FractionOperatorEnum.Or
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 0
     },
     {
       label: 'is on Day',
       value: common.FractionTypeEnum.TsIsOnDay,
-      operator: common.FractionOperatorEnum.Or
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 5
     },
     {
       label: 'is on Week',
       value: common.FractionTypeEnum.TsIsOnWeek,
-      operator: common.FractionOperatorEnum.Or
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 6
     },
     {
       label: 'is on Month',
       value: common.FractionTypeEnum.TsIsOnMonth,
-      operator: common.FractionOperatorEnum.Or
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 7
     },
     {
       label: 'is on Quarter',
       value: common.FractionTypeEnum.TsIsOnQuarter,
-      operator: common.FractionOperatorEnum.Or
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 8
     },
     {
       label: 'is on Year',
       value: common.FractionTypeEnum.TsIsOnYear,
-      operator: common.FractionOperatorEnum.Or
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 9
     },
     {
       label: 'is on Hour',
       value: common.FractionTypeEnum.TsIsOnHour,
-      operator: common.FractionOperatorEnum.Or
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 4
     },
     {
       label: 'is on Minute',
       value: common.FractionTypeEnum.TsIsOnMinute,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is between',
-      value: common.FractionTypeEnum.TsIsBetween,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is in next',
-      value: common.FractionTypeEnum.TsIsInNext,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is after',
-      value: common.FractionTypeEnum.TsIsAfter,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is starting at',
-      value: common.FractionTypeEnum.TsIsStarting,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is beginning at',
-      value: common.FractionTypeEnum.TsIsBeginFor,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is before',
-      value: common.FractionTypeEnum.TsIsBefore,
-      operator: common.FractionOperatorEnum.Or
-    },
-    {
-      label: 'is through',
-      value: common.FractionTypeEnum.TsIsThrough,
-      operator: common.FractionOperatorEnum.Or
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 3
     },
     {
       label: 'is on Timestamp',
       value: common.FractionTypeEnum.TsIsOnTimestamp,
-      operator: common.FractionOperatorEnum.Or
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 1
+    },
+    {
+      label: 'is between',
+      value: common.FractionTypeEnum.TsIsBetween,
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 0
+    },
+    {
+      label: 'is in next',
+      value: common.FractionTypeEnum.TsIsInNext,
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 0
+    },
+    {
+      label: 'is after',
+      value: common.FractionTypeEnum.TsIsAfter,
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 0
+    },
+    {
+      label: 'is starting at',
+      value: common.FractionTypeEnum.TsIsStarting,
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 0
+    },
+    {
+      label: 'is beginning at',
+      value: common.FractionTypeEnum.TsIsBeginFor,
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 0
+    },
+    {
+      label: 'is before',
+      value: common.FractionTypeEnum.TsIsBefore,
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 0
+    },
+    {
+      label: 'is through',
+      value: common.FractionTypeEnum.TsIsThrough,
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 0
     },
     {
       label: 'is null',
       value: common.FractionTypeEnum.TsIsNull,
-      operator: common.FractionOperatorEnum.Or
+      operator: common.FractionOperatorEnum.Or,
+      timeframeLevel: 0
     },
     {
       label: 'is not in last',
       value: common.FractionTypeEnum.TsIsNotInLast,
-      operator: common.FractionOperatorEnum.And
+      operator: common.FractionOperatorEnum.And,
+      timeframeLevel: 0
     },
     {
       label: 'is not on Day',
       value: common.FractionTypeEnum.TsIsNotOnDay,
-      operator: common.FractionOperatorEnum.And
+      operator: common.FractionOperatorEnum.And,
+      timeframeLevel: 5
     },
     {
       label: 'is not on Week',
       value: common.FractionTypeEnum.TsIsNotOnWeek,
-      operator: common.FractionOperatorEnum.And
+      operator: common.FractionOperatorEnum.And,
+      timeframeLevel: 6
     },
     {
       label: 'is not on Month',
       value: common.FractionTypeEnum.TsIsNotOnMonth,
-      operator: common.FractionOperatorEnum.And
+      operator: common.FractionOperatorEnum.And,
+      timeframeLevel: 7
     },
     {
       label: 'is not on Quarter',
       value: common.FractionTypeEnum.TsIsNotOnQuarter,
-      operator: common.FractionOperatorEnum.And
+      operator: common.FractionOperatorEnum.And,
+      timeframeLevel: 8
     },
     {
       label: 'is not on Year',
       value: common.FractionTypeEnum.TsIsNotOnYear,
-      operator: common.FractionOperatorEnum.And
+      operator: common.FractionOperatorEnum.And,
+      timeframeLevel: 9
     },
     {
       label: 'is not on Hour',
       value: common.FractionTypeEnum.TsIsNotOnHour,
-      operator: common.FractionOperatorEnum.And
+      operator: common.FractionOperatorEnum.And,
+      timeframeLevel: 4
     },
     {
       label: 'is not on Minute',
       value: common.FractionTypeEnum.TsIsNotOnMinute,
-      operator: common.FractionOperatorEnum.And
+      operator: common.FractionOperatorEnum.And,
+      timeframeLevel: 3
+    },
+    {
+      label: 'is not on Timestamp',
+      value: common.FractionTypeEnum.TsIsNotOnTimestamp,
+      operator: common.FractionOperatorEnum.And,
+      timeframeLevel: 1
     },
     {
       label: 'is not between',
       value: common.FractionTypeEnum.TsIsNotBetween,
-      operator: common.FractionOperatorEnum.And
+      operator: common.FractionOperatorEnum.And,
+      timeframeLevel: 0
     },
     {
       label: 'is not in next',
       value: common.FractionTypeEnum.TsIsNotInNext,
-      operator: common.FractionOperatorEnum.And
+      operator: common.FractionOperatorEnum.And,
+      timeframeLevel: 0
     },
     // {
     //   label: 'is not after',
     //   value: common.FractionTypeEnum.TsIsNotAfter, // is through
-    //   operator: common.FractionOperatorEnum.And
+    //   operator: common.FractionOperatorEnum.And,
+    //   level: 0
     // },
     // {
     //   label: 'is not starting at',
     //   value: common.FractionTypeEnum.TsIsNotStarting, // is before // not supported (malloy issue)
-    //   operator: common.FractionOperatorEnum.And
+    //   operator: common.FractionOperatorEnum.And,
+    //   level: 0
     // },
     {
       label: 'is not beginning at',
       value: common.FractionTypeEnum.TsIsNotBeginFor,
-      operator: common.FractionOperatorEnum.And
+      operator: common.FractionOperatorEnum.And,
+      timeframeLevel: 0
     },
     // {
     //   label: 'is not before',
     //   value: common.FractionTypeEnum.TsIsNotBefore, // is starting
-    //   operator: common.FractionOperatorEnum.And
+    //   operator: common.FractionOperatorEnum.And,
+    //   level: 0
     // },
     // {
     //   label: 'is not through',
     //   value: common.FractionTypeEnum.TsIsNotThrough, // is after // not supported (malloy issue)
-    //   operator: common.FractionOperatorEnum.And
+    //   operator: common.FractionOperatorEnum.And,
+    //   level: 0
     // },
-    {
-      label: 'is not on Timestamp',
-      value: common.FractionTypeEnum.TsIsNotOnTimestamp,
-      operator: common.FractionOperatorEnum.And
-    },
     {
       label: 'is not null',
       value: common.FractionTypeEnum.TsIsNotNull,
-      operator: common.FractionOperatorEnum.And
+      operator: common.FractionOperatorEnum.And,
+      timeframeLevel: 0
     }
   ];
 
@@ -725,6 +764,30 @@ export class FractionTsComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (common.isDefined(this.fieldTimeframe)) {
+      this.timeSpec = (this.fieldTimeframe + 's') as common.TimeSpecEnum;
+    }
+
+    this.fieldTimeframeLevel = common.isUndefined(this.timeSpec)
+      ? 0
+      : this.timeSpec === common.TimeSpecEnum.Timestamps
+        ? 1
+        : this.timeSpec === common.TimeSpecEnum.Minutes
+          ? 3
+          : this.timeSpec === common.TimeSpecEnum.Hours
+            ? 4
+            : this.timeSpec === common.TimeSpecEnum.Days
+              ? 5
+              : this.timeSpec === common.TimeSpecEnum.Weeks
+                ? 6
+                : this.timeSpec === common.TimeSpecEnum.Months
+                  ? 7
+                  : this.timeSpec === common.TimeSpecEnum.Quarters
+                    ? 8
+                    : this.timeSpec === common.TimeSpecEnum.Years
+                      ? 9
+                      : 0;
+
     if (common.isDefined(changes.fraction)) {
       if (
         [

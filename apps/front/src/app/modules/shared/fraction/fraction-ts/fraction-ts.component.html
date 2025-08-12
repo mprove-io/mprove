@@ -48,14 +48,29 @@
         bindValue="value"
       >
         <ng-template ng-label-tmp let-item="item">
-          <div class="ml-1 truncate">{{ item.label }}</div>
+          <div
+            class="flex flex-row"
+            [ngClass]="{
+              'text-yellow-700': item.operator === fractionOperatorEnum.And,
+              'text-s400':
+                item.operator !== fractionOperatorEnum.And &&
+                item.timeframeLevel !== 0 &&
+                item.timeframeLevel < fieldTimeframeLevel
+            }"
+          >
+            <div class="ml-1 truncate">{{ item.label }}</div>
+          </div>
         </ng-template>
 
         <ng-template ng-option-tmp let-item="item">
           <div
             class="flex flex-row"
             [ngClass]="{
-              'text-s400': item.operator === fractionOperatorEnum.And
+              'text-yellow-700': item.operator === fractionOperatorEnum.And,
+              'text-s400':
+                item.operator !== fractionOperatorEnum.And &&
+                item.timeframeLevel !== 0 &&
+                item.timeframeLevel < fieldTimeframeLevel
             }"
           >
             <div class="ml-1" *ngIf="isMetrics === false"
