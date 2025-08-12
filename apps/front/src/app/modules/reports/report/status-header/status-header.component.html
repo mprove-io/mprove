@@ -1,31 +1,33 @@
-<div
-  class="custom-header flex h-full flex-col items-center justify-center font-semibold"
->
-  <div class="ml-[6px] flex">
-    <m-chart-icon
+<div class="custom-header flex h-full flex-row items-center font-semibold">
+  <div class="ml-[12px] flex" *ngIf="isRunning === false">
+    <!-- <m-chart-icon
       class="mb-[2px] ml-5 flex cursor-pointer"
       [ngClass]="{
         'text-s500': showMiniCharts === true,
         'text-s400': showMiniCharts === false
       }"
       (click)="toggleShowMiniCharts()"
-    ></m-chart-icon>
+    ></m-chart-icon> -->
+
+    <m-right-panel-icon
+      class="text-s500 flex-shrink-0 cursor-pointer"
+      (click)="toggleShowMiniCharts()"
+      [isFilled]="showMiniCharts === true"
+    ></m-right-panel-icon>
   </div>
 
-  <div class="flex h-5">
-    <div *ngIf="isRunning === true" class="relative flex w-full">
-      <ngx-spinner
-        [name]="spinnerName"
-        color="#0084d1"
-        bdColor="#00000000"
-        size="default"
-        type="ball-pulse"
-        [fullScreen]="false"
-        [disableAnimation]="true"
-        [zIndex]="99998"
-      >
-      </ngx-spinner>
-    </div>
+  <div *ngIf="isRunning === true" class="relative ml-[25px] w-9">
+    <ngx-spinner
+      [name]="spinnerName"
+      color="#0084d1"
+      bdColor="#00000000"
+      size="default"
+      type="ball-pulse"
+      [fullScreen]="false"
+      [disableAnimation]="true"
+      [zIndex]="99998"
+    >
+    </ngx-spinner>
   </div>
 </div>
 
