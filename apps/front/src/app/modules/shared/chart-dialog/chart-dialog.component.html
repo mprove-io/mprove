@@ -62,15 +62,50 @@
                 *ngIf="item.partLabel === 'Empty' && item.topLabel === 'Empty'"
               ></div>
 
-              <m-field-label
-                *ngIf="item.partLabel !== 'Empty' || item.topLabel !== 'Empty'"
-                [column]="item"
-                class="ml-1 flex"
-              ></m-field-label>
+              <div class="ml-1 flex flex-row items-center">
+                <m-field-result
+                  *ngIf="
+                    item.partLabel !== 'Empty' || item.topLabel !== 'Empty'
+                  "
+                  class="h-5 w-5"
+                  [size]="2"
+                  [fieldClass]="item.fieldClass"
+                  [result]="item.result"
+                ></m-field-result>
+
+                <m-field-label
+                  *ngIf="
+                    item.partLabel !== 'Empty' || item.topLabel !== 'Empty'
+                  "
+                  [column]="item"
+                  class="ml-3 flex"
+                ></m-field-label>
+              </div>
             </ng-template>
 
             <ng-template ng-option-tmp let-item="item">
-              <m-field-label [column]="item" class="ml-1 flex"></m-field-label>
+              <div class="ml-1 flex flex-row items-center">
+                <m-field-result
+                  *ngIf="
+                    item.partLabel !== 'Empty' || item.topLabel !== 'Empty'
+                  "
+                  class="h-5 w-5"
+                  [size]="2"
+                  [fieldClass]="item.fieldClass"
+                  [result]="item.result"
+                ></m-field-result>
+
+                <m-field-label
+                  [column]="item"
+                  class="flex"
+                  [ngClass]="{
+                    'ml-[32px]':
+                      item.partLabel === 'Empty' && item.topLabel === 'Empty',
+                    'ml-3':
+                      item.partLabel !== 'Empty' || item.topLabel !== 'Empty'
+                  }"
+                ></m-field-label>
+              </div>
             </ng-template>
           </ng-select>
         </form>
