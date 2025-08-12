@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { tap } from 'rxjs';
-import { STORE_MODEL_PREFIX } from '~common/_index';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { ReportQuery } from '~front/app/queries/report.query';
@@ -81,15 +80,17 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
 
         let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
 
-        let timeFieldIdSpec = `${this.metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+        let timeFieldIdSpec =
+          this.metric.modelType === common.ModelTypeEnum.Malloy
+            ? `${this.metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`
+            : `${this.metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
-        this.parametersFilters = this.metric.modelId.startsWith(
-          STORE_MODEL_PREFIX
-        )
-          ? this.params.data.mconfig.extendedFilters
-          : this.params.data.mconfig.extendedFilters.filter(
-              filter => filter.fieldId !== timeFieldIdSpec
-            );
+        this.parametersFilters =
+          this.metric.modelType === common.ModelTypeEnum.Store
+            ? this.params.data.mconfig.extendedFilters
+            : this.params.data.mconfig.extendedFilters.filter(
+                filter => filter.fieldId !== timeFieldIdSpec
+              );
 
         let listen: { [a: string]: string } = {};
 

@@ -308,44 +308,10 @@ export class ReportDataService {
 
             timeFieldIdSpec = storeField?.name;
           } else if (model.type === common.ModelTypeEnum.Malloy) {
-            // console.log('metric');
-            // console.log(metric);
-
             let timeSpecDetail = common.getTimeSpecDetail({
               timeSpec: timeSpec,
               weekStart: struct.weekStart
             });
-
-            // console.log('timeSpecDetail');
-            // console.log(timeSpecDetail);
-
-            // {
-            //   "id": "orders.created_at_day",
-            //   "malloyFieldName": "created_at_day",
-            //   "malloyFieldPath": [
-            //       "orders"
-            //   ],
-            //   "malloyTags": [],
-            //   "mproveTags": [
-            //       {
-            //           "key": "field_group",
-            //           "value": "Created at"
-            //       },
-            //       {
-            //           "key": "build_metrics"
-            //       }
-            //   ],
-            //   "hidden": false,
-            //   "required": false,
-            //   "label": "Created at Day",
-            //   "fieldClass": "dimension",
-            //   "result": "ts",
-            //   "buildMetrics": true,
-            //   "timeframe": "day",
-            //   "sqlName": "orders__created_at_day",
-            //   "topId": "orders",
-            //   "topLabel": "Orders"
-            // }
 
             let mField = model.fields.find(field =>
               timeSpecDetail === common.DetailUnitEnum.Timestamps
@@ -364,9 +330,6 @@ export class ReportDataService {
             );
 
             timeFieldIdSpec = mField?.id;
-
-            // console.log('timeFieldIdSpec');
-            // console.log(timeFieldIdSpec);
           } else if (model.type === common.ModelTypeEnum.SQL) {
             let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
 
