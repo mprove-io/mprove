@@ -48,12 +48,19 @@ export const BLOCKML_EXT_LIST: common.FileExtensionEnum[] = [
 export const RESULTS_LIST: common.FieldResultEnum[] = [
   common.FieldResultEnum.String,
   common.FieldResultEnum.Number,
-  common.FieldResultEnum.Yesno,
+  common.FieldResultEnum.Boolean,
   common.FieldResultEnum.Ts,
-  common.FieldResultEnum.QuarterOfYear,
-  common.FieldResultEnum.MonthName,
-  common.FieldResultEnum.DayOfWeek,
-  common.FieldResultEnum.DayOfWeekIndex
+  common.FieldResultEnum.Date
+  //
+  // common.FieldResultEnum.Array,
+  // common.FieldResultEnum.Record,
+  // common.FieldResultEnum.Json,
+  // common.FieldResultEnum.SqlNative,
+  //
+  // common.FieldResultEnum.DayOfWeek,
+  // common.FieldResultEnum.DayOfWeekIndex,
+  // common.FieldResultEnum.MonthName,
+  // common.FieldResultEnum.QuarterOfYear,
 ];
 
 export const APP_SPINNER_NAME = 'app';

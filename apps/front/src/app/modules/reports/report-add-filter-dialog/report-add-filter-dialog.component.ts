@@ -84,11 +84,11 @@ export class ReportAddFilterDialogComponent implements OnInit {
   storeFiltersSpinnerName = 'reportAddStoreFiltersSpinnerName';
   suggestFieldsSpinnerName = 'reportAddSuggestFieldsSpinnerName';
 
-  sqlResultsList = constants.RESULTS_LIST;
+  malloyResultsList = constants.RESULTS_LIST;
   storeResultsList: string[] = [];
 
   modelTypeStore = common.ModelTypeEnum.Store;
-  modelTypeSql = common.ModelTypeEnum.SQL;
+  modelTypeMalloy = common.ModelTypeEnum.Malloy;
   storeFilterForFilter = common.StoreFilterForEnum.Filter;
   storeFilterForResult = common.StoreFilterForEnum.Result;
   fieldResultString = common.FieldResultEnum.String;
@@ -111,8 +111,8 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
   modelTypesList: SelectItem<common.ModelTypeEnum>[] = [
     {
-      label: 'SQL',
-      value: common.ModelTypeEnum.SQL
+      label: 'Malloy',
+      value: common.ModelTypeEnum.Malloy
     },
     {
       label: 'Store',
@@ -216,7 +216,9 @@ export class ReportAddFilterDialogComponent implements OnInit {
       suggestField: [this.emptySuggestField]
     });
 
-    this.modelTypeForm.controls['modelType'].setValue(common.ModelTypeEnum.SQL);
+    this.modelTypeForm.controls['modelType'].setValue(
+      common.ModelTypeEnum.Malloy
+    );
 
     setTimeout(() => {
       if (

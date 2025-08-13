@@ -40,7 +40,7 @@ export class ModelsService {
       // 'modelFullId'
       structId: modelsTable.structId,
       modelId: modelsTable.modelId,
-      modelType: modelsTable.type,
+      type: modelsTable.type,
       // isStoreModel: modelsTable.isStoreModel,
       connectionId: modelsTable.connectionId,
       filePath: modelsTable.filePath,

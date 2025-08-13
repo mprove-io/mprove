@@ -85,11 +85,11 @@ export class DashboardAddFilterDialogComponent implements OnInit {
   storeFiltersSpinnerName = 'dashboardAddStoreFiltersSpinnerName';
   suggestFieldsSpinnerName = 'dashboardAddSuggestFieldsSpinnerName';
 
-  sqlResultsList = constants.RESULTS_LIST;
+  malloyResultsList = constants.RESULTS_LIST;
   storeResultsList: string[] = [];
 
   modelTypeStore = common.ModelTypeEnum.Store;
-  modelTypeSql = common.ModelTypeEnum.SQL;
+  modelTypeMalloy = common.ModelTypeEnum.Malloy;
   storeFilterForFilter = common.StoreFilterForEnum.Filter;
   storeFilterForResult = common.StoreFilterForEnum.Result;
   fieldResultString = common.FieldResultEnum.String;
