@@ -187,24 +187,15 @@ export class MainTableComponent {
 
     let fields: common.ModelField[] = this.modelQuery.getValue().fields;
 
-    let { queryOperationType, sortFieldId, desc } =
-      common.sortFieldsOnSelectChange({
-        mconfig: newMconfig,
-        selectFieldId: fieldId,
-        modelFields: fields,
-        mconfigFields: this.mconfig.fields
-      });
-
-    // if (this.model.type === common.ModelTypeEnum.Malloy) {
-    //   let queryOperation: common.QueryOperation = {
-    //     type: queryOperationType,
-    //     fieldId: node.data.id,
-    //     sortFieldId: sortFieldId,
-    //     desc: desc,
-    //     timezone: newMconfig.timezone
-    //   };
-
     if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
+      let { queryOperationType, sortFieldId, desc } =
+        common.sortFieldsOnSelectChange({
+          mconfig: newMconfig,
+          selectFieldId: fieldId,
+          modelFields: fields,
+          mconfigFields: this.mconfig.fields
+        });
+
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,

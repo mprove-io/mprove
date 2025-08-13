@@ -22,6 +22,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
+import { MalloyService } from '~backend/services/malloy.service';
 import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
@@ -46,6 +47,7 @@ export class CreateTempMconfigAndQueryController {
     private structsService: StructsService,
     private bridgesService: BridgesService,
     private envsService: EnvsService,
+    private malloyService: MalloyService,
     private wrapToEntService: WrapToEntService,
     private wrapToApiService: WrapToApiService,
     private mconfigsService: MconfigsService,
@@ -72,7 +74,8 @@ export class CreateTempMconfigAndQueryController {
       branchId,
       envId,
       cellMetricsStartDateMs,
-      cellMetricsEndDateMs
+      cellMetricsEndDateMs,
+      queryOperation
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
@@ -165,6 +168,19 @@ export class CreateTempMconfigAndQueryController {
       newMconfig = mqe.newMconfig;
       newQuery = mqe.newQuery;
       isError = mqe.isError;
+    } else if (model.type === common.ModelTypeEnum.Malloy) {
+      let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
+        projectId: projectId,
+        envId: envId,
+        structId: struct.structId,
+        model: model,
+        mconfig: mconfig,
+        queryOperations: [queryOperation]
+      });
+
+      isError = editMalloyQueryResult.isError;
+      newMconfig = editMalloyQueryResult.newMconfig;
+      newQuery = editMalloyQueryResult.newQuery;
     } else {
       let { apiEnv, connectionsWithFallback } =
         await this.envsService.getApiEnvConnectionsWithFallback({

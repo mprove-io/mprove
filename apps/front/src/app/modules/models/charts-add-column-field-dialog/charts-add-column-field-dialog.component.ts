@@ -100,15 +100,15 @@ export class ChartsAddColumnFieldDialogComponent implements OnInit {
 
     let newMconfig = this.structService.makeMconfig();
 
-    let { queryOperationType, sortFieldId, desc } =
-      common.sortFieldsOnSelectChange({
-        mconfig: newMconfig,
-        selectFieldId: this.newColumnFieldId,
-        modelFields: this.fields,
-        mconfigFields: newMconfig.fields
-      });
-
     if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+      let { queryOperationType, sortFieldId, desc } =
+        common.sortFieldsOnSelectChange({
+          mconfig: newMconfig,
+          selectFieldId: this.newColumnFieldId,
+          modelFields: this.fields,
+          mconfigFields: newMconfig.fields
+        });
+
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,

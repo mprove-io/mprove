@@ -27,6 +27,11 @@ export class ToBackendCreateTempMconfigAndQueryRequestPayload {
   mconfig: common.Mconfig;
 
   @IsOptional()
+  @ValidateNested()
+  @Type(() => common.QueryOperation)
+  queryOperation: common.QueryOperation;
+
+  @IsOptional()
   @IsNumber()
   cellMetricsStartDateMs: number;
 

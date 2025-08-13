@@ -504,6 +504,10 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   groupMetricByChange() {
     (document.activeElement as HTMLElement).blur();
 
+    let metric = this.structQuery
+      .getValue()
+      .metrics.find(y => y.metricId === this.ref.data.metricId);
+
     let nav = this.navQuery.getValue();
 
     let groupByFieldId = this.groupByFieldForm.controls['groupByField'].value;
@@ -521,22 +525,42 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         serverTs: 1
       });
 
-      newMconfig.select = [...newMconfig.select, groupByFieldId];
+      let queryOperation: common.QueryOperation;
 
-      newMconfig = common.setChartTitleOnSelectChange({
-        mconfig: newMconfig,
-        fields: this.model.fields
-      });
+      if (metric.modelType === common.ModelTypeEnum.Malloy) {
+        let { queryOperationType, sortFieldId, desc } =
+          common.sortFieldsOnSelectChange({
+            mconfig: newMconfig,
+            selectFieldId: groupByFieldId,
+            modelFields: this.model.fields,
+            mconfigFields: this.emptyGroupMconfig.fields
+          });
 
-      newMconfig = common.setChartFields({
-        mconfig: newMconfig,
-        fields: this.model.fields
-      });
+        queryOperation = {
+          type: queryOperationType,
+          fieldId: groupByFieldId,
+          sortFieldId: sortFieldId,
+          desc: desc,
+          timezone: newMconfig.timezone
+        };
+      } else {
+        newMconfig.select = [...newMconfig.select, groupByFieldId];
 
-      newMconfig = common.sortChartFieldsOnSelectChange({
-        mconfig: newMconfig,
-        fields: this.model.fields
-      });
+        newMconfig = common.setChartTitleOnSelectChange({
+          mconfig: newMconfig,
+          fields: this.model.fields
+        });
+
+        newMconfig = common.setChartFields({
+          mconfig: newMconfig,
+          fields: this.model.fields
+        });
+
+        newMconfig = common.sortChartFieldsOnSelectChange({
+          mconfig: newMconfig,
+          fields: this.model.fields
+        });
+      }
 
       let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload =
         {
@@ -545,6 +569,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
           branchId: nav.branchId,
           envId: nav.envId,
           mconfig: newMconfig,
+          queryOperation: queryOperation,
           cellMetricsStartDateMs: undefined,
           cellMetricsEndDateMs: undefined
         };
