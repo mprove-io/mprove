@@ -80,19 +80,19 @@ export function getMalloyFiltersFractions(item: {
           ? getMalloyFilterStringFractions({
               parentBrick: parentBrick,
               parsed: parsedFilter.parsed
-            })
+            }).fractions
           : field.result === common.FieldResultEnum.Boolean &&
               parsedFilter.kind === 'boolean'
             ? getMalloyFilterBooleanFractions({
                 parentBrick: parentBrick,
                 parsed: parsedFilter.parsed
-              })
+              }).fractions
             : field.result === common.FieldResultEnum.Number &&
                 parsedFilter.kind === 'number'
               ? getMalloyFilterNumberFractions({
                   parentBrick: parentBrick,
                   parsed: parsedFilter.parsed
-                })
+                }).fractions
               : [
                     common.FieldResultEnum.Ts,
                     common.FieldResultEnum.Date

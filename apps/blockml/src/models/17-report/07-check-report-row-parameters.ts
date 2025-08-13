@@ -5,6 +5,7 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
 import { STORE_MODEL_PREFIX } from '~common/_index';
+import { bricksToFractions } from '~node-common/functions/bricks-to-fractions';
 
 let func = common.FuncEnum.CheckReportRowParameters;
 
@@ -14,6 +15,7 @@ export function checkReportRowParameters(
     reports: common.FileReport[];
     metrics: common.ModelMetric[];
     models: common.FileModel[];
+    apiModels: common.Model[];
     stores: common.FileStore[];
     errors: BmError[];
     structId: string;
@@ -26,6 +28,7 @@ export function checkReportRowParameters(
     structId,
     metrics,
     models,
+    apiModels,
     stores,
     caseSensitiveStringFilters
   } = item;
@@ -642,19 +645,20 @@ export function checkReportRowParameters(
               }
 
               if (metric?.modelType === common.ModelTypeEnum.Malloy) {
-                let model = models.find(y => y.name === metric.modelId);
+                let apiModel = item.apiModels.find(
+                  y => y.modelId === metric.modelId
+                );
 
-                let reg =
-                  common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+                let modelField = apiModel.fields.find(x => x.id === p.apply_to);
 
-                let r = reg.exec(p.apply_to);
-
-                if (common.isUndefined(r)) {
+                if (common.isUndefined(modelField)) {
                   item.errors.push(
                     new BmError({
-                      title: common.ErTitleEnum.APPLY_TO_WRONG_REFERENCE,
+                      title:
+                        common.ErTitleEnum.APPLY_TO_REFS_MISSING_MODEL_FIELD,
                       message:
-                        'row apply_to must be in form "alias.field_name"',
+                        `"${p.apply_to}" references missing or not valid field ` +
+                        `of model "${apiModel.modelId}"`,
                       lines: [
                         {
                           line: p.apply_to_line_num,
@@ -667,84 +671,7 @@ export function checkReportRowParameters(
                   return;
                 }
 
-                let asName = r[1];
-                let fieldName = r[2];
-
-                if (asName === common.MF) {
-                  let modelField = model.fields.find(
-                    mField => mField.name === fieldName
-                  );
-
-                  if (common.isUndefined(modelField)) {
-                    item.errors.push(
-                      new BmError({
-                        title:
-                          common.ErTitleEnum.APPLY_TO_REFS_MISSING_MODEL_FIELD,
-                        message:
-                          `"${p.apply_to}" references missing or not valid field ` +
-                          `"${fieldName}" of model "${model.name}" fields section`,
-                        lines: [
-                          {
-                            line: p.apply_to_line_num,
-                            name: x.fileName,
-                            path: x.filePath
-                          }
-                        ]
-                      })
-                    );
-                    return;
-                  }
-
-                  p.notStoreApplyToResult = modelField.result;
-                } else {
-                  let join = model.joins.find(j => j.as === asName);
-
-                  if (common.isUndefined(join)) {
-                    item.errors.push(
-                      new BmError({
-                        title: common.ErTitleEnum.APPLY_TO_REFS_MISSING_ALIAS,
-                        message:
-                          `"${p.apply_to}" references missing alias ` +
-                          `"${asName}" of model "${model.name}" joins section`,
-                        lines: [
-                          {
-                            line: p.apply_to_line_num,
-                            name: x.fileName,
-                            path: x.filePath
-                          }
-                        ]
-                      })
-                    );
-                    return;
-                  }
-
-                  let viewField = join.view.fields.find(
-                    vField => vField.name === fieldName
-                  );
-
-                  if (common.isUndefined(viewField)) {
-                    item.errors.push(
-                      new BmError({
-                        title:
-                          common.ErTitleEnum.APPLY_TO_REFS_MISSING_VIEW_FIELD,
-                        message:
-                          `"${p.apply_to}" references missing or not valid field ` +
-                          `"${fieldName}" of view "${join.view.name}". ` +
-                          `View has "${asName}" alias in "${model.name}" model.`,
-                        lines: [
-                          {
-                            line: p.apply_to_line_num,
-                            name: x.fileName,
-                            path: x.filePath
-                          }
-                        ]
-                      })
-                    );
-                    return;
-                  }
-
-                  p.notStoreApplyToResult = viewField.result;
-                }
+                p.notStoreApplyToResult = modelField.result;
 
                 if (
                   common.isDefined(p.listen) &&
@@ -771,14 +698,7 @@ export function checkReportRowParameters(
                   return;
                 }
 
-                let pResult =
-                  asName === common.MF
-                    ? model.fields.find(mField => mField.name === fieldName)
-                        .result
-                    : model.joins
-                        .find(j => j.as === asName)
-                        .view.fields.find(vField => vField.name === fieldName)
-                        .result;
+                let pResult = modelField.result;
 
                 if (common.isDefined(p.conditions)) {
                   if (p.conditions.length === 0) {
@@ -798,10 +718,15 @@ export function checkReportRowParameters(
                     return;
                   }
 
-                  let pf = barSpecial.processFilter({
-                    caseSensitiveStringFilters: caseSensitiveStringFilters,
+                  let pf = bricksToFractions({
                     filterBricks: p.conditions,
-                    result: pResult
+                    result: pResult,
+                    getTimeRange: false
+                    // timezone: timezone,
+                    // weekStart: weekStart,
+                    // timeSpec: timeSpec
+                    // caseSensitiveStringFilters: caseSensitiveStringFilters,
+                    // fractions: fractions,
                   });
 
                   if (pf.valid === 0) {

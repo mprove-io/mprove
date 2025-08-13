@@ -786,6 +786,7 @@ export class RebuildStructService {
         reports: reports,
         metrics: metrics,
         models: models,
+        apiModels: apiModels,
         stores: stores,
         structId: item.structId,
         caseSensitiveStringFilters: common.toBooleanFromLowercaseString(

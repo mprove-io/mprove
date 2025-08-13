@@ -1,5 +1,18 @@
-import { TemporalFilterExpression } from '@malloydata/malloy-filter';
+import {
+  BooleanFilter,
+  BooleanFilterExpression,
+  NumberFilter,
+  NumberFilterExpression,
+  StringFilter,
+  StringFilterExpression,
+  TemporalFilter,
+  TemporalFilterExpression
+} from '@malloydata/malloy-filter';
+import { MALLOY_FILTER_ANY } from '~common/_index';
 import { common } from '~node-common/barrels/common';
+import { getMalloyFilterBooleanFractions } from './get-malloy-filter-boolean-fractions';
+import { getMalloyFilterNumberFractions } from './get-malloy-filter-number-fractions';
+import { getMalloyFilterStringFractions } from './get-malloy-filter-string-fractions';
 import { getMalloyFilterTsFractions } from './get-malloy-filter-ts-fractions';
 
 export function bricksToFractions(item: {
@@ -46,45 +59,88 @@ export function bricksToFractions(item: {
   let rangeStart: number;
   let rangeEnd: number;
 
-  // console.log('filterBricks');
-  // console.log(filterBricks);
-
   let answerError: { valid: number; brick?: string };
 
   let resultFractions: common.Fraction[] = [];
 
   filterBricks.forEach(brick => {
-    let brickPart = brick.slice(2, -1);
+    if (common.isDefined(answerError)) {
+      return;
+    }
 
-    // console.log('brickPart');
-    // console.log(brickPart);
+    let parseResult;
 
     if (
-      result === common.FieldResultEnum.Ts ||
-      result === common.FieldResultEnum.Date
+      brick.length < 3 ||
+      brick[0] !== 'f' ||
+      brick[1] !== '`' ||
+      brick[brick.length - 1] !== '`'
     ) {
-      let parseResult = TemporalFilterExpression.parse(brickPart);
+      answerError = { valid: 0, brick: brick };
+      return;
+    }
 
-      // console.log('parseResult');
-      // console.log(parseResult);
+    if (brick !== MALLOY_FILTER_ANY) {
+      let brickPart = brick.slice(2, -1);
 
-      if (common.isUndefined(parseResult.parsed)) {
-        answerError = { valid: 0, brick: brick };
-      } else {
-        let result = getMalloyFilterTsFractions({
-          parentBrick: brick,
-          parsed: parseResult.parsed,
-          isGetTimeRange: true,
-          timezone: timezone,
-          weekStart: weekStart,
-          timeSpec: timeSpec
-        });
+      parseResult =
+        result === common.FieldResultEnum.Ts ||
+        result === common.FieldResultEnum.Date
+          ? TemporalFilterExpression.parse(brickPart)
+          : result === common.FieldResultEnum.String
+            ? StringFilterExpression.parse(brickPart)
+            : result === common.FieldResultEnum.Number
+              ? NumberFilterExpression.parse(brickPart)
+              : result === common.FieldResultEnum.Boolean
+                ? BooleanFilterExpression.parse(brickPart)
+                : undefined;
+    }
 
-        rangeStart = result.rangeStart;
-        rangeEnd = result.rangeEnd;
+    if (
+      brick !== MALLOY_FILTER_ANY &&
+      common.isUndefined(parseResult?.parsed)
+    ) {
+      answerError = { valid: 0, brick: brick };
+      return;
+    } else {
+      let rs: {
+        fractions: common.Fraction[];
+        rangeStart?: number;
+        rangeEnd?: number;
+      } =
+        result === common.FieldResultEnum.Ts ||
+        result === common.FieldResultEnum.Date
+          ? getMalloyFilterTsFractions({
+              parentBrick: brick,
+              parsed: parseResult?.parsed as TemporalFilter,
+              isGetTimeRange: getTimeRange,
+              timezone: timezone,
+              weekStart: weekStart,
+              timeSpec: timeSpec
+            })
+          : result === common.FieldResultEnum.String
+            ? getMalloyFilterStringFractions({
+                parentBrick: brick,
+                parsed: parseResult?.parsed as StringFilter
+              })
+            : result === common.FieldResultEnum.Number
+              ? getMalloyFilterNumberFractions({
+                  parentBrick: brick,
+                  parsed: parseResult?.parsed as NumberFilter
+                })
+              : result === common.FieldResultEnum.Boolean
+                ? getMalloyFilterBooleanFractions({
+                    parentBrick: brick,
+                    parsed: parseResult?.parsed as BooleanFilter
+                  })
+                : undefined;
 
-        resultFractions = [...resultFractions, ...result.fractions];
+      if (getTimeRange === true) {
+        rangeStart = rs.rangeStart;
+        rangeEnd = rs.rangeEnd;
       }
+
+      resultFractions = [...resultFractions, ...rs.fractions];
     }
   });
 
@@ -92,7 +148,9 @@ export function bricksToFractions(item: {
     return answerError;
   }
 
-  fractions.push(...resultFractions);
+  if (common.isDefined(fractions)) {
+    fractions.push(...resultFractions);
+  }
 
   if (getTimeRange === true) {
     return {

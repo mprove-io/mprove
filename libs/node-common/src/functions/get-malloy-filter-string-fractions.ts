@@ -164,5 +164,5 @@ export function getMalloyFilterStringFractions(item: {
     }
   });
 
-  return fractions;
+  return { fractions: fractions };
 }

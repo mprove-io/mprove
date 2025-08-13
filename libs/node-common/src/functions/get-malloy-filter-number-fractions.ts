@@ -189,5 +189,5 @@ export function getMalloyFilterNumberFractions(item: {
     }
   });
 
-  return fractions;
+  return { fractions: fractions };
 }

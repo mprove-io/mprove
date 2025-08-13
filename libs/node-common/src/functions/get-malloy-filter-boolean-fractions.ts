@@ -89,5 +89,5 @@ export function getMalloyFilterBooleanFractions(item: {
     }
   });
 
-  return fractions;
+  return { fractions: fractions };
 }
