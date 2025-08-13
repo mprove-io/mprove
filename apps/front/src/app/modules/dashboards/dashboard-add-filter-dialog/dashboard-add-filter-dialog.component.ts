@@ -21,7 +21,11 @@ import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { FractionSubTypeOption, SuggestField } from '~common/_index';
+import {
+  FractionSubTypeOption,
+  MALLOY_FILTER_ANY,
+  SuggestField
+} from '~common/_index';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DashboardService } from '~front/app/services/dashboard.service';
@@ -112,8 +116,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   modelTypesList: SelectItem<common.ModelTypeEnum>[] = [
     {
-      label: 'SQL',
-      value: common.ModelTypeEnum.SQL
+      label: 'Malloy',
+      value: common.ModelTypeEnum.Malloy
     },
     {
       label: 'Store',
@@ -218,7 +222,9 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       suggestField: [this.emptySuggestField]
     });
 
-    this.modelTypeForm.controls['modelType'].setValue(common.ModelTypeEnum.SQL);
+    this.modelTypeForm.controls['modelType'].setValue(
+      common.ModelTypeEnum.Malloy
+    );
 
     setTimeout(() => {
       if (
@@ -675,6 +681,18 @@ export class DashboardAddFilterDialogComponent implements OnInit {
             : undefined,
         controls: controls
       };
+    } else if (
+      this.modelTypeForm.controls['modelType'].value ===
+      common.ModelTypeEnum.Malloy
+    ) {
+      fraction = {
+        brick: MALLOY_FILTER_ANY,
+        parentBrick: MALLOY_FILTER_ANY,
+        operator: common.FractionOperatorEnum.Or,
+        type: common.getFractionTypeForAny(
+          this.fieldResultForm.controls['fieldResult'].value
+        )
+      };
     } else {
       fraction = {
         brick: 'any',
@@ -715,7 +733,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
           : undefined,
       result:
         this.modelTypeForm.controls['modelType'].value ===
-        common.ModelTypeEnum.SQL
+        common.ModelTypeEnum.Malloy
           ? this.fieldResultForm.controls['fieldResult'].value
           : undefined,
       suggestModelDimension: common.isDefined(suggestField?.modelFieldRef)
