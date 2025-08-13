@@ -341,7 +341,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateChartResponse) => {
+        tap((resp: apiToBackend.ToBackendSaveCreateChartResponse) => {
           if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
             let newChart = resp.payload.chart;
 

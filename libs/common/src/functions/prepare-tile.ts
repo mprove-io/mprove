@@ -1,8 +1,4 @@
-import {
-  FilePartTile,
-  FileTileParameter,
-  MALLOY_FILTER_ANY
-} from '~common/_index';
+import { FilePartTile, FileTileParameter } from '~common/_index';
 import { constants } from '~common/barrels/constants';
 import { enums } from '~common/barrels/enums';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
@@ -24,36 +20,18 @@ export function prepareTile(item: {
 
   let parameters: FileTileParameter[] = [];
 
-  if (isDefined(mconfig.filters) && mconfig.filters.length > 0) {
+  if (
+    (mconfig.modelType === enums.ModelTypeEnum.Store ||
+      mconfig.modelType === enums.ModelTypeEnum.SQL) &&
+    isDefined(mconfig.filters) &&
+    mconfig.filters.length > 0
+  ) {
     mconfig.filters.forEach(x => {
       let parameter: FileTileParameter = {
         apply_to: x.fieldId
       };
 
-      if (mconfig.modelType === enums.ModelTypeEnum.SQL) {
-        parameter.conditions = x.fractions.map(fraction => fraction.brick);
-      } else if (mconfig.modelType === enums.ModelTypeEnum.Malloy) {
-        let parentsBricksNoAny = x.fractions
-          .filter(
-            fraction =>
-              isDefined(fraction.parentBrick) &&
-              fraction.parentBrick !== MALLOY_FILTER_ANY
-          )
-          .map(fraction => fraction.parentBrick);
-
-        let parentBricksAny = x.fractions
-          .filter(
-            fraction =>
-              isDefined(fraction.parentBrick) &&
-              fraction.parentBrick === MALLOY_FILTER_ANY
-          )
-          .map(fraction => fraction.parentBrick);
-
-        parameter.conditions = [
-          ...new Set(parentsBricksNoAny),
-          ...parentBricksAny
-        ];
-      } else if (mconfig.modelType === enums.ModelTypeEnum.Store) {
+      if (mconfig.modelType === enums.ModelTypeEnum.Store) {
         parameter.fractions = x.fractions.map(mconfigFraction => {
           let fileFraction: FileFraction = {};
 
@@ -100,7 +78,29 @@ export function prepareTile(item: {
 
           return fileFraction;
         });
+      } else if (mconfig.modelType === enums.ModelTypeEnum.SQL) {
+        parameter.conditions = x.fractions.map(fraction => fraction.brick);
       }
+      // else if (mconfig.modelType === enums.ModelTypeEnum.Malloy) {
+      // let parentsBricksNoAny = x.fractions
+      //   .filter(
+      //     fraction =>
+      //       isDefined(fraction.parentBrick) &&
+      //       fraction.parentBrick !== MALLOY_FILTER_ANY
+      //   )
+      //   .map(fraction => fraction.parentBrick);
+      // let parentBricksAny = x.fractions
+      //   .filter(
+      //     fraction =>
+      //       isDefined(fraction.parentBrick) &&
+      //       fraction.parentBrick === MALLOY_FILTER_ANY
+      //   )
+      //   .map(fraction => fraction.parentBrick);
+      // parameter.conditions = [
+      //   ...new Set(parentsBricksNoAny),
+      //   ...parentBricksAny
+      // ];
+      // }
 
       parameters.push(parameter);
     });

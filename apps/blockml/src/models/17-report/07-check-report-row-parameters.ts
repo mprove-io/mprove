@@ -61,15 +61,13 @@ export function checkReportRowParameters(
             return;
           }
 
-          // let model: common.FileModel;
           let store;
 
           let isStore = false;
 
-          // if (common.isDefined(row.metric)) {
           let metric = metrics.find(m => m.metricId === row.metric);
-          isStore = metric?.modelId.startsWith(STORE_MODEL_PREFIX);
-          // }
+
+          isStore = metric?.modelType === common.ModelTypeEnum.Store;
 
           if (
             isStore === false &&
@@ -165,7 +163,8 @@ export function checkReportRowParameters(
         )
         .forEach(row => {
           let metric = metrics.find(m => m.metricId === row.metric);
-          let isStore = metric?.modelId.startsWith(STORE_MODEL_PREFIX);
+
+          let isStore = metric?.modelType === common.ModelTypeEnum.Store;
 
           let store: common.FileStore;
 
@@ -205,11 +204,12 @@ export function checkReportRowParameters(
                 }
               }
 
-              if (isStore === false) {
+              if (metric?.modelType === common.ModelTypeEnum.SQL) {
                 let model = models.find(y => y.name === metric.modelId);
 
                 let reg =
                   common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+
                 let r = reg.exec(p.apply_to);
 
                 if (common.isUndefined(r)) {
@@ -637,6 +637,218 @@ export function checkReportRowParameters(
                         );
                       }
                     });
+                  }
+                }
+              }
+
+              if (metric?.modelType === common.ModelTypeEnum.Malloy) {
+                let model = models.find(y => y.name === metric.modelId);
+
+                let reg =
+                  common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+
+                let r = reg.exec(p.apply_to);
+
+                if (common.isUndefined(r)) {
+                  item.errors.push(
+                    new BmError({
+                      title: common.ErTitleEnum.APPLY_TO_WRONG_REFERENCE,
+                      message:
+                        'row apply_to must be in form "alias.field_name"',
+                      lines: [
+                        {
+                          line: p.apply_to_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
+                }
+
+                let asName = r[1];
+                let fieldName = r[2];
+
+                if (asName === common.MF) {
+                  let modelField = model.fields.find(
+                    mField => mField.name === fieldName
+                  );
+
+                  if (common.isUndefined(modelField)) {
+                    item.errors.push(
+                      new BmError({
+                        title:
+                          common.ErTitleEnum.APPLY_TO_REFS_MISSING_MODEL_FIELD,
+                        message:
+                          `"${p.apply_to}" references missing or not valid field ` +
+                          `"${fieldName}" of model "${model.name}" fields section`,
+                        lines: [
+                          {
+                            line: p.apply_to_line_num,
+                            name: x.fileName,
+                            path: x.filePath
+                          }
+                        ]
+                      })
+                    );
+                    return;
+                  }
+
+                  p.notStoreApplyToResult = modelField.result;
+                } else {
+                  let join = model.joins.find(j => j.as === asName);
+
+                  if (common.isUndefined(join)) {
+                    item.errors.push(
+                      new BmError({
+                        title: common.ErTitleEnum.APPLY_TO_REFS_MISSING_ALIAS,
+                        message:
+                          `"${p.apply_to}" references missing alias ` +
+                          `"${asName}" of model "${model.name}" joins section`,
+                        lines: [
+                          {
+                            line: p.apply_to_line_num,
+                            name: x.fileName,
+                            path: x.filePath
+                          }
+                        ]
+                      })
+                    );
+                    return;
+                  }
+
+                  let viewField = join.view.fields.find(
+                    vField => vField.name === fieldName
+                  );
+
+                  if (common.isUndefined(viewField)) {
+                    item.errors.push(
+                      new BmError({
+                        title:
+                          common.ErTitleEnum.APPLY_TO_REFS_MISSING_VIEW_FIELD,
+                        message:
+                          `"${p.apply_to}" references missing or not valid field ` +
+                          `"${fieldName}" of view "${join.view.name}". ` +
+                          `View has "${asName}" alias in "${model.name}" model.`,
+                        lines: [
+                          {
+                            line: p.apply_to_line_num,
+                            name: x.fileName,
+                            path: x.filePath
+                          }
+                        ]
+                      })
+                    );
+                    return;
+                  }
+
+                  p.notStoreApplyToResult = viewField.result;
+                }
+
+                if (
+                  common.isDefined(p.listen) &&
+                  common.isDefined(p.conditions)
+                ) {
+                  item.errors.push(
+                    new BmError({
+                      title: common.ErTitleEnum.PARAMETER_WRONG_COMBINATION,
+                      message: `found that both parameters "${common.ParameterEnum.Conditions}" and "${common.ParameterEnum.Listen}" are specified`,
+                      lines: [
+                        {
+                          line: p.listen_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        },
+                        {
+                          line: p.conditions_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
+                }
+
+                let pResult =
+                  asName === common.MF
+                    ? model.fields.find(mField => mField.name === fieldName)
+                        .result
+                    : model.joins
+                        .find(j => j.as === asName)
+                        .view.fields.find(vField => vField.name === fieldName)
+                        .result;
+
+                if (common.isDefined(p.conditions)) {
+                  if (p.conditions.length === 0) {
+                    item.errors.push(
+                      new BmError({
+                        title: common.ErTitleEnum.APPLY_TO_CONDITIONS_IS_EMPTY,
+                        message: `apply_to conditions cannot be empty`,
+                        lines: [
+                          {
+                            line: p.conditions_line_num,
+                            name: x.fileName,
+                            path: x.filePath
+                          }
+                        ]
+                      })
+                    );
+                    return;
+                  }
+
+                  let pf = barSpecial.processFilter({
+                    caseSensitiveStringFilters: caseSensitiveStringFilters,
+                    filterBricks: p.conditions,
+                    result: pResult
+                  });
+
+                  if (pf.valid === 0) {
+                    item.errors.push(
+                      new BmError({
+                        title: common.ErTitleEnum.APPLY_TO_WRONG_CONDITIONS,
+                        message:
+                          `wrong expression "${pf.brick}" of apply_to "${p.apply_to}" ` +
+                          `for ${common.ParameterEnum.Result} "${pResult}" `,
+                        lines: [
+                          {
+                            line: p.conditions_line_num,
+                            name: x.fileName,
+                            path: x.filePath
+                          }
+                        ]
+                      })
+                    );
+                    return;
+                  }
+                }
+
+                if (common.isDefined(p.listen)) {
+                  if (reportField.result !== pResult) {
+                    item.errors.push(
+                      new BmError({
+                        title:
+                          common.ErTitleEnum
+                            .ROW_PARAMETER_AND_LISTEN_RESULT_MISMATCH,
+                        message:
+                          `"${p.listen}" result "${reportField.result}" does not match ` +
+                          `listener "${p.apply_to}" result "${pResult}"`,
+                        lines: [
+                          {
+                            line: p.apply_to_line_num,
+                            name: x.fileName,
+                            path: x.filePath
+                          },
+                          {
+                            line: p.listen_line_num,
+                            name: x.fileName,
+                            path: x.filePath
+                          }
+                        ]
+                      })
+                    );
+                    return;
                   }
                 }
               }

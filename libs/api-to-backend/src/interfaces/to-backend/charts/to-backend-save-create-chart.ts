@@ -51,7 +51,7 @@ export class ToBackendSaveCreateChartResponsePayload {
   chart: common.ChartX;
 }
 
-export class ToBackendCreateChartResponse extends common.MyResponse {
+export class ToBackendSaveCreateChartResponse extends common.MyResponse {
   @ValidateNested()
   @Type(() => ToBackendSaveCreateChartResponsePayload)
   payload: ToBackendSaveCreateChartResponsePayload;
