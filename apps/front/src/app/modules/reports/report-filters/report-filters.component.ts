@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { MALLOY_FILTER_ANY } from '~common/_index';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { ReportService } from '~front/app/services/report.service';
@@ -167,18 +168,10 @@ export class ReportFiltersComponent {
               return newControl;
             })
       };
-    }
-    // else if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
-    //   newFraction = {
-    //     brick: MALLOY_FILTER_ANY,
-    //     parentBrick: MALLOY_FILTER_ANY,
-    //     operator: common.FractionOperatorEnum.Or,
-    //     type: common.getFractionTypeForAny(reportField.result)
-    //   };
-    // }
-    else {
+    } else {
       newFraction = {
-        brick: 'any',
+        brick: MALLOY_FILTER_ANY,
+        parentBrick: MALLOY_FILTER_ANY,
         operator: common.FractionOperatorEnum.Or,
         type: common.getFractionTypeForAny(reportField.result)
       };
