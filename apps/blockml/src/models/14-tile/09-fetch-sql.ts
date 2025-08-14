@@ -84,14 +84,15 @@ export async function fetchSql<T extends types.dzType>(
 
       let startBuildMalloyQuery = Date.now();
 
-      let { preparedResult, filtersFractions } =
+      let { preparedResult, filtersFractions, newMalloyQuery } =
         await barSpecial.buildMalloyQuery(
           {
             apiModel: apiModel,
             malloyConnections: item.malloyConnections,
             malloyModelDef: mod.malloyModel._modelDef,
             malloyQuery: malloyQuery,
-            malloyEntryValueWithSource: mod.valueWithSourceInfo
+            malloyEntryValueWithSource: mod.valueWithSourceInfo,
+            combinedFilters: tile.combinedFilters
           },
           cs
         );
@@ -104,7 +105,9 @@ export async function fetchSql<T extends types.dzType>(
 
       tile.sql = preparedResult.sql.split('\n');
       tile.model = preparedResult._rawQuery.sourceExplore;
-      tile.malloyQuery = malloyQuery;
+      tile.malloyQuery = common.isDefined(newMalloyQuery)
+        ? newMalloyQuery
+        : malloyQuery;
       tile.compiledQuery = preparedResult._rawQuery;
       tile.select = [];
       tile.filtersFractions = filtersFractions;

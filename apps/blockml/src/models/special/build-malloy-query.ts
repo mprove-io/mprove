@@ -19,7 +19,12 @@ import { ConfigService } from '@nestjs/config';
 import * as fse from 'fs-extra';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
-import { getMalloyFiltersFractions } from '~node-common/_index';
+import { FilterBricksDictionary } from '~common/interfaces/blockml/filter-bricks-dictionary';
+import {
+  bricksToFractions,
+  getMalloyFiltersFractions,
+  processMalloyWhereOrHaving
+} from '~node-common/_index';
 
 let func = common.FuncEnum.BuildMalloyQuery;
 
@@ -30,6 +35,7 @@ export async function buildMalloyQuery(
     malloyModelDef: MalloyModelDef;
     malloyQuery: string;
     malloyEntryValueWithSource: ModelEntryValueWithSource;
+    combinedFilters: FilterBricksDictionary;
     // errors: BmError[];
     // structId: string;
     // caller: common.CallerEnum;
@@ -39,7 +45,8 @@ export async function buildMalloyQuery(
   let {
     apiModel,
     malloyModelDef,
-    malloyQuery
+    malloyQuery,
+    combinedFilters
     // errors,
     // structId,
     // caller,
@@ -107,6 +114,71 @@ export async function buildMalloyQuery(
     apiModel: apiModel
   });
 
+  let newMalloyQuery;
+
+  if (
+    common.isDefined(combinedFilters) &&
+    Object.keys(combinedFilters).length > 0
+  ) {
+    let mFilters: { fieldId: string; fractions: common.Fraction[] }[] = [];
+
+    let mFiltersBricks: FilterBricksDictionary = {};
+
+    Object.keys(filtersFractions).forEach(fieldId => {
+      mFiltersBricks[fieldId] = filtersFractions[fieldId].map(
+        fraction => fraction.brick
+      );
+    });
+
+    Object.keys(combinedFilters).forEach(fieldId => {
+      mFiltersBricks[fieldId] = combinedFilters[fieldId];
+    });
+
+    Object.keys(mFiltersBricks).forEach(fieldId => {
+      let modelField = apiModel.fields.find(x => x.id === fieldId);
+
+      let fractions: common.Fraction[] = [];
+
+      let pf = bricksToFractions({
+        // caseSensitiveStringFilters: caseSensitiveStringFilters,
+        filterBricks: mFiltersBricks[fieldId],
+        result: modelField.result,
+        getTimeRange: false,
+        fractions: fractions
+      });
+
+      mFilters.push({
+        fieldId: fieldId,
+        fractions: fractions
+      });
+
+      let p = processMalloyWhereOrHaving({
+        model: apiModel,
+        segment0: segment0,
+        queryOperationFilters: mFilters
+      });
+
+      let isError;
+      let errorMessage;
+
+      if (p.isError === true) {
+        isError = p.isError; // TODO: check
+        errorMessage = p.errorMessage;
+      }
+
+      filtersFractions = p.filtersFractions;
+      parsedFilters = p.parsedFilters;
+    });
+
+    newMalloyQuery = astQuery.toMalloy();
+
+    qm = mm.loadQuery(newMalloyQuery);
+
+    preparedQuery = await qm.getPreparedQuery();
+
+    preparedResult = preparedQuery.getPreparedResult();
+  }
+
   // console.log('Fractions');
   // console.log(Date.now() - startFractions); // 3ms
 
@@ -114,6 +186,7 @@ export async function buildMalloyQuery(
     // astQuery: astQuery,
     // preparedQuery: preparedQuery,
     preparedResult: preparedResult,
-    filtersFractions: filtersFractions
+    filtersFractions: filtersFractions,
+    newMalloyQuery: newMalloyQuery
   };
 }

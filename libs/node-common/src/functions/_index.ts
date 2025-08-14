@@ -28,3 +28,4 @@ export * from './get-unit-duration';
 export * from './get-timespec-unit-moment-start-ts';
 export * from './get-unix-time-from-date-parts';
 export * from './get-unix-time-from-day-of-week';
+export * from './process-malloy-where-or-having';
