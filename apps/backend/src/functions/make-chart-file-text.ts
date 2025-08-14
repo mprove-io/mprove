@@ -22,8 +22,8 @@ export function makeChartFileText(item: {
 
   let filePartTile: common.FilePartTile = common.prepareTile({
     isForDashboard: false,
-    mconfig: mconfig,
-    malloyQueryId: chartId
+    mconfig: mconfig
+    // malloyQueryId: chartId
   });
 
   filePartTile.title = tileTitle;

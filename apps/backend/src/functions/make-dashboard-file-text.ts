@@ -1,4 +1,3 @@
-import * as path from 'path';
 import { common } from '~backend/barrels/common';
 import { enums } from '~common/barrels/enums';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
@@ -200,31 +199,31 @@ export function makeDashboardFileText(item: {
         ? dashboard.tiles.map((x, tileIndex) => {
             let newMconfig = common.makeCopy(x.mconfig);
 
-            if (common.isUndefined(x.malloyQueryId)) {
-              x.malloyQueryId = common.makeId();
-            }
+            // if (common.isUndefined(x.malloyQueryId)) {
+            //   x.malloyQueryId = common.makeId();
+            // }
 
             let filePartTile: common.FilePartTile = common.prepareTile({
               tile: x,
               isForDashboard: true,
-              mconfig: newMconfig,
-              malloyQueryId: x.malloyQueryId
+              mconfig: newMconfig
+              // malloyQueryId: x.malloyQueryId
             });
 
-            if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
-              let modelRelativePath = path.relative(
-                `/${path.dirname(malloyDashboardFilePath)}`,
-                `/${newMconfig.modelFilePath}`
-              );
+            // if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+            //   let modelRelativePath = path.relative(
+            //     `/${path.dirname(malloyDashboardFilePath)}`,
+            //     `/${newMconfig.modelFilePath}`
+            //   );
 
-              let malloyPart: MalloyPart = {
-                modelId: newMconfig.modelId,
-                modelRelativePath: modelRelativePath,
-                malloyQueryText: `query: ${x.malloyQueryId} is ${newMconfig.malloyQuery.substring(5)}`
-              };
+            //   let malloyPart: MalloyPart = {
+            //     modelId: newMconfig.modelId,
+            //     modelRelativePath: modelRelativePath,
+            //     malloyQueryText: `query: ${x.malloyQueryId} is ${newMconfig.malloyQuery.substring(5)}`
+            //   };
 
-              malloyParts.push(malloyPart);
-            }
+            //   malloyParts.push(malloyPart);
+            // }
 
             return filePartTile;
           })

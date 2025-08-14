@@ -16,9 +16,9 @@ export class Tile {
   @IsString()
   queryId: string;
 
-  @IsOptional()
-  @IsString()
-  malloyQueryId: string;
+  // @IsOptional()
+  // @IsString()
+  // malloyQueryId: string;
 
   listen: { [a: string]: string };
 

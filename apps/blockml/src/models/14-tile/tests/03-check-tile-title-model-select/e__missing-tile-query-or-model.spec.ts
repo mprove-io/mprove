@@ -63,6 +63,6 @@ test('1', async t => {
   t.is(errors.length, 1);
   t.is(entDashboards.length, 0);
 
-  t.is(errors[0].title, common.ErTitleEnum.MISSING_TILE_QUERY_OR_MODEL);
+  t.is(errors[0].title, common.ErTitleEnum.MISSING_TILE_MODEL);
   t.is(errors[0].lines[0].line, 3);
 });

@@ -16,8 +16,8 @@ export interface FilePartTile {
   description?: string;
   description_line_num?: number;
 
-  query?: string;
-  query_line_num?: number;
+  // query?: string;
+  // query_line_num?: number;
 
   model?: string;
   model_line_num?: number;

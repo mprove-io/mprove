@@ -11,32 +11,32 @@ export function getTileApiModel(item: {
 
   let apiModel: common.Model;
 
-  if (common.isDefined(tile.query)) {
-    let malloyFile = item.malloyFiles.find(
-      file =>
-        file.path ===
-        filePath.substring(0, filePath.lastIndexOf('.')) + '.malloy'
-    );
+  // if (common.isDefined(tile.query)) {
+  //   let malloyFile = item.malloyFiles.find(
+  //     file =>
+  //       file.path ===
+  //       filePath.substring(0, filePath.lastIndexOf('.')) + '.malloy'
+  //   );
 
-    if (common.isUndefined(malloyFile)) {
-      return undefined; // TODO: check
-    }
+  //   if (common.isUndefined(malloyFile)) {
+  //     return undefined; // TODO: check
+  //   }
 
-    let source: string;
+  //   let source: string;
 
-    let reg = common.MyRegex.MALLOY_QUERY_SOURCE(tile.query);
-    let r;
+  //   let reg = common.MyRegex.MALLOY_QUERY_SOURCE(tile.query);
+  //   let r;
 
-    if ((r = reg.exec(malloyFile.content))) {
-      source = r[2];
-    }
+  //   if ((r = reg.exec(malloyFile.content))) {
+  //     source = r[2];
+  //   }
 
-    let mod = item.mods.find(x => x.source === source);
+  //   let mod = item.mods.find(x => x.source === source);
 
-    apiModel = item.apiModels.find(y => y.modelId === mod.name);
-  } else {
-    apiModel = item.apiModels.find(y => y.modelId === tile.model);
-  }
+  //   apiModel = item.apiModels.find(y => y.modelId === mod.name);
+  // } else {
+  apiModel = item.apiModels.find(y => y.modelId === tile.model);
+  // }
 
   return apiModel;
 }

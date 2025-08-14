@@ -25,7 +25,7 @@ export function checkLimit<T extends types.dzType>(
     let errorsOnStart = item.errors.length;
 
     x.tiles
-      .filter(tile => common.isUndefined(tile.query))
+      // .filter(tile => common.isUndefined(tile.query))
       .forEach(tile => {
         if (!tile.limit) {
           tile.limit = common.DEFAULT_LIMIT;

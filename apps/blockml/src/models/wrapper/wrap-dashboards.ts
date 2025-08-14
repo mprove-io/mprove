@@ -10,6 +10,7 @@ export function wrapDashboards(item: {
   projectId: string;
   dashboards: common.FileDashboard[];
   models: common.FileModel[];
+  apiModels: common.Model[];
   stores: common.FileStore[];
   mods: common.FileMod[];
   envId: string;
@@ -19,6 +20,7 @@ export function wrapDashboards(item: {
     structId,
     projectId,
     models,
+    apiModels,
     stores,
     mods,
     dashboards,
@@ -192,6 +194,7 @@ export function wrapDashboards(item: {
       projectId: projectId,
       structId: structId,
       models: models,
+      apiModels: apiModels,
       mods: mods,
       stores: stores,
       tiles: x.tiles,

@@ -1,5 +1,5 @@
 import { common } from '~blockml/barrels/common';
-import { STORE_MODEL_PREFIX } from '~common/constants/top';
+// import { STORE_MODEL_PREFIX } from '~common/constants/top';
 import { wrapTiles } from './wrap-tiles';
 
 export function wrapCharts(item: {
@@ -9,11 +9,21 @@ export function wrapCharts(item: {
   timezone: string;
   mods: common.FileMod[];
   models: common.FileModel[];
+  apiModels: common.Model[];
   stores: common.FileStore[];
   charts: common.FileChart[];
 }) {
-  let { structId, projectId, models, mods, stores, charts, envId, timezone } =
-    item;
+  let {
+    structId,
+    projectId,
+    models,
+    apiModels,
+    mods,
+    stores,
+    charts,
+    envId,
+    timezone
+  } = item;
 
   let apiCharts: common.Chart[] = [];
   let chartMconfigs: common.Mconfig[] = [];
@@ -24,6 +34,7 @@ export function wrapCharts(item: {
       projectId: projectId,
       structId: structId,
       models: models,
+      apiModels: apiModels,
       mods: mods,
       stores: stores,
       tiles: x.tiles,
@@ -34,21 +45,23 @@ export function wrapCharts(item: {
     chartMconfigs = [...chartMconfigs, ...mconfigs];
     chartQueries = [...chartQueries, ...queries];
 
-    let mod: common.FileMod;
-    let model: common.FileModel;
-    let store: common.FileStore;
+    // let mod: common.FileMod;
+    // let model: common.FileModel;
+    // let store: common.FileStore;
 
-    let isStore = x.tiles[0].model.startsWith(STORE_MODEL_PREFIX);
+    let apiModel = apiModels.find(m => m.modelId === x.tiles[0].model);
 
-    if (isStore === true) {
-      store = stores.find(
-        s => `${STORE_MODEL_PREFIX}_${s.name}` === x.tiles[0].model
-      );
-    } else if (common.isDefined(x.tiles[0].query)) {
-      mod = mods.find(m => m.name === x.tiles[0].model);
-    } else {
-      model = models.find(m => m.name === x.tiles[0].model);
-    }
+    // let isStore = x.tiles[0].model.startsWith(STORE_MODEL_PREFIX);
+
+    // if (isStore === true) {
+    //   store = stores.find(
+    //     s => `${STORE_MODEL_PREFIX}_${s.name}` === x.tiles[0].model
+    //   );
+    // } else if (common.isDefined(x.tiles[0].query)) {
+    //   mod = mods.find(m => m.name === x.tiles[0].model);
+    // } else {
+    //   model = models.find(m => m.name === x.tiles[0].model);
+    // }
 
     apiCharts.push({
       structId: structId,
@@ -57,7 +70,8 @@ export function wrapCharts(item: {
       creatorId: undefined,
       title: x.tiles[0].title,
       modelId: x.tiles[0].model,
-      modelLabel: store?.label || mod?.label || model?.label,
+      modelLabel: apiModel.label,
+      // store?.label || mod?.label || model?.label,
       filePath: x.filePath,
       accessRoles: x.access_roles || [],
       gr: x.group,

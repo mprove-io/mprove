@@ -12,12 +12,22 @@ export function wrapTiles(item: {
   envId: string;
   tiles: common.FilePartTile[];
   models: common.FileModel[];
+  apiModels: common.Model[];
   mods: common.FileMod[];
   stores: common.FileStore[];
   timezone: string;
 }) {
-  let { structId, projectId, models, stores, mods, tiles, envId, timezone } =
-    item;
+  let {
+    structId,
+    projectId,
+    models,
+    apiModels,
+    stores,
+    mods,
+    tiles,
+    envId,
+    timezone
+  } = item;
 
   let apiTiles: common.Tile[] = [];
   let mconfigs: common.Mconfig[] = [];
@@ -44,15 +54,15 @@ export function wrapTiles(item: {
     let isStore =
       common.isDefined(tile.model) && tile.model.startsWith(STORE_MODEL_PREFIX);
 
-    let isMod = common.isDefined(tile.query);
+    let apiModel = apiModels.find(m => m.modelId === tile.model);
 
-    if (isStore === true) {
+    if (apiModel.type === common.ModelTypeEnum.Store) {
       store = stores.find(
         s => `${STORE_MODEL_PREFIX}_${s.name}` === tile.model
       );
-    } else if (isMod === true) {
+    } else if (apiModel.type === common.ModelTypeEnum.Malloy) {
       mod = mods.find(m => m.name === tile.model);
-    } else {
+    } else if (apiModel.type === common.ModelTypeEnum.SQL) {
       model = models.find(m => m.name === tile.model);
     }
 
@@ -285,7 +295,7 @@ export function wrapTiles(item: {
       modelFilePath: store?.filePath || mod?.filePath || model?.filePath,
       mconfigId: mconfigId,
       queryId: queryId,
-      malloyQueryId: tile.query,
+      // malloyQueryId: tile.query,
       listen: tile.listen,
       deletedFilterFieldIds: undefined,
       title: mconfigChart.title,

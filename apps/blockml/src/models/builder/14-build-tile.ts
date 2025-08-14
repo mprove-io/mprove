@@ -6,16 +6,20 @@ import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 import { RabbitService } from '~blockml/services/rabbit.service';
+import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 
 export async function buildTile<T extends types.dzType>(
   item: {
     traceId: string;
+    envId: string;
+    projectId: string;
     entities: T[];
     models: common.FileModel[];
     stores: common.FileStore[];
     mods: common.FileMod[];
     apiModels: common.Model[];
     malloyConnections: PostgresConnection[];
+    projectConnections: ProjectConnection[];
     malloyFiles: common.BmlFile[];
     udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
@@ -119,12 +123,15 @@ export async function buildTile<T extends types.dzType>(
       mods: item.mods,
       apiModels: item.apiModels,
       malloyConnections: item.malloyConnections,
+      projectConnections: item.projectConnections,
       malloyFiles: item.malloyFiles,
       udfsDict: item.udfsDict,
       weekStart: item.weekStart,
       timezone: item.timezone,
       caseSensitiveStringFilters: item.caseSensitiveStringFilters,
       simplifySafeAggregates: item.simplifySafeAggregates,
+      envId: item.envId,
+      projectId: item.projectId,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller

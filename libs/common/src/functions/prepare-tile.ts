@@ -12,9 +12,14 @@ export function prepareTile(item: {
   tile?: TileX;
   mconfig: MconfigX;
   isForDashboard: boolean;
-  malloyQueryId: string;
+  // malloyQueryId: string;
 }): FilePartTile {
-  let { tile, mconfig, isForDashboard, malloyQueryId } = item;
+  let {
+    tile,
+    mconfig,
+    isForDashboard
+    // , malloyQueryId
+  } = item;
 
   let chart = mconfig.chart;
 
@@ -163,40 +168,38 @@ export function prepareTile(item: {
   };
 
   let filePartTile: FilePartTile =
-    mconfig.modelType === enums.ModelTypeEnum.Malloy
-      ? {
-          title: chart.title,
-          description: isDefined(chart.description)
-            ? chart.description
-            : undefined,
-          query: malloyQueryId,
-          parameters:
-            Object.keys(parameters).length > 0 ? parameters : undefined,
-          type: chart.type,
-          data: data,
-          options: {},
-          plate: {}
-        }
-      : {
-          title: chart.title,
-          description: isDefined(chart.description)
-            ? chart.description
-            : undefined,
-          model: mconfig.modelId,
-          select: mconfig.select,
-          sorts: isDefined(mconfig.sorts) ? mconfig.sorts : undefined,
-          limit:
-            isDefined(mconfig.limit) &&
-            mconfig.limit !== Number(constants.DEFAULT_LIMIT)
-              ? <any>mconfig.limit
-              : undefined,
-          parameters:
-            Object.keys(parameters).length > 0 ? parameters : undefined,
-          type: chart.type,
-          data: data,
-          options: {},
-          plate: {}
-        };
+    // mconfig.modelType === enums.ModelTypeEnum.Malloy
+    //   ? {
+    //       title: chart.title,
+    //       description: isDefined(chart.description)
+    //         ? chart.description
+    //         : undefined,
+    //       query: malloyQueryId,
+    //       parameters:
+    //         Object.keys(parameters).length > 0 ? parameters : undefined,
+    //       type: chart.type,
+    //       data: data,
+    //       options: {},
+    //       plate: {}
+    //     }
+    // :
+    {
+      title: chart.title,
+      description: isDefined(chart.description) ? chart.description : undefined,
+      model: mconfig.modelId,
+      select: mconfig.select,
+      sorts: isDefined(mconfig.sorts) ? mconfig.sorts : undefined,
+      limit:
+        isDefined(mconfig.limit) &&
+        mconfig.limit !== Number(constants.DEFAULT_LIMIT)
+          ? <any>mconfig.limit
+          : undefined,
+      parameters: Object.keys(parameters).length > 0 ? parameters : undefined,
+      type: chart.type,
+      data: data,
+      options: {},
+      plate: {}
+    };
 
   filePartTile.options = toFileChartOptions({
     chart: chart,

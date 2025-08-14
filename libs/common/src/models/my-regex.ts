@@ -283,8 +283,9 @@ export class MyRegex {
   }
 
   static CAPTURE_SORT_WITH_OPTIONAL_DESC_G(): RegExp {
-    return cloneRegexp(/^\s*(\w+[.]\w+)\s*(desc)?\s*$/g);
+    return cloneRegexp(/^\s*(\w+(?:\.\w+)*)\s*(desc)?\s*$/g);
   }
+
   static CAPTURE_STORE_SORT_WITH_OPTIONAL_DESC_G(): RegExp {
     return cloneRegexp(/^\s*(\w+)\s*(desc)?\s*$/g);
   }
