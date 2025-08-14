@@ -6,6 +6,8 @@ import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 import { STORE_MODEL_PREFIX } from '~common/constants/top';
+import { bricksToFractions } from '~node-common/functions/bricks-to-fractions';
+import { getTileApiModel } from '~node-common/functions/get-tile-api-model';
 
 let func = common.FuncEnum.CheckTileParameters;
 
@@ -14,14 +16,26 @@ export function checkTileParameters<T extends types.dzType>(
     caseSensitiveStringFilters: boolean;
     entities: T[];
     models: common.FileModel[];
+    mods: common.FileMod[];
+    apiModels: common.Model[];
     stores: common.FileStore[];
+    malloyFiles: common.BmlFile[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId, models, stores, caseSensitiveStringFilters } = item;
+  let {
+    caller,
+    structId,
+    models,
+    mods,
+    apiModels,
+    malloyFiles,
+    stores,
+    caseSensitiveStringFilters
+  } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
@@ -30,6 +44,14 @@ export function checkTileParameters<T extends types.dzType>(
     let errorsOnStart = item.errors.length;
 
     x.tiles.forEach(tile => {
+      let apiModel = getTileApiModel({
+        mods: mods,
+        filePath: x.filePath,
+        apiModels: apiModels,
+        tile: tile,
+        malloyFiles: malloyFiles
+      });
+
       if (common.isUndefined(tile.parameters)) {
         tile.parameters = [];
       }
@@ -57,12 +79,13 @@ export function checkTileParameters<T extends types.dzType>(
           return;
         }
 
-        let isStore =
-          common.isDefined(tile.model) &&
-          tile.model.startsWith(STORE_MODEL_PREFIX);
+        // let isStore =
+        //   common.isDefined(tile.model) &&
+        //   tile.model.startsWith(STORE_MODEL_PREFIX);
 
         if (
-          isStore === false &&
+          // isStore === false &&
+          apiModel.type !== common.ModelTypeEnum.Store &&
           common.isUndefined(p.listen) &&
           common.isUndefined(p.conditions)
         ) {
@@ -85,7 +108,8 @@ export function checkTileParameters<T extends types.dzType>(
         }
 
         if (
-          isStore === true &&
+          // isStore === true &&
+          apiModel.type === common.ModelTypeEnum.Store &&
           common.isUndefined(p.listen) &&
           common.isUndefined(p.fractions)
         ) {
@@ -152,19 +176,30 @@ export function checkTileParameters<T extends types.dzType>(
 
     if (errorsOnStart === item.errors.length) {
       x.tiles.forEach(tile => {
+        let apiModel = getTileApiModel({
+          mods: mods,
+          filePath: x.filePath,
+          apiModels: apiModels,
+          tile: tile,
+          malloyFiles: malloyFiles
+        });
+
         if (x.fileExt === common.FileExtensionEnum.Dashboard) {
           tile.listen = {};
         }
         tile.combinedFilters = {};
 
-        let isStore =
-          common.isDefined(tile.model) &&
-          tile.model.startsWith(STORE_MODEL_PREFIX);
+        // let isStore =
+        //   common.isDefined(tile.model) &&
+        //   tile.model.startsWith(STORE_MODEL_PREFIX);
 
         let model: common.FileModel;
         let store: common.FileStore;
 
-        if (isStore === true) {
+        if (
+          // isStore === true
+          apiModel.type === common.ModelTypeEnum.Store
+        ) {
           store = stores.find(
             m => `${STORE_MODEL_PREFIX}_${m.name}` === tile.model
           );
@@ -229,7 +264,10 @@ export function checkTileParameters<T extends types.dzType>(
 
             let listener;
 
-            if (isStore === false) {
+            if (
+              // isStore === false
+              apiModel.type === common.ModelTypeEnum.SQL
+            ) {
               let reg =
                 common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
               let r = reg.exec(p.apply_to);
@@ -443,7 +481,10 @@ export function checkTileParameters<T extends types.dzType>(
               }
             }
 
-            if (isStore === true) {
+            if (
+              // isStore === true
+              apiModel.type === common.ModelTypeEnum.Store
+            ) {
               let storeField = store.fields.find(
                 sField => sField.name === p.apply_to
               );
@@ -674,6 +715,149 @@ export function checkTileParameters<T extends types.dzType>(
                 // console.log(dashboardField.apiFractions);
 
                 p.fractions = dashboardField.fractions;
+              }
+            }
+
+            if (apiModel.type === common.ModelTypeEnum.Malloy) {
+              let modelField = apiModel.fields.find(x => x.id === p.apply_to);
+
+              if (common.isUndefined(modelField)) {
+                item.errors.push(
+                  new BmError({
+                    title: common.ErTitleEnum.APPLY_TO_REFS_MISSING_MODEL_FIELD,
+                    message:
+                      `"${p.apply_to}" references missing or not valid field ` +
+                      `of model "${apiModel.modelId}" fields section`,
+                    lines: [
+                      {
+                        line: p.apply_to_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              }
+
+              if (
+                common.isDefined(p.listen) &&
+                common.isDefined(p.conditions)
+              ) {
+                item.errors.push(
+                  new BmError({
+                    title: common.ErTitleEnum.PARAMETER_WRONG_COMBINATION,
+                    message: `found that both parameters "${common.ParameterEnum.Conditions}" and "${common.ParameterEnum.Listen}" are specified`,
+                    lines: [
+                      {
+                        line: p.listen_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      },
+                      {
+                        line: p.conditions_line_num,
+                        name: x.fileName,
+                        path: x.filePath
+                      }
+                    ]
+                  })
+                );
+                return;
+              }
+
+              let pResult = modelField.result;
+
+              if (common.isDefined(p.conditions)) {
+                if (p.conditions.length === 0) {
+                  item.errors.push(
+                    new BmError({
+                      title: common.ErTitleEnum.APPLY_TO_CONDITIONS_IS_EMPTY,
+                      message: `apply_to conditions cannot be empty`,
+                      lines: [
+                        {
+                          line: p.conditions_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
+                }
+
+                // let pf = barSpecial.processFilter({
+                //   caseSensitiveStringFilters: caseSensitiveStringFilters,
+                //   filterBricks: p.conditions,
+                //   result: pResult
+                // });
+
+                let pf = bricksToFractions({
+                  // caseSensitiveStringFilters: caseSensitiveStringFilters,
+                  filterBricks: p.conditions,
+                  result: pResult,
+                  getTimeRange: false
+                  // timezone: timezone,
+                  // weekStart: weekStart,
+                  // timeSpec: timeSpec
+                  // fractions: fractions,
+                });
+
+                if (pf.valid === 0) {
+                  item.errors.push(
+                    new BmError({
+                      title: common.ErTitleEnum.APPLY_TO_WRONG_CONDITIONS,
+                      message:
+                        `wrong expression "${pf.brick}" of apply_to "${p.apply_to}" ` +
+                        `for ${common.ParameterEnum.Result} "${pResult}" `,
+                      lines: [
+                        {
+                          line: p.conditions_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
+                }
+              }
+
+              listener = p.apply_to;
+
+              if (common.isDefined(p.listen)) {
+                if (dashboardField.result !== pResult) {
+                  item.errors.push(
+                    new BmError({
+                      title:
+                        common.ErTitleEnum
+                          .TILE_PARAMETER_AND_LISTEN_RESULT_MISMATCH,
+                      message:
+                        `"${p.listen}" result "${dashboardField.result}" does not match ` +
+                        `listener "${p.apply_to}" result "${pResult}"`,
+                      lines: [
+                        {
+                          line: p.apply_to_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        },
+                        {
+                          line: p.listen_line_num,
+                          name: x.fileName,
+                          path: x.filePath
+                        }
+                      ]
+                    })
+                  );
+                  return;
+                }
+
+                tile.listen[listener] = dashboardField.name;
+                tile.combinedFilters[listener] = dashboardField.conditions;
+              } else if (
+                common.isDefined(p.conditions) &&
+                p.conditions.length > 0
+              ) {
+                tile.combinedFilters[listener] = p.conditions;
               }
             }
           });

@@ -54,6 +54,39 @@ export class MyRegex {
 
   // BLOCKML
 
+  static MALLOY_QUERY_SOURCE(tileQueryName: string): RegExp {
+    // tool
+    // query:\s*(mc3)\s+is\s*([\s\S]*?)(?=(?:\nquery:\s*\w+\sis|source:\s|\nrun:\s|\nimport\s*{|\nimport\s*'|\nimport\s*"|$))
+
+    return cloneRegexp(
+      new RegExp(
+        [
+          `query:`,
+          `\\s*`,
+          `(${tileQueryName})`,
+          `\\s+`,
+          `is`,
+          `\\s+`,
+          `(\\w+)`,
+          `\\s+`,
+          `([\\s\\S]*?)`,
+          `(?=`,
+          `(?:`,
+          `\\nquery:\\s*\\w+\\sis`,
+          `|source:\\s`,
+          `|\\nrun:\\s`,
+          `|\\nimport\\s*\\{`,
+          `|\\nimport\\s*\\'`,
+          `|\\nimport\\s*\\"`,
+          `|$`,
+          `)`,
+          `)`
+        ].join(''),
+        'g'
+      )
+    );
+  }
+
   static replaceUnderscoresWithSpaces(input: string): string {
     return input.split('_').join(' ');
   }

@@ -9,6 +9,7 @@ import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 import { RabbitService } from '~blockml/services/rabbit.service';
 import { STORE_MODEL_PREFIX } from '~common/constants/top';
+import { getModAndMalloyQuery } from '~node-common/functions/get-mod-and-malloy-query';
 
 let func = common.FuncEnum.FetchSql;
 
@@ -59,8 +60,8 @@ export async function fetchSql<T extends types.dzType>(
 
   await asyncPool(concurrencyLimit, tiles, async (tile: FilePartTileExtra) => {
     if (common.isDefined(tile.query)) {
-      // console.log('tile');
-      // console.log(tile);
+      console.log('tile');
+      console.log(tile);
 
       let malloyFile = item.malloyFiles.find(
         file =>
@@ -72,50 +73,12 @@ export async function fetchSql<T extends types.dzType>(
         // TODO: error
       }
 
-      // tool
-      // query:\s*(mc3)\s+is\s*([\s\S]*?)(?=(?:\nquery:\s*\w+\sis|source:\s|\nrun:\s|\nimport\s*{|\nimport\s*'|\nimport\s*"|$))
-
-      let queryPattern = new RegExp(
-        [
-          `query:`,
-          `\\s*`,
-          `(${tile.query})`,
-          `\\s+`,
-          `is`,
-          `\\s+`,
-          `(\\w+)`,
-          `\\s+`,
-          `([\\s\\S]*?)`,
-          `(?=`,
-          `(?:`,
-          `\\nquery:\\s*\\w+\\sis`,
-          `|source:\\s`,
-          `|\\nrun:\\s`,
-          `|\\nimport\\s*\\{`,
-          `|\\nimport\\s*\\'`,
-          `|\\nimport\\s*\\"`,
-          `|$`,
-          `)`,
-          `)`
-        ].join(''),
-        'g'
-      );
-
-      let source: string;
-      let malloyQuery: string;
-
-      let match = queryPattern.exec(malloyFile.content);
-
-      if (common.isDefined(match)) {
-        source = match[2];
-
-        malloyQuery = 'run: ' + source + ' ' + match[3].trimEnd();
-
-        // console.log('queryStr');
-        // console.log(queryStr);
-      }
-
-      let mod = item.mods.find(x => x.source === source);
+      let { mod, malloyQuery } = getModAndMalloyQuery({
+        tileQuery: tile.query,
+        malloyFile: malloyFile,
+        mods: item.mods,
+        malloyFiles: item.malloyFiles
+      });
 
       let apiModel = item.apiModels.find(y => y.modelId === mod.name);
 
@@ -132,6 +95,9 @@ export async function fetchSql<T extends types.dzType>(
           },
           cs
         );
+
+      console.log('filtersFractions');
+      console.log(filtersFractions);
 
       console.log('buildMalloyQuery:');
       console.log(Date.now() - startBuildMalloyQuery);

@@ -213,8 +213,11 @@ export class CreateDraftDashboardController {
       malloyDashboardFilePath: secondFileNodeId
     });
 
-    // console.log('dashboardFileText');
-    // console.log(dashboardFileText);
+    console.log('dashboardFileText');
+    console.log(dashboardFileText);
+
+    console.log('malloyFileText');
+    console.log(malloyFileText);
 
     let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
       info: {
@@ -298,8 +301,8 @@ export class CreateDraftDashboardController {
         overrideTimezone: timezone
       });
 
-    // console.log('struct');
-    // console.log(struct);
+    console.log('struct.errors');
+    console.log(struct.errors);
 
     let newDashboard = dashboards.find(x => x.dashboardId === newDashboardId);
 

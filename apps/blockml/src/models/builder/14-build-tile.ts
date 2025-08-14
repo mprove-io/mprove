@@ -100,7 +100,10 @@ export async function buildTile<T extends types.dzType>(
       entities: entities,
       caseSensitiveStringFilters: item.caseSensitiveStringFilters,
       models: item.models,
+      apiModels: item.apiModels,
+      mods: item.mods,
       stores: item.stores,
+      malloyFiles: item.malloyFiles,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
