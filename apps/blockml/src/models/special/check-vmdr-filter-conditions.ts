@@ -4,7 +4,8 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
-import { processFilter } from './process-filter';
+import { MALLOY_FILTER_ANY } from '~common/_index';
+import { bricksToFractions } from '~node-common/functions/bricks-to-fractions';
 
 let func = common.FuncEnum.CheckVmdrFilterConditions;
 
@@ -40,16 +41,31 @@ export function checkVmdrFilterConditions<T extends types.vsmdrType>(
       }
 
       if (common.isUndefined(field.conditions)) {
-        field.conditions = ['any'];
+        field.conditions = [
+          MALLOY_FILTER_ANY
+          // 'any'
+        ];
       }
 
       field.apiFractions = [];
 
-      let p = processFilter({
-        caseSensitiveStringFilters: caseSensitiveStringFilters,
+      // let p = processFilter({
+      //   caseSensitiveStringFilters: caseSensitiveStringFilters,
+      //   filterBricks: field.conditions,
+      //   result: field.result,
+      //   fractions: field.apiFractions
+      // });
+
+      let p = bricksToFractions({
+        // caseSensitiveStringFilters: caseSensitiveStringFilters,
         filterBricks: field.conditions,
         result: field.result,
-        fractions: field.apiFractions
+        fractions: field.apiFractions,
+        getTimeRange: false
+        // timezone: timezone,
+        // weekStart: weekStart,
+        // timeSpec: timeSpec
+        // fractions: fractions,
       });
 
       if (p.valid === 0) {
