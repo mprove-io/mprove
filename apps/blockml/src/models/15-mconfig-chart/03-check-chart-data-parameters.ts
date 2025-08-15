@@ -12,6 +12,7 @@ export function checkChartDataParameters<T extends types.dzType>(
   item: {
     entities: T[];
     models: common.FileModel[];
+    apiModels: common.Model[];
     stores: common.FileStore[];
     errors: BmError[];
     structId: string;
@@ -28,14 +29,16 @@ export function checkChartDataParameters<T extends types.dzType>(
     let errorsOnStart = item.errors.length;
 
     x.tiles.forEach(tile => {
-      let isStore =
-        common.isDefined(tile.model) &&
-        tile.model.startsWith(STORE_MODEL_PREFIX);
+      let apiModel = item.apiModels.find(y => y.modelId === tile.model);
+
+      // let isStore =
+      //   common.isDefined(tile.model) &&
+      //   tile.model.startsWith(STORE_MODEL_PREFIX);
 
       let model: common.FileModel;
       let store: common.FileStore;
 
-      if (isStore === true) {
+      if (apiModel.type === common.ModelTypeEnum.Store) {
         store = item.stores.find(
           m => `${STORE_MODEL_PREFIX}_${m.name}` === tile.model
         );
@@ -154,12 +157,14 @@ export function checkChartDataParameters<T extends types.dzType>(
           return;
         } else {
           let field =
-            isStore === true
+            apiModel.type === common.ModelTypeEnum.Store
               ? store.fields.find(sField => sField.name === tile.data.x_field)
-              : getModelField({
-                  model: model,
-                  fieldId: tile.data.x_field
-                });
+              : apiModel.type === common.ModelTypeEnum.Malloy
+                ? apiModel.fields.find(field => field.id === tile.data.x_field)
+                : getModelField({
+                    model: model,
+                    fieldId: tile.data.x_field
+                  });
 
           if (
             field.fieldClass !== common.FieldClassEnum.Dimension &&
@@ -203,14 +208,18 @@ export function checkChartDataParameters<T extends types.dzType>(
           return;
         } else {
           let field =
-            isStore === true
+            apiModel.type === common.ModelTypeEnum.Store
               ? store.fields.find(
                   sField => sField.name === tile.data.size_field
                 )
-              : getModelField({
-                  model: model,
-                  fieldId: tile.data.size_field
-                });
+              : apiModel.type === common.ModelTypeEnum.Malloy
+                ? apiModel.fields.find(
+                    field => field.id === tile.data.size_field
+                  )
+                : getModelField({
+                    model: model,
+                    fieldId: tile.data.size_field
+                  });
 
           if (field.result !== common.FieldResultEnum.Number) {
             item.errors.push(
@@ -251,14 +260,18 @@ export function checkChartDataParameters<T extends types.dzType>(
           return;
         } else {
           let field =
-            isStore === true
+            apiModel.type === common.ModelTypeEnum.Store
               ? store.fields.find(
                   sField => sField.name === tile.data.multi_field
                 )
-              : getModelField({
-                  model: model,
-                  fieldId: tile.data.multi_field
-                });
+              : apiModel.type === common.ModelTypeEnum.Malloy
+                ? apiModel.fields.find(
+                    field => field.id === tile.data.multi_field
+                  )
+                : getModelField({
+                    model: model,
+                    fieldId: tile.data.multi_field
+                  });
 
           if (field.fieldClass !== common.FieldClassEnum.Dimension) {
             item.errors.push(
@@ -317,12 +330,14 @@ export function checkChartDataParameters<T extends types.dzType>(
             return;
           } else {
             let field =
-              isStore === true
+              apiModel.type === common.ModelTypeEnum.Store
                 ? store.fields.find(sField => sField.name === element)
-                : getModelField({
-                    model: model,
-                    fieldId: element
-                  });
+                : apiModel.type === common.ModelTypeEnum.Malloy
+                  ? apiModel.fields.find(field => field.id === element)
+                  : getModelField({
+                      model: model,
+                      fieldId: element
+                    });
 
             if (
               field.fieldClass !== common.FieldClassEnum.Measure &&

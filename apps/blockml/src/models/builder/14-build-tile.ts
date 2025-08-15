@@ -84,6 +84,7 @@ export async function buildTile<T extends types.dzType>(
   entities = barTile.checkSorts(
     {
       entities: entities,
+      apiModels: item.apiModels,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller

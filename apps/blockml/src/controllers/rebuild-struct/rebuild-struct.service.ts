@@ -738,6 +738,7 @@ export class RebuildStructService {
       {
         entities: dashboards,
         models: models,
+        apiModels: apiModels,
         stores: stores,
         structId: item.structId,
         errors: errors,
@@ -750,6 +751,7 @@ export class RebuildStructService {
       {
         entities: charts,
         models: models,
+        apiModels: apiModels,
         stores: stores,
         structId: item.structId,
         errors: errors,
@@ -770,6 +772,7 @@ export class RebuildStructService {
       {
         entities: reports,
         models: models,
+        apiModels: apiModels,
         stores: stores,
         structId: item.structId,
         errors: errors,

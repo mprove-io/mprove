@@ -150,9 +150,7 @@ export function checkSelectElements<T extends types.dzType>(
               item.errors.push(
                 new BmError({
                   title: common.ErTitleEnum.TILE_WRONG_SELECT_MODEL_FIELD,
-                  message:
-                    `found element "${element}" references missing or not valid field ` +
-                    `of model "${apiModel.modelId}" fields section`,
+                  message: `found element "${element}" references missing or not valid field`,
                   lines: [
                     {
                       line: tile.select_line_num,
