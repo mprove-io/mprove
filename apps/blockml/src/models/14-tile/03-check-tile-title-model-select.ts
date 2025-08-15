@@ -104,18 +104,7 @@ export function checkTileTitleModelSelect<T extends types.dzType>(
       //   return;
       // }
 
-      let model;
-      let store;
-
       let apiModel = item.apiModels.find(y => y.modelId === tile.model);
-
-      if (apiModel.type === common.ModelTypeEnum.Store) {
-        store = item.stores.find(
-          m => `${STORE_MODEL_PREFIX}_${m.name}` === tile.model
-        );
-      } else if (apiModel.type === common.ModelTypeEnum.SQL) {
-        model = item.models.find(m => m.name === tile.model);
-      }
 
       if (common.isUndefined(apiModel)) {
         item.errors.push(
@@ -132,6 +121,17 @@ export function checkTileTitleModelSelect<T extends types.dzType>(
           })
         );
         return;
+      }
+
+      let model;
+      let store;
+
+      if (apiModel.type === common.ModelTypeEnum.Store) {
+        store = item.stores.find(
+          m => `${STORE_MODEL_PREFIX}_${m.name}` === tile.model
+        );
+      } else if (apiModel.type === common.ModelTypeEnum.SQL) {
+        model = item.models.find(m => m.name === tile.model);
       }
 
       if (

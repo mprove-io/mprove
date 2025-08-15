@@ -76,7 +76,7 @@ export function checkSorts<T extends types.dzType>(
               new BmError({
                 title: common.ErTitleEnum.TILE_SORTS_REFS_UNSELECTED_FIELD,
                 message:
-                  'We can sort only selected fields.' +
+                  'Only selected fields can be sorted.' +
                   `Found field "${sorter}" in "${common.ParameterEnum.Sorts}" that ` +
                   `is not in "${common.ParameterEnum.Select}". `,
                 lines: [
