@@ -70,7 +70,7 @@ export function createModelMetrics(
         .forEach(storeField => {
           let topLabel = `Store Model - ${store.label}`;
 
-          let partId = `${storeField.name}`;
+          // let partId = `${storeField.name}`;
 
           let partNodeLabel = common.isDefined(storeFieldGroup)
             ? (storeFieldGroup.label ?? storeFieldGroup.group)
@@ -81,9 +81,9 @@ export function createModelMetrics(
           let partLabel = `${partNodeLabel} ${partFieldLabel}`;
 
           let modelMetric: common.ModelMetric = {
-            metricId: `${STORE_MODEL_PREFIX}_${store.name}.${partId}.${METRIC_ID_BY}.${timeId}`,
+            metricId: `${STORE_MODEL_PREFIX}_${store.name}.${storeField.name}.${METRIC_ID_BY}.${timeId}`,
             filePath: store.filePath,
-            partId: partId,
+            // partId: partId,
             modelId: `${STORE_MODEL_PREFIX}_${store.name}`,
             modelType: common.ModelTypeEnum.Store,
             topNode: `${STORE_MODEL_PREFIX}_${store.name}`,
@@ -185,15 +185,15 @@ export function createModelMetrics(
 
             let yNode = yParentNode.children.find(n => n.id === y.id);
 
-            let partId = y.id.split('.').join('_');
+            // let partId = y.id.split('.').join('_');
             let partNodeLabel = yParentNode.label;
             let partFieldLabel = y.label;
             let partLabel = `${partNodeLabel} ${partFieldLabel}`;
 
             let modelMetric: common.ModelMetric = {
-              metricId: `${apiModel.modelId}.${partId}.${METRIC_ID_BY}.${tg.timeId}`,
+              metricId: `${apiModel.modelId}.${y.id}.${METRIC_ID_BY}.${tg.timeId}`,
               filePath: yNode.fieldFilePath,
-              partId: partId,
+              // partId: partId,
               modelId: apiModel.modelId,
               modelType: common.ModelTypeEnum.Malloy,
               topNode: apiModel.modelId,
@@ -333,16 +333,16 @@ export function createModelMetrics(
         .forEach(modelField => {
           let topLabel = model.label;
 
-          let partId = `${modelField.name}`; // model_fields
+          // let partId = `${modelField.name}`; // model_fields
 
           let partNodeLabel = model.label; // 'Model Fields';
           let partFieldLabel = modelField.label;
           let partLabel = `${partNodeLabel} ${partFieldLabel}`;
 
           let modelMetric: common.ModelMetric = {
-            metricId: `${model.name}.${partId}.${METRIC_ID_BY}.${timeId}`,
+            metricId: `${model.name}.${modelField.name}.${METRIC_ID_BY}.${timeId}`,
             filePath: model.filePath,
-            partId: partId,
+            // partId: partId,
             modelId: model.name,
             modelType: common.ModelTypeEnum.SQL,
             topNode: model.name,
@@ -416,16 +416,16 @@ export function createModelMetrics(
           .forEach(viewField => {
             let topLabel = model.label;
 
-            let partId = `${join.as}_${viewField.name}`;
+            // let partId = `${join.as}_${viewField.name}`;
 
             let partNodeLabel = join.label;
             let partFieldLabel = viewField.label;
             let partLabel = `${partNodeLabel} ${partFieldLabel}`;
 
             let modelMetric: common.ModelMetric = {
-              metricId: `${model.name}.${partId}.${METRIC_ID_BY}.${timeId}`,
+              metricId: `${model.name}.${join.as}.${viewField.name}.${METRIC_ID_BY}.${timeId}`,
               filePath: join.view.filePath,
-              partId: partId,
+              // partId: partId,
               modelId: model.name,
               modelType: common.ModelTypeEnum.SQL,
               topNode: model.name,

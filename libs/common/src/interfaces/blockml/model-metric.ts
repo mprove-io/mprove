@@ -39,8 +39,8 @@ export class ModelMetric {
   @IsString()
   topNode?: string;
 
-  @IsString()
-  partId?: string;
+  // @IsString()
+  // partId?: string;
 
   @IsString()
   label?: string;
