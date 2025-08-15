@@ -59,6 +59,7 @@ export async function buildTile<T extends types.dzType>(
     {
       entities: entities,
       models: item.models,
+      apiModels: item.apiModels,
       stores: item.stores,
       structId: item.structId,
       errors: item.errors,
@@ -71,6 +72,7 @@ export async function buildTile<T extends types.dzType>(
     {
       entities: entities,
       models: item.models,
+      apiModels: item.apiModels,
       stores: item.stores,
       structId: item.structId,
       errors: item.errors,

@@ -13,13 +13,14 @@ export function checkTileTitleModelSelect<T extends types.dzType>(
     entities: T[];
     models: common.FileModel[];
     stores: common.FileStore[];
+    apiModels: common.Model[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId } = item;
+  let { caller, structId, apiModels } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
@@ -103,49 +104,24 @@ export function checkTileTitleModelSelect<T extends types.dzType>(
       //   return;
       // }
 
-      let isStore =
-        common.isDefined(tile.model) &&
-        tile.model.startsWith(STORE_MODEL_PREFIX);
-
       let model;
       let store;
 
-      if (isStore === true) {
+      let apiModel = item.apiModels.find(y => y.modelId === tile.model);
+
+      if (apiModel.type === common.ModelTypeEnum.Store) {
         store = item.stores.find(
           m => `${STORE_MODEL_PREFIX}_${m.name}` === tile.model
         );
-      } else {
+      } else if (apiModel.type === common.ModelTypeEnum.SQL) {
         model = item.models.find(m => m.name === tile.model);
       }
 
-      if (
-        isStore === false &&
-        common.isDefined(tile.model) &&
-        common.isUndefined(model)
-      ) {
+      if (common.isUndefined(apiModel)) {
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.WRONG_TILE_MODEL,
             message: `model "${tile.model}" is missing or not valid`,
-            lines: [
-              {
-                line: tile.model_line_num,
-                name: x.fileName,
-                path: x.filePath
-              }
-            ]
-          })
-        );
-        return;
-      }
-
-      if (isStore === true && common.isUndefined(store)) {
-        item.errors.push(
-          new BmError({
-            title: common.ErTitleEnum.WRONG_TILE_MODEL,
-            message: `store "${
-              tile.model.split(STORE_MODEL_PREFIX + '_')[1]
-            }" is missing or not valid`,
             lines: [
               {
                 line: tile.model_line_num,

@@ -53,7 +53,7 @@ export async function makeMalloyQuery(item: {
     projectConnection
   } = item;
 
-  let startEditMalloyQuery = Date.now();
+  let startMakeMalloyQuery = Date.now();
 
   let isError = false;
   let errorMessage: string;
@@ -663,8 +663,8 @@ export async function makeMalloyQuery(item: {
     });
   }
 
-  console.log('editMalloyQuery:');
-  console.log(Date.now() - startEditMalloyQuery);
+  console.log('makeMalloyQuery:');
+  console.log(Date.now() - startMakeMalloyQuery);
 
   return {
     isError: isError,

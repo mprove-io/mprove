@@ -1,4 +1,8 @@
-import { FilePartTile, FileTileParameter } from '~common/_index';
+import {
+  FilePartTile,
+  FileTileParameter,
+  MALLOY_FILTER_ANY
+} from '~common/_index';
 import { constants } from '~common/barrels/constants';
 import { enums } from '~common/barrels/enums';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
@@ -26,8 +30,8 @@ export function prepareTile(item: {
   let parameters: FileTileParameter[] = [];
 
   if (
-    (mconfig.modelType === enums.ModelTypeEnum.Store ||
-      mconfig.modelType === enums.ModelTypeEnum.SQL) &&
+    // (mconfig.modelType === enums.ModelTypeEnum.Store ||
+    //   mconfig.modelType === enums.ModelTypeEnum.SQL) &&
     isDefined(mconfig.filters) &&
     mconfig.filters.length > 0
   ) {
@@ -85,27 +89,30 @@ export function prepareTile(item: {
         });
       } else if (mconfig.modelType === enums.ModelTypeEnum.SQL) {
         parameter.conditions = x.fractions.map(fraction => fraction.brick);
+      } else if (mconfig.modelType === enums.ModelTypeEnum.Malloy) {
+        //   parameter.conditions = x.fractions.map(fraction => fraction.brick);
+
+        let parentsBricksNoAny = x.fractions
+          .filter(
+            fraction =>
+              isDefined(fraction.parentBrick) &&
+              fraction.parentBrick !== MALLOY_FILTER_ANY
+          )
+          .map(fraction => fraction.parentBrick);
+
+        let parentBricksAny = x.fractions
+          .filter(
+            fraction =>
+              isDefined(fraction.parentBrick) &&
+              fraction.parentBrick === MALLOY_FILTER_ANY
+          )
+          .map(fraction => fraction.parentBrick);
+
+        parameter.conditions = [
+          ...new Set(parentsBricksNoAny),
+          ...parentBricksAny
+        ];
       }
-      // else if (mconfig.modelType === enums.ModelTypeEnum.Malloy) {
-      // let parentsBricksNoAny = x.fractions
-      //   .filter(
-      //     fraction =>
-      //       isDefined(fraction.parentBrick) &&
-      //       fraction.parentBrick !== MALLOY_FILTER_ANY
-      //   )
-      //   .map(fraction => fraction.parentBrick);
-      // let parentBricksAny = x.fractions
-      //   .filter(
-      //     fraction =>
-      //       isDefined(fraction.parentBrick) &&
-      //       fraction.parentBrick === MALLOY_FILTER_ANY
-      //   )
-      //   .map(fraction => fraction.parentBrick);
-      // parameter.conditions = [
-      //   ...new Set(parentsBricksNoAny),
-      //   ...parentBricksAny
-      // ];
-      // }
 
       parameters.push(parameter);
     });

@@ -12,6 +12,7 @@ export function checkSelectElements<T extends types.dzType>(
   item: {
     entities: T[];
     models: common.FileModel[];
+    apiModels: common.Model[];
     stores: common.FileStore[];
     errors: BmError[];
     structId: string;
@@ -33,19 +34,22 @@ export function checkSelectElements<T extends types.dzType>(
         let isStore =
           common.isDefined(tile.model) &&
           tile.model.startsWith(STORE_MODEL_PREFIX);
+
         let model: common.FileModel;
         let store: common.FileStore;
 
-        if (isStore === true) {
+        let apiModel = item.apiModels.find(y => y.modelId === tile.model);
+
+        if (apiModel.type === common.ModelTypeEnum.Store) {
           store = item.stores.find(
             m => `${STORE_MODEL_PREFIX}_${m.name}` === tile.model
           );
-        } else {
+        } else if (apiModel.type === common.ModelTypeEnum.SQL) {
           model = item.models.find(m => m.name === tile.model);
         }
 
         tile.select.forEach(element => {
-          if (isStore === false) {
+          if (apiModel.type === common.ModelTypeEnum.SQL) {
             let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
             let r = reg.exec(element);
 
@@ -135,6 +139,30 @@ export function checkSelectElements<T extends types.dzType>(
                 );
                 return;
               }
+            }
+          } else if (
+            apiModel.type === common.ModelTypeEnum.Malloy ||
+            apiModel.type === common.ModelTypeEnum.Store
+          ) {
+            let modelField = apiModel.fields.find(x => x.id === element);
+
+            if (common.isUndefined(modelField)) {
+              item.errors.push(
+                new BmError({
+                  title: common.ErTitleEnum.TILE_WRONG_SELECT_MODEL_FIELD,
+                  message:
+                    `found element "${element}" references missing or not valid field ` +
+                    `of model "${apiModel.modelId}" fields section`,
+                  lines: [
+                    {
+                      line: tile.select_line_num,
+                      name: x.fileName,
+                      path: x.filePath
+                    }
+                  ]
+                })
+              );
+              return;
             }
           }
         });

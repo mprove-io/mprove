@@ -119,7 +119,7 @@ export async function fetchSql<T extends types.dzType>(
         // extendedFilters: [],
       };
 
-      let startBuildMalloyQuery = Date.now();
+      let startFetchSqlMalloyQuery = Date.now();
 
       let mFilters: { fieldId: string; fractions: common.Fraction[] }[] = [];
 
@@ -154,7 +154,7 @@ export async function fetchSql<T extends types.dzType>(
         mconfig: mconfig,
         malloyConnections: item.malloyConnections,
         projectConnection: item.projectConnections.find(
-          x => x.connectionId === apiModel.modelId
+          x => x.connectionId === apiModel.connectionId
         ),
         queryOperations: [
           // {
@@ -215,12 +215,12 @@ export async function fetchSql<T extends types.dzType>(
       // console.log('filtersFractions');
       // console.log(filtersFractions);
 
-      console.log('buildMalloyQuery:');
-      console.log(Date.now() - startBuildMalloyQuery);
+      console.log('fetchSqlMalloyQuery:');
+      console.log(Date.now() - startFetchSqlMalloyQuery);
 
-      tile.sql = editMalloyQueryResult.newMconfig.compiledQuery.sql.split('\n');
-      tile.malloyQuery = editMalloyQueryResult.newMconfig.compiledQuery.malloy;
-      tile.compiledQuery = editMalloyQueryResult.newMconfig.compiledQuery;
+      tile.compiledQuery = newMconfig.compiledQuery;
+      tile.sql = newMconfig.compiledQuery.sql.split('\n');
+      tile.malloyQuery = newMconfig.malloyQuery;
       tile.filtersFractions = filtersFractions;
       // tile.select = [];
       // tile.model = preparedResult._rawQuery.sourceExplore;
