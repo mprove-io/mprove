@@ -29,13 +29,13 @@ export class ToDiskCreateFileRequestPayload {
   @IsString()
   fileText?: string;
 
-  @IsOptional()
-  @IsString()
-  secondFileName?: string;
+  // @IsOptional()
+  // @IsString()
+  // secondFileName?: string;
 
-  @IsOptional()
-  @IsString()
-  secondFileText?: string;
+  // @IsOptional()
+  // @IsString()
+  // secondFileText?: string;
 
   @IsEnum(common.ProjectRemoteTypeEnum)
   remoteType: common.ProjectRemoteTypeEnum;

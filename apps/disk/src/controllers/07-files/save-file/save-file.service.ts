@@ -32,9 +32,9 @@ export class SaveFileService {
       branch,
       fileNodeId,
       content,
-      secondFileNodeId,
-      secondFileContent,
-      isDeleteSecondFile,
+      // secondFileNodeId,
+      // secondFileContent,
+      // isDeleteSecondFile,
       userAlias,
       remoteType,
       gitUrl,
@@ -117,38 +117,38 @@ export class SaveFileService {
       content: content
     });
 
-    if (
-      common.isDefined(secondFileNodeId) &&
-      common.isDefinedAndNotEmpty(secondFileContent)
-    ) {
-      let relativeSecondFilePath = secondFileNodeId.substring(
-        projectId.length + 1
-      );
-      let secondFilePath = repoDir + '/' + relativeSecondFilePath;
+    // if (
+    //   common.isDefined(secondFileNodeId) &&
+    //   common.isDefinedAndNotEmpty(secondFileContent)
+    // ) {
+    //   let relativeSecondFilePath = secondFileNodeId.substring(
+    //     projectId.length + 1
+    //   );
+    //   let secondFilePath = repoDir + '/' + relativeSecondFilePath;
 
-      // malloy file may not exist when adding to a tile to dashboard
+    //   // malloy file may not exist when adding to a tile to dashboard
 
-      // let isSecondFileExist = await disk.isPathExist(secondFilePath);
-      // if (isSecondFileExist === false) {
-      //   throw new common.ServerError({
-      //     message: common.ErEnum.DISK_FILE_IS_NOT_EXIST
-      //   });
-      // }
+    //   // let isSecondFileExist = await disk.isPathExist(secondFilePath);
+    //   // if (isSecondFileExist === false) {
+    //   //   throw new common.ServerError({
+    //   //     message: common.ErEnum.DISK_FILE_IS_NOT_EXIST
+    //   //   });
+    //   // }
 
-      await disk.writeToFile({
-        filePath: secondFilePath,
-        content: secondFileContent
-      });
-    }
+    //   await disk.writeToFile({
+    //     filePath: secondFilePath,
+    //     content: secondFileContent
+    //   });
+    // }
 
-    if (common.isDefined(secondFileNodeId) && isDeleteSecondFile === true) {
-      let secondRelativeFilePath = secondFileNodeId.substring(
-        projectId.length + 1
-      );
-      let secondFilePath = repoDir + '/' + secondRelativeFilePath;
+    // if (common.isDefined(secondFileNodeId) && isDeleteSecondFile === true) {
+    //   let secondRelativeFilePath = secondFileNodeId.substring(
+    //     projectId.length + 1
+    //   );
+    //   let secondFilePath = repoDir + '/' + secondRelativeFilePath;
 
-      await disk.removePath(secondFilePath);
-    }
+    //   await disk.removePath(secondFilePath);
+    // }
 
     await git.addChangesToStage({ repoDir: repoDir });
 

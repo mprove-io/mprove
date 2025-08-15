@@ -18,7 +18,7 @@ export function makeDashboardFileText(item: {
   roles: string;
   timezone: string;
   caseSensitiveStringFilters: boolean;
-  malloyDashboardFilePath: string;
+  // malloyDashboardFilePath: string;
 }) {
   let {
     dashboard,
@@ -26,8 +26,8 @@ export function makeDashboardFileText(item: {
     newTitle,
     roles,
     timezone,
-    caseSensitiveStringFilters,
-    malloyDashboardFilePath
+    caseSensitiveStringFilters
+    // malloyDashboardFilePath
   } = item;
 
   let malloyParts: MalloyPart[] = [];
@@ -235,30 +235,30 @@ export function makeDashboardFileText(item: {
   // console.log('dashboardFileText');
   // console.log(dashboardFileText);
 
-  let malloyFileText: string;
+  // let malloyFileText: string;
 
-  if (malloyParts.length > 0) {
-    malloyFileText = '';
+  // if (malloyParts.length > 0) {
+  //   malloyFileText = '';
 
-    let uniqueModelIds = [
-      ...new Set(malloyParts.map(malloyPart => malloyPart.modelId))
-    ];
+  //   let uniqueModelIds = [
+  //     ...new Set(malloyParts.map(malloyPart => malloyPart.modelId))
+  //   ];
 
-    malloyFileText = uniqueModelIds
-      .map(modelId => {
-        let malloyPart = malloyParts.find(y => y.modelId === modelId);
-        return `import { ${modelId} } from '${malloyPart.modelRelativePath}';`;
-      })
-      .join('\n');
+  //   malloyFileText = uniqueModelIds
+  //     .map(modelId => {
+  //       let malloyPart = malloyParts.find(y => y.modelId === modelId);
+  //       return `import { ${modelId} } from '${malloyPart.modelRelativePath}';`;
+  //     })
+  //     .join('\n');
 
-    malloyFileText = [
-      `${malloyFileText}\n`,
-      ...malloyParts.map(x => x.malloyQueryText)
-    ].join('\n');
-  }
+  //   malloyFileText = [
+  //     `${malloyFileText}\n`,
+  //     ...malloyParts.map(x => x.malloyQueryText)
+  //   ].join('\n');
+  // }
 
   return {
-    dashboardFileText: dashboardFileText,
-    malloyFileText: malloyFileText
+    dashboardFileText: dashboardFileText
+    // malloyFileText: malloyFileText
   };
 }

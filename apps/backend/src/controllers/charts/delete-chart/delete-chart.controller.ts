@@ -122,21 +122,21 @@ export class DeleteChartController {
       });
     }
 
-    let chartMconfig = await this.mconfigsService.getMconfigCheckExists({
-      structId: bridge.structId,
-      mconfigId: existingChart.tiles[0].mconfigId
-    });
+    // let chartMconfig = await this.mconfigsService.getMconfigCheckExists({
+    //   structId: bridge.structId,
+    //   mconfigId: existingChart.tiles[0].mconfigId
+    // });
 
-    let secondFileNodeId;
+    // let secondFileNodeId;
 
-    if (chartMconfig.modelType === common.ModelTypeEnum.Malloy) {
-      let pathParts = existingChart.filePath.split('.');
+    // if (chartMconfig.modelType === common.ModelTypeEnum.Malloy) {
+    //   let pathParts = existingChart.filePath.split('.');
 
-      pathParts[pathParts.length - 1] =
-        common.FileExtensionEnum.Malloy.slice(1);
+    //   pathParts[pathParts.length - 1] =
+    //     common.FileExtensionEnum.Malloy.slice(1);
 
-      secondFileNodeId = pathParts.join('.');
-    }
+    //   secondFileNodeId = pathParts.join('.');
+    // }
 
     let toDiskDeleteFileRequest: apiToDisk.ToDiskDeleteFileRequest = {
       info: {
@@ -149,7 +149,7 @@ export class DeleteChartController {
         repoId: repoId,
         branch: branchId,
         fileNodeId: existingChart.filePath,
-        secondFileNodeId: secondFileNodeId,
+        // secondFileNodeId: secondFileNodeId,
         userAlias: user.alias,
         remoteType: project.remoteType,
         gitUrl: project.gitUrl,

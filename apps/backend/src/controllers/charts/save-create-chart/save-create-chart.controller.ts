@@ -173,24 +173,27 @@ export class SaveCreateChartController {
 
     let fileName = `${newChartId}${common.FileExtensionEnum.Chart}`;
 
-    let malloyQueryFileName =
-      mconfig.modelType === common.ModelTypeEnum.Malloy
-        ? `${newChartId}${common.FileExtensionEnum.Malloy}`
-        : undefined;
+    // let malloyQueryFileName =
+    //   mconfig.modelType === common.ModelTypeEnum.Malloy
+    //     ? `${newChartId}${common.FileExtensionEnum.Malloy}`
+    //     : undefined;
 
-    let malloyChartFilePath =
-      mconfig.modelType === common.ModelTypeEnum.Malloy
-        ? `${parentNodeId}/${malloyQueryFileName}`
-        : undefined;
+    // let malloyChartFilePath =
+    //   mconfig.modelType === common.ModelTypeEnum.Malloy
+    //     ? `${parentNodeId}/${malloyQueryFileName}`
+    //     : undefined;
 
-    let { chartFileText, malloyFileText } = makeChartFileText({
+    let {
+      chartFileText
+      // , malloyFileText
+    } = makeChartFileText({
       mconfig: mconfig,
       tileTitle: tileTitle,
       roles: accessRoles,
       chartId: newChartId,
       modelId: mconfigModel.modelId,
-      modelFilePath: mconfigModel.filePath,
-      malloyChartFilePath: malloyChartFilePath
+      modelFilePath: mconfigModel.filePath
+      // malloyChartFilePath: malloyChartFilePath
     });
 
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
@@ -207,10 +210,10 @@ export class SaveCreateChartController {
         parentNodeId: parentNodeId,
         fileName: fileName,
         fileText: chartFileText,
-        secondFileName: common.isDefined(malloyFileText)
-          ? malloyQueryFileName
-          : undefined,
-        secondFileText: malloyFileText,
+        // secondFileName: common.isDefined(malloyFileText)
+        //   ? malloyQueryFileName
+        //   : undefined,
+        // secondFileText: malloyFileText,
         remoteType: project.remoteType,
         gitUrl: project.gitUrl,
         privateKey: project.privateKey,

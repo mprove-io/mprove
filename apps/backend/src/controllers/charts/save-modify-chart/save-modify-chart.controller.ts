@@ -196,19 +196,22 @@ export class SaveModifyChartController {
     let pathParts = existingChart.filePath.split('.');
     pathParts[pathParts.length - 1] = common.FileExtensionEnum.Malloy.slice(1);
 
-    let secondFileNodeId =
-      mconfig.modelType === common.ModelTypeEnum.Malloy
-        ? pathParts.join('.')
-        : undefined;
+    // let secondFileNodeId =
+    //   mconfig.modelType === common.ModelTypeEnum.Malloy
+    //     ? pathParts.join('.')
+    //     : undefined;
 
-    let { chartFileText, malloyFileText } = makeChartFileText({
+    let {
+      chartFileText
+      // malloyFileText
+    } = makeChartFileText({
       mconfig: mconfig,
       tileTitle: tileTitle,
       roles: accessRoles,
       chartId: chartId,
       modelId: mconfigModel.modelId,
-      modelFilePath: mconfigModel.filePath,
-      malloyChartFilePath: secondFileNodeId
+      modelFilePath: mconfigModel.filePath
+      // malloyChartFilePath: secondFileNodeId
     });
 
     let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {
@@ -224,10 +227,10 @@ export class SaveModifyChartController {
         fileNodeId: existingChart.filePath,
         userAlias: user.alias,
         content: chartFileText,
-        secondFileNodeId: common.isDefined(malloyFileText)
-          ? secondFileNodeId
-          : undefined,
-        secondFileContent: malloyFileText,
+        // secondFileNodeId: common.isDefined(malloyFileText)
+        //   ? secondFileNodeId
+        //   : undefined,
+        // secondFileContent: malloyFileText,
         remoteType: project.remoteType,
         gitUrl: project.gitUrl,
         privateKey: project.privateKey,

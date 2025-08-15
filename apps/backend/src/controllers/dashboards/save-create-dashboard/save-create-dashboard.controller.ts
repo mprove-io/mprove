@@ -151,12 +151,12 @@ export class SaveCreateDashboardController {
 
     let fileName = `${newDashboardId}${common.FileExtensionEnum.Dashboard}`;
 
-    let malloyFileName = `${newDashboardId}${common.FileExtensionEnum.Malloy}`;
+    // let malloyFileName = `${newDashboardId}${common.FileExtensionEnum.Malloy}`;
 
-    let malloyDashboardFilePath = `${parentNodeId}/${malloyFileName}`;
+    // let malloyDashboardFilePath = `${parentNodeId}/${malloyFileName}`;
 
     let dashFileText: string;
-    let secondFileContent: string;
+    // let secondFileContent: string;
 
     if (common.isDefined(fromDashboardId)) {
       let fromDashboardEntity =
@@ -197,18 +197,21 @@ export class SaveCreateDashboardController {
 
       fromDashboard.tiles = yTiles;
 
-      let { dashboardFileText, malloyFileText } = makeDashboardFileText({
+      let {
+        dashboardFileText
+        // , malloyFileText
+      } = makeDashboardFileText({
         dashboard: fromDashboard,
         newDashboardId: newDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
         caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-        timezone: common.UTC,
-        malloyDashboardFilePath: malloyDashboardFilePath
+        timezone: common.UTC
+        // malloyDashboardFilePath: malloyDashboardFilePath
       });
 
       dashFileText = dashboardFileText;
-      secondFileContent = malloyFileText;
+      // secondFileContent = malloyFileText;
     } else {
       let newDashboard: common.DashboardX = {
         structId: undefined,
@@ -229,18 +232,21 @@ export class SaveCreateDashboardController {
         fields: []
       };
 
-      let { dashboardFileText, malloyFileText } = makeDashboardFileText({
+      let {
+        dashboardFileText
+        // , malloyFileText
+      } = makeDashboardFileText({
         dashboard: newDashboard,
         newDashboardId: newDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
         caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-        timezone: common.UTC,
-        malloyDashboardFilePath: malloyDashboardFilePath
+        timezone: common.UTC
+        // malloyDashboardFilePath: malloyDashboardFilePath
       });
 
       dashFileText = dashboardFileText;
-      secondFileContent = malloyFileText;
+      // secondFileContent = malloyFileText;
     }
 
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
@@ -256,8 +262,8 @@ export class SaveCreateDashboardController {
         parentNodeId: parentNodeId,
         fileName: fileName,
         fileText: dashFileText,
-        secondFileName: malloyFileName,
-        secondFileText: secondFileContent,
+        // secondFileName: malloyFileName,
+        // secondFileText: secondFileContent,
         userAlias: user.alias,
         remoteType: project.remoteType,
         gitUrl: project.gitUrl,

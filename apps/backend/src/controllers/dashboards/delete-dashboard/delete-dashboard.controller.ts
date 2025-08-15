@@ -7,7 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
@@ -19,7 +19,6 @@ import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
-import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
@@ -123,24 +122,24 @@ export class DeleteDashboardController {
       });
     }
 
-    let secondFileNodeId;
+    // let secondFileNodeId;
 
-    let mconfigIds = existingDashboard.tiles.map(x => x.mconfigId);
-    let mconfigs =
-      mconfigIds.length === 0
-        ? []
-        : await this.db.drizzle.query.mconfigsTable.findMany({
-            where: inArray(mconfigsTable.mconfigId, mconfigIds)
-          });
+    // let mconfigIds = existingDashboard.tiles.map(x => x.mconfigId);
+    // let mconfigs =
+    //   mconfigIds.length === 0
+    //     ? []
+    //     : await this.db.drizzle.query.mconfigsTable.findMany({
+    //         where: inArray(mconfigsTable.mconfigId, mconfigIds)
+    //       });
 
-    if (mconfigs.some(x => x.modelType === common.ModelTypeEnum.Malloy)) {
-      let pathParts = existingDashboard.filePath.split('.');
+    // if (mconfigs.some(x => x.modelType === common.ModelTypeEnum.Malloy)) {
+    //   let pathParts = existingDashboard.filePath.split('.');
 
-      pathParts[pathParts.length - 1] =
-        common.FileExtensionEnum.Malloy.slice(1);
+    //   pathParts[pathParts.length - 1] =
+    //     common.FileExtensionEnum.Malloy.slice(1);
 
-      secondFileNodeId = pathParts.join('.');
-    }
+    //   secondFileNodeId = pathParts.join('.');
+    // }
 
     let toDiskDeleteFileRequest: apiToDisk.ToDiskDeleteFileRequest = {
       info: {
@@ -153,7 +152,7 @@ export class DeleteDashboardController {
         repoId: repoId,
         branch: branchId,
         fileNodeId: existingDashboard.filePath,
-        secondFileNodeId: secondFileNodeId,
+        // secondFileNodeId: secondFileNodeId,
         userAlias: user.alias,
         remoteType: project.remoteType,
         gitUrl: project.gitUrl,

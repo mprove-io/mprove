@@ -205,14 +205,17 @@ export class GetDashboardController {
 
     let secondFileId = common.encodeFilePath({ filePath: secondRelativePath });
 
-    let { dashboardFileText, malloyFileText } = makeDashboardFileText({
+    let {
+      dashboardFileText
+      // , malloyFileText
+    } = makeDashboardFileText({
       dashboard: fromDashboard,
       newDashboardId: newDashboardId,
       newTitle: fromDashboard.title,
       roles: fromDashboard.accessRoles.join(', '),
       caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-      timezone: common.UTC,
-      malloyDashboardFilePath: secondFileNodeId
+      timezone: common.UTC
+      // malloyDashboardFilePath: secondFileNodeId
     });
 
     // add dashboard file
@@ -229,21 +232,21 @@ export class GetDashboardController {
       content: dashboardFileText
     };
 
-    let secondTempFile: common.DiskCatalogFile = {
-      projectId: projectId,
-      repoId: repoId,
-      fileId: fromDashboard.draft === true ? secondFileId : malloyFile?.fileId,
-      pathString:
-        fromDashboard.draft === true
-          ? secondPathString
-          : malloyFile?.pathString,
-      fileNodeId:
-        fromDashboard.draft === true
-          ? secondFileNodeId
-          : malloyFile?.fileNodeId,
-      name: secondFileName,
-      content: malloyFileText
-    };
+    // let secondTempFile: common.DiskCatalogFile = {
+    //   projectId: projectId,
+    //   repoId: repoId,
+    //   fileId: fromDashboard.draft === true ? secondFileId : malloyFile?.fileId,
+    //   pathString:
+    //     fromDashboard.draft === true
+    //       ? secondPathString
+    //       : malloyFile?.pathString,
+    //   fileNodeId:
+    //     fromDashboard.draft === true
+    //       ? secondFileNodeId
+    //       : malloyFile?.fileNodeId,
+    //   name: secondFileName,
+    //   content: malloyFileText
+    // };
 
     let diskFiles = [
       tempFile,
@@ -260,9 +263,9 @@ export class GetDashboardController {
       })
     ];
 
-    if (common.isDefined(malloyFileText)) {
-      diskFiles.push(secondTempFile);
-    }
+    // if (common.isDefined(malloyFileText)) {
+    //   diskFiles.push(secondTempFile);
+    // }
 
     let { struct, dashboards, mconfigs, models, queries } =
       await this.blockmlService.rebuildStruct({

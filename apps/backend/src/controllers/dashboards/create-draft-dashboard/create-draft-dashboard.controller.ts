@@ -190,34 +190,37 @@ export class CreateDraftDashboardController {
 
     // second
 
-    let secondFileName = `${newDashboardId}${common.FileExtensionEnum.Malloy}`;
+    // let secondFileName = `${newDashboardId}${common.FileExtensionEnum.Malloy}`;
 
-    let secondRelativePath =
-      currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
-        ? `${common.MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`
-        : `${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`;
+    // let secondRelativePath =
+    //   currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
+    //     ? `${common.MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`
+    //     : `${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`;
 
-    let secondFileNodeId = `${projectId}/${secondRelativePath}`;
+    // let secondFileNodeId = `${projectId}/${secondRelativePath}`;
 
-    let secondPathString = JSON.stringify(secondFileNodeId.split('/'));
+    // let secondPathString = JSON.stringify(secondFileNodeId.split('/'));
 
-    let secondFileId = common.encodeFilePath({ filePath: secondRelativePath });
+    // let secondFileId = common.encodeFilePath({ filePath: secondRelativePath });
 
-    let { dashboardFileText, malloyFileText } = makeDashboardFileText({
+    let {
+      dashboardFileText
+      // , malloyFileText
+    } = makeDashboardFileText({
       dashboard: fromDashboard,
       newDashboardId: newDashboardId,
       newTitle: newDashboardId,
       roles: fromDashboard.accessRoles.join(', '),
       caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-      timezone: common.UTC,
-      malloyDashboardFilePath: secondFileNodeId
+      timezone: common.UTC
+      // malloyDashboardFilePath: secondFileNodeId
     });
 
     console.log('dashboardFileText');
     console.log(dashboardFileText);
 
-    console.log('malloyFileText');
-    console.log(malloyFileText);
+    // console.log('malloyFileText');
+    // console.log(malloyFileText);
 
     let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
       info: {
@@ -260,15 +263,15 @@ export class CreateDraftDashboardController {
       content: dashboardFileText
     };
 
-    let secondTempFile: common.DiskCatalogFile = {
-      projectId: projectId,
-      repoId: repoId,
-      fileId: secondFileId,
-      pathString: secondPathString,
-      fileNodeId: secondFileNodeId,
-      name: secondFileName,
-      content: malloyFileText
-    };
+    // let secondTempFile: common.DiskCatalogFile = {
+    //   projectId: projectId,
+    //   repoId: repoId,
+    //   fileId: secondFileId,
+    //   pathString: secondPathString,
+    //   fileNodeId: secondFileNodeId,
+    //   name: secondFileName,
+    //   content: malloyFileText
+    // };
 
     let diskFiles = [
       tempFile,
@@ -276,7 +279,7 @@ export class CreateDraftDashboardController {
         let ar = x.name.split('.');
         let ext = ar[ar.length - 1];
         let allow =
-          x.fileNodeId !== secondFileNodeId &&
+          // x.fileNodeId !== secondFileNodeId &&
           [
             common.FileExtensionEnum.Chart,
             common.FileExtensionEnum.Dashboard
@@ -285,9 +288,9 @@ export class CreateDraftDashboardController {
       })
     ];
 
-    if (common.isDefined(malloyFileText)) {
-      diskFiles.push(secondTempFile);
-    }
+    // if (common.isDefined(malloyFileText)) {
+    //   diskFiles.push(secondTempFile);
+    // }
 
     let { struct, dashboards, mconfigs, models, queries } =
       await this.blockmlService.rebuildStruct({

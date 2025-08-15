@@ -1,11 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsEnum,
-  IsOptional,
-  IsString,
-  ValidateNested
-} from 'class-validator';
+import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { common } from '~api-to-disk/barrels/common';
 import { ToDiskRequest } from '~api-to-disk/interfaces/to-disk/to-disk-request';
 
@@ -28,17 +22,17 @@ export class ToDiskSaveFileRequestPayload {
   @IsString()
   content: string;
 
-  @IsOptional()
-  @IsString()
-  secondFileNodeId?: string;
+  // @IsOptional()
+  // @IsString()
+  // secondFileNodeId?: string;
 
-  @IsOptional()
-  @IsString()
-  secondFileContent?: string;
+  // @IsOptional()
+  // @IsString()
+  // secondFileContent?: string;
 
-  @IsOptional()
-  @IsBoolean()
-  isDeleteSecondFile?: boolean;
+  // @IsOptional()
+  // @IsBoolean()
+  // isDeleteSecondFile?: boolean;
 
   @IsString()
   userAlias: string;

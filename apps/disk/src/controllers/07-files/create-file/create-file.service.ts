@@ -36,8 +36,8 @@ export class CreateFileService {
       branch,
       fileName,
       fileText,
-      secondFileName,
-      secondFileText,
+      // secondFileName,
+      // secondFileText,
       parentNodeId,
       userAlias,
       remoteType,
@@ -127,23 +127,23 @@ export class CreateFileService {
       content: content
     });
 
-    if (common.isDefinedAndNotEmpty(secondFileName)) {
-      let secondFilePath = parentPath + secondFileName;
-      let secondContent =
-        secondFileText || getContentFromFileName({ fileName: secondFileName });
+    // if (common.isDefinedAndNotEmpty(secondFileName)) {
+    //   let secondFilePath = parentPath + secondFileName;
+    //   let secondContent =
+    //     secondFileText || getContentFromFileName({ fileName: secondFileName });
 
-      let isSecondFileExist = await disk.isPathExist(secondFilePath);
-      if (isSecondFileExist === true) {
-        throw new common.ServerError({
-          message: common.ErEnum.DISK_FILE_ALREADY_EXIST
-        });
-      }
+    //   let isSecondFileExist = await disk.isPathExist(secondFilePath);
+    //   if (isSecondFileExist === true) {
+    //     throw new common.ServerError({
+    //       message: common.ErEnum.DISK_FILE_ALREADY_EXIST
+    //     });
+    //   }
 
-      await disk.writeToFile({
-        filePath: secondFilePath,
-        content: secondContent
-      });
-    }
+    //   await disk.writeToFile({
+    //     filePath: secondFilePath,
+    //     content: secondContent
+    //   });
+    // }
 
     await git.addChangesToStage({ repoDir: repoDir });
 
