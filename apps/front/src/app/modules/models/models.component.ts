@@ -135,7 +135,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
   queryPartEnum = common.QueryPartEnum;
 
   modelTypeStore = common.ModelTypeEnum.Store;
-  modelTypeSQL = common.ModelTypeEnum.SQL;
   modelTypeMalloy = common.ModelTypeEnum.Malloy;
 
   chartTypeEnumTable = common.ChartTypeEnum.Table;
@@ -230,13 +229,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
               common.QueryPartEnum.YamlTile,
               common.QueryPartEnum.YamlStore,
               common.QueryPartEnum.JsonResults
-            ].indexOf(this.queryPartForm.controls['queryPart'].value) < 0) ||
-          (this.model.type === common.ModelTypeEnum.SQL &&
-            [
-              common.QueryPartEnum.SqlMain,
-              common.QueryPartEnum.YamlTile,
-              common.QueryPartEnum.YamlModel,
-              common.QueryPartEnum.JsonResults
             ].indexOf(this.queryPartForm.controls['queryPart'].value) < 0))
       ) {
         let queryPart =
@@ -244,9 +236,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
             ? common.QueryPartEnum.JsonStoreRequestParts
             : this.model.type === common.ModelTypeEnum.Malloy
               ? common.QueryPartEnum.MalloyQuery
-              : this.model.type === common.ModelTypeEnum.SQL
-                ? common.QueryPartEnum.SqlMain
-                : undefined;
+              : undefined;
 
         if (
           common.isDefined(queryPart) &&

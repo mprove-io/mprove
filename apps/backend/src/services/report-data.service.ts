@@ -410,9 +410,9 @@ export class ReportDataService {
             malloyQuery: undefined,
             compiledQuery: undefined,
             select: model.type === common.ModelTypeEnum.Malloy ? [] : select,
-            unsafeSelect: [],
-            warnSelect: [],
-            joinAggregations: [],
+            // unsafeSelect: [],
+            // warnSelect: [],
+            // joinAggregations: [],
             sortings:
               model.type === common.ModelTypeEnum.Malloy ? [] : sortings,
             sorts:

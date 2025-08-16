@@ -145,7 +145,7 @@
             class="flex h-11 flex-1 flex-row items-center"
             *ngIf="lastUrl !== pathModels && mconfig?.select.length > 0"
           >
-            <div
+            <!-- <div
               *ngIf="!!mconfig && mconfig.warnSelect.length > 0"
               class="text-p500 ml-5 flex h-8 w-8 flex-shrink-0"
               tp="Warning: The selected fields [{{
@@ -154,7 +154,7 @@
               placement="left"
             >
               <m-exclamation-icon></m-exclamation-icon>
-            </div>
+            </div> -->
 
             <div class="flex-grow"></div>
 
@@ -1593,31 +1593,6 @@
                   </div>
 
                   <div
-                    *ngIf="model.type === modelTypeSQL"
-                    (click)="setShowSqlMain()"
-                    class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
-                  >
-                    <div
-                      class="flex w-[50px] flex-row items-center justify-center"
-                    >
-                      <div
-                        [ngClass]="{
-                          'text-s400':
-                            rightIsShow === false ||
-                            queryPartForm.controls['queryPart'].value !==
-                              queryPartEnum.SqlMain,
-                          'font-semibold':
-                            rightIsShow &&
-                            queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.SqlMain
-                        }"
-                      >
-                        SQL
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
                     (click)="setShowJsonResults()"
                     class="ml-5 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
                   >
@@ -1712,31 +1687,6 @@
                         }"
                       >
                         STORE
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    *ngIf="model.type === modelTypeSQL"
-                    (click)="setShowYamlModel()"
-                    class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
-                  >
-                    <div
-                      class="flex w-[80px] flex-row items-center justify-center"
-                    >
-                      <div
-                        [ngClass]="{
-                          'text-s400':
-                            rightIsShow === false ||
-                            queryPartForm.controls['queryPart'].value !==
-                              queryPartEnum.YamlModel,
-                          'font-semibold':
-                            rightIsShow &&
-                            queryPartForm.controls['queryPart'].value ===
-                              queryPartEnum.YamlModel
-                        }"
-                      >
-                        MODEL
                       </div>
                     </div>
                   </div>

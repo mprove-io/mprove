@@ -44,10 +44,8 @@ export class StructsService {
       currencySuffix: PROJECT_CONFIG_CURRENCY_SUFFIX,
       thousandsSeparator: PROJECT_CONFIG_THOUSANDS_SEPARATOR,
       errors: [],
-      views: [],
       metrics: [],
       presets: [],
-      udfsDict: {},
       serverTs: undefined
     };
 
@@ -79,10 +77,8 @@ export class StructsService {
             currencySuffix: structsTable.currencySuffix,
             thousandsSeparator: structsTable.thousandsSeparator,
             errors: structsTable.errors,
-            views: structsTable.views,
             // metrics: structsTable.metrics,
             presets: structsTable.presets,
-            udfsDict: structsTable.udfsDict,
             serverTs: structsTable.serverTs
           })
           .from(structsTable)

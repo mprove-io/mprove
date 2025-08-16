@@ -23,4 +23,3 @@ export * from './structs/_index';
 export * from './suggest-fields/_index';
 export * from './test-routes/_index';
 export * from './users/_index';
-export * from './views/_index';

@@ -209,9 +209,9 @@ export class WrapToApiService {
       malloyQuery: mconfig.malloyQuery,
       compiledQuery: mconfig.compiledQuery,
       select: mconfig.select,
-      unsafeSelect: mconfig.unsafeSelect,
-      warnSelect: mconfig.warnSelect,
-      joinAggregations: mconfig.joinAggregations,
+      // unsafeSelect: mconfig.unsafeSelect,
+      // warnSelect: mconfig.warnSelect,
+      // joinAggregations: mconfig.joinAggregations,
       fields: makeMconfigFields({
         modelFields: modelFields,
         select: mconfig.select,
@@ -488,10 +488,8 @@ export class WrapToApiService {
       currencySuffix: struct.currencySuffix,
       thousandsSeparator: struct.thousandsSeparator,
       errors: struct.errors,
-      views: struct.views,
       metrics: struct.metrics,
       presets: struct.presets,
-      udfsDict: struct.udfsDict,
       serverTs: Number(struct.serverTs)
     };
   }

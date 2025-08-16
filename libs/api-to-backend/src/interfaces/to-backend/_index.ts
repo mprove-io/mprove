@@ -24,4 +24,3 @@ export * from './test-routes/_index';
 export * from './to-backend-request';
 export * from './to-backend-request-info';
 export * from './users/_index';
-export * from './views/_index';

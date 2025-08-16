@@ -977,19 +977,9 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     let id = ar.join('.');
     let dotExt = `.${ext}`;
 
-    if (dotExt === common.FileExtensionEnum.View) {
-      this.navigateService.navigateToChart({
-        modelId: `${common.VIEW_MODEL_PREFIX}_${id}`,
-        chartId: common.EMPTY_CHART_ID
-      });
-    } else if (dotExt === common.FileExtensionEnum.Store) {
+    if (dotExt === common.FileExtensionEnum.Store) {
       this.navigateService.navigateToChart({
         modelId: `${common.STORE_MODEL_PREFIX}_${id}`,
-        chartId: common.EMPTY_CHART_ID
-      });
-    } else if (dotExt === common.FileExtensionEnum.Model) {
-      this.navigateService.navigateToChart({
-        modelId: id,
         chartId: common.EMPTY_CHART_ID
       });
     } else if (dotExt === common.FileExtensionEnum.Report) {

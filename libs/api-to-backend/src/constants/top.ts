@@ -177,10 +177,6 @@ export const nameToClass = {
   [enums.ToBackendRequestInfoNameEnum.ToBackendGetModel]:
     interfaces.ToBackendGetModelRequest,
   //
-  [enums.ToBackendRequestInfoNameEnum.ToBackendGetViews]:
-    interfaces.ToBackendGetViewsRequest,
-
-  //
   [enums.ToBackendRequestInfoNameEnum.ToBackendCreateDraftChart]:
     interfaces.ToBackendCreateDraftChartRequest,
   [enums.ToBackendRequestInfoNameEnum.ToBackendDeleteChart]:

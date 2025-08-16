@@ -36,13 +36,10 @@ export const MEMBERS_PER_PAGE = 10;
 export const USERS_PER_PAGE = 10;
 
 export const BLOCKML_EXT_LIST: common.FileExtensionEnum[] = [
-  common.FileExtensionEnum.View,
-  common.FileExtensionEnum.Model,
   common.FileExtensionEnum.Store,
   common.FileExtensionEnum.Report,
   common.FileExtensionEnum.Dashboard,
-  common.FileExtensionEnum.Chart,
-  common.FileExtensionEnum.Udf
+  common.FileExtensionEnum.Chart
 ];
 
 export const RESULTS_LIST: common.FieldResultEnum[] = [

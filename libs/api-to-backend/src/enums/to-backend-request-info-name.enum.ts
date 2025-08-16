@@ -95,8 +95,6 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendGetModels = 'api/ToBackendGetModels',
   ToBackendGetModel = 'api/ToBackendGetModel',
   //
-  ToBackendGetViews = 'api/ToBackendGetViews',
-  //
   ToBackendCreateDraftChart = 'api/ToBackendCreateDraftChart',
   ToBackendDeleteChart = 'api/ToBackendDeleteChart',
   ToBackendDeleteDraftCharts = 'api/ToBackendDeleteDraftCharts',

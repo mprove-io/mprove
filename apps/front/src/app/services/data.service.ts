@@ -318,10 +318,6 @@ export class DataService {
                 : undefined;
           } else if (mconfig.modelType === common.ModelTypeEnum.Store) {
             fieldId = key.toLowerCase();
-          } else if (mconfig.modelType === common.ModelTypeEnum.SQL) {
-            fieldId = mconfig.fields.find(
-              x => x.sqlName === key.toLocaleLowerCase()
-            ).id;
           }
 
           // console.log('fieldId');
@@ -334,10 +330,7 @@ export class DataService {
           // console.log('field');
           // console.log(field);
 
-          if (
-            mconfig.modelType === common.ModelTypeEnum.Store ||
-            mconfig.modelType === common.ModelTypeEnum.SQL
-          ) {
+          if (mconfig.modelType === common.ModelTypeEnum.Store) {
             sqlName = field.sqlName;
           }
 

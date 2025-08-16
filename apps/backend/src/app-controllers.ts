@@ -109,8 +109,6 @@ export const appControllers = [
   controllers.SetUserUiController,
   controllers.UpdateUserPasswordController,
 
-  controllers.GetViewsController,
-
   controllers.CreateDraftChartController,
   controllers.DeleteChartController,
   controllers.DeleteDraftChartsController,

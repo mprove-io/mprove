@@ -27,10 +27,10 @@ export const mconfigsTable = pgTable(
     malloyQuery: varchar('malloy_query'),
     compiledQuery: json('compiled_query').$type<CompiledQuery>(),
     select: json('select').$type<string[]>().notNull(),
-    unsafeSelect: json('unsafe_select').$type<string[]>(),
-    warnSelect: json('warn_select').$type<string[]>(),
-    joinAggregations:
-      json('join_aggregations').$type<common.JoinAggregation[]>(),
+    // unsafeSelect: json('unsafe_select').$type<string[]>(),
+    // warnSelect: json('warn_select').$type<string[]>(),
+    // joinAggregations:
+    //   json('join_aggregations').$type<common.JoinAggregation[]>(),
     sortings: json('sortings').$type<common.Sorting[]>().notNull(),
     sorts: varchar('sorts'),
     timezone: varchar('timezone').notNull(),

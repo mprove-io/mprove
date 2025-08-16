@@ -165,10 +165,8 @@ export class BlockmlService {
       currencySuffix: rs.currencySuffix,
       thousandsSeparator: rs.thousandsSeparator,
       errors: rs.errors,
-      views: rs.views,
       metrics: rs.metrics,
       presets: rs.presets,
-      udfsDict: rs.udfsDict,
       serverTs: undefined
     };
 
