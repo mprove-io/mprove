@@ -569,7 +569,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
           branchId: nav.branchId,
           envId: nav.envId,
           mconfig: newMconfig,
-          queryOperation: queryOperation,
+          queryOperations: [queryOperation],
           cellMetricsStartDateMs: undefined,
           cellMetricsEndDateMs: undefined
         };

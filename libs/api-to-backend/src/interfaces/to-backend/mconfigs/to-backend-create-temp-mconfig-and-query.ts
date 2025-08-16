@@ -29,7 +29,7 @@ export class ToBackendCreateTempMconfigAndQueryRequestPayload {
   @IsOptional()
   @ValidateNested()
   @Type(() => common.QueryOperation)
-  queryOperation: common.QueryOperation;
+  queryOperations: common.QueryOperation[];
 
   @IsOptional()
   @IsNumber()

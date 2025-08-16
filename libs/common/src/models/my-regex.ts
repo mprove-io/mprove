@@ -281,6 +281,9 @@ export class MyRegex {
   static CAPTURE_TRIPLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G(): RegExp {
     return cloneRegexp(/^\s*(\w+)[.](\w+)[.](\w+)\s*$/g);
   }
+  static CAPTURE_SUGGEST_MODEL_FIELD_G(): RegExp {
+    return cloneRegexp(/^\s*(\w+)(?:\.)(\w+(?:\.\w+)*)\s*$/g);
+  }
 
   static CAPTURE_SORT_WITH_OPTIONAL_DESC_G(): RegExp {
     return cloneRegexp(/^\s*(\w+(?:\.\w+)*)\s*(desc)?\s*$/g);

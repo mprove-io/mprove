@@ -21,7 +21,7 @@ import {
   take,
   tap
 } from 'rxjs';
-import { MALLOY_FILTER_ANY } from '~common/constants/top';
+import { DOUBLE_UNDERSCORE, MALLOY_FILTER_ANY } from '~common/constants/top';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { apiToBackend } from '~front/barrels/api-to-backend';
@@ -184,17 +184,12 @@ export class FractionStringComponent implements OnInit, OnDestroy {
       (this.fraction.type === common.FractionTypeEnum.StringIsEqualTo ||
         this.fraction.type === common.FractionTypeEnum.StringIsNotEqualTo)
     ) {
-      let reg =
-        common.MyRegex.CAPTURE_TRIPLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+      let reg = common.MyRegex.CAPTURE_SUGGEST_MODEL_FIELD_G();
 
       let r = reg.exec(this.suggestModelDimension);
 
-      let modelName = r[1];
-      let asName = r[2];
-      let fieldName = r[3];
-
-      let fieldId = `${asName}.${fieldName}`;
-      // let fieldSqlName = `${asName}_${fieldName}`;
+      let modelId = r[1];
+      let fieldId = r[2];
 
       this.searchSubscription = this.searchInput$
         .pipe(
@@ -209,38 +204,23 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                 structId: this.structId,
                 mconfigId: common.makeId(),
                 queryId: common.makeId(),
-                modelId: modelName,
-                modelType: common.ModelTypeEnum.SQL, // TODO: modelType
-                // isStoreModel:
-                //   this.fraction.type === common.FractionTypeEnum.StoreFraction,
-                dateRangeIncludesRightSide: undefined, // adjustMconfig overrides it
+                modelId: modelId,
+                modelType: common.ModelTypeEnum.Malloy,
+                dateRangeIncludesRightSide: undefined,
                 storePart: undefined,
                 modelLabel: 'empty',
                 modelFilePath: undefined,
                 malloyQuery: undefined,
                 compiledQuery: undefined,
-                select: [fieldId],
+                select: [],
                 unsafeSelect: [],
                 warnSelect: [],
                 joinAggregations: [],
                 sortings: [],
-                sorts: `${fieldId}`,
+                sorts: undefined,
                 timezone: common.UTC,
                 limit: 500,
-                filters: common.isDefinedAndNotEmpty(term)
-                  ? [
-                      {
-                        fieldId: fieldId,
-                        fractions: [
-                          {
-                            brick: `%${term}%`,
-                            type: common.FractionTypeEnum.StringContains,
-                            operator: common.FractionOperatorEnum.Or
-                          }
-                        ]
-                      }
-                    ]
-                  : [],
+                filters: [],
                 chart: common.makeCopy(common.DEFAULT_CHART),
                 temp: true,
                 serverTs: 1
@@ -248,20 +228,59 @@ export class FractionStringComponent implements OnInit, OnDestroy {
 
               let nav = this.navQuery.getValue();
 
+              let query;
+
+              let queryOperation1: common.QueryOperation = {
+                type: common.QueryOperationTypeEnum.GroupOrAggregatePlusSort,
+                fieldId: fieldId,
+                sortFieldId: fieldId,
+                desc: false,
+                timezone: newMconfig.timezone
+              };
+
+              let queryOperation2: common.QueryOperation = {
+                type: common.QueryOperationTypeEnum.WhereOrHaving,
+                timezone: newMconfig.timezone,
+                filters: [
+                  {
+                    fieldId: fieldId,
+                    fractions: [
+                      {
+                        brick: `f\`%${term}%\``,
+                        parentBrick: `f\`%${term}%\``,
+                        type: common.FractionTypeEnum.StringContains,
+                        operator: common.FractionOperatorEnum.Or,
+                        stringValue: term
+                      }
+                    ]
+                  }
+                ]
+              };
+
+              let queryOperations: common.QueryOperation[] = common.isDefined(
+                queryOperation2
+              )
+                ? [queryOperation1, queryOperation2]
+                : [queryOperation1];
+
+              let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload =
+                {
+                  projectId: nav.projectId,
+                  isRepoProd: nav.isRepoProd,
+                  branchId: nav.branchId,
+                  envId: nav.envId,
+                  mconfig: newMconfig,
+                  cellMetricsStartDateMs: undefined,
+                  cellMetricsEndDateMs: undefined,
+                  queryOperations: queryOperations
+                };
+
               let q1Resp = await this.apiService
                 .req({
                   pathInfoName:
                     apiToBackend.ToBackendRequestInfoNameEnum
                       .ToBackendCreateTempMconfigAndQuery,
-                  payload: {
-                    projectId: nav.projectId,
-                    isRepoProd: nav.isRepoProd,
-                    branchId: nav.branchId,
-                    envId: nav.envId,
-                    mconfig: newMconfig,
-                    cellMetricsStartDateMs: undefined,
-                    cellMetricsEndDateMs: undefined
-                  } as apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload
+                  payload: payload
                 })
                 .pipe(
                   tap(
@@ -342,7 +361,7 @@ export class FractionStringComponent implements OnInit, OnDestroy {
               this.items = common.isDefined(q3Resp?.payload?.query?.data)
                 ? q3Resp.payload.query.data.map((row: any, i: number) => ({
                     id: i,
-                    name: row[fieldId]
+                    name: row['row'][fieldId.split('.').join(DOUBLE_UNDERSCORE)]
                   }))
                 : [];
 

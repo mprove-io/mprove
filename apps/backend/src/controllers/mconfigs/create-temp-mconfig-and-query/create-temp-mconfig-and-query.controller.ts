@@ -75,7 +75,7 @@ export class CreateTempMconfigAndQueryController {
       envId,
       cellMetricsStartDateMs,
       cellMetricsEndDateMs,
-      queryOperation
+      queryOperations
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
@@ -175,7 +175,7 @@ export class CreateTempMconfigAndQueryController {
         structId: struct.structId,
         model: model,
         mconfig: mconfig,
-        queryOperations: [queryOperation]
+        queryOperations: queryOperations
       });
 
       isError = editMalloyQueryResult.isError;

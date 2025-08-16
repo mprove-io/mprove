@@ -48,6 +48,7 @@ export class Mconfig {
   @IsString()
   modelLabel: string;
 
+  @IsOptional()
   @IsString()
   modelFilePath: string;
 
