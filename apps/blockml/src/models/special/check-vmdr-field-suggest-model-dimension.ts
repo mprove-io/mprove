@@ -134,8 +134,7 @@ function checkSuggestFields(item: {
         return;
       }
 
-      let reg =
-        common.MyRegex.CAPTURE_TRIPLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+      let reg = common.MyRegex.CAPTURE_SUGGEST_MODEL_FIELD_G();
 
       let r = reg.exec(field.suggest_model_dimension);
 
@@ -145,7 +144,7 @@ function checkSuggestFields(item: {
             new BmError({
               title: common.ErTitleEnum.WRONG_SUGGEST_MODEL_DIMENSION,
               message:
-                `The value of the "suggest_model_dimension" parameter must be a reference structured as "model_name.join_as_name.dimension_name". ` +
+                `The value of the "suggest_model_dimension" parameter must be a reference structured as "model_name.field_path". ` +
                 `Found value "${field.suggest_model_dimension}"`,
               lines: [
                 {

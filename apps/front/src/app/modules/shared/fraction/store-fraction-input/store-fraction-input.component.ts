@@ -100,17 +100,12 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
       (this.fraction.type === common.FractionTypeEnum.StringIsEqualTo ||
         this.fraction.type === common.FractionTypeEnum.StringIsNotEqualTo)
     ) {
-      let reg =
-        common.MyRegex.CAPTURE_TRIPLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
+      let reg = common.MyRegex.CAPTURE_SUGGEST_MODEL_FIELD_G();
 
       let r = reg.exec(this.suggestModelDimension);
 
-      let modelName = r[1];
-      let asName = r[2];
-      let fieldName = r[3];
-
-      let fieldId = `${asName}.${fieldName}`;
-      // let fieldSqlName = `${asName}_${fieldName}`;
+      let modelId = r[1];
+      let fieldId = r[2];
 
       this.searchSubscription = this.searchInput$
         .pipe(
@@ -125,7 +120,7 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
                 structId: this.structId,
                 mconfigId: common.makeId(),
                 queryId: common.makeId(),
-                modelId: modelName,
+                modelId: modelId,
                 modelType: common.ModelTypeEnum.Store,
                 // isStoreModel:
                 //   this.fraction.type === common.FractionTypeEnum.StoreFraction,
