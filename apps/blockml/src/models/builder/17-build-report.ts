@@ -8,7 +8,6 @@ export function buildReport(
   item: {
     reports: common.FileReport[];
     metrics: common.ModelMetric[];
-    models: common.FileModel[];
     apiModels: common.Model[];
     stores: common.FileStore[];
     errors: BmError[];
@@ -86,7 +85,6 @@ export function buildReport(
     {
       reports: reports,
       metrics: item.metrics,
-      models: item.models,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
@@ -108,7 +106,6 @@ export function buildReport(
     {
       reports: reports,
       metrics: item.metrics,
-      models: item.models,
       apiModels: item.apiModels,
       stores: item.stores,
       structId: item.structId,
@@ -123,7 +120,6 @@ export function buildReport(
     {
       reports: reports,
       metrics: item.metrics,
-      models: item.models,
       structId: item.structId,
       caseSensitiveStringFilters: item.caseSensitiveStringFilters,
       errors: item.errors,

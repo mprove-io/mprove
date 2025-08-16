@@ -11,7 +11,6 @@ import { nodeCommon } from '~blockml/barrels/node-common';
 import { getConfig } from '~blockml/config/get.config';
 import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
 import { ConsumerMainService } from '~blockml/services/consumer-main.service';
-import { ConsumerWorkerService } from '~blockml/services/consumer-worker.service';
 import { RabbitService } from '~blockml/services/rabbit.service';
 // import { PresetsService } from '~blockml/services/presets.service';
 // import { BmlFile } from '~common/interfaces/blockml/bml-file';
@@ -68,8 +67,6 @@ export async function prepareTest(
     .overrideProvider(RabbitService)
     .useValue({})
     .overrideProvider(ConsumerMainService)
-    .useValue({})
-    .overrideProvider(ConsumerWorkerService)
     .useValue({})
     .compile();
 

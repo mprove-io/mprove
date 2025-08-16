@@ -20,24 +20,21 @@ export interface FieldItemX extends FieldItem {
 export function wrapModels(item: {
   projectId: string;
   structId: string;
-  models: common.FileModel[];
   stores: common.FileStore[];
   mods: common.FileMod[];
   files: common.BmlFile[];
 }): common.Model[] {
-  let { projectId, structId, models, stores, mods, files } = item;
+  let { projectId, structId, stores, mods, files } = item;
 
   let apiModels: common.Model[] = [];
 
-  [...models, ...stores, ...mods].forEach(x => {
+  [...stores, ...mods].forEach(x => {
     let modelType =
-      x.fileExt === common.FileExtensionEnum.Model
-        ? common.ModelTypeEnum.SQL
-        : x.fileExt === common.FileExtensionEnum.Store
-          ? common.ModelTypeEnum.Store
-          : x.fileExt === common.FileExtensionEnum.Malloy
-            ? common.ModelTypeEnum.Malloy
-            : undefined;
+      x.fileExt === common.FileExtensionEnum.Store
+        ? common.ModelTypeEnum.Store
+        : x.fileExt === common.FileExtensionEnum.Malloy
+          ? common.ModelTypeEnum.Malloy
+          : undefined;
 
     let apiFields: common.ModelField[] = [];
     let nodes: common.ModelNode[] = [];
@@ -207,75 +204,6 @@ export function wrapModels(item: {
       //   nodes.push(topNode);
       // }
       // });
-    }
-
-    if (modelType === common.ModelTypeEnum.SQL) {
-      {
-        // model fields scope
-
-        let topNode: common.ModelNode = {
-          id: common.MF,
-          label: x.label, // common.ModelNodeLabelEnum.ModelFields
-          description: undefined,
-          hidden: false,
-          required: false,
-          isField: false,
-          children: [],
-          nodeClass: common.FieldClassEnum.Join
-        };
-
-        (x as common.FileModel).fields.forEach(field => {
-          let apiField: common.ModelField = wrapField({
-            isStoreModel: false,
-            field: field,
-            alias: common.MF,
-            filePath: x.filePath,
-            fileName: x.fileName,
-            topNode: topNode
-          });
-
-          apiFields.push(apiField);
-        });
-
-        if ((x as common.FileModel).fields.length > 0) {
-          nodes.push(topNode);
-        }
-      }
-
-      (x as common.FileModel).joins.forEach(join => {
-        // join fields scope
-        let joinHidden = common.toBooleanFromLowercaseString(join.hidden);
-
-        let topNode: common.ModelNode = {
-          id: join.as,
-          label: join.label,
-          description: join.description,
-          hidden: joinHidden,
-          required: false,
-          isField: false,
-          children: [],
-          nodeClass: common.FieldClassEnum.Join,
-          viewFilePath: join.view.filePath,
-          viewName: join.view.name
-        };
-
-        join.view.fields.forEach(field => {
-          let apiField: common.ModelField = wrapField({
-            isStoreModel: false,
-            field: field,
-            alias: join.as,
-            fileName: join.view.fileName,
-            filePath: join.view.filePath,
-            topNode: topNode
-          });
-
-          apiFields.push(apiField);
-        });
-
-        if (join.view.fields.length > 0) {
-          nodes.push(topNode);
-        }
-      });
     }
 
     if (modelType === common.ModelTypeEnum.Store) {
@@ -540,11 +468,7 @@ export function wrapModels(item: {
         connectionId: x.connection.connectionId,
         filePath: x.filePath,
         fileText: files.find(file => file.path === x.filePath).content,
-        content:
-          x.fileExt === common.FileExtensionEnum.Store ||
-          x.fileExt === common.FileExtensionEnum.Model
-            ? x
-            : undefined,
+        content: x.fileExt === common.FileExtensionEnum.Store ? x : undefined,
         // isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
         dateRangeIncludesRightSide:
           x.fileExt === common.FileExtensionEnum.Store &&
@@ -556,10 +480,7 @@ export function wrapModels(item: {
             ) === true)
             ? true
             : false,
-        isViewModel:
-          x.fileExt === common.FileExtensionEnum.Model
-            ? (x as common.FileModel).isViewModel
-            : false,
+        isViewModel: false,
         accessRoles:
           modelType === common.ModelTypeEnum.Malloy &&
           common.isDefined(accessRolesTag?.value)
@@ -569,17 +490,9 @@ export function wrapModels(item: {
           x.fileExt === common.FileExtensionEnum.Store
             ? `Store Model - ${x.label}`
             : x.label,
-        description: (x as common.FileStore | common.FileModel).description,
-        gr:
-          x.fileExt === common.FileExtensionEnum.Model
-            ? (x as common.FileModel).group
-            : undefined,
-        hidden:
-          x.fileExt === common.FileExtensionEnum.Model
-            ? common.toBooleanFromLowercaseString(
-                (x as common.FileModel).hidden
-              )
-            : false,
+        description: (x as common.FileStore).description,
+        gr: undefined,
+        hidden: false,
         fields: apiFields,
         nodes: sortedNodes,
         serverTs: 1

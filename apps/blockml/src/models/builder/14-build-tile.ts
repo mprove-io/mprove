@@ -14,14 +14,12 @@ export async function buildTile<T extends types.dzType>(
     envId: string;
     projectId: string;
     entities: T[];
-    models: common.FileModel[];
     stores: common.FileStore[];
     mods: common.FileMod[];
     apiModels: common.Model[];
     malloyConnections: PostgresConnection[];
     projectConnections: ProjectConnection[];
     malloyFiles: common.BmlFile[];
-    udfsDict: common.UdfsDict;
     weekStart: common.ProjectWeekStartEnum;
     timezone: string;
     caseSensitiveStringFilters: boolean;
@@ -58,7 +56,6 @@ export async function buildTile<T extends types.dzType>(
   entities = barTile.checkTileTitleModelSelect(
     {
       entities: entities,
-      models: item.models,
       apiModels: item.apiModels,
       stores: item.stores,
       structId: item.structId,
@@ -71,7 +68,6 @@ export async function buildTile<T extends types.dzType>(
   entities = barTile.checkSelectElements(
     {
       entities: entities,
-      models: item.models,
       apiModels: item.apiModels,
       stores: item.stores,
       structId: item.structId,
@@ -106,7 +102,6 @@ export async function buildTile<T extends types.dzType>(
     {
       entities: entities,
       caseSensitiveStringFilters: item.caseSensitiveStringFilters,
-      models: item.models,
       apiModels: item.apiModels,
       mods: item.mods,
       stores: item.stores,
@@ -122,13 +117,11 @@ export async function buildTile<T extends types.dzType>(
     {
       traceId: item.traceId,
       entities: entities,
-      models: item.models,
       mods: item.mods,
       apiModels: item.apiModels,
       malloyConnections: item.malloyConnections,
       projectConnections: item.projectConnections,
       malloyFiles: item.malloyFiles,
-      udfsDict: item.udfsDict,
       weekStart: item.weekStart,
       timezone: item.timezone,
       caseSensitiveStringFilters: item.caseSensitiveStringFilters,

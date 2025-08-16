@@ -12,9 +12,6 @@ let testId = 'e__wrong-chart-name';
 
 test('1', async t => {
   let errors: BmError[];
-  let udfs: common.FileUdf[];
-  let views: common.FileView[];
-  let models: common.FileModel[];
   let dashboards: common.FileDashboard[];
   let charts: common.FileChart[];
 
@@ -51,9 +48,6 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    udfs = await helper.readLog(fromDir, common.LogTypeEnum.Udfs);
-    views = await helper.readLog(fromDir, common.LogTypeEnum.Views);
-    models = await helper.readLog(fromDir, common.LogTypeEnum.Models);
     dashboards = await helper.readLog(fromDir, common.LogTypeEnum.Ds);
     charts = await helper.readLog(fromDir, common.LogTypeEnum.Charts);
     if (common.isDefined(toDir)) {
@@ -69,9 +63,6 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(udfs.length, 0);
-  t.is(views.length, 0);
-  t.is(models.filter(x => x.isViewModel === false).length, 0);
   t.is(dashboards.length, 0);
   t.is(charts.length, 0);
 

@@ -1,9 +1,0 @@
-model: m1
-connection: c1
-joins:
-- from_view: v1
-- join_view: v2
-  as: b
-
-
-

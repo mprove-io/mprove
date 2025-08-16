@@ -1,7 +1,0 @@
-view: v1
-connection: c1
-fields:
-- dimension: dim1
-  sql: ${a.dim2 !@^&%} 
-
-

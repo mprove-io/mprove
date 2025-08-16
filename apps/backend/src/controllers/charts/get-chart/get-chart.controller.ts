@@ -9,7 +9,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
@@ -140,8 +139,9 @@ export class GetChartController {
 
     let isError = false;
 
-    let isSearchExisting =
-      model.type === common.ModelTypeEnum.SQL &&
+    let isSearchExisting = // TODO: check (was model.type === common.ModelTypeEnum.SQL)
+      model.type !== common.ModelTypeEnum.Store &&
+      model.type !== common.ModelTypeEnum.Malloy &&
       chartMconfig.timezone === timezone;
 
     // console.log('isSearchExisting');
@@ -197,57 +197,6 @@ export class GetChartController {
         newMconfig = editMalloyQueryResult.newMconfig;
         newQuery = editMalloyQueryResult.newQuery;
         isError = editMalloyQueryResult.isError;
-      } else {
-        let newMconfigId = common.makeId();
-        let newQueryId = common.makeId();
-
-        let { apiEnv, connectionsWithFallback } =
-          await this.envsService.getApiEnvConnectionsWithFallback({
-            projectId: projectId,
-            envId: envId
-          });
-
-        // biome-ignore format: theme breaks
-        let sendMconfig = Object.assign({}, chartMconfig, <schemaPostgres.MconfigEnt>{
-          mconfigId: newMconfigId,
-          queryId: newQueryId,
-          timezone: timezone,
-          temp: true
-        });
-
-        let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
-          {
-            info: {
-              name: apiToBlockml.ToBlockmlRequestInfoNameEnum
-                .ToBlockmlProcessQuery,
-              traceId: traceId
-            },
-            payload: {
-              projectId: project.projectId,
-              weekStart: struct.weekStart,
-              caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
-              simplifySafeAggregates: struct.simplifySafeAggregates,
-              udfsDict: struct.udfsDict,
-              mconfig: sendMconfig,
-              modelContent: model.content,
-              malloyModelDef: model.malloyModelDef,
-              envId: envId,
-              connections: connectionsWithFallback
-            }
-          };
-
-        let blockmlProcessQueryResponse =
-          await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
-            {
-              routingKey:
-                common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
-              message: toBlockmlProcessQueryRequest,
-              checkIsOk: true
-            }
-          );
-
-        newMconfig = blockmlProcessQueryResponse.payload.mconfig;
-        newQuery = blockmlProcessQueryResponse.payload.query;
       }
 
       let newQueryEnt = this.wrapToEntService.wrapToEntityQuery(newQuery);

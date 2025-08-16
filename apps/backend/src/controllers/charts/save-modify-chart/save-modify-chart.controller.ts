@@ -10,7 +10,6 @@ import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { apiToDisk } from '~backend/barrels/api-to-disk';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
@@ -418,56 +417,6 @@ export class SaveModifyChartController {
       newMconfig = editMalloyQueryResult.newMconfig;
       newQuery = editMalloyQueryResult.newQuery;
       isError = editMalloyQueryResult.isError;
-    } else {
-      let newMconfigId = common.makeId();
-      let newQueryId = common.makeId();
-
-      let { apiEnv, connectionsWithFallback } =
-        await this.envsService.getApiEnvConnectionsWithFallback({
-          projectId: projectId,
-          envId: envId
-        });
-
-      // biome-ignore format: theme breaks
-      let sendMconfig = Object.assign({}, chartMconfig, <schemaPostgres.MconfigEnt>{
-        mconfigId: newMconfigId,
-        queryId: newQueryId,
-        timezone: timezone,
-        temp: true
-      });
-
-      let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
-        {
-          info: {
-            name: apiToBlockml.ToBlockmlRequestInfoNameEnum
-              .ToBlockmlProcessQuery,
-            traceId: traceId
-          },
-          payload: {
-            projectId: project.projectId,
-            weekStart: struct.weekStart,
-            caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
-            simplifySafeAggregates: struct.simplifySafeAggregates,
-            udfsDict: struct.udfsDict,
-            mconfig: sendMconfig,
-            modelContent: model.content,
-            malloyModelDef: model.malloyModelDef,
-            envId: envId,
-            connections: connectionsWithFallback
-          }
-        };
-
-      let blockmlProcessQueryResponse =
-        await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
-          {
-            routingKey: common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
-            message: toBlockmlProcessQueryRequest,
-            checkIsOk: true
-          }
-        );
-
-      newMconfig = blockmlProcessQueryResponse.payload.mconfig;
-      newQuery = blockmlProcessQueryResponse.payload.query;
     }
 
     let newQueryEnt = this.wrapToEntService.wrapToEntityQuery(newQuery);

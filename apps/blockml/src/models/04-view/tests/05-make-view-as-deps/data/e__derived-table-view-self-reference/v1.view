@@ -1,9 +1,0 @@
-view: v1
-connection: c1
-derived_table: |
-  SELECT ${a.dim1}
-  FROM 
-    ${v1 AS a}
-fields:
-- dimension: dim1
-  sql: d1

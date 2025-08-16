@@ -1,9 +1,0 @@
-view: v2
-connection: c2
-table: tab1
-fields:
-- dimension: dim2
-  sql: d2
-
-
-

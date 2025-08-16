@@ -3,9 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { common } from '~blockml/barrels/common';
 import { interfaces } from '~blockml/barrels/interfaces';
-import { GetFractionsService } from '~blockml/controllers/get-fractions/get-fractions.service';
 import { GetTimeRangeService } from '~blockml/controllers/get-time-range/get-time-range.service';
-import { ProcessQueryService } from '~blockml/controllers/process-query/process-query.service';
 import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
 import { makeErrorResponseBlockml } from '~blockml/functions/make-error-response-blockml';
 import { makeOkResponseBlockml } from '~blockml/functions/make-ok-response-blockml';
@@ -22,43 +20,9 @@ export class ConsumerMainService {
   constructor(
     private cs: ConfigService<interfaces.Config>,
     private rebuildStructService: RebuildStructService,
-    private processQueryService: ProcessQueryService,
     private getTimeRangeService: GetTimeRangeService,
-    private getFractionsService: GetFractionsService,
     private logger: Logger
   ) {}
-
-  @RabbitRPC({
-    exchange: common.RabbitExchangesEnum.Blockml.toString(),
-    routingKey: pathProcessQuery,
-    queue: pathProcessQuery
-  })
-  async processQuery(request: any, context: any) {
-    let startTs = Date.now();
-    try {
-      let payload = await this.processQueryService.process(request);
-
-      return makeOkResponseBlockml({
-        body: request,
-        payload: payload,
-        path: pathProcessQuery,
-        method: common.METHOD_RABBIT,
-        duration: Date.now() - startTs,
-        cs: this.cs,
-        logger: this.logger
-      });
-    } catch (e) {
-      return makeErrorResponseBlockml({
-        body: request,
-        e: e,
-        path: pathProcessQuery,
-        method: common.METHOD_RABBIT,
-        duration: Date.now() - startTs,
-        cs: this.cs,
-        logger: this.logger
-      });
-    }
-  }
 
   @RabbitRPC({
     exchange: common.RabbitExchangesEnum.Blockml.toString(),
@@ -116,38 +80,6 @@ export class ConsumerMainService {
         body: request,
         e: e,
         path: pathGetTimeRange,
-        method: common.METHOD_RABBIT,
-        duration: Date.now() - startTs,
-        cs: this.cs,
-        logger: this.logger
-      });
-    }
-  }
-
-  @RabbitRPC({
-    exchange: common.RabbitExchangesEnum.Blockml.toString(),
-    routingKey: pathGetFractions,
-    queue: pathGetFractions
-  })
-  async getFractions(request: any, context: any) {
-    let startTs = Date.now();
-    try {
-      let payload = await this.getFractionsService.get(request);
-
-      return makeOkResponseBlockml({
-        body: request,
-        payload: payload,
-        path: pathGetFractions,
-        method: common.METHOD_RABBIT,
-        duration: Date.now() - startTs,
-        cs: this.cs,
-        logger: this.logger
-      });
-    } catch (e) {
-      return makeErrorResponseBlockml({
-        body: request,
-        e: e,
-        path: pathGetFractions,
         method: common.METHOD_RABBIT,
         duration: Date.now() - startTs,
         cs: this.cs,

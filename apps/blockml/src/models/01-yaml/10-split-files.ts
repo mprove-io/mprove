@@ -18,14 +18,11 @@ export function splitFiles(
   let { caller, structId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
-  let views: common.FileView[] = [];
-  let models: common.FileModel[] = [];
   let mods: common.FileMod[] = [];
   let stores: common.FileStore[] = [];
   let dashboards: common.FileDashboard[] = [];
   let reports: common.FileReport[] = [];
   let charts: common.FileChart[] = [];
-  let udfs: common.FileUdf[] = [];
   let confs: common.FileProjectConf[] = [];
 
   item.filesAny.forEach(file => {
@@ -34,116 +31,6 @@ export function splitFiles(
     let filePath = file.path;
 
     switch (file.ext) {
-      case common.FileExtensionEnum.Udf: {
-        if (file.name === file.udf + common.FileExtensionEnum.Udf) {
-          delete file.ext;
-          delete file.name;
-          delete file.path;
-
-          let newUdfOptions: common.FileUdf = {
-            name: file.udf,
-            fileName: fileName,
-            filePath: filePath,
-            fileExt: fileExt
-          };
-
-          udfs.push(Object.assign(file, newUdfOptions));
-        } else {
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.WRONG_UDF_NAME,
-              message: `filename ${file.name} does not match "udf: ${file.udf}"`,
-              lines: [
-                {
-                  line: file.udf_line_num,
-                  name: file.name,
-                  path: file.path
-                }
-              ]
-            })
-          );
-        }
-        break;
-      }
-
-      case common.FileExtensionEnum.View: {
-        if (file.name === file.view + common.FileExtensionEnum.View) {
-          delete file.ext;
-          delete file.name;
-          delete file.path;
-
-          let newViewOptions: common.FileView = {
-            name: file.view,
-            fileName: fileName,
-            filePath: filePath,
-            fileExt: fileExt,
-            label:
-              file.label ??
-              file.view
-                .split('_')
-                .map((word: string) => common.capitalizeFirstLetter(word))
-                .join(' '),
-            label_line_num: file.label_line_num ?? 0
-          };
-
-          views.push(Object.assign(file, newViewOptions));
-        } else {
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.WRONG_VIEW_NAME,
-              message: `filename ${file.name} does not match "view: ${file.view}"`,
-              lines: [
-                {
-                  line: file.view_line_num,
-                  name: file.name,
-                  path: file.path
-                }
-              ]
-            })
-          );
-        }
-        break;
-      }
-
-      case common.FileExtensionEnum.Model: {
-        if (file.name === file.model + common.FileExtensionEnum.Model) {
-          delete file.ext;
-          delete file.name;
-          delete file.path;
-
-          let newModelOptions: common.FileModel = {
-            name: file.model,
-            fileName: fileName,
-            filePath: filePath,
-            fileExt: fileExt,
-            label:
-              file.label ??
-              file.model
-                .split('_')
-                .map((word: string) => common.capitalizeFirstLetter(word))
-                .join(' '),
-            label_line_num: file.label_line_num ?? 0
-          };
-
-          models.push(Object.assign(file, newModelOptions));
-        } else {
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.WRONG_MODEL_NAME,
-              message: `filename ${file.name} does not match "model: ${file.model}"`,
-              lines: [
-                {
-                  line: file.model_line_num,
-                  name: file.name,
-                  path: file.path
-                }
-              ]
-            })
-          );
-        }
-        break;
-      }
-
       case common.FileExtensionEnum.Store: {
         if (file.name === file.store + common.FileExtensionEnum.Store) {
           delete file.ext;
@@ -301,14 +188,11 @@ export function splitFiles(
     }
   });
 
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Views, views);
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Models, models);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Mods, mods);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Stores, stores);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Reports, reports);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Ds, dashboards);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Charts, charts);
-  helper.log(cs, caller, func, structId, common.LogTypeEnum.Udfs, udfs);
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Confs, confs);
   helper.log(
     cs,
@@ -320,14 +204,11 @@ export function splitFiles(
   );
 
   return {
-    views: views,
-    models: models,
     mods: mods,
     stores: stores,
     reports: reports,
     dashboards: dashboards,
     charts: charts,
-    udfs: udfs,
     confs: confs
   };
 }

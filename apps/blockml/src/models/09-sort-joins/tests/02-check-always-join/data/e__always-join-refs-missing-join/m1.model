@@ -1,6 +1,0 @@
-model: m1
-connection: c1
-always_join: a, b         
-joins:
-- from_view: v1
-  as: a

@@ -15,7 +15,6 @@ export function checkTileParameters<T extends types.dzType>(
   item: {
     caseSensitiveStringFilters: boolean;
     entities: T[];
-    models: common.FileModel[];
     mods: common.FileMod[];
     apiModels: common.Model[];
     stores: common.FileStore[];
@@ -29,7 +28,6 @@ export function checkTileParameters<T extends types.dzType>(
   let {
     caller,
     structId,
-    models,
     mods,
     apiModels,
     malloyFiles,
@@ -193,7 +191,6 @@ export function checkTileParameters<T extends types.dzType>(
         //   common.isDefined(tile.model) &&
         //   tile.model.startsWith(STORE_MODEL_PREFIX);
 
-        let model: common.FileModel;
         let store: common.FileStore;
 
         if (
@@ -203,8 +200,6 @@ export function checkTileParameters<T extends types.dzType>(
           store = stores.find(
             m => `${STORE_MODEL_PREFIX}_${m.name}` === tile.model
           );
-        } else {
-          model = models.find(m => m.name === tile.model);
         }
 
         tile.parameters
@@ -263,223 +258,6 @@ export function checkTileParameters<T extends types.dzType>(
             }
 
             let listener;
-
-            if (
-              // isStore === false
-              apiModel.type === common.ModelTypeEnum.SQL
-            ) {
-              let reg =
-                common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_AND_WHITESPACES_G();
-              let r = reg.exec(p.apply_to);
-
-              if (common.isUndefined(r)) {
-                item.errors.push(
-                  new BmError({
-                    title: common.ErTitleEnum.APPLY_TO_WRONG_REFERENCE,
-                    message: 'Tile apply_to must be in form "alias.field_name"',
-                    lines: [
-                      {
-                        line: p.apply_to_line_num,
-                        name: x.fileName,
-                        path: x.filePath
-                      }
-                    ]
-                  })
-                );
-                return;
-              }
-
-              let asName = r[1];
-              let fieldName = r[2];
-
-              listener = `${asName}.${fieldName}`;
-
-              if (asName === common.MF) {
-                let modelField = model.fields.find(
-                  mField => mField.name === fieldName
-                );
-
-                if (common.isUndefined(modelField)) {
-                  item.errors.push(
-                    new BmError({
-                      title:
-                        common.ErTitleEnum.APPLY_TO_REFS_MISSING_MODEL_FIELD,
-                      message:
-                        `"${p.apply_to}" references missing or not valid field ` +
-                        `"${fieldName}" of model "${model.name}" fields section`,
-                      lines: [
-                        {
-                          line: p.apply_to_line_num,
-                          name: x.fileName,
-                          path: x.filePath
-                        }
-                      ]
-                    })
-                  );
-                  return;
-                }
-              } else {
-                let join = model.joins.find(j => j.as === asName);
-
-                if (common.isUndefined(join)) {
-                  item.errors.push(
-                    new BmError({
-                      title: common.ErTitleEnum.APPLY_TO_REFS_MISSING_ALIAS,
-                      message:
-                        `"${p.apply_to}" references missing alias ` +
-                        `"${asName}" of model "${model.name}" joins section`,
-                      lines: [
-                        {
-                          line: p.apply_to_line_num,
-                          name: x.fileName,
-                          path: x.filePath
-                        }
-                      ]
-                    })
-                  );
-                  return;
-                }
-
-                let viewField = join.view.fields.find(
-                  vField => vField.name === fieldName
-                );
-
-                if (common.isUndefined(viewField)) {
-                  item.errors.push(
-                    new BmError({
-                      title:
-                        common.ErTitleEnum.APPLY_TO_REFS_MISSING_VIEW_FIELD,
-                      message:
-                        `"${p.apply_to}" references missing or not valid field ` +
-                        `"${fieldName}" of view "${join.view.name}". ` +
-                        `View has "${asName}" alias in "${model.name}" model.`,
-                      lines: [
-                        {
-                          line: p.apply_to_line_num,
-                          name: x.fileName,
-                          path: x.filePath
-                        }
-                      ]
-                    })
-                  );
-                  return;
-                }
-              }
-
-              if (
-                common.isDefined(p.listen) &&
-                common.isDefined(p.conditions)
-              ) {
-                item.errors.push(
-                  new BmError({
-                    title: common.ErTitleEnum.PARAMETER_WRONG_COMBINATION,
-                    message: `found that both parameters "${common.ParameterEnum.Conditions}" and "${common.ParameterEnum.Listen}" are specified`,
-                    lines: [
-                      {
-                        line: p.listen_line_num,
-                        name: x.fileName,
-                        path: x.filePath
-                      },
-                      {
-                        line: p.conditions_line_num,
-                        name: x.fileName,
-                        path: x.filePath
-                      }
-                    ]
-                  })
-                );
-                return;
-              }
-
-              let pResult =
-                asName === common.MF
-                  ? model.fields.find(mField => mField.name === fieldName)
-                      .result
-                  : model.joins
-                      .find(j => j.as === asName)
-                      .view.fields.find(vField => vField.name === fieldName)
-                      .result;
-
-              if (common.isDefined(p.conditions)) {
-                if (p.conditions.length === 0) {
-                  item.errors.push(
-                    new BmError({
-                      title: common.ErTitleEnum.APPLY_TO_CONDITIONS_IS_EMPTY,
-                      message: `apply_to conditions cannot be empty`,
-                      lines: [
-                        {
-                          line: p.conditions_line_num,
-                          name: x.fileName,
-                          path: x.filePath
-                        }
-                      ]
-                    })
-                  );
-                  return;
-                }
-
-                let pf = barSpecial.processFilter({
-                  caseSensitiveStringFilters: caseSensitiveStringFilters,
-                  filterBricks: p.conditions,
-                  result: pResult
-                });
-
-                if (pf.valid === 0) {
-                  item.errors.push(
-                    new BmError({
-                      title: common.ErTitleEnum.APPLY_TO_WRONG_CONDITIONS,
-                      message:
-                        `wrong expression "${pf.brick}" of apply_to "${p.apply_to}" ` +
-                        `for ${common.ParameterEnum.Result} "${pResult}" `,
-                      lines: [
-                        {
-                          line: p.conditions_line_num,
-                          name: x.fileName,
-                          path: x.filePath
-                        }
-                      ]
-                    })
-                  );
-                  return;
-                }
-              }
-
-              if (common.isDefined(p.listen)) {
-                if (dashboardField.result !== pResult) {
-                  item.errors.push(
-                    new BmError({
-                      title:
-                        common.ErTitleEnum
-                          .TILE_PARAMETER_AND_LISTEN_RESULT_MISMATCH,
-                      message:
-                        `"${p.listen}" result "${dashboardField.result}" does not match ` +
-                        `listener "${p.apply_to}" result "${pResult}"`,
-                      lines: [
-                        {
-                          line: p.apply_to_line_num,
-                          name: x.fileName,
-                          path: x.filePath
-                        },
-                        {
-                          line: p.listen_line_num,
-                          name: x.fileName,
-                          path: x.filePath
-                        }
-                      ]
-                    })
-                  );
-                  return;
-                }
-
-                tile.listen[listener] = dashboardField.name;
-                tile.combinedFilters[listener] = dashboardField.conditions;
-              } else if (
-                common.isDefined(p.conditions) &&
-                p.conditions.length > 0
-              ) {
-                tile.combinedFilters[listener] = p.conditions;
-              }
-            }
 
             if (
               // isStore === true

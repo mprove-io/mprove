@@ -23,12 +23,9 @@ interface RebuildStructPrep {
   dashboards: common.FileDashboard[];
   metrics: common.ModelMetric[];
   presets: common.Preset[];
-  models: common.FileModel[];
   apiModels: common.Model[];
-  mods: common.FileModel[];
-  udfsDict: common.UdfsDict;
+  mods: common.FileMod[];
   reports: common.FileReport[];
-  views: common.FileView[];
   charts: common.FileChart[];
   mproveDirValue: string;
   weekStart: common.ProjectWeekStartEnum;
@@ -96,8 +93,6 @@ export class RebuildStructService {
 
     let apiErrors = barWrapper.wrapErrors({ errors: prep.errors });
 
-    let apiViews = barWrapper.wrapViews({ views: prep.views });
-
     let apiReports = barWrapper.wrapReports({
       projectId: projectId,
       structId: structId,
@@ -113,7 +108,6 @@ export class RebuildStructService {
       barWrapper.wrapDashboards({
         structId: structId,
         projectId: projectId,
-        models: prep.models,
         apiModels: prep.apiModels,
         mods: prep.mods,
         stores: prep.stores,
@@ -125,7 +119,6 @@ export class RebuildStructService {
     let { apiCharts, chartMconfigs, chartQueries } = barWrapper.wrapCharts({
       structId: structId,
       projectId: projectId,
-      models: prep.models,
       apiModels: prep.apiModels,
       mods: prep.mods,
       stores: prep.stores,
@@ -139,8 +132,6 @@ export class RebuildStructService {
 
     let payload: apiToBlockml.ToBlockmlRebuildStructResponsePayload = {
       errors: apiErrors,
-      udfsDict: prep.udfsDict,
-      views: apiViews,
       models: prep.apiModels,
       dashboards: apiDashboards,
       reports: apiReports,
@@ -241,13 +232,10 @@ export class RebuildStructService {
 
     let mods: common.FileMod[] = [];
 
-    let views: common.FileView[];
-    let models: common.FileModel[];
     let stores: common.FileStore[];
     let reports: common.FileReport[];
     let dashboards: common.FileDashboard[];
     let charts: common.FileChart[];
-    let udfs: common.FileUdf[];
     let projectConfig: common.FileProjectConf;
 
     let yamlBuildItem = barBuilder.buildYaml(
@@ -262,20 +250,15 @@ export class RebuildStructService {
       this.cs
     );
 
-    models = yamlBuildItem.models;
     stores = yamlBuildItem.stores;
     dashboards = yamlBuildItem.dashboards;
     reports = yamlBuildItem.reports;
-    udfs = yamlBuildItem.udfs;
-    views = yamlBuildItem.views;
     charts = yamlBuildItem.charts;
     projectConfig = yamlBuildItem.projectConfig;
 
     if (common.isUndefined(projectConfig)) {
       return {
         errors: errors,
-        views: [],
-        models: [],
         apiModels: [],
         mods: [],
         metrics: [],
@@ -284,7 +267,6 @@ export class RebuildStructService {
         reports: [],
         dashboards: [],
         charts: [],
-        udfsDict: {},
         mproveDirValue: undefined,
         weekStart: common.PROJECT_CONFIG_WEEK_START,
         allowTimezones: common.toBooleanFromLowercaseString(
@@ -410,45 +392,6 @@ export class RebuildStructService {
 
     mods = buildModStartResult.mods;
 
-    views = barBuilder.buildField(
-      {
-        entities: views,
-        projectConfig: projectConfig,
-        structId: item.structId,
-        errors: errors,
-        caller: common.CallerEnum.BuildViewField
-      },
-      this.cs
-    );
-
-    let udfsDict: common.UdfsDict = barBuilder.buildUdf(
-      {
-        udfs: udfs,
-        structId: item.structId,
-        errors: errors,
-        caller: common.CallerEnum.BuildUdf
-      },
-      this.cs
-    );
-
-    views = barBuilder.buildView(
-      {
-        views: views,
-        udfs: udfs,
-        udfsDict: udfsDict,
-        weekStart: projectConfig.week_start,
-        structId: item.structId,
-        caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
-          projectConfig.case_sensitive_string_filters
-        ),
-        envId: item.envId,
-        evs: item.evs,
-        errors: errors,
-        caller: common.CallerEnum.BuildView
-      },
-      this.cs
-    );
-
     stores = barBuilder.buildStoreStart(
       {
         stores: stores,
@@ -481,43 +424,6 @@ export class RebuildStructService {
       this.cs
     );
 
-    models = barSpecial.checkModelName(
-      {
-        models: models,
-        errors: errors,
-        structId: item.structId,
-        caller: common.CallerEnum.BuildCheckModelName
-      },
-      this.cs
-    );
-
-    models.forEach(x => {
-      x.isViewModel = false;
-    });
-
-    let viewModels = barSpecial.buildViewModel(
-      {
-        views: views,
-        errors: errors,
-        structId: item.structId,
-        caller: common.CallerEnum.BuildViewModel
-      },
-      this.cs
-    );
-
-    models = [...models, ...viewModels];
-
-    models = barBuilder.buildField(
-      {
-        entities: models,
-        projectConfig: projectConfig,
-        structId: item.structId,
-        errors: errors,
-        caller: common.CallerEnum.BuildModelField
-      },
-      this.cs
-    );
-
     dashboards = barBuilder.buildField(
       {
         entities: dashboards,
@@ -529,108 +435,9 @@ export class RebuildStructService {
       this.cs
     );
 
-    models = barBuilder.buildModel(
-      {
-        models: models,
-        views: views,
-        udfs: udfs,
-        structId: item.structId,
-        caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
-          projectConfig.case_sensitive_string_filters
-        ),
-        errors: errors,
-        caller: common.CallerEnum.BuildModel
-      },
-      this.cs
-    );
-
-    models = barBuilder.buildJoin(
-      {
-        models: models,
-        structId: item.structId,
-        errors: errors,
-        caller: common.CallerEnum.BuildJoin
-      },
-      this.cs
-    );
-
-    models = barBuilder.buildJoinSqlOn(
-      {
-        models: models,
-        structId: item.structId,
-        errors: errors,
-        caller: common.CallerEnum.BuildJoinSqlOn
-      },
-      this.cs
-    );
-
-    models = barBuilder.buildJoinSqlWhere(
-      {
-        models: models,
-        structId: item.structId,
-        errors: errors,
-        caller: common.CallerEnum.BuildJoinSqlWhere
-      },
-      this.cs
-    );
-
-    models = barBuilder.buildSortJoins(
-      {
-        models: models,
-        structId: item.structId,
-        errors: errors,
-        caller: common.CallerEnum.BuildSortJoins
-      },
-      this.cs
-    );
-
-    models = barBuilder.buildSqlAlwaysWhere(
-      {
-        models: models,
-        structId: item.structId,
-        errors: errors,
-        caller: common.CallerEnum.BuildSqlAlwaysWhere
-      },
-      this.cs
-    );
-
-    models = barBuilder.buildSqlAlwaysWhereCalc(
-      {
-        models: models,
-        structId: item.structId,
-        errors: errors,
-        caller: common.CallerEnum.BuildSqlAlwaysWhereCalc
-      },
-      this.cs
-    );
-
-    barSpecial.checkVmdrSuggestModelDimension(
-      {
-        entities: [...views, ...models],
-        models: models,
-        errors: errors,
-        structId: item.structId,
-        caller: common.CallerEnum.BuildCheckVmdSuggestModelDimension
-      },
-      this.cs
-    );
-
-    let buildMetricsStartResult = barBuilder.buildMetricsStart(
-      {
-        models: models,
-        structId: item.structId,
-        errors: errors,
-        caller: common.CallerEnum.BuildModelMetric
-      },
-      this.cs
-    );
-
-    models = buildMetricsStartResult.models;
-
     let apiModels = barWrapper.wrapModels({
       projectId: item.projectId,
       structId: item.structId,
-      models: models,
       stores: stores,
       mods: mods,
       files: item.files
@@ -638,7 +445,6 @@ export class RebuildStructService {
 
     let buildMetricsNextResult = barBuilder.buildMetricsNext(
       {
-        models: models,
         apiModels: apiModels,
         stores: stores,
         structId: item.structId,
@@ -680,14 +486,12 @@ export class RebuildStructService {
         projectId: item.projectId,
         envId: item.envId,
         entities: dashboards,
-        models: models,
         mods: mods,
         apiModels: apiModels,
         malloyConnections: malloyConnections,
         projectConnections: item.connections,
         malloyFiles: malloyFiles,
         stores: stores,
-        udfsDict: udfsDict,
         weekStart: projectConfig.week_start,
         timezone: projectConfig.default_timezone,
         caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
@@ -710,14 +514,12 @@ export class RebuildStructService {
         projectId: item.projectId,
         envId: item.envId,
         entities: charts,
-        models: models,
         mods: mods,
         apiModels: apiModels,
         malloyConnections: malloyConnections,
         projectConnections: item.connections,
         stores: stores,
         malloyFiles: malloyFiles,
-        udfsDict: udfsDict,
         weekStart: projectConfig.week_start,
         timezone: projectConfig.default_timezone,
         caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
@@ -737,7 +539,6 @@ export class RebuildStructService {
     dashboards = barBuilder.buildMconfigChart(
       {
         entities: dashboards,
-        models: models,
         apiModels: apiModels,
         stores: stores,
         structId: item.structId,
@@ -750,7 +551,6 @@ export class RebuildStructService {
     charts = barBuilder.buildMconfigChart(
       {
         entities: charts,
-        models: models,
         apiModels: apiModels,
         stores: stores,
         structId: item.structId,
@@ -771,7 +571,6 @@ export class RebuildStructService {
     reports = barBuilder.buildMconfigChart(
       {
         entities: reports,
-        models: models,
         apiModels: apiModels,
         stores: stores,
         structId: item.structId,
@@ -796,7 +595,6 @@ export class RebuildStructService {
       {
         reports: reports,
         metrics: metrics,
-        models: models,
         apiModels: apiModels,
         stores: stores,
         structId: item.structId,
@@ -812,7 +610,7 @@ export class RebuildStructService {
     barSpecial.checkVmdrSuggestModelDimension(
       {
         entities: [...dashboards, ...reports],
-        models: models,
+        apiModels: apiModels,
         errors: errors,
         structId: item.structId,
         caller: common.CallerEnum.BuildCheckVmdSuggestModelDimension
@@ -823,10 +621,7 @@ export class RebuildStructService {
     barSpecial.logStruct(
       {
         errors: errors,
-        udfsDict: udfsDict,
         stores: stores,
-        views: views,
-        models: models,
         metrics: metrics,
         dashboards: dashboards,
         reports: reports,
@@ -857,12 +652,9 @@ export class RebuildStructService {
         };
         return presetPart;
       }),
-      models: models,
       apiModels: apiModels,
       mods: mods,
-      udfsDict: udfsDict,
       reports: reports,
-      views: views,
       charts: charts,
       mproveDirValue: projectConfig.mprove_dir,
       weekStart: projectConfig.week_start,

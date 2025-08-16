@@ -1,6 +1,0 @@
-model: m1
-connection: c1
-sql_always_where_calc: '{% apply_filter unk %} target {% end_apply_filter %}'
-joins:
-- from_view: v1
-  as: a

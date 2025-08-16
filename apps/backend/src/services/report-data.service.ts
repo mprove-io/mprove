@@ -2,7 +2,6 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
@@ -342,10 +341,6 @@ export class ReportDataService {
             });
 
             timeFieldIdSpec = mField?.id;
-          } else if (model.type === common.ModelTypeEnum.SQL) {
-            let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
-
-            timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
           }
 
           let isDesc =
@@ -531,46 +526,6 @@ export class ReportDataService {
             // console.log(newQuery);
             // console.log('isError');
             // console.log(isError);
-          } else {
-            let { apiEnv, connectionsWithFallback } =
-              await this.envsService.getApiEnvConnectionsWithFallback({
-                projectId: project.projectId,
-                envId: envId
-              });
-
-            let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
-              {
-                info: {
-                  name: apiToBlockml.ToBlockmlRequestInfoNameEnum
-                    .ToBlockmlProcessQuery,
-                  traceId: traceId
-                },
-                payload: {
-                  projectId: project.projectId,
-                  weekStart: struct.weekStart,
-                  caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
-                  simplifySafeAggregates: struct.simplifySafeAggregates,
-                  udfsDict: struct.udfsDict,
-                  mconfig: mconfig,
-                  modelContent: model.content,
-                  malloyModelDef: model.malloyModelDef,
-                  envId: envId,
-                  connections: connectionsWithFallback
-                }
-              };
-
-            let blockmlProcessQueryResponse =
-              await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
-                {
-                  routingKey:
-                    common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
-                  message: toBlockmlProcessQueryRequest,
-                  checkIsOk: true
-                }
-              );
-
-            newMconfig = blockmlProcessQueryResponse.payload.mconfig;
-            newQuery = blockmlProcessQueryResponse.payload.query;
           }
 
           newMconfig.queryId = newQueryId;

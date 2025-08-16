@@ -1,4 +1,0 @@
-model: m1
-connection: c1
-udfs: 
-- 'u1'

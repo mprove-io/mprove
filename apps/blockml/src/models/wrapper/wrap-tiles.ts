@@ -11,23 +11,13 @@ export function wrapTiles(item: {
   projectId: string;
   envId: string;
   tiles: common.FilePartTile[];
-  models: common.FileModel[];
   apiModels: common.Model[];
   mods: common.FileMod[];
   stores: common.FileStore[];
   timezone: string;
 }) {
-  let {
-    structId,
-    projectId,
-    models,
-    apiModels,
-    stores,
-    mods,
-    tiles,
-    envId,
-    timezone
-  } = item;
+  let { structId, projectId, apiModels, stores, mods, tiles, envId, timezone } =
+    item;
 
   let apiTiles: common.Tile[] = [];
   let mconfigs: common.Mconfig[] = [];
@@ -48,7 +38,6 @@ export function wrapTiles(item: {
     });
 
     let mod: common.FileMod;
-    let model: common.FileModel;
     let store: common.FileStore;
 
     let isStore =
@@ -62,17 +51,13 @@ export function wrapTiles(item: {
       );
     } else if (apiModel.type === common.ModelTypeEnum.Malloy) {
       mod = mods.find(m => m.name === tile.model);
-    } else if (apiModel.type === common.ModelTypeEnum.SQL) {
-      model = models.find(m => m.name === tile.model);
     }
 
     let connection = common.isDefined(store)
       ? store.connection
-      : common.isDefined(model)
-        ? model.connection
-        : common.isDefined(mod)
-          ? mod.connection
-          : undefined;
+      : common.isDefined(mod)
+        ? mod.connection
+        : undefined;
 
     let queryId =
       isStore === true
@@ -245,11 +230,9 @@ export function wrapTiles(item: {
       modelId: tile.model,
       modelType: common.isDefined(store)
         ? common.ModelTypeEnum.Store
-        : common.isDefined(model)
-          ? common.ModelTypeEnum.SQL
-          : common.isDefined(mod)
-            ? common.ModelTypeEnum.Malloy
-            : undefined,
+        : common.isDefined(mod)
+          ? common.ModelTypeEnum.Malloy
+          : undefined,
       dateRangeIncludesRightSide:
         isStore === true &&
         (common.isUndefined(store.date_range_includes_right_side) ||
@@ -259,14 +242,14 @@ export function wrapTiles(item: {
           ? true
           : false,
       storePart: undefined,
-      modelLabel: store?.label || mod?.label || model?.label,
-      modelFilePath: store?.filePath || mod?.filePath || model?.filePath,
+      modelLabel: store?.label || mod?.label,
+      modelFilePath: store?.filePath || mod?.filePath,
       malloyQuery: tile.malloyQuery,
       compiledQuery: tile.compiledQuery,
       select: tile.select || [],
-      unsafeSelect: tile.unsafeSelect || [],
-      warnSelect: tile.warnSelect || [],
-      joinAggregations: tile.joinAggregations || [],
+      // unsafeSelect: tile.unsafeSelect || [],
+      // warnSelect: tile.warnSelect || [],
+      // joinAggregations: tile.joinAggregations || [],
       sortings:
         tile.sortingsAry?.map(s => ({
           fieldId: s.fieldId,
@@ -290,9 +273,9 @@ export function wrapTiles(item: {
     queries.push(query);
     apiTiles.push({
       modelId: tile.model,
-      modelLabel: store?.label || mod?.label || model?.label,
+      modelLabel: store?.label || mod?.label,
       // modelLabel: isStore === true ? store.label : model.label,
-      modelFilePath: store?.filePath || mod?.filePath || model?.filePath,
+      modelFilePath: store?.filePath || mod?.filePath,
       mconfigId: mconfigId,
       queryId: queryId,
       // malloyQueryId: tile.query,

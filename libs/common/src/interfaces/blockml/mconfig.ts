@@ -12,7 +12,6 @@ import {
 import { enums } from '~common/barrels/enums';
 import { IsTimezone } from '~common/functions/is-timezone';
 import { Filter } from './filter';
-import { JoinAggregation } from './join-aggregation';
 import { MconfigChart } from './mconfig-chart';
 import { Sorting } from './sorting';
 import { StorePart } from './store-part';
@@ -61,15 +60,15 @@ export class Mconfig {
   @IsString({ each: true })
   select: string[];
 
-  @ValidateNested()
-  @Type(() => JoinAggregation)
-  joinAggregations: JoinAggregation[];
+  // @ValidateNested()
+  // @Type(() => JoinAggregation)
+  // joinAggregations: JoinAggregation[];
 
-  @IsString({ each: true })
-  unsafeSelect: string[];
+  // @IsString({ each: true })
+  // unsafeSelect: string[];
 
-  @IsString({ each: true })
-  warnSelect: string[];
+  // @IsString({ each: true })
+  // warnSelect: string[];
 
   @ValidateNested()
   @Type(() => Sorting)

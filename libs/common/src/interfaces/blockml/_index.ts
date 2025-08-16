@@ -35,7 +35,5 @@ export * from './rq';
 export * from './sorting';
 export * from './store-part';
 export * from './tile';
-export * from './udfs-dict';
-export * from './view';
 export * from './preset';
 export * from './key-value-pair';

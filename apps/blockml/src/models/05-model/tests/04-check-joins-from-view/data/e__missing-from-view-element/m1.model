@@ -1,4 +1,0 @@
-model: m1
-connection: 'c1'
-joins:                       
-- join_view: v1

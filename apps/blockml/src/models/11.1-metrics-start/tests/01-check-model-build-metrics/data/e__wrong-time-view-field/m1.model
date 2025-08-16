@@ -1,7 +1,0 @@
-model: m1
-connection: c1
-build_metrics:
-- time: orders.dim1
-joins:
-- from_view: v1
-  as: orders

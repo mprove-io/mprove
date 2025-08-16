@@ -1,9 +1,0 @@
-view: v1
-connection: c1
-derived_table: |   
-  SELECT *
-  FROM abc
-  WHERE {% apply_filter unk %} target {% end_apply_filter %}
-fields:
-- dimension: dim1
-  sql: d1

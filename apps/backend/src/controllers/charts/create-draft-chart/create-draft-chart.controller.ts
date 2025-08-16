@@ -9,7 +9,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToBlockml } from '~backend/barrels/api-to-blockml';
 import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
@@ -194,50 +193,6 @@ export class CreateDraftChartController {
         newMconfig.queryId = kQueryId;
       } else {
         newQuery = editMalloyQueryResult.newQuery;
-      }
-    } else {
-      let { apiEnv, connectionsWithFallback } =
-        await this.envsService.getApiEnvConnectionsWithFallback({
-          projectId: projectId,
-          envId: envId
-        });
-
-      let toBlockmlProcessQueryRequest: apiToBlockml.ToBlockmlProcessQueryRequest =
-        {
-          info: {
-            name: apiToBlockml.ToBlockmlRequestInfoNameEnum
-              .ToBlockmlProcessQuery,
-            traceId: traceId
-          },
-          payload: {
-            projectId: project.projectId,
-            weekStart: struct.weekStart,
-            caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
-            simplifySafeAggregates: struct.simplifySafeAggregates,
-            udfsDict: struct.udfsDict,
-            mconfig: mconfig,
-            modelContent: model.content,
-            malloyModelDef: model.malloyModelDef,
-            envId: envId,
-            connections: connectionsWithFallback
-          }
-        };
-
-      let blockmlProcessQueryResponse =
-        await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlProcessQueryResponse>(
-          {
-            routingKey: common.RabbitBlockmlRoutingEnum.ProcessQuery.toString(),
-            message: toBlockmlProcessQueryRequest,
-            checkIsOk: true
-          }
-        );
-
-      newMconfig = blockmlProcessQueryResponse.payload.mconfig;
-
-      if (isKeepQueryId === true && isError === false) {
-        newMconfig.queryId = kQueryId;
-      } else {
-        newQuery = blockmlProcessQueryResponse.payload.query;
       }
     }
 

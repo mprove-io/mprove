@@ -10,14 +10,13 @@ export function checkReportRow(
   item: {
     reports: common.FileReport[];
     metrics: common.ModelMetric[];
-    models: common.FileModel[];
     errors: BmError[];
     structId: string;
     caller: common.CallerEnum;
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId, metrics, models } = item;
+  let { caller, structId, metrics } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newReports: common.FileReport[] = [];

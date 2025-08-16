@@ -8,7 +8,6 @@ import { BmError } from '~blockml/models/bm-error';
 export function buildMconfigChart<T extends types.dcrType>(
   item: {
     entities: T[];
-    models: common.FileModel[];
     apiModels: common.Model[];
     stores: common.FileStore[];
     errors: BmError[];
@@ -46,7 +45,6 @@ export function buildMconfigChart<T extends types.dcrType>(
     entities = barMconfigChart.checkChartDataParameters(
       {
         entities: entities,
-        models: item.models,
         apiModels: item.apiModels,
         stores: item.stores,
         structId: item.structId,

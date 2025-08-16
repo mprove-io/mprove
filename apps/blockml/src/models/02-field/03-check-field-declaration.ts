@@ -140,8 +140,7 @@ export function checkFieldDeclaration<T extends types.vsmdrType>(
           [
             common.ParameterEnum.Dimension.toString(),
             common.ParameterEnum.Time.toString(),
-            common.ParameterEnum.Measure.toString(),
-            common.ParameterEnum.Calculation.toString()
+            common.ParameterEnum.Measure.toString()
           ].indexOf(d) > -1
       );
 
@@ -153,7 +152,7 @@ export function checkFieldDeclaration<T extends types.vsmdrType>(
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.MISSING_FIELD_DECLARATION,
-            message: `field must contain one of parameters: ${common.ParameterEnum.Dimension}, ${common.ParameterEnum.Time}, ${common.ParameterEnum.Measure}, ${common.ParameterEnum.Calculation}`,
+            message: `field must contain one of parameters: ${common.ParameterEnum.Dimension}, ${common.ParameterEnum.Time}, ${common.ParameterEnum.Measure}`,
             lines: [
               {
                 line: Math.min(...fieldKeysLineNums),
@@ -170,7 +169,7 @@ export function checkFieldDeclaration<T extends types.vsmdrType>(
         item.errors.push(
           new BmError({
             title: common.ErTitleEnum.TOO_MANY_DECLARATIONS_FOR_ONE_FIELD,
-            message: `field must contain only one of parameters: ${common.ParameterEnum.Dimension}, ${common.ParameterEnum.Time}, ${common.ParameterEnum.Measure}, ${common.ParameterEnum.Calculation}`,
+            message: `field must contain only one of parameters: ${common.ParameterEnum.Dimension}, ${common.ParameterEnum.Time}, ${common.ParameterEnum.Measure}`,
             lines: [
               {
                 line: Math.min(...fieldKeysLineNums),
@@ -212,10 +211,7 @@ export function checkFieldDeclaration<T extends types.vsmdrType>(
       let fieldName = field[fieldClass as keyof common.FieldAny] as string;
 
       if (
-        [
-          common.ParameterEnum.Time.toString(),
-          common.ParameterEnum.Calculation.toString()
-        ].indexOf(fieldClass) > -1 &&
+        [common.ParameterEnum.Time.toString()].indexOf(fieldClass) > -1 &&
         caller === common.CallerEnum.BuildStoreField
       ) {
         item.errors.push(

@@ -49,18 +49,6 @@ export function buildField<T extends types.vsmdrType>(
 
   // parameters added to fields
 
-  if (item.caller !== common.CallerEnum.BuildStoreField) {
-    entities = barField.checkSqlExist(
-      {
-        entities: entities,
-        structId: item.structId,
-        errors: item.errors,
-        caller: item.caller
-      },
-      cs
-    );
-  }
-
   entities = barField.checkFieldNameDuplicates(
     {
       entities: entities,
@@ -102,26 +90,6 @@ export function buildField<T extends types.vsmdrType>(
   );
 
   entities = barField.transformYesNoDimensions(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  entities = barField.checkMeasures(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  entities = barField.checkCalculations(
     {
       entities: entities,
       structId: item.structId,
@@ -180,46 +148,6 @@ export function buildField<T extends types.vsmdrType>(
       entities: entities,
       structId: item.structId,
       errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  entities = barField.makeFieldsDeps(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  entities = barField.checkFieldsDeps(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  entities = barField.checkCycles(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  entities = barField.substituteSingleRefs(
-    {
-      errors: item.errors,
-      structId: item.structId,
-      entities: entities,
       caller: item.caller
     },
     cs

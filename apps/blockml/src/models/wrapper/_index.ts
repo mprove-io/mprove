@@ -6,4 +6,3 @@ export * from './wrap-mconfig-chart';
 export * from './wrap-models';
 export * from './wrap-reports';
 export * from './wrap-tiles';
-export * from './wrap-views';

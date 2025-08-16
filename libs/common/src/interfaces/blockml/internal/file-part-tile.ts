@@ -2,8 +2,6 @@ import { CompiledQuery } from '@malloydata/malloy/dist/model';
 import { enums } from '~common/barrels/enums';
 import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { Fraction } from '../fraction';
-import { VarsSqlStep } from '../internal/vars-sql-step';
-import { JoinAggregation } from '../join-aggregation';
 import { FileChartData } from './file-chart-data';
 import { FileChartOptions } from './file-chart-options';
 import { FileChartPlate } from './file-chart-plate';
@@ -69,12 +67,4 @@ export interface FilePartTile {
   filtersFractions?: {
     [s: string]: Fraction[];
   };
-
-  joinAggregations?: JoinAggregation[];
-
-  unsafeSelect?: string[];
-
-  warnSelect?: string[];
-
-  varsSqlSteps?: VarsSqlStep[];
 }

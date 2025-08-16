@@ -1,12 +1,9 @@
 export enum FileExtensionEnum {
-  View = '.view',
-  Model = '.model',
   Malloy = '.malloy',
   Store = '.store',
+  Chart = '.chart',
   Report = '.report',
   Dashboard = '.dashboard',
-  Chart = '.chart',
-  Udf = '.udf',
   Yml = '.yml',
   Md = '.md'
 }

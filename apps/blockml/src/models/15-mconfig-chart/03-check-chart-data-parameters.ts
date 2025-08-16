@@ -11,7 +11,6 @@ let func = common.FuncEnum.CheckChartDataParameters;
 export function checkChartDataParameters<T extends types.dzType>(
   item: {
     entities: T[];
-    models: common.FileModel[];
     apiModels: common.Model[];
     stores: common.FileStore[];
     errors: BmError[];
@@ -20,7 +19,7 @@ export function checkChartDataParameters<T extends types.dzType>(
   },
   cs: ConfigService<interfaces.Config>
 ) {
-  let { caller, structId, models } = item;
+  let { caller, structId } = item;
   helper.log(cs, caller, func, structId, common.LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
@@ -35,15 +34,12 @@ export function checkChartDataParameters<T extends types.dzType>(
       //   common.isDefined(tile.model) &&
       //   tile.model.startsWith(STORE_MODEL_PREFIX);
 
-      let model: common.FileModel;
       let store: common.FileStore;
 
       if (apiModel.type === common.ModelTypeEnum.Store) {
         store = item.stores.find(
           m => `${STORE_MODEL_PREFIX}_${m.name}` === tile.model
         );
-      } else {
-        model = item.models.find(m => m.name === tile.model);
       }
 
       // if (common.isUndefined(model)) {
@@ -161,10 +157,7 @@ export function checkChartDataParameters<T extends types.dzType>(
               ? store.fields.find(sField => sField.name === tile.data.x_field)
               : apiModel.type === common.ModelTypeEnum.Malloy
                 ? apiModel.fields.find(field => field.id === tile.data.x_field)
-                : getModelField({
-                    model: model,
-                    fieldId: tile.data.x_field
-                  });
+                : undefined;
 
           if (
             field.fieldClass !== common.FieldClassEnum.Dimension &&
@@ -216,10 +209,7 @@ export function checkChartDataParameters<T extends types.dzType>(
                 ? apiModel.fields.find(
                     field => field.id === tile.data.size_field
                   )
-                : getModelField({
-                    model: model,
-                    fieldId: tile.data.size_field
-                  });
+                : undefined;
 
           if (field.result !== common.FieldResultEnum.Number) {
             item.errors.push(
@@ -268,10 +258,7 @@ export function checkChartDataParameters<T extends types.dzType>(
                 ? apiModel.fields.find(
                     field => field.id === tile.data.multi_field
                   )
-                : getModelField({
-                    model: model,
-                    fieldId: tile.data.multi_field
-                  });
+                : undefined;
 
           if (field.fieldClass !== common.FieldClassEnum.Dimension) {
             item.errors.push(
@@ -334,10 +321,7 @@ export function checkChartDataParameters<T extends types.dzType>(
                 ? store.fields.find(sField => sField.name === element)
                 : apiModel.type === common.ModelTypeEnum.Malloy
                   ? apiModel.fields.find(field => field.id === element)
-                  : getModelField({
-                      model: model,
-                      fieldId: element
-                    });
+                  : undefined;
 
             if (
               field.fieldClass !== common.FieldClassEnum.Measure &&
@@ -429,23 +413,4 @@ export function checkChartDataParameters<T extends types.dzType>(
   );
 
   return newEntities;
-}
-
-function getModelField(item: { model: common.FileModel; fieldId: string }) {
-  let { model, fieldId } = item;
-
-  let reg = common.MyRegex.CAPTURE_DOUBLE_REF_WITHOUT_BRACKETS_G();
-  let r = reg.exec(fieldId);
-
-  let asName = r[1];
-  let fieldName = r[2];
-
-  let field =
-    asName === common.MF
-      ? model.fields.find(mField => mField.name === fieldName)
-      : model.joins
-          .find(j => j.as === asName)
-          .view.fields.find(f => f.name === fieldName);
-
-  return field;
 }

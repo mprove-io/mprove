@@ -222,12 +222,6 @@ function getContentFromFileName(item: { fileName: string }) {
   let ext: any = rExt ? rExt[1] : '';
 
   switch (ext) {
-    case common.FileExtensionEnum.View:
-      content = `view: ${part}`;
-      break;
-    case common.FileExtensionEnum.Model:
-      content = `model: ${part}`;
-      break;
     case common.FileExtensionEnum.Store:
       content = `store: ${part}`;
       break;
@@ -239,9 +233,6 @@ function getContentFromFileName(item: { fileName: string }) {
       break;
     case common.FileExtensionEnum.Report:
       content = `report: ${part}`;
-      break;
-    case common.FileExtensionEnum.Udf:
-      content = `udf: ${part}`;
       break;
     case common.FileExtensionEnum.Yml:
       content =

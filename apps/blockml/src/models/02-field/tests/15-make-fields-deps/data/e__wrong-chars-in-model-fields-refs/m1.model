@@ -1,5 +1,0 @@
-model: m1
-connection: c1
-fields:
-- dimension: dim10
-  sql: ${ !@^&%}   

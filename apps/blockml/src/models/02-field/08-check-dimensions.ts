@@ -56,25 +56,6 @@ export function checkDimensions<T extends types.vsmType>(
         );
         return;
       }
-
-      if (x.connection.type !== common.ConnectionTypeEnum.BigQuery) {
-        if (common.isDefined(field.unnest)) {
-          item.errors.push(
-            new BmError({
-              title: common.ErTitleEnum.UNNEST_IS_NOT_SUPPORTED_FOR_CONNECTION,
-              message: `parameter "${common.ParameterEnum.Unnest}" cannot be used with ${x.connection.type}`,
-              lines: [
-                {
-                  line: field.unnest_line_num,
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
-      }
     });
 
     if (errorsOnStart === item.errors.length) {

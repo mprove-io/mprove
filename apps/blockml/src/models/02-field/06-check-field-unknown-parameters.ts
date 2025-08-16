@@ -90,9 +90,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                     common.ParameterEnum.Hidden.toString(),
                     common.ParameterEnum.Label.toString(),
                     common.ParameterEnum.Description.toString(),
-                    common.ParameterEnum.Unnest.toString(),
                     common.ParameterEnum.Type.toString(),
-                    common.ParameterEnum.Sql.toString(),
                     common.ParameterEnum.Result.toString(),
                     common.ParameterEnum.SuggestModelDimension.toString(),
                     common.ParameterEnum.FormatNumber.toString(),
@@ -128,9 +126,7 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                   common.ParameterEnum.Hidden.toString(),
                   common.ParameterEnum.GroupLabel.toString(),
                   common.ParameterEnum.GroupDescription.toString(),
-                  common.ParameterEnum.Unnest.toString(),
                   common.ParameterEnum.Source.toString(),
-                  common.ParameterEnum.Sql.toString(),
                   common.ParameterEnum.Timeframes.toString()
                 ].indexOf(parameter) < 0
               ) {
@@ -183,8 +179,6 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                     common.ParameterEnum.Description.toString(),
                     common.ParameterEnum.Type.toString(),
                     common.ParameterEnum.Result.toString(),
-                    common.ParameterEnum.Sql.toString(),
-                    common.ParameterEnum.SqlKey.toString(),
                     common.ParameterEnum.Percentile.toString(),
                     common.ParameterEnum.FormatNumber.toString(),
                     common.ParameterEnum.CurrencyPrefix.toString(),
@@ -215,11 +209,10 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
             case common.FieldClassEnum.Calculation: {
               if (
                 [
-                  common.ParameterEnum.Calculation.toString(),
+                  // common.ParameterEnum.Calculation.toString(),
                   common.ParameterEnum.Hidden.toString(),
                   common.ParameterEnum.Label.toString(),
                   common.ParameterEnum.Description.toString(),
-                  common.ParameterEnum.Sql.toString(),
                   common.ParameterEnum.Result.toString(),
                   common.ParameterEnum.FormatNumber.toString(),
                   common.ParameterEnum.CurrencyPrefix.toString(),

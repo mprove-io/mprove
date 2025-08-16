@@ -38,109 +38,6 @@ export function checkTopUnknownParameters(
         }
 
         switch (file.ext) {
-          case common.FileExtensionEnum.Udf: {
-            if (
-              [
-                common.ParameterEnum.Udf.toString(),
-                common.ParameterEnum.Sql.toString()
-              ].indexOf(parameter) < 0
-            ) {
-              item.errors.push(
-                new BmError({
-                  title: common.ErTitleEnum.UNKNOWN_UDF_PARAMETER,
-                  message:
-                    `parameter "${parameter}" cannot be used on top level of ` +
-                    `${common.FileExtensionEnum.Udf} file`,
-                  lines: [
-                    {
-                      line: file[parameter + constants.LINE_NUM],
-                      name: file.name,
-                      path: file.path
-                    }
-                  ]
-                })
-              );
-              return;
-            }
-            break;
-          }
-
-          case common.FileExtensionEnum.View: {
-            if (
-              [
-                common.ParameterEnum.View.toString(),
-                common.ParameterEnum.Connection.toString(),
-                common.ParameterEnum.Label.toString(),
-                common.ParameterEnum.Description.toString(),
-                common.ParameterEnum.AccessRoles.toString(),
-                common.ParameterEnum.Udfs.toString(),
-                common.ParameterEnum.Table.toString(),
-                common.ParameterEnum.DerivedTable.toString(),
-                common.ParameterEnum.Parameters.toString(),
-                common.ParameterEnum.BuildMetrics.toString(),
-                common.ParameterEnum.Fields.toString()
-              ].indexOf(parameter) < 0
-            ) {
-              item.errors.push(
-                new BmError({
-                  title: common.ErTitleEnum.UNKNOWN_VIEW_PARAMETER,
-                  message:
-                    `parameter "${parameter}" cannot be used on top level of ` +
-                    `${common.FileExtensionEnum.View} file`,
-                  lines: [
-                    {
-                      line: file[parameter + constants.LINE_NUM],
-                      name: file.name,
-                      path: file.path
-                    }
-                  ]
-                })
-              );
-              return;
-            }
-            break;
-          }
-
-          case common.FileExtensionEnum.Model: {
-            if (
-              [
-                common.ParameterEnum.Model.toString(),
-                common.ParameterEnum.Connection.toString(),
-                common.ParameterEnum.Label.toString(),
-                // common.ParameterEnum.Group.toString(),
-                // common.ParameterEnum.Hidden.toString(),
-                common.ParameterEnum.Description.toString(),
-                common.ParameterEnum.AccessRoles.toString(),
-                common.ParameterEnum.AlwaysJoin.toString(),
-                common.ParameterEnum.SqlAlwaysWhere.toString(),
-                common.ParameterEnum.SqlAlwaysWhereCalc.toString(),
-                common.ParameterEnum.Udfs.toString(),
-                common.ParameterEnum.Joins.toString(),
-                common.ParameterEnum.BuildMetrics.toString(),
-                common.ParameterEnum.Parameters.toString(),
-                common.ParameterEnum.Fields.toString()
-              ].indexOf(parameter) < 0
-            ) {
-              item.errors.push(
-                new BmError({
-                  title: common.ErTitleEnum.UNKNOWN_MODEL_PARAMETER,
-                  message:
-                    `parameter "${parameter}" cannot be used on top level of ` +
-                    `${common.FileExtensionEnum.Model} file`,
-                  lines: [
-                    {
-                      line: file[parameter + constants.LINE_NUM],
-                      name: file.name,
-                      path: file.path
-                    }
-                  ]
-                })
-              );
-              return;
-            }
-            break;
-          }
-
           case common.FileExtensionEnum.Store: {
             if (
               [
@@ -315,7 +212,6 @@ export function checkTopUnknownParameters(
         if (
           Array.isArray(file[parameter]) &&
           [
-            common.ParameterEnum.Udfs.toString(),
             common.ParameterEnum.Parameters.toString(),
             common.ParameterEnum.Fields.toString(),
             common.ParameterEnum.Tiles.toString(),
@@ -324,7 +220,6 @@ export function checkTopUnknownParameters(
             common.ParameterEnum.FieldTimeGroups.toString(),
             common.ParameterEnum.Results.toString(),
             common.ParameterEnum.Rows.toString(),
-            common.ParameterEnum.Joins.toString(),
             common.ParameterEnum.AccessRoles.toString()
           ].indexOf(parameter) < 0
         ) {
@@ -387,7 +282,6 @@ export function checkTopUnknownParameters(
         if (
           !Array.isArray(file[parameter]) &&
           [
-            common.ParameterEnum.Udfs.toString(),
             common.ParameterEnum.Parameters.toString(),
             common.ParameterEnum.Fields.toString(),
             common.ParameterEnum.Tiles.toString(),
@@ -396,7 +290,6 @@ export function checkTopUnknownParameters(
             common.ParameterEnum.FieldTimeGroups.toString(),
             common.ParameterEnum.Results.toString(),
             common.ParameterEnum.Rows.toString(),
-            common.ParameterEnum.Joins.toString(),
             common.ParameterEnum.AccessRoles.toString()
           ].indexOf(parameter) > -1
         ) {

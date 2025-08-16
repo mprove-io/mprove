@@ -83,14 +83,6 @@ export class ToBlockmlRebuildStructResponsePayload {
   errors: common.BmlError[];
 
   @ValidateNested()
-  @Type(() => common.UdfsDict)
-  udfsDict: common.UdfsDict;
-
-  @ValidateNested()
-  @Type(() => common.View)
-  views: common.View[];
-
-  @ValidateNested()
   @Type(() => common.Model)
   models: common.Model[];
 

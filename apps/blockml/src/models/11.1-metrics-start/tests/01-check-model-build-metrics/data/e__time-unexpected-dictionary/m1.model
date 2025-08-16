@@ -1,8 +1,0 @@
-model: m1
-connection: c1
-build_metrics:
-- time:
-    abc: 123
-joins:
-- from_view: v1
-  as: orders

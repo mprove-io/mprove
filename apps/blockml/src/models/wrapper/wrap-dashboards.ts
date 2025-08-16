@@ -9,7 +9,6 @@ export function wrapDashboards(item: {
   structId: string;
   projectId: string;
   dashboards: common.FileDashboard[];
-  models: common.FileModel[];
   apiModels: common.Model[];
   stores: common.FileStore[];
   mods: common.FileMod[];
@@ -19,7 +18,6 @@ export function wrapDashboards(item: {
   let {
     structId,
     projectId,
-    models,
     apiModels,
     stores,
     mods,
@@ -193,7 +191,6 @@ export function wrapDashboards(item: {
     let { apiTiles, mconfigs, queries } = wrapTiles({
       projectId: projectId,
       structId: structId,
-      models: models,
       apiModels: apiModels,
       mods: mods,
       stores: stores,

@@ -11,8 +11,6 @@ import { IsTimezone } from '~common/functions/is-timezone';
 import { Preset } from '../_index';
 import { BmlError } from '../blockml/bml-error';
 import { ModelMetric } from '../blockml/model-metric';
-import { UdfsDict } from '../blockml/udfs-dict';
-import { View } from '../blockml/view';
 
 export class Struct {
   @IsString()
@@ -56,20 +54,12 @@ export class Struct {
   errors: BmlError[];
 
   @ValidateNested()
-  @Type(() => View)
-  views: View[];
-
-  @ValidateNested()
   @Type(() => ModelMetric)
   metrics: ModelMetric[];
 
   @ValidateNested()
   @Type(() => Preset)
   presets: Preset[];
-
-  @ValidateNested()
-  @Type(() => UdfsDict)
-  udfsDict: UdfsDict;
 
   @IsInt()
   serverTs: number;

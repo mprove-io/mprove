@@ -8,7 +8,6 @@ export function wrapCharts(item: {
   envId: string;
   timezone: string;
   mods: common.FileMod[];
-  models: common.FileModel[];
   apiModels: common.Model[];
   stores: common.FileStore[];
   charts: common.FileChart[];
@@ -16,7 +15,6 @@ export function wrapCharts(item: {
   let {
     structId,
     projectId,
-    models,
     apiModels,
     mods,
     stores,
@@ -33,7 +31,6 @@ export function wrapCharts(item: {
     let { apiTiles, mconfigs, queries } = wrapTiles({
       projectId: projectId,
       structId: structId,
-      models: models,
       apiModels: apiModels,
       mods: mods,
       stores: stores,

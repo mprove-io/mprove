@@ -1,5 +1,5 @@
 export enum ModelTypeEnum {
-  SQL = 'sql',
+  // SQL = 'sql',
   Store = 'Store',
   Malloy = 'Malloy'
 }

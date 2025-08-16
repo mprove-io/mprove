@@ -87,8 +87,6 @@ export function prepareTile(item: {
 
           return fileFraction;
         });
-      } else if (mconfig.modelType === enums.ModelTypeEnum.SQL) {
-        parameter.conditions = x.fractions.map(fraction => fraction.brick);
       } else if (mconfig.modelType === enums.ModelTypeEnum.Malloy) {
         //   parameter.conditions = x.fractions.map(fraction => fraction.brick);
 
