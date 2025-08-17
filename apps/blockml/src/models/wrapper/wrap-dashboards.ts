@@ -1,5 +1,4 @@
 import { common } from '~blockml/barrels/common';
-import { STORE_MODEL_PREFIX } from '~common/_index';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
 import { FileFractionControl } from '~common/interfaces/blockml/internal/file-fraction-control';
@@ -44,9 +43,7 @@ export function wrapDashboards(item: {
           common.isDefined(field.store_filter)
             ? Number(
                 stores
-                  .find(
-                    s => `${STORE_MODEL_PREFIX}_${s.name}` === field.store_model
-                  )
+                  .find(s => s.name === field.store_model)
                   .fields.find(k => k.name === field.store_filter).max_fractions
               )
             : undefined,
@@ -56,9 +53,7 @@ export function wrapDashboards(item: {
         fractions: common.isUndefined(field.store_model)
           ? field.apiFractions
           : field.fractions.map(y => {
-              let store = stores.find(
-                s => `${STORE_MODEL_PREFIX}_${s.name}` === field.store_model
-              );
+              let store = stores.find(s => s.name === field.store_model);
 
               let storeResultCurrentTypeFraction: common.FileStoreFractionType;
 

@@ -1,5 +1,4 @@
 import { common } from '~blockml/barrels/common';
-import { STORE_MODEL_PREFIX } from '~common/constants/top';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
 import { FileFractionControl } from '~common/interfaces/blockml/internal/file-fraction-control';
@@ -276,7 +275,7 @@ export function wrapReports(item: {
                 if (row.type === common.RowTypeEnum.Metric) {
                   model = models.find(m => m.modelId === metric.modelId);
 
-                  let isStore = metric.modelId.startsWith(STORE_MODEL_PREFIX);
+                  let isStore = metric.modelType === common.ModelTypeEnum.Store;
 
                   if (isStore === true) {
                     store = model.content as FileStore;

@@ -1,7 +1,7 @@
 dashboard: d1
 parameters:
 - filter: products_brand
-  store_model: store_model_s1
+  store_model: s1
   store_result: string
   fractions: 
   - logic: OR
@@ -11,7 +11,7 @@ parameters:
       value: abc
 tiles:  
 - title: t1
-  model: store_model_s1
+  model: s1
   select: 
   - dim1
   parameters:

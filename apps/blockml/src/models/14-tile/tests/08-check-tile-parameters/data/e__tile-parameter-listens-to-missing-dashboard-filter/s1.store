@@ -1,0 +1,14 @@
+store: s1
+connection: c1
+method: POST
+request: return {}
+response: return {}
+results: 
+- result: string
+  fraction_types:
+  - type: equal
+    controls: 
+    - input: value_input
+fields:
+- dimension: dim1
+  result: string

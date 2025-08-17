@@ -4,7 +4,6 @@ import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
-import { STORE_MODEL_PREFIX } from '~common/_index';
 import { bricksToFractions } from '~node-common/functions/bricks-to-fractions';
 
 let func = common.FuncEnum.CheckReportRowParameters;
@@ -170,9 +169,7 @@ export function checkReportRowParameters(
           let store: common.FileStore;
 
           if (isStore === true) {
-            store = stores.find(
-              m => `${STORE_MODEL_PREFIX}_${m.name}` === row.model
-            );
+            store = stores.find(m => m.name === row.model);
           }
 
           row.parameters

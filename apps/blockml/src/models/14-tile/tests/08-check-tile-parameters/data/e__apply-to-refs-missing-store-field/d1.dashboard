@@ -1,7 +1,7 @@
 dashboard: d1
 tiles:  
 - title: t1
-  model: store_model_s1
+  model: s1
   select: 
   - dim1
   parameters:

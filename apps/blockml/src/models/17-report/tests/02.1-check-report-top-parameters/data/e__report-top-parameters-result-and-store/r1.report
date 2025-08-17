@@ -3,7 +3,7 @@ title: t
 parameters:
 - filter: f1
   result: string
-  store_model: store_model_s1
+  store_model: s1
 rows: []
 
 

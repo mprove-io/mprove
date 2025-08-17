@@ -230,7 +230,7 @@ export class FilesRightComponent {
 
     if (dotExt === common.FileExtensionEnum.Store) {
       this.navigateService.navigateToChart({
-        modelId: `${common.STORE_MODEL_PREFIX}_${id}`,
+        modelId: id,
         chartId: common.EMPTY_CHART_ID
       });
     } else if (dotExt === common.FileExtensionEnum.Report) {

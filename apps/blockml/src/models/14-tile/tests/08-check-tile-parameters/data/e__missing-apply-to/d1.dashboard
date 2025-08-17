@@ -1,11 +1,10 @@
 dashboard: d1
 tiles:  
 - title: t1
-  model: m1
+  model: s1
   select: 
-  - a.dim1
+  - dim1
   parameters:
-  - conditions:
-    - 'any'
+  - fractions: []
 
 

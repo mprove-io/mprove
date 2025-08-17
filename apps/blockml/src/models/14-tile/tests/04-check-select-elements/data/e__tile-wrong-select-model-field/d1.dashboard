@@ -1,8 +1,8 @@
 dashboard: d1
 tiles:  
 - title: t1
-  model: m1
+  model: s1
   select: 
-  - mf.unk
+  - unk
 
 

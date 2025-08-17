@@ -4,7 +4,6 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
-import { STORE_MODEL_PREFIX } from '~common/constants/top';
 
 let func = common.FuncEnum.CheckTileTitleModelSelect;
 
@@ -125,9 +124,7 @@ export function checkTileTitleModelSelect<T extends types.dcType>(
       let store;
 
       if (apiModel.type === common.ModelTypeEnum.Store) {
-        store = item.stores.find(
-          m => `${STORE_MODEL_PREFIX}_${m.name}` === tile.model
-        );
+        store = item.stores.find(m => m.name === tile.model);
       }
 
       if (

@@ -2,7 +2,7 @@ report: r1
 title: t
 parameters:
 - filter: products_brand
-  store_model: store_model_s1
+  store_model: s1
   store_result: string
   fractions: 
   - logic: OR
@@ -13,7 +13,7 @@ parameters:
 rows:  
 - row_id: A
   type: metric
-  metric: store_model_s1.mea1.by.t1 
+  metric: s1.mea1.by.t1 
   parameters:
   - apply_to: dim1
     listen: products_brand

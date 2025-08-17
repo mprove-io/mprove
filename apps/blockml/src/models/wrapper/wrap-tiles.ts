@@ -1,6 +1,5 @@
 import { common } from '~blockml/barrels/common';
 import { nodeCommon } from '~blockml/barrels/node-common';
-import { STORE_MODEL_PREFIX } from '~common/constants/top';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
 import { FileFractionControl } from '~common/interfaces/blockml/internal/file-fraction-control';
@@ -40,15 +39,10 @@ export function wrapTiles(item: {
     let mod: common.FileMod;
     let store: common.FileStore;
 
-    let isStore =
-      common.isDefined(tile.model) && tile.model.startsWith(STORE_MODEL_PREFIX);
-
     let apiModel = apiModels.find(m => m.modelId === tile.model);
 
     if (apiModel.type === common.ModelTypeEnum.Store) {
-      store = stores.find(
-        s => `${STORE_MODEL_PREFIX}_${s.name}` === tile.model
-      );
+      store = stores.find(s => s.name === tile.model);
     } else if (apiModel.type === common.ModelTypeEnum.Malloy) {
       mod = mods.find(m => m.name === tile.model);
     }
@@ -60,7 +54,7 @@ export function wrapTiles(item: {
         : undefined;
 
     let queryId =
-      isStore === true
+      apiModel.type === common.ModelTypeEnum.Store
         ? common.EMPTY_QUERY_ID
         : nodeCommon.makeQueryId({
             projectId: projectId,
@@ -77,7 +71,10 @@ export function wrapTiles(item: {
       envId: envId,
       connectionId: connection.connectionId,
       connectionType: connection.type,
-      sql: isStore === true ? undefined : tile.sql.join('\n'),
+      sql:
+        apiModel.type === common.ModelTypeEnum.Store
+          ? undefined
+          : tile.sql.join('\n'),
       apiMethod: undefined,
       apiUrl: undefined,
       apiBody: undefined,
@@ -101,7 +98,7 @@ export function wrapTiles(item: {
 
     let filters: common.Filter[] = [];
 
-    if (isStore === true) {
+    if (apiModel.type === common.ModelTypeEnum.Store) {
       tile.parameters.forEach(x => {
         let storeField = store.fields.find(k => k.name === x.apply_to);
 
@@ -234,7 +231,7 @@ export function wrapTiles(item: {
           ? common.ModelTypeEnum.Malloy
           : undefined,
       dateRangeIncludesRightSide:
-        isStore === true &&
+        apiModel.type === common.ModelTypeEnum.Store &&
         (common.isUndefined(store.date_range_includes_right_side) ||
           common.toBooleanFromLowercaseString(
             store.date_range_includes_right_side

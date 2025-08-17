@@ -138,7 +138,7 @@ export function checkReportRow(
           return;
         } else {
           row.model = metric.modelId;
-          row.isStore = row.model.startsWith(common.STORE_MODEL_PREFIX);
+          row.isStore = metric.modelType === common.ModelTypeEnum.Store;
         }
 
         if (common.isUndefined(row.parameters)) {

@@ -5,7 +5,6 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
-import { STORE_MODEL_PREFIX } from '~common/constants/top';
 import { bricksToFractions } from '~node-common/functions/bricks-to-fractions';
 import { getTileApiModel } from '~node-common/functions/get-tile-api-model';
 
@@ -77,12 +76,7 @@ export function checkTileParameters<T extends types.dcType>(
           return;
         }
 
-        // let isStore =
-        //   common.isDefined(tile.model) &&
-        //   tile.model.startsWith(STORE_MODEL_PREFIX);
-
         if (
-          // isStore === false &&
           apiModel.type !== common.ModelTypeEnum.Store &&
           common.isUndefined(p.listen) &&
           common.isUndefined(p.conditions)
@@ -187,19 +181,10 @@ export function checkTileParameters<T extends types.dcType>(
         }
         tile.combinedFilters = {};
 
-        // let isStore =
-        //   common.isDefined(tile.model) &&
-        //   tile.model.startsWith(STORE_MODEL_PREFIX);
-
         let store: common.FileStore;
 
-        if (
-          // isStore === true
-          apiModel.type === common.ModelTypeEnum.Store
-        ) {
-          store = stores.find(
-            m => `${STORE_MODEL_PREFIX}_${m.name}` === tile.model
-          );
+        if (apiModel.type === common.ModelTypeEnum.Store) {
+          store = stores.find(m => m.name === tile.model);
         }
 
         tile.parameters

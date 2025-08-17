@@ -2,14 +2,14 @@ report: r1
 title: t
 parameters:
 - filter: f1
-  store_model: store_model_s1
+  store_model: s1
   store_filter: f1
   fractions: 
   - controls:
     - input: unk
       value: a
 - filter: f2
-  store_model: store_model_s1
+  store_model: s1
   store_result: string
   fractions: 
   - logic: OR

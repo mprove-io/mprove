@@ -110,9 +110,6 @@ export const USE_PROJECT_TIMEZONE_LABEL = 'USE PROJECT CONFIG TIMEZONE';
 
 export const TIME_COLUMNS_LIMIT = 100;
 
-export const VIEW_MODEL_ALIAS = 'v';
-export const VIEW_MODEL_PREFIX = 'view_model';
-
 export const STORE_MODEL_PREFIX = 'store_model';
 
 export const METRIC_ID_BY = 'by';

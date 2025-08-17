@@ -1,4 +1,4 @@
-dashboard: d1
+chart: c1
 tiles:  
 - title: t1
   model: s1
@@ -6,9 +6,6 @@ tiles:
   - dim1
   parameters:
   - apply_to: dim1
-    fractions: []
-  - apply_to: dim1
-    fractions: []
-
+    listen: unk
 
 

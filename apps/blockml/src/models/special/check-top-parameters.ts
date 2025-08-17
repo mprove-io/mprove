@@ -4,7 +4,6 @@ import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
-import { STORE_MODEL_PREFIX } from '~common/constants/top';
 
 let func = common.FuncEnum.CheckStoreFractionControls;
 
@@ -192,9 +191,7 @@ export function checkTopParameters(
     }
 
     if (common.isDefined(field.store_model)) {
-      let store = stores.find(
-        m => `${STORE_MODEL_PREFIX}_${m.name}` === field.store_model
-      );
+      let store = stores.find(m => m.name === field.store_model);
 
       if (common.isUndefined(store)) {
         item.errors.push(

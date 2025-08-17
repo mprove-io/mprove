@@ -33,7 +33,7 @@ test('1', async t => {
 
     let connection: common.ProjectConnection = {
       connectionId: 'c1',
-      type: common.ConnectionTypeEnum.BigQuery
+      type: common.ConnectionTypeEnum.Api
     };
 
     await structService.rebuildStruct({
@@ -65,11 +65,11 @@ test('1', async t => {
 
   t.deepEqual(entDashboards[0].tiles[0].sortingsAry, [
     {
-      fieldId: 'a.dim1',
+      fieldId: 'dim1',
       desc: false
     },
     {
-      fieldId: 'a.dim2',
+      fieldId: 'dim2',
       desc: true
     }
   ]);

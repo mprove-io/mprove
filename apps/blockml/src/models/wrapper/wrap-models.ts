@@ -451,60 +451,57 @@ export function wrapModels(item: {
     //   return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
     // });
 
-    if (sortedNodes.length > 0) {
-      if (common.isDefined(malloyModelDef)) {
-        malloyModelDef.references = []; // TODO: clarify
-      }
-
-      let apiModel: common.Model = {
-        structId: structId,
-        modelId:
-          x.fileExt === common.FileExtensionEnum.Store
-            ? `${common.STORE_MODEL_PREFIX}_${x.name}`
-            : x.name,
-        type: modelType,
-        source: (x as common.FileMod).source,
-        malloyModelDef: malloyModelDef,
-        connectionId: x.connection.connectionId,
-        filePath: x.filePath,
-        fileText: files.find(file => file.path === x.filePath).content,
-        content: x.fileExt === common.FileExtensionEnum.Store ? x : undefined,
-        // isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
-        dateRangeIncludesRightSide:
-          x.fileExt === common.FileExtensionEnum.Store &&
-          (common.isUndefined(
-            (x as common.FileStore).date_range_includes_right_side
-          ) ||
-            common.toBooleanFromLowercaseString(
-              (x as common.FileStore).date_range_includes_right_side
-            ) === true)
-            ? true
-            : false,
-        isViewModel: false,
-        accessRoles:
-          modelType === common.ModelTypeEnum.Malloy &&
-          common.isDefined(accessRolesTag?.value)
-            ? accessRolesTag.value.split(',').map(x => x.trim())
-            : (x.access_roles ?? []),
-        label:
-          x.fileExt === common.FileExtensionEnum.Store
-            ? `Store Model - ${x.label}`
-            : x.label,
-        description: (x as common.FileStore).description,
-        gr: undefined,
-        hidden: false,
-        fields: apiFields,
-        nodes: sortedNodes,
-        serverTs: 1
-      };
-
-      // if (modelType === common.ModelTypeEnum.Malloy) {
-      //   console.log('sortedNodes');
-      //   console.dir(sortedNodes, { depth: null });
-      // }
-
-      apiModels.push(apiModel);
+    // if (sortedNodes.length > 0) {
+    if (common.isDefined(malloyModelDef)) {
+      malloyModelDef.references = []; // TODO: clarify
     }
+
+    let apiModel: common.Model = {
+      structId: structId,
+      modelId: x.name,
+      type: modelType,
+      source: (x as common.FileMod).source,
+      malloyModelDef: malloyModelDef,
+      connectionId: x.connection.connectionId,
+      filePath: x.filePath,
+      fileText: files.find(file => file.path === x.filePath).content,
+      content: x.fileExt === common.FileExtensionEnum.Store ? x : undefined,
+      // isStoreModel: x.fileExt === common.FileExtensionEnum.Store,
+      dateRangeIncludesRightSide:
+        x.fileExt === common.FileExtensionEnum.Store &&
+        (common.isUndefined(
+          (x as common.FileStore).date_range_includes_right_side
+        ) ||
+          common.toBooleanFromLowercaseString(
+            (x as common.FileStore).date_range_includes_right_side
+          ) === true)
+          ? true
+          : false,
+      isViewModel: false,
+      accessRoles:
+        modelType === common.ModelTypeEnum.Malloy &&
+        common.isDefined(accessRolesTag?.value)
+          ? accessRolesTag.value.split(',').map(x => x.trim())
+          : (x.access_roles ?? []),
+      label:
+        x.fileExt === common.FileExtensionEnum.Store
+          ? `Store Model - ${x.label}`
+          : x.label,
+      description: (x as common.FileStore).description,
+      gr: undefined,
+      hidden: false,
+      fields: apiFields,
+      nodes: sortedNodes,
+      serverTs: 1
+    };
+
+    // if (modelType === common.ModelTypeEnum.Malloy) {
+    //   console.log('sortedNodes');
+    //   console.dir(sortedNodes, { depth: null });
+    // }
+
+    apiModels.push(apiModel);
+    // }
   });
 
   // console.log('apiModels.map(x=>x.accessRoles)');

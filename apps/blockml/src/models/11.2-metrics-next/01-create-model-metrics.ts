@@ -3,7 +3,7 @@ import { common } from '~blockml/barrels/common';
 import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { BmError } from '~blockml/models/bm-error';
-import { METRIC_ID_BY, STORE_MODEL_PREFIX } from '~common/constants/top';
+import { METRIC_ID_BY } from '~common/constants/top';
 
 let func = common.FuncEnum.CreateModelMetrics;
 
@@ -80,12 +80,12 @@ export function createModelMetrics(
           let partLabel = `${partNodeLabel} ${partFieldLabel}`;
 
           let modelMetric: common.ModelMetric = {
-            metricId: `${STORE_MODEL_PREFIX}_${store.name}.${storeField.name}.${METRIC_ID_BY}.${timeId}`,
+            metricId: `${store.name}.${storeField.name}.${METRIC_ID_BY}.${timeId}`,
             filePath: store.filePath,
             // partId: partId,
-            modelId: `${STORE_MODEL_PREFIX}_${store.name}`,
+            modelId: `${store.name}`,
             modelType: common.ModelTypeEnum.Store,
-            topNode: `${STORE_MODEL_PREFIX}_${store.name}`,
+            topNode: `${store.name}`,
             topLabel: topLabel,
             fieldId: `${storeField.name}`,
             fieldClass: storeField.fieldClass,

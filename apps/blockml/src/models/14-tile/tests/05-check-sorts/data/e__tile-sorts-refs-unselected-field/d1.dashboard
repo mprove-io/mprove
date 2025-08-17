@@ -1,10 +1,10 @@
 dashboard: d1
 tiles:  
 - title: t1
-  model: m1
+  model: s1
   select: 
-  - a.dim1
-  sorts: a.dim2
+  - dim1
+  sorts: dim2
 
 
 
