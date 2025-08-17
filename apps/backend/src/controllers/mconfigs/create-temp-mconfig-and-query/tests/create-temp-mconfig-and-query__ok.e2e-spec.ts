@@ -110,6 +110,11 @@ test('1', async t => {
     let mconfig = resp1.payload.dashboard.tiles[0].mconfig;
     mconfig.mconfigId = common.makeId();
 
+    let queryOperation: common.QueryOperation = {
+      type: common.QueryOperationTypeEnum.Get,
+      timezone: 'UTC'
+    };
+
     let req2: apiToBackend.ToBackendCreateTempMconfigAndQueryRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum
@@ -124,7 +129,8 @@ test('1', async t => {
         envId: common.PROJECT_ENV_PROD,
         mconfig: mconfig,
         cellMetricsStartDateMs: undefined,
-        cellMetricsEndDateMs: undefined
+        cellMetricsEndDateMs: undefined,
+        queryOperations: [queryOperation]
       }
     };
 
