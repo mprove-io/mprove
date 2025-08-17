@@ -1,0 +1,9 @@
+chart: c1
+tiles:
+- title: Total Profit
+  model: c1_order_items
+  select:
+  - users.state
+  - orders.orders_count
+  limit: 10
+  type: table

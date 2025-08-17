@@ -1,9 +1,0 @@
-view: v2
-connection: c1
-derived_table: |
-  SELECT ${k.time1___hour} as d2
-  FROM 
-    ${v1 AS k}
-fields:
-- dimension: dim2
-  sql: d2  

@@ -33,7 +33,7 @@ test('1', async t => {
 
     let connection: common.ProjectConnection = {
       connectionId: 'c1',
-      type: common.ConnectionTypeEnum.PostgreSQL
+      type: common.ConnectionTypeEnum.Api
     };
 
     await structService.rebuildStruct({
@@ -66,5 +66,5 @@ test('1', async t => {
   t.is(errors[0].title, common.ErTitleEnum.DUPLICATE_APPLY_TO);
   t.is(errors[0].lines.length, 2);
   t.is(errors[0].lines[0].line, 8);
-  t.is(errors[0].lines[1].line, 12);
+  t.is(errors[0].lines[1].line, 14);
 });

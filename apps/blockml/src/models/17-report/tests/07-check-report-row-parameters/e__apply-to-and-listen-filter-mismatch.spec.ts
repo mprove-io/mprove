@@ -33,7 +33,7 @@ test('1', async t => {
 
     let connection: common.ProjectConnection = {
       connectionId: 'c1',
-      type: common.ConnectionTypeEnum.GoogleApi
+      type: common.ConnectionTypeEnum.Api
     };
 
     await structService.rebuildStruct({

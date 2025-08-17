@@ -1,0 +1,39 @@
+import './tables/c1_order_items_tx.malloy';
+import './tables/c1_orders_tx.malloy';
+import './tables/c1_users_tx.malloy';
+import './tables/c1_user_order_facts_tx.malloy';
+import './tables/c1_inventory_items_tx.malloy';
+import './tables/c1_products_tx.malloy';
+import './tables/c1_distribution_centers_tx.malloy';
+
+#(mprove) model
+-- #(mprove) access_roles="sales, marketing"
+source: c1_order_items is c1_order_items_tx extend {
+  join_one: orders is c1_orders_tx on order_id = orders.order_id
+  join_one: users is c1_users_tx on orders.user_id = users.user_id
+  join_one: user_order_facts is c1_user_order_facts_tx on users.user_id = user_order_facts.user_id
+  join_one: inventory_items is c1_inventory_items_tx on inventory_item_id = inventory_items.inventory_item_id
+  join_one: products is c1_products_tx on inventory_items.product_id = products.product_id
+  join_one: distribution_centers is c1_distribution_centers_tx on inventory_items.distribution_center_id = distribution_centers.distribution_center_id
+
+  measure: total_profit is total_sale_price - inventory_items.total_actual_cost
+
+  # percent
+  measure: profit_margin is total_profit / total_sale_price
+
+  -- # bar_chart
+  view: view_orders_count_by_users_state is {
+    limit: 10
+    group_by: users.state
+    aggregate: orders.orders_count
+    -- where: users.state ~ f`TX`
+  }
+
+  view: view_min_first_order_created_ts_by_users_state is {
+    top: 10
+    group_by: users.state
+    aggregate: min_first_order_created_at_ts is min(user_order_facts.first_order_created_at_ts)
+  }
+
+  -- where: users.state ~ f`VA`
+}

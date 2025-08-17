@@ -1,0 +1,251 @@
+import './c1_order_items.malloy';
+
+query: c2 is c1_order_items -> {
+  where: 
+    -- date
+
+    -- orders.created_at_date ~ f``
+
+    -- timestamp
+
+    orders.created_at_day ~ f``,      -- { kind: 'timestamp', parsed: null }
+
+    orders.created_at_day ~ f`null`,  -- { kind: 'timestamp', parsed: { operator: 'null' } }
+
+    orders.created_at_day ~ f`now`,       -- operator: 'in', in: { moment: 'now' }
+    orders.created_at_day ~ f`today`,     -- operator: 'in', in: { moment: 'today' }
+    orders.created_at_day ~ f`yesterday`, -- operator: 'in', in: { moment: 'yesterday' }
+    orders.created_at_day ~ f`tomorrow`,  -- operator: 'in', in: { moment: 'tomorrow' }
+
+    orders.created_at_day ~ f`2025`,              -- operator: 'in', in: { moment: 'literal', literal: '2025', units: 'year' }
+    orders.created_at_day ~ f`2025-Q1`,
+    orders.created_at_day ~ f`2025-01`, 
+    orders.created_at_day ~ f`2025-02-03-WK`, 
+    orders.created_at_day ~ f`2025-02-03`, 
+    orders.created_at_day ~ f`2025-02-03 04`, 
+    orders.created_at_day ~ f`2025-02-03 04:05`, 
+    orders.created_at_day ~ f`2025-02-03 04:05:06`,   -- operator: 'in', in: { moment: 'literal', literal: '2025-02-03 04:05:06' } -- no units
+    orders.created_at_day ~ f`2025-02-03 04:05:06.7`, -- operator: 'in', in: { moment: 'literal', literal: '2025-02-03 04:05:06.7' } -- no units
+
+    orders.created_at_day ~ f`this year`,         -- operator: 'in', in: { moment: 'this', units: 'year' }
+    -- orders.created_at_day ~ f`this quarter`,
+    -- orders.created_at_day ~ f`this month`,
+    -- orders.created_at_day ~ f`this week`,
+    -- orders.created_at_day ~ f`this day`,
+    -- orders.created_at_day ~ f`this hour`,
+    -- orders.created_at_day ~ f`this minute`,
+
+    orders.created_at_day ~ f`last year`,         -- operator: 'in', in: { moment: 'last', units: 'year' }
+    -- orders.created_at_day ~ f`last quarter`,
+    -- orders.created_at_day ~ f`last month`,
+    -- orders.created_at_day ~ f`last week`,
+    -- orders.created_at_day ~ f`last day`,
+    -- orders.created_at_day ~ f`last hour`,
+    -- orders.created_at_day ~ f`last minute`,
+
+    orders.created_at_day ~ f`next year`,         -- operator: 'in', in: { moment: 'next', units: 'year' }
+    -- orders.created_at_day ~ f`next quarter`,
+    -- orders.created_at_day ~ f`next month`,
+    -- orders.created_at_day ~ f`next week`,
+    -- orders.created_at_day ~ f`next day`,
+    -- orders.created_at_day ~ f`next hour`,
+    -- orders.created_at_day ~ f`next minute`,
+
+    orders.created_at_day ~ f`monday`,            -- operator: 'in', in: { moment: 'monday', which: 'last' }
+    orders.created_at_day ~ f`last monday`,       -- operator: 'in', in: { moment: 'monday', which: 'last' }
+    orders.created_at_day ~ f`next monday`,       -- operator: 'in', in: { moment: 'monday', which: 'next' }
+
+    orders.created_at_day ~ f`3 days ago to now`,        
+    orders.created_at_day ~ f`3 weeks ago to now`,        
+
+    orders.created_at_day ~ f`5 days ago`,        -- operator: 'in', in: { moment: 'ago',       units: 'day', n: '5' }
+    orders.created_at_day ~ f`5 days from now`,   -- operator: 'in', in: { moment: 'from_now',  units: 'day', n: '5' }
+
+    orders.created_at_day ~ f`5 days ago for 2 days`,         -- operator: 'for', units: 'day', n: '2', begin: { moment: 'ago',       units: 'day', n: '5' }
+    orders.created_at_day ~ f`5 days from now for 2 days`,    -- operator: 'for', units: 'day', n: '2', begin: { moment: 'from_now',  units: 'day', n: '5' }
+
+    orders.created_at_day ~ f`5 weeks ago for 2 months`,         -- operator: 'for', units: 'month', n: '2', begin: { moment: 'ago',       units: 'week', n: '5' }
+    orders.created_at_day ~ f`5 weeks from now for 2 months`,    -- operator: 'for', units: 'month', n: '2', begin: { moment: 'from_now',  units: 'week', n: '5' }
+
+    orders.created_at_day ~ f`last 5 days`,       -- operator: 'last',    units: 'day', n: '5'
+    orders.created_at_day ~ f`next 5 days`,       -- operator: 'next',    units: 'day', n: '5'
+    orders.created_at_day ~ f`5 days`,            -- operator: 'in_last', units: 'day', n: '5'
+
+    orders.created_at_day ~ f`before 2025-Q2`,                -- operator: 'before', before: { moment: 'literal', literal: '2025-Q2', units: 'quarter' }
+    orders.created_at_day ~ f`before 2025-02-03-WK`,          -- operator: 'before', before: { moment: 'literal', literal: '2025-02-03-WK', units: 'week' }
+    orders.created_at_day ~ f`before 2025-02-03 04:05:06.7`,  -- operator: 'before', before: { moment: 'literal', literal: '2025-02-03 04:05:06.7' }
+
+    orders.created_at_day ~ f`after 2025-Q2`,                 -- operator: 'after', after: { moment: 'literal', literal: '2025-Q2', units: 'quarter' }
+    orders.created_at_day ~ f`after 2025-02-03-WK`,           -- operator: 'after', after: { moment: 'literal', literal: '2025-02-03-WK', units: 'week' }
+    orders.created_at_day ~ f`after 2025-02-03 04:05:06.7`,   -- operator: 'after', after: { moment: 'literal', literal: '2025-02-03 04:05:06.7' }
+
+    orders.created_at_day ~ f`before tuesday`,                -- operator: 'before', before: { moment: 'tuesday', which: 'last' }
+    orders.created_at_day ~ f`after tuesday`,                 -- operator: 'after',  after:  { moment: 'tuesday', which: 'last' }
+    orders.created_at_day ~ f`starting tuesday`,              -- operator: 'before', before: { moment: 'tuesday', which: 'last' }, not: true
+    orders.created_at_day ~ f`through tuesday`,               -- operator: 'after',  after:  { moment: 'tuesday', which: 'last' }, not: true
+
+    orders.created_at_day ~ f`last monday to next friday`,                  -- operator: 'to', fromMoment: { moment: 'monday', which: 'last' }, toMoment: { moment: 'friday', which: 'next' }
+    orders.created_at_day ~ f`2025-01-02 03:04:05 to 2026-07-08 04:05:06`,  -- operator: 'to', fromMoment: { moment: 'literal', literal: '2025-01-02 03:04:05' }, toMoment: { moment: 'literal', literal: '2026-07-08 04:05:06' }
+    
+    orders.created_at_day ~ f`today or tomorrow`,  -- operator: 'or', members: [{ operator: 'in', in: { moment: 'today' } }, { operator: 'in', in: { moment: 'tomorrow' } }]
+
+    -- timestamp not
+
+    orders.created_at_day ~ f`not null`,  
+
+    orders.created_at_day ~ f`not now`,       
+    orders.created_at_day ~ f`not today`,     
+    orders.created_at_day ~ f`not yesterday`, 
+    orders.created_at_day ~ f`not tomorrow`,  
+
+    orders.created_at_day ~ f`not 2025`,              
+    orders.created_at_day ~ f`not 2025-Q1`,
+    orders.created_at_day ~ f`not 2025-01`, 
+    orders.created_at_day ~ f`not 2025-02-03-WK`, 
+    orders.created_at_day ~ f`not 2025-02-03`, 
+    orders.created_at_day ~ f`not 2025-02-03 04`, 
+    orders.created_at_day ~ f`not 2025-02-03 04:05`, 
+    orders.created_at_day ~ f`not 2025-02-03 04:05:06`,   
+    orders.created_at_day ~ f`not 2025-02-03 04:05:06.7`, 
+
+    orders.created_at_day ~ f`not this year`,         
+    -- orders.created_at_day ~ f`not this quarter`,
+    -- orders.created_at_day ~ f`not this month`,
+    -- orders.created_at_day ~ f`not this week`,
+    -- orders.created_at_day ~ f`not this day`,
+    -- orders.created_at_day ~ f`not this hour`,
+    -- orders.created_at_day ~ f`not this minute`,
+
+    orders.created_at_day ~ f`not last year`,         
+    -- orders.created_at_day ~ f`not last quarter`,
+    -- orders.created_at_day ~ f`not last month`,
+    -- orders.created_at_day ~ f`not last week`,
+    -- orders.created_at_day ~ f`not last day`,
+    -- orders.created_at_day ~ f`not last hour`,
+    -- orders.created_at_day ~ f`not last minute`,
+
+    orders.created_at_day ~ f`not next year`,         
+    -- orders.created_at_day ~ f`not next quarter`,
+    -- orders.created_at_day ~ f`not next month`,
+    -- orders.created_at_day ~ f`not next week`,
+    -- orders.created_at_day ~ f`not next day`,
+    -- orders.created_at_day ~ f`not next hour`,
+    -- orders.created_at_day ~ f`not next minute`,
+
+    orders.created_at_day ~ f`not monday`,            
+    orders.created_at_day ~ f`not last monday`,       
+    orders.created_at_day ~ f`not next monday`,       
+
+    orders.created_at_day ~ f`not 3 days ago to now`,
+    orders.created_at_day ~ f`not 3 weeks ago to now`,
+
+    orders.created_at_day ~ f`not 5 days ago`,        
+    orders.created_at_day ~ f`not 5 days from now`,   
+
+    orders.created_at_day ~ f`not 5 days ago for 2 days`,         
+    orders.created_at_day ~ f`not 5 days from now for 2 days`,    
+
+    orders.created_at_day ~ f`not 5 weeks ago for 2 months`,         
+    orders.created_at_day ~ f`not 5 weeks from now for 2 months`,    
+
+    orders.created_at_day ~ f`not last 5 days`,       
+    orders.created_at_day ~ f`not next 5 days`,       
+    orders.created_at_day ~ f`not 5 days`,            
+
+    orders.created_at_day ~ f`not before 2025-Q2`,                
+    orders.created_at_day ~ f`not before 2025-02-03-WK`,          
+    orders.created_at_day ~ f`not before 2025-02-03 04:05:06.7`,  
+
+    orders.created_at_day ~ f`not after 2025-Q2`,                 
+    orders.created_at_day ~ f`not after 2025-02-03-WK`,           
+    orders.created_at_day ~ f`not after 2025-02-03 04:05:06.7`,   
+
+    orders.created_at_day ~ f`not before tuesday`,                
+    orders.created_at_day ~ f`not after tuesday`,                 
+    -- -- orders.created_at_day ~ f`not starting tuesday`, -- bug             
+    -- -- orders.created_at_day ~ f`not through tuesday`,  -- bug       
+
+    orders.created_at_day ~ f`not last monday to next friday`,                  
+    orders.created_at_day ~ f`not 2025-01-02 03:04:05 to 2026-07-08 04:05:06`,  
+
+    -- number
+
+    -- sale_price ~ f``,
+    -- sale_price ~ f`1`,                                      -- operator: '=', values: [ '1' ]
+    -- sale_price ~ f`<= 2`,                                   -- operator: '<=', values: [ '2' ]
+    -- sale_price ~ f`>= 3`,                                   -- operator: '>=', values: [ '3' ]
+    -- sale_price ~ f`< 4`,                                    -- operator: '<', values: [ '4' ]
+    -- sale_price ~ f`> 5`,                                    -- operator: '>', values: [ '5' ]
+    -- sale_price ~ f`null`,                                   -- operator: 'null'
+    -- sale_price ~ f`(6 to 7)`,                               -- operator: 'range', startValue: '6', startOperator: '>', endValue: '7', endOperator: '<'
+    -- sale_price ~ f`(8 to 9]`,                               -- operator: 'range', startValue: '8', startOperator: '>', endValue: '9', endOperator: '<='
+    -- sale_price ~ f`[10 to 11)`,                             -- operator: 'range', startValue: '10', startOperator: '>=', endValue: '11', endOperator: '<'
+    -- sale_price ~ f`[12 to 13]`,                             -- operator: 'range', startValue: '12', startOperator: '>=', endValue: '13', endOperator: '<='
+    -- sale_price ~ f`14, 15`,                                 -- operator: '=', values: [ '14', '15' ]
+    -- sale_price ~ f`16 or 17, 18 or < 19`,                   -- operator: 'or', members: [ { operator: '=', values: [ '16', '17', '18' ] }, { operator: '<', values: [ '19' ] } ]
+    -- sale_price ~ f`!= 20`,                                  -- operator: '!=', values: [ '20' ]
+
+    -- sale_price ~ f`not 1`,                                  -- operator: '!=', values: [ '1' ] }
+    -- sale_price ~ f`not <= 2`,                               -- operator: '<=', values: [ '2' ], not: true
+    -- sale_price ~ f`not >= 3`,                               -- operator: '>=', values: [ '3' ], not: true
+    -- sale_price ~ f`not < 4`,                                -- operator: '<', values: [ '4' ], not: true
+    -- sale_price ~ f`not > 5`,                                -- operator: '>', values: [ '5' ], not: true
+    -- sale_price ~ f`not null`,                               -- operator: 'null', not: true
+    -- sale_price ~ f`not (6 to 7)`,                           -- operator: 'range', startValue: '6', startOperator: '>', endValue: '7', endOperator: '<', not: true
+    -- sale_price ~ f`not (8 to 9]`,                           -- operator: 'range', startValue: '8', startOperator: '>', endValue: '9', endOperator: '<=', not: true
+    -- sale_price ~ f`not [10 to 11)`,                         -- operator: 'range', startValue: '10', startOperator: '>=', endValue: '11', endOperator: '<', not: true
+    -- sale_price ~ f`not [12 to 13]`,                         -- operator: 'range', startValue: '12', startOperator: '>=', endValue: '13', endOperator: '<=', not: true
+    -- sale_price ~ f`not 14, 15`,                             -- operator: '!=', values: [ '14', '15' ]
+    -- sale_price ~ f`not 16 and not 17, 18 and not < 19`,     -- operator: 'and', members: [ { operator: '!=', values: [ '16' ] }, { operator: '!=', values: [ '17', '18' ] }, { operator: '<', values: [ '19' ], not: true } ]
+    -- sale_price ~ f`not != 20`,                              -- operator: '=', values: [ '20' ]
+
+    -- sale_price ~ f`= 0`,                  -- operator: '=', values: [ '0' ]
+    -- sale_price ~ f`!= 0`,                 -- operator: '!=', values: [ '0' ] }
+    -- sale_price ~ f`= 14, 15`,             -- operator: '=', values: [ '14', '15' ] }
+    -- sale_price ~ f`!= 14, 15`,            -- operator: '!=', values: [ '14', '15' ] }
+    -- sale_price ~ f`(21, 22)`,             -- operator: '()', expr: { operator: '=', values: [ '21', '22' ] }
+    -- sale_price ~ f`not (21, 22)`,         -- operator: '()', expr: { operator: '=', values: [ '21', '22' ] }, not: true
+
+    -- boolean
+
+    -- users.has_last_name ~ f``,
+    
+    -- users.has_last_name ~ f`true`,        -- operator: 'true'
+    -- users.has_last_name ~ f`=false`,      -- operator: 'false'
+    -- users.has_last_name ~ f`false`,       -- operator: 'false_or_null'
+    -- users.has_last_name ~ f`null`,        -- operator: 'null'
+    
+    -- users.has_last_name ~ f`not true`,    -- operator: 'true', not: true
+    -- users.has_last_name ~ f`not =false`,  -- operator: 'false', not: true
+    -- users.has_last_name ~ f`not false`,   -- operator: 'false_or_null', not: true
+    -- users.has_last_name ~ f`not null`,    -- operator: 'null', not: true
+
+    -- string
+    
+    -- users.state ~ f``,
+    
+    -- users.state ~ f`a%z`,       -- operator: '~', escaped_values: [ 'a%z' ]
+    -- users.state ~ f`b`,         -- operator: '=', values: [ 'b' ]
+    -- users.state ~ f`%c%`,       -- operator: 'contains', values: [ 'c' ]
+    -- users.state ~ f`s%`,        -- operator: 'starts', values: [ 's' ]
+    -- users.state ~ f`%e`,        -- operator: 'ends', values: [ 'e' ]
+    -- users.state ~ f`null`,      -- operator: 'null'
+    -- users.state ~ f`empty`,     -- operator: 'empty'
+    
+    -- users.state ~ f`-a%z`,      -- operator: '~', escaped_values: [ 'a%z' ], not: true
+    -- users.state ~ f`-b`,        -- operator: '=', values: [ 'b' ], not: true
+    -- users.state ~ f`-%c%`,      -- operator: 'contains', values: [ 'c' ], not: true
+    -- users.state ~ f`-s%`,       -- operator: 'starts', values: [ 's' ], not: true
+    -- users.state ~ f`-%e`,       -- operator: 'ends', values: [ 'e' ], not: true
+    -- users.state ~ f`-null`,     -- operator: 'null', not: true
+    -- users.state ~ f`-empty`,    -- operator: 'empty', not: true
+    
+    -- users.state ~ f`OH, NY`,    -- operator: '=', values: [ 'OH', 'NY' ] 
+    -- users.state ~ f`-NC, -ND`,  -- operator: '=', values: [ 'NC', 'ND' ], not: true
+    -- users.state ~ f`UT, MT%`,   -- operator: ',', members: [ { operator: '=', values: [ 'UT' ] }, { operator: 'starts', values: [ 'MT' ] } ]
+    -- users.state ~ f`\\%%`,      -- operator: '~', escaped_values: [ '\\\\%%' ]
+  
+  group_by: users__state is users.state
+  aggregate: orders__orders_count is orders.orders_count
+  limit: 10
+}

@@ -79,23 +79,6 @@ test('1', async t => {
     });
   }
 
-  // console.log('errors');
-  // console.log(errors);
-
-  // console.log('entMods');
-  // console.log(entMods);
-
   t.is(errors.length, 0);
   t.is(entMods.length, 1);
-
-  // t.deepEqual(entMods[0].tiles[0].sortingsAry, [
-  //   {
-  //     fieldId: 'a.dim1',
-  //     desc: false
-  //   },
-  //   {
-  //     fieldId: 'a.dim2',
-  //     desc: true
-  //   }
-  // ]);
 });

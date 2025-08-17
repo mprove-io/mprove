@@ -3,10 +3,12 @@ title: t
 rows:  
 - row_id: A
   type: metric
-  metric: m1.orders_mea1.by.orders_created
+  metric: s1.mea1.by.t1
   parameters:
-  - conditions:
-    - any
+  - fractions: 
+    - controls:
+      - input: value_input
+        value: a
 
 
 

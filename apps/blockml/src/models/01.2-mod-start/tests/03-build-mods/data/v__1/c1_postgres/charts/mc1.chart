@@ -1,5 +1,0 @@
-chart: mc1
-tiles:
-- title: Total Profit
-  query: mc1
-  type: table
