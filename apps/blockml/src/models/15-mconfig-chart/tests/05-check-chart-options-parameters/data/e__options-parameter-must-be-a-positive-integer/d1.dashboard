@@ -1,9 +1,9 @@
 dashboard: d1
 tiles:  
 - title: t1
-  model: m1
+  model: s1
   select: 
-  - a.mea1
+  - mea1
   type: table
   options:
     page_size: unk
