@@ -7,7 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckTileIsObject;
 
-export function checkTileIsObject<T extends types.dzType>(
+export function checkTileIsObject<T extends types.dcType>(
   item: {
     entities: T[];
     errors: BmError[];

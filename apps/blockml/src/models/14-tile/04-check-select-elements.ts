@@ -7,7 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckSelectElements;
 
-export function checkSelectElements<T extends types.dzType>(
+export function checkSelectElements<T extends types.dcType>(
   item: {
     entities: T[];
     apiModels: common.Model[];

@@ -8,7 +8,7 @@ import { STORE_MODEL_PREFIX } from '~common/_index';
 
 let func = common.FuncEnum.CheckChartDataParameters;
 
-export function checkChartDataParameters<T extends types.dzType>(
+export function checkChartDataParameters<T extends types.dcType>(
   item: {
     entities: T[];
     apiModels: common.Model[];

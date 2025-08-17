@@ -11,7 +11,7 @@ import { getTileApiModel } from '~node-common/functions/get-tile-api-model';
 
 let func = common.FuncEnum.CheckTileParameters;
 
-export function checkTileParameters<T extends types.dzType>(
+export function checkTileParameters<T extends types.dcType>(
   item: {
     caseSensitiveStringFilters: boolean;
     entities: T[];

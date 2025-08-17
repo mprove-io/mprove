@@ -1,5 +1,0 @@
-view: v1
-connection: c1
-fields:
-- dimension: a b
-

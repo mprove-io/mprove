@@ -12,7 +12,7 @@ let testId = 'e__controls-unknown-controls-element-parameter';
 
 test('1', async t => {
   let errors: BmError[];
-  let entStores: common.FileView[];
+  let entStores: common.FileStore[];
 
   let wLogger;
   let configService;

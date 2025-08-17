@@ -9,7 +9,7 @@ import { bricksToFractions } from '~node-common/functions/bricks-to-fractions';
 
 let func = common.FuncEnum.CheckVmdrFilterConditions;
 
-export function checkVmdrFilterConditions<T extends types.vsmdrType>(
+export function checkVmdrFilterConditions<T extends types.sdrType>(
   item: {
     entities: T[];
     errors: BmError[];

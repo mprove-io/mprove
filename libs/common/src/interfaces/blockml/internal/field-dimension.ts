@@ -13,8 +13,8 @@ export interface FieldDimension {
   sql?: string;
   sql_line_num?: number;
 
-  type?: enums.FieldTypeEnum;
-  type_line_num?: number;
+  // type?: enums.FieldTypeEnum;
+  // type_line_num?: number;
 
   result?: enums.FieldResultEnum;
   result_line_num?: number;

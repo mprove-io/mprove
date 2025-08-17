@@ -5,7 +5,7 @@ import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-export function buildMconfigChart<T extends types.dcrType>(
+export function buildMconfigChart<T extends types.drcType>(
   item: {
     entities: T[];
     apiModels: common.Model[];

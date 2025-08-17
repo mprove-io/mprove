@@ -8,7 +8,7 @@ import { STORE_MODEL_PREFIX } from '~common/constants/top';
 
 let func = common.FuncEnum.CheckSorts;
 
-export function checkSorts<T extends types.dzType>(
+export function checkSorts<T extends types.dcType>(
   item: {
     entities: T[];
     apiModels: common.Model[];

@@ -1,6 +1,0 @@
-view: v1
-connection: c1
-fields:
-- measure: mea1
-  sql: mea1
-  unk: 1  

@@ -1,7 +1,0 @@
-view: v1
-connection: c1
-fields:
-- time: created
-  sql: 1
-  timeframes:        
-  - unk

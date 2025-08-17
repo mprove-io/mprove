@@ -8,7 +8,7 @@ import { STORE_MODEL_PREFIX } from '~common/constants/top';
 
 let func = common.FuncEnum.CheckTileTitleModelSelect;
 
-export function checkTileTitleModelSelect<T extends types.dzType>(
+export function checkTileTitleModelSelect<T extends types.dcType>(
   item: {
     entities: T[];
     stores: common.FileStore[];

@@ -12,7 +12,7 @@ let testId = 'e__build-metrics-and-required-fields-do-not-work-together';
 
 test('1', async t => {
   let errors: BmError[];
-  let entStores: common.FileView[];
+  let entStores: common.FileStore[];
 
   let wLogger;
   let configService;

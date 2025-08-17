@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckAndSetImplicitFormatNumber;
 
-export function checkAndSetImplicitFormatNumber<T extends types.vsmdrType>(
+export function checkAndSetImplicitFormatNumber<T extends types.sdrType>(
   item: {
     entities: T[];
     errors: BmError[];

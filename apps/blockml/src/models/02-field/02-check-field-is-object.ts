@@ -7,7 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckFieldIsObject;
 
-export function checkFieldIsObject<T extends types.vsmdrType>(
+export function checkFieldIsObject<T extends types.sdrType>(
   item: {
     entities: T[];
     errors: BmError[];

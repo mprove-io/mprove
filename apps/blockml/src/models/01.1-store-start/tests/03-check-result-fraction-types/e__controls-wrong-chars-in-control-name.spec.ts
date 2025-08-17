@@ -12,7 +12,7 @@ let testId = 'e__controls-wrong-chars-in-control-name';
 
 test('1', async t => {
   let errors: BmError[];
-  let entStores: common.FileView[];
+  let entStores: common.FileStore[];
 
   let wLogger;
   let configService;

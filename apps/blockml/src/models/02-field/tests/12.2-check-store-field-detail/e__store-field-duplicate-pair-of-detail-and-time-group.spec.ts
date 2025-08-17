@@ -12,7 +12,7 @@ let testId = 'e__store-field-duplicate-pair-of-detail-and-time-group';
 
 test('1', async t => {
   let errors: BmError[];
-  let entViews: common.FileView[];
+  let entStores: common.FileStore[];
 
   let wLogger;
   let configService;
@@ -47,7 +47,7 @@ test('1', async t => {
     });
 
     errors = await helper.readLog(fromDir, common.LogTypeEnum.Errors);
-    entViews = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
+    entStores = await helper.readLog(fromDir, common.LogTypeEnum.Entities);
     if (common.isDefined(toDir)) {
       fse.copySync(fromDir, toDir);
     }
@@ -61,7 +61,7 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(entViews.length, 0);
+  t.is(entStores.length, 0);
 
   t.is(
     errors[0].title,

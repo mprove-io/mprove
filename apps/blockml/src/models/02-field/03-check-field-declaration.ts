@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckFieldDeclaration;
 
-export function checkFieldDeclaration<T extends types.vsmdrType>(
+export function checkFieldDeclaration<T extends types.sdrType>(
   item: {
     entities: T[];
     errors: BmError[];

@@ -1,5 +1,0 @@
-mprove_dir: ./
-case_sensitive_string_filters: true
-simplify_safe_aggregates: false
-default_timezone: America/Adak
-

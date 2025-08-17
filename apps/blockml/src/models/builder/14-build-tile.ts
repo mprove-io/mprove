@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 import { RabbitService } from '~blockml/services/rabbit.service';
 import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 
-export async function buildTile<T extends types.dzType>(
+export async function buildTile<T extends types.dcType>(
   item: {
     traceId: string;
     envId: string;

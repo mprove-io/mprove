@@ -12,7 +12,7 @@ let testId = 'e__controls-options-without-selector';
 
 test('1', async t => {
   let errors: BmError[];
-  let entStores: common.FileView[];
+  let entStores: common.FileStore[];
 
   let wLogger;
   let configService;

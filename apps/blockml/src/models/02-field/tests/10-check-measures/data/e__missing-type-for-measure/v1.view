@@ -1,5 +1,0 @@
-view: v1
-connection: c1
-fields:
-  - measure: mea1       
-    sql: 1

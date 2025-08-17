@@ -18,7 +18,7 @@ interface FilePartTileExtra extends common.FilePartTile {
   fileName?: string;
 }
 
-export async function fetchSql<T extends types.dzType>(
+export async function fetchSql<T extends types.dcType>(
   item: {
     traceId: string;
     envId: string;

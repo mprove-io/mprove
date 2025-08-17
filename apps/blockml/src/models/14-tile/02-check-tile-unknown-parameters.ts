@@ -8,7 +8,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckTileUnknownParameters;
 
-export function checkTileUnknownParameters<T extends types.dzType>(
+export function checkTileUnknownParameters<T extends types.dcType>(
   item: {
     entities: T[];
     errors: BmError[];

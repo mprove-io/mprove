@@ -9,7 +9,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckFieldUnknownParameters;
 
-export function checkFieldUnknownParameters<T extends types.vsmdrType>(
+export function checkFieldUnknownParameters<T extends types.sdrType>(
   item: {
     entities: T[];
     errors: BmError[];
@@ -80,8 +80,6 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                     common.ParameterEnum.Meta.toString()
                   ].indexOf(parameter) < 0) ||
                 ([
-                  common.CallerEnum.BuildViewField,
-                  common.CallerEnum.BuildModelField,
                   common.CallerEnum.BuildDashboardField,
                   common.CallerEnum.BuildReportField
                 ].indexOf(caller) > -1 &&
@@ -119,71 +117,53 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
               break;
             }
 
-            case common.FieldClassEnum.Time: {
-              if (
-                [
-                  common.ParameterEnum.Time.toString(),
-                  common.ParameterEnum.Hidden.toString(),
-                  common.ParameterEnum.GroupLabel.toString(),
-                  common.ParameterEnum.GroupDescription.toString(),
-                  common.ParameterEnum.Source.toString(),
-                  common.ParameterEnum.Timeframes.toString()
-                ].indexOf(parameter) < 0
-              ) {
-                item.errors.push(
-                  new BmError({
-                    title: common.ErTitleEnum.UNKNOWN_TIME_PARAMETER,
-                    message: `parameter "${parameter}" cannot be used with ${common.FieldClassEnum.Time}`,
-                    lines: [
-                      {
-                        line: field[
-                          (parameter +
-                            constants.LINE_NUM) as keyof common.FieldAny
-                        ] as number,
-                        name: x.fileName,
-                        path: x.filePath
-                      }
-                    ]
-                  })
-                );
-                return;
-              }
-              break;
-            }
+            // case common.FieldClassEnum.Time: {
+            //   if (
+            //     [
+            //       common.ParameterEnum.Time.toString(),
+            //       common.ParameterEnum.Hidden.toString(),
+            //       common.ParameterEnum.GroupLabel.toString(),
+            //       common.ParameterEnum.GroupDescription.toString(),
+            //       common.ParameterEnum.Source.toString(),
+            //       common.ParameterEnum.Timeframes.toString()
+            //     ].indexOf(parameter) < 0
+            //   ) {
+            //     item.errors.push(
+            //       new BmError({
+            //         title: common.ErTitleEnum.UNKNOWN_TIME_PARAMETER,
+            //         message: `parameter "${parameter}" cannot be used with ${common.FieldClassEnum.Time}`,
+            //         lines: [
+            //           {
+            //             line: field[
+            //               (parameter +
+            //                 constants.LINE_NUM) as keyof common.FieldAny
+            //             ] as number,
+            //             name: x.fileName,
+            //             path: x.filePath
+            //           }
+            //         ]
+            //       })
+            //     );
+            //     return;
+            //   }
+            //   break;
+            // }
 
             case common.FieldClassEnum.Measure: {
               if (
-                (caller === common.CallerEnum.BuildStoreField &&
-                  [
-                    common.ParameterEnum.Measure.toString(),
-                    common.ParameterEnum.Label.toString(),
-                    common.ParameterEnum.Description.toString(),
-                    common.ParameterEnum.Result.toString(),
-                    common.ParameterEnum.Group.toString(),
-                    common.ParameterEnum.FormatNumber.toString(),
-                    common.ParameterEnum.CurrencyPrefix.toString(),
-                    common.ParameterEnum.CurrencySuffix.toString(),
-                    common.ParameterEnum.Required.toString(),
-                    common.ParameterEnum.Meta.toString()
-                  ].indexOf(parameter) < 0) ||
-                ([
-                  common.CallerEnum.BuildViewField,
-                  common.CallerEnum.BuildModelField,
-                  common.CallerEnum.BuildDashboardField,
-                  common.CallerEnum.BuildReportField
-                ].indexOf(caller) > -1 &&
-                  [
-                    common.ParameterEnum.Measure.toString(),
-                    common.ParameterEnum.Hidden.toString(),
-                    common.ParameterEnum.Label.toString(),
-                    common.ParameterEnum.Description.toString(),
-                    common.ParameterEnum.Type.toString(),
-                    common.ParameterEnum.Result.toString(),
-                    common.ParameterEnum.Percentile.toString(),
-                    common.ParameterEnum.FormatNumber.toString(),
-                    common.ParameterEnum.CurrencyPrefix.toString(),
-                    common.ParameterEnum.CurrencySuffix.toString()
-                  ].indexOf(parameter) < 0)
+                caller === common.CallerEnum.BuildStoreField &&
+                [
+                  common.ParameterEnum.Measure.toString(),
+                  common.ParameterEnum.Label.toString(),
+                  common.ParameterEnum.Description.toString(),
+                  common.ParameterEnum.Result.toString(),
+                  common.ParameterEnum.Group.toString(),
+                  common.ParameterEnum.FormatNumber.toString(),
+                  common.ParameterEnum.CurrencyPrefix.toString(),
+                  common.ParameterEnum.CurrencySuffix.toString(),
+                  common.ParameterEnum.Required.toString(),
+                  common.ParameterEnum.Meta.toString()
+                ].indexOf(parameter) < 0
               ) {
                 item.errors.push(
                   new BmError({
@@ -206,39 +186,39 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
               break;
             }
 
-            case common.FieldClassEnum.Calculation: {
-              if (
-                [
-                  // common.ParameterEnum.Calculation.toString(),
-                  common.ParameterEnum.Hidden.toString(),
-                  common.ParameterEnum.Label.toString(),
-                  common.ParameterEnum.Description.toString(),
-                  common.ParameterEnum.Result.toString(),
-                  common.ParameterEnum.FormatNumber.toString(),
-                  common.ParameterEnum.CurrencyPrefix.toString(),
-                  common.ParameterEnum.CurrencySuffix.toString()
-                ].indexOf(parameter) < 0
-              ) {
-                item.errors.push(
-                  new BmError({
-                    title: common.ErTitleEnum.UNKNOWN_CALCULATION_PARAMETER,
-                    message: `parameter "${parameter}" cannot be used with ${common.FieldClassEnum.Calculation}`,
-                    lines: [
-                      {
-                        line: field[
-                          (parameter +
-                            constants.LINE_NUM) as keyof common.FieldAny
-                        ] as number,
-                        name: x.fileName,
-                        path: x.filePath
-                      }
-                    ]
-                  })
-                );
-                return;
-              }
-              break;
-            }
+            // case common.FieldClassEnum.Calculation: {
+            //   if (
+            //     [
+            //       // common.ParameterEnum.Calculation.toString(),
+            //       common.ParameterEnum.Hidden.toString(),
+            //       common.ParameterEnum.Label.toString(),
+            //       common.ParameterEnum.Description.toString(),
+            //       common.ParameterEnum.Result.toString(),
+            //       common.ParameterEnum.FormatNumber.toString(),
+            //       common.ParameterEnum.CurrencyPrefix.toString(),
+            //       common.ParameterEnum.CurrencySuffix.toString()
+            //     ].indexOf(parameter) < 0
+            //   ) {
+            //     item.errors.push(
+            //       new BmError({
+            //         title: common.ErTitleEnum.UNKNOWN_CALCULATION_PARAMETER,
+            //         message: `parameter "${parameter}" cannot be used with ${common.FieldClassEnum.Calculation}`,
+            //         lines: [
+            //           {
+            //             line: field[
+            //               (parameter +
+            //                 constants.LINE_NUM) as keyof common.FieldAny
+            //             ] as number,
+            //             name: x.fileName,
+            //             path: x.filePath
+            //           }
+            //         ]
+            //       })
+            //     );
+            //     return;
+            //   }
+            //   break;
+            // }
 
             case common.FieldClassEnum.Filter: {
               if (
@@ -253,27 +233,10 @@ export function checkFieldUnknownParameters<T extends types.vsmdrType>(
                     // common.ParameterEnum.SuggestModelDimension.toString(),
                   ].indexOf(parameter) < 0) ||
                 //
-                ([
-                  common.CallerEnum.BuildViewField,
-                  common.CallerEnum.BuildModelField,
-                  common.CallerEnum.BuildStoreField
-                ].indexOf(caller) > -1 &&
+                ([common.CallerEnum.BuildStoreField].indexOf(caller) > -1 &&
                   [common.ParameterEnum.Conditions.toString()].indexOf(
                     parameter
                   ) > -1) ||
-                //
-                ([
-                  common.CallerEnum.BuildViewField,
-                  common.CallerEnum.BuildModelField
-                ].indexOf(caller) > -1 &&
-                  [
-                    common.ParameterEnum.Filter.toString(),
-                    common.ParameterEnum.Label.toString(),
-                    common.ParameterEnum.Description.toString(),
-                    common.ParameterEnum.Result.toString(),
-                    common.ParameterEnum.SuggestModelDimension.toString(),
-                    common.ParameterEnum.Conditions.toString()
-                  ].indexOf(parameter) < 0) ||
                 //
                 ([
                   common.CallerEnum.BuildDashboardField,

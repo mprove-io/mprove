@@ -7,7 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckAccess;
 
-export function checkAccess<T extends types.accessType>(
+export function checkAccess<T extends types.drcType>(
   item: {
     entities: T[];
     errors: BmError[];

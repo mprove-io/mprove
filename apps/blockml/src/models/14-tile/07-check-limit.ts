@@ -7,7 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckLimit;
 
-export function checkLimit<T extends types.dzType>(
+export function checkLimit<T extends types.dcType>(
   item: {
     entities: T[];
     errors: BmError[];

@@ -7,7 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckFieldNameDuplicates;
 
-export function checkFieldNameDuplicates<T extends types.vsmdrType>(
+export function checkFieldNameDuplicates<T extends types.sdrType>(
   item: {
     entities: T[];
     errors: BmError[];

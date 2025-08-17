@@ -1,9 +1,0 @@
-view: v1
-connection: c1
-fields:
-- dimension: id
-  sql: id  
-- measure: mea1       
-  type: percentile_by_key  
-  sql: 1
-  sql_key: ${id}    

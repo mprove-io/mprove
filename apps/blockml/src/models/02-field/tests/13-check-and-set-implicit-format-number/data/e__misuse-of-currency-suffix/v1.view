@@ -1,9 +1,0 @@
-view: v1
-connection: c1
-fields:
-- dimension: dim1
-  result: string
-  currency_suffix: 'usd'
-  sql: 1
-
-

@@ -7,7 +7,7 @@ import { BmError } from '~blockml/models/bm-error';
 
 let func = common.FuncEnum.CheckChartType;
 
-export function checkChartType<T extends types.dzType>(
+export function checkChartType<T extends types.dcType>(
   item: {
     entities: T[];
     errors: BmError[];

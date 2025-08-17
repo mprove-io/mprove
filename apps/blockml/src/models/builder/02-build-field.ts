@@ -5,7 +5,7 @@ import { interfaces } from '~blockml/barrels/interfaces';
 import { types } from '~blockml/barrels/types';
 import { BmError } from '~blockml/models/bm-error';
 
-export function buildField<T extends types.vsmdrType>(
+export function buildField<T extends types.sdrType>(
   item: {
     entities: T[];
     projectConfig: common.FileProjectConf;
@@ -79,26 +79,6 @@ export function buildField<T extends types.vsmdrType>(
     cs
   );
 
-  entities = barField.checkDimensions(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  entities = barField.transformYesNoDimensions(
-    {
-      entities: entities,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
   entities = barField.checkAndSetImplicitResult(
     {
       entities: entities,
@@ -135,17 +115,6 @@ export function buildField<T extends types.vsmdrType>(
     {
       entities: entities,
       projectConfig: item.projectConfig,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  entities = barField.transformTimes(
-    {
-      weekStart: item.projectConfig.week_start,
-      entities: entities,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
