@@ -1,13 +1,13 @@
 dashboard: d1
 tiles:  
 - title: t1
-  model: m1
+  model: s1
   select: 
-  - a.dim1
-  - a.mea1
+  - dim1
+  - mea1
   type: line
   data:
-    x_field: a.dim1
+    x_field: dim1
     y_fields:
-    - a.mea1
+    - mea1
     multi_field: unk 
