@@ -573,7 +573,7 @@ export function checkTileParameters<T extends types.dcType>(
                   // caseSensitiveStringFilters: caseSensitiveStringFilters,
                   filterBricks: p.conditions,
                   result: pResult,
-                  getTimeRange: false
+                  isGetTimeRange: false
                   // timezone: timezone,
                   // weekStart: weekStart,
                   // timeSpec: timeSpec

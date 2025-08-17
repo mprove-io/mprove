@@ -19,7 +19,7 @@ export function bricksToFractions(item: {
   filterBricks: string[];
   result: common.FieldResultEnum;
   // parameters below do not affect validation
-  getTimeRange?: boolean;
+  isGetTimeRange?: boolean;
   timeSpec?: common.TimeSpecEnum;
   weekStart?: common.ProjectWeekStartEnum;
   timezone?: string;
@@ -45,7 +45,7 @@ export function bricksToFractions(item: {
     weekStart,
     timezone,
     fractions,
-    getTimeRange
+    isGetTimeRange
     // caseSensitiveStringFilters,
     // connection,
     // proc,
@@ -113,7 +113,7 @@ export function bricksToFractions(item: {
           ? getMalloyFilterTsFractions({
               parentBrick: brick,
               parsed: parseResult?.parsed as TemporalFilter,
-              isGetTimeRange: getTimeRange,
+              isGetTimeRange: isGetTimeRange,
               timezone: timezone,
               weekStart: weekStart,
               timeSpec: timeSpec
@@ -135,7 +135,7 @@ export function bricksToFractions(item: {
                   })
                 : undefined;
 
-      if (getTimeRange === true) {
+      if (isGetTimeRange === true) {
         rangeStart = rs.rangeStart;
         rangeEnd = rs.rangeEnd;
       }
@@ -152,7 +152,7 @@ export function bricksToFractions(item: {
     fractions.push(...resultFractions);
   }
 
-  if (getTimeRange === true) {
+  if (isGetTimeRange === true) {
     return {
       valid: 1,
       rangeStart: rangeStart,

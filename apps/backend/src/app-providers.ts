@@ -29,6 +29,7 @@ import { RabbitService } from './services/rabbit.service';
 import { RedisService } from './services/redis.service';
 import { ReportDataService } from './services/report-data.service';
 import { ReportRowService } from './services/report-row.service';
+import { ReportTimeColumnsService } from './services/report-time-columns.service';
 import { ReportsService } from './services/reports.service';
 import { SnowFlakeService } from './services/snowflake.service';
 import { StoreService } from './services/store.service';
@@ -69,6 +70,7 @@ export const appProviders = [
   ReportsService,
   ReportDataService,
   ReportRowService,
+  ReportTimeColumnsService,
   MembersService,
   EnvsService,
   DocService,

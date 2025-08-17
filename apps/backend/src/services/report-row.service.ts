@@ -4,8 +4,6 @@ import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { clearRowsCache } from '~backend/functions/clear-rows-cache';
 import { processRowIds } from '~backend/functions/process-row-ids';
 
-let retry = require('async-retry');
-
 @Injectable()
 export class ReportRowService {
   constructor() {}

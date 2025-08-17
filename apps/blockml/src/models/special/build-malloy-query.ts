@@ -143,7 +143,7 @@ export async function buildMalloyQuery(
         // caseSensitiveStringFilters: caseSensitiveStringFilters,
         filterBricks: mFiltersBricks[fieldId],
         result: modelField.result,
-        getTimeRange: false,
+        isGetTimeRange: false,
         fractions: fractions
       });
 

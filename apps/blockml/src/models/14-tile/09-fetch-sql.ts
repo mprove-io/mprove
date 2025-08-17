@@ -131,7 +131,7 @@ export async function fetchSql<T extends types.dcType>(
           // caseSensitiveStringFilters: caseSensitiveStringFilters,
           filterBricks: tile.combinedFilters[fieldId],
           result: modelField.result,
-          getTimeRange: false,
+          isGetTimeRange: false,
           fractions: fractions
         });
 

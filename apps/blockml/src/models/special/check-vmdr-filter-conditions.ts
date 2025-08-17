@@ -61,7 +61,7 @@ export function checkVmdrFilterConditions<T extends types.sdrType>(
         filterBricks: field.conditions,
         result: field.result,
         fractions: field.apiFractions,
-        getTimeRange: false
+        isGetTimeRange: false
         // timezone: timezone,
         // weekStart: weekStart,
         // timeSpec: timeSpec

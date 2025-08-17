@@ -13,12 +13,10 @@ import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '~node-common/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
-import { BlockmlService } from './blockml.service';
 import { DocService } from './doc.service';
-import { EnvsService } from './envs.service';
 import { MalloyService } from './malloy.service';
 import { MconfigsService } from './mconfigs.service';
-import { RabbitService } from './rabbit.service';
+import { ReportTimeColumnsService } from './report-time-columns.service';
 import { WrapToApiService } from './wrap-to-api.service';
 import { WrapToEntService } from './wrap-to-ent.service';
 
@@ -27,12 +25,10 @@ let retry = require('async-retry');
 @Injectable()
 export class ReportDataService {
   constructor(
-    private envsService: EnvsService,
     private docService: DocService,
     private malloyService: MalloyService,
     private mconfigsService: MconfigsService,
-    private blockmlService: BlockmlService,
-    private rabbitService: RabbitService,
+    private reportTimeColumnsService: ReportTimeColumnsService,
     private wrapToEntService: WrapToEntService,
     private wrapToApiService: WrapToApiService,
     private cs: ConfigService<interfaces.Config>,
@@ -73,8 +69,8 @@ export class ReportDataService {
       isSaveToDb
     } = item;
 
-    console.log('timeRangeFractionBrick');
-    console.log(timeRangeFractionBrick);
+    // console.log('timeRangeFractionBrick');
+    // console.log(timeRangeFractionBrick);
 
     let {
       columns,
@@ -85,7 +81,7 @@ export class ReportDataService {
       // rangeClose,
       rangeStart,
       rangeEnd
-    } = await this.blockmlService.getTimeColumns({
+    } = await this.reportTimeColumnsService.getTimeColumns({
       traceId: traceId,
       timezone: timezone,
       timeSpec: timeSpec,

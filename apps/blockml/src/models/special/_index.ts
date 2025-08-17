@@ -7,5 +7,4 @@ export * from './check-top-parameters';
 export * from './check-vmdr-field-suggest-model-dimension';
 export * from './check-vmdr-filter-conditions';
 export * from './log-struct';
-export * from './process-filter';
 export * from './build-malloy-query';

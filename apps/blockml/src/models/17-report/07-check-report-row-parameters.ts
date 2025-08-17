@@ -507,7 +507,7 @@ export function checkReportRowParameters(
                   let pf = bricksToFractions({
                     filterBricks: p.conditions,
                     result: pResult,
-                    getTimeRange: false
+                    isGetTimeRange: false
                     // timezone: timezone,
                     // weekStart: weekStart,
                     // timeSpec: timeSpec

@@ -45,20 +45,12 @@ export function buildReportRowParameterFractions(
 
             let fractions: common.Fraction[] = [];
 
-            // let r = processFilter({
-            //   caseSensitiveStringFilters: caseSensitiveStringFilters,
-            //   filterBricks: bricks,
-            //   result: rowParameter.notStoreApplyToResult,
-            //   fractions: fractions,
-            //   getTimeRange: false
-            // });
-
             let r = bricksToFractions({
               // caseSensitiveStringFilters: caseSensitiveStringFilters,
               filterBricks: bricks,
               result: rowParameter.notStoreApplyToResult,
               fractions: fractions,
-              getTimeRange: false
+              isGetTimeRange: false
               // timezone: timezone,
               // weekStart: weekStart,
               // timeSpec: timeSpec
