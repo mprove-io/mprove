@@ -53,5 +53,5 @@ test('1', async t => {
     });
   }
 
-  t.is(files.length, 7);
+  t.is(files.length, 4);
 });

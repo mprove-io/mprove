@@ -1,5 +1,5 @@
-view: v1
-derived_table: |
+store: s1
+request: |
   #comment to be deleted, causes first line indent to become not equal to single tab
     1
   1

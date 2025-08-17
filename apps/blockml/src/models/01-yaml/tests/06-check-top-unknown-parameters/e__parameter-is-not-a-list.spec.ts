@@ -55,7 +55,7 @@ test('1', async t => {
     });
   }
 
-  t.is(errors.length, 12);
+  t.is(errors.length, 3);
   t.is(filesAny.length, 1);
 
   t.is(errors[0].title, common.ErTitleEnum.PARAMETER_IS_NOT_A_LIST);

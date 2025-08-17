@@ -56,7 +56,7 @@ test('1', async t => {
   }
 
   t.is(errors.length, 1);
-  t.is(file3s.length, 2);
+  t.is(file3s.length, 1);
 
   t.is(errors[0].title, common.ErTitleEnum.DUPLICATE_FILE_NAMES);
   t.is(errors[0].lines.length, 3);
