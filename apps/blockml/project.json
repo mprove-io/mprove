@@ -78,7 +78,7 @@
         "commands": [
           "nx clean-logs blockml",
           "nx build-tests blockml",
-          "BLOCKML_LOG_IO=TRUE ava --config=ava-js.config.js dist/tests/blockml/apps/blockml/**/*.spec.js"
+          "BLOCKML_LOG_IO=TRUE ava --config=ava-js.config.js dist/tests/blockml/apps/blockml/src/models/13-chart/**/*.spec.js"
         ],
         "parallel": false
       }

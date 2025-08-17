@@ -2,7 +2,6 @@ store: s1
 connection: c1
 fields:
 - time: time1
-- calculation: calculation1
 
 field_groups:
 - group: g1
