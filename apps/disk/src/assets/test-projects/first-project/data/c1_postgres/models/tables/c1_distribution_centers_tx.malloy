@@ -1,0 +1,12 @@
+source: c1_distribution_centers_table is c1_postgres.table('ecommerce.distribution_centers') extend {
+  rename: _name is name
+}
+
+source: c1_distribution_centers_tx is c1_distribution_centers_table extend {
+  primary_key: distribution_center_id
+  
+  rename: name is _name
+
+  measure: 
+    distribution_centers_count is count()
+}

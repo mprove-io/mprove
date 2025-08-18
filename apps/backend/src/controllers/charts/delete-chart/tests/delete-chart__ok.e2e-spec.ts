@@ -21,7 +21,7 @@ let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = testId;
 
-let chartId = 'ec_s1';
+let chartId = 'c1';
 
 let prep: interfaces.Prep;
 

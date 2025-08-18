@@ -1,0 +1,13 @@
+chart: YHH678TLUMUQPHO3WMRS
+tiles:
+- title: Profit by State
+  model: c1_order_items
+  select:
+  - users.state_name
+  - total_profit
+  sorts: total_profit desc
+  type: bar
+  data:
+    x_field: users.state_name
+    y_fields: 
+    - total_profit

@@ -1,0 +1,141 @@
+import './tables/c1_order_items_tx.malloy';
+import './tables/c1_orders_tx.malloy';
+import './tables/c1_users_tx.malloy';
+import './tables/c1_user_order_facts_tx.malloy';
+import './tables/c1_inventory_items_tx.malloy';
+import './tables/c1_products_tx.malloy';
+import './tables/c1_distribution_centers_tx.malloy';
+
+#(mprove) model
+-- #(mprove) access_roles="sales, marketing"
+source: c1_order_items is c1_order_items_tx extend {
+  join_one: orders is c1_orders_tx on order_id = orders.order_id
+  join_one: users is c1_users_tx on orders.user_id = users.user_id
+  join_one: user_order_facts is c1_user_order_facts_tx on users.user_id = user_order_facts.user_id
+  join_one: inventory_items is c1_inventory_items_tx on inventory_item_id = inventory_items.inventory_item_id
+  join_one: products is c1_products_tx on inventory_items.product_id = products.product_id
+  join_one: distribution_centers is c1_distribution_centers_tx on inventory_items.distribution_center_id = distribution_centers.distribution_center_id
+
+  measure: total_profit is total_sale_price - inventory_items.total_actual_cost
+
+  # percent
+  measure: profit_margin is total_profit / total_sale_price
+
+  -- # bar_chart
+  view: view_orders_count_by_users_state is {
+    limit: 10
+    group_by: users.state
+    aggregate: orders.orders_count
+    -- where: users.state ~ f`TX`
+  }
+
+  view: view_min_first_order_created_ts_by_users_state is {
+    top: 10
+    group_by: users.state
+    aggregate: min_first_order_created_at_ts is min(user_order_facts.first_order_created_at_ts)
+  }
+
+  -- where: users.state ~ f`VA`
+}
+
+run: c1_order_items -> {
+  aggregate: total_sale_price
+  where: 
+    sale_price ~ f`not > 20`,
+    sale_price ~ f`not >= 21`,
+    sale_price ~ f`not < 22`,
+    sale_price ~ f`not <= 22`,
+    sale_price ~ f`not [23 to 25]`,
+  limit: 1
+}
+
+-- run: c1_order_items -> {
+--   drill:
+--     orders.created_at_day ~ f`2025-02-04-WK`,
+--     orders.created_at_day = @2025-02-08
+-- } + { select: * }
+
+run: c1_order_items -> {
+  group_by: orders.created_at_day
+  aggregate: total_sale_price
+  where: 
+    -- orders.created_at_day ~ f`2000-02-29 04:05:06`,
+    orders.created_at_day ~ f`2000-02`,
+    -- users.has_last_name ~ f`true`,
+    -- users.first_name ~ f``,
+    -- users.state ~ f`empty`
+    -- sale_price ~ f`not > 20`,
+    -- sale_price ~ f`not >= 21`,
+    -- sale_price ~ f`not < 22`,
+    -- sale_price ~ f`not <= 22`,
+    -- sale_price ~ f`not [23 to 25]`,
+  order_by: 1 asc
+  limit: 500
+  -- nest: view_orders_count_by_users_state
+}
+
+run: c1_order_items -> { 
+  aggregate: 
+    profit_margin
+    total_profit
+    # duration=minutes { terse }
+    a is min(1234)
+}
+
+run: c1_order_items -> {
+  group_by: 
+    a is orders.created_at_ts.month, 
+    orders.created_at_ts.year
+}
+
+run: c1_order_items -> view_orders_count_by_users_state
+
+query: query_orders_count_by_users_state is c1_order_items -> view_orders_count_by_users_state + {
+  top: 5
+}
+
+run: query_orders_count_by_users_state
+
+run: c1_order_items -> {
+  group_by: users.state
+  -- aggregate: orders.orders_count
+  -- order_by: state desc
+  -- limit: 10
+}
+
+run: c1_order_items -> {
+  group_by: users___state_name is users.state_name
+  aggregate: 
+    total_profit
+  order_by:
+    users___state_name asc
+    -- total_profit desc
+}
+
+run: c1_order_items -> {
+  group_by: users___state_name is users.state_name
+  aggregate: 
+    total_sale_price
+    inventory_items___total_actual_cost is inventory_items.total_actual_cost
+} -> {
+  select: 
+    users___state_name
+    total_profit is total_sale_price - inventory_items___total_actual_cost
+    total_sale_price
+    inventory_items___total_actual_cost
+  order_by:
+    users___state_name asc
+    -- total_profit desc
+}
+
+query: t1 is c1_order_items -> {
+  group_by: users__state_ab is concat(users.state,"ab")
+  group_by: orders.created_at_month
+  where: users.city is not null
+  where: orders.created_at_month is not null
+  aggregate:
+    average_sale_price
+    orders.orders_count
+  order_by: users__state_ab asc
+  limit: 10
+}

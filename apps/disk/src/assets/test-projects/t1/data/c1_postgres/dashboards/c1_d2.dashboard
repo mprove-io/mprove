@@ -1,0 +1,25 @@
+dashboard: c1_d2
+title: d2
+parameters:
+- filter: product_brand
+  result: string
+  conditions:
+  - f`%a%`
+tiles:
+- title: Ec1 Order Items Average Sale Price by Products Category
+  model: c1_order_items
+  select:
+  - products.category
+  - average_sale_price
+  sorts: average_sale_price desc
+  parameters:
+  - apply_to: products.brand
+    listen: product_brand
+  type: table
+  options:
+    page_size: 500
+  plate:
+    plate_width: 12
+    plate_height: 10
+    plate_x: 0
+    plate_y: 0

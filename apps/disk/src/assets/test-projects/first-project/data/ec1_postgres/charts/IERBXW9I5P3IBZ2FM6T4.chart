@@ -1,7 +1,0 @@
-chart: IERBXW9I5P3IBZ2FM6T4
-tiles:
-- title: Total Sale Price
-  model: ec1_m1
-  select:
-  - order_items.total_sale_price
-  type: table

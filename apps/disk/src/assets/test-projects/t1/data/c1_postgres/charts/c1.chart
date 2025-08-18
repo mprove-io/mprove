@@ -1,0 +1,7 @@
+chart: c1
+tiles:
+- title: Orders Count
+  model: c1_order_items
+  select:
+  - orders.orders_count
+  type: table

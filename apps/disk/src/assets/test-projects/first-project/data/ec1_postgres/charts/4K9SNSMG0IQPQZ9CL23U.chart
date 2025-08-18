@@ -1,7 +1,0 @@
-chart: 4K9SNSMG0IQPQZ9CL23U
-tiles:
-- title: Average Sale Price
-  model: ec1_m1
-  select:
-  - order_items.average_sale_price
-  type: table

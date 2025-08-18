@@ -1,7 +1,0 @@
-chart: 4GI2L3ALYEO9LXWP3O92
-tiles:
-- title: Total Profit
-  model: ec1_m1
-  select:
-  - mf.total_profit
-  type: table

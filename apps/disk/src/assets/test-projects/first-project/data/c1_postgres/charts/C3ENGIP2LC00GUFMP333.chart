@@ -1,0 +1,9 @@
+chart: C3ENGIP2LC00GUFMP333
+tiles:
+- title: Users, Orders, Products
+  model: c1_order_items
+  select:
+  - users.users_count
+  - orders.orders_count
+  - products.products_count
+  type: table

@@ -1,0 +1,19 @@
+source: c1_products_table is c1_postgres.table('ecommerce.products') extend {
+  rename:
+    _brand is brand
+    _category is category
+    _cost is cost
+    _retail_price is retail_price
+}
+
+source: c1_products_tx is c1_products_table extend {
+  primary_key: product_id
+  
+  rename: brand is _brand
+  rename: category is _category
+  rename: retail_price is _retail_price
+  rename: cost is _cost
+
+  measure: 
+    products_count is count()
+}

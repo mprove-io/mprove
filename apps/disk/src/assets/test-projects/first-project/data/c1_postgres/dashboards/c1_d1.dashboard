@@ -1,0 +1,260 @@
+dashboard: c1_d1
+title: Ecommerce
+access_roles:
+- sales
+- marketing
+tiles:
+- title: Average Sale Price by Category
+  model: c1_order_items
+  select:
+  - products.category
+  - average_sale_price
+  sorts: average_sale_price desc
+  type: table
+  plate:
+    plate_width: 8
+    plate_height: 9
+    plate_x: 0
+    plate_y: 0
+
+- title: Customers by Gender
+  model: c1_order_items
+  select:
+  - users.gender
+  - users.users_count
+  sorts: users.gender desc
+  type: pie
+  data:
+    x_field: users.gender
+    y_fields:
+    - users.users_count
+  plate:
+    plate_width: 8
+    plate_height: 9
+    plate_x: 8
+    plate_y: 0
+
+- title: Profit by Traffic Source
+  model: c1_order_items
+  select:
+  - total_profit
+  - users.traffic_source
+  type: pie
+  data:
+    x_field: users.traffic_source
+    y_fields:
+    - total_profit
+  plate:
+    plate_width: 8
+    plate_height: 9
+    plate_x: 16
+    plate_y: 0
+
+- title: Revenue by Time, by First Order Year Cohorts
+  model: c1_order_items
+  select:
+  - user_order_facts.first_order_created_at_year
+  - total_sale_price
+  - orders.created_at_quarter
+  type: line
+  data:
+    x_field: orders.created_at_quarter
+    y_fields:
+    - total_sale_price
+    multi_field: user_order_facts.first_order_created_at_year
+  plate:
+    plate_width: 12
+    plate_height: 10
+    plate_x: 0
+    plate_y: 9
+
+- title: Top 10 Brands by Sales
+  model: c1_order_items
+  select:
+  - products.brand
+  - total_sale_price
+  sorts: total_sale_price desc
+  limit: 10
+  type: pie
+  data:
+    x_field: products.brand
+    y_fields:
+    - total_sale_price
+  plate:
+    plate_width: 12
+    plate_height: 11
+    plate_x: 12
+    plate_y: 26
+
+- title: Customers
+  model: c1_order_items
+  select:
+  - users.users_count
+  type: single
+  data:
+    y_fields:
+    - users.users_count
+  plate:
+    plate_width: 4
+    plate_height: 7
+    plate_x: 0
+    plate_y: 19
+
+- title: Orders
+  model: c1_order_items
+  select:
+  - orders.orders_count
+  type: single
+  data:
+    y_fields:
+    - orders.orders_count
+  plate:
+    plate_width: 4
+    plate_height: 7
+    plate_x: 8
+    plate_y: 19
+
+- title: Products
+  model: c1_order_items
+  select:
+  - products.products_count
+  type: single
+  data:
+    y_fields:
+    - products.products_count
+  plate:
+    plate_width: 4
+    plate_height: 7
+    plate_x: 4
+    plate_y: 19
+
+- title: $ Sales
+  model: c1_order_items
+  select:
+  - total_sale_price
+  type: single
+  data:
+    y_fields:
+    - total_sale_price
+  plate:
+    plate_width: 4
+    plate_height: 7
+    plate_x: 12
+    plate_y: 19
+
+- title: $ Cost
+  model: c1_order_items
+  select:
+  - inventory_items.total_actual_cost
+  type: single
+  data:
+    y_fields:
+    - inventory_items.total_actual_cost
+  plate:
+    plate_width: 4
+    plate_height: 7
+    plate_x: 16
+    plate_y: 19
+
+- title: $ Profit
+  model: c1_order_items
+  select:
+  - total_profit
+  type: single
+  data:
+    y_fields:
+    - total_profit
+  plate:
+    plate_width: 4
+    plate_height: 7
+    plate_x: 20
+    plate_y: 19
+
+- title: Dynamics of Sales and Profit
+  model: c1_order_items
+  select:
+  - orders.created_at_month
+  - total_sale_price
+  - total_profit
+  sorts: orders.created_at_month
+  type: line
+  data:
+    x_field: orders.created_at_month
+    y_fields:
+    - total_sale_price
+    - total_profit
+  plate:
+    plate_width: 12
+    plate_height: 10
+    plate_x: 12
+    plate_y: 9
+
+- title: Users by Age Group
+  model: c1_order_items
+  select:
+  - users.age_group
+  - users.users_count
+  sorts: users.age_group
+  type: bar
+  data:
+    x_field: users.age_group
+    y_fields:
+    - users.users_count
+  plate:
+    plate_width: 12
+    plate_height: 10
+    plate_x: 0
+    plate_y: 37
+
+- title: Orders Count by Users Age
+  model: c1_order_items
+  select:
+  - orders.orders_count
+  - users.age
+  sorts: users.age
+  type: scatter
+  data:
+    x_field: users.age
+    y_fields:
+    - orders.orders_count
+  plate:
+    plate_width: 12
+    plate_height: 11
+    plate_x: 0
+    plate_y: 26
+
+- title: >-
+    Order Items Total Sale Price, Total Profit, Orders Count, Products Count,
+    Users Count, Users Female Count, Users Male Count, Users Total Users Age,
+    Order Items Most Expensive Item by Orders Created Month
+  model: c1_order_items
+  select: 
+  - orders.created_at_month
+  - total_sale_price
+  - total_profit
+  - orders.orders_count
+  - products.products_count
+  - users.users_count
+  - users.female_count
+  - users.male_count
+  - users.total_age
+  - most_expensive_item
+  sorts: orders.created_at_month
+  type: line
+  data:
+    x_field: orders.created_at_month
+    y_fields:
+    - total_sale_price
+    - total_profit
+    - orders.orders_count
+    - products.products_count
+    - users.users_count
+    - users.female_count
+    - users.male_count
+    - users.total_age
+    - most_expensive_item
+  plate:
+    plate_width: 12
+    plate_height: 10
+    plate_x: 12
+    plate_y: 37

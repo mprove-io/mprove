@@ -1,0 +1,13 @@
+chart: BSANVXV135J7MF4YX32G
+tiles:
+- title: Profit by Traffic Source
+  model: c1_order_items
+  select:
+  - total_profit
+  - users.traffic_source
+  sorts: total_profit
+  type: pie
+  data:
+    x_field: users.traffic_source
+    y_fields: 
+    - total_profit

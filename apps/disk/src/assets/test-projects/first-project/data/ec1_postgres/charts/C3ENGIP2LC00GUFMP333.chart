@@ -1,9 +1,0 @@
-chart: C3ENGIP2LC00GUFMP333
-tiles:
-- title: Users, Orders, Products
-  model: ec1_m1
-  select:
-  - users.count
-  - orders.count
-  - products.count
-  type: table

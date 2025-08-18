@@ -1,0 +1,122 @@
+-- import './users.malloy';
+
+##! experimental{sql_functions}
+
+-- https://docs.malloydata.dev/documentation/language/timestamp-operations#truncation
+
+source: c1_orders_table is c1_postgres.table('ecommerce.orders') extend {
+  rename:
+    _status is status
+    _created_at is created_at
+    _user_id is user_id
+}
+
+-- source: s1 is c1_postgres.table('ecommerce.orders') extend {
+--   dimension: created_at_now is now
+-- }
+
+-- run: s1 -> {
+--   select: created_at_now
+--   where: created_at_now ~ f`tuesday`,
+--   limit: 1
+-- }
+
+source: c1_orders_tx is c1_orders_table extend {
+  primary_key: order_id 
+
+  -- join_one: users on user_id = users.user_id
+  
+  rename: status is _status
+
+  #(mprove) build_metrics field_group="Created at"
+  dimension: 
+    created_at_ts is sql_timestamp(""" TIMESTAMP 'epoch' + ${created_at_epoch} * INTERVAL '1 second' """)
+    created_at_day is created_at_ts.day
+    created_at_week is created_at_ts.week
+    created_at_month is created_at_ts.month
+    created_at_quarter is created_at_ts.quarter
+    created_at_year is created_at_ts.year
+    created_at_hour is created_at_ts.hour
+    created_at_minute is created_at_ts.minute
+    created_at_second is created_at_ts.second
+
+  #(mprove) field_group="Created at - Extra"
+  dimension: 
+    created_at_year_num is year(created_at_ts)
+    created_at_quarter_num is quarter(created_at_ts)
+    created_at_month_num is month(created_at_ts)
+    created_at_week_num is week(created_at_ts)
+    created_at_day_num is day(created_at_ts)
+    created_at_day_of_week_num is day_of_week(created_at_ts)
+    created_at_day_of_year_num is day_of_year(created_at_ts)
+    created_at_hour_num is hour(created_at_ts)
+    created_at_minute_num is minute(created_at_ts)
+    created_at_second_num is second(created_at_ts)
+  
+  rename: created_at_epoch is _created_at
+
+  dimension: created_at_date is created_at_ts::date
+
+  rename: user_id is _user_id
+
+  measure: 
+    orders_count is count()
+} 
+
+run: c1_orders_tx -> {
+  group_by: created_at_ts
+  order_by: created_at_ts asc
+  limit: 5
+}
+
+run: c1_orders_tx -> {
+  group_by: created_at_year
+  order_by: created_at_year asc
+  limit: 5
+}
+
+run: c1_orders_tx -> {
+  group_by: created_at_ts_hour is created_at_ts.hour
+  order_by: created_at_ts_hour asc
+  timezone: 'Asia/Yekaterinburg'
+  limit: 5
+}
+
+run: c1_orders_tx -> {
+  select: 
+    status
+    created_at_ts
+    created_at_year
+    created_at_quarter
+    created_at_month
+    created_at_week
+    created_at_day
+    created_at_hour
+    created_at_minute
+    created_at_second
+    created_at_year_num
+    created_at_quarter_num
+    created_at_month_num
+    created_at_week_num
+    created_at_day_num
+    created_at_day_of_week_num
+    created_at_day_of_year_num
+    created_at_hour_num
+    created_at_minute_num
+    created_at_second_num
+    -- created_at_ts___week is created_at_ts.week
+    -- created_at_ts___month is created_at_ts.month
+    -- created_at_date
+    -- created_at_date___week is created_at_date.week
+    -- created_at_date___month is created_at_date.month
+  -- order_by: created_at_ts___date asc
+  limit: 5
+}
+
+    -- created_at_ts is to_timestamp!timestamp(created_at)
+    -- created_at_ts is to_timestamp!(created_at)::timestamp
+    -- created_at_ts is sql_timestamp(""" TIMESTAMP 'epoch' + ${created_at} * INTERVAL '1 second' """)
+    -- created_at_ts is sql_timestamp(""" to_timestamp(${created_at}) AT TIME ZONE 'UTC' """)
+    -- created_at_ts is sql_timestamp(""" (TIMESTAMP 'epoch' + created_at * INTERVAL '1 second')::TIMESTAMPTZ """)
+    -- created_at_ts is sql_string(""" to_timestamp(${created_at}) AT TIME ZONE 'UTC' """)::timestamp
+    -- created_at_ts is sql_string(""" (TIMESTAMP 'epoch' + created_at * INTERVAL '1 second')::TIMESTAMPTZ """)::timestamp

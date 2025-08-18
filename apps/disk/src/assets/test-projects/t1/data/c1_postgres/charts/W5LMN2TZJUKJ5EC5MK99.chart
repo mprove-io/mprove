@@ -1,0 +1,20 @@
+chart: W5LMN2TZJUKJ5EC5MK99
+tiles:
+- title: Revenue, Cost, Profit
+  model: c1_order_items
+  select:
+  - total_sale_price
+  - inventory_items.total_actual_cost
+  - total_profit
+  parameters:
+  - apply_to: users.gender
+    conditions:
+    - f`Female`
+  - apply_to: users.state_name
+    conditions: 
+    - f`Delaware, Montana`
+  - apply_to: orders.created_at_day
+    conditions:  
+    - f`2020`
+  type: table
+

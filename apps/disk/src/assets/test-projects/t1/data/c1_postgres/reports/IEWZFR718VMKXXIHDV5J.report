@@ -1,0 +1,29 @@
+report: IEWZFR718VMKXXIHDV5J
+title: Users
+rows:
+- row_id: A
+  type: metric
+  metric: c1_order_items.users.male_count.by.orders.created_at
+  show_chart: true
+  parameters: []
+
+- row_id: B
+  type: metric
+  metric: c1_order_items.users.female_count.by.orders.created_at
+  show_chart: true
+  parameters: []
+
+- row_id: C
+  type: metric
+  metric: c1_order_items.users.users_count.by.orders.created_at
+  parameters:
+  - apply_to: users.gender
+    conditions:
+    - f`Male`
+    - f`Female`
+
+- row_id: D
+  type: formula
+  name: Users Count (formula)
+  formula: $B + $A
+options: {}

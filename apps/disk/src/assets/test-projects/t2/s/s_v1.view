@@ -1,9 +1,0 @@
-view: s_v1
-connection: c1
-derived_table: |
-  SELECT 1000 as k
-
-fields:
-- dimension: k
-  sql: k
-  

@@ -1,9 +1,0 @@
-chart: 10MLKFYJPPMXZM0DD4MB
-tiles:
-- title: Sales, Cost, Profit
-  model: ec1_m1
-  select:
-  - order_items.total_sale_price
-  - inventory_items.total_actual_cost
-  - mf.total_profit
-  type: table

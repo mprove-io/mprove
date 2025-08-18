@@ -1,0 +1,15 @@
+chart: GXSO9LI1KW0GLRQXJ43V
+tiles:
+- title: Users by State by Gender
+  model: c1_order_items
+  select:
+  - users.state_name
+  - users.gender
+  - users.users_count
+  sorts: users.state_name, users.gender
+  type: bar
+  data:
+    x_field: users.gender
+    y_fields:
+    - users.users_count
+    multi_field: users.state_name
