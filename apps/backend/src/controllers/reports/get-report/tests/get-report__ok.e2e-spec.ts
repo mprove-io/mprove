@@ -17,7 +17,7 @@ let password = '123456';
 let orgId = testId;
 let orgName = testId;
 
-let testProjectId = 't1';
+let testProjectId = 't2';
 let projectId = common.makeId();
 let projectName = testId;
 
@@ -74,9 +74,9 @@ test('1', async t => {
         connections: [
           {
             projectId: projectId,
-            connectionId: 'c1',
+            connectionId: 'c7',
             envId: common.PROJECT_ENV_PROD,
-            type: common.ConnectionTypeEnum.PostgreSQL
+            type: common.ConnectionTypeEnum.GoogleApi
           }
         ]
       },
@@ -95,7 +95,7 @@ test('1', async t => {
         envId: common.PROJECT_ENV_PROD,
         isRepoProd: false,
         reportId: 'r1',
-        timeRangeFractionBrick: 'last 5 months',
+        timeRangeFractionBrick: 'f`last 5 months`',
         timeSpec: common.TimeSpecEnum.Months,
         timezone: 'UTC'
       }

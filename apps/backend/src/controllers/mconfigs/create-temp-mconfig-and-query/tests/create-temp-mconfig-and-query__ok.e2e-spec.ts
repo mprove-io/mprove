@@ -17,7 +17,7 @@ let password = '123456';
 let orgId = testId;
 let orgName = testId;
 
-let testProjectId = 't1';
+let testProjectId = 't2';
 let projectId = common.makeId();
 let projectName = testId;
 
@@ -74,9 +74,9 @@ test('1', async t => {
         connections: [
           {
             projectId: projectId,
-            connectionId: 'c1',
+            connectionId: 'c7',
             envId: common.PROJECT_ENV_PROD,
-            type: common.ConnectionTypeEnum.PostgreSQL
+            type: common.ConnectionTypeEnum.GoogleApi
           }
         ]
       },
@@ -94,7 +94,7 @@ test('1', async t => {
         isRepoProd: false,
         branchId: common.BRANCH_MAIN,
         envId: common.PROJECT_ENV_PROD,
-        dashboardId: 'ec_d4',
+        dashboardId: 'd1',
         timezone: 'UTC'
       }
     };
@@ -109,11 +109,6 @@ test('1', async t => {
     let query = resp1.payload.dashboard.tiles[0].query;
     let mconfig = resp1.payload.dashboard.tiles[0].mconfig;
     mconfig.mconfigId = common.makeId();
-
-    let queryOperation: common.QueryOperation = {
-      type: common.QueryOperationTypeEnum.Get,
-      timezone: 'UTC'
-    };
 
     let req2: apiToBackend.ToBackendCreateTempMconfigAndQueryRequest = {
       info: {
@@ -130,7 +125,7 @@ test('1', async t => {
         mconfig: mconfig,
         cellMetricsStartDateMs: undefined,
         cellMetricsEndDateMs: undefined,
-        queryOperations: [queryOperation]
+        queryOperations: []
       }
     };
 

@@ -4,7 +4,8 @@ import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { prepareTestAndSeed } from '~backend/functions/prepare-test';
+import { prepareSeed, prepareTest } from '~backend/functions/prepare-test';
+import { PrepTest } from '~backend/interfaces/prep-test';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '~common/_index';
 
 let testId = 'backend-run-queries__ok-postgres';
@@ -22,13 +23,35 @@ let testProjectId = 't1';
 let projectId = common.makeId();
 let projectName = testId;
 
-let prep: interfaces.Prep;
+let chartId = 'c1';
+
+let prepTest: PrepTest;
 
 test('1', async t => {
   let resp2: apiToBackend.ToBackendRunQueriesResponse;
 
   try {
-    prep = await prepareTestAndSeed({
+    prepTest = await prepareTest({});
+
+    let c1Postgres: apiToBackend.ToBackendSeedRecordsRequestPayloadConnectionsItem =
+      {
+        envId: common.PROJECT_ENV_PROD,
+        projectId: projectId,
+        connectionId: 'c1_postgres',
+        type: common.ConnectionTypeEnum.PostgreSQL,
+        host: prepTest.cs.get<interfaces.Config['firstProjectDwhPostgresHost']>(
+          'firstProjectDwhPostgresHost'
+        ),
+        port: 5436,
+        username: 'postgres',
+        password: prepTest.cs.get<
+          interfaces.Config['firstProjectDwhPostgresPassword']
+        >('firstProjectDwhPostgresPassword'),
+        database: 'p_db'
+      };
+
+    let prepareSeedResult = await prepareSeed({
+      httpServer: prepTest.httpServer,
       traceId: traceId,
       deleteRecordsPayload: {
         emails: [email],
@@ -72,19 +95,7 @@ test('1', async t => {
             isExplorer: true
           }
         ],
-        connections: [
-          {
-            projectId: projectId,
-            connectionId: 'c1',
-            envId: common.PROJECT_ENV_PROD,
-            type: common.ConnectionTypeEnum.PostgreSQL,
-            host: '0.0.0.0',
-            port: 5436,
-            database: 'p_db',
-            username: 'p_user',
-            password: 'p_pass'
-          }
-        ]
+        connections: [c1Postgres]
       },
       loginUserPayload: { email, password }
     });
@@ -105,12 +116,12 @@ test('1', async t => {
 
     let resp1 =
       await helper.sendToBackend<apiToBackend.ToBackendGetChartsResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
+        httpServer: prepTest.httpServer,
+        loginToken: prepareSeedResult.loginToken,
         req: req1
       });
 
-    let chart = resp1.payload.charts.find(x => x.chartId === 's_s1');
+    let chart = resp1.payload.charts.find(x => x.chartId === chartId);
 
     let req2: apiToBackend.ToBackendRunQueriesRequest = {
       info: {
@@ -129,18 +140,18 @@ test('1', async t => {
 
     resp2 =
       await helper.sendToBackend<apiToBackend.ToBackendRunQueriesResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
+        httpServer: prepTest.httpServer,
+        loginToken: prepareSeedResult.loginToken,
         req: req2
       });
 
-    await prep.app.close();
+    await prepTest.app.close();
   } catch (e) {
     logToConsoleBackend({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      logger: prep.logger,
-      cs: prep.cs
+      logger: prepTest.logger,
+      cs: prepTest.cs
     });
   }
 

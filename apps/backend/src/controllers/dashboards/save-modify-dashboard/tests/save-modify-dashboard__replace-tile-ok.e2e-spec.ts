@@ -78,7 +78,7 @@ test('1', async t => {
             projectId: projectId,
             connectionId: 'c7',
             envId: common.PROJECT_ENV_PROD,
-            type: common.ConnectionTypeEnum.Api
+            type: common.ConnectionTypeEnum.GoogleApi
           }
         ]
       },
