@@ -12,19 +12,9 @@ import { getConfig } from '~backend/config/get.config';
 import { RabbitService } from '~backend/services/rabbit.service';
 
 export async function prepareTest(item: {
-  traceId: string;
-  seedRecordsPayload?: apiToBackend.ToBackendSeedRecordsRequestPayload;
-  deleteRecordsPayload?: apiToBackend.ToBackendDeleteRecordsRequestPayload;
   overrideConfigOptions?: interfaces.Config;
-  loginUserPayload?: apiToBackend.ToBackendLoginUserRequestPayload;
 }) {
-  let {
-    traceId,
-    seedRecordsPayload,
-    deleteRecordsPayload,
-    overrideConfigOptions,
-    loginUserPayload
-  } = item;
+  let { overrideConfigOptions } = item;
 
   let extraOverride: interfaces.Config = {
     backendEnv: enums.BackendEnvEnum.TEST
@@ -48,6 +38,38 @@ export async function prepareTest(item: {
 
   let httpServer = app.getHttpServer();
 
+  let rabbitService = moduleRef.get<RabbitService>(RabbitService);
+  let logger = await moduleRef.resolve<Logger>(Logger);
+  let cs = await moduleRef.resolve<ConfigService>(ConfigService);
+
+  let prep: interfaces.Prep = {
+    loginToken: undefined,
+    app,
+    httpServer,
+    moduleRef,
+    rabbitService,
+    logger,
+    cs
+  };
+
+  return prep;
+}
+
+export async function prepareSeed(item: {
+  httpServer: any;
+  traceId: string;
+  seedRecordsPayload?: apiToBackend.ToBackendSeedRecordsRequestPayload;
+  deleteRecordsPayload?: apiToBackend.ToBackendDeleteRecordsRequestPayload;
+  loginUserPayload?: apiToBackend.ToBackendLoginUserRequestPayload;
+}) {
+  let {
+    httpServer,
+    traceId,
+    seedRecordsPayload,
+    deleteRecordsPayload,
+    loginUserPayload
+  } = item;
+
   if (common.isDefined(deleteRecordsPayload)) {
     let deleteRecordsRequest: apiToBackend.ToBackendDeleteRecordsRequest = {
       info: {
@@ -67,6 +89,7 @@ export async function prepareTest(item: {
         console.log(e);
       });
   }
+
   if (common.isDefined(seedRecordsPayload)) {
     let seedRecordsRequest: apiToBackend.ToBackendSeedRecordsRequest = {
       info: {
@@ -111,19 +134,47 @@ export async function prepareTest(item: {
       })) as apiToBackend.ToBackendLoginUserResponse;
   }
 
-  let rabbitService = moduleRef.get<RabbitService>(RabbitService);
-  let logger = await moduleRef.resolve<Logger>(Logger);
-  let cs = await moduleRef.resolve<ConfigService>(ConfigService);
+  return {
+    loginToken: loginUserResp?.payload?.token
+  };
+}
 
-  let prep: interfaces.Prep = {
-    loginToken: loginUserResp?.payload?.token,
-    app,
-    httpServer,
-    moduleRef,
-    rabbitService,
-    logger,
-    cs
+export async function prepareTestAndSeed(item: {
+  traceId: string;
+  seedRecordsPayload?: apiToBackend.ToBackendSeedRecordsRequestPayload;
+  deleteRecordsPayload?: apiToBackend.ToBackendDeleteRecordsRequestPayload;
+  overrideConfigOptions?: interfaces.Config;
+  loginUserPayload?: apiToBackend.ToBackendLoginUserRequestPayload;
+}) {
+  let {
+    traceId,
+    seedRecordsPayload,
+    deleteRecordsPayload,
+    overrideConfigOptions,
+    loginUserPayload
+  } = item;
+
+  let prep1: interfaces.Prep = await prepareTest({
+    overrideConfigOptions: overrideConfigOptions
+  });
+
+  let prepareSeedResult = await prepareSeed({
+    httpServer: prep1.httpServer,
+    traceId,
+    seedRecordsPayload,
+    deleteRecordsPayload,
+    loginUserPayload
+  });
+
+  let prep2: interfaces.Prep = {
+    loginToken: prepareSeedResult.loginToken,
+    app: prep1.app,
+    httpServer: prep1.httpServer,
+    moduleRef: prep1.moduleRef,
+    rabbitService: prep1.rabbitService,
+    logger: prep1.logger,
+    cs: prep1.cs
   };
 
-  return prep;
+  return prep2;
 }

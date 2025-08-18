@@ -4,7 +4,7 @@ import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { prepareTest } from '~backend/functions/prepare-test';
+import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 
 let testId = 'backend-delete-branch__branch-master-cannot-be-deleted';
 
@@ -28,7 +28,7 @@ test('1', async t => {
   let resp: apiToBackend.ToBackendDeleteBranchResponse;
 
   try {
-    prep = await prepareTest({
+    prep = await prepareTestAndSeed({
       traceId: traceId,
       deleteRecordsPayload: {
         emails: [email],

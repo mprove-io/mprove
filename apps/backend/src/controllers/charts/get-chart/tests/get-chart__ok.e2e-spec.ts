@@ -4,7 +4,8 @@ import { common } from '~backend/barrels/common';
 import { helper } from '~backend/barrels/helper';
 import { interfaces } from '~backend/barrels/interfaces';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { prepareTest } from '~backend/functions/prepare-test';
+import { prepareSeed, prepareTest } from '~backend/functions/prepare-test';
+import { PrepTest } from '~backend/interfaces/prep-test';
 
 let testId = 'backend-get-chart__ok';
 
@@ -23,13 +24,33 @@ let projectName = testId;
 
 let chartId = 'c1';
 
-let prep: interfaces.Prep;
+let prepTest: PrepTest;
 
 test('1', async t => {
   let resp: apiToBackend.ToBackendGetChartResponse;
 
   try {
-    prep = await prepareTest({
+    prepTest = await prepareTest({});
+
+    let c1Postgres: apiToBackend.ToBackendSeedRecordsRequestPayloadConnectionsItem =
+      {
+        envId: common.PROJECT_ENV_PROD,
+        projectId: projectId,
+        connectionId: 'c1_postgres',
+        type: common.ConnectionTypeEnum.PostgreSQL,
+        host: prepTest.cs.get<interfaces.Config['firstProjectDwhPostgresHost']>(
+          'firstProjectDwhPostgresHost'
+        ),
+        port: 5436,
+        username: 'postgres',
+        password: prepTest.cs.get<
+          interfaces.Config['firstProjectDwhPostgresPassword']
+        >('firstProjectDwhPostgresPassword'),
+        database: 'p_db'
+      };
+
+    let prepareSeedResult = await prepareSeed({
+      httpServer: prepTest.httpServer,
       traceId: traceId,
       deleteRecordsPayload: {
         emails: [email],
@@ -73,14 +94,7 @@ test('1', async t => {
             isExplorer: true
           }
         ],
-        connections: [
-          {
-            projectId: projectId,
-            connectionId: 'c1',
-            envId: common.PROJECT_ENV_PROD,
-            type: common.ConnectionTypeEnum.PostgreSQL
-          }
-        ]
+        connections: [c1Postgres]
       },
       loginUserPayload: { email, password }
     });
@@ -102,18 +116,18 @@ test('1', async t => {
     };
 
     resp = await helper.sendToBackend<apiToBackend.ToBackendGetChartResponse>({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
+      httpServer: prepTest.httpServer,
+      loginToken: prepareSeedResult.loginToken,
       req: req
     });
 
-    await prep.app.close();
+    await prepTest.app.close();
   } catch (e) {
     logToConsoleBackend({
       log: e,
       logLevel: common.LogLevelEnum.Error,
-      logger: prep.logger,
-      cs: prep.cs
+      logger: prepTest.logger,
+      cs: prepTest.cs
     });
   }
 
