@@ -1,0 +1,69 @@
+dashboard: d1
+title: GA
+parameters:
+- filter: f1
+  store_model: google_analytics
+  store_filter: top_config
+  fractions:
+  - controls:
+    - selector: ga_property
+      value: '474781769'
+    - date_picker: start_date
+      value: '2025-01-02'
+    - date_picker: end_date
+      value: '2025-03-31'
+
+- filter: f2
+  store_model: google_analytics
+  store_result: string
+  fractions:
+  - logic: OR
+    type: contains
+    controls:
+    - input: value_input
+      value: h
+tiles:
+- title: sessions Sessions by events Event Created At Date
+  model: google_analytics
+  select:
+  - sessions
+  - date
+  sorts: date
+  parameters:
+  - apply_to: top_config
+    fractions:
+    - controls:
+      - selector: ga_property
+        value: '474781769'
+      - date_picker: start_date
+        value: '2025-01-01'
+      - date_picker: end_date
+        value: '2025-05-04'
+  type: line
+  data:
+    x_field: date
+    y_fields:
+    - sessions
+  plate:
+    plate_width: 8
+    plate_height: 12
+    plate_x: 0
+    plate_y: 0
+
+- title: page_screens Screen Page Views by events Event Created At Date
+  model: google_analytics
+  select:
+  - date
+  - screen_page_views
+  sorts: date
+  parameters:
+  - apply_to: city
+    listen: f2
+  - apply_to: top_config
+    listen: f1
+  type: table
+  plate:
+    plate_width: 8
+    plate_height: 12
+    plate_x: 8
+    plate_y: 0

@@ -17,7 +17,7 @@ let password = '123456';
 let orgId = testId;
 let orgName = testId;
 
-let testProjectId = 't1';
+let testProjectId = 't3';
 let projectId = common.makeId();
 let projectName = testId;
 
@@ -89,7 +89,7 @@ test('1', async t => {
         branchId: branchId,
         envId: common.PROJECT_ENV_PROD,
         fromNodeId: `${projectId}/readme.md`,
-        toNodeId: `${projectId}/ecommerce/readme.md`
+        toNodeId: `${projectId}/f1/readme.md`
       }
     };
 

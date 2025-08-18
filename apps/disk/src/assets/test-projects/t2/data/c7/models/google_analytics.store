@@ -1,0 +1,19 @@
+store: google_analytics
+connection: c7
+preset: google_analytics
+parameters:
+- filter: top_config
+  required: true
+  max_fractions: 1
+  fraction_controls:
+  - selector: ga_property
+    label: Property
+    value: 474781769
+    options:
+    - value: 474781769
+  - date_picker: start_date
+    label: Start Date
+    value: $METRICS_DATE_FROM
+  - date_picker: end_date
+    label: End Date
+    value: $METRICS_DATE_TO

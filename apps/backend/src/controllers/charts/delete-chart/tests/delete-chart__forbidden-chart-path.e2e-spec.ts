@@ -17,7 +17,7 @@ let password = '123456';
 let orgId = testId;
 let orgName = testId;
 
-let testProjectId = 't1';
+let testProjectId = 't2';
 let projectId = common.makeId();
 let projectName = testId;
 
@@ -76,9 +76,9 @@ test('1', async t => {
         connections: [
           {
             projectId: projectId,
-            connectionId: 'c1',
+            connectionId: 'c7',
             envId: common.PROJECT_ENV_PROD,
-            type: common.ConnectionTypeEnum.PostgreSQL
+            type: common.ConnectionTypeEnum.Api
           }
         ]
       },

@@ -1,0 +1,8 @@
+mprove_dir: ./data
+week_start: Monday    
+allow_timezones: true
+simplify_safe_aggregates: false
+default_timezone: UTC
+format_number: ',.0f'
+currency_prefix: $
+currency_suffix: ''

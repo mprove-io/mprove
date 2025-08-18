@@ -24,6 +24,7 @@ export class Query {
   @IsString()
   queryId: string;
 
+  @IsOptional()
   @IsString()
   sql: string;
 

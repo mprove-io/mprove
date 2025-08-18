@@ -216,8 +216,8 @@ export class CreateDraftDashboardController {
       // malloyDashboardFilePath: secondFileNodeId
     });
 
-    console.log('dashboardFileText');
-    console.log(dashboardFileText);
+    // console.log('dashboardFileText');
+    // console.log(dashboardFileText);
 
     // console.log('malloyFileText');
     // console.log(malloyFileText);

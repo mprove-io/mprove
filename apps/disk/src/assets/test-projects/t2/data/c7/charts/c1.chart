@@ -1,0 +1,23 @@
+chart: c1
+tiles:
+- title: sessions Sessions by events Event Created At Date
+  model: google_analytics
+  select:
+  - sessions
+  - date
+  sorts: date
+  parameters:
+  - apply_to: top_config
+    fractions:
+    - controls:
+      - selector: ga_property
+        value: '474781769'
+      - date_picker: start_date
+        value: '2025-01-01'
+      - date_picker: end_date
+        value: '2025-05-04'
+  type: line
+  data:
+    x_field: date
+    y_fields:
+    - sessions
