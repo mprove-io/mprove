@@ -12,5 +12,5 @@ export async function deleteLocalBranch(item: {
     nodegit.Branch.BRANCH.LOCAL
   );
 
-  await nodegit.Branch.delete(branchRef);
+  await nodegit.Branch.delete(branchRef); // await
 }

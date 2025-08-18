@@ -1,6 +1,6 @@
 import * as nodegit from '@figma/nodegit';
 import { common } from '~disk/barrels/common';
-import { interfaces } from '~disk/barrels/interfaces';
+import { ItemStatus } from '~disk/interfaces/item-status';
 import { getRepoStatus } from './get-repo-status';
 
 export async function checkoutBranch(item: {
@@ -12,7 +12,7 @@ export async function checkoutBranch(item: {
   fetchOptions: nodegit.FetchOptions;
   isFetch: boolean;
 }) {
-  let { repoStatus, currentBranch, conflicts } = <interfaces.ItemStatus>(
+  let { repoStatus, currentBranch, conflicts } = <ItemStatus>(
     await getRepoStatus({
       projectId: item.projectId,
       projectDir: item.projectDir,

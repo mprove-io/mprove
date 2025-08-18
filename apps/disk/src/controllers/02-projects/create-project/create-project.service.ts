@@ -3,21 +3,27 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
-import { disk } from '~disk/barrels/disk';
-import { git } from '~disk/barrels/git';
-import { interfaces } from '~disk/barrels/interfaces';
 import { nodeCommon } from '~disk/barrels/node-common';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
+import { Config } from '~disk/interfaces/config';
+import { ItemCatalog } from '~disk/interfaces/item-catalog';
+import { ItemStatus } from '~disk/interfaces/item-status';
+import { ensureDir } from '~disk/models/disk/ensure-dir';
+import { getNodesAndFiles } from '~disk/models/disk/get-nodes-and-files';
+import { isPathExist } from '~disk/models/disk/is-path-exist';
+import { cloneRemoteToDev } from '~disk/models/git/clone-remote-to-dev';
+import { getRepoStatus } from '~disk/models/git/get-repo-status';
+import { prepareRemoteAndProd } from '~disk/models/git/prepare-remote-and-prod';
 
 @Injectable()
 export class CreateProjectService {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<Config>,
     private logger: Logger
   ) {}
 
   async process(request: any) {
-    let orgPath = this.cs.get<interfaces.Config['diskOrganizationsPath']>(
+    let orgPath = this.cs.get<Config['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
@@ -25,8 +31,7 @@ export class CreateProjectService {
       classType: apiToDisk.ToDiskCreateProjectRequest,
       object: request,
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson:
-        this.cs.get<interfaces.Config['diskLogIsJson']>('diskLogIsJson'),
+      logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
 
@@ -48,14 +53,14 @@ export class CreateProjectService {
 
     //
 
-    let isOrgExist = await disk.isPathExist(orgDir);
+    let isOrgExist = await isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
-    let isProjectExist = await disk.isPathExist(projectDir);
+    let isProjectExist = await isPathExist(projectDir);
     if (isProjectExist === true) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_PROJECT_ALREADY_EXIST
@@ -64,10 +69,10 @@ export class CreateProjectService {
 
     //
 
-    await disk.ensureDir(projectDir);
+    await ensureDir(projectDir);
 
     let keyDir = `${orgDir}/_keys/${projectId}`;
-    await disk.ensureDir(keyDir);
+    await ensureDir(keyDir);
 
     let fetchOptions = makeFetchOptions({
       remoteType: remoteType,
@@ -81,7 +86,7 @@ export class CreateProjectService {
       fetchOpts: fetchOptions
     };
 
-    await git.prepareRemoteAndProd({
+    await prepareRemoteAndProd({
       projectId: projectId,
       projectName: projectName,
       projectDir: projectDir,
@@ -92,7 +97,7 @@ export class CreateProjectService {
       gitUrl: gitUrl
     });
 
-    await git.cloneRemoteToDev({
+    await cloneRemoteToDev({
       orgId: orgId,
       projectId: projectId,
       devRepoId: devRepoId,
@@ -102,7 +107,7 @@ export class CreateProjectService {
       cloneOptions: cloneOptions
     });
 
-    let prodItemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+    let prodItemCatalog = <ItemCatalog>await getNodesAndFiles({
       projectId: projectId,
       projectDir: projectDir,
       repoId: common.PROD_REPO_ID,
@@ -116,7 +121,7 @@ export class CreateProjectService {
       conflicts,
       changesToCommit,
       changesToPush
-    } = <interfaces.ItemStatus>await git.getRepoStatus({
+    } = <ItemStatus>await getRepoStatus({
       projectId: projectId,
       projectDir: projectDir,
       repoId: common.PROD_REPO_ID,

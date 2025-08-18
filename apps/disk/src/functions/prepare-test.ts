@@ -5,16 +5,16 @@ import * as fse from 'fs-extra';
 import { WinstonModule } from 'nest-winston';
 import { appServices } from '~disk/app-services';
 import { common } from '~disk/barrels/common';
-import { constants } from '~disk/barrels/constants';
-import { interfaces } from '~disk/barrels/interfaces';
 import { nodeCommon } from '~disk/barrels/node-common';
 import { getConfig } from '~disk/config/get.config';
+import { APP_NAME_DISK } from '~disk/constants/top';
+import { Config } from '~disk/interfaces/config';
 import { ConsumerService } from '~disk/services/consumer.service';
 import { MessageService } from '~disk/services/message.service';
 
 export async function prepareTest(
   orgId: string,
-  overrideConfigOptions?: interfaces.Config
+  overrideConfigOptions?: Config
 ) {
   let config = getConfig();
 
@@ -28,7 +28,7 @@ export async function prepareTest(
       }),
       WinstonModule.forRoot(
         nodeCommon.getLoggerOptions({
-          appName: constants.APP_NAME_DISK,
+          appName: APP_NAME_DISK,
           isJson: config.diskLogIsJson === common.BoolEnum.TRUE
         })
       )
@@ -36,7 +36,7 @@ export async function prepareTest(
     providers: [Logger, ...appServices]
   })
     .overrideProvider(ConfigService)
-    .useValue({ get: (key: any) => mockConfig[key as keyof interfaces.Config] })
+    .useValue({ get: (key: any) => mockConfig[key as keyof Config] })
     .overrideProvider(ConsumerService)
     .useValue({})
     .compile();
@@ -44,9 +44,9 @@ export async function prepareTest(
   // let app: INestApplication = moduleRef.createNestApplication();
   // await app.init();
 
-  let cs = moduleRef.get<ConfigService<interfaces.Config>>(ConfigService);
+  let cs = moduleRef.get<ConfigService<Config>>(ConfigService);
 
-  let orgPath = cs.get<interfaces.Config['diskOrganizationsPath']>(
+  let orgPath = cs.get<Config['diskOrganizationsPath']>(
     'diskOrganizationsPath'
   );
 

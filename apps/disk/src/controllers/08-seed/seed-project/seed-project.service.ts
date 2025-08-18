@@ -3,21 +3,27 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
-import { disk } from '~disk/barrels/disk';
-import { git } from '~disk/barrels/git';
-import { interfaces } from '~disk/barrels/interfaces';
 import { nodeCommon } from '~disk/barrels/node-common';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
+import { Config } from '~disk/interfaces/config';
+import { ItemCatalog } from '~disk/interfaces/item-catalog';
+import { ItemStatus } from '~disk/interfaces/item-status';
+import { emptyDir } from '~disk/models/disk/empty-dir';
+import { ensureDir } from '~disk/models/disk/ensure-dir';
+import { getNodesAndFiles } from '~disk/models/disk/get-nodes-and-files';
+import { cloneRemoteToDev } from '~disk/models/git/clone-remote-to-dev';
+import { getRepoStatus } from '~disk/models/git/get-repo-status';
+import { prepareRemoteAndProd } from '~disk/models/git/prepare-remote-and-prod';
 
 @Injectable()
 export class SeedProjectService {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<Config>,
     private logger: Logger
   ) {}
 
   async process(request: any) {
-    let orgPath = this.cs.get<interfaces.Config['diskOrganizationsPath']>(
+    let orgPath = this.cs.get<Config['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
@@ -25,8 +31,7 @@ export class SeedProjectService {
       classType: apiToDisk.ToDiskSeedProjectRequest,
       object: request,
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson:
-        this.cs.get<interfaces.Config['diskLogIsJson']>('diskLogIsJson'),
+      logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
 
@@ -49,14 +54,14 @@ export class SeedProjectService {
 
     //
 
-    await disk.ensureDir(orgDir);
-    await disk.emptyDir(projectDir);
+    await ensureDir(orgDir);
+    await emptyDir(projectDir);
 
     //
 
     let keyDir = `${orgDir}/_keys/${projectId}`;
 
-    await disk.ensureDir(keyDir);
+    await ensureDir(keyDir);
 
     let fetchOptions = makeFetchOptions({
       remoteType: remoteType,
@@ -70,7 +75,7 @@ export class SeedProjectService {
       fetchOpts: fetchOptions
     };
 
-    await git.prepareRemoteAndProd({
+    await prepareRemoteAndProd({
       projectId: projectId,
       projectName: projectName,
       projectDir: projectDir,
@@ -81,7 +86,7 @@ export class SeedProjectService {
       cloneOptions: cloneOptions
     });
 
-    await git.cloneRemoteToDev({
+    await cloneRemoteToDev({
       orgId: orgId,
       projectId: projectId,
       devRepoId: devRepoId,
@@ -91,7 +96,7 @@ export class SeedProjectService {
       cloneOptions: cloneOptions
     });
 
-    let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+    let itemCatalog = <ItemCatalog>await getNodesAndFiles({
       projectId: projectId,
       projectDir: projectDir,
       repoId: devRepoId,
@@ -105,7 +110,7 @@ export class SeedProjectService {
       conflicts,
       changesToCommit,
       changesToPush
-    } = <interfaces.ItemStatus>await git.getRepoStatus({
+    } = <ItemStatus>await getRepoStatus({
       projectId: projectId,
       projectDir: projectDir,
       repoId: devRepoId,

@@ -2,21 +2,30 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
-import { disk } from '~disk/barrels/disk';
-import { git } from '~disk/barrels/git';
-import { interfaces } from '~disk/barrels/interfaces';
 import { nodeCommon } from '~disk/barrels/node-common';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
+import { Config } from '~disk/interfaces/config';
+import { ItemCatalog } from '~disk/interfaces/item-catalog';
+import { ItemStatus } from '~disk/interfaces/item-status';
+import { ensureDir } from '~disk/models/disk/ensure-dir';
+import { getNodesAndFiles } from '~disk/models/disk/get-nodes-and-files';
+import { isPathExist } from '~disk/models/disk/is-path-exist';
+import { checkoutBranch } from '~disk/models/git/checkout-branch';
+import { createBranch } from '~disk/models/git/create-branch';
+import { getRepoStatus } from '~disk/models/git/get-repo-status';
+import { isLocalBranchExist } from '~disk/models/git/is-local-branch-exist';
+import { merge } from '~disk/models/git/merge';
+import { pushToRemote } from '~disk/models/git/push-to-remote';
 
 @Injectable()
 export class PushRepoService {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<Config>,
     private logger: Logger
   ) {}
 
   async process(request: any) {
-    let orgPath = this.cs.get<interfaces.Config['diskOrganizationsPath']>(
+    let orgPath = this.cs.get<Config['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
@@ -24,8 +33,7 @@ export class PushRepoService {
       classType: apiToDisk.ToDiskPushRepoRequest,
       object: request,
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson:
-        this.cs.get<interfaces.Config['diskLogIsJson']>('diskLogIsJson'),
+      logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
 
@@ -47,28 +55,28 @@ export class PushRepoService {
 
     let prodRepoDir = `${projectDir}/${common.PROD_REPO_ID}`;
 
-    let isOrgExist = await disk.isPathExist(orgDir);
+    let isOrgExist = await isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
-    let isProjectExist = await disk.isPathExist(projectDir);
+    let isProjectExist = await isPathExist(projectDir);
     if (isProjectExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
-    let isRepoExist = await disk.isPathExist(repoDir);
+    let isRepoExist = await isPathExist(repoDir);
     if (isRepoExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
-    let isBranchExist = await git.isLocalBranchExist({
+    let isBranchExist = await isLocalBranchExist({
       repoDir: repoDir,
       localBranch: branch
     });
@@ -80,7 +88,7 @@ export class PushRepoService {
 
     let keyDir = `${orgDir}/_keys/${projectId}`;
 
-    await disk.ensureDir(keyDir);
+    await ensureDir(keyDir);
 
     let fetchOptions = makeFetchOptions({
       remoteType: remoteType,
@@ -90,7 +98,7 @@ export class PushRepoService {
       publicKey: publicKey
     });
 
-    await git.checkoutBranch({
+    await checkoutBranch({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
@@ -102,7 +110,7 @@ export class PushRepoService {
 
     //
 
-    await git.pushToRemote({
+    await pushToRemote({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
@@ -111,12 +119,12 @@ export class PushRepoService {
       fetchOptions: fetchOptions
     });
 
-    let isProdBranchExist = await git.isLocalBranchExist({
+    let isProdBranchExist = await isLocalBranchExist({
       repoDir: prodRepoDir,
       localBranch: branch
     });
     if (isProdBranchExist === false) {
-      await git.createBranch({
+      await createBranch({
         repoDir: prodRepoDir,
         fromBranch: `origin/${branch}`,
         newBranch: branch,
@@ -124,7 +132,7 @@ export class PushRepoService {
       });
     }
 
-    await git.merge({
+    await merge({
       projectId: projectId,
       projectDir: projectDir,
       repoId: common.PROD_REPO_ID,
@@ -142,7 +150,7 @@ export class PushRepoService {
       conflicts,
       changesToCommit,
       changesToPush
-    } = <interfaces.ItemStatus>await git.getRepoStatus({
+    } = <ItemStatus>await getRepoStatus({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
@@ -152,7 +160,7 @@ export class PushRepoService {
       isCheckConflicts: true
     });
 
-    let repoItemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+    let repoItemCatalog = <ItemCatalog>await getNodesAndFiles({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
@@ -160,15 +168,13 @@ export class PushRepoService {
       isRootMproveDir: false
     });
 
-    let productionItemCatalog = <interfaces.ItemCatalog>(
-      await disk.getNodesAndFiles({
-        projectId: projectId,
-        projectDir: projectDir,
-        repoId: common.PROD_REPO_ID,
-        readFiles: true,
-        isRootMproveDir: false
-      })
-    );
+    let productionItemCatalog = <ItemCatalog>await getNodesAndFiles({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: common.PROD_REPO_ID,
+      readFiles: true,
+      isRootMproveDir: false
+    });
 
     let payload: apiToDisk.ToDiskPushRepoResponsePayload = {
       repo: {

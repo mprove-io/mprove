@@ -2,21 +2,29 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
-import { disk } from '~disk/barrels/disk';
-import { git } from '~disk/barrels/git';
-import { interfaces } from '~disk/barrels/interfaces';
 import { nodeCommon } from '~disk/barrels/node-common';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
+import { Config } from '~disk/interfaces/config';
+import { ItemCatalog } from '~disk/interfaces/item-catalog';
+import { ItemStatus } from '~disk/interfaces/item-status';
+import { ensureDir } from '~disk/models/disk/ensure-dir';
+import { getNodesAndFiles } from '~disk/models/disk/get-nodes-and-files';
+import { isPathExist } from '~disk/models/disk/is-path-exist';
+import { renamePath } from '~disk/models/disk/rename-path';
+import { addChangesToStage } from '~disk/models/git/add-changes-to-stage';
+import { checkoutBranch } from '~disk/models/git/checkout-branch';
+import { getRepoStatus } from '~disk/models/git/get-repo-status';
+import { isLocalBranchExist } from '~disk/models/git/is-local-branch-exist';
 
 @Injectable()
 export class RenameCatalogNodeService {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<Config>,
     private logger: Logger
   ) {}
 
   async process(request: any) {
-    let orgPath = this.cs.get<interfaces.Config['diskOrganizationsPath']>(
+    let orgPath = this.cs.get<Config['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
@@ -24,8 +32,7 @@ export class RenameCatalogNodeService {
       classType: apiToDisk.ToDiskRenameCatalogNodeRequest,
       object: request,
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson:
-        this.cs.get<interfaces.Config['diskLogIsJson']>('diskLogIsJson'),
+      logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
 
@@ -52,28 +59,28 @@ export class RenameCatalogNodeService {
     let parentPath = sourceArray.join('/');
     let newPath = parentPath + '/' + newName;
 
-    let isOrgExist = await disk.isPathExist(orgDir);
+    let isOrgExist = await isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
-    let isProjectExist = await disk.isPathExist(projectDir);
+    let isProjectExist = await isPathExist(projectDir);
     if (isProjectExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
-    let isRepoExist = await disk.isPathExist(repoDir);
+    let isRepoExist = await isPathExist(repoDir);
     if (isRepoExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
-    let isBranchExist = await git.isLocalBranchExist({
+    let isBranchExist = await isLocalBranchExist({
       repoDir: repoDir,
       localBranch: branch
     });
@@ -85,7 +92,7 @@ export class RenameCatalogNodeService {
 
     let keyDir = `${orgDir}/_keys/${projectId}`;
 
-    await disk.ensureDir(keyDir);
+    await ensureDir(keyDir);
 
     let fetchOptions = makeFetchOptions({
       remoteType: remoteType,
@@ -95,7 +102,7 @@ export class RenameCatalogNodeService {
       publicKey: publicKey
     });
 
-    await git.checkoutBranch({
+    await checkoutBranch({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
@@ -105,7 +112,7 @@ export class RenameCatalogNodeService {
       isFetch: false
     });
 
-    let isOldPathExist = await disk.isPathExist(oldPath);
+    let isOldPathExist = await isPathExist(oldPath);
     if (isOldPathExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_OLD_PATH_IS_NOT_EXIST
@@ -113,18 +120,18 @@ export class RenameCatalogNodeService {
     }
 
     //
-    let isNewPathExist = await disk.isPathExist(newPath);
+    let isNewPathExist = await isPathExist(newPath);
     if (isNewPathExist === true) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_NEW_PATH_ALREADY_EXIST
       });
     }
-    await disk.renamePath({
+    await renamePath({
       oldPath: oldPath,
       newPath: newPath
     });
 
-    await git.addChangesToStage({ repoDir: repoDir });
+    await addChangesToStage({ repoDir: repoDir });
 
     let {
       repoStatus,
@@ -132,7 +139,7 @@ export class RenameCatalogNodeService {
       conflicts,
       changesToCommit,
       changesToPush
-    } = <interfaces.ItemStatus>await git.getRepoStatus({
+    } = <ItemStatus>await getRepoStatus({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
@@ -142,7 +149,7 @@ export class RenameCatalogNodeService {
       isCheckConflicts: true
     });
 
-    let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+    let itemCatalog = <ItemCatalog>await getNodesAndFiles({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,

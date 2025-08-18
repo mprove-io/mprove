@@ -3,8 +3,8 @@ import { Dirent } from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
 import { constants } from '~common/barrels/constants';
 import { common } from '~disk/barrels/common';
-import { interfaces } from '~disk/barrels/interfaces';
 import { nodeCommon } from '~disk/barrels/node-common';
+import { ItemCatalog } from '~disk/interfaces/item-catalog';
 
 export async function getNodesAndFiles(item: {
   projectId: string;
@@ -34,17 +34,15 @@ export async function getNodesAndFiles(item: {
           configPath: configPath
         });
 
-  let itemDir = <interfaces.ItemCatalog>(
-    await getDirCatalogNodesAndFilesRecursive({
-      dir: repoDir,
-      projectId: item.projectId,
-      repoId: item.repoId,
-      repoDirPathLength: repoDirPathLength,
-      readFiles: item.readFiles,
-      mproveDir: mproveDir,
-      repoDir: repoDir
-    })
-  );
+  let itemDir = <ItemCatalog>await getDirCatalogNodesAndFilesRecursive({
+    dir: repoDir,
+    projectId: item.projectId,
+    repoId: item.repoId,
+    repoDirPathLength: repoDirPathLength,
+    readFiles: item.readFiles,
+    mproveDir: mproveDir,
+    repoDir: repoDir
+  });
 
   topNode.children = itemDir.nodes;
 
@@ -92,17 +90,15 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
         item.projectId + fileAbsolutePath.substring(item.repoDirPathLength);
 
       if (dirent.isDirectory() === true) {
-        let itemDir = <interfaces.ItemCatalog>(
-          await getDirCatalogNodesAndFilesRecursive({
-            dir: fileAbsolutePath,
-            projectId: item.projectId,
-            repoId: item.repoId,
-            repoDirPathLength: item.repoDirPathLength,
-            readFiles: item.readFiles,
-            mproveDir: item.mproveDir,
-            repoDir: item.repoDir
-          })
-        );
+        let itemDir = <ItemCatalog>await getDirCatalogNodesAndFilesRecursive({
+          dir: fileAbsolutePath,
+          projectId: item.projectId,
+          repoId: item.repoId,
+          repoDirPathLength: item.repoDirPathLength,
+          readFiles: item.readFiles,
+          mproveDir: item.mproveDir,
+          repoDir: item.repoDir
+        });
 
         // add dirNodes to children
 

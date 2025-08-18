@@ -4,9 +4,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { appControllers } from './app-controllers';
 import { appServices } from './app-services';
 import { common } from './barrels/common';
-import { interfaces } from './barrels/interfaces';
 import { getConfig } from './config/get.config';
 import { logToConsoleDisk } from './functions/log-to-console-disk';
+import { Config } from './interfaces/config';
 
 @Module({
   imports: [
@@ -16,17 +16,13 @@ import { logToConsoleDisk } from './functions/log-to-console-disk';
     }),
 
     RabbitMQModule.forRootAsync(RabbitMQModule, {
-      useFactory: (cs: ConfigService<interfaces.Config>) => {
-        let rabbitUser =
-          cs.get<interfaces.Config['diskRabbitUser']>('diskRabbitUser');
-        let rabbitPass =
-          cs.get<interfaces.Config['diskRabbitPass']>('diskRabbitPass');
-        let rabbitHost =
-          cs.get<interfaces.Config['diskRabbitHost']>('diskRabbitHost');
-        let rabbitPort =
-          cs.get<interfaces.Config['diskRabbitPort']>('diskRabbitPort');
+      useFactory: (cs: ConfigService<Config>) => {
+        let rabbitUser = cs.get<Config['diskRabbitUser']>('diskRabbitUser');
+        let rabbitPass = cs.get<Config['diskRabbitPass']>('diskRabbitPass');
+        let rabbitHost = cs.get<Config['diskRabbitHost']>('diskRabbitHost');
+        let rabbitPort = cs.get<Config['diskRabbitPort']>('diskRabbitPort');
         let rabbitProtocol =
-          cs.get<interfaces.Config['diskRabbitProtocol']>('diskRabbitProtocol');
+          cs.get<Config['diskRabbitProtocol']>('diskRabbitProtocol');
 
         return {
           exchanges: [

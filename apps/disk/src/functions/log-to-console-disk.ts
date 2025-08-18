@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { common } from '~disk/barrels/common';
-import { interfaces } from '~disk/barrels/interfaces';
 import { nodeCommon } from '~disk/barrels/node-common';
 import { getConfig } from '~disk/config/get.config';
+import { Config } from '~disk/interfaces/config';
 
 export function logToConsoleDisk(item: {
   log: any;
@@ -16,7 +16,7 @@ export function logToConsoleDisk(item: {
   let logIsJson: common.BoolEnum;
 
   if (common.isDefined(cs)) {
-    logIsJson = cs.get<interfaces.Config['diskLogIsJson']>('diskLogIsJson');
+    logIsJson = cs.get<Config['diskLogIsJson']>('diskLogIsJson');
   } else {
     let config = getConfig();
     logIsJson = config.diskLogIsJson;

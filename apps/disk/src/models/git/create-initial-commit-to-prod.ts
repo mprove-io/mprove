@@ -1,7 +1,9 @@
 import * as nodegit from '@figma/nodegit';
 import { common } from '~disk/barrels/common';
-import { constants } from '~disk/barrels/constants';
-import { disk } from '~disk/barrels/disk';
+import { TEST_PROJECTS } from '~disk/constants/top';
+import { copyPath } from '../disk/copy-path';
+import { isPathExist } from '../disk/is-path-exist';
+import { writeToFile } from '../disk/write-to-file';
 
 export async function createInitialCommitToProd(item: {
   prodDir: string;
@@ -12,15 +14,15 @@ export async function createInitialCommitToProd(item: {
 }) {
   let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.prodDir);
 
-  let sourceDir = `${constants.TEST_PROJECTS}/${item.testProjectId}`;
+  let sourceDir = `${TEST_PROJECTS}/${item.testProjectId}`;
 
-  let isSourceExist = await disk.isPathExist(sourceDir);
+  let isSourceExist = await isPathExist(sourceDir);
 
   // console.log('isSourceExist');
   // console.log(isSourceExist);
 
   if (common.isDefined(item.testProjectId) && isSourceExist) {
-    await disk.copyPath({
+    await copyPath({
       sourcePath: sourceDir,
       destinationPath: item.prodDir
     });
@@ -29,7 +31,7 @@ export async function createInitialCommitToProd(item: {
     let readmeFilePath = `${item.prodDir}/${readmeFileName}`;
     let readmeContent = `# ${item.projectName} project`;
 
-    await disk.writeToFile({
+    await writeToFile({
       filePath: readmeFilePath,
       content: readmeContent
     });
@@ -47,7 +49,7 @@ case_sensitive_string_filters: false
 simplify_safe_aggregates: true
 `;
 
-    await disk.writeToFile({
+    await writeToFile({
       filePath: mproveFilePath,
       content: mproveContent
     });

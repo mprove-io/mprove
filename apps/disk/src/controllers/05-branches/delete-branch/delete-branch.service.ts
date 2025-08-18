@@ -2,21 +2,30 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
-import { disk } from '~disk/barrels/disk';
-import { git } from '~disk/barrels/git';
-import { interfaces } from '~disk/barrels/interfaces';
 import { nodeCommon } from '~disk/barrels/node-common';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
+import { Config } from '~disk/interfaces/config';
+import { ItemCatalog } from '~disk/interfaces/item-catalog';
+import { ItemStatus } from '~disk/interfaces/item-status';
+import { ensureDir } from '~disk/models/disk/ensure-dir';
+import { getNodesAndFiles } from '~disk/models/disk/get-nodes-and-files';
+import { isPathExist } from '~disk/models/disk/is-path-exist';
+import { checkoutBranch } from '~disk/models/git/checkout-branch';
+import { deleteLocalBranch } from '~disk/models/git/delete-local-branch';
+import { deleteRemoteBranch } from '~disk/models/git/delete-remote-branch';
+import { getRepoStatus } from '~disk/models/git/get-repo-status';
+import { isLocalBranchExist } from '~disk/models/git/is-local-branch-exist';
+import { isRemoteBranchExist } from '~disk/models/git/is-remote-branch-exist';
 
 @Injectable()
 export class DeleteBranchService {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<Config>,
     private logger: Logger
   ) {}
 
   async process(request: any) {
-    let orgPath = this.cs.get<interfaces.Config['diskOrganizationsPath']>(
+    let orgPath = this.cs.get<Config['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
@@ -24,8 +33,7 @@ export class DeleteBranchService {
       classType: apiToDisk.ToDiskDeleteBranchRequest,
       object: request,
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson:
-        this.cs.get<interfaces.Config['diskLogIsJson']>('diskLogIsJson'),
+      logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
 
@@ -47,21 +55,21 @@ export class DeleteBranchService {
 
     //
 
-    let isOrgExist = await disk.isPathExist(orgDir);
+    let isOrgExist = await isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
-    let isProjectExist = await disk.isPathExist(projectDir);
+    let isProjectExist = await isPathExist(projectDir);
     if (isProjectExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
-    let isRepoExist = await disk.isPathExist(repoDir);
+    let isRepoExist = await isPathExist(repoDir);
     if (isRepoExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_REPO_IS_NOT_EXIST
@@ -76,7 +84,7 @@ export class DeleteBranchService {
 
     let keyDir = `${orgDir}/_keys/${projectId}`;
 
-    await disk.ensureDir(keyDir);
+    await ensureDir(keyDir);
 
     let fetchOptions = makeFetchOptions({
       remoteType: remoteType,
@@ -86,7 +94,7 @@ export class DeleteBranchService {
       publicKey: publicKey
     });
 
-    await git.checkoutBranch({
+    await checkoutBranch({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
@@ -99,14 +107,14 @@ export class DeleteBranchService {
     let errorIfNoLocalBranch = true;
 
     if (repoId === common.PROD_REPO_ID) {
-      let isRemoteBranchExist = await git.isRemoteBranchExist({
+      let isRemoteBranchExistResult = await isRemoteBranchExist({
         repoDir: repoDir,
         remoteBranch: branch,
         fetchOptions: fetchOptions
       });
 
-      if (isRemoteBranchExist === true) {
-        await git.deleteRemoteBranch({
+      if (isRemoteBranchExistResult === true) {
+        await deleteRemoteBranch({
           projectDir: projectDir,
           branch: branch,
           fetchOptions: fetchOptions
@@ -115,13 +123,13 @@ export class DeleteBranchService {
       }
     }
 
-    let isLocalBranchExist = await git.isLocalBranchExist({
+    let isLocalBranchExistResult = await isLocalBranchExist({
       repoDir: repoDir,
       localBranch: branch
     });
 
-    if (isLocalBranchExist === true) {
-      await git.deleteLocalBranch({
+    if (isLocalBranchExistResult === true) {
+      await deleteLocalBranch({
         repoDir: repoDir,
         branch: branch
       });
@@ -137,7 +145,7 @@ export class DeleteBranchService {
       conflicts,
       changesToCommit,
       changesToPush
-    } = <interfaces.ItemStatus>await git.getRepoStatus({
+    } = <ItemStatus>await getRepoStatus({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
@@ -147,7 +155,7 @@ export class DeleteBranchService {
       isCheckConflicts: true
     });
 
-    let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+    let itemCatalog = <ItemCatalog>await getNodesAndFiles({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,

@@ -1,8 +1,8 @@
 import { parse } from 'dotenv';
 import * as fse from 'fs-extra';
 import { common } from '~disk/barrels/common';
-import { enums } from '~disk/barrels/enums';
-import { interfaces } from '~disk/barrels/interfaces';
+import { DiskEnvEnum } from '~disk/enums/disk-env.enum';
+import { Config } from '~disk/interfaces/config';
 
 export function getDevConfig(envFilePath: any) {
   let envFile: any = {};
@@ -11,8 +11,8 @@ export function getDevConfig(envFilePath: any) {
     envFile = parse(fse.readFileSync(envFilePath));
   }
 
-  let devConfig: interfaces.Config = {
-    diskEnv: <enums.DiskEnvEnum>(process.env.DISK_ENV || envFile.DISK_ENV),
+  let devConfig: Config = {
+    diskEnv: <DiskEnvEnum>(process.env.DISK_ENV || envFile.DISK_ENV),
 
     diskRabbitUser: process.env.DISK_RABBIT_USER || envFile.DISK_RABBIT_USER,
     diskRabbitPass: process.env.DISK_RABBIT_PASS || envFile.DISK_RABBIT_PASS,

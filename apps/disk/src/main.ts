@@ -2,9 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { WinstonModule } from 'nest-winston';
 import { AppModule } from './app.module';
 import { common } from './barrels/common';
-import { constants } from './barrels/constants';
 import { nodeCommon } from './barrels/node-common';
 import { getConfig } from './config/get.config';
+import { APP_NAME_DISK } from './constants/top';
 import { logToConsoleDisk } from './functions/log-to-console-disk';
 
 async function bootstrap() {
@@ -21,7 +21,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger(
       nodeCommon.getLoggerOptions({
-        appName: constants.APP_NAME_DISK,
+        appName: APP_NAME_DISK,
         isJson: config.diskLogIsJson === common.BoolEnum.TRUE
       })
     )

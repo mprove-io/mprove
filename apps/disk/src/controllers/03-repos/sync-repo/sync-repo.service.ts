@@ -5,16 +5,25 @@ import { forEachSeries } from 'p-iteration';
 import { DiskSyncFile } from '~common/_index';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
-import { disk } from '~disk/barrels/disk';
-import { git } from '~disk/barrels/git';
-import { interfaces } from '~disk/barrels/interfaces';
 import { nodeCommon } from '~disk/barrels/node-common';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
+import { Config } from '~disk/interfaces/config';
+import { ItemCatalog } from '~disk/interfaces/item-catalog';
+import { ItemStatus } from '~disk/interfaces/item-status';
+import { ensureDir } from '~disk/models/disk/ensure-dir';
+import { getNodesAndFiles } from '~disk/models/disk/get-nodes-and-files';
+import { isPathExist } from '~disk/models/disk/is-path-exist';
+import { removePath } from '~disk/models/disk/remove-path';
+import { writeToFile } from '~disk/models/disk/write-to-file';
+import { addChangesToStage } from '~disk/models/git/add-changes-to-stage';
+import { checkoutBranch } from '~disk/models/git/checkout-branch';
+import { getRepoStatus } from '~disk/models/git/get-repo-status';
+import { isLocalBranchExist } from '~disk/models/git/is-local-branch-exist';
 
 @Injectable()
 export class SyncRepoService {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<Config>,
     private logger: Logger
   ) {}
 
@@ -25,8 +34,7 @@ export class SyncRepoService {
       classType: apiToDisk.ToDiskSyncRepoRequest,
       object: request,
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson:
-        this.cs.get<interfaces.Config['diskLogIsJson']>('diskLogIsJson'),
+      logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
 
@@ -46,7 +54,7 @@ export class SyncRepoService {
       publicKey
     } = requestValid.payload;
 
-    let orgPath = this.cs.get<interfaces.Config['diskOrganizationsPath']>(
+    let orgPath = this.cs.get<Config['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
@@ -55,7 +63,7 @@ export class SyncRepoService {
     let projectDir = `${orgDir}/${projectId}`;
     let repoDir = `${projectDir}/${repoId}`;
 
-    await disk.ensureDir(keyDir);
+    await ensureDir(keyDir);
 
     let fetchOptions = makeFetchOptions({
       remoteType: remoteType,
@@ -65,28 +73,28 @@ export class SyncRepoService {
       publicKey: publicKey
     });
 
-    let isOrgExist = await disk.isPathExist(orgDir);
+    let isOrgExist = await isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
-    let isProjectExist = await disk.isPathExist(projectDir);
+    let isProjectExist = await isPathExist(projectDir);
     if (isProjectExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
-    let isRepoExist = await disk.isPathExist(repoDir);
+    let isRepoExist = await isPathExist(repoDir);
     if (isRepoExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
-    let isBranchExist = await git.isLocalBranchExist({
+    let isBranchExist = await isLocalBranchExist({
       repoDir: repoDir,
       localBranch: branch
     });
@@ -96,7 +104,7 @@ export class SyncRepoService {
       });
     }
 
-    await git.checkoutBranch({
+    await checkoutBranch({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
@@ -296,13 +304,13 @@ export class SyncRepoService {
         ) {
           let filePath = `${repoDir}/${localChangedFile.path}`;
 
-          let isFileExist = await disk.isPathExist(filePath);
+          let isFileExist = await isPathExist(filePath);
           if (isFileExist === false) {
             let parentPath = filePath.split('/').slice(0, -1).join('/');
-            await disk.ensureDir(parentPath);
+            await ensureDir(parentPath);
           }
 
-          await disk.writeToFile({
+          await writeToFile({
             filePath: filePath,
             content: localChangedFile.content
           });
@@ -310,7 +318,7 @@ export class SyncRepoService {
       }
     );
 
-    await git.addChangesToStage({ repoDir: repoDir });
+    await addChangesToStage({ repoDir: repoDir });
 
     let {
       repoStatus,
@@ -318,7 +326,7 @@ export class SyncRepoService {
       conflicts,
       changesToCommit,
       changesToPush
-    } = <interfaces.ItemStatus>await git.getRepoStatus({
+    } = <ItemStatus>await getRepoStatus({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
@@ -329,7 +337,7 @@ export class SyncRepoService {
       addContent: true
     });
 
-    let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+    let itemCatalog = <ItemCatalog>await getNodesAndFiles({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
@@ -364,8 +372,8 @@ export class SyncRepoService {
 }
 
 async function deleteFile(filePath: string) {
-  let isFileExist = await disk.isPathExist(filePath);
+  let isFileExist = await isPathExist(filePath);
   if (isFileExist === true) {
-    await disk.removePath(filePath);
+    await removePath(filePath);
   }
 }

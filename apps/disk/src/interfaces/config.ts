@@ -1,10 +1,10 @@
 import { IsEnum, IsString } from 'class-validator';
 import { common } from '~disk/barrels/common';
-import { enums } from '~disk/barrels/enums';
+import { DiskEnvEnum } from '~disk/enums/disk-env.enum';
 
 export class Config {
-  @IsEnum(enums.DiskEnvEnum)
-  diskEnv?: enums.DiskEnvEnum;
+  @IsEnum(DiskEnvEnum)
+  diskEnv?: DiskEnvEnum;
 
   @IsString()
   diskRabbitUser?: string;

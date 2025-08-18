@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
-import { interfaces } from '~disk/barrels/interfaces';
 import { CreateOrgService } from '~disk/controllers/01-orgs/create-org/create-org.service';
 import { DeleteOrgService } from '~disk/controllers/01-orgs/delete-org/delete-org.service';
 import { IsOrgExistService } from '~disk/controllers/01-orgs/is-org-exist/is-org-exist.service';
@@ -34,11 +33,12 @@ import { SaveFileService } from '~disk/controllers/07-files/save-file/save-file.
 import { SeedProjectService } from '~disk/controllers/08-seed/seed-project/seed-project.service';
 import { makeErrorResponseDisk } from '~disk/functions/make-error-response-disk';
 import { makeOkResponseDisk } from '~disk/functions/make-ok-response-disk';
+import { Config } from '~disk/interfaces/config';
 
 @Injectable()
 export class MessageService {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<Config>,
 
     private createOrgService: CreateOrgService,
     private deleteOrgService: DeleteOrgService,

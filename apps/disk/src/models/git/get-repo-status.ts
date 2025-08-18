@@ -1,8 +1,9 @@
 import * as nodegit from '@figma/nodegit';
 import { common } from '~disk/barrels/common';
-import { disk } from '~disk/barrels/disk';
-import { interfaces } from '~disk/barrels/interfaces';
 import { nodeCommon } from '~disk/barrels/node-common';
+import { ItemCatalog } from '~disk/interfaces/item-catalog';
+import { ItemStatus } from '~disk/interfaces/item-status';
+import { getNodesAndFiles } from '../disk/get-nodes-and-files';
 import { isRemoteBranchExist } from './is-remote-branch-exist';
 
 export async function getRepoStatus(item: {
@@ -14,7 +15,7 @@ export async function getRepoStatus(item: {
   isFetch: boolean;
   isCheckConflicts: boolean;
   addContent?: boolean;
-}): Promise<interfaces.ItemStatus> {
+}): Promise<ItemStatus> {
   // priorities order:
   // NeedSave (frontend only)
   // NeedStage (no need because auto add file after each save)
@@ -139,15 +140,13 @@ export async function getRepoStatus(item: {
 
   if (item.isCheckConflicts === true) {
     // check conflicts manually instead of git - because they are already committed
-    let itemDevRepoCatalog = <interfaces.ItemCatalog>(
-      await disk.getNodesAndFiles({
-        projectId: item.projectId,
-        projectDir: item.projectDir,
-        repoId: item.repoId,
-        readFiles: true,
-        isRootMproveDir: true
-      })
-    );
+    let itemDevRepoCatalog = <ItemCatalog>await getNodesAndFiles({
+      projectId: item.projectId,
+      projectDir: item.projectDir,
+      repoId: item.repoId,
+      readFiles: true,
+      isRootMproveDir: true
+    });
 
     itemDevRepoCatalog.files.forEach(file => {
       let fileArray = file.content.split('\n');

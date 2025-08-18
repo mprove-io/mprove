@@ -2,21 +2,29 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { apiToDisk } from '~disk/barrels/api-to-disk';
 import { common } from '~disk/barrels/common';
-import { disk } from '~disk/barrels/disk';
-import { git } from '~disk/barrels/git';
-import { interfaces } from '~disk/barrels/interfaces';
 import { nodeCommon } from '~disk/barrels/node-common';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
+import { Config } from '~disk/interfaces/config';
+import { ItemCatalog } from '~disk/interfaces/item-catalog';
+import { ItemStatus } from '~disk/interfaces/item-status';
+import { ensureDir } from '~disk/models/disk/ensure-dir';
+import { getNodesAndFiles } from '~disk/models/disk/get-nodes-and-files';
+import { isPathExist } from '~disk/models/disk/is-path-exist';
+import { movePath } from '~disk/models/disk/move-path';
+import { addChangesToStage } from '~disk/models/git/add-changes-to-stage';
+import { checkoutBranch } from '~disk/models/git/checkout-branch';
+import { getRepoStatus } from '~disk/models/git/get-repo-status';
+import { isLocalBranchExist } from '~disk/models/git/is-local-branch-exist';
 
 @Injectable()
 export class MoveCatalogNodeService {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<Config>,
     private logger: Logger
   ) {}
 
   async process(request: any) {
-    let orgPath = this.cs.get<interfaces.Config['diskOrganizationsPath']>(
+    let orgPath = this.cs.get<Config['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
@@ -24,8 +32,7 @@ export class MoveCatalogNodeService {
       classType: apiToDisk.ToDiskMoveCatalogNodeRequest,
       object: request,
       errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson:
-        this.cs.get<interfaces.Config['diskLogIsJson']>('diskLogIsJson'),
+      logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
 
@@ -50,28 +57,28 @@ export class MoveCatalogNodeService {
     let fromPath = repoDir + '/' + fromNodeId.substring(projectId.length + 1);
     let toPath = repoDir + '/' + toNodeId.substring(projectId.length + 1);
 
-    let isOrgExist = await disk.isPathExist(orgDir);
+    let isOrgExist = await isPathExist(orgDir);
     if (isOrgExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
-    let isProjectExist = await disk.isPathExist(projectDir);
+    let isProjectExist = await isPathExist(projectDir);
     if (isProjectExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
-    let isRepoExist = await disk.isPathExist(repoDir);
+    let isRepoExist = await isPathExist(repoDir);
     if (isRepoExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
-    let isBranchExist = await git.isLocalBranchExist({
+    let isBranchExist = await isLocalBranchExist({
       repoDir: repoDir,
       localBranch: branch
     });
@@ -83,7 +90,7 @@ export class MoveCatalogNodeService {
 
     let keyDir = `${orgDir}/_keys/${projectId}`;
 
-    await disk.ensureDir(keyDir);
+    await ensureDir(keyDir);
 
     let fetchOptions = makeFetchOptions({
       remoteType: remoteType,
@@ -93,7 +100,7 @@ export class MoveCatalogNodeService {
       publicKey: publicKey
     });
 
-    await git.checkoutBranch({
+    await checkoutBranch({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
@@ -103,14 +110,14 @@ export class MoveCatalogNodeService {
       isFetch: false
     });
 
-    let isFromPathExist = await disk.isPathExist(fromPath);
+    let isFromPathExist = await isPathExist(fromPath);
     if (isFromPathExist === false) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_FROM_PATH_IS_NOT_EXIST
       });
     }
 
-    let isToPathExist = await disk.isPathExist(toPath);
+    let isToPathExist = await isPathExist(toPath);
     if (isToPathExist === true) {
       throw new common.ServerError({
         message: common.ErEnum.DISK_TO_PATH_ALREADY_EXIST
@@ -119,12 +126,12 @@ export class MoveCatalogNodeService {
 
     //
 
-    await disk.movePath({
+    await movePath({
       sourcePath: fromPath,
       destinationPath: toPath
     });
 
-    await git.addChangesToStage({ repoDir: repoDir });
+    await addChangesToStage({ repoDir: repoDir });
 
     let {
       repoStatus,
@@ -132,7 +139,7 @@ export class MoveCatalogNodeService {
       conflicts,
       changesToCommit,
       changesToPush
-    } = <interfaces.ItemStatus>await git.getRepoStatus({
+    } = <ItemStatus>await getRepoStatus({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
@@ -142,7 +149,7 @@ export class MoveCatalogNodeService {
       isCheckConflicts: true
     });
 
-    let itemCatalog = <interfaces.ItemCatalog>await disk.getNodesAndFiles({
+    let itemCatalog = <ItemCatalog>await getNodesAndFiles({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,

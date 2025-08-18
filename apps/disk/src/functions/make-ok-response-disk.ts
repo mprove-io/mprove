@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { common } from '~disk/barrels/common';
-import { interfaces } from '~disk/barrels/interfaces';
 import { nodeCommon } from '~disk/barrels/node-common';
+import { Config } from '~disk/interfaces/config';
 
 export function makeOkResponseDisk(item: {
   body: any;
@@ -11,7 +11,7 @@ export function makeOkResponseDisk(item: {
   method: any;
   duration: number;
   skipLog?: boolean;
-  cs: ConfigService<interfaces.Config>;
+  cs: ConfigService<Config>;
   logger: Logger;
 }) {
   let { payload, body, path, method, duration, skipLog, cs, logger } = item;
@@ -24,10 +24,10 @@ export function makeOkResponseDisk(item: {
     duration: duration,
     skipLog: skipLog,
     logResponseOk: common.enumToBoolean(
-      cs.get<interfaces.Config['diskLogResponseOk']>('diskLogResponseOk')
+      cs.get<Config['diskLogResponseOk']>('diskLogResponseOk')
     ),
     logIsJson: common.enumToBoolean(
-      cs.get<interfaces.Config['diskLogIsJson']>('diskLogIsJson')
+      cs.get<Config['diskLogIsJson']>('diskLogIsJson')
     ),
     logger: logger
   });

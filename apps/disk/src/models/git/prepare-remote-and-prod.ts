@@ -1,7 +1,7 @@
 import * as nodegit from '@figma/nodegit';
 import { common } from '~disk/barrels/common';
-import { constants } from '~disk/barrels/constants';
-import { disk } from '~disk/barrels/disk';
+import { CENTRAL_REPO_ID } from '~disk/constants/top';
+import { ensureDir } from '../disk/ensure-dir';
 import { createInitialCommitToProd } from './create-initial-commit-to-prod';
 import { pushToRemote } from './push-to-remote';
 
@@ -16,11 +16,11 @@ export async function prepareRemoteAndProd(item: {
   cloneOptions: nodegit.CloneOptions;
 }) {
   let prodDir = `${item.projectDir}/${common.PROD_REPO_ID}`;
-  let centralDir = `${item.projectDir}/${constants.CENTRAL_REPO_ID}`;
-  await disk.ensureDir(prodDir);
+  let centralDir = `${item.projectDir}/${CENTRAL_REPO_ID}`;
+  await ensureDir(prodDir);
 
   if (item.remoteType === common.ProjectRemoteTypeEnum.Managed) {
-    await disk.ensureDir(centralDir);
+    await ensureDir(centralDir);
 
     // init central repo
     let isBare = 1;
