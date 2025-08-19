@@ -4,31 +4,87 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fse from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
-import { barBuilder } from '~blockml/barrels/bar-builder';
-import { barSpecial } from '~blockml/barrels/bar-special';
-import { barWrapper } from '~blockml/barrels/bar-wrapper';
-import { barYaml } from '~blockml/barrels/bar-yaml';
-import { common } from '~blockml/barrels/common';
-import { interfaces } from '~blockml/barrels/interfaces';
-import { nodeCommon } from '~blockml/barrels/node-common';
-import { getMproveConfigFile } from '~blockml/functions/get-mprove-config-file';
+import { buildChart } from '~blockml/functions/build-chart/_build-chart';
+import { buildDashboard } from '~blockml/functions/build-dashboard/_build-dashboard';
+import { buildField } from '~blockml/functions/build-field/_build-field';
+import { buildMconfigChart } from '~blockml/functions/build-mconfig-chart/_build-mconfig-chart';
+import { buildMetricsNext } from '~blockml/functions/build-metrics-next/_build-metrics-next';
+import { buildModStart } from '~blockml/functions/build-mod-start/_build-mod-start';
+import { buildReport } from '~blockml/functions/build-report/_build-report';
+import { buildStoreNext } from '~blockml/functions/build-store-next/_build-store-next';
+import { buildStoreStart } from '~blockml/functions/build-store-start/_build-store-start';
+import { buildTile } from '~blockml/functions/build-tile/_build-tile';
+import { buildYaml } from '~blockml/functions/build-yaml/_build-yaml';
+import { collectFiles } from '~blockml/functions/build-yaml/collect-files';
+import { checkVmdrSuggestModelDimension } from '~blockml/functions/extra/check-vmdr-field-suggest-model-dimension';
+import { getMproveConfigFile } from '~blockml/functions/extra/get-mprove-config-file';
+import { logStruct } from '~blockml/functions/extra/log-struct';
+import { wrapCharts } from '~blockml/functions/wrap/wrap-charts';
+import { wrapDashboards } from '~blockml/functions/wrap/wrap-dashboards';
+import { wrapErrors } from '~blockml/functions/wrap/wrap-errors';
+import { wrapModels } from '~blockml/functions/wrap/wrap-models';
+import { wrapReports } from '~blockml/functions/wrap/wrap-reports';
 import { BmError } from '~blockml/models/bm-error';
 import { PresetsService } from '~blockml/services/presets.service';
 import { RabbitService } from '~blockml/services/rabbit.service';
+import {
+  MPROVE_CONFIG_FILENAME,
+  PROJECT_CONFIG_ALLOW_TIMEZONES,
+  PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS,
+  PROJECT_CONFIG_CURRENCY_PREFIX,
+  PROJECT_CONFIG_CURRENCY_SUFFIX,
+  PROJECT_CONFIG_DEFAULT_TIMEZONE,
+  PROJECT_CONFIG_FORMAT_NUMBER,
+  PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES,
+  PROJECT_CONFIG_THOUSANDS_SEPARATOR,
+  PROJECT_CONFIG_WEEK_START
+} from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { FileExtensionEnum } from '~common/enums/file-extension.enum';
+import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
+import { CallerEnum } from '~common/enums/special/caller.enum';
+import { ToBlockmlRequestInfoNameEnum } from '~common/enums/to/to-blockml-request-info-name.enum';
+import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
+import { decodeFilePath } from '~common/functions/decode-file-path';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeId } from '~common/functions/make-id';
+import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
+import { Ev } from '~common/interfaces/backend/ev';
+import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
+import { BmlFile } from '~common/interfaces/blockml/bml-file';
+import { FileChart } from '~common/interfaces/blockml/internal/file-chart';
+import { FileDashboard } from '~common/interfaces/blockml/internal/file-dashboard';
+import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
+import { FileProjectConf } from '~common/interfaces/blockml/internal/file-project-conf';
+import { FileReport } from '~common/interfaces/blockml/internal/file-report';
+import { FileStore } from '~common/interfaces/blockml/internal/file-store';
+import { Model } from '~common/interfaces/blockml/model';
+import { ModelMetric } from '~common/interfaces/blockml/model-metric';
+import { Preset } from '~common/interfaces/blockml/preset';
+import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
+import {
+  ToBlockmlRebuildStructRequest,
+  ToBlockmlRebuildStructResponsePayload
+} from '~common/interfaces/to-blockml/api/to-blockml-rebuild-struct';
+import { MyRegex } from '~common/models/my-regex';
+import { ServerError } from '~common/models/server-error';
+import { getMproveDir } from '~node-common/functions/get-mprove-dir';
+import { makeMalloyConnections } from '~node-common/functions/make-malloy-connections';
+import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 interface RebuildStructPrep {
   errors: BmError[];
-  stores: common.FileStore[];
-  dashboards: common.FileDashboard[];
-  metrics: common.ModelMetric[];
-  presets: common.Preset[];
-  apiModels: common.Model[];
-  mods: common.FileMod[];
-  reports: common.FileReport[];
-  charts: common.FileChart[];
+  stores: FileStore[];
+  dashboards: FileDashboard[];
+  metrics: ModelMetric[];
+  presets: Preset[];
+  apiModels: Model[];
+  mods: FileMod[];
+  reports: FileReport[];
+  charts: FileChart[];
   mproveDirValue: string;
-  weekStart: common.ProjectWeekStartEnum;
+  weekStart: ProjectWeekStartEnum;
   allowTimezones: boolean;
   defaultTimezone: string;
   formatNumber: string;
@@ -44,26 +100,25 @@ export class RebuildStructService {
   constructor(
     private rabbitService: RabbitService,
     private presetsService: PresetsService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BlockmlConfig>,
     private logger: Logger
   ) {}
 
   async rebuild(request: any) {
     if (
-      request.info?.name !==
-      apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct
+      request.info?.name !== ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct
     ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BLOCKML_WRONG_REQUEST_INFO_NAME
+      throw new ServerError({
+        message: ErEnum.BLOCKML_WRONG_REQUEST_INFO_NAME
       });
     }
 
-    let reqValid = nodeCommon.transformValidSync({
-      classType: apiToBlockml.ToBlockmlRebuildStructRequest,
+    let reqValid = transformValidSync({
+      classType: ToBlockmlRebuildStructRequest,
       object: request,
-      errorMessage: common.ErEnum.BLOCKML_WRONG_REQUEST_PARAMS,
+      errorMessage: ErEnum.BLOCKML_WRONG_REQUEST_PARAMS,
       logIsJson:
-        this.cs.get<interfaces.Config['blockmlLogIsJson']>('blockmlLogIsJson'),
+        this.cs.get<BlockmlConfig['blockmlLogIsJson']>('blockmlLogIsJson'),
       logger: this.logger
     });
 
@@ -91,9 +146,9 @@ export class RebuildStructService {
       isTest: false
     });
 
-    let apiErrors = barWrapper.wrapErrors({ errors: prep.errors });
+    let apiErrors = wrapErrors({ errors: prep.errors });
 
-    let apiReports = barWrapper.wrapReports({
+    let apiReports = wrapReports({
       projectId: projectId,
       structId: structId,
       reports: prep.reports,
@@ -104,19 +159,18 @@ export class RebuildStructService {
       currencySuffix: prep.currencySuffix
     });
 
-    let { apiDashboards, dashMconfigs, dashQueries } =
-      barWrapper.wrapDashboards({
-        structId: structId,
-        projectId: projectId,
-        apiModels: prep.apiModels,
-        mods: prep.mods,
-        stores: prep.stores,
-        dashboards: prep.dashboards,
-        envId: envId,
-        timezone: prep.defaultTimezone
-      });
+    let { apiDashboards, dashMconfigs, dashQueries } = wrapDashboards({
+      structId: structId,
+      projectId: projectId,
+      apiModels: prep.apiModels,
+      mods: prep.mods,
+      stores: prep.stores,
+      dashboards: prep.dashboards,
+      envId: envId,
+      timezone: prep.defaultTimezone
+    });
 
-    let { apiCharts, chartMconfigs, chartQueries } = barWrapper.wrapCharts({
+    let { apiCharts, chartMconfigs, chartQueries } = wrapCharts({
       structId: structId,
       projectId: projectId,
       apiModels: prep.apiModels,
@@ -130,7 +184,7 @@ export class RebuildStructService {
     let queries = [...dashQueries, ...chartQueries];
     let mconfigs = [...dashMconfigs, ...chartMconfigs];
 
-    let payload: apiToBlockml.ToBlockmlRebuildStructResponsePayload = {
+    let payload: ToBlockmlRebuildStructResponsePayload = {
       errors: apiErrors,
       models: prep.apiModels,
       dashboards: apiDashboards,
@@ -160,40 +214,40 @@ export class RebuildStructService {
     dir: string;
     structId: string;
     envId: string;
-    evs: common.Ev[];
-    connections: common.ProjectConnection[];
+    evs: Ev[];
+    connections: ProjectConnection[];
     overrideTimezone: string;
   }): Promise<RebuildStructPrep> {
-    let configPath = item.dir + '/' + common.MPROVE_CONFIG_FILENAME;
+    let configPath = item.dir + '/' + MPROVE_CONFIG_FILENAME;
 
-    let mproveDir = await nodeCommon.getMproveDir({
+    let mproveDir = await getMproveDir({
       dir: item.dir,
       configPath: configPath
     });
 
-    let files: common.BmlFile[] = [];
+    let files: BmlFile[] = [];
 
     // console.log('mproveDir');
     // console.log(mproveDir);
 
-    if (common.isDefined(mproveDir)) {
-      files = await barYaml.collectFiles(
+    if (isDefined(mproveDir)) {
+      files = await collectFiles(
         {
           dir: mproveDir,
           repoDir: item.dir,
           structId: item.structId,
-          caller: common.CallerEnum.RebuildStruct,
+          caller: CallerEnum.RebuildStruct,
           skipLog: false
         },
         this.cs
       );
     }
 
-    files = files.filter(x => x.name !== common.MPROVE_CONFIG_FILENAME);
+    files = files.filter(x => x.name !== MPROVE_CONFIG_FILENAME);
 
     let mproveConfigFile = await getMproveConfigFile(configPath);
 
-    if (common.isDefined(mproveConfigFile)) {
+    if (isDefined(mproveConfigFile)) {
       files.push(mproveConfigFile);
     }
 
@@ -215,37 +269,37 @@ export class RebuildStructService {
 
   async rebuildStructStateless(item: {
     traceId: string;
-    files: common.BmlFile[];
+    files: BmlFile[];
     structId: string;
     envId: string;
-    evs: common.Ev[];
-    connections: common.ProjectConnection[];
+    evs: Ev[];
+    connections: ProjectConnection[];
     mproveDir: string;
     overrideTimezone: string;
     projectId: string;
     isTest: boolean;
   }): Promise<RebuildStructPrep> {
     //
-    let presets: common.Preset[] = this.presetsService.getPresets();
+    let presets: Preset[] = this.presetsService.getPresets();
 
     let errors: BmError[] = [];
 
-    let mods: common.FileMod[] = [];
+    let mods: FileMod[] = [];
 
-    let stores: common.FileStore[];
-    let reports: common.FileReport[];
-    let dashboards: common.FileDashboard[];
-    let charts: common.FileChart[];
-    let projectConfig: common.FileProjectConf;
+    let stores: FileStore[];
+    let reports: FileReport[];
+    let dashboards: FileDashboard[];
+    let charts: FileChart[];
+    let projectConfig: FileProjectConf;
 
-    let yamlBuildItem = barBuilder.buildYaml(
+    let yamlBuildItem = buildYaml(
       {
         files: item.files,
         connections: item.connections,
         mproveDir: item.mproveDir,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildYaml
+        caller: CallerEnum.BuildYaml
       },
       this.cs
     );
@@ -256,7 +310,7 @@ export class RebuildStructService {
     charts = yamlBuildItem.charts;
     projectConfig = yamlBuildItem.projectConfig;
 
-    if (common.isUndefined(projectConfig)) {
+    if (isUndefined(projectConfig)) {
       return {
         errors: errors,
         apiModels: [],
@@ -268,32 +322,32 @@ export class RebuildStructService {
         dashboards: [],
         charts: [],
         mproveDirValue: undefined,
-        weekStart: common.PROJECT_CONFIG_WEEK_START,
-        allowTimezones: common.toBooleanFromLowercaseString(
-          common.PROJECT_CONFIG_ALLOW_TIMEZONES
+        weekStart: PROJECT_CONFIG_WEEK_START,
+        allowTimezones: toBooleanFromLowercaseString(
+          PROJECT_CONFIG_ALLOW_TIMEZONES
         ),
-        defaultTimezone: common.PROJECT_CONFIG_DEFAULT_TIMEZONE,
-        currencyPrefix: common.PROJECT_CONFIG_CURRENCY_PREFIX,
-        currencySuffix: common.PROJECT_CONFIG_CURRENCY_SUFFIX,
-        thousandsSeparator: common.PROJECT_CONFIG_THOUSANDS_SEPARATOR,
-        formatNumber: common.PROJECT_CONFIG_FORMAT_NUMBER,
-        caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
-          common.PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS
+        defaultTimezone: PROJECT_CONFIG_DEFAULT_TIMEZONE,
+        currencyPrefix: PROJECT_CONFIG_CURRENCY_PREFIX,
+        currencySuffix: PROJECT_CONFIG_CURRENCY_SUFFIX,
+        thousandsSeparator: PROJECT_CONFIG_THOUSANDS_SEPARATOR,
+        formatNumber: PROJECT_CONFIG_FORMAT_NUMBER,
+        caseSensitiveStringFilters: toBooleanFromLowercaseString(
+          PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS
         ),
-        simplifySafeAggregates: common.toBooleanFromLowercaseString(
-          common.PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES
+        simplifySafeAggregates: toBooleanFromLowercaseString(
+          PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES
         )
       };
     }
 
-    if (common.isDefined(item.overrideTimezone)) {
+    if (isDefined(item.overrideTimezone)) {
       projectConfig.default_timezone = item.overrideTimezone;
     }
 
     let blockmlDataPath =
-      this.cs.get<interfaces.Config['blockmlData']>('blockmlData');
+      this.cs.get<BlockmlConfig['blockmlData']>('blockmlData');
 
-    let tempDir = `${blockmlDataPath}/${Date.now()}-${common.makeId()}`;
+    let tempDir = `${blockmlDataPath}/${Date.now()}-${makeId()}`;
 
     let malloyFiles = item.files.filter(y => y.name.endsWith('.malloy'));
 
@@ -303,9 +357,9 @@ export class RebuildStructService {
     let paths: string[] = [];
 
     await forEachSeries(malloyFiles, async file => {
-      let relativePath = common.isDefined(file.pathRelativeToRepo)
+      let relativePath = isDefined(file.pathRelativeToRepo)
         ? file.pathRelativeToRepo
-        : common.decodeFilePath({ filePath: file.path });
+        : decodeFilePath({ filePath: file.path });
 
       file.blockmlPath = `${tempDir}/${relativePath}`;
 
@@ -314,7 +368,7 @@ export class RebuildStructService {
       await fse.ensureDir(path.dirname(file.blockmlPath));
       await fse.writeFile(file.blockmlPath, file.content);
 
-      let reg = common.MyRegex.CAPTURE_MPROVE_MODELS();
+      let reg = MyRegex.CAPTURE_MPROVE_MODELS();
       let r;
 
       let captures: string[] = [];
@@ -327,9 +381,9 @@ export class RebuildStructService {
         let ar = file.name.split('.');
         let ext = ar[ar.length - 1];
 
-        let mod: common.FileMod = {
+        let mod: FileMod = {
           fileName: file.name,
-          fileExt: `.${ext}` as common.FileExtensionEnum, // malloy
+          fileExt: `.${ext}` as FileExtensionEnum, // malloy
           filePath: relativePath,
           name: sourceName,
           // mod: sourceName,
@@ -338,7 +392,7 @@ export class RebuildStructService {
           source: sourceName,
           label: sourceName
             .split('_')
-            .map(k => common.capitalizeFirstLetter(k))
+            .map(k => capitalizeFirstLetter(k))
             .join(' ')
         };
 
@@ -362,17 +416,16 @@ export class RebuildStructService {
 
     // await fse.writeFile(mainPath, mainContent);
 
-    let malloyConnections: PostgresConnection[] =
-      nodeCommon.makeMalloyConnections({
-        connections: item.connections
-      });
+    let malloyConnections: PostgresConnection[] = makeMalloyConnections({
+      connections: item.connections
+    });
 
     // let startBuildModStart = Date.now();
 
     // console.log('mods');
     // console.log(mods);
 
-    let buildModStartResult = await barBuilder.buildModStart(
+    let buildModStartResult = await buildModStart(
       {
         files: item.files,
         malloyConnections: malloyConnections,
@@ -382,7 +435,7 @@ export class RebuildStructService {
         projectId: item.projectId,
         errors: errors,
         structId: item.structId,
-        caller: common.CallerEnum.BuildModStart
+        caller: CallerEnum.BuildModStart
       },
       this.cs
     );
@@ -392,50 +445,50 @@ export class RebuildStructService {
 
     mods = buildModStartResult.mods;
 
-    stores = barBuilder.buildStoreStart(
+    stores = buildStoreStart(
       {
         stores: stores,
         presets: presets,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildStoreStart
+        caller: CallerEnum.BuildStoreStart
       },
       this.cs
     );
 
-    stores = barBuilder.buildField(
+    stores = buildField(
       {
         entities: stores,
         projectConfig: projectConfig,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildStoreField
+        caller: CallerEnum.BuildStoreField
       },
       this.cs
     );
 
-    stores = barBuilder.buildStoreNext(
+    stores = buildStoreNext(
       {
         stores: stores,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildStoreNext
+        caller: CallerEnum.BuildStoreNext
       },
       this.cs
     );
 
-    dashboards = barBuilder.buildField(
+    dashboards = buildField(
       {
         entities: dashboards,
         projectConfig: projectConfig,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildDashboardField
+        caller: CallerEnum.BuildDashboardField
       },
       this.cs
     );
 
-    let apiModels = barWrapper.wrapModels({
+    let apiModels = wrapModels({
       projectId: item.projectId,
       structId: item.structId,
       stores: stores,
@@ -443,44 +496,44 @@ export class RebuildStructService {
       files: item.files
     });
 
-    let buildMetricsNextResult = barBuilder.buildMetricsNext(
+    let buildMetricsNextResult = buildMetricsNext(
       {
         apiModels: apiModels,
         stores: stores,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildModelMetric
+        caller: CallerEnum.BuildModelMetric
       },
       this.cs
     );
 
     let metrics = buildMetricsNextResult.metrics;
 
-    dashboards = barBuilder.buildDashboard(
+    dashboards = buildDashboard(
       {
         dashboards: dashboards,
         stores: stores,
         structId: item.structId,
-        caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
+        caseSensitiveStringFilters: toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters
         ),
         errors: errors,
-        caller: common.CallerEnum.BuildDashboard
+        caller: CallerEnum.BuildDashboard
       },
       this.cs
     );
 
-    charts = barBuilder.buildChart(
+    charts = buildChart(
       {
         charts: charts,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildChart
+        caller: CallerEnum.BuildChart
       },
       this.cs
     );
 
-    dashboards = await barBuilder.buildTile(
+    dashboards = await buildTile(
       {
         traceId: item.traceId,
         projectId: item.projectId,
@@ -494,21 +547,21 @@ export class RebuildStructService {
         stores: stores,
         weekStart: projectConfig.week_start,
         timezone: projectConfig.default_timezone,
-        caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
+        caseSensitiveStringFilters: toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters
         ),
-        simplifySafeAggregates: common.toBooleanFromLowercaseString(
+        simplifySafeAggregates: toBooleanFromLowercaseString(
           projectConfig.simplify_safe_aggregates
         ),
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildDashboardTile
+        caller: CallerEnum.BuildDashboardTile
       },
       this.cs,
       this.rabbitService
     );
 
-    charts = await barBuilder.buildTile(
+    charts = await buildTile(
       {
         traceId: item.traceId,
         projectId: item.projectId,
@@ -522,40 +575,40 @@ export class RebuildStructService {
         malloyFiles: malloyFiles,
         weekStart: projectConfig.week_start,
         timezone: projectConfig.default_timezone,
-        caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
+        caseSensitiveStringFilters: toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters
         ),
-        simplifySafeAggregates: common.toBooleanFromLowercaseString(
+        simplifySafeAggregates: toBooleanFromLowercaseString(
           projectConfig.simplify_safe_aggregates
         ),
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildChartTile
+        caller: CallerEnum.BuildChartTile
       },
       this.cs,
       this.rabbitService
     );
 
-    dashboards = barBuilder.buildMconfigChart(
+    dashboards = buildMconfigChart(
       {
         entities: dashboards,
         apiModels: apiModels,
         stores: stores,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildDashboardTileCharts
+        caller: CallerEnum.BuildDashboardTileCharts
       },
       this.cs
     );
 
-    charts = barBuilder.buildMconfigChart(
+    charts = buildMconfigChart(
       {
         entities: charts,
         apiModels: apiModels,
         stores: stores,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildChartTileCharts
+        caller: CallerEnum.BuildChartTileCharts
       },
       this.cs
     );
@@ -568,57 +621,57 @@ export class RebuildStructService {
       ];
     });
 
-    reports = barBuilder.buildMconfigChart(
+    reports = buildMconfigChart(
       {
         entities: reports,
         apiModels: apiModels,
         stores: stores,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildReportCharts
+        caller: CallerEnum.BuildReportCharts
       },
       this.cs
     );
 
-    reports = barBuilder.buildField(
+    reports = buildField(
       {
         entities: reports,
         projectConfig: projectConfig,
         structId: item.structId,
         errors: errors,
-        caller: common.CallerEnum.BuildReportField
+        caller: CallerEnum.BuildReportField
       },
       this.cs
     );
 
-    reports = barBuilder.buildReport(
+    reports = buildReport(
       {
         reports: reports,
         metrics: metrics,
         apiModels: apiModels,
         stores: stores,
         structId: item.structId,
-        caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
+        caseSensitiveStringFilters: toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters
         ),
         errors: errors,
-        caller: common.CallerEnum.BuildReport
+        caller: CallerEnum.BuildReport
       },
       this.cs
     );
 
-    barSpecial.checkVmdrSuggestModelDimension(
+    checkVmdrSuggestModelDimension(
       {
         entities: [...dashboards, ...reports],
         apiModels: apiModels,
         errors: errors,
         structId: item.structId,
-        caller: common.CallerEnum.BuildCheckVmdSuggestModelDimension
+        caller: CallerEnum.BuildCheckVmdSuggestModelDimension
       },
       this.cs
     );
 
-    barSpecial.logStruct(
+    logStruct(
       {
         errors: errors,
         stores: stores,
@@ -627,7 +680,7 @@ export class RebuildStructService {
         reports: reports,
         charts: charts,
         structId: item.structId,
-        caller: common.CallerEnum.RebuildStruct
+        caller: CallerEnum.RebuildStruct
       },
       this.cs
     );
@@ -644,7 +697,7 @@ export class RebuildStructService {
       dashboards: dashboards,
       metrics: metrics,
       presets: presets.map(preset => {
-        let presetPart: common.Preset = {
+        let presetPart: Preset = {
           presetId: preset.presetId,
           label: preset.label,
           path: preset.path,
@@ -658,7 +711,7 @@ export class RebuildStructService {
       charts: charts,
       mproveDirValue: projectConfig.mprove_dir,
       weekStart: projectConfig.week_start,
-      allowTimezones: common.toBooleanFromLowercaseString(
+      allowTimezones: toBooleanFromLowercaseString(
         projectConfig.allow_timezones
       ),
       defaultTimezone: projectConfig.default_timezone,
@@ -666,10 +719,10 @@ export class RebuildStructService {
       currencyPrefix: projectConfig.currency_prefix,
       currencySuffix: projectConfig.currency_suffix,
       thousandsSeparator: projectConfig.thousands_separator,
-      caseSensitiveStringFilters: common.toBooleanFromLowercaseString(
+      caseSensitiveStringFilters: toBooleanFromLowercaseString(
         projectConfig.case_sensitive_string_filters
       ),
-      simplifySafeAggregates: common.toBooleanFromLowercaseString(
+      simplifySafeAggregates: toBooleanFromLowercaseString(
         projectConfig.simplify_safe_aggregates
       )
     };

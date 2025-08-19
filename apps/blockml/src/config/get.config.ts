@@ -1,7 +1,7 @@
-import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
-import { interfaces } from '~blockml/barrels/interfaces';
-import { nodeCommon } from '~blockml/barrels/node-common';
+import { BlockmlEnvEnum } from '~common/enums/env/blockml-env.enum';
+import { ErEnum } from '~common/enums/er.enum';
+import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
+import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 import { getDevConfig } from './get-dev.config';
 import { getProdConfig } from './get-prod.config';
 import { getTestConfig } from './get-test.config';
@@ -11,16 +11,16 @@ export function getConfig() {
   let devConfig = getDevConfig(envFilePath);
 
   let config =
-    devConfig.blockmlEnv === enums.BlockmlEnvEnum.PROD
+    devConfig.blockmlEnv === BlockmlEnvEnum.PROD
       ? getProdConfig(devConfig)
-      : devConfig.blockmlEnv === enums.BlockmlEnvEnum.TEST
+      : devConfig.blockmlEnv === BlockmlEnvEnum.TEST
         ? getTestConfig(devConfig)
         : devConfig;
 
-  let validatedConfig = nodeCommon.transformValidSync({
-    classType: interfaces.Config,
+  let validatedConfig = transformValidSync({
+    classType: BlockmlConfig,
     object: config,
-    errorMessage: common.ErEnum.BLOCKML_WRONG_ENV_VALUES,
+    errorMessage: ErEnum.BLOCKML_WRONG_ENV_VALUES,
     logIsJson: config.blockmlLogIsJson,
     logger: undefined
   });

@@ -1,25 +1,26 @@
 import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { common } from '~blockml/barrels/common';
-import { interfaces } from '~blockml/barrels/interfaces';
 import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
-import { makeErrorResponseBlockml } from '~blockml/functions/make-error-response-blockml';
-import { makeOkResponseBlockml } from '~blockml/functions/make-ok-response-blockml';
+import { makeErrorResponseBlockml } from '~blockml/functions/extra/make-error-response-blockml';
+import { makeOkResponseBlockml } from '~blockml/functions/extra/make-ok-response-blockml';
+import { METHOD_RABBIT } from '~common/constants/top';
+import { RabbitBlockmlRoutingEnum } from '~common/enums/rabbit-blockml-routing-keys.enum';
+import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
+import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 
-let pathRebuildStruct =
-  common.RabbitBlockmlRoutingEnum.RebuildStruct.toString();
+let pathRebuildStruct = RabbitBlockmlRoutingEnum.RebuildStruct.toString();
 
 @Injectable()
 export class ConsumerMainService {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BlockmlConfig>,
     private rebuildStructService: RebuildStructService,
     private logger: Logger
   ) {}
 
   @RabbitRPC({
-    exchange: common.RabbitExchangesEnum.Blockml.toString(),
+    exchange: RabbitExchangesEnum.Blockml.toString(),
     routingKey: pathRebuildStruct,
     queue: pathRebuildStruct
   })
@@ -32,7 +33,7 @@ export class ConsumerMainService {
         payload: payload,
         body: request,
         path: pathRebuildStruct,
-        method: common.METHOD_RABBIT,
+        method: METHOD_RABBIT,
         duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger
@@ -42,7 +43,7 @@ export class ConsumerMainService {
         e: e,
         body: request,
         path: pathRebuildStruct,
-        method: common.METHOD_RABBIT,
+        method: METHOD_RABBIT,
         duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger

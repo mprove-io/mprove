@@ -1,20 +1,20 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToBlockml } from '~blockml/barrels/api-to-blockml';
-import { interfaces } from '~blockml/barrels/interfaces';
-import { makeErrorResponseBlockml } from '~blockml/functions/make-error-response-blockml';
-import { makeOkResponseBlockml } from '~blockml/functions/make-ok-response-blockml';
+import { makeErrorResponseBlockml } from '~blockml/functions/extra/make-error-response-blockml';
+import { makeOkResponseBlockml } from '~blockml/functions/extra/make-ok-response-blockml';
+import { ToBlockmlRequestInfoNameEnum } from '~common/enums/to/to-blockml-request-info-name.enum';
+import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { RebuildStructService } from './rebuild-struct.service';
 
 @Controller()
 export class RebuildStructController {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BlockmlConfig>,
     private structService: RebuildStructService,
     private logger: Logger
   ) {}
 
-  @Post(apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct)
+  @Post(ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct)
   async rebuildStruct(@Req() request: any, @Body() body: any) {
     let startTs = Date.now();
     try {

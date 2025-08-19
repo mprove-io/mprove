@@ -1,44 +1,30 @@
 export enum CallerEnum {
-  BuildYaml = '01-BuildYaml',
-
-  BuildStoreStart = '01.1-BuildStoreStart',
-  BuildModStart = '01.2-BuildModStart',
-
-  BuildViewField = '02-BuildViewField',
-  BuildModelField = '02-BuildModelField',
-  BuildStoreField = '02-BuildStoreField',
-  BuildDashboardField = '02-BuildDashboardField',
-  BuildReportField = '02-BuildReportField',
-
-  BuildStoreNext = '02.1-BuildStoreNext',
-
-  BuildUdf = '03-BuildUdf',
-  BuildView = '04-BuildView',
-  BuildModel = '05-BuildModel',
-  BuildJoin = '06-BuildJoin',
-  BuildJoinSqlOn = '07-BuildJoinSqlOn',
-  BuildJoinSqlWhere = '08-BuildJoinSqlWhere',
-  BuildSortJoins = '09-BuildSortJoins',
-  BuildSqlAlwaysWhere = '10-BuildSqlAlwaysWhere',
-  BuildSqlAlwaysWhereCalc = '11-BuildSqlAlwaysWhereCalc',
-  BuildModelMetric = '11.1-BuildModelMetric',
-  BuildDashboard = '12-BuildDashboard',
-  BuildChart = '13-BuildChart',
-
-  BuildDashboardTile = '14-BuildDashboardTile',
-  BuildChartTile = '14-BuildChartTile',
-
-  BuildDashboardTileCharts = '15-BuildDashboardTileCharts',
-  BuildChartTileCharts = '15-BuildChartTileCharts',
-  BuildReportCharts = '15-BuildReportCharts',
-
-  BuildReport = '17-BuildReport',
-
-  BuildCheckVmdSuggestModelDimension = 'BuildCheckVmdSuggestModelDimension',
-  BuildCheckModelName = 'BuildCheckModelName',
-  BuildViewModel = 'BuildViewModel',
-
   AppModule = 'AppModule',
   RebuildStruct = 'RebuildStruct',
-  ProcessQuery = 'ProcessQuery'
+
+  BuildChart = 'BuildChart',
+  BuildDashboard = 'BuildDashboard',
+
+  BuildStoreField = 'BuildStoreField',
+  BuildDashboardField = 'BuildDashboardField',
+  BuildReportField = 'BuildReportField',
+
+  BuildDashboardTileCharts = 'BuildDashboardTileCharts',
+  BuildChartTileCharts = 'BuildChartTileCharts',
+  BuildReportCharts = 'BuildReportCharts',
+
+  BuildModelMetric = 'BuildModelMetric',
+
+  BuildModStart = 'BuildModStart',
+
+  BuildReport = 'BuildReport',
+
+  BuildStoreNext = 'BuildStoreNext',
+  BuildStoreStart = 'BuildStoreStart',
+
+  BuildDashboardTile = 'BuildDashboardTile',
+  BuildChartTile = 'BuildChartTile',
+  BuildYaml = 'BuildYaml',
+
+  BuildCheckVmdSuggestModelDimension = 'BuildCheckVmdSuggestModelDimension'
 }

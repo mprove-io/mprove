@@ -1,14 +1,15 @@
-import { common } from '~blockml/barrels/common';
+import { ErTitleEnum } from '~common/enums/special/er-title.enum';
+import { FileErrorLine } from '~common/interfaces/blockml/internal/file-error-line';
 
 export class BmError {
-  title: common.ErTitleEnum;
+  title: ErTitleEnum;
   message: string;
-  lines: common.FileErrorLine[];
+  lines: FileErrorLine[];
 
   constructor(item: {
-    title: common.ErTitleEnum;
+    title: ErTitleEnum;
     message: string;
-    lines: common.FileErrorLine[];
+    lines: FileErrorLine[];
   }) {
     this.title = item.title;
     this.message = item.message;

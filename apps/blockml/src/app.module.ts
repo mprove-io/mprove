@@ -1,14 +1,22 @@
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { constants } from '~blockml/barrels/constants';
+import { SRC_PATH } from '~common/constants/top-blockml';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
+import { CallerEnum } from '~common/enums/special/caller.enum';
+import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
+import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
+import { BmlFile } from '~common/interfaces/blockml/bml-file';
+import { File3 } from '~common/interfaces/blockml/internal/file-3';
+import { Preset } from '~common/interfaces/blockml/preset';
 import { appControllers } from './app-controllers';
 import { appServices } from './app-services';
-import { barYaml } from './barrels/bar-yaml';
-import { common } from './barrels/common';
-import { interfaces } from './barrels/interfaces';
 import { getConfig } from './config/get.config';
-import { logToConsoleBlockml } from './functions/log-to-console-blockml';
+import { collectFiles } from './functions/build-yaml/collect-files';
+import { makeLineNumbers } from './functions/build-yaml/make-line-numbers';
+import { yamlToObjects } from './functions/build-yaml/yaml-to-objects';
+import { logToConsoleBlockml } from './functions/extra/log-to-console-blockml';
 import { BmError } from './models/bm-error';
 import { PresetsService } from './services/presets.service';
 
@@ -20,27 +28,27 @@ import { PresetsService } from './services/presets.service';
     }),
 
     RabbitMQModule.forRootAsync(RabbitMQModule, {
-      useFactory: (cs: ConfigService<interfaces.Config>) => {
+      useFactory: (cs: ConfigService<BlockmlConfig>) => {
         let rabbitUser =
-          cs.get<interfaces.Config['blockmlRabbitUser']>('blockmlRabbitUser');
+          cs.get<BlockmlConfig['blockmlRabbitUser']>('blockmlRabbitUser');
         let rabbitPass =
-          cs.get<interfaces.Config['blockmlRabbitPass']>('blockmlRabbitPass');
+          cs.get<BlockmlConfig['blockmlRabbitPass']>('blockmlRabbitPass');
         let rabbitPort =
-          cs.get<interfaces.Config['blockmlRabbitPort']>('blockmlRabbitPort');
+          cs.get<BlockmlConfig['blockmlRabbitPort']>('blockmlRabbitPort');
         let rabbitHost =
-          cs.get<interfaces.Config['blockmlRabbitHost']>('blockmlRabbitHost');
-        let rabbitProtocol = cs.get<interfaces.Config['blockmlRabbitProtocol']>(
+          cs.get<BlockmlConfig['blockmlRabbitHost']>('blockmlRabbitHost');
+        let rabbitProtocol = cs.get<BlockmlConfig['blockmlRabbitProtocol']>(
           'blockmlRabbitProtocol'
         );
 
         return {
           exchanges: [
             {
-              name: common.RabbitExchangesEnum.Blockml.toString(),
+              name: RabbitExchangesEnum.Blockml.toString(),
               type: 'direct'
             },
             {
-              name: common.RabbitExchangesEnum.BlockmlWorker.toString(),
+              name: RabbitExchangesEnum.BlockmlWorker.toString(),
               type: 'direct'
             }
           ],
@@ -73,7 +81,7 @@ export class AppModule implements OnModuleInit {
   async onModuleInit() {
     logToConsoleBlockml({
       log: `NODE_ENV is set to "${process.env.NODE_ENV}"`,
-      logLevel: common.LogLevelEnum.Info,
+      logLevel: LogLevelEnum.Info,
       logger: this.logger,
       cs: this.cs
     });
@@ -81,23 +89,23 @@ export class AppModule implements OnModuleInit {
     try {
       let errors: BmError[] = [];
 
-      let presetFiles: common.BmlFile[] = await barYaml.collectFiles(
+      let presetFiles: BmlFile[] = await collectFiles(
         {
-          dir: `${constants.SRC_PATH}/presets`,
+          dir: `${SRC_PATH}/presets`,
           repoDir: undefined,
           structId: undefined,
-          caller: common.CallerEnum.AppModule,
+          caller: CallerEnum.AppModule,
           skipLog: true
         },
         this.cs
       );
 
-      let filesAny: any[] = barYaml.yamlToObjects(
+      let filesAny: any[] = yamlToObjects(
         {
           file3s: presetFiles.map(y => {
             let pathParts = y.path.split('.');
 
-            let f: common.File3 = {
+            let f: File3 = {
               ext: `.${pathParts.slice(1).join('.')}` as any,
               name: y.name,
               path: y.path,
@@ -107,23 +115,23 @@ export class AppModule implements OnModuleInit {
           }),
           structId: undefined,
           errors: errors,
-          caller: common.CallerEnum.AppModule
+          caller: CallerEnum.AppModule
         },
         this.cs
       );
 
-      filesAny = barYaml.makeLineNumbers(
+      filesAny = makeLineNumbers(
         {
           filesAny: filesAny,
           structId: undefined,
           errors: errors,
-          caller: common.CallerEnum.AppModule,
+          caller: CallerEnum.AppModule,
           isSetLineNumToZero: true
         },
         this.cs
       );
 
-      let presets: common.Preset[] = [];
+      let presets: Preset[] = [];
 
       if (errors.length > 0) {
         console.log(errors);
@@ -139,7 +147,7 @@ export class AppModule implements OnModuleInit {
                 ? x.name
                     .split('.')[0]
                     .split('_')
-                    .map((word: string) => common.capitalizeFirstLetter(word))
+                    .map((word: string) => capitalizeFirstLetter(word))
                     .join(' ')
                 : x.name);
 
@@ -147,7 +155,7 @@ export class AppModule implements OnModuleInit {
             delete x.path;
             delete x.ext;
 
-            let preset: common.Preset = {
+            let preset: Preset = {
               presetId: presetId,
               path: path,
               label: label,
@@ -166,7 +174,7 @@ export class AppModule implements OnModuleInit {
     } catch (e) {
       logToConsoleBlockml({
         log: e,
-        logLevel: common.LogLevelEnum.Error,
+        logLevel: LogLevelEnum.Error,
         logger: this.logger,
         cs: this.cs
       });

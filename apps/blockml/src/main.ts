@@ -1,18 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { WinstonModule } from 'nest-winston';
+import { APP_NAME_BLOCKML } from '~common/constants/top-blockml';
+import { BoolEnum } from '~common/enums/bool.enum';
+import { ErEnum } from '~common/enums/er.enum';
+import { getLoggerOptions } from '~node-common/functions/get-logger-options';
+import { listenProcessEvents } from '~node-common/functions/listen-process-events';
 import { AppModule } from './app.module';
-import { common } from './barrels/common';
-import { constants } from './barrels/constants';
-import { nodeCommon } from './barrels/node-common';
 import { getConfig } from './config/get.config';
-import { logToConsoleBlockml } from './functions/log-to-console-blockml';
+import { logToConsoleBlockml } from './functions/extra/log-to-console-blockml';
 
 async function bootstrap() {
-  nodeCommon.listenProcessEvents({
-    appTerminated: common.ErEnum.BLOCKML_APP_TERMINATED,
-    uncaughtException: common.ErEnum.BLOCKML_UNCAUGHT_EXCEPTION,
-    unhandledRejectionReason: common.ErEnum.BLOCKML_UNHANDLED_REJECTION_REASON,
-    unhandledRejection: common.ErEnum.BLOCKML_UNHANDLED_REJECTION_ERROR,
+  listenProcessEvents({
+    appTerminated: ErEnum.BLOCKML_APP_TERMINATED,
+    uncaughtException: ErEnum.BLOCKML_UNCAUGHT_EXCEPTION,
+    unhandledRejectionReason: ErEnum.BLOCKML_UNHANDLED_REJECTION_REASON,
+    unhandledRejection: ErEnum.BLOCKML_UNHANDLED_REJECTION_ERROR,
     logToConsoleFn: logToConsoleBlockml
   });
 
@@ -20,9 +22,9 @@ async function bootstrap() {
 
   let app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger(
-      nodeCommon.getLoggerOptions({
-        appName: constants.APP_NAME_BLOCKML,
-        isJson: config.blockmlLogIsJson === common.BoolEnum.TRUE
+      getLoggerOptions({
+        appName: APP_NAME_BLOCKML,
+        isJson: config.blockmlLogIsJson === BoolEnum.TRUE
       })
     )
   });

@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { helper } from './barrels/helper';
-import { interfaces } from './barrels/interfaces';
+import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { RebuildStructService } from './controllers/rebuild-struct/rebuild-struct.service';
+import { isSingleOrMain } from './functions/extra/is-single-or-main';
 import { ConsumerMainService } from './services/consumer-main.service';
 import { PresetsService } from './services/presets.service';
 import { RabbitService } from './services/rabbit.service';
@@ -13,12 +13,12 @@ export const appServices = [
   {
     provide: RebuildStructService,
     useFactory: (
-      cs: ConfigService<interfaces.Config>,
+      cs: ConfigService<BlockmlConfig>,
       rabbitService: RabbitService,
       presetsService: PresetsService,
       logger: Logger
     ) =>
-      helper.isSingleOrMain(cs)
+      isSingleOrMain(cs)
         ? new RebuildStructService(rabbitService, presetsService, cs, logger)
         : {},
     inject: [ConfigService, RabbitService, PresetsService]
@@ -26,11 +26,11 @@ export const appServices = [
   {
     provide: ConsumerMainService,
     useFactory: (
-      cs: ConfigService<interfaces.Config>,
+      cs: ConfigService<BlockmlConfig>,
       structService: RebuildStructService,
       logger: Logger
     ) => {
-      let result = helper.isSingleOrMain(cs)
+      let result = isSingleOrMain(cs)
         ? new ConsumerMainService(cs, structService, logger)
         : {};
       return result;

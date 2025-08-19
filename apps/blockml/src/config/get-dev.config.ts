@@ -1,44 +1,42 @@
 import { parse } from 'dotenv';
 import * as fse from 'fs-extra';
-import { common } from '~blockml/barrels/common';
-import { enums } from '~blockml/barrels/enums';
-import { interfaces } from '~blockml/barrels/interfaces';
+import { BoolEnum } from '~common/enums/bool.enum';
+import { BlockmlEnvEnum } from '~common/enums/env/blockml-env.enum';
+import { FuncEnum } from '~common/enums/special/func.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 
 export function getDevConfig(envFilePath: any) {
   let envFile: any = {};
 
-  if (common.isDefined(envFilePath)) {
+  if (isDefined(envFilePath)) {
     envFile = parse(fse.readFileSync(envFilePath));
   }
 
-  let devConfig: interfaces.Config = {
-    blockmlEnv: <enums.BlockmlEnvEnum>(
+  let devConfig: BlockmlConfig = {
+    blockmlEnv: <BlockmlEnvEnum>(
       (process.env.BLOCKML_ENV || envFile.BLOCKML_ENV)
     ),
-    logIO: <common.BoolEnum>(
-      (process.env.BLOCKML_LOG_IO || envFile.BLOCKML_LOG_IO)
-    ),
-    logFunc: <common.FuncEnum>(
+    logIO: <BoolEnum>(process.env.BLOCKML_LOG_IO || envFile.BLOCKML_LOG_IO),
+    logFunc: <FuncEnum>(
       (process.env.BLOCKML_LOG_FUNC || envFile.BLOCKML_LOG_FUNC)
     ),
-    copyLogsToModels: <common.BoolEnum>(
+    copyLogsToModels: <BoolEnum>(
       (process.env.BLOCKML_COPY_LOGS_TO_MODELS ||
         envFile.BLOCKML_COPY_LOGS_TO_MODELS)
     ),
-    logsPath: <common.BoolEnum>(
+    logsPath: <BoolEnum>(
       (process.env.BLOCKML_LOGS_PATH || envFile.BLOCKML_LOGS_PATH)
     ),
-    isSingle: <common.BoolEnum>(
+    isSingle: <BoolEnum>(
       (process.env.BLOCKML_IS_SINGLE || envFile.BLOCKML_IS_SINGLE)
     ),
-    isMain: <common.BoolEnum>(
-      (process.env.BLOCKML_IS_MAIN || envFile.BLOCKML_IS_MAIN)
-    ),
-    isWorker: <common.BoolEnum>(
+    isMain: <BoolEnum>(process.env.BLOCKML_IS_MAIN || envFile.BLOCKML_IS_MAIN),
+    isWorker: <BoolEnum>(
       (process.env.BLOCKML_IS_WORKER || envFile.BLOCKML_IS_WORKER)
     ),
     concurrencyLimit: Number(
-      common.isDefined(process.env.BLOCKML_CONCURRENCY_LIMIT)
+      isDefined(process.env.BLOCKML_CONCURRENCY_LIMIT)
         ? process.env.BLOCKML_CONCURRENCY_LIMIT
         : envFile.BLOCKML_CONCURRENCY_LIMIT
     ),
@@ -76,14 +74,14 @@ export function getDevConfig(envFilePath: any) {
       process.env.BLOCKML_TESTS_DWH_POSTGRES_DATABASE_NAME ||
       envFile.BLOCKML_TESTS_DWH_POSTGRES_DATABASE_NAME,
 
-    blockmlLogIsJson: <common.BoolEnum>(
+    blockmlLogIsJson: <BoolEnum>(
       (process.env.BLOCKML_LOG_IS_JSON || envFile.BLOCKML_LOG_IS_JSON)
     ),
-    blockmlLogResponseError: <common.BoolEnum>(
+    blockmlLogResponseError: <BoolEnum>(
       (process.env.BLOCKML_LOG_RESPONSE_ERROR ||
         envFile.BLOCKML_LOG_RESPONSE_ERROR)
     ),
-    blockmlLogResponseOk: <common.BoolEnum>(
+    blockmlLogResponseOk: <BoolEnum>(
       (process.env.BLOCKML_LOG_RESPONSE_OK || envFile.BLOCKML_LOG_RESPONSE_OK)
     )
   };

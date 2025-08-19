@@ -1,3 +1,3 @@
-import { controllers } from './barrels/controllers';
+import { RebuildStructController } from './controllers/rebuild-struct/rebuild-struct.controller';
 
-export const appControllers = [controllers.RebuildStructController];
+export const appControllers = [RebuildStructController];

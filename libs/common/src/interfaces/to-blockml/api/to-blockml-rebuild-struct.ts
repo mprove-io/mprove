@@ -19,6 +19,7 @@ import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 import { Preset } from '~common/interfaces/blockml/preset';
 import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 import { Query } from '~common/interfaces/blockml/query';
+import { Report } from '~common/interfaces/blockml/report';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ToBlockmlRequest } from '../to-blockml-request';
 
