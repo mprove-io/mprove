@@ -3,10 +3,6 @@ import {
   SourceDef as MalloySourceDef
 } from '@malloydata/malloy';
 import { ModelEntryValueWithSource } from '@malloydata/malloy-interfaces';
-import {
-  FieldItem,
-  getFieldItems
-} from '~blockml/functions/source-to-field-items';
 import { MF } from '~common/constants/top';
 import { ParameterEnum } from '~common/enums/docs/parameter.enum';
 import { FieldClassEnum } from '~common/enums/field-class.enum';
@@ -26,6 +22,7 @@ import { KeyValuePair } from '~common/interfaces/blockml/key-value-pair';
 import { Model } from '~common/interfaces/blockml/model';
 import { ModelField } from '~common/interfaces/blockml/model-field';
 import { ModelNode } from '~common/interfaces/blockml/model-node';
+import { FieldItem, getFieldItems } from '../extra/source-to-field-items';
 import { wrapField } from './wrap-field';
 import { wrapFieldItem } from './wrap-field-item';
 

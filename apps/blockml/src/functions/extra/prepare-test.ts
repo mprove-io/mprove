@@ -96,14 +96,14 @@ export async function prepareTest(
   let fromDir = `${logsPath}/${caller}/${f}/${structId}`;
   fse.emptyDirSync(fromDir);
 
-  let dataDir = `${SRC_PATH}/models/${pack}/tests/${f}/data/${testId}`;
+  let dataDir = `${SRC_PATH}/functions/${pack}/tests/${f}/data/${testId}`;
 
   let toDir =
     copyLogsToModels === BoolEnum.FALSE
       ? null
       : isDefined(connection)
-        ? `${SRC_PATH}/models/${pack}/tests/${f}/logs/${testId}/${connection.type}`
-        : `${SRC_PATH}/models/${pack}/tests/${f}/logs/${testId}`;
+        ? `${SRC_PATH}/functions/${pack}/tests/${f}/logs/${testId}/${connection.type}`
+        : `${SRC_PATH}/functions/${pack}/tests/${f}/logs/${testId}`;
 
   return {
     structService: structService,

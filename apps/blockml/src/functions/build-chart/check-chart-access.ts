@@ -1,4 +1,3 @@
-import { log } from 'console';
 import { ConfigService } from '@nestjs/config';
 import { BmError } from '~blockml/models/bm-error';
 import { CallerEnum } from '~common/enums/special/caller.enum';
@@ -7,6 +6,7 @@ import { LogTypeEnum } from '~common/enums/special/log-type.enum';
 import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { FileChart } from '~common/interfaces/blockml/internal/file-chart';
 import { checkAccess } from '../extra/check-access';
+import { log } from '../extra/log';
 
 let func = FuncEnum.CheckChartAccess;
 

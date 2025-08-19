@@ -13,9 +13,19 @@ import {
 import { ConfigService } from '@nestjs/config';
 import * as fse from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
-import { nodeCommon } from '~blockml/barrels/node-common';
 import { BmError } from '~blockml/models/bm-error';
+import { CallerEnum } from '~common/enums/special/caller.enum';
+import { ErTitleEnum } from '~common/enums/special/er-title.enum';
+import { FuncEnum } from '~common/enums/special/func.enum';
+import { LogTypeEnum } from '~common/enums/special/log-type.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
+import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
+import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 import { WrapResult } from '~common/interfaces/wrap-result';
+import { errorToWrapResult } from '~node-common/functions/error-to-wrap-result';
+import { getWrapResult } from '~node-common/functions/get-wrap-result';
+import { log } from '../extra/log';
 
 let func = FuncEnum.BuildMods;
 
@@ -33,6 +43,7 @@ export async function buildMods(
   cs: ConfigService<BlockmlConfig>
 ) {
   let { caller, structId, projectId } = item;
+
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   let newMods: FileMod[] = [];
@@ -66,11 +77,9 @@ export async function buildMods(
     let modelUrl = new URL('file://' + fullModelPath);
 
     promises.push(
-      nodeCommon
-        .getWrapResult<MalloyModel>({
-          promise: runtime.getModel(modelUrl)
-        })
-        .catch(e => errorToWrapResult<MalloyModel>(e))
+      getWrapResult<MalloyModel>({
+        promise: runtime.getModel(modelUrl)
+      }).catch(e => errorToWrapResult<MalloyModel>(e))
     );
   });
 

@@ -1,9 +1,24 @@
 import { PostgresConnection } from '@malloydata/db-postgres';
 import { ConfigService } from '@nestjs/config';
-import { barTile } from '~blockml/barrels/bar-tile';
 import { BmError } from '~blockml/models/bm-error';
 import { RabbitService } from '~blockml/services/rabbit.service';
+import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
+import { CallerEnum } from '~common/enums/special/caller.enum';
+import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
+import { BmlFile } from '~common/interfaces/blockml/bml-file';
+import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
+import { FileStore } from '~common/interfaces/blockml/internal/file-store';
+import { Model } from '~common/interfaces/blockml/model';
 import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
+import { dcType } from '~common/types/dc-type';
+import { checkLimit } from './check-limit';
+import { checkSelectElements } from './check-select-elements';
+import { checkSorts } from './check-sorts';
+import { checkTileIsObject } from './check-tile-is-object';
+import { checkTileParameters } from './check-tile-parameters';
+import { checkTileTitleModelSelect } from './check-tile-title-model-select';
+import { checkTileUnknownParameters } from './check-tile-unknown-parameters';
+import { fetchSql } from './fetch-sql';
 
 export async function buildTile<T extends dcType>(
   item: {
@@ -30,7 +45,7 @@ export async function buildTile<T extends dcType>(
 ) {
   let entities = item.entities;
 
-  entities = barTile.checkTileIsObject(
+  entities = checkTileIsObject(
     {
       entities: entities,
       structId: item.structId,
@@ -40,7 +55,7 @@ export async function buildTile<T extends dcType>(
     cs
   );
 
-  entities = barTile.checkTileUnknownParameters(
+  entities = checkTileUnknownParameters(
     {
       entities: entities,
       structId: item.structId,
@@ -50,19 +65,7 @@ export async function buildTile<T extends dcType>(
     cs
   );
 
-  entities = barTile.checkTileTitleModelSelect(
-    {
-      entities: entities,
-      apiModels: item.apiModels,
-      stores: item.stores,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
-
-  entities = barTile.checkSelectElements(
+  entities = checkTileTitleModelSelect(
     {
       entities: entities,
       apiModels: item.apiModels,
@@ -74,7 +77,19 @@ export async function buildTile<T extends dcType>(
     cs
   );
 
-  entities = barTile.checkSorts(
+  entities = checkSelectElements(
+    {
+      entities: entities,
+      apiModels: item.apiModels,
+      stores: item.stores,
+      structId: item.structId,
+      errors: item.errors,
+      caller: item.caller
+    },
+    cs
+  );
+
+  entities = checkSorts(
     {
       entities: entities,
       apiModels: item.apiModels,
@@ -85,7 +100,7 @@ export async function buildTile<T extends dcType>(
     cs
   );
 
-  entities = barTile.checkLimit(
+  entities = checkLimit(
     {
       entities: entities,
       structId: item.structId,
@@ -95,7 +110,7 @@ export async function buildTile<T extends dcType>(
     cs
   );
 
-  entities = barTile.checkTileParameters(
+  entities = checkTileParameters(
     {
       entities: entities,
       caseSensitiveStringFilters: item.caseSensitiveStringFilters,
@@ -110,7 +125,7 @@ export async function buildTile<T extends dcType>(
     cs
   );
 
-  entities = await barTile.fetchSql(
+  entities = await fetchSql(
     {
       traceId: item.traceId,
       entities: entities,

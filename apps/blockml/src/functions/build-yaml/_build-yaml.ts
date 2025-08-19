@@ -1,6 +1,27 @@
 import { ConfigService } from '@nestjs/config';
-import { barYaml } from '~blockml/barrels/bar-yaml';
 import { BmError } from '~blockml/models/bm-error';
+import { FileExtensionEnum } from '~common/enums/file-extension.enum';
+import { CallerEnum } from '~common/enums/special/caller.enum';
+import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
+import { BmlFile } from '~common/interfaces/blockml/bml-file';
+import { File2 } from '~common/interfaces/blockml/internal/file-2';
+import { File3 } from '~common/interfaces/blockml/internal/file-3';
+import { FileChart } from '~common/interfaces/blockml/internal/file-chart';
+import { FileDashboard } from '~common/interfaces/blockml/internal/file-dashboard';
+import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
+import { FileProjectConf } from '~common/interfaces/blockml/internal/file-project-conf';
+import { FileReport } from '~common/interfaces/blockml/internal/file-report';
+import { FileStore } from '~common/interfaces/blockml/internal/file-store';
+import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
+import { checkConnections } from './check-connections';
+import { checkProjectConfig } from './check-project-config';
+import { checkTopUnknownParameters } from './check-top-unknown-parameters';
+import { checkTopValues } from './check-top-values';
+import { deduplicateFileNames } from './deduplicate-file-names';
+import { makeLineNumbers } from './make-line-numbers';
+import { removeWrongExt } from './remove-wrong-ext';
+import { splitFiles } from './split-files';
+import { yamlToObjects } from './yaml-to-objects';
 
 export function buildYaml(
   item: {
@@ -20,7 +41,7 @@ export function buildYaml(
   let charts: FileChart[];
   let confs: FileProjectConf[];
 
-  let file2s: File2[] = barYaml.removeWrongExt(
+  let file2s: File2[] = removeWrongExt(
     {
       files: item.files,
       structId: item.structId,
@@ -30,7 +51,7 @@ export function buildYaml(
     cs
   );
 
-  let file3s: File3[] = barYaml.deduplicateFileNames(
+  let file3s: File3[] = deduplicateFileNames(
     {
       file2s: file2s,
       structId: item.structId,
@@ -40,7 +61,7 @@ export function buildYaml(
     cs
   );
 
-  let filesAny: any[] = barYaml.yamlToObjects(
+  let filesAny: any[] = yamlToObjects(
     {
       file3s: file3s.filter(
         x =>
@@ -59,7 +80,7 @@ export function buildYaml(
     cs
   );
 
-  filesAny = barYaml.makeLineNumbers(
+  filesAny = makeLineNumbers(
     {
       filesAny: filesAny,
       structId: item.structId,
@@ -69,7 +90,7 @@ export function buildYaml(
     cs
   );
 
-  filesAny = barYaml.checkTopUnknownParameters(
+  filesAny = checkTopUnknownParameters(
     {
       filesAny: filesAny,
       structId: item.structId,
@@ -79,7 +100,7 @@ export function buildYaml(
     cs
   );
 
-  filesAny = barYaml.checkTopValues(
+  filesAny = checkTopValues(
     {
       filesAny: filesAny,
       structId: item.structId,
@@ -89,7 +110,7 @@ export function buildYaml(
     cs
   );
 
-  filesAny = barYaml.checkConnections(
+  filesAny = checkConnections(
     {
       filesAny: filesAny,
       connections: item.connections,
@@ -100,7 +121,7 @@ export function buildYaml(
     cs
   );
 
-  let splitFilesResult = barYaml.splitFiles(
+  let splitFilesResult = splitFiles(
     {
       filesAny: filesAny,
       structId: item.structId,
@@ -117,7 +138,7 @@ export function buildYaml(
   reports = splitFilesResult.reports;
   charts = splitFilesResult.charts;
 
-  let projectConfig = barYaml.checkProjectConfig(
+  let projectConfig = checkProjectConfig(
     {
       confs: confs,
       structId: item.structId,

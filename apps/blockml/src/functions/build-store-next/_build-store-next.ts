@@ -1,6 +1,10 @@
 import { ConfigService } from '@nestjs/config';
-import { barStoreNext } from '~blockml/barrels/bar-store-next';
 import { BmError } from '~blockml/models/bm-error';
+import { CallerEnum } from '~common/enums/special/caller.enum';
+import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
+import { FileStore } from '~common/interfaces/blockml/internal/file-store';
+import { checkStoreBuildMetrics } from './check-store-build-metrics';
+import { checkStoreRequiredParameters } from './check-store-required-parameters';
 
 export function buildStoreNext(
   item: {
@@ -13,7 +17,7 @@ export function buildStoreNext(
 ) {
   let stores = item.stores;
 
-  stores = barStoreNext.checkStoreBuildMetrics(
+  stores = checkStoreBuildMetrics(
     {
       stores: stores,
       structId: item.structId,
@@ -23,7 +27,7 @@ export function buildStoreNext(
     cs
   );
 
-  stores = barStoreNext.checkStoreRequiredParameters(
+  stores = checkStoreRequiredParameters(
     {
       stores: stores,
       structId: item.structId,

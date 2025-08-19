@@ -1,8 +1,19 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
+import { logToConsoleBlockml } from '~blockml/functions/extra/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/extra/prepare-test';
+import { readLog } from '~blockml/functions/extra/read-log';
 import { BmError } from '~blockml/models/bm-error';
+import { PROJECT_ENV_PROD } from '~common/constants/top';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { CallerEnum } from '~common/enums/special/caller.enum';
+import { ErTitleEnum } from '~common/enums/special/er-title.enum';
+import { FuncEnum } from '~common/enums/special/func.enum';
+import { LogTypeEnum } from '~common/enums/special/log-type.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { FileReport } from '~common/interfaces/blockml/internal/file-report';
+import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 
 let caller = CallerEnum.BuildReport;
 let func = FuncEnum.CheckReportRowUnknownParams;

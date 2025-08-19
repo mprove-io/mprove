@@ -1,6 +1,18 @@
 import { ConfigService } from '@nestjs/config';
-import { barMconfigChart } from '~blockml/barrels/bar-mconfig-chart';
 import { BmError } from '~blockml/models/bm-error';
+import { CallerEnum } from '~common/enums/special/caller.enum';
+import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
+import { FileStore } from '~common/interfaces/blockml/internal/file-store';
+import { Model } from '~common/interfaces/blockml/model';
+import { drcType } from '~common/types/drc-type';
+import { checkChartData } from './check-chart-data';
+import { checkChartDataParameters } from './check-chart-data-parameters';
+import { checkChartOptionsParameters } from './check-chart-options-parameters';
+import { checkChartOptionsSeriesParameters } from './check-chart-options-series-parameters';
+import { checkChartOptionsXAxisParameters } from './check-chart-options-x-axis-parameters';
+import { checkChartOptionsYAxisParameters } from './check-chart-options-y-axis-parameters';
+import { checkChartPlateParameters } from './check-chart-plate-parameters';
+import { checkChartType } from './check-chart-type';
 
 export function buildMconfigChart<T extends drcType>(
   item: {
@@ -19,7 +31,7 @@ export function buildMconfigChart<T extends drcType>(
     item.caller === CallerEnum.BuildDashboardTileCharts ||
     item.caller === CallerEnum.BuildChartTileCharts
   ) {
-    entities = barMconfigChart.checkChartType(
+    entities = checkChartType(
       {
         entities: entities,
         structId: item.structId,
@@ -29,7 +41,7 @@ export function buildMconfigChart<T extends drcType>(
       cs
     );
 
-    entities = barMconfigChart.checkChartData(
+    entities = checkChartData(
       {
         entities: entities,
         structId: item.structId,
@@ -39,7 +51,7 @@ export function buildMconfigChart<T extends drcType>(
       cs
     );
 
-    entities = barMconfigChart.checkChartDataParameters(
+    entities = checkChartDataParameters(
       {
         entities: entities,
         apiModels: item.apiModels,
@@ -51,7 +63,7 @@ export function buildMconfigChart<T extends drcType>(
       cs
     );
 
-    entities = barMconfigChart.checkChartPlateParameters(
+    entities = checkChartPlateParameters(
       {
         entities: entities,
         structId: item.structId,
@@ -62,7 +74,7 @@ export function buildMconfigChart<T extends drcType>(
     );
   }
 
-  entities = barMconfigChart.checkChartOptionsParameters(
+  entities = checkChartOptionsParameters(
     {
       entities: entities,
       structId: item.structId,
@@ -72,7 +84,7 @@ export function buildMconfigChart<T extends drcType>(
     cs
   );
 
-  entities = barMconfigChart.checkChartOptionsXAxisParameters(
+  entities = checkChartOptionsXAxisParameters(
     {
       entities: entities,
       structId: item.structId,
@@ -82,7 +94,7 @@ export function buildMconfigChart<T extends drcType>(
     cs
   );
 
-  entities = barMconfigChart.checkChartOptionsYAxisParameters(
+  entities = checkChartOptionsYAxisParameters(
     {
       entities: entities,
       structId: item.structId,
@@ -92,7 +104,7 @@ export function buildMconfigChart<T extends drcType>(
     cs
   );
 
-  entities = barMconfigChart.checkChartOptionsSeriesParameters(
+  entities = checkChartOptionsSeriesParameters(
     {
       entities: entities,
       structId: item.structId,
