@@ -9,7 +9,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { IsTimezone } from '~common/functions/is-timezone';
 import { Filter } from './filter';
 import { MconfigChart } from './mconfig-chart';
@@ -29,8 +29,8 @@ export class Mconfig {
   @IsString()
   modelId: string;
 
-  @IsEnum(enums.ModelTypeEnum)
-  modelType: enums.ModelTypeEnum;
+  @IsEnum(ModelTypeEnum)
+  modelType: ModelTypeEnum;
 
   // @IsBoolean()
   // isStoreModel: boolean;

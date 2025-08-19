@@ -1,6 +1,8 @@
 import * as fse from 'fs-extra';
 import { load } from 'js-yaml';
-import { common } from '~node-common/barrels/common';
+import { MPROVE_CONFIG_DIR_DOT_SLASH } from '~common/constants/top';
+import { isUndefined } from '~common/functions/is-undefined';
+import { MyRegex } from '~common/models/my-regex';
 import { readFileCheckSize } from './read-file-check-size';
 
 export async function getMproveDir(item: { dir: string; configPath: string }) {
@@ -30,16 +32,16 @@ export async function getMproveDir(item: { dir: string; configPath: string }) {
 
   if (
     breakOnYamlParsing === true ||
-    common.isUndefined(parsedYaml) ||
+    isUndefined(parsedYaml) ||
     parsedYaml.constructor !== Object
   ) {
     return undefined;
   } else {
-    if (common.isUndefined(parsedYaml.mprove_dir)) {
+    if (isUndefined(parsedYaml.mprove_dir)) {
       return undefined;
     }
 
-    if (parsedYaml.mprove_dir === common.MPROVE_CONFIG_DIR_DOT_SLASH) {
+    if (parsedYaml.mprove_dir === MPROVE_CONFIG_DIR_DOT_SLASH) {
       return item.dir;
     }
 
@@ -47,12 +49,12 @@ export async function getMproveDir(item: { dir: string; configPath: string }) {
 
     if (
       mdir.length > 2 &&
-      mdir.substring(0, 2) === common.MPROVE_CONFIG_DIR_DOT_SLASH
+      mdir.substring(0, 2) === MPROVE_CONFIG_DIR_DOT_SLASH
     ) {
       mdir = mdir.substring(2);
     }
 
-    if (mdir.match(common.MyRegex.CONTAINS_DOT())) {
+    if (mdir.match(MyRegex.CONTAINS_DOT())) {
       return undefined;
     }
 

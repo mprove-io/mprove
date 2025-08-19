@@ -1,4 +1,5 @@
-import { enums } from '~common/barrels/enums';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
 import { Fraction } from '../fraction';
 import { FileFraction } from './file-fraction';
 
@@ -15,7 +16,7 @@ export interface FieldFilter {
   // sql?: string;
   // sql_line_num?: number;
 
-  result?: enums.FieldResultEnum;
+  result?: FieldResultEnum;
   result_line_num?: number;
 
   store_model?: string;
@@ -43,5 +44,5 @@ export interface FieldFilter {
 
   name?: string;
   name_line_num?: number;
-  fieldClass?: enums.FieldClassEnum;
+  fieldClass?: FieldClassEnum;
 }

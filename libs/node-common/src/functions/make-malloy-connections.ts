@@ -1,8 +1,10 @@
 import { PostgresConnection } from '@malloydata/db-postgres';
-import { common } from '~node-common/barrels/common';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 
 export function makeMalloyConnections(item: {
-  connections: common.ProjectConnection[];
+  connections: ProjectConnection[];
 }) {
   let malloyConnections: PostgresConnection[] = [];
 
@@ -10,7 +12,7 @@ export function makeMalloyConnections(item: {
     // TODO: more connection types
 
     let mConnection =
-      c.type === common.ConnectionTypeEnum.PostgreSQL
+      c.type === ConnectionTypeEnum.PostgreSQL
         ? new PostgresConnection(c.connectionId, () => ({}), {
             host: c.host,
             port: c.port,
@@ -20,7 +22,7 @@ export function makeMalloyConnections(item: {
           })
         : undefined;
 
-    if (common.isDefined(mConnection)) {
+    if (isDefined(mConnection)) {
       malloyConnections.push(mConnection);
     }
 

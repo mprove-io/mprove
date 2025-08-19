@@ -7,7 +7,10 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { FieldTypeEnum } from '~common/enums/field-type.enum';
 import { KeyValuePair } from './key-value-pair';
 
 export class ModelField {
@@ -47,11 +50,11 @@ export class ModelField {
   @IsString()
   label: string;
 
-  @IsEnum(enums.FieldClassEnum)
-  fieldClass: enums.FieldClassEnum;
+  @IsEnum(FieldClassEnum)
+  fieldClass: FieldClassEnum;
 
-  @IsEnum(enums.FieldResultEnum)
-  result: enums.FieldResultEnum;
+  @IsEnum(FieldResultEnum)
+  result: FieldResultEnum;
 
   @IsOptional()
   @IsString()
@@ -71,8 +74,8 @@ export class ModelField {
   description?: string;
 
   @IsOptional()
-  @IsEnum(enums.FieldTypeEnum)
-  type?: enums.FieldTypeEnum;
+  @IsEnum(FieldTypeEnum)
+  type?: FieldTypeEnum;
 
   @IsOptional()
   @IsString()
@@ -108,5 +111,5 @@ export class ModelField {
 
   @IsOptional()
   @IsString()
-  detail?: enums.DetailUnitEnum;
+  detail?: DetailUnitEnum;
 }

@@ -1,10 +1,11 @@
-import { common } from '~node-common/barrels/common';
+import { FractionTsUnitEnum } from '~common/enums/fraction/fraction-ts-unit.enum';
+import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { timeRangeMakeCurrentTimestamps } from './time-range-make-current-timestamps';
 
 export function getCurrentUnitStartTs(item: {
-  unit: common.FractionTsUnitEnum;
+  unit: FractionTsUnitEnum;
   timezone: string;
-  weekStart: common.ProjectWeekStartEnum;
+  weekStart: ProjectWeekStartEnum;
 }) {
   let { unit, timezone, weekStart } = item;
 
@@ -14,21 +15,21 @@ export function getCurrentUnitStartTs(item: {
   });
 
   let currentUnitStartTs =
-    unit === common.FractionTsUnitEnum.Years
+    unit === FractionTsUnitEnum.Years
       ? timestampsResult.currentYearTs
-      : unit === common.FractionTsUnitEnum.Quarters
+      : unit === FractionTsUnitEnum.Quarters
         ? timestampsResult.currentQuarterTs
-        : unit === common.FractionTsUnitEnum.Months
+        : unit === FractionTsUnitEnum.Months
           ? timestampsResult.currentMonthTs
-          : unit === common.FractionTsUnitEnum.Weeks
+          : unit === FractionTsUnitEnum.Weeks
             ? timestampsResult.currentWeekStartTs
-            : unit === common.FractionTsUnitEnum.Days
+            : unit === FractionTsUnitEnum.Days
               ? timestampsResult.currentDateTs
-              : unit === common.FractionTsUnitEnum.Hours
+              : unit === FractionTsUnitEnum.Hours
                 ? timestampsResult.currentHourTs
-                : unit === common.FractionTsUnitEnum.Minutes
+                : unit === FractionTsUnitEnum.Minutes
                   ? timestampsResult.currentMinuteTs
-                  : unit === common.FractionTsUnitEnum.Seconds
+                  : unit === FractionTsUnitEnum.Seconds
                     ? timestampsResult.currentSecondTs
                     : undefined;
 

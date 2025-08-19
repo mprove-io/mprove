@@ -1,5 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
-import { constants } from '~common/barrels/constants';
+import { CHART_TYPE_VALUES } from '~common/constants/top';
 import { getTimezonesValues } from '~common/functions/get-timezones-values';
 import { OPTIONS_SCHEMA } from './options-schema';
 
@@ -108,7 +108,7 @@ export const TILE_SCHEMA: JSONSchema7 = {
     },
     type: {
       type: 'string',
-      enum: constants.CHART_TYPE_VALUES
+      enum: CHART_TYPE_VALUES
     },
     data: {
       type: 'object',

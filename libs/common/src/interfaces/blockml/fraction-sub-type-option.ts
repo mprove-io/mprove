@@ -1,10 +1,10 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
 
 export class FractionSubTypeOption {
   @IsOptional()
-  @IsEnum(enums.FractionLogicEnum)
-  logicGroup: enums.FractionLogicEnum;
+  @IsEnum(FractionLogicEnum)
+  logicGroup: FractionLogicEnum;
 
   @IsString()
   typeValue: string;

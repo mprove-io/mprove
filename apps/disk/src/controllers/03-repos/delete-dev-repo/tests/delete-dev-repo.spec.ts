@@ -1,6 +1,14 @@
 import test from 'ava';
-import { apiToDisk } from '~disk/barrels/api-to-disk';
-import { common } from '~disk/barrels/common';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
+import { makeId } from '~common/functions/make-id';
+import { ToDiskCreateOrgRequest } from '~common/interfaces/to-disk/01-orgs/to-disk-create-org';
+import { ToDiskCreateProjectRequest } from '~common/interfaces/to-disk/02-projects/to-disk-create-project';
+import {
+  ToDiskDeleteDevRepoRequest,
+  ToDiskDeleteDevRepoResponse
+} from '~common/interfaces/to-disk/03-repos/to-disk-delete-dev-repo';
 import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
 import { prepareTest } from '~disk/functions/prepare-test';
 
@@ -8,11 +16,11 @@ let testId = 'disk-delete-dev-repo';
 
 let traceId = testId;
 let orgId = testId;
-let projectId = common.makeId();
+let projectId = makeId();
 let projectName = 'p1';
 
 test('1', async t => {
-  let resp: apiToDisk.ToDiskDeleteDevRepoResponse;
+  let resp: ToDiskDeleteDevRepoResponse;
 
   let wLogger;
   let configService;
@@ -22,9 +30,9 @@ test('1', async t => {
     wLogger = logger;
     configService = cs;
 
-    let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
+    let createOrgRequest: ToDiskCreateOrgRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
         traceId: traceId
       },
       payload: {
@@ -32,9 +40,9 @@ test('1', async t => {
       }
     };
 
-    let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
+    let createProjectRequest: ToDiskCreateProjectRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateProject,
         traceId: traceId
       },
       payload: {
@@ -43,13 +51,13 @@ test('1', async t => {
         projectName: projectName,
         devRepoId: 'r1',
         userAlias: 'u1',
-        remoteType: common.ProjectRemoteTypeEnum.Managed
+        remoteType: ProjectRemoteTypeEnum.Managed
       }
     };
 
-    let deleteDevRepoRequest: apiToDisk.ToDiskDeleteDevRepoRequest = {
+    let deleteDevRepoRequest: ToDiskDeleteDevRepoRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo,
+        name: ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo,
         traceId: traceId
       },
       payload: {
@@ -66,7 +74,7 @@ test('1', async t => {
   } catch (e) {
     logToConsoleDisk({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: wLogger,
       cs: configService
     });

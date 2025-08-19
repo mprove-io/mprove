@@ -1,13 +1,13 @@
 // import { hostname } from 'os';
 import * as util from 'util';
 import { Logger } from '@nestjs/common';
-import { enums } from '~common/barrels/enums';
-import { common } from '~node-common/barrels/common';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { isDefined } from '~common/functions/is-defined';
 import { wrapError } from './wrap-error';
 
 export function logToConsole(item: {
   log: any;
-  logLevel: enums.LogLevelEnum;
+  logLevel: LogLevelEnum;
   logger: Logger;
   logIsJson: boolean;
 }) {
@@ -15,9 +15,7 @@ export function logToConsole(item: {
 
   if (
     log instanceof Error ||
-    (common.isDefined(log) &&
-      common.isDefined(log.stack) &&
-      common.isDefined(log.message))
+    (isDefined(log) && isDefined(log.stack) && isDefined(log.message))
   ) {
     log = { error: wrapError(log) };
   }
@@ -31,10 +29,10 @@ export function logToConsole(item: {
   //   hostname: hostname()
   // });
 
-  if (common.isDefined(logger)) {
+  if (isDefined(logger)) {
     let logSorted = getLogSorted(log);
 
-    if (logLevel === enums.LogLevelEnum.Error) {
+    if (logLevel === LogLevelEnum.Error) {
       logger.error(logSorted);
     } else {
       logger.log(logSorted);

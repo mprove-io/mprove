@@ -1,5 +1,5 @@
-import { enums } from '~common/barrels/enums';
+import { BoolEnum } from '~common/enums/bool.enum';
 
-export function booleanToEnum(value: boolean): enums.BoolEnum {
-  return value === true ? enums.BoolEnum.TRUE : enums.BoolEnum.FALSE;
+export function booleanToEnum(value: boolean): BoolEnum {
+  return value === true ? BoolEnum.TRUE : BoolEnum.FALSE;
 }

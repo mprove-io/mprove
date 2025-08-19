@@ -1,12 +1,14 @@
-import { common } from '~node-common/barrels/common';
+import { ErEnum } from '~common/enums/er.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { ServerError } from '~common/models/server-error';
 
 const signalsNames: NodeJS.Signals[] = ['SIGTERM', 'SIGINT', 'SIGHUP'];
 
 export function listenProcessEvents(item: {
-  appTerminated: common.ErEnum;
-  uncaughtException: common.ErEnum;
-  unhandledRejectionReason: common.ErEnum;
-  unhandledRejection: common.ErEnum;
+  appTerminated: ErEnum;
+  uncaughtException: ErEnum;
+  unhandledRejectionReason: ErEnum;
+  unhandledRejection: ErEnum;
   logToConsoleFn: (x: any) => void;
 }) {
   let {
@@ -20,13 +22,13 @@ export function listenProcessEvents(item: {
   signalsNames.forEach(signalName =>
     process.on(signalName, signal => {
       logToConsoleFn({
-        log: new common.ServerError({
+        log: new ServerError({
           message: appTerminated,
           data: {
             signal: signal
           }
         }),
-        logLevel: common.LogLevelEnum.Error,
+        logLevel: LogLevelEnum.Error,
         logger: undefined,
         cs: undefined
       });
@@ -35,11 +37,11 @@ export function listenProcessEvents(item: {
   );
   process.on('uncaughtException', e => {
     logToConsoleFn({
-      log: new common.ServerError({
+      log: new ServerError({
         message: uncaughtException,
         originalError: e
       }),
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: undefined,
       cs: undefined
     });
@@ -47,26 +49,26 @@ export function listenProcessEvents(item: {
   });
   process.on('unhandledRejection', (reason, promise) => {
     logToConsoleFn({
-      log: new common.ServerError({
+      log: new ServerError({
         message: unhandledRejectionReason,
         data: {
           reason: reason
         }
       }),
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: undefined,
       cs: undefined
     });
     promise.catch(e => {
       logToConsoleFn({
-        log: new common.ServerError({
+        log: new ServerError({
           message: unhandledRejection,
           originalError: e,
           data: {
             reason: reason
           }
         }),
-        logLevel: common.LogLevelEnum.Error,
+        logLevel: LogLevelEnum.Error,
         logger: undefined,
         cs: undefined
       });

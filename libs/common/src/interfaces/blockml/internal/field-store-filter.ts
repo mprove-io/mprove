@@ -1,4 +1,4 @@
-import { enums } from '~common/barrels/enums';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
 import { Fraction } from '../fraction';
 import { FileStoreFractionControl } from './file-store-fraction-control';
 
@@ -9,7 +9,7 @@ export interface FieldStoreFilter {
   description?: string;
   description_line_num?: number;
 
-  // result?: enums.FieldResultEnum;
+  // result?: FieldResultEnum;
   // result_line_num?: number;
 
   max_fractions?: number;
@@ -26,6 +26,6 @@ export interface FieldStoreFilter {
   name?: string;
   name_line_num?: number;
 
-  fieldClass?: enums.FieldClassEnum;
+  fieldClass?: FieldClassEnum;
   apiFractions?: Fraction[];
 }

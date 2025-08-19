@@ -1,30 +1,33 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { common } from '~disk/barrels/common';
-import { nodeCommon } from '~disk/barrels/node-common';
+import { BoolEnum } from '~common/enums/bool.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { enumToBoolean } from '~common/functions/enum-to-boolean';
+import { isDefined } from '~common/functions/is-defined';
 import { getConfig } from '~disk/config/get.config';
 import { Config } from '~disk/interfaces/config';
+import { logToConsole } from '~node-common/functions/log-to-console';
 
 export function logToConsoleDisk(item: {
   log: any;
   logger: Logger;
-  logLevel: common.LogLevelEnum;
+  logLevel: LogLevelEnum;
   cs: ConfigService;
 }) {
   let { log, logger, logLevel, cs } = item;
 
-  let logIsJson: common.BoolEnum;
+  let logIsJson: BoolEnum;
 
-  if (common.isDefined(cs)) {
+  if (isDefined(cs)) {
     logIsJson = cs.get<Config['diskLogIsJson']>('diskLogIsJson');
   } else {
     let config = getConfig();
     logIsJson = config.diskLogIsJson;
   }
 
-  nodeCommon.logToConsole({
+  logToConsole({
     log: log,
-    logIsJson: common.enumToBoolean(logIsJson),
+    logIsJson: enumToBoolean(logIsJson),
     logger: logger,
     logLevel: logLevel
   });

@@ -6,7 +6,9 @@ import {
   IsOptional,
   IsString
 } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { StoreMethodEnum } from '~common/enums/store-method.enum';
 
 export class Query {
   @IsString()
@@ -18,8 +20,8 @@ export class Query {
   @IsString()
   connectionId: string;
 
-  @IsEnum(enums.ConnectionTypeEnum)
-  connectionType: enums.ConnectionTypeEnum;
+  @IsEnum(ConnectionTypeEnum)
+  connectionType: ConnectionTypeEnum;
 
   @IsString()
   queryId: string;
@@ -30,7 +32,7 @@ export class Query {
 
   @IsOptional()
   @IsString()
-  apiMethod: enums.StoreMethodEnum;
+  apiMethod: StoreMethodEnum;
 
   @IsOptional()
   @IsString()
@@ -40,8 +42,8 @@ export class Query {
   @IsString()
   apiBody: string;
 
-  @IsEnum(enums.QueryStatusEnum)
-  status: enums.QueryStatusEnum;
+  @IsEnum(QueryStatusEnum)
+  status: QueryStatusEnum;
 
   @IsOptional()
   @IsJSON()

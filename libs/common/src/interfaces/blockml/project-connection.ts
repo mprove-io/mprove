@@ -1,12 +1,12 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 
 export class ProjectConnection {
   @IsString()
   connectionId: string;
 
-  @IsEnum(enums.ConnectionTypeEnum)
-  type: enums.ConnectionTypeEnum;
+  @IsEnum(ConnectionTypeEnum)
+  type: ConnectionTypeEnum;
 
   @IsOptional()
   @IsString()

@@ -1,12 +1,12 @@
 import { ValidationError } from 'class-validator';
-import { common } from '~node-common/barrels/common';
+import { isDefined } from '~common/functions/is-defined';
 
 export function getConstraintsRecursive(
   nestedValidationErrors: ValidationError[]
 ) {
   return nestedValidationErrors.reduce(
     (allConstraints, nestedObject: ValidationError): any[] => {
-      if (common.isDefined(nestedObject.constraints)) {
+      if (isDefined(nestedObject.constraints)) {
         allConstraints.push(nestedObject.constraints);
       }
 

@@ -1,4 +1,4 @@
-import { enums } from '~common/barrels/enums';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 
 export interface FileChartOptionsSeriesElement {
   data_row_id?: string;
@@ -7,7 +7,7 @@ export interface FileChartOptionsSeriesElement {
   data_field?: string;
   data_field_line_num?: number;
 
-  type?: enums.ChartTypeEnum;
+  type?: ChartTypeEnum;
   type_line_num?: number;
 
   y_axis_index?: string;

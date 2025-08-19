@@ -1,5 +1,6 @@
 import { IsEnum, IsString } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
 
 export class SuggestField {
   @IsString()
@@ -17,9 +18,9 @@ export class SuggestField {
   @IsString()
   partLabel: string;
 
-  @IsEnum(enums.FieldClassEnum)
-  fieldClass: enums.FieldClassEnum;
+  @IsEnum(FieldClassEnum)
+  fieldClass: FieldClassEnum;
 
-  @IsEnum(enums.FieldResultEnum)
-  result: enums.FieldResultEnum;
+  @IsEnum(FieldResultEnum)
+  result: FieldResultEnum;
 }

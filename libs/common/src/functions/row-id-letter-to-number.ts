@@ -1,6 +1,6 @@
-import { constants } from '~common/barrels/constants';
+import { ROW_ID_ALPHABET } from '~common/constants/top';
 
-let alphabet = constants.ROW_ID_ALPHABET;
+let alphabet = ROW_ID_ALPHABET;
 let base = alphabet.length;
 
 export function rowIdLetterToNumber(l: string) {

@@ -21,7 +21,7 @@
 //     },
 //     source: {
 //       type: 'string',
-//       enum: constants.TIME_SOURCE_VALUES
+//       enum: TIME_SOURCE_VALUES
 //     },
 //     sql: {
 //       type: 'string'
@@ -33,7 +33,7 @@
 //       type: 'array',
 //       items: {
 //         type: 'string',
-//         enum: constants.TIMEFRAME_VALUES
+//         enum: TIMEFRAME_VALUES
 //       }
 //     }
 //   }

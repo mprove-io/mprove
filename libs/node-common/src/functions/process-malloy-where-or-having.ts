@@ -4,13 +4,19 @@ import {
   ASTViewOperation,
   ASTWhereViewOperation
 } from '@malloydata/malloy-query-builder';
-import { MALLOY_FILTER_ANY } from '~common/_index';
-import { common } from '~node-common/barrels/common';
+import { MALLOY_FILTER_ANY } from '~common/constants/top';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
+import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
+import { isUndefined } from '~common/functions/is-undefined';
+import { Filter } from '~common/interfaces/blockml/filter';
+import { Model } from '~common/interfaces/blockml/model';
 import { getMalloyFiltersFractions } from './get-malloy-filters-fractions';
 
 export function processMalloyWhereOrHaving(item: {
-  model: common.Model;
-  queryOperationFilters: common.Filter[];
+  model: Model;
+  queryOperationFilters: Filter[];
   segment0: ASTSegmentViewDefinition;
 }) {
   let { model, queryOperationFilters, segment0 } = item;
@@ -29,14 +35,14 @@ export function processMalloyWhereOrHaving(item: {
     });
 
   queryOperationFilters.forEach(filter => {
-    if (common.isUndefined(filter.fieldId)) {
+    if (isUndefined(filter.fieldId)) {
       isError = true;
       errorMessage = `filter.fieldId is not defined (QueryOperationTypeEnum.WhereOrHaving)`;
     }
 
     let modelField = model.fields.find(x => x.id === filter.fieldId);
 
-    if (common.isUndefined(modelField)) {
+    if (isUndefined(modelField)) {
       isError = true;
       errorMessage = `modelField is not defined (filter.fieldId: ${filter.fieldId})`;
     }
@@ -48,46 +54,46 @@ export function processMalloyWhereOrHaving(item: {
     let booleanValues = filter.fractions.filter(
       fraction =>
         [
-          common.FractionTypeEnum.BooleanIsTrue,
-          common.FractionTypeEnum.BooleanIsFalse,
-          common.FractionTypeEnum.BooleanIsFalseOrNull,
-          common.FractionTypeEnum.BooleanIsNull,
-          common.FractionTypeEnum.BooleanIsNotTrue,
-          common.FractionTypeEnum.BooleanIsNotFalse,
-          common.FractionTypeEnum.BooleanIsNotFalseOrNull,
-          common.FractionTypeEnum.BooleanIsNotNull
+          FractionTypeEnum.BooleanIsTrue,
+          FractionTypeEnum.BooleanIsFalse,
+          FractionTypeEnum.BooleanIsFalseOrNull,
+          FractionTypeEnum.BooleanIsNull,
+          FractionTypeEnum.BooleanIsNotTrue,
+          FractionTypeEnum.BooleanIsNotFalse,
+          FractionTypeEnum.BooleanIsNotFalseOrNull,
+          FractionTypeEnum.BooleanIsNotNull
         ].indexOf(fraction.type) > -1
     );
 
     let ORs = filter.fractions.filter(
       fraction =>
-        fraction.operator === common.FractionOperatorEnum.Or &&
+        fraction.operator === FractionOperatorEnum.Or &&
         fraction.brick !== MALLOY_FILTER_ANY &&
         [
-          common.FractionTypeEnum.BooleanIsTrue,
-          common.FractionTypeEnum.BooleanIsFalse,
-          common.FractionTypeEnum.BooleanIsFalseOrNull,
-          common.FractionTypeEnum.BooleanIsNull,
-          common.FractionTypeEnum.BooleanIsNotTrue,
-          common.FractionTypeEnum.BooleanIsNotFalse,
-          common.FractionTypeEnum.BooleanIsNotFalseOrNull,
-          common.FractionTypeEnum.BooleanIsNotNull
+          FractionTypeEnum.BooleanIsTrue,
+          FractionTypeEnum.BooleanIsFalse,
+          FractionTypeEnum.BooleanIsFalseOrNull,
+          FractionTypeEnum.BooleanIsNull,
+          FractionTypeEnum.BooleanIsNotTrue,
+          FractionTypeEnum.BooleanIsNotFalse,
+          FractionTypeEnum.BooleanIsNotFalseOrNull,
+          FractionTypeEnum.BooleanIsNotNull
         ].indexOf(fraction.type) < 0
     );
 
     let ANDs = filter.fractions.filter(
       fraction =>
-        fraction.operator === common.FractionOperatorEnum.And &&
+        fraction.operator === FractionOperatorEnum.And &&
         fraction.brick !== MALLOY_FILTER_ANY &&
         [
-          common.FractionTypeEnum.BooleanIsTrue,
-          common.FractionTypeEnum.BooleanIsFalse,
-          common.FractionTypeEnum.BooleanIsFalseOrNull,
-          common.FractionTypeEnum.BooleanIsNull,
-          common.FractionTypeEnum.BooleanIsNotTrue,
-          common.FractionTypeEnum.BooleanIsNotFalse,
-          common.FractionTypeEnum.BooleanIsNotFalseOrNull,
-          common.FractionTypeEnum.BooleanIsNotNull
+          FractionTypeEnum.BooleanIsTrue,
+          FractionTypeEnum.BooleanIsFalse,
+          FractionTypeEnum.BooleanIsFalseOrNull,
+          FractionTypeEnum.BooleanIsNull,
+          FractionTypeEnum.BooleanIsNotTrue,
+          FractionTypeEnum.BooleanIsNotFalse,
+          FractionTypeEnum.BooleanIsNotFalseOrNull,
+          FractionTypeEnum.BooleanIsNotNull
         ].indexOf(fraction.type) < 0
     );
 
@@ -98,19 +104,19 @@ export function processMalloyWhereOrHaving(item: {
 
     if (ORs.length > 0) {
       let fstrORs =
-        filterModelField.result === common.FieldResultEnum.String
+        filterModelField.result === FieldResultEnum.String
           ? ORs.map(fraction => fraction.brick.slice(2, -1)).join(', ')
-          : filterModelField.result === common.FieldResultEnum.Number
+          : filterModelField.result === FieldResultEnum.Number
             ? ORs.map(fraction => fraction.brick.slice(2, -1)).join(' or ')
-            : // : filterModelField.result === common.FieldResultEnum.Boolean
+            : // : filterModelField.result === FieldResultEnum.Boolean
               //   ? ORs.map(y => y.brick.slice(2, -1)).join(' or ')
-              filterModelField.result === common.FieldResultEnum.Ts
+              filterModelField.result === FieldResultEnum.Ts
               ? ORs.map(fraction => fraction.brick.slice(2, -1)).join(' or ')
-              : filterModelField.result === common.FieldResultEnum.Date
+              : filterModelField.result === FieldResultEnum.Date
                 ? ORs.map(fraction => fraction.brick.slice(2, -1)).join(' or ')
                 : undefined;
 
-      if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
+      if (modelField.fieldClass === FieldClassEnum.Dimension) {
         segment0.addWhere(filterFieldName, filterFieldPath, fstrORs);
       } else {
         segment0.addHaving(filterFieldName, filterFieldPath, fstrORs);
@@ -119,19 +125,19 @@ export function processMalloyWhereOrHaving(item: {
 
     if (ANDs.length > 0) {
       let fstrANDs =
-        filterModelField.result === common.FieldResultEnum.String
+        filterModelField.result === FieldResultEnum.String
           ? ANDs.map(y => y.brick.slice(2, -1)).join(', ')
-          : filterModelField.result === common.FieldResultEnum.Number
+          : filterModelField.result === FieldResultEnum.Number
             ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
-            : // : filterModelField.result === common.FieldResultEnum.Boolean
+            : // : filterModelField.result === FieldResultEnum.Boolean
               //   ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
-              filterModelField.result === common.FieldResultEnum.Ts
+              filterModelField.result === FieldResultEnum.Ts
               ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
-              : filterModelField.result === common.FieldResultEnum.Date
+              : filterModelField.result === FieldResultEnum.Date
                 ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
                 : undefined;
 
-      if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
+      if (modelField.fieldClass === FieldClassEnum.Dimension) {
         segment0.addWhere(filterFieldName, filterFieldPath, fstrANDs);
       } else {
         segment0.addHaving(filterFieldName, filterFieldPath, fstrANDs);
@@ -142,7 +148,7 @@ export function processMalloyWhereOrHaving(item: {
       booleanValues.forEach(x => {
         let fstrAny = x.brick.slice(2, -1);
 
-        if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
+        if (modelField.fieldClass === FieldClassEnum.Dimension) {
           segment0.addWhere(filterFieldName, filterFieldPath, fstrAny);
         } else {
           segment0.addHaving(filterFieldName, filterFieldPath, fstrAny);
@@ -154,7 +160,7 @@ export function processMalloyWhereOrHaving(item: {
       anyValues.forEach(x => {
         let fstrAny = '';
 
-        if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
+        if (modelField.fieldClass === FieldClassEnum.Dimension) {
           segment0.addWhere(filterFieldName, filterFieldPath, fstrAny);
         } else {
           segment0.addHaving(filterFieldName, filterFieldPath, fstrAny);

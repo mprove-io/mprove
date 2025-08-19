@@ -1,5 +1,6 @@
 import * as fse from 'fs-extra';
-import { common } from '~node-common/barrels/common';
+import { ErEnum } from '~common/enums/er.enum';
+import { ServerError } from '~common/models/server-error';
 
 export async function readFileCheckSize(item: {
   filePath: string | URL;
@@ -12,8 +13,8 @@ export async function readFileCheckSize(item: {
   let fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
 
   if (fileSizeInMegabytes > 5) {
-    throw new common.ServerError({
-      message: common.ErEnum.FILE_SIZE_IS_TOO_BIG
+    throw new ServerError({
+      message: ErEnum.FILE_SIZE_IS_TOO_BIG
     });
   }
 

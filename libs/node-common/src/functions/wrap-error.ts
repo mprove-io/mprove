@@ -1,12 +1,12 @@
-import { enums } from '~common/barrels/enums';
+import { ErrorStoryEnum } from '~common/enums/error-story.enum';
 import { ServerError } from '~common/models/server-error';
 
 export function wrapError(e: any) {
   let wrappedError = {
     story:
       e instanceof ServerError
-        ? enums.ErrorStoryEnum.DefinedError
-        : enums.ErrorStoryEnum.UnknownError,
+        ? ErrorStoryEnum.DefinedError
+        : ErrorStoryEnum.UnknownError,
     name: e.name || null,
     message: e.message || null,
     at: e.stack?.split('\n')[1] || null,

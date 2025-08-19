@@ -8,38 +8,39 @@ import {
   startOfWeek,
   startOfYear
 } from 'date-fns';
-import { common } from '~node-common/barrels/common';
+import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
 
 export function getTimeSpecUnitStartTs(item: {
-  timeSpec: common.TimeSpecEnum;
+  timeSpec: TimeSpecEnum;
   unixTime: number;
-  weekStart: common.ProjectWeekStartEnum;
+  weekStart: ProjectWeekStartEnum;
 }) {
   let { timeSpec, unixTime, weekStart } = item;
 
   let date = new Date(unixTime * 1000);
 
   let unitStartTs =
-    timeSpec === common.TimeSpecEnum.Timestamps
+    timeSpec === TimeSpecEnum.Timestamps
       ? unixTime
-      : timeSpec === common.TimeSpecEnum.Years
+      : timeSpec === TimeSpecEnum.Years
         ? getUnixTime(startOfYear(date))
-        : timeSpec === common.TimeSpecEnum.Quarters
+        : timeSpec === TimeSpecEnum.Quarters
           ? getUnixTime(startOfQuarter(date))
-          : timeSpec === common.TimeSpecEnum.Months
+          : timeSpec === TimeSpecEnum.Months
             ? getUnixTime(startOfMonth(date))
-            : timeSpec === common.TimeSpecEnum.Weeks
+            : timeSpec === TimeSpecEnum.Weeks
               ? getUnixTime(
                   startOfWeek(date, {
                     weekStartsOn:
-                      weekStart === common.ProjectWeekStartEnum.Sunday ? 0 : 1
+                      weekStart === ProjectWeekStartEnum.Sunday ? 0 : 1
                   })
                 )
-              : timeSpec === common.TimeSpecEnum.Days
+              : timeSpec === TimeSpecEnum.Days
                 ? getUnixTime(startOfDay(date))
-                : timeSpec === common.TimeSpecEnum.Hours
+                : timeSpec === TimeSpecEnum.Hours
                   ? getUnixTime(startOfHour(date))
-                  : timeSpec === common.TimeSpecEnum.Minutes
+                  : timeSpec === TimeSpecEnum.Minutes
                     ? getUnixTime(startOfMinute(date))
                     : unixTime;
 

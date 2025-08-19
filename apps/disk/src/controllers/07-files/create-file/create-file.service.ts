@@ -1,22 +1,29 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToDisk } from '~disk/barrels/api-to-disk';
-import { common } from '~disk/barrels/common';
-import { nodeCommon } from '~disk/barrels/node-common';
+import { MPROVE_CONFIG_FILENAME, PROD_REPO_ID } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { FileExtensionEnum } from '~common/enums/file-extension.enum';
+import {
+  ToDiskCreateFileRequest,
+  ToDiskCreateFileResponsePayload
+} from '~common/interfaces/to-disk/07-files/to-disk-create-file';
+import { MyRegex } from '~common/models/my-regex';
+import { ServerError } from '~common/models/server-error';
+import { ensureDir } from '~disk/functions/disk/ensure-dir';
+import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
+import { isPathExist } from '~disk/functions/disk/is-path-exist';
+import { writeToFile } from '~disk/functions/disk/write-to-file';
+import { addChangesToStage } from '~disk/functions/git/add-changes-to-stage';
+import { checkoutBranch } from '~disk/functions/git/checkout-branch';
+import { commit } from '~disk/functions/git/commit';
+import { getRepoStatus } from '~disk/functions/git/get-repo-status';
+import { isLocalBranchExist } from '~disk/functions/git/is-local-branch-exist';
+import { pushToRemote } from '~disk/functions/git/push-to-remote';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 import { Config } from '~disk/interfaces/config';
 import { ItemCatalog } from '~disk/interfaces/item-catalog';
 import { ItemStatus } from '~disk/interfaces/item-status';
-import { ensureDir } from '~disk/models/disk/ensure-dir';
-import { getNodesAndFiles } from '~disk/models/disk/get-nodes-and-files';
-import { isPathExist } from '~disk/models/disk/is-path-exist';
-import { writeToFile } from '~disk/models/disk/write-to-file';
-import { addChangesToStage } from '~disk/models/git/add-changes-to-stage';
-import { checkoutBranch } from '~disk/models/git/checkout-branch';
-import { commit } from '~disk/models/git/commit';
-import { getRepoStatus } from '~disk/models/git/get-repo-status';
-import { isLocalBranchExist } from '~disk/models/git/is-local-branch-exist';
-import { pushToRemote } from '~disk/models/git/push-to-remote';
+import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class CreateFileService {
@@ -30,10 +37,10 @@ export class CreateFileService {
       'diskOrganizationsPath'
     );
 
-    let requestValid = nodeCommon.transformValidSync({
-      classType: apiToDisk.ToDiskCreateFileRequest,
+    let requestValid = transformValidSync({
+      classType: ToDiskCreateFileRequest,
       object: request,
-      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
+      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
@@ -63,22 +70,22 @@ export class CreateFileService {
 
     let isOrgExist = await isPathExist(orgDir);
     if (isOrgExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await isPathExist(projectDir);
     if (isProjectExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_PROJECT_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isRepoExist = await isPathExist(repoDir);
     if (isRepoExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_REPO_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
@@ -87,8 +94,8 @@ export class CreateFileService {
       localBranch: branch
     });
     if (isBranchExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_BRANCH_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
       });
     }
 
@@ -126,8 +133,8 @@ export class CreateFileService {
 
     let isFileExist = await isPathExist(filePath);
     if (isFileExist === true) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_FILE_ALREADY_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_FILE_ALREADY_EXIST
       });
     }
 
@@ -136,15 +143,15 @@ export class CreateFileService {
       content: content
     });
 
-    // if (common.isDefinedAndNotEmpty(secondFileName)) {
+    // if (isDefinedAndNotEmpty(secondFileName)) {
     //   let secondFilePath = parentPath + secondFileName;
     //   let secondContent =
     //     secondFileText || getContentFromFileName({ fileName: secondFileName });
 
     //   let isSecondFileExist = await isPathExist(secondFilePath);
     //   if (isSecondFileExist === true) {
-    //     throw new common.ServerError({
-    //       message: common.ErEnum.DISK_FILE_ALREADY_EXIST
+    //     throw new ServerError({
+    //       message: ErEnum.DISK_FILE_ALREADY_EXIST
     //     });
     //   }
 
@@ -156,7 +163,7 @@ export class CreateFileService {
 
     await addChangesToStage({ repoDir: repoDir });
 
-    if (repoId === common.PROD_REPO_ID) {
+    if (repoId === PROD_REPO_ID) {
       await commit({
         repoDir: repoDir,
         userAlias: userAlias,
@@ -197,7 +204,7 @@ export class CreateFileService {
       isRootMproveDir: false
     });
 
-    let payload: apiToDisk.ToDiskCreateFileResponsePayload = {
+    let payload: ToDiskCreateFileResponsePayload = {
       repo: {
         orgId: orgId,
         projectId: projectId,
@@ -220,34 +227,34 @@ export class CreateFileService {
 function getContentFromFileName(item: { fileName: string }) {
   let content: string;
 
-  let regPart = common.MyRegex.CAPTURE_FILE_NAME_BEFORE_EXT();
+  let regPart = MyRegex.CAPTURE_FILE_NAME_BEFORE_EXT();
   let rPart = regPart.exec(item.fileName.toLowerCase());
 
   let part: any = rPart ? rPart[1] : undefined;
 
-  let regExt = common.MyRegex.CAPTURE_EXT();
+  let regExt = MyRegex.CAPTURE_EXT();
   let rExt = regExt.exec(item.fileName.toLowerCase());
 
   let ext: any = rExt ? rExt[1] : '';
 
   switch (ext) {
-    case common.FileExtensionEnum.Store:
+    case FileExtensionEnum.Store:
       content = `store: ${part}`;
       break;
-    case common.FileExtensionEnum.Dashboard:
+    case FileExtensionEnum.Dashboard:
       content = `dashboard: ${part}`;
       break;
-    case common.FileExtensionEnum.Chart:
+    case FileExtensionEnum.Chart:
       content = `chart: ${part}`;
       break;
-    case common.FileExtensionEnum.Report:
+    case FileExtensionEnum.Report:
       content = `report: ${part}`;
       break;
-    case common.FileExtensionEnum.Yml:
+    case FileExtensionEnum.Yml:
       content =
-        item.fileName === common.MPROVE_CONFIG_FILENAME ? 'mprove_dir: ./' : '';
+        item.fileName === MPROVE_CONFIG_FILENAME ? 'mprove_dir: ./' : '';
       break;
-    case common.FileExtensionEnum.Md:
+    case FileExtensionEnum.Md:
       content = '';
       break;
     default:

@@ -1,7 +1,8 @@
 import * as nodegit from '@figma/nodegit';
 import * as fse from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
-import { common } from '~node-common/barrels/common';
+import { FileStatusEnum } from '~common/enums/file-status.enum';
+import { DiskSyncFile } from '~common/interfaces/disk/disk-sync-file';
 import { gitLsFiles } from './git-ls-files';
 import { readFileCheckSize } from './read-file-check-size';
 
@@ -12,8 +13,8 @@ export async function getSyncFiles(item: {
 }) {
   let { statusFiles, repoDir, lastSyncTime } = item;
 
-  let changedFiles: common.DiskSyncFile[] = [];
-  let deletedFiles: common.DiskSyncFile[] = [];
+  let changedFiles: DiskSyncFile[] = [];
+  let deletedFiles: DiskSyncFile[] = [];
 
   await forEachSeries(statusFiles, async (x: nodegit.StatusFile) => {
     let path = x.path();
@@ -21,25 +22,25 @@ export async function getSyncFiles(item: {
     let status =
       // doesn't return booleans
       x.isNew()
-        ? common.FileStatusEnum.New
+        ? FileStatusEnum.New
         : x.isDeleted()
-          ? common.FileStatusEnum.Deleted
+          ? FileStatusEnum.Deleted
           : x.isModified()
-            ? common.FileStatusEnum.Modified
+            ? FileStatusEnum.Modified
             : x.isConflicted()
-              ? common.FileStatusEnum.Conflicted
+              ? FileStatusEnum.Conflicted
               : x.isTypechange()
-                ? common.FileStatusEnum.TypeChange
+                ? FileStatusEnum.TypeChange
                 : x.isRenamed()
-                  ? common.FileStatusEnum.Renamed
+                  ? FileStatusEnum.Renamed
                   : x.isIgnored()
-                    ? common.FileStatusEnum.Ignored
+                    ? FileStatusEnum.Ignored
                     : undefined;
 
     let content: string;
     let stat: fse.Stats;
 
-    if (status !== common.FileStatusEnum.Deleted) {
+    if (status !== FileStatusEnum.Deleted) {
       let fullPath = `${repoDir}/${path}`;
 
       let { content: cont, stat: st } = await readFileCheckSize({
@@ -51,14 +52,14 @@ export async function getSyncFiles(item: {
       stat = st;
     }
 
-    let file: common.DiskSyncFile = {
+    let file: DiskSyncFile = {
       path: path,
       status: status,
       content: content,
       modifiedTime: stat?.mtimeMs
     };
 
-    if (file.status === common.FileStatusEnum.Deleted) {
+    if (file.status === FileStatusEnum.Deleted) {
       deletedFiles.push(file);
     } else {
       changedFiles.push(file);
@@ -85,7 +86,7 @@ export async function getSyncFiles(item: {
             getStat: false
           });
 
-          let file: common.DiskSyncFile = {
+          let file: DiskSyncFile = {
             path: path,
             status: undefined,
             content: content,

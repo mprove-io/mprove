@@ -1,0 +1,54 @@
+import * as nodegit from '@figma/nodegit';
+
+import { ErEnum } from '~common/enums/er.enum';
+import { RepoStatusEnum } from '~common/enums/repo-status.enum';
+import { ServerError } from '~common/models/server-error';
+import { ItemStatus } from '~disk/interfaces/item-status';
+import { getRepoStatus } from './get-repo-status';
+
+export async function checkoutBranch(item: {
+  projectId: string;
+  projectDir: string;
+  repoId: string;
+  repoDir: string;
+  branchName: string;
+  fetchOptions: nodegit.FetchOptions;
+  isFetch: boolean;
+}) {
+  let { repoStatus, currentBranch, conflicts } = <ItemStatus>(
+    await getRepoStatus({
+      projectId: item.projectId,
+      projectDir: item.projectDir,
+      repoId: item.repoId,
+      repoDir: item.repoDir,
+      fetchOptions: item.fetchOptions,
+      isFetch: item.isFetch,
+      isCheckConflicts: false
+    })
+  );
+
+  if (currentBranch === item.branchName) {
+    return;
+  }
+
+  let okStatuses = [
+    RepoStatusEnum.NeedPush,
+    RepoStatusEnum.NeedPull,
+    RepoStatusEnum.Ok
+  ];
+
+  if (okStatuses.indexOf(repoStatus) < 0) {
+    throw new ServerError({
+      message: ErEnum.DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH,
+      data: {
+        currentBranch: currentBranch
+      }
+    });
+  }
+
+  let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.repoDir);
+
+  // let checkoutOptions = new nodegit.CheckoutOptions();
+
+  await gitRepo.checkoutBranch(item.branchName, {});
+}

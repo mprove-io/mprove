@@ -26,8 +26,23 @@ import {
 } from '@malloydata/malloy-query-builder';
 import { FieldBase } from '@malloydata/malloy/dist/model';
 import * as fse from 'fs-extra';
-import { ProjectConnection } from '~common/_index';
-import { common } from '~node-common/barrels/common';
+import { DOUBLE_UNDERSCORE } from '~common/constants/top';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeId } from '~common/functions/make-id';
+import { replaceChartField } from '~common/functions/replace-chart-field';
+import { setChartFields } from '~common/functions/set-chart-fields';
+import { setChartTitleOnSelectChange } from '~common/functions/set-chart-title-on-select-change';
+import { QueryOperation } from '~common/interfaces/backend/query-operation';
+import { Filter } from '~common/interfaces/blockml/filter';
+import { Mconfig } from '~common/interfaces/blockml/mconfig';
+import { Model } from '~common/interfaces/blockml/model';
+import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
+import { Query } from '~common/interfaces/blockml/query';
+import { Sorting } from '~common/interfaces/blockml/sorting';
 import { getBlankMconfigAndQuery } from './get-blank-mconfig-and-query';
 import { makeQueryId } from './make-query-id';
 import { processMalloyWhereOrHaving } from './process-malloy-where-or-having';
@@ -36,9 +51,9 @@ export async function makeMalloyQuery(item: {
   projectId: string;
   envId: string;
   structId: string;
-  model: common.Model;
-  mconfig: common.Mconfig;
-  queryOperations: common.QueryOperation[];
+  model: Model;
+  mconfig: Mconfig;
+  queryOperations: QueryOperation[];
   malloyConnections: PostgresConnection[];
   projectConnection: ProjectConnection;
 }) {
@@ -60,9 +75,9 @@ export async function makeMalloyQuery(item: {
 
   if (
     queryOperations.length === 1 &&
-    ((queryOperations[0].type === common.QueryOperationTypeEnum.Get &&
-      common.isUndefined(mconfig.malloyQuery)) ||
-      (queryOperations[0].type === common.QueryOperationTypeEnum.Remove &&
+    ((queryOperations[0].type === QueryOperationTypeEnum.Get &&
+      isUndefined(mconfig.malloyQuery)) ||
+      (queryOperations[0].type === QueryOperationTypeEnum.Remove &&
         mconfig.select?.length === 1))
   ) {
     let { blankMconfig, blankQuery } = getBlankMconfigAndQuery({
@@ -84,7 +99,7 @@ export async function makeMalloyQuery(item: {
   );
   // console.log(Date.now() - startModelDefToModelInfo);
 
-  let malloyToQueryResult = common.isDefined(mconfig.malloyQuery)
+  let malloyToQueryResult = isDefined(mconfig.malloyQuery)
     ? malloyToQuery(mconfig.malloyQuery)
     : undefined;
 
@@ -114,18 +129,18 @@ export async function makeMalloyQuery(item: {
   queryOperations.forEach(queryOperation => {
     if (
       [
-        common.QueryOperationTypeEnum.GroupOrAggregate,
-        common.QueryOperationTypeEnum.GroupOrAggregatePlusSort
+        QueryOperationTypeEnum.GroupOrAggregate,
+        QueryOperationTypeEnum.GroupOrAggregatePlusSort
       ].indexOf(queryOperation.type) > -1
     ) {
-      if (common.isUndefined(queryOperation.fieldId)) {
+      if (isUndefined(queryOperation.fieldId)) {
         isError = true;
         errorMessage = `queryOperation.fieldId is not defined (QueryOperationTypeEnum.Select)`;
       }
 
       let modelField = model.fields.find(x => x.id === queryOperation.fieldId);
 
-      if (common.isUndefined(modelField)) {
+      if (isUndefined(modelField)) {
         isError = true;
         errorMessage = `modelField is not defined (queryOperation.fieldId: ${queryOperation.fieldId})`;
       }
@@ -138,10 +153,9 @@ export async function makeMalloyQuery(item: {
       let fieldRename = modelField.sqlName;
 
       if (
-        [
-          common.FieldClassEnum.Measure,
-          common.FieldClassEnum.Dimension
-        ].indexOf(modelField.fieldClass) < 0
+        [FieldClassEnum.Measure, FieldClassEnum.Dimension].indexOf(
+          modelField.fieldClass
+        ) < 0
       ) {
         isError = true;
         errorMessage = `wrong modelField.fieldClass`;
@@ -152,13 +166,13 @@ export async function makeMalloyQuery(item: {
       );
 
       if (selectIndex < 0) {
-        if (modelField.fieldClass === common.FieldClassEnum.Measure) {
+        if (modelField.fieldClass === FieldClassEnum.Measure) {
           if (fieldPath.length > 0) {
             segment0.addAggregate(fieldName, fieldPath, fieldRename);
           } else {
             segment0.addAggregate(fieldName);
           }
-        } else if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
+        } else if (modelField.fieldClass === FieldClassEnum.Dimension) {
           if (fieldPath.length > 0) {
             segment0.addGroupBy(fieldName, fieldPath, fieldRename);
           } else {
@@ -166,7 +180,7 @@ export async function makeMalloyQuery(item: {
           }
         }
       } else {
-        if (modelField.fieldClass === common.FieldClassEnum.Measure) {
+        if (modelField.fieldClass === FieldClassEnum.Measure) {
           // deselect aggregate
           segment0.operations.items
             .filter(
@@ -177,14 +191,14 @@ export async function makeMalloyQuery(item: {
               let exp = item.field.node
                 .expression as ExpressionWithFieldReference;
 
-              let fieldId = common.isDefined(exp.path)
+              let fieldId = isDefined(exp.path)
                 ? [...exp.path, exp.name].join('.')
                 : exp.name;
 
               return fieldId === queryOperation.fieldId;
             })
             .delete();
-        } else if (modelField.fieldClass === common.FieldClassEnum.Dimension) {
+        } else if (modelField.fieldClass === FieldClassEnum.Dimension) {
           // deselect groupBy
           segment0.operations.items
             .filter(
@@ -195,7 +209,7 @@ export async function makeMalloyQuery(item: {
               let exp = item.field.node
                 .expression as ExpressionWithFieldReference;
 
-              let fieldId = common.isDefined(exp.path)
+              let fieldId = isDefined(exp.path)
                 ? [...exp.path, exp.name].join('.')
                 : exp.name;
 
@@ -204,9 +218,7 @@ export async function makeMalloyQuery(item: {
             .delete();
         }
       }
-    } else if (
-      queryOperation.type === common.QueryOperationTypeEnum.WhereOrHaving
-    ) {
+    } else if (queryOperation.type === QueryOperationTypeEnum.WhereOrHaving) {
       let p = processMalloyWhereOrHaving({
         model: model,
         segment0: segment0,
@@ -221,7 +233,7 @@ export async function makeMalloyQuery(item: {
       let filtersFractions = p.filtersFractions;
       let parsedFilters = p.parsedFilters;
 
-      let filters: common.Filter[] = [];
+      let filters: Filter[] = [];
 
       Object.keys(filtersFractions).forEach(fieldId => {
         filters.push({
@@ -233,15 +245,15 @@ export async function makeMalloyQuery(item: {
       mconfig.filters = filters.sort((a, b) =>
         a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
       );
-    } else if (queryOperation.type === common.QueryOperationTypeEnum.Remove) {
-      if (common.isUndefined(queryOperation.fieldId)) {
+    } else if (queryOperation.type === QueryOperationTypeEnum.Remove) {
+      if (isUndefined(queryOperation.fieldId)) {
         isError = true;
         errorMessage = `queryOperation.fieldId is not defined (QueryOperationTypeEnum.Remove)`;
       }
 
       let modelField = model.fields.find(x => x.id === queryOperation.fieldId);
 
-      if (common.isUndefined(modelField)) {
+      if (isUndefined(modelField)) {
         isError = true;
         errorMessage = `modelField is not defined (queryOperation.fieldId: ${queryOperation.fieldId})`;
       }
@@ -255,20 +267,20 @@ export async function makeMalloyQuery(item: {
         .find(item => {
           let exp = item.field.node.expression as ExpressionWithFieldReference;
 
-          let fieldId = common.isDefined(exp.path)
+          let fieldId = isDefined(exp.path)
             ? [...exp.path, exp.name].join('.')
             : exp.name;
 
           return fieldId === queryOperation.fieldId;
         })
         .delete();
-    } else if (queryOperation.type === common.QueryOperationTypeEnum.Replace) {
-      if (common.isUndefined(queryOperation.fieldId)) {
+    } else if (queryOperation.type === QueryOperationTypeEnum.Replace) {
+      if (isUndefined(queryOperation.fieldId)) {
         isError = true;
         errorMessage = `queryOperation.fieldId is not defined (QueryOperationTypeEnum.Replace)`;
       }
 
-      if (common.isUndefined(queryOperation.replaceWithFieldId)) {
+      if (isUndefined(queryOperation.replaceWithFieldId)) {
         isError = true;
         errorMessage = `queryOperation.replaceWithFieldId is not defined (QueryOperationTypeEnum.Replace)`;
       }
@@ -299,7 +311,7 @@ export async function makeMalloyQuery(item: {
         .find(item => {
           let exp = item.field.node.expression as ExpressionWithFieldReference;
 
-          let fieldId = common.isDefined(exp.path)
+          let fieldId = isDefined(exp.path)
             ? [...exp.path, exp.name].join('.')
             : exp.name;
 
@@ -307,7 +319,7 @@ export async function makeMalloyQuery(item: {
         })
         .delete();
 
-      if (replaceWithModelField.fieldClass === common.FieldClassEnum.Measure) {
+      if (replaceWithModelField.fieldClass === FieldClassEnum.Measure) {
         if (currentFieldPath.length > 0) {
           segment0.addAggregate(
             replaceFieldName,
@@ -318,7 +330,7 @@ export async function makeMalloyQuery(item: {
           segment0.addAggregate(replaceFieldName);
         }
       } else if (
-        replaceWithModelField.fieldClass === common.FieldClassEnum.Dimension
+        replaceWithModelField.fieldClass === FieldClassEnum.Dimension
       ) {
         if (replaceFieldPath.length > 0) {
           segment0.addGroupBy(
@@ -336,7 +348,7 @@ export async function makeMalloyQuery(item: {
       mconfigSelectCopy.splice(index, 1, queryOperation.replaceWithFieldId);
 
       segment0.reorderFields(
-        mconfigSelectCopy.map(x => x.split('.').join(common.DOUBLE_UNDERSCORE))
+        mconfigSelectCopy.map(x => x.split('.').join(DOUBLE_UNDERSCORE))
       );
 
       segment0.operations.items
@@ -355,35 +367,35 @@ export async function makeMalloyQuery(item: {
       mconfig.sortings.forEach(sorting => {
         let fieldNameUnderscore = sorting.fieldId
           .split('.')
-          .join(common.DOUBLE_UNDERSCORE);
+          .join(DOUBLE_UNDERSCORE);
 
         segment0.addOrderBy(
           fieldNameUnderscore,
           sorting.desc === true ? 'desc' : 'asc'
         );
       });
-    } else if (queryOperation.type === common.QueryOperationTypeEnum.Move) {
+    } else if (queryOperation.type === QueryOperationTypeEnum.Move) {
       segment0.reorderFields(
         queryOperation.moveFieldIds.map(x =>
-          x.split('.').join(common.DOUBLE_UNDERSCORE)
+          x.split('.').join(DOUBLE_UNDERSCORE)
         )
       );
-    } else if (queryOperation.type === common.QueryOperationTypeEnum.Limit) {
+    } else if (queryOperation.type === QueryOperationTypeEnum.Limit) {
       segment0.setLimit(queryOperation.limit);
     }
 
     // not else
     if (
       [
-        common.QueryOperationTypeEnum.GroupOrAggregatePlusSort,
-        common.QueryOperationTypeEnum.Remove,
-        common.QueryOperationTypeEnum.Sort
+        QueryOperationTypeEnum.GroupOrAggregatePlusSort,
+        QueryOperationTypeEnum.Remove,
+        QueryOperationTypeEnum.Sort
       ].indexOf(queryOperation.type) > -1 &&
-      common.isDefined(queryOperation.sortFieldId)
+      isDefined(queryOperation.sortFieldId)
     ) {
       let fieldNameUnderscore = queryOperation.sortFieldId
         .split('.')
-        .join(common.DOUBLE_UNDERSCORE);
+        .join(DOUBLE_UNDERSCORE);
 
       let fIndex = mconfig.sortings.findIndex(
         sorting => sorting.fieldId === queryOperation.sortFieldId
@@ -430,7 +442,7 @@ export async function makeMalloyQuery(item: {
       operation => operation instanceof ASTLimitViewOperation
     );
 
-    if (common.isUndefined(limitOp) || limitOp.limit > 500) {
+    if (isUndefined(limitOp) || limitOp.limit > 500) {
       segment0.setLimit(500);
     }
   });
@@ -495,7 +507,7 @@ export async function makeMalloyQuery(item: {
     storeTransformedRequestString: undefined
   });
 
-  let newQuery: common.Query = {
+  let newQuery: Query = {
     queryId: queryId,
     projectId: projectId,
     envId: envId,
@@ -505,7 +517,7 @@ export async function makeMalloyQuery(item: {
     apiMethod: undefined,
     apiUrl: undefined,
     apiBody: undefined,
-    status: common.QueryStatusEnum.New,
+    status: QueryStatusEnum.New,
     lastRunBy: undefined,
     lastRunTs: undefined,
     lastCancelTs: undefined,
@@ -525,7 +537,7 @@ export async function makeMalloyQuery(item: {
 
   let compiledQuery = pr._rawQuery;
 
-  if (common.isDefined(compiledQuery)) {
+  if (isDefined(compiledQuery)) {
     compiledQuery.structs[0].fields.forEach(field => {
       let drillExpression = (field as FieldBase).resultMetadata
         ?.drillExpression;
@@ -551,9 +563,9 @@ export async function makeMalloyQuery(item: {
         return compiledQueryField.name === orderByItem.name;
       });
 
-      let sorting: common.Sorting;
+      let sorting: Sorting;
 
-      if (common.isDefined(field)) {
+      if (isDefined(field)) {
         let mField = model.fields.find(f => {
           let drillExpression = (field as FieldBase).resultMetadata
             ?.drillExpression;
@@ -576,7 +588,7 @@ export async function makeMalloyQuery(item: {
 
       return sorting;
     })
-    .filter(sorting => common.isDefined(sorting));
+    .filter(sorting => isDefined(sorting));
 
   let newSorts: string[] = [];
 
@@ -586,9 +598,9 @@ export async function makeMalloyQuery(item: {
       : newSorts.push(sorting.fieldId)
   );
 
-  let newMconfig: common.Mconfig = {
+  let newMconfig: Mconfig = {
     structId: structId,
-    mconfigId: common.makeId(),
+    mconfigId: makeId(),
     queryId: queryId,
     modelId: model.modelId,
     modelType: model.type,
@@ -616,14 +628,14 @@ export async function makeMalloyQuery(item: {
     queryOperations.filter(
       queryOperation =>
         [
-          common.QueryOperationTypeEnum.GroupOrAggregate,
-          common.QueryOperationTypeEnum.GroupOrAggregatePlusSort,
-          common.QueryOperationTypeEnum.Replace,
-          common.QueryOperationTypeEnum.Remove
+          QueryOperationTypeEnum.GroupOrAggregate,
+          QueryOperationTypeEnum.GroupOrAggregatePlusSort,
+          QueryOperationTypeEnum.Replace,
+          QueryOperationTypeEnum.Remove
         ].indexOf(queryOperation.type) > -1
     ).length > 0
   ) {
-    newMconfig = common.setChartTitleOnSelectChange({
+    newMconfig = setChartTitleOnSelectChange({
       mconfig: newMconfig,
       fields: model.fields
     });
@@ -631,14 +643,13 @@ export async function makeMalloyQuery(item: {
 
   if (
     queryOperations.length === 1 &&
-    [common.QueryOperationTypeEnum.Replace].indexOf(queryOperations[0].type) >
-      -1
+    [QueryOperationTypeEnum.Replace].indexOf(queryOperations[0].type) > -1
   ) {
     let replaceWithModelField = model.fields.find(
       x => x.id === queryOperations[0].replaceWithFieldId
     );
 
-    newMconfig = common.replaceChartField({
+    newMconfig = replaceChartField({
       mconfig: newMconfig,
       currentFieldId: queryOperations[0].fieldId,
       newColumnFieldId: queryOperations[0].replaceWithFieldId,
@@ -650,14 +661,14 @@ export async function makeMalloyQuery(item: {
     queryOperations.filter(
       queryOperation =>
         [
-          common.QueryOperationTypeEnum.GroupOrAggregate,
-          common.QueryOperationTypeEnum.GroupOrAggregatePlusSort,
-          common.QueryOperationTypeEnum.Replace,
-          common.QueryOperationTypeEnum.Remove
+          QueryOperationTypeEnum.GroupOrAggregate,
+          QueryOperationTypeEnum.GroupOrAggregatePlusSort,
+          QueryOperationTypeEnum.Replace,
+          QueryOperationTypeEnum.Remove
         ].indexOf(queryOperation.type) > -1
     ).length > 0
   ) {
-    newMconfig = common.setChartFields({
+    newMconfig = setChartFields({
       mconfig: newMconfig,
       fields: model.fields
     });

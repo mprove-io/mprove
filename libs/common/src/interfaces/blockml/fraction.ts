@@ -7,7 +7,22 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { FractionDayOfWeekValueEnum } from '~common/enums/fraction/fraction-day-of-week-value.enum';
+import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
+import { FractionMonthNameValueEnum } from '~common/enums/fraction/fraction-month-name-value.enum';
+import { FractionNumberBetweenOptionEnum } from '~common/enums/fraction/fraction-number-between-option.enum';
+import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
+import { FractionQuarterOfYearValueEnum } from '~common/enums/fraction/fraction-quarter-of-year-value.enum';
+import { FractionTsForOptionEnum } from '~common/enums/fraction/fraction-ts-for-option.enum';
+import { FractionTsLastCompleteOptionEnum } from '~common/enums/fraction/fraction-ts-last-complete-option.enum';
+import { FractionTsMixUnitEnum } from '~common/enums/fraction/fraction-ts-mix-unit.enum';
+import { FractionTsMomentTypeEnum } from '~common/enums/fraction/fraction-ts-moment-type.enum';
+import { FractionTsRelativeCompleteOptionEnum } from '~common/enums/fraction/fraction-ts-relative-complete-option.enum';
+import { FractionTsRelativeUnitEnum } from '~common/enums/fraction/fraction-ts-relative-unit.enum';
+import { FractionTsRelativeWhenOptionEnum } from '~common/enums/fraction/fraction-ts-relative-when-option.enum';
+import { FractionTsUnitEnum } from '~common/enums/fraction/fraction-ts-unit.enum';
+import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
+import { FractionYesnoValueEnum } from '~common/enums/fraction/fraction-yesno-value.enum';
 import { FractionControl } from './fraction-control';
 import { FractionSubTypeOption } from './fraction-sub-type-option';
 
@@ -28,15 +43,15 @@ export class Fraction {
   parentBrick?: string;
 
   @IsOptional()
-  @IsEnum(enums.FractionOperatorEnum)
-  operator: enums.FractionOperatorEnum;
+  @IsEnum(FractionOperatorEnum)
+  operator: FractionOperatorEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionLogicEnum)
-  logicGroup?: enums.FractionLogicEnum;
+  @IsEnum(FractionLogicEnum)
+  logicGroup?: FractionLogicEnum;
 
-  @IsEnum(enums.FractionTypeEnum)
-  type: enums.FractionTypeEnum;
+  @IsEnum(FractionTypeEnum)
+  type: FractionTypeEnum;
 
   @IsOptional()
   @ValidateNested()
@@ -79,28 +94,28 @@ export class Fraction {
   numberValues?: string;
 
   @IsOptional()
-  @IsEnum(enums.FractionNumberBetweenOptionEnum)
-  numberBetweenOption?: enums.FractionNumberBetweenOptionEnum;
+  @IsEnum(FractionNumberBetweenOptionEnum)
+  numberBetweenOption?: FractionNumberBetweenOptionEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionYesnoValueEnum)
-  yesnoValue?: enums.FractionYesnoValueEnum;
+  @IsEnum(FractionYesnoValueEnum)
+  yesnoValue?: FractionYesnoValueEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionDayOfWeekValueEnum)
-  dayOfWeekValue?: enums.FractionDayOfWeekValueEnum;
+  @IsEnum(FractionDayOfWeekValueEnum)
+  dayOfWeekValue?: FractionDayOfWeekValueEnum;
 
   @IsOptional()
   @IsString()
   dayOfWeekIndexValues?: string;
 
   @IsOptional()
-  @IsEnum(enums.FractionMonthNameValueEnum)
-  monthNameValue?: enums.FractionMonthNameValueEnum;
+  @IsEnum(FractionMonthNameValueEnum)
+  monthNameValue?: FractionMonthNameValueEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionQuarterOfYearValueEnum)
-  quarterOfYearValue?: enums.FractionQuarterOfYearValueEnum;
+  @IsEnum(FractionQuarterOfYearValueEnum)
+  quarterOfYearValue?: FractionQuarterOfYearValueEnum;
 
   @IsOptional()
   @IsNumber()
@@ -155,48 +170,48 @@ export class Fraction {
   tsRelativeValue?: number;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsRelativeUnitEnum)
-  tsRelativeUnit?: enums.FractionTsRelativeUnitEnum;
+  @IsEnum(FractionTsRelativeUnitEnum)
+  tsRelativeUnit?: FractionTsRelativeUnitEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsRelativeCompleteOptionEnum)
-  tsRelativeCompleteOption?: enums.FractionTsRelativeCompleteOptionEnum;
+  @IsEnum(FractionTsRelativeCompleteOptionEnum)
+  tsRelativeCompleteOption?: FractionTsRelativeCompleteOptionEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsRelativeWhenOptionEnum)
-  tsRelativeWhenOption?: enums.FractionTsRelativeWhenOptionEnum;
+  @IsEnum(FractionTsRelativeWhenOptionEnum)
+  tsRelativeWhenOption?: FractionTsRelativeWhenOptionEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsForOptionEnum)
-  tsForOption?: enums.FractionTsForOptionEnum;
+  @IsEnum(FractionTsForOptionEnum)
+  tsForOption?: FractionTsForOptionEnum;
 
   @IsOptional()
   @IsNumber()
   tsForValue?: number;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsUnitEnum)
-  tsForUnit?: enums.FractionTsUnitEnum;
+  @IsEnum(FractionTsUnitEnum)
+  tsForUnit?: FractionTsUnitEnum;
 
   @IsOptional()
   @IsNumber()
   tsLastValue?: number;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsUnitEnum)
-  tsLastUnit?: enums.FractionTsUnitEnum;
+  @IsEnum(FractionTsUnitEnum)
+  tsLastUnit?: FractionTsUnitEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsLastCompleteOptionEnum)
-  tsLastCompleteOption?: enums.FractionTsLastCompleteOptionEnum;
+  @IsEnum(FractionTsLastCompleteOptionEnum)
+  tsLastCompleteOption?: FractionTsLastCompleteOptionEnum;
 
   @IsOptional()
   @IsNumber()
   tsNextValue?: number;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsUnitEnum)
-  tsNextUnit?: enums.FractionTsUnitEnum;
+  @IsEnum(FractionTsUnitEnum)
+  tsNextUnit?: FractionTsUnitEnum;
 
   //
 
@@ -204,12 +219,12 @@ export class Fraction {
   tsMoment?: Moment;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsMomentTypeEnum)
-  tsMomentType?: enums.FractionTsMomentTypeEnum;
+  @IsEnum(FractionTsMomentTypeEnum)
+  tsMomentType?: FractionTsMomentTypeEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsMixUnitEnum)
-  tsMomentUnit?: enums.FractionTsMixUnitEnum;
+  @IsEnum(FractionTsMixUnitEnum)
+  tsMomentUnit?: FractionTsMixUnitEnum;
 
   @IsOptional()
   @IsString()
@@ -225,12 +240,12 @@ export class Fraction {
   tsFromMoment?: Moment;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsMomentTypeEnum)
-  tsFromMomentType?: enums.FractionTsMomentTypeEnum;
+  @IsEnum(FractionTsMomentTypeEnum)
+  tsFromMomentType?: FractionTsMomentTypeEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsMixUnitEnum)
-  tsFromMomentUnit?: enums.FractionTsMixUnitEnum;
+  @IsEnum(FractionTsMixUnitEnum)
+  tsFromMomentUnit?: FractionTsMixUnitEnum;
 
   @IsOptional()
   @IsString()
@@ -246,12 +261,12 @@ export class Fraction {
   tsToMoment?: Moment;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsMomentTypeEnum)
-  tsToMomentType?: enums.FractionTsMomentTypeEnum;
+  @IsEnum(FractionTsMomentTypeEnum)
+  tsToMomentType?: FractionTsMomentTypeEnum;
 
   @IsOptional()
-  @IsEnum(enums.FractionTsMixUnitEnum)
-  tsToMomentUnit?: enums.FractionTsMixUnitEnum;
+  @IsEnum(FractionTsMixUnitEnum)
+  tsToMomentUnit?: FractionTsMixUnitEnum;
 
   @IsOptional()
   @IsString()

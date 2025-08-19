@@ -1,22 +1,27 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToDisk } from '~disk/barrels/api-to-disk';
-import { common } from '~disk/barrels/common';
-import { nodeCommon } from '~disk/barrels/node-common';
+import { PROD_REPO_ID } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import {
+  ToDiskSaveFileRequest,
+  ToDiskSaveFileResponsePayload
+} from '~common/interfaces/to-disk/07-files/to-disk-save-file';
+import { ServerError } from '~common/models/server-error';
+import { ensureDir } from '~disk/functions/disk/ensure-dir';
+import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
+import { isPathExist } from '~disk/functions/disk/is-path-exist';
+import { writeToFile } from '~disk/functions/disk/write-to-file';
+import { addChangesToStage } from '~disk/functions/git/add-changes-to-stage';
+import { checkoutBranch } from '~disk/functions/git/checkout-branch';
+import { commit } from '~disk/functions/git/commit';
+import { getRepoStatus } from '~disk/functions/git/get-repo-status';
+import { isLocalBranchExist } from '~disk/functions/git/is-local-branch-exist';
+import { pushToRemote } from '~disk/functions/git/push-to-remote';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 import { Config } from '~disk/interfaces/config';
 import { ItemCatalog } from '~disk/interfaces/item-catalog';
 import { ItemStatus } from '~disk/interfaces/item-status';
-import { ensureDir } from '~disk/models/disk/ensure-dir';
-import { getNodesAndFiles } from '~disk/models/disk/get-nodes-and-files';
-import { isPathExist } from '~disk/models/disk/is-path-exist';
-import { writeToFile } from '~disk/models/disk/write-to-file';
-import { addChangesToStage } from '~disk/models/git/add-changes-to-stage';
-import { checkoutBranch } from '~disk/models/git/checkout-branch';
-import { commit } from '~disk/models/git/commit';
-import { getRepoStatus } from '~disk/models/git/get-repo-status';
-import { isLocalBranchExist } from '~disk/models/git/is-local-branch-exist';
-import { pushToRemote } from '~disk/models/git/push-to-remote';
+import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class SaveFileService {
@@ -26,10 +31,10 @@ export class SaveFileService {
   ) {}
 
   async process(request: any) {
-    let requestValid = nodeCommon.transformValidSync({
-      classType: apiToDisk.ToDiskSaveFileRequest,
+    let requestValid = transformValidSync({
+      classType: ToDiskSaveFileRequest,
       object: request,
-      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
+      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
@@ -72,22 +77,22 @@ export class SaveFileService {
 
     let isOrgExist = await isPathExist(orgDir);
     if (isOrgExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await isPathExist(projectDir);
     if (isProjectExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_PROJECT_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isRepoExist = await isPathExist(repoDir);
     if (isRepoExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_REPO_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
@@ -96,8 +101,8 @@ export class SaveFileService {
       localBranch: branch
     });
     if (isBranchExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_BRANCH_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
       });
     }
 
@@ -116,8 +121,8 @@ export class SaveFileService {
 
     let isFileExist = await isPathExist(filePath);
     if (isFileExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_FILE_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_FILE_IS_NOT_EXIST
       });
     }
 
@@ -127,8 +132,8 @@ export class SaveFileService {
     });
 
     // if (
-    //   common.isDefined(secondFileNodeId) &&
-    //   common.isDefinedAndNotEmpty(secondFileContent)
+    //   isDefined(secondFileNodeId) &&
+    //   isDefinedAndNotEmpty(secondFileContent)
     // ) {
     //   let relativeSecondFilePath = secondFileNodeId.substring(
     //     projectId.length + 1
@@ -139,8 +144,8 @@ export class SaveFileService {
 
     //   // let isSecondFileExist = await isPathExist(secondFilePath);
     //   // if (isSecondFileExist === false) {
-    //   //   throw new common.ServerError({
-    //   //     message: common.ErEnum.DISK_FILE_IS_NOT_EXIST
+    //   //   throw new ServerError({
+    //   //     message: ErEnum.DISK_FILE_IS_NOT_EXIST
     //   //   });
     //   // }
 
@@ -150,7 +155,7 @@ export class SaveFileService {
     //   });
     // }
 
-    // if (common.isDefined(secondFileNodeId) && isDeleteSecondFile === true) {
+    // if (isDefined(secondFileNodeId) && isDeleteSecondFile === true) {
     //   let secondRelativeFilePath = secondFileNodeId.substring(
     //     projectId.length + 1
     //   );
@@ -161,7 +166,7 @@ export class SaveFileService {
 
     await addChangesToStage({ repoDir: repoDir });
 
-    if (repoId === common.PROD_REPO_ID) {
+    if (repoId === PROD_REPO_ID) {
       await commit({
         repoDir: repoDir,
         userAlias: userAlias,
@@ -202,7 +207,7 @@ export class SaveFileService {
       isRootMproveDir: false
     });
 
-    let payload: apiToDisk.ToDiskSaveFileResponsePayload = {
+    let payload: ToDiskSaveFileResponsePayload = {
       repo: {
         orgId: orgId,
         projectId: projectId,

@@ -1,22 +1,25 @@
 import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { MetricTypeEnum } from '~common/enums/metric-type.enum';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
 
 export class ModelMetric {
   @IsString()
   modelId?: string;
 
-  @IsEnum(enums.ModelTypeEnum)
-  modelType: enums.ModelTypeEnum;
+  @IsEnum(ModelTypeEnum)
+  modelType: ModelTypeEnum;
 
   @IsString()
   fieldId?: string;
 
-  @IsEnum(enums.FieldClassEnum)
-  fieldClass?: enums.FieldClassEnum;
+  @IsEnum(FieldClassEnum)
+  fieldClass?: FieldClassEnum;
 
   @IsOptional()
-  @IsEnum(enums.FieldResultEnum)
-  fieldResult?: enums.FieldResultEnum;
+  @IsEnum(FieldResultEnum)
+  fieldResult?: FieldResultEnum;
 
   @IsString()
   timeFieldId?: string;
@@ -30,8 +33,8 @@ export class ModelMetric {
   @IsString()
   filePath?: string;
 
-  @IsEnum(enums.MetricTypeEnum)
-  type?: enums.MetricTypeEnum;
+  @IsEnum(MetricTypeEnum)
+  type?: MetricTypeEnum;
 
   @IsString()
   metricId?: string;

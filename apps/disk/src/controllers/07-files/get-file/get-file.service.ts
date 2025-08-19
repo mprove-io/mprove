@@ -1,20 +1,26 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToDisk } from '~disk/barrels/api-to-disk';
-import { common } from '~disk/barrels/common';
-import { nodeCommon } from '~disk/barrels/node-common';
+import { ErEnum } from '~common/enums/er.enum';
+import { PanelEnum } from '~common/enums/panel.enum';
+import {
+  ToDiskGetFileRequest,
+  ToDiskGetFileResponsePayload
+} from '~common/interfaces/to-disk/07-files/to-disk-get-file';
+import { ServerError } from '~common/models/server-error';
+import { ensureDir } from '~disk/functions/disk/ensure-dir';
+import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
+import { isPathExist } from '~disk/functions/disk/is-path-exist';
+import { checkoutBranch } from '~disk/functions/git/checkout-branch';
+import { getBaseCommitFileContent } from '~disk/functions/git/get-base-commit-file-content';
+import { getLastCommitFileContent } from '~disk/functions/git/get-last-commit-file-content';
+import { getRepoStatus } from '~disk/functions/git/get-repo-status';
+import { isLocalBranchExist } from '~disk/functions/git/is-local-branch-exist';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 import { Config } from '~disk/interfaces/config';
 import { ItemCatalog } from '~disk/interfaces/item-catalog';
 import { ItemStatus } from '~disk/interfaces/item-status';
-import { ensureDir } from '~disk/models/disk/ensure-dir';
-import { getNodesAndFiles } from '~disk/models/disk/get-nodes-and-files';
-import { isPathExist } from '~disk/models/disk/is-path-exist';
-import { checkoutBranch } from '~disk/models/git/checkout-branch';
-import { getBaseCommitFileContent } from '~disk/models/git/get-base-commit-file-content';
-import { getLastCommitFileContent } from '~disk/models/git/get-last-commit-file-content';
-import { getRepoStatus } from '~disk/models/git/get-repo-status';
-import { isLocalBranchExist } from '~disk/models/git/is-local-branch-exist';
+import { readFileCheckSize } from '~node-common/functions/read-file-check-size';
+import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class GetFileService {
@@ -28,10 +34,10 @@ export class GetFileService {
       'diskOrganizationsPath'
     );
 
-    let requestValid = nodeCommon.transformValidSync({
-      classType: apiToDisk.ToDiskGetFileRequest,
+    let requestValid = transformValidSync({
+      classType: ToDiskGetFileRequest,
       object: request,
-      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
+      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
@@ -59,22 +65,22 @@ export class GetFileService {
 
     let isOrgExist = await isPathExist(orgDir);
     if (isOrgExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await isPathExist(projectDir);
     if (isProjectExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_PROJECT_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isRepoExist = await isPathExist(repoDir);
     if (isRepoExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_REPO_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
@@ -83,8 +89,8 @@ export class GetFileService {
       localBranch: branch
     });
     if (isBranchExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_BRANCH_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
       });
     }
 
@@ -117,13 +123,13 @@ export class GetFileService {
     let isFileExist = await isPathExist(filePath);
     if (isFileExist === false) {
       isExist = false;
-      if (panel === common.PanelEnum.Tree) {
-        throw new common.ServerError({
-          message: common.ErEnum.DISK_FILE_IS_NOT_EXIST
+      if (panel === PanelEnum.Tree) {
+        throw new ServerError({
+          message: ErEnum.DISK_FILE_IS_NOT_EXIST
         });
       }
     } else {
-      let { content: cont } = await nodeCommon.readFileCheckSize({
+      let { content: cont } = await readFileCheckSize({
         filePath: filePath,
         getStat: false
       });
@@ -133,12 +139,12 @@ export class GetFileService {
 
     let originalContent;
 
-    if (panel === common.PanelEnum.ChangesToCommit) {
+    if (panel === PanelEnum.ChangesToCommit) {
       originalContent = await getLastCommitFileContent({
         repoDir: repoDir,
         filePathRelative: filePathRelative
       });
-    } else if (panel === common.PanelEnum.ChangesToPush) {
+    } else if (panel === PanelEnum.ChangesToPush) {
       originalContent = await getBaseCommitFileContent({
         repoDir: repoDir,
         filePathRelative: filePathRelative
@@ -169,7 +175,7 @@ export class GetFileService {
       isRootMproveDir: false
     });
 
-    let payload: apiToDisk.ToDiskGetFileResponsePayload = {
+    let payload: ToDiskGetFileResponsePayload = {
       repo: {
         orgId: orgId,
         projectId: projectId,

@@ -1,8 +1,8 @@
-import { enums } from '~common/barrels/enums';
+import { FileExtensionEnum } from '~common/enums/file-extension.enum';
 
 export interface FileBasic {
   fileName: string;
-  fileExt: enums.FileExtensionEnum;
+  fileExt: FileExtensionEnum;
   filePath: string;
 
   name: string;

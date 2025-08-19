@@ -8,7 +8,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ModelField } from './model-field';
 import { ModelNode } from './model-node';
 
@@ -19,8 +19,8 @@ export class Model {
   @IsString()
   modelId: string;
 
-  @IsEnum(enums.ModelTypeEnum)
-  type: enums.ModelTypeEnum;
+  @IsEnum(ModelTypeEnum)
+  type: ModelTypeEnum;
 
   @IsString()
   source: string;

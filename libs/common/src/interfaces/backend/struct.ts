@@ -6,11 +6,11 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { IsTimezone } from '~common/functions/is-timezone';
-import { Preset } from '../_index';
 import { BmlError } from '../blockml/bml-error';
 import { ModelMetric } from '../blockml/model-metric';
+import { Preset } from '../blockml/preset';
 
 export class Struct {
   @IsString()
@@ -22,8 +22,8 @@ export class Struct {
   @IsString()
   structId: string;
 
-  @IsEnum(enums.ProjectWeekStartEnum)
-  weekStart: enums.ProjectWeekStartEnum;
+  @IsEnum(ProjectWeekStartEnum)
+  weekStart: ProjectWeekStartEnum;
 
   @IsBoolean()
   allowTimezones: boolean;

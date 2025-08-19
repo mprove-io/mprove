@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToDisk } from '~disk/barrels/api-to-disk';
-import { common } from '~disk/barrels/common';
+import { METHOD_RABBIT } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
+import { ServerError } from '~common/models/server-error';
 import { CreateOrgService } from '~disk/controllers/01-orgs/create-org/create-org.service';
 import { DeleteOrgService } from '~disk/controllers/01-orgs/delete-org/delete-org.service';
 import { IsOrgExistService } from '~disk/controllers/01-orgs/is-org-exist/is-org-exist.service';
@@ -88,7 +90,7 @@ export class MessageService {
         payload: payload,
         body: request,
         path: request.info.name,
-        method: common.METHOD_RABBIT,
+        method: METHOD_RABBIT,
         duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger
@@ -98,7 +100,7 @@ export class MessageService {
         e: e,
         body: request,
         path: request.info.name,
-        method: common.METHOD_RABBIT,
+        method: METHOD_RABBIT,
         duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger
@@ -108,75 +110,75 @@ export class MessageService {
 
   async processSwitch(request: any): Promise<any> {
     switch (request.info.name) {
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrg:
+      case ToDiskRequestInfoNameEnum.ToDiskCreateOrg:
         return await this.createOrgService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrg:
+      case ToDiskRequestInfoNameEnum.ToDiskDeleteOrg:
         return await this.deleteOrgService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsOrgExist:
+      case ToDiskRequestInfoNameEnum.ToDiskIsOrgExist:
         return await this.isOrgExistService.process(request);
 
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject:
+      case ToDiskRequestInfoNameEnum.ToDiskCreateProject:
         return await this.createProjectService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteProject:
+      case ToDiskRequestInfoNameEnum.ToDiskDeleteProject:
         return await this.deleteProjectService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsProjectExist:
+      case ToDiskRequestInfoNameEnum.ToDiskIsProjectExist:
         return await this.isProjectExistService.process(request);
 
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCommitRepo:
+      case ToDiskRequestInfoNameEnum.ToDiskCommitRepo:
         return await this.commitRepoService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo:
+      case ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo:
         return await this.createDevRepoService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo:
+      case ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo:
         return await this.deleteDevRepoService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskMergeRepo:
+      case ToDiskRequestInfoNameEnum.ToDiskMergeRepo:
         return await this.mergeRepoService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskPullRepo:
+      case ToDiskRequestInfoNameEnum.ToDiskPullRepo:
         return await this.pullRepoService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskPushRepo:
+      case ToDiskRequestInfoNameEnum.ToDiskPushRepo:
         return await this.pushRepoService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit:
+      case ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit:
         return await this.revertRepoToLastCommitService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote:
+      case ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote:
         return await this.revertRepoToRemoteService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSyncRepo:
+      case ToDiskRequestInfoNameEnum.ToDiskSyncRepo:
         return await this.syncRepoService.process(request);
 
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles:
+      case ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles:
         return await this.getCatalogFilesService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes:
+      case ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes:
         return await this.getCatalogNodesService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode:
+      case ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode:
         return await this.moveCatalogNodeService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode:
+      case ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode:
         return await this.renameCatalogNodeService.process(request);
 
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateBranch:
+      case ToDiskRequestInfoNameEnum.ToDiskCreateBranch:
         return await this.createBranchService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteBranch:
+      case ToDiskRequestInfoNameEnum.ToDiskDeleteBranch:
         return await this.deleteBranchService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsBranchExist:
+      case ToDiskRequestInfoNameEnum.ToDiskIsBranchExist:
         return await this.isBranchExistService.process(request);
 
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFolder:
+      case ToDiskRequestInfoNameEnum.ToDiskCreateFolder:
         return await this.createFolderService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteFolder:
+      case ToDiskRequestInfoNameEnum.ToDiskDeleteFolder:
         return await this.deleteFolderService.process(request);
 
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFile:
+      case ToDiskRequestInfoNameEnum.ToDiskCreateFile:
         return await this.createFileService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteFile:
+      case ToDiskRequestInfoNameEnum.ToDiskDeleteFile:
         return await this.deleteFileService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetFile:
+      case ToDiskRequestInfoNameEnum.ToDiskGetFile:
         return await this.getFileService.process(request);
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile:
+      case ToDiskRequestInfoNameEnum.ToDiskSaveFile:
         return await this.saveFileService.process(request);
 
-      case apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSeedProject:
+      case ToDiskRequestInfoNameEnum.ToDiskSeedProject:
         return await this.seedProjectService.process(request);
 
       default:
-        throw new common.ServerError({
-          message: common.ErEnum.DISK_WRONG_REQUEST_INFO_NAME
+        throw new ServerError({
+          message: ErEnum.DISK_WRONG_REQUEST_INFO_NAME
         });
     }
   }

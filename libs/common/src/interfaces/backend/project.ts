@@ -1,5 +1,5 @@
 import { IsEnum, IsInt, IsString } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
 
 export class Project {
   @IsString()
@@ -14,8 +14,8 @@ export class Project {
   @IsString()
   defaultBranch: string;
 
-  @IsEnum(enums.ProjectRemoteTypeEnum)
-  remoteType: enums.ProjectRemoteTypeEnum;
+  @IsEnum(ProjectRemoteTypeEnum)
+  remoteType: ProjectRemoteTypeEnum;
 
   @IsString()
   gitUrl: string;

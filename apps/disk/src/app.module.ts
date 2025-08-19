@@ -1,9 +1,10 @@
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
 import { appControllers } from './app-controllers';
 import { appServices } from './app-services';
-import { common } from './barrels/common';
 import { getConfig } from './config/get.config';
 import { logToConsoleDisk } from './functions/log-to-console-disk';
 import { Config } from './interfaces/config';
@@ -27,7 +28,7 @@ import { Config } from './interfaces/config';
         return {
           exchanges: [
             {
-              name: common.RabbitExchangesEnum.Disk.toString(),
+              name: RabbitExchangesEnum.Disk.toString(),
               type: 'direct'
             }
           ],
@@ -59,7 +60,7 @@ export class AppModule implements OnModuleInit {
   async onModuleInit() {
     logToConsoleDisk({
       log: `NODE_ENV is set to "${process.env.NODE_ENV}"`,
-      logLevel: common.LogLevelEnum.Info,
+      logLevel: LogLevelEnum.Info,
       logger: this.logger,
       cs: this.cs
     });

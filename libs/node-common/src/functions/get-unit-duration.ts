@@ -1,27 +1,27 @@
-import { common } from '~node-common/barrels/common';
+import { FractionTsUnitEnum } from '~common/enums/fraction/fraction-ts-unit.enum';
 
 export function getUnitDuration(item: {
-  unit: common.FractionTsUnitEnum;
+  unit: FractionTsUnitEnum;
   value: number;
 }) {
   let { unit, value } = item;
 
   let unitDuration =
-    unit === common.FractionTsUnitEnum.Years
+    unit === FractionTsUnitEnum.Years
       ? { years: value }
-      : unit === common.FractionTsUnitEnum.Quarters
+      : unit === FractionTsUnitEnum.Quarters
         ? { months: value * 3 }
-        : unit === common.FractionTsUnitEnum.Months
+        : unit === FractionTsUnitEnum.Months
           ? { months: value }
-          : unit === common.FractionTsUnitEnum.Weeks
+          : unit === FractionTsUnitEnum.Weeks
             ? { days: value * 7 }
-            : unit === common.FractionTsUnitEnum.Days
+            : unit === FractionTsUnitEnum.Days
               ? { days: value }
-              : unit === common.FractionTsUnitEnum.Hours
+              : unit === FractionTsUnitEnum.Hours
                 ? { hours: value }
-                : unit === common.FractionTsUnitEnum.Minutes
+                : unit === FractionTsUnitEnum.Minutes
                   ? { minutes: value }
-                  : unit === common.FractionTsUnitEnum.Seconds
+                  : unit === FractionTsUnitEnum.Seconds
                     ? { seconds: value }
                     : undefined;
 

@@ -1,5 +1,5 @@
 import { IsOptional, IsString } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { FileStatusEnum } from '~common/enums/file-status.enum';
 
 export class DiskFileChange {
   @IsString()
@@ -12,7 +12,7 @@ export class DiskFileChange {
   parentPath: string;
 
   @IsString()
-  status: enums.FileStatusEnum;
+  status: FileStatusEnum;
 
   @IsOptional()
   @IsString()

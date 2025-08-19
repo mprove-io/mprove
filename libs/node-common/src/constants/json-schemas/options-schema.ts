@@ -1,5 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
-import { constants } from '~common/barrels/constants';
+import { CHART_TYPE_VALUES } from '~common/constants/top';
 
 export const OPTIONS_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -48,7 +48,7 @@ export const OPTIONS_SCHEMA: JSONSchema7 = {
           },
           type: {
             type: 'string',
-            enum: constants.CHART_TYPE_VALUES
+            enum: CHART_TYPE_VALUES
           },
           y_axis_index: {
             type: 'integer'

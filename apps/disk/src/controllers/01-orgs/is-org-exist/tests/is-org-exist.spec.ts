@@ -1,6 +1,11 @@
 import test from 'ava';
-import { apiToDisk } from '~disk/barrels/api-to-disk';
-import { common } from '~disk/barrels/common';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
+import { ToDiskCreateOrgRequest } from '~common/interfaces/to-disk/01-orgs/to-disk-create-org';
+import {
+  ToDiskIsOrgExistRequest,
+  ToDiskIsOrgExistResponse
+} from '~common/interfaces/to-disk/01-orgs/to-disk-is-org-exist';
 import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
 import { prepareTest } from '~disk/functions/prepare-test';
 
@@ -10,8 +15,8 @@ let traceId = testId;
 let orgId = testId;
 
 test('1', async t => {
-  let resp1: apiToDisk.ToDiskIsOrgExistResponse;
-  let resp2: apiToDisk.ToDiskIsOrgExistResponse;
+  let resp1: ToDiskIsOrgExistResponse;
+  let resp2: ToDiskIsOrgExistResponse;
 
   let wLogger;
   let configService;
@@ -21,9 +26,9 @@ test('1', async t => {
     wLogger = logger;
     configService = cs;
 
-    let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
+    let createOrgRequest: ToDiskCreateOrgRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
         traceId: traceId
       },
       payload: {
@@ -31,9 +36,9 @@ test('1', async t => {
       }
     };
 
-    let isOrgExistRequest_1: apiToDisk.ToDiskIsOrgExistRequest = {
+    let isOrgExistRequest_1: ToDiskIsOrgExistRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsOrgExist,
+        name: ToDiskRequestInfoNameEnum.ToDiskIsOrgExist,
         traceId: traceId
       },
       payload: {
@@ -41,9 +46,9 @@ test('1', async t => {
       }
     };
 
-    let isOrgExistRequest_2: apiToDisk.ToDiskIsOrgExistRequest = {
+    let isOrgExistRequest_2: ToDiskIsOrgExistRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskIsOrgExist,
+        name: ToDiskRequestInfoNameEnum.ToDiskIsOrgExist,
         traceId: traceId
       },
       payload: {
@@ -58,7 +63,7 @@ test('1', async t => {
   } catch (e) {
     logToConsoleDisk({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: wLogger,
       cs: configService
     });

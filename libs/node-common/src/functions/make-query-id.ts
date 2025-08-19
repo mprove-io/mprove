@@ -1,5 +1,6 @@
 import * as crypto from 'crypto';
-import { common } from '~node-common/barrels/common';
+import { isDefined } from '~common/functions/is-defined';
+import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 
 export function makeQueryId(item: {
   projectId: string;
@@ -7,7 +8,7 @@ export function makeQueryId(item: {
   connectionId: string;
   sql: string;
   storeTransformedRequestString: string;
-  store: common.FileStore;
+  store: FileStore;
 }) {
   let {
     projectId,
@@ -18,7 +19,7 @@ export function makeQueryId(item: {
     store
   } = item;
 
-  let postText = common.isDefined(sql)
+  let postText = isDefined(sql)
     ? sql
     : storeTransformedRequestString +
       store.method.toString() +

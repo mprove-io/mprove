@@ -1,5 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
-import { constants } from '~common/barrels/constants';
+import { PROJECT_WEEK_START_VALUES } from '~common/constants/top';
 import { getTimezonesValues } from '~common/functions/get-timezones-values';
 
 export const CONFIG_SCHEMA: JSONSchema7 = {
@@ -13,7 +13,7 @@ export const CONFIG_SCHEMA: JSONSchema7 = {
     },
     week_start: {
       type: 'string',
-      enum: constants.PROJECT_WEEK_START_VALUES
+      enum: PROJECT_WEEK_START_VALUES
     },
     allow_timezones: {
       type: 'boolean'

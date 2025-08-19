@@ -7,12 +7,12 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { enums } from '~common/barrels/enums';
-import { Filter } from '../_index';
+import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
+import { Filter } from '../blockml/filter';
 
 export class QueryOperation {
-  @IsEnum(enums.QueryOperationTypeEnum)
-  type: enums.QueryOperationTypeEnum;
+  @IsEnum(QueryOperationTypeEnum)
+  type: QueryOperationTypeEnum;
 
   @IsString()
   timezone: string;

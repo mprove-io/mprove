@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { ServerError } from '~common/models/server-error';
 
 export class ResponseInfo {
@@ -15,8 +15,8 @@ export class ResponseInfo {
   @IsString()
   duration?: number;
 
-  @IsEnum(enums.ResponseInfoStatusEnum)
-  status: enums.ResponseInfoStatusEnum;
+  @IsEnum(ResponseInfoStatusEnum)
+  status: ResponseInfoStatusEnum;
 
   @IsString()
   traceId: string;

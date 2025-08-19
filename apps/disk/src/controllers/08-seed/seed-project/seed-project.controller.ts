@@ -1,6 +1,6 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToDisk } from '~disk/barrels/api-to-disk';
+import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { makeErrorResponseDisk } from '~disk/functions/make-error-response-disk';
 import { makeOkResponseDisk } from '~disk/functions/make-ok-response-disk';
 import { Config } from '~disk/interfaces/config';
@@ -14,7 +14,7 @@ export class SeedProjectController {
     private logger: Logger
   ) {}
 
-  @Post(apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSeedProject)
+  @Post(ToDiskRequestInfoNameEnum.ToDiskSeedProject)
   async seedProject(@Req() request: any, @Body() body: any) {
     let startTs = Date.now();
     try {

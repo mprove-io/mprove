@@ -8,7 +8,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
 import { IsTimezone } from '~common/functions/is-timezone';
 import { Column } from './column';
 import { Fraction } from './fraction';
@@ -48,8 +48,8 @@ export class Report {
   @IsTimezone()
   timezone: string;
 
-  @IsEnum(enums.TimeSpecEnum)
-  timeSpec: enums.TimeSpecEnum;
+  @IsEnum(TimeSpecEnum)
+  timeSpec: TimeSpecEnum;
 
   @ValidateNested()
   @Type(() => Fraction)

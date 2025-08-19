@@ -1,5 +1,7 @@
-import { Mconfig, ModelField, isDefined } from '~common/_index';
-import { enums } from '~common/barrels/enums';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { Mconfig } from '~common/interfaces/blockml/mconfig';
+import { ModelField } from '~common/interfaces/blockml/model-field';
+import { isDefined } from './is-defined';
 
 export function setChartTitleOnSelectChange<T extends Mconfig>(item: {
   mconfig: T;
@@ -14,7 +16,7 @@ export function setChartTitleOnSelectChange<T extends Mconfig>(item: {
     mconfig.select.forEach((fieldId: string) => {
       let field = fields.find(f => f.id === fieldId);
 
-      if (field.fieldClass === enums.FieldClassEnum.Dimension) {
+      if (field.fieldClass === FieldClassEnum.Dimension) {
         fieldsSelectedDimensions.push(field);
       } else {
         fieldsSelectedMeasuresAndCalculations.push(field);
@@ -49,7 +51,7 @@ export function setChartTitleOnSelectChange<T extends Mconfig>(item: {
 
 function getCompLabel(x: ModelField) {
   // let topLabelPrefix =
-  //   x.topLabel === enums.ModelNodeLabelEnum.ModelFields ? '' : `${x.topLabel} `;
+  //   x.topLabel === ModelNodeLabelEnum.ModelFields ? '' : `${x.topLabel} `;
 
   let topLabelPrefix = `${x.topLabel} `;
 

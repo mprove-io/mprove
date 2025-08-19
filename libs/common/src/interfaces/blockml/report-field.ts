@@ -7,7 +7,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
 import { Fraction } from './fraction';
 
 export class ReportField {
@@ -33,8 +33,8 @@ export class ReportField {
   maxFractions: number;
 
   @IsOptional()
-  @IsEnum(enums.FieldResultEnum)
-  result: enums.FieldResultEnum;
+  @IsEnum(FieldResultEnum)
+  result: FieldResultEnum;
 
   @IsOptional()
   @IsString()

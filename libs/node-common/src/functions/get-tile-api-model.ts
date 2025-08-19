@@ -1,30 +1,33 @@
-import { common } from '~node-common/barrels/common';
+import { BmlFile } from '~common/interfaces/blockml/bml-file';
+import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
+import { FilePartTile } from '~common/interfaces/blockml/internal/file-part-tile';
+import { Model } from '~common/interfaces/blockml/model';
 
 export function getTileApiModel(item: {
-  tile: common.FilePartTile;
+  tile: FilePartTile;
   filePath: string;
-  mods: common.FileMod[];
-  apiModels: common.Model[];
-  malloyFiles: common.BmlFile[];
+  mods: FileMod[];
+  apiModels: Model[];
+  malloyFiles: BmlFile[];
 }) {
   let { tile, filePath } = item;
 
-  let apiModel: common.Model;
+  let apiModel: Model;
 
-  // if (common.isDefined(tile.query)) {
+  // if (isDefined(tile.query)) {
   //   let malloyFile = item.malloyFiles.find(
   //     file =>
   //       file.path ===
   //       filePath.substring(0, filePath.lastIndexOf('.')) + '.malloy'
   //   );
 
-  //   if (common.isUndefined(malloyFile)) {
+  //   if (isUndefined(malloyFile)) {
   //     return undefined; // TODO: check
   //   }
 
   //   let source: string;
 
-  //   let reg = common.MyRegex.MALLOY_QUERY_SOURCE(tile.query);
+  //   let reg = MyRegex.MALLOY_QUERY_SOURCE(tile.query);
   //   let r;
 
   //   if ((r = reg.exec(malloyFile.content))) {

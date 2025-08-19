@@ -1,4 +1,6 @@
-import { enums } from '~common/barrels/enums';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { TimeSourceEnum } from '~common/enums/time-source.enum';
+import { TimeframeEnum } from '~common/enums/timeframe.enum';
 
 export interface FieldTime {
   hidden?: string; // boolean
@@ -13,13 +15,13 @@ export interface FieldTime {
   sql?: string;
   sql_line_num?: number;
 
-  source?: enums.TimeSourceEnum;
+  source?: TimeSourceEnum;
   source_line_num?: number;
 
   unnest?: string;
   unnest_line_num?: number;
 
-  timeframes?: enums.TimeframeEnum[];
+  timeframes?: TimeframeEnum[];
   timeframes_line_num?: number;
 
   //
@@ -28,5 +30,5 @@ export interface FieldTime {
 
   name_line_num?: number;
 
-  fieldClass?: enums.FieldClassEnum;
+  fieldClass?: FieldClassEnum;
 }

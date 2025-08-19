@@ -3,14 +3,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
 import { WinstonModule } from 'nest-winston';
+import { BoolEnum } from '~common/enums/bool.enum';
 import { appServices } from '~disk/app-services';
-import { common } from '~disk/barrels/common';
-import { nodeCommon } from '~disk/barrels/node-common';
 import { getConfig } from '~disk/config/get.config';
 import { APP_NAME_DISK } from '~disk/constants/top';
 import { Config } from '~disk/interfaces/config';
 import { ConsumerService } from '~disk/services/consumer.service';
 import { MessageService } from '~disk/services/message.service';
+import { getLoggerOptions } from '~node-common/functions/get-logger-options';
 
 export async function prepareTest(
   orgId: string,
@@ -27,9 +27,9 @@ export async function prepareTest(
         isGlobal: true
       }),
       WinstonModule.forRoot(
-        nodeCommon.getLoggerOptions({
+        getLoggerOptions({
           appName: APP_NAME_DISK,
-          isJson: config.diskLogIsJson === common.BoolEnum.TRUE
+          isJson: config.diskLogIsJson === BoolEnum.TRUE
         })
       )
     ],

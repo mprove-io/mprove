@@ -1,8 +1,9 @@
-import { common } from '~disk/barrels/common';
+import { RepoStatusEnum } from '~common/enums/repo-status.enum';
+import { DiskFileLine } from '~common/interfaces/disk/disk-file-line';
 
 export interface ItemStatus {
-  repoStatus: common.RepoStatusEnum;
-  conflicts: common.DiskFileLine[];
+  repoStatus: RepoStatusEnum;
+  conflicts: DiskFileLine[];
   currentBranch: string;
   changesToCommit: any;
   changesToPush: any;

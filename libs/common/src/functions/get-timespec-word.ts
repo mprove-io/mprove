@@ -1,25 +1,26 @@
-import { enums } from '~common/barrels/enums';
+import { TimeframeEnum } from '~common/enums/timeframe.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
 
-export function getTimeSpecWord(item: { timeSpec: enums.TimeSpecEnum }) {
+export function getTimeSpecWord(item: { timeSpec: TimeSpecEnum }) {
   let { timeSpec } = item;
 
   let timeSpecWord =
-    timeSpec === enums.TimeSpecEnum.Years
-      ? enums.TimeframeEnum.Year
-      : timeSpec === enums.TimeSpecEnum.Quarters
-        ? enums.TimeframeEnum.Quarter
-        : timeSpec === enums.TimeSpecEnum.Months
-          ? enums.TimeframeEnum.Month
-          : timeSpec === enums.TimeSpecEnum.Weeks
-            ? enums.TimeframeEnum.Week
-            : timeSpec === enums.TimeSpecEnum.Days
-              ? enums.TimeframeEnum.Date
-              : timeSpec === enums.TimeSpecEnum.Hours
-                ? enums.TimeframeEnum.Hour
-                : timeSpec === enums.TimeSpecEnum.Minutes
-                  ? enums.TimeframeEnum.Minute
-                  : timeSpec === enums.TimeSpecEnum.Timestamps
-                    ? enums.TimeframeEnum.Ts
+    timeSpec === TimeSpecEnum.Years
+      ? TimeframeEnum.Year
+      : timeSpec === TimeSpecEnum.Quarters
+        ? TimeframeEnum.Quarter
+        : timeSpec === TimeSpecEnum.Months
+          ? TimeframeEnum.Month
+          : timeSpec === TimeSpecEnum.Weeks
+            ? TimeframeEnum.Week
+            : timeSpec === TimeSpecEnum.Days
+              ? TimeframeEnum.Date
+              : timeSpec === TimeSpecEnum.Hours
+                ? TimeframeEnum.Hour
+                : timeSpec === TimeSpecEnum.Minutes
+                  ? TimeframeEnum.Minute
+                  : timeSpec === TimeSpecEnum.Timestamps
+                    ? TimeframeEnum.Ts
                     : undefined;
 
   return timeSpecWord;

@@ -1,5 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
-import { constants } from '~common/barrels/constants';
+import { ROW_TYPE_VALUES } from '~common/constants/top';
 import { OPTIONS_SCHEMA } from './options-schema';
 import { FILTER_SCHEMA } from './parameters/filter-schema';
 
@@ -39,7 +39,7 @@ export const REPORT_SCHEMA: JSONSchema7 = {
           },
           type: {
             type: 'string',
-            enum: constants.ROW_TYPE_VALUES
+            enum: ROW_TYPE_VALUES
           },
           metric: {
             type: 'string'

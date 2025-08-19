@@ -1,18 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { WinstonModule } from 'nest-winston';
+import { BoolEnum } from '~common/enums/bool.enum';
+import { ErEnum } from '~common/enums/er.enum';
+import { getLoggerOptions } from '~node-common/functions/get-logger-options';
+import { listenProcessEvents } from '~node-common/functions/listen-process-events';
 import { AppModule } from './app.module';
-import { common } from './barrels/common';
-import { nodeCommon } from './barrels/node-common';
 import { getConfig } from './config/get.config';
 import { APP_NAME_DISK } from './constants/top';
 import { logToConsoleDisk } from './functions/log-to-console-disk';
 
 async function bootstrap() {
-  nodeCommon.listenProcessEvents({
-    appTerminated: common.ErEnum.DISK_APP_TERMINATED,
-    uncaughtException: common.ErEnum.DISK_UNCAUGHT_EXCEPTION,
-    unhandledRejectionReason: common.ErEnum.DISK_UNHANDLED_REJECTION_REASON,
-    unhandledRejection: common.ErEnum.DISK_UNHANDLED_REJECTION_ERROR,
+  listenProcessEvents({
+    appTerminated: ErEnum.DISK_APP_TERMINATED,
+    uncaughtException: ErEnum.DISK_UNCAUGHT_EXCEPTION,
+    unhandledRejectionReason: ErEnum.DISK_UNHANDLED_REJECTION_REASON,
+    unhandledRejection: ErEnum.DISK_UNHANDLED_REJECTION_ERROR,
     logToConsoleFn: logToConsoleDisk
   });
 
@@ -20,9 +22,9 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger(
-      nodeCommon.getLoggerOptions({
+      getLoggerOptions({
         appName: APP_NAME_DISK,
-        isJson: config.diskLogIsJson === common.BoolEnum.TRUE
+        isJson: config.diskLogIsJson === BoolEnum.TRUE
       })
     )
   });

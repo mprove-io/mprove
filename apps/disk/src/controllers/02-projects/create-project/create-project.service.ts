@@ -1,19 +1,24 @@
 import * as nodegit from '@figma/nodegit';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToDisk } from '~disk/barrels/api-to-disk';
-import { common } from '~disk/barrels/common';
-import { nodeCommon } from '~disk/barrels/node-common';
+import { PROD_REPO_ID } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import {
+  ToDiskCreateProjectRequest,
+  ToDiskCreateProjectResponsePayload
+} from '~common/interfaces/to-disk/02-projects/to-disk-create-project';
+import { ServerError } from '~common/models/server-error';
+import { ensureDir } from '~disk/functions/disk/ensure-dir';
+import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
+import { isPathExist } from '~disk/functions/disk/is-path-exist';
+import { cloneRemoteToDev } from '~disk/functions/git/clone-remote-to-dev';
+import { getRepoStatus } from '~disk/functions/git/get-repo-status';
+import { prepareRemoteAndProd } from '~disk/functions/git/prepare-remote-and-prod';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 import { Config } from '~disk/interfaces/config';
 import { ItemCatalog } from '~disk/interfaces/item-catalog';
 import { ItemStatus } from '~disk/interfaces/item-status';
-import { ensureDir } from '~disk/models/disk/ensure-dir';
-import { getNodesAndFiles } from '~disk/models/disk/get-nodes-and-files';
-import { isPathExist } from '~disk/models/disk/is-path-exist';
-import { cloneRemoteToDev } from '~disk/models/git/clone-remote-to-dev';
-import { getRepoStatus } from '~disk/models/git/get-repo-status';
-import { prepareRemoteAndProd } from '~disk/models/git/prepare-remote-and-prod';
+import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class CreateProjectService {
@@ -27,10 +32,10 @@ export class CreateProjectService {
       'diskOrganizationsPath'
     );
 
-    let requestValid = nodeCommon.transformValidSync({
-      classType: apiToDisk.ToDiskCreateProjectRequest,
+    let requestValid = transformValidSync({
+      classType: ToDiskCreateProjectRequest,
       object: request,
-      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
+      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
@@ -55,15 +60,15 @@ export class CreateProjectService {
 
     let isOrgExist = await isPathExist(orgDir);
     if (isOrgExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await isPathExist(projectDir);
     if (isProjectExist === true) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_PROJECT_ALREADY_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_PROJECT_ALREADY_EXIST
       });
     }
 
@@ -110,7 +115,7 @@ export class CreateProjectService {
     let prodItemCatalog = <ItemCatalog>await getNodesAndFiles({
       projectId: projectId,
       projectDir: projectDir,
-      repoId: common.PROD_REPO_ID,
+      repoId: PROD_REPO_ID,
       readFiles: true,
       isRootMproveDir: false
     });
@@ -124,14 +129,14 @@ export class CreateProjectService {
     } = <ItemStatus>await getRepoStatus({
       projectId: projectId,
       projectDir: projectDir,
-      repoId: common.PROD_REPO_ID,
-      repoDir: `${projectDir}/${common.PROD_REPO_ID}`,
+      repoId: PROD_REPO_ID,
+      repoDir: `${projectDir}/${PROD_REPO_ID}`,
       fetchOptions: fetchOptions,
       isFetch: true,
       isCheckConflicts: true
     });
 
-    let payload: apiToDisk.ToDiskCreateProjectResponsePayload = {
+    let payload: ToDiskCreateProjectResponsePayload = {
       orgId: orgId,
       projectId: projectId,
       defaultBranch: currentBranch,

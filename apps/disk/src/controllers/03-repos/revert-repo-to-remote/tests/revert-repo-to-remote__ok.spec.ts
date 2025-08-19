@@ -1,6 +1,24 @@
 import test from 'ava';
-import { apiToDisk } from '~disk/barrels/api-to-disk';
-import { common } from '~disk/barrels/common';
+import { BRANCH_MAIN } from '~common/constants/top';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { PanelEnum } from '~common/enums/panel.enum';
+import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { RepoStatusEnum } from '~common/enums/repo-status.enum';
+import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
+import { makeId } from '~common/functions/make-id';
+import { ToDiskCreateOrgRequest } from '~common/interfaces/to-disk/01-orgs/to-disk-create-org';
+import { ToDiskCreateProjectRequest } from '~common/interfaces/to-disk/02-projects/to-disk-create-project';
+import { ToDiskCommitRepoRequest } from '~common/interfaces/to-disk/03-repos/to-disk-commit-repo';
+import { ToDiskPushRepoRequest } from '~common/interfaces/to-disk/03-repos/to-disk-push-repo';
+import {
+  ToDiskRevertRepoToRemoteRequest,
+  ToDiskRevertRepoToRemoteResponse
+} from '~common/interfaces/to-disk/03-repos/to-disk-revert-repo-to-remote';
+import {
+  ToDiskGetFileRequest,
+  ToDiskGetFileResponse
+} from '~common/interfaces/to-disk/07-files/to-disk-get-file';
+import { ToDiskSaveFileRequest } from '~common/interfaces/to-disk/07-files/to-disk-save-file';
 import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
 import { prepareTest } from '~disk/functions/prepare-test';
 
@@ -8,12 +26,12 @@ let testId = 'disk-revert-repo-to-remote__ok';
 
 let traceId = testId;
 let orgId = testId;
-let projectId = common.makeId();
+let projectId = makeId();
 let projectName = 'p1';
 
 test('1', async t => {
-  let resp1: apiToDisk.ToDiskRevertRepoToRemoteResponse;
-  let resp2: apiToDisk.ToDiskGetFileResponse;
+  let resp1: ToDiskRevertRepoToRemoteResponse;
+  let resp2: ToDiskGetFileResponse;
   let content1 = '1';
 
   let wLogger;
@@ -24,9 +42,9 @@ test('1', async t => {
     wLogger = logger;
     configService = cs;
 
-    let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
+    let createOrgRequest: ToDiskCreateOrgRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
         traceId: traceId
       },
       payload: {
@@ -34,9 +52,9 @@ test('1', async t => {
       }
     };
 
-    let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
+    let createProjectRequest: ToDiskCreateProjectRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateProject,
         traceId: traceId
       },
       payload: {
@@ -45,102 +63,102 @@ test('1', async t => {
         projectName: projectName,
         devRepoId: 'r1',
         userAlias: 'u1',
-        remoteType: common.ProjectRemoteTypeEnum.Managed
+        remoteType: ProjectRemoteTypeEnum.Managed
       }
     };
 
-    let r1_master_saveFileRequest_1: apiToDisk.ToDiskSaveFileRequest = {
+    let r1_master_saveFileRequest_1: ToDiskSaveFileRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+        name: ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
       },
       payload: {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: common.BRANCH_MAIN,
+        branch: BRANCH_MAIN,
         fileNodeId: `${projectId}/readme.md`,
         content: content1,
         userAlias: 'u1',
-        remoteType: common.ProjectRemoteTypeEnum.Managed
+        remoteType: ProjectRemoteTypeEnum.Managed
       }
     };
 
-    let r1_master_commitRepoRequest_1: apiToDisk.ToDiskCommitRepoRequest = {
+    let r1_master_commitRepoRequest_1: ToDiskCommitRepoRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
+        name: ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: traceId
       },
       payload: {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: common.BRANCH_MAIN,
+        branch: BRANCH_MAIN,
         userAlias: 'u1',
         commitMessage: 'commitMessage-1',
-        remoteType: common.ProjectRemoteTypeEnum.Managed
+        remoteType: ProjectRemoteTypeEnum.Managed
       }
     };
 
-    let r1_master_pushRepoRequest: apiToDisk.ToDiskPushRepoRequest = {
+    let r1_master_pushRepoRequest: ToDiskPushRepoRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskPushRepo,
+        name: ToDiskRequestInfoNameEnum.ToDiskPushRepo,
         traceId: traceId
       },
       payload: {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: common.BRANCH_MAIN,
+        branch: BRANCH_MAIN,
         userAlias: 'u1',
-        remoteType: common.ProjectRemoteTypeEnum.Managed
+        remoteType: ProjectRemoteTypeEnum.Managed
       }
     };
 
-    let r1_master_saveFileRequest_2: apiToDisk.ToDiskSaveFileRequest = {
+    let r1_master_saveFileRequest_2: ToDiskSaveFileRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+        name: ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: traceId
       },
       payload: {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: common.BRANCH_MAIN,
+        branch: BRANCH_MAIN,
         fileNodeId: `${projectId}/readme.md`,
         content: '2',
         userAlias: 'u1',
-        remoteType: common.ProjectRemoteTypeEnum.Managed
+        remoteType: ProjectRemoteTypeEnum.Managed
       }
     };
 
-    let revertRepoToRemoteRequest: apiToDisk.ToDiskRevertRepoToRemoteRequest = {
+    let revertRepoToRemoteRequest: ToDiskRevertRepoToRemoteRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote,
+        name: ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote,
         traceId: traceId
       },
       payload: {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: common.BRANCH_MAIN,
-        remoteType: common.ProjectRemoteTypeEnum.Managed
+        branch: BRANCH_MAIN,
+        remoteType: ProjectRemoteTypeEnum.Managed
       }
     };
 
-    let getFileRequest: apiToDisk.ToDiskGetFileRequest = {
+    let getFileRequest: ToDiskGetFileRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetFile,
+        name: ToDiskRequestInfoNameEnum.ToDiskGetFile,
         traceId: traceId
       },
       payload: {
         orgId: orgId,
         projectId: projectId,
         repoId: 'r1',
-        branch: common.BRANCH_MAIN,
+        branch: BRANCH_MAIN,
         fileNodeId: `${projectId}/readme.md`,
-        remoteType: common.ProjectRemoteTypeEnum.Managed,
-        panel: common.PanelEnum.Tree
+        remoteType: ProjectRemoteTypeEnum.Managed,
+        panel: PanelEnum.Tree
       }
     };
 
@@ -161,12 +179,12 @@ test('1', async t => {
   } catch (e) {
     logToConsoleDisk({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: wLogger,
       cs: configService
     });
   }
 
-  t.is(resp1.payload.repo.repoStatus, common.RepoStatusEnum.Ok);
+  t.is(resp1.payload.repo.repoStatus, RepoStatusEnum.Ok);
   t.is(resp2.payload.content, content1);
 });

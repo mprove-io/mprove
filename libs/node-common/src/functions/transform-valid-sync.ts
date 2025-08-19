@@ -4,10 +4,12 @@ import {
   TransformValidationOptions,
   transformAndValidateSync
 } from 'class-transformer-validator';
-import { BoolEnum } from '~common/_index';
-import { enums } from '~common/barrels/enums';
+import { BoolEnum } from '~common/enums/bool.enum';
+import { ErEnum } from '~common/enums/er.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { enumToBoolean } from '~common/functions/enum-to-boolean';
+import { isDefined } from '~common/functions/is-defined';
 import { ServerError } from '~common/models/server-error';
-import { common } from '~node-common/barrels/common';
 import { getConstraintsRecursive } from './get-constraints-recursive';
 import { logToConsole } from './log-to-console';
 
@@ -40,18 +42,16 @@ export function transformValidSync<T extends object>(item: {
     if (
       [
         // default exception handler doesn't print constraints (error.data)
-        enums.ErEnum.BACKEND_WRONG_ENV_VALUES,
-        enums.ErEnum.BLOCKML_WRONG_ENV_VALUES,
-        enums.ErEnum.DISK_WRONG_ENV_VALUES
+        ErEnum.BACKEND_WRONG_ENV_VALUES,
+        ErEnum.BLOCKML_WRONG_ENV_VALUES,
+        ErEnum.DISK_WRONG_ENV_VALUES
       ].indexOf(errorMessage) > -1
     ) {
       logToConsole({
         log: serverError,
-        logIsJson: common.isDefined(logIsJson)
-          ? common.enumToBoolean(logIsJson)
-          : false,
+        logIsJson: isDefined(logIsJson) ? enumToBoolean(logIsJson) : false,
         logger: logger,
-        logLevel: enums.LogLevelEnum.Error
+        logLevel: LogLevelEnum.Error
       });
     }
 

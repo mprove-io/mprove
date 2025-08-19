@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { ControlClassEnum } from '~common/enums/control-class.enum';
 import { FractionControlOption } from './fraction-control-option';
 
 export class FractionControl {
@@ -22,8 +22,8 @@ export class FractionControl {
   @IsString()
   name: string;
 
-  @IsEnum(enums.ControlClassEnum)
-  controlClass: enums.ControlClassEnum;
+  @IsEnum(ControlClassEnum)
+  controlClass: ControlClassEnum;
 
   @IsOptional()
   isMetricsDate: boolean;

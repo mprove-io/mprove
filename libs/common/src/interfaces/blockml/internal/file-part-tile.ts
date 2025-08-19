@@ -1,5 +1,5 @@
 import { CompiledQuery } from '@malloydata/malloy/dist/model';
-import { enums } from '~common/barrels/enums';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { Fraction } from '../fraction';
 import { FileChartData } from './file-chart-data';
@@ -29,7 +29,7 @@ export interface FilePartTile {
   limit?: string; // string
   limit_line_num?: number;
 
-  type?: enums.ChartTypeEnum;
+  type?: ChartTypeEnum;
   type_line_num?: number;
 
   data?: FileChartData;

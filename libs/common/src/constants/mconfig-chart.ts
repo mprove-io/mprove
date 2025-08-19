@@ -1,6 +1,6 @@
-import { MconfigChartSeries } from '~common/_index';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
+import { MconfigChartSeries } from '~common/interfaces/blockml/mconfig-chart-series';
 import { MconfigChartXAxis } from '~common/interfaces/blockml/mconfig-chart-x-axis';
 import { MconfigChartYAxis } from '~common/interfaces/blockml/mconfig-chart-y-axis';
 

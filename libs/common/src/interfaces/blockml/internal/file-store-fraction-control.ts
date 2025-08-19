@@ -1,4 +1,4 @@
-import { enums } from '~common/barrels/enums';
+import { ControlClassEnum } from '~common/enums/control-class.enum';
 import { FileStoreFractionControlOption } from './file-store-fraction-control-option';
 
 export interface FileStoreFractionControl {
@@ -34,7 +34,7 @@ export interface FileStoreFractionControl {
   name?: string;
   name_line_num?: number;
 
-  controlClass?: enums.ControlClassEnum;
+  controlClass?: ControlClassEnum;
 
   isMetricsDate?: boolean;
 }

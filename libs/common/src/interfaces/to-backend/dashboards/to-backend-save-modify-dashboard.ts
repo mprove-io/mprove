@@ -1,0 +1,83 @@
+import { Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
+import { DashboardX } from '~common/interfaces/backend/dashboard-x';
+import { TileX } from '~common/interfaces/backend/tile-x';
+import { MyResponse } from '~common/interfaces/to/my-response';
+import { ToBackendRequest } from '../to-backend-request';
+
+export class ToBackendSaveModifyDashboardRequestPayload {
+  @IsString()
+  projectId: string;
+
+  @IsBoolean()
+  isRepoProd: boolean;
+
+  @IsString()
+  branchId: string;
+
+  @IsString()
+  envId: string;
+
+  @IsString()
+  toDashboardId: string;
+
+  @IsString()
+  fromDashboardId: string;
+
+  // for add or replace tile
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => TileX)
+  newTile?: TileX;
+
+  @IsOptional()
+  @IsBoolean()
+  isReplaceTile?: boolean;
+
+  @IsOptional()
+  @IsString()
+  selectedTileTitle?: string;
+
+  // for dashboard
+
+  @IsOptional()
+  @IsString()
+  dashboardTitle?: string;
+
+  @IsOptional()
+  @IsString()
+  accessRoles?: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => TileX)
+  tilesGrid?: TileX[];
+}
+
+export class ToBackendSaveModifyDashboardRequest extends ToBackendRequest {
+  @ValidateNested()
+  @Type(() => ToBackendSaveModifyDashboardRequestPayload)
+  payload: ToBackendSaveModifyDashboardRequestPayload;
+}
+
+export class ToBackendSaveModifyDashboardResponsePayload {
+  @ValidateNested()
+  @Type(() => DashboardX)
+  dashboard: DashboardX;
+
+  @ValidateNested()
+  @Type(() => DashboardX)
+  newDashboardPart: DashboardX;
+}
+
+export class ToBackendSaveModifyDashboardResponse extends MyResponse {
+  @ValidateNested()
+  @Type(() => ToBackendSaveModifyDashboardResponsePayload)
+  payload: ToBackendSaveModifyDashboardResponsePayload;
+}

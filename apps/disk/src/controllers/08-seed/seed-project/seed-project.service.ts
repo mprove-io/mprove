@@ -1,19 +1,21 @@
 import * as nodegit from '@figma/nodegit';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToDisk } from '~disk/barrels/api-to-disk';
-import { common } from '~disk/barrels/common';
-import { nodeCommon } from '~disk/barrels/node-common';
+import { emptyDir, ensureDir } from 'fs-extra';
+import { ErEnum } from '~common/enums/er.enum';
+import {
+  ToDiskSeedProjectRequest,
+  ToDiskSeedProjectResponsePayload
+} from '~common/interfaces/to-disk/08-seed/to-disk-seed-project';
+import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
+import { cloneRemoteToDev } from '~disk/functions/git/clone-remote-to-dev';
+import { getRepoStatus } from '~disk/functions/git/get-repo-status';
+import { prepareRemoteAndProd } from '~disk/functions/git/prepare-remote-and-prod';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 import { Config } from '~disk/interfaces/config';
 import { ItemCatalog } from '~disk/interfaces/item-catalog';
 import { ItemStatus } from '~disk/interfaces/item-status';
-import { emptyDir } from '~disk/models/disk/empty-dir';
-import { ensureDir } from '~disk/models/disk/ensure-dir';
-import { getNodesAndFiles } from '~disk/models/disk/get-nodes-and-files';
-import { cloneRemoteToDev } from '~disk/models/git/clone-remote-to-dev';
-import { getRepoStatus } from '~disk/models/git/get-repo-status';
-import { prepareRemoteAndProd } from '~disk/models/git/prepare-remote-and-prod';
+import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class SeedProjectService {
@@ -27,10 +29,10 @@ export class SeedProjectService {
       'diskOrganizationsPath'
     );
 
-    let requestValid = nodeCommon.transformValidSync({
-      classType: apiToDisk.ToDiskSeedProjectRequest,
+    let requestValid = transformValidSync({
+      classType: ToDiskSeedProjectRequest,
       object: request,
-      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
+      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
@@ -120,7 +122,7 @@ export class SeedProjectService {
       isCheckConflicts: true
     });
 
-    let payload: apiToDisk.ToDiskSeedProjectResponsePayload = {
+    let payload: ToDiskSeedProjectResponsePayload = {
       repo: {
         orgId: orgId,
         projectId: projectId,

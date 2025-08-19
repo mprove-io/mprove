@@ -1,6 +1,16 @@
 import test from 'ava';
-import { apiToDisk } from '~disk/barrels/api-to-disk';
-import { common } from '~disk/barrels/common';
+import { BRANCH_MAIN } from '~common/constants/top';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
+import { makeId } from '~common/functions/make-id';
+import { ToDiskCreateOrgRequest } from '~common/interfaces/to-disk/01-orgs/to-disk-create-org';
+import { ToDiskCreateProjectRequest } from '~common/interfaces/to-disk/02-projects/to-disk-create-project';
+import { ToDiskCreateBranchRequest } from '~common/interfaces/to-disk/05-branches/to-disk-create-branch';
+import {
+  ToDiskDeleteBranchRequest,
+  ToDiskDeleteBranchResponse
+} from '~common/interfaces/to-disk/05-branches/to-disk-delete-branch';
 import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
 import { prepareTest } from '~disk/functions/prepare-test';
 
@@ -8,11 +18,11 @@ let testId = 'disk-delete-branch__local';
 
 let traceId = testId;
 let orgId = testId;
-let projectId = common.makeId();
+let projectId = makeId();
 let projectName = 'p1';
 
 test('1', async t => {
-  let resp: apiToDisk.ToDiskDeleteBranchResponse;
+  let resp: ToDiskDeleteBranchResponse;
 
   let wLogger;
   let configService;
@@ -22,9 +32,9 @@ test('1', async t => {
     wLogger = logger;
     configService = cs;
 
-    let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
+    let createOrgRequest: ToDiskCreateOrgRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
         traceId: traceId
       },
       payload: {
@@ -32,9 +42,9 @@ test('1', async t => {
       }
     };
 
-    let createProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
+    let createProjectRequest: ToDiskCreateProjectRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateProject,
         traceId: traceId
       },
       payload: {
@@ -43,13 +53,13 @@ test('1', async t => {
         projectName: projectName,
         devRepoId: 'r1',
         userAlias: 'u1',
-        remoteType: common.ProjectRemoteTypeEnum.Managed
+        remoteType: ProjectRemoteTypeEnum.Managed
       }
     };
 
-    let createBranchRequest: apiToDisk.ToDiskCreateBranchRequest = {
+    let createBranchRequest: ToDiskCreateBranchRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
         traceId: traceId
       },
       payload: {
@@ -57,15 +67,15 @@ test('1', async t => {
         projectId: projectId,
         repoId: 'r1',
         newBranch: 'b2',
-        fromBranch: common.BRANCH_MAIN,
+        fromBranch: BRANCH_MAIN,
         isFromRemote: true,
-        remoteType: common.ProjectRemoteTypeEnum.Managed
+        remoteType: ProjectRemoteTypeEnum.Managed
       }
     };
 
-    let deleteBranchRequest: apiToDisk.ToDiskDeleteBranchRequest = {
+    let deleteBranchRequest: ToDiskDeleteBranchRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteBranch,
+        name: ToDiskRequestInfoNameEnum.ToDiskDeleteBranch,
         traceId: traceId
       },
       payload: {
@@ -73,8 +83,8 @@ test('1', async t => {
         projectId: projectId,
         repoId: 'r1',
         branch: 'b2',
-        remoteType: common.ProjectRemoteTypeEnum.Managed,
-        defaultBranch: common.BRANCH_MAIN
+        remoteType: ProjectRemoteTypeEnum.Managed,
+        defaultBranch: BRANCH_MAIN
       }
     };
 
@@ -87,7 +97,7 @@ test('1', async t => {
   } catch (e) {
     logToConsoleDisk({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: wLogger,
       cs: configService
     });

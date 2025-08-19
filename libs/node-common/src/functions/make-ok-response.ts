@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
-import { enums } from '~common/barrels/enums';
-import { MyResponse } from '~common/interfaces/_index';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { MyResponse } from '~common/interfaces/to/my-response';
 import { logToConsole } from './log-to-console';
 
 export function makeOkResponse(item: {
@@ -32,7 +33,7 @@ export function makeOkResponse(item: {
       method: method,
       duration: duration,
       traceId: body.info?.traceId,
-      status: enums.ResponseInfoStatusEnum.Ok
+      status: ResponseInfoStatusEnum.Ok
     },
     payload: payload
   };
@@ -43,7 +44,7 @@ export function makeOkResponse(item: {
     };
     logToConsole({
       log: log,
-      logLevel: enums.LogLevelEnum.Info,
+      logLevel: LogLevelEnum.Info,
       logIsJson: logIsJson,
       logger: logger
     });

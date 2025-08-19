@@ -8,7 +8,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 import { MconfigChartSeries } from './mconfig-chart-series';
 import { MconfigChartXAxis } from './mconfig-chart-x-axis';
 import { MconfigChartYAxis } from './mconfig-chart-y-axis';
@@ -17,8 +17,8 @@ export class MconfigChart {
   @IsBoolean()
   isValid: boolean;
 
-  @IsEnum(enums.ChartTypeEnum)
-  type: enums.ChartTypeEnum;
+  @IsEnum(ChartTypeEnum)
+  type: ChartTypeEnum;
 
   @IsOptional()
   @IsString()
@@ -101,8 +101,8 @@ export class MconfigChart {
   // timeline?: boolean;
 
   // @IsOptional()
-  // @IsEnum(enums.ChartInterpolationEnum)
-  // interpolation?: enums.ChartInterpolationEnum;
+  // @IsEnum(ChartInterpolationEnum)
+  // interpolation?: ChartInterpolationEnum;
 
   // @IsOptional()
   // @IsBoolean()
@@ -121,11 +121,11 @@ export class MconfigChart {
   // labels?: boolean;
 
   // @IsOptional()
-  // @IsEnum(enums.ChartColorSchemeEnum)
-  // colorScheme?: enums.ChartColorSchemeEnum;
+  // @IsEnum(ChartColorSchemeEnum)
+  // colorScheme?: ChartColorSchemeEnum;
 
   // @IsOptional()
-  // @IsEnum(enums.ChartSchemeTypeEnum)
+  // @IsEnum(ChartSchemeTypeEnum)
   // schemeType?: any;
 
   // @IsOptional()

@@ -6,7 +6,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ConnectionHeader } from './connection-header';
 
 export class Connection {
@@ -19,8 +19,8 @@ export class Connection {
   @IsString()
   envId: string;
 
-  @IsEnum(enums.ConnectionTypeEnum)
-  type: enums.ConnectionTypeEnum;
+  @IsEnum(ConnectionTypeEnum)
+  type: ConnectionTypeEnum;
 
   @IsString()
   googleCloudProject: string;

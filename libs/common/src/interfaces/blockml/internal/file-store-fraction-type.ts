@@ -1,4 +1,4 @@
-import { enums } from '~common/barrels/enums';
+import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
 import { FileStoreFractionControl } from './file-store-fraction-control';
 
 export interface FileStoreFractionType {
@@ -16,5 +16,5 @@ export interface FileStoreFractionType {
 
   //
 
-  logicGroup?: enums.FractionLogicEnum;
+  logicGroup?: FractionLogicEnum;
 }

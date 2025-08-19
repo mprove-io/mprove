@@ -21,7 +21,7 @@
 //     },
 //     result: {
 //       type: 'string',
-//       enum: constants.CALCULATION_RESULT_VALUES
+//       enum: CALCULATION_RESULT_VALUES
 //     },
 //     sql: {
 //       type: 'string'

@@ -7,7 +7,8 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
 
 export class ModelNode {
   @IsString()
@@ -20,8 +21,8 @@ export class ModelNode {
   @IsString()
   description?: string;
 
-  @IsEnum(enums.FieldClassEnum)
-  nodeClass: enums.FieldClassEnum;
+  @IsEnum(FieldClassEnum)
+  nodeClass: FieldClassEnum;
 
   @IsOptional()
   @IsString()
@@ -43,8 +44,8 @@ export class ModelNode {
   fieldFilePath?: string;
 
   @IsOptional()
-  @IsEnum(enums.FieldResultEnum)
-  fieldResult?: enums.FieldResultEnum;
+  @IsEnum(FieldResultEnum)
+  fieldResult?: FieldResultEnum;
 
   @IsOptional()
   @IsInt()

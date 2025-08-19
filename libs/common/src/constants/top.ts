@@ -1,4 +1,15 @@
-import { enums } from '~common/barrels/enums';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { FieldTypeEnum } from '~common/enums/field-type.enum';
+import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
+import { JoinRelationshipEnum } from '~common/enums/join-relationship.enum';
+import { JoinTypeEnum } from '~common/enums/join-type.enum';
+import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
+import { RowTypeEnum } from '~common/enums/row-type.enum';
+import { StoreMethodEnum } from '~common/enums/store-method.enum';
+import { TimeSourceEnum } from '~common/enums/time-source.enum';
+import { TimeframeEnum } from '~common/enums/timeframe.enum';
 
 // export const API_PATH = 'api';
 export const MPROVE_CONFIG_FILENAME = 'mprove.yml';
@@ -17,7 +28,7 @@ export const PROJECT_CONFIG_ALLOW_TIMEZONES = 'true';
 export const PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES = 'true';
 export const PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS = 'false';
 export const PROJECT_CONFIG_DEFAULT_TIMEZONE = UTC;
-export const PROJECT_CONFIG_WEEK_START = enums.ProjectWeekStartEnum.Monday;
+export const PROJECT_CONFIG_WEEK_START = ProjectWeekStartEnum.Monday;
 export const PROJECT_CONFIG_CURRENCY_PREFIX = '$';
 export const PROJECT_CONFIG_CURRENCY_SUFFIX = '';
 export const PROJECT_CONFIG_THOUSANDS_SEPARATOR = ',';
@@ -202,258 +213,252 @@ export const NO_FIELDS_SELECTED = 'no_fields_selected';
 export const HEADER_VALUE_IS_HIDDEN = 'value is hidden';
 
 export const FIELD_TYPE_VALUES = [
-  enums.FieldTypeEnum.CountDistinct,
-  enums.FieldTypeEnum.Sum,
-  enums.FieldTypeEnum.SumByKey,
-  enums.FieldTypeEnum.Average,
-  enums.FieldTypeEnum.AverageByKey,
-  enums.FieldTypeEnum.MedianByKey,
-  enums.FieldTypeEnum.PercentileByKey,
-  enums.FieldTypeEnum.Min,
-  enums.FieldTypeEnum.Max,
-  enums.FieldTypeEnum.List,
-  enums.FieldTypeEnum.Custom,
-  enums.FieldTypeEnum.YesnoIsTrue
+  FieldTypeEnum.CountDistinct,
+  FieldTypeEnum.Sum,
+  FieldTypeEnum.SumByKey,
+  FieldTypeEnum.Average,
+  FieldTypeEnum.AverageByKey,
+  FieldTypeEnum.MedianByKey,
+  FieldTypeEnum.PercentileByKey,
+  FieldTypeEnum.Min,
+  FieldTypeEnum.Max,
+  FieldTypeEnum.List,
+  FieldTypeEnum.Custom,
+  FieldTypeEnum.YesnoIsTrue
 ];
 
 export const FIELD_RESULT_VALUES = [
-  enums.FieldResultEnum.String,
-  enums.FieldResultEnum.Number,
-  enums.FieldResultEnum.DayOfWeek,
-  enums.FieldResultEnum.DayOfWeekIndex,
-  enums.FieldResultEnum.MonthName,
-  enums.FieldResultEnum.QuarterOfYear,
-  enums.FieldResultEnum.Ts,
-  enums.FieldResultEnum.Yesno
+  FieldResultEnum.String,
+  FieldResultEnum.Number,
+  FieldResultEnum.DayOfWeek,
+  FieldResultEnum.DayOfWeekIndex,
+  FieldResultEnum.MonthName,
+  FieldResultEnum.QuarterOfYear,
+  FieldResultEnum.Ts,
+  FieldResultEnum.Yesno
 ];
 
 export const DIMENSION_TYPE_VALUES = [
-  enums.FieldTypeEnum.Custom,
-  enums.FieldTypeEnum.YesnoIsTrue
+  FieldTypeEnum.Custom,
+  FieldTypeEnum.YesnoIsTrue
 ];
 
 export const MEASURE_TYPE_VALUES = [
-  enums.FieldTypeEnum.CountDistinct,
-  enums.FieldTypeEnum.Sum,
-  enums.FieldTypeEnum.SumByKey,
-  enums.FieldTypeEnum.Average,
-  enums.FieldTypeEnum.AverageByKey,
-  enums.FieldTypeEnum.MedianByKey,
-  enums.FieldTypeEnum.PercentileByKey,
-  enums.FieldTypeEnum.Min,
-  enums.FieldTypeEnum.Max,
-  enums.FieldTypeEnum.List,
-  enums.FieldTypeEnum.Custom
+  FieldTypeEnum.CountDistinct,
+  FieldTypeEnum.Sum,
+  FieldTypeEnum.SumByKey,
+  FieldTypeEnum.Average,
+  FieldTypeEnum.AverageByKey,
+  FieldTypeEnum.MedianByKey,
+  FieldTypeEnum.PercentileByKey,
+  FieldTypeEnum.Min,
+  FieldTypeEnum.Max,
+  FieldTypeEnum.List,
+  FieldTypeEnum.Custom
 ];
 
 export const ALL_RESULT_VALUES = [
-  enums.FieldResultEnum.DayOfWeek,
-  enums.FieldResultEnum.DayOfWeekIndex,
-  enums.FieldResultEnum.MonthName,
-  enums.FieldResultEnum.QuarterOfYear,
-  enums.FieldResultEnum.Ts,
-  // enums.FieldResultEnum.Timestamp,
-  enums.FieldResultEnum.Yesno,
-  enums.FieldResultEnum.String,
-  enums.FieldResultEnum.Number,
-  enums.FieldResultEnum.Date,
-  enums.FieldResultEnum.Boolean,
-  enums.FieldResultEnum.Array,
-  enums.FieldResultEnum.Record,
-  enums.FieldResultEnum.Json,
-  enums.FieldResultEnum.SqlNative
+  FieldResultEnum.DayOfWeek,
+  FieldResultEnum.DayOfWeekIndex,
+  FieldResultEnum.MonthName,
+  FieldResultEnum.QuarterOfYear,
+  FieldResultEnum.Ts,
+  // FieldResultEnum.Timestamp,
+  FieldResultEnum.Yesno,
+  FieldResultEnum.String,
+  FieldResultEnum.Number,
+  FieldResultEnum.Date,
+  FieldResultEnum.Boolean,
+  FieldResultEnum.Array,
+  FieldResultEnum.Record,
+  FieldResultEnum.Json,
+  FieldResultEnum.SqlNative
 ];
 
 export const DIMENSION_RESULT_VALUES = [
-  enums.FieldResultEnum.String,
-  enums.FieldResultEnum.Number
+  FieldResultEnum.String,
+  FieldResultEnum.Number
 ];
 
 export const MEASURE_RESULT_VALUES = [
-  enums.FieldResultEnum.String,
-  enums.FieldResultEnum.Number
+  FieldResultEnum.String,
+  FieldResultEnum.Number
 ];
 
 export const CALCULATION_RESULT_VALUES = [
-  enums.FieldResultEnum.String,
-  enums.FieldResultEnum.Number
+  FieldResultEnum.String,
+  FieldResultEnum.Number
 ];
 
 export const FILTER_RESULT_VALUES = [
-  enums.FieldResultEnum.String,
-  enums.FieldResultEnum.Number,
-  enums.FieldResultEnum.DayOfWeek,
-  enums.FieldResultEnum.DayOfWeekIndex,
-  enums.FieldResultEnum.MonthName,
-  enums.FieldResultEnum.QuarterOfYear,
-  enums.FieldResultEnum.Ts,
-  enums.FieldResultEnum.Yesno
+  FieldResultEnum.String,
+  FieldResultEnum.Number,
+  FieldResultEnum.DayOfWeek,
+  FieldResultEnum.DayOfWeekIndex,
+  FieldResultEnum.MonthName,
+  FieldResultEnum.QuarterOfYear,
+  FieldResultEnum.Ts,
+  FieldResultEnum.Yesno
 ];
 
 export const CHART_TYPE_VALUES = [
-  enums.ChartTypeEnum.Table,
-  enums.ChartTypeEnum.Line,
-  enums.ChartTypeEnum.Bar,
-  enums.ChartTypeEnum.Scatter,
-  enums.ChartTypeEnum.Single,
-  enums.ChartTypeEnum.Pie
+  ChartTypeEnum.Table,
+  ChartTypeEnum.Line,
+  ChartTypeEnum.Bar,
+  ChartTypeEnum.Scatter,
+  ChartTypeEnum.Single,
+  ChartTypeEnum.Pie
 ];
 
 export const Y_FIELDS_CHART_TYPE_VALUES = [
-  enums.ChartTypeEnum.Line,
-  enums.ChartTypeEnum.Bar,
-  enums.ChartTypeEnum.Scatter
+  ChartTypeEnum.Line,
+  ChartTypeEnum.Bar,
+  ChartTypeEnum.Scatter
 ];
 
 export const JOIN_TYPE_VALUES = [
-  enums.JoinTypeEnum.Cross,
-  enums.JoinTypeEnum.Full,
-  enums.JoinTypeEnum.FullOuter,
-  enums.JoinTypeEnum.Inner,
-  enums.JoinTypeEnum.Left,
-  enums.JoinTypeEnum.LeftOuter,
-  enums.JoinTypeEnum.Right,
-  enums.JoinTypeEnum.RightOuter
+  JoinTypeEnum.Cross,
+  JoinTypeEnum.Full,
+  JoinTypeEnum.FullOuter,
+  JoinTypeEnum.Inner,
+  JoinTypeEnum.Left,
+  JoinTypeEnum.LeftOuter,
+  JoinTypeEnum.Right,
+  JoinTypeEnum.RightOuter
 ];
 
 export const JOIN_RELATIONSHIP_VALUES = [
-  enums.JoinRelationshipEnum.OneToMany,
-  enums.JoinRelationshipEnum.OneToOne,
-  enums.JoinRelationshipEnum.ManyToOne,
-  enums.JoinRelationshipEnum.ManyToMany
+  JoinRelationshipEnum.OneToMany,
+  JoinRelationshipEnum.OneToOne,
+  JoinRelationshipEnum.ManyToOne,
+  JoinRelationshipEnum.ManyToMany
 ];
 
 export const PROJECT_WEEK_START_VALUES = [
-  enums.ProjectWeekStartEnum.Sunday,
-  enums.ProjectWeekStartEnum.Monday
+  ProjectWeekStartEnum.Sunday,
+  ProjectWeekStartEnum.Monday
 ];
 
 export const TIME_SOURCE_VALUES = [
-  enums.TimeSourceEnum.Timestamp,
-  enums.TimeSourceEnum.Epoch,
-  enums.TimeSourceEnum.YYYYMMDD
+  TimeSourceEnum.Timestamp,
+  TimeSourceEnum.Epoch,
+  TimeSourceEnum.YYYYMMDD
 ];
 
 export const TIMEFRAME_VALUES = [
-  enums.TimeframeEnum.Date,
-  enums.TimeframeEnum.DateTs,
-  enums.TimeframeEnum.DayOfWeek,
-  enums.TimeframeEnum.DayOfWeekIndex,
-  enums.TimeframeEnum.DayOfMonth,
-  enums.TimeframeEnum.DayOfYear,
-  enums.TimeframeEnum.Week,
-  enums.TimeframeEnum.WeekTs,
-  enums.TimeframeEnum.WeekOfYear,
-  enums.TimeframeEnum.Month,
-  enums.TimeframeEnum.MonthTs,
-  enums.TimeframeEnum.MonthName,
-  enums.TimeframeEnum.MonthNum,
-  enums.TimeframeEnum.Quarter,
-  enums.TimeframeEnum.QuarterTs,
-  enums.TimeframeEnum.QuarterOfYear,
-  enums.TimeframeEnum.Year,
-  enums.TimeframeEnum.YearTs,
-  enums.TimeframeEnum.TimeOfDay,
-  enums.TimeframeEnum.Time,
-  enums.TimeframeEnum.Ts,
-  enums.TimeframeEnum.Hour,
-  enums.TimeframeEnum.HourTs,
-  enums.TimeframeEnum.HourOfDay,
-  enums.TimeframeEnum.Hour2,
-  enums.TimeframeEnum.Hour3,
-  enums.TimeframeEnum.Hour4,
-  enums.TimeframeEnum.Hour6,
-  enums.TimeframeEnum.Hour8,
-  enums.TimeframeEnum.Hour12,
-  enums.TimeframeEnum.Minute,
-  enums.TimeframeEnum.MinuteTs,
-  enums.TimeframeEnum.Minute2,
-  enums.TimeframeEnum.Minute3,
-  enums.TimeframeEnum.Minute5,
-  enums.TimeframeEnum.Minute10,
-  enums.TimeframeEnum.Minute15,
-  enums.TimeframeEnum.Minute30,
-  enums.TimeframeEnum.YesNoHasValue
+  TimeframeEnum.Date,
+  TimeframeEnum.DateTs,
+  TimeframeEnum.DayOfWeek,
+  TimeframeEnum.DayOfWeekIndex,
+  TimeframeEnum.DayOfMonth,
+  TimeframeEnum.DayOfYear,
+  TimeframeEnum.Week,
+  TimeframeEnum.WeekTs,
+  TimeframeEnum.WeekOfYear,
+  TimeframeEnum.Month,
+  TimeframeEnum.MonthTs,
+  TimeframeEnum.MonthName,
+  TimeframeEnum.MonthNum,
+  TimeframeEnum.Quarter,
+  TimeframeEnum.QuarterTs,
+  TimeframeEnum.QuarterOfYear,
+  TimeframeEnum.Year,
+  TimeframeEnum.YearTs,
+  TimeframeEnum.TimeOfDay,
+  TimeframeEnum.Time,
+  TimeframeEnum.Ts,
+  TimeframeEnum.Hour,
+  TimeframeEnum.HourTs,
+  TimeframeEnum.HourOfDay,
+  TimeframeEnum.Hour2,
+  TimeframeEnum.Hour3,
+  TimeframeEnum.Hour4,
+  TimeframeEnum.Hour6,
+  TimeframeEnum.Hour8,
+  TimeframeEnum.Hour12,
+  TimeframeEnum.Minute,
+  TimeframeEnum.MinuteTs,
+  TimeframeEnum.Minute2,
+  TimeframeEnum.Minute3,
+  TimeframeEnum.Minute5,
+  TimeframeEnum.Minute10,
+  TimeframeEnum.Minute15,
+  TimeframeEnum.Minute30,
+  TimeframeEnum.YesNoHasValue
 ];
 
 // export const CHART_COLOR_SCHEME_VALUES = [
-//   enums.ChartColorSchemeEnum.Soft,
-//   enums.ChartColorSchemeEnum.Air,
-//   enums.ChartColorSchemeEnum.Aqua,
-//   enums.ChartColorSchemeEnum.Cool,
-//   enums.ChartColorSchemeEnum.Fire,
-//   enums.ChartColorSchemeEnum.Flame,
-//   enums.ChartColorSchemeEnum.Forest,
-//   enums.ChartColorSchemeEnum.Horizon,
-//   enums.ChartColorSchemeEnum.Natural,
-//   enums.ChartColorSchemeEnum.Neons,
-//   enums.ChartColorSchemeEnum.Night,
-//   enums.ChartColorSchemeEnum.NightLights,
-//   enums.ChartColorSchemeEnum.Ocean,
-//   enums.ChartColorSchemeEnum.Picnic,
-//   enums.ChartColorSchemeEnum.Solar,
-//   enums.ChartColorSchemeEnum.Vivid
+//   ChartColorSchemeEnum.Soft,
+//   ChartColorSchemeEnum.Air,
+//   ChartColorSchemeEnum.Aqua,
+//   ChartColorSchemeEnum.Cool,
+//   ChartColorSchemeEnum.Fire,
+//   ChartColorSchemeEnum.Flame,
+//   ChartColorSchemeEnum.Forest,
+//   ChartColorSchemeEnum.Horizon,
+//   ChartColorSchemeEnum.Natural,
+//   ChartColorSchemeEnum.Neons,
+//   ChartColorSchemeEnum.Night,
+//   ChartColorSchemeEnum.NightLights,
+//   ChartColorSchemeEnum.Ocean,
+//   ChartColorSchemeEnum.Picnic,
+//   ChartColorSchemeEnum.Solar,
+//   ChartColorSchemeEnum.Vivid
 // ];
 
 // export const CHART_SCHEME_TYPE_VALUES = [
-//   enums.ChartSchemeTypeEnum.Linear,
-//   enums.ChartSchemeTypeEnum.Ordinal
+//   ChartSchemeTypeEnum.Linear,
+//   ChartSchemeTypeEnum.Ordinal
 // ];
 
 // export const CHART_INTERPOLATION_VALUES = [
-//   enums.ChartInterpolationEnum.Basis,
-//   enums.ChartInterpolationEnum.BasisClosed,
-//   enums.ChartInterpolationEnum.Bundle,
-//   enums.ChartInterpolationEnum.Cardinal,
-//   enums.ChartInterpolationEnum.CardinalClosed,
-//   enums.ChartInterpolationEnum.CatmullRomClosed,
-//   enums.ChartInterpolationEnum.CatmullRom,
-//   enums.ChartInterpolationEnum.Linear,
-//   enums.ChartInterpolationEnum.LinearClosed,
-//   enums.ChartInterpolationEnum.MonotoneX,
-//   enums.ChartInterpolationEnum.MonotoneY,
-//   enums.ChartInterpolationEnum.Natural,
-//   enums.ChartInterpolationEnum.Step,
-//   enums.ChartInterpolationEnum.StepAfter,
-//   enums.ChartInterpolationEnum.StepBefore
+//   ChartInterpolationEnum.Basis,
+//   ChartInterpolationEnum.BasisClosed,
+//   ChartInterpolationEnum.Bundle,
+//   ChartInterpolationEnum.Cardinal,
+//   ChartInterpolationEnum.CardinalClosed,
+//   ChartInterpolationEnum.CatmullRomClosed,
+//   ChartInterpolationEnum.CatmullRom,
+//   ChartInterpolationEnum.Linear,
+//   ChartInterpolationEnum.LinearClosed,
+//   ChartInterpolationEnum.MonotoneX,
+//   ChartInterpolationEnum.MonotoneY,
+//   ChartInterpolationEnum.Natural,
+//   ChartInterpolationEnum.Step,
+//   ChartInterpolationEnum.StepAfter,
+//   ChartInterpolationEnum.StepBefore
 // ];
 
 export const ROW_TYPE_VALUES = [
-  enums.RowTypeEnum.Empty,
-  enums.RowTypeEnum.Header,
-  enums.RowTypeEnum.Metric,
-  enums.RowTypeEnum.Formula
+  RowTypeEnum.Empty,
+  RowTypeEnum.Header,
+  RowTypeEnum.Metric,
+  RowTypeEnum.Formula
 ];
 
 export const SAFE_AGGREGATION_MEASURE_TYPES = [
-  enums.FieldTypeEnum.CountDistinct,
-  enums.FieldTypeEnum.Min,
-  enums.FieldTypeEnum.Max,
-  // enums.FieldTypeEnum.List,
-  enums.FieldTypeEnum.SumByKey,
-  enums.FieldTypeEnum.AverageByKey,
-  enums.FieldTypeEnum.PercentileByKey,
-  enums.FieldTypeEnum.MedianByKey
+  FieldTypeEnum.CountDistinct,
+  FieldTypeEnum.Min,
+  FieldTypeEnum.Max,
+  // FieldTypeEnum.List,
+  FieldTypeEnum.SumByKey,
+  FieldTypeEnum.AverageByKey,
+  FieldTypeEnum.PercentileByKey,
+  FieldTypeEnum.MedianByKey
 ];
 
-export const STORE_METHOD_VALUES = [
-  enums.StoreMethodEnum.Get,
-  enums.StoreMethodEnum.Post
-];
+export const STORE_METHOD_VALUES = [StoreMethodEnum.Get, StoreMethodEnum.Post];
 
 export const STORE_FIELD_DETAIL_VALUES = [
-  enums.DetailUnitEnum.Years,
-  enums.DetailUnitEnum.Quarters,
-  enums.DetailUnitEnum.Months,
-  enums.DetailUnitEnum.WeeksSunday,
-  enums.DetailUnitEnum.WeeksMonday,
-  enums.DetailUnitEnum.Days,
-  enums.DetailUnitEnum.Hours,
-  enums.DetailUnitEnum.Minutes,
-  enums.DetailUnitEnum.Timestamps
+  DetailUnitEnum.Years,
+  DetailUnitEnum.Quarters,
+  DetailUnitEnum.Months,
+  DetailUnitEnum.WeeksSunday,
+  DetailUnitEnum.WeeksMonday,
+  DetailUnitEnum.Days,
+  DetailUnitEnum.Hours,
+  DetailUnitEnum.Minutes,
+  DetailUnitEnum.Timestamps
 ];
 
-export const LOGIC_VALUES = [
-  enums.FractionLogicEnum.Or,
-  enums.FractionLogicEnum.AndNot
-];
+export const LOGIC_VALUES = [FractionLogicEnum.Or, FractionLogicEnum.AndNot];

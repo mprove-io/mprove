@@ -1,4 +1,4 @@
-import { enums } from '~common/barrels/enums';
+import { RowTypeEnum } from '~common/enums/row-type.enum';
 import { FileReportRowParameter } from './file-report-row-parameter';
 
 export interface FileReportRow {
@@ -8,7 +8,7 @@ export interface FileReportRow {
   name?: string;
   name_line_num?: number;
 
-  type?: enums.RowTypeEnum;
+  type?: RowTypeEnum;
   type_line_num?: number;
 
   metric?: string;

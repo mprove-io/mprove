@@ -1,4 +1,4 @@
-import { enums } from '~common/barrels/enums';
+import { ControlClassEnum } from '~common/enums/control-class.enum';
 
 export interface FileFractionControl {
   input?: string;
@@ -24,5 +24,5 @@ export interface FileFractionControl {
   name?: string;
   name_line_num?: number;
 
-  controlClass?: enums.ControlClassEnum;
+  controlClass?: ControlClassEnum;
 }

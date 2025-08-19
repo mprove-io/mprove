@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsEnum, ValidateNested } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { ModelTreeLevelsEnum } from '~common/enums/model-tree-levels-enum.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
 import { IsTimezone } from '~common/functions/is-timezone';
 import { Fraction } from '../blockml/fraction';
 import { ProjectChartLink } from './project-chart-link';
@@ -10,14 +11,14 @@ import { ProjectModelLink } from './project-model-link';
 import { ProjectReportLink } from './project-report-link';
 
 export class Ui {
-  @IsEnum(enums.ModelTreeLevelsEnum)
-  modelTreeLevels: enums.ModelTreeLevelsEnum;
+  @IsEnum(ModelTreeLevelsEnum)
+  modelTreeLevels: ModelTreeLevelsEnum;
 
   @IsTimezone()
   timezone: string;
 
-  @IsEnum(enums.TimeSpecEnum)
-  timeSpec: enums.TimeSpecEnum;
+  @IsEnum(TimeSpecEnum)
+  timeSpec: TimeSpecEnum;
 
   @ValidateNested()
   @Type(() => Fraction)

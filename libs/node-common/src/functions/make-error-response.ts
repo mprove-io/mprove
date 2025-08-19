@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
-import { enums } from '~common/barrels/enums';
-import { MyResponse } from '~common/interfaces/_index';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { MyResponse } from '~common/interfaces/to/my-response';
 import { logToConsole } from './log-to-console';
 import { wrapError } from './wrap-error';
 
@@ -33,7 +34,7 @@ export function makeErrorResponse(item: {
       method: method,
       duration: duration,
       traceId: body.info?.traceId,
-      status: enums.ResponseInfoStatusEnum.Error,
+      status: ResponseInfoStatusEnum.Error,
       error: wrapError(e)
     },
     payload: {}
@@ -45,7 +46,7 @@ export function makeErrorResponse(item: {
     };
     logToConsole({
       log: log,
-      logLevel: enums.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logIsJson: logIsJson,
       logger: logger
     });

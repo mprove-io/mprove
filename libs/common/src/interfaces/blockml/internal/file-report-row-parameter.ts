@@ -1,4 +1,4 @@
-import { enums } from '~common/barrels/enums';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
 import { Fraction } from '../fraction';
 import { FileFraction } from './file-fraction';
 
@@ -19,5 +19,5 @@ export interface FileReportRowParameter {
 
   apiFractions?: Fraction[];
 
-  notStoreApplyToResult?: enums.FieldResultEnum;
+  notStoreApplyToResult?: FieldResultEnum;
 }

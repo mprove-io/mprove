@@ -1,10 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToDisk } from '~disk/barrels/api-to-disk';
-import { common } from '~disk/barrels/common';
-import { nodeCommon } from '~disk/barrels/node-common';
+import { ErEnum } from '~common/enums/er.enum';
+import {
+  ToDiskIsProjectExistRequest,
+  ToDiskIsProjectExistResponsePayload
+} from '~common/interfaces/to-disk/02-projects/to-disk-is-project-exist';
+import { ServerError } from '~common/models/server-error';
+import { isPathExist } from '~disk/functions/disk/is-path-exist';
 import { Config } from '~disk/interfaces/config';
-import { isPathExist } from '~disk/models/disk/is-path-exist';
+import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class IsProjectExistService {
@@ -18,10 +22,10 @@ export class IsProjectExistService {
       'diskOrganizationsPath'
     );
 
-    let requestValid = nodeCommon.transformValidSync({
-      classType: apiToDisk.ToDiskIsProjectExistRequest,
+    let requestValid = transformValidSync({
+      classType: ToDiskIsProjectExistRequest,
       object: request,
-      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
+      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
@@ -35,14 +39,14 @@ export class IsProjectExistService {
 
     let isOrgExist = await isPathExist(orgDir);
     if (isOrgExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await isPathExist(projectDir);
 
-    let payload: apiToDisk.ToDiskIsProjectExistResponsePayload = {
+    let payload: ToDiskIsProjectExistResponsePayload = {
       orgId: orgId,
       projectId: projectId,
       isProjectExist: isProjectExist

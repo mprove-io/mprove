@@ -1,5 +1,5 @@
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { JoinRelationshipEnum } from '~common/enums/join-relationship.enum';
 
 export class JoinAggregation {
   @IsString()
@@ -9,6 +9,6 @@ export class JoinAggregation {
   isSafeAggregation: boolean;
 
   @IsOptional()
-  @IsEnum(enums.JoinRelationshipEnum)
-  relationship?: enums.JoinRelationshipEnum;
+  @IsEnum(JoinRelationshipEnum)
+  relationship?: JoinRelationshipEnum;
 }

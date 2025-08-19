@@ -1,5 +1,5 @@
 import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
 import { IsTimezone } from '~common/functions/is-timezone';
 
 export class Rq {
@@ -9,8 +9,8 @@ export class Rq {
   @IsTimezone()
   timezone: string;
 
-  @IsEnum(enums.TimeSpecEnum)
-  timeSpec: enums.TimeSpecEnum;
+  @IsEnum(TimeSpecEnum)
+  timeSpec: TimeSpecEnum;
 
   @IsInt()
   timeStartTs: number;

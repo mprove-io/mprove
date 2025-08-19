@@ -1,4 +1,4 @@
-import { enums } from '~common/barrels/enums';
+import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { FileBasic } from './file-basic';
 
 export interface FileProjectConf extends FileBasic {
@@ -11,7 +11,7 @@ export interface FileProjectConf extends FileBasic {
   simplify_safe_aggregates?: string; // boolean
   simplify_safe_aggregates_line_num?: number;
 
-  week_start?: enums.ProjectWeekStartEnum;
+  week_start?: ProjectWeekStartEnum;
   week_start_line_num?: number;
 
   default_timezone?: string;

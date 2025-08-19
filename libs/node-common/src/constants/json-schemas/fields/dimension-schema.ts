@@ -21,11 +21,11 @@
 //     },
 //     type: {
 //       type: 'string',
-//       enum: constants.DIMENSION_TYPE_VALUES
+//       enum: DIMENSION_TYPE_VALUES
 //     },
 //     result: {
 //       type: 'string',
-//       enum: constants.DIMENSION_RESULT_VALUES
+//       enum: DIMENSION_RESULT_VALUES
 //     },
 //     sql: {
 //       type: 'string'

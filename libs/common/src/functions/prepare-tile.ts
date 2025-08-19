@@ -1,14 +1,13 @@
-import {
-  FilePartTile,
-  FileTileParameter,
-  MALLOY_FILTER_ANY
-} from '~common/_index';
-import { constants } from '~common/barrels/constants';
-import { enums } from '~common/barrels/enums';
+import { DEFAULT_LIMIT, MALLOY_FILTER_ANY } from '~common/constants/top';
+import { UI_CHART_TYPES } from '~common/constants/ui-chart-types';
+import { ControlClassEnum } from '~common/enums/control-class.enum';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { TileX } from '~common/interfaces/backend/tile-x';
 import { FileFraction } from '~common/interfaces/blockml/internal/file-fraction';
 import { FileFractionControl } from '~common/interfaces/blockml/internal/file-fraction-control';
+import { FilePartTile } from '~common/interfaces/blockml/internal/file-part-tile';
+import { FileTileParameter } from '~common/interfaces/blockml/internal/file-tile-parameter';
 import { isDefined } from './is-defined';
 import { toFileChartOptions } from './to-file-chart-options';
 
@@ -30,8 +29,8 @@ export function prepareTile(item: {
   let parameters: FileTileParameter[] = [];
 
   if (
-    // (mconfig.modelType === enums.ModelTypeEnum.Store ||
-    //   mconfig.modelType === enums.ModelTypeEnum.SQL) &&
+    // (mconfig.modelType === ModelTypeEnum.Store ||
+    //   mconfig.modelType === ModelTypeEnum.SQL) &&
     isDefined(mconfig.filters) &&
     mconfig.filters.length > 0
   ) {
@@ -40,7 +39,7 @@ export function prepareTile(item: {
         apply_to: x.fieldId
       };
 
-      if (mconfig.modelType === enums.ModelTypeEnum.Store) {
+      if (mconfig.modelType === ModelTypeEnum.Store) {
         parameter.fractions = x.fractions.map(mconfigFraction => {
           let fileFraction: FileFraction = {};
 
@@ -56,25 +55,22 @@ export function prepareTile(item: {
             mconfigControl => {
               let newFileControl: FileFractionControl = {};
 
-              if (
-                mconfigControl.controlClass === enums.ControlClassEnum.Input
-              ) {
+              if (mconfigControl.controlClass === ControlClassEnum.Input) {
                 newFileControl.input = mconfigControl.name;
               } else if (
-                mconfigControl.controlClass === enums.ControlClassEnum.ListInput
+                mconfigControl.controlClass === ControlClassEnum.ListInput
               ) {
                 newFileControl.list_input = mconfigControl.name;
               } else if (
-                mconfigControl.controlClass === enums.ControlClassEnum.Switch
+                mconfigControl.controlClass === ControlClassEnum.Switch
               ) {
                 newFileControl.switch = mconfigControl.name;
               } else if (
-                mconfigControl.controlClass ===
-                enums.ControlClassEnum.DatePicker
+                mconfigControl.controlClass === ControlClassEnum.DatePicker
               ) {
                 newFileControl.date_picker = mconfigControl.name;
               } else if (
-                mconfigControl.controlClass === enums.ControlClassEnum.Selector
+                mconfigControl.controlClass === ControlClassEnum.Selector
               ) {
                 newFileControl.selector = mconfigControl.name;
               }
@@ -87,7 +83,7 @@ export function prepareTile(item: {
 
           return fileFraction;
         });
-      } else if (mconfig.modelType === enums.ModelTypeEnum.Malloy) {
+      } else if (mconfig.modelType === ModelTypeEnum.Malloy) {
         //   parameter.conditions = x.fractions.map(fraction => fraction.brick);
 
         let parentsBricksNoAny = x.fractions
@@ -143,37 +139,36 @@ export function prepareTile(item: {
 
   let data = {
     x_field:
-      constants.UI_CHART_TYPES.xField.indexOf(chart.type) > -1 &&
-      isDefined(chart.xField)
+      UI_CHART_TYPES.xField.indexOf(chart.type) > -1 && isDefined(chart.xField)
         ? chart.xField
         : undefined,
     y_fields:
-      (constants.UI_CHART_TYPES.yFields.indexOf(chart.type) > -1 ||
-        constants.UI_CHART_TYPES.yField.indexOf(chart.type) > -1) &&
+      (UI_CHART_TYPES.yFields.indexOf(chart.type) > -1 ||
+        UI_CHART_TYPES.yField.indexOf(chart.type) > -1) &&
       isDefined(chart.yFields) &&
       chart.yFields.length > 0
         ? chart.yFields
         : undefined,
     hide_columns:
-      constants.UI_CHART_TYPES.hideColumns.indexOf(chart.type) > -1 &&
+      UI_CHART_TYPES.hideColumns.indexOf(chart.type) > -1 &&
       isDefined(chart.hideColumns) &&
       chart.hideColumns.length > 0
         ? chart.hideColumns
         : undefined,
     multi_field:
-      constants.UI_CHART_TYPES.multiField.indexOf(chart.type) > -1 &&
+      UI_CHART_TYPES.multiField.indexOf(chart.type) > -1 &&
       isDefined(chart.multiField)
         ? chart.multiField
         : undefined,
     size_field:
-      constants.UI_CHART_TYPES.sizeField.indexOf(chart.type) > -1 &&
+      UI_CHART_TYPES.sizeField.indexOf(chart.type) > -1 &&
       isDefined(chart.sizeField)
         ? chart.sizeField
         : undefined
   };
 
   let filePartTile: FilePartTile =
-    // mconfig.modelType === enums.ModelTypeEnum.Malloy
+    // mconfig.modelType === ModelTypeEnum.Malloy
     //   ? {
     //       title: chart.title,
     //       description: isDefined(chart.description)
@@ -195,8 +190,7 @@ export function prepareTile(item: {
       select: mconfig.select,
       sorts: isDefined(mconfig.sorts) ? mconfig.sorts : undefined,
       limit:
-        isDefined(mconfig.limit) &&
-        mconfig.limit !== Number(constants.DEFAULT_LIMIT)
+        isDefined(mconfig.limit) && mconfig.limit !== Number(DEFAULT_LIMIT)
           ? <any>mconfig.limit
           : undefined,
       parameters: Object.keys(parameters).length > 0 ? parameters : undefined,
@@ -269,44 +263,44 @@ export function prepareTile(item: {
 
 // axis: {
 //   x_axis_label:
-//     constants.xAxisLabelChartTypes.indexOf(chart.type) > -1 &&
-//     chart.xAxisLabel !== constants.CHART_DEFAULT_X_AXIS_LABEL &&
+//     xAxisLabelChartTypes.indexOf(chart.type) > -1 &&
+//     chart.xAxisLabel !== CHART_DEFAULT_X_AXIS_LABEL &&
 //     isDefined(chart.xAxisLabel)
 //       ? chart.xAxisLabel
 //       : undefined,
 //   y_axis_label:
-//     constants.yAxisLabelChartTypes.indexOf(chart.type) > -1 &&
-//     chart.yAxisLabel !== constants.CHART_DEFAULT_Y_AXIS_LABEL &&
+//     yAxisLabelChartTypes.indexOf(chart.type) > -1 &&
+//     chart.yAxisLabel !== CHART_DEFAULT_Y_AXIS_LABEL &&
 //     isDefined(chart.yAxisLabel)
 //       ? chart.yAxisLabel
 //       : undefined,
 //   show_x_axis_label:
-//     constants.showXAxisLabelChartTypes.indexOf(chart.type) > -1 &&
-//     chart.showXAxisLabel !== constants.CHART_DEFAULT_SHOW_X_AXIS_LABEL &&
+//     showXAxisLabelChartTypes.indexOf(chart.type) > -1 &&
+//     chart.showXAxisLabel !== CHART_DEFAULT_SHOW_X_AXIS_LABEL &&
 //     isDefined(chart.showXAxisLabel)
 //       ? <any>chart.showXAxisLabel
 //       : undefined,
 //   show_y_axis_label:
-//     constants.showYAxisLabelChartTypes.indexOf(chart.type) > -1 &&
-//     chart.showYAxisLabel !== constants.CHART_DEFAULT_SHOW_Y_AXIS_LABEL &&
+//     showYAxisLabelChartTypes.indexOf(chart.type) > -1 &&
+//     chart.showYAxisLabel !== CHART_DEFAULT_SHOW_Y_AXIS_LABEL &&
 //     isDefined(chart.showYAxisLabel)
 //       ? <any>chart.showYAxisLabel
 //       : undefined,
 //   x_axis:
-//     constants.xAxisChartTypes.indexOf(chart.type) > -1 &&
-//     chart.xAxis !== constants.CHART_DEFAULT_X_AXIS &&
+//     xAxisChartTypes.indexOf(chart.type) > -1 &&
+//     chart.xAxis !== CHART_DEFAULT_X_AXIS &&
 //     isDefined(chart.xAxis)
 //       ? <any>chart.xAxis
 //       : undefined,
 //   y_axis:
-//     constants.yAxisChartTypes.indexOf(chart.type) > -1 &&
-//     chart.yAxis !== constants.CHART_DEFAULT_Y_AXIS &&
+//     yAxisChartTypes.indexOf(chart.type) > -1 &&
+//     chart.yAxis !== CHART_DEFAULT_Y_AXIS &&
 //     isDefined(chart.yAxis)
 //       ? <any>chart.yAxis
 //       : undefined,
 //   show_axis:
-//     constants.showAxisChartTypes.indexOf(chart.type) > -1 &&
-//     chart.showAxis !== constants.CHART_DEFAULT_SHOW_AXIS &&
+//     showAxisChartTypes.indexOf(chart.type) > -1 &&
+//     chart.showAxis !== CHART_DEFAULT_SHOW_AXIS &&
 //     isDefined(chart.showAxis)
 //       ? <any>chart.showAxis
 //       : undefined
@@ -317,250 +311,250 @@ export function prepareTile(item: {
 //
 
 // color_scheme:
-//   constants.colorSchemeChartTypes.indexOf(chart.type) > -1 &&
-//   chart.colorScheme !== constants.CHART_DEFAULT_COLOR_SCHEME &&
+//   colorSchemeChartTypes.indexOf(chart.type) > -1 &&
+//   chart.colorScheme !== CHART_DEFAULT_COLOR_SCHEME &&
 //   isDefined(chart.colorScheme)
 //     ? chart.colorScheme
 //     : undefined,
 // scheme_type:
-//   constants.schemeTypeChartTypes.indexOf(chart.type) > -1 &&
-//   chart.schemeType !== constants.CHART_DEFAULT_SCHEME_TYPE &&
+//   schemeTypeChartTypes.indexOf(chart.type) > -1 &&
+//   chart.schemeType !== CHART_DEFAULT_SCHEME_TYPE &&
 //   isDefined(chart.schemeType)
 //     ? chart.schemeType
 //     : undefined,
 // interpolation:
-//   constants.interpolationChartTypes.indexOf(chart.type) > -1 &&
-//   chart.interpolation !== constants.CHART_DEFAULT_INTERPOLATION &&
+//   interpolationChartTypes.indexOf(chart.type) > -1 &&
+//   chart.interpolation !== CHART_DEFAULT_INTERPOLATION &&
 //   isDefined(chart.interpolation)
 //     ? chart.interpolation
 //     : undefined,
 // card_color:
-//   constants.cardColorChartTypes.indexOf(chart.type) > -1 &&
-//   chart.cardColor !== constants.CHART_DEFAULT_CARD_COLOR &&
+//   cardColorChartTypes.indexOf(chart.type) > -1 &&
+//   chart.cardColor !== CHART_DEFAULT_CARD_COLOR &&
 //   isDefined(chart.cardColor)
 //     ? chart.cardColor
 //     : undefined,
 // empty_color:
-//   constants.emptyColorChartTypes.indexOf(chart.type) > -1 &&
-//   chart.emptyColor !== constants.CHART_DEFAULT_EMPTY_COLOR &&
+//   emptyColorChartTypes.indexOf(chart.type) > -1 &&
+//   chart.emptyColor !== CHART_DEFAULT_EMPTY_COLOR &&
 //   isDefined(chart.emptyColor)
 //     ? chart.emptyColor
 //     : undefined,
 // band_color:
-//   constants.bandColorChartTypes.indexOf(chart.type) > -1 &&
-//   chart.bandColor !== constants.CHART_DEFAULT_BAND_COLOR &&
+//   bandColorChartTypes.indexOf(chart.type) > -1 &&
+//   chart.bandColor !== CHART_DEFAULT_BAND_COLOR &&
 //   isDefined(chart.bandColor)
 //     ? chart.bandColor
 //     : undefined,
 // text_color:
-//   constants.textColorChartTypes.indexOf(chart.type) > -1 &&
-//   chart.textColor !== constants.CHART_DEFAULT_TEXT_COLOR &&
+//   textColorChartTypes.indexOf(chart.type) > -1 &&
+//   chart.textColor !== CHART_DEFAULT_TEXT_COLOR &&
 //   isDefined(chart.textColor)
 //     ? chart.textColor
 //     : undefined,
 // units:
-//   constants.unitsChartTypes.indexOf(chart.type) > -1 &&
-//   chart.units !== constants.CHART_DEFAULT_UNITS &&
+//   unitsChartTypes.indexOf(chart.type) > -1 &&
+//   chart.units !== CHART_DEFAULT_UNITS &&
 //   isDefined(chart.units)
 //     ? chart.units
 //     : undefined,
 // legend_title:
-//   constants.legendTitleChartTypes.indexOf(chart.type) > -1 &&
-//   chart.legendTitle !== constants.CHART_DEFAULT_LEGEND_TITLE &&
+//   legendTitleChartTypes.indexOf(chart.type) > -1 &&
+//   chart.legendTitle !== CHART_DEFAULT_LEGEND_TITLE &&
 //   isDefined(chart.legendTitle)
 //     ? chart.legendTitle
 //     : undefined,
 // legend:
-//   constants.legendChartTypes.indexOf(chart.type) > -1 &&
-//   chart.legend !== constants.CHART_DEFAULT_LEGEND &&
+//   legendChartTypes.indexOf(chart.type) > -1 &&
+//   chart.legend !== CHART_DEFAULT_LEGEND &&
 //   isDefined(chart.legend)
 //     ? <any>chart.legend
 //     : undefined,
 // labels:
-//   constants.labelsChartTypes.indexOf(chart.type) > -1 &&
-//   chart.labels !== constants.CHART_DEFAULT_LABELS &&
+//   labelsChartTypes.indexOf(chart.type) > -1 &&
+//   chart.labels !== CHART_DEFAULT_LABELS &&
 //   isDefined(chart.labels)
 //     ? <any>chart.labels
 //     : undefined,
 // show_data_label:
-//   constants.showDataLabelChartTypes.indexOf(chart.type) > -1 &&
-//   chart.showDataLabel !== constants.CHART_DEFAULT_SHOW_DATA_LABEL &&
+//   showDataLabelChartTypes.indexOf(chart.type) > -1 &&
+//   chart.showDataLabel !== CHART_DEFAULT_SHOW_DATA_LABEL &&
 //   isDefined(chart.showDataLabel)
 //     ? <any>chart.showDataLabel
 //     : undefined,
 // tooltip_disabled:
-//   constants.tooltipDisabledChartTypes.indexOf(chart.type) > -1 &&
-//   chart.tooltipDisabled !== constants.CHART_DEFAULT_TOOLTIP_DISABLED &&
+//   tooltipDisabledChartTypes.indexOf(chart.type) > -1 &&
+//   chart.tooltipDisabled !== CHART_DEFAULT_TOOLTIP_DISABLED &&
 //   isDefined(chart.tooltipDisabled)
 //     ? <any>chart.tooltipDisabled
 //     : undefined,
 // round_edges:
-//   constants.roundEdgesChartTypes.indexOf(chart.type) > -1 &&
-//   chart.roundEdges !== constants.CHART_DEFAULT_ROUND_EDGES &&
+//   roundEdgesChartTypes.indexOf(chart.type) > -1 &&
+//   chart.roundEdges !== CHART_DEFAULT_ROUND_EDGES &&
 //   isDefined(chart.roundEdges)
 //     ? <any>chart.roundEdges
 //     : undefined,
 // round_domains:
-//   constants.roundDomainsChartTypes.indexOf(chart.type) > -1 &&
-//   chart.roundDomains !== constants.CHART_DEFAULT_ROUND_DOMAINS &&
+//   roundDomainsChartTypes.indexOf(chart.type) > -1 &&
+//   chart.roundDomains !== CHART_DEFAULT_ROUND_DOMAINS &&
 //   isDefined(chart.roundDomains)
 //     ? <any>chart.roundDomains
 //     : undefined,
 // show_grid_lines:
-//   constants.showGridLinesChartTypes.indexOf(chart.type) > -1 &&
-//   chart.showGridLines !== constants.CHART_DEFAULT_SHOW_GRID_LINES &&
+//   showGridLinesChartTypes.indexOf(chart.type) > -1 &&
+//   chart.showGridLines !== CHART_DEFAULT_SHOW_GRID_LINES &&
 //   isDefined(chart.showGridLines)
 //     ? <any>chart.showGridLines
 //     : undefined,
 // auto_scale:
-//   constants.autoScaleChartTypes.indexOf(chart.type) > -1 &&
-//   chart.autoScale !== constants.CHART_DEFAULT_AUTO_SCALE &&
+//   autoScaleChartTypes.indexOf(chart.type) > -1 &&
+//   chart.autoScale !== CHART_DEFAULT_AUTO_SCALE &&
 //   isDefined(chart.autoScale)
 //     ? <any>chart.autoScale
 //     : undefined,
 // doughnut:
-//   constants.doughnutChartTypes.indexOf(chart.type) > -1 &&
-//   chart.doughnut !== constants.CHART_DEFAULT_DOUGHNUT &&
+//   doughnutChartTypes.indexOf(chart.type) > -1 &&
+//   chart.doughnut !== CHART_DEFAULT_DOUGHNUT &&
 //   isDefined(chart.doughnut)
 //     ? <any>chart.doughnut
 //     : undefined,
 // explode_slices:
-//   constants.explodeSlicesChartTypes.indexOf(chart.type) > -1 &&
-//   chart.explodeSlices !== constants.CHART_DEFAULT_EXPLODE_SLICES &&
+//   explodeSlicesChartTypes.indexOf(chart.type) > -1 &&
+//   chart.explodeSlices !== CHART_DEFAULT_EXPLODE_SLICES &&
 //   isDefined(chart.explodeSlices)
 //     ? <any>chart.explodeSlices
 //     : undefined,
 // gradient:
-//   constants.gradientChartTypes.indexOf(chart.type) > -1 &&
-//   chart.gradient !== constants.CHART_DEFAULT_GRADIENT &&
+//   gradientChartTypes.indexOf(chart.type) > -1 &&
+//   chart.gradient !== CHART_DEFAULT_GRADIENT &&
 //   isDefined(chart.gradient)
 //     ? <any>chart.gradient
 //     : undefined,
 // animations:
-//   constants.animationsChartTypes.indexOf(chart.type) > -1 &&
-//   chart.animations !== constants.CHART_DEFAULT_ANIMATIONS &&
+//   animationsChartTypes.indexOf(chart.type) > -1 &&
+//   chart.animations !== CHART_DEFAULT_ANIMATIONS &&
 //   isDefined(chart.animations)
 //     ? <any>chart.animations
 //     : undefined,
 // arc_width:
-//   constants.arcWidthChartTypes.indexOf(chart.type) > -1 &&
-//   chart.arcWidth !== constants.CHART_DEFAULT_ARC_WIDTH &&
+//   arcWidthChartTypes.indexOf(chart.type) > -1 &&
+//   chart.arcWidth !== CHART_DEFAULT_ARC_WIDTH &&
 //   isDefined(chart.arcWidth)
 //     ? <any>chart.arcWidth
 //     : undefined,
 // bar_padding:
-//   constants.barPaddingChartTypes.indexOf(chart.type) > -1 &&
-//   chart.barPadding !== constants.CHART_DEFAULT_BAR_PADDING &&
+//   barPaddingChartTypes.indexOf(chart.type) > -1 &&
+//   chart.barPadding !== CHART_DEFAULT_BAR_PADDING &&
 //   isDefined(chart.barPadding)
 //     ? <any>chart.barPadding
 //     : undefined,
 // group_padding:
-//   constants.groupPaddingChartTypes.indexOf(chart.type) > -1 &&
-//   chart.groupPadding !== constants.CHART_DEFAULT_GROUP_PADDING &&
+//   groupPaddingChartTypes.indexOf(chart.type) > -1 &&
+//   chart.groupPadding !== CHART_DEFAULT_GROUP_PADDING &&
 //   isDefined(chart.groupPadding)
 //     ? <any>chart.groupPadding
 //     : undefined,
 // inner_padding:
-//   constants.innerPaddingChartTypes.indexOf(chart.type) > -1 &&
-//   chart.innerPadding !== constants.CHART_DEFAULT_INNER_PADDING &&
+//   innerPaddingChartTypes.indexOf(chart.type) > -1 &&
+//   chart.innerPadding !== CHART_DEFAULT_INNER_PADDING &&
 //   isDefined(chart.innerPadding)
 //     ? <any>chart.innerPadding
 //     : undefined,
 // angle_span:
-//   constants.angleSpanChartTypes.indexOf(chart.type) > -1 &&
-//   chart.angleSpan !== constants.CHART_DEFAULT_ANGLE_SPAN &&
+//   angleSpanChartTypes.indexOf(chart.type) > -1 &&
+//   chart.angleSpan !== CHART_DEFAULT_ANGLE_SPAN &&
 //   isDefined(chart.angleSpan)
 //     ? <any>chart.angleSpan
 //     : undefined,
 // start_angle:
-//   constants.startAngleChartTypes.indexOf(chart.type) > -1 &&
-//   chart.startAngle !== constants.CHART_DEFAULT_START_ANGLE &&
+//   startAngleChartTypes.indexOf(chart.type) > -1 &&
+//   chart.startAngle !== CHART_DEFAULT_START_ANGLE &&
 //   isDefined(chart.startAngle)
 //     ? <any>chart.startAngle
 //     : undefined,
 // big_segments:
-//   constants.bigSegmentsChartTypes.indexOf(chart.type) > -1 &&
-//   chart.bigSegments !== constants.CHART_DEFAULT_BIG_SEGMENTS &&
+//   bigSegmentsChartTypes.indexOf(chart.type) > -1 &&
+//   chart.bigSegments !== CHART_DEFAULT_BIG_SEGMENTS &&
 //   isDefined(chart.bigSegments)
 //     ? <any>chart.bigSegments
 //     : undefined,
 // small_segments:
-//   constants.smallSegmentsChartTypes.indexOf(chart.type) > -1 &&
-//   chart.smallSegments !== constants.CHART_DEFAULT_SMALL_SEGMENTS &&
+//   smallSegmentsChartTypes.indexOf(chart.type) > -1 &&
+//   chart.smallSegments !== CHART_DEFAULT_SMALL_SEGMENTS &&
 //   isDefined(chart.smallSegments)
 //     ? <any>chart.smallSegments
 //     : undefined,
 // min:
-//   constants.minChartTypes.indexOf(chart.type) > -1 &&
-//   chart.min !== constants.CHART_DEFAULT_MIN &&
+//   minChartTypes.indexOf(chart.type) > -1 &&
+//   chart.min !== CHART_DEFAULT_MIN &&
 //   isDefined(chart.min)
 //     ? <any>chart.min
 //     : undefined,
 // max:
-//   constants.maxChartTypes.indexOf(chart.type) > -1 &&
-//   chart.max !== constants.CHART_DEFAULT_MAX &&
+//   maxChartTypes.indexOf(chart.type) > -1 &&
+//   chart.max !== CHART_DEFAULT_MAX &&
 //   isDefined(chart.max)
 //     ? <any>chart.max
 //     : undefined,
 
 // y_scale_min:
-//   constants.yScaleMinChartTypes.indexOf(chart.type) > -1 &&
-//   chart.yScaleMin !== constants.CHART_DEFAULT_Y_SCALE_MIN &&
+//   yScaleMinChartTypes.indexOf(chart.type) > -1 &&
+//   chart.yScaleMin !== CHART_DEFAULT_Y_SCALE_MIN &&
 //   isDefined(chart.yScaleMin)
 //     ? <any>chart.yScaleMin
 //     : undefined,
 // y_scale_max:
-//   constants.yScaleMaxChartTypes.indexOf(chart.type) > -1 &&
-//   chart.yScaleMax !== constants.CHART_DEFAULT_Y_SCALE_MAX &&
+//   yScaleMaxChartTypes.indexOf(chart.type) > -1 &&
+//   chart.yScaleMax !== CHART_DEFAULT_Y_SCALE_MAX &&
 //   isDefined(chart.yScaleMax)
 //     ? <any>chart.yScaleMax
 //     : undefined,
 // x_scale_max:
-//   constants.xScaleMaxChartTypes.indexOf(chart.type) > -1 &&
-//   chart.xScaleMax !== constants.CHART_DEFAULT_X_SCALE_MAX &&
+//   xScaleMaxChartTypes.indexOf(chart.type) > -1 &&
+//   chart.xScaleMax !== CHART_DEFAULT_X_SCALE_MAX &&
 //   isDefined(chart.xScaleMax)
 //     ? <any>chart.xScaleMax
 //     : undefined,
 
 // format_number_data_label:
-//   constants.formatNumberDataLabelChartTypes.indexOf(chart.type) > -1 &&
+//   formatNumberDataLabelChartTypes.indexOf(chart.type) > -1 &&
 //   isDefined(chart.formatNumberDataLabel)
 //     ? chart.formatNumberDataLabel
 //     : undefined,
 
 // format_number_value:
-//   constants.formatNumberValueChartTypes.indexOf(chart.type) > -1 &&
+//   formatNumberValueChartTypes.indexOf(chart.type) > -1 &&
 //   isDefined(chart.formatNumberValue)
 //     ? chart.formatNumberValue
 //     : undefined,
 
 // format_number_axis_tick:
-//   constants.formatNumberAxisTickChartTypes.indexOf(chart.type) > -1 &&
+//   formatNumberAxisTickChartTypes.indexOf(chart.type) > -1 &&
 //   isDefined(chart.formatNumberAxisTick)
 //     ? chart.formatNumberAxisTick
 //     : undefined,
 
 // format_number_y_axis_tick:
-//   constants.formatNumberYAxisTickChartTypes.indexOf(chart.type) > -1 &&
+//   formatNumberYAxisTickChartTypes.indexOf(chart.type) > -1 &&
 //   isDefined(chart.formatNumberYAxisTick)
 //     ? chart.formatNumberYAxisTick
 //     : undefined,
 
 // format_number_x_axis_tick:
-//   constants.formatNumberXAxisTickChartTypes.indexOf(chart.type) > -1 &&
+//   formatNumberXAxisTickChartTypes.indexOf(chart.type) > -1 &&
 //   isDefined(chart.formatNumberXAxisTick)
 //     ? chart.formatNumberXAxisTick
 //     : undefined
 
 // timeline:
-//   constants.timelineChartTypes.indexOf(chart.type) > -1 &&
-//   chart.timeline !== constants.CHART_DEFAULT_TIMELINE &&
+//   timelineChartTypes.indexOf(chart.type) > -1 &&
+//   chart.timeline !== CHART_DEFAULT_TIMELINE &&
 //   isDefined()
 //     ? chart.timeline
 //     : undefined,
 // range_fill_opacity:
-//   constants.rangeFillOpacityChartTypes.indexOf(chart.type) > -1 &&
-//   chart.rangeFillOpacity !== constants.CHART_DEFAULT_RANGE_FILL_OPACITY &&
+//   rangeFillOpacityChartTypes.indexOf(chart.type) > -1 &&
+//   chart.rangeFillOpacity !== CHART_DEFAULT_RANGE_FILL_OPACITY &&
 //   isDefined()
 //     ? chart.rangeFillOpacity
 //     : undefined,

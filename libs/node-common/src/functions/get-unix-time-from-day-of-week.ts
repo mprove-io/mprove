@@ -1,5 +1,5 @@
 import { add, fromUnixTime, getUnixTime, sub } from 'date-fns';
-import { common } from '~node-common/barrels/common';
+import { FractionTsUnitEnum } from '~common/enums/fraction/fraction-ts-unit.enum';
 import { getUnitDuration } from './get-unit-duration';
 
 export function getUnixTimeFromDayOfWeek(item: {
@@ -48,7 +48,7 @@ export function getUnixTimeFromDayOfWeek(item: {
 
   let duration = getUnitDuration({
     value: daysDiff > 0 ? daysDiff : -daysDiff,
-    unit: common.FractionTsUnitEnum.Days
+    unit: FractionTsUnitEnum.Days
   });
 
   let unixTime =

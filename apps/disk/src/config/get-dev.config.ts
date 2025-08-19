@@ -1,13 +1,15 @@
 import { parse } from 'dotenv';
 import * as fse from 'fs-extra';
-import { common } from '~disk/barrels/common';
+import { BoolEnum } from '~common/enums/bool.enum';
+import { isDefined } from '~common/functions/is-defined';
+
 import { DiskEnvEnum } from '~disk/enums/disk-env.enum';
 import { Config } from '~disk/interfaces/config';
 
 export function getDevConfig(envFilePath: any) {
   let envFile: any = {};
 
-  if (common.isDefined(envFilePath)) {
+  if (isDefined(envFilePath)) {
     envFile = parse(fse.readFileSync(envFilePath));
   }
 
@@ -24,13 +26,13 @@ export function getDevConfig(envFilePath: any) {
     diskOrganizationsPath:
       process.env.DISK_ORGANIZATIONS_PATH || envFile.DISK_ORGANIZATIONS_PATH,
 
-    diskLogIsJson: <common.BoolEnum>(
+    diskLogIsJson: <BoolEnum>(
       (process.env.DISK_LOG_IS_JSON || envFile.DISK_LOG_IS_JSON)
     ),
-    diskLogResponseError: <common.BoolEnum>(
+    diskLogResponseError: <BoolEnum>(
       (process.env.DISK_LOG_RESPONSE_ERROR || envFile.DISK_LOG_RESPONSE_ERROR)
     ),
-    diskLogResponseOk: <common.BoolEnum>(
+    diskLogResponseOk: <BoolEnum>(
       (process.env.DISK_LOG_RESPONSE_OK || envFile.DISK_LOG_RESPONSE_OK)
     )
   };

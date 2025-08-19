@@ -1,62 +1,38 @@
-import { enums } from '~common/barrels/enums';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 
 export const UI_CHART_TYPES = {
   //
   // data
   //
-  hideColumns: [enums.ChartTypeEnum.Table],
-  sizeField: [enums.ChartTypeEnum.Scatter],
+  hideColumns: [ChartTypeEnum.Table],
+  sizeField: [ChartTypeEnum.Scatter],
   xField: [
-    enums.ChartTypeEnum.Line,
-    enums.ChartTypeEnum.Bar,
-    enums.ChartTypeEnum.Scatter,
-    enums.ChartTypeEnum.Pie
+    ChartTypeEnum.Line,
+    ChartTypeEnum.Bar,
+    ChartTypeEnum.Scatter,
+    ChartTypeEnum.Pie
   ],
-  yField: [enums.ChartTypeEnum.Pie, enums.ChartTypeEnum.Single],
-  yFields: [
-    enums.ChartTypeEnum.Line,
-    enums.ChartTypeEnum.Bar,
-    enums.ChartTypeEnum.Scatter
-  ],
-  nullableMultiField: [enums.ChartTypeEnum.Scatter],
-  multiField: [
-    enums.ChartTypeEnum.Line,
-    enums.ChartTypeEnum.Bar,
-    enums.ChartTypeEnum.Scatter
-  ],
+  yField: [ChartTypeEnum.Pie, ChartTypeEnum.Single],
+  yFields: [ChartTypeEnum.Line, ChartTypeEnum.Bar, ChartTypeEnum.Scatter],
+  nullableMultiField: [ChartTypeEnum.Scatter],
+  multiField: [ChartTypeEnum.Line, ChartTypeEnum.Bar, ChartTypeEnum.Scatter],
   //
   // options
   //
-  format: [enums.ChartTypeEnum.Table],
-  pageSize: [enums.ChartTypeEnum.Table],
-  xAxisGroup: [
-    enums.ChartTypeEnum.Line,
-    enums.ChartTypeEnum.Bar,
-    enums.ChartTypeEnum.Scatter
-  ],
+  format: [ChartTypeEnum.Table],
+  pageSize: [ChartTypeEnum.Table],
+  xAxisGroup: [ChartTypeEnum.Line, ChartTypeEnum.Bar, ChartTypeEnum.Scatter],
   xAxis: {
-    scale: [
-      enums.ChartTypeEnum.Line,
-      enums.ChartTypeEnum.Bar,
-      enums.ChartTypeEnum.Scatter
-    ]
+    scale: [ChartTypeEnum.Line, ChartTypeEnum.Bar, ChartTypeEnum.Scatter]
   },
-  yAxisGroup: [
-    enums.ChartTypeEnum.Line,
-    enums.ChartTypeEnum.Bar,
-    enums.ChartTypeEnum.Scatter
-  ],
+  yAxisGroup: [ChartTypeEnum.Line, ChartTypeEnum.Bar, ChartTypeEnum.Scatter],
   yAxis: {
-    scale: [
-      enums.ChartTypeEnum.Line,
-      enums.ChartTypeEnum.Bar,
-      enums.ChartTypeEnum.Scatter
-    ]
+    scale: [ChartTypeEnum.Line, ChartTypeEnum.Bar, ChartTypeEnum.Scatter]
   },
   seriesGroup: [
-    enums.ChartTypeEnum.Line,
-    enums.ChartTypeEnum.Bar,
-    enums.ChartTypeEnum.Scatter,
-    enums.ChartTypeEnum.Pie
+    ChartTypeEnum.Line,
+    ChartTypeEnum.Bar,
+    ChartTypeEnum.Scatter,
+    ChartTypeEnum.Pie
   ]
 };

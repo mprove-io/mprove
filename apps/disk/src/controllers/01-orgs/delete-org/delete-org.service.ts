@@ -1,11 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToDisk } from '~disk/barrels/api-to-disk';
-import { common } from '~disk/barrels/common';
-import { nodeCommon } from '~disk/barrels/node-common';
+import { ErEnum } from '~common/enums/er.enum';
+import {
+  ToDiskDeleteOrgRequest,
+  ToDiskDeleteOrgResponsePayload
+} from '~common/interfaces/to-disk/01-orgs/to-disk-delete-org';
+import { isPathExist } from '~disk/functions/disk/is-path-exist';
+import { removePath } from '~disk/functions/disk/remove-path';
 import { Config } from '~disk/interfaces/config';
-import { isPathExist } from '~disk/models/disk/is-path-exist';
-import { removePath } from '~disk/models/disk/remove-path';
+import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class DeleteOrgService {
@@ -19,10 +22,10 @@ export class DeleteOrgService {
       'diskOrganizationsPath'
     );
 
-    let requestValid = nodeCommon.transformValidSync({
-      classType: apiToDisk.ToDiskDeleteOrgRequest,
+    let requestValid = transformValidSync({
+      classType: ToDiskDeleteOrgRequest,
       object: request,
-      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
+      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
@@ -37,7 +40,7 @@ export class DeleteOrgService {
       await removePath(orgDir);
     }
 
-    let payload: apiToDisk.ToDiskDeleteOrgResponsePayload = {
+    let payload: ToDiskDeleteOrgResponsePayload = {
       deletedOrgId: orgId
     };
 

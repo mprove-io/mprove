@@ -21,11 +21,11 @@
 //     },
 //     type: {
 //       type: 'string',
-//       enum: constants.MEASURE_TYPE_VALUES
+//       enum: MEASURE_TYPE_VALUES
 //     },
 //     result: {
 //       type: 'string',
-//       enum: constants.MEASURE_RESULT_VALUES
+//       enum: MEASURE_RESULT_VALUES
 //     },
 //     format_number: {
 //       type: 'string'

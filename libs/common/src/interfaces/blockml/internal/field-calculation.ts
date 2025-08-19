@@ -1,4 +1,5 @@
-import { enums } from '~common/barrels/enums';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
 
 export interface FieldCalculation {
   hidden?: string; // boolean
@@ -13,7 +14,7 @@ export interface FieldCalculation {
   sql?: string;
   sql_line_num?: number;
 
-  result?: enums.FieldResultEnum;
+  result?: FieldResultEnum;
   result_line_num?: number;
 
   format_number?: string;
@@ -31,7 +32,7 @@ export interface FieldCalculation {
 
   name_line_num?: number;
 
-  fieldClass?: enums.FieldClassEnum;
+  fieldClass?: FieldClassEnum;
 
   sqlReal?: string;
 }

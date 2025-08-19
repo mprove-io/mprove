@@ -1,5 +1,5 @@
 import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 
 export class MconfigChartSeries {
   @IsOptional()
@@ -10,8 +10,8 @@ export class MconfigChartSeries {
   @IsString()
   dataRowId?: string;
 
-  @IsEnum(enums.ChartTypeEnum)
-  type?: enums.ChartTypeEnum;
+  @IsEnum(ChartTypeEnum)
+  type?: ChartTypeEnum;
 
   @IsOptional()
   @IsInt()

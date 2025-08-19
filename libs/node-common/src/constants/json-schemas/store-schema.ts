@@ -194,7 +194,7 @@ export const STORE_SCHEMA: JSONSchema7 = {
           // },
           // type: {
           //   type: 'string',
-          //   enum: constants.FIELD_TYPE_VALUES
+          //   enum: FIELD_TYPE_VALUES
           // },
           // suggest_model_dimension: {
           //   type: 'string'

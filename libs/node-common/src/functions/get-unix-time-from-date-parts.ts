@@ -1,5 +1,5 @@
 import { getUnixTime, parseISO } from 'date-fns';
-import { common } from '~node-common/barrels/common';
+import { isDefined } from '~common/functions/is-defined';
 
 export function getUnixTimeFromDateParts(item: {
   year: string;
@@ -13,22 +13,22 @@ export function getUnixTimeFromDateParts(item: {
   // console.log('item');
   // console.log(item);
 
-  let date = common.isDefined(minute)
+  let date = isDefined(minute)
     ? parseISO(`${year}-${month}-${day}T${hour}:${minute}:00`)
-    : common.isDefined(hour)
+    : isDefined(hour)
       ? parseISO(`${year}-${month}-${day}T${hour}:00:00`)
-      : common.isDefined(day)
+      : isDefined(day)
         ? parseISO(`${year}-${month}-${day}`)
-        : common.isDefined(month)
+        : isDefined(month)
           ? parseISO(`${year}-${month}-01`)
-          : common.isDefined(year)
+          : isDefined(year)
             ? parseISO(`${year}-01-01`)
             : undefined;
 
   // console.log('date');
   // console.log(date);
 
-  let unixTime = common.isDefined(date) ? getUnixTime(date) : undefined;
+  let unixTime = isDefined(date) ? getUnixTime(date) : undefined;
 
   return unixTime;
 }

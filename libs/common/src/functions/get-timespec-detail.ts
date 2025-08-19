@@ -1,32 +1,34 @@
-import { enums } from '~common/barrels/enums';
+import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
+import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
 
 export function getTimeSpecDetail(item: {
-  timeSpec: enums.TimeSpecEnum;
-  weekStart: enums.ProjectWeekStartEnum;
+  timeSpec: TimeSpecEnum;
+  weekStart: ProjectWeekStartEnum;
 }) {
   let { timeSpec, weekStart } = item;
 
   let timeSpecDetail =
-    timeSpec === enums.TimeSpecEnum.Years
-      ? enums.DetailUnitEnum.Years
-      : timeSpec === enums.TimeSpecEnum.Quarters
-        ? enums.DetailUnitEnum.Quarters
-        : timeSpec === enums.TimeSpecEnum.Months
-          ? enums.DetailUnitEnum.Months
-          : timeSpec === enums.TimeSpecEnum.Weeks &&
-              weekStart === enums.ProjectWeekStartEnum.Monday
-            ? enums.DetailUnitEnum.WeeksMonday
-            : timeSpec === enums.TimeSpecEnum.Weeks &&
-                weekStart === enums.ProjectWeekStartEnum.Sunday
-              ? enums.DetailUnitEnum.WeeksSunday
-              : timeSpec === enums.TimeSpecEnum.Days
-                ? enums.DetailUnitEnum.Days
-                : timeSpec === enums.TimeSpecEnum.Hours
-                  ? enums.DetailUnitEnum.Hours
-                  : timeSpec === enums.TimeSpecEnum.Minutes
-                    ? enums.DetailUnitEnum.Minutes
-                    : timeSpec === enums.TimeSpecEnum.Timestamps
-                      ? enums.DetailUnitEnum.Timestamps
+    timeSpec === TimeSpecEnum.Years
+      ? DetailUnitEnum.Years
+      : timeSpec === TimeSpecEnum.Quarters
+        ? DetailUnitEnum.Quarters
+        : timeSpec === TimeSpecEnum.Months
+          ? DetailUnitEnum.Months
+          : timeSpec === TimeSpecEnum.Weeks &&
+              weekStart === ProjectWeekStartEnum.Monday
+            ? DetailUnitEnum.WeeksMonday
+            : timeSpec === TimeSpecEnum.Weeks &&
+                weekStart === ProjectWeekStartEnum.Sunday
+              ? DetailUnitEnum.WeeksSunday
+              : timeSpec === TimeSpecEnum.Days
+                ? DetailUnitEnum.Days
+                : timeSpec === TimeSpecEnum.Hours
+                  ? DetailUnitEnum.Hours
+                  : timeSpec === TimeSpecEnum.Minutes
+                    ? DetailUnitEnum.Minutes
+                    : timeSpec === TimeSpecEnum.Timestamps
+                      ? DetailUnitEnum.Timestamps
                       : undefined;
 
   return timeSpecDetail;

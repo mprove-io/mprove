@@ -1,7 +1,8 @@
-import { common } from '~disk/barrels/common';
+import { DiskCatalogFile } from '~common/interfaces/disk/disk-catalog-file';
+import { DiskCatalogNode } from '~common/interfaces/disk/disk-catalog-node';
 
 export interface ItemCatalog {
-  files: common.DiskCatalogFile[];
-  nodes: common.DiskCatalogNode[];
+  files: DiskCatalogFile[];
+  nodes: DiskCatalogNode[];
   mproveDir: string;
 }

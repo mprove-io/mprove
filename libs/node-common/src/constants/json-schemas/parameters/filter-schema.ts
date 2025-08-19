@@ -1,5 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
-import { constants } from '~common/barrels/constants';
+import { FILTER_RESULT_VALUES } from '~common/constants/top';
 
 export const FILTER_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -21,7 +21,7 @@ export const FILTER_SCHEMA: JSONSchema7 = {
     },
     result: {
       type: 'string',
-      enum: constants.FILTER_RESULT_VALUES
+      enum: FILTER_RESULT_VALUES
     },
     store_model: {
       type: 'string'

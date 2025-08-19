@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { RowTypeEnum } from '~common/enums/row-type.enum';
 import { MconfigX } from '../backend/mconfig-x';
 import { Filter } from './filter';
 import { Parameter } from './parameter';
@@ -15,8 +15,8 @@ export class Row {
   @IsString()
   name: string;
 
-  @IsEnum(enums.RowTypeEnum)
-  rowType: enums.RowTypeEnum;
+  @IsEnum(RowTypeEnum)
+  rowType: RowTypeEnum;
 
   @IsString()
   metricId: string;

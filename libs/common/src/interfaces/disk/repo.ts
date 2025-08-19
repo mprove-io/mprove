@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { RepoStatusEnum } from '~common/enums/repo-status.enum';
 import { DiskCatalogNode } from './disk-catalog-node';
 import { DiskFileChange } from './disk-file-change';
 import { DiskFileLine } from './disk-file-line';
@@ -18,8 +18,8 @@ export class Repo {
   @IsString()
   currentBranchId: string;
 
-  @IsEnum(enums.RepoStatusEnum)
-  repoStatus: enums.RepoStatusEnum;
+  @IsEnum(RepoStatusEnum)
+  repoStatus: RepoStatusEnum;
 
   @ValidateNested()
   @Type(() => DiskFileLine)

@@ -2,23 +2,31 @@ import * as nodegit from '@figma/nodegit';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { forEachSeries } from 'p-iteration';
-import { DiskSyncFile } from '~common/_index';
-import { apiToDisk } from '~disk/barrels/api-to-disk';
-import { common } from '~disk/barrels/common';
-import { nodeCommon } from '~disk/barrels/node-common';
+import { ErEnum } from '~common/enums/er.enum';
+import { FileStatusEnum } from '~common/enums/file-status.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { DiskSyncFile } from '~common/interfaces/disk/disk-sync-file';
+import {
+  ToDiskSyncRepoRequest,
+  ToDiskSyncRepoResponsePayload
+} from '~common/interfaces/to-disk/03-repos/to-disk-sync-repo';
+import { ServerError } from '~common/models/server-error';
+import { ensureDir } from '~disk/functions/disk/ensure-dir';
+import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
+import { isPathExist } from '~disk/functions/disk/is-path-exist';
+import { removePath } from '~disk/functions/disk/remove-path';
+import { writeToFile } from '~disk/functions/disk/write-to-file';
+import { addChangesToStage } from '~disk/functions/git/add-changes-to-stage';
+import { checkoutBranch } from '~disk/functions/git/checkout-branch';
+import { getRepoStatus } from '~disk/functions/git/get-repo-status';
+import { isLocalBranchExist } from '~disk/functions/git/is-local-branch-exist';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 import { Config } from '~disk/interfaces/config';
 import { ItemCatalog } from '~disk/interfaces/item-catalog';
 import { ItemStatus } from '~disk/interfaces/item-status';
-import { ensureDir } from '~disk/models/disk/ensure-dir';
-import { getNodesAndFiles } from '~disk/models/disk/get-nodes-and-files';
-import { isPathExist } from '~disk/models/disk/is-path-exist';
-import { removePath } from '~disk/models/disk/remove-path';
-import { writeToFile } from '~disk/models/disk/write-to-file';
-import { addChangesToStage } from '~disk/models/git/add-changes-to-stage';
-import { checkoutBranch } from '~disk/models/git/checkout-branch';
-import { getRepoStatus } from '~disk/models/git/get-repo-status';
-import { isLocalBranchExist } from '~disk/models/git/is-local-branch-exist';
+import { getSyncFiles } from '~node-common/functions/get-sync-files';
+import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class SyncRepoService {
@@ -30,10 +38,10 @@ export class SyncRepoService {
   async process(request: any) {
     let devReqReceiveTime = Date.now();
 
-    let requestValid = nodeCommon.transformValidSync({
-      classType: apiToDisk.ToDiskSyncRepoRequest,
+    let requestValid = transformValidSync({
+      classType: ToDiskSyncRepoRequest,
       object: request,
-      errorMessage: common.ErEnum.DISK_WRONG_REQUEST_PARAMS,
+      errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
       logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
@@ -75,22 +83,22 @@ export class SyncRepoService {
 
     let isOrgExist = await isPathExist(orgDir);
     if (isOrgExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_ORG_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_ORG_IS_NOT_EXIST
       });
     }
 
     let isProjectExist = await isPathExist(projectDir);
     if (isProjectExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_PROJECT_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
       });
     }
 
     let isRepoExist = await isPathExist(repoDir);
     if (isRepoExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_REPO_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_REPO_IS_NOT_EXIST
       });
     }
 
@@ -99,8 +107,8 @@ export class SyncRepoService {
       localBranch: branch
     });
     if (isBranchExist === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_BRANCH_IS_NOT_EXIST
+      throw new ServerError({
+        message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
       });
     }
 
@@ -121,8 +129,8 @@ export class SyncRepoService {
     let diskLastCommit = headOid.tostrS();
 
     if (lastCommit !== diskLastCommit) {
-      throw new common.ServerError({
-        message: common.ErEnum.DISK_DEV_REPO_COMMIT_DOES_NOT_MATCH_LOCAL_COMMIT,
+      throw new ServerError({
+        message: ErEnum.DISK_DEV_REPO_COMMIT_DOES_NOT_MATCH_LOCAL_COMMIT,
         data: {
           branch: branch,
           devLastCommit: diskLastCommit,
@@ -133,7 +141,7 @@ export class SyncRepoService {
 
     let statusFiles: nodegit.StatusFile[] = await gitRepo.getStatus();
 
-    let { changedFiles, deletedFiles } = await nodeCommon.getSyncFiles({
+    let { changedFiles, deletedFiles } = await getSyncFiles({
       repoDir: repoDir,
       statusFiles: statusFiles,
       lastSyncTime: lastSyncTime
@@ -142,7 +150,7 @@ export class SyncRepoService {
     let devChangedFiles = changedFiles;
     let devDeletedFiles = deletedFiles;
 
-    let restChangedFiles: common.DiskSyncFile[] = devChangedFiles.filter(
+    let restChangedFiles: DiskSyncFile[] = devChangedFiles.filter(
       devChangedFile => {
         let localDeletedFile = localDeletedFiles.find(
           x => x.path === devChangedFile.path
@@ -153,23 +161,23 @@ export class SyncRepoService {
         );
 
         if (
-          common.isDefined(localChangedFile) &&
+          isDefined(localChangedFile) &&
           localChangedFile.modifiedTime > devChangedFile.modifiedTime
         ) {
           return false;
         }
 
         if (
-          common.isUndefined(localChangedFile) &&
+          isUndefined(localChangedFile) &&
           lastSyncTime > 0 &&
           devChangedFile.modifiedTime < lastSyncTime &&
-          devChangedFile.status === common.FileStatusEnum.New
+          devChangedFile.status === FileStatusEnum.New
         ) {
           return false;
         }
 
         if (
-          common.isDefined(localDeletedFile) &&
+          isDefined(localDeletedFile) &&
           lastSyncTime > 0 &&
           devChangedFile.modifiedTime < lastSyncTime
         ) {
@@ -180,7 +188,7 @@ export class SyncRepoService {
       }
     );
 
-    let restDeletedFiles: common.DiskSyncFile[] = devDeletedFiles.filter(
+    let restDeletedFiles: DiskSyncFile[] = devDeletedFiles.filter(
       devDeletedFile => {
         let localDeletedFile = localDeletedFiles.find(
           x => x.path === devDeletedFile.path
@@ -190,17 +198,17 @@ export class SyncRepoService {
           x => x.path === devDeletedFile.path
         );
 
-        if (common.isDefined(localDeletedFile)) {
+        if (isDefined(localDeletedFile)) {
           return false;
         }
 
-        if (lastSyncTime === 0 && common.isDefined(localChangedFile)) {
+        if (lastSyncTime === 0 && isDefined(localChangedFile)) {
           return false;
         }
 
         if (
           lastSyncTime > 0 &&
-          common.isDefined(localChangedFile) &&
+          isDefined(localChangedFile) &&
           localChangedFile.modifiedTime > lastSyncTime
         ) {
           return false;
@@ -212,7 +220,7 @@ export class SyncRepoService {
 
     await forEachSeries(
       devChangedFiles,
-      async (devChangedFile: common.DiskSyncFile) => {
+      async (devChangedFile: DiskSyncFile) => {
         let filePath = `${repoDir}/${devChangedFile.path}`;
 
         let localChangedFile = localChangedFiles.find(
@@ -222,8 +230,8 @@ export class SyncRepoService {
         if (
           lastSyncTime > 0 &&
           devChangedFile.modifiedTime < lastSyncTime &&
-          common.isUndefined(localChangedFile) &&
-          devChangedFile.status === common.FileStatusEnum.New
+          isUndefined(localChangedFile) &&
+          devChangedFile.status === FileStatusEnum.New
         ) {
           await deleteFile(filePath);
         }
@@ -232,20 +240,20 @@ export class SyncRepoService {
 
     await forEachSeries(
       localDeletedFiles,
-      async (localDeletedFile: common.DiskSyncFile) => {
+      async (localDeletedFile: DiskSyncFile) => {
         let filePath = `${repoDir}/${localDeletedFile.path}`;
 
         let devChangedFile = devChangedFiles.find(
           x => x.path === localDeletedFile.path
         );
 
-        if (lastSyncTime === 0 && common.isDefined(devChangedFile)) {
+        if (lastSyncTime === 0 && isDefined(devChangedFile)) {
           return;
         }
 
         if (
           lastSyncTime > 0 &&
-          common.isDefined(devChangedFile) &&
+          isDefined(devChangedFile) &&
           devChangedFile.modifiedTime > lastSyncTime
         ) {
           return;
@@ -257,7 +265,7 @@ export class SyncRepoService {
 
     await forEachSeries(
       localChangedFiles,
-      async (localChangedFile: common.DiskSyncFile) => {
+      async (localChangedFile: DiskSyncFile) => {
         let devDeletedFile = devDeletedFiles.find(
           x => x.path === localChangedFile.path
         );
@@ -269,14 +277,14 @@ export class SyncRepoService {
         if (
           lastSyncTime > 0 &&
           localChangedFile.modifiedTime < lastSyncTime &&
-          common.isUndefined(devChangedFile) &&
-          localChangedFile.status === common.FileStatusEnum.New
+          isUndefined(devChangedFile) &&
+          localChangedFile.status === FileStatusEnum.New
         ) {
           let restDeletedFile = restDeletedFiles.find(
             f => f.path === localChangedFile.path
           );
 
-          if (common.isUndefined(restDeletedFile)) {
+          if (isUndefined(restDeletedFile)) {
             let file: DiskSyncFile = {
               path: localChangedFile.path,
               status: undefined,
@@ -293,13 +301,13 @@ export class SyncRepoService {
         if (
           lastSyncTime > 0 &&
           localChangedFile.modifiedTime < lastSyncTime &&
-          common.isDefined(devDeletedFile)
+          isDefined(devDeletedFile)
         ) {
           return;
         }
 
         if (
-          common.isUndefined(devChangedFile) ||
+          isUndefined(devChangedFile) ||
           localChangedFile.modifiedTime > devChangedFile.modifiedTime
         ) {
           let filePath = `${repoDir}/${localChangedFile.path}`;
@@ -347,7 +355,7 @@ export class SyncRepoService {
 
     let devRespSentTime = Date.now();
 
-    let payload: apiToDisk.ToDiskSyncRepoResponsePayload = {
+    let payload: ToDiskSyncRepoResponsePayload = {
       repo: {
         orgId: orgId,
         projectId: projectId,

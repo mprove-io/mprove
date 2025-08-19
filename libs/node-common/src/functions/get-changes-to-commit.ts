@@ -1,6 +1,9 @@
 import * as nodegit from '@figma/nodegit';
 import { forEachSeries } from 'p-iteration';
-import { common } from '~node-common/barrels/common';
+import { FileStatusEnum } from '~common/enums/file-status.enum';
+import { encodeFilePath } from '~common/functions/encode-file-path';
+import { isUndefined } from '~common/functions/is-undefined';
+import { DiskFileChange } from '~common/interfaces/disk/disk-file-change';
 import { readFileCheckSize } from './read-file-check-size';
 
 export async function getChangesToCommit(item: {
@@ -13,13 +16,13 @@ export async function getChangesToCommit(item: {
 
   let statusFiles: nodegit.StatusFile[] = await gitRepo.getStatus();
 
-  let changesToCommit: common.DiskFileChange[] = [];
+  let changesToCommit: DiskFileChange[] = [];
 
   await forEachSeries(statusFiles, async (x: nodegit.StatusFile) => {
     let path = x.path();
     let pathArray = path.split('/');
 
-    let fileId = common.encodeFilePath({ filePath: path });
+    let fileId = encodeFilePath({ filePath: path });
 
     let fileName = pathArray.slice(-1)[0];
 
@@ -28,23 +31,23 @@ export async function getChangesToCommit(item: {
 
     // doesn't return booleans
     let status = x.isNew()
-      ? common.FileStatusEnum.New
+      ? FileStatusEnum.New
       : x.isDeleted()
-        ? common.FileStatusEnum.Deleted
+        ? FileStatusEnum.Deleted
         : x.isModified()
-          ? common.FileStatusEnum.Modified
+          ? FileStatusEnum.Modified
           : x.isConflicted()
-            ? common.FileStatusEnum.Conflicted
+            ? FileStatusEnum.Conflicted
             : x.isTypechange()
-              ? common.FileStatusEnum.TypeChange
+              ? FileStatusEnum.TypeChange
               : x.isRenamed()
-                ? common.FileStatusEnum.Renamed
+                ? FileStatusEnum.Renamed
                 : x.isIgnored()
-                  ? common.FileStatusEnum.Ignored
+                  ? FileStatusEnum.Ignored
                   : undefined;
 
     let content;
-    if (addContent === true && status !== common.FileStatusEnum.Deleted) {
+    if (addContent === true && status !== FileStatusEnum.Deleted) {
       let fullPath = `${repoDir}/${path}`;
 
       let { content: cont, stat: st } = await readFileCheckSize({
@@ -63,7 +66,7 @@ export async function getChangesToCommit(item: {
       content: content
     };
 
-    if (common.isUndefined(change.content)) {
+    if (isUndefined(change.content)) {
       delete change.content;
     }
 

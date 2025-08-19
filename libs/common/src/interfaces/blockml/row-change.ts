@@ -1,5 +1,5 @@
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
-import { enums } from '~common/barrels/enums';
+import { RowTypeEnum } from '~common/enums/row-type.enum';
 import { Parameter } from './parameter';
 
 export class RowChange {
@@ -12,8 +12,8 @@ export class RowChange {
   name?: string;
 
   @IsOptional()
-  @IsEnum(enums.RowTypeEnum)
-  rowType?: enums.RowTypeEnum;
+  @IsEnum(RowTypeEnum)
+  rowType?: RowTypeEnum;
 
   @IsOptional()
   @IsString()

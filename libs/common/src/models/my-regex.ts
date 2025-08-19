@@ -1,4 +1,4 @@
-import { constants } from '~common/barrels/constants';
+import { QUAD_UNDERSCORE } from '~common/constants/top';
 import { cloneRegexp } from '~common/functions/clone-regexp';
 
 export class MyRegex {
@@ -511,7 +511,7 @@ export class MyRegex {
   }
 
   static replaceRowIds(input: string, ref: string, val: string): string {
-    return input.split(`\$${ref}`).join(`\$${constants.QUAD_UNDERSCORE}${val}`);
+    return input.split(`\$${ref}`).join(`\$${QUAD_UNDERSCORE}${val}`);
   }
 
   static replaceRowIdsFinalAddPars(

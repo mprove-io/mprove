@@ -11,7 +11,10 @@ import {
   ASTWhereViewOperation,
   ParsedFilter
 } from '@malloydata/malloy-query-builder';
-import { common } from '~node-common/barrels/common';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { Fraction } from '~common/interfaces/blockml/fraction';
+import { Model } from '~common/interfaces/blockml/model';
 import { getMalloyFilterBooleanFractions } from './get-malloy-filter-boolean-fractions';
 import { getMalloyFilterNumberFractions } from './get-malloy-filter-number-fractions';
 import { getMalloyFilterStringFractions } from './get-malloy-filter-string-fractions';
@@ -33,12 +36,12 @@ import { getMalloyFilterTsFractions } from './get-malloy-filter-ts-fractions';
 
 export function getMalloyFiltersFractions(item: {
   segment: ASTSegmentViewDefinition;
-  apiModel: common.Model;
+  apiModel: Model;
 }) {
   let { segment, apiModel } = item;
 
   let filtersFractions: {
-    [s: string]: common.Fraction[];
+    [s: string]: Fraction[];
   } = {};
 
   let parsedFilters: ParsedFilter[] = []; // for logs
@@ -66,7 +69,7 @@ export function getMalloyFiltersFractions(item: {
 
       let exp = op.node.filter.expression as ExpressionWithFieldReference;
 
-      let fieldId = common.isDefined(exp.path)
+      let fieldId = isDefined(exp.path)
         ? [...exp.path, exp.name].join('.')
         : exp.name;
 
@@ -74,29 +77,28 @@ export function getMalloyFiltersFractions(item: {
 
       let parentBrick = `f\`${(op.node.filter as FilterWithFilterString).filter}\``;
 
-      let fractions: common.Fraction[] =
-        field.result === common.FieldResultEnum.String &&
+      let fractions: Fraction[] =
+        field.result === FieldResultEnum.String &&
         parsedFilter.kind === 'string'
           ? getMalloyFilterStringFractions({
               parentBrick: parentBrick,
               parsed: parsedFilter.parsed
             }).fractions
-          : field.result === common.FieldResultEnum.Boolean &&
+          : field.result === FieldResultEnum.Boolean &&
               parsedFilter.kind === 'boolean'
             ? getMalloyFilterBooleanFractions({
                 parentBrick: parentBrick,
                 parsed: parsedFilter.parsed
               }).fractions
-            : field.result === common.FieldResultEnum.Number &&
+            : field.result === FieldResultEnum.Number &&
                 parsedFilter.kind === 'number'
               ? getMalloyFilterNumberFractions({
                   parentBrick: parentBrick,
                   parsed: parsedFilter.parsed
                 }).fractions
-              : [
-                    common.FieldResultEnum.Ts,
-                    common.FieldResultEnum.Date
-                  ].indexOf(field.result) > -1 &&
+              : [FieldResultEnum.Ts, FieldResultEnum.Date].indexOf(
+                    field.result
+                  ) > -1 &&
                   (parsedFilter.kind === 'timestamp' ||
                     parsedFilter.kind === 'date')
                 ? getMalloyFilterTsFractions({
@@ -109,7 +111,7 @@ export function getMalloyFiltersFractions(item: {
                   }).fractions
                 : [];
 
-      if (common.isDefined(filtersFractions[fieldId])) {
+      if (isDefined(filtersFractions[fieldId])) {
         filtersFractions[fieldId] = [
           ...filtersFractions[fieldId],
           ...fractions

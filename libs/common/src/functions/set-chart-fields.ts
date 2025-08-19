@@ -1,23 +1,23 @@
-import {
-  Mconfig,
-  MconfigChart,
-  ModelField,
-  isDefined,
-  setChartSeries
-} from '~common/_index';
-import { enums } from '~common/barrels/enums';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { Mconfig } from '~common/interfaces/blockml/mconfig';
+import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
+import { ModelField } from '~common/interfaces/blockml/model-field';
+import { isDefined } from './is-defined';
+import { setChartSeries } from './set-chart-series';
 
 export function setChartFields<T extends Mconfig>(item: {
-  oldChartType?: enums.ChartTypeEnum;
-  newChartType?: enums.ChartTypeEnum;
+  oldChartType?: ChartTypeEnum;
+  newChartType?: ChartTypeEnum;
   mconfig: T;
   fields: ModelField[];
 }) {
   let { oldChartType, newChartType, mconfig, fields } = item;
 
   if (
-    oldChartType === enums.ChartTypeEnum.Scatter &&
-    newChartType !== enums.ChartTypeEnum.Scatter
+    oldChartType === ChartTypeEnum.Scatter &&
+    newChartType !== ChartTypeEnum.Scatter
   ) {
     mconfig.chart.xField = undefined;
     mconfig.chart.yFields = [];
@@ -33,20 +33,20 @@ export function setChartFields<T extends Mconfig>(item: {
     mconfig.select.forEach((fieldId: string) => {
       let field = fields.find(f => f.id === fieldId);
 
-      if (field.fieldClass === enums.FieldClassEnum.Dimension) {
+      if (field.fieldClass === FieldClassEnum.Dimension) {
         if (
-          field.result === enums.FieldResultEnum.Number ||
-          field.result === enums.FieldResultEnum.Ts
+          field.result === FieldResultEnum.Number ||
+          field.result === FieldResultEnum.Ts
         ) {
           selectedDimensionsResultIsNumberOrTs.push(field.id);
         } else {
           selectedDimensionsResultIsNotNumberOrTs.push(field.id);
         }
       } else if (
-        field.fieldClass === enums.FieldClassEnum.Measure ||
-        field.fieldClass === enums.FieldClassEnum.Calculation
+        field.fieldClass === FieldClassEnum.Measure ||
+        field.fieldClass === FieldClassEnum.Calculation
       ) {
-        if (field.result === enums.FieldResultEnum.Number) {
+        if (field.result === FieldResultEnum.Number) {
           selectedMCsResultIsNumber.push(field.id);
         } else {
           selectedMCsResultIsNotNumber.push(field.id);
@@ -88,8 +88,8 @@ export function setChartFields<T extends Mconfig>(item: {
 
     if (
       yFields.length > 0 &&
-      (newChartType === enums.ChartTypeEnum.Pie ||
-        newChartType === enums.ChartTypeEnum.Single)
+      (newChartType === ChartTypeEnum.Pie ||
+        newChartType === ChartTypeEnum.Single)
     ) {
       yFields = [yFields[0]];
     }

@@ -1,5 +1,10 @@
 import { JSONSchema7 } from 'json-schema';
-import { constants } from '~common/barrels/constants';
+import {
+  FIELD_RESULT_VALUES,
+  FIELD_TYPE_VALUES,
+  TIMEFRAME_VALUES,
+  TIME_SOURCE_VALUES
+} from '~common/constants/top';
 
 export const FIELD_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -21,11 +26,11 @@ export const FIELD_SCHEMA: JSONSchema7 = {
     },
     type: {
       type: 'string',
-      enum: constants.FIELD_TYPE_VALUES
+      enum: FIELD_TYPE_VALUES
     },
     result: {
       type: 'string',
-      enum: constants.FIELD_RESULT_VALUES
+      enum: FIELD_RESULT_VALUES
     },
     suggest_model_dimension: {
       type: 'string'
@@ -56,13 +61,13 @@ export const FIELD_SCHEMA: JSONSchema7 = {
     },
     source: {
       type: 'string',
-      enum: constants.TIME_SOURCE_VALUES
+      enum: TIME_SOURCE_VALUES
     },
     timeframes: {
       type: 'array',
       items: {
         type: 'string',
-        enum: constants.TIMEFRAME_VALUES
+        enum: TIMEFRAME_VALUES
       }
     },
     measure: {

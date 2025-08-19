@@ -1,13 +1,20 @@
-import { common } from '~node-common/barrels/common';
+import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { makeCopy } from '~common/functions/make-copy';
+import { makeId } from '~common/functions/make-id';
+import { Mconfig } from '~common/interfaces/blockml/mconfig';
+import { Model } from '~common/interfaces/blockml/model';
+import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
+import { Query } from '~common/interfaces/blockml/query';
 import { makeQueryId } from './make-query-id';
 
 export function getBlankMconfigAndQuery(item: {
   projectId: string;
   envId: string;
   structId: string;
-  model: common.Model;
-  mconfig: common.Mconfig;
-  connection: common.ProjectConnection;
+  model: Model;
+  mconfig: Mconfig;
+  connection: ProjectConnection;
 }) {
   let { projectId, envId, structId, model, mconfig, connection } = item;
 
@@ -20,7 +27,7 @@ export function getBlankMconfigAndQuery(item: {
     storeTransformedRequestString: undefined
   });
 
-  let blankQuery: common.Query = {
+  let blankQuery: Query = {
     queryId: queryId,
     projectId: projectId,
     envId: envId,
@@ -30,7 +37,7 @@ export function getBlankMconfigAndQuery(item: {
     apiMethod: undefined,
     apiUrl: undefined,
     apiBody: undefined,
-    status: common.QueryStatusEnum.New,
+    status: QueryStatusEnum.New,
     data: [],
     lastRunBy: undefined,
     lastRunTs: 1,
@@ -46,9 +53,9 @@ export function getBlankMconfigAndQuery(item: {
     serverTs: 1
   };
 
-  let blankMconfig: common.Mconfig = {
+  let blankMconfig: Mconfig = {
     structId: structId,
-    mconfigId: common.makeId(),
+    mconfigId: makeId(),
     queryId: queryId,
     modelId: model.modelId,
     modelType: model.type,
@@ -67,7 +74,7 @@ export function getBlankMconfigAndQuery(item: {
     timezone: mconfig.timezone,
     limit: 500,
     filters: [],
-    chart: common.makeCopy(common.DEFAULT_CHART),
+    chart: makeCopy(DEFAULT_CHART),
     temp: false,
     serverTs: 1
   };

@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
-import { DiskFileLine } from '~common/interfaces/disk/_index';
+import { DiskFileLine } from '../disk/disk-file-line';
 
 export class BmlError {
   @IsString()

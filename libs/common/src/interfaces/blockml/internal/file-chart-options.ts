@@ -65,7 +65,7 @@ export interface FileChartOptions {
   // timeline?: string; // boolean
   // timeline_line_num?: number;
 
-  // interpolation?: enums.ChartInterpolationEnum;
+  // interpolation?: ChartInterpolationEnum;
   // interpolation_line_num?: number;
 
   // auto_scale?: string; // boolean
@@ -80,10 +80,10 @@ export interface FileChartOptions {
   // labels?: string; // boolean
   // labels_line_num?: number;
 
-  // color_scheme?: enums.ChartColorSchemeEnum;
+  // color_scheme?: ChartColorSchemeEnum;
   // color_scheme_line_num?: number;
 
-  // scheme_type?: enums.ChartSchemeTypeEnum;
+  // scheme_type?: ChartSchemeTypeEnum;
   // scheme_type_line_num?: number;
 
   // arc_width?: string;
