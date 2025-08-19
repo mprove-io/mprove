@@ -1,6 +1,20 @@
 import { ConfigService } from '@nestjs/config';
-import { barField } from '~blockml/barrels/bar-field';
 import { BmError } from '~blockml/models/bm-error';
+import { CallerEnum } from '~common/enums/special/caller.enum';
+import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
+import { FileProjectConf } from '~common/interfaces/blockml/internal/file-project-conf';
+import { FileStore } from '~common/interfaces/blockml/internal/file-store';
+import { sdrType } from '~common/types/sdr-type';
+import { checkAndSetImplicitFormatNumber } from './check-and-set-implicit-format-number';
+import { checkAndSetImplicitResult } from './check-and-set-implicit-result';
+import { checkFieldDeclaration } from './check-field-declaration';
+import { checkFieldIsObject } from './check-field-is-object';
+import { checkFieldNameDuplicates } from './check-field-name-duplicates';
+import { checkFieldUnknownParameters } from './check-field-unknown-parameters';
+import { checkFieldsExist } from './check-fields-exist';
+import { checkStoreFieldDetail } from './check-store-field-detail';
+import { checkStoreFieldGroup } from './check-store-field-group';
+import { setImplicitLabel } from './set-implicit-label';
 
 export function buildField<T extends sdrType>(
   item: {
@@ -14,7 +28,7 @@ export function buildField<T extends sdrType>(
 ) {
   let entities = item.entities;
 
-  entities = barField.checkFieldsExist(
+  entities = checkFieldsExist(
     {
       entities: entities,
       structId: item.structId,
@@ -24,7 +38,7 @@ export function buildField<T extends sdrType>(
     cs
   );
 
-  entities = barField.checkFieldIsObject(
+  entities = checkFieldIsObject(
     {
       entities: entities,
       structId: item.structId,
@@ -34,7 +48,7 @@ export function buildField<T extends sdrType>(
     cs
   );
 
-  entities = barField.checkFieldDeclaration(
+  entities = checkFieldDeclaration(
     {
       entities: entities,
       structId: item.structId,
@@ -46,7 +60,7 @@ export function buildField<T extends sdrType>(
 
   // parameters added to fields
 
-  entities = barField.checkFieldNameDuplicates(
+  entities = checkFieldNameDuplicates(
     {
       entities: entities,
       structId: item.structId,
@@ -56,7 +70,7 @@ export function buildField<T extends sdrType>(
     cs
   );
 
-  entities = barField.checkFieldUnknownParameters(
+  entities = checkFieldUnknownParameters(
     {
       entities: entities,
       structId: item.structId,
@@ -66,7 +80,7 @@ export function buildField<T extends sdrType>(
     cs
   );
 
-  entities = barField.setImplicitLabel(
+  entities = setImplicitLabel(
     {
       entities: entities,
       structId: item.structId,
@@ -76,7 +90,7 @@ export function buildField<T extends sdrType>(
     cs
   );
 
-  entities = barField.checkAndSetImplicitResult(
+  entities = checkAndSetImplicitResult(
     {
       entities: entities,
       structId: item.structId,
@@ -87,7 +101,7 @@ export function buildField<T extends sdrType>(
   );
 
   if (item.caller === CallerEnum.BuildStoreField) {
-    entities = barField.checkStoreFieldGroup(
+    entities = checkStoreFieldGroup(
       {
         stores: entities as FileStore[],
         structId: item.structId,
@@ -97,7 +111,7 @@ export function buildField<T extends sdrType>(
       cs
     ) as T[];
 
-    entities = barField.checkStoreFieldDetail(
+    entities = checkStoreFieldDetail(
       {
         stores: entities as FileStore[],
         structId: item.structId,
@@ -108,7 +122,7 @@ export function buildField<T extends sdrType>(
     ) as T[];
   }
 
-  entities = barField.checkAndSetImplicitFormatNumber(
+  entities = checkAndSetImplicitFormatNumber(
     {
       entities: entities,
       projectConfig: item.projectConfig,

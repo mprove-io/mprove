@@ -1,7 +1,7 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
-import { logToConsoleBlockml } from '~blockml/functions/log-to-console-blockml';
-import { prepareTest } from '~blockml/functions/prepare-test';
+import { prepareTest } from '~blockml/functions/extra/prepare-test';
+import { isDefined } from '~common/functions/is-defined';
 
 let caller = CallerEnum.RebuildStruct;
 let func = FuncEnum.CollectFiles;

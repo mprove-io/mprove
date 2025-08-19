@@ -1,5 +1,12 @@
 import { ConfigService } from '@nestjs/config';
 import { BmError } from '~blockml/models/bm-error';
+import { CallerEnum } from '~common/enums/special/caller.enum';
+import { FuncEnum } from '~common/enums/special/func.enum';
+import { LogTypeEnum } from '~common/enums/special/log-type.enum';
+import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
+import { FileDashboard } from '~common/interfaces/blockml/internal/file-dashboard';
+import { checkVmdrFilterConditions } from '../extra/check-vmdr-filter-conditions';
+import { log } from '../extra/log';
 
 let func = FuncEnum.CheckDashboardFilterConditions;
 

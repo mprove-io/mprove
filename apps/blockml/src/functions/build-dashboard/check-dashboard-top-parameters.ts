@@ -1,5 +1,14 @@
 import { ConfigService } from '@nestjs/config';
 import { BmError } from '~blockml/models/bm-error';
+import { CallerEnum } from '~common/enums/special/caller.enum';
+import { FuncEnum } from '~common/enums/special/func.enum';
+import { LogTypeEnum } from '~common/enums/special/log-type.enum';
+import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
+import { FileDashboard } from '~common/interfaces/blockml/internal/file-dashboard';
+import { FileReport } from '~common/interfaces/blockml/internal/file-report';
+import { FileStore } from '~common/interfaces/blockml/internal/file-store';
+import { checkTopParameters } from '../extra/check-top-parameters';
+import { log } from '../extra/log';
 
 let func = FuncEnum.CheckDashboardTopParameters;
 

@@ -1,6 +1,13 @@
 import { ConfigService } from '@nestjs/config';
-import { barDashboard } from '~blockml/barrels/bar-dashboard';
 import { BmError } from '~blockml/models/bm-error';
+import { CallerEnum } from '~common/enums/special/caller.enum';
+import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
+import { FileDashboard } from '~common/interfaces/blockml/internal/file-dashboard';
+import { FileStore } from '~common/interfaces/blockml/internal/file-store';
+import { checkDashboardAccess } from './check-dashboard-access';
+import { checkDashboardFilterConditions } from './check-dashboard-filter-conditions';
+import { checkDashboardTilesExist } from './check-dashboard-tiles-exist';
+import { checkDashboardTopParameters } from './check-dashboard-top-parameters';
 
 export function buildDashboard(
   item: {
@@ -15,7 +22,7 @@ export function buildDashboard(
 ) {
   let dashboards = item.dashboards;
 
-  dashboards = barDashboard.checkDashboardAccess(
+  dashboards = checkDashboardAccess(
     {
       dashboards: dashboards,
       structId: item.structId,
@@ -25,7 +32,7 @@ export function buildDashboard(
     cs
   );
 
-  dashboards = barDashboard.checkDashboardTopParameters(
+  dashboards = checkDashboardTopParameters(
     {
       dashboards: dashboards,
       stores: item.stores,
@@ -36,7 +43,7 @@ export function buildDashboard(
     cs
   );
 
-  dashboards = barDashboard.checkDashboardFilterConditions(
+  dashboards = checkDashboardFilterConditions(
     {
       dashboards: dashboards,
       structId: item.structId,
@@ -47,7 +54,7 @@ export function buildDashboard(
     cs
   );
 
-  dashboards = barDashboard.checkDashboardTilesExist(
+  dashboards = checkDashboardTilesExist(
     {
       dashboards: dashboards,
       structId: item.structId,
