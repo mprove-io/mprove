@@ -18,7 +18,7 @@ import { helper } from '~blockml/barrels/helper';
 import { interfaces } from '~blockml/barrels/interfaces';
 import { nodeCommon } from '~blockml/barrels/node-common';
 import { BmError } from '~blockml/models/bm-error';
-import { WrapResult } from '~node-common/interfaces/wrap-result';
+import { WrapResult } from '~common/interfaces/wrap-result';
 
 let func = common.FuncEnum.BuildMods;
 

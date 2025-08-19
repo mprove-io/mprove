@@ -6,6 +6,9 @@ import { ErEnum } from '~common/enums/er.enum';
 import { FileStatusEnum } from '~common/enums/file-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
+import { DiskConfig } from '~common/interfaces/disk/disk-config';
+import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
+import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
 import { DiskSyncFile } from '~common/interfaces/disk/disk-sync-file';
 import {
   ToDiskSyncRepoRequest,
@@ -22,16 +25,13 @@ import { checkoutBranch } from '~disk/functions/git/checkout-branch';
 import { getRepoStatus } from '~disk/functions/git/get-repo-status';
 import { isLocalBranchExist } from '~disk/functions/git/is-local-branch-exist';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
-import { Config } from '~disk/interfaces/config';
-import { ItemCatalog } from '~disk/interfaces/item-catalog';
-import { ItemStatus } from '~disk/interfaces/item-status';
 import { getSyncFiles } from '~node-common/functions/get-sync-files';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class SyncRepoService {
   constructor(
-    private cs: ConfigService<Config>,
+    private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
 
@@ -42,7 +42,7 @@ export class SyncRepoService {
       classType: ToDiskSyncRepoRequest,
       object: request,
       errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
+      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
 
@@ -62,7 +62,7 @@ export class SyncRepoService {
       publicKey
     } = requestValid.payload;
 
-    let orgPath = this.cs.get<Config['diskOrganizationsPath']>(
+    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
@@ -334,7 +334,7 @@ export class SyncRepoService {
       conflicts,
       changesToCommit,
       changesToPush
-    } = <ItemStatus>await getRepoStatus({
+    } = <DiskItemStatus>await getRepoStatus({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
@@ -345,7 +345,7 @@ export class SyncRepoService {
       addContent: true
     });
 
-    let itemCatalog = <ItemCatalog>await getNodesAndFiles({
+    let itemCatalog = <DiskItemCatalog>await getNodesAndFiles({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,

@@ -3,18 +3,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
 import { WinstonModule } from 'nest-winston';
+import { APP_NAME_DISK } from '~common/constants/top-disk';
 import { BoolEnum } from '~common/enums/bool.enum';
+import { DiskConfig } from '~common/interfaces/disk/disk-config';
 import { appServices } from '~disk/app-services';
 import { getConfig } from '~disk/config/get.config';
-import { APP_NAME_DISK } from '~disk/constants/top';
-import { Config } from '~disk/interfaces/config';
 import { ConsumerService } from '~disk/services/consumer.service';
 import { MessageService } from '~disk/services/message.service';
 import { getLoggerOptions } from '~node-common/functions/get-logger-options';
 
 export async function prepareTest(
   orgId: string,
-  overrideConfigOptions?: Config
+  overrideConfigOptions?: DiskConfig
 ) {
   let config = getConfig();
 
@@ -36,7 +36,7 @@ export async function prepareTest(
     providers: [Logger, ...appServices]
   })
     .overrideProvider(ConfigService)
-    .useValue({ get: (key: any) => mockConfig[key as keyof Config] })
+    .useValue({ get: (key: any) => mockConfig[key as keyof DiskConfig] })
     .overrideProvider(ConsumerService)
     .useValue({})
     .compile();
@@ -44,9 +44,9 @@ export async function prepareTest(
   // let app: INestApplication = moduleRef.createNestApplication();
   // await app.init();
 
-  let cs = moduleRef.get<ConfigService<Config>>(ConfigService);
+  let cs = moduleRef.get<ConfigService<DiskConfig>>(ConfigService);
 
-  let orgPath = cs.get<Config['diskOrganizationsPath']>(
+  let orgPath = cs.get<DiskConfig['diskOrganizationsPath']>(
     'diskOrganizationsPath'
   );
 

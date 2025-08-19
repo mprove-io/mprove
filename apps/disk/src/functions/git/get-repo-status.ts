@@ -6,9 +6,9 @@ import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isDefined } from '~common/functions/is-defined';
 import { DiskFileChange } from '~common/interfaces/disk/disk-file-change';
 import { DiskFileLine } from '~common/interfaces/disk/disk-file-line';
+import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
+import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
 import { MyRegex } from '~common/models/my-regex';
-import { ItemCatalog } from '~disk/interfaces/item-catalog';
-import { ItemStatus } from '~disk/interfaces/item-status';
 import { getChangesToCommit } from '~node-common/functions/get-changes-to-commit';
 import { getNodesAndFiles } from '../disk/get-nodes-and-files';
 import { isRemoteBranchExist } from './is-remote-branch-exist';
@@ -22,7 +22,7 @@ export async function getRepoStatus(item: {
   isFetch: boolean;
   isCheckConflicts: boolean;
   addContent?: boolean;
-}): Promise<ItemStatus> {
+}): Promise<DiskItemStatus> {
   // priorities order:
   // NeedSave (frontend only)
   // NeedStage (no need because auto add file after each save)
@@ -146,7 +146,7 @@ export async function getRepoStatus(item: {
 
   if (item.isCheckConflicts === true) {
     // check conflicts manually instead of git - because they are already committed
-    let itemDevRepoCatalog = <ItemCatalog>await getNodesAndFiles({
+    let itemDevRepoCatalog = <DiskItemCatalog>await getNodesAndFiles({
       projectId: item.projectId,
       projectDir: item.projectDir,
       repoId: item.repoId,

@@ -1,15 +1,15 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
+import { DiskConfig } from '~common/interfaces/disk/disk-config';
 import { makeErrorResponseDisk } from '~disk/functions/make-error-response-disk';
 import { makeOkResponseDisk } from '~disk/functions/make-ok-response-disk';
-import { Config } from '~disk/interfaces/config';
 import { DeleteFileService } from './delete-file.service';
 
 @Controller()
 export class DeleteFileController {
   constructor(
-    private cs: ConfigService<Config>,
+    private cs: ConfigService<DiskConfig>,
     private deleteFileService: DeleteFileService,
     private logger: Logger
   ) {}

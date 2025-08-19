@@ -6,8 +6,8 @@ import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isDefined } from '~common/functions/is-defined';
 import { DiskCatalogFile } from '~common/interfaces/disk/disk-catalog-file';
 import { DiskCatalogNode } from '~common/interfaces/disk/disk-catalog-node';
+import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
 import { MyRegex } from '~common/models/my-regex';
-import { ItemCatalog } from '~disk/interfaces/item-catalog';
 import { getMproveDir } from '~node-common/functions/get-mprove-dir';
 import { readFileCheckSize } from '~node-common/functions/read-file-check-size';
 
@@ -39,7 +39,7 @@ export async function getNodesAndFiles(item: {
           configPath: configPath
         });
 
-  let itemDir = <ItemCatalog>await getDirCatalogNodesAndFilesRecursive({
+  let itemDir = <DiskItemCatalog>await getDirCatalogNodesAndFilesRecursive({
     dir: repoDir,
     projectId: item.projectId,
     repoId: item.repoId,
@@ -95,15 +95,17 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
         item.projectId + fileAbsolutePath.substring(item.repoDirPathLength);
 
       if (dirent.isDirectory() === true) {
-        let itemDir = <ItemCatalog>await getDirCatalogNodesAndFilesRecursive({
-          dir: fileAbsolutePath,
-          projectId: item.projectId,
-          repoId: item.repoId,
-          repoDirPathLength: item.repoDirPathLength,
-          readFiles: item.readFiles,
-          mproveDir: item.mproveDir,
-          repoDir: item.repoDir
-        });
+        let itemDir = <DiskItemCatalog>(
+          await getDirCatalogNodesAndFilesRecursive({
+            dir: fileAbsolutePath,
+            projectId: item.projectId,
+            repoId: item.repoId,
+            repoDirPathLength: item.repoDirPathLength,
+            readFiles: item.readFiles,
+            mproveDir: item.mproveDir,
+            repoDir: item.repoDir
+          })
+        );
 
         // add dirNodes to children
 

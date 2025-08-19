@@ -1,8 +1,8 @@
 import { IsEnum, IsString } from 'class-validator';
 import { BoolEnum } from '~common/enums/bool.enum';
-import { DiskEnvEnum } from '~disk/enums/disk-env.enum';
+import { DiskEnvEnum } from '~common/enums/env/disk-env.enum';
 
-export class Config {
+export class DiskConfig {
   @IsEnum(DiskEnvEnum)
   diskEnv?: DiskEnvEnum;
 

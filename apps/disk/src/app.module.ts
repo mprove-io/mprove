@@ -3,11 +3,11 @@ import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
+import { DiskConfig } from '~common/interfaces/disk/disk-config';
 import { appControllers } from './app-controllers';
 import { appServices } from './app-services';
 import { getConfig } from './config/get.config';
 import { logToConsoleDisk } from './functions/log-to-console-disk';
-import { Config } from './interfaces/config';
 
 @Module({
   imports: [
@@ -17,13 +17,13 @@ import { Config } from './interfaces/config';
     }),
 
     RabbitMQModule.forRootAsync(RabbitMQModule, {
-      useFactory: (cs: ConfigService<Config>) => {
-        let rabbitUser = cs.get<Config['diskRabbitUser']>('diskRabbitUser');
-        let rabbitPass = cs.get<Config['diskRabbitPass']>('diskRabbitPass');
-        let rabbitHost = cs.get<Config['diskRabbitHost']>('diskRabbitHost');
-        let rabbitPort = cs.get<Config['diskRabbitPort']>('diskRabbitPort');
+      useFactory: (cs: ConfigService<DiskConfig>) => {
+        let rabbitUser = cs.get<DiskConfig['diskRabbitUser']>('diskRabbitUser');
+        let rabbitPass = cs.get<DiskConfig['diskRabbitPass']>('diskRabbitPass');
+        let rabbitHost = cs.get<DiskConfig['diskRabbitHost']>('diskRabbitHost');
+        let rabbitPort = cs.get<DiskConfig['diskRabbitPort']>('diskRabbitPort');
         let rabbitProtocol =
-          cs.get<Config['diskRabbitProtocol']>('diskRabbitProtocol');
+          cs.get<DiskConfig['diskRabbitProtocol']>('diskRabbitProtocol');
 
         return {
           exchanges: [

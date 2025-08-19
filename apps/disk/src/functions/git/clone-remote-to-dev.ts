@@ -1,6 +1,6 @@
 import * as nodegit from '@figma/nodegit';
+import { CENTRAL_REPO_ID } from '~common/constants/top-disk';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
-import { CENTRAL_REPO_ID } from '~disk/constants/top';
 
 export async function cloneRemoteToDev(item: {
   orgId: string;

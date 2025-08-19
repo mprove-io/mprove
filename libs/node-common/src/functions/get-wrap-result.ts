@@ -1,4 +1,4 @@
-import { WrapResult } from '~node-common/interfaces/wrap-result';
+import { WrapResult } from '~common/interfaces/wrap-result';
 
 export async function getWrapResult<T>(item: {
   promise: Promise<T>;

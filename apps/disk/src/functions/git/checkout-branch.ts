@@ -2,8 +2,8 @@ import * as nodegit from '@figma/nodegit';
 
 import { ErEnum } from '~common/enums/er.enum';
 import { RepoStatusEnum } from '~common/enums/repo-status.enum';
+import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
 import { ServerError } from '~common/models/server-error';
-import { ItemStatus } from '~disk/interfaces/item-status';
 import { getRepoStatus } from './get-repo-status';
 
 export async function checkoutBranch(item: {
@@ -15,7 +15,7 @@ export async function checkoutBranch(item: {
   fetchOptions: nodegit.FetchOptions;
   isFetch: boolean;
 }) {
-  let { repoStatus, currentBranch, conflicts } = <ItemStatus>(
+  let { repoStatus, currentBranch, conflicts } = <DiskItemStatus>(
     await getRepoStatus({
       projectId: item.projectId,
       projectDir: item.projectDir,

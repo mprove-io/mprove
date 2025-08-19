@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '~common/enums/er.enum';
+import { DiskConfig } from '~common/interfaces/disk/disk-config';
 import {
   ToDiskIsBranchExistRequest,
   ToDiskIsBranchExistResponsePayload
@@ -11,18 +12,17 @@ import { isPathExist } from '~disk/functions/disk/is-path-exist';
 import { isLocalBranchExist } from '~disk/functions/git/is-local-branch-exist';
 import { isRemoteBranchExist } from '~disk/functions/git/is-remote-branch-exist';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
-import { Config } from '~disk/interfaces/config';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class IsBranchExistService {
   constructor(
-    private cs: ConfigService<Config>,
+    private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
 
   async process(request: any) {
-    let orgPath = this.cs.get<Config['diskOrganizationsPath']>(
+    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
@@ -30,7 +30,7 @@ export class IsBranchExistService {
       classType: ToDiskIsBranchExistRequest,
       object: request,
       errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
+      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
 

@@ -1,6 +1,6 @@
+import { DiskEnvEnum } from '~common/enums/env/disk-env.enum';
 import { ErEnum } from '~common/enums/er.enum';
-import { DiskEnvEnum } from '~disk/enums/disk-env.enum';
-import { Config } from '~disk/interfaces/config';
+import { DiskConfig } from '~common/interfaces/disk/disk-config';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 import { getDevConfig } from './get-dev.config';
 import { getProdConfig } from './get-prod.config';
@@ -18,7 +18,7 @@ export function getConfig() {
         : devConfig;
 
   let validatedConfig = transformValidSync({
-    classType: Config,
+    classType: DiskConfig,
     object: config,
     errorMessage: ErEnum.DISK_WRONG_ENV_VALUES,
     logIsJson: config.diskLogIsJson,

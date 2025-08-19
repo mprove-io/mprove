@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '~common/enums/er.enum';
+import { DiskConfig } from '~common/interfaces/disk/disk-config';
 import {
   ToDiskCreateOrgRequest,
   ToDiskCreateOrgResponsePayload
@@ -8,18 +9,17 @@ import {
 import { ServerError } from '~common/models/server-error';
 import { ensureDir } from '~disk/functions/disk/ensure-dir';
 import { isPathExist } from '~disk/functions/disk/is-path-exist';
-import { Config } from '~disk/interfaces/config';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class CreateOrgService {
   constructor(
-    private cs: ConfigService<Config>,
+    private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
 
   async process(request: any) {
-    let orgPath = this.cs.get<Config['diskOrganizationsPath']>(
+    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
@@ -27,7 +27,7 @@ export class CreateOrgService {
       classType: ToDiskCreateOrgRequest,
       object: request,
       errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
+      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
 

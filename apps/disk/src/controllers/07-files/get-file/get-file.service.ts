@@ -2,6 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '~common/enums/er.enum';
 import { PanelEnum } from '~common/enums/panel.enum';
+import { DiskConfig } from '~common/interfaces/disk/disk-config';
+import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
+import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
 import {
   ToDiskGetFileRequest,
   ToDiskGetFileResponsePayload
@@ -16,21 +19,18 @@ import { getLastCommitFileContent } from '~disk/functions/git/get-last-commit-fi
 import { getRepoStatus } from '~disk/functions/git/get-repo-status';
 import { isLocalBranchExist } from '~disk/functions/git/is-local-branch-exist';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
-import { Config } from '~disk/interfaces/config';
-import { ItemCatalog } from '~disk/interfaces/item-catalog';
-import { ItemStatus } from '~disk/interfaces/item-status';
 import { readFileCheckSize } from '~node-common/functions/read-file-check-size';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class GetFileService {
   constructor(
-    private cs: ConfigService<Config>,
+    private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
 
   async process(request: any) {
-    let orgPath = this.cs.get<Config['diskOrganizationsPath']>(
+    let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
     );
 
@@ -38,7 +38,7 @@ export class GetFileService {
       classType: ToDiskGetFileRequest,
       object: request,
       errorMessage: ErEnum.DISK_WRONG_REQUEST_PARAMS,
-      logIsJson: this.cs.get<Config['diskLogIsJson']>('diskLogIsJson'),
+      logIsJson: this.cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
       logger: this.logger
     });
 
@@ -157,7 +157,7 @@ export class GetFileService {
       conflicts,
       changesToCommit,
       changesToPush
-    } = <ItemStatus>await getRepoStatus({
+    } = <DiskItemStatus>await getRepoStatus({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,
@@ -167,7 +167,7 @@ export class GetFileService {
       isCheckConflicts: false
     });
 
-    let itemCatalog = <ItemCatalog>await getNodesAndFiles({
+    let itemCatalog = <DiskItemCatalog>await getNodesAndFiles({
       projectId: projectId,
       projectDir: projectDir,
       repoId: repoId,

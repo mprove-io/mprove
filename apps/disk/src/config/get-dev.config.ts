@@ -3,8 +3,8 @@ import * as fse from 'fs-extra';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { isDefined } from '~common/functions/is-defined';
 
-import { DiskEnvEnum } from '~disk/enums/disk-env.enum';
-import { Config } from '~disk/interfaces/config';
+import { DiskEnvEnum } from '~common/enums/env/disk-env.enum';
+import { DiskConfig } from '~common/interfaces/disk/disk-config';
 
 export function getDevConfig(envFilePath: any) {
   let envFile: any = {};
@@ -13,7 +13,7 @@ export function getDevConfig(envFilePath: any) {
     envFile = parse(fse.readFileSync(envFilePath));
   }
 
-  let devConfig: Config = {
+  let devConfig: DiskConfig = {
     diskEnv: <DiskEnvEnum>(process.env.DISK_ENV || envFile.DISK_ENV),
 
     diskRabbitUser: process.env.DISK_RABBIT_USER || envFile.DISK_RABBIT_USER,

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { METHOD_RABBIT } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
+import { DiskConfig } from '~common/interfaces/disk/disk-config';
 import { ServerError } from '~common/models/server-error';
 import { CreateOrgService } from '~disk/controllers/01-orgs/create-org/create-org.service';
 import { DeleteOrgService } from '~disk/controllers/01-orgs/delete-org/delete-org.service';
@@ -35,12 +36,11 @@ import { SaveFileService } from '~disk/controllers/07-files/save-file/save-file.
 import { SeedProjectService } from '~disk/controllers/08-seed/seed-project/seed-project.service';
 import { makeErrorResponseDisk } from '~disk/functions/make-error-response-disk';
 import { makeOkResponseDisk } from '~disk/functions/make-ok-response-disk';
-import { Config } from '~disk/interfaces/config';
 
 @Injectable()
 export class MessageService {
   constructor(
-    private cs: ConfigService<Config>,
+    private cs: ConfigService<DiskConfig>,
 
     private createOrgService: CreateOrgService,
     private deleteOrgService: DeleteOrgService,

@@ -1,4 +1,4 @@
-import { WrapResult } from '~node-common/interfaces/wrap-result';
+import { WrapResult } from '~common/interfaces/wrap-result';
 
 export function errorToWrapResult<T>(error: any) {
   // console.log(error);

@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { enumToBoolean } from '~common/functions/enum-to-boolean';
-import { Config } from '~disk/interfaces/config';
+import { DiskConfig } from '~common/interfaces/disk/disk-config';
 import { makeOkResponse } from '~node-common/functions/make-ok-response';
 
 export function makeOkResponseDisk(item: {
@@ -11,7 +11,7 @@ export function makeOkResponseDisk(item: {
   method: any;
   duration: number;
   skipLog?: boolean;
-  cs: ConfigService<Config>;
+  cs: ConfigService<DiskConfig>;
   logger: Logger;
 }) {
   let { payload, body, path, method, duration, skipLog, cs, logger } = item;
@@ -24,9 +24,11 @@ export function makeOkResponseDisk(item: {
     duration: duration,
     skipLog: skipLog,
     logResponseOk: enumToBoolean(
-      cs.get<Config['diskLogResponseOk']>('diskLogResponseOk')
+      cs.get<DiskConfig['diskLogResponseOk']>('diskLogResponseOk')
     ),
-    logIsJson: enumToBoolean(cs.get<Config['diskLogIsJson']>('diskLogIsJson')),
+    logIsJson: enumToBoolean(
+      cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson')
+    ),
     logger: logger
   });
 }
