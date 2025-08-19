@@ -1,7 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -22,7 +21,7 @@ export class IsOrgExistController {
     });
 
     let payload: apiToBackend.ToBackendIsOrgExistResponsePayload = {
-      isExist: common.isDefined(org)
+      isExist: isDefined(org)
     };
 
     return payload;

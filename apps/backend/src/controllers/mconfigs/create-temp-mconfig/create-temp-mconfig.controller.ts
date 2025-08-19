@@ -7,11 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -43,22 +39,19 @@ export class CreateTempMconfigController {
     private envsService: EnvsService,
     private wrapToEntService: WrapToEntService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfig)
-  async createTempMconfig(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async createTempMconfig(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendCreateTempMconfigRequest = request.body;
 
     let { oldMconfigId, mconfig, projectId, isRepoProd, branchId, envId } =
       reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -99,20 +92,20 @@ export class CreateTempMconfigController {
     });
 
     if (mconfig.structId !== bridge.structId) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_STRUCT_ID_CHANGED
+      throw new ServerError({
+        message: ErEnum.BACKEND_STRUCT_ID_CHANGED
       });
     }
 
-    let isAccessGranted = helper.checkAccess({
+    let isAccessGranted = checkAccess({
       userAlias: user.alias,
       member: member,
       entity: model
     });
 
     if (isAccessGranted === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_FORBIDDEN_MODEL
+      throw new ServerError({
+        message: ErEnum.BACKEND_FORBIDDEN_MODEL
       });
     }
 
@@ -125,8 +118,8 @@ export class CreateTempMconfigController {
       oldMconfig.queryId !== mconfig.queryId ||
       oldMconfig.modelId !== mconfig.modelId
     ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_OLD_MCONFIG_MISMATCH
+      throw new ServerError({
+        message: ErEnum.BACKEND_OLD_MCONFIG_MISMATCH
       });
     }
 

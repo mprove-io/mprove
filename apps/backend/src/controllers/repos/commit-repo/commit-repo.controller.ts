@@ -1,11 +1,6 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -20,28 +15,24 @@ export class CommitRepoController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private rabbitService: RabbitService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private branchesService: BranchesService
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo)
-  async commitRepo(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async commitRepo(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendCommitRepoRequest = request.body;
 
     let { projectId, branchId, isRepoProd, commitMessage } = reqValid.payload;
 
     if (isRepoProd === true) {
-      throw new common.ServerError({
-        message:
-          common.ErEnum.BACKEND_MANUAL_COMMIT_TO_PRODUCTION_REPO_IS_FORBIDDEN
+      throw new ServerError({
+        message: ErEnum.BACKEND_MANUAL_COMMIT_TO_PRODUCTION_REPO_IS_FORBIDDEN
       });
     }
 
     let repoId =
-      // isRepoProd === true ? common.PROD_REPO_ID :
+      // isRepoProd === true ? PROD_REPO_ID :
       user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
@@ -54,15 +45,15 @@ export class CommitRepoController {
     });
 
     let firstProjectId =
-      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
+      this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
 
     if (
       member.isAdmin === false &&
       projectId === firstProjectId &&
-      repoId === common.PROD_REPO_ID
+      repoId === PROD_REPO_ID
     ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 
@@ -93,7 +84,7 @@ export class CommitRepoController {
 
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskCommitRepoResponse>({
-        routingKey: helper.makeRoutingKeyToDisk({
+        routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
         }),

@@ -1,10 +1,7 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
@@ -18,36 +15,33 @@ export class CreateOrgController {
   constructor(
     private orgsService: OrgsService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrg)
-  async createOrg(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async createOrg(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendCreateOrgRequest = request.body;
 
-    if (user.alias === common.RESTRICTED_USER_ALIAS) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_USER
+    if (user.alias === RESTRICTED_USER_ALIAS) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 
     let allowUsersToCreateOrganizations = this.cs.get<
-      interfaces.Config['allowUsersToCreateOrganizations']
+      BackendConfig['allowUsersToCreateOrganizations']
     >('allowUsersToCreateOrganizations');
 
     let firstUserEmail =
-      this.cs.get<interfaces.Config['firstUserEmail']>('firstUserEmail');
+      this.cs.get<BackendConfig['firstUserEmail']>('firstUserEmail');
 
     if (
-      allowUsersToCreateOrganizations !== common.BoolEnum.TRUE &&
+      allowUsersToCreateOrganizations !== BoolEnum.TRUE &&
       user.email !== firstUserEmail
     ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_CREATION_OF_ORGANIZATIONS_IS_FORBIDDEN
+      throw new ServerError({
+        message: ErEnum.BACKEND_CREATION_OF_ORGANIZATIONS_IS_FORBIDDEN
       });
     }
 
@@ -57,15 +51,15 @@ export class CreateOrgController {
       where: eq(orgsTable.name, name)
     });
 
-    if (name.toLowerCase() === common.FIRST_ORG_NAME.toLowerCase()) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_ORGANIZATION_NAME
+    if (name.toLowerCase() === FIRST_ORG_NAME.toLowerCase()) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_ORGANIZATION_NAME
       });
     }
 
-    if (common.isDefined(org)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_ORG_ALREADY_EXISTS
+    if (isDefined(org)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_ORG_ALREADY_EXISTS
       });
     }
 

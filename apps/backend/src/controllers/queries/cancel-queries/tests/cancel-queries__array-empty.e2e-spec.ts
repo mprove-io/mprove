@@ -1,8 +1,5 @@
 import test from 'ava';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '~common/_index';
@@ -11,36 +8,36 @@ let testId = 'backend-cancel-queries__array-empty';
 
 let traceId = testId;
 
-let userId = common.makeId();
+let userId = makeId();
 let email = `${testId}@example.com`;
 let password = '123456';
 
 let orgId = testId;
 let orgName = testId;
 
-let projectId = common.makeId();
+let projectId = makeId();
 let projectName = testId;
 
 let connectionId = 'c1';
-let connectionType = common.ConnectionTypeEnum.PostgreSQL;
+let connectionType = ConnectionTypeEnum.PostgreSQL;
 
-let queryId = common.makeId();
-let queryJobId = common.makeId();
+let queryId = makeId();
+let queryJobId = makeId();
 
-let structId = common.makeId();
-let mconfigId = common.makeId();
+let structId = makeId();
+let mconfigId = makeId();
 
 let prep: interfaces.Prep;
 
 test('1', async t => {
   let resp1: apiToBackend.ToBackendCancelQueriesResponse;
 
-  let mconfig: common.Mconfig = {
+  let mconfig: Mconfig = {
     structId: structId,
     mconfigId: mconfigId,
     queryId: queryId,
     modelId: 'abc',
-    modelType: common.ModelTypeEnum.Malloy,
+    modelType: ModelTypeEnum.Malloy,
     // isStoreModel: false,
     dateRangeIncludesRightSide: false,
     storePart: undefined,
@@ -54,17 +51,17 @@ test('1', async t => {
     // joinAggregations: [],
     sortings: [],
     sorts: undefined,
-    timezone: common.UTC,
+    timezone: UTC,
     limit: 500,
     filters: [],
-    chart: common.makeCopy(common.DEFAULT_CHART),
+    chart: makeCopy(DEFAULT_CHART),
     temp: true,
     serverTs: 1
   };
 
-  let query: common.Query = {
+  let query: Query = {
     projectId: projectId,
-    envId: common.PROJECT_ENV_PROD,
+    envId: PROJECT_ENV_PROD,
     connectionId: connectionId,
     connectionType: connectionType,
     queryId: queryId,
@@ -73,7 +70,7 @@ test('1', async t => {
     apiUrl: undefined,
     apiBody: undefined,
     data: undefined,
-    status: common.QueryStatusEnum.Running,
+    status: QueryStatusEnum.Running,
     lastRunBy: userId,
     lastRunTs: 1,
     lastCancelTs: undefined,
@@ -118,8 +115,8 @@ test('1', async t => {
             orgId,
             projectId,
             name: projectName,
-            remoteType: common.ProjectRemoteTypeEnum.Managed,
-            defaultBranch: common.BRANCH_MAIN
+            remoteType: ProjectRemoteTypeEnum.Managed,
+            defaultBranch: BRANCH_MAIN
           }
         ],
         members: [
@@ -136,7 +133,7 @@ test('1', async t => {
           {
             projectId: projectId,
             connectionId: connectionId,
-            envId: common.PROJECT_ENV_PROD,
+            envId: PROJECT_ENV_PROD,
             type: connectionType
           }
         ],
@@ -150,7 +147,7 @@ test('1', async t => {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: {
         projectId: projectId,
@@ -161,24 +158,23 @@ test('1', async t => {
       }
     };
 
-    resp1 =
-      await helper.sendToBackend<apiToBackend.ToBackendCancelQueriesResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req1
-      });
+    resp1 = await sendToBackend<apiToBackend.ToBackendCancelQueriesResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req1
+    });
 
     await prep.app.close();
   } catch (e) {
     logToConsoleBackend({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: prep.logger,
       cs: prep.cs
     });
   }
 
-  t.is(resp1.info.error.message, common.ErEnum.BACKEND_WRONG_REQUEST_PARAMS);
+  t.is(resp1.info.error.message, ErEnum.BACKEND_WRONG_REQUEST_PARAMS);
   t.is(
     resp1.info.error.data[0].arrayNotEmpty,
     'mconfigIds should not be empty'

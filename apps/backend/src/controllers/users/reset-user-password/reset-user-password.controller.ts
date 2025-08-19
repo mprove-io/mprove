@@ -8,11 +8,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { constants } from '~backend/barrels/constants';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { SkipJwtCheck } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -28,7 +24,7 @@ export class ResetUserPasswordController {
   constructor(
     private mailerService: MailerService,
     private usersService: UsersService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -43,17 +39,17 @@ export class ResetUserPasswordController {
       email: email
     });
 
-    if (user.alias === common.RESTRICTED_USER_ALIAS) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_USER
+    if (user.alias === RESTRICTED_USER_ALIAS) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 
     this.usersService.checkUserHashIsDefined({ user: user });
 
-    user.passwordResetToken = common.makeId();
-    user.passwordResetExpiresTs = helper.makeTsUsingOffsetFromNow(
-      constants.PASSWORD_EXPIRES_OFFSET
+    user.passwordResetToken = makeId();
+    user.passwordResetExpiresTs = makeTsUsingOffsetFromNow(
+      PASSWORD_EXPIRES_OFFSET
     );
 
     await retry(
@@ -70,9 +66,9 @@ export class ResetUserPasswordController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let hostUrl = this.cs.get<interfaces.Config['hostUrl']>('hostUrl');
+    let hostUrl = this.cs.get<BackendConfig['hostUrl']>('hostUrl');
 
-    let urlUpdatePassword = `${hostUrl}/${common.PATH_UPDATE_PASSWORD}?token=${user.passwordResetToken}`;
+    let urlUpdatePassword = `${hostUrl}/${PATH_UPDATE_PASSWORD}?token=${user.passwordResetToken}`;
 
     await this.mailerService.sendMail({
       to: user.email,

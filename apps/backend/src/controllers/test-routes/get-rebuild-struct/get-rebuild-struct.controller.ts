@@ -1,10 +1,7 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
+
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser, SkipJwtCheck } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
@@ -26,16 +23,13 @@ export class GetRebuildStructController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRebuildStruct)
-  async getRebuildStruct(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getRebuildStruct(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetRebuildStructRequest = request.body;
 
     let { orgId, projectId, repoId, branch, envId, overrideTimezone } =
       reqValid.payload;
 
-    let structId = common.makeId();
+    let structId = makeId();
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -63,7 +57,7 @@ export class GetRebuildStructController {
     let getCatalogFilesResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
         {
-          routingKey: helper.makeRoutingKeyToDisk({
+          routingKey: makeRoutingKeyToDisk({
             orgId: orgId,
             projectId: projectId
           }),
@@ -92,9 +86,7 @@ export class GetRebuildStructController {
         structId: structId,
         projectId: projectId,
         mproveDir: getCatalogFilesResponse.payload.mproveDir,
-        files: helper.diskFilesToBlockmlFiles(
-          getCatalogFilesResponse.payload.files
-        ),
+        files: diskFilesToBlockmlFiles(getCatalogFilesResponse.payload.files),
         envId: envId,
         evs: apiEnv.evsWithFallback,
         connections: connectionsWithFallback,
@@ -105,7 +97,7 @@ export class GetRebuildStructController {
     let rebuildStructResponse =
       await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
         {
-          routingKey: common.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
+          routingKey: RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
           message: rebuildStructRequest,
           checkIsOk: true
         }

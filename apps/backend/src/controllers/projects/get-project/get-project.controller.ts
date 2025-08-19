@@ -1,6 +1,5 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
@@ -17,10 +16,7 @@ export class GetProjectController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject)
-  async getProject(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getProject(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetProjectRequest = request.body;
 
     let { projectId } = reqValid.payload;

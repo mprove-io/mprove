@@ -9,7 +9,6 @@ import {
   pgTable,
   varchar
 } from 'drizzle-orm/pg-core';
-import { common } from '~backend/barrels/common';
 
 export const mconfigsTable = pgTable(
   'mconfigs',
@@ -18,10 +17,10 @@ export const mconfigsTable = pgTable(
     structId: varchar('struct_id', { length: 32 }).notNull(),
     queryId: varchar('query_id', { length: 64 }).notNull(),
     modelId: varchar('model_id', { length: 64 }).notNull(),
-    modelType: varchar('model_type').$type<common.ModelTypeEnum>(),
+    modelType: varchar('model_type').$type<ModelTypeEnum>(),
     // isStoreModel: boolean('is_store_model'),
     dateRangeIncludesRightSide: boolean('date_range_includes_right_side'),
-    storePart: json('store_part').$type<common.StorePart>(),
+    storePart: json('store_part').$type<StorePart>(),
     modelLabel: varchar('model_label'),
     modelFilePath: varchar('model_file_path'),
     malloyQuery: varchar('malloy_query'),
@@ -30,13 +29,13 @@ export const mconfigsTable = pgTable(
     // unsafeSelect: json('unsafe_select').$type<string[]>(),
     // warnSelect: json('warn_select').$type<string[]>(),
     // joinAggregations:
-    //   json('join_aggregations').$type<common.JoinAggregation[]>(),
-    sortings: json('sortings').$type<common.Sorting[]>().notNull(),
+    //   json('join_aggregations').$type<JoinAggregation[]>(),
+    sortings: json('sortings').$type<Sorting[]>().notNull(),
     sorts: varchar('sorts'),
     timezone: varchar('timezone').notNull(),
     limit: integer('limit').notNull(),
-    filters: json('filters').$type<common.Filter[]>().notNull(),
-    chart: json('chart').$type<common.MconfigChart>().notNull(),
+    filters: json('filters').$type<Filter[]>().notNull(),
+    chart: json('chart').$type<MconfigChart>().notNull(),
     temp: boolean('temp').notNull(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

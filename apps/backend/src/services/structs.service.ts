@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray, sql } from 'drizzle-orm';
-import { common } from '~backend/barrels/common';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
@@ -30,7 +29,7 @@ export class StructsService {
   }) {
     let { structId, projectId, skipError, addMetrics } = item;
 
-    let emptyStruct: schemaPostgres.StructEnt = {
+    let emptyStruct: StructEnt = {
       structId: structId,
       projectId: projectId,
       mproveDirValue: './data',
@@ -49,9 +48,9 @@ export class StructsService {
       serverTs: undefined
     };
 
-    let struct: schemaPostgres.StructEnt;
+    let struct: StructEnt;
 
-    if (structId === common.EMPTY_STRUCT_ID) {
+    if (structId === EMPTY_STRUCT_ID) {
       struct = emptyStruct;
     } else {
       if (addMetrics === true) {
@@ -87,19 +86,19 @@ export class StructsService {
               eq(structsTable.structId, structId),
               eq(structsTable.projectId, projectId)
             )
-          )) as schemaPostgres.StructEnt[];
+          )) as StructEnt[];
 
         struct = structs.length > 0 ? structs[0] : undefined;
 
         struct.metrics = [];
       }
 
-      if (common.isUndefined(struct)) {
+      if (isUndefined(struct)) {
         if (skipError === true) {
           struct = emptyStruct;
         } else {
-          throw new common.ServerError({
-            message: common.ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST
+          throw new ServerError({
+            message: ErEnum.BACKEND_STRUCT_DOES_NOT_EXIST
           });
         }
       }
@@ -126,7 +125,7 @@ WHERE c.branch_id IS NULL AND to_timestamp(s.server_ts/1000) < (NOW() - INTERVAL
       rawData.rows.map((x: any) => x.struct_id) || [];
 
     orphanedStructIds = orphanedStructIds.filter(
-      x => [common.EMPTY_STRUCT_ID].indexOf(x) < 0
+      x => [EMPTY_STRUCT_ID].indexOf(x) < 0
     );
 
     if (orphanedStructIds.length > 0) {

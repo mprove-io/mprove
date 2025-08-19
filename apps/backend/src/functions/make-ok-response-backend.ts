@@ -1,8 +1,5 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { nodeCommon } from '~backend/barrels/node-common';
 
 export function makeOkResponseBackend(item: {
   body: any;
@@ -11,23 +8,23 @@ export function makeOkResponseBackend(item: {
   method: any;
   duration: number;
   skipLog?: boolean;
-  cs: ConfigService<interfaces.Config>;
+  cs: ConfigService<BackendConfig>;
   logger: Logger;
 }) {
   let { payload, body, path, method, duration, skipLog, cs, logger } = item;
 
-  return nodeCommon.makeOkResponse({
+  return makeOkResponse({
     body: body,
     payload: payload,
     path: path,
     method: method,
     duration: duration,
     skipLog: skipLog,
-    logResponseOk: common.enumToBoolean(
-      cs.get<interfaces.Config['backendLogResponseOk']>('backendLogResponseOk')
+    logResponseOk: enumToBoolean(
+      cs.get<BackendConfig['backendLogResponseOk']>('backendLogResponseOk')
     ),
-    logIsJson: common.enumToBoolean(
-      cs.get<interfaces.Config['backendLogIsJson']>('backendLogIsJson')
+    logIsJson: enumToBoolean(
+      cs.get<BackendConfig['backendLogIsJson']>('backendLogIsJson')
     ),
     logger: logger
   });

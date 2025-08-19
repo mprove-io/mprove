@@ -1,8 +1,5 @@
 import test from 'ava';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareSeed, prepareTest } from '~backend/functions/prepare-test';
 import { PrepTest } from '~backend/interfaces/prep-test';
@@ -12,7 +9,7 @@ let testId = 'backend-run-queries__ok-postgres';
 
 let traceId = testId;
 
-let userId = common.makeId();
+let userId = makeId();
 let email = `${testId}@example.com`;
 let password = '123456';
 
@@ -20,7 +17,7 @@ let orgId = testId;
 let orgName = testId;
 
 let testProjectId = 't1';
-let projectId = common.makeId();
+let projectId = makeId();
 let projectName = testId;
 
 let chartId = 'c1';
@@ -35,17 +32,17 @@ test('1', async t => {
 
     let c1Postgres: apiToBackend.ToBackendSeedRecordsRequestPayloadConnectionsItem =
       {
-        envId: common.PROJECT_ENV_PROD,
+        envId: PROJECT_ENV_PROD,
         projectId: projectId,
         connectionId: 'c1_postgres',
-        type: common.ConnectionTypeEnum.PostgreSQL,
-        host: prepTest.cs.get<interfaces.Config['firstProjectDwhPostgresHost']>(
+        type: ConnectionTypeEnum.PostgreSQL,
+        host: prepTest.cs.get<BackendConfig['firstProjectDwhPostgresHost']>(
           'firstProjectDwhPostgresHost'
         ),
         port: 5436,
         username: 'postgres',
         password: prepTest.cs.get<
-          interfaces.Config['firstProjectDwhPostgresPassword']
+          BackendConfig['firstProjectDwhPostgresPassword']
         >('firstProjectDwhPostgresPassword'),
         database: 'p_db'
       };
@@ -81,8 +78,8 @@ test('1', async t => {
             projectId,
             testProjectId,
             name: projectName,
-            defaultBranch: common.BRANCH_MAIN,
-            remoteType: common.ProjectRemoteTypeEnum.Managed
+            defaultBranch: BRANCH_MAIN,
+            remoteType: ProjectRemoteTypeEnum.Managed
           }
         ],
         members: [
@@ -104,22 +101,21 @@ test('1', async t => {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetCharts,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: {
         projectId: projectId,
         isRepoProd: false,
-        branchId: common.BRANCH_MAIN,
-        envId: common.PROJECT_ENV_PROD
+        branchId: BRANCH_MAIN,
+        envId: PROJECT_ENV_PROD
       }
     };
 
-    let resp1 =
-      await helper.sendToBackend<apiToBackend.ToBackendGetChartsResponse>({
-        httpServer: prepTest.httpServer,
-        loginToken: prepareSeedResult.loginToken,
-        req: req1
-      });
+    let resp1 = await sendToBackend<apiToBackend.ToBackendGetChartsResponse>({
+      httpServer: prepTest.httpServer,
+      loginToken: prepareSeedResult.loginToken,
+      req: req1
+    });
 
     let chart = resp1.payload.charts.find(x => x.chartId === chartId);
 
@@ -127,7 +123,7 @@ test('1', async t => {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: {
         projectId: projectId,
@@ -138,23 +134,22 @@ test('1', async t => {
       }
     };
 
-    resp2 =
-      await helper.sendToBackend<apiToBackend.ToBackendRunQueriesResponse>({
-        httpServer: prepTest.httpServer,
-        loginToken: prepareSeedResult.loginToken,
-        req: req2
-      });
+    resp2 = await sendToBackend<apiToBackend.ToBackendRunQueriesResponse>({
+      httpServer: prepTest.httpServer,
+      loginToken: prepareSeedResult.loginToken,
+      req: req2
+    });
 
     await prepTest.app.close();
   } catch (e) {
     logToConsoleBackend({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: prepTest.logger,
       cs: prepTest.cs
     });
   }
 
   t.is(resp2.info.error, undefined);
-  t.is(resp2.info.status, common.ResponseInfoStatusEnum.Ok);
+  t.is(resp2.info.status, ResponseInfoStatusEnum.Ok);
 });

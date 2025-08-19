@@ -8,11 +8,12 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
-import { apiToBackend } from './barrels/api-to-backend';
-import { common } from './barrels/common';
-import { constants } from './barrels/constants';
-import { interfaces } from './barrels/interfaces';
-import { schemaPostgres } from './barrels/schema-postgres';
+import { UNK_ST_ID } from '~common/constants/top-backend';
+import { ErEnum } from '~common/enums/er.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { BackendConfig } from '~common/interfaces/backend/backend-config';
+import { MyResponse } from '~common/interfaces/to/my-response';
+import { ServerError } from '~common/models/server-error';
 import { logResponseBackend } from './functions/log-response-backend';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { makeErrorResponseBackend } from './functions/make-error-response-backend';
@@ -21,12 +22,17 @@ import { makeTsNumber } from './functions/make-ts-number';
 import { Idemp } from './interfaces/idemp';
 import { RedisService } from './services/redis.service';
 
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { ToBackendRequest } from '~common/interfaces/to-backend/to-backend-request';
+import { UserEnt } from './drizzle/postgres/schema/users';
+
 let retry = require('async-retry');
 
 @Injectable()
 export class AppInterceptor implements NestInterceptor {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private redisService: RedisService
   ) {}
@@ -34,31 +40,29 @@ export class AppInterceptor implements NestInterceptor {
   async intercept(
     context: ExecutionContext,
     next: CallHandler
-  ): Promise<Observable<common.MyResponse>> {
+  ): Promise<Observable<MyResponse>> {
     let request = context.switchToHttp().getRequest();
 
-    // if (common.ToBackendRequestInfoNameEnum.ToBackendWebhookAnalyticsEvents) {
+    // if (ToBackendRequestInfoNameEnum.ToBackendWebhookAnalyticsEvents) {
     //   return next.handle();
     // }
 
     request.start_ts = Date.now();
 
-    let req: apiToBackend.ToBackendRequest = request.body;
-    let user: schemaPostgres.UserEnt = request.user;
+    let req: ToBackendRequest = request.body;
+    let user: UserEnt = request.user;
     // let sessionStId: string = request.session?.getUserId();
 
     let iKey = req?.info?.idempotencyKey;
-    let stId = common.isDefined(user?.userId)
-      ? user.userId
-      : constants.UNK_ST_ID;
-    // let stId = common.isDefined(sessionStId)
+    let stId = isDefined(user?.userId) ? user.userId : UNK_ST_ID;
+    // let stId = isDefined(sessionStId)
     // ? sessionStId
-    // : constants.ST_ID_UNK;
+    // : ST_ID_UNK;
 
-    let idemp = common.isUndefined(iKey)
+    let idemp = isUndefined(iKey)
       ? undefined
       : await this.redisService.find({ id: iKey }); // stId
-    if (common.isUndefined(idemp) && common.isDefined(iKey)) {
+    if (isUndefined(idemp) && isDefined(iKey)) {
       let idempWr: Idemp = {
         idempotencyKey: iKey,
         stId: stId,
@@ -75,13 +79,13 @@ export class AppInterceptor implements NestInterceptor {
 
     let respX;
 
-    if (common.isDefined(idemp) && common.isUndefined(idemp.resp)) {
+    if (isDefined(idemp) && isUndefined(idemp.resp)) {
       try {
         await retry(
           async (bail: any, num: number) => {
             let idempX = await this.redisService.find({ id: iKey }); // stId
 
-            if (common.isUndefined(idempX.resp)) {
+            if (isUndefined(idempX.resp)) {
               bail(new Error(`Idemp resp is still empty, attempt ${num}`));
             }
 
@@ -94,11 +98,11 @@ export class AppInterceptor implements NestInterceptor {
             randomize: false, // 1 to 2 (default true)
             onRetry: (e: any) => {
               logToConsoleBackend({
-                log: new common.ServerError({
-                  message: common.ErEnum.BACKEND_GET_IDEMP_RESP_RETRY,
+                log: new ServerError({
+                  message: ErEnum.BACKEND_GET_IDEMP_RESP_RETRY,
                   originalError: e
                 }),
-                logLevel: common.LogLevelEnum.Error,
+                logLevel: LogLevelEnum.Error,
                 logger: this.logger,
                 cs: this.cs
               });
@@ -106,8 +110,8 @@ export class AppInterceptor implements NestInterceptor {
           }
         );
       } catch (e) {
-        let err = new common.ServerError({
-          message: common.ErEnum.BACKEND_GET_IDEMP_RESP_RETRY_FAILED,
+        let err = new ServerError({
+          message: ErEnum.BACKEND_GET_IDEMP_RESP_RETRY_FAILED,
           originalError: e
         });
 
@@ -137,7 +141,7 @@ export class AppInterceptor implements NestInterceptor {
       }
     }
 
-    return common.isUndefined(idemp)
+    return isUndefined(idemp)
       ? next.handle().pipe(
           mergeMap(async payload => {
             let resp = makeOkResponseBackend({
@@ -151,7 +155,7 @@ export class AppInterceptor implements NestInterceptor {
               logger: this.logger
             });
 
-            if (common.isDefined(iKey)) {
+            if (isDefined(iKey)) {
               let idempB: Idemp = {
                 idempotencyKey: iKey,
                 stId: stId,
@@ -173,24 +177,23 @@ export class AppInterceptor implements NestInterceptor {
           tap(x =>
             logResponseBackend({
               response: x,
-              logLevel: common.LogLevelEnum.Info,
+              logLevel: LogLevelEnum.Info,
               cs: this.cs,
               logger: this.logger
             })
           )
         )
-      : common.isDefined(idemp.resp)
+      : isDefined(idemp.resp)
         ? of(idemp.resp).pipe(
             map(x => {
-              (x as common.MyResponse).info.duration =
-                Date.now() - request.start_ts; // update
+              (x as MyResponse).info.duration = Date.now() - request.start_ts; // update
 
-              return x as unknown as common.MyResponse;
+              return x as unknown as MyResponse;
             }),
             tap(x =>
               logResponseBackend({
                 response: x,
-                logLevel: common.LogLevelEnum.Info,
+                logLevel: LogLevelEnum.Info,
                 cs: this.cs,
                 logger: this.logger
               })
@@ -204,7 +207,7 @@ export class AppInterceptor implements NestInterceptor {
             tap(x =>
               logResponseBackend({
                 response: x,
-                logLevel: common.LogLevelEnum.Info,
+                logLevel: LogLevelEnum.Info,
                 cs: this.cs,
                 logger: this.logger
               })

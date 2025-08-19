@@ -1,8 +1,5 @@
 import test from 'ava';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 
@@ -11,7 +8,7 @@ let testId = 'backend-complete-user-registration__ok';
 let traceId = testId;
 
 let email = `${testId}@example.com`;
-let emailToken = common.makeId();
+let emailToken = makeId();
 let newPassword = '456';
 
 let prep: interfaces.Prep;
@@ -42,7 +39,7 @@ test('1', async t => {
           name: apiToBackend.ToBackendRequestInfoNameEnum
             .ToBackendCompleteUserRegistration,
           traceId: traceId,
-          idempotencyKey: common.makeId()
+          idempotencyKey: makeId()
         },
         payload: {
           emailConfirmationToken: emailToken,
@@ -51,7 +48,7 @@ test('1', async t => {
       };
 
     resp =
-      await helper.sendToBackend<apiToBackend.ToBackendCompleteUserRegistrationResponse>(
+      await sendToBackend<apiToBackend.ToBackendCompleteUserRegistrationResponse>(
         {
           httpServer: prep.httpServer,
           req: completeUserRegistrationReq
@@ -62,12 +59,12 @@ test('1', async t => {
   } catch (e) {
     logToConsoleBackend({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: prep.logger,
       cs: prep.cs
     });
   }
 
   t.is(resp.info.error, undefined);
-  t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
+  t.is(resp.info.status, ResponseInfoStatusEnum.Ok);
 });

@@ -1,8 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
@@ -18,10 +16,7 @@ export class IsProjectExistController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendIsProjectExist)
-  async isProjectExist(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async isProjectExist(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendIsProjectExistRequest = request.body;
 
     let { name, orgId } = reqValid.payload;
@@ -33,7 +28,7 @@ export class IsProjectExistController {
     });
 
     let payload: apiToBackend.ToBackendIsProjectExistResponsePayload = {
-      isExist: common.isDefined(project)
+      isExist: isDefined(project)
     };
 
     return payload;

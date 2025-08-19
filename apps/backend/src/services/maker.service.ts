@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { common } from '~backend/barrels/common';
-import { constants } from '~backend/barrels/constants';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { HashService } from './hash.service';
 
 @Injectable()
@@ -12,14 +10,14 @@ export class MakerService {
     projectId: string;
     roles?: string[];
     envs?: string[];
-    user: schemaPostgres.UserEnt;
+    user: UserEnt;
     isAdmin: boolean;
     isEditor: boolean;
     isExplorer: boolean;
   }) {
     let { projectId, roles, envs, user, isAdmin, isEditor, isExplorer } = item;
 
-    let member: schemaPostgres.MemberEnt = {
+    let member: MemberEnt = {
       memberFullId: this.hashService.makeMemberFullId({
         projectId: projectId,
         memberId: user.userId
@@ -50,7 +48,7 @@ export class MakerService {
   }) {
     let { projectId, repoId, branchId, envId, structId, needValidate } = item;
 
-    let bridge: schemaPostgres.BridgeEnt = {
+    let bridge: BridgeEnt = {
       bridgeFullId: this.hashService.makeBridgeFullId({
         projectId: projectId,
         repoId: repoId,
@@ -72,7 +70,7 @@ export class MakerService {
   makeBranch(item: { projectId: string; repoId: string; branchId: string }) {
     let { projectId, repoId, branchId } = item;
 
-    let branch: schemaPostgres.BranchEnt = {
+    let branch: BranchEnt = {
       branchFullId: this.hashService.makeBranchFullId({
         projectId: projectId,
         repoId: repoId,
@@ -87,10 +85,10 @@ export class MakerService {
     return branch;
   }
 
-  makeEnv(item: { projectId: string; envId: string; evs: common.Ev[] }) {
+  makeEnv(item: { projectId: string; envId: string; evs: Ev[] }) {
     let { projectId, envId, evs } = item;
 
-    let env: schemaPostgres.EnvEnt = {
+    let env: EnvEnt = {
       envFullId: this.hashService.makeEnvFullId({
         projectId: projectId,
         envId: envId
@@ -111,9 +109,9 @@ export class MakerService {
     projectId: string;
     connectionId: string;
     envId: string;
-    type: common.ConnectionTypeEnum;
+    type: ConnectionTypeEnum;
     baseUrl: string;
-    headers: common.ConnectionHeader[];
+    headers: ConnectionHeader[];
     googleAuthScopes: string[];
     host: string;
     port: number;
@@ -146,7 +144,7 @@ export class MakerService {
       bigqueryQuerySizeLimitGb
     } = item;
 
-    let connection: schemaPostgres.ConnectionEnt = {
+    let connection: ConnectionEnt = {
       connectionFullId: this.hashService.makeConnectionFullId({
         projectId: projectId,
         envId: envId,
@@ -164,10 +162,9 @@ export class MakerService {
       googleCloudClientEmail: serviceAccountCredentials?.client_email,
       googleAccessToken: undefined,
       bigqueryQuerySizeLimitGb:
-        common.isDefined(bigqueryQuerySizeLimitGb) &&
-        bigqueryQuerySizeLimitGb > 0
+        isDefined(bigqueryQuerySizeLimitGb) && bigqueryQuerySizeLimitGb > 0
           ? bigqueryQuerySizeLimitGb
-          : constants.DEFAULT_QUERY_SIZE_LIMIT,
+          : DEFAULT_QUERY_SIZE_LIMIT,
       account: account,
       warehouse: warehouse,
       host: host,
@@ -190,9 +187,9 @@ export class MakerService {
     filePath: string;
     accessRoles: string[];
     title: string;
-    fields: common.ReportField[];
-    rows: common.Row[];
-    chart: common.MconfigChart;
+    fields: ReportField[];
+    rows: Row[];
+    chart: MconfigChart;
     draftCreatedTs?: number;
     draft: boolean;
   }) {
@@ -211,7 +208,7 @@ export class MakerService {
       draftCreatedTs
     } = item;
 
-    let report: schemaPostgres.ReportEnt = {
+    let report: ReportEnt = {
       reportFullId: this.hashService.makeReportFullId({
         structId: structId,
         reportId: reportId

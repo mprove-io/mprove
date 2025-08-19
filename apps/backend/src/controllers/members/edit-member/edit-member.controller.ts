@@ -8,10 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
@@ -30,16 +27,13 @@ export class EditMemberController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember)
-  async editMember(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async editMember(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendEditMemberRequest = request.body;
 
     let { projectId, memberId, isAdmin, isEditor, isExplorer, roles } =
@@ -55,8 +49,8 @@ export class EditMemberController {
     });
 
     if (memberId === user.userId && isAdmin === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_ADMIN_CANNOT_CHANGE_HIS_ADMIN_STATUS
+      throw new ServerError({
+        message: ErEnum.BACKEND_ADMIN_CANNOT_CHANGE_HIS_ADMIN_STATUS
       });
     }
 
@@ -96,7 +90,7 @@ export class EditMemberController {
 
     let apiMember = this.wrapToApiService.wrapToApiMember(member);
 
-    if (common.isDefined(avatar)) {
+    if (isDefined(avatar)) {
       apiMember.avatarSmall = avatar.avatarSmall;
     }
 

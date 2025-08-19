@@ -7,7 +7,6 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { common } from '~backend/barrels/common';
 
 export const projectsTable = pgTable(
   'projects',
@@ -18,7 +17,7 @@ export const projectsTable = pgTable(
     defaultBranch: text('default_branch').default('main').notNull(),
     remoteType: varchar('remote_type')
       .default('Managed')
-      .$type<common.ProjectRemoteTypeEnum>()
+      .$type<ProjectRemoteTypeEnum>()
       .notNull(),
     gitUrl: varchar('git_url'),
     publicKey: text('public_key'),

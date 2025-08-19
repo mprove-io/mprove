@@ -1,6 +1,3 @@
-import { common } from '~backend/barrels/common';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
-import { enums } from '~common/barrels/enums';
 import { isDefined } from '~common/functions/is-defined';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
 import { toFileChartOptions } from '~common/functions/to-file-chart-options';
@@ -11,12 +8,12 @@ export function makeReportFileText(item: {
   reportId: string;
   title: string;
   accessRoles: string[];
-  rows: common.Row[];
-  metrics: common.ModelMetric[];
-  models: schemaPostgres.ModelEnt[];
-  struct: schemaPostgres.StructEnt;
-  newReportFields: common.ReportField[];
-  chart: common.MconfigChart;
+  rows: Row[];
+  metrics: ModelMetric[];
+  models: ModelEnt[];
+  struct: StructEnt;
+  newReportFields: ReportField[];
+  chart: MconfigChart;
   timezone: string;
   caseSensitiveStringFilters: boolean;
 }) {
@@ -39,7 +36,7 @@ export function makeReportFileText(item: {
     isReport: true
   });
 
-  let fileReport: common.FileReport = {
+  let fileReport: FileReport = {
     fileName: undefined,
     fileExt: undefined,
     filePath: undefined,
@@ -47,70 +44,66 @@ export function makeReportFileText(item: {
     report: reportId,
     title: title,
     parameters:
-      common.isDefined(newReportFields) && newReportFields.length > 0
+      isDefined(newReportFields) && newReportFields.length > 0
         ? newReportFields.map(field => ({
             filter: field.id,
             hidden:
-              common.isDefined(field.hidden) &&
-              field.hidden !== common.REPORT_FIELD_DEFAULT_HIDDEN
+              isDefined(field.hidden) &&
+              field.hidden !== REPORT_FIELD_DEFAULT_HIDDEN
                 ? <any>field.hidden
                 : undefined,
             label:
-              common.isDefined(field.label) &&
+              isDefined(field.label) &&
               field.label.toUpperCase() !==
-                common.MyRegex.replaceUnderscoresWithSpaces(
-                  field.id
-                ).toUpperCase()
+                MyRegex.replaceUnderscoresWithSpaces(field.id).toUpperCase()
                 ? field.label
                 : undefined,
             description:
-              common.isDefined(field.description) && field.description !== ''
+              isDefined(field.description) && field.description !== ''
                 ? field.description
                 : undefined,
             result: field.result,
             store: field.storeModel,
             store_result: field.storeResult,
             store_filter: field.storeFilter,
-            fractions: common.isUndefined(field.storeModel)
+            fractions: isUndefined(field.storeModel)
               ? undefined
               : field.fractions?.map(mconfigFraction => {
                   let fileFraction: FileFraction = {};
 
-                  if (common.isDefined(mconfigFraction.logicGroup)) {
+                  if (isDefined(mconfigFraction.logicGroup)) {
                     fileFraction.logic = mconfigFraction.logicGroup;
                   }
 
-                  if (common.isDefined(mconfigFraction.storeFractionSubType)) {
+                  if (isDefined(mconfigFraction.storeFractionSubType)) {
                     fileFraction.type = mconfigFraction.storeFractionSubType;
                   }
 
                   fileFraction.controls = mconfigFraction.controls.map(
                     mconfigControl => {
-                      let newFileControl: common.FileFractionControl = {};
+                      let newFileControl: FileFractionControl = {};
 
                       if (
-                        mconfigControl.controlClass ===
-                        enums.ControlClassEnum.Input
+                        mconfigControl.controlClass === ControlClassEnum.Input
                       ) {
                         newFileControl.input = mconfigControl.name;
                       } else if (
                         mconfigControl.controlClass ===
-                        enums.ControlClassEnum.ListInput
+                        ControlClassEnum.ListInput
                       ) {
                         newFileControl.list_input = mconfigControl.name;
                       } else if (
-                        mconfigControl.controlClass ===
-                        enums.ControlClassEnum.Switch
+                        mconfigControl.controlClass === ControlClassEnum.Switch
                       ) {
                         newFileControl.switch = mconfigControl.name;
                       } else if (
                         mconfigControl.controlClass ===
-                        enums.ControlClassEnum.DatePicker
+                        ControlClassEnum.DatePicker
                       ) {
                         newFileControl.date_picker = mconfigControl.name;
                       } else if (
                         mconfigControl.controlClass ===
-                        enums.ControlClassEnum.Selector
+                        ControlClassEnum.Selector
                       ) {
                         newFileControl.selector = mconfigControl.name;
                       }
@@ -119,7 +112,7 @@ export function makeReportFileText(item: {
 
                       newFileControl.value =
                         newFileControl.controlClass ===
-                          common.ControlClassEnum.Switch &&
+                          ControlClassEnum.Switch &&
                         typeof newValue === 'string'
                           ? toBooleanFromLowercaseString(newValue)
                           : newValue;
@@ -134,8 +127,8 @@ export function makeReportFileText(item: {
                 }),
             suggest_model_dimension: field.suggestModelDimension,
             conditions:
-              common.isUndefined(field.storeModel) &&
-              common.isDefined(field.fractions) &&
+              isUndefined(field.storeModel) &&
+              isDefined(field.fractions) &&
               field.fractions.length > 0
                 ? field.fractions.map(x => x.brick)
                 : undefined
@@ -148,14 +141,14 @@ export function makeReportFileText(item: {
       // console.log(x);
 
       let metric =
-        x.rowType === common.RowTypeEnum.Metric
+        x.rowType === RowTypeEnum.Metric
           ? metrics.find(m => m.metricId === x.metricId)
           : undefined;
 
       // console.log('metric');
       // console.log(metric);
 
-      let model = common.isDefined(metric)
+      let model = isDefined(metric)
         ? models.find(m => m.modelId === metric.modelId)
         : undefined;
 
@@ -164,63 +157,62 @@ export function makeReportFileText(item: {
       // console.log('model.isStoreModel');
       // console.log(model?.isStoreModel);
 
-      let row: common.FileReportRow = {
+      let row: FileReportRow = {
         row_id: x.rowId,
         type: x.rowType,
         name:
-          x.rowType === common.RowTypeEnum.Empty ||
-          x.rowType === common.RowTypeEnum.Metric
+          x.rowType === RowTypeEnum.Empty || x.rowType === RowTypeEnum.Metric
             ? undefined
             : x.name,
         metric: x.metricId,
-        formula: common.isDefined(x.formula) ? x.formula : undefined,
+        formula: isDefined(x.formula) ? x.formula : undefined,
         show_chart:
-          common.isDefined(x.showChart) &&
-          x.showChart !== common.REPORT_ROW_DEFAULT_SHOW_CHART
+          isDefined(x.showChart) &&
+          x.showChart !== REPORT_ROW_DEFAULT_SHOW_CHART
             ? <any>x.showChart
             : undefined,
         format_number:
-          x.rowType === common.RowTypeEnum.Metric &&
+          x.rowType === RowTypeEnum.Metric &&
           metric.formatNumber === x.formatNumber
             ? undefined
             : struct.formatNumber === x.formatNumber
               ? undefined
               : x.formatNumber,
         currency_prefix:
-          x.rowType === common.RowTypeEnum.Metric &&
+          x.rowType === RowTypeEnum.Metric &&
           metric.currencyPrefix === x.currencyPrefix
             ? undefined
             : struct.currencyPrefix === x.currencyPrefix
               ? undefined
               : x.currencyPrefix,
         currency_suffix:
-          x.rowType === common.RowTypeEnum.Metric &&
+          x.rowType === RowTypeEnum.Metric &&
           metric.currencySuffix === x.currencySuffix
             ? undefined
             : struct.currencySuffix === x.currencySuffix
               ? undefined
               : x.currencySuffix,
         parameters:
-          [common.RowTypeEnum.Metric].indexOf(x.rowType) < 0
+          [RowTypeEnum.Metric].indexOf(x.rowType) < 0
             ? undefined
-            : common.isDefined(x.parameters)
+            : isDefined(x.parameters)
               ? x.parameters.map(parameter => {
-                  let p: common.FileReportRowParameter = {
+                  let p: FileReportRowParameter = {
                     apply_to: parameter.apply_to,
                     // result: parameter.result,
                     conditions:
-                      common.isDefined(parameter.listen) ||
-                      model?.type === common.ModelTypeEnum.Store
+                      isDefined(parameter.listen) ||
+                      model?.type === ModelTypeEnum.Store
                         ? // model?.isStoreModel === true
                           undefined
-                        : common.isDefined(parameter.fractions) &&
+                        : isDefined(parameter.fractions) &&
                             parameter.fractions.length > 0
                           ? parameter.fractions.map(fraction => fraction.brick)
                           : undefined,
                     fractions:
-                      model?.type === common.ModelTypeEnum.Store &&
+                      model?.type === ModelTypeEnum.Store &&
                       // model?.isStoreModel === true &&
-                      common.isUndefined(parameter.listen)
+                      isUndefined(parameter.listen)
                         ? parameter.fractions.map(apiFraction => {
                             // console.log('apiFraction');
                             // console.log(apiFraction);
@@ -242,29 +234,29 @@ export function makeReportFileText(item: {
 
                                 if (
                                   mconfigControl.controlClass ===
-                                  enums.ControlClassEnum.Input
+                                  ControlClassEnum.Input
                                 ) {
                                   newFileControl.input = mconfigControl.name;
                                 } else if (
                                   mconfigControl.controlClass ===
-                                  enums.ControlClassEnum.ListInput
+                                  ControlClassEnum.ListInput
                                 ) {
                                   newFileControl.list_input =
                                     mconfigControl.name;
                                 } else if (
                                   mconfigControl.controlClass ===
-                                  enums.ControlClassEnum.Switch
+                                  ControlClassEnum.Switch
                                 ) {
                                   newFileControl.switch = mconfigControl.name;
                                 } else if (
                                   mconfigControl.controlClass ===
-                                  enums.ControlClassEnum.DatePicker
+                                  ControlClassEnum.DatePicker
                                 ) {
                                   newFileControl.date_picker =
                                     mconfigControl.name;
                                 } else if (
                                   mconfigControl.controlClass ===
-                                  enums.ControlClassEnum.Selector
+                                  ControlClassEnum.Selector
                                 ) {
                                   newFileControl.selector = mconfigControl.name;
                                 }
@@ -273,11 +265,11 @@ export function makeReportFileText(item: {
 
                                 newFileControl.value =
                                   mconfigControl.isMetricsDate === true
-                                    ? (model.content as common.FileStore).fields
+                                    ? (model.content as FileStore).fields
                                         .find(
                                           field =>
                                             field.fieldClass ===
-                                              common.FieldClassEnum.Filter &&
+                                              FieldClassEnum.Filter &&
                                             field.name === parameter.apply_to
                                         )
                                         .fraction_controls.find(
@@ -285,7 +277,7 @@ export function makeReportFileText(item: {
                                             control.name === mconfigControl.name
                                         ).value
                                     : newFileControl.controlClass ===
-                                          common.ControlClassEnum.Switch &&
+                                          ControlClassEnum.Switch &&
                                         typeof newValue === 'string'
                                       ? toBooleanFromLowercaseString(newValue)
                                       : newValue;
@@ -310,7 +302,7 @@ export function makeReportFileText(item: {
     options: options
   };
 
-  let fileReportText = common.toYaml(fileReport);
+  let fileReportText = toYaml(fileReport);
 
   return fileReportText;
 }

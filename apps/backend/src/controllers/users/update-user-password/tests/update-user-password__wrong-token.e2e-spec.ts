@@ -1,8 +1,5 @@
 import test from 'ava';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 
@@ -45,7 +42,7 @@ test('1', async t => {
           name: apiToBackend.ToBackendRequestInfoNameEnum
             .ToBackendUpdateUserPassword,
           traceId: traceId,
-          idempotencyKey: common.makeId()
+          idempotencyKey: makeId()
         },
         payload: {
           passwordResetToken: wrongPasswordResetToken,
@@ -54,26 +51,21 @@ test('1', async t => {
       };
 
     resp =
-      await helper.sendToBackend<apiToBackend.ToBackendUpdateUserPasswordResponse>(
-        {
-          httpServer: prep.httpServer,
-          loginToken: prep.loginToken,
-          req: updateUserPasswordReq
-        }
-      );
+      await sendToBackend<apiToBackend.ToBackendUpdateUserPasswordResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: updateUserPasswordReq
+      });
 
     await prep.app.close();
   } catch (e) {
     logToConsoleBackend({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: prep.logger,
       cs: prep.cs
     });
   }
 
-  t.is(
-    resp.info.error.message,
-    common.ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN
-  );
+  t.is(resp.info.error.message, ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN);
 });

@@ -1,8 +1,5 @@
 import test from 'ava';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 
@@ -58,14 +55,14 @@ test('1', async t => {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrg,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: {
         orgId: orgId
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendGetOrgResponse>({
+    resp = await sendToBackend<apiToBackend.ToBackendGetOrgResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req
@@ -75,11 +72,11 @@ test('1', async t => {
   } catch (e) {
     logToConsoleBackend({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: prep.logger,
       cs: prep.cs
     });
   }
 
-  t.is(resp.info.error.message, common.ErEnum.BACKEND_FORBIDDEN_ORG);
+  t.is(resp.info.error.message, ErEnum.BACKEND_FORBIDDEN_ORG);
 });

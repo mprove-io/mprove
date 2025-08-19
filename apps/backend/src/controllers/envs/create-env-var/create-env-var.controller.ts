@@ -9,10 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
@@ -33,16 +30,13 @@ export class CreateEnvVarController {
     private envsService: EnvsService,
     private membersService: MembersService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnvVar)
-  async createEnvVar(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async createEnvVar(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendCreateEnvVarRequest = request.body;
 
     let { projectId, envId, evId, val } = reqValid.payload;
@@ -57,11 +51,11 @@ export class CreateEnvVarController {
     });
 
     let firstProjectId =
-      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
+      this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
 
     if (userMember.isAdmin === false && projectId === firstProjectId) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 
@@ -73,13 +67,13 @@ export class CreateEnvVarController {
 
     let ev = env.evs.find(x => x.evId === evId);
 
-    if (common.isDefined(ev)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_EV_ALREADY_EXISTS
+    if (isDefined(ev)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_EV_ALREADY_EXISTS
       });
     }
 
-    let newEv: common.Ev = {
+    let newEv: Ev = {
       evId: evId,
       val: val
     };

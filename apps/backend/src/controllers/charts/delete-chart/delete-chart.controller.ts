@@ -9,12 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
@@ -46,28 +41,25 @@ export class DeleteChartController {
     private blockmlService: BlockmlService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteChart)
-  async deleteChart(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async deleteChart(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendDeleteChartRequest = request.body;
 
-    if (user.alias === common.RESTRICTED_USER_ALIAS) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_USER
+    if (user.alias === RESTRICTED_USER_ALIAS) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId, chartId } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -98,15 +90,15 @@ export class DeleteChartController {
     });
 
     let firstProjectId =
-      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
+      this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
 
     if (
       member.isAdmin === false &&
       projectId === firstProjectId &&
-      repoId === common.PROD_REPO_ID
+      repoId === PROD_REPO_ID
     ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 
@@ -129,11 +121,11 @@ export class DeleteChartController {
 
     // let secondFileNodeId;
 
-    // if (chartMconfig.modelType === common.ModelTypeEnum.Malloy) {
+    // if (chartMconfig.modelType === ModelTypeEnum.Malloy) {
     //   let pathParts = existingChart.filePath.split('.');
 
     //   pathParts[pathParts.length - 1] =
-    //     common.FileExtensionEnum.Malloy.slice(1);
+    //     FileExtensionEnum.Malloy.slice(1);
 
     //   secondFileNodeId = pathParts.join('.');
     // }
@@ -160,7 +152,7 @@ export class DeleteChartController {
 
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteFileResponse>({
-        routingKey: helper.makeRoutingKeyToDisk({
+        routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
         }),
@@ -178,7 +170,7 @@ export class DeleteChartController {
 
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {
-        x.structId = common.EMPTY_STRUCT_ID;
+        x.structId = EMPTY_STRUCT_ID;
         x.needValidate = true;
       }
     });

@@ -6,9 +6,7 @@ import {
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -19,13 +17,13 @@ let retry = require('async-retry');
 @Injectable()
 export class ClickHouseService {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   async runQuery(item: {
-    connection: schemaPostgres.ConnectionEnt;
+    connection: ConnectionEnt;
     queryJobId: string;
     queryId: string;
     querySql: string;
@@ -82,8 +80,8 @@ export class ClickHouseService {
             )
           });
 
-          if (common.isDefined(q)) {
-            q.status = common.QueryStatusEnum.Completed;
+          if (isDefined(q)) {
+            q.status = QueryStatusEnum.Completed;
             q.queryJobId = undefined; // null
             q.data = data;
             q.lastCompleteTs = makeTsNumber();
@@ -118,8 +116,8 @@ export class ClickHouseService {
             )
           });
 
-          if (common.isDefined(q)) {
-            q.status = common.QueryStatusEnum.Error;
+          if (isDefined(q)) {
+            q.status = QueryStatusEnum.Error;
             q.data = [];
             q.queryJobId = undefined; // null
             q.lastErrorMessage = e.message

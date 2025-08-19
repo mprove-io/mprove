@@ -1,6 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
-import { common } from '~backend/barrels/common';
 
 export async function sendToBackend<T>(item: {
   httpServer: any;
@@ -12,25 +11,25 @@ export async function sendToBackend<T>(item: {
 
   let rq = request(httpServer).post('/' + req.info.name);
 
-  if (common.isDefined(loginToken)) {
+  if (isDefined(loginToken)) {
     rq = rq.auth(loginToken, { type: 'bearer' });
   }
 
   let response = await rq.send(req);
 
   if (response.status !== HttpStatus.CREATED) {
-    throw new common.ServerError({
-      message: common.ErEnum.BACKEND_ERROR_CODE_FROM_BACKEND,
+    throw new ServerError({
+      message: ErEnum.BACKEND_ERROR_CODE_FROM_BACKEND,
       originalError: response.text
     });
   }
 
   if (
     checkIsOk === true &&
-    response.body.info.status !== common.ResponseInfoStatusEnum.Ok
+    response.body.info.status !== ResponseInfoStatusEnum.Ok
   ) {
-    throw new common.ServerError({
-      message: common.ErEnum.BACKEND_ERROR_RESPONSE_FROM_BACKEND,
+    throw new ServerError({
+      message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_BACKEND,
       originalError: response.body.info.error
     });
   }

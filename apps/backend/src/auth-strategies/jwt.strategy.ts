@@ -3,21 +3,24 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { eq } from 'drizzle-orm';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
+import { ErEnum } from '~common/enums/er.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { BackendConfig } from '~common/interfaces/backend/backend-config';
+import { ServerError } from '~common/models/server-error';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    cs: ConfigService<interfaces.Config>,
+    cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: cs.get<interfaces.Config['jwtSecret']>('jwtSecret')
+      secretOrKey: cs.get<BackendConfig['jwtSecret']>('jwtSecret')
     });
   }
 
@@ -26,18 +29,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       where: eq(usersTable.userId, payload.userId)
     });
 
-    if (common.isUndefined(user)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_USER_DOES_NOT_EXIST
+    if (isUndefined(user)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_USER_DOES_NOT_EXIST
       });
     }
 
     if (
-      common.isDefined(user.jwtMinIat) &&
+      isDefined(user.jwtMinIat) &&
       Number(user.jwtMinIat) > payload.iat * 1000
     ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_NOT_AUTHORIZED
+      throw new ServerError({
+        message: ErEnum.BACKEND_NOT_AUTHORIZED
       });
     }
 

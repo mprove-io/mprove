@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { common } from '~backend/barrels/common';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { HashService } from './hash.service';
 
 @Injectable()
 export class WrapToEntService {
   constructor(private hashService: HashService) {}
 
-  // wrapToEntityApi(x: common.Api): schemaPostgres.ApiEnt {
+  // wrapToEntityApi(x: Api): ApiEnt {
   //   return {
   //     struct_id: x.structId,
   //     api_id: x.apiId,
@@ -18,9 +17,7 @@ export class WrapToEntService {
   //   };
   // }
 
-  wrapToEntityDashboard(
-    dashboard: common.Dashboard
-  ): schemaPostgres.DashboardEnt {
+  wrapToEntityDashboard(dashboard: Dashboard): DashboardEnt {
     return {
       dashboardFullId: this.hashService.makeDashboardFullId({
         structId: dashboard.structId,
@@ -43,7 +40,7 @@ export class WrapToEntService {
     };
   }
 
-  wrapToEntityMconfig(mconfig: common.Mconfig): schemaPostgres.MconfigEnt {
+  wrapToEntityMconfig(mconfig: Mconfig): MconfigEnt {
     return {
       structId: mconfig.structId,
       queryId: mconfig.queryId,
@@ -72,7 +69,7 @@ export class WrapToEntService {
     };
   }
 
-  wrapToEntityModel(model: common.Model): schemaPostgres.ModelEnt {
+  wrapToEntityModel(model: Model): ModelEnt {
     return {
       modelFullId: this.hashService.makeModelFullId({
         structId: model.structId,
@@ -101,7 +98,7 @@ export class WrapToEntService {
     };
   }
 
-  wrapToEntityQuery(query: common.Query): schemaPostgres.QueryEnt {
+  wrapToEntityQuery(query: Query): QueryEnt {
     return {
       projectId: query.projectId,
       envId: query.envId,
@@ -123,12 +120,12 @@ export class WrapToEntService {
       lastErrorTs: query.lastErrorTs,
       queryJobId: undefined, // null
       bigqueryQueryJobId: undefined, // null
-      bigqueryConsecutiveErrorsGetJob: common.isDefined(
+      bigqueryConsecutiveErrorsGetJob: isDefined(
         query.bigqueryConsecutiveErrorsGetJob
       )
         ? query.bigqueryConsecutiveErrorsGetJob
         : 0,
-      bigqueryConsecutiveErrorsGetResults: common.isDefined(
+      bigqueryConsecutiveErrorsGetResults: isDefined(
         query.bigqueryConsecutiveErrorsGetResults
       )
         ? query.bigqueryConsecutiveErrorsGetResults
@@ -137,7 +134,7 @@ export class WrapToEntService {
     };
   }
 
-  wrapToEntityReport(report: common.Report): schemaPostgres.ReportEnt {
+  wrapToEntityReport(report: Report): ReportEnt {
     return {
       reportFullId: this.hashService.makeReportFullId({
         structId: report.structId,
@@ -160,9 +157,9 @@ export class WrapToEntService {
   }
 
   wrapToEntityChart(item: {
-    chart: common.Chart;
-    chartType: common.ChartTypeEnum;
-  }): schemaPostgres.ChartEnt {
+    chart: Chart;
+    chartType: ChartTypeEnum;
+  }): ChartEnt {
     let { chart, chartType } = item;
 
     return {

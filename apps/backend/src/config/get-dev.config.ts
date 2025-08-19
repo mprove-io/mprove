@@ -1,22 +1,25 @@
 import { parse } from 'dotenv';
 import * as fse from 'fs-extra';
-import { common } from '~backend/barrels/common';
-import { enums } from '~backend/barrels/enums';
-import { interfaces } from '~backend/barrels/interfaces';
+import { BoolEnum } from '~common/enums/bool.enum';
+import { EmailTransportEnum } from '~common/enums/email-transport.enum';
+import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
+import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { BackendConfig } from '~common/interfaces/backend/backend-config';
 
 export function getDevConfig(envFilePath: any) {
   let envFile: any = {};
 
-  if (common.isDefined(envFilePath)) {
+  if (isDefined(envFilePath)) {
     envFile = parse(fse.readFileSync(envFilePath));
   }
 
-  let devConfig: interfaces.Config = {
-    backendEnv: <enums.BackendEnvEnum>(
+  let devConfig: BackendConfig = {
+    backendEnv: <BackendEnvEnum>(
       (process.env.BACKEND_ENV || envFile.BACKEND_ENV)
     ),
 
-    isScheduler: <common.BoolEnum>(
+    isScheduler: <BoolEnum>(
       (process.env.BACKEND_IS_SCHEDULER || envFile.BACKEND_IS_SCHEDULER)
     ),
 
@@ -28,7 +31,7 @@ export function getDevConfig(envFilePath: any) {
 
     specialKey: process.env.BACKEND_SPECIAL_KEY || envFile.BACKEND_SPECIAL_KEY,
 
-    allowTestRoutes: <common.BoolEnum>(
+    allowTestRoutes: <BoolEnum>(
       (process.env.BACKEND_ALLOW_TEST_ROUTES ||
         envFile.BACKEND_ALLOW_TEST_ROUTES)
     ),
@@ -50,7 +53,7 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_FIRST_PROJECT_NAME ||
       envFile.BACKEND_FIRST_PROJECT_NAME,
 
-    firstProjectRemoteType: <common.ProjectRemoteTypeEnum>(
+    firstProjectRemoteType: <ProjectRemoteTypeEnum>(
       (process.env.BACKEND_FIRST_PROJECT_REMOTE_TYPE ||
         envFile.BACKEND_FIRST_PROJECT_REMOTE_TYPE)
     ),
@@ -67,7 +70,7 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_FIRST_PROJECT_PUBLIC_KEY_PATH ||
       envFile.BACKEND_FIRST_PROJECT_PUBLIC_KEY_PATH,
 
-    firstProjectSeedConnections: <common.BoolEnum>(
+    firstProjectSeedConnections: <BoolEnum>(
       (process.env.BACKEND_FIRST_PROJECT_SEED_CONNECTIONS ||
         envFile.BACKEND_FIRST_PROJECT_SEED_CONNECTIONS)
     ),
@@ -100,12 +103,12 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_PASSWORD ||
       envFile.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_PASSWORD,
 
-    allowUsersToCreateOrganizations: <common.BoolEnum>(
+    allowUsersToCreateOrganizations: <BoolEnum>(
       (process.env.BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS ||
         envFile.BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS)
     ),
 
-    registerOnlyInvitedUsers: <common.BoolEnum>(
+    registerOnlyInvitedUsers: <BoolEnum>(
       (process.env.BACKEND_REGISTER_ONLY_INVITED_USERS ||
         envFile.BACKEND_REGISTER_ONLY_INVITED_USERS)
     ),
@@ -120,19 +123,19 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_SEND_EMAIL_FROM_ADDRESS ||
       envFile.BACKEND_SEND_EMAIL_FROM_ADDRESS,
 
-    emailTransport: <enums.EmailTransportEnum>(
+    emailTransport: <EmailTransportEnum>(
       (process.env.BACKEND_EMAIL_TRANSPORT || envFile.BACKEND_EMAIL_TRANSPORT)
     ),
 
     smtpHost: process.env.BACKEND_SMTP_HOST || envFile.BACKEND_SMTP_HOST,
 
     smtpPort: Number(
-      common.isDefined(process.env.BACKEND_SMTP_PORT)
+      isDefined(process.env.BACKEND_SMTP_PORT)
         ? process.env.BACKEND_SMTP_PORT
         : envFile.BACKEND_SMTP_PORT
     ),
 
-    smtpSecure: <common.BoolEnum>(
+    smtpSecure: <BoolEnum>(
       (process.env.BACKEND_SMTP_SECURE || envFile.BACKEND_SMTP_SECURE)
     ),
 
@@ -170,7 +173,7 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_MYSQL_HOST || envFile.BACKEND_MYSQL_HOST,
 
     backendMysqlPort: Number(
-      common.isDefined(process.env.BACKEND_MYSQL_PORT)
+      isDefined(process.env.BACKEND_MYSQL_PORT)
         ? process.env.BACKEND_MYSQL_PORT
         : envFile.BACKEND_MYSQL_PORT
     ),
@@ -188,25 +191,25 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_POSTGRES_DATABASE_URL ||
       envFile.BACKEND_POSTGRES_DATABASE_URL,
 
-    backendIsPostgresTls: <common.BoolEnum>(
+    backendIsPostgresTls: <BoolEnum>(
       (process.env.BACKEND_IS_POSTGRES_TLS || envFile.BACKEND_IS_POSTGRES_TLS)
     ),
 
-    backendLogDrizzlePostgres: <common.BoolEnum>(
+    backendLogDrizzlePostgres: <BoolEnum>(
       (process.env.BACKEND_LOG_DRIZZLE_POSTGRES ||
         envFile.BACKEND_LOG_DRIZZLE_POSTGRES)
     ),
 
-    backendLogIsJson: <common.BoolEnum>(
+    backendLogIsJson: <BoolEnum>(
       (process.env.BACKEND_LOG_IS_JSON || envFile.BACKEND_LOG_IS_JSON)
     ),
 
-    backendLogResponseError: <common.BoolEnum>(
+    backendLogResponseError: <BoolEnum>(
       (process.env.BACKEND_LOG_RESPONSE_ERROR ||
         envFile.BACKEND_LOG_RESPONSE_ERROR)
     ),
 
-    backendLogResponseOk: <common.BoolEnum>(
+    backendLogResponseOk: <BoolEnum>(
       (process.env.BACKEND_LOG_RESPONSE_OK || envFile.BACKEND_LOG_RESPONSE_OK)
     )
   };

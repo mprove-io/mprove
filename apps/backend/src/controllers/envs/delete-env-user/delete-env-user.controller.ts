@@ -7,9 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -29,16 +27,13 @@ export class DeleteEnvUserController {
     private envsService: EnvsService,
     private membersService: MembersService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnvUser)
-  async deleteEnvUser(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async deleteEnvUser(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendDeleteEnvUserRequest = request.body;
 
     let { projectId, envId, envUserId } = reqValid.payload;

@@ -1,8 +1,5 @@
 import test from 'ava';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 
@@ -10,7 +7,7 @@ let testId = 'backend-save-modify-dashboard__add-tile-ok';
 
 let traceId = testId;
 
-let userId = common.makeId();
+let userId = makeId();
 let email = `${testId}@example.com`;
 let password = '123456';
 
@@ -18,7 +15,7 @@ let orgId = testId;
 let orgName = testId;
 
 let testProjectId = 't2';
-let projectId = common.makeId();
+let projectId = makeId();
 let projectName = testId;
 
 let dashboardId = 'd2';
@@ -59,8 +56,8 @@ test('1', async t => {
             projectId,
             testProjectId,
             name: projectName,
-            defaultBranch: common.BRANCH_MAIN,
-            remoteType: common.ProjectRemoteTypeEnum.Managed
+            defaultBranch: BRANCH_MAIN,
+            remoteType: ProjectRemoteTypeEnum.Managed
           }
         ],
         members: [
@@ -77,8 +74,8 @@ test('1', async t => {
           {
             projectId: projectId,
             connectionId: 'c7',
-            envId: common.PROJECT_ENV_PROD,
-            type: common.ConnectionTypeEnum.GoogleApi
+            envId: PROJECT_ENV_PROD,
+            type: ConnectionTypeEnum.GoogleApi
           }
         ]
       },
@@ -89,28 +86,29 @@ test('1', async t => {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: {
         projectId: projectId,
         isRepoProd: false,
-        branchId: common.BRANCH_MAIN,
-        envId: common.PROJECT_ENV_PROD,
+        branchId: BRANCH_MAIN,
+        envId: PROJECT_ENV_PROD,
         dashboardId: dashboardId,
         timezone: 'UTC'
       }
     };
 
-    let resp1 =
-      await helper.sendToBackend<apiToBackend.ToBackendGetDashboardResponse>({
+    let resp1 = await sendToBackend<apiToBackend.ToBackendGetDashboardResponse>(
+      {
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: req1
-      });
+      }
+    );
 
     let fromDashboard = resp1.payload.dashboard;
 
-    let newTile = common.makeCopy(fromDashboard.tiles[0]);
+    let newTile = makeCopy(fromDashboard.tiles[0]);
     newTile.title = 'new title';
 
     let req: apiToBackend.ToBackendSaveModifyDashboardRequest = {
@@ -118,13 +116,13 @@ test('1', async t => {
         name: apiToBackend.ToBackendRequestInfoNameEnum
           .ToBackendSaveModifyDashboard,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: {
         projectId: projectId,
         isRepoProd: false,
-        branchId: common.BRANCH_MAIN,
-        envId: common.PROJECT_ENV_PROD,
+        branchId: BRANCH_MAIN,
+        envId: PROJECT_ENV_PROD,
         toDashboardId: dashboardId,
         fromDashboardId: dashboardId,
         newTile: newTile,
@@ -133,24 +131,22 @@ test('1', async t => {
     };
 
     resp =
-      await helper.sendToBackend<apiToBackend.ToBackendSaveModifyDashboardResponse>(
-        {
-          httpServer: prep.httpServer,
-          loginToken: prep.loginToken,
-          req: req
-        }
-      );
+      await sendToBackend<apiToBackend.ToBackendSaveModifyDashboardResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: req
+      });
 
     await prep.app.close();
   } catch (e) {
     logToConsoleBackend({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: prep.logger,
       cs: prep.cs
     });
   }
 
   t.is(resp.info.error, undefined);
-  t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
+  t.is(resp.info.status, ResponseInfoStatusEnum.Ok);
 });

@@ -7,10 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -28,16 +25,13 @@ export class SetProjectInfoController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo)
-  async setProjectInfo(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async setProjectInfo(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendSetProjectInfoRequest = request.body;
 
     let { projectId, name } = reqValid.payload;
@@ -51,7 +45,7 @@ export class SetProjectInfoController {
       memberId: user.userId
     });
 
-    if (common.isDefined(name)) {
+    if (isDefined(name)) {
       project.name = name;
     }
 

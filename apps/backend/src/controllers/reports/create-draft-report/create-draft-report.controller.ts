@@ -8,10 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { kitsTable } from '~backend/drizzle/postgres/schema/kits';
@@ -50,16 +47,13 @@ export class CreateDraftReportController {
     private envsService: EnvsService,
     private makerService: MakerService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftReport)
-  async createDraftRep(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async createDraftRep(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendCreateDraftReportRequest = request.body;
 
     let { traceId } = reqValid.info;
@@ -91,7 +85,7 @@ export class CreateDraftReportController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
+      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -113,27 +107,26 @@ export class CreateDraftReportController {
       projectId: projectId,
       addMetrics: true
       // addMetrics:
-      //   common.isDefined(rowChange) &&
+      //   isDefined(rowChange) &&
       //   [
-      //     common.ChangeTypeEnum.AddMetric,
-      //     common.ChangeTypeEnum.ConvertToMetric
+      //     ChangeTypeEnum.AddMetric,
+      //     ChangeTypeEnum.ConvertToMetric
       //   ].indexOf(changeType) > -1
     });
 
-    let fromReport: schemaPostgres.ReportEnt =
-      await this.reportsService.getReport({
-        projectId: projectId,
-        reportId: fromReportId,
-        structId: bridge.structId,
-        checkExist: true,
-        checkAccess: true,
-        user: user,
-        userMember: userMember
-      });
+    let fromReport: ReportEnt = await this.reportsService.getReport({
+      projectId: projectId,
+      reportId: fromReportId,
+      structId: bridge.structId,
+      checkExist: true,
+      checkAccess: true,
+      user: user,
+      userMember: userMember
+    });
 
-    if (common.isDefined(newReportFields)) {
+    if (isDefined(newReportFields)) {
       fromReport.rows
-        .filter(row => common.isDefined(row.parameters))
+        .filter(row => isDefined(row.parameters))
         .forEach(row => {
           row.parameters = row.parameters.filter(
             parameter =>
@@ -143,7 +136,7 @@ export class CreateDraftReportController {
         });
     }
 
-    let reportId = common.makeId();
+    let reportId = makeId();
 
     let copyMconfigsMap: { fromMconfigId: string; toMconfigId: string }[] = [];
     let copyQueriesMap: { fromQueryId: string; toQueryId: string }[] = [];
@@ -151,23 +144,20 @@ export class CreateDraftReportController {
 
     fromReport.rows.forEach(row => {
       if (
-        row.rowType === common.RowTypeEnum.Metric ||
-        row.rowType === common.RowTypeEnum.Formula
+        row.rowType === RowTypeEnum.Metric ||
+        row.rowType === RowTypeEnum.Formula
       ) {
-        let rq: common.Rq = row.rqs.find(
+        let rq: Rq = row.rqs.find(
           y =>
             y.fractionBrick === timeRangeFractionBrick &&
             y.timeSpec === timeSpec &&
             y.timezone === timezone
         );
 
-        if (common.isDefined(rq)) {
-          if (
-            row.rowType === common.RowTypeEnum.Metric &&
-            common.isDefined(rq.mconfigId)
-          ) {
-            let newMconfigId = common.makeId();
-            let newQueryId = common.makeId();
+        if (isDefined(rq)) {
+          if (row.rowType === RowTypeEnum.Metric && isDefined(rq.mconfigId)) {
+            let newMconfigId = makeId();
+            let newQueryId = makeId();
 
             copyMconfigsMap.push({
               fromMconfigId: rq.mconfigId,
@@ -176,7 +166,7 @@ export class CreateDraftReportController {
 
             rq.mconfigId = newMconfigId;
 
-            if (common.isDefined(rq.queryId)) {
+            if (isDefined(rq.queryId)) {
               copyQueriesMap.push({
                 fromQueryId: rq.queryId,
                 toQueryId: newQueryId
@@ -186,11 +176,8 @@ export class CreateDraftReportController {
             }
           }
 
-          if (
-            row.rowType === common.RowTypeEnum.Formula &&
-            common.isDefined(rq.kitId)
-          ) {
-            let newKitId = common.makeId();
+          if (row.rowType === RowTypeEnum.Formula && isDefined(rq.kitId)) {
+            let newKitId = makeId();
 
             copyKitsMap.push({
               fromKitId: rq.kitId,
@@ -277,8 +264,8 @@ export class CreateDraftReportController {
     let models: ModelEnt[] = [];
 
     // if (
-    //   changeType === common.ChangeTypeEnum.ConvertToMetric &&
-    //   common.isDefined(rowChange?.metricId)
+    //   changeType === ChangeTypeEnum.ConvertToMetric &&
+    //   isDefined(rowChange?.metricId)
     // ) {
     //   let metric = struct.metrics.find(x => x.metricId === rowChange.metricId);
 
@@ -292,7 +279,7 @@ export class CreateDraftReportController {
     //   models.push(model);
     // }
 
-    let processedRows: common.Row[] = this.reportRowService.getProcessedRows({
+    let processedRows: Row[] = this.reportRowService.getProcessedRows({
       rows: fromReport.rows,
       rowChange: rowChange,
       rowIds: rowIds,
@@ -317,7 +304,7 @@ export class CreateDraftReportController {
         a.dataRowId > b.dataRowId ? 1 : b.dataRowId > a.dataRowId ? -1 : 0
       );
 
-    let report: schemaPostgres.ReportEnt = this.makerService.makeReport({
+    let report: ReportEnt = this.makerService.makeReport({
       projectId: projectId,
       structId: bridge.structId,
       reportId: reportId,

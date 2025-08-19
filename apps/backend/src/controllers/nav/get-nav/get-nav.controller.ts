@@ -1,10 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
@@ -30,10 +26,7 @@ export class GetNavController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetNav)
-  async getNav(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getNav(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetNavRequest = request.body;
 
     let { orgId, projectId, getRepo } = reqValid.payload;
@@ -69,7 +62,7 @@ export class GetNavController {
     let existingOrgIds = [...new Set(orgIdsWithDuplicates)];
 
     let resultOrgId =
-      common.isDefined(orgId) && existingOrgIds.indexOf(orgId) > -1
+      isDefined(orgId) && existingOrgIds.indexOf(orgId) > -1
         ? orgId
         : existingOrgIds[0];
 
@@ -80,21 +73,21 @@ export class GetNavController {
       .map(x => x.projectId);
 
     let resultProjectId =
-      common.isDefined(projectId) && existingProjectIds.indexOf(projectId) > -1
+      isDefined(projectId) && existingProjectIds.indexOf(projectId) > -1
         ? projectId
         : existingProjectIds[0];
 
     let resultProject = projects.find(x => x.projectId === resultProjectId);
 
-    let bridge: schemaPostgres.BridgeEnt;
+    let bridge: BridgeEnt;
 
-    if (common.isDefined(resultProject)) {
+    if (isDefined(resultProject)) {
       bridge = await this.db.drizzle.query.bridgesTable.findFirst({
         where: and(
           eq(bridgesTable.projectId, resultProject.projectId),
-          eq(bridgesTable.repoId, common.PROD_REPO_ID),
+          eq(bridgesTable.repoId, PROD_REPO_ID),
           eq(bridgesTable.branchId, resultProject.defaultBranch),
-          eq(bridgesTable.envId, common.PROJECT_ENV_PROD)
+          eq(bridgesTable.envId, PROJECT_ENV_PROD)
         )
       });
     }
@@ -109,9 +102,9 @@ export class GetNavController {
 
     if (
       getRepo === true &&
-      common.isDefined(resultOrgId) &&
-      common.isDefined(resultProjectId) &&
-      common.isDefined(bridge)
+      isDefined(resultOrgId) &&
+      isDefined(resultProjectId) &&
+      isDefined(bridge)
     ) {
       let userMember = await this.membersService.getMemberCheckExists({
         projectId: resultProject.projectId,
@@ -149,7 +142,7 @@ export class GetNavController {
       let diskResponse =
         await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogNodesResponse>(
           {
-            routingKey: helper.makeRoutingKeyToDisk({
+            routingKey: makeRoutingKeyToDisk({
               orgId: resultProject.orgId,
               projectId: resultProject.projectId
             }),
@@ -172,8 +165,8 @@ export class GetNavController {
       projectDefaultBranch: resultProject?.defaultBranch,
       isRepoProd: true,
       branchId: resultProject?.defaultBranch,
-      envId: common.PROJECT_ENV_PROD,
-      needValidate: common.isDefined(bridge) ? bridge.needValidate : false,
+      envId: PROJECT_ENV_PROD,
+      needValidate: isDefined(bridge) ? bridge.needValidate : false,
       user: this.wrapToApiService.wrapToApiUser(user),
       serverNowTs: Date.now(),
       userMember: apiMember,

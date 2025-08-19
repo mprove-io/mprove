@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import * as bcrypt from 'bcrypt';
 import { Strategy } from 'passport-local';
-import { common } from '~backend/barrels/common';
 import { UsersService } from '~backend/services/users.service';
+import { ErEnum } from '~common/enums/er.enum';
+import { ServerError } from '~common/models/server-error';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -24,8 +25,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     let hash = await bcrypt.hash(password, user.salt);
 
     if (hash !== user.hash) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_WRONG_PASSWORD
+      throw new ServerError({
+        message: ErEnum.BACKEND_WRONG_PASSWORD
       });
     }
 

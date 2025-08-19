@@ -1,7 +1,5 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
@@ -35,10 +33,7 @@ export class EditDraftReportController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditDraftReport)
-  async editDraftRep(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async editDraftRep(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendEditDraftReportRequest = request.body;
 
     let { traceId } = reqValid.info;
@@ -70,7 +65,7 @@ export class EditDraftReportController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
+      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -92,10 +87,10 @@ export class EditDraftReportController {
       projectId: projectId,
       addMetrics: true
       // addMetrics:
-      //   common.isDefined(rowChange) &&
+      //   isDefined(rowChange) &&
       //   [
-      //     common.ChangeTypeEnum.AddMetric,
-      //     common.ChangeTypeEnum.ConvertToMetric
+      //     ChangeTypeEnum.AddMetric,
+      //     ChangeTypeEnum.ConvertToMetric
       //   ].indexOf(changeType) > -1
     });
 
@@ -109,9 +104,9 @@ export class EditDraftReportController {
       userMember: userMember
     });
 
-    if (common.isDefined(newReportFields)) {
+    if (isDefined(newReportFields)) {
       report.rows
-        .filter(row => common.isDefined(row.parameters))
+        .filter(row => isDefined(row.parameters))
         .forEach(row => {
           row.parameters = row.parameters.filter(
             parameter =>
@@ -124,8 +119,8 @@ export class EditDraftReportController {
     let models: ModelEnt[] = [];
 
     // if (
-    //   changeType === common.ChangeTypeEnum.ConvertToMetric &&
-    //   common.isDefined(rowChange?.metricId)
+    //   changeType === ChangeTypeEnum.ConvertToMetric &&
+    //   isDefined(rowChange?.metricId)
     // ) {
     //   let metric = struct.metrics.find(x => x.metricId === rowChange.metricId);
 

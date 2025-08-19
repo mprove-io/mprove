@@ -1,8 +1,5 @@
 import test from 'ava';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 
@@ -10,21 +7,21 @@ let testId = 'backend-get-org-users__ok-3';
 
 let traceId = testId;
 
-let userId = common.makeId();
+let userId = makeId();
 let email = `${testId}@example.com`;
 let password = '123456';
 
-let secondUserId = common.makeId();
+let secondUserId = makeId();
 let secondEmail = `${testId}2@example.com`;
 let secondPassword = '123';
 
 let orgId = testId;
 let orgName = testId;
 
-let projectId = common.makeId();
+let projectId = makeId();
 let projectName = testId;
 
-let secondProjectId = common.makeId();
+let secondProjectId = makeId();
 let secondProjectName = 'p2';
 
 let prep: interfaces.Prep;
@@ -68,15 +65,15 @@ test('1', async t => {
             orgId,
             projectId,
             name: projectName,
-            remoteType: common.ProjectRemoteTypeEnum.Managed,
-            defaultBranch: common.BRANCH_MAIN
+            remoteType: ProjectRemoteTypeEnum.Managed,
+            defaultBranch: BRANCH_MAIN
           },
           {
             orgId,
             projectId: secondProjectId,
             name: secondProjectName,
-            remoteType: common.ProjectRemoteTypeEnum.Managed,
-            defaultBranch: common.BRANCH_MAIN
+            remoteType: ProjectRemoteTypeEnum.Managed,
+            defaultBranch: BRANCH_MAIN
           }
         ],
         members: [
@@ -105,7 +102,7 @@ test('1', async t => {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: {
         orgId: orgId,
@@ -114,25 +111,24 @@ test('1', async t => {
       }
     };
 
-    resp =
-      await helper.sendToBackend<apiToBackend.ToBackendGetOrgUsersResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req
-      });
+    resp = await sendToBackend<apiToBackend.ToBackendGetOrgUsersResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req
+    });
 
     await prep.app.close();
   } catch (e) {
     logToConsoleBackend({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: prep.logger,
       cs: prep.cs
     });
   }
 
   t.is(resp.info.error, undefined);
-  t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
+  t.is(resp.info.status, ResponseInfoStatusEnum.Ok);
   t.is(resp.payload.total, 2);
   t.is(resp.payload.orgUsersList.length, 2);
 });

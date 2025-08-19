@@ -1,10 +1,10 @@
-import { interfaces } from '~backend/barrels/interfaces';
+import { BackendConfig } from '~common/interfaces/backend/backend-config';
 
-export function getProdConfig(devConfig: interfaces.Config) {
+export function getProdConfig(devConfig: BackendConfig) {
   let prodConfig = Object.assign({}, devConfig);
 
-  // prodConfig.allowTestRoutes = common.BoolEnum.FALSE;
-  // testConfig.backendLogIsJson = common.BoolEnum.FALSE;
+  // prodConfig.allowTestRoutes = BoolEnum.FALSE;
+  // testConfig.backendLogIsJson = BoolEnum.FALSE;
 
   return prodConfig;
 }

@@ -1,13 +1,11 @@
-import { common } from '~backend/barrels/common';
-
 export function makeTilesX(item: {
-  tiles: common.Tile[];
-  mconfigs: common.MconfigX[];
-  queries: common.Query[];
+  tiles: Tile[];
+  mconfigs: MconfigX[];
+  queries: Query[];
   isAddMconfigAndQuery: boolean;
-  models: common.ModelX[];
-  dashboardExtendedFilters: common.FilterX[];
-}): common.TileX[] {
+  models: ModelX[];
+  dashboardExtendedFilters: FilterX[];
+}): TileX[] {
   let {
     tiles,
     mconfigs,
@@ -17,8 +15,8 @@ export function makeTilesX(item: {
     dashboardExtendedFilters
   } = item;
 
-  let tilesX: common.TileX[] = tiles.map(x => {
-    let tileX: common.TileX = Object.assign({}, x, <common.TileX>{
+  let tilesX: TileX[] = tiles.map(x => {
+    let tileX: TileX = Object.assign({}, x, <TileX>{
       hasAccessToModel: models.find(m => m.modelId === x.modelId).hasAccess
     });
 
@@ -28,15 +26,15 @@ export function makeTilesX(item: {
 
       let listen = tileX.listen;
 
-      if (common.isDefined(dashboardExtendedFilters)) {
+      if (isDefined(dashboardExtendedFilters)) {
         tileX.mconfig.extendedFilters = tileX.mconfig.extendedFilters.sort(
           (a, b) => {
-            if (common.isDefined(listen[a.fieldId])) {
+            if (isDefined(listen[a.fieldId])) {
               let aIndex = dashboardExtendedFilters.findIndex(
                 df => df.fieldId === listen[a.fieldId]
               );
 
-              if (common.isDefined(listen[b.fieldId])) {
+              if (isDefined(listen[b.fieldId])) {
                 let bIndex = dashboardExtendedFilters.findIndex(
                   df => df.fieldId === listen[b.fieldId]
                 );
@@ -44,7 +42,7 @@ export function makeTilesX(item: {
               } else {
                 return -1;
               }
-            } else if (common.isDefined(listen[b.fieldId])) {
+            } else if (isDefined(listen[b.fieldId])) {
               return 1;
             } else {
               return a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0;

@@ -2,9 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import * as snowflake from 'snowflake-sdk';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -16,13 +14,13 @@ let retry = require('async-retry');
 @Injectable()
 export class SnowFlakeService {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   async runQuery(item: {
-    connection: schemaPostgres.ConnectionEnt;
+    connection: ConnectionEnt;
     queryJobId: string;
     queryId: string;
     querySql: string;
@@ -59,11 +57,11 @@ export class SnowFlakeService {
     snowflakeConnection.connect(function (err, conn): void {
       if (err) {
         logToConsoleBackend({
-          log: new common.ServerError({
-            message: common.ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_CONNECT,
+          log: new ServerError({
+            message: ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_CONNECT,
             originalError: err
           }),
-          logLevel: common.LogLevelEnum.Error,
+          logLevel: LogLevelEnum.Error,
           logger: logger,
           cs: cs
         });
@@ -107,8 +105,8 @@ export class SnowFlakeService {
           )
         });
 
-        if (common.isDefined(q)) {
-          q.status = common.QueryStatusEnum.Completed;
+        if (isDefined(q)) {
+          q.status = QueryStatusEnum.Completed;
           q.queryJobId = undefined; // null;
           q.data = data.rows;
           q.lastCompleteTs = makeTsNumber();
@@ -141,8 +139,8 @@ export class SnowFlakeService {
           )
         });
 
-        if (common.isDefined(q)) {
-          q.status = common.QueryStatusEnum.Error;
+        if (isDefined(q)) {
+          q.status = QueryStatusEnum.Error;
           q.data = [];
           q.queryJobId = undefined; // null
           q.lastErrorMessage = e.message;
@@ -192,12 +190,11 @@ export class SnowFlakeService {
       snowflakeConnection.destroy(function (err, conn) {
         if (err) {
           logToConsoleBackend({
-            log: new common.ServerError({
-              message:
-                common.ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_DESTROY_CONNECTION,
+            log: new ServerError({
+              message: ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_DESTROY_CONNECTION,
               originalError: err
             }),
-            logLevel: common.LogLevelEnum.Error,
+            logLevel: LogLevelEnum.Error,
             logger: logger,
             cs: cs
           });

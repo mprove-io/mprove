@@ -9,9 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { SkipJwtCheck } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
@@ -32,7 +30,7 @@ export class CompleteUserRegistrationController {
     private usersService: UsersService,
     private membersService: MembersService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -51,15 +49,15 @@ export class CompleteUserRegistrationController {
       where: eq(usersTable.emailVerificationToken, emailConfirmationToken)
     });
 
-    if (common.isUndefined(user)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_USER_DOES_NOT_EXIST
+    if (isUndefined(user)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_USER_DOES_NOT_EXIST
       });
     }
 
-    if (common.isDefined(user.hash) || user.isEmailVerified === true) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_USER_ALREADY_REGISTERED
+    if (isDefined(user.hash) || user.isEmailVerified === true) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_USER_ALREADY_REGISTERED
       });
     }
 

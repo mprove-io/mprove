@@ -9,9 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
@@ -31,16 +29,13 @@ export class DeleteConnectionController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteConnection)
-  async deleteConnection(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async deleteConnection(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendDeleteConnectionRequest = request.body;
 
     let { traceId } = reqValid.info;

@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
-import { common } from '~backend/barrels/common';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { envsTable } from '~backend/drizzle/postgres/schema/envs';
@@ -23,9 +22,9 @@ export class EnvsService {
       where: and(eq(envsTable.envId, envId), eq(envsTable.projectId, projectId))
     });
 
-    if (common.isDefined(env)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_ENV_ALREADY_EXISTS
+    if (isDefined(env)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_ENV_ALREADY_EXISTS
       });
     }
   }
@@ -33,7 +32,7 @@ export class EnvsService {
   async getEnvCheckExistsAndAccess(item: {
     projectId: string;
     envId: string;
-    member: schemaPostgres.MemberEnt;
+    member: MemberEnt;
   }) {
     let { projectId, envId, member } = item;
 
@@ -41,19 +40,19 @@ export class EnvsService {
       where: and(eq(envsTable.envId, envId), eq(envsTable.projectId, projectId))
     });
 
-    if (common.isUndefined(env)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_ENV_DOES_NOT_EXIST
+    if (isUndefined(env)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_ENV_DOES_NOT_EXIST
       });
     }
 
     if (
-      envId !== common.PROJECT_ENV_PROD &&
+      envId !== PROJECT_ENV_PROD &&
       member.isAdmin === false &&
       env.memberIds.indexOf(member.memberId) < 0
     ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MEMBER_DOES_NOT_HAVE_ACCESS_TO_ENV
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_DOES_NOT_HAVE_ACCESS_TO_ENV
       });
     }
 
@@ -109,17 +108,15 @@ export class EnvsService {
                 )
               : [],
           envMembers:
-            x.envId === common.PROJECT_ENV_PROD
+            x.envId === PROJECT_ENV_PROD
               ? []
               : members.filter(m => x.memberIds.indexOf(m.memberId) > -1)
         });
       })
       .sort((a, b) =>
-        a.envId !== common.PROJECT_ENV_PROD &&
-        b.envId === common.PROJECT_ENV_PROD
+        a.envId !== PROJECT_ENV_PROD && b.envId === PROJECT_ENV_PROD
           ? 1
-          : a.envId === common.PROJECT_ENV_PROD &&
-              b.envId !== common.PROJECT_ENV_PROD
+          : a.envId === PROJECT_ENV_PROD && b.envId !== PROJECT_ENV_PROD
             ? -1
             : a.envId > b.envId
               ? 1
@@ -154,10 +151,10 @@ export class EnvsService {
         )
       });
 
-    let connectionsWithFallback: common.ProjectConnection[] =
+    let connectionsWithFallback: ProjectConnection[] =
       connectionsEntsWithFallback.map(
         x =>
-          <common.ProjectConnection>{
+          <ProjectConnection>{
             connectionId: x.connectionId,
             type: x.type,
             googleCloudProject: x.googleCloudProject,

@@ -8,7 +8,6 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { common } from '~backend/barrels/common';
 
 export const dashboardsTable = pgTable(
   'dashboards',
@@ -24,8 +23,8 @@ export const dashboardsTable = pgTable(
     title: varchar('title'),
     gr: varchar('gr'),
     hidden: boolean('hidden').notNull(),
-    fields: json('fields').$type<common.DashboardField[]>().notNull(),
-    tiles: json('tiles').$type<common.Tile[]>().notNull(),
+    fields: json('fields').$type<DashboardField[]>().notNull(),
+    tiles: json('tiles').$type<Tile[]>().notNull(),
     description: varchar('description'),
     creatorId: varchar('creator_id', { length: 32 }), // user_id
     draft: boolean('draft').notNull(),

@@ -1,11 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { eq } from 'drizzle-orm';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -23,7 +19,7 @@ export class ProjectsService {
     private blockmlService: BlockmlService,
     private hashService: HashService,
     private makerService: MakerService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -35,9 +31,9 @@ export class ProjectsService {
       where: eq(projectsTable.projectId, projectId)
     });
 
-    if (common.isUndefined(project)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_PROJECT_DOES_NOT_EXIST
+    if (isUndefined(project)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_PROJECT_DOES_NOT_EXIST
       });
     }
 
@@ -47,15 +43,15 @@ export class ProjectsService {
   async addProject(item: {
     orgId: string;
     name: string;
-    user: schemaPostgres.UserEnt;
+    user: UserEnt;
     traceId: string;
     testProjectId: string;
     projectId: string;
-    remoteType: common.ProjectRemoteTypeEnum;
+    remoteType: ProjectRemoteTypeEnum;
     gitUrl?: string;
     privateKey?: string;
     publicKey?: string;
-    evs: common.Ev[];
+    evs: Ev[];
   }) {
     let {
       orgId,
@@ -93,7 +89,7 @@ export class ProjectsService {
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateProjectResponse>(
         {
-          routingKey: helper.makeRoutingKeyToDisk({
+          routingKey: makeRoutingKeyToDisk({
             orgId: orgId,
             projectId: projectId
           }),
@@ -102,7 +98,7 @@ export class ProjectsService {
         }
       );
 
-    let newProject: schemaPostgres.ProjectEnt = {
+    let newProject: ProjectEnt = {
       orgId: orgId,
       projectId: projectId,
       name: name,
@@ -116,7 +112,7 @@ export class ProjectsService {
 
     let prodEnv = this.makerService.makeEnv({
       projectId: newProject.projectId,
-      envId: common.PROJECT_ENV_PROD,
+      envId: PROJECT_ENV_PROD,
       evs: evs
     });
 
@@ -128,12 +124,12 @@ export class ProjectsService {
       isExplorer: true
     });
 
-    let devStructId = common.makeId();
-    let prodStructId = common.makeId();
+    let devStructId = makeId();
+    let prodStructId = makeId();
 
     let prodBranch = this.makerService.makeBranch({
       projectId: newProject.projectId,
-      repoId: common.PROD_REPO_ID,
+      repoId: PROD_REPO_ID,
       branchId: newProject.defaultBranch
     });
 
@@ -167,7 +163,7 @@ export class ProjectsService {
       structId: prodStructId,
       diskFiles: diskResponse.payload.prodFiles,
       mproveDir: diskResponse.payload.mproveDir,
-      envId: common.PROJECT_ENV_PROD,
+      envId: PROJECT_ENV_PROD,
       overrideTimezone: undefined,
       evs: evs
     });
@@ -178,7 +174,7 @@ export class ProjectsService {
       structId: devStructId,
       diskFiles: diskResponse.payload.prodFiles,
       mproveDir: diskResponse.payload.mproveDir,
-      envId: common.PROJECT_ENV_PROD,
+      envId: PROJECT_ENV_PROD,
       overrideTimezone: undefined,
       evs: evs
     });

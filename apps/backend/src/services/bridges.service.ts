@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
-import { common } from '~backend/barrels/common';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 
@@ -25,9 +25,9 @@ export class BridgesService {
       )
     });
 
-    if (common.isUndefined(bridge)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST
+    if (isUndefined(bridge)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST
       });
     }
 

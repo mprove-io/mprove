@@ -1,8 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
@@ -30,9 +28,9 @@ export class DashboardsService {
       )
     });
 
-    if (common.isUndefined(dashboard)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST
+    if (isUndefined(dashboard)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST
       });
     }
 
@@ -41,30 +39,30 @@ export class DashboardsService {
 
   checkDashboardPath(item: { filePath: string; userAlias: string }) {
     if (item.filePath.split('/')[2] !== item.userAlias) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_FORBIDDEN_DASHBOARD_PATH
+      throw new ServerError({
+        message: ErEnum.BACKEND_FORBIDDEN_DASHBOARD_PATH
       });
     }
   }
 
   async getDashboardXCheckAccess(item: {
     projectId: string;
-    dashboard: schemaPostgres.DashboardEnt;
-    member: schemaPostgres.MemberEnt;
-    user: schemaPostgres.UserEnt;
-    bridge: schemaPostgres.BridgeEnt;
+    dashboard: DashboardEnt;
+    member: MemberEnt;
+    user: UserEnt;
+    bridge: BridgeEnt;
   }) {
     let { projectId, dashboard, member, user, bridge } = item;
 
-    let isAccessGranted = helper.checkAccess({
+    let isAccessGranted = checkAccess({
       userAlias: user.alias,
       member: member,
       entity: dashboard
     });
 
     if (isAccessGranted === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_FORBIDDEN_DASHBOARD
+      throw new ServerError({
+        message: ErEnum.BACKEND_FORBIDDEN_DASHBOARD
       });
     }
 
@@ -94,7 +92,7 @@ export class DashboardsService {
     let apiModels = models.map(model =>
       this.wrapToApiService.wrapToApiModel({
         model: model,
-        hasAccess: helper.checkAccess({
+        hasAccess: checkAccess({
           userAlias: user.alias,
           member: member,
           entity: model
@@ -121,9 +119,9 @@ export class DashboardsService {
 
   async getDashboardParts(item: {
     structId: string;
-    user: schemaPostgres.UserEnt;
-    userMember: schemaPostgres.MemberEnt;
-    newDashboard: common.Dashboard;
+    user: UserEnt;
+    userMember: MemberEnt;
+    newDashboard: Dashboard;
   }) {
     let { structId, user, userMember, newDashboard } = item;
 
@@ -150,10 +148,10 @@ export class DashboardsService {
             ? eq(dashboardsTable.creatorId, user.userId)
             : eq(dashboardsTable.draft, false)
         )
-      )) as schemaPostgres.DashboardEnt[];
+      )) as DashboardEnt[];
 
     let dashboardPartsGrantedAccess = dashboardParts.filter(x =>
-      helper.checkAccess({
+      checkAccess({
         userAlias: user.alias,
         member: userMember,
         entity: x
@@ -176,7 +174,7 @@ export class DashboardsService {
           eq(modelsTable.structId, structId),
           inArray(modelsTable.modelId, uniqueModelIds)
         )
-      )) as schemaPostgres.ModelEnt[];
+      )) as ModelEnt[];
 
     let newDashboardParts = dashboardPartsGrantedAccess.map(x =>
       this.wrapToApiService.wrapToApiDashboard({
@@ -187,7 +185,7 @@ export class DashboardsService {
         models: models.map(model =>
           this.wrapToApiService.wrapToApiModel({
             model: model,
-            hasAccess: helper.checkAccess({
+            hasAccess: checkAccess({
               userAlias: user.alias,
               member: userMember,
               entity: model

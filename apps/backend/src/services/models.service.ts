@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
-import { common } from '~backend/barrels/common';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 
@@ -19,9 +18,9 @@ export class ModelsService {
       )
     });
 
-    if (common.isUndefined(model)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MODEL_DOES_NOT_EXIST
+    if (isUndefined(model)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MODEL_DOES_NOT_EXIST
       });
     }
 
@@ -29,7 +28,7 @@ export class ModelsService {
   }
 
   async getModelsY(item: {
-    bridge: schemaPostgres.BridgeEnt;
+    bridge: BridgeEnt;
     filterByModelIds: string[];
     addFields: boolean;
     addContent: boolean;
@@ -58,7 +57,7 @@ export class ModelsService {
 
     let where = [eq(modelsTable.structId, bridge.structId)];
 
-    if (common.isDefined(filterByModelIds) && filterByModelIds.length > 0) {
+    if (isDefined(filterByModelIds) && filterByModelIds.length > 0) {
       where = [...where, inArray(modelsTable.modelId, filterByModelIds)];
     }
 
@@ -75,7 +74,7 @@ export class ModelsService {
     let models = (await this.db.drizzle
       .select(selectObj)
       .from(modelsTable)
-      .where(and(...where))) as schemaPostgres.ModelEnt[];
+      .where(and(...where))) as ModelEnt[];
 
     return models;
   }

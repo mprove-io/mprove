@@ -8,10 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
@@ -34,7 +31,7 @@ export class DeleteDraftDashboardsController {
     private projectsService: ProjectsService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -42,16 +39,13 @@ export class DeleteDraftDashboardsController {
   @Post(
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftDashboards
   )
-  async createEmptyDashboard(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async createEmptyDashboard(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendDeleteDraftDashboardsRequest =
       request.body;
 
-    if (user.alias === common.RESTRICTED_USER_ALIAS) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_USER
+    if (user.alias === RESTRICTED_USER_ALIAS) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 
@@ -59,7 +53,7 @@ export class DeleteDraftDashboardsController {
     let { projectId, isRepoProd, branchId, envId, dashboardIds } =
       reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

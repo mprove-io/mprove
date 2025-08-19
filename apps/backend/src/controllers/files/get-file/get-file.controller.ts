@@ -1,9 +1,5 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -30,16 +26,13 @@ export class GetFileController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile)
-  async getFile(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getFile(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetFileRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, fileNodeId, panel } =
       reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -71,7 +64,7 @@ export class GetFileController {
 
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetFileResponse>({
-        routingKey: helper.makeRoutingKeyToDisk({
+        routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
         }),
@@ -81,7 +74,7 @@ export class GetFileController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
+      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 

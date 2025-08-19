@@ -1,8 +1,5 @@
 import test from 'ava';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareSeed, prepareTest } from '~backend/functions/prepare-test';
 import { PrepTest } from '~backend/interfaces/prep-test';
@@ -11,7 +8,7 @@ let testId = 'backend-get-chart__ok';
 
 let traceId = testId;
 
-let userId = common.makeId();
+let userId = makeId();
 let email = `${testId}@example.com`;
 let password = '123456';
 
@@ -19,7 +16,7 @@ let orgId = testId;
 let orgName = testId;
 
 let testProjectId = 't1';
-let projectId = common.makeId();
+let projectId = makeId();
 let projectName = testId;
 
 let chartId = 'c1';
@@ -34,17 +31,17 @@ test('1', async t => {
 
     let c1Postgres: apiToBackend.ToBackendSeedRecordsRequestPayloadConnectionsItem =
       {
-        envId: common.PROJECT_ENV_PROD,
+        envId: PROJECT_ENV_PROD,
         projectId: projectId,
         connectionId: 'c1_postgres',
-        type: common.ConnectionTypeEnum.PostgreSQL,
-        host: prepTest.cs.get<interfaces.Config['firstProjectDwhPostgresHost']>(
+        type: ConnectionTypeEnum.PostgreSQL,
+        host: prepTest.cs.get<BackendConfig['firstProjectDwhPostgresHost']>(
           'firstProjectDwhPostgresHost'
         ),
         port: 5436,
         username: 'postgres',
         password: prepTest.cs.get<
-          interfaces.Config['firstProjectDwhPostgresPassword']
+          BackendConfig['firstProjectDwhPostgresPassword']
         >('firstProjectDwhPostgresPassword'),
         database: 'p_db'
       };
@@ -80,8 +77,8 @@ test('1', async t => {
             projectId,
             testProjectId,
             name: projectName,
-            defaultBranch: common.BRANCH_MAIN,
-            remoteType: common.ProjectRemoteTypeEnum.Managed
+            defaultBranch: BRANCH_MAIN,
+            remoteType: ProjectRemoteTypeEnum.Managed
           }
         ],
         members: [
@@ -103,19 +100,19 @@ test('1', async t => {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: {
         projectId: projectId,
         isRepoProd: false,
-        branchId: common.BRANCH_MAIN,
-        envId: common.PROJECT_ENV_PROD,
+        branchId: BRANCH_MAIN,
+        envId: PROJECT_ENV_PROD,
         chartId: chartId,
         timezone: 'UTC'
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendGetChartResponse>({
+    resp = await sendToBackend<apiToBackend.ToBackendGetChartResponse>({
       httpServer: prepTest.httpServer,
       loginToken: prepareSeedResult.loginToken,
       req: req
@@ -125,12 +122,12 @@ test('1', async t => {
   } catch (e) {
     logToConsoleBackend({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: prepTest.logger,
       cs: prepTest.cs
     });
   }
 
   t.is(resp.info.error, undefined);
-  t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
+  t.is(resp.info.status, ResponseInfoStatusEnum.Ok);
 });

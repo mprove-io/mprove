@@ -2,11 +2,11 @@ import { ExtractTablesWithRelations, SQLWrapper, eq } from 'drizzle-orm';
 import { NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
 import { PgTransaction } from 'drizzle-orm/pg-core';
 import { forEachSeries } from 'p-iteration';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+import { schemaPostgres } from '~backend/drizzle/postgres/schema/_schema-postgres';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { refreshServerTs } from '~backend/functions/refresh-server-ts';
+import { DbRecords } from '~backend/interfaces/db-records';
+import { isDefined } from '~common/functions/is-defined';
 import { drizzleSetAllColumnsFull } from './drizzle-set-all-columns-full';
 import { setUndefinedToNull } from './drizzle-set-undefined-to-null';
 import { avatarsTable } from './schema/avatars';
@@ -36,19 +36,19 @@ export interface RecordsPack {
     typeof schemaPostgres,
     ExtractTablesWithRelations<typeof schemaPostgres>
   >;
-  insert?: interfaces.DbRecords;
-  update?: interfaces.DbRecords;
-  insertOrUpdate?: interfaces.DbRecords;
-  insertOrDoNothing?: interfaces.DbRecords;
+  insert?: DbRecords;
+  update?: DbRecords;
+  insertOrUpdate?: DbRecords;
+  insertOrDoNothing?: DbRecords;
   rawQueries?: SQLWrapper[];
   serverTs?: number;
 }
 
 export interface RecordsPackOutput {
-  insert?: interfaces.DbRecords;
-  update?: interfaces.DbRecords;
-  insertOrUpdate?: interfaces.DbRecords;
-  insertOrDoNothing?: interfaces.DbRecords;
+  insert?: DbRecords;
+  update?: DbRecords;
+  insertOrUpdate?: DbRecords;
+  insertOrDoNothing?: DbRecords;
   rawQueries?: SQLWrapper[];
   serverTs?: number;
 }
@@ -67,143 +67,120 @@ export class DrizzlePacker {
       serverTs: serverTs
     } = item;
 
-    let newServerTs = common.isDefined(serverTs) ? serverTs : makeTsNumber();
+    let newServerTs = isDefined(serverTs) ? serverTs : makeTsNumber();
 
-    if (common.isDefined(insertRecords)) {
+    if (isDefined(insertRecords)) {
       Object.keys(insertRecords).forEach(key => {
-        if (
-          common.isDefined(insertRecords[key as keyof interfaces.DbRecords])
-        ) {
+        if (isDefined(insertRecords[key as keyof DbRecords])) {
           refreshServerTs(
-            insertRecords[key as keyof interfaces.DbRecords] as any,
+            insertRecords[key as keyof DbRecords] as any,
             newServerTs
           );
         }
       });
 
       if (
-        common.isDefined(insertRecords.avatars) &&
+        isDefined(insertRecords.avatars) &&
         insertRecords.avatars.length > 0
       ) {
         await tx.insert(avatarsTable).values(insertRecords.avatars);
       }
 
       if (
-        common.isDefined(insertRecords.branches) &&
+        isDefined(insertRecords.branches) &&
         insertRecords.branches.length > 0
       ) {
         await tx.insert(branchesTable).values(insertRecords.branches);
       }
 
       if (
-        common.isDefined(insertRecords.bridges) &&
+        isDefined(insertRecords.bridges) &&
         insertRecords.bridges.length > 0
       ) {
         await tx.insert(bridgesTable).values(insertRecords.bridges);
       }
 
       if (
-        common.isDefined(insertRecords.connections) &&
+        isDefined(insertRecords.connections) &&
         insertRecords.connections.length > 0
       ) {
         await tx.insert(connectionsTable).values(insertRecords.connections);
       }
 
       if (
-        common.isDefined(insertRecords.dashboards) &&
+        isDefined(insertRecords.dashboards) &&
         insertRecords.dashboards.length > 0
       ) {
         await tx.insert(dashboardsTable).values(insertRecords.dashboards);
       }
 
-      if (
-        common.isDefined(insertRecords.envs) &&
-        insertRecords.envs.length > 0
-      ) {
+      if (isDefined(insertRecords.envs) && insertRecords.envs.length > 0) {
         await tx.insert(envsTable).values(insertRecords.envs);
       }
 
-      if (
-        common.isDefined(insertRecords.kits) &&
-        insertRecords.kits.length > 0
-      ) {
+      if (isDefined(insertRecords.kits) && insertRecords.kits.length > 0) {
         await tx.insert(kitsTable).values(insertRecords.kits);
       }
 
       if (
-        common.isDefined(insertRecords.mconfigs) &&
+        isDefined(insertRecords.mconfigs) &&
         insertRecords.mconfigs.length > 0
       ) {
         await tx.insert(mconfigsTable).values(insertRecords.mconfigs);
       }
 
       if (
-        common.isDefined(insertRecords.members) &&
+        isDefined(insertRecords.members) &&
         insertRecords.members.length > 0
       ) {
         await tx.insert(membersTable).values(insertRecords.members);
       }
 
-      if (
-        common.isDefined(insertRecords.models) &&
-        insertRecords.models.length > 0
-      ) {
+      if (isDefined(insertRecords.models) && insertRecords.models.length > 0) {
         await tx.insert(modelsTable).values(insertRecords.models);
       }
 
-      if (
-        common.isDefined(insertRecords.notes) &&
-        insertRecords.notes.length > 0
-      ) {
+      if (isDefined(insertRecords.notes) && insertRecords.notes.length > 0) {
         await tx.insert(notesTable).values(insertRecords.notes);
       }
 
-      if (
-        common.isDefined(insertRecords.orgs) &&
-        insertRecords.orgs.length > 0
-      ) {
+      if (isDefined(insertRecords.orgs) && insertRecords.orgs.length > 0) {
         await tx.insert(orgsTable).values(insertRecords.orgs);
       }
 
       if (
-        common.isDefined(insertRecords.projects) &&
+        isDefined(insertRecords.projects) &&
         insertRecords.projects.length > 0
       ) {
         await tx.insert(projectsTable).values(insertRecords.projects);
       }
 
       if (
-        common.isDefined(insertRecords.queries) &&
+        isDefined(insertRecords.queries) &&
         insertRecords.queries.length > 0
       ) {
         await tx.insert(queriesTable).values(insertRecords.queries);
       }
 
       if (
-        common.isDefined(insertRecords.reports) &&
+        isDefined(insertRecords.reports) &&
         insertRecords.reports.length > 0
       ) {
         await tx.insert(reportsTable).values(insertRecords.reports);
       }
 
       if (
-        common.isDefined(insertRecords.structs) &&
+        isDefined(insertRecords.structs) &&
         insertRecords.structs.length > 0
       ) {
         await tx.insert(structsTable).values(insertRecords.structs);
       }
 
-      if (
-        common.isDefined(insertRecords.users) &&
-        insertRecords.users.length > 0
-      ) {
+      if (isDefined(insertRecords.users) && insertRecords.users.length > 0) {
         await tx.insert(usersTable).values(insertRecords.users);
       }
 
-      if (
-        common.isDefined(insertRecords.charts) &&
-        insertRecords.charts.length > 0
-      ) {
+      if (isDefined(insertRecords.charts) && insertRecords.charts.length > 0) {
         await tx.insert(chartsTable).values(insertRecords.charts);
       }
     }
@@ -212,20 +189,18 @@ export class DrizzlePacker {
     //
     //
 
-    if (common.isDefined(updateRecords)) {
+    if (isDefined(updateRecords)) {
       Object.keys(updateRecords).forEach(key => {
-        if (
-          common.isDefined(updateRecords[key as keyof interfaces.DbRecords])
-        ) {
+        if (isDefined(updateRecords[key as keyof DbRecords])) {
           refreshServerTs(
-            updateRecords[key as keyof interfaces.DbRecords] as any,
+            updateRecords[key as keyof DbRecords] as any,
             newServerTs
           );
         }
       });
 
       if (
-        common.isDefined(updateRecords.avatars) &&
+        isDefined(updateRecords.avatars) &&
         updateRecords.avatars.length > 0
       ) {
         updateRecords.avatars = setUndefinedToNull({
@@ -242,7 +217,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(updateRecords.branches) &&
+        isDefined(updateRecords.branches) &&
         updateRecords.branches.length > 0
       ) {
         updateRecords.branches = setUndefinedToNull({
@@ -259,7 +234,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(updateRecords.bridges) &&
+        isDefined(updateRecords.bridges) &&
         updateRecords.bridges.length > 0
       ) {
         updateRecords.bridges = setUndefinedToNull({
@@ -276,7 +251,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(updateRecords.connections) &&
+        isDefined(updateRecords.connections) &&
         updateRecords.connections.length > 0
       ) {
         updateRecords.connections = setUndefinedToNull({
@@ -293,7 +268,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(updateRecords.dashboards) &&
+        isDefined(updateRecords.dashboards) &&
         updateRecords.dashboards.length > 0
       ) {
         updateRecords.dashboards = setUndefinedToNull({
@@ -309,10 +284,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (
-        common.isDefined(updateRecords.envs) &&
-        updateRecords.envs.length > 0
-      ) {
+      if (isDefined(updateRecords.envs) && updateRecords.envs.length > 0) {
         updateRecords.envs = setUndefinedToNull({
           ents: updateRecords.envs,
           table: envsTable
@@ -326,10 +298,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (
-        common.isDefined(updateRecords.kits) &&
-        updateRecords.kits.length > 0
-      ) {
+      if (isDefined(updateRecords.kits) && updateRecords.kits.length > 0) {
         updateRecords.kits = setUndefinedToNull({
           ents: updateRecords.kits,
           table: kitsTable
@@ -341,7 +310,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(updateRecords.mconfigs) &&
+        isDefined(updateRecords.mconfigs) &&
         updateRecords.mconfigs.length > 0
       ) {
         updateRecords.mconfigs = setUndefinedToNull({
@@ -358,7 +327,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(updateRecords.members) &&
+        isDefined(updateRecords.members) &&
         updateRecords.members.length > 0
       ) {
         updateRecords.members = setUndefinedToNull({
@@ -374,10 +343,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (
-        common.isDefined(updateRecords.models) &&
-        updateRecords.models.length > 0
-      ) {
+      if (isDefined(updateRecords.models) && updateRecords.models.length > 0) {
         updateRecords.models = setUndefinedToNull({
           ents: updateRecords.models,
           table: modelsTable
@@ -391,10 +357,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (
-        common.isDefined(updateRecords.notes) &&
-        updateRecords.notes.length > 0
-      ) {
+      if (isDefined(updateRecords.notes) && updateRecords.notes.length > 0) {
         updateRecords.notes = setUndefinedToNull({
           ents: updateRecords.notes,
           table: notesTable
@@ -408,10 +371,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (
-        common.isDefined(updateRecords.orgs) &&
-        updateRecords.orgs.length > 0
-      ) {
+      if (isDefined(updateRecords.orgs) && updateRecords.orgs.length > 0) {
         updateRecords.orgs = setUndefinedToNull({
           ents: updateRecords.orgs,
           table: orgsTable
@@ -423,7 +383,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(updateRecords.projects) &&
+        isDefined(updateRecords.projects) &&
         updateRecords.projects.length > 0
       ) {
         updateRecords.projects = setUndefinedToNull({
@@ -440,7 +400,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(updateRecords.queries) &&
+        isDefined(updateRecords.queries) &&
         updateRecords.queries.length > 0
       ) {
         updateRecords.queries = setUndefinedToNull({
@@ -457,7 +417,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(updateRecords.reports) &&
+        isDefined(updateRecords.reports) &&
         updateRecords.reports.length > 0
       ) {
         updateRecords.reports = setUndefinedToNull({
@@ -474,7 +434,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(updateRecords.structs) &&
+        isDefined(updateRecords.structs) &&
         updateRecords.structs.length > 0
       ) {
         updateRecords.structs = setUndefinedToNull({
@@ -490,10 +450,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (
-        common.isDefined(updateRecords.users) &&
-        updateRecords.users.length > 0
-      ) {
+      if (isDefined(updateRecords.users) && updateRecords.users.length > 0) {
         updateRecords.users = setUndefinedToNull({
           ents: updateRecords.users,
           table: usersTable
@@ -507,10 +464,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (
-        common.isDefined(updateRecords.charts) &&
-        updateRecords.charts.length > 0
-      ) {
+      if (isDefined(updateRecords.charts) && updateRecords.charts.length > 0) {
         updateRecords.charts = setUndefinedToNull({
           ents: updateRecords.charts,
           table: chartsTable
@@ -529,20 +483,18 @@ export class DrizzlePacker {
     //
     //
 
-    if (common.isDefined(insOrUpdRecords)) {
+    if (isDefined(insOrUpdRecords)) {
       Object.keys(insOrUpdRecords).forEach(key => {
-        if (
-          common.isDefined(insOrUpdRecords[key as keyof interfaces.DbRecords])
-        ) {
+        if (isDefined(insOrUpdRecords[key as keyof DbRecords])) {
           refreshServerTs(
-            insOrUpdRecords[key as keyof interfaces.DbRecords] as any,
+            insOrUpdRecords[key as keyof DbRecords] as any,
             newServerTs
           );
         }
       });
 
       if (
-        common.isDefined(insOrUpdRecords.avatars) &&
+        isDefined(insOrUpdRecords.avatars) &&
         insOrUpdRecords.avatars.length > 0
       ) {
         insOrUpdRecords.avatars = Array.from(
@@ -564,7 +516,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insOrUpdRecords.branches) &&
+        isDefined(insOrUpdRecords.branches) &&
         insOrUpdRecords.branches.length > 0
       ) {
         insOrUpdRecords.branches = Array.from(
@@ -586,7 +538,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insOrUpdRecords.bridges) &&
+        isDefined(insOrUpdRecords.bridges) &&
         insOrUpdRecords.bridges.length > 0
       ) {
         insOrUpdRecords.bridges = Array.from(
@@ -608,7 +560,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insOrUpdRecords.connections) &&
+        isDefined(insOrUpdRecords.connections) &&
         insOrUpdRecords.connections.length > 0
       ) {
         insOrUpdRecords.connections = Array.from(
@@ -632,7 +584,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insOrUpdRecords.dashboards) &&
+        isDefined(insOrUpdRecords.dashboards) &&
         insOrUpdRecords.dashboards.length > 0
       ) {
         insOrUpdRecords.dashboards = Array.from(
@@ -655,10 +607,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (
-        common.isDefined(insOrUpdRecords.envs) &&
-        insOrUpdRecords.envs.length > 0
-      ) {
+      if (isDefined(insOrUpdRecords.envs) && insOrUpdRecords.envs.length > 0) {
         insOrUpdRecords.envs = Array.from(
           new Set(insOrUpdRecords.envs.map(x => x.envFullId))
         ).map(id => insOrUpdRecords.envs.find(x => x.envFullId === id));
@@ -677,10 +626,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (
-        common.isDefined(insOrUpdRecords.kits) &&
-        insOrUpdRecords.kits.length > 0
-      ) {
+      if (isDefined(insOrUpdRecords.kits) && insOrUpdRecords.kits.length > 0) {
         insOrUpdRecords.kits = Array.from(
           new Set(insOrUpdRecords.kits.map(x => x.kitId))
         ).map(id => insOrUpdRecords.kits.find(x => x.kitId === id));
@@ -700,7 +646,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insOrUpdRecords.mconfigs) &&
+        isDefined(insOrUpdRecords.mconfigs) &&
         insOrUpdRecords.mconfigs.length > 0
       ) {
         insOrUpdRecords.mconfigs = Array.from(
@@ -722,7 +668,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insOrUpdRecords.members) &&
+        isDefined(insOrUpdRecords.members) &&
         insOrUpdRecords.members.length > 0
       ) {
         insOrUpdRecords.members = Array.from(
@@ -744,7 +690,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insOrUpdRecords.models) &&
+        isDefined(insOrUpdRecords.models) &&
         insOrUpdRecords.models.length > 0
       ) {
         insOrUpdRecords.models = Array.from(
@@ -766,7 +712,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insOrUpdRecords.notes) &&
+        isDefined(insOrUpdRecords.notes) &&
         insOrUpdRecords.notes.length > 0
       ) {
         insOrUpdRecords.notes = Array.from(
@@ -787,10 +733,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (
-        common.isDefined(insOrUpdRecords.orgs) &&
-        insOrUpdRecords.orgs.length > 0
-      ) {
+      if (isDefined(insOrUpdRecords.orgs) && insOrUpdRecords.orgs.length > 0) {
         insOrUpdRecords.orgs = Array.from(
           new Set(insOrUpdRecords.orgs.map(x => x.orgId))
         ).map(id => insOrUpdRecords.orgs.find(x => x.orgId === id));
@@ -810,7 +753,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insOrUpdRecords.projects) &&
+        isDefined(insOrUpdRecords.projects) &&
         insOrUpdRecords.projects.length > 0
       ) {
         insOrUpdRecords.projects = Array.from(
@@ -832,7 +775,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insOrUpdRecords.queries) &&
+        isDefined(insOrUpdRecords.queries) &&
         insOrUpdRecords.queries.length > 0
       ) {
         insOrUpdRecords.queries = Array.from(
@@ -854,7 +797,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insOrUpdRecords.reports) &&
+        isDefined(insOrUpdRecords.reports) &&
         insOrUpdRecords.reports.length > 0
       ) {
         insOrUpdRecords.reports = Array.from(
@@ -876,7 +819,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insOrUpdRecords.structs) &&
+        isDefined(insOrUpdRecords.structs) &&
         insOrUpdRecords.structs.length > 0
       ) {
         insOrUpdRecords.structs = Array.from(
@@ -898,7 +841,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insOrUpdRecords.users) &&
+        isDefined(insOrUpdRecords.users) &&
         insOrUpdRecords.users.length > 0
       ) {
         insOrUpdRecords.users = Array.from(
@@ -920,7 +863,7 @@ export class DrizzlePacker {
       }
 
       if (
-        common.isDefined(insOrUpdRecords.charts) &&
+        isDefined(insOrUpdRecords.charts) &&
         insOrUpdRecords.charts.length > 0
       ) {
         insOrUpdRecords.charts = Array.from(
@@ -946,22 +889,18 @@ export class DrizzlePacker {
     //
     //
 
-    if (common.isDefined(insOrDoNothingRecords)) {
+    if (isDefined(insOrDoNothingRecords)) {
       Object.keys(insOrDoNothingRecords).forEach(key => {
-        if (
-          common.isDefined(
-            insOrDoNothingRecords[key as keyof interfaces.DbRecords]
-          )
-        ) {
+        if (isDefined(insOrDoNothingRecords[key as keyof DbRecords])) {
           refreshServerTs(
-            insOrDoNothingRecords[key as keyof interfaces.DbRecords] as any,
+            insOrDoNothingRecords[key as keyof DbRecords] as any,
             newServerTs
           );
         }
       });
 
       if (
-        common.isDefined(insOrDoNothingRecords.queries) &&
+        isDefined(insOrDoNothingRecords.queries) &&
         insOrDoNothingRecords.queries.length > 0
       ) {
         insOrDoNothingRecords.queries = Array.from(
@@ -983,7 +922,7 @@ export class DrizzlePacker {
     //
     //
 
-    if (common.isDefined(rawQueries)) {
+    if (isDefined(rawQueries)) {
       await forEachSeries(rawQueries, async x => {
         await tx.execute(x);
       });

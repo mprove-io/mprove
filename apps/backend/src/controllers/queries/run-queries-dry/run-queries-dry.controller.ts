@@ -9,10 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
@@ -46,16 +43,13 @@ export class RunQueriesDryController {
     private envsService: EnvsService,
     private mconfigsService: MconfigsService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry)
-  async runQueriesDry(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async runQueriesDry(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendRunQueriesDryRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, mconfigIds, dryId } =
@@ -68,7 +62,7 @@ export class RunQueriesDryController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
+      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -100,8 +94,8 @@ export class RunQueriesDryController {
     let queryIds = [...new Set(mconfigs.map(x => x.queryId))];
 
     let results: {
-      validEstimate: common.QueryEstimate;
-      errorQuery: schemaPostgres.QueryEnt;
+      validEstimate: QueryEstimate;
+      errorQuery: QueryEnt;
     }[] = await asyncPool(8, queryIds, async queryId => {
       let query = await this.queriesService.getQueryCheckExistsSkipData({
         projectId: projectId,
@@ -138,11 +132,11 @@ export class RunQueriesDryController {
     });
 
     let validEstimates = results
-      .filter(result => common.isDefined(result.validEstimate))
+      .filter(result => isDefined(result.validEstimate))
       .map(x => x.validEstimate);
 
     let errorQueries = results
-      .filter(result => common.isDefined(result.errorQuery))
+      .filter(result => isDefined(result.errorQuery))
       .map(x => x.errorQuery);
 
     await retry(

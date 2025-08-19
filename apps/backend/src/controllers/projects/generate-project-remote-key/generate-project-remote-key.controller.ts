@@ -9,10 +9,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { parseKey, parsePrivateKey } from 'sshpk';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -26,7 +23,7 @@ let retry = require('async-retry');
 export class GenerateProjectRemoteKeyController {
   constructor(
     private orgsService: OrgsService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -34,10 +31,7 @@ export class GenerateProjectRemoteKeyController {
   @Post(
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGenerateProjectRemoteKey
   )
-  async createProject(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async createProject(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGenerateProjectRemoteKeyRequest =
       request.body;
 
@@ -61,20 +55,20 @@ export class GenerateProjectRemoteKeyController {
         type: 'pkcs8',
         format: 'pem',
         cipher: 'aes-256-cbc',
-        passphrase: common.PASS_PHRASE
+        passphrase: PASS_PHRASE
       }
     });
 
     let sshPublicKey = parseKey(publicKey, 'pem', {
-      passphrase: common.PASS_PHRASE
+      passphrase: PASS_PHRASE
     }).toString('ssh');
 
     let sshPrivateKey = parsePrivateKey(privateKey, 'pem', {
-      passphrase: common.PASS_PHRASE
+      passphrase: PASS_PHRASE
     }).toString('ssh');
 
-    let note: schemaPostgres.NoteEnt = {
-      noteId: common.makeId(),
+    let note: NoteEnt = {
+      noteId: makeId(),
       publicKey: sshPublicKey,
       privateKey: sshPrivateKey,
       serverTs: undefined

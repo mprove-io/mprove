@@ -1,8 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray, or } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
@@ -25,10 +23,7 @@ export class GetConnectionsController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetConnections)
-  async getConnections(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getConnections(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetConnectionsRequest = request.body;
 
     let { projectId, envId } = reqValid.payload;
@@ -55,7 +50,7 @@ export class GetConnectionsController {
 
     let connections;
 
-    if (common.isDefined(envId)) {
+    if (isDefined(envId)) {
       let apiEnvs = await this.envsService.getApiEnvs({
         projectId: projectId
       });

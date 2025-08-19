@@ -1,5 +1,3 @@
-import { common } from '~backend/barrels/common';
-import { enums } from '~common/barrels/enums';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
 import { FileFraction } from '~common/interfaces/blockml/internal/file-fraction';
 import { getYYYYMMDDCurrentDateByTimezone } from '~node-common/functions/get-yyyymmdd-current-date-by-timezone';
@@ -11,7 +9,7 @@ interface MalloyPart {
 }
 
 export function makeDashboardFileText(item: {
-  dashboard: common.DashboardX;
+  dashboard: DashboardX;
   newDashboardId: string;
   newTitle: string;
   // group: string;
@@ -32,99 +30,94 @@ export function makeDashboardFileText(item: {
 
   let malloyParts: MalloyPart[] = [];
 
-  let dashboardFile: common.FileDashboard = {
+  let dashboardFile: FileDashboard = {
     fileName: undefined,
     fileExt: undefined,
     filePath: undefined,
     name: undefined,
     dashboard: newDashboardId,
-    title: common.isDefined(newTitle) ? newTitle.trim() : undefined,
-    description: common.isDefined(dashboard.description)
+    title: isDefined(newTitle) ? newTitle.trim() : undefined,
+    description: isDefined(dashboard.description)
       ? dashboard.description
       : undefined,
     // group:
-    //   common.isDefined(group) && group.trim().length > 0
+    //   isDefined(group) && group.trim().length > 0
     //     ? group.trim()
     //     : undefined,
     access_roles:
-      common.isDefined(roles) && roles.trim().length > 0
+      isDefined(roles) && roles.trim().length > 0
         ? roles.split(',').map(x => x.trim())
         : undefined,
     parameters:
-      common.isDefined(dashboard.fields) && dashboard.fields.length > 0
+      isDefined(dashboard.fields) && dashboard.fields.length > 0
         ? dashboard.fields.map(field => {
-            let fileField: common.FieldFilter = {
+            let fileField: FieldFilter = {
               filter: field.id,
               hidden:
-                common.isDefined(field.hidden) &&
-                field.hidden !== common.DASHBOARD_FIELD_DEFAULT_HIDDEN
+                isDefined(field.hidden) &&
+                field.hidden !== DASHBOARD_FIELD_DEFAULT_HIDDEN
                   ? <any>field.hidden
                   : undefined,
               label:
-                common.isDefined(field.label) &&
+                isDefined(field.label) &&
                 field.label.toUpperCase() !==
-                  common.MyRegex.replaceUnderscoresWithSpaces(
-                    field.id
-                  ).toUpperCase()
+                  MyRegex.replaceUnderscoresWithSpaces(field.id).toUpperCase()
                   ? field.label
                   : undefined,
               description:
-                common.isDefined(field.description) && field.description !== ''
+                isDefined(field.description) && field.description !== ''
                   ? field.description
                   : undefined,
               result: field.result,
               store_model: field.storeModel,
               store_result: field.storeResult,
               store_filter: field.storeFilter,
-              fractions: common.isUndefined(field.storeModel)
+              fractions: isUndefined(field.storeModel)
                 ? undefined
                 : field.fractions?.map(mconfigFraction => {
                     let fileFraction: FileFraction = {};
 
-                    if (common.isDefined(mconfigFraction.logicGroup)) {
+                    if (isDefined(mconfigFraction.logicGroup)) {
                       fileFraction.logic = mconfigFraction.logicGroup;
                     }
 
-                    if (
-                      common.isDefined(mconfigFraction.storeFractionSubType)
-                    ) {
+                    if (isDefined(mconfigFraction.storeFractionSubType)) {
                       fileFraction.type = mconfigFraction.storeFractionSubType;
                     }
 
                     fileFraction.controls = mconfigFraction.controls.map(
                       mconfigControl => {
-                        let newFileControl: common.FileFractionControl = {};
+                        let newFileControl: FileFractionControl = {};
 
                         if (
-                          mconfigControl.controlClass ===
-                          enums.ControlClassEnum.Input
+                          mconfigControl.controlClass === ControlClassEnum.Input
                         ) {
                           newFileControl.input = mconfigControl.name;
                         } else if (
                           mconfigControl.controlClass ===
-                          enums.ControlClassEnum.ListInput
+                          ControlClassEnum.ListInput
                         ) {
                           newFileControl.list_input = mconfigControl.name;
                         } else if (
                           mconfigControl.controlClass ===
-                          enums.ControlClassEnum.Switch
+                          ControlClassEnum.Switch
                         ) {
                           newFileControl.switch = mconfigControl.name;
                         } else if (
                           mconfigControl.controlClass ===
-                          enums.ControlClassEnum.DatePicker
+                          ControlClassEnum.DatePicker
                         ) {
                           newFileControl.date_picker = mconfigControl.name;
                         } else if (
                           mconfigControl.controlClass ===
-                          enums.ControlClassEnum.Selector
+                          ControlClassEnum.Selector
                         ) {
                           newFileControl.selector = mconfigControl.name;
                         }
 
                         let newValue = mconfigControl.value;
 
-                        let reg = common.MyRegex.CAPTURE_S_REF();
+                        let reg = MyRegex.CAPTURE_S_REF();
 
                         let r;
 
@@ -160,7 +153,7 @@ export function makeDashboardFileText(item: {
                             // break;
                           }
 
-                          newValue = common.MyRegex.replaceSRefs(
+                          newValue = MyRegex.replaceSRefs(
                             newValue,
                             reference,
                             target
@@ -169,7 +162,7 @@ export function makeDashboardFileText(item: {
 
                         newFileControl.value =
                           newFileControl.controlClass ===
-                            common.ControlClassEnum.Switch &&
+                            ControlClassEnum.Switch &&
                           typeof newValue === 'string'
                             ? toBooleanFromLowercaseString(newValue)
                             : newValue;
@@ -184,8 +177,8 @@ export function makeDashboardFileText(item: {
                   }),
               suggest_model_dimension: field.suggestModelDimension,
               conditions:
-                common.isUndefined(field.storeModel) &&
-                common.isDefined(field.fractions) &&
+                isUndefined(field.storeModel) &&
+                isDefined(field.fractions) &&
                 field.fractions.length > 0
                   ? field.fractions.map(x => x.brick)
                   : undefined
@@ -195,22 +188,22 @@ export function makeDashboardFileText(item: {
           })
         : undefined,
     tiles:
-      common.isDefined(dashboard.tiles) && dashboard.tiles.length > 0
+      isDefined(dashboard.tiles) && dashboard.tiles.length > 0
         ? dashboard.tiles.map((x, tileIndex) => {
-            let newMconfig = common.makeCopy(x.mconfig);
+            let newMconfig = makeCopy(x.mconfig);
 
-            // if (common.isUndefined(x.malloyQueryId)) {
-            //   x.malloyQueryId = common.makeId();
+            // if (isUndefined(x.malloyQueryId)) {
+            //   x.malloyQueryId = makeId();
             // }
 
-            let filePartTile: common.FilePartTile = common.prepareTile({
+            let filePartTile: FilePartTile = prepareTile({
               tile: x,
               isForDashboard: true,
               mconfig: newMconfig
               // malloyQueryId: x.malloyQueryId
             });
 
-            // if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+            // if (newMconfig.modelType === ModelTypeEnum.Malloy) {
             //   let modelRelativePath = path.relative(
             //     `/${path.dirname(malloyDashboardFilePath)}`,
             //     `/${newMconfig.modelFilePath}`
@@ -230,7 +223,7 @@ export function makeDashboardFileText(item: {
         : undefined
   };
 
-  let dashboardFileText = common.toYaml(dashboardFile);
+  let dashboardFileText = toYaml(dashboardFile);
 
   // console.log('dashboardFileText');
   // console.log(dashboardFileText);

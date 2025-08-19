@@ -7,10 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -24,21 +21,18 @@ let retry = require('async-retry');
 export class SetUserUiController {
   constructor(
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserUi)
-  async setUserUi(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async setUserUi(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendSetUserUiRequest = request.body;
 
-    if (user.alias === common.RESTRICTED_USER_ALIAS) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_USER
+    if (user.alias === RESTRICTED_USER_ALIAS) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 

@@ -8,11 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
@@ -50,7 +46,7 @@ export class CreateTempMconfigAndQueryController {
     private wrapToEntService: WrapToEntService,
     private wrapToApiService: WrapToApiService,
     private mconfigsService: MconfigsService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -59,7 +55,7 @@ export class CreateTempMconfigAndQueryController {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery
   )
   async createTempMconfigAndQuery(
-    @AttachUser() user: schemaPostgres.UserEnt,
+    @AttachUser() user: UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendCreateTempMconfigAndQueryRequest =
@@ -77,7 +73,7 @@ export class CreateTempMconfigAndQueryController {
       queryOperations
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -118,29 +114,29 @@ export class CreateTempMconfigAndQueryController {
     });
 
     if (mconfig.structId !== bridge.structId) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_STRUCT_ID_CHANGED
+      throw new ServerError({
+        message: ErEnum.BACKEND_STRUCT_ID_CHANGED
       });
     }
 
-    let isAccessGranted = helper.checkAccess({
+    let isAccessGranted = checkAccess({
       userAlias: user.alias,
       member: member,
       entity: model
     });
 
     if (isAccessGranted === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_FORBIDDEN_MODEL
+      throw new ServerError({
+        message: ErEnum.BACKEND_FORBIDDEN_MODEL
       });
     }
 
-    let newMconfig: common.Mconfig;
-    let newQuery: common.Query;
+    let newMconfig: Mconfig;
+    let newQuery: Query;
 
     let isError = false;
 
-    if (model.type === common.ModelTypeEnum.Store) {
+    if (model.type === ModelTypeEnum.Store) {
       // if (model.isStoreModel === true) {
       // console.log('createMconfigAndQuery prepStoreMconfigQuery');
 
@@ -150,13 +146,13 @@ export class CreateTempMconfigAndQueryController {
         envId: envId,
         model: model,
         mconfig: mconfig,
-        metricsStartDateYYYYMMDD: common.isDefined(cellMetricsStartDateMs)
+        metricsStartDateYYYYMMDD: isDefined(cellMetricsStartDateMs)
           ? getYYYYMMDDFromEpochUtcByTimezone({
               timezone: mconfig.timezone,
               secondsEpochUTC: cellMetricsStartDateMs / 1000
             })
           : undefined,
-        metricsEndDateYYYYMMDD: common.isDefined(cellMetricsEndDateMs)
+        metricsEndDateYYYYMMDD: isDefined(cellMetricsEndDateMs)
           ? getYYYYMMDDFromEpochUtcByTimezone({
               timezone: mconfig.timezone,
               secondsEpochUTC: cellMetricsEndDateMs / 1000
@@ -167,7 +163,7 @@ export class CreateTempMconfigAndQueryController {
       newMconfig = mqe.newMconfig;
       newQuery = mqe.newQuery;
       isError = mqe.isError;
-    } else if (model.type === common.ModelTypeEnum.Malloy) {
+    } else if (model.type === ModelTypeEnum.Malloy) {
       let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
         projectId: projectId,
         envId: envId,
@@ -218,7 +214,7 @@ export class CreateTempMconfigAndQueryController {
           mconfig: newMconfigEnt,
           modelFields: model.fields
         }),
-        query: common.isDefined(query)
+        query: isDefined(query)
           ? this.wrapToApiService.wrapToApiQuery(query)
           : this.wrapToApiService.wrapToApiQuery(newQueryEnt)
       };

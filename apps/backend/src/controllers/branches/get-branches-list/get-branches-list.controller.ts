@@ -1,8 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, asc, eq, inArray } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
@@ -22,10 +20,7 @@ export class GetBranchesListController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetBranchesList)
-  async getBranchesList(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getBranchesList(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetBranchesListRequest = request.body;
 
     let { projectId } = reqValid.payload;
@@ -42,7 +37,7 @@ export class GetBranchesListController {
     let branches = await this.db.drizzle.query.branchesTable.findMany({
       where: and(
         eq(branchesTable.projectId, projectId),
-        inArray(branchesTable.repoId, [common.PROD_REPO_ID, user.userId])
+        inArray(branchesTable.repoId, [PROD_REPO_ID, user.userId])
       ),
       orderBy: asc(branchesTable.branchId)
     });
@@ -53,7 +48,7 @@ export class GetBranchesListController {
       userMember: apiMember,
       branchesList: branches.map(x => ({
         branchId: x.branchId,
-        isRepoProd: x.repoId === common.PROD_REPO_ID
+        isRepoProd: x.repoId === PROD_REPO_ID
       }))
     };
 

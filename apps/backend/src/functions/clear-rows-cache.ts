@@ -1,10 +1,8 @@
-import { common } from '~backend/barrels/common';
-
 export function clearRowsCache(item: {
-  processedRows: common.Row[];
+  processedRows: Row[];
   changedRowIds: string[];
   timezone: string;
-  timeSpec: common.TimeSpecEnum;
+  timeSpec: TimeSpecEnum;
   timeRangeFractionBrick: string;
 }) {
   let {
@@ -26,8 +24,8 @@ export function clearRowsCache(item: {
       row.deps.findIndex(dep => changedRowIds.indexOf(dep) > -1) > -1
     ) {
       if (
-        row.rowType === common.RowTypeEnum.Formula ||
-        row.rowType === common.RowTypeEnum.Metric
+        row.rowType === RowTypeEnum.Formula ||
+        row.rowType === RowTypeEnum.Metric
       ) {
         let currentRqIndex = row.rqs.findIndex(
           y =>
@@ -41,7 +39,7 @@ export function clearRowsCache(item: {
           ...row.rqs.slice(currentRqIndex + 1)
         ];
 
-        if (row.rowType === common.RowTypeEnum.Metric) {
+        if (row.rowType === RowTypeEnum.Metric) {
           row.parametersFiltersWithExcludedTime = [];
 
           row.records = [];

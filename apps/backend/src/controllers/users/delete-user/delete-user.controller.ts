@@ -9,12 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
@@ -33,21 +28,18 @@ let retry = require('async-retry');
 export class DeleteUserController {
   constructor(
     private rabbitService: RabbitService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteUser)
-  async deleteUser(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async deleteUser(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendDeleteUserRequest = request.body;
 
-    if (user.alias === common.RESTRICTED_USER_ALIAS) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_USER
+    if (user.alias === RESTRICTED_USER_ALIAS) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 
@@ -58,8 +50,8 @@ export class DeleteUserController {
     });
 
     if (ownerOrgs.length > 0) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_USER_IS_ORG_OWNER,
+      throw new ServerError({
+        message: ErEnum.BACKEND_USER_IS_ORG_OWNER,
         data: {
           orgIds: ownerOrgs.map(x => x.orgId)
         }
@@ -95,8 +87,8 @@ export class DeleteUserController {
     });
 
     if (erProjectIds.length > 0) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_USER_IS_THE_ONLY_PROJECT_ADMIN,
+      throw new ServerError({
+        message: ErEnum.BACKEND_USER_IS_THE_ONLY_PROJECT_ADMIN,
         data: {
           projectIds: erProjectIds
         }
@@ -116,7 +108,7 @@ export class DeleteUserController {
             where: inArray(projectsTable.projectId, projectIds)
           });
 
-    await asyncPool(1, userMembers, async (m: schemaPostgres.MemberEnt) => {
+    await asyncPool(1, userMembers, async (m: MemberEnt) => {
       let project = projects.find(p => p.projectId === m.projectId);
 
       let toDiskDeleteDevRepoRequest: apiToDisk.ToDiskDeleteDevRepoRequest = {
@@ -133,7 +125,7 @@ export class DeleteUserController {
 
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteDevRepoResponse>(
         {
-          routingKey: helper.makeRoutingKeyToDisk({
+          routingKey: makeRoutingKeyToDisk({
             orgId: project.orgId,
             projectId: project.projectId
           }),

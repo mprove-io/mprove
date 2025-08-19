@@ -1,9 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
@@ -32,10 +29,7 @@ export class GetReportsController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReports)
-  async getReports(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getReports(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetReportsRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
@@ -51,7 +45,7 @@ export class GetReportsController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
+      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -84,7 +78,7 @@ export class GetReportsController {
     });
 
     let reportsGrantedAccess = structReports.filter(x =>
-      helper.checkAccess({
+      checkAccess({
         userAlias: user.alias,
         member: userMember,
         entity: x
@@ -116,7 +110,7 @@ export class GetReportsController {
     });
 
     let modelIds = struct.metrics
-      .filter(m => common.isDefined(m.modelId))
+      .filter(m => isDefined(m.modelId))
       .map(x => x.modelId);
 
     let models = await this.db.drizzle.query.modelsTable.findMany({
@@ -140,7 +134,7 @@ export class GetReportsController {
           models: models.map(model =>
             this.wrapToApiService.wrapToApiModel({
               model: model,
-              hasAccess: helper.checkAccess({
+              hasAccess: checkAccess({
                 userAlias: user.alias,
                 member: userMember,
                 entity: model
@@ -163,12 +157,12 @@ export class GetReportsController {
         })
       ),
       storeModels: models
-        .filter(model => model.type === common.ModelTypeEnum.Store)
+        .filter(model => model.type === ModelTypeEnum.Store)
         // .filter(model => model.isStoreModel === true)
         .map(model =>
           this.wrapToApiService.wrapToApiModel({
             model: model,
-            hasAccess: helper.checkAccess({
+            hasAccess: checkAccess({
               userAlias: user.alias,
               member: userMember,
               entity: model

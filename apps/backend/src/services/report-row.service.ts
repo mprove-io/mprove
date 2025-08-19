@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { common } from '~backend/barrels/common';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { clearRowsCache } from '~backend/functions/clear-rows-cache';
 import { processRowIds } from '~backend/functions/process-row-ids';
 
@@ -9,18 +8,18 @@ export class ReportRowService {
   constructor() {}
 
   getProcessedRows(item: {
-    rowChange: common.RowChange;
+    rowChange: RowChange;
     rowIds: string[];
-    metrics: common.ModelMetric[];
-    models: schemaPostgres.ModelEnt[];
-    rows: common.Row[];
-    changeType: common.ChangeTypeEnum;
+    metrics: ModelMetric[];
+    models: ModelEnt[];
+    rows: Row[];
+    changeType: ChangeTypeEnum;
     timezone: string;
-    timeSpec: common.TimeSpecEnum;
+    timeSpec: TimeSpecEnum;
     timeRangeFractionBrick: string;
-    struct: schemaPostgres.StructEnt;
-    newReportFields: common.ReportField[];
-    listeners: common.Listener[];
+    struct: StructEnt;
+    newReportFields: ReportField[];
+    listeners: Listener[];
   }) {
     let {
       rows,
@@ -37,33 +36,29 @@ export class ReportRowService {
       listeners
     } = item;
 
-    let processedRows: common.Row[] = rows.map(row => Object.assign({}, row));
+    let processedRows: Row[] = rows.map(row => Object.assign({}, row));
 
-    if (changeType === common.ChangeTypeEnum.AddEmpty) {
+    if (changeType === ChangeTypeEnum.AddEmpty) {
       let targetIndex: number;
 
-      if (common.isDefined(rowChange.rowId)) {
+      if (isDefined(rowChange.rowId)) {
         targetIndex = processedRows.findIndex(
           pRow => pRow.rowId === rowChange.rowId
         );
       }
 
-      let rowIdsNumbers = processedRows.map(y =>
-        common.rowIdLetterToNumber(y.rowId)
-      );
+      let rowIdsNumbers = processedRows.map(y => rowIdLetterToNumber(y.rowId));
 
       let maxRowIdNumber =
         rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
 
-      let rowIdNumber = common.isDefined(maxRowIdNumber)
-        ? maxRowIdNumber + 1
-        : 0;
+      let rowIdNumber = isDefined(maxRowIdNumber) ? maxRowIdNumber + 1 : 0;
 
-      let rowId = common.rowIdNumberToLetter(rowIdNumber);
+      let rowId = rowIdNumberToLetter(rowIdNumber);
 
-      let newRow: common.Row = {
+      let newRow: Row = {
         rowId: rowId,
-        rowType: common.RowTypeEnum.Empty,
+        rowType: RowTypeEnum.Empty,
         name: undefined,
         metricId: undefined,
         topLabel: undefined,
@@ -91,9 +86,9 @@ export class ReportRowService {
 
       processedRows.push(newRow);
 
-      let targetRows: common.Row[] = [];
+      let targetRows: Row[] = [];
 
-      if (common.isDefined(targetIndex)) {
+      if (isDefined(targetIndex)) {
         targetRows = [
           ...processedRows.slice(0, targetIndex + 1),
           newRow,
@@ -104,36 +99,32 @@ export class ReportRowService {
       }
 
       processedRows = processRowIds({
-        rows: common.isDefined(targetIndex) ? targetRows : processedRows,
-        targetRowIds: common.isDefined(targetIndex)
+        rows: isDefined(targetIndex) ? targetRows : processedRows,
+        targetRowIds: isDefined(targetIndex)
           ? targetRows.map(pRow => pRow.rowId)
           : processedRows.map(pRow => pRow.rowId)
       });
-    } else if (changeType === common.ChangeTypeEnum.AddHeader) {
+    } else if (changeType === ChangeTypeEnum.AddHeader) {
       let targetIndex: number;
 
-      if (common.isDefined(rowChange.rowId)) {
+      if (isDefined(rowChange.rowId)) {
         targetIndex = processedRows.findIndex(
           pRow => pRow.rowId === rowChange.rowId
         );
       }
 
-      let rowIdsNumbers = processedRows.map(y =>
-        common.rowIdLetterToNumber(y.rowId)
-      );
+      let rowIdsNumbers = processedRows.map(y => rowIdLetterToNumber(y.rowId));
 
       let maxRowIdNumber =
         rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
 
-      let rowIdNumber = common.isDefined(maxRowIdNumber)
-        ? maxRowIdNumber + 1
-        : 0;
+      let rowIdNumber = isDefined(maxRowIdNumber) ? maxRowIdNumber + 1 : 0;
 
-      let rowId = common.rowIdNumberToLetter(rowIdNumber);
+      let rowId = rowIdNumberToLetter(rowIdNumber);
 
-      let newRow: common.Row = {
+      let newRow: Row = {
         rowId: rowId,
-        rowType: common.RowTypeEnum.Header,
+        rowType: RowTypeEnum.Header,
         name: rowChange.name,
         metricId: undefined,
         topLabel: undefined,
@@ -161,9 +152,9 @@ export class ReportRowService {
 
       processedRows.push(newRow);
 
-      let targetRows: common.Row[] = [];
+      let targetRows: Row[] = [];
 
-      if (common.isDefined(targetIndex)) {
+      if (isDefined(targetIndex)) {
         targetRows = [
           ...processedRows.slice(0, targetIndex + 1),
           newRow,
@@ -174,36 +165,32 @@ export class ReportRowService {
       }
 
       processedRows = processRowIds({
-        rows: common.isDefined(targetIndex) ? targetRows : processedRows,
-        targetRowIds: common.isDefined(targetIndex)
+        rows: isDefined(targetIndex) ? targetRows : processedRows,
+        targetRowIds: isDefined(targetIndex)
           ? targetRows.map(pRow => pRow.rowId)
           : processedRows.map(pRow => pRow.rowId)
       });
-    } else if (changeType === common.ChangeTypeEnum.AddFormula) {
+    } else if (changeType === ChangeTypeEnum.AddFormula) {
       let targetIndex: number;
 
-      if (common.isDefined(rowChange.rowId)) {
+      if (isDefined(rowChange.rowId)) {
         targetIndex = processedRows.findIndex(
           pRow => pRow.rowId === rowChange.rowId
         );
       }
 
-      let rowIdsNumbers = processedRows.map(y =>
-        common.rowIdLetterToNumber(y.rowId)
-      );
+      let rowIdsNumbers = processedRows.map(y => rowIdLetterToNumber(y.rowId));
 
       let maxRowIdNumber =
         rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
 
-      let rowIdNumber = common.isDefined(maxRowIdNumber)
-        ? maxRowIdNumber + 1
-        : 0;
+      let rowIdNumber = isDefined(maxRowIdNumber) ? maxRowIdNumber + 1 : 0;
 
-      let rowId = common.rowIdNumberToLetter(rowIdNumber);
+      let rowId = rowIdNumberToLetter(rowIdNumber);
 
-      let newRow: common.Row = {
+      let newRow: Row = {
         rowId: rowId,
-        rowType: common.RowTypeEnum.Formula,
+        rowType: RowTypeEnum.Formula,
         name: rowChange.name,
         metricId: undefined,
         topLabel: undefined,
@@ -231,9 +218,9 @@ export class ReportRowService {
 
       processedRows.push(newRow);
 
-      let targetRows: common.Row[] = [];
+      let targetRows: Row[] = [];
 
-      if (common.isDefined(targetIndex)) {
+      if (isDefined(targetIndex)) {
         targetRows = [
           ...processedRows.slice(0, targetIndex + 1),
           newRow,
@@ -244,38 +231,34 @@ export class ReportRowService {
       }
 
       processedRows = processRowIds({
-        rows: common.isDefined(targetIndex) ? targetRows : processedRows,
-        targetRowIds: common.isDefined(targetIndex)
+        rows: isDefined(targetIndex) ? targetRows : processedRows,
+        targetRowIds: isDefined(targetIndex)
           ? targetRows.map(pRow => pRow.rowId)
           : processedRows.map(pRow => pRow.rowId)
       });
-    } else if (changeType === common.ChangeTypeEnum.AddMetric) {
+    } else if (changeType === ChangeTypeEnum.AddMetric) {
       let targetIndex: number;
 
-      if (common.isDefined(rowChange.rowId)) {
+      if (isDefined(rowChange.rowId)) {
         targetIndex = processedRows.findIndex(
           pRow => pRow.rowId === rowChange.rowId
         );
       }
 
-      let rowIdsNumbers = processedRows.map(y =>
-        common.rowIdLetterToNumber(y.rowId)
-      );
+      let rowIdsNumbers = processedRows.map(y => rowIdLetterToNumber(y.rowId));
 
       let maxRowIdNumber =
         rowIdsNumbers.length > 0 ? Math.max(...rowIdsNumbers) : undefined;
 
-      let rowIdNumber = common.isDefined(maxRowIdNumber)
-        ? maxRowIdNumber + 1
-        : 0;
+      let rowIdNumber = isDefined(maxRowIdNumber) ? maxRowIdNumber + 1 : 0;
 
-      let rowId = common.rowIdNumberToLetter(rowIdNumber);
+      let rowId = rowIdNumberToLetter(rowIdNumber);
 
-      let metric: common.ModelMetric = metrics.find(
+      let metric: ModelMetric = metrics.find(
         m => m.metricId === rowChange.metricId
       );
 
-      let newRow: common.Row = {
+      let newRow: Row = {
         rowId: rowId,
         rowType: rowChange.rowType,
         name: undefined,
@@ -288,9 +271,7 @@ export class ReportRowService {
         timeFieldLabel: metric.timeFieldLabel,
         timeLabel: metric.timeLabel,
         showChart: rowChange.showChart,
-        parameters: common.isDefined(rowChange.parameters)
-          ? rowChange.parameters
-          : [],
+        parameters: isDefined(rowChange.parameters) ? rowChange.parameters : [],
         parametersFiltersWithExcludedTime: [],
         formula: undefined,
         deps: undefined,
@@ -307,9 +288,9 @@ export class ReportRowService {
 
       processedRows.push(newRow);
 
-      let targetRows: common.Row[] = [];
+      let targetRows: Row[] = [];
 
-      if (common.isDefined(targetIndex)) {
+      if (isDefined(targetIndex)) {
         targetRows = [
           ...processedRows.slice(0, targetIndex + 1),
           newRow,
@@ -320,26 +301,26 @@ export class ReportRowService {
       }
 
       processedRows = processRowIds({
-        rows: common.isDefined(targetIndex) ? targetRows : processedRows,
-        targetRowIds: common.isDefined(targetIndex)
+        rows: isDefined(targetIndex) ? targetRows : processedRows,
+        targetRowIds: isDefined(targetIndex)
           ? targetRows.map(pRow => pRow.rowId)
           : processedRows.map(pRow => pRow.rowId)
       });
-    } else if (changeType === common.ChangeTypeEnum.EditInfo) {
+    } else if (changeType === ChangeTypeEnum.EditInfo) {
       let pRow = processedRows.find(row => row.rowId === rowChange.rowId);
 
-      let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
-        showChart: common.isDefined(rowChange.showChart)
+      let editRow: Row = Object.assign({}, pRow, <Row>{
+        showChart: isDefined(rowChange.showChart)
           ? rowChange.showChart
           : pRow.showChart,
-        name: common.isDefined(rowChange.name) ? rowChange.name : pRow.name,
-        formatNumber: common.isDefined(rowChange.formatNumber)
+        name: isDefined(rowChange.name) ? rowChange.name : pRow.name,
+        formatNumber: isDefined(rowChange.formatNumber)
           ? rowChange.formatNumber
           : pRow.formatNumber,
-        currencyPrefix: common.isDefined(rowChange.currencyPrefix)
+        currencyPrefix: isDefined(rowChange.currencyPrefix)
           ? rowChange.currencyPrefix
           : pRow.currencyPrefix,
-        currencySuffix: common.isDefined(rowChange.currencySuffix)
+        currencySuffix: isDefined(rowChange.currencySuffix)
           ? rowChange.currencySuffix
           : pRow.currencySuffix
       });
@@ -347,27 +328,27 @@ export class ReportRowService {
       processedRows = processedRows.map(row =>
         row.rowId === editRow.rowId ? editRow : row
       );
-      // } else if (changeType === common.ChangeTypeEnum.ConvertToHeader) {
+      // } else if (changeType === ChangeTypeEnum.ConvertToHeader) {
       //   let pRow = processedRows.find(row => row.rowId === rowChange.rowId);
 
-      //   let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
-      //     rowType: common.RowTypeEnum.Header,
+      //   let editRow: Row = Object.assign({}, pRow, <Row>{
+      //     rowType: RowTypeEnum.Header,
       //     name: rowChange.name
       //   });
 
       //   processedRows = processedRows.map(row =>
       //     row.rowId === editRow.rowId ? editRow : row
       //   );
-      // } else if (changeType === common.ChangeTypeEnum.ConvertToMetric) {
-      //   let metric: common.ModelMetric = metrics.find(
+      // } else if (changeType === ChangeTypeEnum.ConvertToMetric) {
+      //   let metric: ModelMetric = metrics.find(
       //     m => m.metricId === rowChange.metricId
       //   );
 
       //   let model = models.find(m => m.modelId === metric.modelId);
 
-      //   let editRow: common.Row = {
+      //   let editRow: Row = {
       //     rowId: rowChange.rowId,
-      //     rowType: common.RowTypeEnum.Metric,
+      //     rowType: RowTypeEnum.Metric,
       //     name: undefined,
       //     metricId: metric.metricId,
       //     topLabel: metric.topLabel,
@@ -379,20 +360,20 @@ export class ReportRowService {
       //     timeLabel: metric.timeLabel,
       //     showChart: false,
       //     parameters:
-      //       model.type !== common.ModelTypeEnum.Store
+      //       model.type !== ModelTypeEnum.Store
       //         ? []
-      //         : (model.content as common.FileStore).fields
+      //         : (model.content as FileStore).fields
       //             .filter(
       //               x =>
-      //                 x.fieldClass === common.FieldClassEnum.Filter &&
-      //                 common.toBooleanFromLowercaseString(x.required) === true
+      //                 x.fieldClass === FieldClassEnum.Filter &&
+      //                 toBooleanFromLowercaseString(x.required) === true
       //             )
       //             .map(storeFilter => {
-      //               let newControls: common.FractionControl[] = [];
+      //               let newControls: FractionControl[] = [];
 
       //               storeFilter.fraction_controls.forEach(
       //                 storeFractionControl => {
-      //                   let newControl: common.FractionControl = {
+      //                   let newControl: FractionControl = {
       //                     isMetricsDate: storeFractionControl.isMetricsDate,
       //                     options: storeFractionControl.options,
       //                     value: storeFractionControl.value,
@@ -406,14 +387,14 @@ export class ReportRowService {
       //                 }
       //               );
 
-      //               let newFraction: common.Fraction = {
-      //                 type: common.FractionTypeEnum.StoreFraction,
+      //               let newFraction: Fraction = {
+      //                 type: FractionTypeEnum.StoreFraction,
       //                 controls: newControls,
       //                 brick: undefined as any,
       //                 operator: undefined as any
       //               };
 
-      //               let newParameter: common.Parameter = {
+      //               let newParameter: Parameter = {
       //                 apply_to: storeFilter.name,
       //                 fractions: [newFraction],
       //                 listen: undefined
@@ -443,10 +424,10 @@ export class ReportRowService {
       //     rows: processedRows,
       //     targetRowIds: processedRows.map(pr => pr.rowId)
       //   });
-      // } else if (changeType === common.ChangeTypeEnum.ConvertToFormula) {
-      //   let editRow: common.Row = {
+      // } else if (changeType === ChangeTypeEnum.ConvertToFormula) {
+      //   let editRow: Row = {
       //     rowId: rowChange.rowId,
-      //     rowType: common.RowTypeEnum.Formula,
+      //     rowType: RowTypeEnum.Formula,
       //     name: rowChange.name,
       //     metricId: undefined,
       //     topLabel: undefined,
@@ -480,7 +461,7 @@ export class ReportRowService {
       //     rows: processedRows,
       //     targetRowIds: processedRows.map(pr => pr.rowId)
       //   });
-    } else if (changeType === common.ChangeTypeEnum.EditFormula) {
+    } else if (changeType === ChangeTypeEnum.EditFormula) {
       clearRowsCache({
         processedRows: processedRows,
         changedRowIds: [rowChange.rowId],
@@ -491,7 +472,7 @@ export class ReportRowService {
 
       let pRow = processedRows.find(r => r.rowId === rowChange.rowId);
 
-      let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
+      let editRow: Row = Object.assign({}, pRow, <Row>{
         formula: rowChange.formula,
         rqs: [],
         records: []
@@ -505,7 +486,7 @@ export class ReportRowService {
         rows: processedRows,
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
-    } else if (changeType === common.ChangeTypeEnum.EditParameters) {
+    } else if (changeType === ChangeTypeEnum.EditParameters) {
       clearRowsCache({
         processedRows: processedRows,
         changedRowIds: [],
@@ -514,10 +495,10 @@ export class ReportRowService {
         timeRangeFractionBrick: timeRangeFractionBrick
       });
 
-      if (common.isDefined(rowChange)) {
+      if (isDefined(rowChange)) {
         let pRow = processedRows.find(r => r.rowId === rowChange.rowId);
 
-        let editRow: common.Row = Object.assign({}, pRow, <common.Row>{
+        let editRow: Row = Object.assign({}, pRow, <Row>{
           parameters: rowChange.parameters,
           rqs: [],
           records: [],
@@ -534,7 +515,7 @@ export class ReportRowService {
         rows: processedRows,
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
-    } else if (changeType === common.ChangeTypeEnum.EditListeners) {
+    } else if (changeType === ChangeTypeEnum.EditListeners) {
       clearRowsCache({
         processedRows: processedRows,
         changedRowIds: [],
@@ -544,40 +525,36 @@ export class ReportRowService {
       });
 
       processedRows = processedRows.map(row => {
-        if (common.isUndefined(row.parameters)) {
+        if (isUndefined(row.parameters)) {
           return row;
         }
 
-        let newParameters: common.Parameter[] = [];
+        let newParameters: Parameter[] = [];
 
         row.parameters.forEach(rowParameter => {
           let listener = listeners.find(
             l => l.rowId === row.rowId && l.applyTo === rowParameter.apply_to
           );
 
-          if (common.isDefined(listener)) {
+          if (isDefined(listener)) {
             let reportField = newReportFields.find(
               f => f.id === listener.listen
             );
 
-            let editParameter: common.Parameter = Object.assign(
-              {},
-              rowParameter,
-              <common.Parameter>{
-                listen: listener.listen,
-                fractions: reportField.fractions
-              }
-            );
+            let editParameter: Parameter = Object.assign({}, rowParameter, <
+              Parameter
+            >{
+              listen: listener.listen,
+              fractions: reportField.fractions
+            });
 
             newParameters.push(editParameter);
           } else {
-            let editParameter: common.Parameter = Object.assign(
-              {},
-              rowParameter,
-              <common.Parameter>{
-                listen: undefined
-              }
-            );
+            let editParameter: Parameter = Object.assign({}, rowParameter, <
+              Parameter
+            >{
+              listen: undefined
+            });
 
             newParameters.push(editParameter);
           }
@@ -592,7 +569,7 @@ export class ReportRowService {
           .forEach(l => {
             let reportField = newReportFields.find(f => f.id === l.listen);
 
-            let newParameter: common.Parameter = {
+            let newParameter: Parameter = {
               apply_to: l.applyTo,
               fractions: reportField.fractions,
               listen: l.listen
@@ -601,7 +578,7 @@ export class ReportRowService {
             newParameters.push(newParameter);
           });
 
-        let editRow: common.Row = Object.assign({}, row, <common.Row>{
+        let editRow: Row = Object.assign({}, row, <Row>{
           parameters: newParameters,
           rqs: [],
           records: [],
@@ -616,7 +593,7 @@ export class ReportRowService {
         rows: processedRows,
         targetRowIds: processedRows.map(pr => pr.rowId)
       });
-      // } else if (changeType === common.ChangeTypeEnum.Clear) {
+      // } else if (changeType === ChangeTypeEnum.Clear) {
       //   clearRowsCache({
       //     processedRows: processedRows,
       //     changedRowIds: rowIds,
@@ -627,9 +604,9 @@ export class ReportRowService {
 
       //   processedRows = processedRows.map(row => {
       //     if (rowIds.indexOf(row.rowId) > -1) {
-      //       let emptyRow: common.Row = {
+      //       let emptyRow: Row = {
       //         rowId: row.rowId,
-      //         rowType: common.RowTypeEnum.Empty,
+      //         rowType: RowTypeEnum.Empty,
       //         name: undefined,
       //         metricId: undefined,
       //         topLabel: undefined,
@@ -665,7 +642,7 @@ export class ReportRowService {
       //     rows: processedRows,
       //     targetRowIds: processedRows.map(pRow => pRow.rowId)
       //   });
-    } else if (changeType === common.ChangeTypeEnum.Delete) {
+    } else if (changeType === ChangeTypeEnum.Delete) {
       clearRowsCache({
         processedRows: processedRows,
         changedRowIds: rowIds,
@@ -683,12 +660,12 @@ export class ReportRowService {
         targetRowIds: processedRows.map(pRow => pRow.rowId),
         replaceWithUndef: rowIds
       });
-    } else if (changeType === common.ChangeTypeEnum.Move) {
+    } else if (changeType === ChangeTypeEnum.Move) {
       processedRows = processRowIds({
         rows: processedRows,
         targetRowIds: rowIds
       });
-    } else if (changeType === common.ChangeTypeEnum.EditChart) {
+    } else if (changeType === ChangeTypeEnum.EditChart) {
       //
     }
 

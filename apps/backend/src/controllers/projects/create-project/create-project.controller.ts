@@ -1,10 +1,7 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { notesTable } from '~backend/drizzle/postgres/schema/notes';
@@ -21,15 +18,12 @@ export class CreateProjectController {
     private projectsService: ProjectsService,
     private orgsService: OrgsService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateProject)
-  async createProject(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async createProject(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendCreateProjectRequest = request.body;
 
     let { traceId } = reqValid.info;
@@ -42,11 +36,11 @@ export class CreateProjectController {
       userId: user.userId
     });
 
-    let firstOrgId = this.cs.get<interfaces.Config['firstOrgId']>('firstOrgId');
+    let firstOrgId = this.cs.get<BackendConfig['firstOrgId']>('firstOrgId');
 
     if (org.orgId === firstOrgId) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_ORGANIZATION
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_ORGANIZATION
       });
     }
 
@@ -54,22 +48,22 @@ export class CreateProjectController {
       where: and(eq(projectsTable.orgId, orgId), eq(projectsTable.name, name))
     });
 
-    if (common.isDefined(project)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_PROJECT_ALREADY_EXISTS
+    if (isDefined(project)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_PROJECT_ALREADY_EXISTS
       });
     }
 
-    let note: schemaPostgres.NoteEnt;
+    let note: NoteEnt;
 
-    if (remoteType === common.ProjectRemoteTypeEnum.GitClone) {
+    if (remoteType === ProjectRemoteTypeEnum.GitClone) {
       note = await this.db.drizzle.query.notesTable.findFirst({
         where: eq(notesTable.noteId, noteId)
       });
 
-      if (common.isUndefined(note)) {
-        throw new common.ServerError({
-          message: common.ErEnum.BACKEND_NOTE_DOES_NOT_EXIST
+      if (isUndefined(note)) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_NOTE_DOES_NOT_EXIST
         });
       }
     }
@@ -81,7 +75,7 @@ export class CreateProjectController {
       user: user,
       testProjectId: undefined,
       remoteType: remoteType,
-      projectId: common.makeId(),
+      projectId: makeId(),
       gitUrl: gitUrl,
       privateKey: note?.privateKey,
       publicKey: note?.publicKey,

@@ -9,12 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
@@ -46,22 +41,19 @@ export class PushRepoController {
     private envsService: EnvsService,
     private makerService: MakerService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo)
-  async pushRepo(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async pushRepo(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendPushRepoRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -85,14 +77,14 @@ export class PushRepoController {
     });
 
     let firstProjectId =
-      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
+      this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
 
     if (
       member.isAdmin === false && // no check for repoId
       projectId === firstProjectId
     ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 
@@ -116,7 +108,7 @@ export class PushRepoController {
 
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskPushRepoResponse>({
-        routingKey: helper.makeRoutingKeyToDisk({
+        routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
         }),
@@ -135,7 +127,7 @@ export class PushRepoController {
     let prodBranch = await this.db.drizzle.query.branchesTable.findFirst({
       where: and(
         eq(branchesTable.projectId, projectId),
-        eq(branchesTable.repoId, common.PROD_REPO_ID),
+        eq(branchesTable.repoId, PROD_REPO_ID),
         eq(branchesTable.branchId, branchId)
       )
     });
@@ -143,25 +135,25 @@ export class PushRepoController {
     let prodBranchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
         eq(bridgesTable.projectId, branch.projectId),
-        eq(bridgesTable.repoId, common.PROD_REPO_ID),
+        eq(bridgesTable.repoId, PROD_REPO_ID),
         eq(bridgesTable.branchId, branch.branchId)
       )
     });
 
-    if (common.isUndefined(prodBranch)) {
+    if (isUndefined(prodBranch)) {
       prodBranch = this.makerService.makeBranch({
         projectId: projectId,
-        repoId: common.PROD_REPO_ID,
+        repoId: PROD_REPO_ID,
         branchId: branchId
       });
 
       branchBridges.forEach(x => {
         let prodBranchBridge = this.makerService.makeBridge({
           projectId: branch.projectId,
-          repoId: common.PROD_REPO_ID,
+          repoId: PROD_REPO_ID,
           branchId: branch.branchId,
           envId: x.envId,
-          structId: common.EMPTY_STRUCT_ID,
+          structId: EMPTY_STRUCT_ID,
           needValidate: true
         });
 
@@ -171,7 +163,7 @@ export class PushRepoController {
 
     await forEachSeries(prodBranchBridges, async x => {
       if (x.envId === envId) {
-        let structId = common.makeId();
+        let structId = makeId();
 
         await this.blockmlService.rebuildStruct({
           traceId: traceId,
@@ -186,7 +178,7 @@ export class PushRepoController {
         x.structId = structId;
         x.needValidate = false;
       } else {
-        x.structId = common.EMPTY_STRUCT_ID;
+        x.structId = EMPTY_STRUCT_ID;
         x.needValidate = true;
       }
     });

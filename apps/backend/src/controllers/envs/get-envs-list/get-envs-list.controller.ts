@@ -1,8 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { envsTable } from '~backend/drizzle/postgres/schema/envs';
@@ -22,10 +20,7 @@ export class GetEnvsListController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvsList)
-  async getEnvsList(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getEnvsList(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetEnvsListRequest = request.body;
 
     let { projectId, isFilter } = reqValid.payload;
@@ -46,8 +41,7 @@ export class GetEnvsListController {
     if (isFilter === true) {
       envs = envs.filter(
         x =>
-          x.memberIds.indexOf(user.userId) > -1 ||
-          x.envId === common.PROJECT_ENV_PROD
+          x.memberIds.indexOf(user.userId) > -1 || x.envId === PROJECT_ENV_PROD
       );
     }
 

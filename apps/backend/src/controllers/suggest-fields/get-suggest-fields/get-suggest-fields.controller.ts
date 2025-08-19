@@ -1,9 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
@@ -31,10 +28,7 @@ export class GetSuggestFieldsController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields)
-  async getSuggestFields(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getSuggestFields(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetSuggestFieldsRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
@@ -50,7 +44,7 @@ export class GetSuggestFieldsController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
+      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -78,7 +72,7 @@ export class GetSuggestFieldsController {
 
     let modelsGrantedAccess = models
       .filter(x =>
-        helper.checkAccess({
+        checkAccess({
           userAlias: user.alias,
           member: userMember,
           entity: x
@@ -86,22 +80,22 @@ export class GetSuggestFieldsController {
       )
       .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0));
 
-    let suggestFields: common.SuggestField[] = [];
+    let suggestFields: SuggestField[] = [];
 
     modelsGrantedAccess.forEach(x => {
       x.fields
         .filter(
           y =>
             y.hidden === false &&
-            y.fieldClass === common.FieldClassEnum.Dimension &&
-            y.result === common.FieldResultEnum.String
+            y.fieldClass === FieldClassEnum.Dimension &&
+            y.result === FieldResultEnum.String
         )
         .forEach(field => {
-          let partFieldLabel = common.isDefined(field.groupLabel)
+          let partFieldLabel = isDefined(field.groupLabel)
             ? `${field.groupLabel} ${field.label}`
             : field.label;
 
-          let suggestField: common.SuggestField = {
+          let suggestField: SuggestField = {
             modelFieldRef: `${x.modelId}.${field.id}`,
             topLabel: x.label,
             partNodeLabel: field.topLabel,
@@ -118,17 +112,17 @@ export class GetSuggestFieldsController {
     });
 
     suggestFields = suggestFields.sort((a, b) =>
-      a.fieldClass !== common.FieldClassEnum.Dimension &&
-      b.fieldClass === common.FieldClassEnum.Dimension
+      a.fieldClass !== FieldClassEnum.Dimension &&
+      b.fieldClass === FieldClassEnum.Dimension
         ? 1
-        : a.fieldClass === common.FieldClassEnum.Dimension &&
-            b.fieldClass !== common.FieldClassEnum.Dimension
+        : a.fieldClass === FieldClassEnum.Dimension &&
+            b.fieldClass !== FieldClassEnum.Dimension
           ? -1
-          : a.fieldClass !== common.FieldClassEnum.Filter &&
-              b.fieldClass === common.FieldClassEnum.Filter
+          : a.fieldClass !== FieldClassEnum.Filter &&
+              b.fieldClass === FieldClassEnum.Filter
             ? 1
-            : a.fieldClass === common.FieldClassEnum.Filter &&
-                b.fieldClass !== common.FieldClassEnum.Filter
+            : a.fieldClass === FieldClassEnum.Filter &&
+                b.fieldClass !== FieldClassEnum.Filter
               ? -1
               : a.partLabel > b.partLabel
                 ? 1

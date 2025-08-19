@@ -9,12 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
@@ -45,16 +40,13 @@ export class SyncRepoController {
     private envsService: EnvsService,
     private blockmlService: BlockmlService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSyncRepo)
-  async syncRepo(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async syncRepo(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendSyncRepoRequest = request.body;
 
     let { traceId } = reqValid.info;
@@ -122,7 +114,7 @@ export class SyncRepoController {
 
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskSyncRepoResponse>({
-        routingKey: helper.makeRoutingKeyToDisk({
+        routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
         }),
@@ -140,7 +132,7 @@ export class SyncRepoController {
 
     await forEachSeries(branchBridges, async x => {
       if (x.envId === envId) {
-        let structId = common.makeId();
+        let structId = makeId();
 
         await this.blockmlService.rebuildStruct({
           traceId: traceId,
@@ -155,7 +147,7 @@ export class SyncRepoController {
         x.structId = structId;
         x.needValidate = false;
       } else {
-        x.structId = common.EMPTY_STRUCT_ID;
+        x.structId = EMPTY_STRUCT_ID;
         x.needValidate = true;
       }
     });

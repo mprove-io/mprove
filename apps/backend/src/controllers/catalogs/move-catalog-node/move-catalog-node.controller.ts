@@ -9,12 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
@@ -43,16 +38,13 @@ export class MoveCatalogNodeController {
     private branchesService: BranchesService,
     private envsService: EnvsService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode)
-  async moveCatalogNode(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async moveCatalogNode(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendMoveCatalogNodeRequest = request.body;
 
     let { traceId } = reqValid.info;
@@ -103,7 +95,7 @@ export class MoveCatalogNodeController {
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskMoveCatalogNodeResponse>(
         {
-          routingKey: helper.makeRoutingKeyToDisk({
+          routingKey: makeRoutingKeyToDisk({
             orgId: project.orgId,
             projectId: projectId
           }),
@@ -122,7 +114,7 @@ export class MoveCatalogNodeController {
 
     await forEachSeries(branchBridges, async x => {
       if (x.envId === envId) {
-        let structId = common.makeId();
+        let structId = makeId();
 
         await this.blockmlService.rebuildStruct({
           traceId: traceId,
@@ -137,7 +129,7 @@ export class MoveCatalogNodeController {
         x.structId = structId;
         x.needValidate = false;
       } else {
-        x.structId = common.EMPTY_STRUCT_ID;
+        x.structId = EMPTY_STRUCT_ID;
         x.needValidate = true;
       }
     });

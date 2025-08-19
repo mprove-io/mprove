@@ -9,12 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
@@ -54,21 +49,18 @@ export class SaveCreateReportController {
     private bridgesService: BridgesService,
     private wrapToApiService: WrapToApiService,
     private wrapToEntService: WrapToEntService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveCreateReport)
-  async saveCreateRep(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async saveCreateRep(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendSaveCreateReportRequest = request.body;
 
-    if (user.alias === common.RESTRICTED_USER_ALIAS) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_USER
+    if (user.alias === RESTRICTED_USER_ALIAS) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 
@@ -89,7 +81,7 @@ export class SaveCreateReportController {
       chart
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -130,7 +122,7 @@ export class SaveCreateReportController {
     });
 
     let metricRows = fromReport.rows.filter(
-      row => row.rowType === common.RowTypeEnum.Metric
+      row => row.rowType === RowTypeEnum.Metric
     );
 
     let currentStruct = await this.structsService.getStructCheckExists({
@@ -141,15 +133,15 @@ export class SaveCreateReportController {
     });
 
     let firstProjectId =
-      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
+      this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
 
     if (
       userMember.isAdmin === false &&
       projectId === firstProjectId &&
-      repoId === common.PROD_REPO_ID
+      repoId === PROD_REPO_ID
     ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 
@@ -177,24 +169,24 @@ export class SaveCreateReportController {
       newReportFields: newReportFields,
       chart: chart,
       caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-      timezone: common.UTC
+      timezone: UTC
     });
 
     let mdir = currentStruct.mproveDirValue;
 
     if (
       mdir.length > 2 &&
-      mdir.substring(0, 2) === common.MPROVE_CONFIG_DIR_DOT_SLASH
+      mdir.substring(0, 2) === MPROVE_CONFIG_DIR_DOT_SLASH
     ) {
       mdir = mdir.substring(2);
     }
 
     let parentNodeId =
-      currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
-        ? `${projectId}/${common.MPROVE_USERS_FOLDER}/${user.alias}`
-        : `${projectId}/${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}`;
+      currentStruct.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
+        ? `${projectId}/${MPROVE_USERS_FOLDER}/${user.alias}`
+        : `${projectId}/${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}`;
 
-    let fileName = `${newReportId}${common.FileExtensionEnum.Report}`;
+    let fileName = `${newReportId}${FileExtensionEnum.Report}`;
 
     let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
       info: {
@@ -219,7 +211,7 @@ export class SaveCreateReportController {
 
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateFileResponse>({
-        routingKey: helper.makeRoutingKeyToDisk({
+        routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
         }),
@@ -237,7 +229,7 @@ export class SaveCreateReportController {
 
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {
-        x.structId = common.EMPTY_STRUCT_ID;
+        x.structId = EMPTY_STRUCT_ID;
         x.needValidate = true;
       }
     });
@@ -255,11 +247,11 @@ export class SaveCreateReportController {
 
     let report = reports.find(x => x.reportId === newReportId);
 
-    if (common.isDefined(report)) {
+    if (isDefined(report)) {
       report.rows = fromReport.rows;
     }
 
-    let repEnt = common.isDefined(report)
+    let repEnt = isDefined(report)
       ? this.wrapToEntService.wrapToEntityReport(report)
       : undefined;
 
@@ -280,7 +272,7 @@ export class SaveCreateReportController {
           await this.db.packer.write({
             tx: tx,
             insert: {
-              reports: common.isDefined(repEnt) ? [repEnt] : []
+              reports: isDefined(repEnt) ? [repEnt] : []
             },
             insertOrUpdate: {
               structs: [struct],
@@ -291,16 +283,16 @@ export class SaveCreateReportController {
       getRetryOption(this.cs, this.logger)
     );
 
-    if (common.isUndefined(report)) {
+    if (isUndefined(report)) {
       let fileId = `${parentNodeId}/${fileName}`;
       let fileIdAr = fileId.split('/');
       fileIdAr.shift();
       let filePath = fileIdAr.join('/');
 
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_CREATE_REPORT_FAIL,
+      throw new ServerError({
+        message: ErEnum.BACKEND_CREATE_REPORT_FAIL,
         data: {
-          encodedFileId: common.encodeFilePath({ filePath: filePath })
+          encodedFileId: encodeFilePath({ filePath: filePath })
         }
       });
     }

@@ -1,17 +1,15 @@
-import { common } from '~backend/barrels/common';
-
 export function makeMconfigFields(item: {
-  modelFields: common.ModelField[];
+  modelFields: ModelField[];
   select: string[];
-  sortings: common.Sorting[];
-  chart: common.MconfigChart;
+  sortings: Sorting[];
+  chart: MconfigChart;
 }) {
   let { modelFields, select, sortings, chart } = item;
 
-  let selectDimensions: common.MconfigField[] = [];
-  let selectMeasuresAndCalculations: common.MconfigField[] = []; // for columns moveLeft moveRight
-  // let selectMeasures: common.MconfigField[] = [];
-  // let selectCalculations: common.MconfigField[] = [];
+  let selectDimensions: MconfigField[] = [];
+  let selectMeasuresAndCalculations: MconfigField[] = []; // for columns moveLeft moveRight
+  // let selectMeasures: MconfigField[] = [];
+  // let selectCalculations: MconfigField[] = [];
 
   // console.log('select');
   // console.log(select);
@@ -21,24 +19,24 @@ export function makeMconfigFields(item: {
 
   select.forEach((fieldId: string) => {
     let field = modelFields.find(f => f.id === fieldId);
-    let f: common.MconfigField = Object.assign({}, field, <common.MconfigField>{
+    let f: MconfigField = Object.assign({}, field, <MconfigField>{
       sorting: sortings.find(x => x.fieldId === fieldId),
       sortingNumber: sortings.findIndex(s => s.fieldId === fieldId),
       isHideColumn: chart?.hideColumns.indexOf(field.id) > -1
     });
 
-    if (field.fieldClass === common.FieldClassEnum.Dimension) {
+    if (field.fieldClass === FieldClassEnum.Dimension) {
       selectDimensions.push(f);
-    } else if (field.fieldClass === common.FieldClassEnum.Measure) {
+    } else if (field.fieldClass === FieldClassEnum.Measure) {
       selectMeasuresAndCalculations.push(f);
       // selectMeasures.push(f);
-    } else if (field.fieldClass === common.FieldClassEnum.Calculation) {
+    } else if (field.fieldClass === FieldClassEnum.Calculation) {
       selectMeasuresAndCalculations.push(f);
       // selectCalculations.push(f);
     }
   });
 
-  let selectFields: common.MconfigField[] = [
+  let selectFields: MconfigField[] = [
     ...selectDimensions,
     ...selectMeasuresAndCalculations
     // ...selectMeasures,

@@ -1,5 +1,3 @@
-import { common } from '~backend/barrels/common';
-
 export function makeModelFileText(item: {
   isStore: boolean;
   modelId: string;
@@ -22,13 +20,13 @@ export function makeModelFileText(item: {
     label: label,
     connection: connectionId,
     access_roles:
-      common.isDefined(roles) && roles.trim().length > 0
+      isDefined(roles) && roles.trim().length > 0
         ? roles.split(',').map(x => x.trim())
         : undefined,
     preset: presetId
   });
 
-  let modelFileText = common.toYaml(next);
+  let modelFileText = toYaml(next);
 
   return modelFileText;
 }

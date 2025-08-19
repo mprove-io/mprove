@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { common } from '~backend/barrels/common';
-import { constants } from '~backend/barrels/constants';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { makeDashboardFiltersX } from '~backend/functions/make-dashboard-filters-x';
 import { makeFullName } from '~backend/functions/make-full-name';
 import { makeMconfigFields } from '~backend/functions/make-mconfig-fields';
@@ -13,7 +11,7 @@ import { makeTilesX } from '~backend/functions/make-tiles-x';
 export class WrapToApiService {
   constructor() {}
 
-  // wrapToApiApi(item: { api: schemaPostgres.ApiEnt }): common.Api {
+  // wrapToApiApi(item: { api: ApiEnt }): Api {
   //   let { api } = item;
 
   //   return {
@@ -26,7 +24,7 @@ export class WrapToApiService {
   //   };
   // }
 
-  wrapToApiConnection(x: schemaPostgres.ConnectionEnt): common.Connection {
+  wrapToApiConnection(x: ConnectionEnt): Connection {
     return {
       projectId: x.projectId,
       connectionId: x.connectionId,
@@ -34,10 +32,10 @@ export class WrapToApiService {
       type: x.type,
       baseUrl: x.baseUrl,
       headers: x.headers?.map(header => {
-        let newHeader: common.ConnectionHeader = {
+        let newHeader: ConnectionHeader = {
           key: header.key,
-          value: common.isDefinedAndNotEmpty(header.value)
-            ? common.HEADER_VALUE_IS_HIDDEN
+          value: isDefinedAndNotEmpty(header.value)
+            ? HEADER_VALUE_IS_HIDDEN
             : ''
         };
         return newHeader;
@@ -58,20 +56,20 @@ export class WrapToApiService {
   }
 
   wrapToApiDashboard(item: {
-    dashboard: schemaPostgres.DashboardEnt;
-    mconfigs: common.MconfigX[];
-    queries: common.Query[];
-    member: common.Member;
+    dashboard: DashboardEnt;
+    mconfigs: MconfigX[];
+    queries: Query[];
+    member: Member;
     isAddMconfigAndQuery: boolean;
-    models: common.ModelX[];
-  }): common.DashboardX {
+    models: ModelX[];
+  }): DashboardX {
     let { dashboard, mconfigs, queries, isAddMconfigAndQuery, member, models } =
       item;
 
     let filePathArray = dashboard.filePath.split('/');
 
     let usersFolderIndex = filePathArray.findIndex(
-      x => x === common.MPROVE_USERS_FOLDER
+      x => x === MPROVE_USERS_FOLDER
     );
 
     let author =
@@ -85,10 +83,10 @@ export class WrapToApiService {
     let dashboardExtendedFilters = makeDashboardFiltersX(dashboard);
 
     let storeModelIds = dashboard.fields
-      .filter(x => common.isDefined(x.storeModel))
+      .filter(x => isDefined(x.storeModel))
       .map(x => x.storeModel);
 
-    let dashboardX: common.DashboardX = {
+    let dashboardX: DashboardX = {
       structId: dashboard.structId,
       dashboardId: dashboard.dashboardId,
       draft: dashboard.draft,
@@ -131,12 +129,12 @@ export class WrapToApiService {
   }
 
   wrapToApiEnv(item: {
-    env: schemaPostgres.EnvEnt;
+    env: EnvEnt;
     envConnectionIds: string[];
     fallbackConnectionIds: string[];
-    fallbackEvs: common.Ev[];
-    envMembers: schemaPostgres.MemberEnt[];
-  }): common.Env {
+    fallbackEvs: Ev[];
+    envMembers: MemberEnt[];
+  }): Env {
     let {
       env,
       envConnectionIds,
@@ -145,10 +143,10 @@ export class WrapToApiService {
       envMembers
     } = item;
 
-    let envUsers: common.EnvUser[] = [];
+    let envUsers: EnvUser[] = [];
 
     envMembers.forEach(x => {
-      let envUser: common.EnvUser = {
+      let envUser: EnvUser = {
         userId: x.memberId,
         alias: x.alias,
         firstName: x.firstName,
@@ -182,7 +180,7 @@ export class WrapToApiService {
     };
   }
 
-  wrapToApiEnvsItem(env: schemaPostgres.EnvEnt): common.EnvsItem {
+  wrapToApiEnvsItem(env: EnvEnt): EnvsItem {
     return {
       projectId: env.projectId,
       envId: env.envId
@@ -190,9 +188,9 @@ export class WrapToApiService {
   }
 
   wrapToApiMconfig(item: {
-    mconfig: schemaPostgres.MconfigEnt;
-    modelFields: common.ModelField[];
-  }): common.MconfigX {
+    mconfig: MconfigEnt;
+    modelFields: ModelField[];
+  }): MconfigX {
     let { mconfig, modelFields } = item;
 
     return {
@@ -233,7 +231,7 @@ export class WrapToApiService {
     };
   }
 
-  wrapToApiMember(x: schemaPostgres.MemberEnt): common.Member {
+  wrapToApiMember(x: MemberEnt): Member {
     return {
       projectId: x.projectId,
       memberId: x.memberId,
@@ -251,7 +249,7 @@ export class WrapToApiService {
     };
   }
 
-  wrapToApiEnvUser(x: schemaPostgres.MemberEnt): common.EnvUser {
+  wrapToApiEnvUser(x: MemberEnt): EnvUser {
     return {
       userId: x.memberId,
       alias: x.alias,
@@ -262,9 +260,9 @@ export class WrapToApiService {
   }
 
   wrapToApiModel(item: {
-    model: schemaPostgres.ModelEnt;
+    model: ModelEnt;
     hasAccess: boolean;
-  }): common.ModelX {
+  }): ModelX {
     let { model, hasAccess } = item;
 
     return {
@@ -292,7 +290,7 @@ export class WrapToApiService {
     };
   }
 
-  wrapToApiOrg(org: schemaPostgres.OrgEnt): common.Org {
+  wrapToApiOrg(org: OrgEnt): Org {
     return {
       orgId: org.orgId,
       name: org.name,
@@ -302,7 +300,7 @@ export class WrapToApiService {
     };
   }
 
-  wrapToApiOrgsItem(org: schemaPostgres.OrgEnt): common.OrgsItem {
+  wrapToApiOrgsItem(org: OrgEnt): OrgsItem {
     return {
       orgId: org.orgId,
       name: org.name
@@ -310,9 +308,9 @@ export class WrapToApiService {
   }
 
   wrapToApiProject(item: {
-    project: schemaPostgres.ProjectEnt;
+    project: ProjectEnt;
     isAdmin: boolean;
-  }): common.Project {
+  }): Project {
     let { project, isAdmin } = item;
 
     return {
@@ -327,9 +325,7 @@ export class WrapToApiService {
     };
   }
 
-  wrapToApiProjectsItem(
-    project: schemaPostgres.ProjectEnt
-  ): common.ProjectsItem {
+  wrapToApiProjectsItem(project: ProjectEnt): ProjectsItem {
     return {
       projectId: project.projectId,
       name: project.name,
@@ -337,7 +333,7 @@ export class WrapToApiService {
     };
   }
 
-  wrapToApiQuery(x: schemaPostgres.QueryEnt): common.Query {
+  wrapToApiQuery(x: QueryEnt): Query {
     return {
       projectId: x.projectId,
       envId: x.envId,
@@ -345,7 +341,7 @@ export class WrapToApiService {
       connectionType: x.connectionType,
       queryId: x.queryId,
       sql: x.sql,
-      apiMethod: x.apiMethod as common.StoreMethodEnum,
+      apiMethod: x.apiMethod as StoreMethodEnum,
       apiUrl: x.apiUrl,
       apiBody: x.apiBody,
       status: x.status,
@@ -367,24 +363,24 @@ export class WrapToApiService {
   }
 
   wrapToApiReport(item: {
-    report: schemaPostgres.ReportEnt;
-    member: common.Member;
-    models: common.ModelX[];
+    report: ReportEnt;
+    member: Member;
+    models: ModelX[];
     timezone: string;
-    timeSpec: common.TimeSpecEnum;
-    timeRangeFraction: common.Fraction;
+    timeSpec: TimeSpecEnum;
+    timeRangeFraction: Fraction;
     // rangeOpen: number;
     // rangeClose: number;
     rangeStart: number;
     rangeEnd: number;
     timeColumnsLimit: number;
-    columns: common.Column[];
+    columns: Column[];
     timeColumnsLength: number;
     isTimeColumnsLimitExceeded: boolean;
     metricsStartDateYYYYMMDD: string;
     metricsEndDateExcludedYYYYMMDD: string;
     metricsEndDateIncludedYYYYMMDD: string;
-  }): common.ReportX {
+  }): ReportX {
     let {
       report,
       member,
@@ -406,11 +402,11 @@ export class WrapToApiService {
     } = item;
 
     let author;
-    if (common.isDefined(report.filePath)) {
+    if (isDefined(report.filePath)) {
       let filePathArray = report.filePath.split('/');
 
       let usersFolderIndex = filePathArray.findIndex(
-        x => x === common.MPROVE_USERS_FOLDER
+        x => x === MPROVE_USERS_FOLDER
       );
 
       author =
@@ -424,7 +420,7 @@ export class WrapToApiService {
 
     let reportExtendedFilters = makeReportFiltersX(report);
 
-    let reportX: common.ReportX = {
+    let reportX: ReportX = {
       projectId: report.projectId,
       structId: report.structId,
       reportId: report.reportId,
@@ -456,7 +452,7 @@ export class WrapToApiService {
         return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
       }),
       rows: report.rows.map(x => {
-        x.hasAccessToModel = common.isDefined(x.mconfig)
+        x.hasAccessToModel = isDefined(x.mconfig)
           ? models.find(m => m.modelId === x.mconfig.modelId).hasAccess
           : false;
         return x;
@@ -473,7 +469,7 @@ export class WrapToApiService {
     return reportX;
   }
 
-  wrapToApiStruct(struct: schemaPostgres.StructEnt): common.Struct {
+  wrapToApiStruct(struct: StructEnt): Struct {
     return {
       projectId: struct.projectId,
       structId: struct.structId,
@@ -494,8 +490,8 @@ export class WrapToApiService {
     };
   }
 
-  wrapToApiUser(user: schemaPostgres.UserEnt): common.User {
-    let defaultSrvUi = common.makeCopy(constants.DEFAULT_SRV_UI);
+  wrapToApiUser(user: UserEnt): User {
+    let defaultSrvUi = makeCopy(DEFAULT_SRV_UI);
 
     return {
       userId: user.userId,
@@ -510,27 +506,27 @@ export class WrapToApiService {
         timeRangeFraction:
           user.ui?.timeRangeFraction || defaultSrvUi.timeRangeFraction,
 
-        projectFileLinks: common.isDefined(user.ui?.projectFileLinks)
+        projectFileLinks: isDefined(user.ui?.projectFileLinks)
           ? user.ui?.projectFileLinks
           : defaultSrvUi.projectFileLinks,
 
-        projectModelLinks: common.isDefined(user.ui?.projectModelLinks)
+        projectModelLinks: isDefined(user.ui?.projectModelLinks)
           ? user.ui?.projectModelLinks
           : defaultSrvUi.projectModelLinks,
 
-        projectChartLinks: common.isDefined(user.ui?.projectChartLinks)
+        projectChartLinks: isDefined(user.ui?.projectChartLinks)
           ? user.ui?.projectChartLinks
           : defaultSrvUi.projectChartLinks,
 
-        projectDashboardLinks: common.isDefined(user.ui?.projectDashboardLinks)
+        projectDashboardLinks: isDefined(user.ui?.projectDashboardLinks)
           ? user.ui?.projectDashboardLinks
           : defaultSrvUi.projectDashboardLinks,
 
-        projectReportLinks: common.isDefined(user.ui?.projectReportLinks)
+        projectReportLinks: isDefined(user.ui?.projectReportLinks)
           ? user.ui?.projectReportLinks
           : defaultSrvUi.projectReportLinks,
 
-        modelTreeLevels: common.isDefined(user.ui?.modelTreeLevels)
+        modelTreeLevels: isDefined(user.ui?.modelTreeLevels)
           ? user.ui?.modelTreeLevels
           : defaultSrvUi.modelTreeLevels
       },
@@ -539,22 +535,22 @@ export class WrapToApiService {
   }
 
   wrapToApiChart(item: {
-    chart: schemaPostgres.ChartEnt;
-    mconfigs: common.MconfigX[];
-    queries: common.Query[];
-    member: common.Member;
+    chart: ChartEnt;
+    mconfigs: MconfigX[];
+    queries: Query[];
+    member: Member;
     isAddMconfigAndQuery: boolean;
-    models: common.ModelX[];
-  }): common.ChartX {
+    models: ModelX[];
+  }): ChartX {
     let { chart, mconfigs, queries, member, isAddMconfigAndQuery, models } =
       item;
 
-    let filePathArray = common.isDefined(chart.filePath)
+    let filePathArray = isDefined(chart.filePath)
       ? chart.filePath.split('/')
       : [];
 
     let usersFolderIndex = filePathArray.findIndex(
-      x => x === common.MPROVE_USERS_FOLDER
+      x => x === MPROVE_USERS_FOLDER
     );
 
     let author =

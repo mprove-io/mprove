@@ -1,13 +1,15 @@
 import { IsEnum, IsInt, IsNumber, IsString } from 'class-validator';
-import { common } from '~backend/barrels/common';
-import { enums } from '~backend/barrels/enums';
+import { BoolEnum } from '~common/enums/bool.enum';
+import { EmailTransportEnum } from '~common/enums/email-transport.enum';
+import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
+import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
 
-export class Config {
-  @IsEnum(enums.BackendEnvEnum)
-  backendEnv?: enums.BackendEnvEnum;
+export class BackendConfig {
+  @IsEnum(BackendEnvEnum)
+  backendEnv?: BackendEnvEnum;
 
-  @IsEnum(common.BoolEnum)
-  isScheduler?: common.BoolEnum;
+  @IsEnum(BoolEnum)
+  isScheduler?: BoolEnum;
 
   @IsString()
   firstProjectDwhBigqueryCredentialsPath?: string;
@@ -18,8 +20,8 @@ export class Config {
   @IsString()
   specialKey?: string;
 
-  @IsEnum(common.BoolEnum)
-  allowTestRoutes?: common.BoolEnum;
+  @IsEnum(BoolEnum)
+  allowTestRoutes?: BoolEnum;
 
   @IsString()
   firstUserEmail?: string;
@@ -36,8 +38,8 @@ export class Config {
   @IsString()
   firstProjectName?: string;
 
-  @IsEnum(common.ProjectRemoteTypeEnum)
-  firstProjectRemoteType?: common.ProjectRemoteTypeEnum;
+  @IsEnum(ProjectRemoteTypeEnum)
+  firstProjectRemoteType?: ProjectRemoteTypeEnum;
 
   @IsString()
   firstProjectRemoteGitUrl?: string;
@@ -48,8 +50,8 @@ export class Config {
   @IsString()
   firstProjectRemotePublicKeyPath?: string;
 
-  @IsEnum(common.BoolEnum)
-  firstProjectSeedConnections?: common.BoolEnum;
+  @IsEnum(BoolEnum)
+  firstProjectSeedConnections?: BoolEnum;
 
   @IsString()
   firstProjectDwhPostgresHost?: string;
@@ -72,16 +74,16 @@ export class Config {
   @IsString()
   firstProjectDwhSnowflakePassword?: string;
 
-  @IsEnum(common.BoolEnum)
-  allowUsersToCreateOrganizations?: common.BoolEnum;
+  @IsEnum(BoolEnum)
+  allowUsersToCreateOrganizations?: BoolEnum;
 
-  @IsEnum(common.BoolEnum)
-  registerOnlyInvitedUsers?: common.BoolEnum;
+  @IsEnum(BoolEnum)
+  registerOnlyInvitedUsers?: BoolEnum;
 
   //
 
-  // @IsEnum(common.BoolEnum)
-  // sendEmail?: common.BoolEnum;
+  // @IsEnum(BoolEnum)
+  // sendEmail?: BoolEnum;
 
   @IsString()
   hostUrl?: string;
@@ -92,8 +94,8 @@ export class Config {
   @IsString()
   sendEmailFromAddress?: string;
 
-  @IsEnum(enums.EmailTransportEnum)
-  emailTransport?: enums.EmailTransportEnum;
+  @IsEnum(EmailTransportEnum)
+  emailTransport?: EmailTransportEnum;
 
   //
   @IsString()
@@ -102,8 +104,8 @@ export class Config {
   @IsInt()
   smtpPort?: number;
 
-  @IsEnum(common.BoolEnum)
-  smtpSecure?: common.BoolEnum;
+  @IsEnum(BoolEnum)
+  smtpSecure?: BoolEnum;
 
   @IsString()
   smtpAuthUser?: string;
@@ -152,18 +154,18 @@ export class Config {
   @IsString()
   backendPostgresDatabaseUrl?: string;
 
-  @IsEnum(common.BoolEnum)
-  backendIsPostgresTls?: common.BoolEnum;
+  @IsEnum(BoolEnum)
+  backendIsPostgresTls?: BoolEnum;
 
-  @IsEnum(common.BoolEnum)
-  backendLogDrizzlePostgres?: common.BoolEnum;
+  @IsEnum(BoolEnum)
+  backendLogDrizzlePostgres?: BoolEnum;
 
-  @IsEnum(common.BoolEnum)
-  backendLogIsJson?: common.BoolEnum;
+  @IsEnum(BoolEnum)
+  backendLogIsJson?: BoolEnum;
 
-  @IsEnum(common.BoolEnum)
-  backendLogResponseError?: common.BoolEnum;
+  @IsEnum(BoolEnum)
+  backendLogResponseError?: BoolEnum;
 
-  @IsEnum(common.BoolEnum)
-  backendLogResponseOk?: common.BoolEnum;
+  @IsEnum(BoolEnum)
+  backendLogResponseOk?: BoolEnum;
 }

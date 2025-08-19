@@ -9,11 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { SkipJwtCheck } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
@@ -45,7 +41,7 @@ let retry = require('async-retry');
 export class DeleteRecordsController {
   constructor(
     private rabbitService: RabbitService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -64,7 +60,7 @@ export class DeleteRecordsController {
     let structIds: string[] = [];
     let userIds: string[] = [];
 
-    if (common.isDefined(projectNames) && projectNames.length > 0) {
+    if (isDefined(projectNames) && projectNames.length > 0) {
       let projects = await this.db.drizzle.query.projectsTable.findMany({
         where: and(
           inArray(projectsTable.orgId, orgIds),
@@ -77,7 +73,7 @@ export class DeleteRecordsController {
       }
     }
 
-    if (common.isDefined(orgNames) && orgNames.length > 0) {
+    if (isDefined(orgNames) && orgNames.length > 0) {
       let orgs = await this.db.drizzle.query.orgsTable.findMany({
         where: inArray(orgsTable.name, orgNames)
       });
@@ -100,7 +96,7 @@ export class DeleteRecordsController {
         };
 
         await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteOrgResponse>({
-          routingKey: helper.makeRoutingKeyToDisk({
+          routingKey: makeRoutingKeyToDisk({
             orgId: x,
             projectId: null
           }),
@@ -116,7 +112,7 @@ export class DeleteRecordsController {
           where: eq(usersTable.email, email)
         });
 
-        if (common.isDefined(user)) {
+        if (isDefined(user)) {
           userIds.push(user.userId);
         }
       });

@@ -8,11 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
@@ -51,16 +47,13 @@ export class EditDraftChartController {
     private wrapToApiService: WrapToApiService,
     private mconfigsService: MconfigsService,
     private chartsService: ChartsService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditDraftChart)
-  async editDraftChart(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async editDraftChart(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendEditDraftChartRequest = request.body;
 
     let { traceId } = reqValid.info;
@@ -74,7 +67,7 @@ export class EditDraftChartController {
       queryOperation
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -115,20 +108,20 @@ export class EditDraftChartController {
     });
 
     if (mconfig.structId !== bridge.structId) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_STRUCT_ID_CHANGED
+      throw new ServerError({
+        message: ErEnum.BACKEND_STRUCT_ID_CHANGED
       });
     }
 
-    let isAccessGrantedForModel = helper.checkAccess({
+    let isAccessGrantedForModel = checkAccess({
       userAlias: user.alias,
       member: userMember,
       entity: model
     });
 
     if (isAccessGrantedForModel === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_FORBIDDEN_MODEL
+      throw new ServerError({
+        message: ErEnum.BACKEND_FORBIDDEN_MODEL
       });
     }
 
@@ -138,23 +131,23 @@ export class EditDraftChartController {
     });
 
     if (chart.draft === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_CHART_IS_NOT_DRAFT
+      throw new ServerError({
+        message: ErEnum.BACKEND_CHART_IS_NOT_DRAFT
       });
     }
 
     if (chart.creatorId !== user.userId) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_CHART_CREATOR_ID_MISMATCH
+      throw new ServerError({
+        message: ErEnum.BACKEND_CHART_CREATOR_ID_MISMATCH
       });
     }
 
-    let newMconfig: common.Mconfig;
-    let newQuery: common.Query;
+    let newMconfig: Mconfig;
+    let newQuery: Query;
 
     let isError = false;
 
-    if (model.type === common.ModelTypeEnum.Store) {
+    if (model.type === ModelTypeEnum.Store) {
       // if (model.isStoreModel === true) {
 
       // console.log('createMconfigAndQuery prepStoreMconfigQuery');
@@ -172,7 +165,7 @@ export class EditDraftChartController {
       newMconfig = mqe.newMconfig;
       newQuery = mqe.newQuery;
       isError = mqe.isError;
-    } else if (model.type === common.ModelTypeEnum.Malloy) {
+    } else if (model.type === ModelTypeEnum.Malloy) {
       let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
         projectId: projectId,
         envId: envId,
@@ -190,7 +183,7 @@ export class EditDraftChartController {
     let newQueryEnt = this.wrapToEntService.wrapToEntityQuery(newQuery);
     let newMconfigEnt = this.wrapToEntService.wrapToEntityMconfig(newMconfig);
 
-    let tile: common.Tile = {
+    let tile: Tile = {
       modelId: newMconfig.modelId,
       modelLabel: newMconfig.modelLabel,
       modelFilePath: newMconfig.modelFilePath,
@@ -206,7 +199,7 @@ export class EditDraftChartController {
       plateY: undefined
     };
 
-    let newChart: common.Chart = {
+    let newChart: Chart = {
       structId: bridge.structId,
       chartId: chartId,
       draft: true,
@@ -266,7 +259,7 @@ export class EditDraftChartController {
           })
         ],
         queries: [
-          common.isDefined(query)
+          isDefined(query)
             ? this.wrapToApiService.wrapToApiQuery(query)
             : this.wrapToApiService.wrapToApiQuery(newQueryEnt)
         ],
@@ -274,7 +267,7 @@ export class EditDraftChartController {
         models: [
           this.wrapToApiService.wrapToApiModel({
             model: model,
-            hasAccess: helper.checkAccess({
+            hasAccess: checkAccess({
               userAlias: user.alias,
               member: userMember,
               entity: model

@@ -1,9 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, or } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
@@ -34,10 +31,7 @@ export class GetDashboardsController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards)
-  async getDashboards(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getDashboards(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetDashboardsRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
@@ -53,7 +47,7 @@ export class GetDashboardsController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
+      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -93,10 +87,10 @@ export class GetDashboardsController {
             eq(dashboardsTable.creatorId, user.userId)
           )
         )
-      )) as schemaPostgres.DashboardEnt[];
+      )) as DashboardEnt[];
 
     let dashboardsGrantedAccess = dashboards.filter(x =>
-      helper.checkAccess({
+      checkAccess({
         userAlias: user.alias,
         member: userMember,
         entity: x
@@ -111,9 +105,7 @@ export class GetDashboardsController {
         connectionId: modelsTable.connectionId
       })
       .from(modelsTable)
-      .where(
-        eq(modelsTable.structId, bridge.structId)
-      )) as schemaPostgres.ModelEnt[];
+      .where(eq(modelsTable.structId, bridge.structId))) as ModelEnt[];
 
     let modelsY = await this.modelsService.getModelsY({
       bridge: bridge,
@@ -137,7 +129,7 @@ export class GetDashboardsController {
         .map(model =>
           this.wrapToApiService.wrapToApiModel({
             model: model,
-            hasAccess: helper.checkAccess({
+            hasAccess: checkAccess({
               userAlias: user.alias,
               member: userMember,
               entity: model
@@ -154,7 +146,7 @@ export class GetDashboardsController {
           models: models.map(model =>
             this.wrapToApiService.wrapToApiModel({
               model: model,
-              hasAccess: helper.checkAccess({
+              hasAccess: checkAccess({
                 userAlias: user.alias,
                 member: userMember,
                 entity: model

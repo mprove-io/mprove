@@ -1,19 +1,24 @@
 import { NestFactory } from '@nestjs/core';
 import { json, urlencoded } from 'body-parser';
 import { WinstonModule } from 'nest-winston';
+import {
+  APP_NAME_BACKEND,
+  APP_NAME_SCHEDULER
+} from '~common/constants/top-backend';
+import { BoolEnum } from '~common/enums/bool.enum';
+import { ErEnum } from '~common/enums/er.enum';
+import { getLoggerOptions } from '~node-common/functions/get-logger-options';
+import { listenProcessEvents } from '~node-common/functions/listen-process-events';
 import { AppModule } from './app.module';
-import { common } from './barrels/common';
-import { constants } from './barrels/constants';
-import { nodeCommon } from './barrels/node-common';
 import { getConfig } from './config/get.config';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 
 async function bootstrap() {
-  nodeCommon.listenProcessEvents({
-    appTerminated: common.ErEnum.BACKEND_APP_TERMINATED,
-    uncaughtException: common.ErEnum.BACKEND_UNCAUGHT_EXCEPTION,
-    unhandledRejectionReason: common.ErEnum.BACKEND_UNHANDLED_REJECTION_REASON,
-    unhandledRejection: common.ErEnum.BACKEND_UNHANDLED_REJECTION_ERROR,
+  listenProcessEvents({
+    appTerminated: ErEnum.BACKEND_APP_TERMINATED,
+    uncaughtException: ErEnum.BACKEND_UNCAUGHT_EXCEPTION,
+    unhandledRejectionReason: ErEnum.BACKEND_UNHANDLED_REJECTION_REASON,
+    unhandledRejection: ErEnum.BACKEND_UNHANDLED_REJECTION_ERROR,
     logToConsoleFn: logToConsoleBackend
   });
 
@@ -21,20 +26,20 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger(
-      nodeCommon.getLoggerOptions({
+      getLoggerOptions({
         appName:
-          config.isScheduler === common.BoolEnum.TRUE
-            ? constants.APP_NAME_SCHEDULER
-            : constants.APP_NAME_BACKEND,
+          config.isScheduler === BoolEnum.TRUE
+            ? APP_NAME_SCHEDULER
+            : APP_NAME_BACKEND,
 
-        isJson: config.backendLogIsJson === common.BoolEnum.TRUE
+        isJson: config.backendLogIsJson === BoolEnum.TRUE
       })
     )
   });
 
   // use after nestjs 8
   // app.setGlobalPrefix('api');
-  // app.setGlobalPrefix(constants.API_PATH);
+  // app.setGlobalPrefix(API_PATH);
   app.use(json({ limit: '50mb' }));
   app.use(urlencoded({ limit: '50mb', extended: true }));
 

@@ -8,11 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
@@ -53,16 +49,13 @@ export class GetChartController {
     private wrapToEntService: WrapToEntService,
     private rabbitService: RabbitService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart)
-  async getChart(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getChart(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetChartRequest = request.body;
 
     let { traceId } = reqValid.info;
@@ -80,7 +73,7 @@ export class GetChartController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
+      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -107,15 +100,15 @@ export class GetChartController {
       chartId: chartId
     });
 
-    let isAccessGranted = helper.checkAccess({
+    let isAccessGranted = checkAccess({
       userAlias: user.alias,
       member: userMember,
       entity: chart
     });
 
     if (isAccessGranted === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_FORBIDDEN_CHART
+      throw new ServerError({
+        message: ErEnum.BACKEND_FORBIDDEN_CHART
       });
     }
 
@@ -134,14 +127,14 @@ export class GetChartController {
 
     let query;
 
-    let newMconfig: common.Mconfig;
-    let newQuery: common.Query;
+    let newMconfig: Mconfig;
+    let newQuery: Query;
 
     let isError = false;
 
-    let isSearchExisting = // TODO: check (was model.type === common.ModelTypeEnum.SQL)
-      model.type !== common.ModelTypeEnum.Store &&
-      model.type !== common.ModelTypeEnum.Malloy &&
+    let isSearchExisting = // TODO: check (was model.type === ModelTypeEnum.SQL)
+      model.type !== ModelTypeEnum.Store &&
+      model.type !== ModelTypeEnum.Malloy &&
       chartMconfig.timezone === timezone;
 
     // console.log('isSearchExisting');
@@ -153,13 +146,13 @@ export class GetChartController {
         projectId: projectId
       });
     } else {
-      if (model.type === common.ModelTypeEnum.Store) {
+      if (model.type === ModelTypeEnum.Store) {
         // if (model.isStoreModel === true) {
-        let newMconfigId = common.makeId();
-        let newQueryId = common.makeId();
+        let newMconfigId = makeId();
+        let newQueryId = makeId();
 
         // biome-ignore format: theme breaks
-        let sMconfig = Object.assign({}, chartMconfig, <schemaPostgres.MconfigEnt>{
+        let sMconfig = Object.assign({}, chartMconfig, <MconfigEnt>{
           mconfigId: newMconfigId,
           queryId: newQueryId,
           timezone: timezone,
@@ -179,9 +172,9 @@ export class GetChartController {
         newMconfig = mqe.newMconfig;
         newQuery = mqe.newQuery;
         isError = mqe.isError;
-      } else if (model.type === common.ModelTypeEnum.Malloy) {
-        let queryOperation: common.QueryOperation = {
-          type: common.QueryOperationTypeEnum.Get,
+      } else if (model.type === ModelTypeEnum.Malloy) {
+        let queryOperation: QueryOperation = {
+          type: QueryOperationTypeEnum.Get,
           timezone: timezone
         };
 
@@ -255,7 +248,7 @@ export class GetChartController {
         models: [
           this.wrapToApiService.wrapToApiModel({
             model: model,
-            hasAccess: helper.checkAccess({
+            hasAccess: checkAccess({
               userAlias: user.alias,
               member: userMember,
               entity: model

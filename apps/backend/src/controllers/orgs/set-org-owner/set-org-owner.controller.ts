@@ -8,10 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
@@ -28,16 +25,13 @@ export class SetOrgOwnerController {
   constructor(
     private orgsService: OrgsService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner)
-  async setOrgOwner(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async setOrgOwner(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendSetOrgOwnerRequest = request.body;
 
     let { orgId, ownerEmail } = reqValid.payload;
@@ -56,9 +50,9 @@ export class SetOrgOwnerController {
       )
     });
 
-    if (common.isUndefined(newOwner)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_NEW_OWNER_NOT_FOUND
+    if (isUndefined(newOwner)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_NEW_OWNER_NOT_FOUND
       });
     }
 

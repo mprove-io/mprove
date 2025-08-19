@@ -1,10 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { BlockmlService } from './blockml.service';
@@ -27,7 +24,7 @@ export class ReportsService {
     private rabbitService: RabbitService,
     private wrapToEntService: WrapToEntService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -42,9 +39,9 @@ export class ReportsService {
       )
     });
 
-    if (common.isUndefined(report)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_REPORT_DOES_NOT_EXIST
+    if (isUndefined(report)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_REPORT_DOES_NOT_EXIST
       });
     }
 
@@ -53,8 +50,8 @@ export class ReportsService {
 
   checkRepPath(item: { filePath: string; userAlias: string }) {
     if (item.filePath.split('/')[2] !== item.userAlias) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_FORBIDDEN_REPORT_PATH
+      throw new ServerError({
+        message: ErEnum.BACKEND_FORBIDDEN_REPORT_PATH
       });
     }
   }
@@ -63,8 +60,8 @@ export class ReportsService {
     projectId: string;
     reportId: string;
     structId: string;
-    user: schemaPostgres.UserEnt;
-    userMember: schemaPostgres.MemberEnt;
+    user: UserEnt;
+    userMember: MemberEnt;
     checkExist: boolean;
     checkAccess: boolean;
   }) {
@@ -78,8 +75,8 @@ export class ReportsService {
       userMember
     } = item;
 
-    let chart = common.makeCopy(common.DEFAULT_CHART);
-    chart.type = common.ChartTypeEnum.Line;
+    let chart = makeCopy(DEFAULT_CHART);
+    chart.type = ChartTypeEnum.Line;
 
     let emptyRep = this.makerService.makeReport({
       structId: undefined,
@@ -96,7 +93,7 @@ export class ReportsService {
     });
 
     let report =
-      reportId === common.EMPTY_REPORT_ID
+      reportId === EMPTY_REPORT_ID
         ? emptyRep
         : await this.db.drizzle.query.reportsTable.findFirst({
             where: and(
@@ -106,33 +103,32 @@ export class ReportsService {
             )
           });
 
-    if (checkExist === true && common.isUndefined(report)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_REPORT_NOT_FOUND
+    if (checkExist === true && isUndefined(report)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_REPORT_NOT_FOUND
       });
     }
 
     if (
-      reportId !== common.EMPTY_REPORT_ID &&
+      reportId !== EMPTY_REPORT_ID &&
       report.draft === true &&
       report.creatorId !== user.userId
     ) {
-      throw new common.ServerError({
-        message:
-          common.ErEnum.BACKEND_DRAFT_REPORT_IS_AVAILABLE_ONLY_TO_ITS_CREATOR
+      throw new ServerError({
+        message: ErEnum.BACKEND_DRAFT_REPORT_IS_AVAILABLE_ONLY_TO_ITS_CREATOR
       });
     }
 
     if (checkAccess === true && report.draft === false) {
-      let isAccessGranted = helper.checkAccess({
+      let isAccessGranted = checkAccess({
         userAlias: user.alias,
         member: userMember,
         entity: report
       });
 
       if (isAccessGranted === false) {
-        throw new common.ServerError({
-          message: common.ErEnum.BACKEND_FORBIDDEN_REPORT
+        throw new ServerError({
+          message: ErEnum.BACKEND_FORBIDDEN_REPORT
         });
       }
     }

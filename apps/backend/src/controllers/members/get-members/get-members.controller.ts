@@ -1,10 +1,7 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { asc, eq, inArray, sql } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
@@ -21,15 +18,12 @@ export class GetMembersController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembers)
-  async getMembers(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getMembers(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetMembersRequest = request.body;
 
     let { projectId, perPage, pageNum } = reqValid.payload;
@@ -44,11 +38,11 @@ export class GetMembersController {
     });
 
     let firstProjectId =
-      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
+      this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
 
     if (userMember.isAdmin === false && projectId === firstProjectId) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 
@@ -83,7 +77,7 @@ export class GetMembersController {
     apiMembers.forEach(x => {
       let avatar = avatars.find(a => a.userId === x.memberId);
 
-      if (common.isDefined(avatar)) {
+      if (isDefined(avatar)) {
         x.avatarSmall = avatar.avatarSmall;
       }
     });

@@ -1,21 +1,19 @@
-import { common } from '~backend/barrels/common';
-
 export function makeMconfigFiltersX(item: {
-  modelFields: common.ModelField[];
-  mconfigFilters: common.Filter[];
+  modelFields: ModelField[];
+  mconfigFilters: Filter[];
 }) {
   let { modelFields, mconfigFilters } = item;
 
-  let filtersX: common.FilterX[] = [];
+  let filtersX: FilterX[] = [];
 
-  if (common.isDefined(modelFields) && common.isDefined(mconfigFilters)) {
+  if (isDefined(modelFields) && isDefined(mconfigFilters)) {
     filtersX = mconfigFilters.map(x => {
-      let filterX: common.FilterX = {
+      let filterX: FilterX = {
         fieldId: x.fieldId,
         fractions: x.fractions.sort((a, b) => {
-          let getPriority = (op: common.FractionOperatorEnum): number => {
-            if (op === common.FractionOperatorEnum.Or) return 0;
-            if (op === common.FractionOperatorEnum.And) return 1;
+          let getPriority = (op: FractionOperatorEnum): number => {
+            if (op === FractionOperatorEnum.Or) return 0;
+            if (op === FractionOperatorEnum.And) return 1;
             return 2;
           };
 

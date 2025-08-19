@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
-import { common } from '~backend/barrels/common';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 
@@ -23,9 +23,9 @@ export class BranchesService {
       )
     });
 
-    if (common.isUndefined(branch)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+    if (isUndefined(branch)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
       });
     }
 
@@ -47,9 +47,9 @@ export class BranchesService {
       )
     });
 
-    if (common.isDefined(branch)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_BRANCH_ALREADY_EXISTS
+    if (isDefined(branch)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_BRANCH_ALREADY_EXISTS
       });
     }
   }

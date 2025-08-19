@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { common } from '~backend/barrels/common';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { makeMalloyConnections } from '~node-common/functions/make-malloy-connections';
 import { makeMalloyQuery } from '~node-common/functions/make-malloy-query';
@@ -16,9 +16,9 @@ export class MalloyService {
     projectId: string;
     envId: string;
     structId: string;
-    model: common.Model;
-    mconfig: common.Mconfig;
-    queryOperations: common.QueryOperation[];
+    model: Model;
+    mconfig: Mconfig;
+    queryOperations: QueryOperation[];
   }) {
     let { projectId, envId, structId, model, mconfig, queryOperations } = item;
 

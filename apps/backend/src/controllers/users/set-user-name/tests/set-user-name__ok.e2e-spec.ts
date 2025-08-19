@@ -1,8 +1,5 @@
 import test from 'ava';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 
@@ -42,7 +39,7 @@ test('1', async t => {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserName,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: {
         firstName: firstName,
@@ -50,18 +47,17 @@ test('1', async t => {
       }
     };
 
-    resp =
-      await helper.sendToBackend<apiToBackend.ToBackendSetUserNameResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: setUserNameReq
-      });
+    resp = await sendToBackend<apiToBackend.ToBackendSetUserNameResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: setUserNameReq
+    });
 
     await prep.app.close();
   } catch (e) {
     logToConsoleBackend({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: prep.logger,
       cs: prep.cs
     });

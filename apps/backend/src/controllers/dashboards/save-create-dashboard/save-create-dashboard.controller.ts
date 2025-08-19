@@ -9,12 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
@@ -49,22 +44,19 @@ export class SaveCreateDashboardController {
     private envsService: EnvsService,
     private bridgesService: BridgesService,
     private wrapToEntService: WrapToEntService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveCreateDashboard)
-  async saveCreateDashboard(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async saveCreateDashboard(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendSaveCreateDashboardRequest =
       request.body;
 
-    if (user.alias === common.RESTRICTED_USER_ALIAS) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_USER
+    if (user.alias === RESTRICTED_USER_ALIAS) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 
@@ -81,7 +73,7 @@ export class SaveCreateDashboardController {
       tilesGrid
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -93,8 +85,8 @@ export class SaveCreateDashboardController {
     });
 
     if (userMember.isExplorer === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
       });
     }
 
@@ -123,15 +115,15 @@ export class SaveCreateDashboardController {
     });
 
     let firstProjectId =
-      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
+      this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
 
     if (
       userMember.isAdmin === false &&
       projectId === firstProjectId &&
-      repoId === common.PROD_REPO_ID
+      repoId === PROD_REPO_ID
     ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 
@@ -139,26 +131,26 @@ export class SaveCreateDashboardController {
 
     if (
       mdir.length > 2 &&
-      mdir.substring(0, 2) === common.MPROVE_CONFIG_DIR_DOT_SLASH
+      mdir.substring(0, 2) === MPROVE_CONFIG_DIR_DOT_SLASH
     ) {
       mdir = mdir.substring(2);
     }
 
     let parentNodeId =
-      currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
-        ? `${projectId}/${common.MPROVE_USERS_FOLDER}/${user.alias}`
-        : `${projectId}/${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}`;
+      currentStruct.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
+        ? `${projectId}/${MPROVE_USERS_FOLDER}/${user.alias}`
+        : `${projectId}/${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}`;
 
-    let fileName = `${newDashboardId}${common.FileExtensionEnum.Dashboard}`;
+    let fileName = `${newDashboardId}${FileExtensionEnum.Dashboard}`;
 
-    // let malloyFileName = `${newDashboardId}${common.FileExtensionEnum.Malloy}`;
+    // let malloyFileName = `${newDashboardId}${FileExtensionEnum.Malloy}`;
 
     // let malloyDashboardFilePath = `${parentNodeId}/${malloyFileName}`;
 
     let dashFileText: string;
     // let secondFileContent: string;
 
-    if (common.isDefined(fromDashboardId)) {
+    if (isDefined(fromDashboardId)) {
       let fromDashboardEntity =
         await this.dashboardsService.getDashboardCheckExists({
           structId: bridge.structId,
@@ -175,7 +167,7 @@ export class SaveCreateDashboardController {
         }
       );
 
-      let yTiles: common.TileX[] = [];
+      let yTiles: TileX[] = [];
 
       tilesGrid.forEach(freshTile => {
         let yTile = fromDashboard.tiles.find(y => freshTile.title === y.title);
@@ -188,7 +180,7 @@ export class SaveCreateDashboardController {
         yTile.listen = freshTile.listen;
         yTile.mconfig.filters = yTile.mconfig.filters.filter(
           k =>
-            common.isUndefined(freshTile.deletedFilterFieldIds) ||
+            isUndefined(freshTile.deletedFilterFieldIds) ||
             freshTile.deletedFilterFieldIds.indexOf(k.fieldId) < 0
         );
 
@@ -206,14 +198,14 @@ export class SaveCreateDashboardController {
         newTitle: dashboardTitle,
         roles: accessRoles,
         caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-        timezone: common.UTC
+        timezone: UTC
         // malloyDashboardFilePath: malloyDashboardFilePath
       });
 
       dashFileText = dashboardFileText;
       // secondFileContent = malloyFileText;
     } else {
-      let newDashboard: common.DashboardX = {
+      let newDashboard: DashboardX = {
         structId: undefined,
         dashboardId: newDashboardId,
         draft: false,
@@ -241,7 +233,7 @@ export class SaveCreateDashboardController {
         newTitle: dashboardTitle,
         roles: accessRoles,
         caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-        timezone: common.UTC
+        timezone: UTC
         // malloyDashboardFilePath: malloyDashboardFilePath
       });
 
@@ -274,7 +266,7 @@ export class SaveCreateDashboardController {
 
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateFileResponse>({
-        routingKey: helper.makeRoutingKeyToDisk({
+        routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
         }),
@@ -292,7 +284,7 @@ export class SaveCreateDashboardController {
 
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {
-        x.structId = common.EMPTY_STRUCT_ID;
+        x.structId = EMPTY_STRUCT_ID;
         x.needValidate = true;
       }
     });
@@ -311,16 +303,16 @@ export class SaveCreateDashboardController {
 
     let dashboard = dashboards.find(x => x.dashboardId === newDashboardId);
 
-    if (common.isUndefined(dashboard)) {
+    if (isUndefined(dashboard)) {
       let fileId = `${parentNodeId}/${fileName}`;
       let fileIdAr = fileId.split('/');
       fileIdAr.shift();
       let filePath = fileIdAr.join('/');
 
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_CREATE_DASHBOARD_FAIL,
+      throw new ServerError({
+        message: ErEnum.BACKEND_CREATE_DASHBOARD_FAIL,
         data: {
-          encodedFileId: common.encodeFilePath({ filePath: filePath })
+          encodedFileId: encodeFilePath({ filePath: filePath })
         }
       });
     }

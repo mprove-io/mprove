@@ -2,13 +2,13 @@ import { drizzle as drizzlePg } from 'drizzle-orm/node-postgres';
 import { migrate as migratePg } from 'drizzle-orm/node-postgres/migrator';
 import { Client, ClientConfig } from 'pg';
 import 'reflect-metadata';
-import { common } from '~backend/barrels/common';
+import { BoolEnum } from '~common/enums/bool.enum';
 
 async function start() {
   let clientConfig: ClientConfig = {
     connectionString: process.env.CLI_DRIZZLE_POSTGRES_DATABASE_URL,
     ssl:
-      process.env.CLI_DRIZZLE_IS_POSTGRES_TLS === common.BoolEnum.TRUE
+      process.env.CLI_DRIZZLE_IS_POSTGRES_TLS === BoolEnum.TRUE
         ? {
             rejectUnauthorized: false
           }

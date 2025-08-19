@@ -9,12 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { SkipJwtCheck } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
@@ -34,7 +29,7 @@ export class SpecialRebuildStructsController {
   constructor(
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -50,17 +45,16 @@ export class SpecialRebuildStructsController {
     let { specialKey, userIds, skipRebuild, overrideTimezone } =
       reqValid.payload;
 
-    let envSpecialKey =
-      this.cs.get<interfaces.Config['specialKey']>('specialKey');
+    let envSpecialKey = this.cs.get<BackendConfig['specialKey']>('specialKey');
 
-    if (common.isUndefinedOrEmpty(specialKey) || specialKey !== envSpecialKey) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_WRONG_SPECIAL_KEY
+    if (isUndefinedOrEmpty(specialKey) || specialKey !== envSpecialKey) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_WRONG_SPECIAL_KEY
       });
     }
 
     let projectIds: string[] = [];
-    let members: schemaPostgres.MemberEnt[] = [];
+    let members: MemberEnt[] = [];
 
     if (userIds.length > 0) {
       members = await this.db.drizzle.query.membersTable.findMany({
@@ -70,7 +64,7 @@ export class SpecialRebuildStructsController {
       projectIds = members.map(x => x.projectId);
     }
 
-    let projects: schemaPostgres.ProjectEnt[] = [];
+    let projects: ProjectEnt[] = [];
 
     if (projectIds.length > 0) {
       projects = await this.db.drizzle.query.projectsTable.findMany({
@@ -80,7 +74,7 @@ export class SpecialRebuildStructsController {
       projects = await this.db.drizzle.select().from(projectsTable);
     }
 
-    let bridges: schemaPostgres.BridgeEnt[];
+    let bridges: BridgeEnt[];
 
     if (userIds.length > 0) {
       bridges = await this.db.drizzle.query.bridgesTable.findMany({
@@ -97,7 +91,7 @@ export class SpecialRebuildStructsController {
     await asyncPool(1, bridges, async bridge => {
       let project = projects.find(x => x.projectId === bridge.projectId);
 
-      if (common.isUndefined(project)) {
+      if (isUndefined(project)) {
         notFoundProjectIds.push(bridge.projectId);
         return;
       }
@@ -133,7 +127,7 @@ export class SpecialRebuildStructsController {
         let getCatalogFilesResponse =
           await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
             {
-              routingKey: helper.makeRoutingKeyToDisk({
+              routingKey: makeRoutingKeyToDisk({
                 orgId: project.orgId,
                 projectId: project.projectId
               }),
@@ -142,16 +136,13 @@ export class SpecialRebuildStructsController {
             }
           );
 
-        if (
-          getCatalogFilesResponse.info.status !==
-          common.ResponseInfoStatusEnum.Ok
-        ) {
+        if (getCatalogFilesResponse.info.status !== ResponseInfoStatusEnum.Ok) {
           bridgeItem.errorMessage = getCatalogFilesResponse.info.error.message;
           errorGetCatalogBridgeItems.push(bridgeItem);
           return;
         }
 
-        let structId = common.makeId();
+        let structId = makeId();
 
         await this.blockmlService.rebuildStruct({
           traceId: traceId,
@@ -166,7 +157,7 @@ export class SpecialRebuildStructsController {
         bridge.structId = structId;
         bridge.needValidate = false;
       } else {
-        bridge.structId = common.EMPTY_STRUCT_ID;
+        bridge.structId = EMPTY_STRUCT_ID;
         bridge.needValidate = true;
       }
 

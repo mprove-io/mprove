@@ -1,19 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Redis } from 'ioredis';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { IDEMP_EXPIRE_SECONDS } from '~backend/constants/top';
 
 @Injectable()
 export class RedisService {
   private client: Redis;
 
-  constructor(private cs: ConfigService<interfaces.Config>) {
+  constructor(private cs: ConfigService<BackendConfig>) {
     let redisHost =
-      this.cs.get<interfaces.Config['backendRedisHost']>('backendRedisHost');
+      this.cs.get<BackendConfig['backendRedisHost']>('backendRedisHost');
 
-    let redisPassword = this.cs.get<interfaces.Config['backendRedisPassword']>(
+    let redisPassword = this.cs.get<BackendConfig['backendRedisPassword']>(
       'backendRedisPassword'
     );
 
@@ -39,6 +38,6 @@ export class RedisService {
 
     const data = await this.client.get(id);
 
-    return common.isDefined(data) ? JSON.parse(data) : undefined;
+    return isDefined(data) ? JSON.parse(data) : undefined;
   }
 }

@@ -9,12 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
@@ -43,7 +38,7 @@ export class RevertRepoToLastCommitController {
     private branchesService: BranchesService,
     private envsService: EnvsService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -52,7 +47,7 @@ export class RevertRepoToLastCommitController {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit
   )
   async revertRepoToLastCommit(
-    @AttachUser() user: schemaPostgres.UserEnt,
+    @AttachUser() user: UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendRevertRepoToLastCommitRequest =
@@ -61,7 +56,7 @@ export class RevertRepoToLastCommitController {
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -106,7 +101,7 @@ export class RevertRepoToLastCommitController {
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskRevertRepoToLastCommitResponse>(
         {
-          routingKey: helper.makeRoutingKeyToDisk({
+          routingKey: makeRoutingKeyToDisk({
             orgId: project.orgId,
             projectId: projectId
           }),
@@ -125,7 +120,7 @@ export class RevertRepoToLastCommitController {
 
     await forEachSeries(branchBridges, async x => {
       if (x.envId === envId) {
-        let structId = common.makeId();
+        let structId = makeId();
 
         await this.blockmlService.rebuildStruct({
           traceId: traceId,
@@ -140,7 +135,7 @@ export class RevertRepoToLastCommitController {
         x.structId = structId;
         x.needValidate = false;
       } else {
-        x.structId = common.EMPTY_STRUCT_ID;
+        x.structId = EMPTY_STRUCT_ID;
         x.needValidate = true;
       }
     });

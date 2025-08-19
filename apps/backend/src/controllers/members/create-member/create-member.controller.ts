@@ -10,13 +10,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { constants } from '~backend/barrels/constants';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
@@ -47,16 +41,13 @@ export class CreateMemberController {
     private mailerService: MailerService,
     private wrapToApiService: WrapToApiService,
     private makerService: MakerService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateMember)
-  async createMember(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async createMember(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendCreateMemberRequest = request.body;
 
     let { traceId } = reqValid.info;
@@ -75,25 +66,25 @@ export class CreateMemberController {
       where: eq(usersTable.email, email)
     });
 
-    let newUser: schemaPostgres.UserEnt;
+    let newUser: UserEnt;
 
-    if (common.isUndefined(invitedUser)) {
+    if (isUndefined(invitedUser)) {
       let alias = await this.usersService.makeAlias(email);
 
       newUser = {
-        userId: common.makeId(),
+        userId: makeId(),
         email: email,
         passwordResetToken: undefined,
         passwordResetExpiresTs: undefined,
         isEmailVerified: false,
-        emailVerificationToken: common.makeId(),
+        emailVerificationToken: makeId(),
         hash: undefined,
         salt: undefined,
         jwtMinIat: undefined,
         alias: alias,
         firstName: undefined,
         lastName: undefined,
-        ui: common.makeCopy(constants.DEFAULT_SRV_UI),
+        ui: makeCopy(DEFAULT_SRV_UI),
         serverTs: undefined
       };
 
@@ -104,7 +95,7 @@ export class CreateMemberController {
       // });
     }
 
-    if (common.isDefined(invitedUser)) {
+    if (isDefined(invitedUser)) {
       await this.membersService.checkMemberDoesNotExist({
         memberId: invitedUser.userId,
         projectId: projectId
@@ -113,7 +104,7 @@ export class CreateMemberController {
 
     let newMember = this.makerService.makeMember({
       projectId: projectId,
-      user: common.isDefined(invitedUser) ? invitedUser : newUser,
+      user: isDefined(invitedUser) ? invitedUser : newUser,
       isAdmin: false,
       isEditor: true,
       isExplorer: true
@@ -138,7 +129,7 @@ export class CreateMemberController {
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateDevRepoResponse>(
         {
-          routingKey: helper.makeRoutingKeyToDisk({
+          routingKey: makeRoutingKeyToDisk({
             orgId: project.orgId,
             projectId: projectId
           }),
@@ -150,7 +141,7 @@ export class CreateMemberController {
     let prodBranch = await this.db.drizzle.query.branchesTable.findFirst({
       where: and(
         eq(branchesTable.projectId, projectId),
-        eq(branchesTable.repoId, common.PROD_REPO_ID),
+        eq(branchesTable.repoId, PROD_REPO_ID),
         eq(branchesTable.branchId, project.defaultBranch)
       )
     });
@@ -169,7 +160,7 @@ export class CreateMemberController {
       )
     });
 
-    let devBranchBridges: schemaPostgres.BridgeEnt[] = [];
+    let devBranchBridges: BridgeEnt[] = [];
 
     prodBranchBridges.forEach(x => {
       let devBranchBridge = this.makerService.makeBridge({
@@ -177,7 +168,7 @@ export class CreateMemberController {
         repoId: devBranch.repoId,
         branchId: devBranch.branchId,
         envId: x.envId,
-        structId: common.EMPTY_STRUCT_ID,
+        structId: EMPTY_STRUCT_ID,
         needValidate: true
       });
 
@@ -185,8 +176,8 @@ export class CreateMemberController {
     });
 
     await forEachSeries(devBranchBridges, async x => {
-      if (x.envId === common.PROJECT_ENV_PROD) {
-        let structId = common.makeId();
+      if (x.envId === PROJECT_ENV_PROD) {
+        let structId = makeId();
 
         await this.blockmlService.rebuildStruct({
           traceId: traceId,
@@ -201,7 +192,7 @@ export class CreateMemberController {
         x.structId = structId;
         x.needValidate = false;
       } else {
-        x.structId = common.EMPTY_STRUCT_ID;
+        x.structId = EMPTY_STRUCT_ID;
         x.needValidate = true;
       }
     });
@@ -214,7 +205,7 @@ export class CreateMemberController {
               tx: tx,
               insert: {
                 members: [newMember],
-                users: common.isDefined(newUser) ? [newUser] : [],
+                users: isDefined(newUser) ? [newUser] : [],
                 branches: [devBranch],
                 bridges: [...devBranchBridges]
               }
@@ -233,24 +224,24 @@ export class CreateMemberController {
 
     let avatar = avatars.length > 0 ? avatars[0] : undefined;
 
-    let hostUrl = this.cs.get<interfaces.Config['hostUrl']>('hostUrl');
+    let hostUrl = this.cs.get<BackendConfig['hostUrl']>('hostUrl');
 
-    if (common.isDefined(invitedUser) && invitedUser.isEmailVerified === true) {
+    if (isDefined(invitedUser) && invitedUser.isEmailVerified === true) {
       let urlProjectMetrics = [
         hostUrl,
-        common.PATH_ORG,
+        PATH_ORG,
         project.orgId,
-        common.PATH_PROJECT,
+        PATH_PROJECT,
         projectId,
-        common.PATH_REPO,
-        common.PROD_REPO_ID,
-        common.PATH_BRANCH,
+        PATH_REPO,
+        PROD_REPO_ID,
+        PATH_BRANCH,
         project.defaultBranch,
-        common.PATH_ENV,
-        common.PROJECT_ENV_PROD,
-        common.PATH_REPORTS,
-        common.PATH_REPORT,
-        common.EMPTY_REPORT_ID
+        PATH_ENV,
+        PROJECT_ENV_PROD,
+        PATH_REPORTS,
+        PATH_REPORT,
+        EMPTY_REPORT_ID
       ].join('/');
 
       await this.mailerService.sendMail({
@@ -259,13 +250,13 @@ export class CreateMemberController {
         text: `Project metrics: ${urlProjectMetrics}`
       });
     } else {
-      let emailVerificationToken = common.isDefined(invitedUser)
+      let emailVerificationToken = isDefined(invitedUser)
         ? invitedUser.emailVerificationToken
         : newUser.emailVerificationToken;
 
       let emailBase64 = Buffer.from(email).toString('base64');
 
-      let urlCompleteRegistration = `${hostUrl}/${common.PATH_COMPLETE_REGISTRATION}?token=${emailVerificationToken}&b=${emailBase64}`;
+      let urlCompleteRegistration = `${hostUrl}/${PATH_COMPLETE_REGISTRATION}?token=${emailVerificationToken}&b=${emailBase64}`;
 
       await this.mailerService.sendMail({
         to: email,
@@ -276,7 +267,7 @@ export class CreateMemberController {
 
     let apiMember = this.wrapToApiService.wrapToApiMember(newMember);
 
-    if (common.isDefined(avatar)) {
+    if (isDefined(avatar)) {
       apiMember.avatarSmall = avatar.avatarSmall;
     }
 

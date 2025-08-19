@@ -8,12 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -52,23 +47,20 @@ export class GetDashboardController {
     private mconfigsService: MconfigsService,
     private wrapToApiService: WrapToApiService,
     private wrapToEntService: WrapToEntService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard)
-  async getDashboard(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getDashboard(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetDashboardRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId, dashboardId, timezone } =
       reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -81,7 +73,7 @@ export class GetDashboardController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
+      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -145,7 +137,7 @@ export class GetDashboardController {
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
         {
-          routingKey: helper.makeRoutingKeyToDisk({
+          routingKey: makeRoutingKeyToDisk({
             orgId: project.orgId,
             projectId: projectId
           }),
@@ -156,54 +148,51 @@ export class GetDashboardController {
 
     let newDashboardId = fromDashboard.dashboardId;
 
-    let fileName = `${newDashboardId}${common.FileExtensionEnum.Dashboard}`;
+    let fileName = `${newDashboardId}${FileExtensionEnum.Dashboard}`;
 
     let mdir = currentStruct.mproveDirValue;
 
     if (
       mdir.length > 2 &&
-      mdir.substring(0, 2) === common.MPROVE_CONFIG_DIR_DOT_SLASH
+      mdir.substring(0, 2) === MPROVE_CONFIG_DIR_DOT_SLASH
     ) {
       mdir = mdir.substring(2);
     }
 
     let dashboardFile = diskResponse.payload.files.find(
       x =>
-        x.name ===
-        `${fromDashboard.dashboardId}${common.FileExtensionEnum.Dashboard}`
+        x.name === `${fromDashboard.dashboardId}${FileExtensionEnum.Dashboard}`
     );
 
     let malloyFile = diskResponse.payload.files.find(
-      x =>
-        x.name ===
-        `${fromDashboard.dashboardId}${common.FileExtensionEnum.Malloy}`
+      x => x.name === `${fromDashboard.dashboardId}${FileExtensionEnum.Malloy}`
     );
 
     let relativePath =
-      currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
-        ? `${common.MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`
-        : `${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`;
+      currentStruct.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
+        ? `${MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`
+        : `${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`;
 
     let fileNodeId = `${projectId}/${relativePath}`;
 
     let pathString = JSON.stringify(fileNodeId.split('/'));
 
-    let fileId = common.encodeFilePath({ filePath: relativePath });
+    let fileId = encodeFilePath({ filePath: relativePath });
 
     // second
 
-    let secondFileName = `${newDashboardId}${common.FileExtensionEnum.Malloy}`;
+    let secondFileName = `${newDashboardId}${FileExtensionEnum.Malloy}`;
 
     let secondRelativePath =
-      currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
-        ? `${common.MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`
-        : `${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`;
+      currentStruct.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
+        ? `${MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`
+        : `${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`;
 
     let secondFileNodeId = `${projectId}/${secondRelativePath}`;
 
     let secondPathString = JSON.stringify(secondFileNodeId.split('/'));
 
-    let secondFileId = common.encodeFilePath({ filePath: secondRelativePath });
+    let secondFileId = encodeFilePath({ filePath: secondRelativePath });
 
     let {
       dashboardFileText
@@ -214,13 +203,13 @@ export class GetDashboardController {
       newTitle: fromDashboard.title,
       roles: fromDashboard.accessRoles.join(', '),
       caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-      timezone: common.UTC
+      timezone: UTC
       // malloyDashboardFilePath: secondFileNodeId
     });
 
     // add dashboard file
 
-    let tempFile: common.DiskCatalogFile = {
+    let tempFile: DiskCatalogFile = {
       projectId: projectId,
       repoId: repoId,
       fileId: fromDashboard.draft === true ? fileId : dashboardFile.fileId,
@@ -232,7 +221,7 @@ export class GetDashboardController {
       content: dashboardFileText
     };
 
-    // let secondTempFile: common.DiskCatalogFile = {
+    // let secondTempFile: DiskCatalogFile = {
     //   projectId: projectId,
     //   repoId: repoId,
     //   fileId: fromDashboard.draft === true ? secondFileId : malloyFile?.fileId,
@@ -255,15 +244,14 @@ export class GetDashboardController {
         let ext = ar[ar.length - 1];
         let allow =
           x.fileNodeId !== secondFileNodeId &&
-          [
-            common.FileExtensionEnum.Chart,
-            common.FileExtensionEnum.Dashboard
-          ].indexOf(`.${ext}` as common.FileExtensionEnum) < 0;
+          [FileExtensionEnum.Chart, FileExtensionEnum.Dashboard].indexOf(
+            `.${ext}` as FileExtensionEnum
+          ) < 0;
         return allow;
       })
     ];
 
-    // if (common.isDefined(malloyFileText)) {
+    // if (isDefined(malloyFileText)) {
     //   diskFiles.push(secondTempFile);
     // }
 
@@ -281,9 +269,9 @@ export class GetDashboardController {
 
     let newDashboard = dashboards.find(x => x.dashboardId === newDashboardId);
 
-    if (common.isUndefined(newDashboard)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_GET_DASHBOARD_FAIL,
+    if (isUndefined(newDashboard)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_GET_DASHBOARD_FAIL,
         data: {
           structErrors: struct.errors
         }
@@ -303,12 +291,12 @@ export class GetDashboardController {
       x => dashboardQueryIds.indexOf(x.queryId) > -1
     );
 
-    let insertMconfigs: schemaPostgres.MconfigEnt[] = [];
-    let insertOrUpdateQueries: schemaPostgres.QueryEnt[] = [];
-    let insertOrDoNothingQueries: schemaPostgres.QueryEnt[] = [];
+    let insertMconfigs: MconfigEnt[] = [];
+    let insertOrUpdateQueries: QueryEnt[] = [];
+    let insertOrDoNothingQueries: QueryEnt[] = [];
 
     dashboardMconfigs
-      .filter(mconfig => mconfig.modelType !== common.ModelTypeEnum.Store)
+      .filter(mconfig => mconfig.modelType !== ModelTypeEnum.Store)
       // .filter(mconfig => mconfig.isStoreModel === false)
       .forEach(mconfig => {
         let query = dashboardQueries.find(y => y.queryId === mconfig.queryId);
@@ -323,17 +311,17 @@ export class GetDashboardController {
     await forEachSeries(
       dashboardMconfigs.filter(
         mconfig =>
-          mconfig.modelType === common.ModelTypeEnum.Store ||
-          mconfig.modelType === common.ModelTypeEnum.Malloy
+          mconfig.modelType === ModelTypeEnum.Store ||
+          mconfig.modelType === ModelTypeEnum.Malloy
       ),
       async mconfig => {
-        let newMconfig: common.Mconfig;
-        let newQuery: common.Query;
+        let newMconfig: Mconfig;
+        let newQuery: Query;
         let isError = false;
 
         let model = models.find(y => y.modelId === mconfig.modelId);
 
-        if (mconfig.modelType === common.ModelTypeEnum.Store) {
+        if (mconfig.modelType === ModelTypeEnum.Store) {
           let mqe = await this.mconfigsService.prepStoreMconfigQuery({
             struct: struct,
             project: project,
@@ -347,7 +335,7 @@ export class GetDashboardController {
           newMconfig = mqe.newMconfig;
           newQuery = mqe.newQuery;
           isError = mqe.isError;
-        } else if (mconfig.modelType === common.ModelTypeEnum.Malloy) {
+        } else if (mconfig.modelType === ModelTypeEnum.Malloy) {
           let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
             projectId: projectId,
             envId: envId,
@@ -356,7 +344,7 @@ export class GetDashboardController {
             mconfig: mconfig,
             queryOperations: [
               {
-                type: common.QueryOperationTypeEnum.Get,
+                type: QueryOperationTypeEnum.Get,
                 timezone: timezone
               }
             ]

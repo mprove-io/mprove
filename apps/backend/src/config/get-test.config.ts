@@ -1,9 +1,9 @@
-import { interfaces } from '~backend/barrels/interfaces';
+import { BackendConfig } from '~common/interfaces/backend/backend-config';
 
-export function getTestConfig(devConfig: interfaces.Config) {
+export function getTestConfig(devConfig: BackendConfig) {
   let testConfig = Object.assign({}, devConfig);
 
-  // testConfig.backendLogIsJson = common.BoolEnum.FALSE;
+  // testConfig.backendLogIsJson = BoolEnum.FALSE;
 
   return testConfig;
 }

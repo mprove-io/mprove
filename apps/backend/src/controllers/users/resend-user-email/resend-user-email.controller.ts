@@ -1,7 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
+
 import { SkipJwtCheck } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
@@ -27,15 +26,15 @@ export class ResendUserEmailController {
       where: eq(usersTable.userId, userId)
     });
 
-    if (common.isUndefined(user)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_USER_DOES_NOT_EXIST
+    if (isUndefined(user)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_USER_DOES_NOT_EXIST
       });
     }
 
-    if (user.alias === common.RESTRICTED_USER_ALIAS) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_USER
+    if (user.alias === RESTRICTED_USER_ALIAS) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 

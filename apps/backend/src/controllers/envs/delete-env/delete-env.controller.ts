@@ -8,10 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
@@ -33,16 +30,13 @@ export class DeleteEnvController {
     private membersService: MembersService,
     private envsService: EnvsService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnv)
-  async deleteEnv(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async deleteEnv(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendDeleteEnvRequest = request.body;
 
     let { projectId, envId } = reqValid.payload;
@@ -56,9 +50,9 @@ export class DeleteEnvController {
       projectId: projectId
     });
 
-    if (envId === common.PROJECT_ENV_PROD) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_ENV_PROD_CANNOT_BE_DELETED
+    if (envId === PROJECT_ENV_PROD) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_ENV_PROD_CANNOT_BE_DELETED
       });
     }
 

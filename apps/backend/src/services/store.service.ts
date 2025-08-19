@@ -1,9 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -26,14 +24,14 @@ export interface StoreUserCodeReturn {
 export class StoreService {
   constructor(
     private userCodeService: UserCodeService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   async adjustMconfig(item: {
-    mconfig: common.Mconfig;
-    model: common.Model;
+    mconfig: Mconfig;
+    model: Model;
     caseSensitiveStringFilters: boolean;
     metricsStartDateYYYYMMDD: string;
     metricsEndDateYYYYMMDD: string;
@@ -51,39 +49,37 @@ export class StoreService {
     // console.log('item.metricsEndDateYYYYMMDD');
     // console.log(item.metricsEndDateYYYYMMDD);
 
-    let newMconfig = common.makeCopy(mconfig);
+    let newMconfig = makeCopy(mconfig);
 
     //
     newMconfig.dateRangeIncludesRightSide =
-      common.isUndefined(
-        (model.content as common.FileStore).date_range_includes_right_side
+      isUndefined(
+        (model.content as FileStore).date_range_includes_right_side
       ) ||
-      common.toBooleanFromLowercaseString(
-        (model.content as common.FileStore).date_range_includes_right_side
+      toBooleanFromLowercaseString(
+        (model.content as FileStore).date_range_includes_right_side
       ) === true
         ? true
         : false;
 
     // add required filters
-    (model.content as common.FileStore).fields
-      .filter(x => x.fieldClass === common.FieldClassEnum.Filter)
+    (model.content as FileStore).fields
+      .filter(x => x.fieldClass === FieldClassEnum.Filter)
       .forEach(storeFilter => {
-        if (
-          common.toBooleanFromLowercaseString(storeFilter.required) === true
-        ) {
+        if (toBooleanFromLowercaseString(storeFilter.required) === true) {
           let selectedFilter = newMconfig.filters.find(
             x => x.fieldId === `${storeFilter.name}`
           );
 
-          if (common.isUndefined(selectedFilter)) {
-            let newFraction: common.Fraction = {
-              type: common.FractionTypeEnum.StoreFraction,
+          if (isUndefined(selectedFilter)) {
+            let newFraction: Fraction = {
+              type: FractionTypeEnum.StoreFraction,
               controls: [] as any[],
               brick: undefined as any,
               operator: undefined as any
             };
 
-            let newFilter: common.Filter = {
+            let newFilter: Filter = {
               fieldId: `${storeFilter.name}`,
               fractions: [newFraction]
             };
@@ -98,8 +94,8 @@ export class StoreService {
               x => x.name === storeFractionControl.name
             );
 
-            if (common.isUndefined(selectedControl)) {
-              let newControl: common.FractionControl = {
+            if (isUndefined(selectedControl)) {
+              let newControl: FractionControl = {
                 isMetricsDate: storeFractionControl.isMetricsDate,
                 options: storeFractionControl.options,
                 value: storeFractionControl.value,
@@ -122,7 +118,7 @@ export class StoreService {
       // console.log('filter.fieldId');
       // console.log(filter.fieldId);
 
-      if (common.isUndefined(filter.fieldId)) {
+      if (isUndefined(filter.fieldId)) {
         // console.log('___filter___');
         // console.log(filter);
       }
@@ -134,17 +130,16 @@ export class StoreService {
         fraction.controls
           .filter(
             control =>
-              common.isDefinedAndNotEmpty(control.value) &&
+              isDefinedAndNotEmpty(control.value) &&
               typeof control.value === 'string'
           )
           .forEach(control => {
             // console.log('control');
             // console.log(control);
 
-            let storeFilt = (model.content as common.FileStore).fields
+            let storeFilt = (model.content as FileStore).fields
               .filter(
-                storeField =>
-                  storeField.fieldClass === common.FieldClassEnum.Filter
+                storeField => storeField.fieldClass === FieldClassEnum.Filter
               )
               .find(storeField => storeField.name === filter.fieldId);
 
@@ -153,14 +148,14 @@ export class StoreService {
 
             let newValue =
               control.isMetricsDate === true &&
-              (common.isDefined(metricsStartDateYYYYMMDD) ||
-                common.isDefined(metricsEndDateYYYYMMDD))
+              (isDefined(metricsStartDateYYYYMMDD) ||
+                isDefined(metricsEndDateYYYYMMDD))
                 ? storeFilt.fraction_controls.find(
                     fc => fc.name === control.name
                   ).value
                 : control.value;
 
-            let reg = common.MyRegex.CAPTURE_S_REF();
+            let reg = MyRegex.CAPTURE_S_REF();
             let r;
 
             // let refError;
@@ -172,9 +167,9 @@ export class StoreService {
 
               if (
                 reference === 'METRICS_DATE_FROM' &&
-                control.controlClass === common.ControlClassEnum.DatePicker
+                control.controlClass === ControlClassEnum.DatePicker
               ) {
-                target = common.isDefined(metricsStartDateYYYYMMDD)
+                target = isDefined(metricsStartDateYYYYMMDD)
                   ? metricsStartDateYYYYMMDD
                   : getYYYYMMDDCurrentDateByTimezone({
                       timezone: mconfig.timezone,
@@ -182,9 +177,9 @@ export class StoreService {
                     });
               } else if (
                 reference === 'METRICS_DATE_TO' &&
-                control.controlClass === common.ControlClassEnum.DatePicker
+                control.controlClass === ControlClassEnum.DatePicker
               ) {
-                target = common.isDefined(metricsEndDateYYYYMMDD)
+                target = isDefined(metricsEndDateYYYYMMDD)
                   ? metricsEndDateYYYYMMDD
                   : getYYYYMMDDCurrentDateByTimezone({
                       timezone: mconfig.timezone,
@@ -203,15 +198,11 @@ export class StoreService {
                 // break;
               }
 
-              newValue = common.MyRegex.replaceSRefs(
-                newValue,
-                reference,
-                target
-              );
+              newValue = MyRegex.replaceSRefs(newValue, reference, target);
             }
 
             control.value =
-              control.controlClass === common.ControlClassEnum.Switch &&
+              control.controlClass === ControlClassEnum.Switch &&
               typeof newValue === 'string'
                 ? toBooleanFromLowercaseString(newValue)
                 : newValue;
@@ -223,11 +214,11 @@ export class StoreService {
 
     let addSelect: string[] = [];
 
-    (model.content as common.FileStore).fields
+    (model.content as FileStore).fields
       .filter(
         storeField =>
-          storeField.fieldClass !== common.FieldClassEnum.Filter &&
-          common.toBooleanFromLowercaseString(storeField.required) === true
+          storeField.fieldClass !== FieldClassEnum.Filter &&
+          toBooleanFromLowercaseString(storeField.required) === true
       )
       .forEach(field => {
         if (newMconfig.select.indexOf(field.name) < 0) {
@@ -242,9 +233,9 @@ export class StoreService {
 
   async transformStoreRequest(item: {
     input: string;
-    mconfig: common.Mconfig;
-    storeModel: common.Model;
-    storeParam: common.ParameterEnum;
+    mconfig: Mconfig;
+    storeModel: Model;
+    storeParam: ParameterEnum;
     caseSensitiveStringFilters: boolean;
     metricsStartDateYYYYMMDD: string;
     metricsEndDateYYYYMMDD: string;
@@ -261,29 +252,29 @@ export class StoreService {
 
     let inputSub = input;
 
-    let reg = common.MyRegex.CAPTURE_S_REF();
+    let reg = MyRegex.CAPTURE_S_REF();
     let r;
 
     let refError;
 
-    let selectedDimensions = (storeModel.content as common.FileStore).fields
-      .filter(field => field.fieldClass === common.FieldClassEnum.Dimension)
+    let selectedDimensions = (storeModel.content as FileStore).fields
+      .filter(field => field.fieldClass === FieldClassEnum.Dimension)
       .filter(f => mconfig.select.indexOf(`${f.name}`) > -1);
 
-    let selectedMeasures = (storeModel.content as common.FileStore).fields
-      .filter(field => field.fieldClass === common.FieldClassEnum.Measure)
+    let selectedMeasures = (storeModel.content as FileStore).fields
+      .filter(field => field.fieldClass === FieldClassEnum.Measure)
       .filter(f => mconfig.select.indexOf(`${f.name}`) > -1);
 
     let orderByElements: {
       fieldId: string;
-      field: common.FieldAny;
+      field: FieldAny;
       desc: boolean;
     }[] = [];
 
     mconfig.sortings.forEach(sorting => {
       let orderByElement = {
         fieldId: sorting.fieldId,
-        field: (storeModel.content as common.FileStore).fields.find(
+        field: (storeModel.content as FileStore).fields.find(
           field => `${field.name}` === sorting.fieldId
         ),
         desc: sorting.desc
@@ -307,14 +298,14 @@ export class StoreService {
       } else if (reference === 'QUERY_LIMIT') {
         target = JSON.stringify(mconfig.limit);
       } else if (reference === 'METRICS_DATE_FROM') {
-        target = common.isDefined(metricsStartDateYYYYMMDD)
+        target = isDefined(metricsStartDateYYYYMMDD)
           ? metricsStartDateYYYYMMDD
           : getYYYYMMDDCurrentDateByTimezone({
               timezone: mconfig.timezone,
               deltaDays: -1
             });
       } else if (reference === 'METRICS_DATE_TO') {
-        target = common.isDefined(metricsEndDateYYYYMMDD)
+        target = isDefined(metricsEndDateYYYYMMDD)
           ? metricsEndDateYYYYMMDD
           : getYYYYMMDDCurrentDateByTimezone({
               timezone: mconfig.timezone,
@@ -328,9 +319,7 @@ export class StoreService {
       } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
         target = caseSensitiveStringFilters;
       } else if (reference === 'STORE_FIELDS') {
-        target = JSON.stringify(
-          (storeModel.content as common.FileStore).fields
-        );
+        target = JSON.stringify((storeModel.content as FileStore).fields);
       } else if (reference === 'QUERY_TIMEZONE') {
         target = mconfig.timezone;
       } else {
@@ -338,10 +327,10 @@ export class StoreService {
         break;
       }
 
-      inputSub = common.MyRegex.replaceSRefs(inputSub, reference, target);
+      inputSub = MyRegex.replaceSRefs(inputSub, reference, target);
     }
 
-    if (common.isDefined(refError)) {
+    if (isDefined(refError)) {
       return {
         result: 'Error',
         errorMessage: refError,
@@ -365,7 +354,7 @@ ${inputSub}
   }
 
   async transformStoreResponseData(item: {
-    storeModel: common.Model;
+    storeModel: Model;
     respData: any;
   }): Promise<StoreUserCodeReturn> {
     let { storeModel, respData } = item;
@@ -373,11 +362,11 @@ ${inputSub}
     // console.log('respData');
     // console.log(respData);
 
-    let store = storeModel.content as common.FileStore;
+    let store = storeModel.content as FileStore;
 
     let inputSub = store.response;
 
-    let reg = common.MyRegex.CAPTURE_S_REF();
+    let reg = MyRegex.CAPTURE_S_REF();
     let r;
 
     let refError;
@@ -400,17 +389,17 @@ ${inputSub}
       } else if (reference === 'STORE_FIELDS') {
         target = JSON.stringify(store.fields);
       } else {
-        refError = `Unknown reference in store.${common.ParameterEnum.Response}: $${reference}`;
+        refError = `Unknown reference in store.${ParameterEnum.Response}: $${reference}`;
         break;
       }
 
-      inputSub = common.MyRegex.replaceSRefs(inputSub, reference, target);
+      inputSub = MyRegex.replaceSRefs(inputSub, reference, target);
     }
 
     // console.log('inputSub');
     // console.log(inputSub);
 
-    if (common.isDefined(refError)) {
+    if (isDefined(refError)) {
       return {
         result: 'Error',
         errorMessage: refError,
@@ -435,8 +424,8 @@ ${inputSub}
 
   async runQuery(item: {
     projectId: string;
-    connection: schemaPostgres.ConnectionEnt;
-    model: schemaPostgres.ModelEnt;
+    connection: ConnectionEnt;
+    model: ModelEnt;
     queryId: string;
     queryJobId: string;
   }) {
@@ -466,15 +455,15 @@ ${inputSub}
 
       let response;
 
-      if (connection.type === common.ConnectionTypeEnum.GoogleApi) {
+      if (connection.type === ConnectionTypeEnum.GoogleApi) {
         headers['Authorization'] = `Bearer ${connection.googleAccessToken}`;
         headers['Content-Type'] = 'application/json';
       }
 
       response =
-        queryStart.apiMethod === common.StoreMethodEnum.Post
+        queryStart.apiMethod === StoreMethodEnum.Post
           ? await axios.post(url, body, { headers: headers })
-          : queryStart.apiMethod === common.StoreMethodEnum.Get
+          : queryStart.apiMethod === StoreMethodEnum.Get
             ? await axios.get(url, body, { headers: headers })
             : { message: 'method must be POST or GET' };
 
@@ -500,15 +489,15 @@ ${inputSub}
         )
       });
 
-      if (common.isDefined(q)) {
+      if (isDefined(q)) {
         if (response.status !== 200 && response.status !== 201) {
-          q.status = common.QueryStatusEnum.Error;
+          q.status = QueryStatusEnum.Error;
           q.data = [];
           q.queryJobId = undefined; // null
           q.lastErrorMessage = `response status code "${response.code}" is not 200 or 201`;
           q.lastErrorTs = makeTsNumber();
-        } else if (common.isUndefined(response.data)) {
-          q.status = common.QueryStatusEnum.Error;
+        } else if (isUndefined(response.data)) {
+          q.status = QueryStatusEnum.Error;
           q.data = [];
           q.queryJobId = undefined; // null
           q.lastErrorMessage = `response has no data`;
@@ -519,14 +508,14 @@ ${inputSub}
             respData: response.data
           });
 
-          if (common.isDefined(dataResult.errorMessage)) {
-            q.status = common.QueryStatusEnum.Error;
+          if (isDefined(dataResult.errorMessage)) {
+            q.status = QueryStatusEnum.Error;
             q.data = [];
             q.queryJobId = undefined; // null
             q.lastErrorMessage = `store response data processing Error: ${dataResult.errorMessage}`;
             q.lastErrorTs = makeTsNumber();
           } else {
-            q.status = common.QueryStatusEnum.Completed;
+            q.status = QueryStatusEnum.Completed;
             q.queryJobId = undefined; // null;
             q.data = dataResult.result || [];
             q.lastCompleteTs = makeTsNumber();
@@ -562,11 +551,11 @@ ${inputSub}
         )
       });
 
-      if (common.isDefined(q)) {
-        q.status = common.QueryStatusEnum.Error;
+      if (isDefined(q)) {
+        q.status = QueryStatusEnum.Error;
         q.data = [];
         q.queryJobId = undefined; // null
-        q.lastErrorMessage = common.isDefined(e?.response?.data)
+        q.lastErrorMessage = isDefined(e?.response?.data)
           ? e.message + JSON.stringify(e?.response?.data)
           : e.message;
         q.lastErrorTs = makeTsNumber();

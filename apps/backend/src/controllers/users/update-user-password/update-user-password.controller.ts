@@ -8,9 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { SkipJwtCheck } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
@@ -29,7 +27,7 @@ export class UpdateUserPasswordController {
   constructor(
     private usersService: UsersService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -45,15 +43,15 @@ export class UpdateUserPasswordController {
       where: eq(usersTable.passwordResetToken, passwordResetToken)
     });
 
-    if (common.isUndefined(user)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN
+    if (isUndefined(user)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN
       });
     }
 
     if (user.passwordResetExpiresTs < makeTsNumber()) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_UPDATE_PASSWORD_TOKEN_EXPIRED
+      throw new ServerError({
+        message: ErEnum.BACKEND_UPDATE_PASSWORD_TOKEN_EXPIRED
       });
     }
 

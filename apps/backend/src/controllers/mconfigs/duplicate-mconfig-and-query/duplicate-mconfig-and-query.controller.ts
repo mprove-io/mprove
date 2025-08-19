@@ -8,11 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
@@ -43,7 +39,7 @@ export class DuplicateMconfigAndQueryController {
     private bridgesService: BridgesService,
     private envsService: EnvsService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -52,7 +48,7 @@ export class DuplicateMconfigAndQueryController {
     apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDuplicateMconfigAndQuery
   )
   async duplicateMconfigAndQuery(
-    @AttachUser() user: schemaPostgres.UserEnt,
+    @AttachUser() user: UserEnt,
     @Req() request: any
   ) {
     let reqValid: apiToBackend.ToBackendDuplicateMconfigAndQueryRequest =
@@ -62,7 +58,7 @@ export class DuplicateMconfigAndQueryController {
     let { projectId, isRepoProd, branchId, envId, oldMconfigId } =
       reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -108,20 +104,20 @@ export class DuplicateMconfigAndQueryController {
     });
 
     if (oldMconfig.structId !== bridge.structId) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_STRUCT_ID_CHANGED
+      throw new ServerError({
+        message: ErEnum.BACKEND_STRUCT_ID_CHANGED
       });
     }
 
-    let isAccessGranted = helper.checkAccess({
+    let isAccessGranted = checkAccess({
       userAlias: user.alias,
       member: member,
       entity: model
     });
 
     if (isAccessGranted === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_FORBIDDEN_MODEL
+      throw new ServerError({
+        message: ErEnum.BACKEND_FORBIDDEN_MODEL
       });
     }
 
@@ -132,16 +128,16 @@ export class DuplicateMconfigAndQueryController {
       )
     });
 
-    let newMconfigId = common.makeId();
-    let newQueryId = common.makeId();
+    let newMconfigId = makeId();
+    let newQueryId = makeId();
 
-    let newMconfig = Object.assign({}, oldMconfig, <schemaPostgres.MconfigEnt>{
+    let newMconfig = Object.assign({}, oldMconfig, <MconfigEnt>{
       mconfigId: newMconfigId,
       queryId: newQueryId,
       temp: true
     });
 
-    let newQuery = Object.assign({}, oldQuery, <schemaPostgres.QueryEnt>{
+    let newQuery = Object.assign({}, oldQuery, <QueryEnt>{
       queryId: newQueryId
     });
 

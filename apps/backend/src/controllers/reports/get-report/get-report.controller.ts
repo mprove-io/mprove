@@ -7,11 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { constants } from '~backend/barrels/constants';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -41,16 +37,13 @@ export class GetReportController {
     private structsService: StructsService,
     private envsService: EnvsService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReport)
-  async getRep(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getRep(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetReportRequest = request.body;
 
     let { traceId } = reqValid.info;
@@ -76,7 +69,7 @@ export class GetReportController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
+      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -137,7 +130,7 @@ export class GetReportController {
       timezone: timezone
     });
 
-    user.ui = user.ui || common.makeCopy(constants.DEFAULT_SRV_UI);
+    user.ui = user.ui || makeCopy(DEFAULT_SRV_UI);
     user.ui.timezone = timezone;
     user.ui.timeSpec = timeSpec;
     user.ui.timeRangeFraction = repApi.timeRangeFraction;

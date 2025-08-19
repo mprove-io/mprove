@@ -9,12 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
@@ -39,22 +34,19 @@ export class CreateBranchController {
     private branchesService: BranchesService,
     private membersService: MembersService,
     private blockmlService: BlockmlService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch)
-  async createBranch(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async createBranch(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendCreateBranchRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, newBranchId, fromBranchId, isRepoProd } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -99,7 +91,7 @@ export class CreateBranchController {
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateBranchResponse>(
         {
-          routingKey: helper.makeRoutingKeyToDisk({
+          routingKey: makeRoutingKeyToDisk({
             orgId: project.orgId,
             projectId: projectId
           }),
@@ -122,7 +114,7 @@ export class CreateBranchController {
       )
     });
 
-    let newBranchBridges: schemaPostgres.BridgeEnt[] = [];
+    let newBranchBridges: BridgeEnt[] = [];
 
     fromBranchBridges.forEach(x => {
       let newBranchBridge = this.makerService.makeBridge({
@@ -130,7 +122,7 @@ export class CreateBranchController {
         repoId: newBranch.repoId,
         branchId: newBranch.branchId,
         envId: x.envId,
-        structId: common.EMPTY_STRUCT_ID,
+        structId: EMPTY_STRUCT_ID,
         needValidate: true
       });
 
@@ -138,8 +130,8 @@ export class CreateBranchController {
     });
 
     await forEachSeries(newBranchBridges, async x => {
-      if (x.envId === common.PROJECT_ENV_PROD) {
-        let structId = common.makeId();
+      if (x.envId === PROJECT_ENV_PROD) {
+        let structId = makeId();
 
         await this.blockmlService.rebuildStruct({
           traceId: traceId,
@@ -154,7 +146,7 @@ export class CreateBranchController {
         x.structId = structId;
         x.needValidate = false;
       } else {
-        x.structId = common.EMPTY_STRUCT_ID;
+        x.structId = EMPTY_STRUCT_ID;
         x.needValidate = true;
       }
     });

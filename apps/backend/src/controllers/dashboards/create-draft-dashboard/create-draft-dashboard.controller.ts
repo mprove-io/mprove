@@ -8,12 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -50,16 +45,13 @@ export class CreateDraftDashboardController {
     private envsService: EnvsService,
     private bridgesService: BridgesService,
     private wrapToEntService: WrapToEntService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftDashboard)
-  async createDraftDashboard(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async createDraftDashboard(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendCreateDraftDashboardRequest =
       request.body;
 
@@ -76,7 +68,7 @@ export class CreateDraftDashboardController {
       timezone
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -125,13 +117,13 @@ export class CreateDraftDashboardController {
       projectId: projectId
     });
 
-    let yTiles: common.TileX[] = [];
+    let yTiles: TileX[] = [];
 
     tiles.forEach(freshTile => {
       let yTile = fromDashboard.tiles.find(y => freshTile.title === y.title);
 
-      // if (common.isDefined(yTile.malloyQueryId)) {
-      //   yTile.malloyQueryId = common.makeId();
+      // if (isDefined(yTile.malloyQueryId)) {
+      //   yTile.malloyQueryId = makeId();
       // }
 
       yTile.plateX = freshTile.plateX;
@@ -142,7 +134,7 @@ export class CreateDraftDashboardController {
       yTile.listen = freshTile.listen;
       yTile.mconfig.filters = yTile.mconfig.filters.filter(
         k =>
-          common.isUndefined(freshTile.deletedFilterFieldIds) ||
+          isUndefined(freshTile.deletedFilterFieldIds) ||
           freshTile.deletedFilterFieldIds.indexOf(k.fieldId) < 0
       );
 
@@ -166,42 +158,42 @@ export class CreateDraftDashboardController {
     //   });
     // });
 
-    let fileName = `${newDashboardId}${common.FileExtensionEnum.Dashboard}`;
+    let fileName = `${newDashboardId}${FileExtensionEnum.Dashboard}`;
 
     let mdir = currentStruct.mproveDirValue;
 
     if (
       mdir.length > 2 &&
-      mdir.substring(0, 2) === common.MPROVE_CONFIG_DIR_DOT_SLASH
+      mdir.substring(0, 2) === MPROVE_CONFIG_DIR_DOT_SLASH
     ) {
       mdir = mdir.substring(2);
     }
 
     let relativePath =
-      currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
-        ? `${common.MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`
-        : `${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`;
+      currentStruct.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
+        ? `${MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`
+        : `${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`;
 
     let fileNodeId = `${projectId}/${relativePath}`;
 
     let pathString = JSON.stringify(fileNodeId.split('/'));
 
-    let fileId = common.encodeFilePath({ filePath: relativePath });
+    let fileId = encodeFilePath({ filePath: relativePath });
 
     // second
 
-    // let secondFileName = `${newDashboardId}${common.FileExtensionEnum.Malloy}`;
+    // let secondFileName = `${newDashboardId}${FileExtensionEnum.Malloy}`;
 
     // let secondRelativePath =
-    //   currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
-    //     ? `${common.MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`
-    //     : `${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`;
+    //   currentStruct.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
+    //     ? `${MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`
+    //     : `${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`;
 
     // let secondFileNodeId = `${projectId}/${secondRelativePath}`;
 
     // let secondPathString = JSON.stringify(secondFileNodeId.split('/'));
 
-    // let secondFileId = common.encodeFilePath({ filePath: secondRelativePath });
+    // let secondFileId = encodeFilePath({ filePath: secondRelativePath });
 
     let {
       dashboardFileText
@@ -212,7 +204,7 @@ export class CreateDraftDashboardController {
       newTitle: newDashboardId,
       roles: fromDashboard.accessRoles.join(', '),
       caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-      timezone: common.UTC
+      timezone: UTC
       // malloyDashboardFilePath: secondFileNodeId
     });
 
@@ -242,7 +234,7 @@ export class CreateDraftDashboardController {
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
         {
-          routingKey: helper.makeRoutingKeyToDisk({
+          routingKey: makeRoutingKeyToDisk({
             orgId: project.orgId,
             projectId: projectId
           }),
@@ -253,7 +245,7 @@ export class CreateDraftDashboardController {
 
     // add dashboard file
 
-    let tempFile: common.DiskCatalogFile = {
+    let tempFile: DiskCatalogFile = {
       projectId: projectId,
       repoId: repoId,
       fileId: fileId,
@@ -263,7 +255,7 @@ export class CreateDraftDashboardController {
       content: dashboardFileText
     };
 
-    // let secondTempFile: common.DiskCatalogFile = {
+    // let secondTempFile: DiskCatalogFile = {
     //   projectId: projectId,
     //   repoId: repoId,
     //   fileId: secondFileId,
@@ -280,15 +272,14 @@ export class CreateDraftDashboardController {
         let ext = ar[ar.length - 1];
         let allow =
           // x.fileNodeId !== secondFileNodeId &&
-          [
-            common.FileExtensionEnum.Chart,
-            common.FileExtensionEnum.Dashboard
-          ].indexOf(`.${ext}` as common.FileExtensionEnum) < 0;
+          [FileExtensionEnum.Chart, FileExtensionEnum.Dashboard].indexOf(
+            `.${ext}` as FileExtensionEnum
+          ) < 0;
         return allow;
       })
     ];
 
-    // if (common.isDefined(malloyFileText)) {
+    // if (isDefined(malloyFileText)) {
     //   diskFiles.push(secondTempFile);
     // }
 
@@ -309,9 +300,9 @@ export class CreateDraftDashboardController {
 
     let newDashboard = dashboards.find(x => x.dashboardId === newDashboardId);
 
-    if (common.isUndefined(newDashboard)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_CREATE_TEMP_DASHBOARD_FAIL,
+    if (isUndefined(newDashboard)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_CREATE_TEMP_DASHBOARD_FAIL,
         data: {
           structErrors: struct.errors
         }
@@ -331,12 +322,12 @@ export class CreateDraftDashboardController {
       x => dashboardQueryIds.indexOf(x.queryId) > -1
     );
 
-    let insertMconfigs: schemaPostgres.MconfigEnt[] = [];
-    let insertOrUpdateQueries: schemaPostgres.QueryEnt[] = [];
-    let insertOrDoNothingQueries: schemaPostgres.QueryEnt[] = [];
+    let insertMconfigs: MconfigEnt[] = [];
+    let insertOrUpdateQueries: QueryEnt[] = [];
+    let insertOrDoNothingQueries: QueryEnt[] = [];
 
     dashboardMconfigs
-      .filter(mconfig => mconfig.modelType !== common.ModelTypeEnum.Store)
+      .filter(mconfig => mconfig.modelType !== ModelTypeEnum.Store)
       // .filter(mconfig => mconfig.isStoreModel === false)
       .forEach(mconfig => {
         let query = dashboardQueries.find(y => y.queryId === mconfig.queryId);
@@ -351,18 +342,18 @@ export class CreateDraftDashboardController {
     await forEachSeries(
       dashboardMconfigs.filter(
         mconfig =>
-          mconfig.modelType === common.ModelTypeEnum.Store ||
-          mconfig.modelType === common.ModelTypeEnum.Malloy
+          mconfig.modelType === ModelTypeEnum.Store ||
+          mconfig.modelType === ModelTypeEnum.Malloy
       ),
       // dashboardMconfigs.filter(mconfig => mconfig.isStoreModel === true),
       async mconfig => {
-        let newMconfig: common.Mconfig;
-        let newQuery: common.Query;
+        let newMconfig: Mconfig;
+        let newQuery: Query;
         let isError = false;
 
         let model = models.find(y => y.modelId === mconfig.modelId);
 
-        if (mconfig.modelType === common.ModelTypeEnum.Store) {
+        if (mconfig.modelType === ModelTypeEnum.Store) {
           let mqe = await this.mconfigsService.prepStoreMconfigQuery({
             struct: struct,
             project: project,
@@ -376,7 +367,7 @@ export class CreateDraftDashboardController {
           newMconfig = mqe.newMconfig;
           newQuery = mqe.newQuery;
           isError = mqe.isError;
-        } else if (mconfig.modelType === common.ModelTypeEnum.Malloy) {
+        } else if (mconfig.modelType === ModelTypeEnum.Malloy) {
           let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
             projectId: projectId,
             envId: envId,
@@ -385,7 +376,7 @@ export class CreateDraftDashboardController {
             mconfig: mconfig,
             queryOperations: [
               {
-                type: common.QueryOperationTypeEnum.Get,
+                type: QueryOperationTypeEnum.Get,
                 timezone: timezone
               }
             ]

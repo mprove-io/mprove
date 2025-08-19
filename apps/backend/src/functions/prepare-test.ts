@@ -3,21 +3,17 @@ import { INestApplication, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '~backend/app.module';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { enums } from '~backend/barrels/enums';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { getConfig } from '~backend/config/get.config';
 import { RabbitService } from '~backend/services/rabbit.service';
 
 export async function prepareTest(item: {
-  overrideConfigOptions?: interfaces.Config;
+  overrideConfigOptions?: BackendConfig;
 }) {
   let { overrideConfigOptions } = item;
 
-  let extraOverride: interfaces.Config = {
-    backendEnv: enums.BackendEnvEnum.TEST
+  let extraOverride: BackendConfig = {
+    backendEnv: BackendEnvEnum.TEST
   };
 
   let config = getConfig();
@@ -28,7 +24,7 @@ export async function prepareTest(item: {
     imports: [AppModule]
   })
     .overrideProvider(ConfigService)
-    .useValue({ get: (key: any) => mockConfig[key as keyof interfaces.Config] })
+    .useValue({ get: (key: any) => mockConfig[key as keyof BackendConfig] })
     .overrideProvider(MailerService)
     .useValue({ sendMail: async () => {} })
     .compile();
@@ -70,12 +66,12 @@ export async function prepareSeed(item: {
     loginUserPayload
   } = item;
 
-  if (common.isDefined(deleteRecordsPayload)) {
+  if (isDefined(deleteRecordsPayload)) {
     let deleteRecordsRequest: apiToBackend.ToBackendDeleteRecordsRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: deleteRecordsPayload
     };
@@ -90,12 +86,12 @@ export async function prepareSeed(item: {
       });
   }
 
-  if (common.isDefined(seedRecordsPayload)) {
+  if (isDefined(seedRecordsPayload)) {
     let seedRecordsRequest: apiToBackend.ToBackendSeedRecordsRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: seedRecordsPayload
     };
@@ -113,12 +109,12 @@ export async function prepareSeed(item: {
 
   let loginUserResp: apiToBackend.ToBackendLoginUserResponse;
 
-  if (common.isDefined(loginUserPayload)) {
+  if (isDefined(loginUserPayload)) {
     let loginUserRequest: apiToBackend.ToBackendLoginUserRequest = {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: loginUserPayload
     };
@@ -143,7 +139,7 @@ export async function prepareTestAndSeed(item: {
   traceId: string;
   seedRecordsPayload?: apiToBackend.ToBackendSeedRecordsRequestPayload;
   deleteRecordsPayload?: apiToBackend.ToBackendDeleteRecordsRequestPayload;
-  overrideConfigOptions?: interfaces.Config;
+  overrideConfigOptions?: BackendConfig;
   loginUserPayload?: apiToBackend.ToBackendLoginUserRequestPayload;
 }) {
   let {

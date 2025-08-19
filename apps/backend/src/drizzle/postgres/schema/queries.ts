@@ -8,7 +8,6 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
-import { common } from '~backend/barrels/common';
 
 export const queriesTable = pgTable(
   'queries',
@@ -18,7 +17,7 @@ export const queriesTable = pgTable(
     envId: varchar('env_id', { length: 32 }).notNull(),
     connectionId: varchar('connection_id', { length: 32 }).notNull(),
     connectionType: varchar('connection_type')
-      .$type<common.ConnectionTypeEnum>()
+      .$type<ConnectionTypeEnum>()
       .notNull(),
     queryJobId: varchar('query_job_id'),
     bigqueryQueryJobId: varchar('bigquery_query_job_id'),
@@ -26,7 +25,7 @@ export const queriesTable = pgTable(
     apiMethod: text('api_method'),
     apiUrl: text('api_url'),
     apiBody: text('api_body'),
-    status: varchar('status').$type<common.QueryStatusEnum>().notNull(),
+    status: varchar('status').$type<QueryStatusEnum>().notNull(),
     data: json('data'),
     lastRunBy: varchar('last_run_by'),
     lastRunTs: bigint('last_run_ts', { mode: 'number' }),

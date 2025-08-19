@@ -8,13 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { constants } from '~backend/barrels/constants';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { SkipJwtCheck } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -41,7 +35,7 @@ export class SeedRecordsController {
     private makerService: MakerService,
     private wrapToApiService: WrapToApiService,
     private wrapToEntService: WrapToEntService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -61,52 +55,50 @@ export class SeedRecordsController {
 
     //
 
-    let users: schemaPostgres.UserEnt[] = [];
-    let orgs: schemaPostgres.OrgEnt[] = [];
-    let projects: schemaPostgres.ProjectEnt[] = [];
-    let envs: schemaPostgres.EnvEnt[] = [];
-    let members: schemaPostgres.MemberEnt[] = [];
-    let connections: schemaPostgres.ConnectionEnt[] = [];
-    let structs: schemaPostgres.StructEnt[] = [];
-    let branches: schemaPostgres.BranchEnt[] = [];
-    let bridges: schemaPostgres.BridgeEnt[] = [];
-    let charts: schemaPostgres.ChartEnt[] = [];
-    let queries: schemaPostgres.QueryEnt[] = [];
-    let models: schemaPostgres.ModelEnt[] = [];
-    let reports: schemaPostgres.ReportEnt[] = [];
-    let mconfigs: schemaPostgres.MconfigEnt[] = [];
-    let dashboards: schemaPostgres.DashboardEnt[] = [];
+    let users: UserEnt[] = [];
+    let orgs: OrgEnt[] = [];
+    let projects: ProjectEnt[] = [];
+    let envs: EnvEnt[] = [];
+    let members: MemberEnt[] = [];
+    let connections: ConnectionEnt[] = [];
+    let structs: StructEnt[] = [];
+    let branches: BranchEnt[] = [];
+    let bridges: BridgeEnt[] = [];
+    let charts: ChartEnt[] = [];
+    let queries: QueryEnt[] = [];
+    let models: ModelEnt[] = [];
+    let reports: ReportEnt[] = [];
+    let mconfigs: MconfigEnt[] = [];
+    let dashboards: DashboardEnt[] = [];
 
-    if (common.isDefined(payloadUsers)) {
+    if (isDefined(payloadUsers)) {
       await asyncPool(
         1,
         payloadUsers,
         async (x: apiToBackend.ToBackendSeedRecordsRequestPayloadUsersItem) => {
           let alias = await this.usersService.makeAlias(x.email);
-          let { salt, hash } = common.isDefined(x.password)
+          let { salt, hash } = isDefined(x.password)
             ? await this.usersService.makeSaltAndHash(x.password)
             : { salt: undefined, hash: undefined };
 
-          let newUser: schemaPostgres.UserEnt = {
-            userId: x.userId || common.makeId(),
+          let newUser: UserEnt = {
+            userId: x.userId || makeId(),
             email: x.email,
             alias: alias,
             isEmailVerified: x.isEmailVerified,
-            emailVerificationToken: x.emailVerificationToken || common.makeId(),
+            emailVerificationToken: x.emailVerificationToken || makeId(),
             passwordResetToken: x.passwordResetToken,
-            passwordResetExpiresTs: common.isDefined(x.passwordResetExpiresTs)
+            passwordResetExpiresTs: isDefined(x.passwordResetExpiresTs)
               ? x.passwordResetExpiresTs
-              : common.isDefined(x.passwordResetToken)
-                ? helper.makeTsUsingOffsetFromNow(
-                    constants.PASSWORD_EXPIRES_OFFSET
-                  )
+              : isDefined(x.passwordResetToken)
+                ? makeTsUsingOffsetFromNow(PASSWORD_EXPIRES_OFFSET)
                 : undefined,
             hash: hash,
             salt: salt,
             jwtMinIat: undefined,
             firstName: undefined,
             lastName: undefined,
-            ui: common.makeCopy(constants.DEFAULT_SRV_UI),
+            ui: makeCopy(DEFAULT_SRV_UI),
             serverTs: undefined
           };
 
@@ -115,12 +107,12 @@ export class SeedRecordsController {
       );
     }
 
-    if (common.isDefined(payloadOrgs)) {
+    if (isDefined(payloadOrgs)) {
       await asyncPool(
         1,
         payloadOrgs,
         async (x: apiToBackend.ToBackendSeedRecordsRequestPayloadOrgsItem) => {
-          let newOrg: schemaPostgres.OrgEnt = {
+          let newOrg: OrgEnt = {
             orgId: x.orgId,
             name: x.name,
             ownerEmail: x.ownerEmail,
@@ -140,7 +132,7 @@ export class SeedRecordsController {
 
           await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateOrgResponse>(
             {
-              routingKey: helper.makeRoutingKeyToDisk({
+              routingKey: makeRoutingKeyToDisk({
                 orgId: newOrg.orgId,
                 projectId: null
               }),
@@ -154,7 +146,7 @@ export class SeedRecordsController {
       );
     }
 
-    if (common.isDefined(payloadConnections)) {
+    if (isDefined(payloadConnections)) {
       payloadConnections.forEach(x => {
         let newConnection = this.makerService.makeConnection({
           projectId: x.projectId,
@@ -180,7 +172,7 @@ export class SeedRecordsController {
       });
     }
 
-    if (common.isDefined(payloadEnvs)) {
+    if (isDefined(payloadEnvs)) {
       payloadEnvs.forEach(x => {
         let newEnv = this.makerService.makeEnv({
           projectId: x.projectId,
@@ -192,16 +184,16 @@ export class SeedRecordsController {
       });
     }
 
-    if (common.isDefined(payloadProjects)) {
+    if (isDefined(payloadProjects)) {
       await asyncPool(
         1,
         payloadProjects,
         async (
           x: apiToBackend.ToBackendSeedRecordsRequestPayloadProjectsItem
         ) => {
-          let newProject: schemaPostgres.ProjectEnt = {
+          let newProject: ProjectEnt = {
             orgId: x.orgId,
-            projectId: x.projectId || common.makeId(),
+            projectId: x.projectId || makeId(),
             name: x.name,
             defaultBranch: x.defaultBranch,
             remoteType: x.remoteType,
@@ -213,7 +205,7 @@ export class SeedRecordsController {
 
           let prodEnv = this.makerService.makeEnv({
             projectId: newProject.projectId,
-            envId: common.PROJECT_ENV_PROD,
+            envId: PROJECT_ENV_PROD,
             evs: []
           });
 
@@ -240,7 +232,7 @@ export class SeedRecordsController {
           let diskResponse =
             await this.rabbitService.sendToDisk<apiToDisk.ToDiskSeedProjectResponse>(
               {
-                routingKey: helper.makeRoutingKeyToDisk({
+                routingKey: makeRoutingKeyToDisk({
                   orgId: newProject.orgId,
                   projectId: newProject.projectId
                 }),
@@ -249,8 +241,8 @@ export class SeedRecordsController {
               }
             );
 
-          let devStructId = common.makeId();
-          let prodStructId = common.makeId();
+          let devStructId = makeId();
+          let prodStructId = makeId();
 
           let prodEnvProjectConnections = connections
             .filter(
@@ -260,7 +252,7 @@ export class SeedRecordsController {
             )
             .map(
               c =>
-                <common.ProjectConnection>{
+                <ProjectConnection>{
                   connectionId: c.connectionId,
                   type: c.type,
                   googleCloudProject: c.googleCloudProject,
@@ -324,7 +316,7 @@ export class SeedRecordsController {
 
           let prodBranch = this.makerService.makeBranch({
             projectId: newProject.projectId,
-            repoId: common.PROD_REPO_ID,
+            repoId: PROD_REPO_ID,
             branchId: newProject.defaultBranch
           });
 
@@ -432,7 +424,7 @@ export class SeedRecordsController {
       );
     }
 
-    if (common.isDefined(payloadMembers)) {
+    if (isDefined(payloadMembers)) {
       await asyncPool(
         1,
         payloadMembers,
@@ -456,14 +448,14 @@ export class SeedRecordsController {
       );
     }
 
-    if (common.isDefined(payloadQueries)) {
+    if (isDefined(payloadQueries)) {
       queries = [
         ...queries,
         ...payloadQueries.map(pq => this.wrapToEntService.wrapToEntityQuery(pq))
       ];
     }
 
-    if (common.isDefined(payloadMconfigs)) {
+    if (isDefined(payloadMconfigs)) {
       mconfigs = [
         ...mconfigs,
         ...payloadMconfigs.map(mc =>

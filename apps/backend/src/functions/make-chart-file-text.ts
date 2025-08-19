@@ -1,7 +1,5 @@
-import { common } from '~backend/barrels/common';
-
 export function makeChartFileText(item: {
-  mconfig: common.MconfigX;
+  mconfig: MconfigX;
   chartId: string;
   tileTitle: string;
   roles: string;
@@ -19,7 +17,7 @@ export function makeChartFileText(item: {
     modelId
   } = item;
 
-  let filePartTile: common.FilePartTile = common.prepareTile({
+  let filePartTile: FilePartTile = prepareTile({
     isForDashboard: false,
     mconfig: mconfig
     // malloyQueryId: chartId
@@ -27,10 +25,10 @@ export function makeChartFileText(item: {
 
   filePartTile.title = tileTitle;
 
-  let chartFileText = common.toYaml({
+  let chartFileText = toYaml({
     chart: chartId,
     access_roles:
-      common.isDefined(roles) && roles.trim().length > 0
+      isDefined(roles) && roles.trim().length > 0
         ? roles.split(',').map(x => x.trim())
         : undefined,
     tiles: [filePartTile]
@@ -43,7 +41,7 @@ export function makeChartFileText(item: {
   //   `/${modelFilePath}`
   // );
 
-  //   if (mconfig.modelType === common.ModelTypeEnum.Malloy) {
+  //   if (mconfig.modelType === ModelTypeEnum.Malloy) {
   //     malloyFileText = `import { ${modelId} } from '${relativePath}';
 
   // query: ${chartId} is ${mconfig.malloyQuery.substring(5)}

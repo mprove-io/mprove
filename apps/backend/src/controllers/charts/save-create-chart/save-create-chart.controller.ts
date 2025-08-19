@@ -9,12 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
@@ -52,21 +47,18 @@ export class SaveCreateChartController {
     private bridgesService: BridgesService,
     private wrapToEntService: WrapToEntService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveCreateChart)
-  async saveCreateChart(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async saveCreateChart(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendSaveCreateChartRequest = request.body;
 
-    if (user.alias === common.RESTRICTED_USER_ALIAS) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_USER
+    if (user.alias === RESTRICTED_USER_ALIAS) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 
@@ -86,7 +78,7 @@ export class SaveCreateChartController {
     // console.log('saveCreateChart mconfig.select');
     // console.log(mconfig.select);
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -98,8 +90,8 @@ export class SaveCreateChartController {
     });
 
     if (member.isExplorer === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
       });
     }
 
@@ -128,15 +120,15 @@ export class SaveCreateChartController {
     });
 
     let firstProjectId =
-      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
+      this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
 
     if (
       member.isAdmin === false &&
       projectId === firstProjectId &&
-      repoId === common.PROD_REPO_ID
+      repoId === PROD_REPO_ID
     ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 
@@ -145,15 +137,15 @@ export class SaveCreateChartController {
       modelId: mconfig.modelId
     });
 
-    let isAccessGranted = helper.checkAccess({
+    let isAccessGranted = checkAccess({
       userAlias: user.alias,
       member: member,
       entity: mconfigModel
     });
 
     if (isAccessGranted === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_FORBIDDEN_MODEL
+      throw new ServerError({
+        message: ErEnum.BACKEND_FORBIDDEN_MODEL
       });
     }
 
@@ -161,25 +153,25 @@ export class SaveCreateChartController {
 
     if (
       mdir.length > 2 &&
-      mdir.substring(0, 2) === common.MPROVE_CONFIG_DIR_DOT_SLASH
+      mdir.substring(0, 2) === MPROVE_CONFIG_DIR_DOT_SLASH
     ) {
       mdir = mdir.substring(2);
     }
 
     let parentNodeId =
-      currentStruct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
-        ? `${projectId}/${common.MPROVE_USERS_FOLDER}/${user.alias}`
-        : `${projectId}/${mdir}/${common.MPROVE_USERS_FOLDER}/${user.alias}`;
+      currentStruct.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
+        ? `${projectId}/${MPROVE_USERS_FOLDER}/${user.alias}`
+        : `${projectId}/${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}`;
 
-    let fileName = `${newChartId}${common.FileExtensionEnum.Chart}`;
+    let fileName = `${newChartId}${FileExtensionEnum.Chart}`;
 
     // let malloyQueryFileName =
-    //   mconfig.modelType === common.ModelTypeEnum.Malloy
-    //     ? `${newChartId}${common.FileExtensionEnum.Malloy}`
+    //   mconfig.modelType === ModelTypeEnum.Malloy
+    //     ? `${newChartId}${FileExtensionEnum.Malloy}`
     //     : undefined;
 
     // let malloyChartFilePath =
-    //   mconfig.modelType === common.ModelTypeEnum.Malloy
+    //   mconfig.modelType === ModelTypeEnum.Malloy
     //     ? `${parentNodeId}/${malloyQueryFileName}`
     //     : undefined;
 
@@ -210,7 +202,7 @@ export class SaveCreateChartController {
         parentNodeId: parentNodeId,
         fileName: fileName,
         fileText: chartFileText,
-        // secondFileName: common.isDefined(malloyFileText)
+        // secondFileName: isDefined(malloyFileText)
         //   ? malloyQueryFileName
         //   : undefined,
         // secondFileText: malloyFileText,
@@ -223,7 +215,7 @@ export class SaveCreateChartController {
 
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateFileResponse>({
-        routingKey: helper.makeRoutingKeyToDisk({
+        routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
         }),
@@ -241,7 +233,7 @@ export class SaveCreateChartController {
 
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {
-        x.structId = common.EMPTY_STRUCT_ID;
+        x.structId = EMPTY_STRUCT_ID;
         x.needValidate = true;
       }
     });
@@ -260,32 +252,32 @@ export class SaveCreateChartController {
 
     let chart = charts.find(x => x.chartId === newChartId);
 
-    if (common.isUndefined(chart)) {
+    if (isUndefined(chart)) {
       let fileId = `${parentNodeId}/${fileName}`;
       let fileIdAr = fileId.split('/');
       fileIdAr.shift();
 
       let filePath = fileIdAr.join('/');
 
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_CREATE_CHART_FAIL,
+      throw new ServerError({
+        message: ErEnum.BACKEND_CREATE_CHART_FAIL,
         data: {
-          encodedFileId: common.encodeFilePath({ filePath: filePath })
+          encodedFileId: encodeFilePath({ filePath: filePath })
         }
       });
     }
 
-    let chartTile = common.isDefined(chart) ? chart.tiles[0] : undefined;
+    let chartTile = isDefined(chart) ? chart.tiles[0] : undefined;
 
-    let chartMconfig = common.isDefined(chart)
+    let chartMconfig = isDefined(chart)
       ? mconfigs.find(x => x.mconfigId === chartTile.mconfigId)
       : undefined;
 
-    let chartQuery = common.isDefined(chart)
+    let chartQuery = isDefined(chart)
       ? queries.find(x => x.queryId === chartTile.queryId)
       : undefined;
 
-    let chartEnt = common.isDefined(chart)
+    let chartEnt = isDefined(chart)
       ? this.wrapToEntService.wrapToEntityChart({
           chart: chart,
           chartType: chartMconfig.chart.type
@@ -330,9 +322,7 @@ export class SaveCreateChartController {
         hidden: modelsTable.hidden
       })
       .from(modelsTable)
-      .where(
-        eq(modelsTable.structId, bridge.structId)
-      )) as schemaPostgres.ModelEnt[];
+      .where(eq(modelsTable.structId, bridge.structId))) as ModelEnt[];
 
     let payload: apiToBackend.ToBackendSaveCreateChartResponsePayload = {
       chart: this.wrapToApiService.wrapToApiChart({
@@ -343,7 +333,7 @@ export class SaveCreateChartController {
         models: modelEnts.map(model =>
           this.wrapToApiService.wrapToApiModel({
             model: model,
-            hasAccess: helper.checkAccess({
+            hasAccess: checkAccess({
               userAlias: user.alias,
               member: member,
               entity: model

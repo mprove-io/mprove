@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { common } from '~backend/barrels/common';
+
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { QueriesService } from './queries.service';
 import { StructsService } from './structs.service';
@@ -30,12 +30,11 @@ export class TasksService {
 
       await this.queriesService.checkBigqueryRunningQueries().catch(e => {
         logToConsoleBackend({
-          log: new common.ServerError({
-            message:
-              common.ErEnum.BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERIES,
+          log: new ServerError({
+            message: ErEnum.BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERIES,
             originalError: e
           }),
-          logLevel: common.LogLevelEnum.Error,
+          logLevel: LogLevelEnum.Error,
           logger: this.logger,
           cs: this.cs
         });
@@ -52,11 +51,11 @@ export class TasksService {
 
       await this.structsService.removeOrphanedStructs().catch(e => {
         logToConsoleBackend({
-          log: new common.ServerError({
-            message: common.ErEnum.BACKEND_SCHEDULER_REMOVE_ORPHANED_STRUCTS,
+          log: new ServerError({
+            message: ErEnum.BACKEND_SCHEDULER_REMOVE_ORPHANED_STRUCTS,
             originalError: e
           }),
-          logLevel: common.LogLevelEnum.Error,
+          logLevel: LogLevelEnum.Error,
           logger: this.logger,
           cs: this.cs
         });
@@ -64,11 +63,11 @@ export class TasksService {
 
       await this.queriesService.removeOrphanedQueries().catch(e => {
         logToConsoleBackend({
-          log: new common.ServerError({
-            message: common.ErEnum.BACKEND_SCHEDULER_REMOVE_ORPHANED_QUERIES,
+          log: new ServerError({
+            message: ErEnum.BACKEND_SCHEDULER_REMOVE_ORPHANED_QUERIES,
             originalError: e
           }),
-          logLevel: common.LogLevelEnum.Error,
+          logLevel: LogLevelEnum.Error,
           logger: this.logger,
           cs: this.cs
         });

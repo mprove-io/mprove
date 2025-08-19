@@ -9,7 +9,6 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { common } from '~backend/barrels/common';
 
 export const connectionsTable = pgTable(
   'connections',
@@ -20,9 +19,9 @@ export const connectionsTable = pgTable(
     projectId: varchar('project_id', { length: 32 }).notNull(),
     envId: varchar('env_id', { length: 32 }).notNull(), // name
     connectionId: varchar('connection_id', { length: 32 }).notNull(), // name
-    type: varchar('type').$type<common.ConnectionTypeEnum>().notNull(),
+    type: varchar('type').$type<ConnectionTypeEnum>().notNull(),
     baseUrl: varchar('base_url'),
-    headers: json('headers').$type<common.ConnectionHeader[]>(),
+    headers: json('headers').$type<ConnectionHeader[]>(),
     googleAuthScopes: json('google_auth_scopes').$type<string[]>(),
     serviceAccountCredentials: json('service_account_credentials'),
     googleCloudProject: varchar('google_cloud_project'),

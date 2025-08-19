@@ -1,8 +1,5 @@
 import test from 'ava';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 
@@ -10,7 +7,7 @@ let testId = 'backend-get-org-users__ok-5';
 
 let traceId = testId;
 
-let userId = common.makeId();
+let userId = makeId();
 let email = `${testId}@example.com`;
 let password = '123456';
 
@@ -57,7 +54,7 @@ test('1', async t => {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: {
         orgId: orgId,
@@ -66,25 +63,24 @@ test('1', async t => {
       }
     };
 
-    resp =
-      await helper.sendToBackend<apiToBackend.ToBackendGetOrgUsersResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req
-      });
+    resp = await sendToBackend<apiToBackend.ToBackendGetOrgUsersResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req
+    });
 
     await prep.app.close();
   } catch (e) {
     logToConsoleBackend({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: prep.logger,
       cs: prep.cs
     });
   }
 
   t.is(resp.info.error, undefined);
-  t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
+  t.is(resp.info.status, ResponseInfoStatusEnum.Ok);
   t.is(resp.payload.total, 0);
   t.is(resp.payload.orgUsersList.length, 0);
 });

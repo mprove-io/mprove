@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BackendConfig } from '~common/interfaces/backend/backend-config';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
-import { helper } from './barrels/helper';
-import { interfaces } from './barrels/interfaces';
+import { isScheduler } from './functions/is-scheduler';
 import { BigQueryService } from './services/bigquery.service';
 import { BlockmlService } from './services/blockml.service';
 import { BranchesService } from './services/branches.service';
@@ -78,12 +78,12 @@ export const appProviders = [
   {
     provide: TasksService,
     useFactory: (
-      cs: ConfigService<interfaces.Config>,
+      cs: ConfigService<BackendConfig>,
       queriesService: QueriesService,
       structsService: StructsService,
       logger: Logger
     ) =>
-      helper.isScheduler(cs)
+      isScheduler(cs)
         ? new TasksService(cs, queriesService, structsService, logger)
         : {},
     inject: [ConfigService, QueriesService, StructsService]

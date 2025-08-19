@@ -8,7 +8,6 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { common } from '~backend/barrels/common';
 
 export const chartsTable = pgTable(
   'charts',
@@ -19,14 +18,14 @@ export const chartsTable = pgTable(
     structId: varchar('struct_id', { length: 32 }).notNull(),
     chartId: varchar('chart_id', { length: 32 }).notNull(), // name
     title: varchar('title').notNull(),
-    chartType: varchar('chart_type').$type<common.ChartTypeEnum>(),
+    chartType: varchar('chart_type').$type<ChartTypeEnum>(),
     modelId: varchar('model_id', { length: 64 }).notNull(),
     modelLabel: varchar('model_label').notNull(),
     filePath: varchar('file_path'),
     accessRoles: json('access_roles').$type<string[]>().notNull(),
     gr: varchar('gr'),
     hidden: boolean('hidden').notNull(),
-    tiles: json('tiles').$type<common.Tile[]>().notNull(),
+    tiles: json('tiles').$type<Tile[]>().notNull(),
     creatorId: varchar('creator_id', { length: 32 }), // user_id
     draft: boolean('draft'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()

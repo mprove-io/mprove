@@ -3,9 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
@@ -21,7 +19,7 @@ let retry = require('async-retry');
 export class QueriesService {
   constructor(
     private envsService: EnvsService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -66,13 +64,13 @@ export class QueriesService {
           eq(queriesTable.queryId, queryId),
           eq(queriesTable.projectId, projectId)
         )
-      )) as schemaPostgres.QueryEnt[];
+      )) as QueryEnt[];
 
     let query = queries.length < 0 ? undefined : queries[0];
 
-    if (common.isUndefined(query)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
+    if (isUndefined(query)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
       });
     }
 
@@ -89,9 +87,9 @@ export class QueriesService {
       )
     });
 
-    if (common.isUndefined(query)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
+    if (isUndefined(query)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
       });
     }
 
@@ -135,7 +133,7 @@ export class QueriesService {
           inArray(queriesTable.queryId, queryIds),
           eq(queriesTable.projectId, projectId)
         )
-      )) as schemaPostgres.QueryEnt[];
+      )) as QueryEnt[];
 
     let notFoundQueryIds: string[] = [];
 
@@ -146,8 +144,8 @@ export class QueriesService {
     });
 
     if (notFoundQueryIds.length > 0) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_QUERIES_DO_NOT_EXIST,
+      throw new ServerError({
+        message: ErEnum.BACKEND_QUERIES_DO_NOT_EXIST,
         data: {
           notFoundQueryIds: notFoundQueryIds
         }
@@ -198,12 +196,12 @@ WHERE m.mconfig_id is NULL
   async checkBigqueryRunningQueries() {
     let queries = await this.db.drizzle.query.queriesTable.findMany({
       where: and(
-        eq(queriesTable.status, common.QueryStatusEnum.Running),
-        eq(queriesTable.connectionType, common.ConnectionTypeEnum.BigQuery)
+        eq(queriesTable.status, QueryStatusEnum.Running),
+        eq(queriesTable.connectionType, ConnectionTypeEnum.BigQuery)
       )
     });
 
-    await asyncPool(8, queries, async (query: schemaPostgres.QueryEnt) => {
+    await asyncPool(8, queries, async (query: QueryEnt) => {
       try {
         let apiEnvs = await this.envsService.getApiEnvs({
           projectId: query.projectId
@@ -226,8 +224,8 @@ WHERE m.mconfig_id is NULL
           }
         );
 
-        if (common.isUndefined(connection)) {
-          query.status = common.QueryStatusEnum.Error;
+        if (isUndefined(connection)) {
+          query.status = QueryStatusEnum.Error;
           query.data = [];
           query.lastErrorMessage = `Project connection not found`;
           query.lastErrorTs = makeTsNumber();
@@ -260,7 +258,7 @@ WHERE m.mconfig_id is NULL
           .get()
           .catch(async (e: any) => {
             if (query.bigqueryConsecutiveErrorsGetJob > 2) {
-              query.status = common.QueryStatusEnum.Error;
+              query.status = QueryStatusEnum.Error;
               query.data = [];
               query.lastErrorMessage = `Bigquery get Job fail`;
               query.lastErrorTs = makeTsNumber();
@@ -309,7 +307,7 @@ WHERE m.mconfig_id is NULL
           if (queryJobGetResponse.status.errorResult) {
             let errorResult = queryJobGetResponse.status.errorResult;
 
-            query.status = common.QueryStatusEnum.Error;
+            query.status = QueryStatusEnum.Error;
             query.data = [];
             query.lastErrorMessage =
               `Query fail. ` +
@@ -336,7 +334,7 @@ WHERE m.mconfig_id is NULL
               .getQueryResults()
               .catch(async (e: any) => {
                 if (query.bigqueryConsecutiveErrorsGetResults > 2) {
-                  query.status = common.QueryStatusEnum.Error;
+                  query.status = QueryStatusEnum.Error;
                   query.data = [];
                   query.lastErrorMessage = `Bigquery get QueryResults fail`;
                   query.lastErrorTs = makeTsNumber();
@@ -367,7 +365,7 @@ WHERE m.mconfig_id is NULL
               (Number(newLastCompleteTs) - Number(query.lastRunTs)) / 1000
             );
 
-            query.status = common.QueryStatusEnum.Completed;
+            query.status = QueryStatusEnum.Completed;
             // no need for query.bigquery_consecutive_errors_get_results = 0
             // because status change to Completed
             query.data = queryResultsItem[0];
@@ -391,12 +389,11 @@ WHERE m.mconfig_id is NULL
         }
       } catch (e) {
         logToConsoleBackend({
-          log: new common.ServerError({
-            message:
-              common.ErEnum.BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERY,
+          log: new ServerError({
+            message: ErEnum.BACKEND_SCHEDULER_CHECK_BIGQUERY_RUNNING_QUERY,
             originalError: e
           }),
-          logLevel: common.LogLevelEnum.Error,
+          logLevel: LogLevelEnum.Error,
           logger: this.logger,
           cs: this.cs
         });

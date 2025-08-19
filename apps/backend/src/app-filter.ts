@@ -6,11 +6,14 @@ import {
   Logger
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToBackend } from './barrels/api-to-backend';
-import { common } from './barrels/common';
-import { constants } from './barrels/constants';
-import { interfaces } from './barrels/interfaces';
-import { schemaPostgres } from './barrels/schema-postgres';
+import { UNK_ST_ID } from '~common/constants/top-backend';
+import { ErEnum } from '~common/enums/er.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { BackendConfig } from '~common/interfaces/backend/backend-config';
+import { ToBackendRequest } from '~common/interfaces/to-backend/to-backend-request';
+import { ServerError } from '~common/models/server-error';
+import { UserEnt } from './drizzle/postgres/schema/users';
 import { logResponseBackend } from './functions/log-response-backend';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { makeErrorResponseBackend } from './functions/make-error-response-backend';
@@ -21,7 +24,7 @@ import { RedisService } from './services/redis.service';
 @Catch()
 export class AppFilter implements ExceptionFilter {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     private redisService: RedisService
   ) {}
@@ -39,13 +42,13 @@ export class AppFilter implements ExceptionFilter {
 
       let e =
         (exception as any).message === 'Unauthorized'
-          ? new common.ServerError({
-              message: common.ErEnum.BACKEND_UNAUTHORIZED,
+          ? new ServerError({
+              message: ErEnum.BACKEND_UNAUTHORIZED,
               originalError: exception
             })
           : exception;
 
-      let req: apiToBackend.ToBackendRequest = request.body;
+      let req: ToBackendRequest = request.body;
 
       let resp = makeErrorResponseBackend({
         e: e,
@@ -60,19 +63,17 @@ export class AppFilter implements ExceptionFilter {
 
       let iKey = req?.info?.idempotencyKey;
 
-      if (common.isDefined(iKey)) {
+      if (isDefined(iKey)) {
         try {
-          let user: schemaPostgres.UserEnt = request.user;
+          let user: UserEnt = request.user;
           // let sessionStId: string = request.session?.getUserId();
 
           let idemp: Idemp = {
             idempotencyKey: iKey,
-            stId: common.isDefined(user?.userId)
-              ? user.userId
-              : constants.UNK_ST_ID,
-            // stId: common.isDefined(sessionStId)
+            stId: isDefined(user?.userId) ? user.userId : UNK_ST_ID,
+            // stId: isDefined(sessionStId)
             //   ? sessionStId
-            //   : constants.UNK_ST_ID,
+            //   : UNK_ST_ID,
             req: req,
             resp: resp,
             serverTs: makeTsNumber()
@@ -84,11 +85,11 @@ export class AppFilter implements ExceptionFilter {
           });
         } catch (er) {
           logToConsoleBackend({
-            log: new common.ServerError({
-              message: common.ErEnum.BACKEND_APP_FILTER_SAVE_IDEMP_ERROR,
+            log: new ServerError({
+              message: ErEnum.BACKEND_APP_FILTER_SAVE_IDEMP_ERROR,
               originalError: er
             }),
-            logLevel: common.LogLevelEnum.Error,
+            logLevel: LogLevelEnum.Error,
             logger: this.logger,
             cs: this.cs
           });
@@ -97,7 +98,7 @@ export class AppFilter implements ExceptionFilter {
 
       logResponseBackend({
         response: resp,
-        logLevel: common.LogLevelEnum.Info,
+        logLevel: LogLevelEnum.Info,
         cs: this.cs,
         logger: this.logger
       });
@@ -105,11 +106,11 @@ export class AppFilter implements ExceptionFilter {
       response.status(HttpStatus.CREATED).json(resp);
     } catch (err) {
       logToConsoleBackend({
-        log: new common.ServerError({
-          message: common.ErEnum.BACKEND_APP_FILTER_ERROR,
+        log: new ServerError({
+          message: ErEnum.BACKEND_APP_FILTER_ERROR,
           originalError: err
         }),
-        logLevel: common.LogLevelEnum.Error,
+        logLevel: LogLevelEnum.Error,
         logger: this.logger,
         cs: this.cs
       });

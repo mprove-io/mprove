@@ -1,11 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { eq } from 'drizzle-orm';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -18,7 +14,7 @@ let retry = require('async-retry');
 export class OrgsService {
   constructor(
     private rabbitService: RabbitService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -30,9 +26,9 @@ export class OrgsService {
       where: eq(orgsTable.orgId, orgId)
     });
 
-    if (common.isUndefined(org)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_ORG_DOES_NOT_EXIST
+    if (isUndefined(org)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_ORG_DOES_NOT_EXIST
       });
     }
 
@@ -41,13 +37,13 @@ export class OrgsService {
 
   async checkUserIsOrgOwner(item: {
     userId: string;
-    org: schemaPostgres.OrgEnt;
+    org: OrgEnt;
   }) {
     let { org, userId } = item;
 
     if (org.ownerId !== userId) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_ONLY_ORG_OWNER_CAN_ACCESS
+      throw new ServerError({
+        message: ErEnum.BACKEND_ONLY_ORG_OWNER_CAN_ACCESS
       });
     }
 
@@ -63,7 +59,7 @@ export class OrgsService {
   }) {
     let { ownerId, ownerEmail, name, traceId, orgId } = item;
 
-    let newOrg: schemaPostgres.OrgEnt = {
+    let newOrg: OrgEnt = {
       orgId: orgId || makeId(),
       name: name,
       ownerId: ownerId,
@@ -82,7 +78,7 @@ export class OrgsService {
     };
 
     await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateOrgResponse>({
-      routingKey: helper.makeRoutingKeyToDisk({
+      routingKey: makeRoutingKeyToDisk({
         orgId: newOrg.orgId,
         projectId: undefined
       }),

@@ -6,12 +6,12 @@ import {
   drizzle as drizzlePg
 } from 'drizzle-orm/node-postgres';
 import { Pool, PoolConfig } from 'pg';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
 import { getConfig } from '~backend/config/get.config';
+import { BoolEnum } from '~common/enums/bool.enum';
+import { BackendConfig } from '~common/interfaces/backend/backend-config';
 import { DrizzleLogWriter } from './drizzle-log-writer';
 import { DrizzlePacker } from './postgres/drizzle-packer';
+import { schemaPostgres } from './postgres/schema/_schema-postgres';
 
 export const DRIZZLE = 'DRIZZLE';
 
@@ -33,15 +33,15 @@ export interface Db {
     {
       provide: DRIZZLE,
       inject: [ConfigService, Logger],
-      useFactory: (cs: ConfigService<interfaces.Config>, logger: Logger) => {
+      useFactory: (cs: ConfigService<BackendConfig>, logger: Logger) => {
         let poolConfig: PoolConfig = {
-          connectionString: cs.get<
-            interfaces.Config['backendPostgresDatabaseUrl']
-          >('backendPostgresDatabaseUrl'),
+          connectionString: cs.get<BackendConfig['backendPostgresDatabaseUrl']>(
+            'backendPostgresDatabaseUrl'
+          ),
           ssl:
-            cs.get<interfaces.Config['backendIsPostgresTls']>(
+            cs.get<BackendConfig['backendIsPostgresTls']>(
               'backendIsPostgresTls'
-            ) === common.BoolEnum.TRUE
+            ) === BoolEnum.TRUE
               ? {
                   rejectUnauthorized: false
                 }
@@ -55,9 +55,9 @@ export interface Db {
         };
 
         if (
-          cs.get<interfaces.Config['backendLogDrizzlePostgres']>(
+          cs.get<BackendConfig['backendLogDrizzlePostgres']>(
             'backendLogDrizzlePostgres'
-          ) === common.BoolEnum.TRUE
+          ) === BoolEnum.TRUE
         ) {
           let prefixPostgres = 'POSTGRES';
 

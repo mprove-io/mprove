@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
-import { common } from '~backend/barrels/common';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 
@@ -18,9 +18,9 @@ export class ChartsService {
       )
     });
 
-    if (common.isUndefined(chart)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_CHART_DOES_NOT_EXIST
+    if (isUndefined(chart)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_CHART_DOES_NOT_EXIST
       });
     }
 
@@ -31,7 +31,7 @@ export class ChartsService {
     let filePathArray = item.filePath.split('/');
 
     let usersFolderIndex = filePathArray.findIndex(
-      x => x === common.MPROVE_USERS_FOLDER
+      x => x === MPROVE_USERS_FOLDER
     );
 
     if (
@@ -39,8 +39,8 @@ export class ChartsService {
       filePathArray.length === usersFolderIndex + 1 ||
       filePathArray[usersFolderIndex + 1] !== item.userAlias
     ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_FORBIDDEN_CHART_PATH
+      throw new ServerError({
+        message: ErEnum.BACKEND_FORBIDDEN_CHART_PATH
       });
     }
   }

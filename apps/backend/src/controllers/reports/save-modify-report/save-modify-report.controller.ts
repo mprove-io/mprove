@@ -9,12 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
@@ -54,21 +49,18 @@ export class SaveModifyReportController {
     private bridgesService: BridgesService,
     private wrapToEntService: WrapToEntService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport)
-  async saveModifyRep(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async saveModifyRep(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendSaveModifyReportRequest = request.body;
 
-    if (user.alias === common.RESTRICTED_USER_ALIAS) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_USER
+    if (user.alias === RESTRICTED_USER_ALIAS) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 
@@ -89,7 +81,7 @@ export class SaveModifyReportController {
       chart
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -130,7 +122,7 @@ export class SaveModifyReportController {
     });
 
     let metricRows = fromReport.rows.filter(
-      row => row.rowType === common.RowTypeEnum.Metric
+      row => row.rowType === RowTypeEnum.Metric
     );
 
     let currentStruct = await this.structsService.getStructCheckExists({
@@ -141,15 +133,15 @@ export class SaveModifyReportController {
     });
 
     let firstProjectId =
-      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
+      this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
 
     if (
       userMember.isAdmin === false &&
       projectId === firstProjectId &&
-      repoId === common.PROD_REPO_ID
+      repoId === PROD_REPO_ID
     ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 
@@ -189,7 +181,7 @@ export class SaveModifyReportController {
       newReportFields: newReportFields,
       chart: chart,
       caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
-      timezone: common.UTC
+      timezone: UTC
     });
 
     let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {
@@ -214,7 +206,7 @@ export class SaveModifyReportController {
 
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskSaveFileResponse>({
-        routingKey: helper.makeRoutingKeyToDisk({
+        routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
         }),
@@ -232,7 +224,7 @@ export class SaveModifyReportController {
 
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {
-        x.structId = common.EMPTY_STRUCT_ID;
+        x.structId = EMPTY_STRUCT_ID;
         x.needValidate = true;
       }
     });
@@ -250,18 +242,18 @@ export class SaveModifyReportController {
 
     let report = reports.find(x => x.reportId === modReportId);
 
-    if (common.isDefined(report)) {
+    if (isDefined(report)) {
       report.rows = fromReport.rows;
     }
 
-    let repEnt = common.isDefined(report)
+    let repEnt = isDefined(report)
       ? this.wrapToEntService.wrapToEntityReport(report)
       : undefined;
 
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
-          if (common.isUndefined(report)) {
+          if (isUndefined(report)) {
             await tx
               .delete(reportsTable)
               .where(
@@ -286,7 +278,7 @@ export class SaveModifyReportController {
           await this.db.packer.write({
             tx: tx,
             insertOrUpdate: {
-              reports: common.isDefined(repEnt) ? [repEnt] : [],
+              reports: isDefined(repEnt) ? [repEnt] : [],
               structs: [struct],
               bridges: [...branchBridges]
             }
@@ -295,15 +287,15 @@ export class SaveModifyReportController {
       getRetryOption(this.cs, this.logger)
     );
 
-    if (common.isUndefined(report)) {
+    if (isUndefined(report)) {
       let fileIdAr = existingModReport.filePath.split('/');
       fileIdAr.shift();
       let filePath = fileIdAr.join('/');
 
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MODIFY_REPORT_FAIL,
+      throw new ServerError({
+        message: ErEnum.BACKEND_MODIFY_REPORT_FAIL,
         data: {
-          encodedFileId: common.encodeFilePath({ filePath: filePath })
+          encodedFileId: encodeFilePath({ filePath: filePath })
         }
       });
     }

@@ -8,10 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
@@ -35,16 +32,13 @@ export class CreateEnvController {
     private membersService: MembersService,
     private makerService: MakerService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnv)
-  async createEnv(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async createEnv(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendCreateEnvRequest = request.body;
 
     let { projectId, envId } = reqValid.payload;
@@ -86,7 +80,7 @@ export class CreateEnvController {
       where: eq(branchesTable.projectId, projectId)
     });
 
-    let newBridges: schemaPostgres.BridgeEnt[] = [];
+    let newBridges: BridgeEnt[] = [];
 
     branches.forEach(x => {
       let newBridge = this.makerService.makeBridge({
@@ -94,7 +88,7 @@ export class CreateEnvController {
         repoId: x.repoId,
         branchId: x.branchId,
         envId: envId,
-        structId: common.EMPTY_STRUCT_ID,
+        structId: EMPTY_STRUCT_ID,
         needValidate: true
       });
 

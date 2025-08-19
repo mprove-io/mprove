@@ -1,8 +1,5 @@
 import test from 'ava';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 
@@ -10,14 +7,14 @@ let testId = 'backend-create-env__env-already-exists';
 
 let traceId = testId;
 
-let userId = common.makeId();
+let userId = makeId();
 let email = `${testId}@example.com`;
 let password = '123456';
 
 let orgId = testId;
 let orgName = testId;
 
-let projectId = common.makeId();
+let projectId = makeId();
 let projectName = testId;
 
 let prep: interfaces.Prep;
@@ -55,8 +52,8 @@ test('1', async t => {
             orgId,
             projectId,
             name: projectName,
-            remoteType: common.ProjectRemoteTypeEnum.Managed,
-            defaultBranch: common.BRANCH_MAIN
+            remoteType: ProjectRemoteTypeEnum.Managed,
+            defaultBranch: BRANCH_MAIN
           }
         ],
         members: [
@@ -77,15 +74,15 @@ test('1', async t => {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnv,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: {
-        envId: common.PROJECT_ENV_PROD,
+        envId: PROJECT_ENV_PROD,
         projectId: projectId
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendCreateEnvResponse>({
+    resp = await sendToBackend<apiToBackend.ToBackendCreateEnvResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req
@@ -95,11 +92,11 @@ test('1', async t => {
   } catch (e) {
     logToConsoleBackend({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: prep.logger,
       cs: prep.cs
     });
   }
 
-  t.is(resp.info.error.message, common.ErEnum.BACKEND_ENV_ALREADY_EXISTS);
+  t.is(resp.info.error.message, ErEnum.BACKEND_ENV_ALREADY_EXISTS);
 });

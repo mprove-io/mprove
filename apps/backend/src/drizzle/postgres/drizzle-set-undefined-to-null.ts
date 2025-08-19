@@ -1,6 +1,6 @@
 import { getTableColumns } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
-import { common } from '~backend/barrels/common';
+import { isUndefined } from '~common/functions/is-undefined';
 
 export function setUndefinedToNull<
   TTable extends PgTable,
@@ -15,7 +15,7 @@ export function setUndefinedToNull<
 
     for (const [key, value] of Object.entries(obj)) {
       if (schemaColumns.has(key)) {
-        (result as any)[key] = common.isUndefined(value) // value === undefined
+        (result as any)[key] = isUndefined(value) // value === undefined
           ? null
           : value;
       } else {

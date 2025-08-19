@@ -3,11 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { format, fromUnixTime } from 'date-fns';
 import * as pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { nodeCommon } from '~backend/barrels/node-common';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { DOUBLE_UNDERSCORE } from '~common/_index';
@@ -33,16 +29,16 @@ export class DocService {
   constructor(
     private rabbitService: RabbitService,
     private userCodeService: UserCodeService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   async calculateData(item: {
-    report: common.ReportX;
+    report: ReportX;
     timezone: string;
-    timeSpec: common.TimeSpecEnum;
-    timeRangeFraction: common.Fraction;
+    timeSpec: TimeSpecEnum;
+    timeRangeFraction: Fraction;
     traceId: string;
   }) {
     let { report, timeSpec, timeRangeFraction, timezone, traceId } = item;
@@ -55,7 +51,7 @@ export class DocService {
     report.rows.forEach(x => {
       x.formulaError = undefined;
 
-      if (common.isDefined(x.formulaDeps) && x.formulaDeps.length > 0) {
+      if (isDefined(x.formulaDeps) && x.formulaDeps.length > 0) {
         let wrongReferences: string[] = [];
 
         x.formulaDeps.forEach(dep => {
@@ -86,7 +82,7 @@ export class DocService {
       report.rows
         .filter(k => cycledNames.indexOf(k.rowId) > -1)
         .forEach(x => {
-          if (common.isUndefined(x.formulaError)) {
+          if (isUndefined(x.formulaError)) {
             x.formulaError = `Cycle in formula references of rows: ${cycledNamesStr}`;
           }
           return x;
@@ -101,19 +97,19 @@ export class DocService {
     let topQueryData: any[] = [];
     let topQueryError: any;
 
-    if (report.rows.filter(x => common.isDefined(x.formulaError)).length > 0) {
-      topQueryError = common.SOME_ROWS_HAVE_FORMULA_ERRORS;
+    if (report.rows.filter(x => isDefined(x.formulaError)).length > 0) {
+      topQueryError = SOME_ROWS_HAVE_FORMULA_ERRORS;
     } else {
       let cn: pg.IConnectionParameters<pg.IClient> = {
-        host: this.cs.get<interfaces.Config['firstProjectDwhPostgresHost']>(
+        host: this.cs.get<BackendConfig['firstProjectDwhPostgresHost']>(
           'firstProjectDwhPostgresHost'
         ),
         port: 5436,
         database: 'p_db',
         user: 'postgres',
-        password: this.cs.get<
-          interfaces.Config['firstProjectDwhPostgresPassword']
-        >('firstProjectDwhPostgresPassword'),
+        password: this.cs.get<BackendConfig['firstProjectDwhPostgresPassword']>(
+          'firstProjectDwhPostgresPassword'
+        ),
         ssl: false
       };
 
@@ -126,12 +122,10 @@ export class DocService {
       let mainSelect = [
         `unnest(ARRAY[${timestampValues}]::bigint[]) AS timestamp`,
         ...report.rows
-          .filter(row => row.rowType === common.RowTypeEnum.Metric)
+          .filter(row => row.rowType === RowTypeEnum.Metric)
           .map(row => {
             let values = reportDataColumns.map(r =>
-              common.isDefined(r.fields[row.rowId])
-                ? r.fields[row.rowId]
-                : 'NULL'
+              isDefined(r.fields[row.rowId]) ? r.fields[row.rowId] : 'NULL'
             );
             let str = `    unnest(ARRAY[${values}]::numeric[]) AS ${row.rowId}`;
             return str;
@@ -143,13 +137,13 @@ export class DocService {
       let outerSelect = [
         `  main.timestamp as timestamp`,
         ...report.rows
-          .filter(row => row.rowType === common.RowTypeEnum.Metric)
+          .filter(row => row.rowType === RowTypeEnum.Metric)
           .map(x => `  main.${x.rowId} AS ${x.rowId}`),
         ...report.rows
-          .filter(row => row.rowType === common.RowTypeEnum.Formula)
+          .filter(row => row.rowType === RowTypeEnum.Formula)
           .map(row => {
             let newFormula = row.formula;
-            let reg = common.MyRegex.CAPTURE_ROW_REF();
+            let reg = MyRegex.CAPTURE_ROW_REF();
             let r;
 
             while ((r = reg.exec(newFormula))) {
@@ -158,20 +152,20 @@ export class DocService {
               let targetRow = report.rows.find(y => y.rowId === reference);
 
               let targetTo =
-                targetRow.rowType === common.RowTypeEnum.Formula
+                targetRow.rowType === RowTypeEnum.Formula
                   ? targetRow.formula
-                  : targetRow.rowType === common.RowTypeEnum.Metric
+                  : targetRow.rowType === RowTypeEnum.Metric
                     ? `main.${targetRow.rowId}`
                     : reference;
 
               newFormula =
-                targetRow.rowType === common.RowTypeEnum.Metric
-                  ? common.MyRegex.replaceRowIdsFinalNoPars(
+                targetRow.rowType === RowTypeEnum.Metric
+                  ? MyRegex.replaceRowIdsFinalNoPars(
                       newFormula,
                       reference,
                       targetTo
                     )
-                  : common.MyRegex.replaceRowIdsFinalAddPars(
+                  : MyRegex.replaceRowIdsFinalAddPars(
                       newFormula,
                       reference,
                       targetTo
@@ -207,7 +201,7 @@ FROM main;`;
             Object.keys(r)
               .filter(y => y !== 'timestamp')
               .forEach(x => {
-                r[x] = common.isDefined(r[x]) ? Number(r[x]) : undefined;
+                r[x] = isDefined(r[x]) ? Number(r[x]) : undefined;
               });
 
             return r;
@@ -221,20 +215,20 @@ FROM main;`;
       // console.log(topQueryData);
     }
 
-    let lastCalculatedTs = Number(helper.makeTs());
+    let lastCalculatedTs = Number(makeTs());
 
-    let newKits: schemaPostgres.KitEnt[] = [];
+    let newKits: KitEnt[] = [];
 
     report.rows
       .filter(
         row =>
-          row.rowType === common.RowTypeEnum.Metric ||
-          row.rowType === common.RowTypeEnum.Formula
+          row.rowType === RowTypeEnum.Metric ||
+          row.rowType === RowTypeEnum.Formula
       )
       .forEach(row => {
         if (
-          row.rowType === common.RowTypeEnum.Formula &&
-          common.isDefined(row.formulaError)
+          row.rowType === RowTypeEnum.Formula &&
+          isDefined(row.formulaError)
         ) {
           row.topQueryError = row.formulaError;
           row.records = reportDataColumns.map((y: any, index) => {
@@ -242,7 +236,7 @@ FROM main;`;
             // let unixDateZoned = new Date(unixTimeZoned * 1000);
             // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
-            let record: common.RowRecord = {
+            let record: RowRecord = {
               columnLabel: undefined,
               id: index + 1,
               key: unixTimeZoned,
@@ -254,8 +248,8 @@ FROM main;`;
             return record;
           });
         } else if (
-          row.rowType === common.RowTypeEnum.Formula &&
-          common.isDefined(topQueryError)
+          row.rowType === RowTypeEnum.Formula &&
+          isDefined(topQueryError)
         ) {
           row.topQueryError = topQueryError;
           row.records = reportDataColumns.map((y: any, index) => {
@@ -263,7 +257,7 @@ FROM main;`;
             // let unixDateZoned = new Date(unixTimeZoned * 1000);
             // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
-            let record: common.RowRecord = {
+            let record: RowRecord = {
               columnLabel: undefined,
               id: index + 1,
               key: unixTimeZoned,
@@ -275,8 +269,8 @@ FROM main;`;
             return record;
           });
         } else if (
-          row.rowType === common.RowTypeEnum.Metric &&
-          common.isDefined(topQueryError)
+          row.rowType === RowTypeEnum.Metric &&
+          isDefined(topQueryError)
         ) {
           row.topQueryError = topQueryError;
 
@@ -285,7 +279,7 @@ FROM main;`;
             // let unixDateZoned = new Date(unixTimeZoned * 1000);
             // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
-            let record: common.RowRecord = {
+            let record: RowRecord = {
               columnLabel: undefined,
               id: index + 1,
               key: unixTimeZoned,
@@ -296,7 +290,7 @@ FROM main;`;
 
             return record;
           });
-        } else if (common.isUndefined(topQueryError)) {
+        } else if (isUndefined(topQueryError)) {
           row.topQueryError = undefined;
 
           row.records = topQueryData.map((y: any, index) => {
@@ -304,7 +298,7 @@ FROM main;`;
             // let unixDateZoned = new Date(unixTimeZoned * 1000);
             // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
-            let record: common.RowRecord = {
+            let record: RowRecord = {
               columnLabel: undefined,
               id: index + 1,
               key: unixTimeZoned,
@@ -324,10 +318,10 @@ FROM main;`;
             y.timezone === timezone
         );
 
-        if (row.rowType === common.RowTypeEnum.Formula) {
-          rq.kitId = common.makeId();
+        if (row.rowType === RowTypeEnum.Formula) {
+          rq.kitId = makeId();
 
-          let newKit: schemaPostgres.KitEnt = {
+          let newKit: KitEnt = {
             structId: report.structId,
             kitId: rq.kitId,
             reportId: report.reportId,
@@ -361,25 +355,25 @@ FROM main;`;
   }
 
   makeReportDataColumns(item: {
-    report: common.ReportX;
-    timeSpec: common.TimeSpecEnum;
+    report: ReportX;
+    timeSpec: TimeSpecEnum;
   }) {
     let { report, timeSpec } = item;
 
-    let reportDataColumns: common.ReportDataColumn[] = [];
+    let reportDataColumns: ReportDataColumn[] = [];
 
     report.rows
       .filter(
         row =>
-          row.rowType === common.RowTypeEnum.Metric &&
+          row.rowType === RowTypeEnum.Metric &&
           row.mconfig.select.length > 0 &&
-          common.isDefined(row.query?.data)
+          isDefined(row.query?.data)
       )
       .forEach(row => {
         row.query.data =
-          row.mconfig?.modelType === common.ModelTypeEnum.Malloy
+          row.mconfig?.modelType === ModelTypeEnum.Malloy
             ? row.query.data
-                .filter((x: any) => common.isDefined(x.row))
+                .filter((x: any) => isDefined(x.row))
                 .map((x: any) => {
                   x.row = Object.keys(x.row).reduce((destination: any, key) => {
                     destination[key.toLowerCase()] = x.row[key];
@@ -396,9 +390,9 @@ FROM main;`;
               );
       });
 
-    if (timeSpec !== common.TimeSpecEnum.Timestamps) {
+    if (timeSpec !== TimeSpecEnum.Timestamps) {
       reportDataColumns = report.columns.map((column, i) => {
-        let reportDataColumn: common.ReportDataColumn = {
+        let reportDataColumn: ReportDataColumn = {
           id: i,
           fields: {
             timestamp: column.columnId
@@ -408,23 +402,23 @@ FROM main;`;
         report.rows
           .filter(
             row =>
-              row.rowType === common.RowTypeEnum.Metric &&
+              row.rowType === RowTypeEnum.Metric &&
               row.mconfig.select.length > 0
           )
-          .forEach((row: common.Row) => {
+          .forEach((row: Row) => {
             let timeFieldId =
-              row.mconfig?.modelType === common.ModelTypeEnum.Malloy
+              row.mconfig?.modelType === ModelTypeEnum.Malloy
                 ? row.mconfig?.select[0].split('.').join(DOUBLE_UNDERSCORE)
                 : row.mconfig?.select[0].split('.').join('_').toLowerCase();
 
             let fieldId =
-              row.mconfig?.modelType === common.ModelTypeEnum.Malloy
+              row.mconfig?.modelType === ModelTypeEnum.Malloy
                 ? row.mconfig?.select[1].split('.').join(DOUBLE_UNDERSCORE)
                 : row.mconfig?.select[1].split('.').join('_').toLowerCase();
 
             let dataRow;
 
-            if (row.mconfig.modelType === common.ModelTypeEnum.Store) {
+            if (row.mconfig.modelType === ModelTypeEnum.Store) {
               dataRow = row.query?.data?.find(
                 (r: any) => r[timeFieldId] === column.columnId
               );
@@ -432,28 +426,28 @@ FROM main;`;
               let tsDate = fromUnixTime(column.columnId);
 
               let timeValue =
-                row.mconfig?.modelType === common.ModelTypeEnum.Malloy
+                row.mconfig?.modelType === ModelTypeEnum.Malloy
                   ? tsDate.toISOString().slice(0, 19)
-                  : timeSpec === common.TimeSpecEnum.Years
+                  : timeSpec === TimeSpecEnum.Years
                     ? format(tsDate, 'yyyy')
-                    : timeSpec === common.TimeSpecEnum.Quarters
+                    : timeSpec === TimeSpecEnum.Quarters
                       ? format(tsDate, 'yyyy-MM')
-                      : timeSpec === common.TimeSpecEnum.Months
+                      : timeSpec === TimeSpecEnum.Months
                         ? format(tsDate, 'yyyy-MM')
-                        : timeSpec === common.TimeSpecEnum.Weeks
+                        : timeSpec === TimeSpecEnum.Weeks
                           ? format(tsDate, 'yyyy-MM-dd')
-                          : timeSpec === common.TimeSpecEnum.Days
+                          : timeSpec === TimeSpecEnum.Days
                             ? format(tsDate, 'yyyy-MM-dd')
-                            : timeSpec === common.TimeSpecEnum.Hours
+                            : timeSpec === TimeSpecEnum.Hours
                               ? format(tsDate, 'yyyy-MM-dd HH')
-                              : timeSpec === common.TimeSpecEnum.Minutes
+                              : timeSpec === TimeSpecEnum.Minutes
                                 ? format(tsDate, 'yyyy-MM-dd HH:mm')
-                                : // : timeSpec === common.TimeSpecEnum.Timestamps
+                                : // : timeSpec === TimeSpecEnum.Timestamps
                                   // ? format(tsDate, 'yyyy-MM-dd HH:mm:ss.SSS')
                                   undefined;
 
               dataRow =
-                row.mconfig?.modelType === common.ModelTypeEnum.Malloy
+                row.mconfig?.modelType === ModelTypeEnum.Malloy
                   ? row.query?.data?.find(
                       (r: any) => r.row?.[timeFieldId]?.toString() === timeValue
                     )?.row
@@ -462,10 +456,8 @@ FROM main;`;
                     );
             }
 
-            if (common.isDefined(dataRow)) {
-              reportDataColumn.fields[row.rowId] = common.isUndefined(
-                dataRow[fieldId]
-              )
+            if (isDefined(dataRow)) {
+              reportDataColumn.fields[row.rowId] = isUndefined(dataRow[fieldId])
                 ? undefined
                 : isNaN(dataRow[fieldId]) === false
                   ? Number(dataRow[fieldId])
@@ -481,31 +473,28 @@ FROM main;`;
       report.rows
         .filter(
           row =>
-            row.rowType === common.RowTypeEnum.Metric &&
-            row.mconfig.select.length > 0
+            row.rowType === RowTypeEnum.Metric && row.mconfig.select.length > 0
         )
-        .forEach((row: common.Row) => {
+        .forEach((row: Row) => {
           let timeFieldId =
-            row.mconfig?.modelType === common.ModelTypeEnum.Malloy
+            row.mconfig?.modelType === ModelTypeEnum.Malloy
               ? row.mconfig?.select[0].split('.').join(DOUBLE_UNDERSCORE)
               : row.mconfig?.select[0].split('.').join('_').toLowerCase();
 
           let fieldId =
-            row.mconfig?.modelType === common.ModelTypeEnum.Malloy
+            row.mconfig?.modelType === ModelTypeEnum.Malloy
               ? row.mconfig?.select[1].split('.').join(DOUBLE_UNDERSCORE)
               : row.mconfig?.select[1].split('.').join('_').toLowerCase();
 
           (row.query?.data as any[])?.forEach(x => {
             let dataRow =
-              row.mconfig?.modelType === common.ModelTypeEnum.Malloy
-                ? x.row
-                : x;
+              row.mconfig?.modelType === ModelTypeEnum.Malloy ? x.row : x;
 
             let timestampString = dataRow[timeFieldId]?.toString();
 
             let columnId = dayjs(timestampString).valueOf() / 1000;
 
-            let dataValue = common.isUndefined(dataRow[fieldId])
+            let dataValue = isUndefined(dataRow[fieldId])
               ? undefined
               : isNaN(dataRow[fieldId]) === false
                 ? Number(dataRow[fieldId])
@@ -515,7 +504,7 @@ FROM main;`;
               x => x.fields.timestamp === columnId
             );
 
-            if (common.isUndefined(reportDataColumn)) {
+            if (isUndefined(reportDataColumn)) {
               reportDataColumn = {
                 id: undefined,
                 fields: {
@@ -532,11 +521,11 @@ FROM main;`;
               x => x.columnId === columnId
             );
 
-            if (common.isUndefined(reportColumn)) {
+            if (isUndefined(reportColumn)) {
               reportColumn = {
                 columnId: columnId,
                 // tsUTC: undefined,
-                label: nodeCommon.nodeFormatTsUnix({
+                label: nodeFormatTsUnix({
                   timeSpec: timeSpec,
                   unixTimeZoned: columnId
                 })

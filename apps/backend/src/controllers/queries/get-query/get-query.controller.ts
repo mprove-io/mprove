@@ -1,8 +1,5 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -35,10 +32,7 @@ export class GetQueryController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery)
-  async getQuery(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getQuery(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetQueryRequest = request.body;
 
     let {
@@ -52,7 +46,7 @@ export class GetQueryController {
       envId
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -88,8 +82,8 @@ export class GetQueryController {
     });
 
     if (mconfig.queryId !== queryId) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MCONFIG_QUERY_ID_MISMATCH
+      throw new ServerError({
+        message: ErEnum.BACKEND_MCONFIG_QUERY_ID_MISMATCH
       });
     }
 
@@ -99,7 +93,7 @@ export class GetQueryController {
     });
 
     let chart;
-    if (common.isDefined(chartId)) {
+    if (isDefined(chartId)) {
       chart = await this.chartsService.getChartCheckExists({
         structId: bridge.structId,
         chartId: chartId
@@ -107,38 +101,38 @@ export class GetQueryController {
     }
 
     let dashboard;
-    if (common.isDefined(dashboardId)) {
+    if (isDefined(dashboardId)) {
       chart = await this.dashboardsService.getDashboardCheckExists({
         structId: bridge.structId,
         dashboardId: dashboardId
       });
     }
 
-    let isAccessGranted = common.isDefined(chart)
-      ? helper.checkAccess({
+    let isAccessGranted = isDefined(chart)
+      ? checkAccess({
           userAlias: user.alias,
           member: member,
           entity: chart
         })
-      : common.isDefined(dashboard)
-        ? helper.checkAccess({
+      : isDefined(dashboard)
+        ? checkAccess({
             userAlias: user.alias,
             member: member,
             entity: dashboard
           })
-        : helper.checkAccess({
+        : checkAccess({
             userAlias: user.alias,
             member: member,
             entity: model
           });
 
     if (isAccessGranted === false) {
-      throw new common.ServerError({
-        message: common.isDefined(chart)
-          ? common.ErEnum.BACKEND_FORBIDDEN_CHART
-          : common.isDefined(dashboard)
-            ? common.ErEnum.BACKEND_FORBIDDEN_DASHBOARD
-            : common.ErEnum.BACKEND_FORBIDDEN_MODEL
+      throw new ServerError({
+        message: isDefined(chart)
+          ? ErEnum.BACKEND_FORBIDDEN_CHART
+          : isDefined(dashboard)
+            ? ErEnum.BACKEND_FORBIDDEN_DASHBOARD
+            : ErEnum.BACKEND_FORBIDDEN_MODEL
       });
     }
 

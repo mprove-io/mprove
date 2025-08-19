@@ -2,11 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
@@ -25,7 +21,7 @@ export class MembersService {
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
     private makerService: MakerService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -40,15 +36,15 @@ export class MembersService {
       )
     });
 
-    if (common.isUndefined(member)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
+    if (isUndefined(member)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
       });
     }
 
     if (member.isAdmin !== true) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MEMBER_IS_NOT_ADMIN
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_IS_NOT_ADMIN
       });
     }
 
@@ -68,15 +64,15 @@ export class MembersService {
       )
     });
 
-    if (common.isUndefined(member)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
+    if (isUndefined(member)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
       });
     }
 
     if (member.isEditor !== true && member.isAdmin !== true) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR_OR_ADMIN
       });
     }
 
@@ -93,15 +89,15 @@ export class MembersService {
       )
     });
 
-    if (common.isUndefined(member)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
+    if (isUndefined(member)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
       });
     }
 
     if (member.isEditor !== true) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_IS_NOT_EDITOR
       });
     }
 
@@ -118,9 +114,9 @@ export class MembersService {
       )
     });
 
-    if (common.isUndefined(member)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
+    if (isUndefined(member)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_DOES_NOT_EXIST
       });
     }
 
@@ -137,28 +133,28 @@ export class MembersService {
       )
     });
 
-    if (common.isDefined(member)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MEMBER_ALREADY_EXISTS
+    if (isDefined(member)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_ALREADY_EXISTS
       });
     }
   }
 
   async addMemberToFirstProject(item: {
-    user: schemaPostgres.UserEnt;
+    user: UserEnt;
     traceId: string;
   }) {
     let { user, traceId } = item;
 
     let firstProjectId =
-      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
+      this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
 
-    if (common.isDefined(firstProjectId)) {
+    if (isDefined(firstProjectId)) {
       let project = await this.db.drizzle.query.projectsTable.findFirst({
         where: eq(projectsTable.projectId, firstProjectId)
       });
 
-      if (common.isDefined(project)) {
+      if (isDefined(project)) {
         let member = await this.db.drizzle.query.membersTable.findFirst({
           where: and(
             eq(membersTable.memberId, user.userId),
@@ -166,15 +162,14 @@ export class MembersService {
           )
         });
 
-        if (common.isUndefined(member)) {
-          let newMember: schemaPostgres.MemberEnt =
-            this.makerService.makeMember({
-              projectId: firstProjectId,
-              user: user,
-              isAdmin: false,
-              isEditor: true,
-              isExplorer: true
-            });
+        if (isUndefined(member)) {
+          let newMember: MemberEnt = this.makerService.makeMember({
+            projectId: firstProjectId,
+            user: user,
+            isAdmin: false,
+            isEditor: true,
+            isExplorer: true
+          });
 
           let toDiskCreateDevRepoRequest: apiToDisk.ToDiskCreateDevRepoRequest =
             {
@@ -196,7 +191,7 @@ export class MembersService {
           let diskResponse =
             await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateDevRepoResponse>(
               {
-                routingKey: helper.makeRoutingKeyToDisk({
+                routingKey: makeRoutingKeyToDisk({
                   orgId: project.orgId,
                   projectId: firstProjectId
                 }),
@@ -208,7 +203,7 @@ export class MembersService {
           let prodBranch = await this.db.drizzle.query.branchesTable.findFirst({
             where: and(
               eq(branchesTable.projectId, firstProjectId),
-              eq(branchesTable.repoId, common.PROD_REPO_ID),
+              eq(branchesTable.repoId, PROD_REPO_ID),
               eq(branchesTable.branchId, project.defaultBranch)
             )
           });
@@ -228,7 +223,7 @@ export class MembersService {
               )
             });
 
-          let devBranchBridges: schemaPostgres.BridgeEnt[] = [];
+          let devBranchBridges: BridgeEnt[] = [];
 
           prodBranchBridges.forEach(x => {
             let devBranchBridge = this.makerService.makeBridge({
@@ -236,7 +231,7 @@ export class MembersService {
               repoId: devBranch.repoId,
               branchId: devBranch.branchId,
               envId: x.envId,
-              structId: common.EMPTY_STRUCT_ID,
+              structId: EMPTY_STRUCT_ID,
               needValidate: true
             });
 
@@ -244,8 +239,8 @@ export class MembersService {
           });
 
           await forEachSeries(devBranchBridges, async x => {
-            if (x.envId === common.PROJECT_ENV_PROD) {
-              let structId = common.makeId();
+            if (x.envId === PROJECT_ENV_PROD) {
+              let structId = makeId();
 
               await this.blockmlService.rebuildStruct({
                 traceId,
@@ -260,7 +255,7 @@ export class MembersService {
               x.structId = structId;
               x.needValidate = false;
             } else {
-              x.structId = common.EMPTY_STRUCT_ID;
+              x.structId = EMPTY_STRUCT_ID;
               x.needValidate = true;
             }
           });

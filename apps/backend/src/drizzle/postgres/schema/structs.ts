@@ -7,7 +7,6 @@ import {
   pgTable,
   varchar
 } from 'drizzle-orm/pg-core';
-import { common } from '~backend/barrels/common';
 
 export const structsTable = pgTable(
   'structs',
@@ -17,18 +16,16 @@ export const structsTable = pgTable(
     mproveDirValue: varchar('mprove_dir_value'),
     caseSensitiveStringFilters: boolean('case_sensitive_string_filters'),
     simplifySafeAggregates: boolean('simplify_safe_aggregates'),
-    weekStart: varchar('week_start')
-      .$type<common.ProjectWeekStartEnum>()
-      .notNull(),
+    weekStart: varchar('week_start').$type<ProjectWeekStartEnum>().notNull(),
     allowTimezones: boolean('allow_timezones').notNull(),
     defaultTimezone: varchar('default_timezone').notNull(),
     formatNumber: varchar('format_number'),
     currencyPrefix: varchar('currency_prefix'),
     currencySuffix: varchar('currency_suffix'),
     thousandsSeparator: varchar('thousands_separator'),
-    errors: json('errors').$type<common.BmlError[]>().notNull(),
-    metrics: json('metrics').$type<common.ModelMetric[]>().default([]),
-    presets: json('presets').$type<common.Preset[]>().default([]),
+    errors: json('errors').$type<BmlError[]>().notNull(),
+    metrics: json('metrics').$type<ModelMetric[]>().default([]),
+    presets: json('presets').$type<Preset[]>().default([]),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

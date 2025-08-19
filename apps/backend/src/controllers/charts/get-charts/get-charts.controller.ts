@@ -1,9 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
@@ -34,10 +31,7 @@ export class GetChartsController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetCharts)
-  async getCharts(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getCharts(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetChartsRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
@@ -53,7 +47,7 @@ export class GetChartsController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
+      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -75,7 +69,7 @@ export class GetChartsController {
     });
 
     let chartsGrantedAccess = charts.filter(x =>
-      helper.checkAccess({
+      checkAccess({
         userAlias: user.alias,
         member: userMember,
         entity: x
@@ -90,9 +84,7 @@ export class GetChartsController {
         connectionId: modelsTable.connectionId
       })
       .from(modelsTable)
-      .where(
-        eq(modelsTable.structId, bridge.structId)
-      )) as schemaPostgres.ModelEnt[];
+      .where(eq(modelsTable.structId, bridge.structId))) as ModelEnt[];
 
     let modelsY = await this.modelsService.getModelsY({
       bridge: bridge,
@@ -116,7 +108,7 @@ export class GetChartsController {
         .map(model =>
           this.wrapToApiService.wrapToApiModel({
             model: model,
-            hasAccess: helper.checkAccess({
+            hasAccess: checkAccess({
               userAlias: user.alias,
               member: userMember,
               entity: model
@@ -133,7 +125,7 @@ export class GetChartsController {
           models: models.map(model =>
             this.wrapToApiService.wrapToApiModel({
               model: model,
-              hasAccess: helper.checkAccess({
+              hasAccess: checkAccess({
                 userAlias: user.alias,
                 member: userMember,
                 entity: model

@@ -1,7 +1,5 @@
-import { common } from '~api-to-backend/barrels/common';
-
 export function processRowIds(item: {
-  rows: common.Row[];
+  rows: Row[];
   targetRowIds: string[];
   replaceWithUndef?: string[];
 }) {
@@ -15,7 +13,7 @@ export function processRowIds(item: {
       targetRowId => targetRowId === rowId
     );
 
-    targets[rowId] = common.rowIdNumberToLetter(targetIndex);
+    targets[rowId] = rowIdNumberToLetter(targetIndex);
   });
 
   // rows = rows.map(row => {
@@ -30,14 +28,14 @@ export function processRowIds(item: {
   });
 
   rows.forEach(row => {
-    if (row.rowType === common.RowTypeEnum.Formula) {
+    if (row.rowType === RowTypeEnum.Formula) {
       //
       // console.log('row.formula:');
       // console.log(row.formula);
 
       let newFormula = row.formula;
       let formulaDeps: string[] = [];
-      let reg = common.MyRegex.CAPTURE_ROW_REF();
+      let reg = MyRegex.CAPTURE_ROW_REF();
       let r;
 
       while ((r = reg.exec(newFormula))) {
@@ -45,32 +43,28 @@ export function processRowIds(item: {
 
         let targetRow;
 
-        if (common.isDefined(targets[reference])) {
+        if (isDefined(targets[reference])) {
           targetRow = rows.find(y => y.rowId === targets[reference]);
         }
 
         let targetTo =
-          common.isDefined(targetRow) &&
-          (targetRow.rowType === common.RowTypeEnum.Formula ||
-            targetRow.rowType === common.RowTypeEnum.Metric)
+          isDefined(targetRow) &&
+          (targetRow.rowType === RowTypeEnum.Formula ||
+            targetRow.rowType === RowTypeEnum.Metric)
             ? targets[reference]
-            : common.isDefined(replaceWithUndef) &&
+            : isDefined(replaceWithUndef) &&
                 replaceWithUndef.indexOf(reference) > -1
-              ? common.UNDEF
+              ? UNDEF
               : reference;
 
-        newFormula = common.MyRegex.replaceRowIds(
-          newFormula,
-          reference,
-          targetTo
-        );
+        newFormula = MyRegex.replaceRowIds(newFormula, reference, targetTo);
 
         if (formulaDeps.indexOf(targetTo) < 0) {
           formulaDeps.push(targetTo);
         }
       }
 
-      newFormula = newFormula.split(common.QUAD_UNDERSCORE).join('');
+      newFormula = newFormula.split(QUAD_UNDERSCORE).join('');
 
       row.formula = newFormula;
 
@@ -85,10 +79,9 @@ export function processRowIds(item: {
   });
 
   let newRows = rows.sort((a, b) =>
-    common.rowIdLetterToNumber(a.rowId) > common.rowIdLetterToNumber(b.rowId)
+    rowIdLetterToNumber(a.rowId) > rowIdLetterToNumber(b.rowId)
       ? 1
-      : common.rowIdLetterToNumber(b.rowId) >
-          common.rowIdLetterToNumber(a.rowId)
+      : rowIdLetterToNumber(b.rowId) > rowIdLetterToNumber(a.rowId)
         ? -1
         : 0
   );
@@ -110,7 +103,7 @@ export function processRowIds(item: {
         }
 
         let depRow = rows.find(r => r.rowId === x);
-        if (common.isDefined(depRow)) {
+        if (isDefined(depRow)) {
           depRow.deps.forEach(d => {
             if (endDeps.indexOf(d) < 0) {
               endDeps.push(d);

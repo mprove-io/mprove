@@ -8,7 +8,6 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { common } from '~backend/barrels/common';
 
 export const reportsTable = pgTable(
   'reports',
@@ -22,9 +21,9 @@ export const reportsTable = pgTable(
     filePath: varchar('file_path'),
     accessRoles: json('access_roles').$type<string[]>().notNull(),
     title: varchar('title').notNull(),
-    fields: json('fields').$type<common.ReportField[]>(),
-    rows: json('rows').$type<common.Row[]>().notNull(),
-    chart: json('chart').$type<common.MconfigChart>(),
+    fields: json('fields').$type<ReportField[]>(),
+    rows: json('rows').$type<Row[]>().notNull(),
+    chart: json('chart').$type<MconfigChart>(),
     creatorId: varchar('creator_id', { length: 32 }), // user_id
     draft: boolean('draft').notNull(),
     draftCreatedTs: bigint('draft_created_ts', { mode: 'number' }).notNull(),

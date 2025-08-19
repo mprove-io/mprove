@@ -1,8 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
@@ -21,10 +19,7 @@ export class GetOrgController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrg)
-  async getOrg(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getOrg(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetOrgRequest = request.body;
 
     let { orgId } = reqValid.payload;
@@ -51,8 +46,8 @@ export class GetOrgController {
       let orgIds = projects.map(x => x.orgId);
 
       if (orgIds.indexOf(orgId) < 0) {
-        throw new common.ServerError({
-          message: common.ErEnum.BACKEND_FORBIDDEN_ORG
+        throw new ServerError({
+          message: ErEnum.BACKEND_FORBIDDEN_ORG
         });
       }
     }

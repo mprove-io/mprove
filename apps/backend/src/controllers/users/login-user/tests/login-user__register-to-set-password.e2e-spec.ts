@@ -1,8 +1,5 @@
 import test from 'ava';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 
@@ -38,7 +35,7 @@ test('1', async t => {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: {
         email: email,
@@ -46,7 +43,7 @@ test('1', async t => {
       }
     };
 
-    resp = await helper.sendToBackend<apiToBackend.ToBackendLoginUserResponse>({
+    resp = await sendToBackend<apiToBackend.ToBackendLoginUserResponse>({
       httpServer: prep.httpServer,
       req: loginUserReq
     });
@@ -55,11 +52,11 @@ test('1', async t => {
   } catch (e) {
     logToConsoleBackend({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: prep.logger,
       cs: prep.cs
     });
   }
 
-  t.is(resp.info.error.message, common.ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD);
+  t.is(resp.info.error.message, ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD);
 });

@@ -1,5 +1,3 @@
-import { common } from '~backend/barrels/common';
-
 export function makeRoutingKeyToDisk(item: {
   orgId: string;
   projectId: string;
@@ -22,15 +20,14 @@ export function makeRoutingKeyToDisk(item: {
   let orgGroupIndex = orgGroups.findIndex(x => x.includes(orgFirstLetter));
 
   if (orgGroupIndex < 0) {
-    throw new common.ServerError({
-      message:
-        common.ErEnum.BACKEND_ORG_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
+    throw new ServerError({
+      message: ErEnum.BACKEND_ORG_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
     });
   }
 
   let projectGroupIndex: number;
 
-  if (common.isDefined(item.projectId)) {
+  if (isDefined(item.projectId)) {
     let projectFirstLetter = item.projectId.substring(0, 1).toLowerCase();
 
     projectGroupIndex = projectGroups.findIndex(x =>
@@ -38,16 +35,15 @@ export function makeRoutingKeyToDisk(item: {
     );
 
     if (projectGroupIndex < 0) {
-      throw new common.ServerError({
-        message:
-          common.ErEnum.BACKEND_PROJECT_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
+      throw new ServerError({
+        message: ErEnum.BACKEND_PROJECT_ID_FIRST_LETTER_DOES_NOT_MATCH_ANY_GROUP
       });
     }
   }
 
-  let routingKey = common.isDefined(projectGroupIndex)
-    ? `${orgGroupIndex}${common.TRIPLE_UNDERSCORE}${projectGroupIndex}`
-    : `${orgGroupIndex}${common.TRIPLE_UNDERSCORE}`;
+  let routingKey = isDefined(projectGroupIndex)
+    ? `${orgGroupIndex}${TRIPLE_UNDERSCORE}${projectGroupIndex}`
+    : `${orgGroupIndex}${TRIPLE_UNDERSCORE}`;
 
   return routingKey;
 }

@@ -2,10 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { eq } from 'drizzle-orm';
-import { common } from '~backend/barrels/common';
-import { constants } from '~backend/barrels/constants';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -15,17 +12,17 @@ let retry = require('async-retry');
 @Injectable()
 export class UsersService {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  checkUserHashIsDefined(item: { user: schemaPostgres.UserEnt }) {
+  checkUserHashIsDefined(item: { user: UserEnt }) {
     let { user } = item;
 
-    if (common.isUndefined(user.hash)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
+    if (isUndefined(user.hash)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
       });
     }
   }
@@ -37,9 +34,9 @@ export class UsersService {
       where: eq(usersTable.userId, userId)
     });
 
-    if (common.isUndefined(user)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_USER_DOES_NOT_EXIST
+    if (isUndefined(user)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_USER_DOES_NOT_EXIST
       });
     }
 
@@ -53,9 +50,9 @@ export class UsersService {
       where: eq(usersTable.email, email)
     });
 
-    if (common.isUndefined(user)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_USER_DOES_NOT_EXIST
+    if (isUndefined(user)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_USER_DOES_NOT_EXIST
       });
     }
 
@@ -81,20 +78,20 @@ export class UsersService {
 
     let alias = await this.makeAlias(email);
 
-    let user: schemaPostgres.UserEnt = {
-      userId: common.makeId(),
+    let user: UserEnt = {
+      userId: makeId(),
       email: email,
       passwordResetToken: undefined,
       passwordResetExpiresTs: undefined,
       isEmailVerified: true,
-      emailVerificationToken: common.makeId(),
+      emailVerificationToken: makeId(),
       hash: hash,
       salt: salt,
       jwtMinIat: undefined,
       alias: alias,
       firstName: undefined, // null
       lastName: undefined, // null
-      ui: common.makeCopy(constants.DEFAULT_SRV_UI),
+      ui: makeCopy(DEFAULT_SRV_UI),
       serverTs: undefined
     };
 
@@ -116,14 +113,14 @@ export class UsersService {
   }
 
   async makeAlias(email: string) {
-    let reg = common.MyRegex.CAPTURE_ALIAS();
+    let reg = MyRegex.CAPTURE_ALIAS();
     let r = reg.exec(email);
 
     let alias = r ? r[1] : undefined;
 
-    if (common.isUndefined(alias)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_USER_ALIAS_IS_UNDEFINED
+    if (isUndefined(alias)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_USER_ALIAS_IS_UNDEFINED
       });
     }
 
@@ -136,7 +133,7 @@ export class UsersService {
         where: eq(usersTable.alias, alias)
       });
 
-      if (common.isDefined(aliasUser)) {
+      if (isDefined(aliasUser)) {
         alias = `${alias}${count}`;
         count++;
       } else {

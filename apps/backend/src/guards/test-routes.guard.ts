@@ -1,19 +1,21 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
+import { BoolEnum } from '~common/enums/bool.enum';
+import { ErEnum } from '~common/enums/er.enum';
+import { BackendConfig } from '~common/interfaces/backend/backend-config';
+import { ServerError } from '~common/models/server-error';
 
 @Injectable()
 export class TestRoutesGuard implements CanActivate {
-  constructor(private cs: ConfigService<interfaces.Config>) {}
+  constructor(private cs: ConfigService<BackendConfig>) {}
 
   canActivate(context: ExecutionContext) {
     if (
-      this.cs.get<interfaces.Config['allowTestRoutes']>('allowTestRoutes') !==
-      common.BoolEnum.TRUE
+      this.cs.get<BackendConfig['allowTestRoutes']>('allowTestRoutes') !==
+      BoolEnum.TRUE
     ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_TEST_ROUTES_FORBIDDEN
+      throw new ServerError({
+        message: ErEnum.BACKEND_TEST_ROUTES_FORBIDDEN
       });
     }
 

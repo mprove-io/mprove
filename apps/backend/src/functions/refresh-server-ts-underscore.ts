@@ -1,10 +1,8 @@
-import { common } from '~backend/barrels/common';
-
 export function refreshServerTsUnderscore<T extends { server_ts: string }>(
   arr: T[],
   newServerTs: string
 ) {
-  if (common.isDefined(arr)) {
+  if (isDefined(arr)) {
     arr.forEach(element => (element.server_ts = newServerTs));
   }
 }

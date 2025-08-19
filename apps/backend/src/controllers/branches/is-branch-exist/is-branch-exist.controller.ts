@@ -1,8 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
@@ -20,15 +18,12 @@ export class IsBranchExistController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendIsBranchExist)
-  async isBranchExist(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async isBranchExist(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendIsBranchExistRequest = request.body;
 
     let { projectId, branchId, isRepoProd } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -48,7 +43,7 @@ export class IsBranchExistController {
     });
 
     let payload: apiToBackend.ToBackendIsBranchExistResponsePayload = {
-      isExist: common.isDefined(branch)
+      isExist: isDefined(branch)
     };
 
     return payload;

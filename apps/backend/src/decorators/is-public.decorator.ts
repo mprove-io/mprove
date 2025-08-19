@@ -1,4 +1,4 @@
 import { SetMetadata } from '@nestjs/common';
-import { constants } from '~backend/barrels/constants';
+import { SKIP_JWT } from '~common/constants/top-backend';
 
-export const SkipJwtCheck = () => SetMetadata(constants.SKIP_JWT, true);
+export const SkipJwtCheck = () => SetMetadata(SKIP_JWT, true);

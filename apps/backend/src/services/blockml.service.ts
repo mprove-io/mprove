@@ -2,10 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
 import { apiToBlockml } from '~backend/barrels/api-to-blockml';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -23,7 +20,7 @@ export class BlockmlService {
     private rabbitService: RabbitService,
     private envsService: EnvsService,
     private wrapToEntService: WrapToEntService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -33,11 +30,11 @@ export class BlockmlService {
     projectId: string;
     structId: string;
     envId: string;
-    diskFiles: common.DiskCatalogFile[];
+    diskFiles: DiskCatalogFile[];
     mproveDir: string;
     skipDb?: boolean;
-    connections?: common.ProjectConnection[];
-    evs?: common.Ev[];
+    connections?: ProjectConnection[];
+    evs?: Ev[];
     overrideTimezone: string;
   }) {
     let {
@@ -62,7 +59,7 @@ export class BlockmlService {
     let connectionsWithFallback: ProjectConnection[] = [];
 
     if (
-      common.isUndefined(connections) &&
+      isUndefined(connections) &&
       apiEnv?.envConnectionIdsWithFallback.length > 0
     ) {
       let connectionsEnts =
@@ -78,7 +75,7 @@ export class BlockmlService {
 
       connectionsWithFallback = connectionsEnts.map(
         x =>
-          <common.ProjectConnection>{
+          <ProjectConnection>{
             connectionId: x.connectionId,
             type: x.type,
             googleCloudProject: x.googleCloudProject,
@@ -102,10 +99,10 @@ export class BlockmlService {
           structId: structId,
           projectId: projectId,
           mproveDir: mproveDir,
-          files: helper.diskFilesToBlockmlFiles(diskFiles),
+          files: diskFilesToBlockmlFiles(diskFiles),
           envId: envId,
-          evs: common.isDefined(evs) ? evs : apiEnv.evsWithFallback,
-          connections: common.isDefined(connections)
+          evs: isDefined(evs) ? evs : apiEnv.evsWithFallback,
+          connections: isDefined(connections)
             ? connections
             : connectionsWithFallback,
           overrideTimezone: overrideTimezone
@@ -115,7 +112,7 @@ export class BlockmlService {
     let blockmlRebuildStructResponse =
       await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
         {
-          routingKey: common.RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
+          routingKey: RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
           message: toBlockmlRebuildStructRequest,
           checkIsOk: true
         }
@@ -123,7 +120,7 @@ export class BlockmlService {
 
     let rs = blockmlRebuildStructResponse.payload;
 
-    let struct: schemaPostgres.StructEnt = {
+    let struct: StructEnt = {
       projectId: projectId,
       structId: structId,
       mproveDirValue: rs.mproveDirValue,
@@ -151,7 +148,7 @@ export class BlockmlService {
       report.rows = newRows;
     });
 
-    if (common.isUndefined(skipDb) || skipDb === false) {
+    if (isUndefined(skipDb) || skipDb === false) {
       await retry(
         async () => {
           await this.db.drizzle.transaction(

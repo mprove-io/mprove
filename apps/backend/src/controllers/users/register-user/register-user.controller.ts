@@ -8,11 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { constants } from '~backend/barrels/constants';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { SkipJwtCheck } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
@@ -32,7 +28,7 @@ export class RegisterUserController {
     private usersService: UsersService,
     private emailService: EmailService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -43,7 +39,7 @@ export class RegisterUserController {
 
     let { email, password } = reqValid.payload;
 
-    let newUser: schemaPostgres.UserEnt;
+    let newUser: UserEnt;
 
     let { salt, hash } = await this.usersService.makeSaltAndHash(password);
 
@@ -51,10 +47,10 @@ export class RegisterUserController {
       where: eq(usersTable.email, email)
     });
 
-    if (common.isDefined(user)) {
-      if (common.isDefined(user.hash)) {
-        throw new common.ServerError({
-          message: common.ErEnum.BACKEND_USER_ALREADY_REGISTERED
+    if (isDefined(user)) {
+      if (isDefined(user.hash)) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_USER_ALREADY_REGISTERED
         });
       } else {
         user.hash = hash;
@@ -64,32 +60,32 @@ export class RegisterUserController {
       }
     }
 
-    if (common.isUndefined(user)) {
-      let onlyInv = this.cs.get<interfaces.Config['registerOnlyInvitedUsers']>(
+    if (isUndefined(user)) {
+      let onlyInv = this.cs.get<BackendConfig['registerOnlyInvitedUsers']>(
         'registerOnlyInvitedUsers'
       );
 
-      if (onlyInv === common.BoolEnum.TRUE) {
-        throw new common.ServerError({
-          message: common.ErEnum.BACKEND_USER_IS_NOT_INVITED
+      if (onlyInv === BoolEnum.TRUE) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_USER_IS_NOT_INVITED
         });
       } else {
         let alias = await this.usersService.makeAlias(email);
 
         newUser = {
-          userId: common.makeId(),
+          userId: makeId(),
           email: email,
           passwordResetToken: undefined,
           passwordResetExpiresTs: undefined,
           isEmailVerified: false,
-          emailVerificationToken: common.makeId(),
+          emailVerificationToken: makeId(),
           hash: hash,
           salt: salt,
           jwtMinIat: undefined,
           alias: alias,
           firstName: undefined,
           lastName: undefined,
-          ui: common.makeCopy(constants.DEFAULT_SRV_UI),
+          ui: makeCopy(DEFAULT_SRV_UI),
           serverTs: undefined
         };
 
@@ -110,10 +106,10 @@ export class RegisterUserController {
             await this.db.packer.write({
               tx: tx,
               insert: {
-                users: common.isDefined(user) ? [] : [newUser]
+                users: isDefined(user) ? [] : [newUser]
               },
               insertOrUpdate: {
-                users: common.isDefined(user) ? [newUser] : []
+                users: isDefined(user) ? [newUser] : []
               }
             })
         ),

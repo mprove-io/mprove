@@ -27,24 +27,21 @@ import {
   startOfYear,
   sub
 } from 'date-fns';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { nodeCommon } from '~backend/barrels/node-common';
 import { bricksToFractions } from '~node-common/functions/bricks-to-fractions';
 
 @Injectable()
 export class ReportTimeColumnsService {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger
   ) {}
 
   async getTimeColumns(item: {
     traceId: string;
     timezone: string;
-    timeSpec: common.TimeSpecEnum;
+    timeSpec: TimeSpecEnum;
     timeRangeFractionBrick: string;
-    projectWeekStart: common.ProjectWeekStartEnum;
+    projectWeekStart: ProjectWeekStartEnum;
     caseSensitiveStringFilters: boolean;
   }) {
     let {
@@ -56,14 +53,14 @@ export class ReportTimeColumnsService {
       caseSensitiveStringFilters
     } = item;
 
-    let timeColumnsLimit = common.TIME_COLUMNS_LIMIT;
+    let timeColumnsLimit = TIME_COLUMNS_LIMIT;
 
-    let fractions: common.Fraction[] = [];
+    let fractions: Fraction[] = [];
 
     let p = bricksToFractions({
       // caseSensitiveStringFilters: caseSensitiveStringFilters,
       filterBricks: [timeRangeFractionBrick],
-      result: common.FieldResultEnum.Ts,
+      result: FieldResultEnum.Ts,
       fractions: fractions,
       isGetTimeRange: true,
       timezone: timezone,
@@ -72,8 +69,8 @@ export class ReportTimeColumnsService {
     });
 
     if (p.valid !== 1) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_WRONG_TIME_RANGE
+      throw new ServerError({
+        message: ErEnum.BACKEND_WRONG_TIME_RANGE
       });
     }
 
@@ -83,85 +80,83 @@ export class ReportTimeColumnsService {
     let respRangeEnd = p.rangeEnd;
 
     let rangeStart =
-      common.isUndefined(respRangeStart) && common.isUndefined(respRangeEnd)
+      isUndefined(respRangeStart) && isUndefined(respRangeEnd)
         ? undefined
-        : common.isDefined(respRangeStart)
+        : isDefined(respRangeStart)
           ? respRangeStart
-          : timeSpec === common.TimeSpecEnum.Timestamps
+          : timeSpec === TimeSpecEnum.Timestamps
             ? undefined
             : getUnixTime(
                 sub(
                   fromUnixTime(respRangeEnd),
-                  timeSpec === common.TimeSpecEnum.Years
+                  timeSpec === TimeSpecEnum.Years
                     ? { years: timeColumnsLimit }
-                    : timeSpec === common.TimeSpecEnum.Quarters
+                    : timeSpec === TimeSpecEnum.Quarters
                       ? { months: timeColumnsLimit * 3 }
-                      : timeSpec === common.TimeSpecEnum.Months
+                      : timeSpec === TimeSpecEnum.Months
                         ? { months: timeColumnsLimit }
-                        : timeSpec === common.TimeSpecEnum.Weeks
+                        : timeSpec === TimeSpecEnum.Weeks
                           ? { days: timeColumnsLimit * 7 }
-                          : timeSpec === common.TimeSpecEnum.Days
+                          : timeSpec === TimeSpecEnum.Days
                             ? { days: timeColumnsLimit }
-                            : timeSpec === common.TimeSpecEnum.Hours
+                            : timeSpec === TimeSpecEnum.Hours
                               ? { hours: timeColumnsLimit }
-                              : timeSpec === common.TimeSpecEnum.Minutes
+                              : timeSpec === TimeSpecEnum.Minutes
                                 ? { minutes: timeColumnsLimit }
                                 : {}
                 )
               );
 
     let rangeEnd =
-      common.isUndefined(respRangeStart) && common.isUndefined(respRangeEnd)
+      isUndefined(respRangeStart) && isUndefined(respRangeEnd)
         ? undefined
-        : common.isDefined(respRangeEnd)
+        : isDefined(respRangeEnd)
           ? respRangeEnd
-          : timeSpec === common.TimeSpecEnum.Timestamps
+          : timeSpec === TimeSpecEnum.Timestamps
             ? undefined
             : getUnixTime(
                 add(
                   fromUnixTime(respRangeStart),
-                  timeSpec === common.TimeSpecEnum.Years
+                  timeSpec === TimeSpecEnum.Years
                     ? { years: timeColumnsLimit }
-                    : timeSpec === common.TimeSpecEnum.Quarters
+                    : timeSpec === TimeSpecEnum.Quarters
                       ? { months: timeColumnsLimit * 3 }
-                      : timeSpec === common.TimeSpecEnum.Months
+                      : timeSpec === TimeSpecEnum.Months
                         ? { months: timeColumnsLimit }
-                        : timeSpec === common.TimeSpecEnum.Weeks
+                        : timeSpec === TimeSpecEnum.Weeks
                           ? { days: timeColumnsLimit * 7 }
-                          : timeSpec === common.TimeSpecEnum.Days
+                          : timeSpec === TimeSpecEnum.Days
                             ? { days: timeColumnsLimit }
-                            : timeSpec === common.TimeSpecEnum.Hours
+                            : timeSpec === TimeSpecEnum.Hours
                               ? { hours: timeColumnsLimit }
-                              : timeSpec === common.TimeSpecEnum.Minutes
+                              : timeSpec === TimeSpecEnum.Minutes
                                 ? { minutes: timeColumnsLimit }
                                 : {}
                 )
               );
 
-    let startDate = common.isDefined(rangeStart)
+    let startDate = isDefined(rangeStart)
       ? new Date(rangeStart * 1000)
       : undefined;
 
-    let endDate = common.isDefined(rangeEnd)
-      ? new Date(rangeEnd * 1000)
-      : undefined;
+    let endDate = isDefined(rangeEnd) ? new Date(rangeEnd * 1000) : undefined;
 
     let diffColumnsLength =
-      timeSpec === common.TimeSpecEnum.Timestamps
+      timeSpec === TimeSpecEnum.Timestamps
         ? 0
-        : timeSpec === common.TimeSpecEnum.Years
+        : timeSpec === TimeSpecEnum.Years
           ? differenceInYears(endDate, startDate)
-          : timeSpec === common.TimeSpecEnum.Quarters
+          : timeSpec === TimeSpecEnum.Quarters
             ? differenceInQuarters(endDate, startDate)
-            : timeSpec === common.TimeSpecEnum.Months
+            : timeSpec === TimeSpecEnum.Months
               ? differenceInMonths(endDate, startDate)
-              : timeSpec === common.TimeSpecEnum.Weeks
+              : timeSpec === TimeSpecEnum.Weeks
                 ? differenceInWeeks(endDate, startDate)
-                : timeSpec === common.TimeSpecEnum.Days
+                : timeSpec === TimeSpecEnum.Days
                   ? differenceInDays(endDate, startDate)
-                  : timeSpec === common.TimeSpecEnum.Hours
+                  : timeSpec === TimeSpecEnum.Hours
                     ? differenceInHours(endDate, startDate)
-                    : timeSpec === common.TimeSpecEnum.Minutes
+                    : timeSpec === TimeSpecEnum.Minutes
                       ? differenceInMinutes(endDate, startDate)
                       : undefined;
 
@@ -172,44 +167,44 @@ export class ReportTimeColumnsService {
 
       if (
         [
-          common.FractionTypeEnum.TsIsBefore, // maybe no such case
-          common.FractionTypeEnum.TsIsThrough // maybe no such case
+          FractionTypeEnum.TsIsBefore, // maybe no such case
+          FractionTypeEnum.TsIsThrough // maybe no such case
         ].indexOf(timeRangeFraction.type) > -1
       ) {
         startDate = sub(
           endDate,
-          timeSpec === common.TimeSpecEnum.Years
+          timeSpec === TimeSpecEnum.Years
             ? { years: timeColumnsLimit }
-            : timeSpec === common.TimeSpecEnum.Quarters
+            : timeSpec === TimeSpecEnum.Quarters
               ? { months: timeColumnsLimit * 3 }
-              : timeSpec === common.TimeSpecEnum.Months
+              : timeSpec === TimeSpecEnum.Months
                 ? { months: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Weeks
+                : timeSpec === TimeSpecEnum.Weeks
                   ? { days: timeColumnsLimit * 7 }
-                  : timeSpec === common.TimeSpecEnum.Days
+                  : timeSpec === TimeSpecEnum.Days
                     ? { days: timeColumnsLimit }
-                    : timeSpec === common.TimeSpecEnum.Hours
+                    : timeSpec === TimeSpecEnum.Hours
                       ? { hours: timeColumnsLimit }
-                      : timeSpec === common.TimeSpecEnum.Minutes
+                      : timeSpec === TimeSpecEnum.Minutes
                         ? { minutes: timeColumnsLimit }
                         : {}
         );
       } else {
         endDate = add(
           startDate,
-          timeSpec === common.TimeSpecEnum.Years
+          timeSpec === TimeSpecEnum.Years
             ? { years: timeColumnsLimit }
-            : timeSpec === common.TimeSpecEnum.Quarters
+            : timeSpec === TimeSpecEnum.Quarters
               ? { months: timeColumnsLimit * 3 }
-              : timeSpec === common.TimeSpecEnum.Months
+              : timeSpec === TimeSpecEnum.Months
                 ? { months: timeColumnsLimit }
-                : timeSpec === common.TimeSpecEnum.Weeks
+                : timeSpec === TimeSpecEnum.Weeks
                   ? { days: timeColumnsLimit * 7 }
-                  : timeSpec === common.TimeSpecEnum.Days
+                  : timeSpec === TimeSpecEnum.Days
                     ? { days: timeColumnsLimit }
-                    : timeSpec === common.TimeSpecEnum.Hours
+                    : timeSpec === TimeSpecEnum.Hours
                       ? { hours: timeColumnsLimit }
-                      : timeSpec === common.TimeSpecEnum.Minutes
+                      : timeSpec === TimeSpecEnum.Minutes
                         ? { minutes: timeColumnsLimit }
                         : {}
         );
@@ -217,50 +212,49 @@ export class ReportTimeColumnsService {
     }
 
     let timeColumns =
-      common.isDefined(startDate) &&
-      common.isDefined(endDate) &&
+      isDefined(startDate) &&
+      isDefined(endDate) &&
       getUnixTime(startDate) === getUnixTime(endDate)
-        ? timeSpec === common.TimeSpecEnum.Timestamps
+        ? timeSpec === TimeSpecEnum.Timestamps
           ? [startDate]
-          : timeSpec === common.TimeSpecEnum.Years
+          : timeSpec === TimeSpecEnum.Years
             ? [startOfYear(startDate)]
-            : timeSpec === common.TimeSpecEnum.Quarters
+            : timeSpec === TimeSpecEnum.Quarters
               ? [startOfQuarter(startDate)]
-              : timeSpec === common.TimeSpecEnum.Months
+              : timeSpec === TimeSpecEnum.Months
                 ? [startOfMonth(startDate)]
-                : timeSpec === common.TimeSpecEnum.Weeks
+                : timeSpec === TimeSpecEnum.Weeks
                   ? [
                       startOfWeek(startDate, {
                         weekStartsOn:
-                          projectWeekStart ===
-                          common.ProjectWeekStartEnum.Sunday
+                          projectWeekStart === ProjectWeekStartEnum.Sunday
                             ? 0
                             : 1
                       })
                     ]
-                  : timeSpec === common.TimeSpecEnum.Days
+                  : timeSpec === TimeSpecEnum.Days
                     ? [startOfDay(startDate)]
-                    : timeSpec === common.TimeSpecEnum.Hours
+                    : timeSpec === TimeSpecEnum.Hours
                       ? [startOfHour(startDate)]
-                      : timeSpec === common.TimeSpecEnum.Minutes
+                      : timeSpec === TimeSpecEnum.Minutes
                         ? [startOfMinute(startDate)]
                         : undefined
-        : timeSpec === common.TimeSpecEnum.Years
+        : timeSpec === TimeSpecEnum.Years
           ? eachYearOfInterval({
               start: startDate,
               end: endDate
             })
-          : timeSpec === common.TimeSpecEnum.Quarters
+          : timeSpec === TimeSpecEnum.Quarters
             ? eachQuarterOfInterval({
                 start: startDate,
                 end: endDate
               })
-            : timeSpec === common.TimeSpecEnum.Months
+            : timeSpec === TimeSpecEnum.Months
               ? eachMonthOfInterval({
                   start: startDate,
                   end: endDate
                 })
-              : timeSpec === common.TimeSpecEnum.Weeks
+              : timeSpec === TimeSpecEnum.Weeks
                 ? eachWeekOfInterval(
                     {
                       start: startDate,
@@ -268,40 +262,38 @@ export class ReportTimeColumnsService {
                     },
                     {
                       weekStartsOn:
-                        projectWeekStart === common.ProjectWeekStartEnum.Sunday
-                          ? 0
-                          : 1
+                        projectWeekStart === ProjectWeekStartEnum.Sunday ? 0 : 1
                     }
                   )
-                : timeSpec === common.TimeSpecEnum.Days
+                : timeSpec === TimeSpecEnum.Days
                   ? eachDayOfInterval({
                       start: startDate,
                       end: endDate
                     })
-                  : timeSpec === common.TimeSpecEnum.Hours
+                  : timeSpec === TimeSpecEnum.Hours
                     ? eachHourOfInterval({
                         start: startDate,
                         end: endDate
                       })
-                    : timeSpec === common.TimeSpecEnum.Minutes
+                    : timeSpec === TimeSpecEnum.Minutes
                       ? eachMinuteOfInterval({
                           start: startDate,
                           end: endDate
                         })
-                      : timeSpec === common.TimeSpecEnum.Timestamps &&
-                          common.isDefined(startDate) &&
-                          common.isDefined(endDate)
+                      : timeSpec === TimeSpecEnum.Timestamps &&
+                          isDefined(startDate) &&
+                          isDefined(endDate)
                         ? [startDate, endDate]
-                        : timeSpec === common.TimeSpecEnum.Timestamps &&
-                            common.isDefined(startDate)
+                        : timeSpec === TimeSpecEnum.Timestamps &&
+                            isDefined(startDate)
                           ? [startDate]
-                          : timeSpec === common.TimeSpecEnum.Timestamps &&
-                              common.isDefined(endDate)
+                          : timeSpec === TimeSpecEnum.Timestamps &&
+                              isDefined(endDate)
                             ? [endDate]
                             : undefined;
 
     if (
-      timeSpec !== common.TimeSpecEnum.Timestamps &&
+      timeSpec !== TimeSpecEnum.Timestamps &&
       timeColumns.length > 1 &&
       getUnixTime(timeColumns[timeColumns.length - 1]) === getUnixTime(endDate)
     ) {
@@ -309,14 +301,13 @@ export class ReportTimeColumnsService {
     }
 
     if (
-      timeSpec !== common.TimeSpecEnum.Timestamps &&
+      timeSpec !== TimeSpecEnum.Timestamps &&
       timeColumns.length > timeColumnsLimit
     ) {
       if (
-        [
-          common.FractionTypeEnum.TsIsBefore,
-          common.FractionTypeEnum.TsIsThrough
-        ].indexOf(timeRangeFraction.type) > -1
+        [FractionTypeEnum.TsIsBefore, FractionTypeEnum.TsIsThrough].indexOf(
+          timeRangeFraction.type
+        ) > -1
       ) {
         console.log('timeColumns.shift()');
         timeColumns.shift(); // detail "years" is before calendar day "2025-01-02"
@@ -331,10 +322,10 @@ export class ReportTimeColumnsService {
       // let unixDateZoned = new Date(unixTimeZoned * 1000);
       // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
-      let column: common.Column = {
+      let column: Column = {
         columnId: unixTimeZoned,
         // tsUTC: tsUTC,
-        label: nodeCommon.nodeFormatTsUnix({
+        label: nodeFormatTsUnix({
           timeSpec: timeSpec,
           unixTimeZoned: unixTimeZoned
         })

@@ -3,9 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import * as pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -16,13 +14,13 @@ let retry = require('async-retry');
 @Injectable()
 export class PgService {
   constructor(
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   async runQuery(item: {
-    connection: schemaPostgres.ConnectionEnt;
+    connection: ConnectionEnt;
     queryJobId: string;
     queryId: string;
     projectId: string;
@@ -58,8 +56,8 @@ export class PgService {
           )
         });
 
-        if (common.isDefined(q)) {
-          q.status = common.QueryStatusEnum.Completed;
+        if (isDefined(q)) {
+          q.status = QueryStatusEnum.Completed;
           q.queryJobId = undefined; // null;
           q.data = data;
           q.lastCompleteTs = makeTsNumber();
@@ -91,8 +89,8 @@ export class PgService {
           )
         });
 
-        if (common.isDefined(q)) {
-          q.status = common.QueryStatusEnum.Error;
+        if (isDefined(q)) {
+          q.status = QueryStatusEnum.Error;
           q.data = [];
           q.queryJobId = undefined; // null
           q.lastErrorMessage = e.message;

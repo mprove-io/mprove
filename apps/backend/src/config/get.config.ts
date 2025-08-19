@@ -1,7 +1,7 @@
-import { common } from '~backend/barrels/common';
-import { enums } from '~backend/barrels/enums';
-import { interfaces } from '~backend/barrels/interfaces';
-import { nodeCommon } from '~backend/barrels/node-common';
+import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
+import { ErEnum } from '~common/enums/er.enum';
+import { BackendConfig } from '~common/interfaces/backend/backend-config';
+import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 import { getDevConfig } from './get-dev.config';
 import { getProdConfig } from './get-prod.config';
 import { getTestConfig } from './get-test.config';
@@ -11,16 +11,16 @@ export function getConfig() {
   let devConfig = getDevConfig(envFilePath);
 
   let config =
-    devConfig.backendEnv === enums.BackendEnvEnum.PROD
+    devConfig.backendEnv === BackendEnvEnum.PROD
       ? getProdConfig(devConfig)
-      : devConfig.backendEnv === enums.BackendEnvEnum.TEST
+      : devConfig.backendEnv === BackendEnvEnum.TEST
         ? getTestConfig(devConfig)
         : devConfig;
 
-  let validatedConfig = nodeCommon.transformValidSync({
-    classType: interfaces.Config,
+  let validatedConfig = transformValidSync({
+    classType: BackendConfig,
     object: config,
-    errorMessage: common.ErEnum.BACKEND_WRONG_ENV_VALUES,
+    errorMessage: ErEnum.BACKEND_WRONG_ENV_VALUES,
     logIsJson: config.backendLogIsJson,
     logger: undefined
   });

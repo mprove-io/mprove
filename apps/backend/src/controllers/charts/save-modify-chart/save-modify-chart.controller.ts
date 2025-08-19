@@ -9,12 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
@@ -60,21 +55,18 @@ export class SaveModifyChartController {
     private wrapToEntService: WrapToEntService,
     private wrapToApiService: WrapToApiService,
     private queriesService: QueriesService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyChart)
-  async saveModifyChart(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async saveModifyChart(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendSaveModifyChartRequest = request.body;
 
-    if (user.alias === common.RESTRICTED_USER_ALIAS) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_USER
+    if (user.alias === RESTRICTED_USER_ALIAS) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_USER
       });
     }
 
@@ -91,7 +83,7 @@ export class SaveModifyChartController {
       timezone
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? common.PROD_REPO_ID : user.userId;
+    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -103,8 +95,8 @@ export class SaveModifyChartController {
     });
 
     if (member.isExplorer === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
       });
     }
 
@@ -133,15 +125,15 @@ export class SaveModifyChartController {
     });
 
     let firstProjectId =
-      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
+      this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
 
     if (
       member.isAdmin === false &&
       projectId === firstProjectId &&
-      repoId === common.PROD_REPO_ID
+      repoId === PROD_REPO_ID
     ) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 
@@ -180,23 +172,23 @@ export class SaveModifyChartController {
       modelId: mconfig.modelId
     });
 
-    let isAccessGranted = helper.checkAccess({
+    let isAccessGranted = checkAccess({
       userAlias: user.alias,
       member: member,
       entity: mconfigModel
     });
 
     if (isAccessGranted === false) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_FORBIDDEN_MODEL
+      throw new ServerError({
+        message: ErEnum.BACKEND_FORBIDDEN_MODEL
       });
     }
 
     let pathParts = existingChart.filePath.split('.');
-    pathParts[pathParts.length - 1] = common.FileExtensionEnum.Malloy.slice(1);
+    pathParts[pathParts.length - 1] = FileExtensionEnum.Malloy.slice(1);
 
     // let secondFileNodeId =
-    //   mconfig.modelType === common.ModelTypeEnum.Malloy
+    //   mconfig.modelType === ModelTypeEnum.Malloy
     //     ? pathParts.join('.')
     //     : undefined;
 
@@ -226,7 +218,7 @@ export class SaveModifyChartController {
         fileNodeId: existingChart.filePath,
         userAlias: user.alias,
         content: chartFileText,
-        // secondFileNodeId: common.isDefined(malloyFileText)
+        // secondFileNodeId: isDefined(malloyFileText)
         //   ? secondFileNodeId
         //   : undefined,
         // secondFileContent: malloyFileText,
@@ -239,7 +231,7 @@ export class SaveModifyChartController {
 
     let diskResponse =
       await this.rabbitService.sendToDisk<apiToDisk.ToDiskSaveFileResponse>({
-        routingKey: helper.makeRoutingKeyToDisk({
+        routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
         }),
@@ -257,7 +249,7 @@ export class SaveModifyChartController {
 
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {
-        x.structId = common.EMPTY_STRUCT_ID;
+        x.structId = EMPTY_STRUCT_ID;
         x.needValidate = true;
       }
     });
@@ -276,30 +268,30 @@ export class SaveModifyChartController {
 
     let chart = charts.find(x => x.chartId === chartId);
 
-    if (common.isUndefined(chart)) {
+    if (isUndefined(chart)) {
       let fileIdAr = existingChart.filePath.split('/');
       fileIdAr.shift();
       let filePath = fileIdAr.join('/');
 
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MODIFY_CHART_FAIL,
+      throw new ServerError({
+        message: ErEnum.BACKEND_MODIFY_CHART_FAIL,
         data: {
-          encodedFileId: common.encodeFilePath({ filePath: filePath })
+          encodedFileId: encodeFilePath({ filePath: filePath })
         }
       });
     }
 
-    let chartTile = common.isDefined(chart) ? chart.tiles[0] : undefined;
+    let chartTile = isDefined(chart) ? chart.tiles[0] : undefined;
 
-    let chartMconfig = common.isDefined(chart)
+    let chartMconfig = isDefined(chart)
       ? mconfigs.find(x => x.mconfigId === chartTile.mconfigId)
       : undefined;
 
-    let chartQuery = common.isDefined(chart)
+    let chartQuery = isDefined(chart)
       ? queries.find(x => x.queryId === chartTile.queryId)
       : undefined;
 
-    let chartEnt = common.isDefined(chart)
+    let chartEnt = isDefined(chart)
       ? this.wrapToEntService.wrapToEntityChart({
           chart: chart,
           chartType: chartMconfig.chart.type
@@ -309,7 +301,7 @@ export class SaveModifyChartController {
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
-          if (common.isUndefined(chart)) {
+          if (isUndefined(chart)) {
             // because file chart changed
             await tx
               .delete(chartsTable)
@@ -337,7 +329,7 @@ export class SaveModifyChartController {
               mconfigs: [chartMconfig]
             },
             insertOrUpdate: {
-              charts: common.isDefined(chart) ? [chartEnt] : undefined,
+              charts: isDefined(chart) ? [chartEnt] : undefined,
               structs: [struct],
               bridges: [...branchBridges]
             },
@@ -356,7 +348,7 @@ export class SaveModifyChartController {
 
     let modelApi = this.wrapToApiService.wrapToApiModel({
       model: modelEnt,
-      hasAccess: helper.checkAccess({
+      hasAccess: checkAccess({
         userAlias: user.alias,
         member: member,
         entity: modelEnt
@@ -368,18 +360,18 @@ export class SaveModifyChartController {
       projectId: projectId
     });
 
-    let newMconfig: common.Mconfig;
-    let newQuery: common.Query;
+    let newMconfig: Mconfig;
+    let newQuery: Query;
 
     let isError = false;
 
-    if (model.type === common.ModelTypeEnum.Store) {
+    if (model.type === ModelTypeEnum.Store) {
       // if (model.isStoreModel === true) {
-      let newMconfigId = common.makeId();
-      let newQueryId = common.makeId();
+      let newMconfigId = makeId();
+      let newQueryId = makeId();
 
       // biome-ignore format: theme breaks
-      let sMconfig = Object.assign({}, chartMconfig, <schemaPostgres.MconfigEnt>{
+      let sMconfig = Object.assign({}, chartMconfig, <MconfigEnt>{
         mconfigId: newMconfigId,
         queryId: newQueryId,
         timezone: timezone,
@@ -399,9 +391,9 @@ export class SaveModifyChartController {
       newMconfig = mqe.newMconfig;
       newQuery = mqe.newQuery;
       isError = mqe.isError;
-    } else if (model.type === common.ModelTypeEnum.Malloy) {
-      let queryOperation: common.QueryOperation = {
-        type: common.QueryOperationTypeEnum.Get,
+    } else if (model.type === ModelTypeEnum.Malloy) {
+      let queryOperation: QueryOperation = {
+        type: QueryOperationTypeEnum.Get,
         timezone: timezone
       };
 

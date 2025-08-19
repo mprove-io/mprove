@@ -8,12 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { apiToDisk } from '~backend/barrels/api-to-disk';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
@@ -34,16 +29,13 @@ export class DeleteMemberController {
     private rabbitService: RabbitService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteMember)
-  async deleteMember(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async deleteMember(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendDeleteMemberRequest = request.body;
 
     let { traceId } = reqValid.info;
@@ -59,8 +51,8 @@ export class DeleteMemberController {
     });
 
     if (user.userId === memberId) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_ADMIN_CANNOT_DELETE_HIMSELF
+      throw new ServerError({
+        message: ErEnum.BACKEND_ADMIN_CANNOT_DELETE_HIMSELF
       });
     }
 
@@ -84,7 +76,7 @@ export class DeleteMemberController {
     };
 
     await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteDevRepoResponse>({
-      routingKey: helper.makeRoutingKeyToDisk({
+      routingKey: makeRoutingKeyToDisk({
         orgId: project.orgId,
         projectId: projectId
       }),

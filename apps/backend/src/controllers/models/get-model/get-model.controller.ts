@@ -1,8 +1,5 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -29,10 +26,7 @@ export class GetModelController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel)
-  async getModel(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getModel(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetModelRequest = request.body;
 
     let { projectId, isRepoProd, branchId, modelId, envId } = reqValid.payload;
@@ -48,7 +42,7 @@ export class GetModelController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
+      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -83,7 +77,7 @@ export class GetModelController {
       userMember: apiMember,
       model: this.wrapToApiService.wrapToApiModel({
         model: model,
-        hasAccess: helper.checkAccess({
+        hasAccess: checkAccess({
           userAlias: user.alias,
           member: userMember,
           entity: model

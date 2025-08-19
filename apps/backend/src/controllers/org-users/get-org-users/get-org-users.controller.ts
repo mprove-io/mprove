@@ -1,7 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, asc, eq, inArray, sql } from 'drizzle-orm';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
@@ -21,10 +20,7 @@ export class GetOrgUsersController {
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers)
-  async getOrgUsers(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async getOrgUsers(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendGetOrgUsersRequest = request.body;
 
     let { orgId, perPage, pageNum } = reqValid.payload;

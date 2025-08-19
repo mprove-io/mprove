@@ -1,8 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
-import { common } from '~backend/barrels/common';
-import { nodeCommon } from '~backend/barrels/node-common';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
@@ -29,9 +27,9 @@ export class MconfigsService {
       )
     });
 
-    if (common.isUndefined(mconfig)) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST
+    if (isUndefined(mconfig)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST
       });
     }
 
@@ -39,11 +37,11 @@ export class MconfigsService {
   }
 
   async prepStoreMconfigQuery(item: {
-    struct: schemaPostgres.StructEnt;
-    project: schemaPostgres.ProjectEnt;
+    struct: StructEnt;
+    project: ProjectEnt;
     envId: string;
-    model: schemaPostgres.ModelEnt;
-    mconfig: common.Mconfig;
+    model: ModelEnt;
+    mconfig: Mconfig;
     metricsStartDateYYYYMMDD: string;
     metricsEndDateYYYYMMDD: string;
   }) {
@@ -57,8 +55,8 @@ export class MconfigsService {
       metricsEndDateYYYYMMDD
     } = item;
 
-    let newMconfig: common.Mconfig;
-    let newQuery: common.Query;
+    let newMconfig: Mconfig;
+    let newQuery: Query;
 
     let isError = false;
     let errorMessage: string;
@@ -109,16 +107,16 @@ export class MconfigsService {
     });
 
     let processedRequest = await this.storeService.transformStoreRequest({
-      input: (model.content as common.FileStore).request,
+      input: (model.content as FileStore).request,
       mconfig: newMconfig,
       storeModel: model,
-      storeParam: common.ParameterEnum.Request,
+      storeParam: ParameterEnum.Request,
       caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
       metricsStartDateYYYYMMDD: undefined,
       metricsEndDateYYYYMMDD: undefined
     });
 
-    if (common.isDefined(processedRequest.errorMessage)) {
+    if (isDefined(processedRequest.errorMessage)) {
       isError = true;
       errorMessage = `store request processing Error: ${processedRequest.errorMessage}`;
     }
@@ -136,12 +134,12 @@ export class MconfigsService {
         ? errorMessage
         : JSON.parse(processedRequest.result).body;
 
-    let queryId = nodeCommon.makeQueryId({
+    let queryId = makeQueryId({
       projectId: project.projectId,
       envId: envId,
       connectionId: model.connectionId,
       sql: undefined, // isStore true
-      store: model.content as common.FileStore,
+      store: model.content as FileStore,
       storeTransformedRequestString: processedRequest.result
     });
 
@@ -152,14 +150,10 @@ export class MconfigsService {
       connectionId: model.connectionId,
       connectionType: (model.content as any).connection.type,
       sql: undefined,
-      apiMethod: (model.content as common.FileStore)
-        .method as common.StoreMethodEnum,
+      apiMethod: (model.content as FileStore).method as StoreMethodEnum,
       apiUrl: apiUrl,
       apiBody: apiBody,
-      status:
-        isError === true
-          ? common.QueryStatusEnum.Error
-          : common.QueryStatusEnum.New,
+      status: isError === true ? QueryStatusEnum.Error : QueryStatusEnum.New,
       lastRunBy: undefined,
       lastRunTs: undefined,
       lastCancelTs: undefined,
@@ -178,7 +172,7 @@ export class MconfigsService {
     newMconfig.queryId = newQuery.queryId;
     newMconfig.temp = true;
     newMconfig.storePart = {
-      reqTemplate: (model.content as common.FileStore).request,
+      reqTemplate: (model.content as FileStore).request,
       reqFunction: processedRequest.userCode,
       reqJsonParts: processedRequest.result,
       reqBody: JSON.stringify(apiBody),

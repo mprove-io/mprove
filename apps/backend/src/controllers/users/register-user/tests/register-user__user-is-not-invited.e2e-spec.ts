@@ -1,8 +1,5 @@
 import test from 'ava';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 
@@ -25,7 +22,7 @@ test('1', async t => {
         emails: [email]
       },
       overrideConfigOptions: {
-        registerOnlyInvitedUsers: common.BoolEnum.TRUE
+        registerOnlyInvitedUsers: BoolEnum.TRUE
       }
     });
 
@@ -33,7 +30,7 @@ test('1', async t => {
       info: {
         name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: {
         email: email,
@@ -41,21 +38,20 @@ test('1', async t => {
       }
     };
 
-    resp =
-      await helper.sendToBackend<apiToBackend.ToBackendRegisterUserResponse>({
-        httpServer: prep.httpServer,
-        req: registerUserReq
-      });
+    resp = await sendToBackend<apiToBackend.ToBackendRegisterUserResponse>({
+      httpServer: prep.httpServer,
+      req: registerUserReq
+    });
 
     await prep.app.close();
   } catch (e) {
     logToConsoleBackend({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: prep.logger,
       cs: prep.cs
     });
   }
 
-  t.is(resp.info.error.message, common.ErEnum.BACKEND_USER_IS_NOT_INVITED);
+  t.is(resp.info.error.message, ErEnum.BACKEND_USER_IS_NOT_INVITED);
 });

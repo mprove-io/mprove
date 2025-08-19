@@ -10,10 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import asyncPool from 'tiny-async-pool';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
@@ -58,16 +55,13 @@ export class RunQueriesController {
     private envsService: EnvsService,
     private snowflakeService: SnowFlakeService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries)
-  async runQueries(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async runQueries(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendRunQueriesRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, mconfigIds, poolSize } =
@@ -80,7 +74,7 @@ export class RunQueriesController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? common.PROD_REPO_ID : user.userId,
+      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
       branchId: branchId
     });
 
@@ -125,13 +119,11 @@ export class RunQueriesController {
       projectId: projectId
     });
 
-    let runningQueries: schemaPostgres.QueryEnt[] = [];
+    let runningQueries: QueryEnt[] = [];
     let startedQueryIds: string[] = [];
 
     let googleApiConnectionIds = queries
-      .filter(
-        query => query.connectionType === common.ConnectionTypeEnum.GoogleApi
-      )
+      .filter(query => query.connectionType === ConnectionTypeEnum.GoogleApi)
       .map(query => query.connectionId);
 
     // console.log('googleApiConnectionIds');
@@ -190,7 +182,7 @@ export class RunQueriesController {
       }
     );
 
-    if (common.isDefined(poolSize)) {
+    if (isDefined(poolSize)) {
       startedQueryIds = queryIds;
       let pSize = Number(poolSize);
 
@@ -223,7 +215,7 @@ export class RunQueriesController {
           }
         );
 
-        if (connection.type === common.ConnectionTypeEnum.BigQuery) {
+        if (connection.type === ConnectionTypeEnum.BigQuery) {
           query = await this.bigqueryService.runQuery({
             userId: user.userId,
             query: query,
@@ -244,8 +236,8 @@ export class RunQueriesController {
             getRetryOption(this.cs, this.logger)
           );
         } else {
-          query.status = common.QueryStatusEnum.Running;
-          query.queryJobId = common.makeId();
+          query.status = QueryStatusEnum.Running;
+          query.queryJobId = makeId();
           query.lastRunBy = user.userId;
           query.lastRunTs = makeTsNumber();
 
@@ -263,7 +255,7 @@ export class RunQueriesController {
             getRetryOption(this.cs, this.logger)
           );
 
-          if (connection.type === common.ConnectionTypeEnum.SnowFlake) {
+          if (connection.type === ConnectionTypeEnum.SnowFlake) {
             await this.snowflakeService.runQuery({
               connection: connection,
               queryId: query.queryId,
@@ -271,7 +263,7 @@ export class RunQueriesController {
               querySql: query.sql,
               projectId: projectId
             });
-          } else if (connection.type === common.ConnectionTypeEnum.ClickHouse) {
+          } else if (connection.type === ConnectionTypeEnum.ClickHouse) {
             await this.clickhouseService.runQuery({
               connection: connection,
               queryId: query.queryId,
@@ -279,7 +271,7 @@ export class RunQueriesController {
               querySql: query.sql,
               projectId: projectId
             });
-          } else if (connection.type === common.ConnectionTypeEnum.PostgreSQL) {
+          } else if (connection.type === ConnectionTypeEnum.PostgreSQL) {
             await this.pgService.runQuery({
               connection: connection,
               queryId: query.queryId,
@@ -288,10 +280,9 @@ export class RunQueriesController {
               projectId: projectId
             });
           } else if (
-            [
-              common.ConnectionTypeEnum.Api,
-              common.ConnectionTypeEnum.GoogleApi
-            ].indexOf(connection.type) > -1
+            [ConnectionTypeEnum.Api, ConnectionTypeEnum.GoogleApi].indexOf(
+              connection.type
+            ) > -1
           ) {
             let mconfig = mconfigs.find(x => x.queryId === query.queryId);
             let model = models.find(x => x.modelId === mconfig.modelId);
@@ -307,11 +298,11 @@ export class RunQueriesController {
         }
       }).catch(e => {
         logToConsoleBackend({
-          log: new common.ServerError({
-            message: common.ErEnum.BACKEND_RUN_QUERIES_POOL_ERROR,
+          log: new ServerError({
+            message: ErEnum.BACKEND_RUN_QUERIES_POOL_ERROR,
             originalError: e
           }),
-          logLevel: common.LogLevelEnum.Error,
+          logLevel: LogLevelEnum.Error,
           logger: this.logger,
           cs: this.cs
         });
@@ -346,7 +337,7 @@ export class RunQueriesController {
           }
         );
 
-        if (connection.type === common.ConnectionTypeEnum.BigQuery) {
+        if (connection.type === ConnectionTypeEnum.BigQuery) {
           query = await this.bigqueryService.runQuery({
             userId: user.userId,
             query: query,
@@ -369,8 +360,8 @@ export class RunQueriesController {
 
           runningQueries.push(query);
         } else {
-          query.status = common.QueryStatusEnum.Running;
-          query.queryJobId = common.makeId();
+          query.status = QueryStatusEnum.Running;
+          query.queryJobId = makeId();
           query.lastRunBy = user.userId;
           query.lastRunTs = makeTsNumber();
 
@@ -390,7 +381,7 @@ export class RunQueriesController {
 
           runningQueries.push(query);
 
-          if (connection.type === common.ConnectionTypeEnum.SnowFlake) {
+          if (connection.type === ConnectionTypeEnum.SnowFlake) {
             this.snowflakeService
               .runQuery({
                 connection: connection,
@@ -401,16 +392,16 @@ export class RunQueriesController {
               })
               .catch(e => {
                 logToConsoleBackend({
-                  log: new common.ServerError({
-                    message: common.ErEnum.BACKEND_RUN_QUERY_SNOWFLAKE_ERROR,
+                  log: new ServerError({
+                    message: ErEnum.BACKEND_RUN_QUERY_SNOWFLAKE_ERROR,
                     originalError: e
                   }),
-                  logLevel: common.LogLevelEnum.Error,
+                  logLevel: LogLevelEnum.Error,
                   logger: this.logger,
                   cs: this.cs
                 });
               });
-          } else if (connection.type === common.ConnectionTypeEnum.ClickHouse) {
+          } else if (connection.type === ConnectionTypeEnum.ClickHouse) {
             this.clickhouseService
               .runQuery({
                 connection: connection,
@@ -421,16 +412,16 @@ export class RunQueriesController {
               })
               .catch(e => {
                 logToConsoleBackend({
-                  log: new common.ServerError({
-                    message: common.ErEnum.BACKEND_RUN_QUERY_CLICKHOUSE_ERROR,
+                  log: new ServerError({
+                    message: ErEnum.BACKEND_RUN_QUERY_CLICKHOUSE_ERROR,
                     originalError: e
                   }),
-                  logLevel: common.LogLevelEnum.Error,
+                  logLevel: LogLevelEnum.Error,
                   logger: this.logger,
                   cs: this.cs
                 });
               });
-          } else if (connection.type === common.ConnectionTypeEnum.PostgreSQL) {
+          } else if (connection.type === ConnectionTypeEnum.PostgreSQL) {
             this.pgService
               .runQuery({
                 connection: connection,
@@ -441,20 +432,19 @@ export class RunQueriesController {
               })
               .catch(e => {
                 logToConsoleBackend({
-                  log: new common.ServerError({
-                    message: common.ErEnum.BACKEND_RUN_QUERY_POSTGRES_ERROR,
+                  log: new ServerError({
+                    message: ErEnum.BACKEND_RUN_QUERY_POSTGRES_ERROR,
                     originalError: e
                   }),
-                  logLevel: common.LogLevelEnum.Error,
+                  logLevel: LogLevelEnum.Error,
                   logger: this.logger,
                   cs: this.cs
                 });
               });
           } else if (
-            [
-              common.ConnectionTypeEnum.Api,
-              common.ConnectionTypeEnum.GoogleApi
-            ].indexOf(connection.type) > -1
+            [ConnectionTypeEnum.Api, ConnectionTypeEnum.GoogleApi].indexOf(
+              connection.type
+            ) > -1
           ) {
             let mconfig = mconfigs.find(x => x.queryId === query.queryId);
             let model = models.find(x => x.modelId === mconfig.modelId);
@@ -469,11 +459,11 @@ export class RunQueriesController {
               })
               .catch(e => {
                 logToConsoleBackend({
-                  log: new common.ServerError({
-                    message: common.ErEnum.BACKEND_RUN_QUERY_API_ERROR,
+                  log: new ServerError({
+                    message: ErEnum.BACKEND_RUN_QUERY_API_ERROR,
                     originalError: e
                   }),
-                  logLevel: common.LogLevelEnum.Error,
+                  logLevel: LogLevelEnum.Error,
                   logger: this.logger,
                   cs: this.cs
                 });

@@ -1,8 +1,5 @@
 import test from 'ava';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { helper } from '~backend/barrels/helper';
-import { interfaces } from '~backend/barrels/interfaces';
+
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 
@@ -10,7 +7,7 @@ let testId = 'backend-delete-dashboard__ok';
 
 let traceId = testId;
 
-let userId = common.makeId();
+let userId = makeId();
 let email = `${testId}@example.com`;
 let password = '123456';
 
@@ -18,7 +15,7 @@ let orgId = testId;
 let orgName = testId;
 
 let testProjectId = 't2';
-let projectId = common.makeId();
+let projectId = makeId();
 let projectName = testId;
 
 let dashboardId = 'd1';
@@ -59,8 +56,8 @@ test('1', async t => {
             projectId,
             testProjectId,
             name: projectName,
-            defaultBranch: common.BRANCH_MAIN,
-            remoteType: common.ProjectRemoteTypeEnum.Managed
+            defaultBranch: BRANCH_MAIN,
+            remoteType: ProjectRemoteTypeEnum.Managed
           }
         ],
         members: [
@@ -77,8 +74,8 @@ test('1', async t => {
           {
             projectId: projectId,
             connectionId: 'c7',
-            envId: common.PROJECT_ENV_PROD,
-            type: common.ConnectionTypeEnum.GoogleApi
+            envId: PROJECT_ENV_PROD,
+            type: ConnectionTypeEnum.GoogleApi
           }
         ]
       },
@@ -90,36 +87,33 @@ test('1', async t => {
         name: apiToBackend.ToBackendRequestInfoNameEnum
           .ToBackendDeleteDashboard,
         traceId: traceId,
-        idempotencyKey: common.makeId()
+        idempotencyKey: makeId()
       },
       payload: {
         projectId: projectId,
-        envId: common.PROJECT_ENV_PROD,
+        envId: PROJECT_ENV_PROD,
         isRepoProd: false,
-        branchId: common.BRANCH_MAIN,
+        branchId: BRANCH_MAIN,
         dashboardId: dashboardId
       }
     };
 
-    resp =
-      await helper.sendToBackend<apiToBackend.ToBackendDeleteDashboardResponse>(
-        {
-          httpServer: prep.httpServer,
-          loginToken: prep.loginToken,
-          req: req
-        }
-      );
+    resp = await sendToBackend<apiToBackend.ToBackendDeleteDashboardResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req
+    });
 
     await prep.app.close();
   } catch (e) {
     logToConsoleBackend({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       logger: prep.logger,
       cs: prep.cs
     });
   }
 
   t.is(resp.info.error, undefined);
-  t.is(resp.info.status, common.ResponseInfoStatusEnum.Ok);
+  t.is(resp.info.status, ResponseInfoStatusEnum.Ok);
 });

@@ -7,10 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { apiToBackend } from '~backend/barrels/api-to-backend';
-import { common } from '~backend/barrels/common';
-import { interfaces } from '~backend/barrels/interfaces';
-import { schemaPostgres } from '~backend/barrels/schema-postgres';
+
 import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -30,16 +27,13 @@ export class CreateEnvUserController {
     private envsService: EnvsService,
     private membersService: MembersService,
     private wrapToApiService: WrapToApiService,
-    private cs: ConfigService<interfaces.Config>,
+    private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnvUser)
-  async createEnvUser(
-    @AttachUser() user: schemaPostgres.UserEnt,
-    @Req() request: any
-  ) {
+  async createEnvUser(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: apiToBackend.ToBackendCreateEnvUserRequest = request.body;
 
     let { projectId, envId, envUserId } = reqValid.payload;
@@ -54,11 +48,11 @@ export class CreateEnvUserController {
     });
 
     let firstProjectId =
-      this.cs.get<interfaces.Config['firstProjectId']>('firstProjectId');
+      this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
 
     if (userMember.isAdmin === false && projectId === firstProjectId) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_RESTRICTED_PROJECT
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 
@@ -71,8 +65,8 @@ export class CreateEnvUserController {
     let isAlreadyExist = env.memberIds.indexOf(envUserId) > -1;
 
     if (isAlreadyExist === true) {
-      throw new common.ServerError({
-        message: common.ErEnum.BACKEND_ENV_USER_ALREADY_EXISTS
+      throw new ServerError({
+        message: ErEnum.BACKEND_ENV_USER_ALREADY_EXISTS
       });
     }
 

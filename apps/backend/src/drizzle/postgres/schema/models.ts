@@ -9,7 +9,6 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { common } from '~backend/barrels/common';
 
 export const modelsTable = pgTable(
   'models',
@@ -20,7 +19,7 @@ export const modelsTable = pgTable(
     structId: varchar('struct_id', { length: 32 }).notNull(),
     modelId: varchar('model_id', { length: 64 }).notNull(), // name
     source: varchar('source'),
-    type: varchar('type').$type<common.ModelTypeEnum>(),
+    type: varchar('type').$type<ModelTypeEnum>(),
     malloyModelDef: json('malloy_model_def').$type<MalloyModelDef>(),
     connectionId: varchar('connection_id'),
     filePath: varchar('file_path'),
@@ -33,8 +32,8 @@ export const modelsTable = pgTable(
     label: varchar('label').notNull(),
     gr: varchar('gr'),
     hidden: boolean('hidden').notNull(),
-    fields: json('fields').$type<common.ModelField[]>().notNull(),
-    nodes: json('nodes').$type<common.ModelNode[]>().notNull(),
+    fields: json('fields').$type<ModelField[]>().notNull(),
+    nodes: json('nodes').$type<ModelNode[]>().notNull(),
     description: varchar('description'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

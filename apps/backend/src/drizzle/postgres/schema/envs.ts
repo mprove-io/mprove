@@ -8,7 +8,6 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { common } from '~backend/barrels/common';
 
 export const envsTable = pgTable(
   'envs',
@@ -17,7 +16,7 @@ export const envsTable = pgTable(
     projectId: varchar('project_id', { length: 32 }).notNull(),
     envId: varchar('env_id', { length: 32 }).notNull(), // name
     memberIds: json('member_ids').$type<string[]>().default([]),
-    evs: json('evs').$type<common.Ev[]>().default([]),
+    evs: json('evs').$type<Ev[]>().default([]),
     isFallbackToProdConnections: boolean(
       'is_fallback_to_prod_connections'
     ).default(false),
