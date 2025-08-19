@@ -10,9 +10,6 @@ COPY scripts/wait-for-it.sh scripts/wait-for-it.sh
 
 COPY apps/backend apps/backend/
 
-COPY libs/api-to-backend libs/api-to-backend/
-COPY libs/api-to-disk libs/api-to-disk/
-COPY libs/api-to-blockml libs/api-to-blockml/
 COPY libs/common libs/common/
 COPY libs/node-common libs/node-common/
 

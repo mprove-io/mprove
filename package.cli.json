@@ -52,14 +52,8 @@
     "~blockml": "dist/tests/blockml/apps/blockml/src",
     "~disk": "dist/tests/disk/apps/disk/src",
     "~mcli": "dist/tests/mcli/apps/mcli/src",
-    "@mprove/api-to-backend": "dist/tests/api-to-backend/libs/api-to-backend/src/_index",
-    "@mprove/api-to-blockml": "dist/tests/api-to-blockml/libs/api-to-blockml/src/_index",
-    "@mprove/api-to-disk": "dist/tests/api-to-disk/libs/api-to-disk/src/_index",
     "@mprove/common": "dist/tests/common/libs/common/src/_index",
     "@mprove/node-common": "dist/tests/node-common/libs/node-common/src/_index",
-    "~api-to-backend": "dist/tests/api-to-backend/libs/api-to-backend/src",
-    "~api-to-blockml": "dist/tests/api-to-blockml/libs/api-to-blockml/src",
-    "~api-to-disk": "dist/tests/api-to-disk/libs/api-to-disk/src",
     "~common": "dist/tests/common/libs/common/src",
     "~node-common": "dist/tests/node-common/libs/node-common/src"
   }

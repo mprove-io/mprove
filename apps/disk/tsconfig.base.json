@@ -6,11 +6,9 @@
     "paths": {
       "~disk/*": ["./src/*"],
       //
-      "@mprove/api-to-disk": ["../../libs/api-to-disk/src/_index.ts"],
       "@mprove/common": ["../../libs/common/src/_index.ts"],
       "@mprove/node-common": ["../../libs/node-common/src/_index.ts"],
       // for build-tests
-      "~api-to-disk/*": ["../../libs/api-to-disk/src/*"],
       "~common/*": ["../../libs/common/src/*"],
       "~node-common/*": ["../../libs/node-common/src/*"]
     }

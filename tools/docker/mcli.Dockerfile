@@ -8,7 +8,6 @@ RUN yarn --frozen-lockfile
 
 COPY apps/mcli apps/mcli/
 
-COPY libs/api-to-backend libs/api-to-backend/
 COPY libs/common libs/common/
 COPY libs/node-common libs/node-common/
 

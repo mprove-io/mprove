@@ -10,7 +10,6 @@ COPY scripts/wait-for-it.sh scripts/wait-for-it.sh
 
 COPY apps/disk apps/disk/
 
-COPY libs/api-to-disk libs/api-to-disk/
 COPY libs/common libs/common/
 COPY libs/node-common libs/node-common/
 

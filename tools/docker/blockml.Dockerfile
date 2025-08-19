@@ -10,7 +10,6 @@ COPY scripts/wait-for-it.sh scripts/wait-for-it.sh
 
 COPY apps/blockml apps/blockml/
 
-COPY libs/api-to-blockml libs/api-to-blockml/
 COPY libs/common libs/common/
 COPY libs/node-common libs/node-common/
 

@@ -6,15 +6,9 @@
     "paths": {
       "~backend/*": ["./src/*"],
       //
-      "~api-to-backend/*": ["../../libs/api-to-backend/src/*"],
-      "~api-to-blockml/*": ["../../libs/api-to-blockml/src/*"],
-      "~api-to-disk/*": ["../../libs/api-to-disk/src/*"],
       "~common/*": ["../../libs/common/src/*"],
       "~node-common/*": ["../../libs/node-common/src/*"],
       //
-      "@mprove/api-to-backend": ["../../libs/api-to-backend/src/_index.ts"],
-      "@mprove/api-to-blockml": ["../../libs/api-to-blockml/src/_index.ts"],
-      "@mprove/api-to-disk": ["../../libs/api-to-disk/src/_index.ts"],
       "@mprove/common": ["../../libs/common/src/_index.ts"],
       "@mprove/node-common": ["../../libs/node-common/src/_index.ts"]
     }
