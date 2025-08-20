@@ -9,10 +9,14 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
+import { BackendConfig } from '~backend/config/backend-config';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
+import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
@@ -22,6 +26,16 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { ReportsService } from '~backend/services/reports.service';
+import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
+import { ToBackendDeleteReportRequest } from '~common/interfaces/to-backend/reports/to-backend-delete-report';
+import {
+  ToDiskDeleteFileRequest,
+  ToDiskDeleteFileResponse
+} from '~common/interfaces/to-disk/07-files/to-disk-delete-file';
+import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 

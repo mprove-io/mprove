@@ -9,8 +9,12 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
+import { BackendConfig } from '~backend/config/backend-config';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
+import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BigQueryService } from '~backend/services/bigquery.service';
@@ -18,13 +22,18 @@ import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { ConnectionsService } from '~backend/services/connections.service';
 import { EnvsService } from '~backend/services/envs.service';
-import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
-import { PROJECT_ENV_PROD } from '~common/_index';
+import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { QueryEstimate } from '~common/interfaces/backend/query-estimate';
+import {
+  ToBackendRunQueriesDryRequest,
+  ToBackendRunQueriesDryResponsePayload
+} from '~common/interfaces/to-backend/queries/to-backend-run-queries-dry';
 
 let retry = require('async-retry');
 
@@ -40,7 +49,6 @@ export class RunQueriesDryController {
     private bigqueryService: BigQueryService,
     private membersService: MembersService,
     private envsService: EnvsService,
-    private mconfigsService: MconfigsService,
     private wrapToApiService: WrapToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,

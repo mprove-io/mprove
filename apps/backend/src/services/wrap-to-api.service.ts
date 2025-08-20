@@ -309,7 +309,7 @@ export class WrapToApiService {
   }): ModelX {
     let { model, hasAccess } = item;
 
-    return {
+    let modelX: ModelX = {
       structId: model.structId,
       modelId: model.modelId,
       type: model.type,
@@ -332,6 +332,8 @@ export class WrapToApiService {
       description: model.description,
       serverTs: model.serverTs
     };
+
+    return modelX;
   }
 
   wrapToApiOrg(org: OrgEnt): Org {

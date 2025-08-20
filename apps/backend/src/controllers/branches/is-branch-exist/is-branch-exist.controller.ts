@@ -1,5 +1,4 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { isDefined } from 'class-validator';
 import { and, eq } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
@@ -10,6 +9,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
 import {
   ToBackendIsBranchExistRequest,
   ToBackendIsBranchExistResponsePayload

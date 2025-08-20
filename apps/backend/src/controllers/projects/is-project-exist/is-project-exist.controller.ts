@@ -1,10 +1,17 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
+import {
+  ToBackendIsProjectExistRequest,
+  ToBackendIsProjectExistResponsePayload
+} from '~common/interfaces/to-backend/projects/to-backend-is-project-exist';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()

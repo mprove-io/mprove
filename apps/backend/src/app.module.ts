@@ -6,7 +6,6 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
-import { isDefined } from 'class-validator';
 import { DefaultLogger, and, eq } from 'drizzle-orm';
 import {
   NodePgDatabase,
@@ -22,6 +21,7 @@ import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
+import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';

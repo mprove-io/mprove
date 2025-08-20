@@ -1,17 +1,34 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
-import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import {
+  BridgeEnt,
+  bridgesTable
+} from '~backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
+import {
+  ToBackendGetNavRequest,
+  ToBackendGetNavResponsePayload
+} from '~common/interfaces/to-backend/nav/to-backend-get-nav';
+import {
+  ToDiskGetCatalogNodesRequest,
+  ToDiskGetCatalogNodesResponse
+} from '~common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-nodes';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()

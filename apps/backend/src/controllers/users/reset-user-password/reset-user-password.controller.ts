@@ -8,11 +8,23 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SkipJwtCheck } from '~backend/decorators/_index';
+import { BackendConfig } from '~backend/config/backend-config';
+import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
+import { makeTsUsingOffsetFromNow } from '~backend/functions/make-ts-using-offset-from-now';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { UsersService } from '~backend/services/users.service';
+import {
+  PATH_UPDATE_PASSWORD,
+  RESTRICTED_USER_ALIAS
+} from '~common/constants/top';
+import { PASSWORD_EXPIRES_OFFSET } from '~common/constants/top-backend';
+import { ErEnum } from '~common/enums/er.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { makeId } from '~common/functions/make-id';
+import { ToBackendResetUserPasswordRequest } from '~common/interfaces/to-backend/users/to-backend-reset-user-password';
+import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 

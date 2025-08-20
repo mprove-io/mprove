@@ -9,12 +9,16 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
+import { BackendConfig } from '~backend/config/backend-config';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeReportFileText } from '~backend/functions/make-report-file-text';
+import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
@@ -28,8 +32,28 @@ import { ReportsService } from '~backend/services/reports.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
+import {
+  EMPTY_STRUCT_ID,
+  PROD_REPO_ID,
+  RESTRICTED_USER_ALIAS,
+  UTC
+} from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { RowTypeEnum } from '~common/enums/row-type.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
+import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
+import {
+  ToBackendSaveModifyReportRequest,
+  ToBackendSaveModifyReportResponsePayload
+} from '~common/interfaces/to-backend/reports/to-backend-save-modify-report';
+import {
+  ToDiskSaveFileRequest,
+  ToDiskSaveFileResponse
+} from '~common/interfaces/to-disk/07-files/to-disk-save-file';
+import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 

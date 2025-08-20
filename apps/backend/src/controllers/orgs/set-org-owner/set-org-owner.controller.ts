@@ -8,13 +8,22 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
+import { BackendConfig } from '~backend/config/backend-config';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { usersTable } from '~backend/drizzle/postgres/schema/users';
+import { UserEnt, usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { ErEnum } from '~common/enums/er.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '~common/functions/is-undefined';
+import {
+  ToBackendSetOrgOwnerRequest,
+  ToBackendSetOrgOwnerResponsePayload
+} from '~common/interfaces/to-backend/orgs/to-backend-set-org-owner';
+import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 

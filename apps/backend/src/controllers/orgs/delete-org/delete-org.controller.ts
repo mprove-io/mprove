@@ -8,6 +8,8 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { eq, inArray } from 'drizzle-orm';
+import { BackendConfig } from '~backend/config/backend-config';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
@@ -16,10 +18,19 @@ import { envsTable } from '~backend/drizzle/postgres/schema/envs';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
+import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
+import { ToBackendDeleteOrgRequest } from '~common/interfaces/to-backend/orgs/to-backend-delete-org';
+import {
+  ToDiskDeleteOrgRequest,
+  ToDiskDeleteOrgResponse
+} from '~common/interfaces/to-disk/01-orgs/to-disk-delete-org';
 
 let retry = require('async-retry');
 

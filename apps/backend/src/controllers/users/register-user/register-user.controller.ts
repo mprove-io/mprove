@@ -8,14 +8,28 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { eq } from 'drizzle-orm';
-import { SkipJwtCheck } from '~backend/decorators/_index';
+import { BackendConfig } from '~backend/config/backend-config';
+import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { usersTable } from '~backend/drizzle/postgres/schema/users';
+import { UserEnt, usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EmailService } from '~backend/services/email.service';
 import { UsersService } from '~backend/services/users.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
+import { BoolEnum } from '~common/enums/bool.enum';
+import { ErEnum } from '~common/enums/er.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeCopy } from '~common/functions/make-copy';
+import { makeId } from '~common/functions/make-id';
+import {
+  ToBackendRegisterUserRequest,
+  ToBackendRegisterUserResponsePayload
+} from '~common/interfaces/to-backend/users/to-backend-register-user';
+import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 

@@ -7,10 +7,21 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BackendConfig } from '~backend/config/backend-config';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendSetUserUiRequest,
+  ToBackendSetUserUiResponsePayload
+} from '~common/interfaces/to-backend/users/to-backend-set-user-ui';
+import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 

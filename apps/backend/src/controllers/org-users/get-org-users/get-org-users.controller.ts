@@ -1,13 +1,20 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, asc, eq, inArray, sql } from 'drizzle-orm';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { usersTable } from '~backend/drizzle/postgres/schema/users';
+import { UserEnt, usersTable } from '~backend/drizzle/postgres/schema/users';
 import { makeFullName } from '~backend/functions/make-full-name';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  OrgUsersItem,
+  ToBackendGetOrgUsersRequest,
+  ToBackendGetOrgUsersResponsePayload
+} from '~common/interfaces/to-backend/org-users/to-backend-get-org-users';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()

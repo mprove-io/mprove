@@ -1,15 +1,27 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
+import { BackendConfig } from '~backend/config/backend-config';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { notesTable } from '~backend/drizzle/postgres/schema/notes';
+import { NoteEnt, notesTable } from '~backend/drizzle/postgres/schema/notes';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { ErEnum } from '~common/enums/er.enum';
+import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
+import { makeId } from '~common/functions/make-id';
+import {
+  ToBackendCreateProjectRequest,
+  ToBackendCreateProjectResponsePayload
+} from '~common/interfaces/to-backend/projects/to-backend-create-project';
+import { ServerError } from '~common/models/server-error';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()

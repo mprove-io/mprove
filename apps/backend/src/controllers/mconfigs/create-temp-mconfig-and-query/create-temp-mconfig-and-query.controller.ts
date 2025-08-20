@@ -8,8 +8,12 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
+import { BackendConfig } from '~backend/config/backend-config';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { checkAccess } from '~backend/functions/check-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -20,12 +24,21 @@ import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
-import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
+import { PROD_REPO_ID } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Query } from '~common/interfaces/blockml/query';
+import {
+  ToBackendCreateTempMconfigAndQueryRequest,
+  ToBackendCreateTempMconfigAndQueryResponsePayload
+} from '~common/interfaces/to-backend/mconfigs/to-backend-create-temp-mconfig-and-query';
+import { ServerError } from '~common/models/server-error';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '~node-common/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
 
 let retry = require('async-retry');
@@ -37,7 +50,6 @@ export class CreateTempMconfigAndQueryController {
     private projectsService: ProjectsService,
     private modelsService: ModelsService,
     private membersService: MembersService,
-    private rabbitService: RabbitService,
     private branchesService: BranchesService,
     private structsService: StructsService,
     private bridgesService: BridgesService,

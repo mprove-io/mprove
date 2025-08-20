@@ -1,10 +1,19 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { SkipJwtCheck } from '~backend/decorators/_index';
+import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EmailService } from '~backend/services/email.service';
+import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isUndefined } from '~common/functions/is-undefined';
+import {
+  ToBackendResendUserEmailRequest,
+  ToBackendResendUserEmailResponsePayload
+} from '~common/interfaces/to-backend/users/to-backend-resend-user-email';
+import { ServerError } from '~common/models/server-error';
 
 @SkipJwtCheck()
 @UseGuards(ValidateRequestGuard)

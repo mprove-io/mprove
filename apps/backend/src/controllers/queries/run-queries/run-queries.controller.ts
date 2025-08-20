@@ -10,10 +10,14 @@ import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import asyncPool from 'tiny-async-pool';
+import { BackendConfig } from '~backend/config/backend-config';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
@@ -31,8 +35,19 @@ import { SnowFlakeService } from '~backend/services/snowflake.service';
 import { StoreService } from '~backend/services/store.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
-import { PROJECT_ENV_PROD } from '~common/constants/top';
+import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { ErEnum } from '~common/enums/er.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { makeId } from '~common/functions/make-id';
+import {
+  ToBackendRunQueriesRequest,
+  ToBackendRunQueriesResponsePayload
+} from '~common/interfaces/to-backend/queries/to-backend-run-queries';
+import { ServerError } from '~common/models/server-error';
 
 let { JWT } = require('google-auth-library');
 let retry = require('async-retry');

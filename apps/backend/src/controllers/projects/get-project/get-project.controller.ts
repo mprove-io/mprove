@@ -1,8 +1,15 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendGetProjectRequest,
+  ToBackendGetProjectResponsePayload
+} from '~common/interfaces/to-backend/projects/to-backend-get-project';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()

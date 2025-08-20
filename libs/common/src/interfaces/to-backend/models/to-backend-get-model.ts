@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsString, ValidateNested } from 'class-validator';
-import { Model } from 'echarts';
 import { Member } from '~common/interfaces/backend/member';
+import { ModelX } from '~common/interfaces/backend/model-x';
 import { Struct } from '~common/interfaces/backend/struct';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
@@ -42,8 +42,8 @@ export class ToBackendGetModelResponsePayload {
   userMember: Member;
 
   @ValidateNested()
-  @Type(() => Model)
-  model: Model;
+  @Type(() => ModelX)
+  model: ModelX;
 }
 
 export class ToBackendGetModelResponse extends MyResponse {

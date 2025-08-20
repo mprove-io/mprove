@@ -8,11 +8,15 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
+import { BackendConfig } from '~backend/config/backend-config';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { kitsTable } from '~backend/drizzle/postgres/schema/kits';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -27,7 +31,17 @@ import { ReportRowService } from '~backend/services/report-row.service';
 import { ReportsService } from '~backend/services/reports.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { PROD_REPO_ID } from '~common/constants/top';
+import { RowTypeEnum } from '~common/enums/row-type.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { makeId } from '~common/functions/make-id';
+import { Row } from '~common/interfaces/blockml/row';
+import { Rq } from '~common/interfaces/blockml/rq';
+import {
+  ToBackendCreateDraftReportRequest,
+  ToBackendCreateDraftReportResponsePayload
+} from '~common/interfaces/to-backend/reports/to-backend-create-draft-report';
 
 let retry = require('async-retry');
 

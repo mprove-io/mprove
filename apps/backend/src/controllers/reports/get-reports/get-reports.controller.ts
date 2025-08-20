@@ -1,8 +1,11 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { checkAccess } from '~backend/functions/check-access';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -11,7 +14,14 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { PROD_REPO_ID } from '~common/constants/top';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
+import {
+  ToBackendGetReportsRequest,
+  ToBackendGetReportsResponsePayload
+} from '~common/interfaces/to-backend/reports/to-backend-get-reports';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()

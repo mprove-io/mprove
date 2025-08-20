@@ -8,8 +8,16 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
+import { BackendConfig } from '~backend/config/backend-config';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
+import {
+  QueryEnt,
+  queriesTable
+} from '~backend/drizzle/postgres/schema/queries';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { checkAccess } from '~backend/functions/check-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -21,6 +29,15 @@ import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { PROD_REPO_ID } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { makeId } from '~common/functions/make-id';
+import {
+  ToBackendDuplicateMconfigAndQueryRequest,
+  ToBackendDuplicateMconfigAndQueryResponsePayload
+} from '~common/interfaces/to-backend/mconfigs/to-backend-duplicate-mconfig-and-query';
+import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 

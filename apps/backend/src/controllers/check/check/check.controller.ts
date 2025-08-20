@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { SkipJwtCheck } from '~backend/decorators/is-public.decorator';
+import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 
 @SkipJwtCheck()
 @Controller('*')
