@@ -1,0 +1,43 @@
+report: 0ZN4W4XE9LQ7TSF5DQYC
+title: Calculate Profit
+parameters:
+- filter: products_brand
+  result: string
+  conditions:
+  - f`%a%`
+
+- filter: users_city
+  result: string
+  conditions:
+  - f``
+rows:
+- row_id: A
+  type: metric
+  metric: c1_order_items.total_profit.by.orders.created_at
+  show_chart: true
+  parameters:
+  - apply_to: products.brand
+    listen: products_brand
+  - apply_to: users.city
+    listen: users_city
+
+- row_id: B
+  type: metric
+  metric: c1_order_items.total_sale_price.by.orders.created_at
+  show_chart: true
+  parameters:
+  - apply_to: products.brand
+    listen: products_brand
+  - apply_to: users.city
+    listen: users_city
+
+- row_id: C
+  type: metric
+  metric: c1_order_items.inventory_items.total_actual_cost.by.orders.created_at
+  show_chart: true
+  parameters:
+  - apply_to: products.brand
+    listen: products_brand
+  - apply_to: users.city
+    listen: users_city
+options: {}

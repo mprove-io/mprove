@@ -1,0 +1,15 @@
+chart: 4V3KWMRA9MSH21EQZCJQ
+tiles:
+- title: Revenue by Quarters by User Cohorts (First Order Year)
+  model: c1_order_items
+  select:
+  - user_order_facts.first_order_created_at_year
+  - total_sale_price
+  - orders.created_at_quarter
+  sorts: orders.created_at_quarter
+  type: line
+  data:
+    x_field: orders.created_at_quarter
+    y_fields:
+    - total_sale_price
+    multi_field: user_order_facts.first_order_created_at_year

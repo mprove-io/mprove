@@ -82,7 +82,7 @@ test('1', async t => {
               orgId,
               projectId,
               name: projectName,
-              testProjectId: 'first-project',
+              testProjectId: 't5-mcli',
               defaultBranch: defaultBranch,
               remoteType: ProjectRemoteTypeEnum.Managed,
               gitUrl: undefined,

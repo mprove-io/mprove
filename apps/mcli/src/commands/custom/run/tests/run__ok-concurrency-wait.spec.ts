@@ -29,6 +29,8 @@ test('1', async t => {
     let defaultBranch = BRANCH_MAIN;
 
     let projectId = makeId();
+    let dashboardIds = 'c1_d1,c1_d2';
+    let chartIds = '4V3KWMRA9MSH21EQZCJQ,829VI8FEJ6B5MIF78SWC';
 
     let commandLine = `run \
 --project-id ${projectId} \
@@ -38,8 +40,8 @@ test('1', async t => {
 --concurrency 2 \
 --wait \
 --sleep 2 \
---dashboard-ids ec1_d1 \
---chart-ids 4K9SNSMG0IQPQZ9CL23U,4V3KWMRA9MSH21EQZCJQ \
+--dashboard-ids ${dashboardIds} \
+--chart-ids ${chartIds} \
 --get-dashboards \
 --get-charts \
 --json`;
@@ -86,7 +88,7 @@ test('1', async t => {
               orgId,
               projectId,
               name: projectName,
-              testProjectId: 'first-project',
+              testProjectId: 't5-mcli',
               defaultBranch: defaultBranch,
               remoteType: ProjectRemoteTypeEnum.Managed,
               gitUrl: undefined,
@@ -158,9 +160,9 @@ test('1', async t => {
       `queriesStats.running === 0`
     );
     assert.equal(
-      queriesStats.completed === 16,
+      queriesStats.completed === 18,
       true,
-      `queriesStats.completed === 16`
+      `queriesStats.completed === 18`
     );
     assert.equal(queriesStats.error === 0, true, `queriesStats.error === 0`);
     assert.equal(

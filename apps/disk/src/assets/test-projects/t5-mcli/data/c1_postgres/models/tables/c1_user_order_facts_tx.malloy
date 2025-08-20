@@ -1,0 +1,36 @@
+import './c1_orders_tx.malloy';
+
+##! experimental{sql_functions}
+source: c1_user_order_facts_tx is c1_orders_tx -> {
+  group_by: user_id
+  aggregate: min_order_created_at_ts is (min(created_at_ts))::timestamp
+
+} extend {
+  primary_key: user_id
+
+  #(mprove) field_group="First Order Created at - Timeframes"
+  dimension: 
+    first_order_created_at_year is first_order_created_at_ts.year
+    first_order_created_at_quarter is first_order_created_at_ts.quarter
+    first_order_created_at_month is first_order_created_at_ts.month
+    first_order_created_at_week is first_order_created_at_ts.week
+    first_order_created_at_day is first_order_created_at_ts.day
+    first_order_created_at_hour is first_order_created_at_ts.hour
+    first_order_created_at_minute is first_order_created_at_ts.minute
+    first_order_created_at_second is first_order_created_at_ts.second
+
+  #(mprove) field_group="First Order Created at - Numbers"
+  dimension: 
+    first_order_created_at_year_num is year(first_order_created_at_ts)
+    first_order_created_at_quarter_num is quarter(first_order_created_at_ts)
+    first_order_created_at_month_num is month(first_order_created_at_ts)
+    first_order_created_at_week_num is week(first_order_created_at_ts)
+    first_order_created_at_day_num is day(first_order_created_at_ts)
+    first_order_created_at_day_of_week_num is day_of_week(first_order_created_at_ts)
+    first_order_created_at_day_of_year_num is day_of_year(first_order_created_at_ts)
+    first_order_created_at_hour_num is hour(first_order_created_at_ts)
+    first_order_created_at_minute_num is minute(first_order_created_at_ts)
+    first_order_created_at_second_num is second(first_order_created_at_ts)
+
+    rename: first_order_created_at_ts is min_order_created_at_ts
+}
