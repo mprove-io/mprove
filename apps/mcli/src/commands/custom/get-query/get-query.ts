@@ -1,5 +1,37 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { ErEnum } from '~common/enums/er.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { RepoEnum } from '~common/enums/repo.enum';
+import { RowTypeEnum } from '~common/enums/row-type.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { Parameter } from '~common/interfaces/blockml/parameter';
+import {
+  ToBackendGetChartRequestPayload,
+  ToBackendGetChartResponse
+} from '~common/interfaces/to-backend/charts/to-backend-get-chart';
+import {
+  ToBackendGetDashboardRequestPayload,
+  ToBackendGetDashboardResponse
+} from '~common/interfaces/to-backend/dashboards/to-backend-get-dashboard';
+import {
+  ToBackendGetProjectRequestPayload,
+  ToBackendGetProjectResponse
+} from '~common/interfaces/to-backend/projects/to-backend-get-project';
+import {
+  ToBackendGetReportRequestPayload,
+  ToBackendGetReportResponse
+} from '~common/interfaces/to-backend/reports/to-backend-get-report';
+import {
+  ToBackendGetRepoRequestPayload,
+  ToBackendGetRepoResponse
+} from '~common/interfaces/to-backend/repos/to-backend-get-repo';
+import { ServerError } from '~common/models/server-error';
 import { getConfig } from '~mcli/config/get.config';
 import { getChartUrl } from '~mcli/functions/get-chart-url';
 import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';

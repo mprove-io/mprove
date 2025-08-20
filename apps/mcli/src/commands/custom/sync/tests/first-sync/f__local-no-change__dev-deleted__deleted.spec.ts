@@ -1,5 +1,17 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
+import { BRANCH_MAIN, PROJECT_ENV_PROD } from '~common/constants/top';
+import { RETRY_OPTIONS } from '~common/constants/top-mcli';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { FileStatusEnum } from '~common/enums/file-status.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { makeId } from '~common/functions/make-id';
+import {
+  ToBackendDeleteFileRequestPayload,
+  ToBackendDeleteFileResponse
+} from '~common/interfaces/to-backend/files/to-backend-delete-file';
 import { getConfig } from '~mcli/config/get.config';
 import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
@@ -7,6 +19,7 @@ import { mreq } from '~mcli/functions/mreq';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';
 import { SyncCommand } from '../../sync';
+
 let assert = require('node:assert/strict');
 let retry = require('async-retry');
 

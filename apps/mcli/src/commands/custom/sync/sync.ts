@@ -2,6 +2,21 @@ import * as nodegit from '@figma/nodegit';
 import { Command, Option } from 'clipanion';
 import * as fse from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
+import { MPROVE_CACHE_DIR, MPROVE_SYNC_FILENAME } from '~common/constants/top';
+import { POSSIBLE_TIME_DIFF_MS } from '~common/constants/top-mcli';
+import { ErEnum } from '~common/enums/er.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { sleep } from '~common/functions/sleep';
+import { DiskSyncFile } from '~common/interfaces/disk/disk-sync-file';
+import { McliSyncConfig } from '~common/interfaces/mcli/mcli-sync-config';
+import {
+  ToBackendSyncRepoRequestPayload,
+  ToBackendSyncRepoResponse
+} from '~common/interfaces/to-backend/repos/to-backend-sync-repo';
+import { ServerError } from '~common/models/server-error';
 import { getConfig } from '~mcli/config/get.config';
 import { getFilesUrl } from '~mcli/functions/get-files-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
@@ -10,6 +25,9 @@ import { makeSyncTime } from '~mcli/functions/make-sync-time';
 import { mreq } from '~mcli/functions/mreq';
 import { writeSyncConfig } from '~mcli/functions/write-sync-config';
 import { CustomCommand } from '~mcli/models/custom-command';
+import { getChangesToCommit } from '~node-common/functions/get-changes-to-commit';
+import { getSyncFiles } from '~node-common/functions/get-sync-files';
+import { readFileCheckSize } from '~node-common/functions/read-file-check-size';
 
 let deepEqual = require('fast-deep-equal');
 
