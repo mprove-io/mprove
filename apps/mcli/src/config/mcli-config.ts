@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from 'class-validator';
 
-export class Config {
+export class McliConfig {
   @IsString()
   mproveCliHost?: string;
 

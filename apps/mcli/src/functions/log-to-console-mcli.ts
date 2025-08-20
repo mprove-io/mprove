@@ -1,26 +1,27 @@
 import { BaseContext } from 'clipanion';
-import { common } from '~mcli/barrels/common';
-import { nodeCommon } from '~mcli/barrels/node-common';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { wrapError } from '~node-common/functions/wrap-error';
+
 let prettyjson = require('prettyjson');
 
 export function logToConsoleMcli(item: {
   log: any;
-  logLevel: common.LogLevelEnum;
+  logLevel: LogLevelEnum;
   context: BaseContext;
   isJson: boolean;
   isPretty?: boolean;
 }) {
   let { log, logLevel, context, isJson, isPretty } = item;
 
-  isPretty = common.isDefined(isPretty) ? isPretty : true;
+  isPretty = isDefined(isPretty) ? isPretty : true;
 
   if (
     log instanceof Error ||
-    (common.isDefined(log) &&
-      common.isDefined(log.stack) &&
-      common.isDefined(log.message))
+    (isDefined(log) && isDefined(log.stack) && isDefined(log.message))
   ) {
-    log = { error: nodeCommon.wrapError(log) };
+    log = { error: wrapError(log) };
   }
 
   if (isJson === true) {
@@ -45,10 +46,10 @@ export function logToConsoleMcli(item: {
 
   log = `${log}\n`;
 
-  if (common.isUndefined(context)) {
+  if (isUndefined(context)) {
     console.log(log);
   } else {
-    if (logLevel === common.LogLevelEnum.Error) {
+    if (logLevel === LogLevelEnum.Error) {
       context.stderr.write(log);
     } else {
       context.stdout.write(log);

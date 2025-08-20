@@ -1,8 +1,5 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
-import { apiToBackend } from '~mcli/barrels/api-to-backend';
-import { common } from '~mcli/barrels/common';
-import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
 import { getChartUrl } from '~mcli/functions/get-chart-url';
 import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';
@@ -38,8 +35,8 @@ export class GetStateCommand extends CustomCommand {
 
   repo = Option.String('--repo', {
     required: true,
-    validator: t.isEnum(enums.RepoEnum),
-    description: `(required, "${enums.RepoEnum.Dev}" or "${enums.RepoEnum.Production}")`
+    validator: t.isEnum(RepoEnum),
+    description: `(required, "${RepoEnum.Dev}" or "${RepoEnum.Production}")`
   });
 
   branch = Option.String('--branch', {
@@ -93,15 +90,15 @@ export class GetStateCommand extends CustomCommand {
   });
 
   async execute() {
-    if (common.isUndefined(this.context.config)) {
+    if (isUndefined(this.context.config)) {
       this.context.config = getConfig(this.envFilePath);
     }
 
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
-    if (common.isUndefined(this.projectId)) {
-      let serverError = new common.ServerError({
-        message: common.ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+    if (isUndefined(this.projectId)) {
+      let serverError = new ServerError({
+        message: ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
         originalError: null
       });
       throw serverError;
@@ -111,7 +108,7 @@ export class GetStateCommand extends CustomCommand {
 
     let loginToken = await getLoginToken(this.context);
 
-    let getRepoReqPayload: apiToBackend.ToBackendGetRepoRequestPayload = {
+    let getRepoReqPayload: ToBackendGetRepoRequestPayload = {
       projectId: this.projectId,
       isRepoProd: isRepoProd,
       branchId: this.branch,
@@ -119,71 +116,65 @@ export class GetStateCommand extends CustomCommand {
       isFetch: true
     };
 
-    let getRepoResp = await mreq<apiToBackend.ToBackendGetRepoResponse>({
+    let getRepoResp = await mreq<ToBackendGetRepoResponse>({
       loginToken: loginToken,
-      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
       payload: getRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
 
-    let getModelsReqPayload: apiToBackend.ToBackendGetModelsRequestPayload = {
+    let getModelsReqPayload: ToBackendGetModelsRequestPayload = {
       projectId: this.projectId,
       isRepoProd: isRepoProd,
       branchId: this.branch,
       envId: this.env
     };
 
-    let getModelsResp = await mreq<apiToBackend.ToBackendGetModelsResponse>({
+    let getModelsResp = await mreq<ToBackendGetModelsResponse>({
       loginToken: loginToken,
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModels,
       payload: getModelsReqPayload,
       host: this.context.config.mproveCliHost
     });
 
-    let getChartsReqPayload: apiToBackend.ToBackendGetChartsRequestPayload = {
+    let getChartsReqPayload: ToBackendGetChartsRequestPayload = {
       projectId: this.projectId,
       isRepoProd: isRepoProd,
       branchId: this.branch,
       envId: this.env
     };
 
-    let getChartsResp = await mreq<apiToBackend.ToBackendGetChartsResponse>({
+    let getChartsResp = await mreq<ToBackendGetChartsResponse>({
       loginToken: loginToken,
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetCharts,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetCharts,
       payload: getChartsReqPayload,
       host: this.context.config.mproveCliHost
     });
 
-    let getDashboardsReqPayload: apiToBackend.ToBackendGetDashboardsRequestPayload =
-      {
-        projectId: this.projectId,
-        isRepoProd: isRepoProd,
-        branchId: this.branch,
-        envId: this.env
-      };
-
-    let getDashboardsResp =
-      await mreq<apiToBackend.ToBackendGetDashboardsResponse>({
-        loginToken: loginToken,
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
-        payload: getDashboardsReqPayload,
-        host: this.context.config.mproveCliHost
-      });
-
-    let getReportsReqPayload: apiToBackend.ToBackendGetReportsRequestPayload = {
+    let getDashboardsReqPayload: ToBackendGetDashboardsRequestPayload = {
       projectId: this.projectId,
       isRepoProd: isRepoProd,
       branchId: this.branch,
       envId: this.env
     };
 
-    let getReportsResp = await mreq<apiToBackend.ToBackendGetReportsResponse>({
+    let getDashboardsResp = await mreq<ToBackendGetDashboardsResponse>({
       loginToken: loginToken,
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReports,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
+      payload: getDashboardsReqPayload,
+      host: this.context.config.mproveCliHost
+    });
+
+    let getReportsReqPayload: ToBackendGetReportsRequestPayload = {
+      projectId: this.projectId,
+      isRepoProd: isRepoProd,
+      branchId: this.branch,
+      envId: this.env
+    };
+
+    let getReportsResp = await mreq<ToBackendGetReportsResponse>({
+      loginToken: loginToken,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetReports,
       payload: getReportsReqPayload,
       host: this.context.config.mproveCliHost
     });
@@ -327,7 +318,7 @@ export class GetStateCommand extends CustomCommand {
 
     logToConsoleMcli({
       log: log,
-      logLevel: common.LogLevelEnum.Info,
+      logLevel: LogLevelEnum.Info,
       context: this.context,
       isJson: this.json
     });

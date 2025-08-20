@@ -1,6 +1,4 @@
 import test from 'ava';
-import { common } from '~mcli/barrels/common';
-import { constants } from '~mcli/barrels/constants';
 import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
@@ -18,9 +16,9 @@ test('1', async t => {
   let context: CustomContext;
 
   await retry(async (bail: any) => {
-    let defaultBranch = common.BRANCH_MAIN;
+    let defaultBranch = BRANCH_MAIN;
 
-    let projectId = common.makeId();
+    let projectId = makeId();
     let commandLine = `get-state \
 --project-id ${projectId} \
 --repo dev \
@@ -34,7 +32,7 @@ test('1', async t => {
 --get-models \
 --json`;
 
-    let userId = common.makeId();
+    let userId = makeId();
     let email = `${testId}@example.com`;
     let password = '123123';
 
@@ -78,7 +76,7 @@ test('1', async t => {
               name: projectName,
               testProjectId: 'first-project',
               defaultBranch: defaultBranch,
-              remoteType: common.ProjectRemoteTypeEnum.Managed,
+              remoteType: ProjectRemoteTypeEnum.Managed,
               gitUrl: undefined,
               publicKey: undefined,
               privateKey: undefined
@@ -104,7 +102,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: common.LogLevelEnum.Error,
+        logLevel: LogLevelEnum.Error,
         context: context,
         isJson: true
       });
@@ -115,7 +113,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: common.LogLevelEnum.Error,
+        logLevel: LogLevelEnum.Error,
         context: context,
         isJson: true
       });
@@ -123,19 +121,19 @@ test('1', async t => {
 
     assert.equal(code === 0, true, `code === 0`);
     assert.equal(
-      common.isDefined(parsedOutput?.validationErrorsTotal),
+      isDefined(parsedOutput?.validationErrorsTotal),
       true,
-      `common.isDefined(parsedOutput?.validationErrorsTotal)`
+      `isDefined(parsedOutput?.validationErrorsTotal)`
     );
 
     isPass = true;
-  }, constants.RETRY_OPTIONS).catch((er: any) => {
+  }, RETRY_OPTIONS).catch((er: any) => {
     console.log(context.stdout.toString());
     console.log(context.stderr.toString());
 
     logToConsoleMcli({
       log: er,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       context: undefined,
       isJson: false
     });

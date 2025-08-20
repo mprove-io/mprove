@@ -1,10 +1,10 @@
 import { BaseContext, Command } from 'clipanion';
-import { common } from '~mcli/barrels/common';
-import { interfaces } from '~mcli/barrels/interfaces';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { McliConfig } from '~mcli/config/mcli-config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 
 export interface CustomContext extends BaseContext {
-  config: interfaces.Config;
+  config: McliConfig;
   loginToken: string;
 }
 
@@ -12,7 +12,7 @@ export class CustomCommand extends Command<CustomContext> {
   async catch(e: any) {
     logToConsoleMcli({
       log: e,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       context: this.context,
       isJson: false
     });

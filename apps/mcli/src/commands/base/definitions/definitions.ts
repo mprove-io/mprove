@@ -1,5 +1,5 @@
 import { Command, Option } from 'clipanion';
-import { common } from '~mcli/barrels/common';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 
 export class DefinitionsCommand extends Command {
@@ -19,7 +19,7 @@ export class DefinitionsCommand extends Command {
 
     logToConsoleMcli({
       log: log,
-      logLevel: common.LogLevelEnum.Info,
+      logLevel: LogLevelEnum.Info,
       context: this.context,
       isJson: this.json
     });

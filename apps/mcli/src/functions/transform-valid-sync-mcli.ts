@@ -3,8 +3,8 @@ import {
   TransformValidationOptions,
   transformAndValidateSync
 } from 'class-transformer-validator';
-import { common } from '~mcli/barrels/common';
-import { nodeCommon } from '~mcli/barrels/node-common';
+import { ServerError } from '~common/models/server-error';
+import { getConstraintsRecursive } from '~node-common/functions/get-constraints-recursive';
 
 export function transformValidSyncMcli<T extends object>(item: {
   classType: ClassType<T>;
@@ -21,10 +21,10 @@ export function transformValidSyncMcli<T extends object>(item: {
     let constraints;
 
     if (Array.isArray(e)) {
-      constraints = nodeCommon.getConstraintsRecursive(e);
+      constraints = getConstraintsRecursive(e);
     }
 
-    let serverError = new common.ServerError({
+    let serverError = new ServerError({
       message: errorMessage,
       data: constraints,
       originalError: null

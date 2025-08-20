@@ -1,7 +1,4 @@
 import test from 'ava';
-import { apiToBackend } from '~mcli/barrels/api-to-backend';
-import { common } from '~mcli/barrels/common';
-import { constants } from '~mcli/barrels/constants';
 import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
@@ -20,9 +17,9 @@ test('1', async t => {
   let context: CustomContext;
 
   await retry(async (bail: any) => {
-    let branch = common.BRANCH_MAIN;
+    let branch = BRANCH_MAIN;
 
-    let projectId = common.makeId();
+    let projectId = makeId();
     let commandLine = `commit \
 --project-id ${projectId} \
 --repo dev \
@@ -31,7 +28,7 @@ test('1', async t => {
 --get-repo \
 --json`;
 
-    let userId = common.makeId();
+    let userId = makeId();
     let email = `${testId}@example.com`;
     let password = '123123';
 
@@ -74,7 +71,7 @@ test('1', async t => {
               projectId,
               name: projectName,
               defaultBranch: branch,
-              remoteType: common.ProjectRemoteTypeEnum.Managed,
+              remoteType: ProjectRemoteTypeEnum.Managed,
               gitUrl: undefined,
               publicKey: undefined,
               privateKey: undefined
@@ -97,7 +94,7 @@ test('1', async t => {
 
       context = mockContext as any;
 
-      let saveFileReqPayload: apiToBackend.ToBackendSaveFileRequestPayload = {
+      let saveFileReqPayload: ToBackendSaveFileRequestPayload = {
         projectId: projectId,
         branchId: branch,
         envId: 'prod',
@@ -105,10 +102,9 @@ test('1', async t => {
         content: '123'
       };
 
-      let saveFileResp = await mreq<apiToBackend.ToBackendSaveFileResponse>({
+      let saveFileResp = await mreq<ToBackendSaveFileResponse>({
         loginToken: context.loginToken,
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveFile,
         payload: saveFileReqPayload,
         host: config.mproveCliHost
       });
@@ -117,7 +113,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: common.LogLevelEnum.Error,
+        logLevel: LogLevelEnum.Error,
         context: context,
         isJson: true
       });
@@ -128,7 +124,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: common.LogLevelEnum.Error,
+        logLevel: LogLevelEnum.Error,
         context: context,
         isJson: true
       });
@@ -136,19 +132,19 @@ test('1', async t => {
 
     assert.equal(code === 0, true, `code === 0`);
     assert.equal(
-      common.isDefined(parsedOutput?.url),
+      isDefined(parsedOutput?.url),
       true,
-      `common.isDefined(parsedOutput?.url)`
+      `isDefined(parsedOutput?.url)`
     );
 
     isPass = true;
-  }, constants.RETRY_OPTIONS).catch((er: any) => {
+  }, RETRY_OPTIONS).catch((er: any) => {
     console.log(context.stdout.toString());
     console.log(context.stderr.toString());
 
     logToConsoleMcli({
       log: er,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       context: undefined,
       isJson: false
     });

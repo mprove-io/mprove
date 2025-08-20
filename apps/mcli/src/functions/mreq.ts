@@ -1,20 +1,26 @@
+import { isDefined } from 'class-validator';
 import got, { OptionsOfTextResponseBody } from 'got';
-import { apiToBackend } from '~mcli/barrels/api-to-backend';
-import { common } from '~mcli/barrels/common';
+import { ErEnum } from '~common/enums/er.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { makeId } from '~common/functions/make-id';
+import { ToBackendRequest } from '~common/interfaces/to-backend/to-backend-request';
+import { MyResponse } from '~common/interfaces/to/my-response';
+import { ServerError } from '~common/models/server-error';
 
-export async function mreq<T extends common.MyResponse>(item: {
+export async function mreq<T extends MyResponse>(item: {
   host: string;
-  pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum;
+  pathInfoName: ToBackendRequestInfoNameEnum;
   payload: any;
   loginToken?: string;
 }): Promise<T> {
   let { host, pathInfoName, payload, loginToken } = item;
 
-  let body: apiToBackend.ToBackendRequest = {
+  let body: ToBackendRequest = {
     info: {
-      traceId: common.makeId(),
+      traceId: makeId(),
       name: pathInfoName,
-      idempotencyKey: common.makeId()
+      idempotencyKey: makeId()
     },
     payload: payload
   };
@@ -26,15 +32,15 @@ export async function mreq<T extends common.MyResponse>(item: {
     headers: {}
   };
 
-  if (common.isDefined(loginToken)) {
+  if (isDefined(loginToken)) {
     options.headers.authorization = `Bearer ${loginToken}`;
   }
 
   let resp = await got.post(url, options).json<T>();
 
-  if (resp.info?.status !== common.ResponseInfoStatusEnum.Ok) {
-    throw new common.ServerError({
-      message: common.ErEnum.MCLI_ERROR_RESPONSE_FROM_BACKEND,
+  if (resp.info?.status !== ResponseInfoStatusEnum.Ok) {
+    throw new ServerError({
+      message: ErEnum.MCLI_ERROR_RESPONSE_FROM_BACKEND,
       originalError: resp.info?.error
     });
   }

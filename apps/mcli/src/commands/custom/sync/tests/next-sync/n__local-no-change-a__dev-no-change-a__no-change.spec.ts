@@ -1,7 +1,5 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
-import { common } from '~mcli/barrels/common';
-import { constants } from '~mcli/barrels/constants';
 import { getConfig } from '~mcli/config/get.config';
 import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
@@ -32,7 +30,7 @@ test('1', async t => {
       gitUrl: config.mproveCliTestLocalSourceGitUrl
     });
 
-    let projectId = common.makeId();
+    let projectId = makeId();
 
     let commandLine = `sync \
 --project-id ${projectId} \
@@ -41,7 +39,7 @@ test('1', async t => {
 --json \
 --debug`;
 
-    let userId = common.makeId();
+    let userId = makeId();
     let email = `${testId}@example.com`;
     let password = '123123';
 
@@ -81,8 +79,8 @@ test('1', async t => {
               orgId,
               projectId,
               name: projectName,
-              defaultBranch: common.BRANCH_MAIN,
-              remoteType: common.ProjectRemoteTypeEnum.GitClone,
+              defaultBranch: BRANCH_MAIN,
+              remoteType: ProjectRemoteTypeEnum.GitClone,
               gitUrl: config.mproveCliTestDevSourceGitUrl,
               publicKey: fse
                 .readFileSync(config.mproveCliTestPublicKeyPath)
@@ -106,8 +104,8 @@ test('1', async t => {
             {
               projectId: projectId,
               connectionId: 'c1_postgres',
-              envId: common.PROJECT_ENV_PROD,
-              type: common.ConnectionTypeEnum.PostgreSQL,
+              envId: PROJECT_ENV_PROD,
+              type: ConnectionTypeEnum.PostgreSQL,
               host: 'dwh-postgres',
               port: 5436,
               database: 'p_db',
@@ -131,7 +129,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: common.LogLevelEnum.Error,
+        logLevel: LogLevelEnum.Error,
         context: context,
         isJson: true
       });
@@ -142,7 +140,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: common.LogLevelEnum.Error,
+        logLevel: LogLevelEnum.Error,
         context: context,
         isJson: true
       });
@@ -156,13 +154,13 @@ test('1', async t => {
     );
 
     isPass = true;
-  }, constants.RETRY_OPTIONS).catch((er: any) => {
+  }, RETRY_OPTIONS).catch((er: any) => {
     console.log(context.stdout.toString());
     console.log(context.stderr.toString());
 
     logToConsoleMcli({
       log: er,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       context: undefined,
       isJson: false
     });

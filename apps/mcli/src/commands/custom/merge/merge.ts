@@ -1,6 +1,4 @@
 import { Command, Option } from 'clipanion';
-import { apiToBackend } from '~mcli/barrels/api-to-backend';
-import { common } from '~mcli/barrels/common';
 import { getConfig } from '~mcli/config/get.config';
 import { getFilesUrl } from '~mcli/functions/get-files-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
@@ -58,15 +56,15 @@ export class MergeCommand extends CustomCommand {
   });
 
   async execute() {
-    if (common.isUndefined(this.context.config)) {
+    if (isUndefined(this.context.config)) {
       this.context.config = getConfig(this.envFilePath);
     }
 
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
-    if (common.isUndefined(this.projectId)) {
-      let serverError = new common.ServerError({
-        message: common.ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+    if (isUndefined(this.projectId)) {
+      let serverError = new ServerError({
+        message: ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
         originalError: null
       });
       throw serverError;
@@ -74,17 +72,16 @@ export class MergeCommand extends CustomCommand {
 
     let loginToken = await getLoginToken(this.context);
 
-    let mergeRepoReqPayload: apiToBackend.ToBackendMergeRepoRequestPayload = {
+    let mergeRepoReqPayload: ToBackendMergeRepoRequestPayload = {
       projectId: this.projectId,
       branchId: this.branch,
       theirBranchId: this.theirBranch,
       envId: this.env
     };
 
-    let mergeRepoResp = await mreq<apiToBackend.ToBackendMergeRepoResponse>({
+    let mergeRepoResp = await mreq<ToBackendMergeRepoResponse>({
       loginToken: loginToken,
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
       payload: mergeRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
@@ -121,7 +118,7 @@ export class MergeCommand extends CustomCommand {
 
     logToConsoleMcli({
       log: log,
-      logLevel: common.LogLevelEnum.Info,
+      logLevel: LogLevelEnum.Info,
       context: this.context,
       isJson: this.json
     });

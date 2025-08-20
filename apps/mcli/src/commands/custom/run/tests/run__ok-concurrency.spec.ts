@@ -1,7 +1,4 @@
 import test from 'ava';
-import { common } from '~mcli/barrels/common';
-import { constants } from '~mcli/barrels/constants';
-import { interfaces } from '~mcli/barrels/interfaces';
 import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
@@ -18,12 +15,12 @@ test('1', async t => {
   let parsedOutput: any;
   let context: CustomContext;
 
-  let queriesStats: interfaces.QueriesStats;
+  let queriesStats: McliQueriesStats;
 
   await retry(async (bail: any) => {
-    let defaultBranch = common.BRANCH_MAIN;
+    let defaultBranch = BRANCH_MAIN;
 
-    let projectId = common.makeId();
+    let projectId = makeId();
 
     let commandLine = `run \
 --project-id ${projectId} \
@@ -37,7 +34,7 @@ test('1', async t => {
 --get-charts \
 --json`;
 
-    let userId = common.makeId();
+    let userId = makeId();
     let email = `${testId}@example.com`;
     let password = '123123';
 
@@ -81,7 +78,7 @@ test('1', async t => {
               name: projectName,
               testProjectId: 'first-project',
               defaultBranch: defaultBranch,
-              remoteType: common.ProjectRemoteTypeEnum.Managed,
+              remoteType: ProjectRemoteTypeEnum.Managed,
               gitUrl: undefined,
               publicKey: undefined,
               privateKey: undefined
@@ -101,8 +98,8 @@ test('1', async t => {
             {
               projectId: projectId,
               connectionId: 'c1_postgres',
-              envId: common.PROJECT_ENV_PROD,
-              type: common.ConnectionTypeEnum.PostgreSQL,
+              envId: PROJECT_ENV_PROD,
+              type: ConnectionTypeEnum.PostgreSQL,
               host: 'dwh-postgres',
               port: 5436,
               database: 'p_db',
@@ -120,7 +117,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: common.LogLevelEnum.Error,
+        logLevel: LogLevelEnum.Error,
         context: context,
         isJson: true
       });
@@ -131,7 +128,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: common.LogLevelEnum.Error,
+        logLevel: LogLevelEnum.Error,
         context: context,
         isJson: true
       });
@@ -163,13 +160,13 @@ test('1', async t => {
     );
 
     isPass = true;
-  }, constants.RETRY_OPTIONS).catch((er: any) => {
+  }, RETRY_OPTIONS).catch((er: any) => {
     console.log(context.stdout.toString());
     console.log(context.stderr.toString());
 
     logToConsoleMcli({
       log: er,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       context: undefined,
       isJson: false
     });

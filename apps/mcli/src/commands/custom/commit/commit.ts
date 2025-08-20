@@ -1,8 +1,5 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
-import { apiToBackend } from '~mcli/barrels/api-to-backend';
-import { common } from '~mcli/barrels/common';
-import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
 import { getFilesUrl } from '~mcli/functions/get-files-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
@@ -29,8 +26,8 @@ export class CommitCommand extends CustomCommand {
 
   repo = Option.String('--repo', {
     required: true,
-    validator: t.isEnum(enums.RepoEnum),
-    description: `(required, "${enums.RepoEnum.Dev}" or "${enums.RepoEnum.Production}")`
+    validator: t.isEnum(RepoEnum),
+    description: `(required, "${RepoEnum.Dev}" or "${RepoEnum.Production}")`
   });
 
   branch = Option.String('--branch', {
@@ -56,15 +53,15 @@ export class CommitCommand extends CustomCommand {
   });
 
   async execute() {
-    if (common.isUndefined(this.context.config)) {
+    if (isUndefined(this.context.config)) {
       this.context.config = getConfig(this.envFilePath);
     }
 
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
-    if (common.isUndefined(this.projectId)) {
-      let serverError = new common.ServerError({
-        message: common.ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+    if (isUndefined(this.projectId)) {
+      let serverError = new ServerError({
+        message: ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
         originalError: null
       });
       throw serverError;
@@ -74,17 +71,16 @@ export class CommitCommand extends CustomCommand {
 
     let loginToken = await getLoginToken(this.context);
 
-    let commitRepoReqPayload: apiToBackend.ToBackendCommitRepoRequestPayload = {
+    let commitRepoReqPayload: ToBackendCommitRepoRequestPayload = {
       projectId: this.projectId,
       isRepoProd: isRepoProd,
       branchId: this.branch,
       commitMessage: this.commitMessage
     };
 
-    let commitRepoResp = await mreq<apiToBackend.ToBackendCommitRepoResponse>({
+    let commitRepoResp = await mreq<ToBackendCommitRepoResponse>({
       loginToken: loginToken,
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
       payload: commitRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
@@ -95,7 +91,7 @@ export class CommitCommand extends CustomCommand {
       projectId: this.projectId,
       repoId: commitRepoResp.payload.repo.repoId,
       branch: this.branch,
-      env: common.PROJECT_ENV_PROD
+      env: PROJECT_ENV_PROD
     });
 
     let log: any = {
@@ -116,7 +112,7 @@ export class CommitCommand extends CustomCommand {
 
     logToConsoleMcli({
       log: log,
-      logLevel: common.LogLevelEnum.Info,
+      logLevel: LogLevelEnum.Info,
       context: this.context,
       isJson: this.json
     });

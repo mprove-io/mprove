@@ -1,4 +1,4 @@
-export interface QueriesStats {
+export interface McliQueriesStats {
   started: number;
   running: number;
   completed: number;

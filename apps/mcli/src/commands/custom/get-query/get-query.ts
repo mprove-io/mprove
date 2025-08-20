@@ -1,8 +1,5 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
-import { apiToBackend } from '~mcli/barrels/api-to-backend';
-import { common } from '~mcli/barrels/common';
-import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
 import { getChartUrl } from '~mcli/functions/get-chart-url';
 import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';
@@ -41,10 +38,10 @@ interface ReportPartQ {
 interface RowPartQ {
   rowId: string;
   name: string;
-  rowType: common.RowTypeEnum;
+  rowType: RowTypeEnum;
   metricId: string;
   formula: string;
-  parameters: common.Parameter[];
+  parameters: Parameter[];
   query: QueryPartQ;
   records: any[];
 }
@@ -53,9 +50,9 @@ interface QueryPartQ {
   // projectId: string;
   // envId: string;
   connectionId: string;
-  connectionType: common.ConnectionTypeEnum;
+  connectionType: ConnectionTypeEnum;
   queryId: string;
-  status: common.QueryStatusEnum;
+  status: QueryStatusEnum;
   lastRunBy: string;
   lastRunTs: number;
   lastCancelTs: number;
@@ -103,8 +100,8 @@ export class GetQueryCommand extends CustomCommand {
 
   repo = Option.String('--repo', {
     required: true,
-    validator: t.isEnum(enums.RepoEnum),
-    description: `(required, "${enums.RepoEnum.Dev}" or "${enums.RepoEnum.Production}")`
+    validator: t.isEnum(RepoEnum),
+    description: `(required, "${RepoEnum.Dev}" or "${RepoEnum.Production}")`
   });
 
   branch = Option.String('--branch', {
@@ -176,27 +173,27 @@ export class GetQueryCommand extends CustomCommand {
   });
 
   async execute() {
-    if (common.isUndefined(this.context.config)) {
+    if (isUndefined(this.context.config)) {
       this.context.config = getConfig(this.envFilePath);
     }
 
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
-    if (common.isUndefined(this.projectId)) {
-      let serverError = new common.ServerError({
-        message: common.ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+    if (isUndefined(this.projectId)) {
+      let serverError = new ServerError({
+        message: ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
         originalError: null
       });
       throw serverError;
     }
 
     if (
-      common.isDefined(this.dashboardId) &&
-      common.isDefined(this.chartId) &&
-      common.isDefined(this.reportId)
+      isDefined(this.dashboardId) &&
+      isDefined(this.chartId) &&
+      isDefined(this.reportId)
     ) {
-      let serverError = new common.ServerError({
-        message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
+      let serverError = new ServerError({
+        message: ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
         data: `dashboard-id, chart-id, report-id`,
         originalError: null
       });
@@ -204,34 +201,29 @@ export class GetQueryCommand extends CustomCommand {
     }
 
     if (
-      common.isUndefined(this.dashboardId) &&
-      common.isUndefined(this.chartId) &&
-      common.isUndefined(this.reportId)
+      isUndefined(this.dashboardId) &&
+      isUndefined(this.chartId) &&
+      isUndefined(this.reportId)
     ) {
-      let serverError = new common.ServerError({
+      let serverError = new ServerError({
         message:
-          common.ErEnum
-            .MCLI_DASHBOARD_ID_CHART_ID_AND_REPORT_ID_ARE_NOT_DEFINED,
+          ErEnum.MCLI_DASHBOARD_ID_CHART_ID_AND_REPORT_ID_ARE_NOT_DEFINED,
         originalError: null
       });
       throw serverError;
     }
 
-    if (
-      common.isDefined(this.tileIndex) &&
-      common.isUndefined(this.dashboardId)
-    ) {
-      let serverError = new common.ServerError({
-        message:
-          common.ErEnum.MCLI_TILE_INDEX_DOES_NOT_WORK_WITHOUT_DASHBOARD_ID,
+    if (isDefined(this.tileIndex) && isUndefined(this.dashboardId)) {
+      let serverError = new ServerError({
+        message: ErEnum.MCLI_TILE_INDEX_DOES_NOT_WORK_WITHOUT_DASHBOARD_ID,
         originalError: null
       });
       throw serverError;
     }
 
-    if (common.isDefined(this.rowId) && common.isUndefined(this.reportId)) {
-      let serverError = new common.ServerError({
-        message: common.ErEnum.MCLI_ROW_ID_DOES_NOT_WORK_WITHOUT_REPORT_ID,
+    if (isDefined(this.rowId) && isUndefined(this.reportId)) {
+      let serverError = new ServerError({
+        message: ErEnum.MCLI_ROW_ID_DOES_NOT_WORK_WITHOUT_REPORT_ID,
         originalError: null
       });
       throw serverError;
@@ -241,19 +233,18 @@ export class GetQueryCommand extends CustomCommand {
 
     let loginToken = await getLoginToken(this.context);
 
-    let getProjectReqPayload: apiToBackend.ToBackendGetProjectRequestPayload = {
+    let getProjectReqPayload: ToBackendGetProjectRequestPayload = {
       projectId: this.projectId
     };
 
-    let getProjectResp = await mreq<apiToBackend.ToBackendGetProjectResponse>({
+    let getProjectResp = await mreq<ToBackendGetProjectResponse>({
       loginToken: loginToken,
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetProject,
       payload: getProjectReqPayload,
       host: this.context.config.mproveCliHost
     });
 
-    let getRepoReqPayload: apiToBackend.ToBackendGetRepoRequestPayload = {
+    let getRepoReqPayload: ToBackendGetRepoRequestPayload = {
       projectId: this.projectId,
       isRepoProd: isRepoProd,
       branchId: this.branch,
@@ -261,17 +252,17 @@ export class GetQueryCommand extends CustomCommand {
       isFetch: true
     };
 
-    let getRepoResp = await mreq<apiToBackend.ToBackendGetRepoResponse>({
+    let getRepoResp = await mreq<ToBackendGetRepoResponse>({
       loginToken: loginToken,
-      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
       payload: getRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
 
     let chartPartQ: ChartPartQ;
 
-    if (common.isDefined(this.chartId)) {
-      let getChartReqPayload: apiToBackend.ToBackendGetChartRequestPayload = {
+    if (isDefined(this.chartId)) {
+      let getChartReqPayload: ToBackendGetChartRequestPayload = {
         projectId: this.projectId,
         isRepoProd: isRepoProd,
         branchId: this.branch,
@@ -280,10 +271,9 @@ export class GetQueryCommand extends CustomCommand {
         timezone: this.timezone
       };
 
-      let getChartResp = await mreq<apiToBackend.ToBackendGetChartResponse>({
+      let getChartResp = await mreq<ToBackendGetChartResponse>({
         loginToken: loginToken,
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetChart,
         payload: getChartReqPayload,
         host: this.context.config.mproveCliHost
       });
@@ -341,31 +331,28 @@ export class GetQueryCommand extends CustomCommand {
 
     let dashboardPartQ: DashboardPartQ;
 
-    if (common.isDefined(this.dashboardId)) {
-      let getDashboardReqPayload: apiToBackend.ToBackendGetDashboardRequestPayload =
-        {
-          projectId: this.projectId,
-          isRepoProd: isRepoProd,
-          branchId: this.branch,
-          envId: this.env,
-          dashboardId: this.dashboardId,
-          timezone: this.timezone
-        };
+    if (isDefined(this.dashboardId)) {
+      let getDashboardReqPayload: ToBackendGetDashboardRequestPayload = {
+        projectId: this.projectId,
+        isRepoProd: isRepoProd,
+        branchId: this.branch,
+        envId: this.env,
+        dashboardId: this.dashboardId,
+        timezone: this.timezone
+      };
 
-      let getDashboardResp =
-        await mreq<apiToBackend.ToBackendGetDashboardResponse>({
-          loginToken: loginToken,
-          pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
-          payload: getDashboardReqPayload,
-          host: this.context.config.mproveCliHost
-        });
+      let getDashboardResp = await mreq<ToBackendGetDashboardResponse>({
+        loginToken: loginToken,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
+        payload: getDashboardReqPayload,
+        host: this.context.config.mproveCliHost
+      });
 
       let dashboardX = getDashboardResp.payload.dashboard;
 
       let tilePartQs = dashboardX.tiles
         .filter((tile, i) => {
-          if (common.isDefined(this.tileIndex)) {
+          if (isDefined(this.tileIndex)) {
             return i === this.tileIndex;
           }
 
@@ -430,22 +417,21 @@ export class GetQueryCommand extends CustomCommand {
 
     let reportPartQ: ReportPartQ;
 
-    if (common.isDefined(this.reportId)) {
-      let getRepReqPayload: apiToBackend.ToBackendGetReportRequestPayload = {
+    if (isDefined(this.reportId)) {
+      let getRepReqPayload: ToBackendGetReportRequestPayload = {
         projectId: this.projectId,
         isRepoProd: isRepoProd,
         branchId: this.branch,
         envId: this.env,
         reportId: this.reportId,
         timezone: this.timezone,
-        timeSpec: this.timeSpec as common.TimeSpecEnum,
+        timeSpec: this.timeSpec as TimeSpecEnum,
         timeRangeFractionBrick: this.timeRange
       };
 
-      let getRepResp = await mreq<apiToBackend.ToBackendGetReportResponse>({
+      let getRepResp = await mreq<ToBackendGetReportResponse>({
         loginToken: loginToken,
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReport,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetReport,
         payload: getRepReqPayload,
         host: this.context.config.mproveCliHost
       });
@@ -454,7 +440,7 @@ export class GetQueryCommand extends CustomCommand {
 
       let rowPartQs = repX.rows
         .filter(row => {
-          if (common.isDefined(this.rowId)) {
+          if (isDefined(this.rowId)) {
             return row.rowId === this.rowId;
           }
 
@@ -463,7 +449,7 @@ export class GetQueryCommand extends CustomCommand {
         .map(row => {
           let queryPartQ: QueryPartQ;
 
-          if (row.rowType === common.RowTypeEnum.Metric) {
+          if (row.rowType === RowTypeEnum.Metric) {
             queryPartQ = {
               connectionId: row.query.connectionId,
               connectionType: row.query.connectionType,
@@ -497,7 +483,7 @@ export class GetQueryCommand extends CustomCommand {
           let rowPartQ: RowPartQ = {
             rowId: row.rowId,
             name:
-              row.rowType === common.RowTypeEnum.Metric
+              row.rowType === RowTypeEnum.Metric
                 ? `${row.partNodeLabel} ${row.partFieldLabel} by ${row.timeNodeLabel} ${row.timeFieldLabel} - ${row.topLabel}`
                 : row.name,
             rowType: row.rowType,
@@ -534,21 +520,21 @@ export class GetQueryCommand extends CustomCommand {
 
     let log: any = {};
 
-    if (common.isDefined(this.chartId)) {
+    if (isDefined(this.chartId)) {
       log.chart = chartPartQ;
     }
 
-    if (common.isDefined(this.dashboardId)) {
+    if (isDefined(this.dashboardId)) {
       log.dashboard = dashboardPartQ;
     }
 
-    if (common.isDefined(this.reportId)) {
+    if (isDefined(this.reportId)) {
       log.report = reportPartQ;
     }
 
     logToConsoleMcli({
       log: log,
-      logLevel: common.LogLevelEnum.Info,
+      logLevel: LogLevelEnum.Info,
       context: this.context,
       isJson: this.json
     });

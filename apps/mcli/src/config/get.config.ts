@@ -1,19 +1,20 @@
 import { parse } from 'dotenv';
 import * as fse from 'fs-extra';
-import { common } from '~mcli/barrels/common';
-import { interfaces } from '~mcli/barrels/interfaces';
+import { ErEnum } from '~common/enums/er.enum';
+import { isDefined } from '~common/functions/is-defined';
 import { transformValidSyncMcli } from '~mcli/functions/transform-valid-sync-mcli';
+import { McliConfig } from './mcli-config';
 
 export function getConfig(envPath?: string) {
-  let envFilePath = common.isDefined(envPath)
+  let envFilePath = isDefined(envPath)
     ? envPath
-    : common.isDefined(process.env.ENV_FILE_PATH)
+    : isDefined(process.env.ENV_FILE_PATH)
       ? process.env.ENV_FILE_PATH
       : '.env';
 
   let envFile: any = {};
 
-  if (common.isDefined(envFilePath)) {
+  if (isDefined(envFilePath)) {
     let isPathExist = fse.pathExistsSync(envFilePath);
     if (isPathExist === true) {
       let stat = fse.statSync(envFilePath);
@@ -23,7 +24,7 @@ export function getConfig(envPath?: string) {
     }
   }
 
-  let config: interfaces.Config = {
+  let config: McliConfig = {
     mproveCliHost: process.env.MPROVE_CLI_HOST || envFile.MPROVE_CLI_HOST,
 
     mproveCliEmail: process.env.MPROVE_CLI_EMAIL || envFile.MPROVE_CLI_EMAIL,
@@ -60,9 +61,9 @@ export function getConfig(envPath?: string) {
   };
 
   let validatedConfig = transformValidSyncMcli({
-    classType: interfaces.Config,
+    classType: McliConfig,
     object: config,
-    errorMessage: common.ErEnum.MCLI_WRONG_ENV_VALUES
+    errorMessage: ErEnum.MCLI_WRONG_ENV_VALUES
   });
 
   return validatedConfig;

@@ -2,11 +2,6 @@ import * as nodegit from '@figma/nodegit';
 import { Command, Option } from 'clipanion';
 import * as fse from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
-import { apiToBackend } from '~mcli/barrels/api-to-backend';
-import { common } from '~mcli/barrels/common';
-import { constants } from '~mcli/barrels/constants';
-import { interfaces } from '~mcli/barrels/interfaces';
-import { nodeCommon } from '~mcli/barrels/node-common';
 import { getConfig } from '~mcli/config/get.config';
 import { getFilesUrl } from '~mcli/functions/get-files-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
@@ -76,23 +71,21 @@ export class SyncCommand extends CustomCommand {
   });
 
   async execute() {
-    if (common.isUndefined(this.context.config)) {
+    if (isUndefined(this.context.config)) {
       this.context.config = getConfig(this.envFilePath);
     }
 
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
-    if (common.isUndefined(this.projectId)) {
-      let serverError = new common.ServerError({
-        message: common.ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+    if (isUndefined(this.projectId)) {
+      let serverError = new ServerError({
+        message: ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
         originalError: null
       });
       throw serverError;
     }
 
-    let repoDir = common.isDefined(this.localPath)
-      ? this.localPath
-      : process.cwd();
+    let repoDir = isDefined(this.localPath) ? this.localPath : process.cwd();
 
     let gitRepo = <nodegit.Repository>await nodegit.Repository.open(repoDir);
 
@@ -106,8 +99,8 @@ export class SyncCommand extends CustomCommand {
 
     let statusFiles: nodegit.StatusFile[] = await gitRepo.getStatus();
 
-    let syncParentPath = `${repoDir}/${common.MPROVE_CACHE_DIR}`;
-    let syncFilePath = `${syncParentPath}/${common.MPROVE_SYNC_FILENAME}`;
+    let syncParentPath = `${repoDir}/${MPROVE_CACHE_DIR}`;
+    let syncFilePath = `${syncParentPath}/${MPROVE_SYNC_FILENAME}`;
 
     if (this.firstSync === true) {
       await fse.remove(syncFilePath);
@@ -117,22 +110,22 @@ export class SyncCommand extends CustomCommand {
 
     let syncFileContent;
     if (isSyncFileExist === true) {
-      let { content } = await nodeCommon.readFileCheckSize({
+      let { content } = await readFileCheckSize({
         filePath: syncFilePath,
         getStat: false
       });
       syncFileContent = content;
     }
 
-    let syncConfig: interfaces.SyncConfig = isSyncFileExist
+    let syncConfig: McliSyncConfig = isSyncFileExist
       ? JSON.parse(syncFileContent)
       : undefined;
 
-    let lastSyncTime = common.isDefined(syncConfig?.lastSyncTime)
+    let lastSyncTime = isDefined(syncConfig?.lastSyncTime)
       ? Number(syncConfig.lastSyncTime)
       : 0;
 
-    let { changedFiles, deletedFiles } = await nodeCommon.getSyncFiles({
+    let { changedFiles, deletedFiles } = await getSyncFiles({
       repoDir: repoDir,
       statusFiles: statusFiles,
       lastSyncTime: lastSyncTime
@@ -145,7 +138,7 @@ export class SyncCommand extends CustomCommand {
 
     let localReqSentTime = Date.now();
 
-    let syncRepoReqPayload: apiToBackend.ToBackendSyncRepoRequestPayload = {
+    let syncRepoReqPayload: ToBackendSyncRepoRequestPayload = {
       projectId: this.projectId,
       branchId: currentBranchName,
       envId: this.env,
@@ -155,9 +148,9 @@ export class SyncCommand extends CustomCommand {
       localDeletedFiles: localDeletedFiles
     };
 
-    let syncRepoResp = await mreq<apiToBackend.ToBackendSyncRepoResponse>({
+    let syncRepoResp = await mreq<ToBackendSyncRepoResponse>({
       loginToken: loginToken,
-      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSyncRepo,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSyncRepo,
       payload: syncRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
@@ -166,7 +159,7 @@ export class SyncCommand extends CustomCommand {
 
     await forEachSeries(
       syncRepoResp.payload.restDeletedFiles,
-      async (x: common.DiskSyncFile) => {
+      async (x: DiskSyncFile) => {
         let filePath = `${repoDir}/${x.path}`;
 
         let isFileExist = await fse.pathExists(filePath);
@@ -178,7 +171,7 @@ export class SyncCommand extends CustomCommand {
 
     await forEachSeries(
       syncRepoResp.payload.restChangedFiles,
-      async (x: common.DiskSyncFile) => {
+      async (x: DiskSyncFile) => {
         let filePath = `${repoDir}/${x.path}`;
 
         let isFileExist = await fse.pathExists(filePath);
@@ -193,7 +186,7 @@ export class SyncCommand extends CustomCommand {
 
     //
 
-    let localChangesToCommit = await nodeCommon.getChangesToCommit({
+    let localChangesToCommit = await getChangesToCommit({
       repoDir: repoDir,
       addContent: true
     });
@@ -208,18 +201,18 @@ export class SyncCommand extends CustomCommand {
           localChangesToCommit: localChangesToCommit,
           devChangesToCommit: devChangesToCommit
         },
-        logLevel: common.LogLevelEnum.Info,
+        logLevel: LogLevelEnum.Info,
         context: this.context,
         isJson: this.json
       });
 
-      let serverError = new common.ServerError({
-        message: common.ErEnum.MCLI_SYNC_FAILED
+      let serverError = new ServerError({
+        message: ErEnum.MCLI_SYNC_FAILED
       });
       throw serverError;
     }
 
-    await common.sleep(constants.POSSIBLE_TIME_DIFF_MS);
+    await sleep(POSSIBLE_TIME_DIFF_MS);
 
     let syncTime = await makeSyncTime({ skipDelay: true });
 
@@ -281,7 +274,7 @@ export class SyncCommand extends CustomCommand {
 
     logToConsoleMcli({
       log: log,
-      logLevel: common.LogLevelEnum.Info,
+      logLevel: LogLevelEnum.Info,
       context: this.context,
       isJson: this.json
     });

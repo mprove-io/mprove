@@ -1,8 +1,5 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
-import { apiToBackend } from '~mcli/barrels/api-to-backend';
-import { common } from '~mcli/barrels/common';
-import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
 import { getFilesUrl } from '~mcli/functions/get-files-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';
@@ -34,8 +31,8 @@ export class PullCommand extends CustomCommand {
 
   repo = Option.String('--repo', {
     required: true,
-    validator: t.isEnum(enums.RepoEnum),
-    description: `(required, "${enums.RepoEnum.Dev}" or "${enums.RepoEnum.Production}")`
+    validator: t.isEnum(RepoEnum),
+    description: `(required, "${RepoEnum.Dev}" or "${RepoEnum.Production}")`
   });
 
   branch = Option.String('--branch', {
@@ -65,15 +62,15 @@ export class PullCommand extends CustomCommand {
   });
 
   async execute() {
-    if (common.isUndefined(this.context.config)) {
+    if (isUndefined(this.context.config)) {
       this.context.config = getConfig(this.envFilePath);
     }
 
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
-    if (common.isUndefined(this.projectId)) {
-      let serverError = new common.ServerError({
-        message: common.ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+    if (isUndefined(this.projectId)) {
+      let serverError = new ServerError({
+        message: ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
         originalError: null
       });
       throw serverError;
@@ -83,16 +80,16 @@ export class PullCommand extends CustomCommand {
 
     let loginToken = await getLoginToken(this.context);
 
-    let pullRepoReqPayload: apiToBackend.ToBackendPullRepoRequestPayload = {
+    let pullRepoReqPayload: ToBackendPullRepoRequestPayload = {
       projectId: this.projectId,
       isRepoProd: isRepoProd,
       branchId: this.branch,
       envId: this.env
     };
 
-    let pullRepoResp = await mreq<apiToBackend.ToBackendPullRepoResponse>({
+    let pullRepoResp = await mreq<ToBackendPullRepoResponse>({
       loginToken: loginToken,
-      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPullRepo,
       payload: pullRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
@@ -129,7 +126,7 @@ export class PullCommand extends CustomCommand {
 
     logToConsoleMcli({
       log: log,
-      logLevel: common.LogLevelEnum.Info,
+      logLevel: LogLevelEnum.Info,
       context: this.context,
       isJson: this.json
     });

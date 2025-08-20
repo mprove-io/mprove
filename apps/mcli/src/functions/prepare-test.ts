@@ -1,15 +1,27 @@
 import { BaseContext, Cli, CommandClass } from 'clipanion';
-import { apiToBackend } from '~mcli/barrels/api-to-backend';
-import { common } from '~mcli/barrels/common';
-import { interfaces } from '~mcli/barrels/interfaces';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import {
+  ToBackendDeleteRecordsRequestPayload,
+  ToBackendDeleteRecordsResponse
+} from '~common/interfaces/to-backend/test-routes/to-backend-delete-records';
+import {
+  ToBackendSeedRecordsRequestPayload,
+  ToBackendSeedRecordsResponse
+} from '~common/interfaces/to-backend/test-routes/to-backend-seed-records';
+import {
+  ToBackendLoginUserRequestPayload,
+  ToBackendLoginUserResponse
+} from '~common/interfaces/to-backend/users/to-backend-login-user';
+import { McliConfig } from '~mcli/config/mcli-config';
 import { CustomContext } from '~mcli/models/custom-command';
 import { mreq } from './mreq';
 
 export async function prepareTest(item: {
   command: CommandClass<CustomContext | BaseContext>;
-  config: interfaces.Config;
-  deletePack?: apiToBackend.ToBackendDeleteRecordsRequestPayload;
-  seedPack?: apiToBackend.ToBackendSeedRecordsRequestPayload;
+  config: McliConfig;
+  deletePack?: ToBackendDeleteRecordsRequestPayload;
+  seedPack?: ToBackendSeedRecordsRequestPayload;
   loginEmail?: string;
   loginPassword?: string;
 }) {
@@ -24,38 +36,35 @@ export async function prepareTest(item: {
     binaryVersion: require('../../../../package.json').version
   });
 
-  if (common.isDefined(command)) {
+  if (isDefined(command)) {
     cli.register(command);
   }
 
-  if (common.isDefined(deletePack)) {
-    await mreq<apiToBackend.ToBackendDeleteRecordsResponse>({
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
+  if (isDefined(deletePack)) {
+    await mreq<ToBackendDeleteRecordsResponse>({
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
       payload: deletePack,
       host: config.mproveCliHost
     });
   }
 
-  if (common.isDefined(seedPack)) {
-    await mreq<apiToBackend.ToBackendSeedRecordsResponse>({
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
+  if (isDefined(seedPack)) {
+    await mreq<ToBackendSeedRecordsResponse>({
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
       payload: seedPack,
       host: config.mproveCliHost
     });
   }
 
-  let loginUserResp: apiToBackend.ToBackendLoginUserResponse;
-  if (common.isDefined(loginEmail) && common.isDefined(loginPassword)) {
-    let loginUserReqPayload: apiToBackend.ToBackendLoginUserRequestPayload = {
+  let loginUserResp: ToBackendLoginUserResponse;
+  if (isDefined(loginEmail) && isDefined(loginPassword)) {
+    let loginUserReqPayload: ToBackendLoginUserRequestPayload = {
       email: loginEmail,
       password: loginPassword
     };
 
-    loginUserResp = await mreq<apiToBackend.ToBackendLoginUserResponse>({
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+    loginUserResp = await mreq<ToBackendLoginUserResponse>({
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendLoginUser,
       payload: loginUserReqPayload,
       host: config.mproveCliHost
     });
@@ -63,7 +72,7 @@ export async function prepareTest(item: {
 
   let createMockContext = (itemC: {
     loginToken: string;
-    config: interfaces.Config;
+    config: McliConfig;
   }) => {
     let out = '';
     let err = '';

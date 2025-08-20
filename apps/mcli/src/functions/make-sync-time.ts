@@ -1,5 +1,5 @@
-import { common } from '~mcli/barrels/common';
-import { constants } from '~mcli/barrels/constants';
+import { POSSIBLE_TIME_DIFF_MS } from '~common/constants/top-mcli';
+import { sleep } from '~common/functions/sleep';
 
 export async function makeSyncTime(item?: { skipDelay?: boolean }) {
   let syncTime;
@@ -7,9 +7,9 @@ export async function makeSyncTime(item?: { skipDelay?: boolean }) {
   if (item?.skipDelay === true) {
     syncTime = Date.now();
   } else {
-    await common.sleep(constants.POSSIBLE_TIME_DIFF_MS);
+    await sleep(POSSIBLE_TIME_DIFF_MS);
     syncTime = Date.now();
-    await common.sleep(constants.POSSIBLE_TIME_DIFF_MS);
+    await sleep(POSSIBLE_TIME_DIFF_MS);
   }
 
   return syncTime;

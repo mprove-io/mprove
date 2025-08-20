@@ -1,8 +1,5 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
-import { apiToBackend } from '~mcli/barrels/api-to-backend';
-import { common } from '~mcli/barrels/common';
-import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
 import { getChartUrl } from '~mcli/functions/get-chart-url';
 import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';
@@ -16,12 +13,12 @@ interface ChartPart {
   title: string;
   chartId: string;
   url: string;
-  query: common.Query;
+  query: Query;
 }
 
 interface TilePart {
   title: string;
-  query: common.Query;
+  query: Query;
 }
 
 interface DashboardPart {
@@ -58,8 +55,8 @@ export class RunCommand extends CustomCommand {
 
   repo = Option.String('--repo', {
     required: true,
-    validator: t.isEnum(enums.RepoEnum),
-    description: `(required, "${enums.RepoEnum.Dev}" or "${enums.RepoEnum.Production}")`
+    validator: t.isEnum(RepoEnum),
+    description: `(required, "${RepoEnum.Dev}" or "${RepoEnum.Production}")`
   });
 
   branch = Option.String('--branch', {
@@ -121,32 +118,32 @@ export class RunCommand extends CustomCommand {
   });
 
   async execute() {
-    if (common.isUndefined(this.context.config)) {
+    if (isUndefined(this.context.config)) {
       this.context.config = getConfig(this.envFilePath);
     }
 
     this.projectId = this.projectId || this.context.config.mproveCliProjectId;
 
-    if (common.isUndefined(this.projectId)) {
-      let serverError = new common.ServerError({
-        message: common.ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
+    if (isUndefined(this.projectId)) {
+      let serverError = new ServerError({
+        message: ErEnum.MCLI_PROJECT_ID_IS_NOT_DEFINED,
         originalError: null
       });
       throw serverError;
     }
 
     if (this.noDashboards === true && this.getDashboards === true) {
-      let serverError = new common.ServerError({
-        message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
+      let serverError = new ServerError({
+        message: ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
         data: `no-dashboards and get-dashboards`,
         originalError: null
       });
       throw serverError;
     }
 
-    if (this.noDashboards === true && common.isDefined(this.dashboardIds)) {
-      let serverError = new common.ServerError({
-        message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
+    if (this.noDashboards === true && isDefined(this.dashboardIds)) {
+      let serverError = new ServerError({
+        message: ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
         data: `no-dashboards and dashboard-ids`,
         originalError: null
       });
@@ -154,26 +151,26 @@ export class RunCommand extends CustomCommand {
     }
 
     if (this.noCharts === true && this.getCharts === true) {
-      let serverError = new common.ServerError({
-        message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
+      let serverError = new ServerError({
+        message: ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
         data: `no-charts and get-charts`,
         originalError: null
       });
       throw serverError;
     }
 
-    if (this.noCharts === true && common.isDefined(this.chartIds)) {
-      let serverError = new common.ServerError({
-        message: common.ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
+    if (this.noCharts === true && isDefined(this.chartIds)) {
+      let serverError = new ServerError({
+        message: ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
         data: `no-charts and chart-ids`,
         originalError: null
       });
       throw serverError;
     }
 
-    if (common.isDefined(this.sleep) && this.wait === false) {
-      let serverError = new common.ServerError({
-        message: common.ErEnum.MCLI_SLEEP_SECONDS_DOES_NOT_WORK_WITHOUT_WAIT,
+    if (isDefined(this.sleep) && this.wait === false) {
+      let serverError = new ServerError({
+        message: ErEnum.MCLI_SLEEP_SECONDS_DOES_NOT_WORK_WITHOUT_WAIT,
         originalError: null
       });
       throw serverError;
@@ -183,19 +180,18 @@ export class RunCommand extends CustomCommand {
 
     let loginToken = await getLoginToken(this.context);
 
-    let getProjectReqPayload: apiToBackend.ToBackendGetProjectRequestPayload = {
+    let getProjectReqPayload: ToBackendGetProjectRequestPayload = {
       projectId: this.projectId
     };
 
-    let getProjectResp = await mreq<apiToBackend.ToBackendGetProjectResponse>({
+    let getProjectResp = await mreq<ToBackendGetProjectResponse>({
       loginToken: loginToken,
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetProject,
       payload: getProjectReqPayload,
       host: this.context.config.mproveCliHost
     });
 
-    let getRepoReqPayload: apiToBackend.ToBackendGetRepoRequestPayload = {
+    let getRepoReqPayload: ToBackendGetRepoRequestPayload = {
       projectId: this.projectId,
       isRepoProd: isRepoProd,
       branchId: this.branch,
@@ -203,9 +199,9 @@ export class RunCommand extends CustomCommand {
       isFetch: true
     };
 
-    let getRepoResp = await mreq<apiToBackend.ToBackendGetRepoResponse>({
+    let getRepoResp = await mreq<ToBackendGetRepoResponse>({
       loginToken: loginToken,
-      pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
       payload: getRepoReqPayload,
       host: this.context.config.mproveCliHost
     });
@@ -219,32 +215,31 @@ export class RunCommand extends CustomCommand {
     let chartParts: ChartPart[] = [];
 
     if (this.noCharts === false) {
-      let getChartsReqPayload: apiToBackend.ToBackendGetChartsRequestPayload = {
+      let getChartsReqPayload: ToBackendGetChartsRequestPayload = {
         projectId: this.projectId,
         isRepoProd: isRepoProd,
         branchId: this.branch,
         envId: this.env
       };
 
-      let getChartsResp = await mreq<apiToBackend.ToBackendGetChartsResponse>({
+      let getChartsResp = await mreq<ToBackendGetChartsResponse>({
         loginToken: loginToken,
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetCharts,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetCharts,
         payload: getChartsReqPayload,
         host: this.context.config.mproveCliHost
       });
 
       let chartIds = this.chartIds?.split(',');
 
-      if (common.isDefined(chartIds)) {
+      if (isDefined(chartIds)) {
         chartIds.forEach(x => {
           if (
             getChartsResp.payload.charts
               .map(chart => chart.chartId)
               .indexOf(x) < 0
           ) {
-            let serverError = new common.ServerError({
-              message: common.ErEnum.MCLI_CHART_NOT_FOUND,
+            let serverError = new ServerError({
+              message: ErEnum.MCLI_CHART_NOT_FOUND,
               data: { id: x },
               originalError: null
             });
@@ -256,8 +251,7 @@ export class RunCommand extends CustomCommand {
       chartParts = getChartsResp.payload.charts
         .filter(
           chartPart =>
-            common.isUndefined(chartIds) ||
-            chartIds.indexOf(chartPart.chartId) > -1
+            isUndefined(chartIds) || chartIds.indexOf(chartPart.chartId) > -1
         )
         .map(x => {
           let url = getChartUrl({
@@ -275,7 +269,7 @@ export class RunCommand extends CustomCommand {
             title: x.title,
             chartId: x.chartId,
             url: url,
-            query: { queryId: x.tiles[0].queryId } as common.Query
+            query: { queryId: x.tiles[0].queryId } as Query
           };
 
           mconfigParts.push({
@@ -291,34 +285,31 @@ export class RunCommand extends CustomCommand {
     let dashboardParts: DashboardPart[] = [];
 
     if (this.noDashboards === false) {
-      let getDashboardsReqPayload: apiToBackend.ToBackendGetDashboardsRequestPayload =
-        {
-          projectId: this.projectId,
-          isRepoProd: isRepoProd,
-          branchId: this.branch,
-          envId: this.env
-        };
+      let getDashboardsReqPayload: ToBackendGetDashboardsRequestPayload = {
+        projectId: this.projectId,
+        isRepoProd: isRepoProd,
+        branchId: this.branch,
+        envId: this.env
+      };
 
-      let getDashboardsResp =
-        await mreq<apiToBackend.ToBackendGetDashboardsResponse>({
-          loginToken: loginToken,
-          pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
-          payload: getDashboardsReqPayload,
-          host: this.context.config.mproveCliHost
-        });
+      let getDashboardsResp = await mreq<ToBackendGetDashboardsResponse>({
+        loginToken: loginToken,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
+        payload: getDashboardsReqPayload,
+        host: this.context.config.mproveCliHost
+      });
 
       let dashboardIds = this.dashboardIds?.split(',');
 
-      if (common.isDefined(dashboardIds)) {
+      if (isDefined(dashboardIds)) {
         dashboardIds.forEach(x => {
           if (
             getDashboardsResp.payload.dashboards
               .map(dashboard => dashboard.dashboardId)
               .indexOf(x) < 0
           ) {
-            let serverError = new common.ServerError({
-              message: common.ErEnum.MCLI_DASHBOARD_NOT_FOUND,
+            let serverError = new ServerError({
+              message: ErEnum.MCLI_DASHBOARD_NOT_FOUND,
               data: { id: x },
               originalError: null
             });
@@ -330,7 +321,7 @@ export class RunCommand extends CustomCommand {
       dashboardParts = getDashboardsResp.payload.dashboards
         .filter(
           dashboard =>
-            common.isUndefined(dashboardIds) ||
+            isUndefined(dashboardIds) ||
             dashboardIds.indexOf(dashboard.dashboardId) > -1
         )
         .map(dashboard => {
@@ -341,7 +332,7 @@ export class RunCommand extends CustomCommand {
               title: tile.title,
               query: {
                 queryId: tile.queryId
-              } as common.Query
+              } as Query
             };
 
             tileParts.push(tilePart);
@@ -377,29 +368,26 @@ export class RunCommand extends CustomCommand {
     // let uniqueQueryIds = [...new Set(queryIdsWithDuplicates)];
 
     //
-    let getQueriesReqPayloadStart: apiToBackend.ToBackendGetQueriesRequestPayload =
-      {
-        projectId: this.projectId,
-        isRepoProd: isRepoProd,
-        branchId: this.branch,
-        envId: this.env,
-        mconfigIds: mconfigParts.map(x => x.mconfigId)
-        // queryIds: uniqueQueryIds
-      };
+    let getQueriesReqPayloadStart: ToBackendGetQueriesRequestPayload = {
+      projectId: this.projectId,
+      isRepoProd: isRepoProd,
+      branchId: this.branch,
+      envId: this.env,
+      mconfigIds: mconfigParts.map(x => x.mconfigId)
+      // queryIds: uniqueQueryIds
+    };
 
-    let getQueriesRespStart =
-      await mreq<apiToBackend.ToBackendGetQueriesResponse>({
-        loginToken: loginToken,
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQueries,
-        payload: getQueriesReqPayloadStart,
-        host: this.context.config.mproveCliHost
-      });
+    let getQueriesRespStart = await mreq<ToBackendGetQueriesResponse>({
+      loginToken: loginToken,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQueries,
+      payload: getQueriesReqPayloadStart,
+      host: this.context.config.mproveCliHost
+    });
 
     let queriesStart = getQueriesRespStart.payload.queries;
     //
 
-    let runQueriesReqPayload: apiToBackend.ToBackendRunQueriesRequestPayload = {
+    let runQueriesReqPayload: ToBackendRunQueriesRequestPayload = {
       projectId: this.projectId,
       isRepoProd: isRepoProd,
       branchId: this.branch,
@@ -409,15 +397,14 @@ export class RunCommand extends CustomCommand {
       poolSize: this.concurrency
     };
 
-    let runQueriesResp = await mreq<apiToBackend.ToBackendRunQueriesResponse>({
+    let runQueriesResp = await mreq<ToBackendRunQueriesResponse>({
       loginToken: loginToken,
-      pathInfoName:
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRunQueries,
       payload: runQueriesReqPayload,
       host: this.context.config.mproveCliHost
     });
 
-    if (this.noCharts === false && common.isUndefined(this.concurrency)) {
+    if (this.noCharts === false && isUndefined(this.concurrency)) {
       chartParts.forEach(v => {
         let query = runQueriesResp.payload.runningQueries.find(
           q => q.queryId === v.query.queryId
@@ -426,7 +413,7 @@ export class RunCommand extends CustomCommand {
       });
     }
 
-    if (this.noDashboards === false && common.isUndefined(this.concurrency)) {
+    if (this.noDashboards === false && isUndefined(this.concurrency)) {
       dashboardParts.forEach(dashboardPart => {
         dashboardPart.tiles.forEach(tilePart => {
           let query = runQueriesResp.payload.runningQueries.find(
@@ -440,39 +427,36 @@ export class RunCommand extends CustomCommand {
     // let queryIdsToGet: string[] = [...uniqueQueryIds];
     let mconfigPartsToGet = [...mconfigParts];
 
-    let waitQueries: common.Query[] = [];
+    let waitQueries: Query[] = [];
 
     if (this.wait === true) {
-      this.sleep = common.isDefined(this.sleep) ? this.sleep : 3;
+      this.sleep = isDefined(this.sleep) ? this.sleep : 3;
 
-      await common.sleep(this.sleep * 1000);
+      await sleep(this.sleep * 1000);
 
       // while (queryIdsToGet.length > 0) {
       while (mconfigPartsToGet.length > 0) {
-        let getQueriesReqPayload: apiToBackend.ToBackendGetQueriesRequestPayload =
-          {
-            projectId: this.projectId,
-            isRepoProd: isRepoProd,
-            branchId: this.branch,
-            envId: this.env,
-            mconfigIds: mconfigPartsToGet.map(x => x.mconfigId)
-            // queryIds: queryIdsToGet
-          };
+        let getQueriesReqPayload: ToBackendGetQueriesRequestPayload = {
+          projectId: this.projectId,
+          isRepoProd: isRepoProd,
+          branchId: this.branch,
+          envId: this.env,
+          mconfigIds: mconfigPartsToGet.map(x => x.mconfigId)
+          // queryIds: queryIdsToGet
+        };
 
-        let getQueriesResp =
-          await mreq<apiToBackend.ToBackendGetQueriesResponse>({
-            loginToken: loginToken,
-            pathInfoName:
-              apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQueries,
-            payload: getQueriesReqPayload,
-            host: this.context.config.mproveCliHost
-          });
+        let getQueriesResp = await mreq<ToBackendGetQueriesResponse>({
+          loginToken: loginToken,
+          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQueries,
+          payload: getQueriesReqPayload,
+          host: this.context.config.mproveCliHost
+        });
 
         getQueriesResp.payload.queries.forEach(query => {
           let queryStart = queriesStart.find(y => y.queryId === query.queryId);
 
           if (
-            query.status !== common.QueryStatusEnum.Running &&
+            query.status !== QueryStatusEnum.Running &&
             query.serverTs > queryStart.serverTs
           ) {
             waitQueries.push(query);
@@ -499,7 +483,7 @@ export class RunCommand extends CustomCommand {
         });
 
         if (mconfigPartsToGet.length > 0) {
-          await common.sleep(this.sleep * 1000);
+          await sleep(this.sleep * 1000);
         }
       }
     }
@@ -517,7 +501,7 @@ export class RunCommand extends CustomCommand {
       queriesStats.error === 0
         ? []
         : chartParts
-            .filter(x => x.query.status === common.QueryStatusEnum.Error)
+            .filter(x => x.query.status === QueryStatusEnum.Error)
             .map(v => ({
               title: v.title,
               chartId: v.chartId,
@@ -526,7 +510,7 @@ export class RunCommand extends CustomCommand {
                 lastErrorMessage: v.query.lastErrorMessage,
                 status: v.query.status,
                 queryId: v.query.queryId
-              } as common.Query
+              } as Query
             }));
 
     let errorDashboards: DashboardPart[] =
@@ -535,23 +519,22 @@ export class RunCommand extends CustomCommand {
         : dashboardParts
             .filter(
               x =>
-                x.tiles.filter(
-                  y => y.query.status === common.QueryStatusEnum.Error
-                ).length > 0
+                x.tiles.filter(y => y.query.status === QueryStatusEnum.Error)
+                  .length > 0
             )
             .map(d => ({
               title: d.title,
               dashboardId: d.dashboardId,
               url: d.url,
               tiles: d.tiles
-                .filter(q => q.query.status === common.QueryStatusEnum.Error)
+                .filter(q => q.query.status === QueryStatusEnum.Error)
                 .map(r => ({
                   title: r.title,
                   query: {
                     lastErrorMessage: r.query.lastErrorMessage,
                     status: r.query.status,
                     queryId: r.query.queryId
-                  } as common.Query
+                  } as Query
                 }))
             }));
 
@@ -571,7 +554,7 @@ export class RunCommand extends CustomCommand {
 
     logToConsoleMcli({
       log: log,
-      logLevel: common.LogLevelEnum.Info,
+      logLevel: LogLevelEnum.Info,
       context: this.context,
       isJson: this.json
     });

@@ -1,8 +1,4 @@
 import test from 'ava';
-import { apiToBackend } from '~mcli/barrels/api-to-backend';
-import { common } from '~mcli/barrels/common';
-import { constants } from '~mcli/barrels/constants';
-import { enums } from '~mcli/barrels/enums';
 import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
@@ -21,10 +17,10 @@ test('1', async t => {
   let context: CustomContext;
 
   await retry(async (bail: any) => {
-    let repo = enums.RepoEnum.Dev;
-    let branch = common.BRANCH_MAIN;
+    let repo = RepoEnum.Dev;
+    let branch = BRANCH_MAIN;
 
-    let projectId = common.makeId();
+    let projectId = makeId();
     let commandLine = `push \
 --project-id ${projectId} \
 --repo ${repo} \
@@ -34,7 +30,7 @@ test('1', async t => {
 --get-repo \
 --json`;
 
-    let userId = common.makeId();
+    let userId = makeId();
     let email = `${testId}@example.com`;
     let password = '123123';
 
@@ -77,7 +73,7 @@ test('1', async t => {
               projectId,
               name: projectName,
               defaultBranch: branch,
-              remoteType: common.ProjectRemoteTypeEnum.Managed,
+              remoteType: ProjectRemoteTypeEnum.Managed,
               gitUrl: undefined,
               publicKey: undefined,
               privateKey: undefined
@@ -100,7 +96,7 @@ test('1', async t => {
 
       context = mockContext as any;
 
-      let saveFileReqPayload: apiToBackend.ToBackendSaveFileRequestPayload = {
+      let saveFileReqPayload: ToBackendSaveFileRequestPayload = {
         projectId: projectId,
         branchId: branch,
         envId: 'prod',
@@ -108,37 +104,32 @@ test('1', async t => {
         content: '123'
       };
 
-      let saveFileResp = await mreq<apiToBackend.ToBackendSaveFileResponse>({
+      let saveFileResp = await mreq<ToBackendSaveFileResponse>({
         loginToken: context.loginToken,
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveFile,
         payload: saveFileReqPayload,
         host: config.mproveCliHost
       });
 
-      let commitRepoReqPayload: apiToBackend.ToBackendCommitRepoRequestPayload =
-        {
-          projectId: projectId,
-          isRepoProd: false,
-          branchId: branch,
-          commitMessage: 'm1'
-        };
+      let commitRepoReqPayload: ToBackendCommitRepoRequestPayload = {
+        projectId: projectId,
+        isRepoProd: false,
+        branchId: branch,
+        commitMessage: 'm1'
+      };
 
-      let commitRepoResp = await mreq<apiToBackend.ToBackendCommitRepoResponse>(
-        {
-          loginToken: context.loginToken,
-          pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
-          payload: commitRepoReqPayload,
-          host: config.mproveCliHost
-        }
-      );
+      let commitRepoResp = await mreq<ToBackendCommitRepoResponse>({
+        loginToken: context.loginToken,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
+        payload: commitRepoReqPayload,
+        host: config.mproveCliHost
+      });
 
       code = await cli.run(commandLine.split(' '), context);
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: common.LogLevelEnum.Error,
+        logLevel: LogLevelEnum.Error,
         context: context,
         isJson: true
       });
@@ -149,7 +140,7 @@ test('1', async t => {
     } catch (e) {
       logToConsoleMcli({
         log: e,
-        logLevel: common.LogLevelEnum.Error,
+        logLevel: LogLevelEnum.Error,
         context: context,
         isJson: true
       });
@@ -157,19 +148,19 @@ test('1', async t => {
 
     assert.equal(code === 0, true, `code === 0`);
     assert.equal(
-      common.isDefined(parsedOutput?.validationErrorsTotal),
+      isDefined(parsedOutput?.validationErrorsTotal),
       true,
-      `common.isDefined(parsedOutput?.validationErrorsTotal)`
+      `isDefined(parsedOutput?.validationErrorsTotal)`
     );
 
     isPass = true;
-  }, constants.RETRY_OPTIONS).catch((er: any) => {
+  }, RETRY_OPTIONS).catch((er: any) => {
     console.log(context.stdout.toString());
     console.log(context.stderr.toString());
 
     logToConsoleMcli({
       log: er,
-      logLevel: common.LogLevelEnum.Error,
+      logLevel: LogLevelEnum.Error,
       context: undefined,
       isJson: false
     });
