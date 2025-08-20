@@ -27,13 +27,31 @@ test('1', async t => {
     let defaultBranch = BRANCH_MAIN;
 
     let projectId = makeId();
+    let reportId = '0ZN4W4XE9LQ7TSF5DQYC';
+    let rowId = 'B';
+
+    // yarn mcli get-query \
+    // --project-id DXYE72ODCP5LWPWH2EXQ \
+    // --repo dev \
+    // --branch main \
+    // --env prod \
+    // --report-id 0ZN4W4XE9LQ7TSF5DQYC \
+    // --row-id B \
+    // --detail days \
+    // --range "f\`last 3 days\`" \
+    // --timezone Asia/Yekaterinburg \
+    // --get-sql \
+    // --get-data
+
     let commandLine = `get-query \
 --project-id ${projectId} \
 --repo dev \
 --branch ${defaultBranch} \
 --env prod \
---report-id r2 \
---row-id B \
+--report-id ${reportId} \
+--row-id ${rowId} \
+--detail days \
+--timezone Asia/Yekaterinburg \
 --get-sql \
 --get-data \
 --json`;

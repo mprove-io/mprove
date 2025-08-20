@@ -27,12 +27,14 @@ test('1', async t => {
     let defaultBranch = BRANCH_MAIN;
 
     let projectId = makeId();
+    let chartId = 'C3ENGIP2LC00GUFMP333';
+
     let commandLine = `get-query \
 --project-id ${projectId} \
 --repo dev \
 --branch ${defaultBranch} \
 --env prod \
---chart-id 4K9SNSMG0IQPQZ9CL23U \
+--chart-id ${chartId} \
 --get-sql \
 --get-data \
 --json`;

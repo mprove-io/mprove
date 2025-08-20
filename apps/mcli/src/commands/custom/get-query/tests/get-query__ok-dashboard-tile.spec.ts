@@ -27,12 +27,14 @@ test('1', async t => {
     let defaultBranch = BRANCH_MAIN;
 
     let projectId = makeId();
+    let dashboardId = 'c1_d1';
+
     let commandLine = `get-query \
 --project-id ${projectId} \
 --repo dev \
 --branch ${defaultBranch} \
 --env prod \
---dashboard-id ec1_d1 \
+--dashboard-id ${dashboardId} \
 --tile-index 0 \
 --get-sql \
 --get-data \

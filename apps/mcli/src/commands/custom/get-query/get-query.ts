@@ -174,19 +174,15 @@ export class GetQueryCommand extends CustomCommand {
     description: '(default "UTC") Timezone'
   });
 
-  timeSpec = Option.String('--timeSpec', 'days', {
+  timeSpec = Option.String('--detail', 'days', {
+    // TODO: timestamps
     description:
       '(default "days") "minutes" | "hours" | "days" | "weeks" | "months" | "quarters" | "years"'
   });
 
-  timeRange = Option.String(
-    '--timeRange',
-    'last 5 days complete plus current', // TODO: new fractions 2
-    {
-      description:
-        '(default "last 5 days complete plus current") Ts Filter Expression'
-    }
-  );
+  timeRange = Option.String('--range', 'f`last 5 days`', {
+    description: '(default "f`last 5 days`") Ts Filter Expression'
+  });
 
   getSql = Option.Boolean('--get-sql', false, {
     description: '(default false), show query sql in output'
