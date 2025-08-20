@@ -9,7 +9,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
-
 import { SkipJwtCheck } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';

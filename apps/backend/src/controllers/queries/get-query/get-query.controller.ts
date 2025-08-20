@@ -1,6 +1,4 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-
-import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -13,6 +11,7 @@ import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { isDefined } from '~common/functions/is-defined';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()

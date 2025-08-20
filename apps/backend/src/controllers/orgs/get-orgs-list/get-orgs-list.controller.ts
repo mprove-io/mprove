@@ -1,7 +1,5 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq, inArray } from 'drizzle-orm';
-
-import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';

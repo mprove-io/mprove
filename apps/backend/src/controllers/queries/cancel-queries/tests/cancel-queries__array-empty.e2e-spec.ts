@@ -1,5 +1,4 @@
 import test from 'ava';
-
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '~common/_index';

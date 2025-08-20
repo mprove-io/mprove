@@ -1,11 +1,10 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-
-import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
+import { isDefined } from '~common/functions/is-defined';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()

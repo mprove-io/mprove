@@ -1,6 +1,4 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-
-import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -14,6 +12,7 @@ import { ReportRowService } from '~backend/services/report-row.service';
 import { ReportsService } from '~backend/services/reports.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { isDefined } from '~common/functions/is-defined';
 
 @UseGuards(ValidateRequestGuard)
 @Controller()

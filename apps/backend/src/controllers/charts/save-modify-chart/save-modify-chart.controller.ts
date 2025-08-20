@@ -9,14 +9,18 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-
-import { AttachUser } from '~backend/decorators/_index';
+import { BackendConfig } from '~backend/config/backend-config';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
+import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { checkAccess } from '~backend/functions/check-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeChartFileText } from '~backend/functions/make-chart-file-text';
+import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
@@ -33,6 +37,33 @@ import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
+import {
+  EMPTY_STRUCT_ID,
+  PROD_REPO_ID,
+  RESTRICTED_USER_ALIAS
+} from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { FileExtensionEnum } from '~common/enums/file-extension.enum';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
+import { encodeFilePath } from '~common/functions/encode-file-path';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeId } from '~common/functions/make-id';
+import { QueryOperation } from '~common/interfaces/backend/query-operation';
+import { Mconfig } from '~common/interfaces/blockml/mconfig';
+import { Query } from '~common/interfaces/blockml/query';
+import {
+  ToBackendSaveModifyChartRequest,
+  ToBackendSaveModifyChartResponsePayload
+} from '~common/interfaces/to-backend/charts/to-backend-save-modify-chart';
+import {
+  ToDiskSaveFileRequest,
+  ToDiskSaveFileResponse
+} from '~common/interfaces/to-disk/07-files/to-disk-save-file';
+import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 

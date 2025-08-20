@@ -8,10 +8,12 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { eq } from 'drizzle-orm';
-
-import { AttachUser } from '~backend/decorators/_index';
+import { BackendConfig } from '~backend/config/backend-config';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
+import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/envs.service';
@@ -19,7 +21,12 @@ import { MakerService } from '~backend/services/maker.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
-import { PROJECT_ENV_PROD } from '~common/constants/top';
+import { EMPTY_STRUCT_ID, PROJECT_ENV_PROD } from '~common/constants/top';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendCreateEnvRequest,
+  ToBackendCreateEnvResponsePayload
+} from '~common/interfaces/to-backend/envs/to-backend-create-env';
 
 let retry = require('async-retry');
 

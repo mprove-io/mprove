@@ -1,6 +1,4 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-
-import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';

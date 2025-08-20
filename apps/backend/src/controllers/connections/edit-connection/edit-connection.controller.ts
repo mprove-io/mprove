@@ -7,16 +7,21 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-
-import { AttachUser } from '~backend/decorators/_index';
+import { BackendConfig } from '~backend/config/backend-config';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { ConnectionsService } from '~backend/services/connections.service';
-import { MakerService } from '~backend/services/maker.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendEditConnectionRequest,
+  ToBackendEditConnectionResponsePayload
+} from '~common/interfaces/to-backend/connections/to-backend-edit-connection';
 
 let retry = require('async-retry');
 
@@ -27,7 +32,6 @@ export class EditConnectionController {
     private projectsService: ProjectsService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
-    private makerService: MakerService,
     private wrapToApiService: WrapToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,

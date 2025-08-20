@@ -1,6 +1,5 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-
 import { AttachUser, SkipJwtCheck } from '~backend/decorators/_index';
 import { LocalAuthGuard } from '~backend/guards/local-auth.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';

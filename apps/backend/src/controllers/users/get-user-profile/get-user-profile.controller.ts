@@ -1,6 +1,4 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-
-import { AttachUser } from '~backend/decorators/_index';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 

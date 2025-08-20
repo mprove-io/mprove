@@ -1,5 +1,4 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-
 import { AttachUser, SkipJwtCheck } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';

@@ -1,7 +1,5 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
-
-import { AttachUser } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
