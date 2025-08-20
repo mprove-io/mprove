@@ -20,10 +20,10 @@ let projectName = testId;
 let memberUserId = makeId();
 let memberUserEmail = `2${testId}@example.com`;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendDeleteMemberResponse;
+  let resp: ToBackendDeleteMemberResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -87,9 +87,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendDeleteMemberRequest = {
+    let req: ToBackendDeleteMemberRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteMember,
+        name: ToBackendRequestInfoNameEnum.ToBackendDeleteMember,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -99,7 +99,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendDeleteMemberResponse>({
+    resp = await sendToBackend<ToBackendDeleteMemberResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

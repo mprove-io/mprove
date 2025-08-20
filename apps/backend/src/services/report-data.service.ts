@@ -2,13 +2,56 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-
+import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { kitsTable } from '~backend/drizzle/postgres/schema/kits';
-import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
+import { KitEnt, kitsTable } from '~backend/drizzle/postgres/schema/kits';
+import {
+  MconfigEnt,
+  mconfigsTable
+} from '~backend/drizzle/postgres/schema/mconfigs';
+import { MemberEnt } from '~backend/drizzle/postgres/schema/members';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import { ProjectEnt } from '~backend/drizzle/postgres/schema/projects';
+import {
+  QueryEnt,
+  queriesTable
+} from '~backend/drizzle/postgres/schema/queries';
+import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
+import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { checkAccess } from '~backend/functions/check-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
+import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
+import { EMPTY_REPORT_ID } from '~common/constants/top';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { RowTypeEnum } from '~common/enums/row-type.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { getTimeSpecDetail } from '~common/functions/get-timespec-detail';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeCopy } from '~common/functions/make-copy';
+import { makeId } from '~common/functions/make-id';
+import { setChartFields } from '~common/functions/set-chart-fields';
+import { setChartTitleOnSelectChange } from '~common/functions/set-chart-title-on-select-change';
+import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
+import { Member } from '~common/interfaces/backend/member';
+import { Filter } from '~common/interfaces/blockml/filter';
+import { Fraction } from '~common/interfaces/blockml/fraction';
+import { FractionControl } from '~common/interfaces/blockml/fraction-control';
+import { FileStore } from '~common/interfaces/blockml/internal/file-store';
+import { Mconfig } from '~common/interfaces/blockml/mconfig';
+import { ModelMetric } from '~common/interfaces/blockml/model-metric';
+import { Parameter } from '~common/interfaces/blockml/parameter';
+import { Query } from '~common/interfaces/blockml/query';
+import { RowRecord } from '~common/interfaces/blockml/row-record';
+import { Rq } from '~common/interfaces/blockml/rq';
+import { Sorting } from '~common/interfaces/blockml/sorting';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '~node-common/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
 import { DocService } from './doc.service';
 import { MalloyService } from './malloy.service';

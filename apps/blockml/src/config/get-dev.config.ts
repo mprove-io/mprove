@@ -1,10 +1,10 @@
 import { parse } from 'dotenv';
 import * as fse from 'fs-extra';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { BlockmlEnvEnum } from '~common/enums/env/blockml-env.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
 import { isDefined } from '~common/functions/is-defined';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 
 export function getDevConfig(envFilePath: any) {
   let envFile: any = {};

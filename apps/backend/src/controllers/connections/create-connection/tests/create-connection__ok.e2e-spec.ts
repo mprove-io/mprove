@@ -19,10 +19,10 @@ let projectName = testId;
 
 let connectionId = 'c1';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendCreateConnectionResponse;
+  let resp: ToBackendCreateConnectionResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -72,10 +72,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendCreateConnectionRequest = {
+    let req: ToBackendCreateConnectionRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendCreateConnection,
+        name: ToBackendRequestInfoNameEnum.ToBackendCreateConnection,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -87,7 +86,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendCreateConnectionResponse>({
+    resp = await sendToBackend<ToBackendCreateConnectionResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

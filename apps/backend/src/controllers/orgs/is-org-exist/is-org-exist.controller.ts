@@ -10,9 +10,9 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 export class IsOrgExistController {
   constructor(@Inject(DRIZZLE) private db: Db) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendIsOrgExist)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendIsOrgExist)
   async isOrgExist(@Req() request: any) {
-    let reqValid: apiToBackend.ToBackendIsOrgExistRequest = request.body;
+    let reqValid: ToBackendIsOrgExistRequest = request.body;
 
     let { name } = reqValid.payload;
 
@@ -20,7 +20,7 @@ export class IsOrgExistController {
       where: eq(orgsTable.name, name)
     });
 
-    let payload: apiToBackend.ToBackendIsOrgExistResponsePayload = {
+    let payload: ToBackendIsOrgExistResponsePayload = {
       isExist: isDefined(org)
     };
 

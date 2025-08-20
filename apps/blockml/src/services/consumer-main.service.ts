@@ -1,13 +1,13 @@
 import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
 import { makeErrorResponseBlockml } from '~blockml/functions/extra/make-error-response-blockml';
 import { makeOkResponseBlockml } from '~blockml/functions/extra/make-ok-response-blockml';
 import { METHOD_RABBIT } from '~common/constants/top';
 import { RabbitBlockmlRoutingEnum } from '~common/enums/rabbit-blockml-routing-keys.enum';
 import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 
 let pathRebuildStruct = RabbitBlockmlRoutingEnum.RebuildStruct.toString();
 

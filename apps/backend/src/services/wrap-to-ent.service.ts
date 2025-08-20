@@ -1,5 +1,18 @@
 import { Injectable } from '@nestjs/common';
-
+import { ChartEnt } from '~backend/drizzle/postgres/schema/charts';
+import { DashboardEnt } from '~backend/drizzle/postgres/schema/dashboards';
+import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
+import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
+import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
+import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { Chart } from '~common/interfaces/blockml/chart';
+import { Dashboard } from '~common/interfaces/blockml/dashboard';
+import { Mconfig } from '~common/interfaces/blockml/mconfig';
+import { Model } from '~common/interfaces/blockml/model';
+import { Query } from '~common/interfaces/blockml/query';
+import { Report } from '~common/interfaces/blockml/report';
 import { HashService } from './hash.service';
 
 @Injectable()

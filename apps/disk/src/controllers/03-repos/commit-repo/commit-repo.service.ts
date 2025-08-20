@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '~common/enums/er.enum';
-import { DiskConfig } from '~common/interfaces/disk/disk-config';
 import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
 import {
@@ -9,6 +8,7 @@ import {
   ToDiskCommitRepoResponsePayload
 } from '~common/interfaces/to-disk/03-repos/to-disk-commit-repo';
 import { ServerError } from '~common/models/server-error';
+import { DiskConfig } from '~disk/config/disk-config';
 import { ensureDir } from '~disk/functions/disk/ensure-dir';
 import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '~disk/functions/disk/is-path-exist';

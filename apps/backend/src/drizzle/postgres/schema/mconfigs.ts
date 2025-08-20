@@ -9,6 +9,11 @@ import {
   pgTable,
   varchar
 } from 'drizzle-orm/pg-core';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { Filter } from '~common/interfaces/blockml/filter';
+import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
+import { Sorting } from '~common/interfaces/blockml/sorting';
+import { StorePart } from '~common/interfaces/blockml/store-part';
 
 export const mconfigsTable = pgTable(
   'mconfigs',

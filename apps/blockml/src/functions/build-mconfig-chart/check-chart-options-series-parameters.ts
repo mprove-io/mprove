@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
 import { CHART_TYPE_VALUES } from '~common/constants/top';
 import { LINE_NUM } from '~common/constants/top-blockml';
@@ -10,7 +11,6 @@ import { LogTypeEnum } from '~common/enums/special/log-type.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { FileChartOptionsSeriesElement } from '~common/interfaces/blockml/internal/file-chart-options-series';
 import { FilePartTile } from '~common/interfaces/blockml/internal/file-part-tile';
 import { FileReport } from '~common/interfaces/blockml/internal/file-report';

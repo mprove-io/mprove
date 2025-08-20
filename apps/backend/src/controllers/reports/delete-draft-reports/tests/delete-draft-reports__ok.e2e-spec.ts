@@ -18,10 +18,10 @@ let testProjectId = 't2';
 let projectId = makeId();
 let projectName = testId;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp2: apiToBackend.ToBackendDeleteDraftReportsResponse;
+  let resp2: ToBackendDeleteDraftReportsResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -80,10 +80,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req1: apiToBackend.ToBackendCreateDraftReportRequest = {
+    let req1: ToBackendCreateDraftReportRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendCreateDraftReport,
+        name: ToBackendRequestInfoNameEnum.ToBackendCreateDraftReport,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -104,17 +103,15 @@ test('1', async t => {
       }
     };
 
-    let resp1 =
-      await sendToBackend<apiToBackend.ToBackendCreateDraftReportResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req1
-      });
+    let resp1 = await sendToBackend<ToBackendCreateDraftReportResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req1
+    });
 
-    let req2: apiToBackend.ToBackendDeleteDraftReportsRequest = {
+    let req2: ToBackendDeleteDraftReportsRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendDeleteDraftReports,
+        name: ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReports,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -127,12 +124,11 @@ test('1', async t => {
       }
     };
 
-    resp2 =
-      await sendToBackend<apiToBackend.ToBackendDeleteDraftReportsResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req2
-      });
+    resp2 = await sendToBackend<ToBackendDeleteDraftReportsResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req2
+    });
 
     // console.log(resp2);
 

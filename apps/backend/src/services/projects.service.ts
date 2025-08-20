@@ -1,10 +1,27 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { eq } from 'drizzle-orm';
-
+import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
+import {
+  ProjectEnt,
+  projectsTable
+} from '~backend/drizzle/postgres/schema/projects';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
+import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
+import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeId } from '~common/functions/make-id';
+import { Ev } from '~common/interfaces/backend/ev';
+import {
+  ToDiskCreateProjectRequest,
+  ToDiskCreateProjectResponse
+} from '~common/interfaces/to-disk/02-projects/to-disk-create-project';
+import { ServerError } from '~common/models/server-error';
 import { BlockmlService } from './blockml.service';
 import { HashService } from './hash.service';
 import { MakerService } from './maker.service';
@@ -67,9 +84,9 @@ export class ProjectsService {
       evs
     } = item;
 
-    let toDiskCreateProjectRequest: apiToDisk.ToDiskCreateProjectRequest = {
+    let toDiskCreateProjectRequest: ToDiskCreateProjectRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateProject,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateProject,
         traceId: traceId
       },
       payload: {
@@ -87,16 +104,14 @@ export class ProjectsService {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateProjectResponse>(
-        {
-          routingKey: makeRoutingKeyToDisk({
-            orgId: orgId,
-            projectId: projectId
-          }),
-          message: toDiskCreateProjectRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToDisk<ToDiskCreateProjectResponse>({
+        routingKey: makeRoutingKeyToDisk({
+          orgId: orgId,
+          projectId: projectId
+        }),
+        message: toDiskCreateProjectRequest,
+        checkIsOk: true
+      });
 
     let newProject: ProjectEnt = {
       orgId: orgId,

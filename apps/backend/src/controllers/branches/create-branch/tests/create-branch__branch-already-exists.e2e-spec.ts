@@ -20,10 +20,10 @@ let projectName = testId;
 let fromBranchId = BRANCH_MAIN;
 let newBranchId = BRANCH_MAIN;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendCreateBranchResponse;
+  let resp: ToBackendCreateBranchResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -73,9 +73,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendCreateBranchRequest = {
+    let req: ToBackendCreateBranchRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
+        name: ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -87,7 +87,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendCreateBranchResponse>({
+    resp = await sendToBackend<ToBackendCreateBranchResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

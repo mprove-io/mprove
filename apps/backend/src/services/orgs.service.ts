@@ -1,11 +1,20 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { eq } from 'drizzle-orm';
-
+import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
+import { OrgEnt, orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
-import { makeId } from '~common/_index';
+import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
+import { ErEnum } from '~common/enums/er.enum';
+import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeId } from '~common/functions/make-id';
+import {
+  ToDiskCreateOrgRequest,
+  ToDiskCreateOrgResponse
+} from '~common/interfaces/to-disk/01-orgs/to-disk-create-org';
+import { ServerError } from '~common/models/server-error';
 import { RabbitService } from './rabbit.service';
 
 let retry = require('async-retry');
@@ -67,9 +76,9 @@ export class OrgsService {
       serverTs: undefined
     };
 
-    let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
+    let createOrgRequest: ToDiskCreateOrgRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
         traceId: traceId
       },
       payload: {
@@ -77,7 +86,7 @@ export class OrgsService {
       }
     };
 
-    await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateOrgResponse>({
+    await this.rabbitService.sendToDisk<ToDiskCreateOrgResponse>({
       routingKey: makeRoutingKeyToDisk({
         orgId: newOrg.orgId,
         projectId: undefined

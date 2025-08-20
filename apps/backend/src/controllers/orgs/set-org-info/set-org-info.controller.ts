@@ -28,9 +28,9 @@ export class SetOrgInfoController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo)
   async setOrgInfo(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendSetOrgInfoRequest = request.body;
+    let reqValid: ToBackendSetOrgInfoRequest = request.body;
 
     let { orgId, name } = reqValid.payload;
 
@@ -65,7 +65,7 @@ export class SetOrgInfoController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendSetOrgInfoResponsePayload = {
+    let payload: ToBackendSetOrgInfoResponsePayload = {
       org: this.wrapToApiService.wrapToApiOrg(org)
     };
 

@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BackendConfig } from '~backend/config/backend-config';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
-import { BackendConfig } from '~common/interfaces/backend/backend-config';
 import { ServerError } from '~common/models/server-error';
 
 @Injectable()

@@ -18,10 +18,10 @@ let testProjectId = 't2';
 let projectId = makeId();
 let projectName = testId;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetDashboardsResponse;
+  let resp: ToBackendGetDashboardsResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -80,9 +80,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetDashboardsRequest = {
+    let req: ToBackendGetDashboardsRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -94,7 +94,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendGetDashboardsResponse>({
+    resp = await sendToBackend<ToBackendGetDashboardsResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

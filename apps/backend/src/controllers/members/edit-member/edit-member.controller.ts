@@ -32,9 +32,9 @@ export class EditMemberController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendEditMember)
   async editMember(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendEditMemberRequest = request.body;
+    let reqValid: ToBackendEditMemberRequest = request.body;
 
     let { projectId, memberId, isAdmin, isEditor, isExplorer, roles } =
       reqValid.payload;
@@ -94,7 +94,7 @@ export class EditMemberController {
       apiMember.avatarSmall = avatar.avatarSmall;
     }
 
-    let payload: apiToBackend.ToBackendEditMemberResponsePayload = {
+    let payload: ToBackendEditMemberResponsePayload = {
       member: apiMember
     };
 

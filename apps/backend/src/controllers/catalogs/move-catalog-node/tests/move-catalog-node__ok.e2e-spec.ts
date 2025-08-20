@@ -20,10 +20,10 @@ let projectName = testId;
 
 let branchId = BRANCH_MAIN;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendMoveCatalogNodeResponse;
+  let resp: ToBackendMoveCatalogNodeResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -74,10 +74,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendMoveCatalogNodeRequest = {
+    let req: ToBackendMoveCatalogNodeRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendMoveCatalogNode,
+        name: ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -90,7 +89,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendMoveCatalogNodeResponse>({
+    resp = await sendToBackend<ToBackendMoveCatalogNodeResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

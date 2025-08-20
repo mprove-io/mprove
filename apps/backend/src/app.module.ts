@@ -15,6 +15,7 @@ import {
 import { migrate as migratePg } from 'drizzle-orm/node-postgres/migrator';
 import * as fse from 'fs-extra';
 import { Client, ClientConfig } from 'pg';
+import { BackendConfig } from '~backend/config/backend-config';
 import { FIRST_ORG_NAME, PROJECT_ENV_PROD } from '~common/constants/top';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
@@ -24,7 +25,6 @@ import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
-import { BackendConfig } from '~common/interfaces/backend/backend-config';
 import { Ev } from '~common/interfaces/backend/ev';
 import { appControllers } from './app-controllers';
 import { AppFilter } from './app-filter';

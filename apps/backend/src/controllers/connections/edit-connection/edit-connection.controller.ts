@@ -34,9 +34,9 @@ export class EditConnectionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditConnection)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendEditConnection)
   async editConnection(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendEditConnectionRequest = request.body;
+    let reqValid: ToBackendEditConnectionRequest = request.body;
     let {
       projectId,
       envId,
@@ -101,7 +101,7 @@ export class EditConnectionController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendEditConnectionResponsePayload = {
+    let payload: ToBackendEditConnectionResponsePayload = {
       connection: this.wrapToApiService.wrapToApiConnection(connection)
     };
 

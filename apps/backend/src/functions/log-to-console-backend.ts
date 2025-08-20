@@ -1,6 +1,12 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BackendConfig } from '~backend/config/backend-config';
 import { getConfig } from '~backend/config/get.config';
+import { BoolEnum } from '~common/enums/bool.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { enumToBoolean } from '~common/functions/enum-to-boolean';
+import { isDefined } from '~common/functions/is-defined';
+import { logToConsole } from '~node-common/functions/log-to-console';
 
 export function logToConsoleBackend(item: {
   log: any;

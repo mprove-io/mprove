@@ -29,9 +29,9 @@ export class GetQueriesController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQueries)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetQueries)
   async getQueries(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetQueriesRequest = request.body;
+    let reqValid: ToBackendGetQueriesRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, mconfigIds } =
       reqValid.payload;
@@ -85,7 +85,7 @@ export class GetQueriesController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendGetQueriesResponsePayload = {
+    let payload: ToBackendGetQueriesResponsePayload = {
       queries: queries.map(x => this.wrapToApiService.wrapToApiQuery(x))
     };
 

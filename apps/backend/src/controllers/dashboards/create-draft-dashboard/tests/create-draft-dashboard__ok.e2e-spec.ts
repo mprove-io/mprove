@@ -20,10 +20,10 @@ let projectName = testId;
 
 let oldDashboardId = 'd1';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendCreateDraftDashboardResponse;
+  let resp: ToBackendCreateDraftDashboardResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -82,9 +82,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req1: apiToBackend.ToBackendGetDashboardRequest = {
+    let req1: ToBackendGetDashboardRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -98,21 +98,18 @@ test('1', async t => {
       }
     };
 
-    let resp1 = await sendToBackend<apiToBackend.ToBackendGetDashboardResponse>(
-      {
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req1
-      }
-    );
+    let resp1 = await sendToBackend<ToBackendGetDashboardResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req1
+    });
 
     // console.log('resp1');
     // console.log(resp1);
 
-    let req: apiToBackend.ToBackendCreateDraftDashboardRequest = {
+    let req: ToBackendCreateDraftDashboardRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendCreateDraftDashboard,
+        name: ToBackendRequestInfoNameEnum.ToBackendCreateDraftDashboard,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -129,12 +126,11 @@ test('1', async t => {
       }
     };
 
-    resp =
-      await sendToBackend<apiToBackend.ToBackendCreateDraftDashboardResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req
-      });
+    resp = await sendToBackend<ToBackendCreateDraftDashboardResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req
+    });
 
     // console.log('resp');
     // console.log(resp);

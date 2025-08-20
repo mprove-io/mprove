@@ -27,10 +27,10 @@ let queryJobId = makeId();
 let structId = makeId();
 let mconfigId = makeId();
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp1: apiToBackend.ToBackendCancelQueriesResponse;
+  let resp1: ToBackendCancelQueriesResponse;
 
   let mconfig: Mconfig = {
     structId: structId,
@@ -143,9 +143,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req1: apiToBackend.ToBackendCancelQueriesRequest = {
+    let req1: ToBackendCancelQueriesRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
+        name: ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -158,7 +158,7 @@ test('1', async t => {
       }
     };
 
-    resp1 = await sendToBackend<apiToBackend.ToBackendCancelQueriesResponse>({
+    resp1 = await sendToBackend<ToBackendCancelQueriesResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req1

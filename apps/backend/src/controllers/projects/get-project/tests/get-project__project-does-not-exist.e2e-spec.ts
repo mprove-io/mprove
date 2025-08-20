@@ -17,10 +17,10 @@ let orgName = testId;
 let projectId = makeId();
 let projectName = testId;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetProjectResponse;
+  let resp: ToBackendGetProjectResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -67,9 +67,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetProjectRequest = {
+    let req: ToBackendGetProjectRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetProject,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -78,7 +78,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendGetProjectResponse>({
+    resp = await sendToBackend<ToBackendGetProjectResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

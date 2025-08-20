@@ -1,7 +1,5 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 
-import { apiToBlockml } from '~backend/barrels/api-to-blockml';
-
 import { AttachUser, SkipJwtCheck } from '~backend/decorators/_index';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
@@ -22,9 +20,9 @@ export class GetRebuildStructController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRebuildStruct)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetRebuildStruct)
   async getRebuildStruct(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetRebuildStructRequest = request.body;
+    let reqValid: ToBackendGetRebuildStructRequest = request.body;
 
     let { orgId, projectId, repoId, branch, envId, overrideTimezone } =
       reqValid.payload;
@@ -37,9 +35,9 @@ export class GetRebuildStructController {
 
     // to disk
 
-    let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
+    let getCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
+        name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -55,16 +53,14 @@ export class GetRebuildStructController {
     };
 
     let getCatalogFilesResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
-        {
-          routingKey: makeRoutingKeyToDisk({
-            orgId: orgId,
-            projectId: projectId
-          }),
-          message: getCatalogFilesRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToDisk<ToDiskGetCatalogFilesResponse>({
+        routingKey: makeRoutingKeyToDisk({
+          orgId: orgId,
+          projectId: projectId
+        }),
+        message: getCatalogFilesRequest,
+        checkIsOk: true
+      });
 
     let { apiEnv, connectionsWithFallback } =
       await this.envsService.getApiEnvConnectionsWithFallback({
@@ -77,9 +73,9 @@ export class GetRebuildStructController {
     // console.log('connectionsWithFallback');
     // console.log(connectionsWithFallback);
 
-    let rebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest = {
+    let rebuildStructRequest: ToBlockmlRebuildStructRequest = {
       info: {
-        name: apiToBlockml.ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct,
+        name: ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -95,13 +91,11 @@ export class GetRebuildStructController {
     };
 
     let rebuildStructResponse =
-      await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
-        {
-          routingKey: RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
-          message: rebuildStructRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToBlockml<ToBlockmlRebuildStructResponse>({
+        routingKey: RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
+        message: rebuildStructRequest,
+        checkIsOk: true
+      });
 
     let payload = rebuildStructResponse.payload;
 

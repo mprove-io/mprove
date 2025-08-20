@@ -31,9 +31,9 @@ export class GetQueryController {
     private wrapToApiService: WrapToApiService
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetQuery)
   async getQuery(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetQueryRequest = request.body;
+    let reqValid: ToBackendGetQueryRequest = request.body;
 
     let {
       queryId,
@@ -141,7 +141,7 @@ export class GetQueryController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendGetQueryResponsePayload = {
+    let payload: ToBackendGetQueryResponsePayload = {
       query: this.wrapToApiService.wrapToApiQuery(query)
     };
 

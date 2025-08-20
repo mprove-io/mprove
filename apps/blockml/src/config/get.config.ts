@@ -1,6 +1,6 @@
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BlockmlEnvEnum } from '~common/enums/env/blockml-env.enum';
 import { ErEnum } from '~common/enums/er.enum';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 import { getDevConfig } from './get-dev.config';
 import { getProdConfig } from './get-prod.config';

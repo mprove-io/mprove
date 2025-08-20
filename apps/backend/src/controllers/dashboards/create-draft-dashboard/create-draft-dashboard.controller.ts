@@ -50,10 +50,9 @@ export class CreateDraftDashboardController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftDashboard)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateDraftDashboard)
   async createDraftDashboard(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendCreateDraftDashboardRequest =
-      request.body;
+    let reqValid: ToBackendCreateDraftDashboardRequest = request.body;
 
     let { traceId } = reqValid.info;
     let {
@@ -214,9 +213,9 @@ export class CreateDraftDashboardController {
     // console.log('malloyFileText');
     // console.log(malloyFileText);
 
-    let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
+    let getCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
+        name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -232,16 +231,14 @@ export class CreateDraftDashboardController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
-        {
-          routingKey: makeRoutingKeyToDisk({
-            orgId: project.orgId,
-            projectId: projectId
-          }),
-          message: getCatalogFilesRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToDisk<ToDiskGetCatalogFilesResponse>({
+        routingKey: makeRoutingKeyToDisk({
+          orgId: project.orgId,
+          projectId: projectId
+        }),
+        message: getCatalogFilesRequest,
+        checkIsOk: true
+      });
 
     // add dashboard file
 
@@ -439,7 +436,7 @@ export class CreateDraftDashboardController {
       userMember: userMember
     });
 
-    let payload: apiToBackend.ToBackendCreateDraftDashboardResponsePayload = {
+    let payload: ToBackendCreateDraftDashboardResponsePayload = {
       newDashboardPart:
         newDashboardParts.length > 0 ? newDashboardParts[0] : undefined
     };

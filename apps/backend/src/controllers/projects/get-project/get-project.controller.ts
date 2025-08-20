@@ -15,9 +15,9 @@ export class GetProjectController {
     private wrapToApiService: WrapToApiService
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetProject)
   async getProject(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetProjectRequest = request.body;
+    let reqValid: ToBackendGetProjectRequest = request.body;
 
     let { projectId } = reqValid.payload;
 
@@ -30,7 +30,7 @@ export class GetProjectController {
       memberId: user.userId
     });
 
-    let payload: apiToBackend.ToBackendGetProjectResponsePayload = {
+    let payload: ToBackendGetProjectResponsePayload = {
       project: this.wrapToApiService.wrapToApiProject({
         project: project,
         isAdmin: userMember.isAdmin

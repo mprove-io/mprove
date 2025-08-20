@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
 import { LINE_NUM } from '~common/constants/top-blockml';
 import { ParameterEnum } from '~common/enums/docs/parameter.enum';
@@ -8,7 +9,6 @@ import { FuncEnum } from '~common/enums/special/func.enum';
 import { LogTypeEnum } from '~common/enums/special/log-type.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { FileStoreFractionType } from '~common/interfaces/blockml/internal/file-store-fraction-type';
 import { MyRegex } from '~common/models/my-regex';

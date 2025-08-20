@@ -8,10 +8,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
+import { BackendConfig } from '~backend/config/backend-config';
 import { UNK_ST_ID } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { BackendConfig } from '~common/interfaces/backend/backend-config';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ServerError } from '~common/models/server-error';
 import { logResponseBackend } from './functions/log-response-backend';

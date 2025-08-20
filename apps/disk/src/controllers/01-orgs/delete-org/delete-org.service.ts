@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '~common/enums/er.enum';
-import { DiskConfig } from '~common/interfaces/disk/disk-config';
 import {
   ToDiskDeleteOrgRequest,
   ToDiskDeleteOrgResponsePayload
 } from '~common/interfaces/to-disk/01-orgs/to-disk-delete-org';
+import { DiskConfig } from '~disk/config/disk-config';
 import { isPathExist } from '~disk/functions/disk/is-path-exist';
 import { removePath } from '~disk/functions/disk/remove-path';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';

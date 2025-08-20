@@ -43,10 +43,9 @@ export class RevertRepoToRemoteController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote)
   async revertRepoToRemote(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendRevertRepoToRemoteRequest =
-      request.body;
+    let reqValid: ToBackendRevertRepoToRemoteRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
@@ -87,35 +86,32 @@ export class RevertRepoToRemoteController {
       member: member
     });
 
-    let toDiskRevertRepoToRemoteRequest: apiToDisk.ToDiskRevertRepoToRemoteRequest =
-      {
-        info: {
-          name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote,
-          traceId: reqValid.info.traceId
-        },
-        payload: {
-          orgId: project.orgId,
-          projectId: projectId,
-          repoId: repoId,
-          branch: branchId,
-          remoteType: project.remoteType,
-          gitUrl: project.gitUrl,
-          privateKey: project.privateKey,
-          publicKey: project.publicKey
-        }
-      };
+    let toDiskRevertRepoToRemoteRequest: ToDiskRevertRepoToRemoteRequest = {
+      info: {
+        name: ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote,
+        traceId: reqValid.info.traceId
+      },
+      payload: {
+        orgId: project.orgId,
+        projectId: projectId,
+        repoId: repoId,
+        branch: branchId,
+        remoteType: project.remoteType,
+        gitUrl: project.gitUrl,
+        privateKey: project.privateKey,
+        publicKey: project.publicKey
+      }
+    };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskRevertRepoToRemoteResponse>(
-        {
-          routingKey: makeRoutingKeyToDisk({
-            orgId: project.orgId,
-            projectId: projectId
-          }),
-          message: toDiskRevertRepoToRemoteRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToDisk<ToDiskRevertRepoToRemoteResponse>({
+        routingKey: makeRoutingKeyToDisk({
+          orgId: project.orgId,
+          projectId: projectId
+        }),
+        message: toDiskRevertRepoToRemoteRequest,
+        checkIsOk: true
+      });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
@@ -168,7 +164,7 @@ export class RevertRepoToRemoteController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendRevertRepoToRemoteResponsePayload = {
+    let payload: ToBackendRevertRepoToRemoteResponsePayload = {
       repo: diskResponse.payload.repo,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       needValidate: currentBridge.needValidate

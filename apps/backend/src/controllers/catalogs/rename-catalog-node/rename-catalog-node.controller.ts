@@ -43,9 +43,9 @@ export class RenameCatalogNodeController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode)
   async renameCatalogNode(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendRenameCatalogNodeRequest = request.body;
+    let reqValid: ToBackendRenameCatalogNodeRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, branchId, envId, nodeId, newName } = reqValid.payload;
@@ -73,37 +73,34 @@ export class RenameCatalogNodeController {
       member: member
     });
 
-    let toDiskRenameCatalogNodeRequest: apiToDisk.ToDiskRenameCatalogNodeRequest =
-      {
-        info: {
-          name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode,
-          traceId: reqValid.info.traceId
-        },
-        payload: {
-          orgId: project.orgId,
-          projectId: projectId,
-          repoId: repoId,
-          branch: branchId,
-          nodeId: nodeId,
-          newName: newName.toLowerCase(),
-          remoteType: project.remoteType,
-          gitUrl: project.gitUrl,
-          privateKey: project.privateKey,
-          publicKey: project.publicKey
-        }
-      };
+    let toDiskRenameCatalogNodeRequest: ToDiskRenameCatalogNodeRequest = {
+      info: {
+        name: ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode,
+        traceId: reqValid.info.traceId
+      },
+      payload: {
+        orgId: project.orgId,
+        projectId: projectId,
+        repoId: repoId,
+        branch: branchId,
+        nodeId: nodeId,
+        newName: newName.toLowerCase(),
+        remoteType: project.remoteType,
+        gitUrl: project.gitUrl,
+        privateKey: project.privateKey,
+        publicKey: project.publicKey
+      }
+    };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskRenameCatalogNodeResponse>(
-        {
-          routingKey: makeRoutingKeyToDisk({
-            orgId: project.orgId,
-            projectId: projectId
-          }),
-          message: toDiskRenameCatalogNodeRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToDisk<ToDiskRenameCatalogNodeResponse>({
+        routingKey: makeRoutingKeyToDisk({
+          orgId: project.orgId,
+          projectId: projectId
+        }),
+        message: toDiskRenameCatalogNodeRequest,
+        checkIsOk: true
+      });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
@@ -156,7 +153,7 @@ export class RenameCatalogNodeController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendRenameCatalogNodeResponsePayload = {
+    let payload: ToBackendRenameCatalogNodeResponsePayload = {
       repo: diskResponse.payload.repo,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       needValidate: currentBridge.needValidate

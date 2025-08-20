@@ -1,11 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
-
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { envsTable } from '~backend/drizzle/postgres/schema/envs';
-import { membersTable } from '~backend/drizzle/postgres/schema/members';
-import { PROJECT_ENV_PROD } from '~common/_index';
+import {
+  MemberEnt,
+  membersTable
+} from '~backend/drizzle/postgres/schema/members';
+import { PROJECT_ENV_PROD } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
+import { ServerError } from '~common/models/server-error';
 import { WrapToApiService } from './wrap-to-api.service';
 
 @Injectable()

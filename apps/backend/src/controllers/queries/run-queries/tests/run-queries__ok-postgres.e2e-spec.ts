@@ -25,27 +25,26 @@ let chartId = 'c1';
 let prepTest: PrepTest;
 
 test('1', async t => {
-  let resp2: apiToBackend.ToBackendRunQueriesResponse;
+  let resp2: ToBackendRunQueriesResponse;
 
   try {
     prepTest = await prepareTest({});
 
-    let c1Postgres: apiToBackend.ToBackendSeedRecordsRequestPayloadConnectionsItem =
-      {
-        envId: PROJECT_ENV_PROD,
-        projectId: projectId,
-        connectionId: 'c1_postgres',
-        type: ConnectionTypeEnum.PostgreSQL,
-        host: prepTest.cs.get<BackendConfig['firstProjectDwhPostgresHost']>(
-          'firstProjectDwhPostgresHost'
-        ),
-        port: 5436,
-        username: 'postgres',
-        password: prepTest.cs.get<
-          BackendConfig['firstProjectDwhPostgresPassword']
-        >('firstProjectDwhPostgresPassword'),
-        database: 'p_db'
-      };
+    let c1Postgres: ToBackendSeedRecordsRequestPayloadConnectionsItem = {
+      envId: PROJECT_ENV_PROD,
+      projectId: projectId,
+      connectionId: 'c1_postgres',
+      type: ConnectionTypeEnum.PostgreSQL,
+      host: prepTest.cs.get<BackendConfig['firstProjectDwhPostgresHost']>(
+        'firstProjectDwhPostgresHost'
+      ),
+      port: 5436,
+      username: 'postgres',
+      password: prepTest.cs.get<
+        BackendConfig['firstProjectDwhPostgresPassword']
+      >('firstProjectDwhPostgresPassword'),
+      database: 'p_db'
+    };
 
     let prepareSeedResult = await prepareSeed({
       httpServer: prepTest.httpServer,
@@ -97,9 +96,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req1: apiToBackend.ToBackendGetChartsRequest = {
+    let req1: ToBackendGetChartsRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetCharts,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetCharts,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -111,7 +110,7 @@ test('1', async t => {
       }
     };
 
-    let resp1 = await sendToBackend<apiToBackend.ToBackendGetChartsResponse>({
+    let resp1 = await sendToBackend<ToBackendGetChartsResponse>({
       httpServer: prepTest.httpServer,
       loginToken: prepareSeedResult.loginToken,
       req: req1
@@ -119,9 +118,9 @@ test('1', async t => {
 
     let chart = resp1.payload.charts.find(x => x.chartId === chartId);
 
-    let req2: apiToBackend.ToBackendRunQueriesRequest = {
+    let req2: ToBackendRunQueriesRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        name: ToBackendRequestInfoNameEnum.ToBackendRunQueries,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -134,7 +133,7 @@ test('1', async t => {
       }
     };
 
-    resp2 = await sendToBackend<apiToBackend.ToBackendRunQueriesResponse>({
+    resp2 = await sendToBackend<ToBackendRunQueriesResponse>({
       httpServer: prepTest.httpServer,
       loginToken: prepareSeedResult.loginToken,
       req: req2

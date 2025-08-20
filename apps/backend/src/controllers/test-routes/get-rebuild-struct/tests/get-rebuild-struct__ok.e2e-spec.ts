@@ -1,7 +1,5 @@
 import test from 'ava';
 
-import { apiToBlockml } from '~backend/barrels/api-to-blockml';
-
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 
@@ -25,10 +23,10 @@ let userAlias = testId;
 
 let envId = PROJECT_ENV_PROD;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBlockml.ToBlockmlRebuildStructResponse;
+  let resp: ToBlockmlRebuildStructResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -79,9 +77,9 @@ test('1', async t => {
 
     // to disk
 
-    let seedProjectReq: apiToDisk.ToDiskSeedProjectRequest = {
+    let seedProjectReq: ToDiskSeedProjectRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSeedProject,
+        name: ToDiskRequestInfoNameEnum.ToDiskSeedProject,
         traceId: traceId
       },
       payload: {
@@ -99,7 +97,7 @@ test('1', async t => {
       }
     };
 
-    await prep.rabbitService.sendToDisk<apiToDisk.ToDiskSeedProjectResponse>({
+    await prep.rabbitService.sendToDisk<ToDiskSeedProjectResponse>({
       checkIsOk: true,
       routingKey: makeRoutingKeyToDisk({
         orgId: orgId,
@@ -110,10 +108,9 @@ test('1', async t => {
 
     // to backend
 
-    let getRebuildStructReq: apiToBackend.ToBackendGetRebuildStructRequest = {
+    let getRebuildStructReq: ToBackendGetRebuildStructRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendGetRebuildStruct,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetRebuildStruct,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -127,7 +124,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBlockml.ToBlockmlRebuildStructResponse>({
+    resp = await sendToBackend<ToBlockmlRebuildStructResponse>({
       httpServer: prep.httpServer,
       req: getRebuildStructReq
     });

@@ -1,11 +1,11 @@
 import { parse } from 'dotenv';
 import * as fse from 'fs-extra';
+import { BackendConfig } from '~backend/config/backend-config';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { EmailTransportEnum } from '~common/enums/email-transport.enum';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
 import { isDefined } from '~common/functions/is-defined';
-import { BackendConfig } from '~common/interfaces/backend/backend-config';
 
 export function getDevConfig(envFilePath: any) {
   let envFile: any = {};

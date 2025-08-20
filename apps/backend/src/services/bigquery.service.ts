@@ -1,7 +1,11 @@
 import { BigQuery, JobResponse } from '@google-cloud/bigquery';
 import { Injectable } from '@nestjs/common';
-
+import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
+import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { QueryEstimate } from '~common/interfaces/backend/query-estimate';
 
 @Injectable()
 export class BigQueryService {

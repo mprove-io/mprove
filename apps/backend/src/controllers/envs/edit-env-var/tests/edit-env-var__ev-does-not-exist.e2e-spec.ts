@@ -20,10 +20,10 @@ let projectName = testId;
 let evId = 'MPROVE_EV1';
 let val = '123';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendEditEnvVarResponse;
+  let resp: ToBackendEditEnvVarResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -73,9 +73,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendEditEnvVarRequest = {
+    let req: ToBackendEditEnvVarRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEnvVar,
+        name: ToBackendRequestInfoNameEnum.ToBackendEditEnvVar,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -87,7 +87,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendEditEnvVarResponse>({
+    resp = await sendToBackend<ToBackendEditEnvVarResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

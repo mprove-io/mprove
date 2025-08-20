@@ -18,10 +18,10 @@ let testProjectId = 't2';
 let projectId = makeId();
 let projectName = testId;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp2: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse;
+  let resp2: ToBackendCreateTempMconfigAndQueryResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -80,9 +80,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req1: apiToBackend.ToBackendGetDashboardRequest = {
+    let req1: ToBackendGetDashboardRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -96,22 +96,19 @@ test('1', async t => {
       }
     };
 
-    let resp1 = await sendToBackend<apiToBackend.ToBackendGetDashboardResponse>(
-      {
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req1
-      }
-    );
+    let resp1 = await sendToBackend<ToBackendGetDashboardResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req1
+    });
 
     let query = resp1.payload.dashboard.tiles[0].query;
     let mconfig = resp1.payload.dashboard.tiles[0].mconfig;
     mconfig.mconfigId = makeId();
 
-    let req2: apiToBackend.ToBackendCreateTempMconfigAndQueryRequest = {
+    let req2: ToBackendCreateTempMconfigAndQueryRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendCreateTempMconfigAndQuery,
+        name: ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -127,14 +124,11 @@ test('1', async t => {
       }
     };
 
-    resp2 =
-      await sendToBackend<apiToBackend.ToBackendCreateTempMconfigAndQueryResponse>(
-        {
-          httpServer: prep.httpServer,
-          loginToken: prep.loginToken,
-          req: req2
-        }
-      );
+    resp2 = await sendToBackend<ToBackendCreateTempMconfigAndQueryResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req2
+    });
 
     await prep.app.close();
   } catch (e) {

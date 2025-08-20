@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { QueryOperation } from '~common/interfaces/backend/query-operation';
+import { Mconfig } from '~common/interfaces/blockml/mconfig';
+import { Model } from '~common/interfaces/blockml/model';
 import { makeMalloyConnections } from '~node-common/functions/make-malloy-connections';
 import { makeMalloyQuery } from '~node-common/functions/make-malloy-query';
 import { EnvsService } from './envs.service';

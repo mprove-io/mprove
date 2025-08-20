@@ -3,9 +3,30 @@ import { INestApplication, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '~backend/app.module';
-
+import { BackendConfig } from '~backend/config/backend-config';
 import { getConfig } from '~backend/config/get.config';
+import { Prep } from '~backend/interfaces/prep';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { makeId } from '~common/functions/make-id';
+import {
+  ToBackendDeleteRecordsRequest,
+  ToBackendDeleteRecordsRequestPayload,
+  ToBackendDeleteRecordsResponse
+} from '~common/interfaces/to-backend/test-routes/to-backend-delete-records';
+import {
+  ToBackendSeedRecordsRequest,
+  ToBackendSeedRecordsRequestPayload,
+  ToBackendSeedRecordsResponse
+} from '~common/interfaces/to-backend/test-routes/to-backend-seed-records';
+import {
+  ToBackendLoginUserRequest,
+  ToBackendLoginUserRequestPayload,
+  ToBackendLoginUserResponse
+} from '~common/interfaces/to-backend/users/to-backend-login-user';
+import { sendToBackend } from './send-to-backend';
 
 export async function prepareTest(item: {
   overrideConfigOptions?: BackendConfig;
@@ -38,7 +59,7 @@ export async function prepareTest(item: {
   let logger = await moduleRef.resolve<Logger>(Logger);
   let cs = await moduleRef.resolve<ConfigService>(ConfigService);
 
-  let prep: interfaces.Prep = {
+  let prep: Prep = {
     loginToken: undefined,
     app,
     httpServer,
@@ -54,9 +75,9 @@ export async function prepareTest(item: {
 export async function prepareSeed(item: {
   httpServer: any;
   traceId: string;
-  seedRecordsPayload?: apiToBackend.ToBackendSeedRecordsRequestPayload;
-  deleteRecordsPayload?: apiToBackend.ToBackendDeleteRecordsRequestPayload;
-  loginUserPayload?: apiToBackend.ToBackendLoginUserRequestPayload;
+  seedRecordsPayload?: ToBackendSeedRecordsRequestPayload;
+  deleteRecordsPayload?: ToBackendDeleteRecordsRequestPayload;
+  loginUserPayload?: ToBackendLoginUserRequestPayload;
 }) {
   let {
     httpServer,
@@ -67,67 +88,61 @@ export async function prepareSeed(item: {
   } = item;
 
   if (isDefined(deleteRecordsPayload)) {
-    let deleteRecordsRequest: apiToBackend.ToBackendDeleteRecordsRequest = {
+    let deleteRecordsRequest: ToBackendDeleteRecordsRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
+        name: ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
         traceId: traceId,
         idempotencyKey: makeId()
       },
       payload: deleteRecordsPayload
     };
-    await helper
-      .sendToBackend<apiToBackend.ToBackendDeleteRecordsResponse>({
-        checkIsOk: true,
-        httpServer: httpServer,
-        req: deleteRecordsRequest
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    await sendToBackend<ToBackendDeleteRecordsResponse>({
+      checkIsOk: true,
+      httpServer: httpServer,
+      req: deleteRecordsRequest
+    }).catch(e => {
+      console.log(e);
+    });
   }
 
   if (isDefined(seedRecordsPayload)) {
-    let seedRecordsRequest: apiToBackend.ToBackendSeedRecordsRequest = {
+    let seedRecordsRequest: ToBackendSeedRecordsRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
+        name: ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
         traceId: traceId,
         idempotencyKey: makeId()
       },
       payload: seedRecordsPayload
     };
 
-    await helper
-      .sendToBackend<apiToBackend.ToBackendSeedRecordsResponse>({
-        checkIsOk: true,
-        httpServer: httpServer,
-        req: seedRecordsRequest
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    await sendToBackend<ToBackendSeedRecordsResponse>({
+      checkIsOk: true,
+      httpServer: httpServer,
+      req: seedRecordsRequest
+    }).catch(e => {
+      console.log(e);
+    });
   }
 
-  let loginUserResp: apiToBackend.ToBackendLoginUserResponse;
+  let loginUserResp: ToBackendLoginUserResponse;
 
   if (isDefined(loginUserPayload)) {
-    let loginUserRequest: apiToBackend.ToBackendLoginUserRequest = {
+    let loginUserRequest: ToBackendLoginUserRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+        name: ToBackendRequestInfoNameEnum.ToBackendLoginUser,
         traceId: traceId,
         idempotencyKey: makeId()
       },
       payload: loginUserPayload
     };
 
-    loginUserResp = (await helper
-      .sendToBackend<apiToBackend.ToBackendLoginUserResponse>({
-        checkIsOk: true,
-        httpServer: httpServer,
-        req: loginUserRequest
-      })
-      .catch(e => {
-        console.log(e);
-      })) as apiToBackend.ToBackendLoginUserResponse;
+    loginUserResp = (await sendToBackend<ToBackendLoginUserResponse>({
+      checkIsOk: true,
+      httpServer: httpServer,
+      req: loginUserRequest
+    }).catch(e => {
+      console.log(e);
+    })) as ToBackendLoginUserResponse;
   }
 
   return {
@@ -137,10 +152,10 @@ export async function prepareSeed(item: {
 
 export async function prepareTestAndSeed(item: {
   traceId: string;
-  seedRecordsPayload?: apiToBackend.ToBackendSeedRecordsRequestPayload;
-  deleteRecordsPayload?: apiToBackend.ToBackendDeleteRecordsRequestPayload;
+  seedRecordsPayload?: ToBackendSeedRecordsRequestPayload;
+  deleteRecordsPayload?: ToBackendDeleteRecordsRequestPayload;
   overrideConfigOptions?: BackendConfig;
-  loginUserPayload?: apiToBackend.ToBackendLoginUserRequestPayload;
+  loginUserPayload?: ToBackendLoginUserRequestPayload;
 }) {
   let {
     traceId,
@@ -150,7 +165,7 @@ export async function prepareTestAndSeed(item: {
     loginUserPayload
   } = item;
 
-  let prep1: interfaces.Prep = await prepareTest({
+  let prep1: Prep = await prepareTest({
     overrideConfigOptions: overrideConfigOptions
   });
 
@@ -162,7 +177,7 @@ export async function prepareTestAndSeed(item: {
     loginUserPayload
   });
 
-  let prep2: interfaces.Prep = {
+  let prep2: Prep = {
     loginToken: prepareSeedResult.loginToken,
     app: prep1.app,
     httpServer: prep1.httpServer,

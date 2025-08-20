@@ -1,3 +1,7 @@
+import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
+import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
+import { FilterX } from '~common/interfaces/backend/filter-x';
+
 export function makeReportFiltersX(report: ReportEnt) {
   let filtersX: FilterX[] = report.fields.map(field => {
     let filterX: FilterX = {

@@ -50,10 +50,9 @@ export class EditDraftDashboardController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditDraftDashboard)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendEditDraftDashboard)
   async editDraftDashboard(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendEditDraftDashboardRequest =
-      request.body;
+    let reqValid: ToBackendEditDraftDashboardRequest = request.body;
 
     let { traceId } = reqValid.info;
     let {
@@ -192,9 +191,9 @@ export class EditDraftDashboardController {
       // malloyDashboardFilePath: secondFileNodeId
     });
 
-    let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
+    let getCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
+        name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -210,16 +209,14 @@ export class EditDraftDashboardController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
-        {
-          routingKey: makeRoutingKeyToDisk({
-            orgId: project.orgId,
-            projectId: projectId
-          }),
-          message: getCatalogFilesRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToDisk<ToDiskGetCatalogFilesResponse>({
+        routingKey: makeRoutingKeyToDisk({
+          orgId: project.orgId,
+          projectId: projectId
+        }),
+        message: getCatalogFilesRequest,
+        checkIsOk: true
+      });
 
     // add dashboard file
 
@@ -418,7 +415,7 @@ export class EditDraftDashboardController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendEditDraftDashboardResponsePayload = {
+    let payload: ToBackendEditDraftDashboardResponsePayload = {
       dashboard: newDashboardX
     };
 

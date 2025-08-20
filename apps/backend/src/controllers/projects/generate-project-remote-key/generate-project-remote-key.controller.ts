@@ -28,12 +28,9 @@ export class GenerateProjectRemoteKeyController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGenerateProjectRemoteKey
-  )
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGenerateProjectRemoteKey)
   async createProject(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGenerateProjectRemoteKeyRequest =
-      request.body;
+    let reqValid: ToBackendGenerateProjectRemoteKeyRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { orgId } = reqValid.payload;
@@ -88,11 +85,10 @@ export class GenerateProjectRemoteKeyController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendGenerateProjectRemoteKeyResponsePayload =
-      {
-        noteId: note.noteId,
-        publicKey: note.publicKey
-      };
+    let payload: ToBackendGenerateProjectRemoteKeyResponsePayload = {
+      noteId: note.noteId,
+      publicKey: note.publicKey
+    };
 
     return payload;
   }

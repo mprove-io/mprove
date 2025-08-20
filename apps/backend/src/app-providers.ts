@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { BackendConfig } from '~common/interfaces/backend/backend-config';
+import { BackendConfig } from '~backend/config/backend-config';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { isScheduler } from './functions/is-scheduler';

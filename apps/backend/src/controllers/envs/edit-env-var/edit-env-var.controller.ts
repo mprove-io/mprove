@@ -35,9 +35,9 @@ export class EditEnvVarController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEnvVar)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendEditEnvVar)
   async editEnvVar(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendEditEnvVarRequest = request.body;
+    let reqValid: ToBackendEditEnvVarRequest = request.body;
 
     let { projectId, envId, evId, val } = reqValid.payload;
 
@@ -104,7 +104,7 @@ export class EditEnvVarController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendEditEnvVarResponsePayload = {
+    let payload: ToBackendEditEnvVarResponsePayload = {
       userMember: this.wrapToApiService.wrapToApiMember(userMember),
       envs: apiEnvs
     };

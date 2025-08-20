@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
 import {
   METRIC_ID_BY,
@@ -15,7 +16,6 @@ import { LogTypeEnum } from '~common/enums/special/log-type.enum';
 import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { Model } from '~common/interfaces/blockml/model';
 import { ModelMetric } from '~common/interfaces/blockml/model-metric';

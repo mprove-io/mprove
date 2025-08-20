@@ -1,21 +1,27 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray, sql } from 'drizzle-orm';
-
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
-import { structsTable } from '~backend/drizzle/postgres/schema/structs';
-import { ProjectWeekStartEnum } from '~common/_index';
 import {
+  StructEnt,
+  structsTable
+} from '~backend/drizzle/postgres/schema/structs';
+import {
+  EMPTY_STRUCT_ID,
   PROJECT_CONFIG_CURRENCY_PREFIX,
   PROJECT_CONFIG_CURRENCY_SUFFIX,
   PROJECT_CONFIG_DEFAULT_TIMEZONE,
   PROJECT_CONFIG_FORMAT_NUMBER,
   PROJECT_CONFIG_THOUSANDS_SEPARATOR
 } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
+import { isUndefined } from '~common/functions/is-undefined';
+import { ServerError } from '~common/models/server-error';
 
 @Injectable()
 export class StructsService {

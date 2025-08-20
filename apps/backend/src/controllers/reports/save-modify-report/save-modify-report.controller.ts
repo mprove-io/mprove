@@ -54,9 +54,9 @@ export class SaveModifyReportController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport)
   async saveModifyRep(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendSaveModifyReportRequest = request.body;
+    let reqValid: ToBackendSaveModifyReportRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {
       throw new ServerError({
@@ -184,9 +184,9 @@ export class SaveModifyReportController {
       timezone: UTC
     });
 
-    let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {
+    let toDiskSaveFileRequest: ToDiskSaveFileRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+        name: ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -205,7 +205,7 @@ export class SaveModifyReportController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskSaveFileResponse>({
+      await this.rabbitService.sendToDisk<ToDiskSaveFileResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
@@ -317,7 +317,7 @@ export class SaveModifyReportController {
       timezone: timezone
     });
 
-    let payload: apiToBackend.ToBackendSaveModifyReportResponsePayload = {
+    let payload: ToBackendSaveModifyReportResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: userMemberApi,

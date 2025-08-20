@@ -52,9 +52,9 @@ export class CreateDraftReportController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftReport)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateDraftReport)
   async createDraftRep(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendCreateDraftReportRequest = request.body;
+    let reqValid: ToBackendCreateDraftReportRequest = request.body;
 
     let { traceId } = reqValid.info;
     let {
@@ -337,7 +337,7 @@ export class CreateDraftReportController {
       isSaveToDb: true
     });
 
-    let payload: apiToBackend.ToBackendCreateDraftReportResponsePayload = {
+    let payload: ToBackendCreateDraftReportResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: userMemberApi,

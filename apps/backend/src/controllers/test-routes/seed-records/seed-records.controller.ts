@@ -40,9 +40,9 @@ export class SeedRecordsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSeedRecords)
   async seedRecords(@Req() request: any) {
-    let reqValid: apiToBackend.ToBackendSeedRecordsRequest = request.body;
+    let reqValid: ToBackendSeedRecordsRequest = request.body;
 
     let payloadUsers = reqValid.payload.users;
     let payloadMembers = reqValid.payload.members;
@@ -75,7 +75,7 @@ export class SeedRecordsController {
       await asyncPool(
         1,
         payloadUsers,
-        async (x: apiToBackend.ToBackendSeedRecordsRequestPayloadUsersItem) => {
+        async (x: ToBackendSeedRecordsRequestPayloadUsersItem) => {
           let alias = await this.usersService.makeAlias(x.email);
           let { salt, hash } = isDefined(x.password)
             ? await this.usersService.makeSaltAndHash(x.password)
@@ -111,7 +111,7 @@ export class SeedRecordsController {
       await asyncPool(
         1,
         payloadOrgs,
-        async (x: apiToBackend.ToBackendSeedRecordsRequestPayloadOrgsItem) => {
+        async (x: ToBackendSeedRecordsRequestPayloadOrgsItem) => {
           let newOrg: OrgEnt = {
             orgId: x.orgId,
             name: x.name,
@@ -120,9 +120,9 @@ export class SeedRecordsController {
             serverTs: undefined
           };
 
-          let createOrgRequest: apiToDisk.ToDiskCreateOrgRequest = {
+          let createOrgRequest: ToDiskCreateOrgRequest = {
             info: {
-              name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
+              name: ToDiskRequestInfoNameEnum.ToDiskCreateOrg,
               traceId: reqValid.info.traceId
             },
             payload: {
@@ -130,16 +130,14 @@ export class SeedRecordsController {
             }
           };
 
-          await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateOrgResponse>(
-            {
-              routingKey: makeRoutingKeyToDisk({
-                orgId: newOrg.orgId,
-                projectId: null
-              }),
-              message: createOrgRequest,
-              checkIsOk: true
-            }
-          );
+          await this.rabbitService.sendToDisk<ToDiskCreateOrgResponse>({
+            routingKey: makeRoutingKeyToDisk({
+              orgId: newOrg.orgId,
+              projectId: null
+            }),
+            message: createOrgRequest,
+            checkIsOk: true
+          });
 
           orgs.push(newOrg);
         }
@@ -188,9 +186,7 @@ export class SeedRecordsController {
       await asyncPool(
         1,
         payloadProjects,
-        async (
-          x: apiToBackend.ToBackendSeedRecordsRequestPayloadProjectsItem
-        ) => {
+        async (x: ToBackendSeedRecordsRequestPayloadProjectsItem) => {
           let newProject: ProjectEnt = {
             orgId: x.orgId,
             projectId: x.projectId || makeId(),
@@ -209,9 +205,9 @@ export class SeedRecordsController {
             evs: []
           });
 
-          let toDiskSeedProjectRequest: apiToDisk.ToDiskSeedProjectRequest = {
+          let toDiskSeedProjectRequest: ToDiskSeedProjectRequest = {
             info: {
-              name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSeedProject,
+              name: ToDiskRequestInfoNameEnum.ToDiskSeedProject,
               traceId: reqValid.info.traceId
             },
             payload: {
@@ -230,16 +226,14 @@ export class SeedRecordsController {
           };
 
           let diskResponse =
-            await this.rabbitService.sendToDisk<apiToDisk.ToDiskSeedProjectResponse>(
-              {
-                routingKey: makeRoutingKeyToDisk({
-                  orgId: newProject.orgId,
-                  projectId: newProject.projectId
-                }),
-                message: toDiskSeedProjectRequest,
-                checkIsOk: true
-              }
-            );
+            await this.rabbitService.sendToDisk<ToDiskSeedProjectResponse>({
+              routingKey: makeRoutingKeyToDisk({
+                orgId: newProject.orgId,
+                projectId: newProject.projectId
+              }),
+              message: toDiskSeedProjectRequest,
+              checkIsOk: true
+            });
 
           let devStructId = makeId();
           let prodStructId = makeId();
@@ -428,9 +422,7 @@ export class SeedRecordsController {
       await asyncPool(
         1,
         payloadMembers,
-        async (
-          x: apiToBackend.ToBackendSeedRecordsRequestPayloadMembersItem
-        ) => {
+        async (x: ToBackendSeedRecordsRequestPayloadMembersItem) => {
           let user = users.find(u => u.email === x.email);
 
           let newMember = this.makerService.makeMember({
@@ -494,7 +486,7 @@ export class SeedRecordsController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendSeedRecordsResponse['payload'] = {};
+    let payload: ToBackendSeedRecordsResponse['payload'] = {};
 
     return payload;
   }

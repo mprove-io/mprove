@@ -48,9 +48,9 @@ export class RunQueriesDryController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry)
   async runQueriesDry(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendRunQueriesDryRequest = request.body;
+    let reqValid: ToBackendRunQueriesDryRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, mconfigIds, dryId } =
       reqValid.payload;
@@ -153,7 +153,7 @@ export class RunQueriesDryController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendRunQueriesDryResponsePayload = {
+    let payload: ToBackendRunQueriesDryResponsePayload = {
       dryId: dryId,
       errorQueries: errorQueries.map(x =>
         this.wrapToApiService.wrapToApiQuery(x)

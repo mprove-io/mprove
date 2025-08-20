@@ -35,9 +35,9 @@ export class DeleteEnvVarController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnvVar)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteEnvVar)
   async deleteEnvVar(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendDeleteEnvVarRequest = request.body;
+    let reqValid: ToBackendDeleteEnvVarRequest = request.body;
 
     let { projectId, envId, evId } = reqValid.payload;
 
@@ -96,7 +96,7 @@ export class DeleteEnvVarController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendDeleteEnvVarResponsePayload = {
+    let payload: ToBackendDeleteEnvVarResponsePayload = {
       userMember: this.wrapToApiService.wrapToApiMember(userMember),
       envs: apiEnvs
     };

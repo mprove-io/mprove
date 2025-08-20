@@ -12,10 +12,10 @@ let password = '123456';
 let firstName = 'John';
 let lastName = 'Smith';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendSetUserNameResponse;
+  let resp: ToBackendSetUserNameResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -35,9 +35,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let setUserNameReq: apiToBackend.ToBackendSetUserNameRequest = {
+    let setUserNameReq: ToBackendSetUserNameRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserName,
+        name: ToBackendRequestInfoNameEnum.ToBackendSetUserName,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -47,7 +47,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendSetUserNameResponse>({
+    resp = await sendToBackend<ToBackendSetUserNameResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: setUserNameReq

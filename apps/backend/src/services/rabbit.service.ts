@@ -1,5 +1,10 @@
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
+import { ErEnum } from '~common/enums/er.enum';
+import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { MyResponse } from '~common/interfaces/to/my-response';
+import { ServerError } from '~common/models/server-error';
 
 @Injectable()
 export class RabbitService {

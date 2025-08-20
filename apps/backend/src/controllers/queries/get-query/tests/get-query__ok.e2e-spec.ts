@@ -18,10 +18,10 @@ let testProjectId = 't2';
 let projectId = makeId();
 let projectName = testId;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp2: apiToBackend.ToBackendGetQueryResponse;
+  let resp2: ToBackendGetQueryResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -80,9 +80,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req1: apiToBackend.ToBackendGetDashboardRequest = {
+    let req1: ToBackendGetDashboardRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -96,17 +96,15 @@ test('1', async t => {
       }
     };
 
-    let resp1 = await sendToBackend<apiToBackend.ToBackendGetDashboardResponse>(
-      {
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req1
-      }
-    );
+    let resp1 = await sendToBackend<ToBackendGetDashboardResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req1
+    });
 
-    let req2: apiToBackend.ToBackendGetQueryRequest = {
+    let req2: ToBackendGetQueryRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetQuery,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -120,7 +118,7 @@ test('1', async t => {
       }
     };
 
-    resp2 = await sendToBackend<apiToBackend.ToBackendGetQueryResponse>({
+    resp2 = await sendToBackend<ToBackendGetQueryResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req2

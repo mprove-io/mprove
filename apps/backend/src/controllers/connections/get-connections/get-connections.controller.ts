@@ -22,9 +22,9 @@ export class GetConnectionsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetConnections)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetConnections)
   async getConnections(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetConnectionsRequest = request.body;
+    let reqValid: ToBackendGetConnectionsRequest = request.body;
 
     let { projectId, envId } = reqValid.payload;
 
@@ -80,7 +80,7 @@ export class GetConnectionsController {
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let payload: apiToBackend.ToBackendGetConnectionsResponsePayload = {
+    let payload: ToBackendGetConnectionsResponsePayload = {
       userMember: apiMember,
       connections: connections
         .sort((a, b) =>

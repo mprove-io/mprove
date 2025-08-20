@@ -30,9 +30,9 @@ export class GetDashboardsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetDashboards)
   async getDashboards(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetDashboardsRequest = request.body;
+    let reqValid: ToBackendGetDashboardsRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
@@ -121,7 +121,7 @@ export class GetDashboardsController {
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let payload: apiToBackend.ToBackendGetDashboardsResponsePayload = {
+    let payload: ToBackendGetDashboardsResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: apiMember,

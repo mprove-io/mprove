@@ -25,9 +25,9 @@ export class GetNavController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetNav)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetNav)
   async getNav(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetNavRequest = request.body;
+    let reqValid: ToBackendGetNavRequest = request.body;
 
     let { orgId, projectId, getRepo } = reqValid.payload;
 
@@ -120,41 +120,38 @@ export class GetNavController {
 
       apiStruct = this.wrapToApiService.wrapToApiStruct(struct);
 
-      let toDiskGetCatalogNodesRequest: apiToDisk.ToDiskGetCatalogNodesRequest =
-        {
-          info: {
-            name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
-            traceId: reqValid.info.traceId
-          },
-          payload: {
-            orgId: resultProject.orgId,
-            projectId: resultProject.projectId,
-            repoId: bridge.repoId,
-            branch: bridge.branchId,
-            isFetch: true,
-            remoteType: resultProject.remoteType,
-            gitUrl: resultProject.gitUrl,
-            privateKey: resultProject.privateKey,
-            publicKey: resultProject.publicKey
-          }
-        };
+      let toDiskGetCatalogNodesRequest: ToDiskGetCatalogNodesRequest = {
+        info: {
+          name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
+          traceId: reqValid.info.traceId
+        },
+        payload: {
+          orgId: resultProject.orgId,
+          projectId: resultProject.projectId,
+          repoId: bridge.repoId,
+          branch: bridge.branchId,
+          isFetch: true,
+          remoteType: resultProject.remoteType,
+          gitUrl: resultProject.gitUrl,
+          privateKey: resultProject.privateKey,
+          publicKey: resultProject.publicKey
+        }
+      };
 
       let diskResponse =
-        await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogNodesResponse>(
-          {
-            routingKey: makeRoutingKeyToDisk({
-              orgId: resultProject.orgId,
-              projectId: resultProject.projectId
-            }),
-            message: toDiskGetCatalogNodesRequest,
-            checkIsOk: true
-          }
-        );
+        await this.rabbitService.sendToDisk<ToDiskGetCatalogNodesResponse>({
+          routingKey: makeRoutingKeyToDisk({
+            orgId: resultProject.orgId,
+            projectId: resultProject.projectId
+          }),
+          message: toDiskGetCatalogNodesRequest,
+          checkIsOk: true
+        });
 
       repo = diskResponse?.payload.repo;
     }
 
-    let payload: apiToBackend.ToBackendGetNavResponsePayload = {
+    let payload: ToBackendGetNavResponsePayload = {
       avatarSmall: avatar?.avatarSmall,
       avatarBig: avatar?.avatarBig,
       orgId: resultOrgId,

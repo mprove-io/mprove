@@ -39,9 +39,9 @@ export class CreateConnectionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateConnection)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateConnection)
   async createConnection(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendCreateConnectionRequest = request.body;
+    let reqValid: ToBackendCreateConnectionRequest = request.body;
     let {
       projectId,
       envId,
@@ -136,7 +136,7 @@ export class CreateConnectionController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendCreateConnectionResponsePayload = {
+    let payload: ToBackendCreateConnectionResponsePayload = {
       connection: this.wrapToApiService.wrapToApiConnection(newConnection)
     };
 

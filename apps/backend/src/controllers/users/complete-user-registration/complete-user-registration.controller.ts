@@ -35,12 +35,9 @@ export class CompleteUserRegistrationController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCompleteUserRegistration
-  )
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCompleteUserRegistration)
   async completeUserRegistration(@Req() request: any) {
-    let reqValid: apiToBackend.ToBackendCompleteUserRegistrationRequest =
-      request.body;
+    let reqValid: ToBackendCompleteUserRegistrationRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { emailConfirmationToken, newPassword } = reqValid.payload;
@@ -66,7 +63,7 @@ export class CompleteUserRegistrationController {
       user: user
     });
 
-    let payload: apiToBackend.ToBackendConfirmUserEmailResponsePayload = {};
+    let payload: ToBackendConfirmUserEmailResponsePayload = {};
 
     user.isEmailVerified = true;
 

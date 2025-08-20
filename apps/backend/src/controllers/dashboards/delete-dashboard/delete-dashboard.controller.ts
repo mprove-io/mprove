@@ -44,9 +44,9 @@ export class DeleteDashboardController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDashboard)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteDashboard)
   async createEmptyDashboard(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendDeleteDashboardRequest = request.body;
+    let reqValid: ToBackendDeleteDashboardRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {
       throw new ServerError({
@@ -133,9 +133,9 @@ export class DeleteDashboardController {
     //   secondFileNodeId = pathParts.join('.');
     // }
 
-    let toDiskDeleteFileRequest: apiToDisk.ToDiskDeleteFileRequest = {
+    let toDiskDeleteFileRequest: ToDiskDeleteFileRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
+        name: ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -154,7 +154,7 @@ export class DeleteDashboardController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteFileResponse>({
+      await this.rabbitService.sendToDisk<ToDiskDeleteFileResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId

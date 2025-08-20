@@ -8,6 +8,8 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
 
 export const queriesTable = pgTable(
   'queries',

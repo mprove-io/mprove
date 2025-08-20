@@ -44,9 +44,9 @@ export class DeleteReportController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteReport)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteReport)
   async deleteRep(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendDeleteReportRequest = request.body;
+    let reqValid: ToBackendDeleteReportRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId, reportId } = reqValid.payload;
@@ -106,9 +106,9 @@ export class DeleteReportController {
       });
     }
 
-    let toDiskDeleteFileRequest: apiToDisk.ToDiskDeleteFileRequest = {
+    let toDiskDeleteFileRequest: ToDiskDeleteFileRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
+        name: ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -126,7 +126,7 @@ export class DeleteReportController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteFileResponse>({
+      await this.rabbitService.sendToDisk<ToDiskDeleteFileResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId

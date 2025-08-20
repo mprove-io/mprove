@@ -1,12 +1,12 @@
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { SRC_PATH } from '~common/constants/top-blockml';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { BmlFile } from '~common/interfaces/blockml/bml-file';
 import { File3 } from '~common/interfaces/blockml/internal/file-3';
 import { Preset } from '~common/interfaces/blockml/preset';

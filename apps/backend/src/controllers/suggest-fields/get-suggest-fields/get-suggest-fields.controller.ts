@@ -27,9 +27,9 @@ export class GetSuggestFieldsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields)
   async getSuggestFields(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetSuggestFieldsRequest = request.body;
+    let reqValid: ToBackendGetSuggestFieldsRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
@@ -133,7 +133,7 @@ export class GetSuggestFieldsController {
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let payload: apiToBackend.ToBackendGetSuggestFieldsResponsePayload = {
+    let payload: ToBackendGetSuggestFieldsResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: apiMember,

@@ -1,11 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
-
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
+import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
+import {
+  DashboardEnt,
+  dashboardsTable
+} from '~backend/drizzle/postgres/schema/dashboards';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
-import { modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { MemberEnt } from '~backend/drizzle/postgres/schema/members';
+import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { checkAccess } from '~backend/functions/check-access';
+import { ErEnum } from '~common/enums/er.enum';
+import { isUndefined } from '~common/functions/is-undefined';
+import { Dashboard } from '~common/interfaces/blockml/dashboard';
+import { ServerError } from '~common/models/server-error';
 import { WrapToApiService } from './wrap-to-api.service';
 
 @Injectable()

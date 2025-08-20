@@ -9,6 +9,9 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { ModelField } from '~common/interfaces/blockml/model-field';
+import { ModelNode } from '~common/interfaces/blockml/model-node';
 
 export const modelsTable = pgTable(
   'models',

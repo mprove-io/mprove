@@ -43,9 +43,9 @@ export class ValidateFilesController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendValidateFiles)
   async saveFile(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendValidateFilesRequest = request.body;
+    let reqValid: ToBackendValidateFilesRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, envId, branchId } = reqValid.payload;
@@ -86,9 +86,9 @@ export class ValidateFilesController {
       member: member
     });
 
-    let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
+    let getCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
+        name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -104,16 +104,14 @@ export class ValidateFilesController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
-        {
-          routingKey: makeRoutingKeyToDisk({
-            orgId: project.orgId,
-            projectId: projectId
-          }),
-          message: getCatalogFilesRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToDisk<ToDiskGetCatalogFilesResponse>({
+        routingKey: makeRoutingKeyToDisk({
+          orgId: project.orgId,
+          projectId: projectId
+        }),
+        message: getCatalogFilesRequest,
+        checkIsOk: true
+      });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
@@ -163,7 +161,7 @@ export class ValidateFilesController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendValidateFilesResponsePayload = {
+    let payload: ToBackendValidateFilesResponsePayload = {
       repo: diskResponse.payload.repo,
       needValidate: currentBridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct)

@@ -1,9 +1,19 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
-
+import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { MemberEnt } from '~backend/drizzle/postgres/schema/members';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { checkAccess } from '~backend/functions/check-access';
+import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
+import { EMPTY_REPORT_ID } from '~common/constants/top';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { ErEnum } from '~common/enums/er.enum';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeCopy } from '~common/functions/make-copy';
+import { ServerError } from '~common/models/server-error';
 import { BlockmlService } from './blockml.service';
 import { DocService } from './doc.service';
 import { MakerService } from './maker.service';
@@ -70,7 +80,7 @@ export class ReportsService {
       reportId,
       structId,
       checkExist,
-      checkAccess,
+      checkAccess: isCheckAccess,
       user,
       userMember
     } = item;
@@ -119,7 +129,7 @@ export class ReportsService {
       });
     }
 
-    if (checkAccess === true && report.draft === false) {
+    if (isCheckAccess === true && report.draft === false) {
       let isAccessGranted = checkAccess({
         userAlias: user.alias,
         member: userMember,

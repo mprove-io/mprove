@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
 import { CallerEnum } from '~common/enums/special/caller.enum';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { FileChart } from '~common/interfaces/blockml/internal/file-chart';
 import { checkChartAccess } from './check-chart-access';
 import { checkChartTilesExist } from './check-chart-tiles-exist';

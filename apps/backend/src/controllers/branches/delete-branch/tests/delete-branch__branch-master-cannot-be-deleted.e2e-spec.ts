@@ -19,10 +19,10 @@ let projectName = testId;
 
 let branchId = BRANCH_MAIN;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendDeleteBranchResponse;
+  let resp: ToBackendDeleteBranchResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -72,9 +72,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendDeleteBranchRequest = {
+    let req: ToBackendDeleteBranchRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
+        name: ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -85,7 +85,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendDeleteBranchResponse>({
+    resp = await sendToBackend<ToBackendDeleteBranchResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

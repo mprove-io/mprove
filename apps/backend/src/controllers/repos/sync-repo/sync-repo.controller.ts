@@ -45,9 +45,9 @@ export class SyncRepoController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSyncRepo)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSyncRepo)
   async syncRepo(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendSyncRepoRequest = request.body;
+    let reqValid: ToBackendSyncRepoRequest = request.body;
 
     let { traceId } = reqValid.info;
     let {
@@ -90,9 +90,9 @@ export class SyncRepoController {
       envId: envId
     });
 
-    let toDiskSyncRepoRequest: apiToDisk.ToDiskSyncRepoRequest = {
+    let toDiskSyncRepoRequest: ToDiskSyncRepoRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSyncRepo,
+        name: ToDiskRequestInfoNameEnum.ToDiskSyncRepo,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -113,7 +113,7 @@ export class SyncRepoController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskSyncRepoResponse>({
+      await this.rabbitService.sendToDisk<ToDiskSyncRepoResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
@@ -173,7 +173,7 @@ export class SyncRepoController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendSyncRepoResponsePayload = {
+    let payload: ToBackendSyncRepoResponsePayload = {
       restChangedFiles: diskResponse.payload.restChangedFiles,
       restDeletedFiles: diskResponse.payload.restDeletedFiles,
       struct: this.wrapToApiService.wrapToApiStruct(struct),

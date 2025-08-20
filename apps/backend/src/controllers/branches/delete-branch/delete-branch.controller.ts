@@ -33,9 +33,9 @@ export class DeleteBranchController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteBranch)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteBranch)
   async deleteBranch(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendDeleteBranchRequest = request.body;
+    let reqValid: ToBackendDeleteBranchRequest = request.body;
 
     let { projectId, isRepoProd, branchId } = reqValid.payload;
 
@@ -69,9 +69,9 @@ export class DeleteBranchController {
       });
     }
 
-    let toDiskDeleteBranchRequest: apiToDisk.ToDiskDeleteBranchRequest = {
+    let toDiskDeleteBranchRequest: ToDiskDeleteBranchRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteBranch,
+        name: ToDiskRequestInfoNameEnum.ToDiskDeleteBranch,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -88,16 +88,14 @@ export class DeleteBranchController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteBranchResponse>(
-        {
-          routingKey: makeRoutingKeyToDisk({
-            orgId: project.orgId,
-            projectId: projectId
-          }),
-          message: toDiskDeleteBranchRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToDisk<ToDiskDeleteBranchResponse>({
+        routingKey: makeRoutingKeyToDisk({
+          orgId: project.orgId,
+          projectId: projectId
+        }),
+        message: toDiskDeleteBranchRequest,
+        checkIsOk: true
+      });
 
     await retry(
       async () =>

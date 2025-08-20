@@ -30,9 +30,9 @@ export class GetChartsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetCharts)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetCharts)
   async getCharts(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetChartsRequest = request.body;
+    let reqValid: ToBackendGetChartsRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
@@ -100,7 +100,7 @@ export class GetChartsController {
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let payload: apiToBackend.ToBackendGetChartsResponsePayload = {
+    let payload: ToBackendGetChartsResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: apiMember,

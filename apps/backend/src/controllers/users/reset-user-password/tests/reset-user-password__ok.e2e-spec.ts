@@ -10,10 +10,10 @@ let traceId = testId;
 let email = `${testId}@example.com`;
 let password = '123456';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendResetUserPasswordResponse;
+  let resp: ToBackendResetUserPasswordResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -33,23 +33,20 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let resetUserPasswordReq: apiToBackend.ToBackendResetUserPasswordRequest = {
+    let resetUserPasswordReq: ToBackendResetUserPasswordRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendResetUserPassword,
+        name: ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
         traceId: traceId,
         idempotencyKey: makeId()
       },
       payload: { email: email }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendResetUserPasswordResponse>(
-      {
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: resetUserPasswordReq
-      }
-    );
+    resp = await sendToBackend<ToBackendResetUserPasswordResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: resetUserPasswordReq
+    });
 
     await prep.app.close();
   } catch (e) {

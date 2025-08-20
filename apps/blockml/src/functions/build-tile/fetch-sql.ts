@@ -1,6 +1,7 @@
 import { PostgresConnection } from '@malloydata/db-postgres';
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
 import { RabbitService } from '~blockml/services/rabbit.service';
 import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
@@ -13,7 +14,6 @@ import { LogTypeEnum } from '~common/enums/special/log-type.enum';
 import { makeCopy } from '~common/functions/make-copy';
 import { makeId } from '~common/functions/make-id';
 import { QueryOperation } from '~common/interfaces/backend/query-operation';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { BmlFile } from '~common/interfaces/blockml/bml-file';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { FileMod } from '~common/interfaces/blockml/internal/file-mod';

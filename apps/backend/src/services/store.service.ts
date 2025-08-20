@@ -1,12 +1,33 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
-
+import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
+import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
-import { toBooleanFromLowercaseString } from '~common/_index';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { ControlClassEnum } from '~common/enums/control-class.enum';
+import { ParameterEnum } from '~common/enums/docs/parameter.enum';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { StoreMethodEnum } from '~common/enums/store-method.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeCopy } from '~common/functions/make-copy';
+import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
+import { Filter } from '~common/interfaces/blockml/filter';
+import { Fraction } from '~common/interfaces/blockml/fraction';
+import { FractionControl } from '~common/interfaces/blockml/fraction-control';
+import { FieldAny } from '~common/interfaces/blockml/internal/field-any';
+import { FileStore } from '~common/interfaces/blockml/internal/file-store';
+import { Mconfig } from '~common/interfaces/blockml/mconfig';
+import { Model } from '~common/interfaces/blockml/model';
+import { MyRegex } from '~common/models/my-regex';
 import { getYYYYMMDDCurrentDateByTimezone } from '~node-common/functions/get-yyyymmdd-current-date-by-timezone';
 import { UserCodeService } from './user-code.service';
 

@@ -20,10 +20,10 @@ let projectName = testId;
 
 let branchId = BRANCH_MAIN;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendDeleteFolderResponse;
+  let resp: ToBackendDeleteFolderResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -74,9 +74,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendDeleteFolderRequest = {
+    let req: ToBackendDeleteFolderRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFolder,
+        name: ToBackendRequestInfoNameEnum.ToBackendDeleteFolder,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -88,7 +88,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendDeleteFolderResponse>({
+    resp = await sendToBackend<ToBackendDeleteFolderResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

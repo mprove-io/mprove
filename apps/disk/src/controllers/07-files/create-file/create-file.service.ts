@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { MPROVE_CONFIG_FILENAME, PROD_REPO_ID } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
-import { DiskConfig } from '~common/interfaces/disk/disk-config';
 import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
 import {
@@ -12,6 +11,7 @@ import {
 } from '~common/interfaces/to-disk/07-files/to-disk-create-file';
 import { MyRegex } from '~common/models/my-regex';
 import { ServerError } from '~common/models/server-error';
+import { DiskConfig } from '~disk/config/disk-config';
 import { ensureDir } from '~disk/functions/disk/ensure-dir';
 import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '~disk/functions/disk/is-path-exist';

@@ -1,10 +1,10 @@
 import { PostgresConnection } from '@malloydata/db-postgres';
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
 import { RabbitService } from '~blockml/services/rabbit.service';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { BmlFile } from '~common/interfaces/blockml/bml-file';
 import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
 import { FileStore } from '~common/interfaces/blockml/internal/file-store';

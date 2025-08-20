@@ -21,9 +21,9 @@ export class GetMembersListController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembersList)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetMembersList)
   async getMembersList(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetMembersListRequest = request.body;
+    let reqValid: ToBackendGetMembersListRequest = request.body;
 
     let { projectId } = reqValid.payload;
 
@@ -40,7 +40,7 @@ export class GetMembersListController {
       where: eq(membersTable.projectId, projectId)
     });
 
-    let payload: apiToBackend.ToBackendGetMembersListResponsePayload = {
+    let payload: ToBackendGetMembersListResponsePayload = {
       userMember: this.wrapToApiService.wrapToApiMember(userMember),
       membersList: members.map(x => this.wrapToApiService.wrapToApiEnvUser(x))
     };

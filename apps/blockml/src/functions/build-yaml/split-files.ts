@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
 import {
   MPROVE_CONFIG_FILENAME,
@@ -11,7 +12,6 @@ import { ErTitleEnum } from '~common/enums/special/er-title.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
 import { LogTypeEnum } from '~common/enums/special/log-type.enum';
 import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { FileChart } from '~common/interfaces/blockml/internal/file-chart';
 import { FileDashboard } from '~common/interfaces/blockml/internal/file-dashboard';
 import { FileMod } from '~common/interfaces/blockml/internal/file-mod';

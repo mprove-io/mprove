@@ -6,9 +6,9 @@ import {
   drizzle as drizzlePg
 } from 'drizzle-orm/node-postgres';
 import { Pool, PoolConfig } from 'pg';
+import { BackendConfig } from '~backend/config/backend-config';
 import { getConfig } from '~backend/config/get.config';
 import { BoolEnum } from '~common/enums/bool.enum';
-import { BackendConfig } from '~common/interfaces/backend/backend-config';
 import { DrizzleLogWriter } from './drizzle-log-writer';
 import { DrizzlePacker } from './postgres/drizzle-packer';
 import { schemaPostgres } from './postgres/schema/_schema-postgres';

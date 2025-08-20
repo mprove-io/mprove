@@ -52,9 +52,9 @@ export class GetDashboardController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetDashboard)
   async getDashboard(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetDashboardRequest = request.body;
+    let reqValid: ToBackendGetDashboardRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId, dashboardId, timezone } =
@@ -117,9 +117,9 @@ export class GetDashboardController {
 
     // fromDashboard.fields = newDashboardFields;
 
-    let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
+    let getCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
+        name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -135,16 +135,14 @@ export class GetDashboardController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
-        {
-          routingKey: makeRoutingKeyToDisk({
-            orgId: project.orgId,
-            projectId: projectId
-          }),
-          message: getCatalogFilesRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToDisk<ToDiskGetCatalogFilesResponse>({
+        routingKey: makeRoutingKeyToDisk({
+          orgId: project.orgId,
+          projectId: projectId
+        }),
+        message: getCatalogFilesRequest,
+        checkIsOk: true
+      });
 
     let newDashboardId = fromDashboard.dashboardId;
 
@@ -411,7 +409,7 @@ export class GetDashboardController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendGetDashboardResponsePayload = {
+    let payload: ToBackendGetDashboardResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: apiMember,

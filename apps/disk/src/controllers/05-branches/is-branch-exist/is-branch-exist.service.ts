@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '~common/enums/er.enum';
-import { DiskConfig } from '~common/interfaces/disk/disk-config';
 import {
   ToDiskIsBranchExistRequest,
   ToDiskIsBranchExistResponsePayload
 } from '~common/interfaces/to-disk/05-branches/to-disk-is-branch-exist';
 import { ServerError } from '~common/models/server-error';
+import { DiskConfig } from '~disk/config/disk-config';
 import { ensureDir } from '~disk/functions/disk/ensure-dir';
 import { isPathExist } from '~disk/functions/disk/is-path-exist';
 import { isLocalBranchExist } from '~disk/functions/git/is-local-branch-exist';

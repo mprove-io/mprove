@@ -13,10 +13,10 @@ let newPassword = '456';
 let passwordResetToken = 'fj823984fj589324';
 let wrongPasswordResetToken = 'fk230g6epe569';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendUpdateUserPasswordResponse;
+  let resp: ToBackendUpdateUserPasswordResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -36,26 +36,23 @@ test('1', async t => {
       }
     });
 
-    let updateUserPasswordReq: apiToBackend.ToBackendUpdateUserPasswordRequest =
-      {
-        info: {
-          name: apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendUpdateUserPassword,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
-          passwordResetToken: wrongPasswordResetToken,
-          newPassword
-        }
-      };
+    let updateUserPasswordReq: ToBackendUpdateUserPasswordRequest = {
+      info: {
+        name: ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword,
+        traceId: traceId,
+        idempotencyKey: makeId()
+      },
+      payload: {
+        passwordResetToken: wrongPasswordResetToken,
+        newPassword
+      }
+    };
 
-    resp =
-      await sendToBackend<apiToBackend.ToBackendUpdateUserPasswordResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: updateUserPasswordReq
-      });
+    resp = await sendToBackend<ToBackendUpdateUserPasswordResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: updateUserPasswordReq
+    });
 
     await prep.app.close();
   } catch (e) {

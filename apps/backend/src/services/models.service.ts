@@ -1,8 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
-
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
+import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { ErEnum } from '~common/enums/er.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { ServerError } from '~common/models/server-error';
 
 @Injectable()
 export class ModelsService {

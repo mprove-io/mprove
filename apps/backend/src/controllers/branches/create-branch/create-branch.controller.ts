@@ -39,9 +39,9 @@ export class CreateBranchController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateBranch)
   async createBranch(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendCreateBranchRequest = request.body;
+    let reqValid: ToBackendCreateBranchRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, newBranchId, fromBranchId, isRepoProd } = reqValid.payload;
@@ -69,9 +69,9 @@ export class CreateBranchController {
       branchId: newBranchId
     });
 
-    let toDiskCreateBranchRequest: apiToDisk.ToDiskCreateBranchRequest = {
+    let toDiskCreateBranchRequest: ToDiskCreateBranchRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateBranch,
         traceId: traceId
       },
       payload: {
@@ -89,16 +89,14 @@ export class CreateBranchController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateBranchResponse>(
-        {
-          routingKey: makeRoutingKeyToDisk({
-            orgId: project.orgId,
-            projectId: projectId
-          }),
-          message: toDiskCreateBranchRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToDisk<ToDiskCreateBranchResponse>({
+        routingKey: makeRoutingKeyToDisk({
+          orgId: project.orgId,
+          projectId: projectId
+        }),
+        message: toDiskCreateBranchRequest,
+        checkIsOk: true
+      });
 
     let newBranch = this.makerService.makeBranch({
       projectId: projectId,

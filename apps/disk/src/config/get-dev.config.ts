@@ -4,7 +4,7 @@ import { BoolEnum } from '~common/enums/bool.enum';
 import { isDefined } from '~common/functions/is-defined';
 
 import { DiskEnvEnum } from '~common/enums/env/disk-env.enum';
-import { DiskConfig } from '~common/interfaces/disk/disk-config';
+import { DiskConfig } from '~disk/config/disk-config';
 
 export function getDevConfig(envFilePath: any) {
   let envFile: any = {};

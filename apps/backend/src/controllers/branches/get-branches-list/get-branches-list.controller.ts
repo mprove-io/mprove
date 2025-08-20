@@ -19,9 +19,9 @@ export class GetBranchesListController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetBranchesList)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetBranchesList)
   async getBranchesList(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetBranchesListRequest = request.body;
+    let reqValid: ToBackendGetBranchesListRequest = request.body;
 
     let { projectId } = reqValid.payload;
 
@@ -44,7 +44,7 @@ export class GetBranchesListController {
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let payload: apiToBackend.ToBackendGetBranchesListResponsePayload = {
+    let payload: ToBackendGetBranchesListResponsePayload = {
       userMember: apiMember,
       branchesList: branches.map(x => ({
         branchId: x.branchId,

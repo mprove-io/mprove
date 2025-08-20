@@ -28,9 +28,9 @@ export class GetReportsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReports)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetReports)
   async getReports(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetReportsRequest = request.body;
+    let reqValid: ToBackendGetReportsRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
@@ -122,7 +122,7 @@ export class GetReportsController {
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let payload: apiToBackend.ToBackendGetReportsResponsePayload = {
+    let payload: ToBackendGetReportsResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: apiMember,

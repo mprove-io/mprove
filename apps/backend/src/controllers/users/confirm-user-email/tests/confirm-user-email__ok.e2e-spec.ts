@@ -11,10 +11,10 @@ let email = `${testId}@example.com`;
 let emailToken = makeId();
 let password = '123456';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendConfirmUserEmailResponse;
+  let resp: ToBackendConfirmUserEmailResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -34,10 +34,9 @@ test('1', async t => {
       }
     });
 
-    let confirmUserEmailReq: apiToBackend.ToBackendConfirmUserEmailRequest = {
+    let confirmUserEmailReq: ToBackendConfirmUserEmailRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendConfirmUserEmail,
+        name: ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -46,7 +45,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendConfirmUserEmailResponse>({
+    resp = await sendToBackend<ToBackendConfirmUserEmailResponse>({
       httpServer: prep.httpServer,
       req: confirmUserEmailReq
     });

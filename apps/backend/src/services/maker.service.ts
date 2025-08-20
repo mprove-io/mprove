@@ -1,5 +1,19 @@
 import { Injectable } from '@nestjs/common';
-
+import { BranchEnt } from '~backend/drizzle/postgres/schema/branches';
+import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
+import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
+import { EnvEnt } from '~backend/drizzle/postgres/schema/envs';
+import { MemberEnt } from '~backend/drizzle/postgres/schema/members';
+import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { DEFAULT_QUERY_SIZE_LIMIT } from '~common/constants/top-backend';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { ConnectionHeader } from '~common/interfaces/backend/connection-header';
+import { Ev } from '~common/interfaces/backend/ev';
+import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
+import { ReportField } from '~common/interfaces/blockml/report-field';
+import { Row } from '~common/interfaces/blockml/row';
 import { HashService } from './hash.service';
 
 @Injectable()

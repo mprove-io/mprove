@@ -1,13 +1,24 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
-import { apiToBlockml } from '~backend/barrels/api-to-blockml';
-
+import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
+import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
+import { diskFilesToBlockmlFiles } from '~backend/functions/disk-files-to-blockml-files';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { processRowIds } from '~backend/functions/process-row-ids';
-import { ProjectConnection } from '~common/_index';
+import { RabbitBlockmlRoutingEnum } from '~common/enums/rabbit-blockml-routing-keys.enum';
+import { ToBlockmlRequestInfoNameEnum } from '~common/enums/to/to-blockml-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { Ev } from '~common/interfaces/backend/ev';
+import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
+import { DiskCatalogFile } from '~common/interfaces/disk/disk-catalog-file';
+import {
+  ToBlockmlRebuildStructRequest,
+  ToBlockmlRebuildStructResponse
+} from '~common/interfaces/to-blockml/api/to-blockml-rebuild-struct';
 import { EnvsService } from './envs.service';
 import { RabbitService } from './rabbit.service';
 import { WrapToEntService } from './wrap-to-ent.service';
@@ -88,35 +99,31 @@ export class BlockmlService {
       );
     }
 
-    let toBlockmlRebuildStructRequest: apiToBlockml.ToBlockmlRebuildStructRequest =
-      {
-        info: {
-          name: apiToBlockml.ToBlockmlRequestInfoNameEnum
-            .ToBlockmlRebuildStruct,
-          traceId: traceId
-        },
-        payload: {
-          structId: structId,
-          projectId: projectId,
-          mproveDir: mproveDir,
-          files: diskFilesToBlockmlFiles(diskFiles),
-          envId: envId,
-          evs: isDefined(evs) ? evs : apiEnv.evsWithFallback,
-          connections: isDefined(connections)
-            ? connections
-            : connectionsWithFallback,
-          overrideTimezone: overrideTimezone
-        }
-      };
+    let toBlockmlRebuildStructRequest: ToBlockmlRebuildStructRequest = {
+      info: {
+        name: ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct,
+        traceId: traceId
+      },
+      payload: {
+        structId: structId,
+        projectId: projectId,
+        mproveDir: mproveDir,
+        files: diskFilesToBlockmlFiles(diskFiles),
+        envId: envId,
+        evs: isDefined(evs) ? evs : apiEnv.evsWithFallback,
+        connections: isDefined(connections)
+          ? connections
+          : connectionsWithFallback,
+        overrideTimezone: overrideTimezone
+      }
+    };
 
     let blockmlRebuildStructResponse =
-      await this.rabbitService.sendToBlockml<apiToBlockml.ToBlockmlRebuildStructResponse>(
-        {
-          routingKey: RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
-          message: toBlockmlRebuildStructRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToBlockml<ToBlockmlRebuildStructResponse>({
+        routingKey: RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
+        message: toBlockmlRebuildStructRequest,
+        checkIsOk: true
+      });
 
     let rs = blockmlRebuildStructResponse.payload;
 

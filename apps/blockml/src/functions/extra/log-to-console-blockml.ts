@@ -1,11 +1,11 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { getConfig } from '~blockml/config/get.config';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { enumToBoolean } from '~common/functions/enum-to-boolean';
 import { isDefined } from '~common/functions/is-defined';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { logToConsole } from '~node-common/functions/log-to-console';
 
 export function logToConsoleBlockml(item: {

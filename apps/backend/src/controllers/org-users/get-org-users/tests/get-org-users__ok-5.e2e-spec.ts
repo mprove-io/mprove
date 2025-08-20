@@ -14,10 +14,10 @@ let password = '123456';
 let orgId = testId;
 let orgName = testId;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetOrgUsersResponse;
+  let resp: ToBackendGetOrgUsersResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -50,9 +50,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetOrgUsersRequest = {
+    let req: ToBackendGetOrgUsersRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -63,7 +63,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendGetOrgUsersResponse>({
+    resp = await sendToBackend<ToBackendGetOrgUsersResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

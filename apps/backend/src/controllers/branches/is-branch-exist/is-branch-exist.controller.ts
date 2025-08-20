@@ -17,9 +17,9 @@ export class IsBranchExistController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendIsBranchExist)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendIsBranchExist)
   async isBranchExist(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendIsBranchExistRequest = request.body;
+    let reqValid: ToBackendIsBranchExistRequest = request.body;
 
     let { projectId, branchId, isRepoProd } = reqValid.payload;
 
@@ -42,7 +42,7 @@ export class IsBranchExistController {
       )
     });
 
-    let payload: apiToBackend.ToBackendIsBranchExistResponsePayload = {
+    let payload: ToBackendIsBranchExistResponsePayload = {
       isExist: isDefined(branch)
     };
 

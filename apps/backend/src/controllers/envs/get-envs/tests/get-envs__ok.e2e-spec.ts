@@ -17,10 +17,10 @@ let orgName = testId;
 let projectId = makeId();
 let projectName = testId;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetEnvsResponse;
+  let resp: ToBackendGetEnvsResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -69,9 +69,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetEnvsRequest = {
+    let req: ToBackendGetEnvsRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvs,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetEnvs,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -80,7 +80,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendGetEnvsResponse>({
+    resp = await sendToBackend<ToBackendGetEnvsResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

@@ -7,6 +7,10 @@ import {
   pgTable,
   varchar
 } from 'drizzle-orm/pg-core';
+import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
+import { BmlError } from '~common/interfaces/blockml/bml-error';
+import { ModelMetric } from '~common/interfaces/blockml/model-metric';
+import { Preset } from '~common/interfaces/blockml/preset';
 
 export const structsTable = pgTable(
   'structs',

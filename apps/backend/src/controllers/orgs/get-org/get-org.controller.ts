@@ -18,9 +18,9 @@ export class GetOrgController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrg)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetOrg)
   async getOrg(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetOrgRequest = request.body;
+    let reqValid: ToBackendGetOrgRequest = request.body;
 
     let { orgId } = reqValid.payload;
 
@@ -52,7 +52,7 @@ export class GetOrgController {
       }
     }
 
-    let payload: apiToBackend.ToBackendGetOrgResponsePayload = {
+    let payload: ToBackendGetOrgResponsePayload = {
       org: this.wrapToApiService.wrapToApiOrg(org)
     };
 

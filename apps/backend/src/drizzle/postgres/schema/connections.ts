@@ -9,6 +9,8 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { ConnectionHeader } from '~common/interfaces/backend/connection-header';
 
 export const connectionsTable = pgTable(
   'connections',

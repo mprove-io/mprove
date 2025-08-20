@@ -1,10 +1,10 @@
 import { ConfigService } from '@nestjs/config';
 import * as fse from 'fs-extra';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
 import { LogTypeEnum } from '~common/enums/special/log-type.enum';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 
 export function log(
   cs: ConfigService<BlockmlConfig>,

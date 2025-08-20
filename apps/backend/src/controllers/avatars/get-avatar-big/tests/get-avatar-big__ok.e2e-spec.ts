@@ -1,7 +1,16 @@
 import test from 'ava';
-
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
+import { sendToBackend } from '~backend/functions/send-to-backend';
+import { Prep } from '~backend/interfaces/prep';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { makeId } from '~common/functions/make-id';
+import {
+  ToBackendGetAvatarBigRequest,
+  ToBackendGetAvatarBigResponse
+} from '~common/interfaces/to-backend/avatars/to-backend-get-avatar-big';
 
 let testId = 'backend-get-avatar-big__ok';
 
@@ -11,10 +20,10 @@ let userId = makeId();
 let email = `${testId}@example.com`;
 let password = '123456';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetAvatarBigResponse;
+  let resp: ToBackendGetAvatarBigResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -35,9 +44,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetAvatarBigRequest = {
+    let req: ToBackendGetAvatarBigRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -46,7 +55,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendGetAvatarBigResponse>({
+    resp = await sendToBackend<ToBackendGetAvatarBigResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

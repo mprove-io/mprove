@@ -36,10 +36,9 @@ export class DeleteDraftReportsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReports)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReports)
   async deleteDraftReports(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendDeleteDraftReportsRequest =
-      request.body;
+    let reqValid: ToBackendDeleteDraftReportsRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId, reportIds } =

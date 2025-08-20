@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { BmlFile } from '~common/interfaces/blockml/bml-file';
 import { File2 } from '~common/interfaces/blockml/internal/file-2';
 import { File3 } from '~common/interfaces/blockml/internal/file-3';

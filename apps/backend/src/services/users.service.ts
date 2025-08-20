@@ -2,10 +2,18 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { eq } from 'drizzle-orm';
-
+import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { usersTable } from '~backend/drizzle/postgres/schema/users';
+import { UserEnt, usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
+import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
+import { ErEnum } from '~common/enums/er.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeCopy } from '~common/functions/make-copy';
+import { makeId } from '~common/functions/make-id';
+import { MyRegex } from '~common/models/my-regex';
+import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 

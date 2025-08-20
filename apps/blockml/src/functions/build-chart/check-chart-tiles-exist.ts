@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
 import { ParameterEnum } from '~common/enums/docs/parameter.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
@@ -7,7 +8,6 @@ import { ErTitleEnum } from '~common/enums/special/er-title.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
 import { LogTypeEnum } from '~common/enums/special/log-type.enum';
 import { isUndefined } from '~common/functions/is-undefined';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { FileChart } from '~common/interfaces/blockml/internal/file-chart';
 import { log } from '../extra/log';
 

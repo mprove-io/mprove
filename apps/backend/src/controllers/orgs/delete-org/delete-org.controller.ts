@@ -36,9 +36,9 @@ export class DeleteOrgController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteOrg)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteOrg)
   async deleteOrg(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendDeleteOrgRequest = request.body;
+    let reqValid: ToBackendDeleteOrgRequest = request.body;
 
     let { orgId } = reqValid.payload;
 
@@ -49,9 +49,9 @@ export class DeleteOrgController {
       userId: user.userId
     });
 
-    let toDiskDeleteOrgRequest: apiToDisk.ToDiskDeleteOrgRequest = {
+    let toDiskDeleteOrgRequest: ToDiskDeleteOrgRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrg,
+        name: ToDiskRequestInfoNameEnum.ToDiskDeleteOrg,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -60,7 +60,7 @@ export class DeleteOrgController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteOrgResponse>({
+      await this.rabbitService.sendToDisk<ToDiskDeleteOrgResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: orgId,
           projectId: undefined

@@ -46,9 +46,9 @@ export class DeleteRecordsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteRecords)
   async deleteRecords(@Req() request: any) {
-    let reqValid: apiToBackend.ToBackendDeleteRecordsRequest = request.body;
+    let reqValid: ToBackendDeleteRecordsRequest = request.body;
 
     let { orgIds, projectIds, emails, orgNames, projectNames } =
       reqValid.payload;
@@ -85,9 +85,9 @@ export class DeleteRecordsController {
 
     if (orgIds.length > 0) {
       await asyncPool(1, orgIds, async (x: string) => {
-        let deleteOrgRequest: apiToDisk.ToDiskDeleteOrgRequest = {
+        let deleteOrgRequest: ToDiskDeleteOrgRequest = {
           info: {
-            name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteOrg,
+            name: ToDiskRequestInfoNameEnum.ToDiskDeleteOrg,
             traceId: reqValid.info.traceId
           },
           payload: {
@@ -95,7 +95,7 @@ export class DeleteRecordsController {
           }
         };
 
-        await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteOrgResponse>({
+        await this.rabbitService.sendToDisk<ToDiskDeleteOrgResponse>({
           routingKey: makeRoutingKeyToDisk({
             orgId: x,
             projectId: null
@@ -205,7 +205,7 @@ export class DeleteRecordsController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendDeleteRecordsResponse['payload'] = {};
+    let payload: ToBackendDeleteRecordsResponse['payload'] = {};
 
     return payload;
   }

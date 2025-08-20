@@ -9,11 +9,11 @@ import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 export class GetUserProfileController {
   constructor(private wrapToApiService: WrapToApiService) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetUserProfile)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetUserProfile)
   async getUserProfile(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetUserProfileRequest = request.body;
+    let reqValid: ToBackendGetUserProfileRequest = request.body;
 
-    let payload: apiToBackend.ToBackendGetUserProfileResponsePayload = {
+    let payload: ToBackendGetUserProfileResponsePayload = {
       user: this.wrapToApiService.wrapToApiUser(user)
     };
 

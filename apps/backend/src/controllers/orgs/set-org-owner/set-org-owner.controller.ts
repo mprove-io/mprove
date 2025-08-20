@@ -30,9 +30,9 @@ export class SetOrgOwnerController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner)
   async setOrgOwner(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendSetOrgOwnerRequest = request.body;
+    let reqValid: ToBackendSetOrgOwnerRequest = request.body;
 
     let { orgId, ownerEmail } = reqValid.payload;
 
@@ -73,7 +73,7 @@ export class SetOrgOwnerController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendSetOrgOwnerResponsePayload = {
+    let payload: ToBackendSetOrgOwnerResponsePayload = {
       org: this.wrapToApiService.wrapToApiOrg(org)
     };
 

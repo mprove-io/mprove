@@ -19,9 +19,9 @@ export class CreateOrgController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrg)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateOrg)
   async createOrg(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendCreateOrgRequest = request.body;
+    let reqValid: ToBackendCreateOrgRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {
       throw new ServerError({
@@ -70,7 +70,7 @@ export class CreateOrgController {
       traceId: reqValid.info.traceId
     });
 
-    let payload: apiToBackend.ToBackendCreateOrgResponsePayload = {
+    let payload: ToBackendCreateOrgResponsePayload = {
       org: this.wrapToApiService.wrapToApiOrg(newOrg)
     };
 

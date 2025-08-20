@@ -15,10 +15,10 @@ let newOwnerEmail = `new-${testId}@example.com`;
 let orgId = testId;
 let orgName = testId;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendSetOrgOwnerResponse;
+  let resp: ToBackendSetOrgOwnerResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -46,9 +46,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendSetOrgOwnerRequest = {
+    let req: ToBackendSetOrgOwnerRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner,
+        name: ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -58,7 +58,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendSetOrgOwnerResponse>({
+    resp = await sendToBackend<ToBackendSetOrgOwnerResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

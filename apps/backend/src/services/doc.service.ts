@@ -3,12 +3,28 @@ import { ConfigService } from '@nestjs/config';
 import { format, fromUnixTime } from 'date-fns';
 import * as pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
-
+import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { KitEnt } from '~backend/drizzle/postgres/schema/kits';
 import { getRetryOption } from '~backend/functions/get-retry-option';
-import { DOUBLE_UNDERSCORE } from '~common/_index';
-import { RabbitService } from './rabbit.service';
-import { UserCodeService } from './user-code.service';
+import { makeTs } from '~backend/functions/make-ts';
+import {
+  DOUBLE_UNDERSCORE,
+  SOME_ROWS_HAVE_FORMULA_ERRORS
+} from '~common/constants/top';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { RowTypeEnum } from '~common/enums/row-type.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeId } from '~common/functions/make-id';
+import { ReportDataColumn } from '~common/interfaces/backend/report-data-column';
+import { ReportX } from '~common/interfaces/backend/report-x';
+import { Fraction } from '~common/interfaces/blockml/fraction';
+import { Row } from '~common/interfaces/blockml/row';
+import { RowRecord } from '~common/interfaces/blockml/row-record';
+import { MyRegex } from '~common/models/my-regex';
+import { nodeFormatTsUnix } from '~node-common/functions/node-format-ts-unix';
 
 let Graph = require('tarjan-graph');
 let toposort = require('toposort');
@@ -27,8 +43,6 @@ interface XColumn {
 @Injectable()
 export class DocService {
   constructor(
-    private rabbitService: RabbitService,
-    private userCodeService: UserCodeService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

@@ -1,6 +1,12 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { MyResponse } from '~common/interfaces/_index';
+import { BackendConfig } from '~backend/config/backend-config';
+import { BoolEnum } from '~common/enums/bool.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { enumToBoolean } from '~common/functions/enum-to-boolean';
+import { MyResponse } from '~common/interfaces/to/my-response';
+import { logToConsole } from '~node-common/functions/log-to-console';
 
 export function logResponseBackend(item: {
   response: MyResponse;

@@ -4,7 +4,7 @@ import { BoolEnum } from '~common/enums/bool.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { enumToBoolean } from '~common/functions/enum-to-boolean';
 import { isDefined } from '~common/functions/is-defined';
-import { DiskConfig } from '~common/interfaces/disk/disk-config';
+import { DiskConfig } from '~disk/config/disk-config';
 import { getConfig } from '~disk/config/get.config';
 import { logToConsole } from '~node-common/functions/log-to-console';
 

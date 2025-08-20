@@ -8,6 +8,9 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
+import { ReportField } from '~common/interfaces/blockml/report-field';
+import { Row } from '~common/interfaces/blockml/row';
 
 export const reportsTable = pgTable(
   'reports',

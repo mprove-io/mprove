@@ -19,9 +19,9 @@ export class GetOrgUsersController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers)
   async getOrgUsers(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetOrgUsersRequest = request.body;
+    let reqValid: ToBackendGetOrgUsersRequest = request.body;
 
     let { orgId, perPage, pageNum } = reqValid.payload;
 
@@ -70,7 +70,7 @@ export class GetOrgUsersController {
             )
           });
 
-    let orgUsers: apiToBackend.OrgUsersItem[] = [];
+    let orgUsers: OrgUsersItem[] = [];
 
     let avatars =
       userIds.length === 0
@@ -86,7 +86,7 @@ export class GetOrgUsersController {
     users.forEach(x => {
       let userMembers = members.filter(m => m.memberId === x.userId);
 
-      let orgUser: apiToBackend.OrgUsersItem = {
+      let orgUser: OrgUsersItem = {
         userId: x.userId,
         avatarSmall: avatars.find(a => a.userId === x.userId)?.avatarSmall,
         email: x.email,
@@ -129,7 +129,7 @@ export class GetOrgUsersController {
       orgUsers.push(orgUser);
     });
 
-    let payload: apiToBackend.ToBackendGetOrgUsersResponsePayload = {
+    let payload: ToBackendGetOrgUsersResponsePayload = {
       orgUsersList: orgUsers,
       total: usersResult.length > 0 ? usersResult[0].total : 0
     };

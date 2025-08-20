@@ -46,9 +46,9 @@ export class CreateFileController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateFile)
   async createFile(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendCreateFileRequest = request.body;
+    let reqValid: ToBackendCreateFileRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, branchId, parentNodeId, fileName, envId, modelInfo } =
@@ -97,9 +97,9 @@ export class CreateFileController {
       });
     }
 
-    let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
+    let toDiskCreateFileRequest: ToDiskCreateFileRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateFile,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -119,7 +119,7 @@ export class CreateFileController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateFileResponse>({
+      await this.rabbitService.sendToDisk<ToDiskCreateFileResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
@@ -179,7 +179,7 @@ export class CreateFileController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendCreateFileResponsePayload = {
+    let payload: ToBackendCreateFileResponsePayload = {
       repo: diskResponse.payload.repo,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       needValidate: currentBridge.needValidate

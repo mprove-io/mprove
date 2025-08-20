@@ -42,9 +42,9 @@ export class GetReportController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReport)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetReport)
   async getRep(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetReportRequest = request.body;
+    let reqValid: ToBackendGetReportRequest = request.body;
 
     let { traceId } = reqValid.info;
     let {
@@ -158,7 +158,7 @@ export class GetReportController {
     //   });
     // });
 
-    let payload: apiToBackend.ToBackendGetReportResponsePayload = {
+    let payload: ToBackendGetReportResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: userMemberApi,

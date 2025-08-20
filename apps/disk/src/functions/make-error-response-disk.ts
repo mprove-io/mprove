@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { enumToBoolean } from '~common/functions/enum-to-boolean';
-import { DiskConfig } from '~common/interfaces/disk/disk-config';
+import { DiskConfig } from '~disk/config/disk-config';
 import { makeErrorResponse } from '~node-common/functions/make-error-response';
 
 export function makeErrorResponseDisk(item: {

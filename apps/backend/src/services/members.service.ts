@@ -2,13 +2,36 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
-
+import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
-import { membersTable } from '~backend/drizzle/postgres/schema/members';
+import {
+  BridgeEnt,
+  bridgesTable
+} from '~backend/drizzle/postgres/schema/bridges';
+import {
+  MemberEnt,
+  membersTable
+} from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
+import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
+import {
+  EMPTY_STRUCT_ID,
+  PROD_REPO_ID,
+  PROJECT_ENV_PROD
+} from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeId } from '~common/functions/make-id';
+import {
+  ToDiskCreateDevRepoRequest,
+  ToDiskCreateDevRepoResponse
+} from '~common/interfaces/to-disk/03-repos/to-disk-create-dev-repo';
+import { ServerError } from '~common/models/server-error';
 import { BlockmlService } from './blockml.service';
 import { MakerService } from './maker.service';
 import { RabbitService } from './rabbit.service';
@@ -171,34 +194,31 @@ export class MembersService {
             isExplorer: true
           });
 
-          let toDiskCreateDevRepoRequest: apiToDisk.ToDiskCreateDevRepoRequest =
-            {
-              info: {
-                name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
-                traceId: traceId
-              },
-              payload: {
-                orgId: project.orgId,
-                projectId: firstProjectId,
-                devRepoId: newMember.memberId,
-                remoteType: project.remoteType,
-                gitUrl: project.gitUrl,
-                privateKey: project.privateKey,
-                publicKey: project.publicKey
-              }
-            };
+          let toDiskCreateDevRepoRequest: ToDiskCreateDevRepoRequest = {
+            info: {
+              name: ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
+              traceId: traceId
+            },
+            payload: {
+              orgId: project.orgId,
+              projectId: firstProjectId,
+              devRepoId: newMember.memberId,
+              remoteType: project.remoteType,
+              gitUrl: project.gitUrl,
+              privateKey: project.privateKey,
+              publicKey: project.publicKey
+            }
+          };
 
           let diskResponse =
-            await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateDevRepoResponse>(
-              {
-                routingKey: makeRoutingKeyToDisk({
-                  orgId: project.orgId,
-                  projectId: firstProjectId
-                }),
-                message: toDiskCreateDevRepoRequest,
-                checkIsOk: true
-              }
-            );
+            await this.rabbitService.sendToDisk<ToDiskCreateDevRepoResponse>({
+              routingKey: makeRoutingKeyToDisk({
+                orgId: project.orgId,
+                projectId: firstProjectId
+              }),
+              message: toDiskCreateDevRepoRequest,
+              checkIsOk: true
+            });
 
           let prodBranch = await this.db.drizzle.query.branchesTable.findFirst({
             where: and(

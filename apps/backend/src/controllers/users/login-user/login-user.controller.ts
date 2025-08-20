@@ -16,11 +16,11 @@ export class LoginUserController {
     private wrapToApiService: WrapToApiService
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendLoginUser)
   async loginUser(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendLoginUserRequest = request.body;
+    let reqValid: ToBackendLoginUserRequest = request.body;
 
-    let payload: apiToBackend.ToBackendLoginUserResponsePayload = {
+    let payload: ToBackendLoginUserResponsePayload = {
       token: this.jwtService.sign({ userId: user.userId }),
       user: this.wrapToApiService.wrapToApiUser(user)
     };

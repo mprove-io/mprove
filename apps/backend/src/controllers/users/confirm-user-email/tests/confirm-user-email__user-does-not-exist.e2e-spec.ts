@@ -8,10 +8,10 @@ let testId = 'backend-confirm-user-email__user-does-not-exist';
 let traceId = testId;
 let emailToken = makeId();
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendConfirmUserEmailResponse;
+  let resp: ToBackendConfirmUserEmailResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -19,20 +19,18 @@ test('1', async t => {
       deleteRecordsPayload: {}
     });
 
-    let confirmUserEmailRequest: apiToBackend.ToBackendConfirmUserEmailRequest =
-      {
-        info: {
-          name: apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendConfirmUserEmail,
-          traceId: traceId,
-          idempotencyKey: makeId()
-        },
-        payload: {
-          token: emailToken
-        }
-      };
+    let confirmUserEmailRequest: ToBackendConfirmUserEmailRequest = {
+      info: {
+        name: ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
+        traceId: traceId,
+        idempotencyKey: makeId()
+      },
+      payload: {
+        token: emailToken
+      }
+    };
 
-    resp = await sendToBackend<apiToBackend.ToBackendConfirmUserEmailResponse>({
+    resp = await sendToBackend<ToBackendConfirmUserEmailResponse>({
       httpServer: prep.httpServer,
       req: confirmUserEmailRequest
     });

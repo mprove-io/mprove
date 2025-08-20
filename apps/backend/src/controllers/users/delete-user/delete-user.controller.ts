@@ -33,9 +33,9 @@ export class DeleteUserController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteUser)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteUser)
   async deleteUser(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendDeleteUserRequest = request.body;
+    let reqValid: ToBackendDeleteUserRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {
       throw new ServerError({
@@ -111,9 +111,9 @@ export class DeleteUserController {
     await asyncPool(1, userMembers, async (m: MemberEnt) => {
       let project = projects.find(p => p.projectId === m.projectId);
 
-      let toDiskDeleteDevRepoRequest: apiToDisk.ToDiskDeleteDevRepoRequest = {
+      let toDiskDeleteDevRepoRequest: ToDiskDeleteDevRepoRequest = {
         info: {
-          name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo,
+          name: ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo,
           traceId: traceId
         },
         payload: {
@@ -123,16 +123,14 @@ export class DeleteUserController {
         }
       };
 
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteDevRepoResponse>(
-        {
-          routingKey: makeRoutingKeyToDisk({
-            orgId: project.orgId,
-            projectId: project.projectId
-          }),
-          message: toDiskDeleteDevRepoRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToDisk<ToDiskDeleteDevRepoResponse>({
+        routingKey: makeRoutingKeyToDisk({
+          orgId: project.orgId,
+          projectId: project.projectId
+        }),
+        message: toDiskDeleteDevRepoRequest,
+        checkIsOk: true
+      });
     });
 
     await retry(

@@ -1,3 +1,7 @@
+import { RowTypeEnum } from '~common/enums/row-type.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { Row } from '~common/interfaces/blockml/row';
+
 export function clearRowsCache(item: {
   processedRows: Row[];
   changedRowIds: string[];

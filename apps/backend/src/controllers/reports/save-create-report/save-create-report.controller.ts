@@ -54,9 +54,9 @@ export class SaveCreateReportController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveCreateReport)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSaveCreateReport)
   async saveCreateRep(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendSaveCreateReportRequest = request.body;
+    let reqValid: ToBackendSaveCreateReportRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {
       throw new ServerError({
@@ -188,9 +188,9 @@ export class SaveCreateReportController {
 
     let fileName = `${newReportId}${FileExtensionEnum.Report}`;
 
-    let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
+    let toDiskCreateFileRequest: ToDiskCreateFileRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateFile,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -210,7 +210,7 @@ export class SaveCreateReportController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateFileResponse>({
+      await this.rabbitService.sendToDisk<ToDiskCreateFileResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
@@ -314,7 +314,7 @@ export class SaveCreateReportController {
       timezone: timezone
     });
 
-    let payload: apiToBackend.ToBackendSaveCreateReportResponsePayload = {
+    let payload: ToBackendSaveCreateReportResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: userMemberApi,

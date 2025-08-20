@@ -36,9 +36,9 @@ export class EditEnvFallbacksController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEnvFallbacks)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendEditEnvFallbacks)
   async editEnvFallbacks(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendEditEnvFallbacksRequest = request.body;
+    let reqValid: ToBackendEditEnvFallbacksRequest = request.body;
 
     let {
       projectId,
@@ -116,7 +116,7 @@ export class EditEnvFallbacksController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendEditEnvFallbacksResponsePayload = {
+    let payload: ToBackendEditEnvFallbacksResponsePayload = {
       userMember: this.wrapToApiService.wrapToApiMember(userMember),
       envs: apiEnvs
     };

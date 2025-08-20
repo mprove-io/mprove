@@ -19,10 +19,10 @@ let projectName = testId;
 
 let branchId = BRANCH_MAIN;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetStructResponse;
+  let resp: ToBackendGetStructResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -81,9 +81,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetStructRequest = {
+    let req: ToBackendGetStructRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetStruct,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetStruct,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -95,7 +95,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendGetStructResponse>({
+    resp = await sendToBackend<ToBackendGetStructResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

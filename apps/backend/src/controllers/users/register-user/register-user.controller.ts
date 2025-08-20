@@ -33,9 +33,9 @@ export class RegisterUserController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendRegisterUser)
   async registerUser(@Req() request: any) {
-    let reqValid: apiToBackend.ToBackendRegisterUserRequest = request.body;
+    let reqValid: ToBackendRegisterUserRequest = request.body;
 
     let { email, password } = reqValid.payload;
 
@@ -121,7 +121,7 @@ export class RegisterUserController {
       emailVerificationToken: newUser.emailVerificationToken
     });
 
-    let payload: apiToBackend.ToBackendRegisterUserResponsePayload = {
+    let payload: ToBackendRegisterUserResponsePayload = {
       user: this.wrapToApiService.wrapToApiUser(newUser)
     };
 

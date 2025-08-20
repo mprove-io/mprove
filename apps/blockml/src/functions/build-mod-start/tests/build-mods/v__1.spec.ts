@@ -1,5 +1,6 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { logToConsoleBlockml } from '~blockml/functions/extra/log-to-console-blockml';
 import { prepareTest } from '~blockml/functions/extra/prepare-test';
 import { readLog } from '~blockml/functions/extra/read-log';
@@ -11,7 +12,6 @@ import { CallerEnum } from '~common/enums/special/caller.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
 import { LogTypeEnum } from '~common/enums/special/log-type.enum';
 import { isDefined } from '~common/functions/is-defined';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
 import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 

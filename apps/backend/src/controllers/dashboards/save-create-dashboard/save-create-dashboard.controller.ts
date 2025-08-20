@@ -49,10 +49,9 @@ export class SaveCreateDashboardController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveCreateDashboard)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSaveCreateDashboard)
   async saveCreateDashboard(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendSaveCreateDashboardRequest =
-      request.body;
+    let reqValid: ToBackendSaveCreateDashboardRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {
       throw new ServerError({
@@ -241,9 +240,9 @@ export class SaveCreateDashboardController {
       // secondFileContent = malloyFileText;
     }
 
-    let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
+    let toDiskCreateFileRequest: ToDiskCreateFileRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateFile,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -265,7 +264,7 @@ export class SaveCreateDashboardController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateFileResponse>({
+      await this.rabbitService.sendToDisk<ToDiskCreateFileResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
@@ -371,7 +370,7 @@ export class SaveCreateDashboardController {
       newDashboard: dashboard
     });
 
-    let payload: apiToBackend.ToBackendSaveCreateDashboardResponsePayload = {
+    let payload: ToBackendSaveCreateDashboardResponsePayload = {
       newDashboardPart:
         newDashboardParts.length > 0 ? newDashboardParts[0] : undefined
     };

@@ -34,9 +34,9 @@ export class DeleteConnectionController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteConnection)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteConnection)
   async deleteConnection(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendDeleteConnectionRequest = request.body;
+    let reqValid: ToBackendDeleteConnectionRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, connectionId, envId } = reqValid.payload;

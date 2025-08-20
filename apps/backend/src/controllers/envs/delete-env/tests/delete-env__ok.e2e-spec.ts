@@ -19,10 +19,10 @@ let projectName = testId;
 
 let envId = 'env1';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendDeleteEnvResponse;
+  let resp: ToBackendDeleteEnvResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -79,9 +79,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendDeleteEnvRequest = {
+    let req: ToBackendDeleteEnvRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnv,
+        name: ToBackendRequestInfoNameEnum.ToBackendDeleteEnv,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -91,7 +91,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendDeleteEnvResponse>({
+    resp = await sendToBackend<ToBackendDeleteEnvResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

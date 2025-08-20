@@ -46,9 +46,9 @@ export class CreateMemberController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateMember)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateMember)
   async createMember(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendCreateMemberRequest = request.body;
+    let reqValid: ToBackendCreateMemberRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, email } = reqValid.payload;
@@ -110,9 +110,9 @@ export class CreateMemberController {
       isExplorer: true
     });
 
-    let toDiskCreateDevRepoRequest: apiToDisk.ToDiskCreateDevRepoRequest = {
+    let toDiskCreateDevRepoRequest: ToDiskCreateDevRepoRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
         traceId: traceId
       },
       payload: {
@@ -127,16 +127,14 @@ export class CreateMemberController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateDevRepoResponse>(
-        {
-          routingKey: makeRoutingKeyToDisk({
-            orgId: project.orgId,
-            projectId: projectId
-          }),
-          message: toDiskCreateDevRepoRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToDisk<ToDiskCreateDevRepoResponse>({
+        routingKey: makeRoutingKeyToDisk({
+          orgId: project.orgId,
+          projectId: projectId
+        }),
+        message: toDiskCreateDevRepoRequest,
+        checkIsOk: true
+      });
 
     let prodBranch = await this.db.drizzle.query.branchesTable.findFirst({
       where: and(
@@ -271,7 +269,7 @@ export class CreateMemberController {
       apiMember.avatarSmall = avatar.avatarSmall;
     }
 
-    let payload: apiToBackend.ToBackendCreateMemberResponsePayload = {
+    let payload: ToBackendCreateMemberResponsePayload = {
       member: apiMember
     };
 

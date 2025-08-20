@@ -33,9 +33,9 @@ export class ConfirmUserEmailController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail)
   async confirmUserEmail(@Req() request: any) {
-    let reqValid: apiToBackend.ToBackendConfirmUserEmailRequest = request.body;
+    let reqValid: ToBackendConfirmUserEmailRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { token } = reqValid.payload;
@@ -61,7 +61,7 @@ export class ConfirmUserEmailController {
       user: user
     });
 
-    let payload: apiToBackend.ToBackendConfirmUserEmailResponsePayload = {};
+    let payload: ToBackendConfirmUserEmailResponsePayload = {};
 
     if (user.isEmailVerified === false) {
       user.isEmailVerified = true;

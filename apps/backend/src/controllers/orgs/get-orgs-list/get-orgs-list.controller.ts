@@ -17,9 +17,9 @@ export class GetOrgsListController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgsList)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetOrgsList)
   async getOrgsList(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetOrgsListRequest = request.body;
+    let reqValid: ToBackendGetOrgsListRequest = request.body;
 
     let userMembers = await this.db.drizzle.query.membersTable.findMany({
       where: eq(membersTable.memberId, user.userId)
@@ -59,7 +59,7 @@ export class GetOrgsListController {
       a.name > b.name ? 1 : b.name > a.name ? -1 : 0
     );
 
-    let payload: apiToBackend.ToBackendGetOrgsListResponsePayload = {
+    let payload: ToBackendGetOrgsListResponsePayload = {
       orgsList: sortedOrgs.map(x => this.wrapToApiService.wrapToApiOrgsItem(x))
     };
 

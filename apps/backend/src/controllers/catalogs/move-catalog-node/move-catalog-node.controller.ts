@@ -43,9 +43,9 @@ export class MoveCatalogNodeController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode)
   async moveCatalogNode(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendMoveCatalogNodeRequest = request.body;
+    let reqValid: ToBackendMoveCatalogNodeRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, branchId, envId, fromNodeId, toNodeId } = reqValid.payload;
@@ -73,9 +73,9 @@ export class MoveCatalogNodeController {
       member: member
     });
 
-    let toDiskMoveCatalogNodeRequest: apiToDisk.ToDiskMoveCatalogNodeRequest = {
+    let toDiskMoveCatalogNodeRequest: ToDiskMoveCatalogNodeRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode,
+        name: ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -93,16 +93,14 @@ export class MoveCatalogNodeController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskMoveCatalogNodeResponse>(
-        {
-          routingKey: makeRoutingKeyToDisk({
-            orgId: project.orgId,
-            projectId: projectId
-          }),
-          message: toDiskMoveCatalogNodeRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToDisk<ToDiskMoveCatalogNodeResponse>({
+        routingKey: makeRoutingKeyToDisk({
+          orgId: project.orgId,
+          projectId: projectId
+        }),
+        message: toDiskMoveCatalogNodeRequest,
+        checkIsOk: true
+      });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
@@ -155,7 +153,7 @@ export class MoveCatalogNodeController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendMoveCatalogNodeResponsePayload = {
+    let payload: ToBackendMoveCatalogNodeResponsePayload = {
       repo: diskResponse.payload.repo,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       needValidate: currentBridge.needValidate

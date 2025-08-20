@@ -24,27 +24,26 @@ let chartId = 'c1';
 let prepTest: PrepTest;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetChartResponse;
+  let resp: ToBackendGetChartResponse;
 
   try {
     prepTest = await prepareTest({});
 
-    let c1Postgres: apiToBackend.ToBackendSeedRecordsRequestPayloadConnectionsItem =
-      {
-        envId: PROJECT_ENV_PROD,
-        projectId: projectId,
-        connectionId: 'c1_postgres',
-        type: ConnectionTypeEnum.PostgreSQL,
-        host: prepTest.cs.get<BackendConfig['firstProjectDwhPostgresHost']>(
-          'firstProjectDwhPostgresHost'
-        ),
-        port: 5436,
-        username: 'postgres',
-        password: prepTest.cs.get<
-          BackendConfig['firstProjectDwhPostgresPassword']
-        >('firstProjectDwhPostgresPassword'),
-        database: 'p_db'
-      };
+    let c1Postgres: ToBackendSeedRecordsRequestPayloadConnectionsItem = {
+      envId: PROJECT_ENV_PROD,
+      projectId: projectId,
+      connectionId: 'c1_postgres',
+      type: ConnectionTypeEnum.PostgreSQL,
+      host: prepTest.cs.get<BackendConfig['firstProjectDwhPostgresHost']>(
+        'firstProjectDwhPostgresHost'
+      ),
+      port: 5436,
+      username: 'postgres',
+      password: prepTest.cs.get<
+        BackendConfig['firstProjectDwhPostgresPassword']
+      >('firstProjectDwhPostgresPassword'),
+      database: 'p_db'
+    };
 
     let prepareSeedResult = await prepareSeed({
       httpServer: prepTest.httpServer,
@@ -96,9 +95,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetChartRequest = {
+    let req: ToBackendGetChartRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetChart,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -112,7 +111,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendGetChartResponse>({
+    resp = await sendToBackend<ToBackendGetChartResponse>({
       httpServer: prepTest.httpServer,
       loginToken: prepareSeedResult.loginToken,
       req: req

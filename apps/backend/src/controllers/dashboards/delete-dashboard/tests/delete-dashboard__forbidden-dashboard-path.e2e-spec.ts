@@ -20,10 +20,10 @@ let projectName = testId;
 
 let dashboardId = 'd1';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendDeleteDashboardResponse;
+  let resp: ToBackendDeleteDashboardResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -82,10 +82,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendDeleteDashboardRequest = {
+    let req: ToBackendDeleteDashboardRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendDeleteDashboard,
+        name: ToBackendRequestInfoNameEnum.ToBackendDeleteDashboard,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -98,7 +97,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendDeleteDashboardResponse>({
+    resp = await sendToBackend<ToBackendDeleteDashboardResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

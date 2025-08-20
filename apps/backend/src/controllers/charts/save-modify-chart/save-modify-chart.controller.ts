@@ -60,9 +60,9 @@ export class SaveModifyChartController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyChart)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSaveModifyChart)
   async saveModifyChart(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendSaveModifyChartRequest = request.body;
+    let reqValid: ToBackendSaveModifyChartRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {
       throw new ServerError({
@@ -205,9 +205,9 @@ export class SaveModifyChartController {
       // malloyChartFilePath: secondFileNodeId
     });
 
-    let toDiskSaveFileRequest: apiToDisk.ToDiskSaveFileRequest = {
+    let toDiskSaveFileRequest: ToDiskSaveFileRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskSaveFile,
+        name: ToDiskRequestInfoNameEnum.ToDiskSaveFile,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -230,7 +230,7 @@ export class SaveModifyChartController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskSaveFileResponse>({
+      await this.rabbitService.sendToDisk<ToDiskSaveFileResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
@@ -444,7 +444,7 @@ export class SaveModifyChartController {
     chartEnt.tiles[0].mconfigId = newMconfig.mconfigId;
     chartEnt.tiles[0].queryId = newMconfig.queryId;
 
-    let payload: apiToBackend.ToBackendSaveModifyChartResponsePayload = {
+    let payload: ToBackendSaveModifyChartResponsePayload = {
       chart: this.wrapToApiService.wrapToApiChart({
         chart: chartEnt,
         mconfigs: [

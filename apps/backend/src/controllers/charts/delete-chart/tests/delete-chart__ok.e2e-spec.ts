@@ -20,10 +20,10 @@ let projectName = testId;
 
 let chartId = 'c1';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendDeleteChartResponse;
+  let resp: ToBackendDeleteChartResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -82,9 +82,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendDeleteChartRequest = {
+    let req: ToBackendDeleteChartRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteChart,
+        name: ToBackendRequestInfoNameEnum.ToBackendDeleteChart,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -97,7 +97,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendDeleteChartResponse>({
+    resp = await sendToBackend<ToBackendDeleteChartResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

@@ -17,10 +17,10 @@ let orgName = testId;
 let projectId = makeId();
 let projectName = testId;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetBranchesListResponse;
+  let resp: ToBackendGetBranchesListResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -70,10 +70,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetBranchesListRequest = {
+    let req: ToBackendGetBranchesListRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendGetBranchesList,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetBranchesList,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -82,7 +81,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendGetBranchesListResponse>({
+    resp = await sendToBackend<ToBackendGetBranchesListResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

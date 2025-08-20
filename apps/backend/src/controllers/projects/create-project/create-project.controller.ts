@@ -22,9 +22,9 @@ export class CreateProjectController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateProject)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateProject)
   async createProject(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendCreateProjectRequest = request.body;
+    let reqValid: ToBackendCreateProjectRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { name, orgId, remoteType, noteId, gitUrl } = reqValid.payload;
@@ -82,7 +82,7 @@ export class CreateProjectController {
       evs: []
     });
 
-    let payload: apiToBackend.ToBackendCreateProjectResponsePayload = {
+    let payload: ToBackendCreateProjectResponsePayload = {
       project: this.wrapToApiService.wrapToApiProject({
         project: newProject,
         isAdmin: true

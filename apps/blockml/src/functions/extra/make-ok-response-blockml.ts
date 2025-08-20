@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { enumToBoolean } from '~common/functions/enum-to-boolean';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { makeOkResponse } from '~node-common/functions/make-ok-response';
 
 export function makeOkResponseBlockml(item: {

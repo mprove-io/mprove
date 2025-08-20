@@ -32,9 +32,9 @@ export class CreateEnvUserController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnvUser)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateEnvUser)
   async createEnvUser(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendCreateEnvUserRequest = request.body;
+    let reqValid: ToBackendCreateEnvUserRequest = request.body;
 
     let { projectId, envId, envUserId } = reqValid.payload;
 
@@ -95,7 +95,7 @@ export class CreateEnvUserController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendCreateEnvUserResponsePayload = {
+    let payload: ToBackendCreateEnvUserResponsePayload = {
       userMember: this.wrapToApiService.wrapToApiMember(userMember),
       envs: apiEnvs
     };

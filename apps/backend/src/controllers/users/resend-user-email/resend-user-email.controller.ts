@@ -16,9 +16,9 @@ export class ResendUserEmailController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResendUserEmail)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendResendUserEmail)
   async resendUserEmail(@Req() request: any) {
-    let reqValid: apiToBackend.ToBackendResendUserEmailRequest = request.body;
+    let reqValid: ToBackendResendUserEmailRequest = request.body;
 
     let { userId } = reqValid.payload;
 
@@ -39,7 +39,7 @@ export class ResendUserEmailController {
     }
 
     if (user.isEmailVerified === true) {
-      let payload: apiToBackend.ToBackendResendUserEmailResponsePayload = {
+      let payload: ToBackendResendUserEmailResponsePayload = {
         isEmailVerified: true
       };
       return payload;
@@ -50,7 +50,7 @@ export class ResendUserEmailController {
       emailVerificationToken: user.emailVerificationToken
     });
 
-    let payload: apiToBackend.ToBackendResendUserEmailResponsePayload = {
+    let payload: ToBackendResendUserEmailResponsePayload = {
       isEmailVerified: false
     };
 

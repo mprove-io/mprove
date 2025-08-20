@@ -43,9 +43,9 @@ export class DeleteFileController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFile)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteFile)
   async deleteFile(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendDeleteFileRequest = request.body;
+    let reqValid: ToBackendDeleteFileRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, branchId, envId, fileNodeId } = reqValid.payload;
@@ -73,9 +73,9 @@ export class DeleteFileController {
       member: member
     });
 
-    let toDiskDeleteFileRequest: apiToDisk.ToDiskDeleteFileRequest = {
+    let toDiskDeleteFileRequest: ToDiskDeleteFileRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
+        name: ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -93,7 +93,7 @@ export class DeleteFileController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteFileResponse>({
+      await this.rabbitService.sendToDisk<ToDiskDeleteFileResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
@@ -153,7 +153,7 @@ export class DeleteFileController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendDeleteFileResponsePayload = {
+    let payload: ToBackendDeleteFileResponsePayload = {
       repo: diskResponse.payload.repo,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       needValidate: currentBridge.needValidate

@@ -1,6 +1,6 @@
+import { BackendConfig } from '~backend/config/backend-config';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
 import { ErEnum } from '~common/enums/er.enum';
-import { BackendConfig } from '~common/interfaces/backend/backend-config';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 import { getDevConfig } from './get-dev.config';
 import { getProdConfig } from './get-prod.config';

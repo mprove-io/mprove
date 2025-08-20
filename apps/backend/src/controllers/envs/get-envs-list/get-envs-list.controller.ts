@@ -19,9 +19,9 @@ export class GetEnvsListController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvsList)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetEnvsList)
   async getEnvsList(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetEnvsListRequest = request.body;
+    let reqValid: ToBackendGetEnvsListRequest = request.body;
 
     let { projectId, isFilter } = reqValid.payload;
 
@@ -49,7 +49,7 @@ export class GetEnvsListController {
       a.envId > b.envId ? 1 : b.envId > a.envId ? -1 : 0
     );
 
-    let payload: apiToBackend.ToBackendGetEnvsListResponsePayload = {
+    let payload: ToBackendGetEnvsListResponsePayload = {
       envsList: sortedEnvs.map(x => this.wrapToApiService.wrapToApiEnvsItem(x))
     };
 

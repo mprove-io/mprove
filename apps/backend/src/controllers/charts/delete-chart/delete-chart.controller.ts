@@ -46,9 +46,9 @@ export class DeleteChartController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteChart)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteChart)
   async deleteChart(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendDeleteChartRequest = request.body;
+    let reqValid: ToBackendDeleteChartRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {
       throw new ServerError({
@@ -130,9 +130,9 @@ export class DeleteChartController {
     //   secondFileNodeId = pathParts.join('.');
     // }
 
-    let toDiskDeleteFileRequest: apiToDisk.ToDiskDeleteFileRequest = {
+    let toDiskDeleteFileRequest: ToDiskDeleteFileRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
+        name: ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -151,7 +151,7 @@ export class DeleteChartController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteFileResponse>({
+      await this.rabbitService.sendToDisk<ToDiskDeleteFileResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId

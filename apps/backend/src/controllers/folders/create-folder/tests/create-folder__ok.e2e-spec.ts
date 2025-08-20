@@ -19,10 +19,10 @@ let projectName = testId;
 
 let branchId = BRANCH_MAIN;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendCreateFolderResponse;
+  let resp: ToBackendCreateFolderResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -72,9 +72,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendCreateFolderRequest = {
+    let req: ToBackendCreateFolderRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
+        name: ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -87,7 +87,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendCreateFolderResponse>({
+    resp = await sendToBackend<ToBackendCreateFolderResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

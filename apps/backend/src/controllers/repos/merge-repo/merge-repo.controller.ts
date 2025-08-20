@@ -43,9 +43,9 @@ export class MergeRepoController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMergeRepo)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendMergeRepo)
   async mergeRepo(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendMergeRepoRequest = request.body;
+    let reqValid: ToBackendMergeRepoRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, branchId, envId, theirBranchId } = reqValid.payload;
@@ -79,9 +79,9 @@ export class MergeRepoController {
       member: member
     });
 
-    let toDiskMergeRepoRequest: apiToDisk.ToDiskMergeRepoRequest = {
+    let toDiskMergeRepoRequest: ToDiskMergeRepoRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskMergeRepo,
+        name: ToDiskRequestInfoNameEnum.ToDiskMergeRepo,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -100,7 +100,7 @@ export class MergeRepoController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskMergeRepoResponse>({
+      await this.rabbitService.sendToDisk<ToDiskMergeRepoResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
@@ -160,7 +160,7 @@ export class MergeRepoController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendMergeRepoResponsePayload = {
+    let payload: ToBackendMergeRepoResponsePayload = {
       repo: diskResponse.payload.repo,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       needValidate: currentBridge.needValidate

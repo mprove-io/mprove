@@ -48,9 +48,9 @@ export class CancelQueriesController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCancelQueries)
   async cancelQueries(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendCancelQueriesRequest = request.body;
+    let reqValid: ToBackendCancelQueriesRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, mconfigIds } =
       reqValid.payload;
@@ -189,7 +189,7 @@ export class CancelQueriesController {
       );
     }
 
-    let payload: apiToBackend.ToBackendCancelQueriesResponsePayload = {
+    let payload: ToBackendCancelQueriesResponsePayload = {
       queries: canceledQueries.map(x => this.wrapToApiService.wrapToApiQuery(x))
     };
 

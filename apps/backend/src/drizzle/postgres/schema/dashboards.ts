@@ -8,6 +8,8 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import { DashboardField } from '~common/interfaces/blockml/dashboard-field';
+import { Tile } from '~common/interfaces/blockml/tile';
 
 export const dashboardsTable = pgTable(
   'dashboards',

@@ -25,9 +25,9 @@ export class GetModelController {
     private wrapToApiService: WrapToApiService
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetModel)
   async getModel(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetModelRequest = request.body;
+    let reqValid: ToBackendGetModelRequest = request.body;
 
     let { projectId, isRepoProd, branchId, modelId, envId } = reqValid.payload;
 
@@ -71,7 +71,7 @@ export class GetModelController {
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let payload: apiToBackend.ToBackendGetModelResponsePayload = {
+    let payload: ToBackendGetModelResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: apiMember,

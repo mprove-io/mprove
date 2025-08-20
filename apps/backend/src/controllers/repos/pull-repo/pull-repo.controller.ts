@@ -43,9 +43,9 @@ export class PullRepoController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendPullRepo)
   async pullRepo(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendPullRepoRequest = request.body;
+    let reqValid: ToBackendPullRepoRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
@@ -86,9 +86,9 @@ export class PullRepoController {
       member: member
     });
 
-    let toDiskPullRepoRequest: apiToDisk.ToDiskPullRepoRequest = {
+    let toDiskPullRepoRequest: ToDiskPullRepoRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskPullRepo,
+        name: ToDiskRequestInfoNameEnum.ToDiskPullRepo,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -105,7 +105,7 @@ export class PullRepoController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskPullRepoResponse>({
+      await this.rabbitService.sendToDisk<ToDiskPullRepoResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
@@ -165,7 +165,7 @@ export class PullRepoController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendPullRepoResponsePayload = {
+    let payload: ToBackendPullRepoResponsePayload = {
       repo: diskResponse.payload.repo,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       needValidate: currentBridge.needValidate

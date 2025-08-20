@@ -19,9 +19,9 @@ export class CommitRepoController {
     private branchesService: BranchesService
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCommitRepo)
   async commitRepo(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendCommitRepoRequest = request.body;
+    let reqValid: ToBackendCommitRepoRequest = request.body;
 
     let { projectId, branchId, isRepoProd, commitMessage } = reqValid.payload;
 
@@ -63,9 +63,9 @@ export class CommitRepoController {
       branchId: branchId
     });
 
-    let toDiskCommitRepoRequest: apiToDisk.ToDiskCommitRepoRequest = {
+    let toDiskCommitRepoRequest: ToDiskCommitRepoRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
+        name: ToDiskRequestInfoNameEnum.ToDiskCommitRepo,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -83,7 +83,7 @@ export class CommitRepoController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskCommitRepoResponse>({
+      await this.rabbitService.sendToDisk<ToDiskCommitRepoResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
@@ -92,7 +92,7 @@ export class CommitRepoController {
         checkIsOk: true
       });
 
-    let payload: apiToBackend.ToBackendCommitRepoResponsePayload = {
+    let payload: ToBackendCommitRepoResponsePayload = {
       repo: diskResponse.payload.repo
     };
 

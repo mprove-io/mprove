@@ -37,9 +37,9 @@ export class DeleteProjectController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteProject)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteProject)
   async deleteProject(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendDeleteProjectRequest = request.body;
+    let reqValid: ToBackendDeleteProjectRequest = request.body;
 
     let { projectId } = reqValid.payload;
 
@@ -52,9 +52,9 @@ export class DeleteProjectController {
       memberId: user.userId
     });
 
-    let toDiskDeleteProjectRequest: apiToDisk.ToDiskDeleteProjectRequest = {
+    let toDiskDeleteProjectRequest: ToDiskDeleteProjectRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteProject,
+        name: ToDiskRequestInfoNameEnum.ToDiskDeleteProject,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -64,16 +64,14 @@ export class DeleteProjectController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteProjectResponse>(
-        {
-          routingKey: makeRoutingKeyToDisk({
-            orgId: project.orgId,
-            projectId: projectId
-          }),
-          message: toDiskDeleteProjectRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToDisk<ToDiskDeleteProjectResponse>({
+        routingKey: makeRoutingKeyToDisk({
+          orgId: project.orgId,
+          projectId: projectId
+        }),
+        message: toDiskDeleteProjectRequest,
+        checkIsOk: true
+      });
 
     await retry(
       async () =>

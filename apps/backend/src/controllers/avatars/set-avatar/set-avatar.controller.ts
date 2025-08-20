@@ -26,9 +26,9 @@ export class SetAvatarController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetAvatar)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSetAvatar)
   async setAvatar(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendSetAvatarRequest = request.body;
+    let reqValid: ToBackendSetAvatarRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {
       throw new ServerError({
@@ -74,7 +74,7 @@ export class SetAvatarController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendSetAvatarResponsePayload = {
+    let payload: ToBackendSetAvatarResponsePayload = {
       avatarSmall: avatar.avatarSmall,
       avatarBig: avatar.avatarBig
     };

@@ -8,6 +8,8 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { Tile } from '~common/interfaces/blockml/tile';
 
 export const chartsTable = pgTable(
   'charts',

@@ -10,10 +10,10 @@ let emailToken = makeId();
 
 let newPassword = '456';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendCompleteUserRegistrationResponse;
+  let resp: ToBackendCompleteUserRegistrationResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -21,11 +21,10 @@ test('1', async t => {
       deleteRecordsPayload: {}
     });
 
-    let completeUserRegistrationRequest: apiToBackend.ToBackendCompleteUserRegistrationRequest =
+    let completeUserRegistrationRequest: ToBackendCompleteUserRegistrationRequest =
       {
         info: {
-          name: apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendCompleteUserRegistration,
+          name: ToBackendRequestInfoNameEnum.ToBackendCompleteUserRegistration,
           traceId: traceId,
           idempotencyKey: makeId()
         },
@@ -35,13 +34,10 @@ test('1', async t => {
         }
       };
 
-    resp =
-      await sendToBackend<apiToBackend.ToBackendCompleteUserRegistrationResponse>(
-        {
-          httpServer: prep.httpServer,
-          req: completeUserRegistrationRequest
-        }
-      );
+    resp = await sendToBackend<ToBackendCompleteUserRegistrationResponse>({
+      httpServer: prep.httpServer,
+      req: completeUserRegistrationRequest
+    });
 
     await prep.app.close();
   } catch (e) {

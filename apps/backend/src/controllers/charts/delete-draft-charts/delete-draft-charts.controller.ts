@@ -36,9 +36,9 @@ export class DeleteDraftChartsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftCharts)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteDraftCharts)
   async deleteDraftCharts(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendDeleteDraftChartsRequest = request.body;
+    let reqValid: ToBackendDeleteDraftChartsRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {
       throw new ServerError({

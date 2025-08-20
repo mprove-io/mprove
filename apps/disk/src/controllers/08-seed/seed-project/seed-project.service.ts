@@ -3,13 +3,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { emptyDir, ensureDir } from 'fs-extra';
 import { ErEnum } from '~common/enums/er.enum';
-import { DiskConfig } from '~common/interfaces/disk/disk-config';
 import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
 import {
   ToDiskSeedProjectRequest,
   ToDiskSeedProjectResponsePayload
 } from '~common/interfaces/to-disk/08-seed/to-disk-seed-project';
+import { DiskConfig } from '~disk/config/disk-config';
 import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
 import { cloneRemoteToDev } from '~disk/functions/git/clone-remote-to-dev';
 import { getRepoStatus } from '~disk/functions/git/get-repo-status';

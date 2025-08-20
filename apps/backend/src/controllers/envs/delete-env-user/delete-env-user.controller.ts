@@ -32,9 +32,9 @@ export class DeleteEnvUserController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnvUser)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteEnvUser)
   async deleteEnvUser(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendDeleteEnvUserRequest = request.body;
+    let reqValid: ToBackendDeleteEnvUserRequest = request.body;
 
     let { projectId, envId, envUserId } = reqValid.payload;
 
@@ -72,7 +72,7 @@ export class DeleteEnvUserController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendDeleteEnvUserResponsePayload = {
+    let payload: ToBackendDeleteEnvUserResponsePayload = {
       userMember: this.wrapToApiService.wrapToApiMember(userMember),
       envs: apiEnvs
     };

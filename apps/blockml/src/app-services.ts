@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { RebuildStructService } from './controllers/rebuild-struct/rebuild-struct.service';
 import { isSingleOrMain } from './functions/extra/is-single-or-main';
 import { ConsumerMainService } from './services/consumer-main.service';

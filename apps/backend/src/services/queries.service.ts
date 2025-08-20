@@ -3,14 +3,23 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
-
+import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import {
+  QueryEnt,
+  queriesTable
+} from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { PROJECT_ENV_PROD } from '~common/constants/top';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { ErEnum } from '~common/enums/er.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { isUndefined } from '~common/functions/is-undefined';
+import { ServerError } from '~common/models/server-error';
 import { EnvsService } from './envs.service';
 
 let retry = require('async-retry');

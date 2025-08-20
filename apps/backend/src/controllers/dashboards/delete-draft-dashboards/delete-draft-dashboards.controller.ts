@@ -36,12 +36,9 @@ export class DeleteDraftDashboardsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftDashboards
-  )
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteDraftDashboards)
   async createEmptyDashboard(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendDeleteDraftDashboardsRequest =
-      request.body;
+    let reqValid: ToBackendDeleteDraftDashboardsRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {
       throw new ServerError({

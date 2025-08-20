@@ -22,10 +22,10 @@ let envId = 'env1';
 let evId = 'MPROVE_EV1';
 let val = '123';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendDeleteEnvVarResponse;
+  let resp: ToBackendDeleteEnvVarResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -87,9 +87,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendDeleteEnvVarRequest = {
+    let req: ToBackendDeleteEnvVarRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnvVar,
+        name: ToBackendRequestInfoNameEnum.ToBackendDeleteEnvVar,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -100,7 +100,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendDeleteEnvVarResponse>({
+    resp = await sendToBackend<ToBackendDeleteEnvVarResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

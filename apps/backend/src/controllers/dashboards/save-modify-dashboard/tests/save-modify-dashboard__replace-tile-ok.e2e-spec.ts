@@ -20,10 +20,10 @@ let projectName = testId;
 
 let dashboardId = 'd2';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendSaveModifyDashboardResponse;
+  let resp: ToBackendSaveModifyDashboardResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -82,9 +82,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req1: apiToBackend.ToBackendGetDashboardRequest = {
+    let req1: ToBackendGetDashboardRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -98,20 +98,17 @@ test('1', async t => {
       }
     };
 
-    let resp1 = await sendToBackend<apiToBackend.ToBackendGetDashboardResponse>(
-      {
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req1
-      }
-    );
+    let resp1 = await sendToBackend<ToBackendGetDashboardResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req1
+    });
 
     let fromDashboard = resp1.payload.dashboard;
 
-    let req: apiToBackend.ToBackendSaveModifyDashboardRequest = {
+    let req: ToBackendSaveModifyDashboardRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendSaveModifyDashboard,
+        name: ToBackendRequestInfoNameEnum.ToBackendSaveModifyDashboard,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -128,12 +125,11 @@ test('1', async t => {
       }
     };
 
-    resp =
-      await sendToBackend<apiToBackend.ToBackendSaveModifyDashboardResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req
-      });
+    resp = await sendToBackend<ToBackendSaveModifyDashboardResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req
+    });
 
     await prep.app.close();
   } catch (e) {

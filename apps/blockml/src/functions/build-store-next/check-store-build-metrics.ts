@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
 import { LINE_NUM } from '~common/constants/top-blockml';
 import { ParameterEnum } from '~common/enums/docs/parameter.enum';
@@ -10,7 +11,6 @@ import { LogTypeEnum } from '~common/enums/special/log-type.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { FileStoreBuildMetric } from '~common/interfaces/blockml/internal/file-store-build-metric';
 import { MyRegex } from '~common/models/my-regex';

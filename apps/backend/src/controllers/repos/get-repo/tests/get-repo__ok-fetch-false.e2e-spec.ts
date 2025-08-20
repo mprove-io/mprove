@@ -19,10 +19,10 @@ let projectName = testId;
 
 let branchId = BRANCH_MAIN;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetRepoResponse;
+  let resp: ToBackendGetRepoResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -72,9 +72,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetRepoRequest = {
+    let req: ToBackendGetRepoRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -87,7 +87,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendGetRepoResponse>({
+    resp = await sendToBackend<ToBackendGetRepoResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

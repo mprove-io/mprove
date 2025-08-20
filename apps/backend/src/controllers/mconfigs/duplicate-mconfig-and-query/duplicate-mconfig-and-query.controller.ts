@@ -44,15 +44,12 @@ export class DuplicateMconfigAndQueryController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDuplicateMconfigAndQuery
-  )
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDuplicateMconfigAndQuery)
   async duplicateMconfigAndQuery(
     @AttachUser() user: UserEnt,
     @Req() request: any
   ) {
-    let reqValid: apiToBackend.ToBackendDuplicateMconfigAndQueryRequest =
-      request.body;
+    let reqValid: ToBackendDuplicateMconfigAndQueryRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId, oldMconfigId } =
@@ -158,14 +155,13 @@ export class DuplicateMconfigAndQueryController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendDuplicateMconfigAndQueryResponsePayload =
-      {
-        mconfig: this.wrapToApiService.wrapToApiMconfig({
-          mconfig: newMconfig,
-          modelFields: model.fields
-        }),
-        query: this.wrapToApiService.wrapToApiQuery(newQuery)
-      };
+    let payload: ToBackendDuplicateMconfigAndQueryResponsePayload = {
+      mconfig: this.wrapToApiService.wrapToApiMconfig({
+        mconfig: newMconfig,
+        modelFields: model.fields
+      }),
+      query: this.wrapToApiService.wrapToApiQuery(newQuery)
+    };
 
     return payload;
   }

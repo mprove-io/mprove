@@ -25,9 +25,9 @@ export class GetMconfigController {
     private wrapToApiService: WrapToApiService
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetMconfig)
   async getMconfig(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetMconfigRequest = request.body;
+    let reqValid: ToBackendGetMconfigRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, mconfigId } =
       reqValid.payload;
@@ -72,7 +72,7 @@ export class GetMconfigController {
       modelId: mconfig.modelId
     });
 
-    let payload: apiToBackend.ToBackendGetMconfigResponsePayload = {
+    let payload: ToBackendGetMconfigResponsePayload = {
       mconfig: this.wrapToApiService.wrapToApiMconfig({
         mconfig: mconfig,
         modelFields: model.fields

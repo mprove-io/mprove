@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
 import { CallerEnum } from '~common/enums/special/caller.enum';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { FileProjectConf } from '~common/interfaces/blockml/internal/file-project-conf';
 import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { sdrType } from '~common/types/sdr-type';

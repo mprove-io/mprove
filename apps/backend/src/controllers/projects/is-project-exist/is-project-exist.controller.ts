@@ -15,9 +15,9 @@ export class IsProjectExistController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendIsProjectExist)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendIsProjectExist)
   async isProjectExist(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendIsProjectExistRequest = request.body;
+    let reqValid: ToBackendIsProjectExistRequest = request.body;
 
     let { name, orgId } = reqValid.payload;
 
@@ -27,7 +27,7 @@ export class IsProjectExistController {
       where: eq(projectsTable.name, name)
     });
 
-    let payload: apiToBackend.ToBackendIsProjectExistResponsePayload = {
+    let payload: ToBackendIsProjectExistResponsePayload = {
       isExist: isDefined(project)
     };
 

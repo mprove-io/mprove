@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BoolEnum } from '~common/enums/bool.enum';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 
 export function isSingleOrMain(cs: ConfigService<BlockmlConfig>): boolean {
   let isSingle = cs.get<BlockmlConfig['isSingle']>('isSingle');

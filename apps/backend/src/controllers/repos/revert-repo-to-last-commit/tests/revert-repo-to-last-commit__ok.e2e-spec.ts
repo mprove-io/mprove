@@ -19,10 +19,10 @@ let projectName = testId;
 
 let branchId = BRANCH_MAIN;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendRevertRepoToLastCommitResponse;
+  let resp: ToBackendRevertRepoToLastCommitResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -72,10 +72,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendRevertRepoToLastCommitRequest = {
+    let req: ToBackendRevertRepoToLastCommitRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendRevertRepoToLastCommit,
+        name: ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -87,14 +86,11 @@ test('1', async t => {
       }
     };
 
-    resp =
-      await sendToBackend<apiToBackend.ToBackendRevertRepoToLastCommitResponse>(
-        {
-          httpServer: prep.httpServer,
-          loginToken: prep.loginToken,
-          req: req
-        }
-      );
+    resp = await sendToBackend<ToBackendRevertRepoToLastCommitResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req
+    });
 
     await prep.app.close();
   } catch (e) {

@@ -51,15 +51,12 @@ export class CreateTempMconfigAndQueryController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery
-  )
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery)
   async createTempMconfigAndQuery(
     @AttachUser() user: UserEnt,
     @Req() request: any
   ) {
-    let reqValid: apiToBackend.ToBackendCreateTempMconfigAndQueryRequest =
-      request.body;
+    let reqValid: ToBackendCreateTempMconfigAndQueryRequest = request.body;
 
     let { traceId } = reqValid.info;
     let {
@@ -208,16 +205,15 @@ export class CreateTempMconfigAndQueryController {
       )
     });
 
-    let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryResponsePayload =
-      {
-        mconfig: this.wrapToApiService.wrapToApiMconfig({
-          mconfig: newMconfigEnt,
-          modelFields: model.fields
-        }),
-        query: isDefined(query)
-          ? this.wrapToApiService.wrapToApiQuery(query)
-          : this.wrapToApiService.wrapToApiQuery(newQueryEnt)
-      };
+    let payload: ToBackendCreateTempMconfigAndQueryResponsePayload = {
+      mconfig: this.wrapToApiService.wrapToApiMconfig({
+        mconfig: newMconfigEnt,
+        modelFields: model.fields
+      }),
+      query: isDefined(query)
+        ? this.wrapToApiService.wrapToApiQuery(query)
+        : this.wrapToApiService.wrapToApiQuery(newQueryEnt)
+    };
 
     return payload;
   }

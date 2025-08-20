@@ -43,15 +43,12 @@ export class RevertRepoToLastCommitController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit
-  )
+  @Post(ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit)
   async revertRepoToLastCommit(
     @AttachUser() user: UserEnt,
     @Req() request: any
   ) {
-    let reqValid: apiToBackend.ToBackendRevertRepoToLastCommitRequest =
-      request.body;
+    let reqValid: ToBackendRevertRepoToLastCommitRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
@@ -79,11 +76,10 @@ export class RevertRepoToLastCommitController {
       member: member
     });
 
-    let toDiskRevertRepoToLastCommitRequest: apiToDisk.ToDiskRevertRepoToLastCommitRequest =
+    let toDiskRevertRepoToLastCommitRequest: ToDiskRevertRepoToLastCommitRequest =
       {
         info: {
-          name: apiToDisk.ToDiskRequestInfoNameEnum
-            .ToDiskRevertRepoToLastCommit,
+          name: ToDiskRequestInfoNameEnum.ToDiskRevertRepoToLastCommit,
           traceId: reqValid.info.traceId
         },
         payload: {
@@ -99,7 +95,7 @@ export class RevertRepoToLastCommitController {
       };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskRevertRepoToLastCommitResponse>(
+      await this.rabbitService.sendToDisk<ToDiskRevertRepoToLastCommitResponse>(
         {
           routingKey: makeRoutingKeyToDisk({
             orgId: project.orgId,
@@ -161,7 +157,7 @@ export class RevertRepoToLastCommitController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendRevertRepoToLastCommitResponsePayload = {
+    let payload: ToBackendRevertRepoToLastCommitResponsePayload = {
       repo: diskResponse.payload.repo,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       needValidate: currentBridge.needValidate

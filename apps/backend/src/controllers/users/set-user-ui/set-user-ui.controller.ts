@@ -26,9 +26,9 @@ export class SetUserUiController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserUi)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSetUserUi)
   async setUserUi(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendSetUserUiRequest = request.body;
+    let reqValid: ToBackendSetUserUiRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {
       throw new ServerError({
@@ -54,7 +54,7 @@ export class SetUserUiController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendSetUserUiResponsePayload = {
+    let payload: ToBackendSetUserUiResponsePayload = {
       user: this.wrapToApiService.wrapToApiUser(user)
     };
 

@@ -18,10 +18,10 @@ let testProjectId = 't2';
 let projectId = makeId();
 let projectName = testId;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendDeleteReportResponse;
+  let resp: ToBackendDeleteReportResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -80,9 +80,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendDeleteReportRequest = {
+    let req: ToBackendDeleteReportRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteReport,
+        name: ToBackendRequestInfoNameEnum.ToBackendDeleteReport,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -95,7 +95,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendDeleteReportResponse>({
+    resp = await sendToBackend<ToBackendDeleteReportResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

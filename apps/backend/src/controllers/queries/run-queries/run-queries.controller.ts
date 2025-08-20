@@ -60,9 +60,9 @@ export class RunQueriesController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendRunQueries)
   async runQueries(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendRunQueriesRequest = request.body;
+    let reqValid: ToBackendRunQueriesRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, mconfigIds, poolSize } =
       reqValid.payload;
@@ -473,7 +473,7 @@ export class RunQueriesController {
       });
     }
 
-    let payload: apiToBackend.ToBackendRunQueriesResponsePayload = {
+    let payload: ToBackendRunQueriesResponsePayload = {
       runningQueries: runningQueries.map(x => {
         delete x.sql;
         return this.wrapToApiService.wrapToApiQuery(x);

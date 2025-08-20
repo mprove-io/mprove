@@ -17,10 +17,10 @@ let orgName = testId;
 let projectId = makeId();
 let projectName = testId;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendGetOrgsListResponse;
+  let resp: ToBackendGetOrgsListResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -69,16 +69,16 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendGetOrgsListRequest = {
+    let req: ToBackendGetOrgsListRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgsList,
+        name: ToBackendRequestInfoNameEnum.ToBackendGetOrgsList,
         traceId: traceId,
         idempotencyKey: makeId()
       },
       payload: {}
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendGetOrgsListResponse>({
+    resp = await sendToBackend<ToBackendGetOrgsListResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

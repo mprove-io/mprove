@@ -8,6 +8,7 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import { Ev } from '~common/interfaces/backend/ev';
 
 export const envsTable = pgTable(
   'envs',

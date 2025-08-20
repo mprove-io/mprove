@@ -22,10 +22,10 @@ let newTitle = testId;
 
 let dashboardId = makeId();
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendSaveCreateDashboardResponse;
+  let resp: ToBackendSaveCreateDashboardResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -84,10 +84,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendSaveCreateDashboardRequest = {
+    let req: ToBackendSaveCreateDashboardRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendSaveCreateDashboard,
+        name: ToBackendRequestInfoNameEnum.ToBackendSaveCreateDashboard,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -101,12 +100,11 @@ test('1', async t => {
       }
     };
 
-    resp =
-      await sendToBackend<apiToBackend.ToBackendSaveCreateDashboardResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req
-      });
+    resp = await sendToBackend<ToBackendSaveCreateDashboardResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req
+    });
 
     await prep.app.close();
   } catch (e) {

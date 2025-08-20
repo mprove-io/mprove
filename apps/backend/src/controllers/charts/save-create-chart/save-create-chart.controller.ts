@@ -52,9 +52,9 @@ export class SaveCreateChartController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveCreateChart)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSaveCreateChart)
   async saveCreateChart(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendSaveCreateChartRequest = request.body;
+    let reqValid: ToBackendSaveCreateChartRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {
       throw new ServerError({
@@ -188,9 +188,9 @@ export class SaveCreateChartController {
       // malloyChartFilePath: malloyChartFilePath
     });
 
-    let toDiskCreateFileRequest: apiToDisk.ToDiskCreateFileRequest = {
+    let toDiskCreateFileRequest: ToDiskCreateFileRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFile,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateFile,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -214,7 +214,7 @@ export class SaveCreateChartController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateFileResponse>({
+      await this.rabbitService.sendToDisk<ToDiskCreateFileResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
@@ -324,7 +324,7 @@ export class SaveCreateChartController {
       .from(modelsTable)
       .where(eq(modelsTable.structId, bridge.structId))) as ModelEnt[];
 
-    let payload: apiToBackend.ToBackendSaveCreateChartResponsePayload = {
+    let payload: ToBackendSaveCreateChartResponsePayload = {
       chart: this.wrapToApiService.wrapToApiChart({
         chart: chartEnt,
         mconfigs: [],

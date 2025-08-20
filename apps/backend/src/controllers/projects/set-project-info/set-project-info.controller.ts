@@ -30,9 +30,9 @@ export class SetProjectInfoController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo)
   async setProjectInfo(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendSetProjectInfoRequest = request.body;
+    let reqValid: ToBackendSetProjectInfoRequest = request.body;
 
     let { projectId, name } = reqValid.payload;
 
@@ -63,7 +63,7 @@ export class SetProjectInfoController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendSetProjectInfoResponsePayload = {
+    let payload: ToBackendSetProjectInfoResponsePayload = {
       project: this.wrapToApiService.wrapToApiProject({
         project: project,
         isAdmin: userMember.isAdmin

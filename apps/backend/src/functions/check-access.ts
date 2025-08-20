@@ -1,3 +1,10 @@
+import { ChartEnt } from '~backend/drizzle/postgres/schema/charts';
+import { DashboardEnt } from '~backend/drizzle/postgres/schema/dashboards';
+import { MemberEnt } from '~backend/drizzle/postgres/schema/members';
+import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
+import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
+import { isDefined } from '~common/functions/is-defined';
+
 export function checkAccess(item: {
   userAlias: string;
   member: MemberEnt;

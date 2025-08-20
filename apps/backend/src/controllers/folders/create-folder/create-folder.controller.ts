@@ -45,9 +45,9 @@ export class CreateFolderController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFolder)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateFolder)
   async createFolder(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendCreateFolderRequest = request.body;
+    let reqValid: ToBackendCreateFolderRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, branchId, parentNodeId, folderName, envId } =
@@ -83,9 +83,9 @@ export class CreateFolderController {
       envId: envId
     });
 
-    let toDiskCreateFolderRequest: apiToDisk.ToDiskCreateFolderRequest = {
+    let toDiskCreateFolderRequest: ToDiskCreateFolderRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -103,16 +103,14 @@ export class CreateFolderController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskCreateFolderResponse>(
-        {
-          routingKey: makeRoutingKeyToDisk({
-            orgId: project.orgId,
-            projectId: projectId
-          }),
-          message: toDiskCreateFolderRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToDisk<ToDiskCreateFolderResponse>({
+        routingKey: makeRoutingKeyToDisk({
+          orgId: project.orgId,
+          projectId: projectId
+        }),
+        message: toDiskCreateFolderRequest,
+        checkIsOk: true
+      });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
@@ -165,7 +163,7 @@ export class CreateFolderController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendCreateFolderResponsePayload = {
+    let payload: ToBackendCreateFolderResponsePayload = {
       repo: diskResponse.payload.repo,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       needValidate: currentBridge.needValidate

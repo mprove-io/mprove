@@ -10,10 +10,10 @@ let traceId = testId;
 let email = `${testId}@example.com`;
 let password = '123456';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendLoginUserResponse;
+  let resp: ToBackendLoginUserResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -32,9 +32,9 @@ test('1', async t => {
       }
     });
 
-    let loginUserReq: apiToBackend.ToBackendLoginUserRequest = {
+    let loginUserReq: ToBackendLoginUserRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+        name: ToBackendRequestInfoNameEnum.ToBackendLoginUser,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -44,7 +44,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendLoginUserResponse>({
+    resp = await sendToBackend<ToBackendLoginUserResponse>({
       httpServer: prep.httpServer,
       req: loginUserReq
     });

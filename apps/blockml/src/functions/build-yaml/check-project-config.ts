@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { formatSpecifier } from 'd3-format';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
@@ -24,7 +25,6 @@ import { LogTypeEnum } from '~common/enums/special/log-type.enum';
 import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
 import { isTimezoneValid } from '~common/functions/is-timezone-valid';
 import { isUndefined } from '~common/functions/is-undefined';
-import { BlockmlConfig } from '~common/interfaces/blockml/blockml-config';
 import { FileProjectConf } from '~common/interfaces/blockml/internal/file-project-conf';
 import { MyRegex } from '~common/models/my-regex';
 import { log } from '../extra/log';

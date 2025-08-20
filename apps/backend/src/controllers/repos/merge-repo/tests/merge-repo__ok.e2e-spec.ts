@@ -21,10 +21,10 @@ let branchId = BRANCH_MAIN;
 
 let theirBranchId = 'b2';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendMergeRepoResponse;
+  let resp: ToBackendMergeRepoResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -74,9 +74,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req1: apiToBackend.ToBackendCreateBranchRequest = {
+    let req1: ToBackendCreateBranchRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
+        name: ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -88,17 +88,15 @@ test('1', async t => {
       }
     };
 
-    let resp1 = await sendToBackend<apiToBackend.ToBackendCreateBranchResponse>(
-      {
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req1
-      }
-    );
+    let resp1 = await sendToBackend<ToBackendCreateBranchResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req1
+    });
 
-    let req: apiToBackend.ToBackendMergeRepoRequest = {
+    let req: ToBackendMergeRepoRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
+        name: ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -110,7 +108,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendMergeRepoResponse>({
+    resp = await sendToBackend<ToBackendMergeRepoResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

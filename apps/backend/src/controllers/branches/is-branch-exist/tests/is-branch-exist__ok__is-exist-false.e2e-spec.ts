@@ -19,10 +19,10 @@ let projectName = testId;
 
 let branchId = 'unk';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendIsBranchExistResponse;
+  let resp: ToBackendIsBranchExistResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -72,9 +72,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendIsBranchExistRequest = {
+    let req: ToBackendIsBranchExistRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendIsBranchExist,
+        name: ToBackendRequestInfoNameEnum.ToBackendIsBranchExist,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -85,7 +85,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendIsBranchExistResponse>({
+    resp = await sendToBackend<ToBackendIsBranchExistResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

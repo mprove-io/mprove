@@ -32,10 +32,9 @@ export class UpdateUserPasswordController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword)
   async updateUserPassword(@Req() request: any) {
-    let reqValid: apiToBackend.ToBackendUpdateUserPasswordRequest =
-      request.body;
+    let reqValid: ToBackendUpdateUserPasswordRequest = request.body;
 
     let { passwordResetToken, newPassword } = reqValid.payload;
 

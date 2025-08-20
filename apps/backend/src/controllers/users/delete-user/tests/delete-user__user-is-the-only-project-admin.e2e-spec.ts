@@ -21,10 +21,10 @@ let orgName = testId;
 let projectId = makeId();
 let projectName = testId;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendDeleteUserResponse;
+  let resp: ToBackendDeleteUserResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -80,16 +80,16 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let deleteUserReq: apiToBackend.ToBackendDeleteUserRequest = {
+    let deleteUserReq: ToBackendDeleteUserRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteUser,
+        name: ToBackendRequestInfoNameEnum.ToBackendDeleteUser,
         traceId: traceId,
         idempotencyKey: makeId()
       },
       payload: {}
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendDeleteUserResponse>({
+    resp = await sendToBackend<ToBackendDeleteUserResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: deleteUserReq

@@ -19,10 +19,10 @@ let projectName = testId;
 
 let connectionId = 'c1';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendDeleteConnectionResponse;
+  let resp: ToBackendDeleteConnectionResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -80,10 +80,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendDeleteConnectionRequest = {
+    let req: ToBackendDeleteConnectionRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum
-          .ToBackendDeleteConnection,
+        name: ToBackendRequestInfoNameEnum.ToBackendDeleteConnection,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -94,7 +93,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendDeleteConnectionResponse>({
+    resp = await sendToBackend<ToBackendDeleteConnectionResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

@@ -25,9 +25,9 @@ export class GetRepoController {
     private wrapToApiService: WrapToApiService
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetRepo)
   async getRepo(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetRepoRequest = request.body;
+    let reqValid: ToBackendGetRepoRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, isFetch } = reqValid.payload;
 
@@ -61,9 +61,9 @@ export class GetRepoController {
       envId: envId
     });
 
-    let toDiskGetCatalogNodesRequest: apiToDisk.ToDiskGetCatalogNodesRequest = {
+    let toDiskGetCatalogNodesRequest: ToDiskGetCatalogNodesRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
+        name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -80,16 +80,14 @@ export class GetRepoController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogNodesResponse>(
-        {
-          routingKey: makeRoutingKeyToDisk({
-            orgId: project.orgId,
-            projectId: projectId
-          }),
-          message: toDiskGetCatalogNodesRequest,
-          checkIsOk: true
-        }
-      );
+      await this.rabbitService.sendToDisk<ToDiskGetCatalogNodesResponse>({
+        routingKey: makeRoutingKeyToDisk({
+          orgId: project.orgId,
+          projectId: projectId
+        }),
+        message: toDiskGetCatalogNodesRequest,
+        checkIsOk: true
+      });
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
@@ -99,7 +97,7 @@ export class GetRepoController {
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let payload: apiToBackend.ToBackendGetRepoResponsePayload = {
+    let payload: ToBackendGetRepoResponsePayload = {
       userMember: apiMember,
       user: this.wrapToApiService.wrapToApiUser(user),
       needValidate: bridge.needValidate,

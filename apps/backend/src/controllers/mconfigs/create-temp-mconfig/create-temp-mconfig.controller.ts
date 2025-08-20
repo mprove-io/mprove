@@ -44,9 +44,9 @@ export class CreateTempMconfigController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfig)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfig)
   async createTempMconfig(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendCreateTempMconfigRequest = request.body;
+    let reqValid: ToBackendCreateTempMconfigRequest = request.body;
 
     let { oldMconfigId, mconfig, projectId, isRepoProd, branchId, envId } =
       reqValid.payload;
@@ -141,7 +141,7 @@ export class CreateTempMconfigController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendCreateTempMconfigResponsePayload = {
+    let payload: ToBackendCreateTempMconfigResponsePayload = {
       mconfig: this.wrapToApiService.wrapToApiMconfig({
         mconfig: mconfigEnt,
         modelFields: model.fields

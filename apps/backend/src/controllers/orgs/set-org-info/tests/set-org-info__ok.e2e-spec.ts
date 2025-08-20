@@ -13,10 +13,10 @@ let password = '123456';
 let orgId = testId;
 let orgName = testId;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendSetOrgInfoResponse;
+  let resp: ToBackendSetOrgInfoResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -44,9 +44,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendSetOrgInfoRequest = {
+    let req: ToBackendSetOrgInfoRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo,
+        name: ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -56,7 +56,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendSetOrgInfoResponse>({
+    resp = await sendToBackend<ToBackendSetOrgInfoResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

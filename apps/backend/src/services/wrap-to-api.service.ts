@@ -1,11 +1,55 @@
 import { Injectable } from '@nestjs/common';
-
+import { ChartEnt } from '~backend/drizzle/postgres/schema/charts';
+import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
+import { DashboardEnt } from '~backend/drizzle/postgres/schema/dashboards';
+import { EnvEnt } from '~backend/drizzle/postgres/schema/envs';
+import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
+import { MemberEnt } from '~backend/drizzle/postgres/schema/members';
+import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
+import { OrgEnt } from '~backend/drizzle/postgres/schema/orgs';
+import { ProjectEnt } from '~backend/drizzle/postgres/schema/projects';
+import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
+import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
+import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { makeDashboardFiltersX } from '~backend/functions/make-dashboard-filters-x';
 import { makeFullName } from '~backend/functions/make-full-name';
 import { makeMconfigFields } from '~backend/functions/make-mconfig-fields';
 import { makeMconfigFiltersX } from '~backend/functions/make-mconfig-filters-x';
 import { makeReportFiltersX } from '~backend/functions/make-report-filters-x';
 import { makeTilesX } from '~backend/functions/make-tiles-x';
+import {
+  HEADER_VALUE_IS_HIDDEN,
+  MPROVE_USERS_FOLDER
+} from '~common/constants/top';
+import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
+import { StoreMethodEnum } from '~common/enums/store-method.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
+import { makeCopy } from '~common/functions/make-copy';
+import { ChartX } from '~common/interfaces/backend/chart-x';
+import { Connection } from '~common/interfaces/backend/connection';
+import { ConnectionHeader } from '~common/interfaces/backend/connection-header';
+import { DashboardX } from '~common/interfaces/backend/dashboard-x';
+import { Env } from '~common/interfaces/backend/env';
+import { EnvUser } from '~common/interfaces/backend/env-user';
+import { EnvsItem } from '~common/interfaces/backend/envs-item';
+import { Ev } from '~common/interfaces/backend/ev';
+import { MconfigX } from '~common/interfaces/backend/mconfig-x';
+import { Member } from '~common/interfaces/backend/member';
+import { ModelX } from '~common/interfaces/backend/model-x';
+import { Org } from '~common/interfaces/backend/org';
+import { OrgsItem } from '~common/interfaces/backend/orgs-item';
+import { Project } from '~common/interfaces/backend/project';
+import { ProjectsItem } from '~common/interfaces/backend/projects-item';
+import { ReportX } from '~common/interfaces/backend/report-x';
+import { Struct } from '~common/interfaces/backend/struct';
+import { User } from '~common/interfaces/backend/user';
+import { Column } from '~common/interfaces/blockml/column';
+import { Fraction } from '~common/interfaces/blockml/fraction';
+import { ModelField } from '~common/interfaces/blockml/model-field';
+import { Query } from '~common/interfaces/blockml/query';
 
 @Injectable()
 export class WrapToApiService {

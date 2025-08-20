@@ -34,9 +34,9 @@ export class DeleteMemberController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteMember)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteMember)
   async deleteMember(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendDeleteMemberRequest = request.body;
+    let reqValid: ToBackendDeleteMemberRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, memberId } = reqValid.payload;
@@ -63,9 +63,9 @@ export class DeleteMemberController {
 
     let devRepoId = member.memberId;
 
-    let toDiskDeleteDevRepoRequest: apiToDisk.ToDiskDeleteDevRepoRequest = {
+    let toDiskDeleteDevRepoRequest: ToDiskDeleteDevRepoRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo,
+        name: ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo,
         traceId: traceId
       },
       payload: {
@@ -75,7 +75,7 @@ export class DeleteMemberController {
       }
     };
 
-    await this.rabbitService.sendToDisk<apiToDisk.ToDiskDeleteDevRepoResponse>({
+    await this.rabbitService.sendToDisk<ToDiskDeleteDevRepoResponse>({
       routingKey: makeRoutingKeyToDisk({
         orgId: project.orgId,
         projectId: projectId

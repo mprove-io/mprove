@@ -30,9 +30,9 @@ export class SetUserNameController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserName)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSetUserName)
   async setUserName(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendSetUserNameRequest = request.body;
+    let reqValid: ToBackendSetUserNameRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {
       throw new ServerError({
@@ -69,7 +69,7 @@ export class SetUserNameController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: apiToBackend.ToBackendSetUserNameResponsePayload = {
+    let payload: ToBackendSetUserNameResponsePayload = {
       user: this.wrapToApiService.wrapToApiUser(user)
     };
 

@@ -19,9 +19,9 @@ export class GetEnvsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvs)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetEnvs)
   async getEnvs(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetEnvsRequest = request.body;
+    let reqValid: ToBackendGetEnvsRequest = request.body;
 
     let { projectId } = reqValid.payload;
 
@@ -38,7 +38,7 @@ export class GetEnvsController {
       projectId: projectId
     });
 
-    let payload: apiToBackend.ToBackendGetEnvsResponsePayload = {
+    let payload: ToBackendGetEnvsResponsePayload = {
       userMember: this.wrapToApiService.wrapToApiMember(userMember),
       envs: apiEnvs
     };

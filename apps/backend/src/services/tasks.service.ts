@@ -1,8 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
-
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
+import { ErEnum } from '~common/enums/er.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { ServerError } from '~common/models/server-error';
 import { QueriesService } from './queries.service';
 import { StructsService } from './structs.service';
 

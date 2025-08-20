@@ -25,9 +25,9 @@ export class GetFileController {
     private wrapToApiService: WrapToApiService
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetFile)
   async getFile(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetFileRequest = request.body;
+    let reqValid: ToBackendGetFileRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, fileNodeId, panel } =
       reqValid.payload;
@@ -43,9 +43,9 @@ export class GetFileController {
       memberId: user.userId
     });
 
-    let toDiskGetFileRequest: apiToDisk.ToDiskGetFileRequest = {
+    let toDiskGetFileRequest: ToDiskGetFileRequest = {
       info: {
-        name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetFile,
+        name: ToDiskRequestInfoNameEnum.ToDiskGetFile,
         traceId: reqValid.info.traceId
       },
       payload: {
@@ -63,7 +63,7 @@ export class GetFileController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetFileResponse>({
+      await this.rabbitService.sendToDisk<ToDiskGetFileResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
@@ -97,7 +97,7 @@ export class GetFileController {
       skipError: true
     });
 
-    let payload: apiToBackend.ToBackendGetFileResponsePayload = {
+    let payload: ToBackendGetFileResponsePayload = {
       repo: diskResponse.payload.repo,
       originalContent: diskResponse.payload.originalContent,
       content: diskResponse.payload.content,

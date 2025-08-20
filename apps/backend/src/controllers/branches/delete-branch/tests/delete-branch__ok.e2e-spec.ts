@@ -20,10 +20,10 @@ let projectName = testId;
 let newBranchId = makeId();
 let fromBranchId = BRANCH_MAIN;
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp2: apiToBackend.ToBackendDeleteBranchResponse;
+  let resp2: ToBackendDeleteBranchResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -73,9 +73,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req1: apiToBackend.ToBackendCreateBranchRequest = {
+    let req1: ToBackendCreateBranchRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
+        name: ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -87,17 +87,15 @@ test('1', async t => {
       }
     };
 
-    let resp1 = await sendToBackend<apiToBackend.ToBackendCreateBranchResponse>(
-      {
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: req1
-      }
-    );
+    let resp1 = await sendToBackend<ToBackendCreateBranchResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: req1
+    });
 
-    let req2: apiToBackend.ToBackendDeleteBranchRequest = {
+    let req2: ToBackendDeleteBranchRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
+        name: ToBackendRequestInfoNameEnum.ToBackendDeleteBranch,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -108,7 +106,7 @@ test('1', async t => {
       }
     };
 
-    resp2 = await sendToBackend<apiToBackend.ToBackendDeleteBranchResponse>({
+    resp2 = await sendToBackend<ToBackendDeleteBranchResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req2

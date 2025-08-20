@@ -8,9 +8,9 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 export class LogoutUserController {
   constructor() {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLogoutUser)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendLogoutUser)
   async logoutUser(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendLogoutUserRequest = request.body;
+    let reqValid: ToBackendLogoutUserRequest = request.body;
 
     let payload = {};
 

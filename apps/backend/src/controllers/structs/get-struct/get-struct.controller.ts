@@ -23,9 +23,9 @@ export class GetStructController {
     private wrapToApiService: WrapToApiService
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetStruct)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetStruct)
   async getStruct(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetStructRequest = request.body;
+    let reqValid: ToBackendGetStructRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
 
@@ -64,7 +64,7 @@ export class GetStructController {
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let payload: apiToBackend.ToBackendGetStructResponsePayload = {
+    let payload: ToBackendGetStructResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: apiMember

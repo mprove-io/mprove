@@ -1,7 +1,21 @@
 import { Injectable } from '@nestjs/common';
-
+import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
+import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
 import { clearRowsCache } from '~backend/functions/clear-rows-cache';
 import { processRowIds } from '~backend/functions/process-row-ids';
+import { ChangeTypeEnum } from '~common/enums/change-type.enum';
+import { RowTypeEnum } from '~common/enums/row-type.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { rowIdLetterToNumber } from '~common/functions/row-id-letter-to-number';
+import { rowIdNumberToLetter } from '~common/functions/row-id-number-to-letter';
+import { Listener } from '~common/interfaces/blockml/listener';
+import { ModelMetric } from '~common/interfaces/blockml/model-metric';
+import { Parameter } from '~common/interfaces/blockml/parameter';
+import { ReportField } from '~common/interfaces/blockml/report-field';
+import { Row } from '~common/interfaces/blockml/row';
+import { RowChange } from '~common/interfaces/blockml/row-change';
 
 @Injectable()
 export class ReportRowService {

@@ -54,9 +54,9 @@ export class GetChartController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetChart)
   async getChart(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetChartRequest = request.body;
+    let reqValid: ToBackendGetChartRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId, chartId, timezone } =
@@ -233,7 +233,7 @@ export class GetChartController {
     // console.log('getChart mconfig.select');
     // console.log(mconfig.select);
 
-    let payload: apiToBackend.ToBackendGetChartResponsePayload = {
+    let payload: ToBackendGetChartResponsePayload = {
       userMember: apiMember,
       chart: this.wrapToApiService.wrapToApiChart({
         chart: chart,

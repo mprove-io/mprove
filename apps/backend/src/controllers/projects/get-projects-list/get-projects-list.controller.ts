@@ -28,9 +28,9 @@ export class GetProjectsListController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProjectsList)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendGetProjectsList)
   async getProjectsList(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendGetProjectsListRequest = request.body;
+    let reqValid: ToBackendGetProjectsListRequest = request.body;
 
     let { orgId } = reqValid.payload;
 
@@ -54,7 +54,7 @@ export class GetProjectsListController {
       a.name > b.name ? 1 : b.name > a.name ? -1 : 0
     );
 
-    let payload: apiToBackend.ToBackendGetProjectsListResponsePayload = {
+    let payload: ToBackendGetProjectsListResponsePayload = {
       projectsList: sortedProjects.map(x =>
         this.wrapToApiService.wrapToApiProjectsItem(x)
       )

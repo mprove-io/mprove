@@ -29,9 +29,9 @@ export class ResetUserPasswordController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendResetUserPassword)
   async resetUserPassword(@Req() request: any) {
-    let reqValid: apiToBackend.ToBackendResetUserPasswordRequest = request.body;
+    let reqValid: ToBackendResetUserPasswordRequest = request.body;
 
     let { email } = reqValid.payload;
 

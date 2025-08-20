@@ -53,9 +53,9 @@ export class CreateDraftChartController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftChart)
+  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateDraftChart)
   async createDraftChart(@AttachUser() user: UserEnt, @Req() request: any) {
-    let reqValid: apiToBackend.ToBackendCreateDraftChartRequest = request.body;
+    let reqValid: ToBackendCreateDraftChartRequest = request.body;
 
     let { traceId } = reqValid.info;
     let {
@@ -270,7 +270,7 @@ export class CreateDraftChartController {
 
     let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
 
-    let payload: apiToBackend.ToBackendCreateDraftChartResponsePayload = {
+    let payload: ToBackendCreateDraftChartResponsePayload = {
       chart: this.wrapToApiService.wrapToApiChart({
         chart: newChartEnt,
         mconfigs: [

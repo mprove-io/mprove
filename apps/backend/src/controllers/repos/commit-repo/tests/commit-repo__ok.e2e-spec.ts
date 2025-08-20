@@ -20,10 +20,10 @@ let projectName = testId;
 let branchId = BRANCH_MAIN;
 let commitMessage = 'first';
 
-let prep: interfaces.Prep;
+let prep: Prep;
 
 test('1', async t => {
-  let resp: apiToBackend.ToBackendCommitRepoResponse;
+  let resp: ToBackendCommitRepoResponse;
 
   try {
     prep = await prepareTestAndSeed({
@@ -73,9 +73,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    let req: apiToBackend.ToBackendCommitRepoRequest = {
+    let req: ToBackendCommitRepoRequest = {
       info: {
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
+        name: ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
         traceId: traceId,
         idempotencyKey: makeId()
       },
@@ -87,7 +87,7 @@ test('1', async t => {
       }
     };
 
-    resp = await sendToBackend<apiToBackend.ToBackendCommitRepoResponse>({
+    resp = await sendToBackend<ToBackendCommitRepoResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: req

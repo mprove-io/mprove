@@ -34,12 +34,9 @@ export class SpecialRebuildStructsController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(
-    apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSpecialRebuildStructs
-  )
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSpecialRebuildStructs)
   async specialRebuildStructs(@Req() request: any) {
-    let reqValid: apiToBackend.ToBackendSpecialRebuildStructsRequest =
-      request.body;
+    let reqValid: ToBackendSpecialRebuildStructsRequest = request.body;
 
     let { traceId } = reqValid.info;
     let { specialKey, userIds, skipRebuild, overrideTimezone } =
@@ -85,8 +82,8 @@ export class SpecialRebuildStructsController {
     }
 
     let notFoundProjectIds: string[] = [];
-    let errorGetCatalogBridgeItems: apiToBackend.BridgeItem[] = [];
-    let successBridgeItems: apiToBackend.BridgeItem[] = [];
+    let errorGetCatalogBridgeItems: BridgeItem[] = [];
+    let successBridgeItems: BridgeItem[] = [];
 
     await asyncPool(1, bridges, async bridge => {
       let project = projects.find(x => x.projectId === bridge.projectId);
@@ -96,7 +93,7 @@ export class SpecialRebuildStructsController {
         return;
       }
 
-      let bridgeItem: apiToBackend.BridgeItem = {
+      let bridgeItem: BridgeItem = {
         orgId: project.orgId,
         projectId: project.projectId,
         repoId: bridge.repoId,
@@ -107,9 +104,9 @@ export class SpecialRebuildStructsController {
       };
 
       if (skipRebuild === false) {
-        let getCatalogFilesRequest: apiToDisk.ToDiskGetCatalogFilesRequest = {
+        let getCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
           info: {
-            name: apiToDisk.ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
+            name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
             traceId: reqValid.info.traceId
           },
           payload: {
@@ -125,16 +122,14 @@ export class SpecialRebuildStructsController {
         };
 
         let getCatalogFilesResponse =
-          await this.rabbitService.sendToDisk<apiToDisk.ToDiskGetCatalogFilesResponse>(
-            {
-              routingKey: makeRoutingKeyToDisk({
-                orgId: project.orgId,
-                projectId: project.projectId
-              }),
-              message: getCatalogFilesRequest,
-              checkIsOk: false
-            }
-          );
+          await this.rabbitService.sendToDisk<ToDiskGetCatalogFilesResponse>({
+            routingKey: makeRoutingKeyToDisk({
+              orgId: project.orgId,
+              projectId: project.projectId
+            }),
+            message: getCatalogFilesRequest,
+            checkIsOk: false
+          });
 
         if (getCatalogFilesResponse.info.status !== ResponseInfoStatusEnum.Ok) {
           bridgeItem.errorMessage = getCatalogFilesResponse.info.error.message;
@@ -181,7 +176,7 @@ export class SpecialRebuildStructsController {
       successBridgeItems.push(bridgeItem);
     });
 
-    let payload: apiToBackend.ToBackendSpecialRebuildStructsResponsePayload = {
+    let payload: ToBackendSpecialRebuildStructsResponsePayload = {
       notFoundProjectIds: notFoundProjectIds,
       successTotal: successBridgeItems.length,
       errorTotal: errorGetCatalogBridgeItems.length,
