@@ -3,8 +3,6 @@ import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
 import { FieldResultEnum } from '~common/enums/field-result.enum';
 import { FieldTypeEnum } from '~common/enums/field-type.enum';
 import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
-import { JoinRelationshipEnum } from '~common/enums/join-relationship.enum';
-import { JoinTypeEnum } from '~common/enums/join-type.enum';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { RowTypeEnum } from '~common/enums/row-type.enum';
 import { StoreMethodEnum } from '~common/enums/store-method.enum';
@@ -316,24 +314,6 @@ export const Y_FIELDS_CHART_TYPE_VALUES = [
   ChartTypeEnum.Line,
   ChartTypeEnum.Bar,
   ChartTypeEnum.Scatter
-];
-
-export const JOIN_TYPE_VALUES = [
-  JoinTypeEnum.Cross,
-  JoinTypeEnum.Full,
-  JoinTypeEnum.FullOuter,
-  JoinTypeEnum.Inner,
-  JoinTypeEnum.Left,
-  JoinTypeEnum.LeftOuter,
-  JoinTypeEnum.Right,
-  JoinTypeEnum.RightOuter
-];
-
-export const JOIN_RELATIONSHIP_VALUES = [
-  JoinRelationshipEnum.OneToMany,
-  JoinRelationshipEnum.OneToOne,
-  JoinRelationshipEnum.ManyToOne,
-  JoinRelationshipEnum.ManyToMany
 ];
 
 export const PROJECT_WEEK_START_VALUES = [

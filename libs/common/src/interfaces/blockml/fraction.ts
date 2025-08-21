@@ -13,13 +13,9 @@ import { FractionMonthNameValueEnum } from '~common/enums/fraction/fraction-mont
 import { FractionNumberBetweenOptionEnum } from '~common/enums/fraction/fraction-number-between-option.enum';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FractionQuarterOfYearValueEnum } from '~common/enums/fraction/fraction-quarter-of-year-value.enum';
-import { FractionTsForOptionEnum } from '~common/enums/fraction/fraction-ts-for-option.enum';
 import { FractionTsLastCompleteOptionEnum } from '~common/enums/fraction/fraction-ts-last-complete-option.enum';
 import { FractionTsMixUnitEnum } from '~common/enums/fraction/fraction-ts-mix-unit.enum';
 import { FractionTsMomentTypeEnum } from '~common/enums/fraction/fraction-ts-moment-type.enum';
-import { FractionTsRelativeCompleteOptionEnum } from '~common/enums/fraction/fraction-ts-relative-complete-option.enum';
-import { FractionTsRelativeUnitEnum } from '~common/enums/fraction/fraction-ts-relative-unit.enum';
-import { FractionTsRelativeWhenOptionEnum } from '~common/enums/fraction/fraction-ts-relative-when-option.enum';
 import { FractionTsUnitEnum } from '~common/enums/fraction/fraction-ts-unit.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
 import { FractionYesnoValueEnum } from '~common/enums/fraction/fraction-yesno-value.enum';
@@ -164,26 +160,6 @@ export class Fraction {
   @IsOptional()
   @IsNumber()
   tsDateToMinute?: number;
-
-  @IsOptional()
-  @IsNumber()
-  tsRelativeValue?: number;
-
-  @IsOptional()
-  @IsEnum(FractionTsRelativeUnitEnum)
-  tsRelativeUnit?: FractionTsRelativeUnitEnum;
-
-  @IsOptional()
-  @IsEnum(FractionTsRelativeCompleteOptionEnum)
-  tsRelativeCompleteOption?: FractionTsRelativeCompleteOptionEnum;
-
-  @IsOptional()
-  @IsEnum(FractionTsRelativeWhenOptionEnum)
-  tsRelativeWhenOption?: FractionTsRelativeWhenOptionEnum;
-
-  @IsOptional()
-  @IsEnum(FractionTsForOptionEnum)
-  tsForOption?: FractionTsForOptionEnum;
 
   @IsOptional()
   @IsNumber()

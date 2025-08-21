@@ -19,7 +19,6 @@ import {
   FORMAT_NUMBER_DECIMAL,
   FORMAT_NUMBER_GROUPING
 } from '~common/constants/top-front';
-import { ChartSchemeTypeEnum } from '~common/enums/chart/chart-scheme-type.enum';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
 import { FieldResultEnum } from '~common/enums/field-result.enum';
@@ -46,7 +45,6 @@ import { FormatNumberService } from '~front/app/services/format-number.service';
 })
 export class ChartViewComponent implements OnChanges {
   chartTypeEnum = ChartTypeEnum;
-  chartSchemeTypeEnum = ChartSchemeTypeEnum;
   queryStatusEnum = QueryStatusEnum;
 
   eChartInitOpts: any;
