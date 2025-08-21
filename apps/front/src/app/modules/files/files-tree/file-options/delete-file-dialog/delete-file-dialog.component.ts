@@ -6,8 +6,15 @@ import {
   OnInit
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { decodeFilePath } from '~common/functions/decode-file-path';
+import { isDefined } from '~common/functions/is-defined';
+import {
+  ToBackendDeleteFileRequestPayload,
+  ToBackendDeleteFileResponse
+} from '~common/interfaces/to-backend/files/to-backend-delete-file';
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
@@ -42,7 +49,6 @@ export class DeleteFileDialogComponent implements OnInit {
     public ref: DialogRef<DeleteFileDialogData>,
     private repoQuery: RepoQuery,
     private navigateService: NavigateService,
-    private spinner: NgxSpinnerService,
     private fileQuery: FileQuery,
     private uiQuery: UiQuery,
     private navQuery: NavQuery,

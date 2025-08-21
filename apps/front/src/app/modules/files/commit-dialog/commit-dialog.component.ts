@@ -17,10 +17,18 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
+import { APP_SPINNER_NAME } from '~common/constants/top-front';
+import { PanelEnum } from '~common/enums/panel.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import {
+  ToBackendCommitRepoRequestPayload,
+  ToBackendCommitRepoResponse
+} from '~common/interfaces/to-backend/repos/to-backend-commit-repo';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
-import { NavigateService } from '~front/app/services/navigate.service';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface CommitDialogDialogData {
@@ -52,7 +60,6 @@ export class CommitDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<CommitDialogDialogData>,
     private fb: FormBuilder,
-    private navigateService: NavigateService,
     private spinner: NgxSpinnerService,
     private fileService: FileService,
     private repoQuery: RepoQuery

@@ -15,6 +15,12 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendCreateFolderRequestPayload,
+  ToBackendCreateFolderResponse
+} from '~common/interfaces/to-backend/folders/to-backend-create-folder';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';

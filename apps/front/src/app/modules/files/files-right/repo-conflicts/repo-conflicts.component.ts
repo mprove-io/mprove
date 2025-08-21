@@ -1,9 +1,8 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { FileQuery } from '~front/app/queries/file.query';
-import { NavQuery } from '~front/app/queries/nav.query';
+import { PanelEnum } from '~common/enums/panel.enum';
+import { DiskFileLine } from '~common/interfaces/disk/disk-file-line';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
-import { StructQuery } from '~front/app/queries/struct.query';
 import { NavigateService } from '~front/app/services/navigate.service';
 
 @Component({
@@ -21,10 +20,7 @@ export class RepoConflictsComponent {
   );
 
   constructor(
-    private fileQuery: FileQuery,
-    private structQuery: StructQuery,
     private repoQuery: RepoQuery,
-    private navQuery: NavQuery,
     private cd: ChangeDetectorRef,
     private navigateService: NavigateService
   ) {}

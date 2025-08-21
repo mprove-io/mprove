@@ -29,8 +29,61 @@ import {
   take,
   tap
 } from 'rxjs/operators';
+import { CHARTS_PAGE_TITLE } from '~common/constants/page-titles';
+import {
+  EMPTY_CHART_ID,
+  EMPTY_MCONFIG_ID,
+  EMPTY_QUERY_ID,
+  PATH_CHARTS_LIST,
+  PATH_MODELS,
+  PATH_MODELS_LIST,
+  RESTRICTED_USER_ALIAS
+} from '~common/constants/top';
+import { REFRESH_LIST } from '~common/constants/top-front';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { ModelTreeLevelsEnum } from '~common/enums/model-tree-levels-enum.enum';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { PanelEnum } from '~common/enums/panel.enum';
+import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
+import { QueryPartEnum } from '~common/enums/query-part.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { encodeFilePath } from '~common/functions/encode-file-path';
+import { getTimezones } from '~common/functions/get-timezones';
+import { isDefined } from '~common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeId } from '~common/functions/make-id';
+import { setChartFields } from '~common/functions/set-chart-fields';
+import { ChartX } from '~common/interfaces/backend/chart-x';
+import { MconfigX } from '~common/interfaces/backend/mconfig-x';
+import { ProjectChartLink } from '~common/interfaces/backend/project-chart-link';
+import { ProjectModelLink } from '~common/interfaces/backend/project-model-link';
+import { QueryEstimate } from '~common/interfaces/backend/query-estimate';
+import { ModelField } from '~common/interfaces/blockml/model-field';
+import { ModelFieldY } from '~common/interfaces/blockml/model-field-y';
+import { Query } from '~common/interfaces/blockml/query';
+import { RefreshItem } from '~common/interfaces/front/refresh-item';
+import {
+  ToBackendCancelQueriesRequestPayload,
+  ToBackendCancelQueriesResponse
+} from '~common/interfaces/to-backend/queries/to-backend-cancel-queries';
+import {
+  ToBackendGetQueryRequestPayload,
+  ToBackendGetQueryResponse
+} from '~common/interfaces/to-backend/queries/to-backend-get-query';
+import {
+  ToBackendRunQueriesRequestPayload,
+  ToBackendRunQueriesResponse
+} from '~common/interfaces/to-backend/queries/to-backend-run-queries';
+import {
+  ToBackendRunQueriesDryRequestPayload,
+  ToBackendRunQueriesDryResponse
+} from '~common/interfaces/to-backend/queries/to-backend-run-queries-dry';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
-import { RefreshItem } from '~front/app/interfaces/refresh-item';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { ChartsQuery } from '~front/app/queries/charts.query';
 import { FilteredChartsQuery } from '~front/app/queries/filtered-charts.query';
@@ -99,7 +152,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   isInitialScrollCompleted = false;
 
-  pageTitle = frontCHARTS_PAGE_TITLE;
+  pageTitle = CHARTS_PAGE_TITLE;
 
   emptyChartId = EMPTY_CHART_ID;
 

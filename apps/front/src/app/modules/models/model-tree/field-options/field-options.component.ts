@@ -1,5 +1,7 @@
 import { TreeNode } from '@ali-hm/angular-tree-component';
 import { Component, Input } from '@angular/core';
+import { PanelEnum } from '~common/enums/panel.enum';
+import { encodeFilePath } from '~common/functions/encode-file-path';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { NavigateService } from '~front/app/services/navigate.service';
 

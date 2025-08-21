@@ -3,6 +3,32 @@ import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
+import { APP_SPINNER_NAME } from '~common/constants/top-front';
+import { PanelEnum } from '~common/enums/panel.enum';
+import { RepoStatusEnum } from '~common/enums/repo-status.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import {
+  ToBackendValidateFilesRequestPayload,
+  ToBackendValidateFilesResponse
+} from '~common/interfaces/to-backend/files/to-backend-validate-files';
+import {
+  ToBackendGetRepoRequestPayload,
+  ToBackendGetRepoResponse
+} from '~common/interfaces/to-backend/repos/to-backend-get-repo';
+import {
+  ToBackendPullRepoRequestPayload,
+  ToBackendPullRepoResponse
+} from '~common/interfaces/to-backend/repos/to-backend-pull-repo';
+import {
+  ToBackendRevertRepoToLastCommitRequestPayload,
+  ToBackendRevertRepoToLastCommitResponse
+} from '~common/interfaces/to-backend/repos/to-backend-revert-repo-to-last-commit';
+import {
+  ToBackendRevertRepoToRemoteRequestPayload,
+  ToBackendRevertRepoToRemoteResponse
+} from '~common/interfaces/to-backend/repos/to-backend-revert-repo-to-remote';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
