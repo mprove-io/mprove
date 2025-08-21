@@ -27,7 +27,6 @@ import { wrapModels } from '~blockml/functions/wrap/wrap-models';
 import { wrapReports } from '~blockml/functions/wrap/wrap-reports';
 import { BmError } from '~blockml/models/bm-error';
 import { PresetsService } from '~blockml/services/presets.service';
-import { RabbitService } from '~blockml/services/rabbit.service';
 import {
   MPROVE_CONFIG_FILENAME,
   PROJECT_CONFIG_ALLOW_TIMEZONES,
@@ -98,7 +97,6 @@ interface RebuildStructPrep {
 @Injectable()
 export class RebuildStructService {
   constructor(
-    private rabbitService: RabbitService,
     private presetsService: PresetsService,
     private cs: ConfigService<BlockmlConfig>,
     private logger: Logger
@@ -557,8 +555,7 @@ export class RebuildStructService {
         errors: errors,
         caller: CallerEnum.BuildDashboardTile
       },
-      this.cs,
-      this.rabbitService
+      this.cs
     );
 
     charts = await buildTile(
@@ -585,8 +582,7 @@ export class RebuildStructService {
         errors: errors,
         caller: CallerEnum.BuildChartTile
       },
-      this.cs,
-      this.rabbitService
+      this.cs
     );
 
     dashboards = buildMconfigChart(

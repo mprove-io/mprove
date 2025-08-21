@@ -8,7 +8,6 @@ import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { getConfig } from '~blockml/config/get.config';
 import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
 import { ConsumerMainService } from '~blockml/services/consumer-main.service';
-import { RabbitService } from '~blockml/services/rabbit.service';
 import { APP_NAME_BLOCKML, SRC_PATH } from '~common/constants/top-blockml';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
@@ -65,8 +64,6 @@ export async function prepareTest(
     //     return presetFiles;
     //   }
     // })
-    .overrideProvider(RabbitService)
-    .useValue({})
     .overrideProvider(ConsumerMainService)
     .useValue({})
     .compile();

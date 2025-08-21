@@ -5,23 +5,20 @@ import { RebuildStructService } from './controllers/rebuild-struct/rebuild-struc
 import { isSingleOrMain } from './functions/extra/is-single-or-main';
 import { ConsumerMainService } from './services/consumer-main.service';
 import { PresetsService } from './services/presets.service';
-import { RabbitService } from './services/rabbit.service';
 
 export const appServices = [
   PresetsService,
-  RabbitService,
   {
     provide: RebuildStructService,
     useFactory: (
       cs: ConfigService<BlockmlConfig>,
-      rabbitService: RabbitService,
       presetsService: PresetsService,
       logger: Logger
     ) =>
       isSingleOrMain(cs)
-        ? new RebuildStructService(rabbitService, presetsService, cs, logger)
+        ? new RebuildStructService(presetsService, cs, logger)
         : {},
-    inject: [ConfigService, RabbitService, PresetsService]
+    inject: [ConfigService, PresetsService]
   },
   {
     provide: ConsumerMainService,

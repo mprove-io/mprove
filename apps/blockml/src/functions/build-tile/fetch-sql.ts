@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
-import { RabbitService } from '~blockml/services/rabbit.service';
 import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
@@ -52,7 +51,6 @@ export async function fetchSql<T extends dcType>(
     structId: string;
     caller: CallerEnum;
   },
-  rabbitService: RabbitService,
   cs: ConfigService<BlockmlConfig>
 ) {
   let { caller, structId, timezone, envId, projectId } = item;

@@ -46,10 +46,6 @@ import { PresetsService } from './services/presets.service';
             {
               name: RabbitExchangesEnum.Blockml.toString(),
               type: 'direct'
-            },
-            {
-              name: RabbitExchangesEnum.BlockmlWorker.toString(),
-              type: 'direct'
             }
           ],
           uri: [

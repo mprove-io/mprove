@@ -2,7 +2,6 @@ import { PostgresConnection } from '@malloydata/db-postgres';
 import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
-import { RabbitService } from '~blockml/services/rabbit.service';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { BmlFile } from '~common/interfaces/blockml/bml-file';
@@ -40,8 +39,7 @@ export async function buildTile<T extends dcType>(
     structId: string;
     caller: CallerEnum;
   },
-  cs: ConfigService<BlockmlConfig>,
-  rabbitService: RabbitService
+  cs: ConfigService<BlockmlConfig>
 ) {
   let entities = item.entities;
 
@@ -144,7 +142,6 @@ export async function buildTile<T extends dcType>(
       errors: item.errors,
       caller: item.caller
     },
-    rabbitService,
     cs
   );
 
