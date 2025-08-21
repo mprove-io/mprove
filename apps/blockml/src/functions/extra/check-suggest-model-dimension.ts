@@ -16,9 +16,9 @@ import { MyRegex } from '~common/models/my-regex';
 import { sdrType } from '~common/types/sdr-type';
 import { log } from './log';
 
-let func = FuncEnum.CheckVmdrSuggestModelDimension;
+let func = FuncEnum.CheckSuggestModelDimension;
 
-export function checkVmdrSuggestModelDimension<T extends sdrType>(
+export function checkSuggestModelDimension<T extends sdrType>(
   item: {
     entities: T[];
     apiModels: Model[];

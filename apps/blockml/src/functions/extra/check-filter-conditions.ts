@@ -13,9 +13,9 @@ import { sdrType } from '~common/types/sdr-type';
 import { bricksToFractions } from '~node-common/functions/bricks-to-fractions';
 import { log } from './log';
 
-let func = FuncEnum.CheckVmdrFilterConditions;
+let func = FuncEnum.CheckFilterConditions;
 
-export function checkVmdrFilterConditions<T extends sdrType>(
+export function checkFilterConditions<T extends sdrType>(
   item: {
     entities: T[];
     errors: BmError[];
@@ -35,7 +35,7 @@ export function checkVmdrFilterConditions<T extends sdrType>(
 
     // x.filters = {};
 
-    // console.log('checkVmdrFilterConditions');
+    // console.log('checkFilterConditions');
     // console.log(x);
 
     x.fields.forEach(field => {

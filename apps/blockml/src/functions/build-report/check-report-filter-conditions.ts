@@ -5,7 +5,7 @@ import { CallerEnum } from '~common/enums/special/caller.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
 import { LogTypeEnum } from '~common/enums/special/log-type.enum';
 import { FileReport } from '~common/interfaces/blockml/internal/file-report';
-import { checkVmdrFilterConditions } from '../extra/check-vmdr-filter-conditions';
+import { checkFilterConditions } from '../extra/check-filter-conditions';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckReportFilterConditions;
@@ -23,7 +23,7 @@ export function checkReportFilterConditions(
   let { caller, structId, caseSensitiveStringFilters } = item;
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
-  let newReports = checkVmdrFilterConditions(
+  let newReports = checkFilterConditions(
     {
       entities: item.reports,
       errors: item.errors,

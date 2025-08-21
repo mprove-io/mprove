@@ -16,8 +16,8 @@ import { buildStoreNext } from '~blockml/functions/build-store-next/_build-store
 import { buildStoreStart } from '~blockml/functions/build-store-start/_build-store-start';
 import { buildTile } from '~blockml/functions/build-tile/_build-tile';
 import { buildYaml } from '~blockml/functions/build-yaml/_build-yaml';
-import { collectFiles } from '~blockml/functions/build-yaml/collect-files';
-import { checkVmdrSuggestModelDimension } from '~blockml/functions/extra/check-vmdr-field-suggest-model-dimension';
+import { checkSuggestModelDimension } from '~blockml/functions/extra/check-suggest-model-dimension';
+import { collectFiles } from '~blockml/functions/extra/collect-files';
 import { getMproveConfigFile } from '~blockml/functions/extra/get-mprove-config-file';
 import { logStruct } from '~blockml/functions/extra/log-struct';
 import { wrapCharts } from '~blockml/functions/wrap/wrap-charts';
@@ -660,7 +660,7 @@ export class RebuildStructService {
       this.cs
     );
 
-    checkVmdrSuggestModelDimension(
+    checkSuggestModelDimension(
       {
         entities: [...dashboards, ...reports],
         apiModels: apiModels,

@@ -16,7 +16,7 @@ import { FileDashboard } from '~common/interfaces/blockml/internal/file-dashboar
 import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 
 let caller = CallerEnum.BuildDashboard;
-let func = FuncEnum.CheckVmdrFilterConditions;
+let func = FuncEnum.CheckFilterConditions;
 let testId = 'e__wrong-filter-expression-3';
 
 test('1', async t => {

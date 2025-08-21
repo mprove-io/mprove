@@ -2,6 +2,8 @@ export enum CallerEnum {
   AppModule = 'AppModule',
   RebuildStruct = 'RebuildStruct',
 
+  Extra = 'Extra',
+
   BuildChart = 'BuildChart',
   BuildDashboard = 'BuildDashboard',
 

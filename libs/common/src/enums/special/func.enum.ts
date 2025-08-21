@@ -75,7 +75,6 @@ export enum FuncEnum {
   CheckTileParameters = 'build-tile/check-tile-parameters',
   FetchSql = 'build-tile/fetch-sql',
 
-  CollectFiles = 'build-yaml/collect-files',
   RemoveWrongExt = 'build-yaml/remove-wrong-ext',
   DeduplicateFileNames = 'build-yaml/deduplicate-file-names',
   YamlToObjects = 'build-yaml/yaml-to-objects',
@@ -87,14 +86,14 @@ export enum FuncEnum {
   SplitFiles = 'build-yaml/split-files',
   CheckProjectConfig = 'build-yaml/check-project-config',
 
-  BuildMalloyQuery = 'extra/build-malloy-query',
+  CollectFiles = 'extra/collect-files',
   CheckAccess = 'extra/check-access',
-  CheckVmdrFilterConditions = 'extra/check-vmdr-filter-conditions',
+  CheckFilterConditions = 'extra/check-filter-conditions',
   CheckStoreFraction = 'extra/check-store-fraction',
   CheckStoreFractionControls = 'extra/check-store-fraction-controls',
   CheckStoreFractionControlsUse = 'extra/check-store-fraction-controls-use',
   CheckStoreFractionControlOptions = 'extra/check-store-fraction-control-options',
-  CheckVmdrSuggestModelDimension = 'extra/check-vmdr-suggest-model-dimension',
+  CheckSuggestModelDimension = 'extra/check-suggest-model-dimension',
   CheckModelName = 'extra/check-model-name',
   BuildViewModel = 'extra/build-view-model',
   LogStruct = 'extra/log-struct'

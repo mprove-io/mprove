@@ -22,7 +22,7 @@ import { KeyValuePair } from '~common/interfaces/blockml/key-value-pair';
 import { Model } from '~common/interfaces/blockml/model';
 import { ModelField } from '~common/interfaces/blockml/model-field';
 import { ModelNode } from '~common/interfaces/blockml/model-node';
-import { FieldItem, getFieldItems } from '../extra/source-to-field-items';
+import { FieldItem, getFieldItems } from '../extra/get-field-items';
 import { wrapField } from './wrap-field';
 import { wrapFieldItem } from './wrap-field-item';
 
