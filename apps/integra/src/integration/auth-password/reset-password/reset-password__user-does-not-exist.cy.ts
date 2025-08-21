@@ -1,16 +1,16 @@
-import { common } from '~integra/barrels/common';
+import { PATH_LOGIN } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { transformErrorMessage } from '~common/functions/transform-error-message';
 
 let testId = '_reset-password__user-does-not-exist';
 
 let email = `${testId}@example.com`;
-let errorMessage = common.transformErrorMessage(
-  common.ErEnum.BACKEND_USER_DOES_NOT_EXIST
-);
+let errorMessage = transformErrorMessage(ErEnum.BACKEND_USER_DOES_NOT_EXIST);
 
 describe('integra', () => {
   it(testId, () => {
     cy.deletePack({ emails: [email] });
-    cy.visit(common.PATH_LOGIN);
+    cy.visit(PATH_LOGIN);
     cy.get('[data-cy=loginForgotPasswordButton]').click();
     cy.get('[data-cy=forgotPasswordEmailInput]').type(email);
     cy.get('[data-cy=forgotPasswordResetPasswordButton]').click();

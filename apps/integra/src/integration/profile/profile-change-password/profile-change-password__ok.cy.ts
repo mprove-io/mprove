@@ -1,4 +1,7 @@
-import { common } from '~integra/barrels/common';
+import {
+  PATH_PASSWORD_RESET_SENT_AUTH,
+  PATH_PROFILE
+} from '~common/constants/top';
 
 let testId = '_profile-change-password__ok';
 
@@ -18,12 +21,12 @@ describe('integra', () => {
       ]
     });
     cy.loginUser({ email: email, password: password });
-    cy.visit(common.PATH_PROFILE);
+    cy.visit(PATH_PROFILE);
     cy.get('[data-cy=profileChangePasswordButton]').click();
     cy.loading();
-    cy.url().should('include', common.PATH_PASSWORD_RESET_SENT_AUTH);
+    cy.url().should('include', PATH_PASSWORD_RESET_SENT_AUTH);
     cy.get('[data-cy=passwordResetSentDoneButton]').click();
     cy.loading();
-    cy.url().should('include', common.PATH_PROFILE);
+    cy.url().should('include', PATH_PROFILE);
   });
 });

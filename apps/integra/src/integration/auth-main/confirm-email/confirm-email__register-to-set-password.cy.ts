@@ -1,12 +1,15 @@
-import { common } from '~integra/barrels/common';
+import { PATH_CONFIRM_EMAIL } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { makeId } from '~common/functions/make-id';
+import { transformErrorMessage } from '~common/functions/transform-error-message';
 
 let testId = '_confirm-email__register-to-set-password';
 
 let email = `${testId}@example.com`;
-let emailVerificationToken = common.makeId();
+let emailVerificationToken = makeId();
 
-let errorMessage = common.transformErrorMessage(
-  common.ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
+let errorMessage = transformErrorMessage(
+  ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
 );
 
 describe('integra', () => {
@@ -21,7 +24,7 @@ describe('integra', () => {
         }
       ]
     });
-    cy.visit(common.PATH_CONFIRM_EMAIL + '?token=' + emailVerificationToken);
+    cy.visit(PATH_CONFIRM_EMAIL + '?token=' + emailVerificationToken);
     cy.get('[data-cy=errorDialogMessage]').should('contain', errorMessage);
   });
 });

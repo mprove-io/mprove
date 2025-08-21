@@ -36,6 +36,8 @@ export const PROJECT_CONFIG_FORMAT_NUMBER = '';
 
 export const MF = 'mf';
 
+export const INTEGRA_POST = 'POST';
+
 export const PROD_REPO_ID = 'production';
 export const BRANCH_MAIN = 'main'; // also set as string in project default_branch
 export const PROJECT_ENV_PROD = 'prod';

@@ -1,4 +1,7 @@
-import { common } from '~integra/barrels/common';
+import {
+  PATH_PROFILE,
+  USE_PROJECT_TIMEZONE_LABEL
+} from '~common/constants/top';
 
 let testId = '_profile-data__ok';
 
@@ -18,11 +21,11 @@ describe('integra', () => {
       ]
     });
     cy.loginUser({ email: email, password: password });
-    cy.visit(common.PATH_PROFILE);
+    cy.visit(PATH_PROFILE);
     cy.get(`[data-cy=profileTitle]`);
     cy.get('[data-cy=profileTimezone]').should(
       'contain',
-      common.USE_PROJECT_TIMEZONE_LABEL
+      USE_PROJECT_TIMEZONE_LABEL
     );
     cy.get('[data-cy=profileEmail]').should('contain', email);
   });

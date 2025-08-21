@@ -1,13 +1,26 @@
-import { apiToBackend } from '~integra/barrels/api-to-backend';
-import { common } from '~integra/barrels/common';
-import { constants } from '~integra/barrels/constants';
+import { INTEGRA_POST } from '~common/constants/top';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { makeId } from '~common/functions/make-id';
+import {
+  ToBackendDeleteRecordsRequest,
+  ToBackendDeleteRecordsRequestPayload
+} from '~common/interfaces/to-backend/test-routes/to-backend-delete-records';
+import {
+  ToBackendSeedRecordsRequest,
+  ToBackendSeedRecordsRequestPayload
+} from '~common/interfaces/to-backend/test-routes/to-backend-seed-records';
+import {
+  ToBackendLoginUserRequest,
+  ToBackendLoginUserRequestPayload,
+  ToBackendLoginUserResponsePayload
+} from '~common/interfaces/to-backend/users/to-backend-login-user';
 
 declare global {
   namespace Cypress {
     interface Chainable<Subject> {
-      deletePack(pack: apiToBackend.ToBackendDeleteRecordsRequestPayload): void;
-      seedPack(pack: apiToBackend.ToBackendSeedRecordsRequestPayload): void;
-      loginUser(item: apiToBackend.ToBackendLoginUserRequestPayload): void;
+      deletePack(pack: ToBackendDeleteRecordsRequestPayload): void;
+      seedPack(pack: ToBackendSeedRecordsRequestPayload): void;
+      loginUser(item: ToBackendLoginUserRequestPayload): void;
       loading(): void;
       loadingExist(): void;
       loadingNotExist(): void;
@@ -17,12 +30,12 @@ declare global {
 
 Cypress.Commands.add(
   'deletePack',
-  (pack: apiToBackend.ToBackendDeleteRecordsRequestPayload) => {
-    let body: apiToBackend.ToBackendDeleteRecordsRequest = {
+  (pack: ToBackendDeleteRecordsRequestPayload) => {
+    let body: ToBackendDeleteRecordsRequest = {
       info: {
-        idempotencyKey: common.makeId(),
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
-        traceId: common.makeId()
+        idempotencyKey: makeId(),
+        name: ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
+        traceId: makeId()
       },
       payload: pack
     };
@@ -31,63 +44,56 @@ Cypress.Commands.add(
       url:
         'http://backend:3000/' +
         // + commonConstants.API_PATH + '/'
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
-      method: constants.POST,
+        ToBackendRequestInfoNameEnum.ToBackendDeleteRecords,
+      method: INTEGRA_POST,
       body: body
     });
   }
 );
 
-Cypress.Commands.add(
-  'seedPack',
-  (pack: apiToBackend.ToBackendSeedRecordsRequestPayload) => {
-    let body: apiToBackend.ToBackendSeedRecordsRequest = {
-      info: {
-        idempotencyKey: common.makeId(),
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
-        traceId: common.makeId()
-      },
-      payload: pack
-    };
+Cypress.Commands.add('seedPack', (pack: ToBackendSeedRecordsRequestPayload) => {
+  let body: ToBackendSeedRecordsRequest = {
+    info: {
+      idempotencyKey: makeId(),
+      name: ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
+      traceId: makeId()
+    },
+    payload: pack
+  };
 
-    cy.request({
-      url:
-        'http://backend:3000/' +
-        // + commonConstants.API_PATH + '/'
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
-      method: constants.POST,
-      body: body
-    });
-  }
-);
+  cy.request({
+    url:
+      'http://backend:3000/' +
+      // + commonConstants.API_PATH + '/'
+      ToBackendRequestInfoNameEnum.ToBackendSeedRecords,
+    method: INTEGRA_POST,
+    body: body
+  });
+});
 
-Cypress.Commands.add(
-  'loginUser',
-  (item: apiToBackend.ToBackendLoginUserRequestPayload) => {
-    let body: apiToBackend.ToBackendLoginUserRequest = {
-      info: {
-        idempotencyKey: common.makeId(),
-        name: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-        traceId: common.makeId()
-      },
-      payload: item
-    };
+Cypress.Commands.add('loginUser', (item: ToBackendLoginUserRequestPayload) => {
+  let body: ToBackendLoginUserRequest = {
+    info: {
+      idempotencyKey: makeId(),
+      name: ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+      traceId: makeId()
+    },
+    payload: item
+  };
 
-    cy.request({
-      url:
-        'http://backend:3000/' +
-        // + commonConstants.API_PATH + '/'
-        apiToBackend.ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-      method: constants.POST,
-      body: body
-    }).then(resp => {
-      let payload: apiToBackend.ToBackendLoginUserResponsePayload =
-        resp.body.payload;
+  cy.request({
+    url:
+      'http://backend:3000/' +
+      // + commonConstants.API_PATH + '/'
+      ToBackendRequestInfoNameEnum.ToBackendLoginUser,
+    method: INTEGRA_POST,
+    body: body
+  }).then(resp => {
+    let payload: ToBackendLoginUserResponsePayload = resp.body.payload;
 
-      window.localStorage.setItem('token', payload.token);
-    });
-  }
-);
+    window.localStorage.setItem('token', payload.token);
+  });
+});
 
 Cypress.Commands.add('loading', () => {
   cy.get('[data-cy=loadingSpinner]', { timeout: 10000 }).should('exist');

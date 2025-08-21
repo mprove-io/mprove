@@ -1,10 +1,11 @@
-import { common } from '~integra/barrels/common';
+import { PATH_CONFIRM_EMAIL, PATH_REPORTS } from '~common/constants/top';
+import { makeId } from '~common/functions/make-id';
 
 let testId = '_confirm-email__ok-first';
 
 let email = `${testId}@example.com`;
 let password = '123123';
-let emailVerificationToken = common.makeId();
+let emailVerificationToken = makeId();
 
 describe('integra', () => {
   it(testId, () => {
@@ -19,9 +20,9 @@ describe('integra', () => {
         }
       ]
     });
-    cy.visit(common.PATH_CONFIRM_EMAIL + '?token=' + emailVerificationToken);
+    cy.visit(PATH_CONFIRM_EMAIL + '?token=' + emailVerificationToken);
     cy.loading();
-    cy.url().should('include', common.PATH_REPORTS);
+    cy.url().should('include', PATH_REPORTS);
     cy.get('[data-cy=emailIsConfirmedDialogTitle]');
   });
 });

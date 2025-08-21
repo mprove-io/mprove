@@ -1,4 +1,4 @@
-import { common } from '~integra/barrels/common';
+import { PATH_ACCOUNT, PATH_ORG } from '~common/constants/top';
 
 let testId = '_delete-org__ok';
 
@@ -31,7 +31,7 @@ describe('integra', () => {
       ]
     });
     cy.loginUser({ email: email, password: password });
-    cy.visit(`${common.PATH_ORG}/${orgId}/${common.PATH_ACCOUNT}`);
+    cy.visit(`${PATH_ORG}/${orgId}/${PATH_ACCOUNT}`);
     cy.get('[data-cy=orgAccountDeleteOrgButton]').click();
     cy.get('[data-cy=deleteOrgDialogDeleteButton]').click();
     cy.loading();

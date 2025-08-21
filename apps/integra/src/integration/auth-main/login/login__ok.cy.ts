@@ -1,4 +1,4 @@
-import { common } from '~integra/barrels/common';
+import { PATH_LOGIN, PATH_PROFILE } from '~common/constants/top';
 
 let testId = '_login__ok';
 
@@ -17,12 +17,12 @@ describe('integra', () => {
         }
       ]
     });
-    cy.visit(common.PATH_LOGIN);
+    cy.visit(PATH_LOGIN);
     cy.get(`[data-cy=loginTitle]`);
     cy.get('[data-cy=loginEmailInput]').type(email);
     cy.get('[data-cy=loginPasswordInput]').type(password);
     cy.get('[data-cy=loginButton]').click();
     cy.loading();
-    cy.url().should('include', common.PATH_PROFILE);
+    cy.url().should('include', PATH_PROFILE);
   });
 });

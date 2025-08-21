@@ -1,10 +1,12 @@
-import { common } from '~integra/barrels/common';
+import { PATH_LOGIN } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { transformErrorMessage } from '~common/functions/transform-error-message';
 
 let testId = '_reset-password__register-to-set-password';
 
 let email = `${testId}@example.com`;
-let errorMessage = common.transformErrorMessage(
-  common.ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
+let errorMessage = transformErrorMessage(
+  ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
 );
 
 describe('integra', () => {
@@ -18,7 +20,7 @@ describe('integra', () => {
         }
       ]
     });
-    cy.visit(common.PATH_LOGIN);
+    cy.visit(PATH_LOGIN);
     cy.get('[data-cy=loginForgotPasswordButton]').click();
     cy.get('[data-cy=forgotPasswordEmailInput]').type(email);
     cy.get('[data-cy=forgotPasswordResetPasswordButton]').click();

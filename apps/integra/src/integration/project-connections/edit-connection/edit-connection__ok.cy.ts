@@ -1,15 +1,24 @@
-import { common } from '~integra/barrels/common';
+import {
+  BRANCH_MAIN,
+  PATH_CONNECTIONS,
+  PATH_ORG,
+  PATH_PROJECT,
+  PROJECT_ENV_PROD
+} from '~common/constants/top';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { makeId } from '~common/functions/make-id';
 
 let testId = '_edit-connection__ok';
 
-let userId = common.makeId();
+let userId = makeId();
 let email = `${testId}@example.com`;
 let password = '123123';
 
 let orgId = 't' + testId;
 let orgName = testId;
 
-let projectId = common.makeId();
+let projectId = makeId();
 let projectName = testId;
 
 let connectionId = 'c1';
@@ -43,8 +52,8 @@ describe('integra', () => {
           orgId,
           projectId,
           name: projectName,
-          defaultBranch: common.BRANCH_MAIN,
-          remoteType: common.ProjectRemoteTypeEnum.Managed
+          defaultBranch: BRANCH_MAIN,
+          remoteType: ProjectRemoteTypeEnum.Managed
         }
       ],
       members: [
@@ -61,8 +70,8 @@ describe('integra', () => {
         {
           projectId: projectId,
           connectionId: connectionId,
-          envId: common.PROJECT_ENV_PROD,
-          type: common.ConnectionTypeEnum.PostgreSQL,
+          envId: PROJECT_ENV_PROD,
+          type: ConnectionTypeEnum.PostgreSQL,
           host: '1',
           port: 2,
           database: '3',
@@ -73,7 +82,7 @@ describe('integra', () => {
     });
     cy.loginUser({ email: email, password: password });
     cy.visit(
-      `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_CONNECTIONS}`
+      `${PATH_ORG}/${orgId}/${PATH_PROJECT}/${projectId}/${PATH_CONNECTIONS}`
     );
     cy.get('[data-cy=projectConnectionsEditButton]').click();
     cy.get('[data-cy=editConnectionDialogHostInput]')

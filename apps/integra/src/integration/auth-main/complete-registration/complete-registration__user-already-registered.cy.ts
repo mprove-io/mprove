@@ -1,13 +1,16 @@
-import { common } from '~integra/barrels/common';
+import { PATH_COMPLETE_REGISTRATION } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { makeId } from '~common/functions/make-id';
+import { transformErrorMessage } from '~common/functions/transform-error-message';
 
 let testId = '_complete-registration__user-already-registered';
 
 let email = `${testId}@example.com`;
-let emailToken = common.makeId();
+let emailToken = makeId();
 let password = '456456';
 
-let errorMessage = common.transformErrorMessage(
-  common.ErEnum.BACKEND_USER_ALREADY_REGISTERED
+let errorMessage = transformErrorMessage(
+  ErEnum.BACKEND_USER_ALREADY_REGISTERED
 );
 
 describe('integra', () => {
@@ -22,7 +25,7 @@ describe('integra', () => {
         }
       ]
     });
-    cy.visit(common.PATH_COMPLETE_REGISTRATION + '?token=' + emailToken);
+    cy.visit(PATH_COMPLETE_REGISTRATION + '?token=' + emailToken);
     cy.get('[data-cy=completeRegistrationPasswordInput]').type(password);
     cy.get('[data-cy=completeRegistrationSignUpButton]').click();
     cy.loading();

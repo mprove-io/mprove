@@ -1,4 +1,4 @@
-import { common } from '~integra/barrels/common';
+import { PATH_LOGIN, PATH_PASSWORD_RESET_SENT } from '~common/constants/top';
 
 let testId = '_reset-password__ok';
 
@@ -17,11 +17,11 @@ describe('integra', () => {
         }
       ]
     });
-    cy.visit(common.PATH_LOGIN);
+    cy.visit(PATH_LOGIN);
     cy.get('[data-cy=loginForgotPasswordButton]').click();
     cy.get('[data-cy=forgotPasswordEmailInput]').type(email);
     cy.get('[data-cy=forgotPasswordResetPasswordButton]').click();
     cy.loading();
-    cy.url().should('include', common.PATH_PASSWORD_RESET_SENT);
+    cy.url().should('include', PATH_PASSWORD_RESET_SENT);
   });
 });

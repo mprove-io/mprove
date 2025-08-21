@@ -1,4 +1,5 @@
-import { common } from '~integra/barrels/common';
+import { PATH_PROFILE } from '~common/constants/top';
+import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
 
 let testId = '_profile-edit-name__ok';
 
@@ -8,9 +9,7 @@ let password = '123123';
 let firstName = 'John';
 let lastName = 'Smith';
 let fullName =
-  common.capitalizeFirstLetter(firstName) +
-  ' ' +
-  common.capitalizeFirstLetter(lastName);
+  capitalizeFirstLetter(firstName) + ' ' + capitalizeFirstLetter(lastName);
 
 describe('integra', () => {
   it(testId, () => {
@@ -25,7 +24,7 @@ describe('integra', () => {
       ]
     });
     cy.loginUser({ email: email, password: password });
-    cy.visit(common.PATH_PROFILE);
+    cy.visit(PATH_PROFILE);
     cy.get('[data-cy=profileEditNameButton]').click();
     cy.get('[data-cy=editNameDialogTitle]');
     cy.get('[data-cy=editNameDialogFirstNameInput]').type(firstName);

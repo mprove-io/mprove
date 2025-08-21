@@ -1,4 +1,4 @@
-import { common } from '~integra/barrels/common';
+import { PATH_PROFILE } from '~common/constants/top';
 
 let testId = '_navbar-create-org__ok';
 
@@ -23,7 +23,7 @@ describe('integra', () => {
       ]
     });
     cy.loginUser({ email: email, password: password });
-    cy.visit(common.PATH_PROFILE);
+    cy.visit(PATH_PROFILE);
     cy.get('[data-cy=orgSelect]').click();
     cy.get('[data-cy=orgSelectCreateOrgButton]').click();
     cy.get('[data-cy=createOrgDialogOrgNameInput]').type(orgName);

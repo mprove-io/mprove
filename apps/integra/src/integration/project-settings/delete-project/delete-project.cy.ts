@@ -1,15 +1,22 @@
-import { common } from '~integra/barrels/common';
+import {
+  BRANCH_MAIN,
+  PATH_INFO,
+  PATH_ORG,
+  PATH_PROJECT
+} from '~common/constants/top';
+import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { makeId } from '~common/functions/make-id';
 
 let testId = '_delete-project__ok';
 
-let userId = common.makeId();
+let userId = makeId();
 let email = `${testId}@example.com`;
 let password = '123123';
 
 let orgId = 't' + testId;
 let orgName = testId;
 
-let projectId = common.makeId();
+let projectId = makeId();
 let projectName = testId;
 
 describe('integra', () => {
@@ -41,8 +48,8 @@ describe('integra', () => {
           orgId,
           projectId,
           name: projectName,
-          defaultBranch: common.BRANCH_MAIN,
-          remoteType: common.ProjectRemoteTypeEnum.Managed
+          defaultBranch: BRANCH_MAIN,
+          remoteType: ProjectRemoteTypeEnum.Managed
         }
       ],
       members: [
@@ -57,9 +64,7 @@ describe('integra', () => {
       ]
     });
     cy.loginUser({ email: email, password: password });
-    cy.visit(
-      `${common.PATH_ORG}/${orgId}/${common.PATH_PROJECT}/${projectId}/${common.PATH_INFO}`
-    );
+    cy.visit(`${PATH_ORG}/${orgId}/${PATH_PROJECT}/${projectId}/${PATH_INFO}`);
     cy.get('[data-cy=projectInfoDeleteProjectButton]').click();
     cy.get('[data-cy=deleteProjectDialogDeleteButton]').click();
     cy.loading();
