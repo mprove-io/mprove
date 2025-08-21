@@ -6,8 +6,6 @@ import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { RowTypeEnum } from '~common/enums/row-type.enum';
 import { StoreMethodEnum } from '~common/enums/store-method.enum';
-import { TimeSourceEnum } from '~common/enums/time-source.enum';
-import { TimeframeEnum } from '~common/enums/timeframe.enum';
 
 // export const API_PATH = 'api';
 export const MPROVE_CONFIG_FILENAME = 'mprove.yml';
@@ -319,54 +317,6 @@ export const Y_FIELDS_CHART_TYPE_VALUES = [
 export const PROJECT_WEEK_START_VALUES = [
   ProjectWeekStartEnum.Sunday,
   ProjectWeekStartEnum.Monday
-];
-
-export const TIME_SOURCE_VALUES = [
-  TimeSourceEnum.Timestamp,
-  TimeSourceEnum.Epoch,
-  TimeSourceEnum.YYYYMMDD
-];
-
-export const TIMEFRAME_VALUES = [
-  TimeframeEnum.Date,
-  TimeframeEnum.DateTs,
-  TimeframeEnum.DayOfWeek,
-  TimeframeEnum.DayOfWeekIndex,
-  TimeframeEnum.DayOfMonth,
-  TimeframeEnum.DayOfYear,
-  TimeframeEnum.Week,
-  TimeframeEnum.WeekTs,
-  TimeframeEnum.WeekOfYear,
-  TimeframeEnum.Month,
-  TimeframeEnum.MonthTs,
-  TimeframeEnum.MonthName,
-  TimeframeEnum.MonthNum,
-  TimeframeEnum.Quarter,
-  TimeframeEnum.QuarterTs,
-  TimeframeEnum.QuarterOfYear,
-  TimeframeEnum.Year,
-  TimeframeEnum.YearTs,
-  TimeframeEnum.TimeOfDay,
-  TimeframeEnum.Time,
-  TimeframeEnum.Ts,
-  TimeframeEnum.Hour,
-  TimeframeEnum.HourTs,
-  TimeframeEnum.HourOfDay,
-  TimeframeEnum.Hour2,
-  TimeframeEnum.Hour3,
-  TimeframeEnum.Hour4,
-  TimeframeEnum.Hour6,
-  TimeframeEnum.Hour8,
-  TimeframeEnum.Hour12,
-  TimeframeEnum.Minute,
-  TimeframeEnum.MinuteTs,
-  TimeframeEnum.Minute2,
-  TimeframeEnum.Minute3,
-  TimeframeEnum.Minute5,
-  TimeframeEnum.Minute10,
-  TimeframeEnum.Minute15,
-  TimeframeEnum.Minute30,
-  TimeframeEnum.YesNoHasValue
 ];
 
 // export const CHART_COLOR_SCHEME_VALUES = [

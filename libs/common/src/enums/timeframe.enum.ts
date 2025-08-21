@@ -1,5 +1,5 @@
 // 2019-06-27 12:32:02.230908+00
-export enum TimeframeEnum {
+export enum TimeframeEnum { // TODO: check timeframeEnum
   Date = 'date', // 2019-06-27
   DateTs = 'date_ts', //
   DayOfMonth = 'day_of_month', // 27

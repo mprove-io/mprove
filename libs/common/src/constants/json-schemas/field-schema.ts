@@ -1,10 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
-import {
-  FIELD_RESULT_VALUES,
-  FIELD_TYPE_VALUES,
-  TIMEFRAME_VALUES,
-  TIME_SOURCE_VALUES
-} from '~common/constants/top';
+import { FIELD_RESULT_VALUES, FIELD_TYPE_VALUES } from '~common/constants/top';
 
 export const FIELD_SCHEMA: JSONSchema7 = {
   $schema: 'http://json-schema.org/draft-07/schema#',
@@ -60,14 +55,12 @@ export const FIELD_SCHEMA: JSONSchema7 = {
       type: 'string'
     },
     source: {
-      type: 'string',
-      enum: TIME_SOURCE_VALUES
+      type: 'string'
     },
     timeframes: {
       type: 'array',
       items: {
-        type: 'string',
-        enum: TIMEFRAME_VALUES
+        type: 'string'
       }
     },
     measure: {
